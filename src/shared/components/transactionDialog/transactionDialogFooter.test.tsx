@@ -7,6 +7,7 @@ import type { TransactionReceipt } from 'viem';
 import * as useDialogContext from '../dialogProvider';
 import { type ITransactionDialogStep, TransactionDialogStep } from './transactionDialog.api';
 import { type ITransactionDialogFooterProps, TransactionDialogFooter } from './transactionDialogFooter';
+import { testLogger } from '@/test/utils';
 
 const mockRouterPush = jest.fn();
 jest.mock('next/navigation', () => ({
@@ -153,6 +154,7 @@ describe('<TransactionDialogFooter /> component', () => {
 
     it('supports success href as a function that builds the link based on a slug for proposals', () => {
         const proposalSlug = 'tokenvoting';
+        const transactionType = TransactionType.PROPOSAL_CREATE;
         const href = ({ slug }: { slug?: string }) => `/custom-href-${slug!}`;
         const successLink = { label: 'View proposal', href };
         const activeStep = {
@@ -160,14 +162,7 @@ describe('<TransactionDialogFooter /> component', () => {
             meta: { state: 'success' },
         } as ITransactionDialogStep;
 
-        render(
-            createTestComponent({
-                proposalSlug,
-                successLink,
-                activeStep,
-                transactionType: TransactionType.PROPOSAL_CREATE,
-            }),
-        );
+        render(createTestComponent({ proposalSlug, successLink, activeStep, transactionType }));
 
         expect(screen.getByRole('link').getAttribute('href')).toEqual(href({ slug: proposalSlug }));
     });
@@ -192,10 +187,6 @@ describe('<TransactionDialogFooter /> component', () => {
             jest.useFakeTimers();
         });
 
-        afterEach(() => {
-            jest.useRealTimers();
-        });
-
         it('changes the cancel button text to "Proceed anyway" after 8 seconds in the indexing step', () => {
             const activeStep = {
                 id: TransactionDialogStep.INDEXING,
@@ -216,7 +207,10 @@ describe('<TransactionDialogFooter /> component', () => {
             expect(screen.getByRole('button', { name: /transactionDialog.footer.proceedAnyway/ })).toBeInTheDocument();
         });
 
-        it('navigates to the correct fallback url', () => {
+        it('navigates to the correct fallback url', async () => {
+            testLogger.suppressErrors(); // suppress navigation not implemented error
+            const transactionType = TransactionType.PROPOSAL_CREATE;
+
             const close = jest.fn();
             const indexingFallbackUrl = '/proposals';
 
@@ -227,13 +221,7 @@ describe('<TransactionDialogFooter /> component', () => {
                 meta: { state: 'pending' },
             } as ITransactionDialogStep;
 
-            render(
-                createTestComponent({
-                    activeStep,
-                    transactionType: TransactionType.PROPOSAL_CREATE,
-                    indexingFallbackUrl,
-                }),
-            );
+            render(createTestComponent({ activeStep, transactionType, indexingFallbackUrl }));
 
             act(() => {
                 jest.advanceTimersByTime(8000);
@@ -241,9 +229,7 @@ describe('<TransactionDialogFooter /> component', () => {
 
             const proceedButton = screen.getByRole('button', { name: /transactionDialog.footer.proceedAnyway/ });
 
-            act(() => {
-                proceedButton.click();
-            });
+            await userEvent.click(proceedButton);
 
             expect(close).toHaveBeenCalled();
             expect(mockRouterPush).toHaveBeenCalledWith(indexingFallbackUrl);

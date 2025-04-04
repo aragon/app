@@ -74,6 +74,8 @@ const buildSuccessLink = (
     return successHref(params);
 };
 
+const indexingStepTimeout = 8000;
+
 export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     props: ITransactionDialogFooterProps<TCustomStepId>,
 ) => {
@@ -104,11 +106,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     useEffect(() => {
         let timer: NodeJS.Timeout;
         if (isIndexing && state === 'pending') {
-            timer = setTimeout(() => {
-                setShowProceedAnyway(true);
-            }, 8000);
-        } else {
-            setShowProceedAnyway(false);
+            timer = setTimeout(() => setShowProceedAnyway(true), indexingStepTimeout);
         }
 
         return () => {

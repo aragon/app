@@ -12,16 +12,16 @@ export type TransactionDialogPrepareReturn = SendTransactionParameters;
 
 /**
  * Params for building a transaction success link.
- * either a slug, used for proposal transactions or a
- * transaction receipt, used for other transactions.
+ * consists of the transaction receipt and optionally the slug of the proposal
+ * the slug is present if the transaction type is creating a proposal.
  */
 export interface IBuildTransactionDialogSuccessLinkHref {
     /**
-     * Receipt of the transaction used for building the success link for transactions that aren't creating a proposal.
+     * Receipt of the transaction used for building the success link.
      */
     receipt: TransactionReceipt;
     /**
-     * Slug of the proposal if the transaction type is creating a proposal.
+     * Slug of the proposal only passed if the transaction type is creating a proposal.
      */
     slug?: string;
 }
@@ -124,7 +124,7 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
      */
     transactionType?: TransactionType;
     /**
-     * Fallback URL if the indexing step moves to the proceed anyway state.
+     * Fallback URL shown when the indexing step takes too long.
      */
     indexingFallbackUrl?: string;
 }

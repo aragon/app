@@ -15,6 +15,8 @@ import { TransactionDialogStep, type ITransactionDialogProps } from './transacti
 import { TransactionDialogFooter } from './transactionDialogFooter';
 import { transactionDialogUtils } from './transactionDialogUtils';
 
+const indexingStepInterval = 1000;
+
 export const TransactionDialog = <TCustomStepId extends string>(props: ITransactionDialogProps<TCustomStepId>) => {
     const {
         title,
@@ -79,7 +81,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         enabled: waitTxStatus === 'success',
         refetchInterval: (data) => {
             const status = data.state.data ?? null;
-            return !status?.isProcessed ? 1000 : false;
+            return !status?.isProcessed ? indexingStepInterval : false;
         },
     });
 
