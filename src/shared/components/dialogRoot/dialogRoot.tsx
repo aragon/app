@@ -52,12 +52,10 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
         <Dialog.Root
             {...props}
             open={isOpen}
-            useFocusTrap={false}
             onOpenChange={handleOpenChange}
             onInteractOutside={handleInteractOutside}
             hiddenTitle={hiddenTitle ? t(hiddenTitle) : undefined}
             hiddenDescription={hiddenDescription ? t(hiddenDescription) : undefined}
-            //modal={location != null && modal}
             {...activeDialogProps}
         >
             {ActiveDialogComponent && <ActiveDialogComponent location={location!} />}
