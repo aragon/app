@@ -1,7 +1,6 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useMember } from '@/modules/governance/api/governanceService';
 import { TokenPluginDialog } from '@/plugins/tokenPlugin/constants/pluginDialogs';
-import { ITokenDelegationFormDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenDelegationFormDialog/tokenDelegationFormDialog';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -17,6 +16,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAccount } from 'wagmi';
+import { ITokenDelegationFormDialogParams } from '../../dialogs/tokenDelegationFormDialog';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
 
 export enum TokenDelegationSelection {
