@@ -44,6 +44,7 @@ export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStep
                 description={t(
                     `app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PERMISSIONS}.description`,
                 )}
+                helpText={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PERMISSIONS}.helpText`)}
                 {...permissionsStep}
             >
                 <CreateProcessForm.Permissions />
