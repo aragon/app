@@ -57,7 +57,7 @@ class PluginTransactionUtils {
     installDataToAction = (data: Hex, network: Network) => {
         const { pluginSetupProcessor } = networkDefinitions[network].addresses;
 
-        return { to: pluginSetupProcessor, data, value: '0' };
+        return { to: pluginSetupProcessor, data };
     };
 
     buildPrepareInstallationData = (

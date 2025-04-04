@@ -92,7 +92,6 @@ describe('pluginTransaction utils', () => {
             const result = pluginTransactionUtils.installDataToAction(data, network);
             expect(result.data).toEqual(data);
             expect(result.to).toEqual(networkDefinitions[network].addresses.pluginSetupProcessor);
-            expect(result.value).toEqual('0');
         });
     });
 

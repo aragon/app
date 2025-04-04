@@ -112,17 +112,14 @@ describe('publishProposalDialog utils', () => {
         });
     });
 
-    describe('formToProposalActions', () => {
-        it('correctly maps the form actions to the ones needed for the transaction', () => {
-            const actionsBaseData = [
-                { to: '0x123', value: '10', data: '0x1234' },
-                { to: '0x456', value: '0', data: '0x' },
-            ];
-            const actions = [
-                generateProposalActionWithdrawToken(actionsBaseData[0]),
-                generateProposalActionUpdateMetadata(actionsBaseData[1]),
-            ];
-            expect(publishProposalDialogUtils['formToProposalActions'](actions)).toEqual(actionsBaseData);
+    describe('proposalActionToTransactionRequest', () => {
+        it('correctly maps a proposal action to a transaction request', () => {
+            const actionBaseData = { to: '0x123', value: '10', data: '0x1234' };
+            const action = generateProposalActionWithdrawToken(actionBaseData);
+            expect(publishProposalDialogUtils['proposalActionToTransactionRequest'](action)).toEqual({
+                ...actionBaseData,
+                value: BigInt(actionBaseData.value),
+            });
         });
     });
 });

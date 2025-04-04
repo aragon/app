@@ -1,4 +1,3 @@
-import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { encodeFunctionData, type Hex } from 'viem';
 
 const delegateTokensAbi = [
@@ -19,10 +18,7 @@ class TokenDelegationFormDialogUtils {
             args: functionArgs,
         });
 
-        const transaction: TransactionDialogPrepareReturn = {
-            to: tokenAddress as Hex,
-            data: transactionData,
-        };
+        const transaction = { to: tokenAddress as Hex, data: transactionData };
 
         return Promise.resolve(transaction);
     };

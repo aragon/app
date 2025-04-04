@@ -1,4 +1,3 @@
-import { type TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { encodeFunctionData, type Hex } from 'viem';
 import type { ISppProposal } from '../../types';
 
@@ -21,10 +20,7 @@ class AdvanceStageDialogUtils {
             args: functionArgs,
         });
 
-        const transaction: TransactionDialogPrepareReturn = {
-            to: proposal.pluginAddress as Hex,
-            data: transactionData,
-        };
+        const transaction = { to: proposal.pluginAddress as Hex, data: transactionData };
 
         return Promise.resolve(transaction);
     };

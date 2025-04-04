@@ -1,5 +1,6 @@
 import type { IMember } from '@/modules/governance/api/governanceService';
-import type { ICompositeAddress, IProposalAction } from '@aragon/gov-ui-kit';
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
+import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 
 export interface IBuildActionsArrayParams {
@@ -25,7 +26,7 @@ export interface IBuildTransactionParams {
     /**
      * Array of grant or revoke actions to be executed by the proposal.
      */
-    actions: Array<Pick<IProposalAction, 'to' | 'value' | 'data'>>;
+    actions: ITransactionRequest[];
     /**
      * CID of the proposal metadata pinned on IPFS.
      */

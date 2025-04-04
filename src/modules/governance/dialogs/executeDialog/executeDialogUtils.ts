@@ -1,4 +1,3 @@
-import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { encodeFunctionData, type Hex } from 'viem';
 
 export interface IBuildTransactionParams {
@@ -27,7 +26,7 @@ class ExecuteDialogUtils {
         const { proposalIndex, pluginAddress } = params;
 
         const data = encodeFunctionData({ abi: executeAbi, functionName: 'execute', args: [proposalIndex] });
-        const transaction: TransactionDialogPrepareReturn = { to: pluginAddress as Hex, data: data };
+        const transaction = { to: pluginAddress as Hex, data: data };
 
         return Promise.resolve(transaction);
     };

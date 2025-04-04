@@ -48,7 +48,7 @@ describe('<PublishProposalDialog /> component', () => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin()]);
         usePinJsonSpy.mockReturnValue(generateReactQueryMutationResultIdle());
-        buildTransactionSpy.mockReturnValue({});
+        buildTransactionSpy.mockReturnValue({ to: '0x123', data: '0x123' });
     });
 
     afterEach(() => {

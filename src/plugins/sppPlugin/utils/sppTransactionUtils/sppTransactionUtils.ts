@@ -130,7 +130,7 @@ class SppTransactionUtils {
             args: [conditionRules],
         });
 
-        return { to: sppRuleConditionContract, data: transactionData, value: '0' };
+        return { to: sppRuleConditionContract, data: transactionData };
     };
 
     private buildUpdateStagesTransaction = (values: ICreateProcessFormData, sppAddress: Hex, bodyAddresses: Hex[]) => {
@@ -162,7 +162,7 @@ class SppTransactionUtils {
             args: [processedStages],
         });
 
-        return { to: sppAddress, data: transactionData, value: '0' };
+        return { to: sppAddress, data: transactionData };
     };
 
     private processStageApprovals = (requiredApprovals: number, stageType: ProcessStageType) => {

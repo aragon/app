@@ -1,5 +1,5 @@
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import type { Hex } from 'viem';
-import type { IProposalAction } from '../api/governanceService';
 import type { ICreateProposalFormData } from '../components/createProposalForm';
 
 export interface IBuildCreateProposalDataParams<TValues extends ICreateProposalFormData = ICreateProposalFormData> {
@@ -10,7 +10,7 @@ export interface IBuildCreateProposalDataParams<TValues extends ICreateProposalF
     /**
      * Actions to be executed.
      */
-    actions: Array<Pick<IProposalAction, 'to' | 'value' | 'data'>>;
+    actions: ITransactionRequest[];
     /**
      * Form values collected on the create-proposal wizard.
      */

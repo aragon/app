@@ -6,6 +6,7 @@ import { createProposalUtils } from '@/modules/governance/utils/createProposalUt
 import { tokenPlugin } from '@/plugins/tokenPlugin/constants/tokenPlugin';
 import { generateDao } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import * as Viem from 'viem';
 import { zeroAddress } from 'viem';
 import { DaoTokenVotingMode } from '../../types';
@@ -32,7 +33,7 @@ describe('tokenTransaction utils', () => {
             const startDate = 0;
             const endDate = 1728660603;
             const values = { ...generateCreateProposalFormData(), ...generateCreateProposalEndDateFormData() };
-            const actions = [{ to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: '0' }];
+            const actions: ITransactionRequest[] = [{ to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x' }];
             const params = { metadata: '0xipfs-cid' as const, actions, values };
             parseStartDateSpy.mockReturnValue(startDate);
             parseEndDateSpy.mockReturnValue(endDate);

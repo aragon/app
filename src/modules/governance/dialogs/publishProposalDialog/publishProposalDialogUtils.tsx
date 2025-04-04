@@ -1,7 +1,6 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { transactionUtils } from '@/shared/utils/transactionUtils';
+import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
 import type { IProposalAction } from '../../api/governanceService';
 import type {
@@ -48,7 +47,7 @@ class PublishProposalDialogUtils {
     buildTransaction = (params: IBuildTransactionParams) => {
         const { values, metadataCid, plugin } = params;
 
-        const actions = this.formToProposalActions(values.actions);
+        const actions = values.actions.map(this.proposalActionToTransactionRequest);
         const metadata = transactionUtils.cidToHex(metadataCid);
 
         const buildDataFunction = pluginRegistryUtils.getSlotFunction<IBuildCreateProposalDataParams, Hex>({
@@ -58,11 +57,7 @@ class PublishProposalDialogUtils {
 
         const buildDataParams: IBuildCreateProposalDataParams = { actions, metadata, values };
         const transactionData = buildDataFunction(buildDataParams);
-
-        const transaction: TransactionDialogPrepareReturn = {
-            to: plugin.address as Hex,
-            data: transactionData,
-        };
+        const transaction = { to: plugin.address as Hex, data: transactionData };
 
         return transaction;
     };
@@ -87,8 +82,11 @@ class PublishProposalDialogUtils {
         return processedActions;
     };
 
-    private formToProposalActions = (actions: IProposalAction[]) =>
-        actions.map(({ to, value, data }) => ({ to, value, data }));
+    private proposalActionToTransactionRequest = (action: IProposalAction): ITransactionRequest => {
+        const { to, value, data } = action;
+
+        return { to: to as Hex, value: BigInt(value), data: data as Hex };
+    };
 }
 
 export const publishProposalDialogUtils = new PublishProposalDialogUtils();

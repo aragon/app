@@ -1,5 +1,4 @@
 import { type IBuildCreateProposalDataParams } from '@/modules/governance/types';
-import { type TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { addressUtils } from '@aragon/gov-ui-kit';
@@ -59,17 +58,13 @@ class AdminManageMembersDialogPublishUtils {
         const { actions, metadataCid, pluginAddress } = params;
 
         const metadata = transactionUtils.cidToHex(metadataCid);
-
         const transactionData = adminTransactionUtils.buildCreateProposalData({
             actions,
             metadata,
             values: {} as IBuildCreateProposalDataParams['values'],
         });
 
-        const transaction: TransactionDialogPrepareReturn = {
-            to: pluginAddress,
-            data: transactionData,
-        };
+        const transaction = { to: pluginAddress, data: transactionData };
 
         return Promise.resolve(transaction);
     };

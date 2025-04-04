@@ -32,7 +32,7 @@ class PermissionTransactionUtils {
             args: [where, who, keccak256(toBytes(what))],
         });
 
-        return { to, data: transactionData, value: '0' };
+        return { to, data: transactionData };
     };
 
     buildRevokePermissionTransaction = (params: IUpdatePermissionParams) => {
@@ -43,7 +43,7 @@ class PermissionTransactionUtils {
             args: [where, who, keccak256(toBytes(what))],
         });
 
-        return { to, data: transactionData, value: '0' };
+        return { to, data: transactionData };
     };
 
     buildRuleConditions = (conditionAddresses: string[], conditionRules: IRuledCondition[]): IRuledCondition[] => {

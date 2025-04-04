@@ -1,6 +1,5 @@
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
-import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils, type IPluginSetupData } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
@@ -64,7 +63,7 @@ class PublishProcessDialogUtils {
             values: {} as IBuildCreateProposalDataParams['values'],
         });
 
-        const transaction: TransactionDialogPrepareReturn = { to: plugin.address as Hex, data: transactionData };
+        const transaction = { to: plugin.address as Hex, data: transactionData };
 
         return Promise.resolve(transaction);
     };

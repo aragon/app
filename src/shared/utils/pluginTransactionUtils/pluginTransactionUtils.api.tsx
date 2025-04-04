@@ -1,5 +1,6 @@
 import type { IDao } from '@/shared/api/daoService';
 import type { Hex } from 'viem';
+import type { ITransactionRequest } from '../transactionUtils';
 
 export interface IPluginSetupPermission {
     /**
@@ -77,20 +78,5 @@ export interface IBuildApplyPluginsInstallationActionsParams {
     /**
      * Other actions to be added to the installaction action array before the revoke root permission transaction.
      */
-    actions?: IPluginSetupAction[];
-}
-
-export interface IPluginSetupAction {
-    /**
-     * Target of the transaction.
-     */
-    to: Hex;
-    /**
-     * Data of the transaction.
-     */
-    data: Hex;
-    /**
-     * Value of the transaction
-     */
-    value: string;
+    actions?: ITransactionRequest[];
 }

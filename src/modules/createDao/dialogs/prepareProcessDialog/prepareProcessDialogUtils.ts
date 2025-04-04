@@ -1,30 +1,19 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { type IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import type { IDao } from '@/shared/api/daoService';
-import { type TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
 import type { ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
 import type {
-    IBuildPrepareInstallActionParams,
     IBuildPrepareInstallPluginActionParams,
     IBuildPrepareInstallPluginsActionParams,
     IBuildTransactionParams,
 } from './prepareProcessDialogUtils.api';
 
 class PrepareProcessDialogUtils {
-    private proposalMetadata = {
-        title: 'Prepare plugin installation',
-        summary: 'This proposal prepares the installation of all plugins',
-    };
-
-    prepareProposalMetadata = () => this.proposalMetadata;
-
     preparePluginMetadata = (plugin: ICreateProcessFormData['bodies'][number]) => {
         const { name, description, resources: links } = plugin;
 
@@ -39,40 +28,22 @@ class PrepareProcessDialogUtils {
     };
 
     buildTransaction = (params: IBuildTransactionParams) => {
-        const { values, processMetadata, plugin, dao } = params;
-
-        const proposalMetadata = transactionUtils.cidToHex(processMetadata.proposal);
-        const proposalActions = this.buildPrepareInstallActions({ values, dao, processMetadata });
-
-        const buildProposalDataFunction = pluginRegistryUtils.getSlotFunction<IBuildCreateProposalDataParams, Hex>({
-            pluginId: plugin.subdomain,
-            slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
-        })!;
-
-        const transactionData = buildProposalDataFunction({
-            actions: proposalActions,
-            metadata: proposalMetadata,
-            values: {} as IBuildCreateProposalDataParams['values'],
-        });
-
-        const transaction: TransactionDialogPrepareReturn = { to: plugin.address as Hex, data: transactionData };
-
-        return Promise.resolve(transaction);
-    };
-
-    private buildPrepareInstallActions = (params: IBuildPrepareInstallActionParams) => {
         const { values, processMetadata, dao } = params;
+
         const { processor: processorMetadata, plugins: pluginsMetadata } = processMetadata;
+        const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
 
         const processorInstallAction =
             processorMetadata != null ? this.buildPrepareInstallProcessorActionData(processorMetadata, dao) : undefined;
-
         const pluginInstallActions = this.buildPrepareInstallPluginsActionData({ values, dao, pluginsMetadata });
 
-        const installActions =
+        const installActionsData =
             processorInstallAction != null ? [processorInstallAction, ...pluginInstallActions] : pluginInstallActions;
 
-        return installActions.map((actionData) => pluginTransactionUtils.installDataToAction(actionData, dao.network));
+        const installActionTransactions = installActionsData.map((data) => ({ to: pluginSetupProcessor, data }));
+        const encodedTransaction = transactionUtils.encodeTransactionRequests(installActionTransactions, dao.network);
+
+        return Promise.resolve(encodedTransaction);
     };
 
     private buildPrepareInstallProcessorActionData = (metadata: string, dao: IDao) => {
