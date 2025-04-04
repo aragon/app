@@ -1,5 +1,6 @@
 import type { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { invariant } from '@aragon/gov-ui-kit';
 import { encodeFunctionData, type Hex, multicall3Abi, toHex } from 'viem';
 import type { IMulticallRequest, ITransactionRequest } from './transactionUtils.api';
 
@@ -27,7 +28,9 @@ class TransactionUtils {
     };
 
     private encodeMulticallTransaction = (calls: IMulticallRequest[], network: Network): ITransactionRequest => {
-        const { address: multicall3Address } = networkDefinitions[network].contracts!.multicall3!;
+        const { address: multicall3Address } = networkDefinitions[network].contracts?.multicall3 ?? {};
+        invariant(multicall3Address != null, `encodeMulticallTransaction: ${network} does not support multicall3`);
+
         const transactionData = encodeFunctionData({ abi: multicall3Abi, functionName: 'aggregate3', args: [calls] });
         const transaction = { to: multicall3Address, data: transactionData };
 
