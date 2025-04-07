@@ -28,7 +28,7 @@ export const TransactionStatusContainer = <TMeta extends ITransactionStatusStepM
     return (
         <ul
             className={classNames(
-                'flex flex-col gap-3 rounded-xl border bg-neutral-0 p-4 md:gap-4 md:p-6',
+                'flex flex-col gap-3 rounded-xl border bg-neutral-0 p-4 text-sm md:gap-4 md:p-6 md:text-base',
                 { 'border-critical-300 shadow-critical': hasError },
                 { 'border-success-300 shadow-success': isSuccess },
                 { 'border-warning-300 shadow-warning': hasWarnings },

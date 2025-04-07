@@ -56,8 +56,14 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const [adminPlugin] = useDaoPlugins({ daoId, subdomain: 'admin' }) ?? [];
 
+    const phase = {
+        title: t('app.createDao.publishProcessDialog.phaseTitle'),
+        index: 2,
+        length: 2,
+    };
     const stepper = useStepper<ITransactionDialogStepMeta, PublishProcessStep | TransactionDialogStep>({
         initialActiveStep: PublishProcessStep.PIN_METADATA,
+        phase,
     });
 
     const { data: pinJsonData, status, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
@@ -105,6 +111,9 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
     return (
         <TransactionDialog<PublishProcessStep>
             title={t('app.createDao.publishProcessDialog.title')}
+            stepperTitle="Publish process"
+            stepperIndex={2}
+            stepperLength={2}
             description={t('app.createDao.publishProcessDialog.description')}
             submitLabel={t('app.createDao.publishProcessDialog.button.submit')}
             successLink={{

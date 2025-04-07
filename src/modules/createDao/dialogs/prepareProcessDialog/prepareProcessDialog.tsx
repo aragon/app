@@ -56,8 +56,14 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const [adminPlugin] = useDaoPlugins({ daoId, subdomain: 'admin' }) ?? [];
 
+    const phase = {
+        title: t('app.createDao.prepareProcessDialog.phaseTitle'),
+        index: 1,
+        length: 2,
+    };
     const stepper = useStepper<ITransactionDialogStepMeta, PrepareProcessStep | TransactionDialogStep>({
         initialActiveStep: PrepareProcessStep.PIN_METADATA,
+        phase,
     });
     const { nextStep } = stepper;
 

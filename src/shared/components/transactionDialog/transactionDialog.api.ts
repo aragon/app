@@ -61,6 +61,18 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
      */
     title: string;
     /**
+     * Title of the stepper.
+     */
+    stepperTitle?: string;
+    /**
+     * Index of the active step.
+     */
+    stepperIndex?: number;
+    /**
+     * Length of the stepper.
+     */
+    stepperLength?: number;
+    /**
      * Description of the dialog.
      */
     description: string;
