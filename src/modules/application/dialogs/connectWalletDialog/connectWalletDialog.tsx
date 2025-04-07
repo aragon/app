@@ -49,6 +49,19 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
     useEffect(() => {
         const disableOutsideClick = isAppKitModalOpen;
         updateOptions({ disableOutsideClick });
+        // There is a known issue on the radix dialog where elements are not scrollable when the dialog is open.
+        // see here: https://github.com/radix-ui/primitives/issues/1159
+        const appKitModal = document.querySelector('w3m-modal');
+        const handleWheel = (event: Event) => event.stopPropagation();
+        const preventTouchScroll = (event: Event) => event.stopPropagation();
+
+        appKitModal?.addEventListener('wheel', handleWheel);
+        appKitModal?.addEventListener('touchmove', preventTouchScroll, { passive: false });
+
+        return () => {
+            appKitModal?.removeEventListener('wheel', handleWheel);
+            appKitModal?.removeEventListener('touchmove', preventTouchScroll);
+        };
     }, [updateOptions, isAppKitModalOpen]);
 
     useEffect(() => {
