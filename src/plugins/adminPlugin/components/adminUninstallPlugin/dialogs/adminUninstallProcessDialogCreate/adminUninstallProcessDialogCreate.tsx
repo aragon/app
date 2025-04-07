@@ -1,12 +1,13 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Dialog, EmptyState, type IDialogRootProps } from '@aragon/gov-ui-kit';
+import { Dialog, EmptyState, invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 
-export interface IAdminUninstallProcessDialogCreateProps extends IDialogRootProps {
+export interface IAdminUninstallProcessDialogCreateParams {
     /**
      * ID of the DAO.
      */
@@ -15,25 +16,27 @@ export interface IAdminUninstallProcessDialogCreateProps extends IDialogRootProp
      * The admin plugin.
      */
     adminPlugin: IDaoPlugin;
-    /**
-     * Callback to close the dialog.
-     */
-    onClose: () => void;
 }
 
+export interface IAdminUninstallProcessDialogCreateProps
+    extends IDialogComponentProps<IAdminUninstallProcessDialogCreateParams> {}
+
 export const AdminUninstallProcessDialogCreate: React.FC<IAdminUninstallProcessDialogCreateProps> = (props) => {
-    const { daoId, adminPlugin, open: isOpen, onClose } = props;
+    const { location } = props;
+    invariant(location.params != null, 'AdminUninstallProcessDialogCreate: required parameters must be set.');
+
+    const { daoId, adminPlugin } = location.params;
 
     const router = useRouter();
-
     const { t } = useTranslations();
+    const { close } = useDialogContext();
 
     const createProcessUrl: __next_route_internal_types__.DynamicRoutes = `/dao/${daoId}/create/process`;
 
     const handlePermissionGuardSuccess = useCallback(() => {
         router.push(createProcessUrl);
-        onClose();
-    }, [router, onClose, createProcessUrl]);
+        close();
+    }, [router, createProcessUrl, close]);
 
     const { check: createProcessGuard, result: canCreateProcess } = usePermissionCheckGuard({
         permissionNamespace: 'proposal',
@@ -43,21 +46,19 @@ export const AdminUninstallProcessDialogCreate: React.FC<IAdminUninstallProcessD
         daoId,
     });
 
-    const handleProcessGuard = () => {
+    const handleCreateProcessClick = () => {
+        if (canCreateProcess) {
+            handlePermissionGuardSuccess();
+            return;
+        }
         createProcessGuard();
-        onClose();
-    };
-
-    const defaultActionProps = {
-        onClick: canCreateProcess ? undefined : handleProcessGuard,
-        href: canCreateProcess ? createProcessUrl : undefined,
     };
 
     return (
-        <Dialog.Root open={isOpen} size="lg">
+        <>
             <Dialog.Header
                 title={t('app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogCreate.title')}
-                onClose={onClose}
+                onClose={() => close()}
             />
             <Dialog.Content className="flex flex-col items-center gap-4">
                 <EmptyState
@@ -68,10 +69,10 @@ export const AdminUninstallProcessDialogCreate: React.FC<IAdminUninstallProcessD
                     )}
                     primaryButton={{
                         label: t('app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogCreate.label'),
-                        ...defaultActionProps,
+                        onClick: handleCreateProcessClick,
                     }}
                 />
             </Dialog.Content>
-        </Dialog.Root>
+        </>
     );
 };

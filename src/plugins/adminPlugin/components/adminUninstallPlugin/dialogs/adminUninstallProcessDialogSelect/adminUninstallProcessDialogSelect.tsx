@@ -4,14 +4,14 @@ import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
-import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { DialogAlert, DialogAlertFooter, type IDialogRootProps } from '@aragon/gov-ui-kit';
+import { DialogAlert, DialogAlertFooter, invariant, type IDialogRootProps } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import type { Hex } from 'viem';
 import { adminUninstallProcessDialogSelectUtils } from './adminUninstallProcessDialogSelectUtils';
 
-export interface IAdminUninstallProcessDialogSelectProps extends IDialogRootProps {
+export interface IAdminUninstallProcessDialogSelectParams extends IDialogRootProps {
     /**
      * ID of the DAO.
      */
@@ -20,19 +20,21 @@ export interface IAdminUninstallProcessDialogSelectProps extends IDialogRootProp
      * The admin plugin.
      */
     adminPlugin: IDaoPlugin;
-    /**
-     * Callback to close the dialog.
-     */
-    onClose: () => void;
 }
 
+export interface IAdminUninstallProcessDialogSelectProps
+    extends IDialogComponentProps<IAdminUninstallProcessDialogSelectParams> {}
+
 export const AdminUninstallProcessDialogSelect: React.FC<IAdminUninstallProcessDialogSelectProps> = (props) => {
-    const { daoId, adminPlugin, open: isOpen, onClose } = props;
+    const { location } = props;
+    invariant(location.params != null, 'AdminUninstallProcessDialogSelect: required parameters must be set.');
+
+    const { daoId, adminPlugin } = location.params;
     const [selectedPlugin, setSelectedPlugin] = useState<IDaoPlugin>(adminPlugin);
 
     const { t } = useTranslations();
 
-    const { open } = useDialogContext();
+    const { open, close } = useDialogContext();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const daoAddress = dao!.address as Hex;
@@ -59,7 +61,6 @@ export const AdminUninstallProcessDialogSelect: React.FC<IAdminUninstallProcessD
             onPluginSelected: handlePluginSelected,
         };
         open(GovernanceDialog.SELECT_PLUGIN, { params });
-        onClose();
     };
 
     const { check: createProposalGuard } = usePermissionCheckGuard({
@@ -69,14 +70,12 @@ export const AdminUninstallProcessDialogSelect: React.FC<IAdminUninstallProcessD
         daoId,
     });
 
+    const handleClose = () => {
+        close();
+    };
+
     return (
-        <DialogAlert.Root
-            open={isOpen}
-            variant="critical"
-            hiddenDescription={t(
-                'app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogSelect.a11y.description',
-            )}
-        >
+        <>
             <DialogAlert.Header
                 title={t('app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogSelect.title')}
             />
@@ -101,9 +100,9 @@ export const AdminUninstallProcessDialogSelect: React.FC<IAdminUninstallProcessD
                 }}
                 cancelButton={{
                     label: t('app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogSelect.action.cancel'),
-                    onClick: onClose,
+                    onClick: handleClose,
                 }}
             />
-        </DialogAlert.Root>
+        </>
     );
 };
