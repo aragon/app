@@ -118,12 +118,21 @@ class MultisigActionUtils {
     };
 
     normalizeChangeSettingsAction = (params: INormalizeChangeSettingsParams): IGukProposalActionChangeSettings => {
-        const { action, membersCount, t, settings } = params;
-        const { type, proposedSettings, ...otherValues } = action;
+        const { action, membersCount, t } = params;
+        const { type, proposedSettings, existingSettings, ...otherValues } = action;
 
-        const completeProposedSettings = { ...settings, ...proposedSettings };
+        console.log('action', action);
 
-        const parsedExistingSettings = multisigSettingsUtils.parseSettings({ membersCount, settings, t });
+        const completeProposedSettings = { ...existingSettings, ...proposedSettings };
+
+        console.log('existingSettings', existingSettings);
+        console.log('proposedSettings', proposedSettings);
+
+        const parsedExistingSettings = multisigSettingsUtils.parseSettings({
+            membersCount,
+            settings: existingSettings,
+            t,
+        });
         const parsedProposedSettings = multisigSettingsUtils.parseSettings({
             membersCount,
             settings: completeProposedSettings,
