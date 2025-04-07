@@ -84,4 +84,11 @@ describe('<WizardPageStep /> component', () => {
         expect(button).toBeInTheDocument();
         expect(button.type).toEqual('submit');
     });
+
+    it('renders a submit help text when provided', () => {
+        const submitHelpText = 'Some useful help text';
+        useWizardFooterSpy.mockReturnValue({ submitHelpText } as Wizard.IUseWizardFooterReturn);
+        render(createTestComponent());
+        expect(screen.getByText(submitHelpText)).toBeInTheDocument();
+    });
 });
