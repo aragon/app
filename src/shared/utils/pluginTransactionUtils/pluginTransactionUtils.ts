@@ -9,6 +9,7 @@ import {
     type TransactionReceipt,
 } from 'viem';
 import { permissionTransactionUtils } from '../permissionTransactionUtils';
+import type { ITransactionRequest } from '../transactionUtils';
 import { pluginSetupProcessorAbi } from './abi/pluginSetupProcessorAbi';
 import type {
     IBuildApplyPluginsInstallationActionsParams,
@@ -54,10 +55,10 @@ class PluginTransactionUtils {
         return pluginSetupData;
     };
 
-    installDataToAction = (data: Hex, network: Network) => {
+    installDataToAction = (data: Hex, network: Network): ITransactionRequest => {
         const { pluginSetupProcessor } = networkDefinitions[network].addresses;
 
-        return { to: pluginSetupProcessor, data };
+        return { to: pluginSetupProcessor, data, value: BigInt(0) };
     };
 
     buildPrepareInstallationData = (
@@ -85,7 +86,9 @@ class PluginTransactionUtils {
         return { target, operation };
     };
 
-    buildApplyPluginsInstallationActions = (params: IBuildApplyPluginsInstallationActionsParams) => {
+    buildApplyPluginsInstallationActions = (
+        params: IBuildApplyPluginsInstallationActionsParams,
+    ): ITransactionRequest[] => {
         const { dao, setupData, actions = [] } = params;
         const daoAddress = dao.address as Hex;
 

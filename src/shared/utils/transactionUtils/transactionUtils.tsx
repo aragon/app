@@ -1,38 +1,25 @@
 import type { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { invariant } from '@aragon/gov-ui-kit';
-import { encodeFunctionData, type Hex, multicall3Abi, toHex } from 'viem';
-import type { IMulticallRequest, ITransactionRequest } from './transactionUtils.api';
+import { encodeFunctionData, type Hex, toHex, zeroHash } from 'viem';
+import { globalExecutorAbi } from './globalExecutorAbi';
+import type { ITransactionRequest } from './transactionUtils.api';
 
 class TransactionUtils {
     cidToHex = (cid: string): Hex => toHex(`ipfs://${cid}`);
 
-    encodeTransactionRequests = (transactions: ITransactionRequest[], network: Network): ITransactionRequest => {
-        if (transactions.length === 1) {
-            return transactions[0];
-        }
+    encodeTransactionRequests = (transactions: ITransactionRequest[], network: Network): ITransactionRequest =>
+        transactions.length === 1 ? transactions[0] : this.buildExecutorTransaction(transactions, network);
 
-        const multicallRequests = transactions.map((transaction) => this.transactionToMulticallRequest(transaction));
-        const multicallTransaction = this.encodeMulticallTransaction(multicallRequests, network);
+    private buildExecutorTransaction = (transactions: ITransactionRequest[], network: Network): ITransactionRequest => {
+        const { globalExecutor } = networkDefinitions[network].addresses;
 
-        return multicallTransaction;
-    };
+        const transactionData = encodeFunctionData({
+            abi: globalExecutorAbi,
+            functionName: 'execute',
+            args: [zeroHash, transactions, BigInt(0)],
+        });
 
-    private transactionToMulticallRequest = (
-        transaction: Omit<ITransactionRequest, 'value'>,
-        allowFailure = false,
-    ): IMulticallRequest => {
-        const { data, to } = transaction;
-
-        return { target: to, callData: data, allowFailure };
-    };
-
-    private encodeMulticallTransaction = (calls: IMulticallRequest[], network: Network): ITransactionRequest => {
-        const { address: multicall3Address } = networkDefinitions[network].contracts?.multicall3 ?? {};
-        invariant(multicall3Address != null, `encodeMulticallTransaction: ${network} does not support multicall3`);
-
-        const transactionData = encodeFunctionData({ abi: multicall3Abi, functionName: 'aggregate3', args: [calls] });
-        const transaction = { to: multicall3Address, data: transactionData };
+        const transaction = { to: globalExecutor, data: transactionData, value: BigInt(0) };
 
         return transaction;
     };

@@ -9,7 +9,7 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
     );
 
     beforeEach(() => {
-        buildRevokePermissionTransactionSpy.mockReturnValue({ to: '0x123', data: '0xabc' });
+        buildRevokePermissionTransactionSpy.mockReturnValue({ to: '0x123', data: '0xabc', value: BigInt(0) });
     });
 
     afterEach(() => {

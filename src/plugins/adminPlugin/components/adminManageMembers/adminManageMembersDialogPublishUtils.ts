@@ -1,6 +1,6 @@
 import { type IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
-import { transactionUtils } from '@/shared/utils/transactionUtils';
+import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import { adminTransactionUtils } from '../../utils/adminTransactionUtils';
@@ -54,7 +54,7 @@ class AdminManageMembersDialogPublishUtils {
         return [...grantActions, ...revokeActions];
     };
 
-    buildTransaction = (params: IBuildTransactionParams) => {
+    buildTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
         const { actions, metadataCid, pluginAddress } = params;
 
         const metadata = transactionUtils.cidToHex(metadataCid);
@@ -64,7 +64,7 @@ class AdminManageMembersDialogPublishUtils {
             values: {} as IBuildCreateProposalDataParams['values'],
         });
 
-        const transaction = { to: pluginAddress, data: transactionData };
+        const transaction = { to: pluginAddress, data: transactionData, value: BigInt(0) };
 
         return Promise.resolve(transaction);
     };

@@ -58,8 +58,8 @@ describe('adminManageMembersDialogPublish utils', () => {
             });
 
             const expectedResult = [
-                { to: daoAddress, data: encodedGrantData },
-                { to: daoAddress, data: encodedRevokeData },
+                { to: daoAddress, data: encodedGrantData, value: BigInt(0) },
+                { to: daoAddress, data: encodedRevokeData, value: BigInt(0) },
             ];
 
             expect(result).toEqual(expectedResult);
@@ -82,8 +82,8 @@ describe('adminManageMembersDialogPublish utils', () => {
         it('correctly builds the transaction object using the actions array', async () => {
             const to = '0xDao' as Hex;
             const actions: ITransactionRequest[] = [
-                { to, data: '0xAction1' },
-                { to, data: '0xAction2' },
+                { to, data: '0xAction1', value: BigInt(0) },
+                { to, data: '0xAction2', value: BigInt(0) },
             ];
             const metadataCid = 'QmMetadataCid';
             const pluginAddress = '0xPlugin';
@@ -110,6 +110,7 @@ describe('adminManageMembersDialogPublish utils', () => {
             expect(transaction).toEqual({
                 to: pluginAddress,
                 data: proposalDataResult,
+                value: BigInt(0),
             });
         });
     });

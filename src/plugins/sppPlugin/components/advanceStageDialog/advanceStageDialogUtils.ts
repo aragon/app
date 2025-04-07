@@ -1,3 +1,4 @@
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { encodeFunctionData, type Hex } from 'viem';
 import type { ISppProposal } from '../../types';
 
@@ -12,7 +13,7 @@ const advanceStageAbi = [
 ];
 
 class AdvanceStageDialogUtils {
-    buildTransaction = (proposal: ISppProposal) => {
+    buildTransaction = (proposal: ISppProposal): Promise<ITransactionRequest> => {
         const functionArgs = [proposal.proposalIndex];
         const transactionData = encodeFunctionData({
             abi: advanceStageAbi,
@@ -20,7 +21,7 @@ class AdvanceStageDialogUtils {
             args: functionArgs,
         });
 
-        const transaction = { to: proposal.pluginAddress as Hex, data: transactionData };
+        const transaction = { to: proposal.pluginAddress as Hex, data: transactionData, value: BigInt(0) };
 
         return Promise.resolve(transaction);
     };

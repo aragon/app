@@ -14,7 +14,7 @@ describe('adminTransaction utils', () => {
     describe('buildCreateProposalData', () => {
         it('correctly encodes the create-proposal data from the given parameters', () => {
             const metadata = '0xmeta';
-            const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x000' }];
+            const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x000', value: BigInt(0) }];
             const values = generateCreateProposalFormData();
             const transactionData = '0xdata';
             encodeFunctionDataSpy.mockReturnValueOnce(transactionData);

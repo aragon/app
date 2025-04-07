@@ -33,7 +33,9 @@ describe('tokenTransaction utils', () => {
             const startDate = 0;
             const endDate = 1728660603;
             const values = { ...generateCreateProposalFormData(), ...generateCreateProposalEndDateFormData() };
-            const actions: ITransactionRequest[] = [{ to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x' }];
+            const actions: ITransactionRequest[] = [
+                { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
+            ];
             const params = { metadata: '0xipfs-cid' as const, actions, values };
             const transactionData = '0xdata';
             parseStartDateSpy.mockReturnValue(startDate);

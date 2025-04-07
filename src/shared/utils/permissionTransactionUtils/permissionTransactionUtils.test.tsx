@@ -33,7 +33,7 @@ describe('permissionTransaction utils', () => {
                 args: [grantParams.where, grantParams.who, permissionHash],
             });
 
-            const expectedTransaction = { to: grantParams.to, data: transactionData };
+            const expectedTransaction = { to: grantParams.to, data: transactionData, value: BigInt(0) };
             expect(transaction).toEqual(expectedTransaction);
         });
     });
@@ -57,7 +57,7 @@ describe('permissionTransaction utils', () => {
                 args: [grantParams.where, grantParams.who, permissionHash],
             });
 
-            const expectedTransaction = { to: grantParams.to, data: transactionData };
+            const expectedTransaction = { to: grantParams.to, data: transactionData, value: BigInt(0) };
             expect(transaction).toEqual(expectedTransaction);
         });
     });

@@ -2,7 +2,7 @@ import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUti
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils, type IPluginSetupData } from '@/shared/utils/pluginTransactionUtils';
-import { transactionUtils } from '@/shared/utils/transactionUtils';
+import { transactionUtils, type ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
 import { GovernanceSlotId } from '../../../governance/constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../../governance/types';
@@ -39,7 +39,7 @@ class PublishProcessDialogUtils {
 
     prepareProposalMetadata = () => this.proposalMetadata;
 
-    buildTransaction = (params: IBuildTransactionParams) => {
+    buildTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
         const { values, dao, setupData, plugin, metadataCid } = params;
 
         const proposalMetadata = transactionUtils.cidToHex(metadataCid);
@@ -63,7 +63,7 @@ class PublishProcessDialogUtils {
             values: {} as IBuildCreateProposalDataParams['values'],
         });
 
-        const transaction = { to: plugin.address as Hex, data: transactionData };
+        const transaction = { to: plugin.address as Hex, data: transactionData, value: BigInt(0) };
 
         return Promise.resolve(transaction);
     };

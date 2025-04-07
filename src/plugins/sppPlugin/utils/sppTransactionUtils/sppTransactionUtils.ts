@@ -11,6 +11,7 @@ import type { IDao } from '@/shared/api/daoService';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { type IPluginSetupData, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import { sppPlugin } from '../../constants/sppPlugin';
 import { SppProposalType } from '../../types';
@@ -55,7 +56,11 @@ class SppTransactionUtils {
         return transactionData;
     };
 
-    buildPluginsSetupActions = (values: ICreateProcessFormData, setupData: IPluginSetupData[], dao: IDao) => {
+    buildPluginsSetupActions = (
+        values: ICreateProcessFormData,
+        setupData: IPluginSetupData[],
+        dao: IDao,
+    ): ITransactionRequest[] => {
         const daoAddress = dao.address as Hex;
 
         // The SPP plugin is the one prepared first, the setupData array contains the data for the SPP plugin as the first element.
@@ -72,7 +77,11 @@ class SppTransactionUtils {
         return [updateStages, updateCreateProposalRules, ...updatePluginPermissions].filter((action) => action != null);
     };
 
-    private buildBodyPermissionActions = (pluginData: IPluginSetupData, daoAddress: Hex, sppAddress: Hex) => {
+    private buildBodyPermissionActions = (
+        pluginData: IPluginSetupData,
+        daoAddress: Hex,
+        sppAddress: Hex,
+    ): ITransactionRequest[] => {
         const { pluginAddress: bodyAddress } = pluginData;
 
         // No address should be able to create proposals directly on sub-plugins
@@ -106,7 +115,7 @@ class SppTransactionUtils {
         values: ICreateProcessFormData,
         sppSetupData: IPluginSetupData,
         pluginSetupData: IPluginSetupData[],
-    ) => {
+    ): ITransactionRequest | undefined => {
         const { bodies, proposalCreationMode } = values;
 
         const sppRuleConditionContract = sppSetupData.preparedSetupData.helpers[0];
@@ -130,10 +139,14 @@ class SppTransactionUtils {
             args: [conditionRules],
         });
 
-        return { to: sppRuleConditionContract, data: transactionData };
+        return { to: sppRuleConditionContract, data: transactionData, value: BigInt(0) };
     };
 
-    private buildUpdateStagesTransaction = (values: ICreateProcessFormData, sppAddress: Hex, bodyAddresses: Hex[]) => {
+    private buildUpdateStagesTransaction = (
+        values: ICreateProcessFormData,
+        sppAddress: Hex,
+        bodyAddresses: Hex[],
+    ): ITransactionRequest => {
         const { stages } = values;
 
         const processedBodyAddresses = [...bodyAddresses];
@@ -162,7 +175,7 @@ class SppTransactionUtils {
             args: [processedStages],
         });
 
-        return { to: sppAddress, data: transactionData };
+        return { to: sppAddress, data: transactionData, value: BigInt(0) };
     };
 
     private processStageApprovals = (requiredApprovals: number, stageType: ProcessStageType) => {

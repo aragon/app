@@ -1,8 +1,9 @@
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import * as viem from 'viem';
+import { globalExecutorAbi } from './globalExecutorAbi';
 import { transactionUtils } from './transactionUtils';
-import type { IMulticallRequest, ITransactionRequest } from './transactionUtils.api';
+import type { ITransactionRequest } from './transactionUtils.api';
 
 describe('transaction utils', () => {
     describe('cidToHex', () => {
@@ -16,76 +17,61 @@ describe('transaction utils', () => {
 
     describe('encodeTransactionRequests', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const transactionToMulticallRequestSpy = jest.spyOn(transactionUtils as any, 'transactionToMulticallRequest');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const encodeMulticallTransactionSpy = jest.spyOn(transactionUtils as any, 'encodeMulticallTransaction');
+        const buildExecutorTransactionSpy = jest.spyOn(transactionUtils as any, 'buildExecutorTransaction');
 
         afterEach(() => {
-            transactionToMulticallRequestSpy.mockReset();
-            encodeMulticallTransactionSpy.mockReset();
+            buildExecutorTransactionSpy.mockReset();
         });
 
         afterAll(() => {
-            transactionToMulticallRequestSpy.mockRestore();
-            encodeMulticallTransactionSpy.mockRestore();
+            buildExecutorTransactionSpy.mockRestore();
         });
 
         it('returns the single transaction when having only one transaction', () => {
-            const transactions: ITransactionRequest[] = [{ to: '0x123', data: '0x456' }];
+            const transactions: ITransactionRequest[] = [{ to: '0x123', data: '0x456', value: BigInt(0) }];
             const result = transactionUtils.encodeTransactionRequests(transactions, Network.ARBITRUM_MAINNET);
             expect(result).toEqual(transactions[0]);
         });
 
-        it('maps every request to a multicall request and encodes the transaction', () => {
+        it('builds an executor transaction when having multiple transactions to execute', () => {
             const transactions: ITransactionRequest[] = [
-                { to: '0x1', data: '0x2' },
-                { to: '0x3', data: '0x4' },
+                { to: '0x1', data: '0x2', value: BigInt(0) },
+                { to: '0x3', data: '0x4', value: BigInt(0) },
             ];
             const network = Network.ARBITRUM_MAINNET;
-            const multicallRequest: IMulticallRequest = { target: '0x123', callData: '0x456', allowFailure: false };
-            const multicallTransaction = { to: '0xmulticall', data: '0xdata' };
-            transactionToMulticallRequestSpy.mockReturnValue(multicallRequest);
-            encodeMulticallTransactionSpy.mockReturnValue(multicallTransaction);
+            const executorTransaction = { to: '0xmulticall', data: '0xdata' };
+            buildExecutorTransactionSpy.mockReturnValue(executorTransaction);
 
             const result = transactionUtils.encodeTransactionRequests(transactions, network);
-            expect(transactionToMulticallRequestSpy).toHaveBeenCalledTimes(transactions.length);
-            expect(encodeMulticallTransactionSpy).toHaveBeenCalledWith([multicallRequest, multicallRequest], network);
-            expect(result).toEqual(multicallTransaction);
+            expect(buildExecutorTransactionSpy).toHaveBeenCalledWith(transactions, network);
+            expect(result).toEqual(executorTransaction);
         });
     });
 
-    describe('transactionToMulticallRequest', () => {
-        it('maps a transaction request to a multicall request', () => {
-            const transaction: ITransactionRequest = { to: '0x123', data: '0x456' };
-            const result = transactionUtils['transactionToMulticallRequest'](transaction);
-            expect(result).toEqual({ target: '0x123', callData: '0x456', allowFailure: false });
-        });
-    });
-
-    describe('encodeMulticallTransaction', () => {
+    describe('buildExecutorTransaction', () => {
         const encodeFunctionDataSpy = jest.spyOn(viem, 'encodeFunctionData');
 
         afterEach(() => {
             encodeFunctionDataSpy.mockReset();
         });
 
-        it('encodes the transaction and return a multicall transaction', () => {
-            const calls: IMulticallRequest[] = [
-                { target: '0x123', callData: '0x456', allowFailure: false },
-                { target: '0x789', callData: '0xabc', allowFailure: false },
+        it('encodes the transaction and return an executor transaction', () => {
+            const actions: ITransactionRequest[] = [
+                { to: '0x123', data: '0x456', value: BigInt(0) },
+                { to: '0x789', data: '0xabc', value: BigInt(0) },
             ];
             const network = Network.ARBITRUM_MAINNET;
-            const multicallData = '0xdata';
-            const expectedAddress = networkDefinitions[network].contracts!.multicall3!.address;
-            encodeFunctionDataSpy.mockReturnValue(multicallData);
+            const executorData = '0xdata';
+            const expectedAddress = networkDefinitions[network].addresses.globalExecutor;
+            encodeFunctionDataSpy.mockReturnValue(executorData);
 
-            const multicallTransaction = transactionUtils['encodeMulticallTransaction'](calls, network);
+            const multicallTransaction = transactionUtils['buildExecutorTransaction'](actions, network);
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
-                abi: viem.multicall3Abi,
-                functionName: 'aggregate3',
-                args: [calls],
+                abi: globalExecutorAbi,
+                functionName: 'execute',
+                args: [viem.zeroHash, actions, BigInt(0)],
             });
-            expect(multicallTransaction).toEqual({ to: expectedAddress, data: multicallData });
+            expect(multicallTransaction).toEqual({ to: expectedAddress, data: executorData, value: BigInt(0) });
         });
     });
 });

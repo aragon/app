@@ -40,7 +40,11 @@ class PrepareProcessDialogUtils {
         const installActionsData =
             processorInstallAction != null ? [processorInstallAction, ...pluginInstallActions] : pluginInstallActions;
 
-        const installActionTransactions = installActionsData.map((data) => ({ to: pluginSetupProcessor, data }));
+        const installActionTransactions = installActionsData.map((data) => ({
+            to: pluginSetupProcessor,
+            data,
+            value: BigInt(0),
+        }));
         const encodedTransaction = transactionUtils.encodeTransactionRequests(installActionTransactions, dao.network);
 
         return Promise.resolve(encodedTransaction);

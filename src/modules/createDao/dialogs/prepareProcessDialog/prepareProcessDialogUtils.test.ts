@@ -73,7 +73,7 @@ describe('prepareProcessDialog utils', () => {
         beforeEach(() => {
             buildPrepareInstallProcessorActionDataSpy.mockReturnValue('');
             buildPrepareInstallPluginsActionDataSpy.mockReturnValue([]);
-            encodeTransactionRequestsSpy.mockReturnValue({ data: '0x1', to: '0x1' });
+            encodeTransactionRequestsSpy.mockReturnValue({ data: '0x1', to: '0x1', value: BigInt(0) });
         });
 
         afterEach(() => {
@@ -97,7 +97,7 @@ describe('prepareProcessDialog utils', () => {
             await prepareProcessDialogUtils.buildTransaction({ values, dao, processMetadata });
             expect(buildPrepareInstallProcessorActionDataSpy).toHaveBeenCalledWith(processMetadata.processor, dao);
             expect(encodeTransactionRequestsSpy).toHaveBeenCalledWith(
-                [{ to: '0x308a1DC5020c4B5d992F5543a7236c465997fecB', data: installProcessorActionData }],
+                [expect.objectContaining({ data: installProcessorActionData, value: BigInt(0) })],
                 dao.network,
             );
         });
@@ -114,7 +114,7 @@ describe('prepareProcessDialog utils', () => {
             const values = generateCreateProcessFormData();
             const dao = generateDao();
             const processMetadata = { plugins: ['meta'], proposal: '' };
-            const encodedTransaction: ITransactionRequest = { to: '0x123', data: '0x01' };
+            const encodedTransaction: ITransactionRequest = { to: '0x123', data: '0x01', value: BigInt(0) };
             buildPrepareInstallPluginsActionDataSpy.mockReturnValue(['0x01', '0x02']);
             encodeTransactionRequestsSpy.mockReturnValue(encodedTransaction);
 

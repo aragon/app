@@ -40,7 +40,7 @@ describe('sppTransaction utils', () => {
             const transactionData = '0xencoded';
             const startDate = 12345;
             const values = { ...generateCreateProposalFormData(), ...generateCreateProposalEndDateFormData() };
-            const actions: ITransactionRequest[] = [{ to: '0xAddress', data: '0xdata' }];
+            const actions: ITransactionRequest[] = [{ to: '0xAddress', data: '0xdata', value: BigInt(0) }];
             parseStartDateSpy.mockReturnValue(startDate);
 
             const params = { metadata: '0xmetadata' as Viem.Hex, actions, values };
@@ -140,9 +140,9 @@ describe('sppTransaction utils', () => {
             const daoAddress = '0xDao' as Viem.Hex;
             const sppAddress = '0xSpp' as Viem.Hex;
 
-            const revokeCreateProposalAction = { to: daoAddress, data: '0xrevoke-proposal' as Viem.Hex };
-            const revokeExecutePermissionAction = { to: daoAddress, data: '0xrevoke-execute' as Viem.Hex };
-            const grantAction = { to: daoAddress, data: '0xgrant' as Viem.Hex };
+            const revokeCreateProposalAction = { to: daoAddress, data: '0xproposal' as Viem.Hex, value: BigInt(0) };
+            const revokeExecutePermissionAction = { to: daoAddress, data: '0xexecute' as Viem.Hex, value: BigInt(0) };
+            const grantAction = { to: daoAddress, data: '0xgrant' as Viem.Hex, value: BigInt(0) };
 
             revokePermissionSpy
                 .mockReturnValueOnce(revokeCreateProposalAction)
@@ -217,7 +217,7 @@ describe('sppTransaction utils', () => {
                 args: [expectedConditionRules],
             });
 
-            const expectedTransaction = { to: '0xSppRuleCondition', data: updateRulesTxData };
+            const expectedTransaction = { to: '0xSppRuleCondition', data: updateRulesTxData, value: BigInt(0) };
             expect(result).toEqual(expectedTransaction);
         });
     });
@@ -273,7 +273,7 @@ describe('sppTransaction utils', () => {
                 args: [expectedProcessedStages],
             });
 
-            expect(result).toEqual({ to: sppAddress, data: transactionData });
+            expect(result).toEqual({ to: sppAddress, data: transactionData, value: BigInt(0) });
         });
     });
 

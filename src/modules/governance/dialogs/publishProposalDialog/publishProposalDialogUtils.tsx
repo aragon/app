@@ -44,10 +44,10 @@ class PublishProposalDialogUtils {
         return { title, summary, description, resources };
     };
 
-    buildTransaction = (params: IBuildTransactionParams) => {
+    buildTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
         const { values, metadataCid, plugin } = params;
 
-        const actions = values.actions.map(this.proposalActionToTransactionRequest);
+        const actions = values.actions.map(this.actionToTransactionRequest);
         const metadata = transactionUtils.cidToHex(metadataCid);
 
         const buildDataFunction = pluginRegistryUtils.getSlotFunction<IBuildCreateProposalDataParams, Hex>({
@@ -57,9 +57,9 @@ class PublishProposalDialogUtils {
 
         const buildDataParams: IBuildCreateProposalDataParams = { actions, metadata, values };
         const transactionData = buildDataFunction(buildDataParams);
-        const transaction = { to: plugin.address as Hex, data: transactionData };
+        const transaction = { to: plugin.address as Hex, data: transactionData, value: BigInt(0) };
 
-        return transaction;
+        return Promise.resolve(transaction);
     };
 
     prepareActions = async (params: IPrepareActionsParams) => {
@@ -82,7 +82,7 @@ class PublishProposalDialogUtils {
         return processedActions;
     };
 
-    private proposalActionToTransactionRequest = (action: IProposalAction): ITransactionRequest => {
+    private actionToTransactionRequest = (action: IProposalAction): ITransactionRequest => {
         const { to, value, data } = action;
 
         return { to: to as Hex, value: BigInt(value), data: data as Hex };

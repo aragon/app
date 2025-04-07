@@ -38,7 +38,7 @@ describe('publishProposalDialog utils', () => {
     });
 
     describe('buildTransaction', () => {
-        it('calls the plugin-specific function to prepare the transaction data and resolves with a transaction object', () => {
+        it('calls the plugin-specific function to prepare the transaction data and resolves with a transaction object', async () => {
             const transactionData = '0xfbd56e4100000000000000000000000000000000000000000000000000000000000000e';
             const slotFunction = jest.fn(() => transactionData);
             getSlotFunctionSpy.mockReturnValue(slotFunction);
@@ -52,7 +52,7 @@ describe('publishProposalDialog utils', () => {
             const metadataCid = 'test-cid';
             const plugin = generateDaoPlugin({ address: '0x123', subdomain: 'multisig' });
 
-            const transaction = publishProposalDialogUtils.buildTransaction({ values, metadataCid, plugin });
+            const transaction = await publishProposalDialogUtils.buildTransaction({ values, metadataCid, plugin });
 
             expect(getSlotFunctionSpy).toHaveBeenCalledWith({
                 pluginId: plugin.subdomain,
@@ -109,7 +109,7 @@ describe('publishProposalDialog utils', () => {
         it('correctly maps a proposal action to a transaction request', () => {
             const actionBaseData = { to: '0x123', value: '10', data: '0x1234' };
             const action = generateProposalActionWithdrawToken(actionBaseData);
-            expect(publishProposalDialogUtils['proposalActionToTransactionRequest'](action)).toEqual({
+            expect(publishProposalDialogUtils['actionToTransactionRequest'](action)).toEqual({
                 ...actionBaseData,
                 value: BigInt(actionBaseData.value),
             });
