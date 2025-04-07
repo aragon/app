@@ -1,12 +1,13 @@
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
 import { Button, DefinitionList, InputContainer, Tag } from '@aragon/gov-ui-kit';
 import { Duration } from 'luxon';
-import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { CreateProcessDialog } from '../../../../../constants/moduleDialogs';
+import type { IGovernanceStageTimingFieldDialogParams } from '../../../../../dialogs/governanceStageTimingFieldDialog';
 import { type ICreateProcessFormStageTiming, ProcessStageType } from '../../../createProcessFormDefinitions';
-import { GovernanceStageTimingFieldDialog } from './governanceStageTimingFieldDialog';
 
 export interface IGovernanceStageTimingFieldProps {
     /**
@@ -24,8 +25,7 @@ export const GovernanceStageTimingField: React.FC<IGovernanceStageTimingFieldPro
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
-
-    const [isTimingDialogOpen, setIsTimingDialogOpen] = useState(false);
+    const { open, close } = useDialogContext();
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
@@ -49,7 +49,8 @@ export const GovernanceStageTimingField: React.FC<IGovernanceStageTimingFieldPro
         setValue(`${fieldPrefix}.votingPeriod`, votingPeriod);
         setValue(`${fieldPrefix}.earlyStageAdvance`, earlyStageAdvance);
         setValue(`${fieldPrefix}.stageExpiration`, stageExpiration);
-        setIsTimingDialogOpen(false);
+
+        close();
     };
 
     const formatDuration = (duration: IDateDuration): string => {
@@ -71,6 +72,19 @@ export const GovernanceStageTimingField: React.FC<IGovernanceStageTimingFieldPro
 
     const expirationTagValue = stageExpiration != null ? 'yes' : 'no';
     const expirationTagLabel = t(`app.createDao.createProcessForm.governance.stageTimingField.${expirationTagValue}`);
+
+    const handleTimingDialogOpen = () => {
+        // onClose={() => setIsTimingDialogOpen(false)}
+        // onSubmit={handleDialogSubmit}
+        // stageType={stageType}
+        // defaultValues={{ votingPeriod, earlyStageAdvance, stageExpiration }}
+        const params: IGovernanceStageTimingFieldDialogParams = {
+            onSubmit: handleDialogSubmit,
+            stageType,
+            defaultValues: { votingPeriod, earlyStageAdvance, stageExpiration },
+        };
+        open(CreateProcessDialog.STAGE_TIMING, { params });
+    };
 
     return (
         <InputContainer
@@ -107,17 +121,9 @@ export const GovernanceStageTimingField: React.FC<IGovernanceStageTimingFieldPro
                     </DefinitionList.Item>
                 )}
             </DefinitionList.Container>
-            <Button onClick={() => setIsTimingDialogOpen(true)} variant="tertiary" size="md">
+            <Button onClick={handleTimingDialogOpen} variant="tertiary" size="md">
                 {t('app.createDao.createProcessForm.governance.stageTimingField.edit')}
             </Button>
-            {isTimingDialogOpen && (
-                <GovernanceStageTimingFieldDialog
-                    onClose={() => setIsTimingDialogOpen(false)}
-                    onSubmit={handleDialogSubmit}
-                    stageType={stageType}
-                    defaultValues={{ votingPeriod, earlyStageAdvance, stageExpiration }}
-                />
-            )}
         </InputContainer>
     );
 };
