@@ -55,7 +55,6 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
                         >
                             {t('app.shared.wizardPage.step.back')}
                         </Button>
-
                         <Button iconRight={IconType.CHEVRON_RIGHT} variant={submitVariant} size="lg" type="submit">
                             {submitLabel}
                         </Button>
