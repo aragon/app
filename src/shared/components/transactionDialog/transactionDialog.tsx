@@ -1,7 +1,7 @@
 import { Network } from '@/shared/api/daoService';
 import { useTransactionStatus } from '@/shared/api/transactionService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { ChainEntityType, Dialog, Heading, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
+import { ChainEntityType, Dialog, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useAccount, useSendTransaction, useSwitchChain, useWaitForTransactionReceipt } from 'wagmi';
@@ -34,7 +34,6 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         indexingFallbackUrl,
     } = props;
     const { activeStep, steps, phase, activeStepIndex, nextStep, updateActiveStep, updateSteps } = stepper;
-    const { title: phaseTitle, index: phaseIndex, length: phaseLength } = phase ?? {};
     const activeStepInfo = activeStep != null ? steps[activeStepIndex] : undefined;
 
     const { t } = useTranslations();
@@ -211,16 +210,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                     {children}
                     <TransactionStatus.Container steps={steps}>
                         {phase != null && (
-                            <div className="flex items-center justify-between">
-                                <Heading size="h4">{phaseTitle}</Heading>
-
-                                <div className="flex flex-row gap-1 text-sm font-normal leading-tight md:text-base">
-                                    <span>{t('app.shared.wizardPage.container.step', { number: phaseIndex })}</span>
-                                    <span className="text-neutral-500">
-                                        {t('app.shared.wizardPage.container.total', { total: phaseLength })}
-                                    </span>
-                                </div>
-                            </div>
+                            <TransactionStatus.Title title={phase.title} current={phase.current} total={phase.total} />
                         )}
                         {steps.map((step) => (
                             <TransactionStatus.Step key={step.id} {...step} />

@@ -8,11 +8,11 @@ export interface IStepperPhase {
     /**
      * Current number of the stepper based on the active dialog phase.
      */
-    index?: number;
+    current?: number;
     /**
      * Total number of phases in the dialog flow.
      */
-    length?: number;
+    total?: number;
 }
 
 export interface IUseStepperParams<TMeta = undefined, TStepId extends string = string> {

@@ -12,6 +12,7 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import type { IStepperPhase } from '@/shared/hooks/useStepper';
 import { useStepper } from '@/shared/hooks/useStepper';
 import type { IPluginSetupData } from '@/shared/utils/pluginTransactionUtils';
 import { invariant } from '@aragon/gov-ui-kit';
@@ -57,10 +58,10 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const [adminPlugin] = useDaoPlugins({ daoId, subdomain: 'admin' }) ?? [];
 
-    const phase = {
+    const phase: IStepperPhase = {
         title: t('app.createDao.publishProcessDialog.phaseTitle'),
-        index: 2,
-        length: 2,
+        current: 2,
+        total: 2,
     };
     const stepper = useStepper<ITransactionDialogStepMeta, PublishProcessStep | TransactionDialogStep>({
         initialActiveStep: PublishProcessStep.PIN_METADATA,
@@ -112,9 +113,6 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
     return (
         <TransactionDialog<PublishProcessStep>
             title={t('app.createDao.publishProcessDialog.title')}
-            stepperTitle="Publish process"
-            stepperIndex={2}
-            stepperLength={2}
             description={t('app.createDao.publishProcessDialog.description')}
             submitLabel={t('app.createDao.publishProcessDialog.button.submit')}
             successLink={{

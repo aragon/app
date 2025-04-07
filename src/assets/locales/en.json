@@ -1572,6 +1572,8 @@
           "proceedAnyway": "Proceed anyway",
           "retry": "Retry"
         },
+        "phaseCurrent": "Step {{current}}",
+        "phaseTotal": "of {{total}}",
         "step": {
           "APPROVE": {
             "addon": "Wallet",
