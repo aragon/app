@@ -29,7 +29,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         network = Network.ETHEREUM_MAINNET,
     } = props;
 
-    const { activeStep, steps, activeStepIndex, nextStep, updateActiveStep, updateSteps } = stepper;
+    const { activeStep, steps, phase, activeStepIndex, nextStep, updateActiveStep, updateSteps } = stepper;
     const activeStepInfo = activeStep != null ? steps[activeStepIndex] : undefined;
 
     const { t } = useTranslations();
@@ -181,6 +181,9 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                 <div className="flex flex-col gap-6 pb-3 md:pb-4">
                     {children}
                     <TransactionStatus.Container steps={steps}>
+                        {phase != null && (
+                            <TransactionStatus.Title title={phase.title} current={phase.current} total={phase.total} />
+                        )}
                         {steps.map((step) => (
                             <TransactionStatus.Step key={step.id} {...step} />
                         ))}

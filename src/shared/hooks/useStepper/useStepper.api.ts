@@ -1,5 +1,20 @@
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 
+export interface IStepperPhase {
+    /**
+     * Title of the stepper based on the active dialog phase.
+     */
+    title?: string;
+    /**
+     * Current number of the stepper based on the active dialog phase.
+     */
+    current?: number;
+    /**
+     * Total number of phases in the dialog flow.
+     */
+    total?: number;
+}
+
 export interface IUseStepperParams<TMeta = undefined, TStepId extends string = string> {
     /**
      * Initial steps used to populate the steps array.
@@ -9,9 +24,17 @@ export interface IUseStepperParams<TMeta = undefined, TStepId extends string = s
      * Initial active step, defaults to the first element on the initialSteps array.
      */
     initialActiveStep?: TStepId;
+    /**
+     * Information about the stepper based on the active dialog phase.
+     */
+    phase?: IStepperPhase;
 }
 
 export interface IUseStepperReturn<TMeta = undefined, TStepId extends string = string> {
+    /**
+     * Information about the stepper based on the active dialog phase.
+     */
+    phase?: IStepperPhase;
     /**
      * Array of steps ordered by order value.
      */

@@ -10,6 +10,7 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import type { IStepperPhase } from '@/shared/hooks/useStepper';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { invariant } from '@aragon/gov-ui-kit';
@@ -56,8 +57,14 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const [adminPlugin] = useDaoPlugins({ daoId, subdomain: 'admin' }) ?? [];
 
+    const phase: IStepperPhase = {
+        title: t('app.createDao.prepareProcessDialog.phaseTitle'),
+        current: 1,
+        total: 2,
+    };
     const stepper = useStepper<ITransactionDialogStepMeta, PrepareProcessStep | TransactionDialogStep>({
         initialActiveStep: PrepareProcessStep.PIN_METADATA,
+        phase,
     });
     const { nextStep } = stepper;
 
