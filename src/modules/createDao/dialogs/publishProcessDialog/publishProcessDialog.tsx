@@ -1,5 +1,6 @@
 import { useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
+import { TransactionType } from '@/shared/api/transactionService';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
@@ -118,12 +119,14 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
             submitLabel={t('app.createDao.publishProcessDialog.button.submit')}
             successLink={{
                 label: t('app.createDao.publishProcessDialog.button.success'),
-                href: `/dao/${daoId}/proposals`,
+                href: `/dao/${daoId}/dashboard`,
             }}
             stepper={stepper}
             customSteps={customSteps}
             prepareTransaction={handlePrepareTransaction}
             network={dao?.network}
+            transactionType={TransactionType.PROPOSAL_CREATE}
+            indexingFallbackUrl={`/dao/${daoId}/dashboard`}
         />
     );
 };

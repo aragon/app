@@ -1569,6 +1569,7 @@
             "pending": "Awaiting signature"
           },
           "cancel": "Cancel",
+          "proceedAnyway": "Proceed anyway",
           "retry": "Retry"
         },
         "step": {
@@ -1584,6 +1585,10 @@
           },
           "INDEX": {
             "errorLabel": "Unable to index transaction",
+            "label": "Index onchain data"
+          },
+          "INDEXING": {
+            "errorLabel": "Indexing failed",
             "label": "Index onchain data"
           },
           "PREPARE": {
