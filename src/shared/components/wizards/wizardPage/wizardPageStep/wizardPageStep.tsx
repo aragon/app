@@ -12,19 +12,16 @@ export interface IWizardPageStepProps extends IWizardStepProps {
      * Description of the step.
      */
     description: string;
-    /**
-     * Help text to be displayed under the submit/next button.
-     */
-    helpText?: string;
 }
 
 export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
-    const { title, description, helpText, children, className, ...otherProps } = props;
+    const { title, description, children, className, ...otherProps } = props;
 
     const { t } = useTranslations();
 
     const { hasPrevious } = useWizardContext();
-    const { displayValidationError, validationStatus, submitLabel, submitVariant, onPreviousClick } = useWizardFooter();
+    const { displayValidationError, validationStatus, submitLabel, submitVariant, onPreviousClick, submitHelpText } =
+        useWizardFooter();
 
     return (
         <Wizard.Step
@@ -63,7 +60,11 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
                             {submitLabel}
                         </Button>
                     </div>
-                    <p className="text-right text-sm font-normal leading-tight text-neutral-500">{helpText}</p>
+                    {submitHelpText && (
+                        <p className="text-right text-sm font-normal leading-tight text-neutral-500">
+                            {submitHelpText}
+                        </p>
+                    )}
                 </div>
             </div>
         </Wizard.Step>

@@ -325,7 +325,6 @@
           },
           "PERMISSIONS": {
             "description": "Define who can create proposals of this type.",
-            "helpText": "You will have to sign two transactions",
             "name": "Proposal creation rules",
             "title": "Set proposal creation rules"
           },
@@ -335,6 +334,7 @@
             "title": "Design the governance process"
           }
         },
+        "submitHelpText": "You will have to sign two transactions",
         "submitLabel": "Publish process"
       },
       "layoutWizardCreateProcess": {

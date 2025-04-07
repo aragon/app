@@ -15,11 +15,21 @@ export interface IWizardPageContainerProps<TFormData extends FieldValues = Field
 export const WizardPageContainer = <TFormData extends FieldValues = FieldValues>(
     props: IWizardPageContainerProps<TFormData>,
 ) => {
-    const { submitLabel, initialSteps, defaultValues, finalStep, children, className, ...wizardFormProps } = props;
+    const {
+        submitLabel,
+        submitHelpText,
+        initialSteps,
+        defaultValues,
+        finalStep,
+        children,
+        className,
+        ...wizardFormProps
+    } = props;
 
     return (
         <Wizard.Root
             submitLabel={submitLabel}
+            submitHelpText={submitHelpText}
             initialSteps={initialSteps}
             defaultValues={defaultValues}
             useDevTool={false}

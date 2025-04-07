@@ -20,6 +20,10 @@ export interface IWizardRootProps<TFormData extends FieldValues = FieldValues> {
      */
     submitLabel: string;
     /**
+     * Help text to be displayed under the submit button at the end of the wizard.
+     */
+    submitHelpText?: string;
+    /**
      * Default values for the form.
      */
     defaultValues?: UseFormProps<TFormData>['defaultValues'];
@@ -34,7 +38,7 @@ export interface IWizardRootProps<TFormData extends FieldValues = FieldValues> {
 }
 
 export const WizardRoot = <TFormData extends FieldValues = FieldValues>(props: IWizardRootProps<TFormData>) => {
-    const { initialSteps = [], children, submitLabel, defaultValues, useDevTool } = props;
+    const { initialSteps = [], children, submitLabel, defaultValues, useDevTool, submitHelpText } = props;
 
     const formMethods = useForm<TFormData>({ mode: 'onTouched', defaultValues });
     const { formState, reset, control } = formMethods;
@@ -48,7 +52,10 @@ export const WizardRoot = <TFormData extends FieldValues = FieldValues>(props: I
         }
     }, [formState, reset]);
 
-    const wizardContextValues = useMemo(() => ({ ...wizardStepper, submitLabel }), [wizardStepper, submitLabel]);
+    const wizardContextValues = useMemo(
+        () => ({ ...wizardStepper, submitLabel, submitHelpText }),
+        [wizardStepper, submitLabel, submitHelpText],
+    );
 
     useConfirmWizardExit(formState.isDirty);
 
