@@ -2,7 +2,7 @@ import type { IMember } from '@/modules/governance/api/governanceService';
 import { AddressesInput } from '@/shared/components/forms/addressesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, Dialog, type ICompositeAddress } from '@aragon/gov-ui-kit';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 
 export interface IAdminManageMembersDialogAddressesProps {
@@ -34,7 +34,7 @@ export const AdminManageMembersDialogAddresses: React.FC<IAdminManageMembersDial
 
     const { t } = useTranslations();
 
-    const initialMembers = currentAdmins.map((member) => ({ address: member.address }));
+    const initialMembers = useMemo(() => currentAdmins.map((member) => ({ address: member.address })), [currentAdmins]);
 
     const formMethods = useForm<IAdminManageMembersFormData>({
         defaultValues: {
@@ -43,7 +43,7 @@ export const AdminManageMembersDialogAddresses: React.FC<IAdminManageMembersDial
         mode: 'onTouched',
     });
 
-    const { handleSubmit, control } = formMethods;
+    const { handleSubmit, control, reset } = formMethods;
 
     const watchMembersField = useWatch({ name: 'members', control });
 
@@ -59,6 +59,10 @@ export const AdminManageMembersDialogAddresses: React.FC<IAdminManageMembersDial
             newMembers.some((newAddress) => addressUtils.isAddressEqual(initialAddress, newAddress)),
         );
     }, [watchMembersField, currentAdmins]);
+
+    useEffect(() => {
+        reset({ members: initialMembers });
+    }, [initialMembers, reset]);
 
     return (
         <FormProvider {...formMethods}>

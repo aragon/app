@@ -1,3 +1,4 @@
+import { adminPluginDialogs } from '@/plugins/adminPlugin/constants/pluginDialogs';
 import { initialiseAdminPlugin } from './adminPlugin';
 import { initialiseMultisigPlugin } from './multisigPlugin';
 import { initialiseSppPlugin } from './sppPlugin';
@@ -13,4 +14,5 @@ export const initialisePlugins = () => {
 
 export const pluginDialogs = {
     ...tokenPluginDialogs,
+    ...adminPluginDialogs,
 };

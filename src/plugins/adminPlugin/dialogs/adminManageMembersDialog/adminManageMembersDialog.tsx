@@ -1,10 +1,11 @@
 import { useMemberList } from '@/modules/governance/api/governanceService';
-import { Dialog, type ICompositeAddress, type IDialogRootProps } from '@aragon/gov-ui-kit';
+import { IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import { type ICompositeAddress, invariant } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
 import { AdminManageMembersDialogAddresses } from './adminManageMembersDialogAddresses';
 import { AdminManageMembersDialogPublish } from './adminManageMembersDialogPublish';
 
-export interface IAdminManageMembersDialogProps extends IDialogRootProps {
+export interface IAdminManageMembersDialogParams {
     /**
      * ID of the DAO.
      */
@@ -14,6 +15,7 @@ export interface IAdminManageMembersDialogProps extends IDialogRootProps {
      */
     pluginAddress: string;
 }
+export interface IAdminManageMembersDialogProps extends IDialogComponentProps<IAdminManageMembersDialogParams> {}
 
 export interface IManageMembersFormData {
     /**
@@ -23,14 +25,19 @@ export interface IManageMembersFormData {
 }
 
 export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> = (props) => {
-    const { onOpenChange, daoId, pluginAddress, ...otherProps } = props;
+    const { location } = props;
+    invariant(location.params != null, 'AdminManageMembersDialog: required parameters must be set.');
+
+    const { daoId, pluginAddress } = location.params;
 
     const [updatedAdmins, setUpdatedAdmins] = useState<ICompositeAddress[]>([]);
 
     // TODO: (APP-4045). Setting this to the max pageSize of 300 for now to ensure we get all of the data
     // in the future we should find a better way to handle this.
     const memberParams = { daoId, pluginAddress, pageSize: 300 };
-    const { data: memberList } = useMemberList({ queryParams: memberParams });
+    const { data: memberList, refetch } = useMemberList({ queryParams: memberParams });
+
+    const { close } = useDialogContext();
 
     const currentAdmins = useMemo(() => {
         return memberList?.pages.flatMap((page) => page.data);
@@ -43,30 +50,24 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
         setShowPublishManageAdmins(true);
     };
 
-    // When closing we reset the updated admins and update the dialog content to be the addresses form
-    const onClose = () => {
-        setShowPublishManageAdmins(false);
-        setUpdatedAdmins([]);
-        onOpenChange?.(false);
+    const handleClose = async () => {
+        close();
+        await refetch();
     };
 
-    return (
-        <Dialog.Root onOpenChange={onOpenChange} {...otherProps}>
-            {showPublishManageAdmins ? (
-                <AdminManageMembersDialogPublish
-                    currentAdmins={currentAdmins ?? []}
-                    updatedAdmins={updatedAdmins}
-                    pluginAddress={pluginAddress}
-                    daoId={daoId}
-                    onClose={onClose}
-                />
-            ) : (
-                <AdminManageMembersDialogAddresses
-                    currentAdmins={currentAdmins ?? []}
-                    onClose={onClose}
-                    handleSubmitAddresses={handleSubmitAddresses}
-                />
-            )}
-        </Dialog.Root>
+    return showPublishManageAdmins ? (
+        <AdminManageMembersDialogPublish
+            currentAdmins={currentAdmins ?? []}
+            updatedAdmins={updatedAdmins}
+            pluginAddress={pluginAddress}
+            daoId={daoId}
+            onClose={handleClose}
+        />
+    ) : (
+        <AdminManageMembersDialogAddresses
+            currentAdmins={currentAdmins ?? []}
+            onClose={handleClose}
+            handleSubmitAddresses={handleSubmitAddresses}
+        />
     );
 };
