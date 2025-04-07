@@ -1,5 +1,5 @@
 import { useMemberList } from '@/modules/governance/api/governanceService';
-import { IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { type ICompositeAddress, invariant } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
 import { AdminManageMembersDialogAddresses } from './adminManageMembersDialogAddresses';
