@@ -129,8 +129,7 @@ class TokenActionUtils {
         const { type, proposedSettings, existingSettings, ...otherValues } = action;
 
         const completeProposedSettings = { ...existingSettings, ...proposedSettings };
-        console.log('existingSettings', existingSettings);
-        console.log('proposedSettings', proposedSettings);
+
         const parsedExistingSettings = tokenSettingsUtils.parseSettings({ settings: existingSettings, t });
         const parsedProposedSettings = tokenSettingsUtils.parseSettings({ settings: completeProposedSettings, t });
 

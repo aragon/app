@@ -121,12 +121,7 @@ class MultisigActionUtils {
         const { action, membersCount, t } = params;
         const { type, proposedSettings, existingSettings, ...otherValues } = action;
 
-        console.log('action', action);
-
         const completeProposedSettings = { ...existingSettings, ...proposedSettings };
-
-        console.log('existingSettings', existingSettings);
-        console.log('proposedSettings', proposedSettings);
 
         const parsedExistingSettings = multisigSettingsUtils.parseSettings({
             membersCount,
