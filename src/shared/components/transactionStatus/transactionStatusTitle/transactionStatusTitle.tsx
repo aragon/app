@@ -1,11 +1,13 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IStepperPhase } from '@/shared/hooks/useStepper';
-import { Heading } from '@aragon/gov-ui-kit';
+import { Heading, invariant } from '@aragon/gov-ui-kit';
 
 export interface ITransactionStatusTitle extends IStepperPhase {}
 
 export const TransactionStatusTitle: React.FC<ITransactionStatusTitle> = (props) => {
     const { title, current, total } = props;
+
+    invariant(current > 0 && current <= total, 'TransactionStatusTitle: current must be less than or equal to total');
 
     const { t } = useTranslations();
 

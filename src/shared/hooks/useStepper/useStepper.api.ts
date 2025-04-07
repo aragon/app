@@ -4,15 +4,15 @@ export interface IStepperPhase {
     /**
      * Title of the stepper based on the active dialog phase.
      */
-    title?: string;
+    title: string;
     /**
      * Current number of the stepper based on the active dialog phase.
      */
-    current?: number;
+    current: number;
     /**
      * Total number of phases in the dialog flow.
      */
-    total?: number;
+    total: number;
 }
 
 export interface IUseStepperParams<TMeta = undefined, TStepId extends string = string> {
