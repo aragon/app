@@ -1,10 +1,11 @@
 import type { IMember } from '@/modules/governance/api/governanceService';
 import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
+import { IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { Dialog, type IDialogRootProps } from '@aragon/gov-ui-kit';
+import { Dialog, invariant } from '@aragon/gov-ui-kit';
 
-export interface IMultisigRemoveMembersActionDialogProps extends Pick<IDialogRootProps, 'open' | 'onOpenChange'> {
+export interface IMultisigRemoveMembersActionDialogParams {
     /**
      * ID of the DAO.
      */
@@ -19,21 +20,28 @@ export interface IMultisigRemoveMembersActionDialogProps extends Pick<IDialogRoo
     onMemberClick: (address: string) => void;
 }
 
+export interface IMultisigRemoveMembersActionDialogProps
+    extends IDialogComponentProps<IMultisigRemoveMembersActionDialogParams> {}
+
 export const MultisigRemoveMembersActionDialog: React.FC<IMultisigRemoveMembersActionDialogProps> = (props) => {
-    const { daoId, pluginAddress, onMemberClick, open, onOpenChange } = props;
+    const { location } = props;
+    invariant(location.params != null, 'TokenDelegationFormDialog: required parameters must be set.');
+
+    const { daoId, pluginAddress, onMemberClick } = location.params;
 
     const { t } = useTranslations();
+    const { close } = useDialogContext();
     const [multisigPlugin] = useDaoPlugins({ daoId, pluginAddress, includeSubPlugins: true })!;
 
     const membersParams = { queryParams: { daoId, pluginAddress } };
 
     const handleMemberClicked = (member: IMember) => {
         onMemberClick(member.address);
-        onOpenChange?.(false);
+        close();
     };
 
     return (
-        <Dialog.Root open={open} onOpenChange={onOpenChange}>
+        <>
             <Dialog.Header
                 title={t('app.plugins.multisig.multisigRemoveMembersAction.dialog.heading')}
                 onClose={close}
@@ -46,6 +54,6 @@ export const MultisigRemoveMembersActionDialog: React.FC<IMultisigRemoveMembersA
                     onMemberClick={handleMemberClicked}
                 />
             </Dialog.Content>
-        </Dialog.Root>
+        </>
     );
 };

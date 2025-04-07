@@ -1,15 +1,17 @@
 import { type IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import { MultisigPluginDialog } from '@/plugins/multisigPlugin/constants/pluginDialogs';
+import type { IMultisigRemoveMembersActionDialogParams } from '@/plugins/multisigPlugin/dialogs/multisigRemoveMembersActionDialog';
 import { type IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 import { type IDaoPlugin } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { addressUtils, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
 import type { IMultisigSetupMembershipForm } from '../../multisigSetupMembership';
 import { MultisigSetupMembership } from '../../multisigSetupMembership';
-import { MultisigRemoveMembersActionDialog } from './multisigRemoveMembersActionDialog';
 
 export interface IMultisigRemoveMembersActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<IMultisigPluginSettings>>> {}
@@ -26,8 +28,7 @@ export const MultisigRemoveMembersAction: React.FC<IMultisigRemoveMembersActionP
     const { action, index } = props;
 
     const { setValue } = useFormContext();
-
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const { open } = useDialogContext();
 
     const actionFieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
@@ -50,6 +51,15 @@ export const MultisigRemoveMembersAction: React.FC<IMultisigRemoveMembersActionP
         }
     };
 
+    const handleAddClick = () => {
+        const params: IMultisigRemoveMembersActionDialogParams = {
+            daoId: action.daoId,
+            pluginAddress: action.to,
+            onMemberClick: handleMemberClick,
+        };
+        open(MultisigPluginDialog.REMOVE_MEMBERS, { params });
+    };
+
     useEffect(() => {
         if (controlledMembersField.some((field) => !addressUtils.isAddress(field.address))) {
             return;
@@ -62,20 +72,11 @@ export const MultisigRemoveMembersAction: React.FC<IMultisigRemoveMembersActionP
     }, [actionFieldName, controlledMembersField, setValue]);
 
     return (
-        <>
-            <MultisigSetupMembership
-                formPrefix={actionFieldName}
-                disabled={true}
-                onAddClick={() => setIsDialogOpen(true)}
-                hideLabel={true}
-            />
-            <MultisigRemoveMembersActionDialog
-                open={isDialogOpen}
-                onOpenChange={setIsDialogOpen}
-                daoId={action.daoId}
-                pluginAddress={action.to}
-                onMemberClick={handleMemberClick}
-            />
-        </>
+        <MultisigSetupMembership
+            formPrefix={actionFieldName}
+            disabled={true}
+            onAddClick={handleAddClick}
+            hideLabel={true}
+        />
     );
 };

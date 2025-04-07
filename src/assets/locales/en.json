@@ -1030,6 +1030,11 @@
           "optimisticApprovalLabel": "veto approval",
           "vetoed": "vetoed"
         },
+        "multisigRemoveMembersAction": {
+          "dialog": {
+            "heading": "Remove members"
+          }
+        },
         "multisigSetupGovernance": {
           "minimumApproval": {
             "alert": {
