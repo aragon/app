@@ -1,2 +1,2 @@
 export { transactionUtils } from './transactionUtils';
-export type { IMulticallRequest, ITransactionRequest } from './transactionUtils.api';
+export type { ITransactionRequest } from './transactionUtils.api';
