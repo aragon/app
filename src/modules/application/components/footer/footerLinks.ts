@@ -16,11 +16,7 @@ export interface IFooterLink {
 }
 
 export const footerLinks: IFooterLink[] = [
-    {
-        label: 'explore',
-        link: process.env.NEXT_PUBLIC_FEATURE_DEPLOYED_EXPLORE_LINK === 'true' ? 'https://app.aragon.org' : '/',
-        target: process.env.NEXT_PUBLIC_FEATURE_DEPLOYED_EXPLORE_LINK === 'true' ? '_blank' : undefined,
-    },
+    { label: 'explore', link: '/' },
     {
         label: 'help',
         link: 'https://aragonassociation.atlassian.net/servicedesk/customer/portal/3',
