@@ -36,7 +36,7 @@ export const AdminUninstallPlugin: React.FC<IAdminUninstallPluginProps> = (props
             daoId,
             adminPlugin,
         };
-        open(AdminPluginDialog.UNINSTALL_PROCESS_CREATE, { params, disableOutsideClick: true });
+        open(AdminPluginDialog.UNINSTALL_PROCESS_CREATE, { params });
     };
 
     const handleCloseSelectDialog = () => {
