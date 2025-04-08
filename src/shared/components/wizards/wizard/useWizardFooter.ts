@@ -37,6 +37,10 @@ export interface IUseWizardFooterReturn {
      */
     submitLabel: string;
     /**
+     * Help text to be displayed under the submit button at the end of the wizard.
+     */
+    submitHelpText?: string;
+    /**
      * Callback to be triggered to navigate to a previous step.
      */
     onPreviousClick: () => void;
@@ -44,7 +48,7 @@ export interface IUseWizardFooterReturn {
 
 export const useWizardFooter = (): IUseWizardFooterReturn => {
     const { t } = useTranslations();
-    const { submitLabel, hasNext, previousStep } = useWizardContext();
+    const { submitLabel, hasNext, previousStep, submitHelpText } = useWizardContext();
 
     const { formState, clearErrors } = useFormContext();
     const { isSubmitted, errors } = formState;
@@ -54,6 +58,7 @@ export const useWizardFooter = (): IUseWizardFooterReturn => {
 
     const submitVariant = displayValidationError ? 'critical' : !hasNext ? 'primary' : 'secondary';
     const processedSubmitLabel = hasNext ? t('app.shared.wizard.footer.next') : submitLabel;
+    const processedSubmitHelpText = hasNext ? undefined : submitHelpText;
 
     const onPreviousClick = useCallback(() => {
         // Clear form errors when going on a previous step to avoid displaying validation error for next steps
@@ -66,6 +71,7 @@ export const useWizardFooter = (): IUseWizardFooterReturn => {
         displayValidationError,
         submitVariant,
         submitLabel: processedSubmitLabel,
+        submitHelpText: processedSubmitHelpText,
         onPreviousClick,
     };
 };

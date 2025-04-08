@@ -334,6 +334,7 @@
             "title": "Design the governance process"
           }
         },
+        "submitHelpText": "You will have to sign two transactions.",
         "submitLabel": "Publish process"
       },
       "layoutWizardCreateProcess": {
