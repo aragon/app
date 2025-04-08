@@ -1,4 +1,4 @@
-import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { encodeFunctionData, erc20Abi, type Hex } from 'viem';
 import type { IBuildApproveTransactionParams, IBuildTokenWrapTransactionParams } from './tokenWrapFormDialogUtils.api';
 
@@ -24,7 +24,7 @@ const erc20WrapperAbi = [
 ];
 
 class TokenWrapFormDialogUtils {
-    buildApproveTransaction = (params: IBuildApproveTransactionParams) => {
+    buildApproveTransaction = (params: IBuildApproveTransactionParams): Promise<ITransactionRequest> => {
         const { token, amount } = params;
 
         const transactionData = encodeFunctionData({
@@ -33,12 +33,12 @@ class TokenWrapFormDialogUtils {
             args: [token.address as Hex, amount],
         });
 
-        const transaction: TransactionDialogPrepareReturn = { to: token.underlying as Hex, data: transactionData };
+        const transaction = { to: token.underlying as Hex, data: transactionData, value: BigInt(0) };
 
         return Promise.resolve(transaction);
     };
 
-    buildWrapTransaction = (params: IBuildTokenWrapTransactionParams) => {
+    buildWrapTransaction = (params: IBuildTokenWrapTransactionParams): Promise<ITransactionRequest> => {
         const { token, address, amount } = params;
 
         const transactionData = encodeFunctionData({
@@ -47,12 +47,12 @@ class TokenWrapFormDialogUtils {
             args: [address, amount],
         });
 
-        const transaction: TransactionDialogPrepareReturn = { to: token.address as Hex, data: transactionData };
+        const transaction = { to: token.address as Hex, data: transactionData, value: BigInt(0) };
 
         return Promise.resolve(transaction);
     };
 
-    buildUnwrapTransaction = (params: IBuildTokenWrapTransactionParams) => {
+    buildUnwrapTransaction = (params: IBuildTokenWrapTransactionParams): Promise<ITransactionRequest> => {
         const { token, address, amount } = params;
 
         const transactionData = encodeFunctionData({
@@ -61,7 +61,7 @@ class TokenWrapFormDialogUtils {
             args: [address, amount],
         });
 
-        const transaction: TransactionDialogPrepareReturn = { to: token.address as Hex, data: transactionData };
+        const transaction = { to: token.address as Hex, data: transactionData, value: BigInt(0) };
 
         return Promise.resolve(transaction);
     };

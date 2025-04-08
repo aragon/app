@@ -2,19 +2,11 @@ import type { Network } from '@/shared/api/daoService';
 import type { TransactionType } from '@/shared/api/transactionService';
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import type { ReactNode } from 'react';
 import type { TransactionReceipt } from 'viem';
-import type { SendTransactionParameters } from 'wagmi/actions';
 import type { ITransactionStatusStepMeta } from '../transactionStatus';
 
-// Return type for the prepareTransaction property of the TransactionDialog component
-export type TransactionDialogPrepareReturn = SendTransactionParameters;
-
-/**
- * Params for building a transaction success link.
- * consists of the transaction receipt and optionally the slug of the proposal
- * the slug is present if the transaction type is creating a proposal.
- */
 export interface IBuildTransactionDialogSuccessLinkHref {
     /**
      * Receipt of the transaction used for building the success link.
@@ -26,7 +18,7 @@ export interface IBuildTransactionDialogSuccessLinkHref {
     slug?: string;
 }
 
-// Static or dynamic link based on the params.
+// Static or dynamic link based displayed as success transaction link.
 export type TransactionDialogSuccessLinkHref = string | ((params: IBuildTransactionDialogSuccessLinkHref) => string);
 
 export interface ITransactionDialogActionParams {
@@ -101,7 +93,7 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
     /**
      * Callback to be used for preparing the transaction to send to the wallet.
      */
-    prepareTransaction: () => Promise<TransactionDialogPrepareReturn>;
+    prepareTransaction: () => Promise<ITransactionRequest>;
     /**
      * Callback called on cancel button click.
      */

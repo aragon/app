@@ -64,7 +64,7 @@ describe('publishProcessDialog utils', () => {
             const dao = generateDao();
             const setupData = [generatePluginSetupData()];
             const values = generateCreateProcessFormData();
-            const installPluginActions = [{ to: '0x123' as Hex, data: '0x' as Hex, value: '11' }];
+            const installPluginActions = [{ to: '0x123' as Hex, data: '0x' as Hex, value: BigInt(11) }];
             const slotFunction = jest.fn();
             buildApplyPluginsInstallationActionsSpy.mockReturnValue(installPluginActions);
             getSlotFunctionSpy.mockReturnValue(slotFunction);
@@ -78,7 +78,7 @@ describe('publishProcessDialog utils', () => {
             const dao = generateDao();
             const setupData = [generatePluginSetupData()];
             const values = generateCreateProcessFormData({ governanceType: GovernanceType.ADVANCED });
-            const processorActions = [{ to: '0x123' as Hex, data: '0x0' as Hex, value: '0' }];
+            const processorActions = [{ to: '0x123' as Hex, data: '0x0' as Hex, value: BigInt(0) }];
             buildPluginsSetupActionsSpy.mockReturnValue(processorActions);
             await publishProcessDialogUtils.buildTransaction(createTestParams({ dao, values, setupData }));
 
