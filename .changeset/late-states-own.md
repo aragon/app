@@ -2,4 +2,4 @@
 '@aragon/app-next': patch
 ---
 
-Fix issue fetching transaction status when not indexing
+Correctly implement enabled step property transaction status query when indexing
