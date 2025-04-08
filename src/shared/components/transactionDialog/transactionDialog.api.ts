@@ -1,4 +1,5 @@
 import type { Network } from '@/shared/api/daoService';
+import type { TransactionType } from '@/shared/api/transactionService';
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import type { ReactNode } from 'react';
@@ -9,12 +10,28 @@ import type { ITransactionStatusStepMeta } from '../transactionStatus';
 // Return type for the prepareTransaction property of the TransactionDialog component
 export type TransactionDialogPrepareReturn = SendTransactionParameters;
 
-// Static or dynamic link based on the transaction receipt.
-export type TransactionDialogSuccessLinkHref = string | ((receipt: TransactionReceipt) => string);
+/**
+ * Params for building a transaction success link.
+ * consists of the transaction receipt and optionally the slug of the proposal
+ * the slug is present if the transaction type is creating a proposal.
+ */
+export interface IBuildTransactionDialogSuccessLinkHref {
+    /**
+     * Receipt of the transaction used for building the success link.
+     */
+    receipt: TransactionReceipt;
+    /**
+     * Slug of the proposal only passed if the transaction type is creating a proposal.
+     */
+    slug?: string;
+}
+
+// Static or dynamic link based on the params.
+export type TransactionDialogSuccessLinkHref = string | ((params: IBuildTransactionDialogSuccessLinkHref) => string);
 
 export interface ITransactionDialogActionParams {
     /**
-     * Callback to be triggered if an error occurs to propertly monitor the transaction status.
+     * Callback to be triggered if an error occurs to properly monitor the transaction status.
      */
     onError: (error: unknown) => void;
 }
@@ -24,6 +41,7 @@ export enum TransactionDialogStep {
     PREPARE = 'PREPARE',
     APPROVE = 'APPROVE',
     CONFIRM = 'CONFIRM',
+    INDEXING = 'INDEXING',
 }
 
 export interface ITransactionDialogStepMeta extends ITransactionStatusStepMeta {
@@ -101,4 +119,12 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
      * Children of the component.
      */
     children?: ReactNode;
+    /**
+     * Type of the transaction to determine whether or not to show the indexing step.
+     */
+    transactionType?: TransactionType;
+    /**
+     * Fallback URL shown when the indexing step takes too long.
+     */
+    indexingFallbackUrl?: string;
 }

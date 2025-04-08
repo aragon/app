@@ -1567,6 +1567,7 @@
             "pending": "Awaiting signature"
           },
           "cancel": "Cancel",
+          "proceedAnyway": "Proceed anyway",
           "retry": "Retry"
         },
         "step": {
@@ -1579,6 +1580,10 @@
             "addon": "Details",
             "errorLabel": "Confirmation failed",
             "label": "Confirm transaction"
+          },
+          "INDEXING": {
+            "errorLabel": "Indexing failed",
+            "label": "Index onchain data"
           },
           "PREPARE": {
             "errorLabel": "Unable to prepare transaction",

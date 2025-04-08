@@ -1,4 +1,5 @@
 import { Network } from '@/shared/api/daoService';
+import { TransactionType } from '@/shared/api/transactionService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateReactQueryResultError, generateStepperResult } from '@/shared/testUtils';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
@@ -88,6 +89,40 @@ describe('<TransactionDialog /> component', () => {
         render(createTestComponent({ stepper }));
         expect(screen.getByText(steps[0].meta.label)).toBeInTheDocument();
         expect(screen.getByText(steps[1].meta.label)).toBeInTheDocument();
+    });
+
+    it('includes the indexing step when transactionType is provided', () => {
+        const updateSteps = jest.fn();
+        const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
+
+        render(
+            createTestComponent({
+                stepper,
+                transactionType: TransactionType.DAO_CREATE,
+            }),
+        );
+
+        expect(updateSteps).toHaveBeenCalledWith(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    id: TransactionDialogStep.INDEXING,
+                }),
+            ]),
+        );
+    });
+
+    it('excludes the indexing step when transactionType is not provided', () => {
+        const updateSteps = jest.fn();
+
+        render(createTestComponent());
+
+        expect(updateSteps).not.toHaveBeenCalledWith(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    id: TransactionDialogStep.INDEXING,
+                }),
+            ]),
+        );
     });
 
     it('automatically triggers the step action when its auto property is set to true and state is idle', async () => {

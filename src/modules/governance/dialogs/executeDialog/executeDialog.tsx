@@ -1,3 +1,4 @@
+import { TransactionType } from '@/shared/api/transactionService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
     type ITransactionDialogStepMeta,
@@ -70,6 +71,8 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
             network={network}
+            transactionType={TransactionType.PROPOSAL_EXECUTE}
+            indexingFallbackUrl={`/dao/${daoId}/proposals/${slug}`}
         >
             <DataList.Root entityLabel="">
                 <ProposalDataListItem.Structure
