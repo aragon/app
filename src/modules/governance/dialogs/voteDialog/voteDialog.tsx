@@ -1,4 +1,5 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
+import { TransactionType } from '@/shared/api/transactionService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
     type ITransactionDialogStepMeta,
@@ -74,6 +75,8 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
             network={proposal.network}
+            transactionType={TransactionType.PROPOSAL_VOTE}
+            indexingFallbackUrl={`/dao/${daoId}/proposals/${slug}`}
         >
             <VoteProposalDataListItemStructure
                 proposalId={slug}

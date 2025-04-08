@@ -31,6 +31,23 @@ class AdminUninstallProcessDialogSelectUtils {
         };
     }
 
+    private buildProposalValues(
+        daoAddress: Hex,
+        adminAddress: Hex,
+        daoId: string,
+    ): ICreateProposalFormData & ICreateProposalStartDateForm {
+        const revokeAction = this.buildRevokeAction(daoAddress, adminAddress, daoId);
+
+        return {
+            ...this.prepareProposalMetadata(),
+            body: '',
+            addActions: true,
+            resources: [],
+            actions: [revokeAction],
+            startTimeMode: 'now',
+        };
+    }
+
     private buildRevokeAction(daoAddress: Hex, adminAddress: Hex, daoId: string): IProposalActionData {
         const rawAction = permissionTransactionUtils.buildRevokePermissionTransaction({
             where: daoAddress,
@@ -46,23 +63,7 @@ class AdminUninstallProcessDialogSelectUtils {
             inputData: null,
             daoId,
             meta: undefined,
-        };
-    }
-
-    private buildProposalValues(
-        daoAddress: Hex,
-        adminAddress: Hex,
-        daoId: string,
-    ): ICreateProposalFormData & ICreateProposalStartDateForm {
-        const revokeAction = this.buildRevokeAction(daoAddress, adminAddress, daoId);
-
-        return {
-            ...this.prepareProposalMetadata(),
-            body: '',
-            addActions: true,
-            resources: [],
-            actions: [revokeAction],
-            startTimeMode: 'now',
+            value: '0',
         };
     }
 }

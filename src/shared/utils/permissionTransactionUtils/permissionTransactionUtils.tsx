@@ -1,4 +1,5 @@
 import { encodeFunctionData, keccak256, toBytes, zeroHash } from 'viem';
+import type { ITransactionRequest } from '../transactionUtils';
 import { permissionManagerAbi } from './abi/permissionManagerAbi';
 import type { IRuledCondition, IUpdatePermissionParams } from './permissionTransactionUtils.api';
 
@@ -24,7 +25,7 @@ class PermissionTransactionUtils {
         executePermission: 'EXECUTE_PERMISSION',
     };
 
-    buildGrantPermissionTransaction = (params: IUpdatePermissionParams) => {
+    buildGrantPermissionTransaction = (params: IUpdatePermissionParams): ITransactionRequest => {
         const { where, who, what, to } = params;
         const transactionData = encodeFunctionData({
             abi: permissionManagerAbi,
@@ -32,10 +33,10 @@ class PermissionTransactionUtils {
             args: [where, who, keccak256(toBytes(what))],
         });
 
-        return { to, data: transactionData, value: '0' };
+        return { to, data: transactionData, value: BigInt(0) };
     };
 
-    buildRevokePermissionTransaction = (params: IUpdatePermissionParams) => {
+    buildRevokePermissionTransaction = (params: IUpdatePermissionParams): ITransactionRequest => {
         const { where, who, what, to } = params;
         const transactionData = encodeFunctionData({
             abi: permissionManagerAbi,
@@ -43,7 +44,7 @@ class PermissionTransactionUtils {
             args: [where, who, keccak256(toBytes(what))],
         });
 
-        return { to, data: transactionData, value: '0' };
+        return { to, data: transactionData, value: BigInt(0) };
     };
 
     buildRuleConditions = (conditionAddresses: string[], conditionRules: IRuledCondition[]): IRuledCondition[] => {

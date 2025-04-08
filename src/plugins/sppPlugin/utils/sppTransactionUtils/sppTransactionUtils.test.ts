@@ -12,6 +12,7 @@ import { generateDao } from '@/shared/testUtils';
 import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import * as Viem from 'viem';
 import { zeroHash } from 'viem';
 import { sppPluginAbi, sppPluginSetupAbi } from './sppPluginAbi';
@@ -39,7 +40,7 @@ describe('sppTransaction utils', () => {
             const transactionData = '0xencoded';
             const startDate = 12345;
             const values = { ...generateCreateProposalFormData(), ...generateCreateProposalEndDateFormData() };
-            const actions = [{ to: '0xAddress', data: '0xdata', value: '0' }];
+            const actions: ITransactionRequest[] = [{ to: '0xAddress', data: '0xdata', value: BigInt(0) }];
             parseStartDateSpy.mockReturnValue(startDate);
 
             const params = { metadata: '0xmetadata' as Viem.Hex, actions, values };
@@ -120,9 +121,9 @@ describe('sppTransaction utils', () => {
             const dao = generateDao({ address: '0x123', network: Network.ETHEREUM_SEPOLIA });
             const daoAddress = dao.address as Viem.Hex;
 
-            const updateStagesAction = { to: '0x002', data: '0xstages', value: '0' };
-            const updateRulesAction = { to: '0x003', data: '0xrules', value: '0' };
-            const bodyPermissionActions = [{ to: daoAddress, data: '0xbody' as Viem.Hex, value: '0' }];
+            const updateStagesAction = { to: '0x002', data: '0xstages' };
+            const updateRulesAction = { to: '0x003', data: '0xrules' };
+            const bodyPermissionActions = [{ to: daoAddress, data: '0xbody' as Viem.Hex }];
 
             buildUpdateStagesTransactionSpy.mockReturnValueOnce(updateStagesAction);
             buildUpdateRulesTransactionSpy.mockReturnValueOnce(updateRulesAction);
@@ -139,9 +140,9 @@ describe('sppTransaction utils', () => {
             const daoAddress = '0xDao' as Viem.Hex;
             const sppAddress = '0xSpp' as Viem.Hex;
 
-            const revokeCreateProposalAction = { to: daoAddress, data: '0xrevoke-proposal' as Viem.Hex, value: '0' };
-            const revokeExecutePermissionAction = { to: daoAddress, data: '0xrevoke-execute' as Viem.Hex, value: '0' };
-            const grantAction = { to: daoAddress, data: '0xgrant' as Viem.Hex, value: '0' };
+            const revokeCreateProposalAction = { to: daoAddress, data: '0xproposal' as Viem.Hex, value: BigInt(0) };
+            const revokeExecutePermissionAction = { to: daoAddress, data: '0xexecute' as Viem.Hex, value: BigInt(0) };
+            const grantAction = { to: daoAddress, data: '0xgrant' as Viem.Hex, value: BigInt(0) };
 
             revokePermissionSpy
                 .mockReturnValueOnce(revokeCreateProposalAction)
@@ -216,7 +217,7 @@ describe('sppTransaction utils', () => {
                 args: [expectedConditionRules],
             });
 
-            const expectedTransaction = { to: '0xSppRuleCondition', data: updateRulesTxData, value: '0' };
+            const expectedTransaction = { to: '0xSppRuleCondition', data: updateRulesTxData, value: BigInt(0) };
             expect(result).toEqual(expectedTransaction);
         });
     });
@@ -272,7 +273,7 @@ describe('sppTransaction utils', () => {
                 args: [expectedProcessedStages],
             });
 
-            expect(result).toEqual({ to: sppAddress, data: transactionData, value: '0' });
+            expect(result).toEqual({ to: sppAddress, data: transactionData, value: BigInt(0) });
         });
     });
 

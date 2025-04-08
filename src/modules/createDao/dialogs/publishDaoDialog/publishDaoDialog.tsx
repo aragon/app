@@ -1,8 +1,10 @@
 import type { IPinResult } from '@/shared/api/ipfsService/domain';
 import { usePinFile, usePinJson } from '@/shared/api/ipfsService/mutations';
+import { TransactionType } from '@/shared/api/transactionService';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
+    type IBuildTransactionDialogSuccessLinkHref,
     type ITransactionDialogActionParams,
     type ITransactionDialogStep,
     type ITransactionDialogStepMeta,
@@ -14,7 +16,6 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { DaoDataListItem, invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo } from 'react';
-import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ICreateDaoFormData } from '../../components/createDaoForm';
 import { publishDaoDialogUtils } from './publishDaoDialogUtils';
@@ -105,10 +106,10 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         return publishDaoDialogUtils.buildTransaction({ values: values, metadataCid, connectedAddress: address });
     };
 
-    const getDaoLink = (txReceipt: TransactionReceipt) => {
+    const getDaoLink = ({ receipt }: IBuildTransactionDialogSuccessLinkHref) => {
         setIsBlocked(false);
 
-        const daoAddress = publishDaoDialogUtils.getDaoAddress(txReceipt)!;
+        const daoAddress = publishDaoDialogUtils.getDaoAddress(receipt)!;
         const daoId = `${network}-${daoAddress}`;
 
         return `/dao/${daoId}`;
@@ -143,6 +144,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
             customSteps={customSteps}
             prepareTransaction={handlePrepareTransaction}
             network={network}
+            transactionType={TransactionType.DAO_CREATE}
         >
             <DaoDataListItem.Structure
                 name={name}
