@@ -1,8 +1,7 @@
 import { adminPlugin } from '@/plugins/adminPlugin/constants/adminPlugin';
-import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { transactionUtils } from '@/shared/utils/transactionUtils';
+import { transactionUtils, type ITransactionRequest } from '@/shared/utils/transactionUtils';
 import {
     encodeAbiParameters,
     encodeFunctionData,
@@ -44,7 +43,7 @@ class PublishDaoDialogUtils {
         };
     };
 
-    buildTransaction = (params: IBuildTransactionParams) => {
+    buildTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
         const { values, metadataCid, connectedAddress } = params;
         const { network } = values;
 
@@ -60,10 +59,7 @@ class PublishDaoDialogUtils {
             args: [daoSettings, pluginSettings],
         });
 
-        const transaction: TransactionDialogPrepareReturn = {
-            to: daoFactory,
-            data: transactionData,
-        };
+        const transaction = { to: daoFactory, data: transactionData, value: BigInt(0) };
 
         return Promise.resolve(transaction);
     };

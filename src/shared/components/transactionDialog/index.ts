@@ -6,5 +6,4 @@ export {
     type ITransactionDialogProps,
     type ITransactionDialogStep,
     type ITransactionDialogStepMeta,
-    type TransactionDialogPrepareReturn,
 } from './transactionDialog.api';

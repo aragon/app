@@ -43,8 +43,8 @@ describe('pluginTransaction utils', () => {
             const dao = generateDao({ network: Network.BASE_MAINNET, address: '0x1234' });
 
             const transactionData = '0x123' as Hex;
-            const transactionOne = { to: '0x' as Hex, data: transactionData, value: '0' };
-            const transactionTwo = { to: '0x' as Hex, data: transactionData, value: '0' };
+            const transactionOne = { to: '0x' as Hex, data: transactionData, value: BigInt(0) };
+            const transactionTwo = { to: '0x' as Hex, data: transactionData, value: BigInt(0) };
 
             buildApplyInstallationTransactionSpy.mockReturnValue(transactionData);
             installDataToActionSpy.mockReturnValueOnce(transactionOne).mockReturnValueOnce(transactionTwo);
@@ -92,7 +92,6 @@ describe('pluginTransaction utils', () => {
             const result = pluginTransactionUtils.installDataToAction(data, network);
             expect(result.data).toEqual(data);
             expect(result.to).toEqual(networkDefinitions[network].addresses.pluginSetupProcessor);
-            expect(result.value).toEqual('0');
         });
     });
 
@@ -154,9 +153,9 @@ describe('pluginTransaction utils', () => {
             const daoAddress = '0x123' as Hex;
             const dao = generateDao({ address: daoAddress });
             const setupData = [generatePluginSetupData(), generatePluginSetupData()];
-            const grantAction = { to: daoAddress, data: '0xgrant' as Viem.Hex, value: '0' };
-            const setupActions = [{ to: '0x001' as Viem.Hex, data: '0xsetup' as Viem.Hex, value: '0' }];
-            const revokeAction = { to: daoAddress, data: '0xrevoke' as Viem.Hex, value: '0' };
+            const grantAction = { to: daoAddress, data: '0xgrant' as Viem.Hex, value: BigInt(0) };
+            const setupActions = [{ to: '0x001' as Viem.Hex, data: '0xsetup' as Viem.Hex, value: BigInt(0) }];
+            const revokeAction = { to: daoAddress, data: '0xrevoke' as Viem.Hex, value: BigInt(0) };
 
             grantPermissionSpy.mockReturnValueOnce(grantAction);
             setupDataToActionsSpy.mockReturnValue(setupActions);

@@ -9,11 +9,7 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
     );
 
     beforeEach(() => {
-        buildRevokePermissionTransactionSpy.mockReturnValue({
-            to: '0x123',
-            data: '0xabc',
-            value: '0',
-        });
+        buildRevokePermissionTransactionSpy.mockReturnValue({ to: '0x123', data: '0xabc', value: BigInt(0) });
     });
 
     afterEach(() => {
@@ -45,12 +41,7 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
             expect(result).toMatchObject({
                 values: {
                     ...adminUninstallProcessDialogSelectUtils.prepareProposalMetadata(),
-                    actions: [
-                        expect.objectContaining({
-                            from: daoAddress,
-                            daoId,
-                        }),
-                    ],
+                    actions: [expect.objectContaining({ from: daoAddress, daoId })],
                 },
                 daoId,
                 pluginAddress,
