@@ -1,6 +1,6 @@
-import { AdminManageMembersDialog } from '@/plugins/adminPlugin/dialogs/adminManageMembersDialog';
 import { type IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { AdminUninstallProcessDialogCreate } from '../components/adminUninstallPlugin/dialogs/adminUninstallProcessDialogCreate';
+import { AdminManageMembersDialog } from '../dialogs/adminManageMembersDialog';
+import { AdminUninstallProcessDialogCreate } from '../dialogs/adminUninstallProcessDialogCreate';
 
 export enum AdminPluginDialog {
     MANAGE_MEMBERS = 'MANAGE_MEMBERS',

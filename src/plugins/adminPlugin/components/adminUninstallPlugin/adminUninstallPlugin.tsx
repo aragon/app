@@ -5,7 +5,7 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { Button } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import type { IAdminUninstallProcessDialogCreateParams } from './dialogs/adminUninstallProcessDialogCreate';
+import type { IAdminUninstallProcessDialogCreateParams } from '../../dialogs/adminUninstallProcessDialogCreate';
 import { AdminUninstallProcessDialogSelect } from './dialogs/adminUninstallProcessDialogSelect';
 
 export interface IAdminUninstallPluginProps {
