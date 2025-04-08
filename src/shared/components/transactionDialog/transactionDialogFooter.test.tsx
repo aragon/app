@@ -1,6 +1,8 @@
+import { TransactionType } from '@/shared/api/transactionService';
 import { generateDialogContext } from '@/shared/testUtils';
+import { testLogger } from '@/test/utils';
 import { IconType } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { TransactionReceipt } from 'viem';
 import * as useDialogContext from '../dialogProvider';
@@ -133,14 +135,29 @@ describe('<TransactionDialogFooter /> component', () => {
 
     it('supports success href to be a function to build the link based on the transaction receipt', () => {
         const txReceipt = { from: '0x123' } as unknown as TransactionReceipt;
-        const href = (txReceipt: TransactionReceipt) => `/custom-href-${txReceipt.from}`;
+        const href = ({ receipt }: { receipt?: TransactionReceipt }) => `/custom-href-${receipt!.from}`;
         const successLink = { label: 'View proposal', href };
         const activeStep = {
             id: TransactionDialogStep.CONFIRM,
             meta: { state: 'success' },
-        } as unknown as ITransactionDialogStep;
+        } as ITransactionDialogStep;
         render(createTestComponent({ txReceipt, successLink, activeStep }));
-        expect(screen.getByRole('link').getAttribute('href')).toEqual(href(txReceipt));
+        expect(screen.getByRole('link').getAttribute('href')).toEqual(href({ receipt: txReceipt }));
+    });
+
+    it('supports success href as a function that builds the link based on a slug for proposals', () => {
+        const proposalSlug = 'tokenvoting';
+        const transactionType = TransactionType.PROPOSAL_CREATE;
+        const href = ({ slug }: { slug?: string }) => `/custom-href-${slug!}`;
+        const successLink = { label: 'View proposal', href };
+        const activeStep = {
+            id: TransactionDialogStep.INDEXING,
+            meta: { state: 'success' },
+        } as ITransactionDialogStep;
+
+        render(createTestComponent({ proposalSlug, successLink, activeStep, transactionType }));
+
+        expect(screen.getByRole('link').getAttribute('href')).toEqual(href({ slug: proposalSlug }));
     });
 
     it('closes the dialog on success link click', async () => {
@@ -155,5 +172,56 @@ describe('<TransactionDialogFooter /> component', () => {
         render(createTestComponent({ successLink, activeStep }));
         await userEvent.click(screen.getByText(successLink.label));
         expect(close).toHaveBeenCalled();
+    });
+
+    describe('shouldProceedAnywayFeature', () => {
+        // Fake timers outside of this block causes issues with other tests
+        beforeEach(() => {
+            jest.useFakeTimers();
+        });
+
+        it('changes the cancel button text to "Proceed anyway" after 8 seconds in the indexing step', () => {
+            const activeStep = {
+                id: TransactionDialogStep.INDEXING,
+                meta: { state: 'pending' },
+            } as ITransactionDialogStep;
+
+            render(createTestComponent({ activeStep }));
+
+            // Cancel button is the default button
+            expect(screen.getByRole('button', { name: /transactionDialog.footer.cancel/ })).toBeInTheDocument();
+
+            // simulate 8 seconds passing
+            act(() => {
+                jest.advanceTimersByTime(8000);
+            });
+
+            // Cancel button should now be Proceed anyway
+            expect(screen.getByRole('link', { name: /transactionDialog.footer.proceedAnyway/ })).toBeInTheDocument();
+        });
+
+        it('the proceed anyway button has the correct fallback href', () => {
+            testLogger.suppressErrors(); // suppress navigation not implemented error
+            const transactionType = TransactionType.PROPOSAL_CREATE;
+
+            const close = jest.fn();
+            const indexingFallbackUrl = '/proposals';
+
+            useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
+
+            const activeStep = {
+                id: TransactionDialogStep.INDEXING,
+                meta: { state: 'pending' },
+            } as ITransactionDialogStep;
+
+            render(createTestComponent({ activeStep, transactionType, indexingFallbackUrl }));
+
+            act(() => {
+                jest.advanceTimersByTime(8000);
+            });
+
+            const proceedButton = screen.getByRole('link', { name: /transactionDialog.footer.proceedAnyway/ });
+            expect(proceedButton).toHaveAttribute('href', indexingFallbackUrl);
+        });
     });
 });

@@ -1,5 +1,45 @@
 # @aragon/app-next
 
+## 1.1.0
+
+### Minor Changes
+
+- [#442](https://github.com/aragon/app-next/pull/442) [`d9c7078`](https://github.com/aragon/app-next/commit/d9c70780248fb7c418fe7afeb5a96860d1baba87) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Update configs to use Node v22
+
+- [#462](https://github.com/aragon/app-next/pull/462) [`249f12a`](https://github.com/aragon/app-next/commit/249f12ac92b23c2c9283cac1ba7dda512d820653) Thanks [@milosh86](https://github.com/milosh86)! - Implement token compatibility checks for token importing
+
+- [#427](https://github.com/aragon/app-next/pull/427) [`61ccad4`](https://github.com/aragon/app-next/commit/61ccad42899170d711ccbab1b4826ebdbd7f51bd) Thanks [@evanaronson](https://github.com/evanaronson)! - Implement a theme system that supports DAO UI customizations at specified slots
+
+- [#443](https://github.com/aragon/app-next/pull/443) [`0671a49`](https://github.com/aragon/app-next/commit/0671a49d7f9b2caea263cc534880014d8c70ec05) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#445](https://github.com/aragon/app-next/pull/445) [`add889b`](https://github.com/aragon/app-next/commit/add889b96d820ae37a31dc34056262b8a1c1eee3) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update dependencies of Github actions
+
+- [#474](https://github.com/aragon/app-next/pull/474) [`da80098`](https://github.com/aragon/app-next/commit/da800988f6d6346b02a9e59409766ccfea199509) Thanks [@shan8851](https://github.com/shan8851)! - Fix issue with focus and scrolling in wallet connect modal.
+
+- [#451](https://github.com/aragon/app-next/pull/451) [`a3594f9`](https://github.com/aragon/app-next/commit/a3594f995dc11c7bd3e05e2a8ba43881a0e31849) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Refactor body-setup flow on governance designer
+
+- [#460](https://github.com/aragon/app-next/pull/460) [`4803e9c`](https://github.com/aragon/app-next/commit/4803e9c1241db7169d6c6a5ec27b3f4c81d1d3e1) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#469](https://github.com/aragon/app-next/pull/469) [`e17903f`](https://github.com/aragon/app-next/commit/e17903faee2e7536aa427631144e7e6cc98e922f) Thanks [@evanaronson](https://github.com/evanaronson)! - Update strings across app to adhere to style guide
+
+- [#459](https://github.com/aragon/app-next/pull/459) [`1d9c95a`](https://github.com/aragon/app-next/commit/1d9c95a0c6c9a82ea03a77071725431cd7a2b780) Thanks [@shan8851](https://github.com/shan8851)! - Support setup of simple-governance processes
+
+### Patch Changes
+
+- [`eb776f4`](https://github.com/aragon/app-next/commit/eb776f432bcd56a8c5ea57e990927774f2bfd94b) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Uses summary for shorter description on Proposal metadata
+
+- [#464](https://github.com/aragon/app-next/pull/464) [`5af343e`](https://github.com/aragon/app-next/commit/5af343ed781c07998b57014adeabceacb55bbf3d) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Update gov-ui-kit library to fix calculation of support for token-voting plugin
+
+- [#463](https://github.com/aragon/app-next/pull/463) [`31d6926`](https://github.com/aragon/app-next/commit/31d69263f54eea83542790a3b0c9881a4cfedf44) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement XML sitemap and refactor metadata generation for SEO, specifically `Proposal` page
+
+- [#444](https://github.com/aragon/app-next/pull/444) [`314c859`](https://github.com/aragon/app-next/commit/314c859e6b9e9586240098633ec8ad6db65d16ca) Thanks [@evanaronson](https://github.com/evanaronson)! - Update button strings for TransactionDialog when signing a transaction
+
+- [#465](https://github.com/aragon/app-next/pull/465) [`0b0f51d`](https://github.com/aragon/app-next/commit/0b0f51df902c569fe763dcdac1e3ce29f3857189) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Fix validation of bodies of create process form
+
+- [#446](https://github.com/aragon/app-next/pull/446) [`b99fde2`](https://github.com/aragon/app-next/commit/b99fde28df212552dfc7bf11ed2d35e54ee88405) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Update heading spacing and layout on dashboard pages, fix title casing of strings, update number of items rendered on DAO pages
+
+- [#440](https://github.com/aragon/app-next/pull/440) [`38d787e`](https://github.com/aragon/app-next/commit/38d787e84668c1a921097b405a506dc7d80f5213) Thanks [@dependabot](https://github.com/apps/dependabot)! - Bump next dependencies to 15.2.3
+
 ## 1.0.1
 
 ### Patch Changes

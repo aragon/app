@@ -1,6 +1,6 @@
 import { generateMember } from '@/modules/governance/testUtils';
 import { permissionManagerAbi } from '@/shared/utils/permissionTransactionUtils/abi/permissionManagerAbi';
-import { transactionUtils } from '@/shared/utils/transactionUtils';
+import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import * as Viem from 'viem';
@@ -58,8 +58,8 @@ describe('adminManageMembersDialogPublish utils', () => {
             });
 
             const expectedResult = [
-                { to: daoAddress, value: '0', data: encodedGrantData },
-                { to: daoAddress, value: '0', data: encodedRevokeData },
+                { to: daoAddress, data: encodedGrantData, value: BigInt(0) },
+                { to: daoAddress, data: encodedRevokeData, value: BigInt(0) },
             ];
 
             expect(result).toEqual(expectedResult);
@@ -81,10 +81,9 @@ describe('adminManageMembersDialogPublish utils', () => {
     describe('buildTransaction', () => {
         it('correctly builds the transaction object using the actions array', async () => {
             const to = '0xDao' as Hex;
-            const value = '0';
-            const actions = [
-                { to, value, data: '0xAction1' },
-                { to, value, data: '0xAction2' },
+            const actions: ITransactionRequest[] = [
+                { to, data: '0xAction1', value: BigInt(0) },
+                { to, data: '0xAction2', value: BigInt(0) },
             ];
             const metadataCid = 'QmMetadataCid';
             const pluginAddress = '0xPlugin';
@@ -111,6 +110,7 @@ describe('adminManageMembersDialogPublish utils', () => {
             expect(transaction).toEqual({
                 to: pluginAddress,
                 data: proposalDataResult,
+                value: BigInt(0),
             });
         });
     });

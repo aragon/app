@@ -334,6 +334,7 @@
             "title": "Design the governance process"
           }
         },
+        "submitHelpText": "You will have to sign two transactions.",
         "submitLabel": "Publish process"
       },
       "layoutWizardCreateProcess": {
@@ -1569,6 +1570,7 @@
             "pending": "Awaiting signature"
           },
           "cancel": "Cancel",
+          "proceedAnyway": "Proceed anyway",
           "retry": "Retry"
         },
         "statusTitle": {
@@ -1585,6 +1587,10 @@
             "addon": "Details",
             "errorLabel": "Confirmation failed",
             "label": "Confirm transaction"
+          },
+          "INDEXING": {
+            "errorLabel": "Indexing failed",
+            "label": "Index onchain data"
           },
           "PREPARE": {
             "errorLabel": "Unable to prepare transaction",

@@ -80,9 +80,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
 
     const handlePinJson = useCallback(
         async (params: ITransactionDialogActionParams) => {
-            const proposalMetadata = prepareProcessDialogUtils.prepareProposalMetadata();
             const isAdvancedGovernance = values.governanceType === GovernanceType.ADVANCED;
-            const { IpfsHash: proposalMetadataHash } = await pinJson({ body: proposalMetadata }, params);
 
             const pinPluginsMetadataPromises = values.bodies.map((plugin) => {
                 const pluginMetadata = isAdvancedGovernance
@@ -93,7 +91,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
             });
 
             const pluginMetadata = (await Promise.all(pinPluginsMetadataPromises)).map(({ IpfsHash }) => IpfsHash);
-            const metadata: IPrepareProcessMetadata = { proposal: proposalMetadataHash, plugins: pluginMetadata };
+            const metadata: IPrepareProcessMetadata = { plugins: pluginMetadata };
 
             if (isAdvancedGovernance) {
                 const processorMetadata = prepareProcessDialogUtils.prepareProcessorMetadata(values);

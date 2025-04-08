@@ -1,4 +1,5 @@
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
+import { TransactionType } from '@/shared/api/transactionService';
 import {
     TransactionDialog,
     TransactionDialogStep,
@@ -64,6 +65,8 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
                     label: t('app.plugins.spp.advanceStageDialog.button.success'),
                     onClick: onSuccessClick,
                 }}
+                transactionType={TransactionType.PROPOSAL_ADVANCE_STAGE}
+                indexingFallbackUrl={`/dao/${daoId}/proposals/${slug}`}
             >
                 <ProposalDataListItem.Structure
                     title={proposal.title}

@@ -1,20 +1,29 @@
 import type { Network } from '@/shared/api/daoService';
+import type { TransactionType } from '@/shared/api/transactionService';
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import type { ReactNode } from 'react';
 import type { TransactionReceipt } from 'viem';
-import type { SendTransactionParameters } from 'wagmi/actions';
 import type { ITransactionStatusStepMeta } from '../transactionStatus';
 
-// Return type for the prepareTransaction property of the TransactionDialog component
-export type TransactionDialogPrepareReturn = SendTransactionParameters;
+export interface IBuildTransactionDialogSuccessLinkHref {
+    /**
+     * Receipt of the transaction used for building the success link.
+     */
+    receipt: TransactionReceipt;
+    /**
+     * Slug of the proposal only passed if the transaction type is creating a proposal.
+     */
+    slug?: string;
+}
 
-// Static or dynamic link based on the transaction receipt.
-export type TransactionDialogSuccessLinkHref = string | ((receipt: TransactionReceipt) => string);
+// Static or dynamic link based displayed as success transaction link.
+export type TransactionDialogSuccessLinkHref = string | ((params: IBuildTransactionDialogSuccessLinkHref) => string);
 
 export interface ITransactionDialogActionParams {
     /**
-     * Callback to be triggered if an error occurs to propertly monitor the transaction status.
+     * Callback to be triggered if an error occurs to properly monitor the transaction status.
      */
     onError: (error: unknown) => void;
 }
@@ -24,6 +33,7 @@ export enum TransactionDialogStep {
     PREPARE = 'PREPARE',
     APPROVE = 'APPROVE',
     CONFIRM = 'CONFIRM',
+    INDEXING = 'INDEXING',
 }
 
 export interface ITransactionDialogStepMeta extends ITransactionStatusStepMeta {
@@ -83,7 +93,7 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
     /**
      * Callback to be used for preparing the transaction to send to the wallet.
      */
-    prepareTransaction: () => Promise<TransactionDialogPrepareReturn>;
+    prepareTransaction: () => Promise<ITransactionRequest>;
     /**
      * Callback called on cancel button click.
      */
@@ -101,4 +111,12 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
      * Children of the component.
      */
     children?: ReactNode;
+    /**
+     * Type of the transaction to determine whether or not to show the indexing step.
+     */
+    transactionType?: TransactionType;
+    /**
+     * Fallback URL shown when the indexing step takes too long.
+     */
+    indexingFallbackUrl?: string;
 }

@@ -1,4 +1,5 @@
 import { Network } from '@/shared/api/daoService';
+import { useTransactionStatus } from '@/shared/api/transactionService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ChainEntityType, Dialog, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
@@ -14,6 +15,8 @@ import { TransactionDialogStep, type ITransactionDialogProps } from './transacti
 import { TransactionDialogFooter } from './transactionDialogFooter';
 import { transactionDialogUtils } from './transactionDialogUtils';
 
+const indexingStepInterval = 1000;
+
 export const TransactionDialog = <TCustomStepId extends string>(props: ITransactionDialogProps<TCustomStepId>) => {
     const {
         title,
@@ -27,6 +30,8 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         onCancelClick,
         onSuccess,
         network = Network.ETHEREUM_MAINNET,
+        transactionType,
+        indexingFallbackUrl,
     } = props;
 
     const { activeStep, steps, multistep, activeStepIndex, nextStep, updateActiveStep, updateSteps } = stepper;
@@ -69,6 +74,19 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         hash: transactionHash,
     });
 
+    const isIndexing = activeStep === TransactionDialogStep.INDEXING;
+    // Using the `!` operator here as this hook is only enabled when the transactionHash and transactionType are defined
+    const indexingUrlParams = { network, transactionHash: transactionHash! };
+    const indexingQueryParams = { type: transactionType! };
+    const indexingParams = { urlParams: indexingUrlParams, queryParams: indexingQueryParams };
+    const { data: transactionStatus } = useTransactionStatus(indexingParams, {
+        enabled: waitTxStatus === 'success' && isIndexing,
+        refetchInterval: (data) => {
+            const status = data.state.data ?? null;
+            return !status?.isProcessed ? indexingStepInterval : false;
+        },
+    });
+
     const handleSendTransaction = useCallback(() => {
         const errorHandler = handleTransactionError(TransactionDialogStep.APPROVE);
 
@@ -95,18 +113,23 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
             [TransactionDialogStep.PREPARE]: prepareTransactionMutate,
             [TransactionDialogStep.APPROVE]: approveStepAction,
             [TransactionDialogStep.CONFIRM]: handleRetryTransaction,
+            [TransactionDialogStep.INDEXING]: () => {
+                // noOp needed as react query will refetch the transaction status
+            },
         }),
         [prepareTransactionMutate, approveStepAction, handleRetryTransaction],
     );
 
     const approveStepStatus = chainId === requiredChainId ? approveTransactionStatus : switchChainStatus;
+    const indexingStepStatus = transactionStatus?.isProcessed ? 'success' : isIndexing ? 'pending' : 'idle';
     const transactionStepStates: Record<TransactionDialogStep, TransactionStatusState> = useMemo(
         () => ({
             [TransactionDialogStep.PREPARE]: prepareTransactionStatus,
             [TransactionDialogStep.APPROVE]: approveStepStatus,
             [TransactionDialogStep.CONFIRM]: transactionDialogUtils.queryToStepState(waitTxStatus, waitTxFetchStatus),
+            [TransactionDialogStep.INDEXING]: indexingStepStatus,
         }),
-        [prepareTransactionStatus, approveStepStatus, waitTxStatus, waitTxFetchStatus],
+        [prepareTransactionStatus, approveStepStatus, waitTxStatus, waitTxFetchStatus, indexingStepStatus],
     );
 
     const transactionStepAddon: Record<TransactionDialogStep, ITransactionStatusStepMetaAddon | undefined> = useMemo(
@@ -123,6 +146,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                           href: buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash }),
                       }
                     : undefined,
+            [TransactionDialogStep.INDEXING]: undefined,
         }),
         [t, buildEntityUrl, transactionHash],
     );
@@ -130,7 +154,11 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     const transactionSteps = useMemo(() => {
         const stepKeys = Object.keys(TransactionDialogStep) as TransactionDialogStep[];
 
-        return stepKeys.map((stepId, index) => ({
+        const filteredSteps = transactionType
+            ? stepKeys
+            : stepKeys.filter((step) => step !== TransactionDialogStep.INDEXING);
+
+        return filteredSteps.map((stepId, index) => ({
             id: stepId,
             order: (customSteps?.length ?? 0) + index,
             meta: {
@@ -142,7 +170,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                 addon: transactionStepAddon[stepId],
             },
         }));
-    }, [transactionStepActions, transactionStepStates, transactionStepAddon, customSteps, t]);
+    }, [transactionType, customSteps, t, transactionStepStates, transactionStepActions, transactionStepAddon]);
 
     useEffect(() => {
         const { state, action, auto } = activeStepInfo?.meta ?? {};
@@ -171,8 +199,9 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     useEffect(() => {
         if (waitTxStatus === 'success') {
             onSuccessRef.current?.();
+            nextStep();
         }
-    }, [waitTxStatus]);
+    }, [waitTxStatus, nextStep]);
 
     return (
         <>
@@ -201,6 +230,9 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                 activeStep={activeStepInfo}
                 onError={handleTransactionError(activeStepInfo?.id)}
                 onCancelClick={onCancelClick}
+                transactionType={transactionType}
+                proposalSlug={transactionStatus?.slug}
+                indexingFallbackUrl={indexingFallbackUrl}
             />
         </>
     );

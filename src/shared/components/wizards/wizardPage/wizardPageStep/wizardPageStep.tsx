@@ -20,7 +20,8 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
     const { t } = useTranslations();
 
     const { hasPrevious } = useWizardContext();
-    const { displayValidationError, validationStatus, submitLabel, submitVariant, onPreviousClick } = useWizardFooter();
+    const { displayValidationError, validationStatus, submitLabel, submitVariant, onPreviousClick, submitHelpText } =
+        useWizardFooter();
 
     return (
         <Wizard.Step
@@ -43,19 +44,26 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
                         {t(`app.shared.wizardPage.step.error.${validationStatus}.description`)}
                     </AlertCard>
                 )}
-                <div className="flex flex-row justify-between">
-                    <Button
-                        className={!hasPrevious ? 'invisible' : undefined}
-                        iconLeft={IconType.CHEVRON_LEFT}
-                        onClick={onPreviousClick}
-                        variant="tertiary"
-                        size="lg"
-                    >
-                        {t('app.shared.wizardPage.step.back')}
-                    </Button>
-                    <Button iconRight={IconType.CHEVRON_RIGHT} variant={submitVariant} size="lg" type="submit">
-                        {submitLabel}
-                    </Button>
+                <div className="flex flex-col gap-3">
+                    <div className="flex flex-row justify-between">
+                        <Button
+                            className={!hasPrevious ? 'invisible' : undefined}
+                            iconLeft={IconType.CHEVRON_LEFT}
+                            onClick={onPreviousClick}
+                            variant="tertiary"
+                            size="lg"
+                        >
+                            {t('app.shared.wizardPage.step.back')}
+                        </Button>
+                        <Button iconRight={IconType.CHEVRON_RIGHT} variant={submitVariant} size="lg" type="submit">
+                            {submitLabel}
+                        </Button>
+                    </div>
+                    {submitHelpText && (
+                        <p className="text-right text-sm font-normal leading-tight text-neutral-500">
+                            {submitHelpText}
+                        </p>
+                    )}
                 </div>
             </div>
         </Wizard.Step>

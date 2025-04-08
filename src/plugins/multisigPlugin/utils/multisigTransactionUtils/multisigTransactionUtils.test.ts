@@ -4,6 +4,7 @@ import { createProposalUtils } from '@/modules/governance/utils/createProposalUt
 import { multisigPlugin } from '@/plugins/multisigPlugin/constants/multisigPlugin';
 import { generateDao } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import * as Viem from 'viem';
 import { multisigPluginAbi, multisigPluginSetupAbi } from './multisigPluginAbi';
 import { multisigTransactionUtils } from './multisigTransactionUtils';
@@ -30,7 +31,7 @@ describe('multisigTransaction utils', () => {
             const startDate = 0;
             const endDate = 1728660603;
             const values = { ...generateCreateProposalFormData(), ...generateCreateProposalEndDateFormData() };
-            const actions = [{ to: '0x123', data: '0x0', value: '0' }];
+            const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x0', value: BigInt(0) }];
             const params = { metadata: '0x' as const, actions: actions, values };
             parseStartDateSpy.mockReturnValue(startDate);
             parseEndDateSpy.mockReturnValue(endDate);

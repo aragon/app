@@ -16,6 +16,10 @@ export interface IWizardContext extends IUseStepperReturn<IWizardContainerStepMe
      * Label of the submit button at the end of the wizard.
      */
     submitLabel: string;
+    /**
+     * Help text to be displayed under the submit button at the end of the wizard.
+     */
+    submitHelpText?: string;
 }
 
 const wizardContext = createContext<IWizardContext | null>(null);

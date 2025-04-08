@@ -1,5 +1,5 @@
-import { type TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -17,7 +17,7 @@ export interface IBuildTransactionParams {
 }
 
 class VoteDialogUtils {
-    buildTransaction = (params: IBuildTransactionParams) => {
+    buildTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
         const { proposal, voteValue } = params;
 
         const buildDataFunction = pluginRegistryUtils.getSlotFunction<IBuildVoteDataParams, Hex>({
@@ -27,11 +27,7 @@ class VoteDialogUtils {
 
         const buildDataParams: IBuildVoteDataParams = { proposalIndex: proposal.proposalIndex, vote: voteValue };
         const transactionData = buildDataFunction(buildDataParams);
-
-        const transaction: TransactionDialogPrepareReturn = {
-            to: proposal.pluginAddress as Hex,
-            data: transactionData,
-        };
+        const transaction = { to: proposal.pluginAddress as Hex, data: transactionData, value: BigInt(0) };
 
         return Promise.resolve(transaction);
     };
