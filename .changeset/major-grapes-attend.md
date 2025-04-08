@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-Use multicall transactions for plugin preparation actions
+Batch multiple plugin preparation transactions into one using the global executor
