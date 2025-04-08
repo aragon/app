@@ -2,20 +2,16 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
-import type { IProposalAction } from '../../api/governanceService';
-import type {
-    ICreateProposalFormData,
-    IProposalActionData,
-    PrepareProposalActionMap,
-} from '../../components/createProposalForm';
+import type { IProposalActionData, PrepareProposalActionMap } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
+import type { IProposalData } from './publishProposalDialog';
 
 export interface IBuildTransactionParams {
     /**
-     * Values of the create-proposal form.
+     * data for publishing the proposal.
      */
-    values: ICreateProposalFormData;
+    proposal: IProposalData;
     /**
      * CID of the proposal metadata pinned on IPFS.
      */
@@ -38,16 +34,16 @@ export interface IPrepareActionsParams {
 }
 
 class PublishProposalDialogUtils {
-    prepareMetadata = (formValues: ICreateProposalFormData) => {
+    prepareMetadata = (formValues: IProposalData) => {
         const { title, summary, body: description, resources } = formValues;
 
         return { title, summary, description, resources };
     };
 
     buildTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
-        const { values, metadataCid, plugin } = params;
+        const { proposal, metadataCid, plugin } = params;
+        const { actions } = proposal;
 
-        const actions = values.actions.map(this.actionToTransactionRequest);
         const metadata = transactionUtils.cidToHex(metadataCid);
 
         const buildDataFunction = pluginRegistryUtils.getSlotFunction<IBuildCreateProposalDataParams, Hex>({
@@ -55,7 +51,7 @@ class PublishProposalDialogUtils {
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
         })!;
 
-        const buildDataParams: IBuildCreateProposalDataParams = { actions, metadata, values };
+        const buildDataParams: IBuildCreateProposalDataParams = { actions, metadata, values: proposal };
         const transactionData = buildDataFunction(buildDataParams);
         const transaction = { to: plugin.address as Hex, data: transactionData, value: BigInt(0) };
 
@@ -80,12 +76,6 @@ class PublishProposalDialogUtils {
         }));
 
         return processedActions;
-    };
-
-    private actionToTransactionRequest = (action: IProposalAction): ITransactionRequest => {
-        const { to, value, data } = action;
-
-        return { to: to as Hex, value: BigInt(value), data: data as Hex };
     };
 }
 

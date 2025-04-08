@@ -367,20 +367,6 @@
         },
         "title": "Publish DAO"
       },
-      "publishProcessDialog": {
-        "button": {
-          "submit": "Finalize installation",
-          "success": "View proposals"
-        },
-        "description": "To finalize your governance process, confirm the onchain transaction in your wallet.",
-        "step": {
-          "PIN_METADATA": {
-            "errorLabel": "Unable to pin data on IPFS",
-            "label": "Pin data on IPFS"
-          }
-        },
-        "title": "Finalize governance process"
-      },
       "setupBodyDialog": {
         "a11y": {
           "description": "Create a new voting body for your DAO"

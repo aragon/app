@@ -3,13 +3,15 @@ import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUti
 import type { IDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { transactionUtils } from '@/shared/utils/transactionUtils';
+import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import { ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
 import type { ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
 import type {
     IBuildPrepareInstallPluginActionParams,
     IBuildPrepareInstallPluginsActionParams,
+    IBuildProcessProposalActionsParams,
     IBuildTransactionParams,
 } from './prepareProcessDialogUtils.api';
 
@@ -48,6 +50,28 @@ class PrepareProcessDialogUtils {
         const encodedTransaction = transactionUtils.encodeTransactionRequests(installActionTransactions, dao.network);
 
         return Promise.resolve(encodedTransaction);
+    };
+
+    buildProcessProposalActions = (params: IBuildProcessProposalActionsParams): ITransactionRequest[] => {
+        const { values, dao, setupData } = params;
+
+        const isAdvancedGovernance = values.governanceType === 'ADVANCED';
+
+        const processorSetupActions = isAdvancedGovernance
+            ? sppTransactionUtils.buildPluginsSetupActions(values, setupData, dao)
+            : [];
+
+        const buildActionsParams = { dao, setupData, actions: processorSetupActions };
+        const proposalActions = pluginTransactionUtils.buildApplyPluginsInstallationActions(buildActionsParams);
+
+        return proposalActions;
+    };
+
+    prepareProcessProposalMetadata = () => this.processProposalMetadata;
+
+    private processProposalMetadata = {
+        title: 'Apply plugin installation',
+        summary: 'This proposal applies the plugin installation to create the new process',
     };
 
     private buildPrepareInstallProcessorActionData = (metadata: string, dao: IDao) => {

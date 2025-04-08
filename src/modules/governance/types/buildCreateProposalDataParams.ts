@@ -1,8 +1,8 @@
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import type { Hex } from 'viem';
-import type { ICreateProposalFormData } from '../components/createProposalForm';
+import type { IProposalData } from '../dialogs/publishProposalDialog/publishProposalDialog';
 
-export interface IBuildCreateProposalDataParams<TValues extends ICreateProposalFormData = ICreateProposalFormData> {
+export interface IBuildCreateProposalDataParams<TValues extends IProposalData = IProposalData> {
     /**
      * Metadata of the proposal in Hex format.
      */

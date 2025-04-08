@@ -1,3 +1,5 @@
+import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
+import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
 import { useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
@@ -17,9 +19,8 @@ import { useCallback, useMemo, useState } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
 import { GovernanceType, type ICreateProcessFormData } from '../../components/createProcessForm';
-import type { IPublishProcessDialogParams } from '../publishProcessDialog';
 import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
-import type { IPrepareProcessMetadata } from './prepareProcessDialogUtils.api';
+import type { IBuildProcessProposalActionsParams, IPrepareProcessMetadata } from './prepareProcessDialogUtils.api';
 
 export enum PrepareProcessStep {
     PIN_METADATA = 'PIN_METADATA',
@@ -99,9 +100,19 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     );
 
     const handlePrepareInstallationSuccess = (txReceipt: TransactionReceipt) => {
+        invariant(dao != null, 'PrepareProcessDialog: DAO cannot be fetched');
+
         const setupData = pluginTransactionUtils.getPluginSetupData(txReceipt);
-        const params: IPublishProcessDialogParams = { values, daoId, setupData };
-        open('PUBLISH_PROCESS', { params });
+        const proposalActionParams: IBuildProcessProposalActionsParams = { values, dao, setupData };
+        const proposalActions = prepareProcessDialogUtils.buildProcessProposalActions(proposalActionParams);
+
+        const proposalMetadata = prepareProcessDialogUtils.prepareProcessProposalMetadata();
+        const params: IPublishProposalDialogParams = {
+            proposal: { ...proposalMetadata, addActions: true, resources: values.resources, actions: proposalActions },
+            daoId,
+            plugin: adminPlugin.meta,
+        };
+        open(GovernanceDialog.PUBLISH_PROPOSAL, { params });
     };
 
     const pinMetadataNamespace = `app.createDao.prepareProcessDialog.step.${PrepareProcessStep.PIN_METADATA}`;

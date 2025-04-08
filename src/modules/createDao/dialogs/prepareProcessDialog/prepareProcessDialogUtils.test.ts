@@ -1,6 +1,6 @@
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import { Network } from '@/shared/api/daoService';
-import { generateDao } from '@/shared/testUtils';
+import { generateDao, generatePluginSetupData } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
@@ -10,6 +10,8 @@ import {
     generateCreateProcessFormStage,
 } from '../../testUtils';
 import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
+import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import type { IBuildProcessProposalActionsParams } from './prepareProcessDialogUtils.api';
 
 describe('prepareProcessDialog utils', () => {
     const cidToHexSpy = jest.spyOn(transactionUtils, 'cidToHex');
@@ -222,6 +224,45 @@ describe('prepareProcessDialog utils', () => {
             expect(getSlotFunctionSpy).toHaveBeenCalledWith(expect.objectContaining({ pluginId: body.plugin }));
             expect(prepareTransactionMock).toHaveBeenCalledWith({ metadata, dao, body, stageVotingPeriod: undefined });
             expect(result).toEqual(transactionData);
+        });
+    });
+
+    describe('prepareProcessProposalMetadata', () => {
+        it('returns the metadata for the publish process proposal', () => {
+            const result = prepareProcessDialogUtils.prepareProcessProposalMetadata();
+            expect(result.title).toEqual(prepareProcessDialogUtils['processProposalMetadata'].title);
+            expect(result.summary).toEqual(prepareProcessDialogUtils['processProposalMetadata'].summary);
+        });
+    });
+
+    describe('buildProcessProposalActions', () => {
+        const buildApplyPluginsInstallationActionsSpy = jest.spyOn(
+            pluginTransactionUtils,
+            'buildApplyPluginsInstallationActions',
+        );
+
+        const createTestParams = (
+            params?: Partial<IBuildProcessProposalActionsParams>,
+        ): IBuildProcessProposalActionsParams => ({
+            values: generateCreateProcessFormData(),
+            dao: generateDao(),
+            setupData: [generatePluginSetupData()],
+            ...params,
+        });
+        it('builds the apply-installation actions and passes them to the create proposal plugin function', () => {
+            const dao = generateDao();
+            const setupData = [generatePluginSetupData()];
+            const values = generateCreateProcessFormData();
+            const installPluginActions = [{ to: '0x123' as Hex, data: '0x' as Hex, value: BigInt(11) }];
+
+            buildApplyPluginsInstallationActionsSpy.mockReturnValue(installPluginActions);
+
+            const result = prepareProcessDialogUtils.buildProcessProposalActions(
+                createTestParams({ dao, values, setupData }),
+            );
+
+            expect(buildApplyPluginsInstallationActionsSpy).toHaveBeenCalledWith({ dao, setupData, actions: [] });
+            expect(result).toEqual(installPluginActions);
         });
     });
 });
