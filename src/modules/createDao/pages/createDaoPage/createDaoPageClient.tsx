@@ -7,7 +7,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useMemo } from 'react';
 import { CreateDaoForm, type ICreateDaoFormData } from '../../components/createDaoForm';
-import { CreateDaoDialog } from '../../constants/moduleDialogs';
+import { CreateDaoDialog } from '../../constants/moduleDialogTypes';
 import type { IPublishDaoDialogParams } from '../../dialogs/publishDaoDialog';
 import { CreateDaoWizardStep, createDaoWizardSteps } from './createDaoPageDefinitions';
 

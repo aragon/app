@@ -1,6 +1,6 @@
 import type { IMember } from '@/modules/governance/api/governanceService';
 import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
-import { IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';

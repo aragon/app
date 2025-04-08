@@ -6,15 +6,7 @@ import { PrepareProcessDialog } from '../dialogs/prepareProcessDialog';
 import { PublishDaoDialog } from '../dialogs/publishDaoDialog';
 import { PublishProcessDialog } from '../dialogs/publishProcessDialog';
 import { SetupBodyDialog } from '../dialogs/setupBodyDialog';
-
-export enum CreateDaoDialog {
-    PUBLISH_DAO = ' PUBLISH_DAO',
-    CREATE_DAO_DETAILS = 'CREATE_DAO_DETAILS',
-    CREATE_PROCESS_DETAILS = 'CREATE_PROCESS_DETAILS',
-    PREPARE_PROCESS = 'PREPARE_PROCESS',
-    PUBLISH_PROCESS = 'PUBLISH_PROCESS',
-    SETUP_BODY = 'SETUP_BODY',
-}
+import { CreateDaoDialog, CreateProcessDialog } from './moduleDialogTypes';
 
 export const createDaoDialogs: Record<CreateDaoDialog, IDialogComponentDefinitions> = {
     [CreateDaoDialog.PUBLISH_DAO]: { Component: PublishDaoDialog },
@@ -28,10 +20,6 @@ export const createDaoDialogs: Record<CreateDaoDialog, IDialogComponentDefinitio
         hiddenDescription: 'app.createDao.setupBodyDialog.a11y.description',
     },
 };
-
-export enum CreateProcessDialog {
-    STAGE_TIMING = ' STAGE_TIMING',
-}
 
 export const createProcessDialogs: Record<CreateProcessDialog, IDialogComponentDefinitions> = {
     [CreateProcessDialog.STAGE_TIMING]: {

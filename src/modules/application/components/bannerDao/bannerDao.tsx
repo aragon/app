@@ -1,6 +1,6 @@
 'use client';
 
-import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
+import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogTypes';
 import type { ICreateProcessDetailsDialogParams } from '@/modules/createDao/dialogs/createProcessDetailsDialog';
 import { useAdminStatus } from '@/plugins/adminPlugin/hooks/useAdminStatus';
 import { Banner } from '@/shared/components/banner';

@@ -1,6 +1,6 @@
 'use client';
 
-import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
+import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogTypes';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { useDialogContext } from '@/shared/components/dialogProvider';
