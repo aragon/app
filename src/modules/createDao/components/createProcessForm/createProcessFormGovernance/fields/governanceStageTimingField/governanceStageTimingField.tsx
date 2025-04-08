@@ -5,7 +5,6 @@ import type { IDateDuration } from '@/shared/utils/dateUtils';
 import { Button, DefinitionList, InputContainer, Tag } from '@aragon/gov-ui-kit';
 import { Duration } from 'luxon';
 import { useFormContext } from 'react-hook-form';
-import { CreateProcessDialog } from '../../../../../constants/moduleDialogTypes';
 import type { IGovernanceStageTimingFieldDialogParams } from '../../../../../dialogs/governanceStageTimingFieldDialog';
 import { type ICreateProcessFormStageTiming, ProcessStageType } from '../../../createProcessFormDefinitions';
 
@@ -83,7 +82,7 @@ export const GovernanceStageTimingField: React.FC<IGovernanceStageTimingFieldPro
             stageType,
             defaultValues: { votingPeriod, earlyStageAdvance, stageExpiration },
         };
-        open(CreateProcessDialog.STAGE_TIMING, { params });
+        open('STAGE_TIMING', { params });
     };
 
     return (
