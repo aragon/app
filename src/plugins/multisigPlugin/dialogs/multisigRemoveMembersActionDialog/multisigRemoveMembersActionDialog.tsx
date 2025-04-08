@@ -25,7 +25,7 @@ export interface IMultisigRemoveMembersActionDialogProps
 
 export const MultisigRemoveMembersActionDialog: React.FC<IMultisigRemoveMembersActionDialogProps> = (props) => {
     const { location } = props;
-    invariant(location.params != null, 'TokenDelegationFormDialog: required parameters must be set.');
+    invariant(location.params != null, 'MultisigRemoveMembersActionDialog: required parameters must be set.');
 
     const { daoId, pluginAddress, onMemberClick } = location.params;
 

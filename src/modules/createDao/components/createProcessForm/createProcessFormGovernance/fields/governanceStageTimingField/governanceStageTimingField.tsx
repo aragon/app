@@ -73,10 +73,6 @@ export const GovernanceStageTimingField: React.FC<IGovernanceStageTimingFieldPro
     const expirationTagLabel = t(`app.createDao.createProcessForm.governance.stageTimingField.${expirationTagValue}`);
 
     const handleTimingDialogOpen = () => {
-        // onClose={() => setIsTimingDialogOpen(false)}
-        // onSubmit={handleDialogSubmit}
-        // stageType={stageType}
-        // defaultValues={{ votingPeriod, earlyStageAdvance, stageExpiration }}
         const params: IGovernanceStageTimingFieldDialogParams = {
             onSubmit: handleDialogSubmit,
             stageType,

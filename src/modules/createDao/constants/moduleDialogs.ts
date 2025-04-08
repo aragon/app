@@ -7,7 +7,6 @@ import { PublishDaoDialog } from '../dialogs/publishDaoDialog';
 import { PublishProcessDialog } from '../dialogs/publishProcessDialog';
 import { SetupBodyDialog } from '../dialogs/setupBodyDialog';
 
-// This is extracted from the original file to avoid circular dependencies
 export enum CreateDaoDialog {
     PUBLISH_DAO = 'PUBLISH_DAO',
     CREATE_DAO_DETAILS = 'CREATE_DAO_DETAILS',
