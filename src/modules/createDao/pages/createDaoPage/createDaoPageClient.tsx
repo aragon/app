@@ -21,7 +21,9 @@ export const CreateDaoPageClient: React.FC<ICreateDaoPageClientProps> = () => {
 
     const handleFormSubmit = (values: ICreateDaoFormData) => {
         const params: IPublishDaoDialogParams = { values };
-        checkWalletConnection({ onSuccess: () => open(CreateDaoDialog.PUBLISH_DAO, { params }) });
+        checkWalletConnection({
+            onSuccess: () => open(CreateDaoDialog.PUBLISH_DAO, { params }),
+        });
     };
 
     const [networkStep, metadataStep] = createDaoWizardSteps;

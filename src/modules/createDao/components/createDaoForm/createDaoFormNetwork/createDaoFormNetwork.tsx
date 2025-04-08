@@ -12,7 +12,7 @@ const optimismMainnet = {
     logo: 'https://assets.coingecko.com/coins/images/25244/large/Optimism.png',
     disabled: true,
     testnet: false,
-    order: 7,
+    order: 9,
 };
 
 export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => {
