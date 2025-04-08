@@ -1,6 +1,6 @@
 // This is extracted from the original file to avoid circular dependencies
 export enum CreateDaoDialog {
-    PUBLISH_DAO = ' PUBLISH_DAO',
+    PUBLISH_DAO = 'PUBLISH_DAO',
     CREATE_DAO_DETAILS = 'CREATE_DAO_DETAILS',
     CREATE_PROCESS_DETAILS = 'CREATE_PROCESS_DETAILS',
     PREPARE_PROCESS = 'PREPARE_PROCESS',
@@ -9,5 +9,5 @@ export enum CreateDaoDialog {
 }
 
 export enum CreateProcessDialog {
-    STAGE_TIMING = ' STAGE_TIMING',
+    STAGE_TIMING = 'STAGE_TIMING',
 }
