@@ -57,14 +57,14 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const [adminPlugin] = useDaoPlugins({ daoId, subdomain: 'admin' }) ?? [];
 
-    const phase: IStepperPhase = {
+    const multistep: IStepperPhase = {
         title: t('app.createDao.publishProcessDialog.phaseTitle'),
         current: 2,
         total: 2,
     };
     const stepper = useStepper<ITransactionDialogStepMeta, PublishProcessStep | TransactionDialogStep>({
         initialActiveStep: PublishProcessStep.PIN_METADATA,
-        phase,
+        multistep,
     });
 
     const { data: pinJsonData, status, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });

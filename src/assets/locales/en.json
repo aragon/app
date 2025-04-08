@@ -345,7 +345,7 @@
           "success": "Finalize installation"
         },
         "description": "To prepare your governance process, confirm the onchain transaction in your wallet.",
-        "phaseTitle": "Prepare installation",
+        "multistepTitle": "Prepare installation",
         "step": {
           "PIN_METADATA": {
             "errorLabel": "Unable to pin data on IPFS",
@@ -374,7 +374,7 @@
           "success": "View proposals"
         },
         "description": "To finalize your governance process, confirm the onchain transaction in your wallet.",
-        "phaseTitle": "Finalize installation",
+        "multistepTitle": "Finalize installation",
         "step": {
           "PIN_METADATA": {
             "errorLabel": "Unable to pin data on IPFS",
@@ -1572,8 +1572,8 @@
           "retry": "Retry"
         },
         "statusTitle": {
-          "phaseCurrent": "Step {{current}}",
-          "phaseTotal": "of {{total}}"
+          "multistepCurrent": "Step {{current}}",
+          "multistepTotal": "of {{total}}"
         },
         "step": {
           "APPROVE": {

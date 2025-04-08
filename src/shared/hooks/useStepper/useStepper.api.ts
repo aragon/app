@@ -2,11 +2,11 @@ import type { IStepperStep } from '@/shared/utils/stepperUtils';
 
 export interface IStepperPhase {
     /**
-     * Title of the stepper based on the active dialog phase.
+     * Title of the stepper based on the active dialog multistep.
      */
     title: string;
     /**
-     * Current number of the stepper based on the active dialog phase.
+     * Current number of the stepper based on the active dialog multistep.
      */
     current: number;
     /**
@@ -25,16 +25,16 @@ export interface IUseStepperParams<TMeta = undefined, TStepId extends string = s
      */
     initialActiveStep?: TStepId;
     /**
-     * Information about the stepper based on the active dialog phase.
+     * Information about the stepper based on the active dialog multistep.
      */
-    phase?: IStepperPhase;
+    multistep?: IStepperPhase;
 }
 
 export interface IUseStepperReturn<TMeta = undefined, TStepId extends string = string> {
     /**
-     * Information about the stepper based on the active dialog phase.
+     * Information about the stepper based on the active dialog multistep.
      */
-    phase?: IStepperPhase;
+    multistep?: IStepperPhase;
     /**
      * Array of steps ordered by order value.
      */
