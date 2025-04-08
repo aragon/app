@@ -79,7 +79,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     const indexingQueryParams = { type: transactionType! };
     const indexingParams = { urlParams: indexingUrlParams, queryParams: indexingQueryParams };
     const { data: transactionStatus } = useTransactionStatus(indexingParams, {
-        enabled: waitTxStatus === 'success',
+        enabled: waitTxStatus === 'success' && activeStep === TransactionDialogStep.INDEXING,
         refetchInterval: (data) => {
             const status = data.state.data ?? null;
             return !status?.isProcessed ? indexingStepInterval : false;
