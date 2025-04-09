@@ -96,10 +96,10 @@ export const AdminManageMembersDialogPublish: React.FC<IAdminManageMembersDialog
                 order: 0,
                 meta: {
                     label: t(
-                        `app.plugins.admin.adminManageMembers.dialog.publish.step.${AdminManageMembersDialogPublishStep.PIN_METADATA}.label`,
+                        `app.plugins.admin.adminManageMembersDialog.publish.step.${AdminManageMembersDialogPublishStep.PIN_METADATA}.label`,
                     ),
                     errorLabel: t(
-                        `app.plugins.admin.adminManageMembers.dialog.publish.step.${AdminManageMembersDialogPublishStep.PIN_METADATA}.errorLabel`,
+                        `app.plugins.admin.adminManageMembersDialog.publish.step.${AdminManageMembersDialogPublishStep.PIN_METADATA}.errorLabel`,
                     ),
                     state: status,
                     action: handlePinJson,
@@ -117,12 +117,12 @@ export const AdminManageMembersDialogPublish: React.FC<IAdminManageMembersDialog
 
     return (
         <TransactionDialog
-            title={t('app.plugins.admin.adminManageMembers.dialog.publish.title')}
-            description={t('app.plugins.admin.adminManageMembers.dialog.publish.description')}
-            submitLabel={t('app.plugins.admin.adminManageMembers.dialog.publish.button.submit')}
+            title={t('app.plugins.admin.adminManageMembersDialog.publish.title')}
+            description={t('app.plugins.admin.adminManageMembersDialog.publish.description')}
+            submitLabel={t('app.plugins.admin.adminManageMembersDialog.publish.button.submit')}
             onCancelClick={onClose}
             successLink={{
-                label: t('app.plugins.admin.adminManageMembers.dialog.publish.button.success'),
+                label: t('app.plugins.admin.adminManageMembersDialog.publish.button.success'),
                 onClick: onSuccessClick,
             }}
             stepper={stepper}

@@ -52,6 +52,7 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
 
     const handleClose = async () => {
         close();
+        // After publishing new admins, clicking "Manage Admin" again would show the old list. We need to refetch.
         await refetch();
     };
 

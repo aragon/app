@@ -1,15 +1,16 @@
 import { type IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { TokenDelegationFormDialog } from '../dialogs/tokenDelegationFormDialog';
-import { TokenWrapFormDialogAction, TokenWrapFormDialogApprove } from '../dialogs/tokenWrapFormDialog';
+import { TokenApproveTokensDialog } from '../dialogs/tokenApproveTokensDialog';
+import { TokenDelegationDialog } from '../dialogs/tokenDelegationDialog';
+import { TokenWrapUnwrapDialog } from '../dialogs/tokenWrapUnwrapDialog';
 
 export enum TokenPluginDialog {
-    TOKEN_DELEGATION = ' TOKEN_DELEGATION',
-    TOKEN_WRAPPING_APPROVE = ' TOKEN_WRAPPING_APPROVE',
-    TOKEN_WRAPPING_ACTION = ' TOKEN_WRAPPING_ACTION',
+    DELEGATE = 'DELEGATE',
+    APPROVE_TOKENS = 'APPROVE_TOKENS',
+    WRAP_UNWRAP = 'WRAP_UNWRAP',
 }
 
 export const tokenPluginDialogs: Record<TokenPluginDialog, IDialogComponentDefinitions> = {
-    [TokenPluginDialog.TOKEN_DELEGATION]: { Component: TokenDelegationFormDialog },
-    [TokenPluginDialog.TOKEN_WRAPPING_APPROVE]: { Component: TokenWrapFormDialogApprove },
-    [TokenPluginDialog.TOKEN_WRAPPING_ACTION]: { Component: TokenWrapFormDialogAction },
+    [TokenPluginDialog.DELEGATE]: { Component: TokenDelegationDialog },
+    [TokenPluginDialog.APPROVE_TOKENS]: { Component: TokenApproveTokensDialog },
+    [TokenPluginDialog.WRAP_UNWRAP]: { Component: TokenWrapUnwrapDialog },
 };

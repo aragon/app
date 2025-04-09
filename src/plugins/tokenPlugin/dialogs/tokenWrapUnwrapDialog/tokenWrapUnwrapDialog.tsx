@@ -13,9 +13,9 @@ import { useRouter } from 'next/navigation';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ITokenPluginSettingsToken } from '../../types';
-import { tokenWrapFormDialogUtils } from './tokenWrapFormDialogUtils';
+import { tokenWrapUnwrapDialogUtils } from './tokenWrapUnwrapDialogUtils';
 
-export interface ITokenWrapFormDialogActionParams {
+export interface ITokenWrapUnwrapDialogParams {
     /**
      * Action to be performed.
      */
@@ -42,9 +42,9 @@ export interface ITokenWrapFormDialogActionParams {
     onSuccess?: () => void;
 }
 
-export interface ITokenWrapFormDialogActionProps extends IDialogComponentProps<ITokenWrapFormDialogActionParams> {}
+export interface ITokenWrapUnwrapDialogProps extends IDialogComponentProps<ITokenWrapUnwrapDialogParams> {}
 
-export const TokenWrapFormDialogAction: React.FC<ITokenWrapFormDialogActionProps> = (props) => {
+export const TokenWrapUnwrapDialog: React.FC<ITokenWrapUnwrapDialogProps> = (props) => {
     const { location } = props;
     invariant(location.params != null, 'TokenWrapFormDialogAction: required parameters must be set.');
 
@@ -61,8 +61,8 @@ export const TokenWrapFormDialogAction: React.FC<ITokenWrapFormDialogActionProps
 
     const handlePrepareTransaction = () =>
         action === 'wrap'
-            ? tokenWrapFormDialogUtils.buildWrapTransaction({ token, address, amount })
-            : tokenWrapFormDialogUtils.buildUnwrapTransaction({ token, address, amount });
+            ? tokenWrapUnwrapDialogUtils.buildWrapTransaction({ token, address, amount })
+            : tokenWrapUnwrapDialogUtils.buildUnwrapTransaction({ token, address, amount });
 
     const onSuccessClick = () => {
         router.refresh();
@@ -73,15 +73,15 @@ export const TokenWrapFormDialogAction: React.FC<ITokenWrapFormDialogActionProps
 
     return (
         <TransactionDialog
-            title={t(`app.plugins.token.tokenWrapForm.dialog.${action}.title`)}
-            description={t(`app.plugins.token.tokenWrapForm.dialog.${action}.description`)}
-            submitLabel={t(`app.plugins.token.tokenWrapForm.dialog.${action}.submit`)}
+            title={t(`app.plugins.token.tokenWrapUnwrapDialog.${action}.title`)}
+            description={t(`app.plugins.token.tokenWrapUnwrapDialog.${action}.description`)}
+            submitLabel={t(`app.plugins.token.tokenWrapUnwrapDialog.${action}.submit`)}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
             network={network}
             onSuccess={onSuccess}
             successLink={{
-                label: t(`app.plugins.token.tokenWrapForm.dialog.${action}.success`),
+                label: t(`app.plugins.token.tokenWrapUnwrapDialog.${action}.success`),
                 onClick: onSuccessClick,
             }}
         >

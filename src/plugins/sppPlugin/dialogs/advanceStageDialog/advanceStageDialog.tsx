@@ -45,10 +45,6 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
         router.refresh();
     };
 
-    const handleCloseDialog = () => {
-        stepper.updateActiveStep(initialActiveStep);
-    };
-
     const { address: creatorAddress, ens: creatorEns } = proposal.creator;
 
     const plugin = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress, includeSubPlugins: true })?.[0];
@@ -62,7 +58,6 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
             submitLabel={t('app.plugins.spp.advanceStageDialog.button.submit')}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
-            onCancelClick={handleCloseDialog}
             network={proposal.network}
             successLink={{
                 label: t('app.plugins.spp.advanceStageDialog.button.success'),

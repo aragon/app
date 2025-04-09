@@ -1,11 +1,11 @@
 import { type IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { CreateDaoDetailsDialog } from '../dialogs/createDaoDetailsDialog';
 import { CreateProcessDetailsDialog } from '../dialogs/createProcessDetailsDialog';
-import { GovernanceStageTimingFieldDialog } from '../dialogs/governanceStageTimingFieldDialog';
 import { PrepareProcessDialog } from '../dialogs/prepareProcessDialog';
 import { PublishDaoDialog } from '../dialogs/publishDaoDialog';
 import { PublishProcessDialog } from '../dialogs/publishProcessDialog';
 import { SetupBodyDialog } from '../dialogs/setupBodyDialog';
+import { GovernanceStageTimingFieldDialog } from '../dialogs/setupStageTimingDialog';
 
 export enum CreateDaoDialog {
     PUBLISH_DAO = 'PUBLISH_DAO',
@@ -14,7 +14,7 @@ export enum CreateDaoDialog {
     PREPARE_PROCESS = 'PREPARE_PROCESS',
     PUBLISH_PROCESS = 'PUBLISH_PROCESS',
     SETUP_BODY = 'SETUP_BODY',
-    STAGE_TIMING = 'STAGE_TIMING',
+    SETUP_STAGE_TIMING = 'SETUP_STAGE_TIMING',
 }
 
 export const createDaoDialogs: Record<CreateDaoDialog, IDialogComponentDefinitions> = {
@@ -28,9 +28,9 @@ export const createDaoDialogs: Record<CreateDaoDialog, IDialogComponentDefinitio
         size: 'lg',
         hiddenDescription: 'app.createDao.setupBodyDialog.a11y.description',
     },
-    [CreateDaoDialog.STAGE_TIMING]: {
+    [CreateDaoDialog.SETUP_STAGE_TIMING]: {
         Component: GovernanceStageTimingFieldDialog,
         size: 'lg',
-        hiddenDescription: 'app.createDao.createProcessForm.governance.stageTimingField.dialog.a11y.description',
+        hiddenDescription: 'app.createDao.setupStageTimingDialog.a11y.description',
     },
 };

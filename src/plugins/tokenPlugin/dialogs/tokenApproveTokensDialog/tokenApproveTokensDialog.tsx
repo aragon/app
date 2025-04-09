@@ -12,9 +12,9 @@ import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ITokenPluginSettingsToken } from '../../types';
-import { tokenWrapFormDialogUtils } from './tokenWrapFormDialogUtils';
+import { tokenApproveTokensDialogUtils } from './tokenApproveTokensDialogUtils';
 
-export interface ITokenWrapFormDialogApproveParams {
+export interface ITokenApproveTokensDialogParams {
     /**
      * Wrapper governance token.
      */
@@ -41,9 +41,9 @@ export interface ITokenWrapFormDialogApproveParams {
     onSuccess?: () => void;
 }
 
-export interface ITokenWrapFormDialogApproveProps extends IDialogComponentProps<ITokenWrapFormDialogApproveParams> {}
+export interface ITokenApproveTokensDialogProps extends IDialogComponentProps<ITokenApproveTokensDialogParams> {}
 
-export const TokenWrapFormDialogApprove: React.FC<ITokenWrapFormDialogApproveProps> = (props) => {
+export const TokenApproveTokensDialog: React.FC<ITokenApproveTokensDialogProps> = (props) => {
     const { location } = props;
     invariant(location.params != null, 'TokenWrapFormDialogApprove: required parameters must be set.');
 
@@ -57,7 +57,7 @@ export const TokenWrapFormDialogApprove: React.FC<ITokenWrapFormDialogApprovePro
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
-    const handlePrepareTransaction = () => tokenWrapFormDialogUtils.buildApproveTransaction({ token, amount });
+    const handlePrepareTransaction = () => tokenApproveTokensDialogUtils.buildApproveTransaction({ token, amount });
 
     const onSuccessClick = () => {
         onApproveSuccess();
@@ -67,15 +67,15 @@ export const TokenWrapFormDialogApprove: React.FC<ITokenWrapFormDialogApprovePro
 
     return (
         <TransactionDialog
-            title={t('app.plugins.token.tokenWrapForm.dialog.approve.title')}
-            description={t('app.plugins.token.tokenWrapForm.dialog.approve.description')}
-            submitLabel={t('app.plugins.token.tokenWrapForm.dialog.approve.submit')}
+            title={t('app.plugins.token.tokenApproveTokensDialog.title')}
+            description={t('app.plugins.token.tokenApproveTokensDialog.description')}
+            submitLabel={t('app.plugins.token.tokenApproveTokensDialog.submit')}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
             network={network}
             onSuccess={onSuccess}
             successLink={{
-                label: t('app.plugins.token.tokenWrapForm.dialog.approve.success'),
+                label: t('app.plugins.token.tokenApproveTokensDialog.success'),
                 onClick: onSuccessClick,
             }}
         >

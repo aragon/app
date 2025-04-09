@@ -210,34 +210,6 @@
             }
           },
           "stageTimingField": {
-            "dialog": {
-              "a11y": {
-                "description": "Configure the duration and expiration for the stage"
-              },
-              "action": {
-                "cancel": "Cancel",
-                "save": "Save"
-              },
-              "earlyAdvance": {
-                "helpText": "This allows a proposal to be advanced early to subsequent stages if it's approved before the voting period ends.",
-                "label": "Early stage advance"
-              },
-              "expiration": {
-                "helpText": "This limits the amount of time after the voting period ends for advancing the proposal to the next stage.",
-                "infoText": "Recommended minimum expiration time is 7 days.",
-                "label": "Stage expiration"
-              },
-              "timelockPeriod": {
-                "helpText": "The time that must pass before the proposal can advance.",
-                "label": "Timelock period"
-              },
-              "title": "Edit timing",
-              "votingPeriod": {
-                "helpText": "This is amount of time bodies in this stage have to vote on proposals.",
-                "infoText": "Recommended minimum voting period is 7 days.",
-                "label": "Voting period"
-              }
-            },
             "earlyAdvance": "Early stage advance",
             "edit": "Edit timing",
             "expiration": "Stage expiration",
@@ -406,6 +378,34 @@
         },
         "submit": "Save",
         "title": "Add voting body"
+      },
+      "setupStageTimingDialog": {
+        "a11y": {
+          "description": "Configure the duration and expiration for the stage"
+        },
+        "action": {
+          "cancel": "Cancel",
+          "save": "Save"
+        },
+        "earlyAdvance": {
+          "helpText": "This allows a proposal to be advanced early to subsequent stages if it's approved before the voting period ends.",
+          "label": "Early stage advance"
+        },
+        "expiration": {
+          "helpText": "This limits the amount of time after the voting period ends for advancing the proposal to the next stage.",
+          "infoText": "Recommended minimum expiration time is 7 days.",
+          "label": "Stage expiration"
+        },
+        "timelockPeriod": {
+          "helpText": "The time that must pass before the proposal can advance.",
+          "label": "Timelock period"
+        },
+        "title": "Edit timing",
+        "votingPeriod": {
+          "helpText": "This is amount of time bodies in this stage have to vote on proposals.",
+          "infoText": "Recommended minimum voting period is 7 days.",
+          "label": "Voting period"
+        }
       }
     },
     "daos": {
@@ -908,30 +908,30 @@
           "proposalExecution": "Proposal execution"
         },
         "adminManageMembers": {
-          "button": "Manage admins",
-          "dialog": {
-            "addresses": {
-              "action": {
-                "cancel": "Cancel",
-                "update": "Update admins"
-              },
-              "description": "Add or remove the addresses that should be able to make any change to the DAO without a proposal.",
-              "title": "Manage admins"
+          "button": "Manage admins"
+        },
+        "adminManageMembersDialog": {
+          "addresses": {
+            "action": {
+              "cancel": "Cancel",
+              "update": "Update admins"
             },
-            "publish": {
-              "button": {
-                "submit": "Update admins",
-                "success": "View settings"
-              },
-              "description": "To update admins, confirm the onchain transaction in your wallet.",
-              "step": {
-                "PIN_METADATA": {
-                  "errorLabel": "Unable to pin data on IPFS",
-                  "label": "Pin data on IPFS"
-                }
-              },
-              "title": "Update admins"
-            }
+            "description": "Add or remove the addresses that should be able to make any change to the DAO without a proposal.",
+            "title": "Manage admins"
+          },
+          "publish": {
+            "button": {
+              "submit": "Update admins",
+              "success": "View settings"
+            },
+            "description": "To update admins, confirm the onchain transaction in your wallet.",
+            "step": {
+              "PIN_METADATA": {
+                "errorLabel": "Unable to pin data on IPFS",
+                "label": "Pin data on IPFS"
+              }
+            },
+            "title": "Update admins"
           }
         },
         "adminMemberInfo": {
@@ -1144,6 +1144,12 @@
         "tokenActions": {
           "Mint": "Mint",
           "UpdateVoteSettings": "Update settings"
+        },
+        "tokenApproveTokensDialog": {
+          "description": "To approve wrapping your tokens, confirm the onchain transaction in your wallet.",
+          "submit": "Approve tokens",
+          "success": "Wrap tokens",
+          "title": "Approve wrapping"
         },
         "tokenCreateProposalSettingsForm": {
           "endTime": {
@@ -1403,26 +1409,6 @@
           "entity": "Votes"
         },
         "tokenWrapForm": {
-          "dialog": {
-            "approve": {
-              "description": "To approve wrapping your tokens, confirm the onchain transaction in your wallet.",
-              "submit": "Approve tokens",
-              "success": "Wrap tokens",
-              "title": "Approve wrapping"
-            },
-            "unwrap": {
-              "description": "To unwrap your tokens, confirm the onchain transaction in your wallet.",
-              "submit": "Unwrap tokens",
-              "success": "View members",
-              "title": "Unwrap tokens"
-            },
-            "wrap": {
-              "description": "To wrap your tokens, confirm the onchain transaction in your wallet.",
-              "submit": "Wrap tokens",
-              "success": "View members",
-              "title": "Wrap tokens"
-            }
-          },
           "footerInfo": "Wrapping tokens will transfer them out of your wallet to the wrapping contract, where they can be withdrawn back to your wallet at any time.",
           "info": "Wrap {{underlyingSymbol}} to increase your voting power.",
           "percentage": {
@@ -1436,6 +1422,20 @@
             "approve": "Approve {{underlyingSymbol}}",
             "unwrap": "Unwrap {{amount}} {{symbol}}",
             "wrap": "Wrap {{underlyingSymbol}}"
+          }
+        },
+        "tokenWrapUnwrapDialog": {
+          "unwrap": {
+            "description": "To unwrap your tokens, confirm the onchain transaction in your wallet.",
+            "submit": "Unwrap tokens",
+            "success": "View members",
+            "title": "Unwrap tokens"
+          },
+          "wrap": {
+            "description": "To wrap your tokens, confirm the onchain transaction in your wallet.",
+            "submit": "Wrap tokens",
+            "success": "View members",
+            "title": "Wrap tokens"
           }
         }
       }
