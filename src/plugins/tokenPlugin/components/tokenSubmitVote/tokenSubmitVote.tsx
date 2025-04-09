@@ -1,4 +1,4 @@
-import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
+import { GovernanceDialog } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';

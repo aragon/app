@@ -1,6 +1,6 @@
 import { type IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
 import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
-import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
+import { GovernanceDialog } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { IVerifySmartContractDialogParams } from '@/modules/governance/dialogs/verifySmartContractDialog';
 import type { IWalletConnectActionDialogParams } from '@/modules/governance/dialogs/walletConnectActionDialog';

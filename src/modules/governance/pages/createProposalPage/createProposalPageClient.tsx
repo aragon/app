@@ -16,7 +16,7 @@ import {
     type PrepareProposalActionFunction,
     type PrepareProposalActionMap,
 } from '../../components/createProposalForm';
-import { GovernanceDialog } from '../../constants/moduleDialogs';
+import { GovernanceDialog } from '../../constants/governanceDialogId';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { type IPublishProposalDialogParams } from '../../dialogs/publishProposalDialog';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';

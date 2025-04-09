@@ -1,4 +1,4 @@
-import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
+import { GovernanceDialog } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';

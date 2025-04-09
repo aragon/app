@@ -4,7 +4,7 @@ import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateDialogContext, generateTabComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { GovernanceDialog } from '../../constants/moduleDialogs';
+import { GovernanceDialog } from '../../constants/governanceDialogId';
 import { CreateProposalPageClient, type ICreateProposalPageClientProps } from './createProposalPageClient';
 
 jest.mock('./createProposalPageClientSteps', () => ({

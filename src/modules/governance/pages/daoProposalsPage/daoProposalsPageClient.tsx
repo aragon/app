@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { IGetProposalListParams } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
-import { GovernanceDialog } from '../../constants/moduleDialogs';
+import { GovernanceDialog } from '../../constants/governanceDialogId';
 import type { ISelectPluginDialogParams } from '../../dialogs/selectPluginDialog';
 
 export interface IDaoProposalsPageClientProps {
