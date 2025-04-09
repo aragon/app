@@ -63,7 +63,7 @@ class PublishDaoDialogUtils {
             args: [daoSettings, pluginSettings],
         });
 
-        const transaction: TransactionDialogPrepareReturn = {
+        const transaction = {
             to: daoFactoryAddress?.length ? daoFactoryAddress : daoFactory,
             data: transactionData,
             value: BigInt(0),
