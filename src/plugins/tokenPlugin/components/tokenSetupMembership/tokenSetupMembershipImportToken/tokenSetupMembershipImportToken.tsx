@@ -6,7 +6,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
-import { AddressInput, addressUtils, Heading, IconType, Link } from '@aragon/gov-ui-kit';
+import { AddressInput, addressUtils, IconType, Link } from '@aragon/gov-ui-kit';
 import { AlertCard } from '@aragon/gov-ui-kit-original';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -123,7 +123,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
                 />
                 {isTokenCheckCardVisible && (
                     <TransactionStatus.Container steps={steps}>
-                        <Heading size="h4">{addressUtils.truncateAddress(importTokenAddress)}</Heading>
+                        <TransactionStatus.Title title={addressUtils.truncateAddress(importTokenAddress)} />
                         {steps.map((step) => (
                             <TransactionStatus.Step key={step.id} {...step} />
                         ))}

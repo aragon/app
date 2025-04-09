@@ -12,7 +12,7 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import type { IStepperPhase } from '@/shared/hooks/useStepper';
+import type { IMultistep } from '@/shared/hooks/useStepper';
 import { useStepper } from '@/shared/hooks/useStepper';
 import type { IPluginSetupData } from '@/shared/utils/pluginTransactionUtils';
 import { invariant } from '@aragon/gov-ui-kit';
@@ -58,8 +58,8 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const [adminPlugin] = useDaoPlugins({ daoId, subdomain: 'admin' }) ?? [];
 
-    const multistep: IStepperPhase = {
-        title: t('app.createDao.publishProcessDialog.phaseTitle'),
+    const multistep: IMultistep = {
+        title: t('app.createDao.publishProcessDialog.multistepTitle'),
         current: 2,
         total: 2,
     };

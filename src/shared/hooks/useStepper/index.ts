@@ -1,2 +1,2 @@
 export { useStepper } from './useStepper';
-export type { IStepperPhase, IUseStepperParams, IUseStepperReturn } from './useStepper.api';
+export type { IMultistep, IUseStepperParams, IUseStepperReturn } from './useStepper.api';

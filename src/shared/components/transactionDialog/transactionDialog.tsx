@@ -210,13 +210,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                 <div className="flex flex-col gap-6 pb-3 md:pb-4">
                     {children}
                     <TransactionStatus.Container steps={steps}>
-                        {multistep != null && (
-                            <TransactionStatus.Title
-                                title={multistep.title}
-                                current={multistep.current}
-                                total={multistep.total}
-                            />
-                        )}
+                        {multistep != null && <TransactionStatus.Title title={multistep.title} multistep={multistep} />}
                         {steps.map((step) => (
                             <TransactionStatus.Step key={step.id} {...step} />
                         ))}
