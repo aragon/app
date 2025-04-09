@@ -1,48 +1,43 @@
 import {
-    type ITransactionStatusTitle,
+    type ITransactionStatusTitleProps,
     TransactionStatusTitle,
 } from '@/shared/components/transactionStatus/transactionStatusTitle/transactionStatusTitle';
-import { testLogger } from '@/test/utils';
 import { render, screen } from '@testing-library/react';
 
 describe('<TransactionStatusTitle /> component', () => {
-    const createTestComponent = (props?: Partial<ITransactionStatusTitle>) => {
-        const completeProps: ITransactionStatusTitle = {
-            title: 'test',
-            current: 1,
-            total: 2,
+    const renderComponent = (props?: Partial<ITransactionStatusTitleProps>) => {
+        const completeProps: ITransactionStatusTitleProps = {
+            title: 'Test Title',
             ...props,
         };
 
-        return <TransactionStatusTitle {...completeProps} />;
+        return render(<TransactionStatusTitle {...completeProps} />);
     };
 
-    it('renders the title and step values for current and total', () => {
-        const title = 'Transaction Status Title';
-        const current = 1;
-        const total = 3;
-        render(createTestComponent({ title, current, total }));
+    it('renders only the title when multistep is not provided', () => {
+        const title = 'Solo Test Title';
+        renderComponent({ title });
 
-        expect(screen.getByText(title)).toBeInTheDocument();
-        expect(screen.getByText((text) => text.includes(`current=${current.toString()}`))).toBeInTheDocument();
-        expect(screen.getByText((text) => text.includes(`total=${total.toString()}`))).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: title })).toBeInTheDocument();
+
+        expect(screen.queryByText(/Step/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/of/i)).not.toBeInTheDocument();
     });
 
-    it('throws an error when current is greater than total', () => {
-        testLogger.suppressErrors();
-        const title = 'Transaction Status Title';
-        const current = 4;
-        const total = 3;
+    it('renders the title from multistep when passed explicitly and multistep info when provided', () => {
+        const multistep = {
+            title: 'Multistep Title',
+            current: 2,
+            total: 5,
+        };
 
-        expect(() => render(createTestComponent({ title, current, total }))).toThrow();
-    });
+        renderComponent({ title: multistep.title, multistep });
 
-    it('throws an error when current is less than 0', () => {
-        testLogger.suppressErrors();
-        const title = 'Transaction Status Title';
-        const current = -1;
-        const total = 3;
+        expect(screen.getByRole('heading', { name: multistep.title })).toBeInTheDocument();
 
-        expect(() => render(createTestComponent({ title, current, total }))).toThrow();
+        expect(
+            screen.getByText((text) => text.includes(`current=${multistep.current.toString()}`)),
+        ).toBeInTheDocument();
+        expect(screen.getByText((text) => text.includes(`total=${multistep.total.toString()}`))).toBeInTheDocument();
     });
 });
