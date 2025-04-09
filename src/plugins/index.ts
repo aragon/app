@@ -1,5 +1,5 @@
 import { initialiseAdminPlugin } from './adminPlugin';
-import { adminPluginDialogs } from './adminPlugin/constants/pluginDialogs';
+import { adminPluginDialogs } from './adminPlugin/constants/adminPluginDialogsDefinitions';
 import { initialiseMultisigPlugin } from './multisigPlugin';
 import { multisigPluginDialogs } from './multisigPlugin/constants/pluginDialogs';
 import { initialiseSppPlugin } from './sppPlugin';

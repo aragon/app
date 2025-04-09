@@ -1,4 +1,4 @@
-import { AdminPluginDialog } from '@/plugins/adminPlugin/constants/pluginDialogs';
+import { AdminPluginDialog } from '@/plugins/adminPlugin/constants/adminPluginDialogId';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
