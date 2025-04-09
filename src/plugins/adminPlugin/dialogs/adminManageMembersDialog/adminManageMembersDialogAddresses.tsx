@@ -60,6 +60,7 @@ export const AdminManageMembersDialogAddresses: React.FC<IAdminManageMembersDial
         );
     }, [watchMembersField, currentAdmins]);
 
+    // Re-initialise the initial members on the form after fetching the members list
     useEffect(() => {
         reset({ members: initialMembers });
     }, [initialMembers, reset]);
