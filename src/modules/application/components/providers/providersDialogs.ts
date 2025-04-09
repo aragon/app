@@ -1,4 +1,4 @@
-import { createDaoDialogs, createProcessDialogs } from '@/modules/createDao/constants/moduleDialogs';
+import { createDaoDialogs } from '@/modules/createDao/constants/moduleDialogs';
 import { financeDialogs } from '@/modules/finance/constants/moduleDialogs';
 import { governanceDialogs } from '@/modules/governance/constants/moduleDialogs';
 import { pluginDialogs } from '@/plugins';
@@ -10,6 +10,5 @@ export const providersDialogs: Record<string, IDialogComponentDefinitions> = {
     ...governanceDialogs,
     ...financeDialogs,
     ...createDaoDialogs,
-    ...createProcessDialogs,
     ...pluginDialogs,
 };
