@@ -77,7 +77,7 @@ export const GovernanceStageTimingField: React.FC<IGovernanceStageTimingFieldPro
             stageType,
             defaultValues: { votingPeriod, earlyStageAdvance, stageExpiration },
         };
-        open('STAGE_TIMING', { params });
+        open('SETUP_STAGE_TIMING', { params });
     };
 
     return (
