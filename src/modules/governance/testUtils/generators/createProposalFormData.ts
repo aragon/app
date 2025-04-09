@@ -1,4 +1,5 @@
 import { type ICreateProposalFormData } from '../../components/createProposalForm';
+import type { IProposalCreate } from '../../dialogs/publishProposalDialog';
 import type { ICreateProposalEndDateForm, ICreateProposalStartDateForm } from '../../utils/createProposalUtils';
 
 export const generateCreateProposalFormData = (values?: Partial<ICreateProposalFormData>): ICreateProposalFormData => ({
@@ -8,6 +9,12 @@ export const generateCreateProposalFormData = (values?: Partial<ICreateProposalF
     resources: [],
     actions: [],
     ...values,
+});
+
+export const generateCreateProposalData = (proposal?: Partial<IProposalCreate>): IProposalCreate => ({
+    ...generateCreateProposalFormData(),
+    actions: [],
+    ...proposal,
 });
 
 export const generateCreateProposalStartDateFormData = (

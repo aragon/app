@@ -1,5 +1,5 @@
 import type { IBuildPreparePluginInstallDataParams } from '@/modules/createDao/types';
-import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
+import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
@@ -11,7 +11,7 @@ import { tokenPlugin } from '../../constants/tokenPlugin';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
 import { tokenPluginAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
 
-export interface ICreateTokenProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
+export interface ICreateTokenProposalFormData extends IProposalCreate, ICreateProposalEndDateForm {}
 
 export interface IPrepareTokenInstallDataParams
     extends IBuildPreparePluginInstallDataParams<

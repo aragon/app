@@ -896,28 +896,12 @@
         "adminManageMembers": {
           "button": "Manage admins",
           "dialog": {
-            "addresses": {
-              "action": {
-                "cancel": "Cancel",
-                "update": "Update admins"
-              },
-              "description": "Add or remove the addresses that should be able to make any change to the DAO without a proposal.",
-              "title": "Manage admins"
+            "action": {
+              "cancel": "Cancel",
+              "update": "Update admins"
             },
-            "publish": {
-              "button": {
-                "submit": "Update admins",
-                "success": "View settings"
-              },
-              "description": "To update admins, confirm the onchain transaction in your wallet.",
-              "step": {
-                "PIN_METADATA": {
-                  "errorLabel": "Unable to pin data on IPFS",
-                  "label": "Pin data on IPFS"
-                }
-              },
-              "title": "Update admins"
-            }
+            "description": "Add or remove the addresses that should be able to make any change to the DAO without a proposal.",
+            "title": "Manage admins"
           }
         },
         "adminMemberInfo": {

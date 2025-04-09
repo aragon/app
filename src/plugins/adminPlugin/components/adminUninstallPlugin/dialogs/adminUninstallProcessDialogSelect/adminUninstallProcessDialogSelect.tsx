@@ -41,7 +41,7 @@ export const AdminUninstallProcessDialogSelect: React.FC<IAdminUninstallProcessD
         const params: IPublishProposalDialogParams = adminUninstallProcessDialogSelectUtils.buildProposalParams(
             daoAddress,
             adminPlugin.address as Hex,
-            selectedPlugin.address as Hex,
+            selectedPlugin,
             daoId,
         );
         open(GovernanceDialog.PUBLISH_PROPOSAL, { params });

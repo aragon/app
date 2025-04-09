@@ -4,7 +4,7 @@ import {
     ProcessStageType,
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
-import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
+import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import type { IDao } from '@/shared/api/daoService';
@@ -17,7 +17,7 @@ import { sppPlugin } from '../../constants/sppPlugin';
 import { SppProposalType } from '../../types';
 import { sppPluginAbi, sppPluginSetupAbi } from './sppPluginAbi';
 
-export interface ICreateSppProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
+export interface ICreateSppProposalFormData extends IProposalCreate, ICreateProposalEndDateForm {}
 
 class SppTransactionUtils {
     // When stage expiration is not defined, we set a default max-advance to 100 years

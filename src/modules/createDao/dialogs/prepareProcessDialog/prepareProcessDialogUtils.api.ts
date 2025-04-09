@@ -1,7 +1,7 @@
 import type { IDao } from '@/shared/api/daoService';
+import type { IPluginSetupData } from '@/shared/utils/pluginTransactionUtils';
 import type { ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
-import { IPluginSetupData } from '@/shared/utils/pluginTransactionUtils';
 
 export interface IPrepareProcessMetadata {
     /**

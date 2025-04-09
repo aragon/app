@@ -19,6 +19,7 @@ import {
 import { GovernanceDialog } from '../../constants/moduleDialogs';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { type IPublishProposalDialogParams } from '../../dialogs/publishProposalDialog';
+import { proposalUtils } from '../../utils/proposalUtils';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
 import { createProposalWizardSteps } from './createProposalPageDefinitions';
 
@@ -80,7 +81,17 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     );
 
     const handleFormSubmit = (values: ICreateProposalFormData) => {
-        const params: IPublishProposalDialogParams = { values, daoId, pluginAddress, prepareActions };
+        /* We are always saving actions on the form so that user doesn't lose them if they navigate around the form.
+        So we use the addActions flag to determine if we should add actions to the proposal or not. */
+        const { actions, addActions } = values;
+        const processedActions = addActions ? actions.map(proposalUtils.actionToTransactionRequest) : [];
+
+        const params: IPublishProposalDialogParams = {
+            proposal: { ...values, actions: processedActions },
+            daoId,
+            plugin,
+            prepareActions,
+        };
         open(GovernanceDialog.PUBLISH_PROPOSAL, { params });
     };
 

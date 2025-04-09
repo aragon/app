@@ -4,7 +4,7 @@ import type { IDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
-import { ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
+import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
 import type { ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
@@ -16,6 +16,11 @@ import type {
 } from './prepareProcessDialogUtils.api';
 
 class PrepareProcessDialogUtils {
+    private publishProcessProposalMetadata = {
+        title: 'Apply plugin installation',
+        summary: 'This proposal applies the plugin installation to create the new process',
+    };
+
     preparePluginMetadata = (plugin: ICreateProcessFormData['bodies'][number]) => {
         const { name, description, resources: links } = plugin;
 
@@ -52,7 +57,7 @@ class PrepareProcessDialogUtils {
         return Promise.resolve(encodedTransaction);
     };
 
-    buildProcessProposalActions = (params: IBuildProcessProposalActionsParams): ITransactionRequest[] => {
+    buildPublishProcessProposalActions = (params: IBuildProcessProposalActionsParams): ITransactionRequest[] => {
         const { values, dao, setupData } = params;
 
         const isAdvancedGovernance = values.governanceType === 'ADVANCED';
@@ -67,12 +72,7 @@ class PrepareProcessDialogUtils {
         return proposalActions;
     };
 
-    prepareProcessProposalMetadata = () => this.processProposalMetadata;
-
-    private processProposalMetadata = {
-        title: 'Apply plugin installation',
-        summary: 'This proposal applies the plugin installation to create the new process',
-    };
+    preparePublishProcessProposalMetadata = () => this.publishProcessProposalMetadata;
 
     private buildPrepareInstallProcessorActionData = (metadata: string, dao: IDao) => {
         const processorMetadata = transactionUtils.cidToHex(metadata);

@@ -2,6 +2,7 @@ import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUti
 import { Network } from '@/shared/api/daoService';
 import { generateDao, generatePluginSetupData } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
 import {
@@ -10,7 +11,6 @@ import {
     generateCreateProcessFormStage,
 } from '../../testUtils';
 import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
-import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { IBuildProcessProposalActionsParams } from './prepareProcessDialogUtils.api';
 
 describe('prepareProcessDialog utils', () => {
@@ -227,11 +227,11 @@ describe('prepareProcessDialog utils', () => {
         });
     });
 
-    describe('prepareProcessProposalMetadata', () => {
+    describe('preparePublishProcessProposalMetadata', () => {
         it('returns the metadata for the publish process proposal', () => {
-            const result = prepareProcessDialogUtils.prepareProcessProposalMetadata();
-            expect(result.title).toEqual(prepareProcessDialogUtils['processProposalMetadata'].title);
-            expect(result.summary).toEqual(prepareProcessDialogUtils['processProposalMetadata'].summary);
+            const result = prepareProcessDialogUtils.preparePublishProcessProposalMetadata();
+            expect(result.title).toEqual(prepareProcessDialogUtils['publishProcessProposalMetadata'].title);
+            expect(result.summary).toEqual(prepareProcessDialogUtils['publishProcessProposalMetadata'].summary);
         });
     });
 
@@ -257,7 +257,7 @@ describe('prepareProcessDialog utils', () => {
 
             buildApplyPluginsInstallationActionsSpy.mockReturnValue(installPluginActions);
 
-            const result = prepareProcessDialogUtils.buildProcessProposalActions(
+            const result = prepareProcessDialogUtils.buildPublishProcessProposalActions(
                 createTestParams({ dao, values, setupData }),
             );
 

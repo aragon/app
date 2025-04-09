@@ -1,7 +1,7 @@
 import * as usePermissionCheckGuard from '@/modules/governance/hooks/usePermissionCheckGuard';
 import * as DialogProvider from '@/shared/components/dialogProvider';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateDialogContext, generateTabComponentPlugin } from '@/shared/testUtils';
+import { generateDaoPlugin, generateDialogContext, generateTabComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { GovernanceDialog } from '../../constants/moduleDialogs';
@@ -54,16 +54,20 @@ describe('<CreateProposalPageClient /> component', () => {
         const pluginAddress = '0x472839';
         const open = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
+        const plugins = [
+            generateTabComponentPlugin({ id: 'multisig', meta: generateDaoPlugin({ address: pluginAddress }) }),
+        ];
+        useDaoPluginsSpy.mockReturnValue(plugins);
         render(createTestComponent({ daoId, pluginAddress }));
         // Advance the wizard three times to trigger the submit function
         await userEvent.click(screen.getByTestId('steps-mock'));
         await userEvent.click(screen.getByTestId('steps-mock'));
         await userEvent.click(screen.getByTestId('steps-mock'));
         const expectedParams = {
+            proposal: { actions: [] },
             daoId,
-            pluginAddress,
+            plugin: plugins[0].meta,
             prepareActions: {},
-            values: { actions: [] },
         };
         expect(open).toHaveBeenCalledWith(GovernanceDialog.PUBLISH_PROPOSAL, { params: expectedParams });
     });

@@ -1,4 +1,4 @@
-import { IDaoPlugin, useDao } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { TransactionType } from '@/shared/api/transactionService';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
@@ -14,50 +14,29 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo } from 'react';
 import { useAccount } from 'wagmi';
-//import type { PrepareProposalActionMap } from '../../components/createProposalForm';
-import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
-import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
+import type { ICreateProposalFormData, PrepareProposalActionMap } from '../../components/createProposalForm';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
 export enum PublishProposalStep {
     PIN_METADATA = 'PIN_METADATA',
 }
 
-export interface IProposalData {
+export interface IProposalCreate extends Omit<ICreateProposalFormData, 'addActions' | 'actions'> {
     /**
-     * Title of the proposal.
-     */
-    title: string;
-    /**
-     * Short description of the proposal.
-     */
-    summary: string;
-    /**
-     * Long description of the proposal supporting HTML tags.
-     */
-    body?: string;
-    /**
-     * Defines if the user wants to add actions to the proposal or not.
-     */
-    addActions: boolean;
-    /**
-     * Resources of the proposal.
-     */
-    resources: IResourcesInputResource[];
-    /**
-     * List of actions to be executed if the proposal succeeds.
+     * Array of actions to be executed on the proposal with only the necessary to, data and value properties.
      */
     actions: ITransactionRequest[];
 }
 
 export interface IPublishProposalDialogParams {
     /**
-     * data for publishing the proposal.
+     * data for creating the proposal.
      */
-    proposal: IProposalData;
+    proposal: IProposalCreate;
     /**
      * ID of the DAO to create the proposal for.
      */
@@ -66,10 +45,10 @@ export interface IPublishProposalDialogParams {
      *  Plugin used a target for creating the proposal.
      */
     plugin: IDaoPlugin;
-    // /**
-    //  * Partial map of action-type and prepare-action functions as not all actions require an async data preparation.
-    //  */
-    // prepareActions: PrepareProposalActionMap;
+    /**
+     * Partial map of action-type and prepare-action functions as not all actions require an async data preparation.
+     */
+    prepareActions: PrepareProposalActionMap;
 }
 
 export interface IPublishProposalDialogProps extends IDialogComponentProps<IPublishProposalDialogParams> {}
@@ -109,15 +88,9 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const handlePrepareTransaction = async () => {
         invariant(pinJsonData != null, 'PublishProposalDialog: metadata not pinned for prepare transaction step.');
         const { IpfsHash: metadataCid } = pinJsonData;
-        const { actions, addActions } = proposal;
-
-        // We are always saving actions on the form so that user doesn't lose them if they navigate around the form.
-        // So we use the addActions flag to determine if we should add actions to the proposal or not.
-        const processedActions = addActions ? actions : [];
-        const processedValues = { ...proposal, actions: processedActions };
 
         return publishProposalDialogUtils.buildTransaction({
-            proposal: processedValues,
+            proposal,
             metadataCid,
             plugin: daoPlugin.meta,
         });

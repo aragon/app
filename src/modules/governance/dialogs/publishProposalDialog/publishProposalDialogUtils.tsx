@@ -5,13 +5,13 @@ import { type Hex } from 'viem';
 import type { IProposalActionData, PrepareProposalActionMap } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
-import type { IProposalData } from './publishProposalDialog';
+import type { IProposalCreate } from './publishProposalDialog';
 
 export interface IBuildTransactionParams {
     /**
      * data for publishing the proposal.
      */
-    proposal: IProposalData;
+    proposal: IProposalCreate;
     /**
      * CID of the proposal metadata pinned on IPFS.
      */
@@ -34,8 +34,8 @@ export interface IPrepareActionsParams {
 }
 
 class PublishProposalDialogUtils {
-    prepareMetadata = (formValues: IProposalData) => {
-        const { title, summary, body: description, resources } = formValues;
+    prepareMetadata = (values: IProposalCreate) => {
+        const { title, summary, body: description, resources } = values;
 
         return { title, summary, description, resources };
     };

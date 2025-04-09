@@ -1,3 +1,4 @@
+import { generateDaoPlugin } from '@/shared/testUtils';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import type { Hex } from 'viem';
 import { adminUninstallProcessDialogSelectUtils } from './adminUninstallProcessDialogSelectUtils';
@@ -24,10 +25,15 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
             const adminAddress: Hex = '0xPluginSetupProcessor';
             const permissionId = 'EXECUTE_PERMISSION';
 
+            const plugin = generateDaoPlugin({
+                address: pluginAddress,
+                subdomain: 'admin',
+            });
+
             const result = adminUninstallProcessDialogSelectUtils.buildProposalParams(
                 daoAddress,
                 adminAddress,
-                pluginAddress,
+                plugin,
                 daoId,
             );
 
@@ -39,12 +45,12 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
             });
 
             expect(result).toMatchObject({
-                values: {
+                proposal: {
                     ...adminUninstallProcessDialogSelectUtils.prepareProposalMetadata(),
-                    actions: [expect.objectContaining({ from: daoAddress, daoId })],
+                    actions: [{ to: '0x123', data: '0xabc', value: BigInt(0) }],
                 },
                 daoId,
-                pluginAddress,
+                plugin,
             });
         });
     });

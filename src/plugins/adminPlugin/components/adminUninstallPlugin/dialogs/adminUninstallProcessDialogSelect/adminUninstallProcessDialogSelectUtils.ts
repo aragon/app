@@ -1,6 +1,8 @@
 import type { ICreateProposalFormData, IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { ICreateProposalStartDateForm } from '@/modules/governance/utils/createProposalUtils';
+import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import type { Hex } from 'viem';
 
@@ -20,13 +22,15 @@ class AdminUninstallProcessDialogSelectUtils {
     buildProposalParams(
         daoAddress: Hex,
         adminAddress: Hex,
-        pluginAddress: Hex,
+        plugin: IDaoPlugin,
         daoId: string,
     ): IPublishProposalDialogParams {
+        const action = this.buildRevokeAction(daoAddress, adminAddress, daoId);
+        const proposalAction = proposalUtils.actionToTransactionRequest(action);
         return {
-            values: this.buildProposalValues(daoAddress, adminAddress, daoId),
+            proposal: { ...this.buildProposalValues(daoAddress, adminAddress, daoId), actions: [proposalAction] },
             daoId,
-            pluginAddress,
+            plugin,
             prepareActions: {},
         };
     }

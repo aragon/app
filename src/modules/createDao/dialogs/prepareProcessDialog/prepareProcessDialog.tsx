@@ -104,13 +104,14 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
 
         const setupData = pluginTransactionUtils.getPluginSetupData(txReceipt);
         const proposalActionParams: IBuildProcessProposalActionsParams = { values, dao, setupData };
-        const proposalActions = prepareProcessDialogUtils.buildProcessProposalActions(proposalActionParams);
+        const proposalActions = prepareProcessDialogUtils.buildPublishProcessProposalActions(proposalActionParams);
 
-        const proposalMetadata = prepareProcessDialogUtils.prepareProcessProposalMetadata();
+        const proposalMetadata = prepareProcessDialogUtils.preparePublishProcessProposalMetadata();
         const params: IPublishProposalDialogParams = {
-            proposal: { ...proposalMetadata, addActions: true, resources: values.resources, actions: proposalActions },
+            proposal: { ...proposalMetadata, ...values, actions: proposalActions },
             daoId,
             plugin: adminPlugin.meta,
+            prepareActions: {},
         };
         open(GovernanceDialog.PUBLISH_PROPOSAL, { params });
     };
