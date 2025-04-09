@@ -16,7 +16,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAccount } from 'wagmi';
-import type { ITokenDelegationFormDialogParams } from '../../dialogs/tokenDelegationFormDialog';
+import type { ITokenDelegationDialogParams } from '../../dialogs/tokenDelegationDialog';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
 
 export enum TokenDelegationSelection {
@@ -105,7 +105,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
     const handleDelegateChange = (value?: IAddressInputResolvedValue) => onDelegateChange(value?.address);
 
     const handleFormSubmit = () => {
-        const params: ITokenDelegationFormDialogParams = {
+        const params: ITokenDelegationDialogParams = {
             token: plugin.settings.token.address,
             delegate,
             network: dao!.network,

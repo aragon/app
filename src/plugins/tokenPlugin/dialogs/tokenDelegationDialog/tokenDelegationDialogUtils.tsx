@@ -10,7 +10,7 @@ const delegateTokensAbi = [
     },
 ];
 
-class TokenDelegationFormDialogUtils {
+class TokenDelegationDialogUtils {
     buildTransaction = (tokenAddress: string, delegatee: string): Promise<ITransactionRequest> => {
         const functionArgs = [delegatee];
         const transactionData = encodeFunctionData({
@@ -25,4 +25,4 @@ class TokenDelegationFormDialogUtils {
     };
 }
 
-export const tokenDelegationFormDialogUtils = new TokenDelegationFormDialogUtils();
+export const tokenDelegationDialogUtils = new TokenDelegationDialogUtils();

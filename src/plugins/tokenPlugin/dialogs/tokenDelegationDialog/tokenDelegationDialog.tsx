@@ -11,9 +11,9 @@ import { invariant, MemberDataListItem } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
-import { tokenDelegationFormDialogUtils } from './tokenDelegationFormDialogUtils';
+import { tokenDelegationDialogUtils } from './tokenDelegationDialogUtils';
 
-export interface ITokenDelegationFormDialogParams {
+export interface ITokenDelegationDialogParams {
     /**
      * Address of the token.
      */
@@ -28,14 +28,14 @@ export interface ITokenDelegationFormDialogParams {
     network: Network;
 }
 
-export interface ITokenDelegationFormDialogProps extends IDialogComponentProps<ITokenDelegationFormDialogParams> {}
+export interface ITokenDelegationDialogProps extends IDialogComponentProps<ITokenDelegationDialogParams> {}
 
-export const TokenDelegationFormDialog: React.FC<ITokenDelegationFormDialogProps> = (props) => {
+export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (props) => {
     const { location } = props;
-    invariant(location.params != null, 'TokenDelegationFormDialog: required parameters must be set.');
+    invariant(location.params != null, 'TokenDelegationDialog: required parameters must be set.');
 
     const { address } = useAccount();
-    invariant(address != null, 'TokenDelegationFormDialog: user must be connected.');
+    invariant(address != null, 'TokenDelegationDialog: user must be connected.');
 
     const { token, delegate = zeroAddress, network } = location.params;
 
@@ -45,7 +45,7 @@ export const TokenDelegationFormDialog: React.FC<ITokenDelegationFormDialogProps
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
-    const handlePrepareTransaction = () => tokenDelegationFormDialogUtils.buildTransaction(token, delegate);
+    const handlePrepareTransaction = () => tokenDelegationDialogUtils.buildTransaction(token, delegate);
 
     const onSuccessClick = () => {
         router.refresh();

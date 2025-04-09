@@ -1,5 +1,5 @@
 import { type IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { TokenDelegationFormDialog } from '../dialogs/tokenDelegationFormDialog';
+import { TokenDelegationDialog } from '../dialogs/tokenDelegationDialog';
 import { TokenWrapFormDialogAction, TokenWrapFormDialogApprove } from '../dialogs/tokenWrapFormDialog';
 
 export enum TokenPluginDialog {
@@ -9,7 +9,7 @@ export enum TokenPluginDialog {
 }
 
 export const tokenPluginDialogs: Record<TokenPluginDialog, IDialogComponentDefinitions> = {
-    [TokenPluginDialog.TOKEN_DELEGATION]: { Component: TokenDelegationFormDialog },
+    [TokenPluginDialog.TOKEN_DELEGATION]: { Component: TokenDelegationDialog },
     [TokenPluginDialog.TOKEN_WRAPPING_APPROVE]: { Component: TokenWrapFormDialogApprove },
     [TokenPluginDialog.TOKEN_WRAPPING_ACTION]: { Component: TokenWrapFormDialogAction },
 };
