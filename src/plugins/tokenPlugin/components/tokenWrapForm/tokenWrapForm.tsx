@@ -12,7 +12,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { erc20Abi, formatUnits, parseUnits, type Hex } from 'viem';
 import { useAccount, useBalance, useReadContract } from 'wagmi';
-import { TokenPluginDialog } from '../../constants/pluginDialogs';
+import { TokenPluginDialog } from '../../constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '../../dialogs/tokenApproveTokensDialog';
 import type { ITokenWrapUnwrapDialogParams } from '../../dialogs/tokenWrapUnwrapDialog';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';

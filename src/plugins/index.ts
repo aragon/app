@@ -5,7 +5,7 @@ import { multisigPluginDialogs } from './multisigPlugin/constants/pluginDialogs'
 import { initialiseSppPlugin } from './sppPlugin';
 import { sppPluginDialogs } from './sppPlugin/constants/pluginDialogs';
 import { initialiseTokenPlugin } from './tokenPlugin';
-import { tokenPluginDialogs } from './tokenPlugin/constants/pluginDialogs';
+import { tokenPluginDialogs } from './tokenPlugin/constants/tokenPluginDialogsDefinitions';
 
 export const initialisePlugins = () => {
     initialiseMultisigPlugin();
