@@ -14,6 +14,7 @@ export enum CreateDaoDialog {
     PREPARE_PROCESS = 'PREPARE_PROCESS',
     PUBLISH_PROCESS = 'PUBLISH_PROCESS',
     SETUP_BODY = 'SETUP_BODY',
+    STAGE_TIMING = 'STAGE_TIMING',
 }
 
 export const createDaoDialogs: Record<CreateDaoDialog, IDialogComponentDefinitions> = {
@@ -27,14 +28,7 @@ export const createDaoDialogs: Record<CreateDaoDialog, IDialogComponentDefinitio
         size: 'lg',
         hiddenDescription: 'app.createDao.setupBodyDialog.a11y.description',
     },
-};
-
-export enum CreateProcessDialog {
-    STAGE_TIMING = 'STAGE_TIMING',
-}
-
-export const createProcessDialogs: Record<CreateProcessDialog, IDialogComponentDefinitions> = {
-    [CreateProcessDialog.STAGE_TIMING]: {
+    [CreateDaoDialog.STAGE_TIMING]: {
         Component: GovernanceStageTimingFieldDialog,
         size: 'lg',
         hiddenDescription: 'app.createDao.createProcessForm.governance.stageTimingField.dialog.a11y.description',
