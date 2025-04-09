@@ -5,7 +5,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { Button } from '@aragon/gov-ui-kit';
-import type { IAdminManageMembersDialogParams } from '../../dialogs/adminManageMembersDialog/adminManageMembersDialog';
+import type { IAdminManageMembersDialogParams } from '../../dialogs/adminManageMembersDialog';
 
 export interface IAdminMangeMembersProps {
     /**
@@ -41,10 +41,8 @@ export const AdminManageMembers: React.FC<IAdminMangeMembersProps> = (props) => 
     const handleManageAdminsClick = () => (canCreateProposal ? openManageMembersDialog() : createProposalGuard());
 
     return (
-        <>
-            <Button onClick={handleManageAdminsClick} size="md" variant="secondary">
-                {t('app.plugins.admin.adminManageMembers.button')}
-            </Button>
-        </>
+        <Button onClick={handleManageAdminsClick} size="md" variant="secondary">
+            {t('app.plugins.admin.adminManageMembers.button')}
+        </Button>
     );
 };
