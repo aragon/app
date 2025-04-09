@@ -6,7 +6,7 @@ import { Card, Dialog, InputContainer, invariant, Switch } from '@aragon/gov-ui-
 import { useState, type FormEvent } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { ProcessStageType } from '../../components/createProcessForm';
-import type { ISetupStageTimingForm } from '../../dialogs/setupStageTimingDialog/setupStageTimingDialogDefinitions';
+import type { ISetupStageTimingForm } from './setupStageTimingDialogDefinitions';
 
 export interface ISetupStageTimingDialogParams {
     /**

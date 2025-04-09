@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-export const GovernanceStageTimingFieldDialog = dynamic(() =>
+export const SetupStageTimingDialog = dynamic(() =>
     import('./setupStageTimingDialog').then((mod) => mod.SetupStageTimingDialog),
 );
 

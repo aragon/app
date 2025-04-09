@@ -46,10 +46,10 @@ export interface ITokenWrapUnwrapDialogProps extends IDialogComponentProps<IToke
 
 export const TokenWrapUnwrapDialog: React.FC<ITokenWrapUnwrapDialogProps> = (props) => {
     const { location } = props;
-    invariant(location.params != null, 'TokenWrapFormDialogAction: required parameters must be set.');
+    invariant(location.params != null, 'TokenWrapUnwrapDialog: required parameters must be set.');
 
     const { address } = useAccount();
-    invariant(address != null, 'TokenWrapFormDialogAction: user must be connected to perform the action');
+    invariant(address != null, 'TokenWrapUnwrapDialog: user must be connected to perform the action');
 
     const { action, token, underlyingToken, amount, network, onSuccess } = location.params;
 
