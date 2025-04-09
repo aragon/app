@@ -1,4 +1,3 @@
-import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import * as DaoService from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import {
@@ -15,6 +14,7 @@ import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
+import { ApplicationDialog } from '../../../constants/applicationDialogId';
 import { NavigationDao, type INavigationDaoProps } from './navigationDao';
 import { navigationDaoLinks } from './navigationDaoLinks';
 

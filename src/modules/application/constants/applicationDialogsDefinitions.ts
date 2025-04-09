@@ -1,11 +1,7 @@
-import { type IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
+import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { ConnectWalletDialog } from '../dialogs/connectWalletDialog';
 import { UserDialog } from '../dialogs/userDialog';
-
-export enum ApplicationDialog {
-    CONNECT_WALLET = 'CONNECT_WALLET',
-    USER = 'USER',
-}
+import { ApplicationDialog } from './applicationDialogId';
 
 export const applicationDialogs: Record<ApplicationDialog, IDialogComponentDefinitions> = {
     [ApplicationDialog.CONNECT_WALLET]: {

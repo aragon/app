@@ -1,6 +1,6 @@
 'use client';
 
-import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
+import { ApplicationDialog } from '@/modules/application/constants/applicationDialogId';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';

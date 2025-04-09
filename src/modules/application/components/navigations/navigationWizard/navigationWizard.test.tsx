@@ -1,4 +1,3 @@
-import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import * as DaoService from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import { generateDao, generateDialogContext, generateReactQueryResultSuccess } from '@/shared/testUtils';
@@ -10,6 +9,7 @@ import { userEvent } from '@testing-library/user-event';
 import { type AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
+import { ApplicationDialog } from '../../../constants/applicationDialogId';
 import { NavigationWizard, type INavigationWizardProps } from './navigationWizard';
 
 jest.mock('@aragon/gov-ui-kit', () => ({

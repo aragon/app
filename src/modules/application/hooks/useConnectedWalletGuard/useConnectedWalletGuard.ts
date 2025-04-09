@@ -1,7 +1,7 @@
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useCallback } from 'react';
 import { useAccount } from 'wagmi';
-import { ApplicationDialog } from '../../constants/moduleDialogs';
+import { ApplicationDialog } from '../../constants/applicationDialogId';
 
 export interface IUseConnectedWalletGuardParams {
     /**
