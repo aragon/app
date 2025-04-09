@@ -1,9 +1,6 @@
-import { type IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
+import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { MultisigRemoveMembersActionDialog } from '../dialogs/multisigRemoveMembersActionDialog';
-
-export enum MultisigPluginDialog {
-    REMOVE_MEMBERS = 'REMOVE_MEMBERS',
-}
+import { MultisigPluginDialog } from './multisigPluginDialogId';
 
 export const multisigPluginDialogs: Record<MultisigPluginDialog, IDialogComponentDefinitions> = {
     [MultisigPluginDialog.REMOVE_MEMBERS]: {

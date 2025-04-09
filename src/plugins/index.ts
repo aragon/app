@@ -1,7 +1,7 @@
 import { initialiseAdminPlugin } from './adminPlugin';
 import { adminPluginDialogs } from './adminPlugin/constants/adminPluginDialogsDefinitions';
 import { initialiseMultisigPlugin } from './multisigPlugin';
-import { multisigPluginDialogs } from './multisigPlugin/constants/pluginDialogs';
+import { multisigPluginDialogs } from './multisigPlugin/constants/multisigPluginDialogsDefinitions';
 import { initialiseSppPlugin } from './sppPlugin';
 import { sppPluginDialogs } from './sppPlugin/constants/pluginDialogs';
 import { initialiseTokenPlugin } from './tokenPlugin';
