@@ -3,7 +3,7 @@ import { adminPluginDialogs } from './adminPlugin/constants/adminPluginDialogsDe
 import { initialiseMultisigPlugin } from './multisigPlugin';
 import { multisigPluginDialogs } from './multisigPlugin/constants/multisigPluginDialogsDefinitions';
 import { initialiseSppPlugin } from './sppPlugin';
-import { sppPluginDialogs } from './sppPlugin/constants/pluginDialogs';
+import { sppPluginDialogs } from './sppPlugin/constants/sppPluginDialogsDefinitions';
 import { initialiseTokenPlugin } from './tokenPlugin';
 import { tokenPluginDialogs } from './tokenPlugin/constants/tokenPluginDialogsDefinitions';
 
