@@ -66,6 +66,7 @@ export const GovernanceStageTimingFieldDialog: React.FC<IGovernanceStageTimingFi
         event.preventDefault();
         event.stopPropagation();
         void handleSubmit(onSubmit)(event);
+        close();
     };
 
     const context = isTimelockStage ? 'timelockPeriod' : 'votingPeriod';

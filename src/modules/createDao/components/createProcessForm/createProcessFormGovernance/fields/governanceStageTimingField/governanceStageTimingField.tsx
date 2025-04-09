@@ -24,7 +24,7 @@ export const GovernanceStageTimingField: React.FC<IGovernanceStageTimingFieldPro
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
-    const { open, close } = useDialogContext();
+    const { open } = useDialogContext();
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
@@ -48,8 +48,6 @@ export const GovernanceStageTimingField: React.FC<IGovernanceStageTimingFieldPro
         setValue(`${fieldPrefix}.votingPeriod`, votingPeriod);
         setValue(`${fieldPrefix}.earlyStageAdvance`, earlyStageAdvance);
         setValue(`${fieldPrefix}.stageExpiration`, stageExpiration);
-
-        close();
     };
 
     const formatDuration = (duration: IDateDuration): string => {
