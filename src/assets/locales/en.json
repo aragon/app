@@ -1144,6 +1144,12 @@
           "Mint": "Mint",
           "UpdateVoteSettings": "Update settings"
         },
+        "tokenApproveTokensDialog": {
+          "description": "To approve wrapping your tokens, confirm the onchain transaction in your wallet.",
+          "submit": "Approve tokens",
+          "success": "Wrap tokens",
+          "title": "Approve wrapping"
+        },
         "tokenCreateProposalSettingsForm": {
           "endTime": {
             "infoText": "The minimum duration is {{days}} days, {{hours}} hours, and {{minutes}} minutes, set by DAO governance.",
@@ -1402,26 +1408,6 @@
           "entity": "Votes"
         },
         "tokenWrapForm": {
-          "dialog": {
-            "approve": {
-              "description": "To approve wrapping your tokens, confirm the onchain transaction in your wallet.",
-              "submit": "Approve tokens",
-              "success": "Wrap tokens",
-              "title": "Approve wrapping"
-            },
-            "unwrap": {
-              "description": "To unwrap your tokens, confirm the onchain transaction in your wallet.",
-              "submit": "Unwrap tokens",
-              "success": "View members",
-              "title": "Unwrap tokens"
-            },
-            "wrap": {
-              "description": "To wrap your tokens, confirm the onchain transaction in your wallet.",
-              "submit": "Wrap tokens",
-              "success": "View members",
-              "title": "Wrap tokens"
-            }
-          },
           "footerInfo": "Wrapping tokens will transfer them out of your wallet to the wrapping contract, where they can be withdrawn back to your wallet at any time.",
           "info": "Wrap {{underlyingSymbol}} to increase your voting power.",
           "percentage": {
@@ -1435,6 +1421,20 @@
             "approve": "Approve {{underlyingSymbol}}",
             "unwrap": "Unwrap {{amount}} {{symbol}}",
             "wrap": "Wrap {{underlyingSymbol}}"
+          }
+        },
+        "tokenWrapUnwrapDialog": {
+          "unwrap": {
+            "description": "To unwrap your tokens, confirm the onchain transaction in your wallet.",
+            "submit": "Unwrap tokens",
+            "success": "View members",
+            "title": "Unwrap tokens"
+          },
+          "wrap": {
+            "description": "To wrap your tokens, confirm the onchain transaction in your wallet.",
+            "submit": "Wrap tokens",
+            "success": "View members",
+            "title": "Wrap tokens"
           }
         }
       }

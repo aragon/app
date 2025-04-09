@@ -110,7 +110,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
             delegate,
             network: dao!.network,
         };
-        open(TokenPluginDialog.TOKEN_DELEGATION, { params });
+        open(TokenPluginDialog.DELEGATE, { params });
     };
 
     // Update form initial data on user address / backend data update
