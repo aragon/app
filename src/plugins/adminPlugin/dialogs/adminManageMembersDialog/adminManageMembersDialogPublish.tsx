@@ -38,13 +38,13 @@ export interface IAdminManageMembersDialogPublishProps {
      */
     daoId: string;
     /**
-     * Callback to close the dialog.
+     * Callback to notify successful update.
      */
-    onClose: () => void;
+    onSuccess: () => void;
 }
 
 export const AdminManageMembersDialogPublish: React.FC<IAdminManageMembersDialogPublishProps> = (props) => {
-    const { currentAdmins, updatedAdmins, pluginAddress, daoId, onClose } = props;
+    const { currentAdmins, updatedAdmins, pluginAddress, daoId, onSuccess } = props;
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -112,7 +112,7 @@ export const AdminManageMembersDialogPublish: React.FC<IAdminManageMembersDialog
 
     const onSuccessClick = () => {
         router.refresh();
-        onClose();
+        onSuccess();
     };
 
     return (
@@ -120,7 +120,6 @@ export const AdminManageMembersDialogPublish: React.FC<IAdminManageMembersDialog
             title={t('app.plugins.admin.adminManageMembersDialog.publish.title')}
             description={t('app.plugins.admin.adminManageMembersDialog.publish.description')}
             submitLabel={t('app.plugins.admin.adminManageMembersDialog.publish.button.submit')}
-            onCancelClick={onClose}
             successLink={{
                 label: t('app.plugins.admin.adminManageMembersDialog.publish.button.success'),
                 onClick: onSuccessClick,

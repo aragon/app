@@ -1,5 +1,5 @@
 import { useMemberList } from '@/modules/governance/api/governanceService';
-import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { type ICompositeAddress, invariant } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
 import { AdminManageMembersDialogAddresses } from './adminManageMembersDialogAddresses';
@@ -37,8 +37,6 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
     const memberParams = { daoId, pluginAddress, pageSize: 300 };
     const { data: memberList, refetch } = useMemberList({ queryParams: memberParams });
 
-    const { close } = useDialogContext();
-
     const currentAdmins = useMemo(() => {
         return memberList?.pages.flatMap((page) => page.data);
     }, [memberList]);
@@ -50,8 +48,7 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
         setShowPublishManageAdmins(true);
     };
 
-    const handleClose = async () => {
-        close();
+    const handleSuccess = async () => {
         // After publishing new admins, clicking "Manage Admin" again would show the old list. We need to refetch.
         await refetch();
     };
@@ -62,12 +59,11 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
             updatedAdmins={updatedAdmins}
             pluginAddress={pluginAddress}
             daoId={daoId}
-            onClose={handleClose}
+            onSuccess={handleSuccess}
         />
     ) : (
         <AdminManageMembersDialogAddresses
             currentAdmins={currentAdmins ?? []}
-            onClose={handleClose}
             handleSubmitAddresses={handleSubmitAddresses}
         />
     );
