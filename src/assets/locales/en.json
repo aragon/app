@@ -210,34 +210,6 @@
             }
           },
           "stageTimingField": {
-            "dialog": {
-              "a11y": {
-                "description": "Configure the duration and expiration for the stage"
-              },
-              "action": {
-                "cancel": "Cancel",
-                "save": "Save"
-              },
-              "earlyAdvance": {
-                "helpText": "This allows a proposal to be advanced early to subsequent stages if it's approved before the voting period ends.",
-                "label": "Early stage advance"
-              },
-              "expiration": {
-                "helpText": "This limits the amount of time after the voting period ends for advancing the proposal to the next stage.",
-                "infoText": "Recommended minimum expiration time is 7 days.",
-                "label": "Stage expiration"
-              },
-              "timelockPeriod": {
-                "helpText": "The time that must pass before the proposal can advance.",
-                "label": "Timelock period"
-              },
-              "title": "Edit timing",
-              "votingPeriod": {
-                "helpText": "This is amount of time bodies in this stage have to vote on proposals.",
-                "infoText": "Recommended minimum voting period is 7 days.",
-                "label": "Voting period"
-              }
-            },
             "earlyAdvance": "Early stage advance",
             "edit": "Edit timing",
             "expiration": "Stage expiration",
@@ -405,6 +377,34 @@
         },
         "submit": "Save",
         "title": "Add voting body"
+      },
+      "setupStageTimingDialog": {
+        "a11y": {
+          "description": "Configure the duration and expiration for the stage"
+        },
+        "action": {
+          "cancel": "Cancel",
+          "save": "Save"
+        },
+        "earlyAdvance": {
+          "helpText": "This allows a proposal to be advanced early to subsequent stages if it's approved before the voting period ends.",
+          "label": "Early stage advance"
+        },
+        "expiration": {
+          "helpText": "This limits the amount of time after the voting period ends for advancing the proposal to the next stage.",
+          "infoText": "Recommended minimum expiration time is 7 days.",
+          "label": "Stage expiration"
+        },
+        "timelockPeriod": {
+          "helpText": "The time that must pass before the proposal can advance.",
+          "label": "Timelock period"
+        },
+        "title": "Edit timing",
+        "votingPeriod": {
+          "helpText": "This is amount of time bodies in this stage have to vote on proposals.",
+          "infoText": "Recommended minimum voting period is 7 days.",
+          "label": "Voting period"
+        }
       }
     },
     "daos": {
