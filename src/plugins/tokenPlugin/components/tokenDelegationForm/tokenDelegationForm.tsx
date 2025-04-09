@@ -1,6 +1,8 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useMember } from '@/modules/governance/api/governanceService';
+import { TokenPluginDialog } from '@/plugins/tokenPlugin/constants/pluginDialogs';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import {
@@ -14,8 +16,8 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAccount } from 'wagmi';
+import type { ITokenDelegationFormDialogParams } from '../../dialogs/tokenDelegationFormDialog';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
-import { TokenDelegationFormDialog } from './tokenDelegationFormDialog';
 
 export enum TokenDelegationSelection {
     YOURSELF = 'YOURSELF',
@@ -47,8 +49,7 @@ export interface ITokenDelegationFormProps {
 export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) => {
     const { plugin, daoId } = props;
 
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-
+    const { open } = useDialogContext();
     const { t } = useTranslations();
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
@@ -103,7 +104,14 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
 
     const handleDelegateChange = (value?: IAddressInputResolvedValue) => onDelegateChange(value?.address);
 
-    const handleFormSubmit = () => setIsDialogOpen(true);
+    const handleFormSubmit = () => {
+        const params: ITokenDelegationFormDialogParams = {
+            token: plugin.settings.token.address,
+            delegate,
+            network: dao!.network,
+        };
+        open(TokenPluginDialog.TOKEN_DELEGATION, { params });
+    };
 
     // Update form initial data on user address / backend data update
     useEffect(() => {
@@ -154,13 +162,6 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
                     {t('app.plugins.token.tokenDelegationForm.info')}
                 </p>
             </div>
-            <TokenDelegationFormDialog
-                open={isDialogOpen}
-                onOpenChange={setIsDialogOpen}
-                token={plugin.settings.token.address}
-                delegate={delegate}
-                network={dao!.network}
-            />
         </form>
     );
 };

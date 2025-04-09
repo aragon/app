@@ -1,5 +1,6 @@
 import type { IToken } from '@/modules/finance/api/financeService';
 import type { Network } from '@/shared/api/daoService';
+import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
     TransactionDialog,
     TransactionDialogStep,
@@ -7,12 +8,13 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { AssetDataListItem, Dialog, type IDialogRootProps } from '@aragon/gov-ui-kit';
+import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
+import { useAccount } from 'wagmi';
 import type { ITokenPluginSettingsToken } from '../../types';
 import { tokenWrapFormDialogUtils } from './tokenWrapFormDialogUtils';
 
-export interface ITokenWrapFormDialogApproveProps extends IDialogRootProps {
+export interface ITokenWrapFormDialogApproveParams {
     /**
      * Wrapper governance token.
      */
@@ -39,8 +41,16 @@ export interface ITokenWrapFormDialogApproveProps extends IDialogRootProps {
     onSuccess?: () => void;
 }
 
+export interface ITokenWrapFormDialogApproveProps extends IDialogComponentProps<ITokenWrapFormDialogApproveParams> {}
+
 export const TokenWrapFormDialogApprove: React.FC<ITokenWrapFormDialogApproveProps> = (props) => {
-    const { token, underlyingToken, amount, network, onOpenChange, onApproveSuccess, onSuccess, ...otherProps } = props;
+    const { location } = props;
+    invariant(location.params != null, 'TokenWrapFormDialogApprove: required parameters must be set.');
+
+    const { address } = useAccount();
+    invariant(address != null, 'TokenWrapFormDialogApprove: user must be connected.');
+
+    const { token, underlyingToken, amount, network, onApproveSuccess, onSuccess } = location.params;
 
     const { t } = useTranslations();
 
@@ -49,42 +59,33 @@ export const TokenWrapFormDialogApprove: React.FC<ITokenWrapFormDialogApprovePro
 
     const handlePrepareTransaction = () => tokenWrapFormDialogUtils.buildApproveTransaction({ token, amount });
 
-    const handleCloseDialog = () => {
-        stepper.updateActiveStep(initialActiveStep);
-        onOpenChange?.(false);
-    };
-
     const onSuccessClick = () => {
-        handleCloseDialog();
         onApproveSuccess();
     };
 
     const parsedAmount = formatUnits(amount, token.decimals);
 
     return (
-        <Dialog.Root onOpenChange={handleCloseDialog} {...otherProps}>
-            <TransactionDialog
-                title={t('app.plugins.token.tokenWrapForm.dialog.approve.title')}
-                description={t('app.plugins.token.tokenWrapForm.dialog.approve.description')}
-                submitLabel={t('app.plugins.token.tokenWrapForm.dialog.approve.submit')}
-                stepper={stepper}
-                prepareTransaction={handlePrepareTransaction}
-                onCancelClick={handleCloseDialog}
-                network={network}
-                onSuccess={onSuccess}
-                successLink={{
-                    label: t('app.plugins.token.tokenWrapForm.dialog.approve.success'),
-                    onClick: onSuccessClick,
-                }}
-            >
-                <AssetDataListItem.Structure
-                    logoSrc={underlyingToken.logo}
-                    name={underlyingToken.name}
-                    amount={parsedAmount}
-                    symbol={underlyingToken.symbol}
-                    hideValue={true}
-                />
-            </TransactionDialog>
-        </Dialog.Root>
+        <TransactionDialog
+            title={t('app.plugins.token.tokenWrapForm.dialog.approve.title')}
+            description={t('app.plugins.token.tokenWrapForm.dialog.approve.description')}
+            submitLabel={t('app.plugins.token.tokenWrapForm.dialog.approve.submit')}
+            stepper={stepper}
+            prepareTransaction={handlePrepareTransaction}
+            network={network}
+            onSuccess={onSuccess}
+            successLink={{
+                label: t('app.plugins.token.tokenWrapForm.dialog.approve.success'),
+                onClick: onSuccessClick,
+            }}
+        >
+            <AssetDataListItem.Structure
+                logoSrc={underlyingToken.logo}
+                name={underlyingToken.name}
+                amount={parsedAmount}
+                symbol={underlyingToken.symbol}
+                hideValue={true}
+            />
+        </TransactionDialog>
     );
 };
