@@ -1,6 +1,10 @@
 import type { Network } from '@/shared/api/daoService';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { TransactionStatus, type ITransactionStatusStepMeta } from '@/shared/components/transactionStatus';
+import {
+    TransactionStatus,
+    type ITransactionInfo,
+    type ITransactionStatusStepMeta,
+} from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
@@ -122,6 +126,10 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
     const contractName = smartContractAbi?.name ?? unverifiedContractName;
     const buttonLabel = smartContractValue?.address == null || isLoadingAbi ? 'verify' : 'add';
 
+    const transactionInfo: ITransactionInfo = {
+        title: contractName,
+    };
+
     return (
         <>
             <Dialog.Header title={t('app.governance.verifySmartContractDialog.title')} />
@@ -136,8 +144,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
                         {...smartContractField}
                     />
                     {smartContractValue?.address != null && (
-                        <TransactionStatus.Container steps={verificationSteps}>
-                            <TransactionStatus.Title title={contractName} />
+                        <TransactionStatus.Container steps={verificationSteps} transactionInfo={transactionInfo}>
                             {verificationSteps.map((step) => (
                                 <TransactionStatus.Step key={step.id} {...step} />
                             ))}

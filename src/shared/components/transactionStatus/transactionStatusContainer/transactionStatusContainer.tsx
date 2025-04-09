@@ -1,6 +1,7 @@
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
 import classNames from 'classnames';
 import { type ComponentProps } from 'react';
+import { type ITransactionInfo, TransactionStatusInfo } from '../transactionStatusInfo';
 import { type ITransactionStatusStepMeta } from '../transactionStatusStep';
 
 export interface ITransactionStatusContainerProps<
@@ -11,12 +12,16 @@ export interface ITransactionStatusContainerProps<
      * Information about the stepper steps and state.
      */
     steps: IUseStepperReturn<TMeta, TStepId>['steps'];
+    /**
+     * The current step index.
+     */
+    transactionInfo?: ITransactionInfo;
 }
 
 export const TransactionStatusContainer = <TMeta extends ITransactionStatusStepMeta, TStepId extends string>(
     props: ITransactionStatusContainerProps<TMeta, TStepId>,
 ) => {
-    const { className, children, ...otherProps } = props;
+    const { className, children, transactionInfo, ...otherProps } = props;
 
     return (
         <ul
@@ -26,6 +31,14 @@ export const TransactionStatusContainer = <TMeta extends ITransactionStatusStepM
             )}
             {...otherProps}
         >
+            {transactionInfo != null && (
+                <TransactionStatusInfo
+                    title={transactionInfo.title}
+                    current={transactionInfo.current}
+                    total={transactionInfo.total}
+                    className="mb-1 md:mb-2"
+                />
+            )}
             {children}
         </ul>
     );

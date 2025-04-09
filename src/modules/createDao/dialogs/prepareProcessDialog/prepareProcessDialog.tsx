@@ -8,9 +8,9 @@ import {
     TransactionDialog,
     type TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
+import type { ITransactionInfo } from '@/shared/components/transactionStatus/transactionStatusInfo';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import type { IMultistep } from '@/shared/hooks/useStepper';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { invariant } from '@aragon/gov-ui-kit';
@@ -57,14 +57,13 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const [adminPlugin] = useDaoPlugins({ daoId, subdomain: 'admin' }) ?? [];
 
-    const multistep: IMultistep = {
-        title: t('app.createDao.prepareProcessDialog.multistepTitle'),
+    const transactionInfo: ITransactionInfo = {
+        title: t('app.createDao.prepareProcessDialog.transactionInfoTitle'),
         current: 1,
         total: 2,
     };
     const stepper = useStepper<ITransactionDialogStepMeta, PrepareProcessStep | TransactionDialogStep>({
         initialActiveStep: PrepareProcessStep.PIN_METADATA,
-        multistep,
     });
     const { nextStep } = stepper;
 
@@ -138,6 +137,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
                 label: t('app.createDao.prepareProcessDialog.button.success'),
                 onClick: handlePrepareInstallationSuccess,
             }}
+            transactionInfo={transactionInfo}
             stepper={stepper}
             customSteps={customSteps}
             prepareTransaction={handlePrepareTransaction}

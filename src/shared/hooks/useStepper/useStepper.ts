@@ -5,7 +5,7 @@ import type { IUseStepperParams, IUseStepperReturn } from './useStepper.api';
 export const useStepper = <TMeta, TStepId extends string = string>(
     params?: IUseStepperParams<TMeta, TStepId>,
 ): IUseStepperReturn<TMeta, TStepId> => {
-    const { initialSteps, initialActiveStep, multistep } = params ?? {};
+    const { initialSteps, initialActiveStep } = params ?? {};
 
     const stepperUtils = useMemo(
         () => new StepperUtils(initialSteps, initialActiveStep),
@@ -38,7 +38,6 @@ export const useStepper = <TMeta, TStepId extends string = string>(
 
     return {
         steps,
-        multistep,
         activeStep,
         activeStepIndex: stepperUtils.findStepIndex(activeStep),
         hasNext: stepperUtils.hasNext(),

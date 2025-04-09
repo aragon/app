@@ -22,6 +22,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         title,
         description,
         customSteps,
+        transactionInfo,
         stepper,
         submitLabel,
         successLink,
@@ -34,7 +35,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         indexingFallbackUrl,
     } = props;
 
-    const { activeStep, steps, multistep, activeStepIndex, nextStep, updateActiveStep, updateSteps } = stepper;
+    const { activeStep, steps, activeStepIndex, nextStep, updateActiveStep, updateSteps } = stepper;
     const activeStepInfo = activeStep != null ? steps[activeStepIndex] : undefined;
 
     const { t } = useTranslations();
@@ -209,8 +210,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
             <Dialog.Content description={description}>
                 <div className="flex flex-col gap-6 pb-3 md:pb-4">
                     {children}
-                    <TransactionStatus.Container steps={steps}>
-                        {multistep != null && <TransactionStatus.Title title={multistep.title} multistep={multistep} />}
+                    <TransactionStatus.Container steps={steps} transactionInfo={transactionInfo}>
                         {steps.map((step) => (
                             <TransactionStatus.Step key={step.id} {...step} />
                         ))}

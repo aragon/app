@@ -346,14 +346,14 @@
           "success": "Finalize installation"
         },
         "description": "To prepare your governance process, confirm the onchain transaction in your wallet.",
-        "multistepTitle": "Prepare installation",
         "step": {
           "PIN_METADATA": {
             "errorLabel": "Unable to pin data on IPFS",
             "label": "Pin data on IPFS"
           }
         },
-        "title": "Prepare governance process"
+        "title": "Prepare governance process",
+        "transactionInfoTitle": "Prepare installation"
       },
       "publishDaoDialog": {
         "button": {
@@ -375,14 +375,14 @@
           "success": "View proposals"
         },
         "description": "To finalize your governance process, confirm the onchain transaction in your wallet.",
-        "multistepTitle": "Finalize installation",
         "step": {
           "PIN_METADATA": {
             "errorLabel": "Unable to pin data on IPFS",
             "label": "Pin data on IPFS"
           }
         },
-        "title": "Finalize governance process"
+        "title": "Finalize governance process",
+        "transactionInfoTitle": "Finalize installation"
       },
       "setupBodyDialog": {
         "a11y": {
@@ -1573,10 +1573,6 @@
           "proceedAnyway": "Proceed anyway",
           "retry": "Retry"
         },
-        "statusTitle": {
-          "multistepCurrent": "Step {{current}}",
-          "multistepTotal": "of {{total}}"
-        },
         "step": {
           "APPROVE": {
             "addon": "Wallet",
@@ -1596,6 +1592,10 @@
             "errorLabel": "Unable to prepare transaction",
             "label": "Prepare transaction"
           }
+        },
+        "transactionInfo": {
+          "current": "Step {{current}}",
+          "total": "of {{total}}"
         }
       },
       "useApplicationVersion": {
