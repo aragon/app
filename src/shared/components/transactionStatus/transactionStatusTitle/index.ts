@@ -1,1 +1,1 @@
-export { TransactionStatusTitle, type ITransactionStatusTitle } from './transactionStatusTitle';
+export { TransactionStatusTitle, type ITransactionStatusTitleProps } from './transactionStatusTitle';
