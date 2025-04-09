@@ -1,4 +1,4 @@
-import { type IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
+import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { CreateDaoDetailsDialog } from '../dialogs/createDaoDetailsDialog';
 import { CreateProcessDetailsDialog } from '../dialogs/createProcessDetailsDialog';
 import { PrepareProcessDialog } from '../dialogs/prepareProcessDialog';
@@ -6,16 +6,7 @@ import { PublishDaoDialog } from '../dialogs/publishDaoDialog';
 import { PublishProcessDialog } from '../dialogs/publishProcessDialog';
 import { SetupBodyDialog } from '../dialogs/setupBodyDialog';
 import { GovernanceStageTimingFieldDialog } from '../dialogs/setupStageTimingDialog';
-
-export enum CreateDaoDialog {
-    PUBLISH_DAO = 'PUBLISH_DAO',
-    CREATE_DAO_DETAILS = 'CREATE_DAO_DETAILS',
-    CREATE_PROCESS_DETAILS = 'CREATE_PROCESS_DETAILS',
-    PREPARE_PROCESS = 'PREPARE_PROCESS',
-    PUBLISH_PROCESS = 'PUBLISH_PROCESS',
-    SETUP_BODY = 'SETUP_BODY',
-    SETUP_STAGE_TIMING = 'SETUP_STAGE_TIMING',
-}
+import { CreateDaoDialog } from './createDaoDialogId';
 
 export const createDaoDialogs: Record<CreateDaoDialog, IDialogComponentDefinitions> = {
     [CreateDaoDialog.PUBLISH_DAO]: { Component: PublishDaoDialog },

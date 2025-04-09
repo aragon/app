@@ -1,6 +1,6 @@
 'use client';
 
-import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
+import { CreateDaoDialog } from '@/modules/createDao/constants/createDaoDialogId';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';

@@ -7,7 +7,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useMemo } from 'react';
 import { createProcessFormUtils, type ICreateProcessFormData } from '../../components/createProcessForm';
-import { CreateDaoDialog } from '../../constants/moduleDialogs';
+import { CreateDaoDialog } from '../../constants/createDaoDialogId';
 import type { IPrepareProcessDialogParams } from '../../dialogs/prepareProcessDialog';
 import { createProcessWizardSteps } from './createProcessPageDefinitions';
 import { CreateProcessPageClientSteps } from './createProcessPageSteps';
