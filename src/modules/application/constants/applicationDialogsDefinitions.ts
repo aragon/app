@@ -1,20 +1,16 @@
-import { type IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
+import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { ConnectWalletDialog } from '../dialogs/connectWalletDialog';
 import { UserDialog } from '../dialogs/userDialog';
+import { ApplicationDialogId } from './applicationDialogId';
 
-export enum ApplicationDialog {
-    CONNECT_WALLET = 'CONNECT_WALLET',
-    USER = 'USER',
-}
-
-export const applicationDialogs: Record<ApplicationDialog, IDialogComponentDefinitions> = {
-    [ApplicationDialog.CONNECT_WALLET]: {
+export const applicationDialogsDefinitions: Record<ApplicationDialogId, IDialogComponentDefinitions> = {
+    [ApplicationDialogId.CONNECT_WALLET]: {
         Component: ConnectWalletDialog,
         hiddenTitle: 'app.application.connectWalletDialog.a11y.title',
         hiddenDescription: 'app.application.connectWalletDialog.a11y.description',
         useFocusTrap: false,
     },
-    [ApplicationDialog.USER]: {
+    [ApplicationDialogId.USER]: {
         Component: UserDialog,
         hiddenTitle: 'app.application.userDialog.a11y.title',
         hiddenDescription: 'app.application.userDialog.a11y.description',

@@ -4,7 +4,7 @@ import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateDaoPlugin, generateDialogContext, generateTabComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { GovernanceDialog } from '../../constants/moduleDialogs';
+import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { CreateProposalPageClient, type ICreateProposalPageClientProps } from './createProposalPageClient';
 
 jest.mock('./createProposalPageClientSteps', () => ({
@@ -68,6 +68,6 @@ describe('<CreateProposalPageClient /> component', () => {
             daoId,
             plugin: plugins[0].meta,
         };
-        expect(open).toHaveBeenCalledWith(GovernanceDialog.PUBLISH_PROPOSAL, { params: expectedParams });
+        expect(open).toHaveBeenCalledWith(GovernanceDialogId.PUBLISH_PROPOSAL, { params: expectedParams });
     });
 });

@@ -3,7 +3,7 @@ import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { useCallback, useRef } from 'react';
-import { GovernanceDialog } from '../../constants/moduleDialogs';
+import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { IPermissionCheckDialogParams } from '../../dialogs/permissionCheckDialog';
 
 export interface IUsePermissionCheckGuardParams extends IPermissionCheckDialogParams {}
@@ -35,7 +35,7 @@ export const usePermissionCheckGuard = (params: IUsePermissionCheckGuardParams) 
                 plugin,
                 ...functionParams,
             };
-            open(GovernanceDialog.PERMISSION_CHECK, { params: dialogParams });
+            open(GovernanceDialogId.PERMISSION_CHECK, { params: dialogParams });
         },
         [slotId, onError, onSuccess, permissionNamespace, daoId, proposal, plugin, open],
     );

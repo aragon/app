@@ -5,6 +5,7 @@ import type { IDateDuration } from '@/shared/utils/dateUtils';
 import { Button, DefinitionList, InputContainer, Tag } from '@aragon/gov-ui-kit';
 import { Duration } from 'luxon';
 import { useFormContext } from 'react-hook-form';
+import { CreateDaoDialogId } from '../../../../../constants/createDaoDialogId';
 import type {
     ISetupStageTimingDialogParams,
     ISetupStageTimingForm,
@@ -77,7 +78,7 @@ export const GovernanceStageTimingField: React.FC<IGovernanceStageTimingFieldPro
             stageType,
             defaultValues: { votingPeriod, earlyStageAdvance, stageExpiration },
         };
-        open('SETUP_STAGE_TIMING', { params });
+        open(CreateDaoDialogId.SETUP_STAGE_TIMING, { params });
     };
 
     return (

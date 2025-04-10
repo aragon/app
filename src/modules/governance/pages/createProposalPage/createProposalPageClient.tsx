@@ -16,7 +16,7 @@ import {
     type PrepareProposalActionFunction,
     type PrepareProposalActionMap,
 } from '../../components/createProposalForm';
-import { GovernanceDialog } from '../../constants/moduleDialogs';
+import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { type IPublishProposalDialogParams } from '../../dialogs/publishProposalDialog';
 import { proposalUtils } from '../../utils/proposalUtils';
@@ -101,7 +101,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
             plugin,
             prepareActions,
         };
-        open(GovernanceDialog.PUBLISH_PROPOSAL, { params });
+        open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
     };
 
     const contextValues = useMemo(

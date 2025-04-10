@@ -7,7 +7,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useMemo } from 'react';
 import { createProcessFormUtils, type ICreateProcessFormData } from '../../components/createProcessForm';
-import { CreateDaoDialog } from '../../constants/moduleDialogs';
+import { CreateDaoDialogId } from '../../constants/createDaoDialogId';
 import type { IPrepareProcessDialogParams } from '../../dialogs/prepareProcessDialog';
 import { createProcessWizardSteps } from './createProcessPageDefinitions';
 import { CreateProcessPageClientSteps } from './createProcessPageSteps';
@@ -29,7 +29,7 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
     const handleFormSubmit = (values: ICreateProcessFormData) => {
         const dialogParams: IPrepareProcessDialogParams = { daoId, values };
         checkWalletConnection({
-            onSuccess: () => open(CreateDaoDialog.PREPARE_PROCESS, { params: dialogParams }),
+            onSuccess: () => open(CreateDaoDialogId.PREPARE_PROCESS, { params: dialogParams }),
         });
     };
 

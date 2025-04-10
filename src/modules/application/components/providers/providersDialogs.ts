@@ -1,14 +1,14 @@
-import { createDaoDialogs } from '@/modules/createDao/constants/moduleDialogs';
-import { financeDialogs } from '@/modules/finance/constants/moduleDialogs';
-import { governanceDialogs } from '@/modules/governance/constants/moduleDialogs';
-import { pluginDialogs } from '@/plugins';
+import { applicationDialogsDefinitions } from '@/modules/application/constants/applicationDialogsDefinitions';
+import { createDaoDialogsDefinitions } from '@/modules/createDao/constants/createDaoDialogsDefinitions';
+import { financeDialogsDefinitions } from '@/modules/finance/constants/financeDialogsDefinitions';
+import { governanceDialogsDefinitions } from '@/modules/governance/constants/governanceDialogsDefinitions';
+import { pluginDialogsDefinitions } from '@/plugins';
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { applicationDialogs } from '../../constants/moduleDialogs';
 
 export const providersDialogs: Record<string, IDialogComponentDefinitions> = {
-    ...applicationDialogs,
-    ...governanceDialogs,
-    ...financeDialogs,
-    ...createDaoDialogs,
-    ...pluginDialogs,
+    ...applicationDialogsDefinitions,
+    ...governanceDialogsDefinitions,
+    ...financeDialogsDefinitions,
+    ...createDaoDialogsDefinitions,
+    ...pluginDialogsDefinitions,
 };

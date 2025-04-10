@@ -1,4 +1,3 @@
-import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
 import { useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
@@ -22,6 +21,7 @@ import { useAccount } from 'wagmi';
 import { GovernanceType, type ICreateProcessFormData } from '../../components/createProcessForm';
 import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
 import type { IBuildProcessProposalActionsParams, IPrepareProcessMetadata } from './prepareProcessDialogUtils.api';
+import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 
 export enum PrepareProcessStep {
     PIN_METADATA = 'PIN_METADATA',
@@ -120,7 +120,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
             daoId,
             plugin: adminPlugin.meta,
         };
-        open(GovernanceDialog.PUBLISH_PROPOSAL, { params });
+        open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
     };
 
     const pinMetadataNamespace = `app.createDao.prepareProcessDialog.step.${PrepareProcessStep.PIN_METADATA}`;
