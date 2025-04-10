@@ -2,10 +2,10 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
-import type { IProposalActionData, PrepareProposalActionMap } from '../../components/createProposalForm';
+import type { PrepareProposalActionMap } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
-import type { IProposalCreate } from './publishProposalDialog.api';
+import type { IProposalCreate, IProposalCreateAction } from './publishProposalDialog.api';
 
 export interface IBuildTransactionParams {
     /**
@@ -26,7 +26,7 @@ export interface IPrepareActionsParams {
     /**
      * List of actions of the proposal.
      */
-    actions: IProposalActionData[];
+    actions: IProposalCreateAction[];
     /**
      * Partial map of action-type and prepare-action function.
      */
@@ -62,13 +62,16 @@ class PublishProposalDialogUtils {
         const { actions, prepareActions } = params;
 
         const prepareActionDataPromises = actions.map(async (action) => {
+            if (!action.type) {
+                return action.data;
+            }
             const prepareFunction = prepareActions?.[action.type];
             const actionData = await (prepareFunction != null ? prepareFunction(action) : action.data);
 
             return actionData;
         });
 
-        const resolvedActionDataPromises = await Promise.all(prepareActionDataPromises);
+        const resolvedActionDataPromises = (await Promise.all(prepareActionDataPromises)) as Hex[];
 
         const processedActions = actions.map((action, index) => ({
             ...action,

@@ -31,7 +31,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const { address } = useAccount();
     invariant(address != null, 'PublishProposalDialog: user must be connected.');
 
-    const { daoId, plugin, proposal } = location.params;
+    const { daoId, plugin, proposal, prepareActions } = location.params;
     const { address: pluginAddress } = plugin;
     const { title, summary } = proposal;
 
@@ -59,8 +59,13 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
         invariant(pinJsonData != null, 'PublishProposalDialog: metadata not pinned for prepare transaction step.');
         const { IpfsHash: metadataCid } = pinJsonData;
 
+        const { actions } = proposal;
+
+        const processedActions = await publishProposalDialogUtils.prepareActions({ actions, prepareActions });
+        const processedProposal = { ...proposal, actions: processedActions };
+
         return publishProposalDialogUtils.buildTransaction({
-            proposal,
+            proposal: processedProposal,
             metadataCid,
             plugin: daoPlugin.meta,
         });
