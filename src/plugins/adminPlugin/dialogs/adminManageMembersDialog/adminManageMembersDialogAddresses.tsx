@@ -1,4 +1,5 @@
 import type { IMember } from '@/modules/governance/api/governanceService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { AddressesInput } from '@/shared/components/forms/addressesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, Dialog, type ICompositeAddress } from '@aragon/gov-ui-kit';
@@ -14,10 +15,6 @@ export interface IAdminManageMembersDialogAddressesProps {
      * Callback to handle the form submission.
      */
     handleSubmitAddresses: (data: IAdminManageMembersFormData) => void;
-    /**
-     * Callback to close the dialog.
-     */
-    onClose: () => void;
 }
 
 export interface IAdminManageMembersFormData {
@@ -30,9 +27,10 @@ export interface IAdminManageMembersFormData {
 const formId = 'manageAdminsForm';
 
 export const AdminManageMembersDialogAddresses: React.FC<IAdminManageMembersDialogAddressesProps> = (props) => {
-    const { currentAdmins, onClose, handleSubmitAddresses } = props;
+    const { currentAdmins, handleSubmitAddresses } = props;
 
     const { t } = useTranslations();
+    const { close } = useDialogContext();
 
     const initialMembers = useMemo(() => currentAdmins.map((member) => ({ address: member.address })), [currentAdmins]);
 
@@ -67,7 +65,10 @@ export const AdminManageMembersDialogAddresses: React.FC<IAdminManageMembersDial
 
     return (
         <FormProvider {...formMethods}>
-            <Dialog.Header onClose={onClose} title={t('app.plugins.admin.adminManageMembersDialog.addresses.title')} />
+            <Dialog.Header
+                onClose={() => close()}
+                title={t('app.plugins.admin.adminManageMembersDialog.addresses.title')}
+            />
             <Dialog.Content description={t('app.plugins.admin.adminManageMembersDialog.addresses.description')}>
                 <form
                     className="flex w-full flex-col gap-3 pb-6 md:gap-2"
@@ -90,7 +91,7 @@ export const AdminManageMembersDialogAddresses: React.FC<IAdminManageMembersDial
                 }}
                 secondaryAction={{
                     label: t('app.plugins.admin.adminManageMembersDialog.addresses.action.cancel'),
-                    onClick: onClose,
+                    onClick: () => close(),
                 }}
             />
         </FormProvider>

@@ -45,10 +45,10 @@ export interface ITokenApproveTokensDialogProps extends IDialogComponentProps<IT
 
 export const TokenApproveTokensDialog: React.FC<ITokenApproveTokensDialogProps> = (props) => {
     const { location } = props;
-    invariant(location.params != null, 'TokenWrapFormDialogApprove: required parameters must be set.');
+    invariant(location.params != null, 'TokenApproveTokensDialog: required parameters must be set.');
 
     const { address } = useAccount();
-    invariant(address != null, 'TokenWrapFormDialogApprove: user must be connected.');
+    invariant(address != null, 'TokenApproveTokensDialog: user must be connected.');
 
     const { token, underlyingToken, amount, network, onApproveSuccess, onSuccess } = location.params;
 

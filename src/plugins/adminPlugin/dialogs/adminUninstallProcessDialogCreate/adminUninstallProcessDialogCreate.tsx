@@ -48,9 +48,9 @@ export const AdminUninstallProcessDialogCreate: React.FC<IAdminUninstallProcessD
 
     const handleCreateProcessClick = () => {
         if (canCreateProcess) {
-            handlePermissionGuardSuccess();
-            return;
+            close();
         }
+
         createProcessGuard();
     };
 
@@ -69,6 +69,7 @@ export const AdminUninstallProcessDialogCreate: React.FC<IAdminUninstallProcessD
                     )}
                     primaryButton={{
                         label: t('app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogCreate.label'),
+                        href: canCreateProcess ? createProcessUrl : undefined,
                         onClick: handleCreateProcessClick,
                     }}
                 />
