@@ -1,5 +1,6 @@
 import { Network } from '@/shared/api/daoService';
 import { useTransactionStatus } from '@/shared/api/transactionService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ChainEntityType, Dialog, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
@@ -40,6 +41,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
 
     const { t } = useTranslations();
     const { switchChain, status: switchChainStatus } = useSwitchChain();
+    const { updateOptions } = useDialogContext();
 
     // Make the onSuccess property stable to only trigger it once on transaction success
     const onSuccessRef = useRef(onSuccess);
@@ -172,6 +174,10 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
             },
         }));
     }, [transactionType, customSteps, t, transactionStepStates, transactionStepActions, transactionStepAddon]);
+
+    useEffect(() => {
+        updateOptions({ disableOutsideClick: true });
+    }, [updateOptions]);
 
     useEffect(() => {
         const { state, action, auto } = activeStepInfo?.meta ?? {};

@@ -1,8 +1,9 @@
 import type { IMember } from '@/modules/governance/api/governanceService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { AddressesInput } from '@/shared/components/forms/addressesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, Dialog, type ICompositeAddress } from '@aragon/gov-ui-kit';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 
 export interface IAdminManageMembersDialogAddressesProps {
@@ -14,10 +15,6 @@ export interface IAdminManageMembersDialogAddressesProps {
      * Callback to handle the form submission.
      */
     handleSubmitAddresses: (data: IAdminManageMembersFormData) => void;
-    /**
-     * Callback to close the dialog.
-     */
-    onClose: () => void;
 }
 
 export interface IAdminManageMembersFormData {
@@ -30,11 +27,12 @@ export interface IAdminManageMembersFormData {
 const formId = 'manageAdminsForm';
 
 export const AdminManageMembersDialogAddresses: React.FC<IAdminManageMembersDialogAddressesProps> = (props) => {
-    const { currentAdmins, onClose, handleSubmitAddresses } = props;
+    const { currentAdmins, handleSubmitAddresses } = props;
 
     const { t } = useTranslations();
+    const { close } = useDialogContext();
 
-    const initialMembers = currentAdmins.map((member) => ({ address: member.address }));
+    const initialMembers = useMemo(() => currentAdmins.map((member) => ({ address: member.address })), [currentAdmins]);
 
     const formMethods = useForm<IAdminManageMembersFormData>({
         defaultValues: {
@@ -43,7 +41,7 @@ export const AdminManageMembersDialogAddresses: React.FC<IAdminManageMembersDial
         mode: 'onTouched',
     });
 
-    const { handleSubmit, control } = formMethods;
+    const { handleSubmit, control, reset } = formMethods;
 
     const watchMembersField = useWatch({ name: 'members', control });
 
@@ -60,10 +58,18 @@ export const AdminManageMembersDialogAddresses: React.FC<IAdminManageMembersDial
         );
     }, [watchMembersField, currentAdmins]);
 
+    // Re-initialise the initial members on the form after fetching the members list
+    useEffect(() => {
+        reset({ members: initialMembers });
+    }, [initialMembers, reset]);
+
     return (
         <FormProvider {...formMethods}>
-            <Dialog.Header onClose={onClose} title={t('app.plugins.admin.adminManageMembers.dialog.addresses.title')} />
-            <Dialog.Content description={t('app.plugins.admin.adminManageMembers.dialog.addresses.description')}>
+            <Dialog.Header
+                onClose={() => close()}
+                title={t('app.plugins.admin.adminManageMembersDialog.addresses.title')}
+            />
+            <Dialog.Content description={t('app.plugins.admin.adminManageMembersDialog.addresses.description')}>
                 <form
                     className="flex w-full flex-col gap-3 pb-6 md:gap-2"
                     onSubmit={handleSubmit(handleSubmitAddresses)}
@@ -78,14 +84,14 @@ export const AdminManageMembersDialogAddresses: React.FC<IAdminManageMembersDial
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{
-                    label: t('app.plugins.admin.adminManageMembers.dialog.addresses.action.update'),
+                    label: t('app.plugins.admin.adminManageMembersDialog.addresses.action.update'),
                     type: 'submit',
                     form: formId,
                     disabled: !haveMembersChanged,
                 }}
                 secondaryAction={{
-                    label: t('app.plugins.admin.adminManageMembers.dialog.addresses.action.cancel'),
-                    onClick: onClose,
+                    label: t('app.plugins.admin.adminManageMembersDialog.addresses.action.cancel'),
+                    onClick: () => close(),
                 }}
             />
         </FormProvider>
