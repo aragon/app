@@ -122,7 +122,10 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
 
     const displaySuccessLink = stepId === successStep && isSuccessState;
 
-    const isCancelDisabled = stepId === TransactionDialogStep.CONFIRM && (isSuccessState || isPendingState);
+    const isCancelDisabled =
+        (stepId === TransactionDialogStep.CONFIRM || stepId === TransactionDialogStep.INDEXING) &&
+        (isSuccessState || isPendingState) &&
+        !showProceedAnyway;
     const isProceedAnywayDisabled = stepId === TransactionDialogStep.INDEXING && isSuccessState;
 
     const customSubmitLabel = stepId != null && state != null ? stepStateSubmitLabel[stepId]?.[state] : undefined;
