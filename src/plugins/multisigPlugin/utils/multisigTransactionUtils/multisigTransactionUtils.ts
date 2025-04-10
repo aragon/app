@@ -13,10 +13,10 @@ export interface ICreateMultisigProposalFormData extends IProposalCreate, ICreat
 
 class MultisigTransactionUtils {
     buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateMultisigProposalFormData>): Hex => {
-        const { metadata, actions, values } = params;
+        const { metadata, actions, proposal } = params;
 
-        const startDate = createProposalUtils.parseStartDate(values);
-        const endDate = createProposalUtils.parseEndDate(values);
+        const startDate = createProposalUtils.parseStartDate(proposal);
+        const endDate = createProposalUtils.parseEndDate(proposal);
 
         const functionArgs = [metadata, actions, BigInt(0), false, false, startDate, endDate];
         const data = encodeFunctionData({ abi: multisigPluginAbi, functionName: 'createProposal', args: functionArgs });

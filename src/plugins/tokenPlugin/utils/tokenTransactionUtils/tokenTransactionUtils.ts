@@ -22,10 +22,10 @@ export interface IPrepareTokenInstallDataParams
 
 class TokenTransactionUtils {
     buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateTokenProposalFormData>): Hex => {
-        const { metadata, actions, values } = params;
+        const { metadata, actions, proposal } = params;
 
-        const startDate = createProposalUtils.parseStartDate(values);
-        const endDate = createProposalUtils.parseEndDate(values);
+        const startDate = createProposalUtils.parseStartDate(proposal);
+        const endDate = createProposalUtils.parseEndDate(proposal);
 
         const functionArgs = [metadata, actions, BigInt(0), startDate, endDate, 0, false];
         const data = encodeFunctionData({ abi: tokenPluginAbi, functionName: 'createProposal', args: functionArgs });

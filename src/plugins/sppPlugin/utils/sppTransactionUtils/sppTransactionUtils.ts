@@ -28,9 +28,9 @@ class SppTransactionUtils {
     private anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';
 
     buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateSppProposalFormData>): Hex => {
-        const { metadata, actions, values } = params;
+        const { metadata, actions, proposal } = params;
 
-        const startDate = createProposalUtils.parseStartDate(values);
+        const startDate = createProposalUtils.parseStartDate(proposal);
 
         const functionArgs = [metadata, actions, BigInt(0), startDate, [[]]];
         const data = encodeFunctionData({ abi: sppPluginAbi, functionName: 'createProposal', args: functionArgs });
