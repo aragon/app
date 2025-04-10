@@ -23,6 +23,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         title,
         description,
         customSteps,
+        transactionInfo,
         stepper,
         submitLabel,
         successLink,
@@ -215,7 +216,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
             <Dialog.Content description={description}>
                 <div className="flex flex-col gap-6 pb-3 md:pb-4">
                     {children}
-                    <TransactionStatus.Container steps={steps}>
+                    <TransactionStatus.Container steps={steps} transactionInfo={transactionInfo}>
                         {steps.map((step) => (
                             <TransactionStatus.Step key={step.id} {...step} />
                         ))}
