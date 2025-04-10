@@ -5,7 +5,7 @@ import { Button, formatterUtils, InputContainer, NumberFormat } from '@aragon/go
 import classNames from 'classnames';
 import { type ChangeEvent, useId } from 'react';
 import type { IAsset } from '../../api/financeService';
-import { FinanceDialogs } from '../../constants/moduleDialogs';
+import { FinanceDialogId } from '../../constants/financeDialogId';
 import type { IAssetSelectionDialogParams } from '../../dialogs/assetSelectionDialog';
 import { AssetInputToken } from './assetInputToken';
 
@@ -78,7 +78,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
 
         const { onChange: onAssetClick } = assetField;
         const params: IAssetSelectionDialogParams = { initialParams: fetchAssetsParams, onAssetClick, close };
-        open(FinanceDialogs.ASSET_SELECTION, { params });
+        open(FinanceDialogId.ASSET_SELECTION, { params });
     };
 
     const handleMaxAmount = (e: React.MouseEvent<HTMLButtonElement>) => {

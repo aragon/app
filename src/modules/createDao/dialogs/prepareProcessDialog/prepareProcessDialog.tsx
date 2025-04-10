@@ -18,6 +18,7 @@ import { useCallback, useMemo, useState } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
 import { GovernanceType, type ICreateProcessFormData } from '../../components/createProcessForm';
+import { CreateDaoDialogId } from '../../constants/createDaoDialogId';
 import type { IPublishProcessDialogParams } from '../publishProcessDialog';
 import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
 import type { IPrepareProcessMetadata } from './prepareProcessDialogUtils.api';
@@ -107,7 +108,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     const handlePrepareInstallationSuccess = (txReceipt: TransactionReceipt) => {
         const setupData = pluginTransactionUtils.getPluginSetupData(txReceipt);
         const params: IPublishProcessDialogParams = { values, daoId, setupData };
-        open('PUBLISH_PROCESS', { params });
+        open(CreateDaoDialogId.PUBLISH_PROCESS, { params });
     };
 
     const pinMetadataNamespace = `app.createDao.prepareProcessDialog.step.${PrepareProcessStep.PIN_METADATA}`;

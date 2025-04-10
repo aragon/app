@@ -7,7 +7,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useMemo } from 'react';
 import { CreateDaoForm, type ICreateDaoFormData } from '../../components/createDaoForm';
-import { CreateDaoDialog } from '../../constants/moduleDialogs';
+import { CreateDaoDialogId } from '../../constants/createDaoDialogId';
 import type { IPublishDaoDialogParams } from '../../dialogs/publishDaoDialog';
 import { CreateDaoWizardStep, createDaoWizardSteps } from './createDaoPageDefinitions';
 
@@ -22,7 +22,7 @@ export const CreateDaoPageClient: React.FC<ICreateDaoPageClientProps> = () => {
     const handleFormSubmit = (values: ICreateDaoFormData) => {
         const params: IPublishDaoDialogParams = { values };
         checkWalletConnection({
-            onSuccess: () => open(CreateDaoDialog.PUBLISH_DAO, { params }),
+            onSuccess: () => open(CreateDaoDialogId.PUBLISH_DAO, { params }),
         });
     };
 
