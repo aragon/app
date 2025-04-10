@@ -46,7 +46,7 @@ describe('publishProposalDialog utils', () => {
             getSlotFunctionSpy.mockReturnValue(slotFunction);
 
             const actionBaseValues = { data: '0x123456', to: '0x000', value: '4' };
-            const values = generateCreateProposalFormData({
+            const proposal = generateCreateProposalFormData({
                 actions: [
                     { ...generateProposalActionUpdateMetadata(actionBaseValues), daoId: 'test', meta: undefined },
                 ],
@@ -54,10 +54,10 @@ describe('publishProposalDialog utils', () => {
             const metadataCid = 'test-cid';
             const plugin = generateDaoPlugin({ address: '0x123', subdomain: 'multisig' });
 
-            const processedActions = values.actions.map(proposalUtils.actionToTransactionRequest);
+            const processedActions = proposal.actions.map(proposalUtils.actionToTransactionRequest);
 
             const transaction = await publishProposalDialogUtils.buildTransaction({
-                proposal: { ...values, actions: processedActions },
+                proposal: { ...proposal, actions: processedActions },
                 metadataCid,
                 plugin,
             });
@@ -69,7 +69,7 @@ describe('publishProposalDialog utils', () => {
             expect(slotFunction).toHaveBeenCalledWith({
                 actions: processedActions,
                 metadata: '0x697066733a2f2f746573742d636964',
-                values: { ...values, actions: processedActions },
+                proposal: { ...proposal, actions: processedActions },
             });
 
             expect(transaction.data).toEqual(transactionData);
