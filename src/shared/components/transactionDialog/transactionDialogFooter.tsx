@@ -73,7 +73,7 @@ const buildSuccessLink = (
     return successHref(params);
 };
 
-const indexingStepTimeout = 8000;
+const indexingStepTimeout = 14000;
 
 export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     props: ITransactionDialogFooterProps<TCustomStepId>,
@@ -121,10 +121,9 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     const successStep = transactionType ? TransactionDialogStep.INDEXING : TransactionDialogStep.CONFIRM;
 
     const displaySuccessLink = stepId === successStep && isSuccessState;
-    const isCancelDisabled =
-        (stepId === TransactionDialogStep.CONFIRM || stepId === TransactionDialogStep.INDEXING) &&
-        (isSuccessState || isPendingState) &&
-        !showProceedAnyway;
+
+    const isCancelDisabled = stepId === TransactionDialogStep.CONFIRM && (isSuccessState || isPendingState);
+    const isProceedAnywayDisabled = stepId === TransactionDialogStep.INDEXING && isSuccessState;
 
     const customSubmitLabel = stepId != null && state != null ? stepStateSubmitLabel[stepId]?.[state] : undefined;
     const defaultSubmitLabel = isErrorState
@@ -180,7 +179,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
                 label: cancelButtonLabel,
                 onClick: handleCancelClick,
                 href: showProceedAnyway ? getFallbackUrl() : undefined,
-                disabled: isCancelDisabled,
+                disabled: showProceedAnyway ? isProceedAnywayDisabled : isCancelDisabled,
             }}
         />
     );
