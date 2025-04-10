@@ -1,5 +1,5 @@
 import { generateCreateProcessFormBody } from '@/modules/createDao/testUtils';
-import { generateCreateProposalData, generateCreateProposalEndDateFormData } from '@/modules/governance/testUtils';
+import { generateCreateProposalEndDateFormData } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { multisigPlugin } from '@/plugins/multisigPlugin/constants/multisigPlugin';
 import { generateDao } from '@/shared/testUtils';
@@ -8,6 +8,7 @@ import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import * as Viem from 'viem';
 import { multisigPluginAbi, multisigPluginSetupAbi } from './multisigPluginAbi';
 import { multisigTransactionUtils } from './multisigTransactionUtils';
+import { generateProposalCreate } from '@/modules/governance/testUtils/generators/proposalCreate';
 
 describe('multisigTransaction utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
@@ -30,7 +31,7 @@ describe('multisigTransaction utils', () => {
         it('correctly encodes the create-proposal data from the given parameters', () => {
             const startDate = 0;
             const endDate = 1728660603;
-            const values = { ...generateCreateProposalData(), ...generateCreateProposalEndDateFormData() };
+            const values = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
             const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x0', value: BigInt(0) }];
             const params = { metadata: '0x' as const, actions: actions, values };
             parseStartDateSpy.mockReturnValue(startDate);

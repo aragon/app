@@ -1,8 +1,7 @@
-import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import { useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { TransactionType } from '@/shared/api/transactionService';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
-import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
     type IBuildTransactionDialogSuccessLinkHref,
     type ITransactionDialogActionParams,
@@ -14,44 +13,15 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
-import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo } from 'react';
 import { useAccount } from 'wagmi';
-import type { ICreateProposalFormData, PrepareProposalActionMap } from '../../components/createProposalForm';
+import type { IPublishProposalDialogProps } from './publishProposalDialog.api';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
 export enum PublishProposalStep {
     PIN_METADATA = 'PIN_METADATA',
 }
-
-export interface IProposalCreate extends Omit<ICreateProposalFormData, 'addActions' | 'actions'> {
-    /**
-     * Array of actions to be executed on the proposal with only the necessary to, data and value properties.
-     */
-    actions: ITransactionRequest[];
-}
-
-export interface IPublishProposalDialogParams {
-    /**
-     * data for creating the proposal.
-     */
-    proposal: IProposalCreate;
-    /**
-     * ID of the DAO to create the proposal for.
-     */
-    daoId: string;
-    /**
-     *  Plugin used a target for creating the proposal.
-     */
-    plugin: IDaoPlugin;
-    /**
-     * Partial map of action-type and prepare-action functions as not all actions require an async data preparation.
-     */
-    prepareActions: PrepareProposalActionMap;
-}
-
-export interface IPublishProposalDialogProps extends IDialogComponentProps<IPublishProposalDialogParams> {}
 
 export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (props) => {
     const { location } = props;

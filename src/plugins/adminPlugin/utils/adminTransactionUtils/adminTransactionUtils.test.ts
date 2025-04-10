@@ -1,4 +1,4 @@
-import { generateCreateProposalData } from '@/modules/governance/testUtils';
+import { generateProposalCreate } from '@/modules/governance/testUtils/generators/proposalCreate';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import * as Viem from 'viem';
 import { adminPluginAbi } from './adminPluginAbi';
@@ -15,7 +15,7 @@ describe('adminTransaction utils', () => {
         it('correctly encodes the create-proposal data from the given parameters', () => {
             const metadata = '0xmeta';
             const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x000', value: BigInt(0) }];
-            const values = generateCreateProposalData();
+            const values = generateProposalCreate();
             const transactionData = '0xdata';
             encodeFunctionDataSpy.mockReturnValueOnce(transactionData);
 

@@ -4,13 +4,13 @@ import * as Viem from 'viem';
 import { ProposalActionType } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import {
-    generateCreateProposalData,
     generateCreateProposalFormData,
     generateProposalActionUpdateMetadata,
     generateProposalActionWithdrawToken,
 } from '../../testUtils';
 import { proposalUtils } from '../../utils/proposalUtils';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
+import { generateProposalCreate } from '../../testUtils/generators/proposalCreate';
 
 describe('publishProposalDialog utils', () => {
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
@@ -23,7 +23,7 @@ describe('publishProposalDialog utils', () => {
 
     describe('prepareMetadata', () => {
         it('correctly map form values to metadata object', () => {
-            const formValues = generateCreateProposalData({
+            const formValues = generateProposalCreate({
                 title: 'Title',
                 summary: 'Short summary',
                 body: '<p>Proposal body</p>',

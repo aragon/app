@@ -1,6 +1,6 @@
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import type { Hex } from 'viem';
-import type { IProposalCreate } from '../dialogs/publishProposalDialog/publishProposalDialog';
+import type { IProposalCreate } from '../dialogs/publishProposalDialog';
 
 export interface IBuildCreateProposalDataParams<TValues extends IProposalCreate = IProposalCreate> {
     /**

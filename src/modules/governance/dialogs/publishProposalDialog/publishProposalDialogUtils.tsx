@@ -5,7 +5,7 @@ import { type Hex } from 'viem';
 import type { IProposalActionData, PrepareProposalActionMap } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
-import type { IProposalCreate } from './publishProposalDialog';
+import type { IProposalCreate } from './publishProposalDialog.api';
 
 export interface IBuildTransactionParams {
     /**

@@ -20,14 +20,10 @@ import { GukModulesProvider, modulesCopy } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { act, type ReactNode } from 'react';
 import * as Wagmi from 'wagmi';
-import { generateCreateProposalData } from '../../testUtils';
-import {
-    type IPublishProposalDialogParams,
-    type IPublishProposalDialogProps,
-    PublishProposalDialog,
-    type PublishProposalStep,
-} from './publishProposalDialog';
+import { PublishProposalDialog, type PublishProposalStep } from './publishProposalDialog';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
+import type { IPublishProposalDialogParams, IPublishProposalDialogProps } from './publishProposalDialog.api';
+import { generateProposalCreate } from '../../testUtils/generators/proposalCreate';
 
 jest.mock('@/shared/components/transactionDialog', () => ({
     TransactionDialog: jest.fn((props: { children: ReactNode }) => (
@@ -65,7 +61,7 @@ describe('<PublishProposalDialog /> component', () => {
     ): IDialogLocation<IPublishProposalDialogParams> => ({
         id: 'test',
         params: {
-            proposal: generateCreateProposalData(),
+            proposal: generateProposalCreate(),
             daoId: 'test',
             plugin: generateDaoPlugin(),
             prepareActions: {},
@@ -112,7 +108,7 @@ describe('<PublishProposalDialog /> component', () => {
     });
 
     it('renders a draft version of the proposal being created', () => {
-        const proposal = generateCreateProposalData({ title: 'Proposal title', summary: 'Proposal summary' });
+        const proposal = generateProposalCreate({ title: 'Proposal title', summary: 'Proposal summary' });
         const location = generateDialogLocation({ proposal });
         useAccountSpy.mockReturnValue({
             address: '0xD740fd724D616795120BC363316580dAFf41129A',
@@ -137,7 +133,7 @@ describe('<PublishProposalDialog /> component', () => {
         usePinJsonSpy.mockReturnValue(generateReactQueryMutationResultIdle({ mutate: pinJson }));
         const errorHandler = jest.fn();
 
-        const proposal = generateCreateProposalData({
+        const proposal = generateProposalCreate({
             title: 'test-title',
             summary: 'test-summary',
             resources: [{ name: 'twitter', url: 'https://x.com/test' }],
@@ -162,7 +158,7 @@ describe('<PublishProposalDialog /> component', () => {
     it('prepares the transaction using the buildTransaction functionality and the hash of the pinned data', async () => {
         const daoPlugin = generateDaoPlugin();
         const ipfsResult = { IpfsHash: 'test' };
-        const proposal = generateCreateProposalData();
+        const proposal = generateProposalCreate();
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: daoPlugin })]);
         usePinJsonSpy.mockReturnValue(generateReactQueryMutationResultSuccess({ data: ipfsResult }));
         const location = generateDialogLocation({ proposal });

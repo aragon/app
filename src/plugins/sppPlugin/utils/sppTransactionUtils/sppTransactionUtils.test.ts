@@ -4,7 +4,7 @@ import {
     generateCreateProcessFormData,
     generateCreateProcessFormStage,
 } from '@/modules/createDao/testUtils/generators/createProcessFormData';
-import { generateCreateProposalData, generateCreateProposalEndDateFormData } from '@/modules/governance/testUtils';
+import { generateCreateProposalEndDateFormData } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { sppPlugin } from '@/plugins/sppPlugin/constants/sppPlugin';
 import { Network } from '@/shared/api/daoService';
@@ -17,6 +17,7 @@ import * as Viem from 'viem';
 import { zeroHash } from 'viem';
 import { sppPluginAbi, sppPluginSetupAbi } from './sppPluginAbi';
 import { sppTransactionUtils } from './sppTransactionUtils';
+import { generateProposalCreate } from '@/modules/governance/testUtils/generators/proposalCreate';
 
 describe('sppTransaction utils', () => {
     const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');
@@ -39,7 +40,7 @@ describe('sppTransaction utils', () => {
         it('encodes createProposal data with correct parameters', () => {
             const transactionData = '0xencoded';
             const startDate = 12345;
-            const values = { ...generateCreateProposalData(), ...generateCreateProposalEndDateFormData() };
+            const values = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
             const actions: ITransactionRequest[] = [{ to: '0xAddress', data: '0xdata', value: BigInt(0) }];
             parseStartDateSpy.mockReturnValue(startDate);
 
