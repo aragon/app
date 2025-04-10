@@ -20,10 +20,10 @@ import { GukModulesProvider, modulesCopy } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { act, type ReactNode } from 'react';
 import * as Wagmi from 'wagmi';
-import { PublishProposalDialog, type PublishProposalStep } from './publishProposalDialog';
-import { publishProposalDialogUtils } from './publishProposalDialogUtils';
-import type { IPublishProposalDialogParams, IPublishProposalDialogProps } from './publishProposalDialog.api';
 import { generateProposalCreate } from '../../testUtils/generators/proposalCreate';
+import { PublishProposalDialog, type PublishProposalStep } from './publishProposalDialog';
+import type { IPublishProposalDialogParams, IPublishProposalDialogProps } from './publishProposalDialog.api';
+import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
 jest.mock('@/shared/components/transactionDialog', () => ({
     TransactionDialog: jest.fn((props: { children: ReactNode }) => (

@@ -5,6 +5,7 @@ import {
     generateCreateProcessFormStage,
 } from '@/modules/createDao/testUtils/generators/createProcessFormData';
 import { generateCreateProposalEndDateFormData } from '@/modules/governance/testUtils';
+import { generateProposalCreate } from '@/modules/governance/testUtils/generators/proposalCreate';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { sppPlugin } from '@/plugins/sppPlugin/constants/sppPlugin';
 import { Network } from '@/shared/api/daoService';
@@ -17,7 +18,6 @@ import * as Viem from 'viem';
 import { zeroHash } from 'viem';
 import { sppPluginAbi, sppPluginSetupAbi } from './sppPluginAbi';
 import { sppTransactionUtils } from './sppTransactionUtils';
-import { generateProposalCreate } from '@/modules/governance/testUtils/generators/proposalCreate';
 
 describe('sppTransaction utils', () => {
     const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');

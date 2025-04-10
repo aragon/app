@@ -1,5 +1,6 @@
 import { generateCreateProcessFormBody } from '@/modules/createDao/testUtils';
 import { generateCreateProposalEndDateFormData } from '@/modules/governance/testUtils';
+import { generateProposalCreate } from '@/modules/governance/testUtils/generators/proposalCreate';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { multisigPlugin } from '@/plugins/multisigPlugin/constants/multisigPlugin';
 import { generateDao } from '@/shared/testUtils';
@@ -8,7 +9,6 @@ import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import * as Viem from 'viem';
 import { multisigPluginAbi, multisigPluginSetupAbi } from './multisigPluginAbi';
 import { multisigTransactionUtils } from './multisigTransactionUtils';
-import { generateProposalCreate } from '@/modules/governance/testUtils/generators/proposalCreate';
 
 describe('multisigTransaction utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');

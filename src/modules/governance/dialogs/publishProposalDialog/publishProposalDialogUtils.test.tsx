@@ -8,9 +8,9 @@ import {
     generateProposalActionUpdateMetadata,
     generateProposalActionWithdrawToken,
 } from '../../testUtils';
+import { generateProposalCreate } from '../../testUtils/generators/proposalCreate';
 import { proposalUtils } from '../../utils/proposalUtils';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
-import { generateProposalCreate } from '../../testUtils/generators/proposalCreate';
 
 describe('publishProposalDialog utils', () => {
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
