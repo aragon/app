@@ -1,45 +1,41 @@
 'use client';
 
-import { type IDebugContextControl } from '@/shared/components/debugProvider';
 import { useDebugContext } from '@/shared/components/debugProvider/debugProvider';
-import { Button, Heading, IconType, InputText, Switch } from '@aragon/gov-ui-kit';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { Button, Heading, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { DebugPanelControl } from './debugPanelControl';
 
 export interface IDebugPanelProps {}
 
-export const DebugPanel: React.FC = () => {
+export const DebugPanel: React.FC<IDebugPanelProps> = () => {
     const [isOpen, setIsOpen] = useState(false);
 
+    const { controls, registerControl } = useDebugContext();
+    const { t } = useTranslations();
+
     const panelRef = useRef<HTMLDivElement>(null);
-    const { controls, values, updateValue, registerControl } = useDebugContext();
 
     const togglePanel = () => setIsOpen((current) => !current);
 
-    const groupedControls = Object.groupBy(controls, (control) => control.group ?? 'Global');
-
-    const handleValueChange = (name: string, value: unknown, onChange?: IDebugContextControl['onChange']) => {
-        updateValue(name, value);
-        onChange?.(value);
-    };
+    useEffect(
+        () => registerControl({ name: 'highlightSlots', type: 'boolean', label: 'Highlight slot components' }),
+        [registerControl],
+    );
 
     useEffect(() => {
-        registerControl({ name: 'displayKeys', type: 'boolean', label: 'Display keys' });
-        registerControl({ name: 'highlightSlot', type: 'boolean', label: 'Highlight slots' });
-    }, [registerControl]);
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (isOpen && !panelRef.current?.contains(event.target as Node)) {
-                setIsOpen(false);
-            }
+        const handleMouseDown = (event: MouseEvent) => {
+            const isOutsideClick = !panelRef.current?.contains(event.target as Node);
+            setIsOpen((current) => (current && isOutsideClick ? false : current));
         };
 
-        // Bind the event listener
-        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('mousedown', handleMouseDown);
 
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleMouseDown);
     }, [isOpen]);
+
+    const groupedControls = Object.groupBy(controls, ({ group }) => group ?? 'Global');
 
     return (
         <>
@@ -57,33 +53,16 @@ export const DebugPanel: React.FC = () => {
                 })}
             >
                 <div className="flex flex-row justify-between">
-                    <Heading size="h2">Debug Panel</Heading>
+                    <Heading size="h2">{t('app.application.debugPanel.title')}</Heading>
                     <Button size="md" iconLeft={IconType.CLOSE} onClick={togglePanel} variant="ghost" />
                 </div>
                 <div className="flex flex-col gap-4">
                     {Object.keys(groupedControls).map((group) => (
                         <div className="flex flex-col gap-2" key={group}>
                             <Heading size="h3">{group}</Heading>
-                            <div className="flex flex-col gap-1">
-                                {groupedControls[group]?.map(({ type, name, label, onChange }) => (
-                                    <React.Fragment key={name}>
-                                        {type === 'boolean' && (
-                                            <Switch
-                                                checked={values[name] as boolean}
-                                                onCheckedChanged={(event) => handleValueChange(name, event, onChange)}
-                                                inlineLabel={label}
-                                            />
-                                        )}
-                                        {type === 'string' && (
-                                            <InputText
-                                                value={(values[name] as string | undefined) ?? ''}
-                                                onChange={({ target }) =>
-                                                    handleValueChange(name, target.value, onChange)
-                                                }
-                                                label={label}
-                                            />
-                                        )}
-                                    </React.Fragment>
+                            <div className="flex flex-col gap-2">
+                                {groupedControls[group]?.map((control) => (
+                                    <DebugPanelControl control={control} key={control.name} />
                                 ))}
                             </div>
                         </div>

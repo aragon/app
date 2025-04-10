@@ -1,5 +1,10 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import type { IDebugContext, IDebugContextControl, IDebugContextProviderProps } from './debugProvider.api';
+import type {
+    DebugContextValues,
+    IDebugContext,
+    IDebugContextControl,
+    IDebugContextProviderProps,
+} from './debugProvider.api';
 
 const debugContext = createContext<IDebugContext | null>(null);
 
@@ -42,12 +47,12 @@ export const DebugContextProvider: React.FC<IDebugContextProviderProps> = (props
     return <debugContext.Provider value={contextValues}>{children}</debugContext.Provider>;
 };
 
-export const useDebugContext = () => {
-    const values = useContext(debugContext);
+export const useDebugContext = <TValues extends DebugContextValues = DebugContextValues>(): IDebugContext<TValues> => {
+    const context = useContext(debugContext);
 
-    if (values == null) {
+    if (context == null) {
         throw new Error('useDebugContext: hook must be called inside a DebugContextProvider to work properly.');
     }
 
-    return values;
+    return { ...context, values: context.values as TValues };
 };

@@ -1,2 +1,7 @@
 export { DebugContextProvider, useDebugContext } from './debugProvider';
-export type { IDebugContext, IDebugContextControl, IDebugContextProviderProps } from './debugProvider.api';
+export type {
+    DebugContextValues,
+    IDebugContext,
+    IDebugContextControl,
+    IDebugContextProviderProps,
+} from './debugProvider.api';

@@ -39,7 +39,7 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
                 <Providers translations={translationAssets} wagmiInitialState={wagmiInitialState}>
                     <ErrorBoundary>
                         <div className="flex grow flex-col">{children}</div>
-                        <DebugPanel />
+                        {process.env.NEXT_PUBLIC_FEATURE_DEBUG === 'true' && <DebugPanel />}
                     </ErrorBoundary>
                     <Footer />
                 </Providers>
