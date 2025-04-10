@@ -1,5 +1,6 @@
 import { CreateProcessForm } from '@/modules/createDao/components/createProcessForm';
 import { ProposalActionType } from '@/modules/governance/api/governanceService/domain';
+import type { IProposalCreateAction } from '@/modules/governance/dialogs/publishProposalDialog';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
@@ -8,7 +9,6 @@ import { encodeFunctionData } from 'viem';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 import { useCreateProposalFormContext } from '../../../createProposalFormProvider';
 import type { IUpdatePluginMetadataAction, IUpdatePluginMetadataActionProps } from './updatePluginMetadataAction.api';
-import type { IProposalCreateAction } from '@/modules/governance/dialogs/publishProposalDialog';
 
 const setMetadataAbi = {
     type: 'function',

@@ -5,7 +5,7 @@ export const PublishProposalDialog = dynamic(() =>
 );
 export type {
     IProposalCreate,
+    IProposalCreateAction,
     IPublishProposalDialogParams,
     IPublishProposalDialogProps,
-    IProposalCreateAction,
 } from './publishProposalDialog.api';

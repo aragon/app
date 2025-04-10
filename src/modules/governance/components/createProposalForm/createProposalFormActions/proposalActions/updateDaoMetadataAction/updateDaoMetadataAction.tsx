@@ -1,5 +1,6 @@
 import { CreateDaoForm, type ICreateDaoFormMetadataData } from '@/modules/createDao/components/createDaoForm';
 import { ProposalActionType, type IProposalActionUpdateMetadata } from '@/modules/governance/api/governanceService';
+import type { IProposalCreateAction } from '@/modules/governance/dialogs/publishProposalDialog';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { usePinFile } from '@/shared/api/ipfsService/mutations/usePinFile';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -10,7 +11,6 @@ import { useCallback, useEffect } from 'react';
 import { encodeFunctionData } from 'viem';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 import { useCreateProposalFormContext } from '../../../createProposalFormProvider';
-import type { IProposalCreateAction } from '@/modules/governance/dialogs/publishProposalDialog';
 
 export interface IUpdateDaoMetadataAction extends Omit<IProposalActionUpdateMetadata, 'proposedMetadata'> {
     /**
