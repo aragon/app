@@ -8,17 +8,6 @@ import React, { useEffect, useRef, useState } from 'react';
 
 export interface IDebugPanelProps {}
 
-// TODO: Object.groupBy is supported on Node v21, update code to use Object.groupBy and update engines.node version to 22 (APP-3603)
-const groupBy = <TItem extends object>(iterable: TItem[], fn: (item: TItem) => string | number) => {
-    return [...iterable].reduce<Record<string, TItem[]>>((groups, curr) => {
-        const key = fn(curr);
-        const group = groups[key] ?? [];
-        group.push(curr);
-
-        return { ...groups, [key]: group };
-    }, {});
-};
-
 export const DebugPanel: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -27,7 +16,7 @@ export const DebugPanel: React.FC = () => {
 
     const togglePanel = () => setIsOpen((current) => !current);
 
-    const groupedControls = groupBy(controls, (control) => control.group ?? 'Global');
+    const groupedControls = Object.groupBy(controls, (control) => control.group ?? 'Global');
 
     const handleValueChange = (name: string, value: unknown, onChange?: IDebugContextControl['onChange']) => {
         updateValue(name, value);
@@ -76,7 +65,7 @@ export const DebugPanel: React.FC = () => {
                         <div className="flex flex-col gap-2" key={group}>
                             <Heading size="h3">{group}</Heading>
                             <div className="flex flex-col gap-1">
-                                {groupedControls[group].map(({ type, name, label, onChange }) => (
+                                {groupedControls[group]?.map(({ type, name, label, onChange }) => (
                                     <React.Fragment key={name}>
                                         {type === 'boolean' && (
                                             <Switch
