@@ -180,7 +180,7 @@ describe('<TransactionDialogFooter /> component', () => {
             jest.useFakeTimers();
         });
 
-        it('changes the cancel button text to "Proceed anyway" after 8 seconds in the indexing step', () => {
+        it('changes the cancel button text to "Proceed anyway" after 14 seconds in the indexing step', () => {
             const activeStep = {
                 id: TransactionDialogStep.INDEXING,
                 meta: { state: 'pending' },
@@ -193,7 +193,7 @@ describe('<TransactionDialogFooter /> component', () => {
 
             // simulate 8 seconds passing
             act(() => {
-                jest.advanceTimersByTime(8000);
+                jest.advanceTimersByTime(14000);
             });
 
             // Cancel button should now be Proceed anyway
@@ -217,7 +217,7 @@ describe('<TransactionDialogFooter /> component', () => {
             render(createTestComponent({ activeStep, transactionType, indexingFallbackUrl }));
 
             act(() => {
-                jest.advanceTimersByTime(8000);
+                jest.advanceTimersByTime(14000);
             });
 
             const proceedButton = screen.getByRole('link', { name: /transactionDialog.footer.proceedAnyway/ });
