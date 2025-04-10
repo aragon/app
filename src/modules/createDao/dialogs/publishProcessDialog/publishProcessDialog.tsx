@@ -10,6 +10,7 @@ import {
     TransactionDialog,
     type TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
+import type { ITransactionInfo } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
@@ -56,6 +57,12 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const [adminPlugin] = useDaoPlugins({ daoId, subdomain: 'admin' }) ?? [];
+
+    const transactionInfo: ITransactionInfo = {
+        title: t('app.createDao.publishProcessDialog.transactionInfoTitle'),
+        current: 2,
+        total: 2,
+    };
 
     const stepper = useStepper<ITransactionDialogStepMeta, PublishProcessStep | TransactionDialogStep>({
         initialActiveStep: PublishProcessStep.PIN_METADATA,
@@ -112,6 +119,7 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
                 label: t('app.createDao.publishProcessDialog.button.success'),
                 href: `/dao/${daoId}/dashboard`,
             }}
+            transactionInfo={transactionInfo}
             stepper={stepper}
             customSteps={customSteps}
             prepareTransaction={handlePrepareTransaction}
