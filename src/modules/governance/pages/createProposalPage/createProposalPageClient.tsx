@@ -85,6 +85,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
         So we use the addActions flag to determine if we should add actions to the proposal or not. */
         const { actions, addActions } = values;
 
+        // We  need to also send the type to the dialog to properly handle the prepare transaction
         const processedActions = addActions
             ? actions.map((action) => {
                   const transactionRequest = proposalUtils.actionToTransactionRequest(action);
