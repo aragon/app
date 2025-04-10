@@ -9,7 +9,7 @@ import type { IProposalCreate } from './publishProposalDialog.api';
 
 export interface IBuildTransactionParams {
     /**
-     * data for publishing the proposal.
+     * Data for publishing the proposal.
      */
     proposal: IProposalCreate;
     /**
@@ -34,8 +34,8 @@ export interface IPrepareActionsParams {
 }
 
 class PublishProposalDialogUtils {
-    prepareMetadata = (values: IProposalCreate) => {
-        const { title, summary, body: description, resources } = values;
+    prepareMetadata = (proposal: IProposalCreate) => {
+        const { title, summary, body: description, resources } = proposal;
 
         return { title, summary, description, resources };
     };
@@ -51,7 +51,7 @@ class PublishProposalDialogUtils {
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
         })!;
 
-        const buildDataParams: IBuildCreateProposalDataParams = { actions, metadata, values: proposal };
+        const buildDataParams: IBuildCreateProposalDataParams = { actions, metadata, proposal };
         const transactionData = buildDataFunction(buildDataParams);
         const transaction = { to: plugin.address as Hex, data: transactionData, value: BigInt(0) };
 

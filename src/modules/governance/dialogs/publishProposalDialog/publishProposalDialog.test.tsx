@@ -64,7 +64,6 @@ describe('<PublishProposalDialog /> component', () => {
             proposal: generateProposalCreate(),
             daoId: 'test',
             plugin: generateDaoPlugin(),
-            prepareActions: {},
             ...params,
         },
     });

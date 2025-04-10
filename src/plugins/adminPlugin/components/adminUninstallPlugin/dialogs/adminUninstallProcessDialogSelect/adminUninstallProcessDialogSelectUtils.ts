@@ -31,7 +31,6 @@ class AdminUninstallProcessDialogSelectUtils {
             proposal: { ...this.buildProposalValues(daoAddress, adminAddress, daoId), actions: [proposalAction] },
             daoId,
             plugin,
-            prepareActions: {},
         };
     }
 

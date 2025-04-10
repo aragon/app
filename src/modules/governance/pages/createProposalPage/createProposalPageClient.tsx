@@ -84,7 +84,16 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
         /* We are always saving actions on the form so that user doesn't lose them if they navigate around the form.
         So we use the addActions flag to determine if we should add actions to the proposal or not. */
         const { actions, addActions } = values;
-        const processedActions = addActions ? actions.map(proposalUtils.actionToTransactionRequest) : [];
+
+        const processedActions = addActions
+            ? actions.map((action) => {
+                  const transactionRequest = proposalUtils.actionToTransactionRequest(action);
+                  return {
+                      ...transactionRequest,
+                      type: action.type,
+                  };
+              })
+            : [];
 
         const params: IPublishProposalDialogParams = {
             proposal: { ...values, actions: processedActions },

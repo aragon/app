@@ -35,7 +35,7 @@ export interface IPublishProposalDialogParams {
     /**
      * Partial map of action-type and prepare-action functions as not all actions require an async data preparation.
      */
-    prepareActions: PrepareProposalActionMap;
+    prepareActions?: PrepareProposalActionMap;
 }
 
 export interface IPublishProposalDialogProps extends IDialogComponentProps<IPublishProposalDialogParams> {}

@@ -19,16 +19,17 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
 
     describe('buildProposalParams', () => {
         it('builds the correct proposal parameters', () => {
-            const pluginAddress: Hex = '0xPluginAddress';
             const daoAddress: Hex = '0xDaoAddress';
             const daoId = 'dao-123';
             const adminAddress: Hex = '0xPluginSetupProcessor';
             const permissionId = 'EXECUTE_PERMISSION';
 
-            const plugin = generateDaoPlugin({
-                address: pluginAddress,
-                subdomain: 'admin',
-            });
+            const plugin = generateDaoPlugin({ address: '0x123', subdomain: 'admin' });
+
+            const to = '0xTo';
+            const data = '0xData';
+
+            buildRevokePermissionTransactionSpy.mockReturnValue({ to, data, value: BigInt(0) });
 
             const result = adminUninstallProcessDialogSelectUtils.buildProposalParams(
                 daoAddress,
@@ -47,7 +48,7 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
             expect(result).toMatchObject({
                 proposal: {
                     ...adminUninstallProcessDialogSelectUtils.prepareProposalMetadata(),
-                    actions: [{ to: '0x123', data: '0xabc', value: BigInt(0) }],
+                    actions: [{ to, data, value: BigInt(0) }],
                 },
                 daoId,
                 plugin,

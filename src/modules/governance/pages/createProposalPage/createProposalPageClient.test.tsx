@@ -67,7 +67,6 @@ describe('<CreateProposalPageClient /> component', () => {
             proposal: { actions: [] },
             daoId,
             plugin: plugins[0].meta,
-            prepareActions: {},
         };
         expect(open).toHaveBeenCalledWith(GovernanceDialog.PUBLISH_PROPOSAL, { params: expectedParams });
     });
