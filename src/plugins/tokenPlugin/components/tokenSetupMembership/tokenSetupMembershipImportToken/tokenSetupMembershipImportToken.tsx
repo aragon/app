@@ -1,12 +1,16 @@
 import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import { useGovernanceToken } from '@/plugins/tokenPlugin/hooks/useGovernanceToken';
 import { useDao } from '@/shared/api/daoService';
-import { type ITransactionStatusStepMeta, TransactionStatus } from '@/shared/components/transactionStatus';
+import {
+    type ITransactionInfo,
+    type ITransactionStatusStepMeta,
+    TransactionStatus,
+} from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
-import { AddressInput, addressUtils, Heading, IconType, Link } from '@aragon/gov-ui-kit';
+import { AddressInput, addressUtils, IconType, Link } from '@aragon/gov-ui-kit';
 import { AlertCard } from '@aragon/gov-ui-kit-original';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -107,6 +111,10 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
     const alertContext = isError ? `notErc20Compatible` : `notGovernanceCompatible`;
     const alertNamespace = `app.plugins.token.tokenSetupMembership.importToken.alert.${alertContext}`;
 
+    const transactionInfo: ITransactionInfo = {
+        title: addressUtils.truncateAddress(importTokenAddress),
+    };
+
     return (
         <>
             <div className="flex flex-col gap-2 md:gap-3">
@@ -122,8 +130,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
                     {...importTokenAddressField}
                 />
                 {isTokenCheckCardVisible && (
-                    <TransactionStatus.Container steps={steps}>
-                        <Heading size="h4">{addressUtils.truncateAddress(importTokenAddress)}</Heading>
+                    <TransactionStatus.Container steps={steps} transactionInfo={transactionInfo}>
                         {steps.map((step) => (
                             <TransactionStatus.Step key={step.id} {...step} />
                         ))}
