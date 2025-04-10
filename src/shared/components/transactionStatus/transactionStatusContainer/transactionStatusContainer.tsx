@@ -13,7 +13,7 @@ export interface ITransactionStatusContainerProps<
      */
     steps: IUseStepperReturn<TMeta, TStepId>['steps'];
     /**
-     * The current step index.
+     * Info about the stepper in the current transaction dialog.
      */
     transactionInfo?: ITransactionInfo;
 }
@@ -31,14 +31,7 @@ export const TransactionStatusContainer = <TMeta extends ITransactionStatusStepM
             )}
             {...otherProps}
         >
-            {transactionInfo != null && (
-                <TransactionStatusInfo
-                    title={transactionInfo.title}
-                    current={transactionInfo.current}
-                    total={transactionInfo.total}
-                    className="mb-1 md:mb-2"
-                />
-            )}
+            {transactionInfo != null && <TransactionStatusInfo {...transactionInfo} className="mb-1 md:mb-2" />}
             {children}
         </ul>
     );

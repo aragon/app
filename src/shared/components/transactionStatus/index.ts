@@ -7,4 +7,5 @@ export const TransactionStatus = {
 };
 
 export * from './transactionStatusContainer';
+export * from './transactionStatusInfo';
 export * from './transactionStatusStep';

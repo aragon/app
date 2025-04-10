@@ -1,8 +1,11 @@
 import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import { useGovernanceToken } from '@/plugins/tokenPlugin/hooks/useGovernanceToken';
 import { useDao } from '@/shared/api/daoService';
-import { type ITransactionStatusStepMeta, TransactionStatus } from '@/shared/components/transactionStatus';
-import type { ITransactionInfo } from '@/shared/components/transactionStatus/transactionStatusInfo';
+import {
+    type ITransactionInfo,
+    type ITransactionStatusStepMeta,
+    TransactionStatus,
+} from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';

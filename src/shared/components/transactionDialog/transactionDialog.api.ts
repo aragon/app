@@ -5,8 +5,7 @@ import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import type { ReactNode } from 'react';
 import type { TransactionReceipt } from 'viem';
-import type { ITransactionStatusStepMeta } from '../transactionStatus';
-import type { ITransactionInfo } from '../transactionStatus/transactionStatusInfo';
+import type { ITransactionInfo, ITransactionStatusStepMeta } from '../transactionStatus';
 
 export interface IBuildTransactionDialogSuccessLinkHref {
     /**

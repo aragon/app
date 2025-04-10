@@ -1597,8 +1597,10 @@
             "errorLabel": "Unable to prepare transaction",
             "label": "Prepare transaction"
           }
-        },
-        "transactionInfo": {
+        }
+      },
+      "transactionStatus": {
+        "info": {
           "current": "Step {{current}}",
           "total": "of {{total}}"
         }

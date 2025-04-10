@@ -27,10 +27,7 @@ export interface ITransactionStatusInfoProps extends ITransactionInfo {
 export const TransactionStatusInfo: React.FC<ITransactionStatusInfoProps> = (props) => {
     const { title, current, total, className } = props;
 
-    invariant(
-        !((current == null) !== (total == null) || (current != null && total != null && current > total)),
-        'TransactionStatusInfo: current and total must be set together, and current must be less than or equal to total.',
-    );
+    invariant((current == null) === (total == null), 'TransactionStatusInfo: current and total must be set together');
 
     const { t } = useTranslations();
 
@@ -43,10 +40,8 @@ export const TransactionStatusInfo: React.FC<ITransactionStatusInfoProps> = (pro
             </Heading>
             {isMultiphase && (
                 <div className="flex flex-row gap-1 text-sm font-normal leading-tight md:text-base">
-                    <span>{t('app.shared.transactionDialog.transactionInfo.current', { current })}</span>
-                    <span className="text-neutral-500">
-                        {t('app.shared.transactionDialog.transactionInfo.total', { total })}
-                    </span>
+                    <span>{t('app.shared.transactionStatus.info.current', { current })}</span>
+                    <span className="text-neutral-500">{t('app.shared.transactionStatus.info.total', { total })}</span>
                 </div>
             )}
         </div>
