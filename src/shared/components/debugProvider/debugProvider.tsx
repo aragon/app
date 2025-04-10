@@ -49,6 +49,18 @@ export const DebugContextProvider: React.FC<IDebugContextProviderProps> = (props
 
 export const useDebugContext = <TValues extends DebugContextValues = DebugContextValues>(): IDebugContext<TValues> => {
     const context = useContext(debugContext);
+    const isTestEnvironment = process.env.JEST_WORKER_ID !== undefined;
+
+    // Do not throw error on Jest environment to avoid adding the debug-provider on unit tests
+    if (isTestEnvironment) {
+        return {
+            values: {} as TValues,
+            registerControl: () => null,
+            unregisterControl: () => null,
+            controls: [],
+            updateValue: () => null,
+        } as IDebugContext<TValues>;
+    }
 
     if (context == null) {
         throw new Error('useDebugContext: hook must be called inside a DebugContextProvider to work properly.');

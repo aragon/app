@@ -32,6 +32,10 @@ export const PluginSingleComponent: React.FC<IPluginSingleComponentProps> = (pro
 
     const LoadedComponent = pluginRegistryUtils.getSlotComponent({ slotId, pluginId });
 
+    if (LoadedComponent == null && Fallback == null) {
+        return null;
+    }
+
     return (
         <div className={classNames({ 'relative rounded border border-primary-400': highlightSlots })}>
             {highlightSlots && (
