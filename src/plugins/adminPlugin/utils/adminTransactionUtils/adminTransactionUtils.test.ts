@@ -15,11 +15,11 @@ describe('adminTransaction utils', () => {
         it('correctly encodes the create-proposal data from the given parameters', () => {
             const metadata = '0xmeta';
             const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x000', value: BigInt(0) }];
-            const values = generateProposalCreate();
+            const proposal = generateProposalCreate();
             const transactionData = '0xdata';
             encodeFunctionDataSpy.mockReturnValueOnce(transactionData);
 
-            const result = adminTransactionUtils.buildCreateProposalData({ metadata, actions, values });
+            const result = adminTransactionUtils.buildCreateProposalData({ metadata, actions, proposal });
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: adminPluginAbi,
                 functionName: 'createProposal',

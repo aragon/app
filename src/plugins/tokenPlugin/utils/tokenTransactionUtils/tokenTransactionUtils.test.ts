@@ -33,11 +33,11 @@ describe('tokenTransaction utils', () => {
         it('correctly encodes the create-proposal data from the given parameters', () => {
             const startDate = 0;
             const endDate = 1728660603;
-            const values = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
+            const proposal = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
             const actions: ITransactionRequest[] = [
                 { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
             ];
-            const params = { metadata: '0xipfs-cid' as const, actions, values };
+            const params = { metadata: '0xipfs-cid' as const, actions, proposal };
             const transactionData = '0xdata';
             parseStartDateSpy.mockReturnValue(startDate);
             parseEndDateSpy.mockReturnValue(endDate);

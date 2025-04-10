@@ -40,11 +40,11 @@ describe('sppTransaction utils', () => {
         it('encodes createProposal data with correct parameters', () => {
             const transactionData = '0xencoded';
             const startDate = 12345;
-            const values = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
+            const proposal = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
             const actions: ITransactionRequest[] = [{ to: '0xAddress', data: '0xdata', value: BigInt(0) }];
             parseStartDateSpy.mockReturnValue(startDate);
 
-            const params = { metadata: '0xmetadata' as Viem.Hex, actions, values };
+            const params = { metadata: '0xmetadata' as Viem.Hex, actions, proposal };
             encodeFunctionDataSpy.mockReturnValue(transactionData);
 
             const result = sppTransactionUtils.buildCreateProposalData(params);

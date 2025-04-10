@@ -31,9 +31,9 @@ describe('multisigTransaction utils', () => {
         it('correctly encodes the create-proposal data from the given parameters', () => {
             const startDate = 0;
             const endDate = 1728660603;
-            const values = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
+            const proposal = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
             const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x0', value: BigInt(0) }];
-            const params = { metadata: '0x' as const, actions: actions, values };
+            const params = { metadata: '0x' as const, actions: actions, proposal };
             parseStartDateSpy.mockReturnValue(startDate);
             parseEndDateSpy.mockReturnValue(endDate);
 
