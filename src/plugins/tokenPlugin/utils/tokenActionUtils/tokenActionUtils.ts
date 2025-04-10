@@ -1,3 +1,4 @@
+import type { IToken } from '@/modules/finance/api/financeService';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { actionComposerUtils } from '@/modules/governance/components/actionComposer/actionComposerUtils';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
@@ -21,7 +22,7 @@ import {
     type ITokenPluginSettings,
 } from '../../types';
 import type { ITokenProposalAction } from '../../types/tokenProposalAction';
-import { tokenSettingsUtils, type IParseTokenSettingsParams } from '../tokenSettingsUtils';
+import { tokenSettingsUtils } from '../tokenSettingsUtils';
 import { defaultMintAction, defaultUpdateSettings } from './tokenActionDefinitions';
 
 export interface IGetTokenActionsProps {
@@ -35,11 +36,19 @@ export interface IGetTokenActionsProps {
     t: TranslationFunction;
 }
 
-export interface INormalizeChangeSettingsParams extends IParseTokenSettingsParams {
+export interface INormalizeChangeSettingsParams {
     /**
      * Action to be normalised.
      */
     action: ITokenActionChangeSettings;
+    /*
+     * Translation function for internationalization.
+     */
+    t: TranslationFunction;
+    /**
+     * Token plugin settings.
+     */
+    token: IToken;
 }
 
 export type IGetTokenActionsResult = IActionComposerPluginData<IDaoPlugin<ITokenPluginSettings>>;
@@ -121,8 +130,13 @@ class TokenActionUtils {
     };
 
     normalizeChangeSettingsAction = (params: INormalizeChangeSettingsParams): IGukProposalActionChangeSettings => {
-        const { action, t, settings } = params;
-        const { type, proposedSettings, ...otherValues } = action;
+        const { action, t, token } = params;
+        const { type, proposedSettings, existingSettings, ...otherValues } = action;
+
+        const settings = {
+            ...existingSettings,
+            token,
+        } as ITokenPluginSettings;
 
         const completeProposedSettings = { ...settings, ...proposedSettings };
 

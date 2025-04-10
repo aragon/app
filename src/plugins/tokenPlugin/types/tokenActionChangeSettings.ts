@@ -12,4 +12,8 @@ export interface ITokenActionChangeSettings
      * The proposed settings to be updated.
      */
     proposedSettings: ITokenPluginSettings;
+    /**
+     * The existing settings before the update.
+     */
+    existingSettings: ITokenPluginSettings;
 }

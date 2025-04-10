@@ -23,7 +23,7 @@ export const useTokenNormalizeActions = (params: IUseTokenNormalizeActionsParams
             const plugin = daoPlugins.find(({ meta }) => addressUtils.isAddressEqual(pluginAddress, meta.address))
                 ?.meta as IDaoPlugin<ITokenPluginSettings>;
 
-            return tokenActionUtils.normalizeChangeSettingsAction({ action, settings: plugin.settings, t });
+            return tokenActionUtils.normalizeChangeSettingsAction({ action, token: plugin.settings.token, t });
         }
 
         return action;
