@@ -70,7 +70,7 @@ describe('publishProposalDialog utils', () => {
             expect(slotFunction).toHaveBeenCalledWith({
                 actions: processedActions,
                 metadata: '0x697066733a2f2f746573742d636964',
-                values: { ...proposal, actions: processedActions },
+                proposal: { ...proposal, actions: processedActions },
             });
 
             expect(transaction.data).toEqual(transactionData);
