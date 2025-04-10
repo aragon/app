@@ -116,7 +116,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
         const proposalMetadata = prepareProcessDialogUtils.preparePublishProcessProposalMetadata();
 
         const params: IPublishProposalDialogParams = {
-            proposal: { ...proposalMetadata, ...values, actions: proposalActions },
+            proposal: { ...proposalMetadata, resources: [], actions: proposalActions },
             daoId,
             plugin: adminPlugin.meta,
         };

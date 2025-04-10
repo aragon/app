@@ -28,7 +28,6 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
 
             const to = '0xTo';
             const data = '0xData';
-
             buildRevokePermissionTransactionSpy.mockReturnValue({ to, data, value: BigInt(0) });
 
             const result = adminUninstallProcessDialogSelectUtils.buildProposalParams(
