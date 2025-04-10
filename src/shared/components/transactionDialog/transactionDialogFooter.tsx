@@ -124,9 +124,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
 
     const isCancelDisabled =
         (stepId === TransactionDialogStep.CONFIRM || stepId === TransactionDialogStep.INDEXING) &&
-        (isSuccessState || isPendingState) &&
-        !showProceedAnyway;
-    const isProceedAnywayDisabled = stepId === TransactionDialogStep.INDEXING && isSuccessState;
+        (isSuccessState || isPendingState);
 
     const customSubmitLabel = stepId != null && state != null ? stepStateSubmitLabel[stepId]?.[state] : undefined;
     const defaultSubmitLabel = isErrorState
@@ -182,7 +180,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
                 label: cancelButtonLabel,
                 onClick: handleCancelClick,
                 href: showProceedAnyway ? getFallbackUrl() : undefined,
-                disabled: showProceedAnyway ? isProceedAnywayDisabled : isCancelDisabled,
+                disabled: showProceedAnyway ? isSuccessState : isCancelDisabled,
             }}
         />
     );
