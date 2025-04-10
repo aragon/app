@@ -6,9 +6,9 @@ export type Translations = Awaited<ReturnType<(typeof translations)['en']>>;
 
 class TranslationsUtils {
     t =
-        (translations: Translations, showKey?: boolean) =>
+        (translations: Translations, debug?: boolean) =>
         (key: string, options: ITFuncOptions = {}) => {
-            if (showKey) {
+            if (debug) {
                 return key;
             }
 
