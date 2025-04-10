@@ -1,4 +1,6 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
+import { SppPluginDialog } from '@/plugins/sppPlugin/constants/pluginDialogs';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
@@ -13,10 +15,9 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import { useState } from 'react';
+import type { IAdvanceStageDialogParams } from '../../dialogs/advanceStageDialog';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
-import { AdvanceStageDialog } from '../advanceStageDialog';
 
 export interface ISppStageStatusProps {
     /**
@@ -37,14 +38,18 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const { proposal, daoId, stage } = props;
 
     const { t } = useTranslations();
+    const { open } = useDialogContext();
 
     const { id: chainId } = networkDefinitions[proposal.network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
-    const [isAdvanceDialogOpen, setIsAdvanceDialogOpen] = useState(false);
+    const openAdvanceStageDialog = () => {
+        const params: IAdvanceStageDialogParams = { daoId, proposal };
+        open(SppPluginDialog.ADVANCE_STAGE, { params });
+    };
 
     const { check: promptWalletConnection, result: isConnected } = useConnectedWalletGuard({
-        onSuccess: () => setIsAdvanceDialogOpen(true),
+        onSuccess: openAdvanceStageDialog,
     });
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
@@ -89,7 +94,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
           }
         : {
               label: 'advance',
-              onClick: () => (isConnected ? setIsAdvanceDialogOpen(true) : promptWalletConnection()),
+              onClick: () => (isConnected ? openAdvanceStageDialog() : promptWalletConnection()),
               variant: 'primary' as const,
               disabled: displayMinAdvanceTime,
           };
@@ -132,13 +137,6 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
                     <span className="text-neutral-500">{advanceTimeInfo.info}</span>
                 </div>
             )}
-
-            <AdvanceStageDialog
-                open={isAdvanceDialogOpen}
-                onOpenChange={setIsAdvanceDialogOpen}
-                proposal={proposal}
-                daoId={daoId}
-            />
         </div>
     );
 };

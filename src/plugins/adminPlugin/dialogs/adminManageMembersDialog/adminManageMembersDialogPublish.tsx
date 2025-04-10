@@ -38,13 +38,13 @@ export interface IAdminManageMembersDialogPublishProps {
      */
     daoId: string;
     /**
-     * Callback to close the dialog.
+     * Callback to notify successful update.
      */
-    onClose: () => void;
+    onSuccess: () => void;
 }
 
 export const AdminManageMembersDialogPublish: React.FC<IAdminManageMembersDialogPublishProps> = (props) => {
-    const { currentAdmins, updatedAdmins, pluginAddress, daoId, onClose } = props;
+    const { currentAdmins, updatedAdmins, pluginAddress, daoId, onSuccess } = props;
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -96,10 +96,10 @@ export const AdminManageMembersDialogPublish: React.FC<IAdminManageMembersDialog
                 order: 0,
                 meta: {
                     label: t(
-                        `app.plugins.admin.adminManageMembers.dialog.publish.step.${AdminManageMembersDialogPublishStep.PIN_METADATA}.label`,
+                        `app.plugins.admin.adminManageMembersDialog.publish.step.${AdminManageMembersDialogPublishStep.PIN_METADATA}.label`,
                     ),
                     errorLabel: t(
-                        `app.plugins.admin.adminManageMembers.dialog.publish.step.${AdminManageMembersDialogPublishStep.PIN_METADATA}.errorLabel`,
+                        `app.plugins.admin.adminManageMembersDialog.publish.step.${AdminManageMembersDialogPublishStep.PIN_METADATA}.errorLabel`,
                     ),
                     state: status,
                     action: handlePinJson,
@@ -112,17 +112,16 @@ export const AdminManageMembersDialogPublish: React.FC<IAdminManageMembersDialog
 
     const onSuccessClick = () => {
         router.refresh();
-        onClose();
+        onSuccess();
     };
 
     return (
         <TransactionDialog
-            title={t('app.plugins.admin.adminManageMembers.dialog.publish.title')}
-            description={t('app.plugins.admin.adminManageMembers.dialog.publish.description')}
-            submitLabel={t('app.plugins.admin.adminManageMembers.dialog.publish.button.submit')}
-            onCancelClick={onClose}
+            title={t('app.plugins.admin.adminManageMembersDialog.publish.title')}
+            description={t('app.plugins.admin.adminManageMembersDialog.publish.description')}
+            submitLabel={t('app.plugins.admin.adminManageMembersDialog.publish.button.submit')}
             successLink={{
-                label: t('app.plugins.admin.adminManageMembers.dialog.publish.button.success'),
+                label: t('app.plugins.admin.adminManageMembersDialog.publish.button.success'),
                 onClick: onSuccessClick,
             }}
             stepper={stepper}
