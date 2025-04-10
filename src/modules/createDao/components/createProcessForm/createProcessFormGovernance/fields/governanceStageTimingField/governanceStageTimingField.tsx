@@ -1,12 +1,15 @@
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
 import { Button, DefinitionList, InputContainer, Tag } from '@aragon/gov-ui-kit';
 import { Duration } from 'luxon';
-import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { type ICreateProcessFormStageTiming, ProcessStageType } from '../../../createProcessFormDefinitions';
-import { GovernanceStageTimingFieldDialog } from './governanceStageTimingFieldDialog';
+import type {
+    ISetupStageTimingDialogParams,
+    ISetupStageTimingForm,
+} from '../../../../../dialogs/setupStageTimingDialog';
+import { ProcessStageType } from '../../../createProcessFormDefinitions';
 
 export interface IGovernanceStageTimingFieldProps {
     /**
@@ -24,32 +27,28 @@ export const GovernanceStageTimingField: React.FC<IGovernanceStageTimingFieldPro
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
-
-    const [isTimingDialogOpen, setIsTimingDialogOpen] = useState(false);
+    const { open } = useDialogContext();
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
 
-    const { value: votingPeriod } = useFormField<ICreateProcessFormStageTiming, 'votingPeriod'>('votingPeriod', {
+    const { value: votingPeriod } = useFormField<ISetupStageTimingForm, 'votingPeriod'>('votingPeriod', {
         fieldPrefix,
     });
 
-    const { value: earlyStageAdvance } = useFormField<ICreateProcessFormStageTiming, 'earlyStageAdvance'>(
-        'earlyStageAdvance',
-        { fieldPrefix },
-    );
+    const { value: earlyStageAdvance } = useFormField<ISetupStageTimingForm, 'earlyStageAdvance'>('earlyStageAdvance', {
+        fieldPrefix,
+    });
 
-    const { value: stageExpiration } = useFormField<ICreateProcessFormStageTiming, 'stageExpiration'>(
-        'stageExpiration',
-        { fieldPrefix },
-    );
+    const { value: stageExpiration } = useFormField<ISetupStageTimingForm, 'stageExpiration'>('stageExpiration', {
+        fieldPrefix,
+    });
 
-    const handleDialogSubmit = (values: ICreateProcessFormStageTiming) => {
+    const handleDialogSubmit = (values: ISetupStageTimingForm) => {
         const { votingPeriod, earlyStageAdvance, stageExpiration } = values;
         setValue(`${fieldPrefix}.votingPeriod`, votingPeriod);
         setValue(`${fieldPrefix}.earlyStageAdvance`, earlyStageAdvance);
         setValue(`${fieldPrefix}.stageExpiration`, stageExpiration);
-        setIsTimingDialogOpen(false);
     };
 
     const formatDuration = (duration: IDateDuration): string => {
@@ -71,6 +70,15 @@ export const GovernanceStageTimingField: React.FC<IGovernanceStageTimingFieldPro
 
     const expirationTagValue = stageExpiration != null ? 'yes' : 'no';
     const expirationTagLabel = t(`app.createDao.createProcessForm.governance.stageTimingField.${expirationTagValue}`);
+
+    const handleTimingDialogOpen = () => {
+        const params: ISetupStageTimingDialogParams = {
+            onSubmit: handleDialogSubmit,
+            stageType,
+            defaultValues: { votingPeriod, earlyStageAdvance, stageExpiration },
+        };
+        open('SETUP_STAGE_TIMING', { params });
+    };
 
     return (
         <InputContainer
@@ -107,17 +115,9 @@ export const GovernanceStageTimingField: React.FC<IGovernanceStageTimingFieldPro
                     </DefinitionList.Item>
                 )}
             </DefinitionList.Container>
-            <Button onClick={() => setIsTimingDialogOpen(true)} variant="tertiary" size="md">
+            <Button onClick={handleTimingDialogOpen} variant="tertiary" size="md">
                 {t('app.createDao.createProcessForm.governance.stageTimingField.edit')}
             </Button>
-            {isTimingDialogOpen && (
-                <GovernanceStageTimingFieldDialog
-                    onClose={() => setIsTimingDialogOpen(false)}
-                    onSubmit={handleDialogSubmit}
-                    stageType={stageType}
-                    defaultValues={{ votingPeriod, earlyStageAdvance, stageExpiration }}
-                />
-            )}
         </InputContainer>
     );
 };

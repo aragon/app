@@ -1,9 +1,11 @@
+import { AdminPluginDialog } from '@/plugins/adminPlugin/constants/pluginDialogs';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { Button } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import { AdminUninstallProcessDialogCreate } from './dialogs/adminUninstallProcessDialogCreate';
+import type { IAdminUninstallProcessDialogCreateParams } from '../../dialogs/adminUninstallProcessDialogCreate';
 import { AdminUninstallProcessDialogSelect } from './dialogs/adminUninstallProcessDialogSelect';
 
 export interface IAdminUninstallPluginProps {
@@ -15,19 +17,30 @@ export interface IAdminUninstallPluginProps {
 
 export const AdminUninstallPlugin: React.FC<IAdminUninstallPluginProps> = (props) => {
     const { daoId } = props;
-    const [openDialog, setOpenDialog] = useState<'create' | 'select' | null>(null);
+
+    const [isSelectDialogOpen, setIsSelectDialogOpen] = useState(false);
 
     const { t } = useTranslations();
+    const { open } = useDialogContext();
 
     const daoPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
     const adminPlugin = daoPlugins.find((plugin) => plugin.id === 'admin')!.meta;
 
     const handleOpenDialog = () => {
-        setOpenDialog(daoPlugins.length > 1 ? 'select' : 'create');
+        if (daoPlugins.length > 1) {
+            setIsSelectDialogOpen(true);
+            return;
+        }
+
+        const params: IAdminUninstallProcessDialogCreateParams = {
+            daoId,
+            adminPlugin,
+        };
+        open(AdminPluginDialog.UNINSTALL_PROCESS_CREATE, { params });
     };
 
-    const handleCloseDialog = () => {
-        setOpenDialog(null);
+    const handleCloseSelectDialog = () => {
+        setIsSelectDialogOpen(false);
     };
 
     return (
@@ -35,17 +48,11 @@ export const AdminUninstallPlugin: React.FC<IAdminUninstallPluginProps> = (props
             <Button size="md" variant="critical" onClick={() => handleOpenDialog()}>
                 {t('app.plugins.admin.adminUninstallPlugin.label')}
             </Button>
-            <AdminUninstallProcessDialogCreate
-                daoId={daoId}
-                adminPlugin={adminPlugin}
-                open={openDialog === 'create'}
-                onClose={handleCloseDialog}
-            />
             <AdminUninstallProcessDialogSelect
                 daoId={daoId}
                 adminPlugin={adminPlugin}
-                open={openDialog === 'select'}
-                onClose={handleCloseDialog}
+                open={isSelectDialogOpen}
+                onClose={handleCloseSelectDialog}
             />
         </>
     );

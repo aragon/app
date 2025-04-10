@@ -43,6 +43,7 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
             <WizardPage.Container
                 finalStep={t('app.createDao.createProcessPage.finalStep')}
                 submitLabel={t('app.createDao.createProcessPage.submitLabel')}
+                submitHelpText={t('app.createDao.createProcessPage.submitHelpText')}
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
                 defaultValues={{ stages: [createProcessFormUtils.buildDefaultStage()], bodies: [] }}
