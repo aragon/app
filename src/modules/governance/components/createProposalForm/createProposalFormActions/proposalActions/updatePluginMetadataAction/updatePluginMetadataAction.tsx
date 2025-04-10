@@ -1,5 +1,5 @@
 import { CreateProcessForm } from '@/modules/createDao/components/createProcessForm';
-import { ProposalActionType, type IProposalAction } from '@/modules/governance/api/governanceService/domain';
+import { ProposalActionType } from '@/modules/governance/api/governanceService/domain';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
@@ -8,6 +8,7 @@ import { encodeFunctionData } from 'viem';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 import { useCreateProposalFormContext } from '../../../createProposalFormProvider';
 import type { IUpdatePluginMetadataAction, IUpdatePluginMetadataActionProps } from './updatePluginMetadataAction.api';
+import type { IProposalCreateAction } from '@/modules/governance/dialogs/publishProposalDialog';
 
 const setMetadataAbi = {
     type: 'function',
@@ -32,8 +33,8 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
     const displayProcessKey = isProcess && !isSubPlugin;
 
     const prepareAction = useCallback(
-        async (action: IProposalAction) => {
-            const { proposedMetadata, existingMetadata } = action as IUpdatePluginMetadataAction;
+        async (action: IProposalCreateAction) => {
+            const { proposedMetadata, existingMetadata } = action as unknown as IUpdatePluginMetadataAction;
             const { name, description, resources, processKey } = proposedMetadata;
 
             const pluginMetadata = { ...existingMetadata, name, description, links: resources };

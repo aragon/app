@@ -24,9 +24,8 @@ class AdminUninstallProcessDialogSelectUtils {
         plugin: IDaoPlugin,
         daoId: string,
     ): IPublishProposalDialogParams {
-        const action = this.buildRevokeAction(daoAddress, adminAddress);
         return {
-            proposal: { ...this.buildProposalValues(daoAddress, adminAddress), actions: [action] },
+            proposal: this.buildProposalValues(daoAddress, adminAddress),
             daoId,
             plugin,
         };
@@ -37,7 +36,6 @@ class AdminUninstallProcessDialogSelectUtils {
 
         return {
             ...this.prepareProposalMetadata(),
-            body: '',
             resources: [],
             actions: [revokeAction],
             startTimeMode: 'now',
@@ -45,14 +43,12 @@ class AdminUninstallProcessDialogSelectUtils {
     }
 
     private buildRevokeAction(daoAddress: Hex, adminAddress: Hex): ITransactionRequest {
-        const rawAction = permissionTransactionUtils.buildRevokePermissionTransaction({
+        return permissionTransactionUtils.buildRevokePermissionTransaction({
             where: daoAddress,
             who: adminAddress,
             what: this.permissionIds.EXECUTE_PERMISSION,
             to: daoAddress,
         });
-
-        return rawAction;
     }
 }
 

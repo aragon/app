@@ -7,4 +7,5 @@ export type {
     IProposalCreate,
     IPublishProposalDialogParams,
     IPublishProposalDialogProps,
+    IProposalCreateAction,
 } from './publishProposalDialog.api';
