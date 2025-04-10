@@ -1,5 +1,5 @@
 import { useMemberList } from '@/modules/governance/api/governanceService';
-import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
+import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
@@ -99,7 +99,7 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
             plugin: adminPlugin.meta,
             prepareActions: {},
         };
-        open(GovernanceDialog.PUBLISH_PROPOSAL, { params });
+        open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
     };
 
     // Re-initialise the initial members on the form after fetching the members list
