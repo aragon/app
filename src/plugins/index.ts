@@ -14,7 +14,7 @@ export const initialisePlugins = () => {
     initialiseAdminPlugin();
 };
 
-export const pluginDialogs = {
+export const pluginDialogsDefinitions = {
     ...tokenPluginDialogsDefinitions,
     ...adminPluginDialogsDefinitions,
     ...multisigPluginDialogsDefinitions,

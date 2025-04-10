@@ -2,7 +2,7 @@ import { applicationDialogsDefinitions } from '@/modules/application/constants/a
 import { createDaoDialogsDefinitions } from '@/modules/createDao/constants/createDaoDialogsDefinitions';
 import { financeDialogsDefinitions } from '@/modules/finance/constants/financeDialogsDefinitions';
 import { governanceDialogsDefinitions } from '@/modules/governance/constants/governanceDialogsDefinitions';
-import { pluginDialogs } from '@/plugins';
+import { pluginDialogsDefinitions } from '@/plugins';
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 
 export const providersDialogs: Record<string, IDialogComponentDefinitions> = {
@@ -10,5 +10,5 @@ export const providersDialogs: Record<string, IDialogComponentDefinitions> = {
     ...governanceDialogsDefinitions,
     ...financeDialogsDefinitions,
     ...createDaoDialogsDefinitions,
-    ...pluginDialogs,
+    ...pluginDialogsDefinitions,
 };
