@@ -61,7 +61,7 @@ class AdminManageMembersDialogUtils {
         const transactionData = adminTransactionUtils.buildCreateProposalData({
             actions,
             metadata,
-            values: {} as IBuildCreateProposalDataParams['values'],
+            proposal: {} as IBuildCreateProposalDataParams['proposal'],
         });
 
         const transaction = { to: pluginAddress, data: transactionData, value: BigInt(0) };
