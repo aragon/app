@@ -2,17 +2,17 @@ import { useMemberList } from '@/modules/governance/api/governanceService';
 import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
 import { useDao } from '@/shared/api/daoService';
-import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { AddressesInput } from '@/shared/components/forms/addressesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { addressUtils, Dialog, invariant, type ICompositeAddress, type IDialogRootProps } from '@aragon/gov-ui-kit';
+import { addressUtils, Dialog, invariant, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import type { Hex } from 'viem';
 import { adminManageMembersDialogUtils } from './adminManageMembersDialogUtils';
 
-export interface IAdminManageMembersDialogProps extends IDialogRootProps {
+export interface IAdminManageMembersDialogParams {
     /**
      * ID of the DAO.
      */
@@ -22,6 +22,7 @@ export interface IAdminManageMembersDialogProps extends IDialogRootProps {
      */
     pluginAddress: string;
 }
+export interface IAdminManageMembersDialogProps extends IDialogComponentProps<IAdminManageMembersDialogParams> {}
 
 export interface IManageMembersFormData {
     /**
@@ -33,11 +34,14 @@ export interface IManageMembersFormData {
 const formId = 'manageAdminsForm';
 
 export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> = (props) => {
-    const { onOpenChange, daoId, pluginAddress, ...otherProps } = props;
+    const { location } = props;
+    invariant(location.params != null, 'AdminManageMembersDialog: required parameters must be set.');
+
+    const { daoId, pluginAddress } = location.params;
 
     const { t } = useTranslations();
 
-    const { open } = useDialogContext();
+    const { open, close } = useDialogContext();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     invariant(dao != null, 'ManageAdminsDialogPublish: DAO data must be set.');
@@ -79,7 +83,6 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
     }, [watchMembersField, currentAdmins]);
 
     const handleSubmitAddresses = (data: IManageMembersFormData) => {
-        onOpenChange?.(false);
         const proposalMetadata = adminManageMembersDialogUtils.prepareProposalMetadata();
         const actionsParams = {
             currentAdmins,
@@ -99,45 +102,39 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
         open(GovernanceDialog.PUBLISH_PROPOSAL, { params });
     };
 
+    // Re-initialise the initial members on the form after fetching the members list
     useEffect(() => {
-        if (initialMembers.length) {
-            reset({ members: initialMembers });
-        }
+        reset({ members: initialMembers });
     }, [initialMembers, reset]);
 
     return (
-        <Dialog.Root onOpenChange={onOpenChange} {...otherProps}>
-            <FormProvider {...formMethods}>
-                <Dialog.Header
-                    onClose={() => onOpenChange?.(false)}
-                    title={t('app.plugins.admin.adminManageMembers.dialog.title')}
-                />
-                <Dialog.Content description={t('app.plugins.admin.adminManageMembers.dialog.description')}>
-                    <form
-                        className="flex w-full flex-col gap-3 pb-6 md:gap-2"
-                        onSubmit={handleSubmit(handleSubmitAddresses)}
-                        id={formId}
-                    >
-                        <AddressesInput.Container name="members" allowEmptyList={true}>
-                            {watchMembersField.map((field, index) => (
-                                <AddressesInput.Item key={index} index={index} />
-                            ))}
-                        </AddressesInput.Container>
-                    </form>
-                </Dialog.Content>
-                <Dialog.Footer
-                    primaryAction={{
-                        label: t('app.plugins.admin.adminManageMembers.dialog.action.update'),
-                        type: 'submit',
-                        form: formId,
-                        disabled: !haveMembersChanged,
-                    }}
-                    secondaryAction={{
-                        label: t('app.plugins.admin.adminManageMembers.dialog.action.cancel'),
-                        onClick: () => onOpenChange?.(false),
-                    }}
-                />
-            </FormProvider>
-        </Dialog.Root>
+        <FormProvider {...formMethods}>
+            <Dialog.Header onClose={close} title={t('app.plugins.admin.adminManageMembers.dialog.title')} />
+            <Dialog.Content description={t('app.plugins.admin.adminManageMembers.dialog.description')}>
+                <form
+                    className="flex w-full flex-col gap-3 pb-6 md:gap-2"
+                    onSubmit={handleSubmit(handleSubmitAddresses)}
+                    id={formId}
+                >
+                    <AddressesInput.Container name="members" allowEmptyList={true}>
+                        {watchMembersField.map((field, index) => (
+                            <AddressesInput.Item key={index} index={index} />
+                        ))}
+                    </AddressesInput.Container>
+                </form>
+            </Dialog.Content>
+            <Dialog.Footer
+                primaryAction={{
+                    label: t('app.plugins.admin.adminManageMembers.dialog.action.update'),
+                    type: 'submit',
+                    form: formId,
+                    disabled: !haveMembersChanged,
+                }}
+                secondaryAction={{
+                    label: t('app.plugins.admin.adminManageMembers.dialog.action.cancel'),
+                    onClick: () => close(),
+                }}
+            />
+        </FormProvider>
     );
 };

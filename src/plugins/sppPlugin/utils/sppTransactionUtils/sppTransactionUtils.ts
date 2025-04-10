@@ -1,9 +1,9 @@
 import {
     type ICreateProcessFormData,
-    type ICreateProcessFormStageTiming,
     ProcessStageType,
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
+import type { ISetupStageTimingForm } from '@/modules/createDao/dialogs/setupStageTimingDialog';
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
@@ -185,7 +185,7 @@ class SppTransactionUtils {
         return { approvalThreshold, vetoThreshold };
     };
 
-    private processStageTiming = (timing: ICreateProcessFormStageTiming) => {
+    private processStageTiming = (timing: ISetupStageTimingForm) => {
         const { votingPeriod, stageExpiration, earlyStageAdvance } = timing;
 
         const voteDuration = BigInt(dateUtils.durationToSeconds(votingPeriod));

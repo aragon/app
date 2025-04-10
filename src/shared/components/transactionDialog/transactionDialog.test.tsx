@@ -1,5 +1,6 @@
 import { Network } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
+import { DialogProvider } from '@/shared/components/dialogProvider/dialogProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateReactQueryResultError, generateStepperResult } from '@/shared/testUtils';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
@@ -62,9 +63,11 @@ describe('<TransactionDialog /> component', () => {
 
         return (
             <GukModulesProvider>
-                <Dialog.Root open={true}>
-                    <TransactionDialog {...completeProps} />
-                </Dialog.Root>
+                <DialogProvider>
+                    <Dialog.Root open={true}>
+                        <TransactionDialog {...completeProps} />
+                    </Dialog.Root>
+                </DialogProvider>
             </GukModulesProvider>
         );
     };
