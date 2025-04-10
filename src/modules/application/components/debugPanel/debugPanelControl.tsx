@@ -1,5 +1,3 @@
-'use client';
-
 import { useDebugContext, type IDebugContextControl } from '@/shared/components/debugProvider';
 import { InputText, Switch } from '@aragon/gov-ui-kit';
 

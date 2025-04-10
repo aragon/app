@@ -59,11 +59,7 @@ class PublishDaoDialogUtils {
             args: [daoSettings, pluginSettings],
         });
 
-        const transaction = {
-            to: daoFactory,
-            data: transactionData,
-            value: BigInt(0),
-        };
+        const transaction = { to: daoFactory, data: transactionData, value: BigInt(0) };
 
         return Promise.resolve(transaction);
     };
