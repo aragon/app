@@ -1,10 +1,7 @@
 import type { Network } from '@/shared/api/daoService';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
-import {
-    TransactionStatus,
-    type ITransactionInfo,
-    type ITransactionStatusStepMeta,
-} from '@/shared/components/transactionStatus';
+import { TransactionStatus, type ITransactionStatusStepMeta } from '@/shared/components/transactionStatus';
+import type { ITransactionInfo } from '@/shared/components/transactionStatus/transactionStatusInfo';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';

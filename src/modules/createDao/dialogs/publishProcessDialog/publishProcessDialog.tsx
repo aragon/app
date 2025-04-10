@@ -10,7 +10,7 @@ import {
     TransactionDialog,
     type TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
-import { ITransactionInfo } from '@/shared/components/transactionStatus/transactionStatusInfo';
+import type { ITransactionInfo } from '@/shared/components/transactionStatus/transactionStatusInfo';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
