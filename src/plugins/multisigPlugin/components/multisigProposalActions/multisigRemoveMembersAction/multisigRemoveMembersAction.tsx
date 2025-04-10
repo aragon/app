@@ -9,7 +9,7 @@ import { addressUtils, type IProposalActionComponentProps } from '@aragon/gov-ui
 import { useEffect, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
-import { MultisigPluginDialog } from '../../../constants/multisigPluginDialogId';
+import { MultisigPluginDialogId } from '../../../constants/multisigPluginDialogId';
 import type { IMultisigSetupMembershipForm } from '../../multisigSetupMembership';
 import { MultisigSetupMembership } from '../../multisigSetupMembership';
 
@@ -57,7 +57,7 @@ export const MultisigRemoveMembersAction: React.FC<IMultisigRemoveMembersActionP
             pluginAddress: action.to,
             onMemberClick: handleMemberClick,
         };
-        open(MultisigPluginDialog.REMOVE_MEMBERS, { params });
+        open(MultisigPluginDialogId.REMOVE_MEMBERS, { params });
     };
 
     useEffect(() => {

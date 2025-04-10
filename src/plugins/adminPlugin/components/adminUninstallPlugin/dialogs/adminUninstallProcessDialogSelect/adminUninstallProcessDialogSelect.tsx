@@ -1,4 +1,4 @@
-import { GovernanceDialog } from '@/modules/governance/constants/governanceDialogId';
+import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
@@ -44,7 +44,7 @@ export const AdminUninstallProcessDialogSelect: React.FC<IAdminUninstallProcessD
             selectedPlugin.address as Hex,
             daoId,
         );
-        open(GovernanceDialog.PUBLISH_PROPOSAL, { params });
+        open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
     };
 
     const handlePluginSelected = (plugin: IDaoPlugin) => {
@@ -58,7 +58,7 @@ export const AdminUninstallProcessDialogSelect: React.FC<IAdminUninstallProcessD
             excludePluginIds: ['admin'],
             onPluginSelected: handlePluginSelected,
         };
-        open(GovernanceDialog.SELECT_PLUGIN, { params });
+        open(GovernanceDialogId.SELECT_PLUGIN, { params });
         onClose();
     };
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { ApplicationDialog } from '@/modules/application/constants/applicationDialogId';
+import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -40,7 +40,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const handleCopyClick = () => clipboardUtils.copy(dao.address);
 
     const handleWalletClick = () => {
-        const dialog = isConnected ? ApplicationDialog.USER : ApplicationDialog.CONNECT_WALLET;
+        const dialog = isConnected ? ApplicationDialogId.USER : ApplicationDialogId.CONNECT_WALLET;
         open(dialog);
     };
 

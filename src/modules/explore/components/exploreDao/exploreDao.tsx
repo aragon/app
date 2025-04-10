@@ -1,6 +1,6 @@
 'use client';
 
-import { CreateDaoDialog } from '@/modules/createDao/constants/createDaoDialogId';
+import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
@@ -56,7 +56,7 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
                 <Button
                     variant="primary"
                     size="md"
-                    onClick={() => open(CreateDaoDialog.CREATE_DAO_DETAILS)}
+                    onClick={() => open(CreateDaoDialogId.CREATE_DAO_DETAILS)}
                     className="shrink-0"
                 >
                     {t('app.explore.exploreDao.createDao')}

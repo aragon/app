@@ -1,4 +1,4 @@
-import { GovernanceDialog } from '@/modules/governance/constants/governanceDialogId';
+import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
@@ -42,7 +42,7 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
     const openTransactionDialog = () => {
         const vote = { label: 'approve' as const };
         const params: IVoteDialogParams = { daoId, proposal, vote, isVeto, plugin };
-        open(GovernanceDialog.VOTE, { params });
+        open(GovernanceDialogId.VOTE, { params });
     };
 
     const voteLabel = voted ? (isVeto ? 'vetoed' : 'approved') : isVeto ? 'veto' : 'approve';

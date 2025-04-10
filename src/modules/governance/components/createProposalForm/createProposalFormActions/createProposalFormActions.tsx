@@ -1,6 +1,6 @@
 import { type IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
 import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
-import { GovernanceDialog } from '@/modules/governance/constants/governanceDialogId';
+import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { IVerifySmartContractDialogParams } from '@/modules/governance/dialogs/verifySmartContractDialog';
 import type { IWalletConnectActionDialogParams } from '@/modules/governance/dialogs/walletConnectActionDialog';
@@ -95,7 +95,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             onSubmit: handleAbiSubmit,
             initialValue,
         };
-        open(GovernanceDialog.VERIFY_SMART_CONTRACT, { params });
+        open(GovernanceDialogId.VERIFY_SMART_CONTRACT, { params });
     };
 
     const handleAddCustomAction = () => {
@@ -117,7 +117,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             daoAddress: dao!.address,
             daoNetwork: dao!.network,
         };
-        open(GovernanceDialog.WALLET_CONNECT_ACTION, { params });
+        open(GovernanceDialogId.WALLET_CONNECT_ACTION, { params });
     };
 
     const handleItemSelected = (action: IActionComposerItem, inputValue: string) => {

@@ -14,7 +14,7 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import { SppPluginDialog } from '../../constants/sppPluginDialogId';
+import { SppPluginDialogId } from '../../constants/sppPluginDialogId';
 import type { IAdvanceStageDialogParams } from '../../dialogs/advanceStageDialog';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
@@ -45,7 +45,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const openAdvanceStageDialog = () => {
         const params: IAdvanceStageDialogParams = { daoId, proposal };
-        open(SppPluginDialog.ADVANCE_STAGE, { params });
+        open(SppPluginDialogId.ADVANCE_STAGE, { params });
     };
 
     const { check: promptWalletConnection, result: isConnected } = useConnectedWalletGuard({

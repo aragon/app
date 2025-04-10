@@ -1,4 +1,4 @@
-import { AdminPluginDialog } from '@/plugins/adminPlugin/constants/adminPluginDialogId';
+import { AdminPluginDialogId } from '@/plugins/adminPlugin/constants/adminPluginDialogId';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
@@ -36,7 +36,7 @@ export const AdminUninstallPlugin: React.FC<IAdminUninstallPluginProps> = (props
             daoId,
             adminPlugin,
         };
-        open(AdminPluginDialog.UNINSTALL_PROCESS_CREATE, { params });
+        open(AdminPluginDialogId.UNINSTALL_PROCESS_CREATE, { params });
     };
 
     const handleCloseSelectDialog = () => {

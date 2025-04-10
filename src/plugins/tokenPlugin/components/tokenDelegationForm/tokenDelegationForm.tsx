@@ -15,7 +15,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAccount } from 'wagmi';
-import { TokenPluginDialog } from '../../constants/tokenPluginDialogId';
+import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
 import type { ITokenDelegationDialogParams } from '../../dialogs/tokenDelegationDialog';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
 
@@ -110,7 +110,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
             delegate,
             network: dao!.network,
         };
-        open(TokenPluginDialog.DELEGATE, { params });
+        open(TokenPluginDialogId.DELEGATE, { params });
     };
 
     // Update form initial data on user address / backend data update

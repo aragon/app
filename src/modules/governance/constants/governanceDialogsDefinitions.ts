@@ -6,17 +6,17 @@ import { SelectPluginDialog } from '../dialogs/selectPluginDialog';
 import { VerifySmartContractDialog } from '../dialogs/verifySmartContractDialog';
 import { VoteDialog } from '../dialogs/voteDialog';
 import { WalletConnectActionDialog } from '../dialogs/walletConnectActionDialog';
-import { GovernanceDialog } from './governanceDialogId';
+import { GovernanceDialogId } from './governanceDialogId';
 
-export const governanceDialogs: Record<GovernanceDialog, IDialogComponentDefinitions> = {
-    [GovernanceDialog.PUBLISH_PROPOSAL]: { Component: PublishProposalDialog },
-    [GovernanceDialog.EXECUTE]: { Component: ExecuteDialog },
-    [GovernanceDialog.VOTE]: { Component: VoteDialog },
-    [GovernanceDialog.SELECT_PLUGIN]: { Component: SelectPluginDialog },
-    [GovernanceDialog.VERIFY_SMART_CONTRACT]: { Component: VerifySmartContractDialog, useFocusTrap: false },
-    [GovernanceDialog.PERMISSION_CHECK]: {
+export const governanceDialogsDefinitions: Record<GovernanceDialogId, IDialogComponentDefinitions> = {
+    [GovernanceDialogId.PUBLISH_PROPOSAL]: { Component: PublishProposalDialog },
+    [GovernanceDialogId.EXECUTE]: { Component: ExecuteDialog },
+    [GovernanceDialogId.VOTE]: { Component: VoteDialog },
+    [GovernanceDialogId.SELECT_PLUGIN]: { Component: SelectPluginDialog },
+    [GovernanceDialogId.VERIFY_SMART_CONTRACT]: { Component: VerifySmartContractDialog, useFocusTrap: false },
+    [GovernanceDialogId.PERMISSION_CHECK]: {
         Component: PermissionCheckDialog,
         hiddenDescription: 'app.governance.permissionCheckDialog.a11y.description',
     },
-    [GovernanceDialog.WALLET_CONNECT_ACTION]: { Component: WalletConnectActionDialog },
+    [GovernanceDialogId.WALLET_CONNECT_ACTION]: { Component: WalletConnectActionDialog },
 };

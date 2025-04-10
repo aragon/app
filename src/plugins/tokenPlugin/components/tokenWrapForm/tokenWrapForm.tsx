@@ -12,7 +12,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { erc20Abi, formatUnits, parseUnits, type Hex } from 'viem';
 import { useAccount, useBalance, useReadContract } from 'wagmi';
-import { TokenPluginDialog } from '../../constants/tokenPluginDialogId';
+import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '../../dialogs/tokenApproveTokensDialog';
 import type { ITokenWrapUnwrapDialogParams } from '../../dialogs/tokenWrapUnwrapDialog';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
@@ -104,10 +104,10 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                 ...dialogProps,
                 onApproveSuccess: () => handleApproveSuccess(dialogProps), // open wrap dialog with the same params!
             };
-            open(TokenPluginDialog.APPROVE_TOKENS, { params });
+            open(TokenPluginDialogId.APPROVE_TOKENS, { params });
         } else {
             const params: ITokenWrapUnwrapDialogParams = { ...dialogProps, action: 'wrap' };
-            open(TokenPluginDialog.WRAP_UNWRAP, { params });
+            open(TokenPluginDialogId.WRAP_UNWRAP, { params });
         }
     };
 
@@ -134,12 +134,12 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
 
     const handleUnwrapToken = () => {
         const params: ITokenWrapUnwrapDialogParams = { ...getDialogProps(wrappedAmount), action: 'unwrap' };
-        open(TokenPluginDialog.WRAP_UNWRAP, { params });
+        open(TokenPluginDialogId.WRAP_UNWRAP, { params });
     };
 
     const handleApproveSuccess = (dialogProps: ReturnType<typeof getDialogProps>) => {
         const params: ITokenWrapUnwrapDialogParams = { ...dialogProps, action: 'wrap' };
-        open(TokenPluginDialog.WRAP_UNWRAP, { params });
+        open(TokenPluginDialogId.WRAP_UNWRAP, { params });
     };
 
     const getDialogProps = (confirmAmount: bigint) => ({

@@ -1,4 +1,4 @@
-export enum AdminPluginDialog {
+export enum AdminPluginDialogId {
     MANAGE_MEMBERS = 'MANAGE_MEMBERS',
     UNINSTALL_PROCESS_CREATE = 'UNINSTALL_PROCESS_CREATE',
 }

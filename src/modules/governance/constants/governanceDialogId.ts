@@ -1,4 +1,4 @@
-export enum GovernanceDialog {
+export enum GovernanceDialogId {
     PUBLISH_PROPOSAL = 'PUBLISH_PROPOSAL',
     VOTE = 'VOTE',
     EXECUTE = 'EXECUTE',

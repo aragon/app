@@ -1,7 +1,7 @@
 import type { ISetupBodyDialogParams, ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useFieldArray, useWatch } from 'react-hook-form';
-import { CreateDaoDialog } from '../../../../../constants/createDaoDialogId';
+import { CreateDaoDialogId } from '../../../../../constants/createDaoDialogId';
 import type { ICreateProcessFormData } from '../../../createProcessFormDefinitions';
 import type { IUseBodiesFieldParams, IUseBodiesFieldReturn } from './useBodiesField.api';
 
@@ -41,7 +41,7 @@ export const useBodiesField = (params: IUseBodiesFieldParams): IUseBodiesFieldRe
             isSubPlugin: isAdvancedGovernance,
             daoId,
         };
-        open(CreateDaoDialog.SETUP_BODY, { params });
+        open(CreateDaoDialogId.SETUP_BODY, { params });
     };
 
     const editBody = (bodyId: string) => {
@@ -52,7 +52,7 @@ export const useBodiesField = (params: IUseBodiesFieldParams): IUseBodiesFieldRe
             isSubPlugin: isAdvancedGovernance,
             daoId,
         };
-        open(CreateDaoDialog.SETUP_BODY, { params });
+        open(CreateDaoDialogId.SETUP_BODY, { params });
     };
 
     const removeBody = (bodyId: string) => {

@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { IGetProposalListParams } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
-import { GovernanceDialog } from '../../constants/governanceDialogId';
+import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { ISelectPluginDialogParams } from '../../dialogs/selectPluginDialog';
 
 export interface IDaoProposalsPageClientProps {
@@ -55,7 +55,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     const openSelectPluginDialog = () => {
         const initialPlugin = selectedPlugin;
         const params: ISelectPluginDialogParams = { daoId, initialPlugin, onPluginSelected: handlePluginSelected };
-        open(GovernanceDialog.SELECT_PLUGIN, { params });
+        open(GovernanceDialogId.SELECT_PLUGIN, { params });
     };
 
     const defaultActionProps = {

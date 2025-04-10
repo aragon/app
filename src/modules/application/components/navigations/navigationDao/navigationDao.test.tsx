@@ -14,7 +14,7 @@ import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
-import { ApplicationDialog } from '../../../constants/applicationDialogId';
+import { ApplicationDialogId } from '../../../constants/applicationDialogId';
 import { NavigationDao, type INavigationDaoProps } from './navigationDao';
 import { navigationDaoLinks } from './navigationDaoLinks';
 
@@ -166,7 +166,7 @@ describe('<NavigationDao /> component', () => {
         const button = screen.getByRole('button', { name: 'connect-mock' });
         expect(button).toBeInTheDocument();
         await userEvent.click(button);
-        expect(open).toHaveBeenCalledWith(ApplicationDialog.CONNECT_WALLET);
+        expect(open).toHaveBeenCalledWith(ApplicationDialogId.CONNECT_WALLET);
     });
 
     it('renders the user avatar on a button opening the user dialog', async () => {
@@ -178,6 +178,6 @@ describe('<NavigationDao /> component', () => {
         const button = screen.getByText(address);
         expect(button).toBeInTheDocument();
         await userEvent.click(button);
-        expect(open).toHaveBeenCalledWith(ApplicationDialog.USER);
+        expect(open).toHaveBeenCalledWith(ApplicationDialogId.USER);
     });
 });

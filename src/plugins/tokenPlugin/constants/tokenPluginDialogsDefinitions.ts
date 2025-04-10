@@ -2,10 +2,10 @@ import type { IDialogComponentDefinitions } from '@/shared/components/dialogProv
 import { TokenApproveTokensDialog } from '../dialogs/tokenApproveTokensDialog';
 import { TokenDelegationDialog } from '../dialogs/tokenDelegationDialog';
 import { TokenWrapUnwrapDialog } from '../dialogs/tokenWrapUnwrapDialog';
-import { TokenPluginDialog } from './tokenPluginDialogId';
+import { TokenPluginDialogId } from './tokenPluginDialogId';
 
-export const tokenPluginDialogs: Record<TokenPluginDialog, IDialogComponentDefinitions> = {
-    [TokenPluginDialog.DELEGATE]: { Component: TokenDelegationDialog },
-    [TokenPluginDialog.APPROVE_TOKENS]: { Component: TokenApproveTokensDialog },
-    [TokenPluginDialog.WRAP_UNWRAP]: { Component: TokenWrapUnwrapDialog },
+export const tokenPluginDialogsDefinitions: Record<TokenPluginDialogId, IDialogComponentDefinitions> = {
+    [TokenPluginDialogId.DELEGATE]: { Component: TokenDelegationDialog },
+    [TokenPluginDialogId.APPROVE_TOKENS]: { Component: TokenApproveTokensDialog },
+    [TokenPluginDialogId.WRAP_UNWRAP]: { Component: TokenWrapUnwrapDialog },
 };

@@ -1,9 +1,9 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { AdvanceStageDialog } from '../dialogs/advanceStageDialog';
-import { SppPluginDialog } from './sppPluginDialogId';
+import { SppPluginDialogId } from './sppPluginDialogId';
 
-export const sppPluginDialogs: Record<SppPluginDialog, IDialogComponentDefinitions> = {
-    [SppPluginDialog.ADVANCE_STAGE]: {
+export const sppPluginDialogsDefinitions: Record<SppPluginDialogId, IDialogComponentDefinitions> = {
+    [SppPluginDialogId.ADVANCE_STAGE]: {
         Component: AdvanceStageDialog,
     },
 };

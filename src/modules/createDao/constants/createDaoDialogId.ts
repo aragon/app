@@ -1,4 +1,4 @@
-export enum CreateDaoDialog {
+export enum CreateDaoDialogId {
     PUBLISH_DAO = 'PUBLISH_DAO',
     CREATE_DAO_DETAILS = 'CREATE_DAO_DETAILS',
     CREATE_PROCESS_DETAILS = 'CREATE_PROCESS_DETAILS',

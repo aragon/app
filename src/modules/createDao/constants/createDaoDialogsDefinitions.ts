@@ -6,20 +6,20 @@ import { PublishDaoDialog } from '../dialogs/publishDaoDialog';
 import { PublishProcessDialog } from '../dialogs/publishProcessDialog';
 import { SetupBodyDialog } from '../dialogs/setupBodyDialog';
 import { SetupStageTimingDialog } from '../dialogs/setupStageTimingDialog';
-import { CreateDaoDialog } from './createDaoDialogId';
+import { CreateDaoDialogId } from './createDaoDialogId';
 
-export const createDaoDialogs: Record<CreateDaoDialog, IDialogComponentDefinitions> = {
-    [CreateDaoDialog.PUBLISH_DAO]: { Component: PublishDaoDialog },
-    [CreateDaoDialog.CREATE_DAO_DETAILS]: { Component: CreateDaoDetailsDialog, size: 'lg' },
-    [CreateDaoDialog.CREATE_PROCESS_DETAILS]: { Component: CreateProcessDetailsDialog, size: 'lg' },
-    [CreateDaoDialog.PREPARE_PROCESS]: { Component: PrepareProcessDialog },
-    [CreateDaoDialog.PUBLISH_PROCESS]: { Component: PublishProcessDialog },
-    [CreateDaoDialog.SETUP_BODY]: {
+export const createDaoDialogsDefinitions: Record<CreateDaoDialogId, IDialogComponentDefinitions> = {
+    [CreateDaoDialogId.PUBLISH_DAO]: { Component: PublishDaoDialog },
+    [CreateDaoDialogId.CREATE_DAO_DETAILS]: { Component: CreateDaoDetailsDialog, size: 'lg' },
+    [CreateDaoDialogId.CREATE_PROCESS_DETAILS]: { Component: CreateProcessDetailsDialog, size: 'lg' },
+    [CreateDaoDialogId.PREPARE_PROCESS]: { Component: PrepareProcessDialog },
+    [CreateDaoDialogId.PUBLISH_PROCESS]: { Component: PublishProcessDialog },
+    [CreateDaoDialogId.SETUP_BODY]: {
         Component: SetupBodyDialog,
         size: 'lg',
         hiddenDescription: 'app.createDao.setupBodyDialog.a11y.description',
     },
-    [CreateDaoDialog.SETUP_STAGE_TIMING]: {
+    [CreateDaoDialogId.SETUP_STAGE_TIMING]: {
         Component: SetupStageTimingDialog,
         size: 'lg',
         hiddenDescription: 'app.createDao.setupStageTimingDialog.a11y.description',
