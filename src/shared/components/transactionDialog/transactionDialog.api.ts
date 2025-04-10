@@ -87,7 +87,7 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
      */
     customSteps?: Array<ITransactionDialogStep<TCustomStepId>>;
     /**
-     * Information about the transaction status.
+     * Information about the stepper in the current transaction dialog.
      */
     transactionInfo?: ITransactionInfo;
     /**

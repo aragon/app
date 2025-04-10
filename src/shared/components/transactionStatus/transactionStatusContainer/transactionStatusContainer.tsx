@@ -13,7 +13,7 @@ export interface ITransactionStatusContainerProps<
      */
     steps: IUseStepperReturn<TMeta, TStepId>['steps'];
     /**
-     * Info about the stepper in the current transaction dialog.
+     * Information about the stepper in the current transaction dialog.
      */
     transactionInfo?: ITransactionInfo;
 }
