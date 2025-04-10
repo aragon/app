@@ -1,6 +1,6 @@
 'use client';
 
-import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
+import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -92,7 +92,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                                 subtitle={t('app.explore.exploreDaosPage.noCodeSetup.subtitle')}
                                 isPrimary={true}
                                 actionLabel={t('app.explore.exploreDaosPage.noCodeSetup.actionLabel')}
-                                actionOnClick={() => open(CreateDaoDialog.CREATE_DAO_DETAILS)}
+                                actionOnClick={() => open(CreateDaoDialogId.CREATE_DAO_DETAILS)}
                             />
                             <CtaCard
                                 imgSrc={enterpriseServiceIcon as string}

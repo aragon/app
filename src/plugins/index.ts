@@ -1,11 +1,11 @@
 import { initialiseAdminPlugin } from './adminPlugin';
-import { adminPluginDialogs } from './adminPlugin/constants/pluginDialogs';
+import { adminPluginDialogsDefinitions } from './adminPlugin/constants/adminPluginDialogsDefinitions';
 import { initialiseMultisigPlugin } from './multisigPlugin';
-import { multisigPluginDialogs } from './multisigPlugin/constants/pluginDialogs';
+import { multisigPluginDialogsDefinitions } from './multisigPlugin/constants/multisigPluginDialogsDefinitions';
 import { initialiseSppPlugin } from './sppPlugin';
-import { sppPluginDialogs } from './sppPlugin/constants/pluginDialogs';
+import { sppPluginDialogsDefinitions } from './sppPlugin/constants/sppPluginDialogsDefinitions';
 import { initialiseTokenPlugin } from './tokenPlugin';
-import { tokenPluginDialogs } from './tokenPlugin/constants/pluginDialogs';
+import { tokenPluginDialogsDefinitions } from './tokenPlugin/constants/tokenPluginDialogsDefinitions';
 
 export const initialisePlugins = () => {
     initialiseMultisigPlugin();
@@ -14,9 +14,9 @@ export const initialisePlugins = () => {
     initialiseAdminPlugin();
 };
 
-export const pluginDialogs = {
-    ...tokenPluginDialogs,
-    ...adminPluginDialogs,
-    ...multisigPluginDialogs,
-    ...sppPluginDialogs,
+export const pluginDialogsDefinitions = {
+    ...tokenPluginDialogsDefinitions,
+    ...adminPluginDialogsDefinitions,
+    ...multisigPluginDialogsDefinitions,
+    ...sppPluginDialogsDefinitions,
 };

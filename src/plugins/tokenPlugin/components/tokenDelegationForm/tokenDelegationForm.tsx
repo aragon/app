@@ -1,6 +1,5 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useMember } from '@/modules/governance/api/governanceService';
-import { TokenPluginDialog } from '@/plugins/tokenPlugin/constants/pluginDialogs';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -16,6 +15,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAccount } from 'wagmi';
+import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
 import type { ITokenDelegationDialogParams } from '../../dialogs/tokenDelegationDialog';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
 
@@ -110,7 +110,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
             delegate,
             network: dao!.network,
         };
-        open(TokenPluginDialog.DELEGATE, { params });
+        open(TokenPluginDialogId.DELEGATE, { params });
     };
 
     // Update form initial data on user address / backend data update

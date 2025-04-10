@@ -1,7 +1,7 @@
 'use client';
 
 import { Navigation } from '@/modules/application/components/navigations/navigation';
-import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
+import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { AragonLogo } from '@/shared/components/aragonLogo';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Wallet } from '@aragon/gov-ui-kit';
@@ -40,7 +40,7 @@ export const ExploreNav: React.FC = () => {
     }, []);
 
     const handleWalletClick = () => {
-        const dialog = isConnected ? ApplicationDialog.USER : ApplicationDialog.CONNECT_WALLET;
+        const dialog = isConnected ? ApplicationDialogId.USER : ApplicationDialogId.CONNECT_WALLET;
         open(dialog);
     };
 

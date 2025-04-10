@@ -1,5 +1,4 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
-import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
 import type { IExecuteDialogParams } from '@/modules/governance/dialogs/executeDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -14,6 +13,7 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import type { IProposal } from '../../api/governanceService';
+import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
 export interface IProposalExecutionStatusProps {
@@ -51,7 +51,7 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
 
     const openTransactionDialog = () => {
         const params: IExecuteDialogParams = { daoId, proposal, status: proposalStatus };
-        open(GovernanceDialog.EXECUTE, { params });
+        open(GovernanceDialogId.EXECUTE, { params });
     };
 
     const { check: promptWalletConnection, result: isConnected } = useConnectedWalletGuard({
