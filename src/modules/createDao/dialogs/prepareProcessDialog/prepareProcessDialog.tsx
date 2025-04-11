@@ -119,9 +119,9 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
             proposal: { ...proposalMetadata, resources: [], actions: proposalActions },
             daoId,
             plugin: adminPlugin.meta,
-            translationNamespace: 'app.governance.publishProcessDialog',
+            translationNamespace: 'app.createDao.publishProcessDialog',
             transactionInfo: {
-                title: t('app.governance.publishProcessDialog.transactionInfoTitle'),
+                title: t('app.createDao.publishProcessDialog.transactionInfoTitle'),
                 current: 2,
                 total: 2,
             },

@@ -341,6 +341,14 @@
         },
         "title": "Publish DAO"
       },
+      "publishProcessDialog": {
+        "button": {
+          "submit": "Finalize installation"
+        },
+        "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
+        "title": "Publish governance process",
+        "transactionInfoTitle": "Finalize installation"
+      },
       "setupBodyDialog": {
         "a11y": {
           "description": "Create a new voting body for your DAO"
@@ -793,14 +801,6 @@
           "tryAgain": "Try again"
         },
         "notExecutable": "The proposal must pass before its actions can be executed."
-      },
-      "publishProcessDialog": {
-        "button": {
-          "submit": "Finalize installation"
-        },
-        "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
-        "title": "Publish governance process",
-        "transactionInfoTitle": "Finalize installation"
       },
       "publishProposalDialog": {
         "button": {
