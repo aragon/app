@@ -1,5 +1,6 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
+import type { ITransactionInfo } from '@/shared/components/transactionStatus';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import type { ICreateProposalFormData, PrepareProposalActionMap } from '../../components/createProposalForm';
 
@@ -34,6 +35,14 @@ export interface IPublishProposalDialogParams {
      * Partial map of action-type and prepare-action functions as not all actions require an async data preparation.
      */
     prepareActions?: PrepareProposalActionMap;
+    /**
+     * Translation namespace to customise strings.
+     */
+    translationNamespace?: string;
+    /**
+     * Information about the stepper in the current transaction dialog.
+     */
+    transactionInfo?: ITransactionInfo;
 }
 
 export interface IPublishProposalDialogProps extends IDialogComponentProps<IPublishProposalDialogParams> {}

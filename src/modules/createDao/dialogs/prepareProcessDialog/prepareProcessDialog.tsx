@@ -119,6 +119,12 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
             proposal: { ...proposalMetadata, resources: [], actions: proposalActions },
             daoId,
             plugin: adminPlugin.meta,
+            translationNamespace: 'app.governance.publishProcessDialog',
+            transactionInfo: {
+                title: t('app.governance.publishProcessDialog.transactionInfoTitle'),
+                current: 2,
+                total: 2,
+            },
         };
         open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
     };
@@ -146,10 +152,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
             title={t('app.createDao.prepareProcessDialog.title')}
             description={t('app.createDao.prepareProcessDialog.description')}
             submitLabel={t('app.createDao.prepareProcessDialog.button.submit')}
-            successLink={{
-                label: t('app.createDao.prepareProcessDialog.button.success'),
-                onClick: handlePrepareInstallationSuccess,
-            }}
+            onSuccess={handlePrepareInstallationSuccess}
             transactionInfo={transactionInfo}
             stepper={stepper}
             customSteps={customSteps}

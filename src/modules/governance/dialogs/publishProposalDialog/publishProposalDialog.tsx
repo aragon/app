@@ -31,7 +31,8 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const { address } = useAccount();
     invariant(address != null, 'PublishProposalDialog: user must be connected.');
 
-    const { daoId, plugin, proposal, prepareActions } = location.params;
+    const { daoId, plugin, proposal, prepareActions, translationNamespace, transactionInfo } = location.params;
+
     const { address: pluginAddress } = plugin;
     const { title, summary } = proposal;
 
@@ -98,11 +99,13 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
         [status, handlePinJson, t],
     );
 
+    const namespace = translationNamespace ?? 'app.governance.publishProposalDialog';
+
     return (
         <TransactionDialog<PublishProposalStep>
-            title={t('app.governance.publishProposalDialog.title')}
-            description={t('app.governance.publishProposalDialog.description')}
-            submitLabel={t('app.governance.publishProposalDialog.button.submit')}
+            title={t(`${namespace}.title`)}
+            description={t(`${namespace}.description`)}
+            submitLabel={t(`${namespace}.button.submit`)}
             successLink={{ label: t('app.governance.publishProposalDialog.button.success'), href: getProposalsLink }}
             stepper={stepper}
             customSteps={customSteps}
@@ -110,6 +113,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
             network={dao?.network}
             transactionType={TransactionType.PROPOSAL_CREATE}
             indexingFallbackUrl={`/dao/${daoId}/proposals`}
+            transactionInfo={transactionInfo}
         >
             {plugin.subdomain !== 'admin' && (
                 <ProposalDataListItem.Structure

@@ -81,7 +81,7 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
     /**
      * Label for the submit button used when the transaction has been successful.
      */
-    successLink: ITransactionDialogSuccessLink;
+    successLink?: ITransactionDialogSuccessLink;
     /**
      * Custom steps needed for the transaction.
      */
@@ -105,7 +105,7 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
     /**
      * Callback called when the transaction has been successfully included on the block.
      */
-    onSuccess?: () => void;
+    onSuccess?: (receipt: TransactionReceipt) => void;
     /**
      * The Network the user must be connected to for the transaction.
      * @default Network.ETHEREUM_MAINNET

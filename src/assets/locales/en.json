@@ -317,14 +317,14 @@
           "submit": "Prepare installation",
           "success": "Finalize installation"
         },
-        "description": "To prepare your governance process, confirm the onchain transaction in your wallet.",
+        "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
         "step": {
           "PIN_METADATA": {
             "errorLabel": "Unable to pin data on IPFS",
             "label": "Pin data on IPFS"
           }
         },
-        "title": "Prepare governance process",
+        "title": "Publish governance process",
         "transactionInfoTitle": "Prepare installation"
       },
       "publishDaoDialog": {
@@ -794,6 +794,15 @@
         },
         "notExecutable": "The proposal must pass before its actions can be executed."
       },
+      "publishProcessDialog": {
+        "button": {
+          "submit": "Finalize installation"
+        },
+        "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
+
+        "title": "Publish governance process",
+        "transactionInfoTitle": "Finalize installation"
+      },
       "publishProposalDialog": {
         "button": {
           "submit": "Publish proposal",
@@ -903,6 +912,14 @@
             },
             "description": "Add or remove the addresses that should be able to make any change to the DAO without a proposal.",
             "title": "Manage admins"
+          },
+          "publishManageMembersDialog": {
+            "button": {
+              "submit": "Update admins"
+            },
+            "description": "To update admins, confirm the onchain transaction in your wallet.",
+
+            "title": "Update admins"
           }
         },
         "adminMemberInfo": {
