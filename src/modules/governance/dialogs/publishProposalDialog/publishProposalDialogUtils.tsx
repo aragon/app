@@ -51,6 +51,7 @@ class PublishProposalDialogUtils {
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
         })!;
 
+        debugger;
         const buildDataParams: IBuildCreateProposalDataParams = { actions, metadata, proposal };
         const transactionData = buildDataFunction(buildDataParams);
         const transaction = { to: plugin.address as Hex, data: transactionData, value: BigInt(0) };
