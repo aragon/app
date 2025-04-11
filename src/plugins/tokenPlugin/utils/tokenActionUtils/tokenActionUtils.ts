@@ -21,7 +21,7 @@ import {
     type ITokenPluginSettings,
 } from '../../types';
 import type { ITokenProposalAction } from '../../types/tokenProposalAction';
-import { tokenSettingsUtils, type IParseTokenSettingsParams } from '../tokenSettingsUtils';
+import { tokenSettingsUtils } from '../tokenSettingsUtils';
 import { defaultMintAction, defaultUpdateSettings } from './tokenActionDefinitions';
 
 export interface IGetTokenActionsProps {
@@ -35,11 +35,19 @@ export interface IGetTokenActionsProps {
     t: TranslationFunction;
 }
 
-export interface INormalizeChangeSettingsParams extends IParseTokenSettingsParams {
+export interface INormalizeChangeSettingsParams {
     /**
      * Action to be normalised.
      */
     action: ITokenActionChangeSettings;
+    /*
+     * Translation function for internationalization.
+     */
+    t: TranslationFunction;
+    /**
+     * Token linked to the plugin.
+     */
+    token: ITokenPluginSettings['token'];
 }
 
 export type IGetTokenActionsResult = IActionComposerPluginData<IDaoPlugin<ITokenPluginSettings>>;
@@ -121,12 +129,13 @@ class TokenActionUtils {
     };
 
     normalizeChangeSettingsAction = (params: INormalizeChangeSettingsParams): IGukProposalActionChangeSettings => {
-        const { action, t, settings } = params;
-        const { type, proposedSettings, ...otherValues } = action;
+        const { action, t, token } = params;
+        const { type, proposedSettings, existingSettings, ...otherValues } = action;
 
-        const completeProposedSettings = { ...settings, ...proposedSettings };
+        const completeExistingSettings = { ...existingSettings, token };
+        const completeProposedSettings = { ...completeExistingSettings, ...proposedSettings };
 
-        const parsedExistingSettings = tokenSettingsUtils.parseSettings({ settings, t });
+        const parsedExistingSettings = tokenSettingsUtils.parseSettings({ settings: completeExistingSettings, t });
         const parsedProposedSettings = tokenSettingsUtils.parseSettings({ settings: completeProposedSettings, t });
 
         return {

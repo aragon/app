@@ -44,7 +44,7 @@ describe('proposalActionUtils', () => {
             const normalizationFunctionTwo = jest.fn(() => proposal.actions);
             getSlotFunctionsSpy.mockReturnValue([normalizationFunctionOne, normalizationFunctionTwo]);
             proposalActionUtils.normalizeActions(proposal, dao);
-            const expectedParams = { actions: proposal.actions, daoId: dao.id, settings: proposal.settings };
+            const expectedParams = { actions: proposal.actions, daoId: dao.id };
             expect(normalizationFunctionOne).toHaveBeenCalledWith(expectedParams);
             expect(normalizationFunctionTwo).toHaveBeenCalledWith(expectedParams);
         });

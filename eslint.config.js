@@ -74,6 +74,7 @@ const config = tsEslint.config(
             '@typescript-eslint/dot-notation': ['error', { allowPrivateClassPropertyAccess: true }],
             '@typescript-eslint/consistent-type-imports': ['warn', { fixStyle: 'inline-type-imports' }],
             '@typescript-eslint/consistent-type-exports': ['warn', { fixMixedExportsWithInlineTypeSpecifier: true }],
+            '@typescript-eslint/non-nullable-type-assertion-style': 'off',
             'import/no-cycle': 'warn',
             'react/prop-types': 'off',
             'react/jsx-boolean-value': ['warn', 'always'],
