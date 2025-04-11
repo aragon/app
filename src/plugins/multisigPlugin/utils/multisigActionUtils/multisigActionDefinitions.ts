@@ -55,6 +55,7 @@ export const defaultUpdateSettings = ({
     to: address,
     data: '0x',
     value: '0',
+    existingSettings: settings,
     proposedSettings: settings,
     inputData: {
         function: 'updateMultisigSettings',
