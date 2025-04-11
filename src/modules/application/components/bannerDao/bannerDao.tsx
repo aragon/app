@@ -6,7 +6,8 @@ import { useAdminStatus } from '@/plugins/adminPlugin/hooks/useAdminStatus';
 import { Banner } from '@/shared/components/banner';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, IconType } from '@aragon/gov-ui-kit';
+import { Button, IconType, invariant } from '@aragon/gov-ui-kit';
+import { Hex } from 'viem';
 
 export interface IBannerDaoProps {
     /**
@@ -21,10 +22,11 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { isAdminMember, hasAdminPlugin } = useAdminStatus({ daoId: id });
+    const { isAdminMember, hasAdminPlugin, pluginAddress } = useAdminStatus({ daoId: id });
 
     const handleBannerActionClick = () => {
-        const params: ICreateProcessDetailsDialogParams = { daoId: id };
+        invariant(pluginAddress != null, 'BannerDao: admin pluginAddress is expected.');
+        const params: ICreateProcessDetailsDialogParams = { daoId: id, pluginAddress: pluginAddress as Hex };
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
 

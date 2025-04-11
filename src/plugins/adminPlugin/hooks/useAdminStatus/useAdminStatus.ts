@@ -29,5 +29,6 @@ export const useAdminStatus = (params: IUseAdminStatusParams) => {
     return {
         isAdminMember: isAdminMember && adminFeatureEnabled,
         hasAdminPlugin: pluginAddress != null,
+        pluginAddress,
     };
 };
