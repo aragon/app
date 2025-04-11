@@ -12,7 +12,7 @@ export const useMultisigNormalizeActions = (params: IUseMultisigNormalizeActions
 
     const changeSettingsAction = actions.find((action) => multisigActionUtils.isChangeSettingsAction(action));
     const { data: memberList } = useMemberList(
-        { queryParams: { daoId, pluginAddress: changeSettingsAction!.to } },
+        { queryParams: { daoId, pluginAddress: changeSettingsAction?.to as string } },
         { enabled: changeSettingsAction != null },
     );
     const membersCount = memberList?.pages[0].metadata.totalRecords ?? 0;
