@@ -1,6 +1,5 @@
 import { CreateProcessForm } from '@/modules/createDao/components/createProcessForm';
 import { ProposalActionType } from '@/modules/governance/api/governanceService/domain';
-import type { IProposalCreateAction } from '@/modules/governance/dialogs/publishProposalDialog';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
@@ -25,7 +24,7 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
     const { isProcess, isSubPlugin } = meta;
 
     const { mutateAsync: pinJsonAsync } = usePinJson();
-    const { addPrepareAction } = useCreateProposalFormContext();
+    const { addPrepareAction } = useCreateProposalFormContext<IUpdatePluginMetadataAction>();
 
     const actionFieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
@@ -33,8 +32,8 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
     const displayProcessKey = isProcess && !isSubPlugin;
 
     const prepareAction = useCallback(
-        async (action: IProposalCreateAction) => {
-            const { proposedMetadata, existingMetadata } = action as unknown as IUpdatePluginMetadataAction;
+        async (action: IUpdatePluginMetadataAction) => {
+            const { proposedMetadata, existingMetadata } = action;
             const { name, description, resources, processKey } = proposedMetadata;
 
             const pluginMetadata = { ...existingMetadata, name, description, links: resources };

@@ -10,16 +10,14 @@ import { addressUtils } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ISmartContractAbi } from '../../api/smartContractService';
-import {
-    CreateProposalForm,
-    type ICreateProposalFormData,
-    type PrepareProposalActionFunction,
-    type PrepareProposalActionMap,
-} from '../../components/createProposalForm';
+import { CreateProposalForm, type ICreateProposalFormData } from '../../components/createProposalForm';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import { type IPublishProposalDialogParams } from '../../dialogs/publishProposalDialog';
-import { proposalUtils } from '../../utils/proposalUtils';
+import type {
+    IPublishProposalDialogParams,
+    PrepareProposalActionFunction,
+    PrepareProposalActionMap,
+} from '../../dialogs/publishProposalDialog';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
 import { createProposalWizardSteps } from './createProposalPageDefinitions';
 
@@ -81,27 +79,10 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     );
 
     const handleFormSubmit = (values: ICreateProposalFormData) => {
-        /* We are always saving actions on the form so that user doesn't lose them if they navigate around the form.
-        So we use the addActions flag to determine if we should add actions to the proposal or not. */
+        // We are always saving actions on the form so that user doesn't lose them if they navigate around the form.
         const { actions, addActions } = values;
-
-        // We  need to also send the rest of the action to properly handle the prepare transaction
-        const processedActions = addActions
-            ? actions.map((action) => {
-                  const transactionRequest = proposalUtils.actionToTransactionRequest(action);
-                  return {
-                      ...action,
-                      ...transactionRequest,
-                  };
-              })
-            : [];
-
-        const params: IPublishProposalDialogParams = {
-            proposal: { ...values, actions: processedActions },
-            daoId,
-            plugin,
-            prepareActions,
-        };
+        const proposal = { ...values, actions: addActions ? actions : [] };
+        const params: IPublishProposalDialogParams = { proposal, daoId, plugin, prepareActions };
         open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
     };
 

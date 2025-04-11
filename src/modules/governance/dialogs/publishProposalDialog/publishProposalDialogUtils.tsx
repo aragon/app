@@ -2,10 +2,9 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
-import type { PrepareProposalActionMap } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
-import type { IProposalCreate, IProposalCreateAction } from './publishProposalDialog.api';
+import type { IProposalCreate, IProposalCreateAction, PrepareProposalActionMap } from './publishProposalDialog.api';
 
 export interface IBuildTransactionParams {
     /**
@@ -51,7 +50,8 @@ class PublishProposalDialogUtils {
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
         })!;
 
-        const buildDataParams: IBuildCreateProposalDataParams = { actions, metadata, proposal };
+        const parsedActions = actions.map(this.actionToTransactionRequest);
+        const buildDataParams: IBuildCreateProposalDataParams = { actions: parsedActions, metadata, proposal };
         const transactionData = buildDataFunction(buildDataParams);
         const transaction = { to: plugin.address as Hex, data: transactionData, value: BigInt(0) };
 
@@ -62,10 +62,7 @@ class PublishProposalDialogUtils {
         const { actions, prepareActions } = params;
 
         const prepareActionDataPromises = actions.map(async (action) => {
-            if (!action.type) {
-                return action.data;
-            }
-            const prepareFunction = prepareActions?.[action.type];
+            const prepareFunction = action.type ? prepareActions?.[action.type] : undefined;
             const actionData = await (prepareFunction != null ? prepareFunction(action) : action.data);
 
             return actionData;
@@ -79,6 +76,12 @@ class PublishProposalDialogUtils {
         }));
 
         return processedActions;
+    };
+
+    private actionToTransactionRequest = (action: IProposalCreateAction): ITransactionRequest => {
+        const { to, value, data } = action;
+
+        return { to: to as Hex, value: BigInt(value), data: data as Hex };
     };
 }
 

@@ -52,16 +52,11 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
     const { data: memberList } = useMemberList({ queryParams: memberParams });
     const [adminPlugin] = useDaoPlugins({ daoId, subdomain: 'admin' }) ?? [];
 
-    const currentAdmins = useMemo(() => {
-        return memberList?.pages.flatMap((page) => page.data) ?? [];
-    }, [memberList]);
-
+    const currentAdmins = useMemo(() => memberList?.pages.flatMap((page) => page.data) ?? [], [memberList]);
     const initialMembers = useMemo(() => currentAdmins.map((member) => ({ address: member.address })), [currentAdmins]);
 
     const formMethods = useForm<IManageMembersFormData>({
-        defaultValues: {
-            members: initialMembers,
-        },
+        defaultValues: { members: initialMembers },
         mode: 'onTouched',
     });
 
@@ -92,12 +87,12 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
         };
 
         const actions = adminManageMembersDialogUtils.buildActionsArray(actionsParams);
+        const proposal = { ...proposalMetadata, resources: [], actions };
 
         const params: IPublishProposalDialogParams = {
-            proposal: { ...proposalMetadata, resources: [], actions },
+            proposal,
             daoId,
             plugin: adminPlugin.meta,
-            prepareActions: {},
             translationNamespace: 'app.plugins.admin.adminPublishManageMembersDialog',
         };
         open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });

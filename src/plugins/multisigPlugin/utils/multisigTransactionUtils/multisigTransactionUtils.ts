@@ -1,15 +1,15 @@
 import type { IBuildPreparePluginInstallDataParams } from '@/modules/createDao/types';
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
-import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
-import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
+import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import type { IMultisigSetupGovernanceForm } from '../../components/multisigSetupGovernance';
 import { multisigPlugin } from '../../constants/multisigPlugin';
 import { multisigPluginAbi, multisigPluginSetupAbi } from './multisigPluginAbi';
 
-export interface ICreateMultisigProposalFormData extends IProposalCreate, ICreateProposalEndDateForm {}
+// The end-date form values are set to "partial" because users can also create proposals without the proposal wizard
+export interface ICreateMultisigProposalFormData extends IProposalCreate, Partial<ICreateProposalEndDateForm> {}
 
 class MultisigTransactionUtils {
     buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateMultisigProposalFormData>): Hex => {

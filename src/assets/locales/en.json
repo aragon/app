@@ -927,7 +927,6 @@
             "submit": "Update admins"
           },
           "description": "To update admins, confirm the onchain transaction in your wallet.",
-
           "title": "Update admins"
         },
         "adminSettingsPanel": {

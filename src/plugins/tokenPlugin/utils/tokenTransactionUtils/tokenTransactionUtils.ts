@@ -11,7 +11,8 @@ import { tokenPlugin } from '../../constants/tokenPlugin';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
 import { tokenPluginAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
 
-export interface ICreateTokenProposalFormData extends IProposalCreate, ICreateProposalEndDateForm {}
+// The end-date form values are set to "partial" because users can also create proposals without the proposal wizard
+export interface ICreateTokenProposalFormData extends IProposalCreate, Partial<ICreateProposalEndDateForm> {}
 
 export interface IPrepareTokenInstallDataParams
     extends IBuildPreparePluginInstallDataParams<

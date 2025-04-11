@@ -8,4 +8,6 @@ export type {
     IProposalCreateAction,
     IPublishProposalDialogParams,
     IPublishProposalDialogProps,
+    PrepareProposalActionFunction,
+    PrepareProposalActionMap,
 } from './publishProposalDialog.api';
