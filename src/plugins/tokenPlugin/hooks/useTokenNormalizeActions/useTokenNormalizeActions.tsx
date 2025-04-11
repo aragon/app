@@ -18,10 +18,8 @@ export const useTokenNormalizeActions = (params: IUseTokenNormalizeActionsParams
         if (tokenActionUtils.isTokenMintAction(action)) {
             return tokenActionUtils.normalizeTokenMintAction(action);
         } else if (tokenActionUtils.isChangeSettingsAction(action)) {
-            const { to: pluginAddress } = action;
-            const plugin = daoPlugins.find(({ meta }) => addressUtils.isAddressEqual(pluginAddress, meta.address))
-                ?.meta as IDaoPlugin<ITokenPluginSettings>;
-            const { token } = plugin.settings;
+            const plugin = daoPlugins.find(({ meta }) => addressUtils.isAddressEqual(action.to, meta.address));
+            const { token } = (plugin?.meta as IDaoPlugin<ITokenPluginSettings>).settings;
 
             return tokenActionUtils.normalizeChangeSettingsAction({ action, token, t });
         }
