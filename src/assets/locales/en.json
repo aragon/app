@@ -799,7 +799,6 @@
           "submit": "Finalize installation"
         },
         "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
-
         "title": "Publish governance process",
         "transactionInfoTitle": "Finalize installation"
       },
