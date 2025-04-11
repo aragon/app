@@ -1,9 +1,6 @@
 import { CreateDaoForm, type ICreateDaoFormMetadataData } from '@/modules/createDao/components/createDaoForm';
-import {
-    ProposalActionType,
-    type IProposalAction,
-    type IProposalActionUpdateMetadata,
-} from '@/modules/governance/api/governanceService';
+import { ProposalActionType, type IProposalActionUpdateMetadata } from '@/modules/governance/api/governanceService';
+import type { IProposalCreateAction } from '@/modules/governance/dialogs/publishProposalDialog';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { usePinFile } from '@/shared/api/ipfsService/mutations/usePinFile';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -43,8 +40,9 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (p
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
 
     const prepareAction = useCallback(
-        async (action: IProposalAction) => {
-            const { name, description, resources, avatar } = (action as IUpdateDaoMetadataAction).proposedMetadata;
+        async (action: IProposalCreateAction) => {
+            const { name, description, resources, avatar } = (action as unknown as IUpdateDaoMetadataAction)
+                .proposedMetadata;
             const proposedMetadata = { name, description, links: resources };
 
             let daoAvatar: string | undefined;

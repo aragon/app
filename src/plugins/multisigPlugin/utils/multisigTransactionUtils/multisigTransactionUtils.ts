@@ -1,5 +1,5 @@
 import type { IBuildPreparePluginInstallDataParams } from '@/modules/createDao/types';
-import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
+import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
 import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
@@ -9,14 +9,14 @@ import type { IMultisigSetupGovernanceForm } from '../../components/multisigSetu
 import { multisigPlugin } from '../../constants/multisigPlugin';
 import { multisigPluginAbi, multisigPluginSetupAbi } from './multisigPluginAbi';
 
-export interface ICreateMultisigProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
+export interface ICreateMultisigProposalFormData extends IProposalCreate, ICreateProposalEndDateForm {}
 
 class MultisigTransactionUtils {
     buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateMultisigProposalFormData>): Hex => {
-        const { metadata, actions, values } = params;
+        const { metadata, actions, proposal } = params;
 
-        const startDate = createProposalUtils.parseStartDate(values);
-        const endDate = createProposalUtils.parseEndDate(values);
+        const startDate = createProposalUtils.parseStartDate(proposal);
+        const endDate = createProposalUtils.parseEndDate(proposal);
 
         const functionArgs = [metadata, actions, BigInt(0), false, false, startDate, endDate];
         const data = encodeFunctionData({ abi: multisigPluginAbi, functionName: 'createProposal', args: functionArgs });

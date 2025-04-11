@@ -1,8 +1,8 @@
 import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
+import type { IProposalCreateAction } from '@/modules/governance/dialogs/publishProposalDialog/publishProposalDialog.api';
 import { createContext, useContext } from 'react';
-import type { IProposalAction } from '../../../api/governanceService';
 
-export type PrepareProposalActionFunction = (action: IProposalAction) => Promise<string>;
+export type PrepareProposalActionFunction = (action: IProposalCreateAction) => Promise<string>;
 export type PrepareProposalActionMap = Partial<Record<string, PrepareProposalActionFunction>>;
 
 export interface ICreateProposalFormContext {

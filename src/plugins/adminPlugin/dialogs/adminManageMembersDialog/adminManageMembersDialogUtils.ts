@@ -4,9 +4,9 @@ import { type ITransactionRequest, transactionUtils } from '@/shared/utils/trans
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import { adminTransactionUtils } from '../../utils/adminTransactionUtils';
-import type { IBuildActionsArrayParams, IBuildTransactionParams } from './adminManageMembersDialogPublishUtils.api';
+import type { IBuildActionsArrayParams, IBuildTransactionParams } from './adminManageMembersDialogUtils.api';
 
-class AdminManageMembersDialogPublishUtils {
+class AdminManageMembersDialogUtils {
     private permissionIds = {
         EXECUTE_PROPOSAL_PERMISSION: 'EXECUTE_PROPOSAL_PERMISSION',
     };
@@ -61,7 +61,7 @@ class AdminManageMembersDialogPublishUtils {
         const transactionData = adminTransactionUtils.buildCreateProposalData({
             actions,
             metadata,
-            values: {} as IBuildCreateProposalDataParams['values'],
+            proposal: {} as IBuildCreateProposalDataParams['proposal'],
         });
 
         const transaction = { to: pluginAddress, data: transactionData, value: BigInt(0) };
@@ -70,4 +70,4 @@ class AdminManageMembersDialogPublishUtils {
     };
 }
 
-export const adminManageMembersDialogPublishUtils = new AdminManageMembersDialogPublishUtils();
+export const adminManageMembersDialogUtils = new AdminManageMembersDialogUtils();

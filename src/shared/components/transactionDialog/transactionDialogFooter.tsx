@@ -73,7 +73,7 @@ const buildSuccessLink = (
     return successHref(params);
 };
 
-const indexingStepTimeout = 8000;
+const indexingStepTimeout = 14000;
 
 export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     props: ITransactionDialogFooterProps<TCustomStepId>,
@@ -90,7 +90,17 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         proposalSlug,
     } = props;
 
-    const { label: successLabel, href: successHref, onClick: successOnClick } = successLink;
+    // In some cases where we have multiple transaction steps, we will not need a success link,
+    // as the onSuccess passed to transaction dialog will auto continue to the next step
+    // so the user will not need a success link so these are just simple defaults to satisfy types
+    const successLabel = successLink?.label ?? '';
+    const successHref = successLink?.href ?? '';
+    const successOnClick =
+        successLink?.onClick ??
+        (() => {
+            /* noop needed as user will not click anything */
+        });
+
     const { id: stepId, meta } = activeStep ?? {};
     const { state, action } = meta ?? {};
 
@@ -121,10 +131,10 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     const successStep = transactionType ? TransactionDialogStep.INDEXING : TransactionDialogStep.CONFIRM;
 
     const displaySuccessLink = stepId === successStep && isSuccessState;
+
     const isCancelDisabled =
         (stepId === TransactionDialogStep.CONFIRM || stepId === TransactionDialogStep.INDEXING) &&
-        (isSuccessState || isPendingState) &&
-        !showProceedAnyway;
+        (isSuccessState || isPendingState);
 
     const customSubmitLabel = stepId != null && state != null ? stepStateSubmitLabel[stepId]?.[state] : undefined;
     const defaultSubmitLabel = isErrorState
@@ -138,7 +148,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     const handlePrimaryActionClick = () => {
         if (displaySuccessLink) {
             close();
-            successOnClick?.(txReceipt!);
+            successOnClick(txReceipt!);
         } else {
             action?.({ onError });
         }
@@ -180,7 +190,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
                 label: cancelButtonLabel,
                 onClick: handleCancelClick,
                 href: showProceedAnyway ? getFallbackUrl() : undefined,
-                disabled: isCancelDisabled,
+                disabled: showProceedAnyway ? isSuccessState : isCancelDisabled,
             }}
         />
     );

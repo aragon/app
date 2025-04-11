@@ -205,10 +205,10 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
 
     useEffect(() => {
         if (waitTxStatus === 'success') {
-            onSuccessRef.current?.();
+            onSuccessRef.current?.(txReceipt);
             nextStep();
         }
-    }, [waitTxStatus, nextStep]);
+    }, [waitTxStatus, nextStep, txReceipt]);
 
     return (
         <>

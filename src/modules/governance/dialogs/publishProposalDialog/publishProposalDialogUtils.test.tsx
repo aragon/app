@@ -1,5 +1,6 @@
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import type { Hex } from 'viem';
 import * as Viem from 'viem';
 import { ProposalActionType } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -8,6 +9,8 @@ import {
     generateProposalActionUpdateMetadata,
     generateProposalActionWithdrawToken,
 } from '../../testUtils';
+import { generateProposalCreate } from '../../testUtils/generators/proposalCreate';
+import { proposalUtils } from '../../utils/proposalUtils';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
 describe('publishProposalDialog utils', () => {
@@ -21,7 +24,7 @@ describe('publishProposalDialog utils', () => {
 
     describe('prepareMetadata', () => {
         it('correctly map form values to metadata object', () => {
-            const formValues = generateCreateProposalFormData({
+            const formValues = generateProposalCreate({
                 title: 'Title',
                 summary: 'Short summary',
                 body: '<p>Proposal body</p>',
@@ -44,7 +47,7 @@ describe('publishProposalDialog utils', () => {
             getSlotFunctionSpy.mockReturnValue(slotFunction);
 
             const actionBaseValues = { data: '0x123456', to: '0x000', value: '4' };
-            const values = generateCreateProposalFormData({
+            const proposal = generateCreateProposalFormData({
                 actions: [
                     { ...generateProposalActionUpdateMetadata(actionBaseValues), daoId: 'test', meta: undefined },
                 ],
@@ -52,16 +55,22 @@ describe('publishProposalDialog utils', () => {
             const metadataCid = 'test-cid';
             const plugin = generateDaoPlugin({ address: '0x123', subdomain: 'multisig' });
 
-            const transaction = await publishProposalDialogUtils.buildTransaction({ values, metadataCid, plugin });
+            const processedActions = proposal.actions.map(proposalUtils.actionToTransactionRequest);
+
+            const transaction = await publishProposalDialogUtils.buildTransaction({
+                proposal: { ...proposal, actions: processedActions },
+                metadataCid,
+                plugin,
+            });
 
             expect(getSlotFunctionSpy).toHaveBeenCalledWith({
                 pluginId: plugin.subdomain,
                 slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
             });
             expect(slotFunction).toHaveBeenCalledWith({
-                actions: [{ ...actionBaseValues, value: BigInt(actionBaseValues.value) }],
+                actions: processedActions,
                 metadata: '0x697066733a2f2f746573742d636964',
-                values,
+                proposal: { ...proposal, actions: processedActions },
             });
 
             expect(transaction.data).toEqual(transactionData);
@@ -76,8 +85,24 @@ describe('publishProposalDialog utils', () => {
             const transferAction = generateProposalActionWithdrawToken({ data: '0x123' });
             const transferActionData = 'transfer-async-data';
             const actions = [
-                { ...updateMetadataAction, daoId: 'test', meta: undefined },
-                { ...transferAction, daoId: 'test', meta: undefined },
+                {
+                    ...updateMetadataAction,
+                    to: updateMetadataAction.to as Hex,
+                    from: updateMetadataAction.from as Hex,
+                    data: updateMetadataAction.data as Hex,
+                    value: updateMetadataAction.value as unknown as bigint,
+                    daoId: 'test',
+                    meta: undefined,
+                },
+                {
+                    ...transferAction,
+                    to: transferAction.to as Hex,
+                    from: transferAction.from as Hex,
+                    data: transferAction.data as Hex,
+                    value: transferAction.value as unknown as bigint,
+                    daoId: 'test',
+                    meta: undefined,
+                },
             ];
             const prepareActions = {
                 [ProposalActionType.METADATA_UPDATE]: () => Promise.resolve(updateMetadataActionData),
@@ -96,23 +121,28 @@ describe('publishProposalDialog utils', () => {
             const transferAction = generateProposalActionWithdrawToken({ data: '0x123' });
             const updateAction = generateProposalActionUpdateMetadata({ data: '0x456' });
             const actions = [
-                { ...transferAction, daoId: 'test', meta: undefined },
-                { ...updateAction, daoId: 'test', meta: undefined },
+                {
+                    ...transferAction,
+                    to: transferAction.to as Hex,
+                    from: transferAction.from as Hex,
+                    data: transferAction.data as Hex,
+                    value: transferAction.value as unknown as bigint,
+                    daoId: 'test',
+                    meta: undefined,
+                },
+                {
+                    ...updateAction,
+                    to: updateAction.to as Hex,
+                    from: updateAction.from as Hex,
+                    data: updateAction.data as Hex,
+                    value: updateAction.value as unknown as bigint,
+                    daoId: 'test',
+                    meta: undefined,
+                },
             ];
 
             const result = await publishProposalDialogUtils.prepareActions({ actions });
             expect(result).toEqual(actions);
-        });
-    });
-
-    describe('proposalActionToTransactionRequest', () => {
-        it('correctly maps a proposal action to a transaction request', () => {
-            const actionBaseData = { to: '0x123', value: '10', data: '0x1234' };
-            const action = generateProposalActionWithdrawToken(actionBaseData);
-            expect(publishProposalDialogUtils['actionToTransactionRequest'](action)).toEqual({
-                ...actionBaseData,
-                value: BigInt(actionBaseData.value),
-            });
         });
     });
 });

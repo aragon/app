@@ -1,7 +1,8 @@
 import type { ISetupBodyFormMembership } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { generateCreateProcessFormBody } from '@/modules/createDao/testUtils';
 import { generateToken } from '@/modules/finance/testUtils';
-import { generateCreateProposalEndDateFormData, generateCreateProposalFormData } from '@/modules/governance/testUtils';
+import { generateCreateProposalEndDateFormData } from '@/modules/governance/testUtils';
+import { generateProposalCreate } from '@/modules/governance/testUtils/generators/proposalCreate';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { tokenPlugin } from '@/plugins/tokenPlugin/constants/tokenPlugin';
 import { generateDao } from '@/shared/testUtils';
@@ -32,11 +33,11 @@ describe('tokenTransaction utils', () => {
         it('correctly encodes the create-proposal data from the given parameters', () => {
             const startDate = 0;
             const endDate = 1728660603;
-            const values = { ...generateCreateProposalFormData(), ...generateCreateProposalEndDateFormData() };
+            const proposal = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
             const actions: ITransactionRequest[] = [
                 { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
             ];
-            const params = { metadata: '0xipfs-cid' as const, actions, values };
+            const params = { metadata: '0xipfs-cid' as const, actions, proposal };
             const transactionData = '0xdata';
             parseStartDateSpy.mockReturnValue(startDate);
             parseEndDateSpy.mockReturnValue(endDate);
