@@ -38,6 +38,10 @@ export interface IPublishProcessDialogParams {
      * IDs of the plugins already prepared.
      */
     setupData: IPluginSetupData[];
+    /**
+     * Address of the plugin (process) to use to create a new proposal to add a new process.
+     */
+    pluginAddress: string;
 }
 
 export interface IPublishProcessDialogProps extends IDialogComponentProps<IPublishProcessDialogParams> {}
@@ -46,7 +50,7 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
     const { location } = props;
 
     invariant(location.params != null, 'PublishProcessDialog: required parameters must be set.');
-    const { daoId, values, setupData } = location.params;
+    const { daoId, values, setupData, pluginAddress } = location.params;
 
     const { address } = useAccount();
     invariant(address != null, 'PublishProcessDialog: user must be connected.');

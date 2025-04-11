@@ -11,11 +11,11 @@ export interface ICreateProcessPageProps {
 
 export const CreateProcessPage: React.FC<ICreateProcessPageProps> = async (props) => {
     const { params } = props;
-    const { id } = await params;
+    const { id, pluginAddress } = await params;
 
     return (
         <Page.Container>
-            <CreateProcessPageClient daoId={id} />
+            <CreateProcessPageClient daoId={id} pluginAddress={pluginAddress} />
         </Page.Container>
     );
 };

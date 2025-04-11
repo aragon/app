@@ -36,6 +36,10 @@ export interface IPrepareProcessDialogParams {
      * ID of the DAO to prepare the process for.
      */
     daoId: string;
+    /**
+     * Address of the plugin (process) to use to create a new proposal to add a new process.
+     */
+    pluginAddress: string;
 }
 
 export interface IPrepareProcessDialogProps extends IDialogComponentProps<IPrepareProcessDialogParams> {}
@@ -44,7 +48,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     const { location } = props;
 
     invariant(location.params != null, 'PrepareProcessDialog: required parameters must be set.');
-    const { daoId, values } = location.params;
+    const { daoId, values, pluginAddress } = location.params;
 
     const { address } = useAccount();
     invariant(address != null, 'PrepareProcessDialog: user must be connected.');
@@ -107,7 +111,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
 
     const handlePrepareInstallationSuccess = (txReceipt: TransactionReceipt) => {
         const setupData = pluginTransactionUtils.getPluginSetupData(txReceipt);
-        const params: IPublishProcessDialogParams = { values, daoId, setupData };
+        const params: IPublishProcessDialogParams = { values, daoId, setupData, pluginAddress };
         open(CreateDaoDialogId.PUBLISH_PROCESS, { params });
     };
 
