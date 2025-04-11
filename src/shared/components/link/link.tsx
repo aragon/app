@@ -26,6 +26,8 @@ export const Link: React.FC<ILinkProps> = (props) => {
         }
     };
 
+    // Needed to disable pointer events on the link and prevent navigation
+    // when aria-disabled is set to true
     const disabled = otherProps['aria-disabled'] === true;
 
     return (
