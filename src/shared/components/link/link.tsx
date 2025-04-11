@@ -28,7 +28,7 @@ export const Link: React.FC<ILinkProps> = (props) => {
 
     // Needed to disable pointer events on the link and prevent navigation
     // when aria-disabled is set to true
-    const disabled = otherProps['aria-disabled'] === true;
+    const isDisabled = otherProps['aria-disabled'] === true;
 
     return (
         <NextLink
@@ -36,7 +36,7 @@ export const Link: React.FC<ILinkProps> = (props) => {
             rel={processedRel}
             target={target}
             onClick={handleClick}
-            className={classNames(className, { 'pointer-events-none': disabled })}
+            className={classNames(className, { 'pointer-events-none': isDisabled })}
             {...otherProps}
         />
     );
