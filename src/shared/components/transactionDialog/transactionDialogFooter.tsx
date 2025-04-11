@@ -90,7 +90,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         proposalSlug,
     } = props;
 
-    // In some cases where we have multiple transaction steps will not need a success link,
+    // In some cases where we have multiple transaction steps, we will not need a success link,
     // as the onSuccess passed to transaction dialog will auto continue to the next step
     // so the user will not need a success link so these are just simple defaults to satisfy types
     const successLabel = successLink?.label ?? '';
