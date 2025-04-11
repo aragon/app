@@ -1,6 +1,5 @@
 import { generateCreateProcessFormBody } from '@/modules/createDao/testUtils';
-import { generateCreateProposalEndDateFormData } from '@/modules/governance/testUtils';
-import { generateProposalCreate } from '@/modules/governance/testUtils/generators/proposalCreate';
+import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { multisigPlugin } from '@/plugins/multisigPlugin/constants/multisigPlugin';
 import { generateDao } from '@/shared/testUtils';

@@ -235,7 +235,7 @@ describe('prepareProcessDialog utils', () => {
         });
     });
 
-    describe('buildProcessProposalActions', () => {
+    describe('buildPublishProcessProposalActions', () => {
         const buildApplyPluginsInstallationActionsSpy = jest.spyOn(
             pluginTransactionUtils,
             'buildApplyPluginsInstallationActions',
@@ -249,6 +249,7 @@ describe('prepareProcessDialog utils', () => {
             setupData: [generatePluginSetupData()],
             ...params,
         });
+
         it('builds the apply-installation actions and passes them to the create proposal plugin function', () => {
             const dao = generateDao();
             const setupData = [generatePluginSetupData()];

@@ -20,7 +20,7 @@ import { GukModulesProvider, modulesCopy } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { act, type ReactNode } from 'react';
 import * as Wagmi from 'wagmi';
-import { generateProposalCreate } from '../../testUtils/generators/proposalCreate';
+import { generateProposalCreate } from '../../testUtils';
 import { PublishProposalDialog, type PublishProposalStep } from './publishProposalDialog';
 import type { IPublishProposalDialogParams, IPublishProposalDialogProps } from './publishProposalDialog.api';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';

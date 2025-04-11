@@ -1,4 +1,4 @@
-import { generateProposalCreate } from '@/modules/governance/testUtils/generators/proposalCreate';
+import { generateProposalCreate } from '@/modules/governance/testUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import * as Viem from 'viem';
 import { adminPluginAbi } from './adminPluginAbi';

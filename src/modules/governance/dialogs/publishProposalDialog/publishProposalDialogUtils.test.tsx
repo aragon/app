@@ -8,8 +8,8 @@ import {
     generateCreateProposalFormData,
     generateProposalActionUpdateMetadata,
     generateProposalActionWithdrawToken,
+    generateProposalCreate,
 } from '../../testUtils';
-import { generateProposalCreate } from '../../testUtils/generators/proposalCreate';
 import { proposalUtils } from '../../utils/proposalUtils';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 

@@ -1,5 +1,5 @@
 import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
-import type { IProposalCreateAction } from '@/modules/governance/dialogs/publishProposalDialog/publishProposalDialog.api';
+import type { IProposalCreateAction } from '@/modules/governance/dialogs/publishProposalDialog';
 import { createContext, useContext } from 'react';
 
 export type PrepareProposalActionFunction = (action: IProposalCreateAction) => Promise<string>;

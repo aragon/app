@@ -90,8 +90,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         proposalSlug,
     } = props;
 
-const { label: successLabel, href: successHref, onClick: successOnClick } = successLink ?? { label: submitLabel };
-
+    const { label: successLabel, href: successHref, onClick: successOnClick } = successLink ?? { label: '' };
 
     const { id: stepId, meta } = activeStep ?? {};
     const { state, action } = meta ?? {};

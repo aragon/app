@@ -1,8 +1,7 @@
 import type { ISetupBodyFormMembership } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { generateCreateProcessFormBody } from '@/modules/createDao/testUtils';
 import { generateToken } from '@/modules/finance/testUtils';
-import { generateCreateProposalEndDateFormData } from '@/modules/governance/testUtils';
-import { generateProposalCreate } from '@/modules/governance/testUtils/generators/proposalCreate';
+import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { tokenPlugin } from '@/plugins/tokenPlugin/constants/tokenPlugin';
 import { generateDao } from '@/shared/testUtils';
