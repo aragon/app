@@ -911,14 +911,6 @@
             },
             "description": "Add or remove the addresses that should be able to make any change to the DAO without a proposal.",
             "title": "Manage admins"
-          },
-          "publishManageMembersDialog": {
-            "button": {
-              "submit": "Update admins"
-            },
-            "description": "To update admins, confirm the onchain transaction in your wallet.",
-
-            "title": "Update admins"
           }
         },
         "adminMemberInfo": {
@@ -957,6 +949,14 @@
         "adminVotingTerminal": {
           "description": "Proposals created by admins pass automatically without any governance.",
           "title": "Automatic execution"
+        },
+        "publishManageMembersDialog": {
+          "button": {
+            "submit": "Update admins"
+          },
+          "description": "To update admins, confirm the onchain transaction in your wallet.",
+
+          "title": "Update admins"
         }
       },
       "multisig": {
