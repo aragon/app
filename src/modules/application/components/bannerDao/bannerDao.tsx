@@ -7,7 +7,7 @@ import { Banner } from '@/shared/components/banner';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, invariant } from '@aragon/gov-ui-kit';
-import { Hex } from 'viem';
+import type { Hex } from 'viem';
 
 export interface IBannerDaoProps {
     /**
