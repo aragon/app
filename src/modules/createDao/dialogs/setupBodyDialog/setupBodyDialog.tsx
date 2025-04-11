@@ -56,9 +56,6 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
     }, [initialValues, address]);
 
     const [selectStep, metadataStep, membershipStep, governanceStep] = setupBodySteps;
-    const initialSteps = setupBodySteps.filter(
-        (step) => (initialValues == null || step.id !== 'select') && (isSubPlugin === true || step.id !== 'metadata'),
-    );
 
     return (
         <WizardDialog.Container
@@ -66,19 +63,14 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
             formId="bodySetup"
             onSubmit={onSubmit}
             defaultValues={processedInitialValues}
-            initialSteps={initialSteps}
             submitLabel={t('app.createDao.setupBodyDialog.submit')}
         >
-            {initialValues == null && (
-                <WizardDialog.Step {...selectStep}>
-                    <SetupBodyDialogSelect />
-                </WizardDialog.Step>
-            )}
-            {isSubPlugin && (
-                <WizardDialog.Step {...metadataStep}>
-                    <SetupBodyDialogMetadata />
-                </WizardDialog.Step>
-            )}
+            <WizardDialog.Step {...selectStep} hidden={initialValues != null}>
+                <SetupBodyDialogSelect />
+            </WizardDialog.Step>
+            <WizardDialog.Step {...metadataStep} hidden={!isSubPlugin}>
+                <SetupBodyDialogMetadata />
+            </WizardDialog.Step>
             <WizardDialog.Step {...membershipStep}>
                 <SetupBodyDialogMemberhip daoId={daoId} />
             </WizardDialog.Step>
