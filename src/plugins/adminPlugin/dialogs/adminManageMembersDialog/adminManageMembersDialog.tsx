@@ -98,7 +98,7 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
             daoId,
             plugin: adminPlugin.meta,
             prepareActions: {},
-            translationNamespace: 'app.plugins.admin.publishManageMembersDialog',
+            translationNamespace: 'app.plugins.admin.adminPublishManageMembersDialog',
         };
         open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
     };
