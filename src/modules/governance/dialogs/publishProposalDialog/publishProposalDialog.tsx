@@ -60,7 +60,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
         const { actions } = proposal;
 
         const processedActions = await publishProposalDialogUtils.prepareActions({ actions, prepareActions });
-        const processedProposal = { ...proposal, actions: processedActions };
+        const processedProposal = { ...proposal, actions: processedActions, startTimeMode: 'now' };
 
         return publishProposalDialogUtils.buildTransaction({
             proposal: processedProposal,
