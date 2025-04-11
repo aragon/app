@@ -922,6 +922,14 @@
           "pluginLabelName": "Name",
           "requirement": "Admin only"
         },
+        "adminPublishManageMembersDialog": {
+          "button": {
+            "submit": "Update admins"
+          },
+          "description": "To update admins, confirm the onchain transaction in your wallet.",
+
+          "title": "Update admins"
+        },
         "adminSettingsPanel": {
           "title": "Admin"
         },
@@ -949,14 +957,6 @@
         "adminVotingTerminal": {
           "description": "Proposals created by admins pass automatically without any governance.",
           "title": "Automatic execution"
-        },
-        "adminPublishManageMembersDialog": {
-          "button": {
-            "submit": "Update admins"
-          },
-          "description": "To update admins, confirm the onchain transaction in your wallet.",
-
-          "title": "Update admins"
         }
       },
       "multisig": {
