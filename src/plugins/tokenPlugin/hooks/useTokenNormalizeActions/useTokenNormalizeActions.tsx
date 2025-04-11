@@ -6,14 +6,13 @@ import { addressUtils } from '@aragon/gov-ui-kit';
 import type { ITokenPluginSettings } from '../../types';
 import { tokenActionUtils } from '../../utils/tokenActionUtils';
 
-export interface IUseTokenNormalizeActionsParams extends INormalizeActionsParams<ITokenPluginSettings> {}
+export interface IUseTokenNormalizeActionsParams extends INormalizeActionsParams {}
 
 export const useTokenNormalizeActions = (params: IUseTokenNormalizeActionsParams) => {
     const { actions, daoId } = params;
 
-    const daoPlugins = useDaoPlugins({ daoId, includeSubPlugins: true }) ?? [];
-
     const { t } = useTranslations();
+    const daoPlugins = useDaoPlugins({ daoId, includeSubPlugins: true }) ?? [];
 
     return actions.map((action) => {
         if (tokenActionUtils.isTokenMintAction(action)) {
@@ -22,8 +21,9 @@ export const useTokenNormalizeActions = (params: IUseTokenNormalizeActionsParams
             const { to: pluginAddress } = action;
             const plugin = daoPlugins.find(({ meta }) => addressUtils.isAddressEqual(pluginAddress, meta.address))
                 ?.meta as IDaoPlugin<ITokenPluginSettings>;
+            const { token } = plugin.settings;
 
-            return tokenActionUtils.normalizeChangeSettingsAction({ action, token: plugin.settings.token, t });
+            return tokenActionUtils.normalizeChangeSettingsAction({ action, token, t });
         }
 
         return action;

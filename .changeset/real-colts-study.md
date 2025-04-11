@@ -2,4 +2,4 @@
 '@aragon/app-next': patch
 ---
 
-Update useNormalizeActions for fetching relevant token settings
+Fix token and multisig normalise action functions

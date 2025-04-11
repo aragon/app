@@ -11,9 +11,9 @@ export interface ITokenActionChangeSettings
     /**
      * The proposed settings to be updated.
      */
-    proposedSettings: ITokenPluginSettings;
+    proposedSettings: Omit<ITokenPluginSettings, 'token'>;
     /**
-     * The existing settings before the update.
+     * The settings of the plugin at proposal creation.
      */
-    existingSettings: ITokenPluginSettings;
+    existingSettings: Omit<ITokenPluginSettings, 'token'>;
 }

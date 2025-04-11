@@ -1,4 +1,3 @@
-import type { IToken } from '@/modules/finance/api/financeService';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { actionComposerUtils } from '@/modules/governance/components/actionComposer/actionComposerUtils';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
@@ -46,9 +45,9 @@ export interface INormalizeChangeSettingsParams {
      */
     t: TranslationFunction;
     /**
-     * Token plugin settings.
+     * Token linked to the plugin.
      */
-    token: IToken;
+    token: ITokenPluginSettings['token'];
 }
 
 export type IGetTokenActionsResult = IActionComposerPluginData<IDaoPlugin<ITokenPluginSettings>>;
@@ -133,14 +132,10 @@ class TokenActionUtils {
         const { action, t, token } = params;
         const { type, proposedSettings, existingSettings, ...otherValues } = action;
 
-        const settings = {
-            ...existingSettings,
-            token,
-        } as ITokenPluginSettings;
+        const completeExistingSettings = { ...existingSettings, token };
+        const completeProposedSettings = { ...completeExistingSettings, ...proposedSettings };
 
-        const completeProposedSettings = { ...settings, ...proposedSettings };
-
-        const parsedExistingSettings = tokenSettingsUtils.parseSettings({ settings, t });
+        const parsedExistingSettings = tokenSettingsUtils.parseSettings({ settings: completeExistingSettings, t });
         const parsedProposedSettings = tokenSettingsUtils.parseSettings({ settings: completeProposedSettings, t });
 
         return {
