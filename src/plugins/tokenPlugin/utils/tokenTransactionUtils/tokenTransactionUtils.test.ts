@@ -4,11 +4,12 @@ import { generateToken } from '@/modules/finance/testUtils';
 import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { tokenPlugin } from '@/plugins/tokenPlugin/constants/tokenPlugin';
-import { generateDao } from '@/shared/testUtils';
+import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import * as Viem from 'viem';
 import { zeroAddress } from 'viem';
+import { generateTokenPluginSettings } from '../../testUtils';
 import { DaoTokenVotingMode } from '../../types';
 import { tokenPluginAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
 import { tokenTransactionUtils } from './tokenTransactionUtils';
@@ -36,7 +37,13 @@ describe('tokenTransaction utils', () => {
             const actions: ITransactionRequest[] = [
                 { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
             ];
-            const params = { metadata: '0xipfs-cid' as const, actions, proposal };
+            const plugin = generateDaoPlugin({
+                address: '0x123',
+                subdomain: 'token',
+                settings: generateTokenPluginSettings(),
+            });
+
+            const params = { metadata: '0xipfs-cid' as const, actions, proposal, plugin };
             const transactionData = '0xdata';
             parseStartDateSpy.mockReturnValue(startDate);
             parseEndDateSpy.mockReturnValue(endDate);
