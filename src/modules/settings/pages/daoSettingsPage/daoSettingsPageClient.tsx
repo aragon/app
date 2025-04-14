@@ -71,16 +71,17 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                 </Page.MainSection>
                 {hasSupportedPlugins && (
                     <Page.MainSection title={t('app.settings.daoSettingsPage.main.governanceInfoTitle')}>
-                        <Card className="p-6">
+                        <Card className="flex flex-col gap-4 p-6">
+                            <DaoGovernanceInfo daoId={daoId} />
                             <Button
-                                size="sm"
+                                size="md"
                                 variant="secondary"
+                                className="self-start"
                                 onClick={handleAddGovernanceProcessClick}
                                 iconLeft={IconType.PLUS}
                             >
                                 {t(`app.application.bannerDao.adminMember.action`)}
                             </Button>
-                            <DaoGovernanceInfo daoId={daoId} />
                         </Card>
                     </Page.MainSection>
                 )}
