@@ -38,25 +38,21 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
 
     const { check: checkWalletConnected } = useConnectedWalletGuard();
 
-    const handleSuccess = (selectedPlugin: IDaoPlugin) => {
-        // Step 3: Open the create process dialog with the selected plugin
-        console.log('selectedPlugin', selectedPlugin);
+    const handleWalletConnected = (selectedPlugin: IDaoPlugin) => {
         const params: ICreateProcessDetailsDialogParams = { daoId, pluginAddress: selectedPlugin.address as Hex };
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
 
     const handlePluginSelected = (plugin: IDaoPlugin) => {
-        // Step 2: Check the connection
         checkWalletConnected({
-            onSuccess: () => handleSuccess(plugin),
+            onSuccess: () => handleWalletConnected(plugin),
         });
     };
 
     const handleAddGovernanceProcessClick = () => {
-        // Step 1: Select a plugin (a process to use to create a new proposal to add new process)
+        // Select a plugin (a process to use to create a new proposal to add new process)
         const params: ISelectPluginDialogParams = {
             daoId,
-            // excludePluginIds: ['admin'],
             onPluginSelected: handlePluginSelected,
         };
         open(GovernanceDialogId.SELECT_PLUGIN, { params });
