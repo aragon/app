@@ -161,7 +161,6 @@ describe('<TransactionDialogFooter /> component', () => {
     });
 
     it('closes the dialog on success link click', async () => {
-        testLogger.suppressErrors(); // suppress navigation not implemented error
         const href = () => `/custom-link`;
         const successLink = { label: 'View proposal', href };
         const close = jest.fn();
@@ -193,7 +192,9 @@ describe('<TransactionDialogFooter /> component', () => {
             expect(screen.getByRole('button', { name: /transactionDialog.footer.cancel/ })).toBeInTheDocument();
 
             // simulate 8 seconds passing
-            act(() => jest.advanceTimersByTime(14000));
+            act(() => {
+                jest.advanceTimersByTime(14000);
+            });
 
             // Cancel button should now be Proceed anyway
             expect(screen.getByRole('link', { name: /transactionDialog.footer.proceedAnyway/ })).toBeInTheDocument();
@@ -215,7 +216,9 @@ describe('<TransactionDialogFooter /> component', () => {
 
             render(createTestComponent({ activeStep, transactionType, indexingFallbackUrl }));
 
-            act(() => jest.advanceTimersByTime(14000));
+            act(() => {
+                jest.advanceTimersByTime(14000);
+            });
 
             const proceedButton = screen.getByRole('link', { name: /transactionDialog.footer.proceedAnyway/ });
             expect(proceedButton).toHaveAttribute('href', indexingFallbackUrl);
