@@ -1,5 +1,4 @@
 import type { IProposalCreate, IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
-import type { ICreateProposalStartDateForm } from '@/modules/governance/utils/createProposalUtils';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
@@ -18,38 +17,32 @@ class AdminUninstallProcessDialogSelectUtils {
 
     prepareProposalMetadata = () => this.proposalMetadata;
 
-    buildProposalParams(
+    buildProposalParams = (
         daoAddress: Hex,
         adminAddress: Hex,
         plugin: IDaoPlugin,
         daoId: string,
-    ): IPublishProposalDialogParams {
-        return {
-            proposal: this.buildProposalValues(daoAddress, adminAddress),
-            daoId,
-            plugin,
-        };
-    }
+    ): IPublishProposalDialogParams => {
+        const proposal = this.buildProposalValues(daoAddress, adminAddress);
 
-    private buildProposalValues(daoAddress: Hex, adminAddress: Hex): IProposalCreate & ICreateProposalStartDateForm {
+        return { proposal, daoId, plugin };
+    };
+
+    private buildProposalValues = (daoAddress: Hex, adminAddress: Hex): IProposalCreate => {
         const revokeAction = this.buildRevokeAction(daoAddress, adminAddress);
+        const proposalMetadata = this.prepareProposalMetadata();
 
-        return {
-            ...this.prepareProposalMetadata(),
-            resources: [],
-            actions: [revokeAction],
-            startTimeMode: 'now',
-        };
-    }
+        return { ...proposalMetadata, resources: [], actions: [revokeAction] };
+    };
 
-    private buildRevokeAction(daoAddress: Hex, adminAddress: Hex): ITransactionRequest {
+    private buildRevokeAction = (daoAddress: Hex, adminAddress: Hex): ITransactionRequest => {
         return permissionTransactionUtils.buildRevokePermissionTransaction({
             where: daoAddress,
             who: adminAddress,
             what: this.permissionIds.EXECUTE_PERMISSION,
             to: daoAddress,
         });
-    }
+    };
 }
 
 export const adminUninstallProcessDialogSelectUtils = new AdminUninstallProcessDialogSelectUtils();

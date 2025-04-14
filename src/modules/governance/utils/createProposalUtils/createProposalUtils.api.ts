@@ -4,7 +4,7 @@ export interface ICreateProposalStartDateForm {
     /**
      * Defines if the start time of the proposal is now or at a specific date.
      */
-    startTimeMode: 'now' | 'fixed';
+    startTimeMode?: 'now' | 'fixed';
     /**
      * Fixed start time only set when startTimeMode is set to fixed.
      */
@@ -15,7 +15,7 @@ export interface ICreateProposalEndDateForm extends ICreateProposalStartDateForm
     /**
      * Defines if the end time of the proposal is with duration or fixed format.
      */
-    endTimeMode: 'duration' | 'fixed';
+    endTimeMode?: 'duration' | 'fixed';
     /**
      * End time of the proposal in duration (minutes, hours, days) format only set when endTimeMode is set to duration.
      */

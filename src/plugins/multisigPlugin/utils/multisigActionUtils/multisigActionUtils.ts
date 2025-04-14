@@ -35,7 +35,7 @@ export interface IGetMultisigActionsProps {
     t: TranslationFunction;
 }
 
-export interface INormalizeChangeSettingsParams extends IMultisigSettingsParseParams {
+export interface INormalizeChangeSettingsParams extends Omit<IMultisigSettingsParseParams, 'settings'> {
     /**
      * Action to be normalised.
      */
@@ -118,12 +118,16 @@ class MultisigActionUtils {
     };
 
     normalizeChangeSettingsAction = (params: INormalizeChangeSettingsParams): IGukProposalActionChangeSettings => {
-        const { action, membersCount, t, settings } = params;
-        const { type, proposedSettings, ...otherValues } = action;
+        const { action, membersCount, t } = params;
+        const { type, existingSettings, proposedSettings, ...otherValues } = action;
 
-        const completeProposedSettings = { ...settings, ...proposedSettings };
+        const completeProposedSettings = { ...existingSettings, ...proposedSettings };
 
-        const parsedExistingSettings = multisigSettingsUtils.parseSettings({ membersCount, settings, t });
+        const parsedExistingSettings = multisigSettingsUtils.parseSettings({
+            membersCount,
+            settings: existingSettings,
+            t,
+        });
         const parsedProposedSettings = multisigSettingsUtils.parseSettings({
             membersCount,
             settings: completeProposedSettings,

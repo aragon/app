@@ -4,8 +4,7 @@ import {
     generateCreateProcessFormData,
     generateCreateProcessFormStage,
 } from '@/modules/createDao/testUtils/generators/createProcessFormData';
-import { generateCreateProposalEndDateFormData } from '@/modules/governance/testUtils';
-import { generateProposalCreate } from '@/modules/governance/testUtils/generators/proposalCreate';
+import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { sppPlugin } from '@/plugins/sppPlugin/constants/sppPlugin';
 import { Network } from '@/shared/api/daoService';
