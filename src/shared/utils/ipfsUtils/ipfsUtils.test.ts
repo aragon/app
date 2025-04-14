@@ -24,9 +24,9 @@ describe('ipfs utils', () => {
             expect(src).toContain(`img-width=${size.toString()}&img-height=${size.toString()}`);
         });
 
-        it('uses the default size of 120 when no size is provided', () => {
+        it('uses the default size of 256 when no size is provided', () => {
             const src = ipfsUtils.cidToSrc('800a');
-            expect(src).toContain('img-width=120&img-height=120');
+            expect(src).toContain('img-width=256&img-height=256');
         });
     });
 
