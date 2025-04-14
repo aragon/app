@@ -1,7 +1,6 @@
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import classNames from 'classnames';
-
 import NextLink from 'next/link';
 import { type ComponentProps } from 'react';
 
