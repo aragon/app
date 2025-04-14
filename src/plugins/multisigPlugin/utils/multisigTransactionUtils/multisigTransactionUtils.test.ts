@@ -2,10 +2,11 @@ import { generateCreateProcessFormBody } from '@/modules/createDao/testUtils';
 import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { multisigPlugin } from '@/plugins/multisigPlugin/constants/multisigPlugin';
-import { generateDao } from '@/shared/testUtils';
+import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import * as Viem from 'viem';
+import { generateMultisigPluginSettings } from '../../testUtils';
 import { multisigPluginAbi, multisigPluginSetupAbi } from './multisigPluginAbi';
 import { multisigTransactionUtils } from './multisigTransactionUtils';
 
@@ -32,7 +33,12 @@ describe('multisigTransaction utils', () => {
             const endDate = 1728660603;
             const proposal = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
             const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x0', value: BigInt(0) }];
-            const params = { metadata: '0x' as const, actions: actions, proposal };
+            const plugin = generateDaoPlugin({
+                address: '0x123',
+                subdomain: 'multisig',
+                settings: generateMultisigPluginSettings(),
+            });
+            const params = { metadata: '0x' as const, actions: actions, proposal, plugin };
             parseStartDateSpy.mockReturnValue(startDate);
             parseEndDateSpy.mockReturnValue(endDate);
 
