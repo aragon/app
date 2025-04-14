@@ -30,6 +30,9 @@
           "stats": "Trusted by 7,500+ DAOs and $27B+"
         }
       },
+      "debugPanel": {
+        "title": "App debug"
+      },
       "footer": {
         "copyright": "© {{year}} Aragon",
         "governed": "Governed on",
