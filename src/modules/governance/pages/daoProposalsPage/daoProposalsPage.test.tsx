@@ -41,7 +41,7 @@ describe('<DaoProposalsPage /> component', () => {
 
     const createTestComponent = async (props?: Partial<IDaoProposalsPageProps>) => {
         const completeProps: IDaoProposalsPageProps = {
-            params: Promise.resolve({ id: 'dao-id' }),
+            params: Promise.resolve({ id: 'dao-id', pluginAddress: '0x123' }),
             ...props,
         };
         const Component = await DaoProposalsPage(completeProps);
@@ -55,13 +55,18 @@ describe('<DaoProposalsPage /> component', () => {
         fetchQuerySpy.mockResolvedValue(dao);
         getDaoPluginsSpy.mockReturnValue([bodyPlugin]);
 
-        const params = { id: 'my-dao' };
-        render(await createTestComponent({ params: Promise.resolve(params) }));
+        const getDaoParams = { id: 'my-dao' };
+        const daoPageParams = { ...getDaoParams, pluginAddress: '0x123' };
+        render(await createTestComponent({ params: Promise.resolve(daoPageParams) }));
 
-        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: getDaoParams }).queryKey);
         expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, { type: PluginType.PROCESS });
 
-        const memberListParams = { daoId: params.id, pageSize: daoProposalsCount, pluginAddress: bodyPlugin.address };
+        const memberListParams = {
+            daoId: getDaoParams.id,
+            pageSize: daoProposalsCount,
+            pluginAddress: bodyPlugin.address,
+        };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
             proposalListOptions({ queryParams: memberListParams }).queryKey,
         );

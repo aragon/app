@@ -4,7 +4,7 @@ import { type INotFoundDaoProps, NotFoundDao } from './notFoundDao';
 describe('<NotFoundDao /> component', () => {
     const createTestComponent = (props?: Partial<INotFoundDaoProps>) => {
         const completeProps: INotFoundDaoProps = {
-            params: { id: 'test-id' },
+            params: { id: 'test-id', pluginAddress: '0x123' },
             ...props,
         };
 
@@ -13,7 +13,7 @@ describe('<NotFoundDao /> component', () => {
 
     it('renders a not-found page for DAOs', () => {
         const daoId = 'my-dao-id';
-        const params = { id: daoId };
+        const params = { id: daoId, pluginAddress: '0x123' };
         render(createTestComponent({ params }));
 
         expect(screen.getByText(/notFoundDao.title/)).toBeInTheDocument();

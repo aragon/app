@@ -49,9 +49,10 @@ describe('<LayoutWizard /> component', () => {
     });
 
     it('prefetches the DAO and its settings from the given slug', async () => {
-        const params = { id: 'my-dao' };
-        render(await createTestComponent({ params: Promise.resolve(params) }));
-        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
+        const getDaoParams = { id: 'my-dao' };
+        const daoPageParams = { ...getDaoParams, pluginAddress: '0x123' };
+        render(await createTestComponent({ params: Promise.resolve(daoPageParams) }));
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: getDaoParams }).queryKey);
     });
 
     it('does not prefetch the DAO data when the DAO id is not provided by params', async () => {
@@ -77,7 +78,7 @@ describe('<LayoutWizard /> component', () => {
 
     it('renders error with a link to the explore page on fetch DAO error', async () => {
         const daoId = 'wizard-id';
-        const params = { id: daoId };
+        const params = { id: daoId, pluginAddress: '0x123' };
         fetchQuerySpy.mockRejectedValue('error');
         render(await createTestComponent({ params: Promise.resolve(params) }));
         const errorLink = screen.getByRole('link', { name: /layoutWizard.notFound.action/ });

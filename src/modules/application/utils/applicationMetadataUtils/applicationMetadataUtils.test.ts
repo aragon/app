@@ -18,7 +18,9 @@ describe('applicationMetadata utils', () => {
             const dao = generateDao({ name: 'My DAO', description: 'Description' });
             getDaoSpy.mockResolvedValue(dao);
 
-            const metadata = await applicationMetadataUtils.generateDaoMetadata({ params: Promise.resolve({ id }) });
+            const metadata = await applicationMetadataUtils.generateDaoMetadata({
+                params: Promise.resolve({ id, pluginAddress: '0x123' }),
+            });
             expect(metadata.title).toEqual(dao.name);
             expect(metadata.openGraph?.siteName).toEqual(`${dao.name} | Governed on Aragon`);
             expect(metadata.description).toEqual(dao.description);
@@ -31,7 +33,7 @@ describe('applicationMetadata utils', () => {
             cidToSrcSpy.mockReturnValue(ipfsUrl);
 
             const metadata = await applicationMetadataUtils.generateDaoMetadata({
-                params: Promise.resolve({ id: 'test' }),
+                params: Promise.resolve({ id: 'test', pluginAddress: '0x123' }),
             });
             expect(cidToSrcSpy).toHaveBeenCalledWith(dao.avatar);
             expect(metadata.openGraph?.images).toEqual([ipfsUrl]);
@@ -42,7 +44,7 @@ describe('applicationMetadata utils', () => {
             getDaoSpy.mockResolvedValue(dao);
 
             const metadata = await applicationMetadataUtils.generateDaoMetadata({
-                params: Promise.resolve({ id: 'test' }),
+                params: Promise.resolve({ id: 'test', pluginAddress: '0x123' }),
             });
             expect(metadata.openGraph?.images).toBeUndefined();
         });

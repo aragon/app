@@ -15,7 +15,7 @@ jest.mock('./daoDashboardPageClient', () => ({
 describe('<DaoDashboardPage /> component', () => {
     const createTestComponent = async (props?: Partial<IDaoDashboardPageProps>) => {
         const completeProps: IDaoDashboardPageProps = {
-            params: Promise.resolve({ id: 'dao-id' }),
+            params: Promise.resolve({ id: 'dao-id', pluginAddress: '0x123' }),
             ...props,
         };
 
