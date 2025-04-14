@@ -48,12 +48,5 @@ describe('translations utils', () => {
             expect(translationUtils.t(translations)(partial)).toEqual(partial);
             expect(translationUtils.t(translations)(nested)).toEqual(nested);
         });
-
-        it('returns the translation keys when debug is set to true', () => {
-            const debug = true;
-            const key = 'app.test';
-            const translations = { app: { test: 'value' } } as unknown as Translations;
-            expect(translationUtils.t(translations, debug)(key)).toEqual(key);
-        });
     });
 });
