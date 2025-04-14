@@ -85,13 +85,15 @@ class PrepareProcessDialogUtils {
         const { values, pluginsMetadata, dao } = params;
         const { bodies, stages } = values;
 
-        const installActionsData = bodies.map((body, index) => {
-            const stage = stages.find(({ internalId }) => internalId === body.stageId);
-            const { votingPeriod: stageVotingPeriod } = stage?.timing ?? {};
-            const metadataCid = pluginsMetadata[index];
+        const installActionsData = bodies
+            .filter((body) => body.address == null)
+            .map((body, index) => {
+                const stage = stages.find(({ internalId }) => internalId === body.stageId);
+                const { votingPeriod: stageVotingPeriod } = stage?.timing ?? {};
+                const metadataCid = pluginsMetadata[index];
 
-            return this.buildPrepareInstallPluginActionData({ body, dao, metadataCid, stageVotingPeriod });
-        });
+                return this.buildPrepareInstallPluginActionData({ body, dao, metadataCid, stageVotingPeriod });
+            });
 
         return installActionsData;
     };

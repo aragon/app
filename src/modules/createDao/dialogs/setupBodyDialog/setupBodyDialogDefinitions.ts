@@ -15,6 +15,10 @@ export interface ISetupBodyForm<
      */
     name: string;
     /**
+     * Address of the body, only set when selecting existing / external bodies.
+     */
+    address?: string;
+    /**
      * Optional description of the voting body.
      */
     description?: string;

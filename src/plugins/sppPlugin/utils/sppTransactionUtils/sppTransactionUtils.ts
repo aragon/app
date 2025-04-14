@@ -124,12 +124,14 @@ class SppTransactionUtils {
             return undefined;
         }
 
-        const conditionAddresses = bodies.reduce<string[]>((current, body, bodyIndex) => {
-            const isBodyAllowed = body.canCreateProposal;
-            const bodyConditionAddress = pluginSetupData[bodyIndex].preparedSetupData.helpers[0];
+        const conditionAddresses = bodies
+            .filter((body) => body.address != null)
+            .reduce<string[]>((current, body, bodyIndex) => {
+                const isBodyAllowed = body.canCreateProposal;
+                const bodyConditionAddress = pluginSetupData[bodyIndex].preparedSetupData.helpers[0];
 
-            return isBodyAllowed ? [...current, bodyConditionAddress] : current;
-        }, []);
+                return isBodyAllowed ? [...current, bodyConditionAddress] : current;
+            }, []);
 
         const conditionRules = permissionTransactionUtils.buildRuleConditions(conditionAddresses, []);
 
@@ -159,11 +161,11 @@ class SppTransactionUtils {
 
             const resultType = type === ProcessStageType.NORMAL ? SppProposalType.APPROVAL : SppProposalType.VETO;
 
-            const bodySettings = { isManual: false, tryAdvance: true };
-            const processedBodies = stageBodies.map(() => ({
-                addr: processedBodyAddresses.shift()!,
+            const processedBodies = stageBodies.map((body) => ({
+                addr: body.address ?? processedBodyAddresses.shift()!,
                 resultType,
-                ...bodySettings,
+                tryAdvance: true,
+                isManual: body.address != null,
             }));
 
             return { bodies: processedBodies, ...stageApprovals, ...stageTiming, cancelable: false, editable: false };

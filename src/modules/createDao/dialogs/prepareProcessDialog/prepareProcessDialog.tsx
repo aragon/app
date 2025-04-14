@@ -91,13 +91,15 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
         async (params: ITransactionDialogActionParams) => {
             const isAdvancedGovernance = values.governanceType === GovernanceType.ADVANCED;
 
-            const pinPluginsMetadataPromises = values.bodies.map((plugin) => {
-                const pluginMetadata = isAdvancedGovernance
-                    ? prepareProcessDialogUtils.preparePluginMetadata(plugin)
-                    : prepareProcessDialogUtils.prepareProcessorMetadata(values);
+            const pinPluginsMetadataPromises = values.bodies
+                .filter((body) => body.address != null)
+                .map((plugin) => {
+                    const pluginMetadata = isAdvancedGovernance
+                        ? prepareProcessDialogUtils.preparePluginMetadata(plugin)
+                        : prepareProcessDialogUtils.prepareProcessorMetadata(values);
 
-                return pinJson({ body: pluginMetadata }, params);
-            });
+                    return pinJson({ body: pluginMetadata }, params);
+                });
 
             const pluginMetadata = (await Promise.all(pinPluginsMetadataPromises)).map(({ IpfsHash }) => IpfsHash);
             const metadata: IPrepareProcessMetadata = { plugins: pluginMetadata };

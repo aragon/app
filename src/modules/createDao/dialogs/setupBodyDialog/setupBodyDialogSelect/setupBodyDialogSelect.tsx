@@ -7,6 +7,8 @@ import type { ISetupBodyForm } from '../setupBodyDialogDefinitions';
 
 export interface ISetupBodyDialogSelectProps {}
 
+export const externalPluginId = 'external';
+
 export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = () => {
     const { t } = useTranslations();
 
@@ -32,6 +34,11 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = () =
                     value={plugin.id}
                 />
             ))}
+            <RadioCard
+                label="External address"
+                description="Add any address as a body, such as a Safe or Governor"
+                value={externalPluginId}
+            />
         </RadioGroup>
     );
 };
