@@ -25,7 +25,7 @@ class MiddlewareUtils {
         "object-src 'self'",
         "base-uri 'self'",
         "form-action 'self'",
-        "frame-ancestors 'none'",
+        `frame-ancestors ${env === 'production' ? "'none'" : 'https://vercel.com'}`,
         'upgrade-insecure-requests',
     ];
 }
