@@ -1,12 +1,13 @@
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import classNames from 'classnames';
 import NextLink from 'next/link';
 import { type ComponentProps } from 'react';
 
 export interface ILinkProps extends ComponentProps<'a'> {}
 
 export const Link: React.FC<ILinkProps> = (props) => {
-    const { href = {}, rel = '', target, onClick, ...otherProps } = props;
+    const { href = {}, rel = '', target, onClick, className, ...otherProps } = props;
 
     const { isBlocked } = useBlockNavigationContext();
     const { t } = useTranslations();
@@ -24,5 +25,18 @@ export const Link: React.FC<ILinkProps> = (props) => {
         }
     };
 
-    return <NextLink href={href} rel={processedRel} target={target} onClick={handleClick} {...otherProps} />;
+    // Needed to disable pointer events on the link and prevent navigation
+    // when aria-disabled is set to true
+    const isDisabled = otherProps['aria-disabled'] === true;
+
+    return (
+        <NextLink
+            href={href}
+            rel={processedRel}
+            target={target}
+            onClick={handleClick}
+            className={classNames(className, { 'pointer-events-none': isDisabled })}
+            {...otherProps}
+        />
+    );
 };
