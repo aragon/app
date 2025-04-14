@@ -1,5 +1,5 @@
-import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { IProposalAction } from '../../api/governanceService';
+import type { IProposalCreate } from '../../dialogs/publishProposalDialog';
 
 export type IProposalActionData<TAction extends IProposalAction = IProposalAction, TMeta = undefined> = TAction & {
     /**
@@ -16,27 +16,11 @@ export type IProposalActionData<TAction extends IProposalAction = IProposalActio
     meta: TMeta;
 };
 
-export interface ICreateProposalFormData<TMeta = undefined> {
-    /**
-     * Title of the proposal.
-     */
-    title: string;
-    /**
-     * Short description of the proposal.
-     */
-    summary: string;
-    /**
-     * Long description of the proposal supporting HTML tags.
-     */
-    body?: string;
+export interface ICreateProposalFormData<TMeta = undefined> extends Omit<IProposalCreate, 'actions'> {
     /**
      * Defines if the user wants to add actions to the proposal or not.
      */
     addActions: boolean;
-    /**
-     * Resources of the proposal.
-     */
-    resources: IResourcesInputResource[];
     /**
      * List of actions to be executed if the proposal succeeds.
      */

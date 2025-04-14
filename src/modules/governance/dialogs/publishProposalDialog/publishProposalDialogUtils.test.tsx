@@ -7,6 +7,7 @@ import {
     generateCreateProposalFormData,
     generateProposalActionUpdateMetadata,
     generateProposalActionWithdrawToken,
+    generateProposalCreate,
 } from '../../testUtils';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
@@ -21,7 +22,7 @@ describe('publishProposalDialog utils', () => {
 
     describe('prepareMetadata', () => {
         it('correctly map form values to metadata object', () => {
-            const formValues = generateCreateProposalFormData({
+            const formValues = generateProposalCreate({
                 title: 'Title',
                 summary: 'Short summary',
                 body: '<p>Proposal body</p>',
@@ -44,15 +45,14 @@ describe('publishProposalDialog utils', () => {
             getSlotFunctionSpy.mockReturnValue(slotFunction);
 
             const actionBaseValues = { data: '0x123456', to: '0x000', value: '4' };
-            const values = generateCreateProposalFormData({
-                actions: [
-                    { ...generateProposalActionUpdateMetadata(actionBaseValues), daoId: 'test', meta: undefined },
-                ],
+            const proposalAction = generateProposalActionUpdateMetadata(actionBaseValues);
+            const proposal = generateCreateProposalFormData({
+                actions: [{ ...proposalAction, daoId: 'test', meta: undefined }],
             });
             const metadataCid = 'test-cid';
             const plugin = generateDaoPlugin({ address: '0x123', subdomain: 'multisig' });
 
-            const transaction = await publishProposalDialogUtils.buildTransaction({ values, metadataCid, plugin });
+            const transaction = await publishProposalDialogUtils.buildTransaction({ proposal, metadataCid, plugin });
 
             expect(getSlotFunctionSpy).toHaveBeenCalledWith({
                 pluginId: plugin.subdomain,
@@ -61,7 +61,7 @@ describe('publishProposalDialog utils', () => {
             expect(slotFunction).toHaveBeenCalledWith({
                 actions: [{ ...actionBaseValues, value: BigInt(actionBaseValues.value) }],
                 metadata: '0x697066733a2f2f746573742d636964',
-                values,
+                proposal,
             });
 
             expect(transaction.data).toEqual(transactionData);
@@ -105,7 +105,7 @@ describe('publishProposalDialog utils', () => {
         });
     });
 
-    describe('proposalActionToTransactionRequest', () => {
+    describe('actionToTransactionRequest', () => {
         it('correctly maps a proposal action to a transaction request', () => {
             const actionBaseData = { to: '0x123', value: '10', data: '0x1234' };
             const action = generateProposalActionWithdrawToken(actionBaseData);

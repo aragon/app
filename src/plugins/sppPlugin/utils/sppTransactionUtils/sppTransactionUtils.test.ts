@@ -4,7 +4,7 @@ import {
     generateCreateProcessFormData,
     generateCreateProcessFormStage,
 } from '@/modules/createDao/testUtils/generators/createProcessFormData';
-import { generateCreateProposalEndDateFormData, generateCreateProposalFormData } from '@/modules/governance/testUtils';
+import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { sppPlugin } from '@/plugins/sppPlugin/constants/sppPlugin';
 import { Network } from '@/shared/api/daoService';
@@ -39,11 +39,11 @@ describe('sppTransaction utils', () => {
         it('encodes createProposal data with correct parameters', () => {
             const transactionData = '0xencoded';
             const startDate = 12345;
-            const values = { ...generateCreateProposalFormData(), ...generateCreateProposalEndDateFormData() };
+            const proposal = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
             const actions: ITransactionRequest[] = [{ to: '0xAddress', data: '0xdata', value: BigInt(0) }];
             parseStartDateSpy.mockReturnValue(startDate);
 
-            const params = { metadata: '0xmetadata' as Viem.Hex, actions, values };
+            const params = { metadata: '0xmetadata' as Viem.Hex, actions, proposal };
             encodeFunctionDataSpy.mockReturnValue(transactionData);
 
             const result = sppTransactionUtils.buildCreateProposalData(params);

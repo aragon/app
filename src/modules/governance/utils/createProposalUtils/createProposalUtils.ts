@@ -8,12 +8,12 @@ class CreateProposalUtils {
         const { startTimeMode, startTimeFixed } = formValues;
 
         invariant(
-            startTimeMode === 'now' || startTimeFixed != null,
+            !startTimeMode || startTimeMode === 'now' || startTimeFixed != null,
             'PublishProposalDialogUtils.parseStartDate: startTimeFixed must be properly set when startTimeMode is set to fixed',
         );
 
         // Returning 0 to let the smart contracts set the start time when the transaction is executed.
-        if (startTimeMode === 'now') {
+        if (startTimeMode == undefined || startTimeMode === 'now') {
             return 0;
         }
 
@@ -28,14 +28,17 @@ class CreateProposalUtils {
         const { hours, minutes, days } = endTimeDuration ?? {};
 
         invariant(
-            endTimeMode === 'duration' ? endTimeDuration != null : endTimeFixed != null,
+            !endTimeMode || (endTimeMode === 'duration' ? endTimeDuration != null : endTimeFixed != null),
             'PublishProposalDialogUtils.parseEndDate: endTimeDuration/endTimeFixed must be properly set.',
         );
 
         // Return 0 when endTime is set as duration and equals to minimumDuration to let smart contract set the correct end
         // time when the transaction is executed, otherwise the end time will be set as a few seconds before the minimum
         // duration and the transaction would fail.
-        if (endTimeMode === 'duration' && dateUtils.compareDuration(minimumDuration, endTimeDuration)) {
+        const useDefaultEndTime =
+            !endTimeMode || (endTimeMode === 'duration' && dateUtils.compareDuration(minimumDuration, endTimeDuration));
+
+        if (!endTimeMode || useDefaultEndTime) {
             return 0;
         }
 

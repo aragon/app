@@ -49,6 +49,12 @@ export const defaultUpdateSettings = ({
         supportThreshold: tokenSettingsUtils.ratioToPercentage(settings.supportThreshold),
         minProposerVotingPower: formatUnits(BigInt(settings.minProposerVotingPower), settings.token.decimals),
     },
+    existingSettings: {
+        ...settings,
+        minParticipation: tokenSettingsUtils.ratioToPercentage(settings.minParticipation),
+        supportThreshold: tokenSettingsUtils.ratioToPercentage(settings.supportThreshold),
+        minProposerVotingPower: formatUnits(BigInt(settings.minProposerVotingPower), settings.token.decimals),
+    },
     inputData: {
         function: 'updateVotingSettings',
         contract: '',

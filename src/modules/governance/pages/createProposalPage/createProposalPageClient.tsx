@@ -10,15 +10,14 @@ import { addressUtils } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ISmartContractAbi } from '../../api/smartContractService';
-import {
-    CreateProposalForm,
-    type ICreateProposalFormData,
-    type PrepareProposalActionFunction,
-    type PrepareProposalActionMap,
-} from '../../components/createProposalForm';
+import { CreateProposalForm, type ICreateProposalFormData } from '../../components/createProposalForm';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import { type IPublishProposalDialogParams } from '../../dialogs/publishProposalDialog';
+import type {
+    IPublishProposalDialogParams,
+    PrepareProposalActionFunction,
+    PrepareProposalActionMap,
+} from '../../dialogs/publishProposalDialog';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
 import { createProposalWizardSteps } from './createProposalPageDefinitions';
 
@@ -80,7 +79,10 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     );
 
     const handleFormSubmit = (values: ICreateProposalFormData) => {
-        const params: IPublishProposalDialogParams = { values, daoId, pluginAddress, prepareActions };
+        // We are always saving actions on the form so that user doesn't lose them if they navigate around the form.
+        const { actions, addActions } = values;
+        const proposal = { ...values, actions: addActions ? actions : [] };
+        const params: IPublishProposalDialogParams = { proposal, daoId, plugin, prepareActions };
         open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
     };
 

@@ -2,7 +2,6 @@ import { useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { TransactionType } from '@/shared/api/transactionService';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
-import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
     type IBuildTransactionDialogSuccessLinkHref,
     type ITransactionDialogActionParams,
@@ -17,33 +16,12 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo } from 'react';
 import { useAccount } from 'wagmi';
-import type { ICreateProposalFormData, PrepareProposalActionMap } from '../../components/createProposalForm';
+import type { IPublishProposalDialogProps } from './publishProposalDialog.api';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
 export enum PublishProposalStep {
     PIN_METADATA = 'PIN_METADATA',
 }
-
-export interface IPublishProposalDialogParams {
-    /**
-     * Values of the create-proposal form.
-     */
-    values: ICreateProposalFormData;
-    /**
-     * ID of the DAO to create the proposal for.
-     */
-    daoId: string;
-    /**
-     * Address of the plugin to create the proposal for.
-     */
-    pluginAddress: string;
-    /**
-     * Partial map of action-type and prepare-action functions as not all actions require an async data preparation.
-     */
-    prepareActions: PrepareProposalActionMap;
-}
-
-export interface IPublishProposalDialogProps extends IDialogComponentProps<IPublishProposalDialogParams> {}
 
 export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (props) => {
     const { location } = props;
@@ -53,8 +31,10 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const { address } = useAccount();
     invariant(address != null, 'PublishProposalDialog: user must be connected.');
 
-    const { daoId, pluginAddress, values, prepareActions } = location.params;
-    const { title, summary } = values;
+    const { daoId, plugin, proposal, prepareActions, translationNamespace, transactionInfo } = location.params;
+
+    const { address: pluginAddress } = plugin;
+    const { title, summary } = proposal;
 
     const { t } = useTranslations();
     const { setIsBlocked } = useBlockNavigationContext();
@@ -70,26 +50,23 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
 
     const handlePinJson = useCallback(
         (params: ITransactionDialogActionParams) => {
-            const proposalMetadata = publishProposalDialogUtils.prepareMetadata(values);
+            const proposalMetadata = publishProposalDialogUtils.prepareMetadata(proposal);
             pinJson({ body: proposalMetadata }, params);
         },
-        [pinJson, values],
+        [pinJson, proposal],
     );
 
     const handlePrepareTransaction = async () => {
         invariant(pinJsonData != null, 'PublishProposalDialog: metadata not pinned for prepare transaction step.');
         const { IpfsHash: metadataCid } = pinJsonData;
-        const { actions, addActions } = values;
 
-        // We are always saving actions on the form so that user doesn't lose them if they navigate around the form.
-        // So we use the addActions flag to determine if we should add actions to the proposal or not.
-        const processedActions = addActions
-            ? await publishProposalDialogUtils.prepareActions({ actions, prepareActions })
-            : [];
-        const processedValues = { ...values, actions: processedActions };
+        const { actions } = proposal;
+
+        const processedActions = await publishProposalDialogUtils.prepareActions({ actions, prepareActions });
+        const processedProposal = { ...proposal, actions: processedActions };
 
         return publishProposalDialogUtils.buildTransaction({
-            values: processedValues,
+            proposal: processedProposal,
             metadataCid,
             plugin: daoPlugin.meta,
         });
@@ -122,11 +99,13 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
         [status, handlePinJson, t],
     );
 
+    const namespace = translationNamespace ?? 'app.governance.publishProposalDialog';
+
     return (
         <TransactionDialog<PublishProposalStep>
-            title={t('app.governance.publishProposalDialog.title')}
-            description={t('app.governance.publishProposalDialog.description')}
-            submitLabel={t('app.governance.publishProposalDialog.button.submit')}
+            title={t(`${namespace}.title`)}
+            description={t(`${namespace}.description`)}
+            submitLabel={t(`${namespace}.button.submit`)}
             successLink={{ label: t('app.governance.publishProposalDialog.button.success'), href: getProposalsLink }}
             stepper={stepper}
             customSteps={customSteps}
@@ -134,13 +113,16 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
             network={dao?.network}
             transactionType={TransactionType.PROPOSAL_CREATE}
             indexingFallbackUrl={`/dao/${daoId}/proposals`}
+            transactionInfo={transactionInfo}
         >
-            <ProposalDataListItem.Structure
-                title={title}
-                summary={summary}
-                publisher={{ address }}
-                status={ProposalStatus.DRAFT}
-            />
+            {plugin.subdomain !== 'admin' && (
+                <ProposalDataListItem.Structure
+                    title={title}
+                    summary={summary}
+                    publisher={{ address }}
+                    status={ProposalStatus.DRAFT}
+                />
+            )}
         </TransactionDialog>
     );
 };

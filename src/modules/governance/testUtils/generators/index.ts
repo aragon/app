@@ -5,5 +5,6 @@ export * from './proposal';
 export * from './proposalAction';
 export * from './proposalActionUpdateMetadata';
 export * from './proposalActionWithdrawToken';
+export * from './proposalCreate';
 export * from './smartContractAbi';
 export * from './vote';

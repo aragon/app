@@ -1,20 +1,26 @@
 import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
+import type {
+    IProposalCreateAction,
+    PrepareProposalActionFunction,
+    PrepareProposalActionMap,
+} from '@/modules/governance/dialogs/publishProposalDialog';
 import { createContext, useContext } from 'react';
-import type { IProposalAction } from '../../../api/governanceService';
 
-export type PrepareProposalActionFunction = (action: IProposalAction) => Promise<string>;
-export type PrepareProposalActionMap = Partial<Record<string, PrepareProposalActionFunction>>;
+type AddPrepareActionFunction<TAction extends IProposalCreateAction = IProposalCreateAction> = (
+    actionType: string,
+    prepareAction: PrepareProposalActionFunction<TAction>,
+) => void;
 
-export interface ICreateProposalFormContext {
+export interface ICreateProposalFormContext<TAction extends IProposalCreateAction = IProposalCreateAction> {
     /**
      * Map of proposal-type and prepare action functions to be used for async action preparations.
      * (e.g. actions requiring IPFS pinning or requests to third party APIs)
      */
-    prepareActions: PrepareProposalActionMap;
+    prepareActions: PrepareProposalActionMap<TAction>;
     /**
      * Callback to update the prepare-action maps for the given proposal action type.
      */
-    addPrepareAction: (actionType: string, prepareAction: PrepareProposalActionFunction) => void;
+    addPrepareAction: AddPrepareActionFunction<TAction>;
     /**
      * ABIs of smart contract to be used for adding custom actions to proposals.
      */
@@ -29,7 +35,9 @@ const createProposalFormContext = createContext<ICreateProposalFormContext | nul
 
 export const CreateProposalFormProvider = createProposalFormContext.Provider;
 
-export const useCreateProposalFormContext = () => {
+export const useCreateProposalFormContext = <
+    TAction extends IProposalCreateAction = IProposalCreateAction,
+>(): ICreateProposalFormContext<TAction> => {
     const values = useContext(createProposalFormContext);
 
     if (values == null) {
@@ -38,5 +46,9 @@ export const useCreateProposalFormContext = () => {
         );
     }
 
-    return values;
+    return {
+        ...values,
+        prepareActions: values.prepareActions as PrepareProposalActionMap<TAction>,
+        addPrepareAction: values.addPrepareAction as AddPrepareActionFunction<TAction>,
+    };
 };

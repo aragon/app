@@ -12,4 +12,8 @@ export interface IMultisigActionChangeSettings
      * The proposed settings to be updated.
      */
     proposedSettings: IMultisigPluginSettings;
+    /**
+     * The settings of the plugin at proposal creation.
+     */
+    existingSettings: IMultisigPluginSettings;
 }
