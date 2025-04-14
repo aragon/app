@@ -5,7 +5,6 @@ import { headers } from 'next/headers';
 import NextTopLoader from 'nextjs-toploader';
 import type { ReactNode } from 'react';
 import { cookieToInitialState } from 'wagmi';
-import { DebugPanel } from '../../debugPanel';
 import { ErrorBoundary } from '../../errorBoundary';
 import { Footer } from '../../footer';
 import { Providers } from '../../providers';
@@ -39,7 +38,6 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
                 <Providers translations={translationAssets} wagmiInitialState={wagmiInitialState}>
                     <ErrorBoundary>
                         <div className="flex grow flex-col">{children}</div>
-                        {process.env.NEXT_PUBLIC_FEATURE_DEBUG === 'true' && <DebugPanel />}
                     </ErrorBoundary>
                     <Footer />
                 </Providers>

@@ -45,7 +45,6 @@ export const CreateDaoPageClient: React.FC<ICreateDaoPageClientProps> = () => {
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
             >
-                <CreateDaoForm.Debug />
                 <WizardPage.Step
                     title={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.NETWORK}.title`)}
                     description={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.NETWORK}.description`)}
