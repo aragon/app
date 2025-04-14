@@ -1,7 +1,7 @@
-import type { ICreateProposalFormData, IProposalActionData } from '@/modules/governance/components/createProposalForm';
-import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
-import type { ICreateProposalStartDateForm } from '@/modules/governance/utils/createProposalUtils';
+import type { IProposalCreate, IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import type { Hex } from 'viem';
 
 class AdminUninstallProcessDialogSelectUtils {
@@ -17,55 +17,32 @@ class AdminUninstallProcessDialogSelectUtils {
 
     prepareProposalMetadata = () => this.proposalMetadata;
 
-    buildProposalParams(
+    buildProposalParams = (
         daoAddress: Hex,
         adminAddress: Hex,
-        pluginAddress: Hex,
+        plugin: IDaoPlugin,
         daoId: string,
-    ): IPublishProposalDialogParams {
-        return {
-            values: this.buildProposalValues(daoAddress, adminAddress, daoId),
-            daoId,
-            pluginAddress,
-            prepareActions: {},
-        };
-    }
+    ): IPublishProposalDialogParams => {
+        const proposal = this.buildProposalValues(daoAddress, adminAddress);
 
-    private buildProposalValues(
-        daoAddress: Hex,
-        adminAddress: Hex,
-        daoId: string,
-    ): ICreateProposalFormData & ICreateProposalStartDateForm {
-        const revokeAction = this.buildRevokeAction(daoAddress, adminAddress, daoId);
+        return { proposal, daoId, plugin };
+    };
 
-        return {
-            ...this.prepareProposalMetadata(),
-            body: '',
-            addActions: true,
-            resources: [],
-            actions: [revokeAction],
-            startTimeMode: 'now',
-        };
-    }
+    private buildProposalValues = (daoAddress: Hex, adminAddress: Hex): IProposalCreate => {
+        const revokeAction = this.buildRevokeAction(daoAddress, adminAddress);
+        const proposalMetadata = this.prepareProposalMetadata();
 
-    private buildRevokeAction(daoAddress: Hex, adminAddress: Hex, daoId: string): IProposalActionData {
-        const rawAction = permissionTransactionUtils.buildRevokePermissionTransaction({
+        return { ...proposalMetadata, resources: [], actions: [revokeAction] };
+    };
+
+    private buildRevokeAction = (daoAddress: Hex, adminAddress: Hex): ITransactionRequest => {
+        return permissionTransactionUtils.buildRevokePermissionTransaction({
             where: daoAddress,
             who: adminAddress,
             what: this.permissionIds.EXECUTE_PERMISSION,
             to: daoAddress,
         });
-
-        return {
-            ...rawAction,
-            from: daoAddress,
-            type: 'function',
-            inputData: null,
-            daoId,
-            meta: undefined,
-            value: '0',
-        };
-    }
+    };
 }
 
 export const adminUninstallProcessDialogSelectUtils = new AdminUninstallProcessDialogSelectUtils();

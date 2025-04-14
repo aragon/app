@@ -320,14 +320,14 @@
           "submit": "Prepare installation",
           "success": "Finalize installation"
         },
-        "description": "To prepare your governance process, confirm the onchain transaction in your wallet.",
+        "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
         "step": {
           "PIN_METADATA": {
             "errorLabel": "Unable to pin data on IPFS",
             "label": "Pin data on IPFS"
           }
         },
-        "title": "Prepare governance process",
+        "title": "Publish governance process",
         "transactionInfoTitle": "Prepare installation"
       },
       "publishDaoDialog": {
@@ -346,17 +346,10 @@
       },
       "publishProcessDialog": {
         "button": {
-          "submit": "Finalize installation",
-          "success": "View proposals"
+          "submit": "Finalize installation"
         },
-        "description": "To finalize your governance process, confirm the onchain transaction in your wallet.",
-        "step": {
-          "PIN_METADATA": {
-            "errorLabel": "Unable to pin data on IPFS",
-            "label": "Pin data on IPFS"
-          }
-        },
-        "title": "Finalize governance process",
+        "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
+        "title": "Publish governance process",
         "transactionInfoTitle": "Finalize installation"
       },
       "setupBodyDialog": {
@@ -913,30 +906,14 @@
           "proposalExecution": "Proposal execution"
         },
         "adminManageMembers": {
-          "button": "Manage admins"
-        },
-        "adminManageMembersDialog": {
-          "addresses": {
+          "button": "Manage admins",
+          "dialog": {
             "action": {
               "cancel": "Cancel",
               "update": "Update admins"
             },
             "description": "Add or remove the addresses that should be able to make any change to the DAO without a proposal.",
             "title": "Manage admins"
-          },
-          "publish": {
-            "button": {
-              "submit": "Update admins",
-              "success": "View settings"
-            },
-            "description": "To update admins, confirm the onchain transaction in your wallet.",
-            "step": {
-              "PIN_METADATA": {
-                "errorLabel": "Unable to pin data on IPFS",
-                "label": "Pin data on IPFS"
-              }
-            },
-            "title": "Update admins"
           }
         },
         "adminMemberInfo": {
@@ -947,6 +924,13 @@
           "function": "Proposal creation",
           "pluginLabelName": "Name",
           "requirement": "Admin only"
+        },
+        "adminPublishManageMembersDialog": {
+          "button": {
+            "submit": "Update admins"
+          },
+          "description": "To update admins, confirm the onchain transaction in your wallet.",
+          "title": "Update admins"
         },
         "adminSettingsPanel": {
           "title": "Admin"

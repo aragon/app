@@ -1,13 +1,13 @@
 import { generateMember } from '@/modules/governance/testUtils';
 import { permissionManagerAbi } from '@/shared/utils/permissionTransactionUtils/abi/permissionManagerAbi';
-import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
+import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import * as Viem from 'viem';
 import { adminTransactionUtils } from '../../utils/adminTransactionUtils';
-import { adminManageMembersDialogPublishUtils } from './adminManageMembersDialogPublishUtils';
+import { adminManageMembersDialogUtils } from './adminManageMembersDialogUtils';
 
-describe('adminManageMembersDialogPublish utils', () => {
+describe('adminManageMembersDialog utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
     const cidToHexSpy = jest.spyOn(transactionUtils, 'cidToHex');
     const buildCreateProposalDataSpy = jest.spyOn(adminTransactionUtils, 'buildCreateProposalData');
@@ -22,8 +22,8 @@ describe('adminManageMembersDialogPublish utils', () => {
 
     describe('prepareProposalMetadata', () => {
         it('returns metadata for the prepare-process proposal', () => {
-            const result = adminManageMembersDialogPublishUtils.prepareProposalMetadata();
-            expect(result).toEqual(adminManageMembersDialogPublishUtils['proposalMetadata']);
+            const result = adminManageMembersDialogUtils.prepareProposalMetadata();
+            expect(result).toEqual(adminManageMembersDialogUtils['proposalMetadata']);
         });
     });
 
@@ -50,7 +50,7 @@ describe('adminManageMembersDialogPublish utils', () => {
 
             encodeFunctionDataSpy.mockReturnValueOnce(encodedGrantData).mockReturnValueOnce(encodedRevokeData);
 
-            const result = adminManageMembersDialogPublishUtils.buildActionsArray({
+            const result = adminManageMembersDialogUtils.buildActionsArray({
                 currentAdmins,
                 updatedAdmins,
                 pluginAddress,
@@ -74,43 +74,6 @@ describe('adminManageMembersDialogPublish utils', () => {
                 abi: permissionManagerAbi,
                 functionName: 'revoke',
                 args: [pluginAddress, '0x2', EXECUTE_PROPOSAL_PERMISSION_ID],
-            });
-        });
-    });
-
-    describe('buildTransaction', () => {
-        it('correctly builds the transaction object using the actions array', async () => {
-            const to = '0xDao' as Hex;
-            const actions: ITransactionRequest[] = [
-                { to, data: '0xAction1', value: BigInt(0) },
-                { to, data: '0xAction2', value: BigInt(0) },
-            ];
-            const metadataCid = 'QmMetadataCid';
-            const pluginAddress = '0xPlugin';
-
-            const metadataResult = '0xMetadata';
-            const proposalDataResult = '0xProposalData';
-
-            cidToHexSpy.mockReturnValue(metadataResult);
-            buildCreateProposalDataSpy.mockReturnValue(proposalDataResult);
-
-            const transaction = await adminManageMembersDialogPublishUtils.buildTransaction({
-                actions,
-                metadataCid,
-                pluginAddress,
-            });
-
-            expect(cidToHexSpy).toHaveBeenCalledWith(metadataCid);
-            expect(buildCreateProposalDataSpy).toHaveBeenCalledWith({
-                actions,
-                metadata: metadataResult,
-                values: {},
-            });
-
-            expect(transaction).toEqual({
-                to: pluginAddress,
-                data: proposalDataResult,
-                value: BigInt(0),
             });
         });
     });

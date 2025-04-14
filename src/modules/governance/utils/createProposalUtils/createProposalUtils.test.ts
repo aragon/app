@@ -18,6 +18,11 @@ describe('createProposal utils', () => {
             expect(createProposalUtils.parseStartDate(formValues)).toEqual(0);
         });
 
+        it('returns 0 when startTimeMode is not set', () => {
+            const formValues = generateCreateProposalStartDateFormData({ startTimeMode: undefined });
+            expect(createProposalUtils.parseStartDate(formValues)).toEqual(0);
+        });
+
         it('returns the parsed fixed start date in seconds as an integer', () => {
             const startTimeFixed = { date: '2024-08-30', time: '10:24' };
             const formValues = generateCreateProposalStartDateFormData({ startTimeMode: 'fixed', startTimeFixed });
@@ -54,6 +59,11 @@ describe('createProposal utils', () => {
                 endTimeMode,
                 endTimeDuration,
             });
+            expect(createProposalUtils.parseEndDate(formValues)).toEqual(0);
+        });
+
+        it('returns 0 when endTimeMode is not set', () => {
+            const formValues = generateCreateProposalEndDateFormData({ endTimeMode: undefined });
             expect(createProposalUtils.parseEndDate(formValues)).toEqual(0);
         });
 

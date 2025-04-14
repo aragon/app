@@ -1,4 +1,5 @@
 import type { IDao } from '@/shared/api/daoService';
+import type { IPluginSetupData } from '@/shared/utils/pluginTransactionUtils';
 import type { ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
 
@@ -48,4 +49,19 @@ export interface IBuildPrepareInstallPluginActionParams extends Omit<IBuildPrepa
      * Metadata CID of the plugin.
      */
     metadataCid: string;
+}
+
+export interface IBuildProcessProposalActionsParams {
+    /**
+     * Create-process form values.
+     */
+    values: ICreateProcessFormData;
+    /**
+     * DAO to install the plugins for.
+     */
+    dao: IDao;
+    /**
+     * Address list of the plugins to be installed.
+     */
+    setupData: IPluginSetupData[];
 }

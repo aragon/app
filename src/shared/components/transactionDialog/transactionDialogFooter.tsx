@@ -90,7 +90,10 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         proposalSlug,
     } = props;
 
-    const { label: successLabel, href: successHref, onClick: successOnClick } = successLink;
+    // For two step transactions we move from first to second step automatically on success, so in those cases
+    // we will not have a success link and just use the default label to satisfy the interface.
+    const { label: successLabel, href: successHref, onClick: successOnClick } = successLink ?? { label: '' };
+
     const { id: stepId, meta } = activeStep ?? {};
     const { state, action } = meta ?? {};
 
