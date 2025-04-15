@@ -51,11 +51,15 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (props) =>
     });
 
     return (
-        <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
-            <InputText maxLength={40} {...nameField} />
+        <Card className="flex flex-col items-end gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:items-start md:gap-2">
+            <InputText className="w-full" maxLength={40} {...nameField} />
 
-            <InputText placeholder={t('app.shared.resourcesInput.item.linkInput.placeholder')} {...urlField} />
-            <div className="mt-0 md:mt-9">
+            <InputText
+                className="min-h-[99px] w-full md:min-h-0"
+                placeholder={t('app.shared.resourcesInput.item.linkInput.placeholder')}
+                {...urlField}
+            />
+            <div className="md:flex md:min-h-[114.5px] md:items-center">
                 <Dropdown.Container
                     constrainContentWidth={false}
                     size="md"

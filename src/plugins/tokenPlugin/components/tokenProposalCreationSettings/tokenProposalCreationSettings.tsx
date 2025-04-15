@@ -73,7 +73,13 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
     const checked = canCreateProposal;
 
     return (
-        <CheckboxCard label={name} description={description} onCheckedChange={handleCheckedChange} checked={checked}>
+        <CheckboxCard
+            label={name}
+            description={description}
+            onCheckedChange={handleCheckedChange}
+            checked={checked}
+            className="w-full"
+        >
             {
                 // Stop onClick event propagation to avoid unchecking the card when clicking on the number-input buttons
                 // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions

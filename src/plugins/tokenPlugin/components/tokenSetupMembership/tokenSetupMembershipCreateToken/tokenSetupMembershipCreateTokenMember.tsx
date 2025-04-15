@@ -9,6 +9,7 @@ import {
     IconType,
     InputNumber,
 } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import { useCallback, useState } from 'react';
 import type { ITokenSetupMembershipMember } from '../tokenSetupMembership.api';
 
@@ -57,7 +58,7 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
     );
 
     return (
-        <div className="flex items-end gap-x-4 rounded-xl border border-neutral-100 p-6">
+        <div className="flex flex-col items-end gap-x-4 rounded-xl border border-neutral-100 p-6 md:flex-row md:items-start">
             <div className="flex w-full flex-col gap-4 md:flex-row">
                 <AddressInput
                     placeholder={t('app.plugins.token.tokenSetupMembership.createToken.member.address.placeholder')}
@@ -68,11 +69,17 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
                     className="basis-[65%]"
                     {...memberField}
                 />
-                <InputNumber className="basis-1/3" min={0} {...tokenAmountField} />
+                <InputNumber className="min-h-[99px] basis-1/3" min={0} {...tokenAmountField} />
             </div>
             {onRemove != null && (
                 <Dropdown.Container
-                    customTrigger={<Button variant="tertiary" iconLeft={IconType.DOTS_VERTICAL} className="shrink-0" />}
+                    customTrigger={
+                        <Button
+                            variant="tertiary"
+                            iconLeft={IconType.DOTS_VERTICAL}
+                            className={classNames('shrink-0', memberField.alert?.message ? 'md:self-center' : '')}
+                        />
+                    }
                 >
                     <Dropdown.Item onClick={onRemove}>
                         {t('app.plugins.token.tokenSetupMembership.createToken.member.action.remove')}
