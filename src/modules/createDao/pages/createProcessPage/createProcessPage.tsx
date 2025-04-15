@@ -1,5 +1,5 @@
 import { Page } from '@/shared/components/page';
-import { ICreateProcessPageParams } from '../../types';
+import type { ICreateProcessPageParams } from '../../types';
 import { CreateProcessPageClient } from './createProcessPageClient';
 
 export interface ICreateProcessPageProps {

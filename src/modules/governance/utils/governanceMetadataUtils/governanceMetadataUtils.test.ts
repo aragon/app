@@ -20,7 +20,6 @@ describe('governanceMetadata utils', () => {
         it('fetches proposal and returns expected metadata including dao avatar', async () => {
             const id = 'dao-id';
             const proposalSlug = 'proposal-slug';
-            const pluginAddress = '0x123';
             const proposal = generateProposal({
                 title: 'A Big Change',
                 summary: 'We propose doing something big.',
@@ -33,7 +32,7 @@ describe('governanceMetadata utils', () => {
             cidToSrcSpy.mockReturnValue(ipfsUrl);
 
             const metadata = await governanceMetadataUtils.generateProposalMetadata({
-                params: Promise.resolve({ id, pluginAddress, proposalSlug }),
+                params: Promise.resolve({ id, proposalSlug }),
             });
 
             expect(getProposalBySlugSpy).toHaveBeenCalledWith({
