@@ -23,7 +23,7 @@ class MiddlewareUtils {
         `style-src 'self' https://fonts.googleapis.com 'unsafe-inline'`,
         'img-src * blob: data:',
         'connect-src *',
-        "font-src 'self' https://fonts.gstatic.com",
+        `font-src 'self' https://fonts.gstatic.com ${env === 'production' ? '' : 'https://vercel.live'}`,
         "object-src 'self'",
         "base-uri 'self'",
         "form-action 'self'",
