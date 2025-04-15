@@ -1,12 +1,7 @@
 import { timeUtils } from '@/test/utils';
 import { DateTime } from 'luxon';
-import {
-    generateCreateProposalEndDateFormData,
-    generateCreateProposalFormData,
-    generateCreateProposalStartDateFormData,
-} from '../../testUtils';
+import { generateCreateProposalEndDateFormData, generateCreateProposalStartDateFormData } from '../../testUtils';
 import { createProposalUtils } from './createProposalUtils';
-import type { ICreateProposalEndDateForm } from './createProposalUtils.api';
 
 describe('createProposal utils', () => {
     describe('parseStartDate', () => {
@@ -120,23 +115,6 @@ describe('createProposal utils', () => {
         });
     });
 
-    describe('isTimingDataSet', () => {
-        it('returns false if no timing data param has been set', () => {
-            const proposalWithoutTiming = generateCreateProposalFormData() as ICreateProposalEndDateForm;
-            expect(createProposalUtils.isTimingDataSet(proposalWithoutTiming)).toEqual(false);
-        });
-
-        it('returns true if only start time data has been set', () => {
-            const proposalWithStartTime = generateCreateProposalStartDateFormData();
-            expect(createProposalUtils.isTimingDataSet(proposalWithStartTime)).toEqual(true);
-        });
-
-        it('returns true if start and end time data have been set', () => {
-            const proposalWithTiming = generateCreateProposalEndDateFormData();
-            expect(createProposalUtils.isTimingDataSet(proposalWithTiming)).toEqual(true);
-        });
-    });
-
     describe('createDefaultEndDate', () => {
         it('returns zero 0 if minDuration is more than 7 days', () => {
             const minDuration = 8 * 24 * 60 * 60;
@@ -149,6 +127,12 @@ describe('createProposal utils', () => {
             const expectedTime = Date.now() / 1000 + 7 * 24 * 60 * 60;
 
             expect(createProposalUtils.createDefaultEndDate(minDuration)).toBeCloseTo(expectedTime, -1);
+        });
+
+        it('returns 7 days from now in seconds if minDuration is not provided', () => {
+            const expectedTime = Date.now() / 1000 + 7 * 24 * 60 * 60;
+
+            expect(createProposalUtils.createDefaultEndDate()).toBeCloseTo(expectedTime, -1);
         });
     });
 });

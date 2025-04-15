@@ -22,9 +22,10 @@ class MultisigTransactionUtils {
         //   - startDate set to 0
         //   - endDate set to 7 days from now
         const startDate = createProposalUtils.parseStartDate(proposal);
-        const endDate = createProposalUtils.isTimingDataSet(proposal)
-            ? createProposalUtils.parseEndDate(proposal)
-            : createProposalUtils.createDefaultEndDate(0);
+        const endDate =
+            proposal.endTimeMode != null
+                ? createProposalUtils.parseEndDate(proposal)
+                : createProposalUtils.createDefaultEndDate();
 
         const functionArgs = [metadata, actions, BigInt(0), false, false, startDate, endDate];
         const data = encodeFunctionData({ abi: multisigPluginAbi, functionName: 'createProposal', args: functionArgs });

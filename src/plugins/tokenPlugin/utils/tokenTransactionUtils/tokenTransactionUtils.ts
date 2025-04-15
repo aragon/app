@@ -34,9 +34,10 @@ class TokenTransactionUtils {
         //   - if there is minDuration, and minDuration is more than 7 days, set endDate to minDuration (actually set to 0 to let the smart contract set it properly)
         //   - otherwise, set endDate to 7 days from now
         const startDate = createProposalUtils.parseStartDate(proposal);
-        const endDate = createProposalUtils.isTimingDataSet(proposal)
-            ? createProposalUtils.parseEndDate(proposal)
-            : createProposalUtils.createDefaultEndDate(minDuration);
+        const endDate =
+            proposal.endTimeMode != null
+                ? createProposalUtils.parseEndDate(proposal)
+                : createProposalUtils.createDefaultEndDate(minDuration);
 
         const functionArgs = [metadata, actions, BigInt(0), startDate, endDate, 0, false];
         const data = encodeFunctionData({ abi: tokenPluginAbi, functionName: 'createProposal', args: functionArgs });
