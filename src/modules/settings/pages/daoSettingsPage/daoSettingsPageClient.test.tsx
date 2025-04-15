@@ -37,12 +37,6 @@ describe('<DaoSettingsPageClient /> component', () => {
                 label: 'one',
                 meta: generateDaoPlugin({ subdomain: 'multisig', address: '0x123' }),
             }),
-            generateTabComponentPlugin({
-                id: 'two',
-                uniqueId: '2',
-                label: 'two',
-                meta: generateDaoPlugin({ subdomain: 'token-voting', address: '0x456' }),
-            }),
         ]);
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
     });
