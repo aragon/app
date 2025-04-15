@@ -1,20 +1,23 @@
 'use client';
 
-import { DaoGovernanceInfo } from '@/modules/settings/components/daoGovernanceInfo';
-import { DaoMembersInfo } from '@/modules/settings/components/daoMembersInfo';
+import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
+import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { AdminSettingsPanel } from '@/plugins/adminPlugin/components/adminSettingsPanel';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { Button, Card, IconType } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
-import { useDialogContext } from '../../../../shared/components/dialogProvider';
-import { useConnectedWalletGuard } from '../../../application/hooks/useConnectedWalletGuard';
 import { CreateDaoDialogId } from '../../../createDao/constants/createDaoDialogId';
 import type { ICreateProcessDetailsDialogParams } from '../../../createDao/dialogs/createProcessDetailsDialog';
-import { GovernanceDialogId } from '../../../governance/constants/governanceDialogId';
-import type { ISelectPluginDialogParams } from '../../../governance/dialogs/selectPluginDialog';
+import { DaoGovernanceInfo } from '../../components/daoGovernanceInfo';
+import { DaoMembersInfo } from '../../components/daoMembersInfo';
 import { DaoSettingsInfo } from '../../components/daoSettingsInfo';
 import { DaoVersionInfo } from '../../components/daoVersionInfo';
 
@@ -35,22 +38,31 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     const { data: dao } = useDao(daoParams);
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
+    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
 
-    const { check: checkWalletConnected } = useConnectedWalletGuard();
+    const { check: createProposalGuard } = usePermissionCheckGuard({
+        permissionNamespace: 'proposal',
+        slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
+        plugin: processPlugins[0].meta,
+        daoId,
+    });
 
-    const handleWalletConnected = (selectedPlugin: IDaoPlugin) => {
+    const handlePermissionGuardSuccess = (selectedPlugin: IDaoPlugin) => {
         const params: ICreateProcessDetailsDialogParams = { daoId, pluginAddress: selectedPlugin.address as Hex };
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
 
     const handlePluginSelected = (plugin: IDaoPlugin) => {
-        checkWalletConnected({
-            onSuccess: () => handleWalletConnected(plugin),
-        });
+        createProposalGuard({ plugin, onSuccess: () => handlePermissionGuardSuccess(plugin) });
     };
 
     const handleAddGovernanceProcessClick = () => {
-        // Select a plugin (a process to use to create a new proposal to add new process)
+        // Select a plugin (a process to use to create a new process). If there is only 1 plugin, skip selection step.
+        if (processPlugins.length === 1) {
+            handlePluginSelected(processPlugins[0].meta);
+            return;
+        }
+
         const params: ISelectPluginDialogParams = {
             daoId,
             onPluginSelected: handlePluginSelected,
