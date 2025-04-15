@@ -69,7 +69,7 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
                     className="basis-[65%]"
                     {...memberField}
                 />
-                <InputNumber className="min-h-[99px] basis-1/3" min={0} {...tokenAmountField} />
+                <InputNumber className="min-h-[99px] basis-1/3 md:min-h-0" min={0} {...tokenAmountField} />
             </div>
             {onRemove != null && (
                 <Dropdown.Container
@@ -77,7 +77,10 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
                         <Button
                             variant="tertiary"
                             iconLeft={IconType.DOTS_VERTICAL}
-                            className={classNames('shrink-0', memberField.alert?.message ? 'md:self-center' : '')}
+                            className={classNames(
+                                'shrink-0',
+                                memberField.alert?.message ? 'md:self-center' : 'md:self-end',
+                            )}
                         />
                     }
                 >
