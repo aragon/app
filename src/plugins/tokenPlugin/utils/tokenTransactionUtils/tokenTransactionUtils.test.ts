@@ -1,7 +1,11 @@
 import type { ISetupBodyFormMembership } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { generateCreateProcessFormBody } from '@/modules/createDao/testUtils';
 import { generateToken } from '@/modules/finance/testUtils';
-import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
+import {
+    generateCreateProposalEndDateFormData,
+    generateCreateProposalStartDateFormData,
+    generateProposalCreate,
+} from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { tokenPlugin } from '@/plugins/tokenPlugin/constants/tokenPlugin';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
@@ -56,6 +60,91 @@ describe('tokenTransaction utils', () => {
                 args: [params.metadata, params.actions, BigInt(0), startDate, endDate, 0, false],
             });
             expect(result).toEqual(transactionData);
+        });
+
+        it('correctly sets default startDate and endDate when timing data not provided - minDuration > 7 days', () => {
+            parseStartDateSpy.mockRestore();
+            parseEndDateSpy.mockRestore();
+            const proposal = generateProposalCreate();
+            const actions: ITransactionRequest[] = [
+                { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
+            ];
+            const plugin = generateDaoPlugin({
+                address: '0x123',
+                subdomain: 'token',
+                settings: generateTokenPluginSettings({
+                    minDuration: 10 * 24 * 60 * 60,
+                }),
+            });
+
+            const params = { metadata: '0xipfs-cid' as const, actions, proposal, plugin };
+
+            tokenTransactionUtils.buildCreateProposalData(params);
+
+            const encodeFunctionDataArgs = encodeFunctionDataSpy.mock.calls[0][0];
+            const finalStartDate = encodeFunctionDataArgs.args![3];
+            const finalEndDate = encodeFunctionDataArgs.args![4];
+            expect(finalStartDate).toBe(0);
+            expect(finalEndDate).toBe(0);
+        });
+
+        it('correctly sets default startDate and endDate when timing data not provided - minDuration < 7 days', () => {
+            parseStartDateSpy.mockRestore();
+            parseEndDateSpy.mockRestore();
+            const proposal = generateProposalCreate();
+            const actions: ITransactionRequest[] = [
+                { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
+            ];
+            const plugin = generateDaoPlugin({
+                address: '0x123',
+                subdomain: 'token',
+                settings: generateTokenPluginSettings({
+                    minDuration: 3 * 24 * 60 * 60,
+                }),
+            });
+
+            const params = { metadata: '0xipfs-cid' as const, actions, proposal, plugin };
+
+            tokenTransactionUtils.buildCreateProposalData(params);
+
+            const sevenDaysFromNowInSeconds = Date.now() / 1000 + 7 * 24 * 60 * 60;
+            const encodeFunctionDataArgs = encodeFunctionDataSpy.mock.calls[0][0];
+            const finalStartDate = encodeFunctionDataArgs.args![3];
+            const finalEndDate = encodeFunctionDataArgs.args![4];
+            expect(finalStartDate).toBe(0);
+            expect(finalEndDate).toBeCloseTo(sevenDaysFromNowInSeconds, -1);
+        });
+
+        it('correctly sets startDate and endDate from provided timing data', () => {
+            parseStartDateSpy.mockRestore();
+            parseEndDateSpy.mockRestore();
+            const proposal = {
+                ...generateProposalCreate(),
+                ...generateCreateProposalStartDateFormData(),
+                ...generateCreateProposalEndDateFormData(),
+            };
+            const actions: ITransactionRequest[] = [
+                { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
+            ];
+            const plugin = generateDaoPlugin({
+                address: '0x123',
+                subdomain: 'token',
+                settings: generateTokenPluginSettings({
+                    minDuration: 9 * 24 * 60 * 60,
+                }),
+            });
+
+            const params = { metadata: '0xipfs-cid' as const, actions, proposal, plugin };
+
+            tokenTransactionUtils.buildCreateProposalData(params);
+
+            const twoDaysFromNowInSeconds = Date.now() / 1000 + 2 * 24 * 60 * 60;
+            const encodeFunctionDataArgs = encodeFunctionDataSpy.mock.calls[0][0];
+            const finalStartDate = encodeFunctionDataArgs.args![3];
+            const finalEndDate = encodeFunctionDataArgs.args![4];
+
+            expect(finalStartDate).toBe(0);
+            expect(finalEndDate).toBeCloseTo(twoDaysFromNowInSeconds, -1);
         });
     });
 

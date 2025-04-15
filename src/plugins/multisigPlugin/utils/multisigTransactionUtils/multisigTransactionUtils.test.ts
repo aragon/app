@@ -1,5 +1,9 @@
 import { generateCreateProcessFormBody } from '@/modules/createDao/testUtils';
-import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
+import {
+    generateCreateProposalEndDateFormData,
+    generateCreateProposalStartDateFormData,
+    generateProposalCreate,
+} from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { multisigPlugin } from '@/plugins/multisigPlugin/constants/multisigPlugin';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
@@ -48,6 +52,59 @@ describe('multisigTransaction utils', () => {
                 functionName: 'createProposal',
                 args: [params.metadata, params.actions, BigInt(0), false, false, startDate, endDate],
             });
+        });
+
+        it('correctly sets default startDate and endDate when timing data not provided', () => {
+            parseStartDateSpy.mockRestore();
+            parseEndDateSpy.mockRestore();
+            const proposal = generateProposalCreate();
+            const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x0', value: BigInt(0) }];
+            const plugin = generateDaoPlugin({
+                address: '0x123',
+                subdomain: 'multisig',
+                settings: generateMultisigPluginSettings(),
+            });
+            const params = { metadata: '0x' as const, actions: actions, proposal, plugin };
+
+            multisigTransactionUtils.buildCreateProposalData(params);
+
+            // assert
+            const sevenDaysFromNowInSeconds = Date.now() / 1000 + 7 * 24 * 60 * 60;
+            const encodeFunctionDataArgs = encodeFunctionDataSpy.mock.calls[0][0];
+            const finalStartDate = encodeFunctionDataArgs.args![5];
+            const finalEndDate = encodeFunctionDataArgs.args![6];
+
+            expect(finalStartDate).toBe(0);
+            expect(finalEndDate).toBeCloseTo(sevenDaysFromNowInSeconds, -1);
+        });
+
+        it('correctly sets startDate and endDate from provided timing data', () => {
+            parseStartDateSpy.mockRestore();
+            parseEndDateSpy.mockRestore();
+            const proposal = {
+                ...generateProposalCreate(),
+                ...generateCreateProposalStartDateFormData(),
+                ...generateCreateProposalEndDateFormData(),
+            };
+
+            const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x0', value: BigInt(0) }];
+            const plugin = generateDaoPlugin({
+                address: '0x123',
+                subdomain: 'multisig',
+                settings: generateMultisigPluginSettings(),
+            });
+            const params = { metadata: '0x' as const, actions: actions, proposal, plugin };
+
+            multisigTransactionUtils.buildCreateProposalData(params);
+
+            // assert
+            const twoDaysFromNowInSeconds = Date.now() / 1000 + 2 * 24 * 60 * 60;
+            const encodeFunctionDataArgs = encodeFunctionDataSpy.mock.calls[0][0];
+            const finalStartDate = encodeFunctionDataArgs.args![5];
+            const finalEndDate = encodeFunctionDataArgs.args![6];
+
+            expect(finalStartDate).toBe(0);
+            expect(finalEndDate).toBeCloseTo(twoDaysFromNowInSeconds, -1);
         });
     });
 
