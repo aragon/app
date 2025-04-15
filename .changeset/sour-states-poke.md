@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-Implement new process creation over an existing process
+Implement new process creation flow via an existing process

@@ -37,7 +37,7 @@ describe('<LayoutDao /> component', () => {
 
     const createTestComponent = async (props?: Partial<ILayoutDaoProps>) => {
         const completeProps: ILayoutDaoProps = {
-            params: Promise.resolve({ id: 'test-dao', pluginAddress: '0x123' }),
+            params: Promise.resolve({ id: 'test-dao' }),
             ...props,
         };
 
@@ -53,10 +53,9 @@ describe('<LayoutDao /> component', () => {
     });
 
     it('prefetches the DAO from the given slug', async () => {
-        const getDaoParams = { id: 'my-dao' };
-        const daoPageParams = { ...getDaoParams, pluginAddress: '0x123' };
-        render(await createTestComponent({ params: Promise.resolve(daoPageParams) }));
-        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: getDaoParams }).queryKey);
+        const params = { id: 'my-dao' };
+        render(await createTestComponent({ params: Promise.resolve(params) }));
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
     });
 
     it('dehydrates the query client state', async () => {
@@ -76,7 +75,7 @@ describe('<LayoutDao /> component', () => {
     });
 
     it('renders error with a link to explore page on fetch DAO error', async () => {
-        const params = Promise.resolve({ id: 'daoId', pluginAddress: '0x123' });
+        const params = Promise.resolve({ id: 'daoId' });
         fetchQuerySpy.mockRejectedValue('error');
         render(await createTestComponent({ params }));
         const errorLink = screen.getByRole('link', { name: /layoutDao.notFound.action/ });

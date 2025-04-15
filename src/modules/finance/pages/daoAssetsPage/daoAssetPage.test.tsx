@@ -36,7 +36,7 @@ describe('<DaoAssetsPage /> component', () => {
 
     const createTestComponent = async (props?: Partial<IDaoAssetsPageProps>) => {
         const completeProps: IDaoAssetsPageProps = {
-            params: Promise.resolve({ id: 'test-slug', pluginAddress: '0x123' }),
+            params: Promise.resolve({ id: 'test-slug' }),
             ...props,
         };
 
@@ -51,14 +51,13 @@ describe('<DaoAssetsPage /> component', () => {
     });
 
     it('prefetches the DAO and its asset list', async () => {
-        const getDaoParams = { id: 'my-dao' };
-        const daoPageParams = { ...getDaoParams, pluginAddress: '0x123' };
+        const params = { id: 'my-dao' };
         const id = 'another-test-slug';
         const dao = generateDao({ id });
         fetchQuerySpy.mockResolvedValue(dao);
 
-        render(await createTestComponent({ params: Promise.resolve(daoPageParams) }));
-        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: getDaoParams }).queryKey);
+        render(await createTestComponent({ params: Promise.resolve(params) }));
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
 
         const expectedParams = { address: dao.address, network: dao.network, pageSize: daoAssetsCount };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(

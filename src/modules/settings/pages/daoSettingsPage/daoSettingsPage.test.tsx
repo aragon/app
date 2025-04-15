@@ -10,7 +10,7 @@ jest.mock('./daoSettingsPageClient', () => ({
 describe('<DaoSettingsPage /> component', () => {
     const createTestComponent = async (props?: Partial<IDaoSettingsPageProps>) => {
         const completeProps: IDaoSettingsPageProps = {
-            params: Promise.resolve({ id: 'dao-id', pluginAddress: '0x123' }),
+            params: Promise.resolve({ id: 'dao-id' }),
             ...props,
         };
         const Component = await DaoSettingsPage(completeProps);
@@ -19,7 +19,7 @@ describe('<DaoSettingsPage /> component', () => {
     };
 
     it('renders and passes the correct daoId to DaoSettingsPageClient', async () => {
-        const params = { id: 'my-dao', pluginAddress: '0x123' };
+        const params = { id: 'my-dao' };
         render(await createTestComponent({ params: Promise.resolve(params) }));
 
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();

@@ -31,7 +31,7 @@ describe('<DaoMemberDetailsPage /> component', () => {
 
     const createTestComponent = async (props?: Partial<IDaoMemberDetailsPageProps>) => {
         const completeProps: IDaoMemberDetailsPageProps = {
-            params: Promise.resolve({ address: 'test-address', id: 'dao-id', pluginAddress: '0x123' }),
+            params: Promise.resolve({ address: 'test-address', id: 'dao-id' }),
             ...props,
         };
         const Component = await DaoMemberDetailsPage(completeProps);
@@ -40,7 +40,7 @@ describe('<DaoMemberDetailsPage /> component', () => {
     };
 
     it('prefetches the DAO member data from the given address and dao ID', async () => {
-        const params = { address: 'test-address', id: 'my-dao', pluginAddress: '0x123' };
+        const params = { address: 'test-address', id: 'my-dao' };
         const memberParams = {
             urlParams: { address: params.address },
             queryParams: { daoId: params.id },
@@ -56,7 +56,7 @@ describe('<DaoMemberDetailsPage /> component', () => {
 
     it('renders error with a link to proposal list page on fetch proposal error', async () => {
         const daoId = 'test-dao-id';
-        const params = { id: daoId, pluginAddress: '0x123', address: '' };
+        const params = { id: daoId, address: '' };
         fetchQuerySpy.mockRejectedValue('error');
         render(await createTestComponent({ params: Promise.resolve(params) }));
         const errorLink = screen.getByRole('link', { name: /daoMemberDetailsPage.notFound.action/ });

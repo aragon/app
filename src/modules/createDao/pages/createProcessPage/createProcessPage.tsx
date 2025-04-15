@@ -1,12 +1,22 @@
 import { Page } from '@/shared/components/page';
-import type { IDaoPageParams } from '@/shared/types';
 import { CreateProcessPageClient } from './createProcessPageClient';
+
+export interface ICreateProcessPageParams {
+    /**
+     * ID of the DAO.
+     */
+    id: string;
+    /**
+     * Address of the plugin to use to create a new proposal to add a new process.
+     */
+    pluginAddress: string;
+}
 
 export interface ICreateProcessPageProps {
     /**
      * Parameters of the create process page.
      */
-    params: Promise<IDaoPageParams>;
+    params: Promise<ICreateProcessPageParams>;
 }
 
 export const CreateProcessPage: React.FC<ICreateProcessPageProps> = async (props) => {
