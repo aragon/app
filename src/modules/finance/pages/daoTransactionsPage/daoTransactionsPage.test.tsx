@@ -52,7 +52,7 @@ describe('<DaoTransactionsPage /> component', () => {
 
     it('prefetches the DAO and its transaction list', async () => {
         const id = 'another-test-slug';
-        const params = { id: 'my-dao' };
+        const params = { id };
         const dao = generateDao({ id });
         fetchQuerySpy.mockResolvedValue(dao);
 

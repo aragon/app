@@ -61,11 +61,7 @@ describe('<DaoProposalsPage /> component', () => {
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
         expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, { type: PluginType.PROCESS });
 
-        const memberListParams = {
-            daoId: params.id,
-            pageSize: daoProposalsCount,
-            pluginAddress: bodyPlugin.address,
-        };
+        const memberListParams = { daoId: params.id, pageSize: daoProposalsCount, pluginAddress: bodyPlugin.address };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
             proposalListOptions({ queryParams: memberListParams }).queryKey,
         );

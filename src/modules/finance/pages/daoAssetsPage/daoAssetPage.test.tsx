@@ -51,8 +51,8 @@ describe('<DaoAssetsPage /> component', () => {
     });
 
     it('prefetches the DAO and its asset list', async () => {
-        const params = { id: 'my-dao' };
         const id = 'another-test-slug';
+        const params = { id };
         const dao = generateDao({ id });
         fetchQuerySpy.mockResolvedValue(dao);
 

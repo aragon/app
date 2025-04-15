@@ -18,9 +18,7 @@ describe('applicationMetadata utils', () => {
             const dao = generateDao({ name: 'My DAO', description: 'Description' });
             getDaoSpy.mockResolvedValue(dao);
 
-            const metadata = await applicationMetadataUtils.generateDaoMetadata({
-                params: Promise.resolve({ id }),
-            });
+            const metadata = await applicationMetadataUtils.generateDaoMetadata({ params: Promise.resolve({ id }) });
             expect(metadata.title).toEqual(dao.name);
             expect(metadata.openGraph?.siteName).toEqual(`${dao.name} | Governed on Aragon`);
             expect(metadata.description).toEqual(dao.description);
