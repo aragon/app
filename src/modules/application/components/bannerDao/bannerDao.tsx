@@ -22,11 +22,12 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { isAdminMember, hasAdminPlugin, pluginAddress } = useAdminStatus({ daoId: id });
+    const { isAdminMember, adminPluginAddress } = useAdminStatus({ daoId: id });
+    const hasAdminPlugin = adminPluginAddress != null;
 
     const handleBannerActionClick = () => {
-        invariant(pluginAddress != null, 'BannerDao: admin pluginAddress is expected.');
-        const params: ICreateProcessDetailsDialogParams = { daoId: id, pluginAddress: pluginAddress as Hex };
+        invariant(hasAdminPlugin, 'BannerDao: admin pluginAddress is expected.');
+        const params: ICreateProcessDetailsDialogParams = { daoId: id, pluginAddress: adminPluginAddress as Hex };
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
 
