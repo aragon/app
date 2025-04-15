@@ -17,7 +17,9 @@ class MiddlewareUtils {
 
     private getContentSecurityPolicies = (nonce: string, env: string): string[] => [
         "default-src 'self'",
-        `script-src 'self' 'nonce-${nonce}' https: ${env !== 'local' ? "'strict-dynamic'" : "'unsafe-eval'"}`,
+        // 'strict-dynamic' disables host-based allowlists like https:
+        // In preview, we remove it to allow Vercel Comments script injection
+        `script-src 'self' 'nonce-${nonce}' https: ${env === 'production' ? "'strict-dynamic'" : 'https://vercel.live'}`,
         `style-src 'self' https://fonts.googleapis.com 'unsafe-inline'`,
         'img-src * blob: data:',
         'connect-src *',
