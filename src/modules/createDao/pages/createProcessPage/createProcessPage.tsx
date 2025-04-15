@@ -1,16 +1,6 @@
 import { Page } from '@/shared/components/page';
+import { ICreateProcessPageParams } from '../../types';
 import { CreateProcessPageClient } from './createProcessPageClient';
-
-export interface ICreateProcessPageParams {
-    /**
-     * ID of the DAO.
-     */
-    id: string;
-    /**
-     * Plugin address used to create a proposal for adding a new process.
-     */
-    pluginAddress: string;
-}
 
 export interface ICreateProcessPageProps {
     /**

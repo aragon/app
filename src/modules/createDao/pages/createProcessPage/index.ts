@@ -1,1 +1,1 @@
-export { CreateProcessPage, type ICreateProcessPageParams, type ICreateProcessPageProps } from './createProcessPage';
+export { CreateProcessPage, type ICreateProcessPageProps } from './createProcessPage';
