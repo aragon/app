@@ -7,7 +7,7 @@ export interface ICreateProcessPageParams {
      */
     id: string;
     /**
-     * Address of the plugin to use to create a new proposal to add a new process.
+     * Plugin address used to create a proposal for adding a new process.
      */
     pluginAddress: string;
 }

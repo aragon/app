@@ -18,7 +18,7 @@ export interface ICreateProcessPageClientProps {
      */
     daoId: string;
     /**
-     * Address of the plugin (process) to use to create a new proposal to add a new process.
+     * Plugin address used to create a proposal for adding a new process.
      */
     pluginAddress: string;
 }
