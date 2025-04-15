@@ -30,7 +30,7 @@ describe('<DaoSettingsPageClient /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(UseDaoPluginsModule, 'useDaoPlugins');
 
     beforeEach(() => {
-        const mockedPlugins = [
+        useDaoPluginsSpy.mockReturnValue([
             generateTabComponentPlugin({
                 id: 'one',
                 uniqueId: '1',
@@ -43,9 +43,7 @@ describe('<DaoSettingsPageClient /> component', () => {
                 label: 'two',
                 meta: generateDaoPlugin({ subdomain: 'token-voting', address: '0x456' }),
             }),
-        ];
-
-        useDaoPluginsSpy.mockReturnValue(mockedPlugins);
+        ]);
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
     });
 

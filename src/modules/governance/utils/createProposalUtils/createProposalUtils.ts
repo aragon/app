@@ -4,6 +4,8 @@ import { DateTime } from 'luxon';
 import type { ICreateProposalEndDateForm, ICreateProposalStartDateForm } from './createProposalUtils.api';
 
 class CreateProposalUtils {
+    #sevenDaysInSeconds = 7 * 24 * 60 * 60;
+
     parseStartDate = (formValues: ICreateProposalStartDateForm): number => {
         const { startTimeMode, startTimeFixed } = formValues;
 
@@ -60,16 +62,14 @@ class CreateProposalUtils {
      * @returns {number} end date in seconds
      */
     createDefaultEndDate = (minDuration = 0): number => {
-        const sevenDaysInSeconds = 7 * 24 * 60 * 60;
-
-        if (minDuration > sevenDaysInSeconds) {
+        if (minDuration > this.#sevenDaysInSeconds) {
             // setting 0 will properly set endDate to minDuration ... see above comment for more details.
             return 0;
         }
 
         const startDate = DateTime.now();
         const endDate = startDate.plus({
-            seconds: sevenDaysInSeconds,
+            seconds: this.#sevenDaysInSeconds,
         });
 
         return this.dateToSeconds(endDate);

@@ -31,7 +31,7 @@ class TokenTransactionUtils {
 
         // Handle proposals without time settings in the following way:
         //   - startDate set to 0
-        //   - if there is minDuration, and minDuration is more than 7 days, set endDate to minDuration (actually set to 0 to let the smart contract set it properly)
+        //   - if there is minDuration, and minDuration is more than 7 days, set endDate to minDuration
         //   - otherwise, set endDate to 7 days from now
         const startDate = createProposalUtils.parseStartDate(proposal);
         const endDate =
