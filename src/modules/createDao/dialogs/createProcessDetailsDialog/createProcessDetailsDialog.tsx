@@ -8,11 +8,15 @@ export interface ICreateProcessDetailsDialogParams {
     /**
      * ID of the DAO to create the governance process for.
      */
-    daoId: string;
+    daoId?: string;
     /**
      * Plugin address used to create a proposal for adding a new process.
      */
-    pluginAddress: Hex;
+    pluginAddress?: Hex;
+    /**
+     * Callback function to be called when the get started action is clicked.
+     */
+    onStart?: () => void;
 }
 
 export interface ICreateProcessDetailsDialogProps extends IDialogComponentProps<ICreateProcessDetailsDialogParams> {}
@@ -22,7 +26,7 @@ export const CreateProcessDetailsDialog: React.FC<ICreateProcessDetailsDialogPro
     const { id } = location;
 
     invariant(location.params != null, 'CreateProcessDetailsDialog: required parameters must be set.');
-    const { daoId, pluginAddress } = location.params;
+    const { daoId, pluginAddress, onStart } = location.params;
 
     const { t } = useTranslations();
 
@@ -47,7 +51,8 @@ export const CreateProcessDetailsDialog: React.FC<ICreateProcessDetailsDialogPro
             description={t('app.createDao.createProcessDetailsDialog.description')}
             steps={steps}
             actionLabel={t('app.createDao.createProcessDetailsDialog.actionLabel')}
-            wizardLink={`/dao/${daoId}/create/${pluginAddress}/process`}
+            onActionClick={onStart}
+            wizardLink={pluginAddress && daoId ? `/dao/${daoId}/create/${pluginAddress}/process` : undefined}
             infoLink="https://docs.aragon.org/spp/1.x/index.html#staged_governance_processes"
             dialogId={id}
         />

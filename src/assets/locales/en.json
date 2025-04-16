@@ -827,8 +827,14 @@
           "cancel": "Cancel",
           "select": "Create proposal"
         },
-        "description": "Select the proposal type you want to create.",
-        "title": "Create proposal"
+        "process": {
+          "description": "Select the governance process to use for creating the proposal.",
+          "title": "Select process"
+        },
+        "proposal": {
+          "description": "Select the proposal type you want to create.",
+          "title": "Create proposal"
+        }
       },
       "verifySmartContractDialog": {
         "action": {
