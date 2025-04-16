@@ -1,14 +1,14 @@
 'use client';
 
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo } from 'react';
-import { useDaoPlugins } from '../../../../shared/hooks/useDaoPlugins';
-import { GovernanceSlotId } from '../../../governance/constants/moduleSlots';
-import { usePermissionCheckGuard } from '../../../governance/hooks/usePermissionCheckGuard';
 import { createProcessFormUtils, type ICreateProcessFormData } from '../../components/createProcessForm';
 import { CreateDaoDialogId } from '../../constants/createDaoDialogId';
 import type { IPrepareProcessDialogParams } from '../../dialogs/prepareProcessDialog';
