@@ -44,7 +44,6 @@ describe('tokenTransaction utils', () => {
                 { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
             ];
             const plugin = generateDaoPlugin({
-                address: '0x123',
                 subdomain: 'token',
                 settings: generateTokenPluginSettings(),
             });
@@ -65,6 +64,7 @@ describe('tokenTransaction utils', () => {
         });
 
         it('correctly sets default startDate and endDate when timing data not provided - minDuration > 7 days', () => {
+            // used mockRestore here in addition to mockReset to restore the original implementation of the function!
             parseStartDateSpy.mockRestore();
             parseEndDateSpy.mockRestore();
             const proposal = generateProposalCreate();
@@ -72,7 +72,6 @@ describe('tokenTransaction utils', () => {
                 { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
             ];
             const plugin = generateDaoPlugin({
-                address: '0x123',
                 subdomain: 'token',
                 settings: generateTokenPluginSettings({
                     minDuration: 10 * 24 * 60 * 60,
@@ -99,7 +98,6 @@ describe('tokenTransaction utils', () => {
                 { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
             ];
             const plugin = generateDaoPlugin({
-                address: '0x123',
                 subdomain: 'token',
                 settings: generateTokenPluginSettings({
                     minDuration: 3 * 24 * 60 * 60,
@@ -130,7 +128,6 @@ describe('tokenTransaction utils', () => {
                 { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
             ];
             const plugin = generateDaoPlugin({
-                address: '0x123',
                 subdomain: 'token',
                 settings: generateTokenPluginSettings({
                     minDuration: 9 * 24 * 60 * 60,

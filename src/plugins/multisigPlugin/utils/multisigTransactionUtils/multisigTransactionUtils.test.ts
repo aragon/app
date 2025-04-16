@@ -40,7 +40,6 @@ describe('multisigTransaction utils', () => {
             const proposal = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
             const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x0', value: BigInt(0) }];
             const plugin = generateDaoPlugin({
-                address: '0x123',
                 subdomain: 'multisig',
                 settings: generateMultisigPluginSettings(),
             });
@@ -63,7 +62,6 @@ describe('multisigTransaction utils', () => {
             const proposal = generateProposalCreate();
             const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x0', value: BigInt(0) }];
             const plugin = generateDaoPlugin({
-                address: '0x123',
                 subdomain: 'multisig',
                 settings: generateMultisigPluginSettings(),
             });
@@ -92,7 +90,6 @@ describe('multisigTransaction utils', () => {
             };
             const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x0', value: BigInt(0) }];
             const plugin = generateDaoPlugin({
-                address: '0x123',
                 subdomain: 'multisig',
                 settings: generateMultisigPluginSettings(),
             });

@@ -92,7 +92,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                                 onClick={handleAddGovernanceProcessClick}
                                 iconLeft={IconType.PLUS}
                             >
-                                {t(`app.settings.daoSettingsPage.main.governanceAction`)}
+                                {t('app.settings.daoSettingsPage.main.governanceAction')}
                             </Button>
                         </Card>
                     </Page.MainSection>
