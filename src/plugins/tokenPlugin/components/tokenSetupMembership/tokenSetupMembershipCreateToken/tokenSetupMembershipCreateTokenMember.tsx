@@ -29,8 +29,11 @@ export interface ITokenSetupMembershipCreateTokenMemberProps {
 }
 export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembershipCreateTokenMemberProps> = (props) => {
     const { formPrefix, onRemove, initialValue } = props;
+
     const { t } = useTranslations();
+
     const [memberInput, setMemberInput] = useState<string | undefined>(initialValue);
+
     const {
         onChange: onMemberChange,
         value: memberValue,
@@ -40,12 +43,14 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
         rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
         fieldPrefix: formPrefix,
     });
+
     const tokenAmountField = useFormField<ITokenSetupMembershipMember, 'tokenAmount'>('tokenAmount', {
         label: t('app.plugins.token.tokenSetupMembership.createToken.member.tokens.label'),
         rules: { required: true, validate: (value) => Number(value) > 0, min: 0 },
         defaultValue: 1,
         fieldPrefix: formPrefix,
     });
+
     const handleAddressAccept = useCallback(
         (value?: IAddressInputResolvedValue) => onMemberChange(value?.address ?? ''),
         [onMemberChange],
