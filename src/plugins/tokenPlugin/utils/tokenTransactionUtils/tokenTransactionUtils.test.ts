@@ -11,10 +11,8 @@ import { tokenPlugin } from '@/plugins/tokenPlugin/constants/tokenPlugin';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
-import { DateTime } from 'luxon';
 import * as Viem from 'viem';
 import { zeroAddress } from 'viem';
-import { timeUtils } from '../../../../test/utils';
 import { generateTokenPluginSettings } from '../../testUtils';
 import { DaoTokenVotingMode } from '../../types';
 import { tokenPluginAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
@@ -24,6 +22,7 @@ describe('tokenTransaction utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
     const parseStartDateSpy = jest.spyOn(createProposalUtils, 'parseStartDate');
     const parseEndDateSpy = jest.spyOn(createProposalUtils, 'parseEndDate');
+    const createDefaultEndDateSpy = jest.spyOn(createProposalUtils, 'createDefaultEndDate');
     const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');
     const buildPrepareInstallationDataSpy = jest.spyOn(pluginTransactionUtils, 'buildPrepareInstallationData');
 
@@ -31,6 +30,7 @@ describe('tokenTransaction utils', () => {
         encodeFunctionDataSpy.mockReset();
         parseStartDateSpy.mockReset();
         parseEndDateSpy.mockReset();
+        createDefaultEndDateSpy.mockReset();
         encodeAbiParametersSpy.mockReset();
         buildPrepareInstallationDataSpy.mockReset();
     });
@@ -52,6 +52,7 @@ describe('tokenTransaction utils', () => {
             const transactionData = '0xdata';
             parseStartDateSpy.mockReturnValue(startDate);
             parseEndDateSpy.mockReturnValue(endDate);
+            createDefaultEndDateSpy.mockReturnValue(-1);
             encodeFunctionDataSpy.mockReturnValue(transactionData);
 
             const result = tokenTransactionUtils.buildCreateProposalData(params);
@@ -63,10 +64,10 @@ describe('tokenTransaction utils', () => {
             expect(result).toEqual(transactionData);
         });
 
-        it('correctly sets default startDate and endDate when timing data not provided - minDuration > 7 days', () => {
-            // used mockRestore here in addition to mockReset to restore the original implementation of the function!
-            parseStartDateSpy.mockRestore();
-            parseEndDateSpy.mockRestore();
+        it('correctly sets default startDate and endDate when timing data not provided', () => {
+            const startDate = 0;
+            const endDate = 0;
+            const minDuration = 10 * 24 * 60 * 60;
             const proposal = generateProposalCreate();
             const actions: ITransactionRequest[] = [
                 { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
@@ -74,51 +75,31 @@ describe('tokenTransaction utils', () => {
             const plugin = generateDaoPlugin({
                 subdomain: 'token',
                 settings: generateTokenPluginSettings({
-                    minDuration: 10 * 24 * 60 * 60,
+                    minDuration,
                 }),
             });
 
             const params = { metadata: '0xipfs-cid' as const, actions, proposal, plugin };
+            parseStartDateSpy.mockReturnValue(startDate);
+            parseEndDateSpy.mockReturnValue(-1);
+            createDefaultEndDateSpy.mockReturnValue(endDate);
 
             tokenTransactionUtils.buildCreateProposalData(params);
 
-            const encodeFunctionDataArgs = encodeFunctionDataSpy.mock.calls[0][0];
-            const finalStartDate = encodeFunctionDataArgs.args![3];
-            const finalEndDate = encodeFunctionDataArgs.args![4];
-            expect(finalStartDate).toBe(0);
-            expect(finalEndDate).toBe(0);
-        });
-
-        it('correctly sets default startDate and endDate when timing data not provided - minDuration < 7 days', () => {
-            parseStartDateSpy.mockRestore();
-            parseEndDateSpy.mockRestore();
-            timeUtils.setTime('2025-04-16T09:30:00');
-            const proposal = generateProposalCreate();
-            const actions: ITransactionRequest[] = [
-                { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
-            ];
-            const plugin = generateDaoPlugin({
-                subdomain: 'token',
-                settings: generateTokenPluginSettings({
-                    minDuration: 3 * 24 * 60 * 60,
-                }),
+            expect(parseStartDateSpy).toHaveBeenCalledWith(proposal);
+            expect(createDefaultEndDateSpy).toHaveBeenCalledWith(minDuration);
+            expect(parseEndDateSpy).not.toHaveBeenCalled();
+            expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
+                abi: tokenPluginAbi,
+                functionName: 'createProposal',
+                args: [params.metadata, params.actions, BigInt(0), startDate, endDate, 0, false],
             });
-            const params = { metadata: '0xipfs-cid' as const, actions, proposal, plugin };
-
-            tokenTransactionUtils.buildCreateProposalData(params);
-
-            const sevenDaysFromNowInSeconds = DateTime.now().toSeconds() + 7 * 24 * 60 * 60;
-            const encodeFunctionDataArgs = encodeFunctionDataSpy.mock.calls[0][0];
-            const finalStartDate = encodeFunctionDataArgs.args![3];
-            const finalEndDate = encodeFunctionDataArgs.args![4];
-            expect(finalStartDate).toBe(0);
-            expect(finalEndDate).toBe(sevenDaysFromNowInSeconds);
         });
 
         it('correctly sets startDate and endDate from provided timing data', () => {
-            parseStartDateSpy.mockRestore();
-            parseEndDateSpy.mockRestore();
-            timeUtils.setTime('2025-04-16T09:30:00');
+            const startDate = 0;
+            const endDate = 0;
+            const minDuration = 10 * 24 * 60 * 60;
             const proposal = {
                 ...generateProposalCreate(),
                 ...generateCreateProposalStartDateFormData(),
@@ -130,21 +111,25 @@ describe('tokenTransaction utils', () => {
             const plugin = generateDaoPlugin({
                 subdomain: 'token',
                 settings: generateTokenPluginSettings({
-                    minDuration: 9 * 24 * 60 * 60,
+                    minDuration,
                 }),
             });
 
             const params = { metadata: '0xipfs-cid' as const, actions, proposal, plugin };
+            parseStartDateSpy.mockReturnValue(startDate);
+            parseEndDateSpy.mockReturnValue(endDate);
+            createDefaultEndDateSpy.mockReturnValue(-1);
 
             tokenTransactionUtils.buildCreateProposalData(params);
 
-            const twoDaysFromNowInSeconds = DateTime.now().toSeconds() + 2 * 24 * 60 * 60;
-            const encodeFunctionDataArgs = encodeFunctionDataSpy.mock.calls[0][0];
-            const finalStartDate = encodeFunctionDataArgs.args![3];
-            const finalEndDate = encodeFunctionDataArgs.args![4];
-
-            expect(finalStartDate).toBe(0);
-            expect(finalEndDate).toBe(twoDaysFromNowInSeconds);
+            expect(parseStartDateSpy).toHaveBeenCalledWith(proposal);
+            expect(createDefaultEndDateSpy).not.toHaveBeenCalledWith(minDuration);
+            expect(parseEndDateSpy).toHaveBeenCalledWith(proposal);
+            expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
+                abi: tokenPluginAbi,
+                functionName: 'createProposal',
+                args: [params.metadata, params.actions, BigInt(0), startDate, endDate, 0, false],
+            });
         });
     });
 
