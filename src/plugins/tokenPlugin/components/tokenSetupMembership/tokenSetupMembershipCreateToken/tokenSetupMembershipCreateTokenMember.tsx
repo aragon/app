@@ -27,14 +27,10 @@ export interface ITokenSetupMembershipCreateTokenMemberProps {
      */
     onRemove?: () => void;
 }
-
 export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembershipCreateTokenMemberProps> = (props) => {
     const { formPrefix, onRemove, initialValue } = props;
-
     const { t } = useTranslations();
-
     const [memberInput, setMemberInput] = useState<string | undefined>(initialValue);
-
     const {
         onChange: onMemberChange,
         value: memberValue,
@@ -44,21 +40,19 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
         rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
         fieldPrefix: formPrefix,
     });
-
     const tokenAmountField = useFormField<ITokenSetupMembershipMember, 'tokenAmount'>('tokenAmount', {
         label: t('app.plugins.token.tokenSetupMembership.createToken.member.tokens.label'),
         rules: { required: true, validate: (value) => Number(value) > 0, min: 0 },
         defaultValue: 1,
         fieldPrefix: formPrefix,
     });
-
     const handleAddressAccept = useCallback(
         (value?: IAddressInputResolvedValue) => onMemberChange(value?.address ?? ''),
         [onMemberChange],
     );
 
     return (
-        <div className="flex flex-col items-end gap-x-4 rounded-xl border border-neutral-100 p-6 md:flex-row md:items-start">
+        <div className="flex items-end gap-x-4 rounded-xl border border-neutral-100 p-6">
             <div className="flex w-full flex-col gap-4 md:flex-row">
                 <AddressInput
                     placeholder={t('app.plugins.token.tokenSetupMembership.createToken.member.address.placeholder')}
@@ -69,7 +63,7 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
                     className="basis-[65%]"
                     {...memberField}
                 />
-                <InputNumber className="min-h-[99px] basis-1/3 md:min-h-0" min={0} {...tokenAmountField} />
+                <InputNumber className="basis-1/3" min={0} {...tokenAmountField} />
             </div>
             {onRemove != null && (
                 <Dropdown.Container
@@ -79,7 +73,9 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
                             iconLeft={IconType.DOTS_VERTICAL}
                             className={classNames(
                                 'shrink-0',
-                                memberField.alert?.message ? 'md:self-center' : 'md:self-end',
+                                memberField.alert?.message || tokenAmountField.alert?.message
+                                    ? 'md:self-center'
+                                    : 'md:self-end',
                             )}
                         />
                     }

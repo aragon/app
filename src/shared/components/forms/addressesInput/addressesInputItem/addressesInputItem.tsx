@@ -98,7 +98,7 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
     }, [trigger, memberFieldName, isAlreadyInList, value.address]);
 
     return (
-        <Card className="flex gap-2 border border-neutral-100 p-6 shadow-neutral-sm">
+        <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
             <AddressInput
                 chainId={1}
                 onChange={setAddressInput}
@@ -112,9 +112,7 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
             <Dropdown.Container
                 constrainContentWidth={false}
                 size="md"
-                customTrigger={
-                    <Button className="self-start" variant="tertiary" size="lg" iconLeft={IconType.DOTS_VERTICAL} />
-                }
+                customTrigger={<Button variant="tertiary" size="lg" iconLeft={IconType.DOTS_VERTICAL} />}
                 disabled={!canRemove}
             >
                 <Dropdown.Item onClick={() => onRemoveMember(index)}>
