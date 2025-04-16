@@ -15,19 +15,29 @@ class MiddlewareUtils {
         return response;
     };
 
-    private getContentSecurityPolicies = (nonce: string, env: string): string[] => [
-        "default-src 'self'",
-        `script-src 'self' 'nonce-${nonce}' https: ${env !== 'local' ? "'strict-dynamic'" : "'unsafe-eval'"}`,
-        `style-src 'self' https://fonts.googleapis.com 'unsafe-inline'`,
-        'img-src * blob: data:',
-        'connect-src *',
-        "font-src 'self' https://fonts.gstatic.com",
-        "object-src 'self'",
-        "base-uri 'self'",
-        "form-action 'self'",
-        "frame-ancestors 'none'",
-        'upgrade-insecure-requests',
-    ];
+    private getContentSecurityPolicies = (nonce: string, env: string): string[] => {
+        const isProd = env === 'production' || env === 'staging';
+        const isLocal = env === 'local';
+
+        const scriptSrc = isProd ? `'strict-dynamic'` : isLocal ? `'unsafe-eval'` : 'https://vercel.live';
+        const frameSrc = isProd ? `'none'` : 'https://vercel.live';
+        const fontSrc = isProd ? '' : ' https://vercel.live';
+
+        return [
+            "default-src 'self'",
+            `script-src 'self' 'nonce-${nonce}' https: ${scriptSrc}`,
+            `style-src 'self' https://fonts.googleapis.com 'unsafe-inline'`,
+            'img-src * blob: data:',
+            'connect-src *',
+            `font-src 'self' https://fonts.gstatic.com${fontSrc}`,
+            "object-src 'self'",
+            "base-uri 'self'",
+            "form-action 'self'",
+            `frame-ancestors ${frameSrc}`,
+            `frame-src ${frameSrc}`,
+            'upgrade-insecure-requests',
+        ];
+    };
 }
 
 export const middlewareUtils = new MiddlewareUtils();
