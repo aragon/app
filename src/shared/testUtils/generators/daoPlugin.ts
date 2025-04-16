@@ -1,4 +1,5 @@
 import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
+import { DateTime } from 'luxon';
 import { generatePluginSettings } from './pluginSettings';
 
 export const generateDaoPlugin = <TSettings extends IPluginSettings = IPluginSettings>(
@@ -12,7 +13,7 @@ export const generateDaoPlugin = <TSettings extends IPluginSettings = IPluginSet
     isBody: false,
     isSubPlugin: false,
     settings: generatePluginSettings() as TSettings,
-    blockTimestamp: Date.now(),
+    blockTimestamp: DateTime.now().toMillis(),
     transactionHash: '0x123',
     slug: 'slug',
     ...daoPlugin,

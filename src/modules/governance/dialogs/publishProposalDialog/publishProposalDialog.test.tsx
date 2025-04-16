@@ -15,7 +15,7 @@ import {
     generateReactQueryResultSuccess,
     generateTabComponentPlugin,
 } from '@/shared/testUtils';
-import { testLogger } from '@/test/utils';
+import { testLogger, timeUtils } from '@/test/utils';
 import { GukModulesProvider, modulesCopy } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { act, type ReactNode } from 'react';
@@ -155,14 +155,15 @@ describe('<PublishProposalDialog /> component', () => {
     });
 
     it('prepares the transaction using the buildTransaction functionality and the hash of the pinned data', async () => {
+        timeUtils.setTime('2025-04-16T09:30:00');
         const daoPlugin = generateDaoPlugin();
         const ipfsResult = { IpfsHash: 'test' };
         const proposal = generateProposalCreate();
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: daoPlugin })]);
         usePinJsonSpy.mockReturnValue(generateReactQueryMutationResultSuccess({ data: ipfsResult }));
         const location = generateDialogLocation({ proposal });
-        render(createTestComponent({ location }));
 
+        render(createTestComponent({ location }));
         const { prepareTransaction } = (
             TransactionDialog as jest.Mock<ReactNode, Array<ITransactionDialogProps<PublishProposalStep>>>
         ).mock.calls[0][0];
