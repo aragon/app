@@ -32,7 +32,7 @@ jobs:
       deploymentUrl: ${{ steps.set-deployment-url.outputs.deploymentUrl }}
     steps:
       - name: Download infra credentials
-        uses: aragon/github-templates/steps/credential-retrieval@v0.2
+        uses: aragon/github-templates/steps/credential-retrieval@v0.3
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
           op-vault: "kv_app-next_infra"
@@ -45,7 +45,7 @@ jobs:
         with:
           name: nextjs-build
       - name: Download secrets
-        uses: aragon/github-templates/steps/credential-retrieval@v0.2
+        uses: aragon/github-templates/steps/credential-retrieval@v0.3
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
           op-vault: "kv_app-next_${{ inputs.env }}"
