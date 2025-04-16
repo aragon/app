@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-Implement debug panel
+Add beta support for Peaq network
