@@ -15,22 +15,29 @@ class MiddlewareUtils {
         return response;
     };
 
-    private getContentSecurityPolicies = (nonce: string, env: string): string[] => [
-        "default-src 'self'",
-        // 'strict-dynamic' disables host-based allowlists like https:
-        // In preview, we remove it to allow Vercel Comments script injection
-        `script-src 'self' 'nonce-${nonce}' https: ${env === 'production' ? "'strict-dynamic'" : 'https://vercel.live'}`,
-        `style-src 'self' https://fonts.googleapis.com 'unsafe-inline'`,
-        'img-src * blob: data:',
-        'connect-src *',
-        `font-src 'self' https://fonts.gstatic.com ${env === 'production' ? '' : 'https://vercel.live'}`,
-        "object-src 'self'",
-        "base-uri 'self'",
-        "form-action 'self'",
-        `frame-ancestors ${env === 'production' ? "'none'" : 'https://vercel.live'}`,
-        `frame-src ${env === 'production' ? "'none'" : 'https://vercel.live'}`,
-        'upgrade-insecure-requests',
-    ];
+    private getContentSecurityPolicies = (nonce: string, env: string): string[] => {
+        const isProd = env === 'production' || env === 'staging';
+        const isLocal = env === 'local';
+
+        const scriptSrc = isProd ? `'strict-dynamic'` : isLocal ? `'unsafe-eval'` : 'https://vercel.live';
+        const frameSrc = isProd ? `'none'` : 'https://vercel.live';
+        const fontSrc = isProd ? '' : ' https://vercel.live';
+
+        return [
+            "default-src 'self'",
+            `script-src 'self' 'nonce-${nonce}' https: ${scriptSrc}`,
+            `style-src 'self' https://fonts.googleapis.com 'unsafe-inline'`,
+            'img-src * blob: data:',
+            'connect-src *',
+            `font-src 'self' https://fonts.gstatic.com${fontSrc}`,
+            "object-src 'self'",
+            "base-uri 'self'",
+            "form-action 'self'",
+            `frame-ancestors ${frameSrc}`,
+            `frame-src ${frameSrc}`,
+            'upgrade-insecure-requests',
+        ];
+    };
 }
 
 export const middlewareUtils = new MiddlewareUtils();
