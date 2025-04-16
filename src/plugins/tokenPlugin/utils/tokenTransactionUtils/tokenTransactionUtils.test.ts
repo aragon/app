@@ -1,11 +1,7 @@
 import type { ISetupBodyFormMembership } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { generateCreateProcessFormBody } from '@/modules/createDao/testUtils';
 import { generateToken } from '@/modules/finance/testUtils';
-import {
-    generateCreateProposalEndDateFormData,
-    generateCreateProposalStartDateFormData,
-    generateProposalCreate,
-} from '@/modules/governance/testUtils';
+import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { tokenPlugin } from '@/plugins/tokenPlugin/constants/tokenPlugin';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
@@ -56,6 +52,10 @@ describe('tokenTransaction utils', () => {
             encodeFunctionDataSpy.mockReturnValue(transactionData);
 
             const result = tokenTransactionUtils.buildCreateProposalData(params);
+
+            expect(parseStartDateSpy).toHaveBeenCalledWith(proposal);
+            expect(createDefaultEndDateSpy).not.toHaveBeenCalled();
+            expect(parseEndDateSpy).toHaveBeenCalledWith(proposal);
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: tokenPluginAbi,
                 functionName: 'createProposal',
@@ -89,42 +89,6 @@ describe('tokenTransaction utils', () => {
             expect(parseStartDateSpy).toHaveBeenCalledWith(proposal);
             expect(createDefaultEndDateSpy).toHaveBeenCalledWith(minDuration);
             expect(parseEndDateSpy).not.toHaveBeenCalled();
-            expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
-                abi: tokenPluginAbi,
-                functionName: 'createProposal',
-                args: [params.metadata, params.actions, BigInt(0), startDate, endDate, 0, false],
-            });
-        });
-
-        it('correctly sets startDate and endDate from provided timing data', () => {
-            const startDate = 0;
-            const endDate = 0;
-            const minDuration = 10 * 24 * 60 * 60;
-            const proposal = {
-                ...generateProposalCreate(),
-                ...generateCreateProposalStartDateFormData(),
-                ...generateCreateProposalEndDateFormData(),
-            };
-            const actions: ITransactionRequest[] = [
-                { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
-            ];
-            const plugin = generateDaoPlugin({
-                subdomain: 'token',
-                settings: generateTokenPluginSettings({
-                    minDuration,
-                }),
-            });
-
-            const params = { metadata: '0xipfs-cid' as const, actions, proposal, plugin };
-            parseStartDateSpy.mockReturnValue(startDate);
-            parseEndDateSpy.mockReturnValue(endDate);
-            createDefaultEndDateSpy.mockReturnValue(-1);
-
-            tokenTransactionUtils.buildCreateProposalData(params);
-
-            expect(parseStartDateSpy).toHaveBeenCalledWith(proposal);
-            expect(createDefaultEndDateSpy).not.toHaveBeenCalledWith(minDuration);
-            expect(parseEndDateSpy).toHaveBeenCalledWith(proposal);
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: tokenPluginAbi,
                 functionName: 'createProposal',

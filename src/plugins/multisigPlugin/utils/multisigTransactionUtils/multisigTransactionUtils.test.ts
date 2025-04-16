@@ -1,17 +1,11 @@
 import { generateCreateProcessFormBody } from '@/modules/createDao/testUtils';
-import {
-    generateCreateProposalEndDateFormData,
-    generateCreateProposalStartDateFormData,
-    generateProposalCreate,
-} from '@/modules/governance/testUtils';
+import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { multisigPlugin } from '@/plugins/multisigPlugin/constants/multisigPlugin';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
-import { DateTime } from 'luxon';
 import * as Viem from 'viem';
-import { timeUtils } from '../../../../test/utils';
 import { generateMultisigPluginSettings } from '../../testUtils';
 import { multisigPluginAbi, multisigPluginSetupAbi } from './multisigPluginAbi';
 import { multisigTransactionUtils } from './multisigTransactionUtils';
@@ -21,6 +15,7 @@ describe('multisigTransaction utils', () => {
     const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');
     const parseStartDateSpy = jest.spyOn(createProposalUtils, 'parseStartDate');
     const parseEndDateSpy = jest.spyOn(createProposalUtils, 'parseEndDate');
+    const createDefaultEndDateSpy = jest.spyOn(createProposalUtils, 'createDefaultEndDate');
 
     beforeEach(() => {
         encodeFunctionDataSpy.mockReturnValue('0x');
@@ -31,6 +26,7 @@ describe('multisigTransaction utils', () => {
         encodeAbiParametersSpy.mockReset();
         parseStartDateSpy.mockReset();
         parseEndDateSpy.mockReset();
+        createDefaultEndDateSpy.mockReset();
     });
 
     describe('buildCreateProposalData', () => {
@@ -46,8 +42,13 @@ describe('multisigTransaction utils', () => {
             const params = { metadata: '0x' as const, actions: actions, proposal, plugin };
             parseStartDateSpy.mockReturnValue(startDate);
             parseEndDateSpy.mockReturnValue(endDate);
+            createDefaultEndDateSpy.mockReturnValue(-1);
 
             multisigTransactionUtils.buildCreateProposalData(params);
+
+            expect(parseStartDateSpy).toHaveBeenCalledWith(proposal);
+            expect(parseEndDateSpy).toHaveBeenCalledWith(proposal);
+            expect(createDefaultEndDateSpy).not.toHaveBeenCalled();
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: multisigPluginAbi,
                 functionName: 'createProposal',
@@ -56,9 +57,8 @@ describe('multisigTransaction utils', () => {
         });
 
         it('correctly sets default startDate and endDate when timing data not provided', () => {
-            parseStartDateSpy.mockRestore();
-            parseEndDateSpy.mockRestore();
-            timeUtils.setTime('2025-04-16T09:30:00');
+            const startDate = 0;
+            const endDate = 0;
             const proposal = generateProposalCreate();
             const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x0', value: BigInt(0) }];
             const plugin = generateDaoPlugin({
@@ -66,44 +66,20 @@ describe('multisigTransaction utils', () => {
                 settings: generateMultisigPluginSettings(),
             });
             const params = { metadata: '0x' as const, actions: actions, proposal, plugin };
+            parseStartDateSpy.mockReturnValue(startDate);
+            parseEndDateSpy.mockReturnValue(-1);
+            createDefaultEndDateSpy.mockReturnValue(endDate);
 
             multisigTransactionUtils.buildCreateProposalData(params);
 
-            // assert
-            const sevenDaysFromNowInSeconds = DateTime.now().toSeconds() + 7 * 24 * 60 * 60;
-            const encodeFunctionDataArgs = encodeFunctionDataSpy.mock.calls[0][0];
-            const finalStartDate = encodeFunctionDataArgs.args![5];
-            const finalEndDate = encodeFunctionDataArgs.args![6];
-
-            expect(finalStartDate).toBe(0);
-            expect(finalEndDate).toBe(sevenDaysFromNowInSeconds);
-        });
-
-        it('correctly sets startDate and endDate from provided timing data', () => {
-            parseStartDateSpy.mockRestore();
-            parseEndDateSpy.mockRestore();
-            timeUtils.setTime('2025-04-16T09:30:00');
-            const proposal = {
-                ...generateProposalCreate(),
-                ...generateCreateProposalStartDateFormData(),
-                ...generateCreateProposalEndDateFormData(),
-            };
-            const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x0', value: BigInt(0) }];
-            const plugin = generateDaoPlugin({
-                subdomain: 'multisig',
-                settings: generateMultisigPluginSettings(),
+            expect(parseStartDateSpy).toHaveBeenCalledWith(proposal);
+            expect(createDefaultEndDateSpy).toHaveBeenCalledWith(); // called without arguments
+            expect(parseEndDateSpy).not.toHaveBeenCalled();
+            expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
+                abi: multisigPluginAbi,
+                functionName: 'createProposal',
+                args: [params.metadata, params.actions, BigInt(0), false, false, startDate, endDate],
             });
-            const params = { metadata: '0x' as const, actions: actions, proposal, plugin };
-
-            multisigTransactionUtils.buildCreateProposalData(params);
-
-            const twoDaysFromNowInSeconds = DateTime.now().toSeconds() + 2 * 24 * 60 * 60;
-            const encodeFunctionDataArgs = encodeFunctionDataSpy.mock.calls[0][0];
-            const finalStartDate = encodeFunctionDataArgs.args![5];
-            const finalEndDate = encodeFunctionDataArgs.args![6];
-
-            expect(finalStartDate).toBe(0);
-            expect(finalEndDate).toBe(twoDaysFromNowInSeconds);
         });
     });
 
