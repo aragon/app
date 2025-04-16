@@ -14,20 +14,20 @@ export const useAdminStatus = (params: IUseAdminStatusParams) => {
 
     const { address: memberAddress } = useAccount();
 
-    const adminPlugin = useDaoPlugins({ daoId, subdomain: 'admin' });
-    const pluginAddress = adminPlugin?.[0]?.meta?.address;
+    const adminPlugins = useDaoPlugins({ daoId, subdomain: 'admin' });
+    const adminPluginAddress = adminPlugins?.[0]?.meta?.address;
 
-    const memberExistsParams = { memberAddress: memberAddress as string, pluginAddress: pluginAddress! };
+    const memberExistsParams = { memberAddress: memberAddress as string, pluginAddress: adminPluginAddress! };
 
     const { data: isAdminMember } = useMemberExists(
         { urlParams: memberExistsParams },
-        { enabled: memberAddress != null && pluginAddress != null },
+        { enabled: memberAddress != null && adminPluginAddress != null },
     );
 
     const adminFeatureEnabled = process.env.NEXT_PUBLIC_FEATURE_GOVERNANCE_DESIGNER === 'true';
 
     return {
         isAdminMember: isAdminMember && adminFeatureEnabled,
-        hasAdminPlugin: pluginAddress != null,
+        adminPluginAddress,
     };
 };

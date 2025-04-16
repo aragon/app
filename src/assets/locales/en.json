@@ -1460,6 +1460,7 @@
           "versionInfoTitle": "Version Info"
         },
         "main": {
+          "governanceAction": "Add governance",
           "governanceInfoTitle": "Governance",
           "membersInfoTitle": "Members",
           "settingsInfoTitle": "DAO",

@@ -6,17 +6,26 @@ import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import type { IMultisigSetupGovernanceForm } from '../../components/multisigSetupGovernance';
 import { multisigPlugin } from '../../constants/multisigPlugin';
+import type { IMultisigPluginSettings } from '../../types';
 import { multisigPluginAbi, multisigPluginSetupAbi } from './multisigPluginAbi';
 
 // The end-date form values are set to "partial" because users can also create proposals without the proposal wizard
 export interface ICreateMultisigProposalFormData extends IProposalCreate, Partial<ICreateProposalEndDateForm> {}
 
 class MultisigTransactionUtils {
-    buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateMultisigProposalFormData>): Hex => {
+    buildCreateProposalData = (
+        params: IBuildCreateProposalDataParams<ICreateMultisigProposalFormData, IMultisigPluginSettings>,
+    ): Hex => {
         const { metadata, actions, proposal } = params;
 
+        // Handle proposals without time settings in the following way:
+        //   - startDate set to 0
+        //   - endDate set to 7 days from now
         const startDate = createProposalUtils.parseStartDate(proposal);
-        const endDate = createProposalUtils.parseEndDate(proposal);
+        const endDate =
+            proposal.endTimeMode != null
+                ? createProposalUtils.parseEndDate(proposal)
+                : createProposalUtils.createDefaultEndDate();
 
         const functionArgs = [metadata, actions, BigInt(0), false, false, startDate, endDate];
         const data = encodeFunctionData({ abi: multisigPluginAbi, functionName: 'createProposal', args: functionArgs });

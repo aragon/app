@@ -1,7 +1,15 @@
 import * as DaoService from '@/shared/api/daoService';
 import { DialogProvider } from '@/shared/components/dialogProvider';
-import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import * as UseDaoPluginsModule from '@/shared/hooks/useDaoPlugins';
+import {
+    generateDao,
+    generateDaoPlugin,
+    generateReactQueryResultError,
+    generateReactQueryResultSuccess,
+    generateTabComponentPlugin,
+} from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
+
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { DaoSettingsPageClient, type IDaoSettingsPageClientProps } from './daoSettingsPageClient';
@@ -19,13 +27,23 @@ jest.mock('@/plugins/adminPlugin/components/adminSettingsPanel', () => ({
 describe('<DaoSettingsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const hasSupportedPluginsSpy = jest.spyOn(daoUtils, 'hasSupportedPlugins');
+    const useDaoPluginsSpy = jest.spyOn(UseDaoPluginsModule, 'useDaoPlugins');
 
     beforeEach(() => {
+        useDaoPluginsSpy.mockReturnValue([
+            generateTabComponentPlugin({
+                id: 'one',
+                uniqueId: '1',
+                label: 'one',
+                meta: generateDaoPlugin({ subdomain: 'multisig', address: '0x123' }),
+            }),
+        ]);
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
     });
 
     afterEach(() => {
         useDaoSpy.mockReset();
+        useDaoPluginsSpy.mockReset();
         hasSupportedPluginsSpy.mockReset();
     });
 

@@ -11,7 +11,6 @@ import {
     type TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo } from 'react';
@@ -33,13 +32,11 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
 
     const { daoId, plugin, proposal, prepareActions, translationNamespace, transactionInfo } = location.params;
 
-    const { address: pluginAddress } = plugin;
     const { title, summary } = proposal;
 
     const { t } = useTranslations();
     const { setIsBlocked } = useBlockNavigationContext();
 
-    const daoPlugin = useDaoPlugins({ daoId, pluginAddress })![0];
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const stepper = useStepper<ITransactionDialogStepMeta, PublishProposalStep | TransactionDialogStep>({
@@ -68,7 +65,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
         return publishProposalDialogUtils.buildTransaction({
             proposal: processedProposal,
             metadataCid,
-            plugin: daoPlugin.meta,
+            plugin,
         });
     };
 

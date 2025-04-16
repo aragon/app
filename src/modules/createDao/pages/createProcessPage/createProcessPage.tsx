@@ -1,21 +1,21 @@
 import { Page } from '@/shared/components/page';
-import type { IDaoPageParams } from '@/shared/types';
+import type { ICreateProcessPageParams } from '../../types';
 import { CreateProcessPageClient } from './createProcessPageClient';
 
 export interface ICreateProcessPageProps {
     /**
      * Parameters of the create process page.
      */
-    params: Promise<IDaoPageParams>;
+    params: Promise<ICreateProcessPageParams>;
 }
 
 export const CreateProcessPage: React.FC<ICreateProcessPageProps> = async (props) => {
     const { params } = props;
-    const { id } = await params;
+    const { id, pluginAddress } = await params;
 
     return (
         <Page.Container>
-            <CreateProcessPageClient daoId={id} />
+            <CreateProcessPageClient daoId={id} pluginAddress={pluginAddress} />
         </Page.Container>
     );
 };
