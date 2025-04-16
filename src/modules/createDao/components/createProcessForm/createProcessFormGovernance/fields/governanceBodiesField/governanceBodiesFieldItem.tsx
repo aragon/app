@@ -3,7 +3,7 @@ import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Accordion, Button, Card, Dropdown, Heading, IconType } from '@aragon/gov-ui-kit';
+import { Accordion, Button, Dropdown, Heading, IconType } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { GovernanceType, type ICreateProcessFormData } from '../../../createProcessFormDefinitions';
@@ -49,45 +49,43 @@ export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps
     }, [isAdvancedGovernance, fieldName, processName, setValue]);
 
     return (
-        <Card className="overflow-hidden border border-neutral-100">
-            <Accordion.Container isMulti={true}>
-                <Accordion.Item value={body.internalId}>
-                    <Accordion.ItemHeader>
-                        <Heading size="h4">{body.name}</Heading>
-                    </Accordion.ItemHeader>
-                    <Accordion.ItemContent>
-                        <PluginSingleComponent
-                            pluginId={body.plugin}
-                            slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}
-                            body={body}
-                            isAdvancedGovernance={isAdvancedGovernance}
-                        />
-                        <div className="flex w-full grow justify-between">
-                            <Button className="justify-end" variant="secondary" size="md" onClick={onEdit}>
-                                {t('app.createDao.createProcessForm.governance.bodiesField.action.edit')}
-                            </Button>
-                            <Dropdown.Container
-                                constrainContentWidth={false}
-                                size="md"
-                                customTrigger={
-                                    <Button
-                                        className="w-fit"
-                                        variant="tertiary"
-                                        size="md"
-                                        iconRight={IconType.DOTS_VERTICAL}
-                                    >
-                                        {t('app.createDao.createProcessForm.governance.bodiesField.action.more')}
-                                    </Button>
-                                }
-                            >
-                                <Dropdown.Item onClick={onDelete}>
-                                    {t('app.createDao.createProcessForm.governance.bodiesField.action.remove')}
-                                </Dropdown.Item>
-                            </Dropdown.Container>
-                        </div>
-                    </Accordion.ItemContent>
-                </Accordion.Item>
-            </Accordion.Container>
-        </Card>
+        <Accordion.Container isMulti={true}>
+            <Accordion.Item value={body.internalId}>
+                <Accordion.ItemHeader>
+                    <Heading size="h4">{body.name}</Heading>
+                </Accordion.ItemHeader>
+                <Accordion.ItemContent className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6">
+                    <PluginSingleComponent
+                        pluginId={body.plugin}
+                        slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}
+                        body={body}
+                        isAdvancedGovernance={isAdvancedGovernance}
+                    />
+                    <div className="flex w-full grow justify-between">
+                        <Button className="justify-end" variant="secondary" size="md" onClick={onEdit}>
+                            {t('app.createDao.createProcessForm.governance.bodiesField.action.edit')}
+                        </Button>
+                        <Dropdown.Container
+                            constrainContentWidth={false}
+                            size="md"
+                            customTrigger={
+                                <Button
+                                    className="w-fit"
+                                    variant="tertiary"
+                                    size="md"
+                                    iconRight={IconType.DOTS_VERTICAL}
+                                >
+                                    {t('app.createDao.createProcessForm.governance.bodiesField.action.more')}
+                                </Button>
+                            }
+                        >
+                            <Dropdown.Item onClick={onDelete}>
+                                {t('app.createDao.createProcessForm.governance.bodiesField.action.remove')}
+                            </Dropdown.Item>
+                        </Dropdown.Container>
+                    </div>
+                </Accordion.ItemContent>
+            </Accordion.Item>
+        </Accordion.Container>
     );
 };

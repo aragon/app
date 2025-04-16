@@ -6,8 +6,12 @@ export type Translations = Awaited<ReturnType<(typeof translations)['en']>>;
 
 class TranslationsUtils {
     t =
-        (translations: Translations) =>
+        (translations: Translations, debug?: boolean) =>
         (key: string, options: ITFuncOptions = {}) => {
+            if (debug) {
+                return key;
+            }
+
             const value = key
                 .split('.')
                 .reduce<string | object | undefined>((acc: string | object | undefined, key: string) => {

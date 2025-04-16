@@ -9,6 +9,7 @@ import {
     IconType,
     InputNumber,
 } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import { useCallback, useState } from 'react';
 import type { ITokenSetupMembershipMember } from '../tokenSetupMembership.api';
 
@@ -26,7 +27,6 @@ export interface ITokenSetupMembershipCreateTokenMemberProps {
      */
     onRemove?: () => void;
 }
-
 export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembershipCreateTokenMemberProps> = (props) => {
     const { formPrefix, onRemove, initialValue } = props;
 
@@ -72,7 +72,18 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
             </div>
             {onRemove != null && (
                 <Dropdown.Container
-                    customTrigger={<Button variant="tertiary" iconLeft={IconType.DOTS_VERTICAL} className="shrink-0" />}
+                    customTrigger={
+                        <Button
+                            variant="tertiary"
+                            iconLeft={IconType.DOTS_VERTICAL}
+                            className={classNames(
+                                'shrink-0',
+                                memberField.alert?.message || tokenAmountField.alert?.message
+                                    ? 'md:self-center'
+                                    : 'md:self-end',
+                            )}
+                        />
+                    }
                 >
                     <Dropdown.Item onClick={onRemove}>
                         {t('app.plugins.token.tokenSetupMembership.createToken.member.action.remove')}

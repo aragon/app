@@ -1,4 +1,6 @@
 import { pluginRegistryUtils, type PluginId, type SlotId } from '@/shared/utils/pluginRegistryUtils';
+import classNames from 'classnames';
+import { useDebugContext } from '../debugProvider';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FallbackComponent = React.FC<any>;
@@ -25,11 +27,24 @@ export interface IPluginSingleComponentProps {
 export const PluginSingleComponent: React.FC<IPluginSingleComponentProps> = (props) => {
     const { slotId, pluginId, Fallback, ...otherProps } = props;
 
+    const { values } = useDebugContext<{ highlightSlots: boolean }>();
+    const { highlightSlots } = values;
+
     const LoadedComponent = pluginRegistryUtils.getSlotComponent({ slotId, pluginId });
 
-    if (LoadedComponent == null) {
-        return Fallback?.({ ...otherProps });
+    if (LoadedComponent == null && Fallback == null) {
+        return null;
     }
 
-    return <LoadedComponent {...otherProps} />;
+    return (
+        <div className={classNames({ 'relative w-full rounded border border-primary-400': highlightSlots })}>
+            {highlightSlots && (
+                <p className="absolute -top-6 right-0 z-50 text-neutral-500">
+                    {slotId} ({pluginId})
+                </p>
+            )}
+            {LoadedComponent == null && Fallback != null && <Fallback {...otherProps} />}
+            {LoadedComponent != null && <LoadedComponent {...otherProps} />}
+        </div>
+    );
 };
