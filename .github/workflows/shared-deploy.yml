@@ -8,7 +8,7 @@ on:
   workflow_call:
     inputs:
       domain:
-        description: "Assign the new deployment URL to the speficied input when set"
+        description: "Assign the new deployment URL to the specified input when set"
         required: false
         type: string
       env:
