@@ -16,7 +16,7 @@ export const MultisigCreateProposalSettingsForm: React.FC<IMultisigCreateProposa
     const minEndTime = startTimeFixed ? dateUtils.parseFixedDate(startTimeFixed) : DateTime.now();
 
     return (
-        <>
+        <div className="flex flex-col gap-6 md:gap-12">
             <AdvancedDateInput
                 label={t('app.plugins.multisig.multisigCreateProposalSettingsForm.startTime.label')}
                 helpText={t('app.plugins.multisig.multisigCreateProposalSettingsForm.startTime.helpText')}
@@ -34,6 +34,6 @@ export const MultisigCreateProposalSettingsForm: React.FC<IMultisigCreateProposa
                 minTime={minEndTime}
                 minDuration={{ days: recommendedMinDays, hours: 0, minutes: 0 }}
             />
-        </>
+        </div>
     );
 };
