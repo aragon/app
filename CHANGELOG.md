@@ -1,5 +1,29 @@
 # @aragon/app-next
 
+## 1.2.0
+
+### Minor Changes
+
+- [#493](https://github.com/aragon/app-next/pull/493) [`20dc0e9`](https://github.com/aragon/app-next/commit/20dc0e9668d5dcad39c7e600ee0862f896af8dd2) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Add beta support for Peaq network
+
+- [#475](https://github.com/aragon/app-next/pull/475) [`1bdff2f`](https://github.com/aragon/app-next/commit/1bdff2f4e393d78f6b33e582fa27991de992fc62) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Batch multiple plugin preparation transactions into one using the global executor
+
+- [#484](https://github.com/aragon/app-next/pull/484) [`7b5c204`](https://github.com/aragon/app-next/commit/7b5c204373e9554ecdbb9e43429e4b193e2ecf3b) Thanks [@shan8851](https://github.com/shan8851)! - Refactor publish proposal, remove publishProcess and manageAdminsDialog and use publish proposal instead
+
+- [#480](https://github.com/aragon/app-next/pull/480) [`d3e1bde`](https://github.com/aragon/app-next/commit/d3e1bde2adc5c41f53f0ad69289b073f4dcc96b3) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#435](https://github.com/aragon/app-next/pull/435) [`2fa3666`](https://github.com/aragon/app-next/commit/2fa36660f967a6692a34978d8233516b40f4325e) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Add indexing step to transaction dialog
+
+### Patch Changes
+
+- [#486](https://github.com/aragon/app-next/pull/486) [`71b4fe9`](https://github.com/aragon/app-next/commit/71b4fe998ecb6db93b07062112da6bfaa24c7c42) Thanks [@shan8851](https://github.com/shan8851)! - Update indexing step timing and disable proceed anyway button after succesful response
+
+- [#482](https://github.com/aragon/app-next/pull/482) [`dc5c0a1`](https://github.com/aragon/app-next/commit/dc5c0a18001387ee9fb9c99fbb50b7ba2857b92e) Thanks [@shan8851](https://github.com/shan8851)! - Correctly implement enabled step property transaction status query when indexing
+
+- [#483](https://github.com/aragon/app-next/pull/483) [`e203ecb`](https://github.com/aragon/app-next/commit/e203ecbc4cef01b0a73670bb9c2d6e3161bc0c34) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Fix token and multisig normalise action functions
+
+- [#488](https://github.com/aragon/app-next/pull/488) [`dd18098`](https://github.com/aragon/app-next/commit/dd180987a58d09f8a21b079af5e710dbd899910f) Thanks [@shan8851](https://github.com/shan8851)! - Fix issue where links are still clickable when disabled
+
 ## 1.1.0
 
 ### Minor Changes
