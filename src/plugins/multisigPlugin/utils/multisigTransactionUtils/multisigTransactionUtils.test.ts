@@ -9,7 +9,9 @@ import { multisigPlugin } from '@/plugins/multisigPlugin/constants/multisigPlugi
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
+import { DateTime } from 'luxon';
 import * as Viem from 'viem';
+import { timeUtils } from '../../../../test/utils';
 import { generateMultisigPluginSettings } from '../../testUtils';
 import { multisigPluginAbi, multisigPluginSetupAbi } from './multisigPluginAbi';
 import { multisigTransactionUtils } from './multisigTransactionUtils';
@@ -57,6 +59,7 @@ describe('multisigTransaction utils', () => {
         it('correctly sets default startDate and endDate when timing data not provided', () => {
             parseStartDateSpy.mockRestore();
             parseEndDateSpy.mockRestore();
+            timeUtils.setTime('2025-04-16T09:30:00');
             const proposal = generateProposalCreate();
             const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x0', value: BigInt(0) }];
             const plugin = generateDaoPlugin({
@@ -69,24 +72,24 @@ describe('multisigTransaction utils', () => {
             multisigTransactionUtils.buildCreateProposalData(params);
 
             // assert
-            const sevenDaysFromNowInSeconds = Date.now() / 1000 + 7 * 24 * 60 * 60;
+            const sevenDaysFromNowInSeconds = DateTime.now().toSeconds() + 7 * 24 * 60 * 60;
             const encodeFunctionDataArgs = encodeFunctionDataSpy.mock.calls[0][0];
             const finalStartDate = encodeFunctionDataArgs.args![5];
             const finalEndDate = encodeFunctionDataArgs.args![6];
 
             expect(finalStartDate).toBe(0);
-            expect(finalEndDate).toBeCloseTo(sevenDaysFromNowInSeconds, -1);
+            expect(finalEndDate).toBe(sevenDaysFromNowInSeconds);
         });
 
         it('correctly sets startDate and endDate from provided timing data', () => {
             parseStartDateSpy.mockRestore();
             parseEndDateSpy.mockRestore();
+            timeUtils.setTime('2025-04-16T09:30:00');
             const proposal = {
                 ...generateProposalCreate(),
                 ...generateCreateProposalStartDateFormData(),
                 ...generateCreateProposalEndDateFormData(),
             };
-
             const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x0', value: BigInt(0) }];
             const plugin = generateDaoPlugin({
                 address: '0x123',
@@ -97,14 +100,13 @@ describe('multisigTransaction utils', () => {
 
             multisigTransactionUtils.buildCreateProposalData(params);
 
-            // assert
-            const twoDaysFromNowInSeconds = Date.now() / 1000 + 2 * 24 * 60 * 60;
+            const twoDaysFromNowInSeconds = DateTime.now().toSeconds() + 2 * 24 * 60 * 60;
             const encodeFunctionDataArgs = encodeFunctionDataSpy.mock.calls[0][0];
             const finalStartDate = encodeFunctionDataArgs.args![5];
             const finalEndDate = encodeFunctionDataArgs.args![6];
 
             expect(finalStartDate).toBe(0);
-            expect(finalEndDate).toBeCloseTo(twoDaysFromNowInSeconds, -1);
+            expect(finalEndDate).toBe(twoDaysFromNowInSeconds);
         });
     });
 

@@ -11,8 +11,10 @@ import { tokenPlugin } from '@/plugins/tokenPlugin/constants/tokenPlugin';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
+import { DateTime } from 'luxon';
 import * as Viem from 'viem';
 import { zeroAddress } from 'viem';
+import { timeUtils } from '../../../../test/utils';
 import { generateTokenPluginSettings } from '../../testUtils';
 import { DaoTokenVotingMode } from '../../types';
 import { tokenPluginAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
@@ -91,6 +93,7 @@ describe('tokenTransaction utils', () => {
         it('correctly sets default startDate and endDate when timing data not provided - minDuration < 7 days', () => {
             parseStartDateSpy.mockRestore();
             parseEndDateSpy.mockRestore();
+            timeUtils.setTime('2025-04-16T09:30:00');
             const proposal = generateProposalCreate();
             const actions: ITransactionRequest[] = [
                 { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
@@ -102,22 +105,22 @@ describe('tokenTransaction utils', () => {
                     minDuration: 3 * 24 * 60 * 60,
                 }),
             });
-
             const params = { metadata: '0xipfs-cid' as const, actions, proposal, plugin };
 
             tokenTransactionUtils.buildCreateProposalData(params);
 
-            const sevenDaysFromNowInSeconds = Date.now() / 1000 + 7 * 24 * 60 * 60;
+            const sevenDaysFromNowInSeconds = DateTime.now().toSeconds() + 7 * 24 * 60 * 60;
             const encodeFunctionDataArgs = encodeFunctionDataSpy.mock.calls[0][0];
             const finalStartDate = encodeFunctionDataArgs.args![3];
             const finalEndDate = encodeFunctionDataArgs.args![4];
             expect(finalStartDate).toBe(0);
-            expect(finalEndDate).toBeCloseTo(sevenDaysFromNowInSeconds, -1);
+            expect(finalEndDate).toBe(sevenDaysFromNowInSeconds);
         });
 
         it('correctly sets startDate and endDate from provided timing data', () => {
             parseStartDateSpy.mockRestore();
             parseEndDateSpy.mockRestore();
+            timeUtils.setTime('2025-04-16T09:30:00');
             const proposal = {
                 ...generateProposalCreate(),
                 ...generateCreateProposalStartDateFormData(),
@@ -138,13 +141,13 @@ describe('tokenTransaction utils', () => {
 
             tokenTransactionUtils.buildCreateProposalData(params);
 
-            const twoDaysFromNowInSeconds = Date.now() / 1000 + 2 * 24 * 60 * 60;
+            const twoDaysFromNowInSeconds = DateTime.now().toSeconds() + 2 * 24 * 60 * 60;
             const encodeFunctionDataArgs = encodeFunctionDataSpy.mock.calls[0][0];
             const finalStartDate = encodeFunctionDataArgs.args![3];
             const finalEndDate = encodeFunctionDataArgs.args![4];
 
             expect(finalStartDate).toBe(0);
-            expect(finalEndDate).toBeCloseTo(twoDaysFromNowInSeconds, -1);
+            expect(finalEndDate).toBe(twoDaysFromNowInSeconds);
         });
     });
 

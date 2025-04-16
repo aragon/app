@@ -123,16 +123,18 @@ describe('createProposal utils', () => {
         });
 
         it('returns 7 days from now in seconds if minDuration is less the 7 days', () => {
+            timeUtils.setTime('2025-04-16T09:30:00');
             const minDuration = 6 * 24 * 60 * 60;
-            const expectedTime = Date.now() / 1000 + 7 * 24 * 60 * 60;
+            const expectedTime = DateTime.now().toSeconds() + 7 * 24 * 60 * 60;
 
-            expect(createProposalUtils.createDefaultEndDate(minDuration)).toBeCloseTo(expectedTime, -1);
+            expect(createProposalUtils.createDefaultEndDate(minDuration)).toBe(expectedTime);
         });
 
         it('returns 7 days from now in seconds if minDuration is not provided', () => {
-            const expectedTime = Date.now() / 1000 + 7 * 24 * 60 * 60;
+            timeUtils.setTime('2025-04-16T09:30:00');
+            const expectedTime = DateTime.now().toSeconds() + 7 * 24 * 60 * 60;
 
-            expect(createProposalUtils.createDefaultEndDate()).toBeCloseTo(expectedTime, -1);
+            expect(createProposalUtils.createDefaultEndDate()).toBe(expectedTime);
         });
     });
 });
