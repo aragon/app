@@ -12,6 +12,7 @@ const optimismMainnet = {
     logo: 'https://assets.coingecko.com/coins/images/25244/large/Optimism.png',
     disabled: true,
     testnet: false,
+    beta: false,
     order: 9,
 };
 
@@ -23,8 +24,9 @@ export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => 
         defaultValue: Network.ETHEREUM_SEPOLIA,
     });
 
-    const testnetTag = { variant: 'info' as const, label: t('app.createDao.createDaoForm.network.testnetLabel') };
-    const disabledTag = { variant: 'info' as const, label: t('app.createDao.createDaoForm.network.disabledLabel') };
+    const testnetTag = { variant: 'neutral' as const, label: t('app.createDao.createDaoForm.network.tag.testnet') };
+    const disabledTag = { variant: 'info' as const, label: t('app.createDao.createDaoForm.network.tag.disabled') };
+    const betaTag = { variant: 'info' as const, label: t('app.createDao.createDaoForm.network.tag.beta') };
 
     const sortedNetworks = Object.entries({ ...networkDefinitions, 'optimism-mainnet': optimismMainnet }).sort(
         ([, networkA], [, networkB]) => networkA.order - networkB.order,
@@ -32,14 +34,14 @@ export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => 
 
     return (
         <RadioGroup onValueChange={onNetworkChange} {...networkField}>
-            {sortedNetworks.map(([key, networkListData]) => (
+            {sortedNetworks.map(([key, { disabled, testnet, beta, name, logo }]) => (
                 <RadioCard
                     key={key}
-                    tag={networkListData.disabled ? disabledTag : networkListData.testnet ? testnetTag : undefined}
+                    tag={disabled ? disabledTag : testnet ? testnetTag : beta ? betaTag : undefined}
                     value={key}
-                    label={networkListData.name}
-                    disabled={networkListData.disabled}
-                    avatar={networkListData.logo}
+                    label={name}
+                    disabled={disabled}
+                    avatar={logo}
                 />
             ))}
         </RadioGroup>
