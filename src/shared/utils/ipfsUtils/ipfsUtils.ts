@@ -12,7 +12,7 @@ class IpfsUtils {
     private ipfsPrefix = 'ipfs://';
 
     cidToSrc = (cid?: string | null, options?: ICidToSrcOptions): string | undefined => {
-        const { size = 80 } = options ?? {};
+        const { size = 256 } = options ?? {};
 
         const processedSize = size.toString();
         const processedCid = cid?.startsWith(this.ipfsPrefix) ? cid.replace(this.ipfsPrefix, '') : cid;
