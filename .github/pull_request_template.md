@@ -13,7 +13,7 @@ Task: [APP-0000](https://aragonassociation.atlassian.net/browse/APP-0000)
 - [ ] New feature (non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
 
-## Checklist:
+## Developer Checklist:
 
 - [ ] Manually smoke tested the functionality locally
 - [ ] Confirmed there are no new warnings or errors in the browser console
@@ -25,3 +25,8 @@ Task: [APP-0000](https://aragonassociation.atlassian.net/browse/APP-0000)
 - [ ] Followed the code style guidelines of this project
 - [ ] Reviewed that the Files Changed in Github’s UI reflect my intended changes
 - [ ] Confirmed the pipeline checks are not failing
+
+## Review Checklist:
+
+- [ ] Tested locally that all Acceptance Criteria or Expected Outcomes are satisfied
+- [ ] Confirmed that changes follow the code style guidelines of this project
