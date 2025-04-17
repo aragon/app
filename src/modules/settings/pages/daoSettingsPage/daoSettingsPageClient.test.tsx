@@ -24,6 +24,10 @@ jest.mock('@/plugins/adminPlugin/components/adminSettingsPanel', () => ({
     AdminSettingsPanel: () => <div data-testid="admin-settings-mock" />,
 }));
 
+jest.mock('nextjs-toploader/app', () => ({
+    useRouter: jest.fn(),
+}));
+
 describe('<DaoSettingsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const hasSupportedPluginsSpy = jest.spyOn(daoUtils, 'hasSupportedPlugins');
