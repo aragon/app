@@ -56,11 +56,11 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
             plugin,
             onSuccess: () => handlePermissionGuardSuccess(plugin),
             // on error, go back to the plugin selection
-            onError: () => setTimeout(handleGetStarted, 0),
+            onError: () => setTimeout(handleConfirmProcessCreation, 0),
         });
     };
 
-    const handleGetStarted = () => {
+    const handleConfirmProcessCreation = () => {
         // Select a plugin (a process to use to create a new process). If there is only 1 plugin, skip selection step.
         if (processPlugins.length === 1) {
             handlePluginSelected(processPlugins[0].meta);
@@ -76,7 +76,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     };
 
     const handleAddGovernanceProcessClick = () => {
-        const params: ICreateProcessDetailsDialogParams = { onStart: handleGetStarted };
+        const params: ICreateProcessDetailsDialogParams = { onActionClick: handleConfirmProcessCreation };
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
 

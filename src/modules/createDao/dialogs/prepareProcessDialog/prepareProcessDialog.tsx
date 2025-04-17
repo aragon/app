@@ -68,7 +68,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     invariant(!!plugin, `PrepareProcessDialog: plugin with address "${pluginAddress}" not found.`);
 
     const isAdmin = plugin.meta.subdomain === 'admin';
-    const publishProposalTranslationNamespace = `app.createDao.${isAdmin ? 'publishProcessDialogAdmin' : 'publishProcessDialog'}`;
+    const publishProposalTranslationNamespace = `app.createDao.publishProcessDialog.${isAdmin ? 'admin' : 'default'}`;
 
     const transactionInfo: ITransactionInfo = {
         title: t('app.createDao.prepareProcessDialog.transactionInfoTitle'),

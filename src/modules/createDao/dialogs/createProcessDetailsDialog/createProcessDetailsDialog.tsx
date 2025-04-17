@@ -16,7 +16,7 @@ export interface ICreateProcessDetailsDialogParams {
     /**
      * Callback function to be called when the get started action is clicked.
      */
-    onStart?: () => void;
+    onActionClick?: () => void;
 }
 
 export interface ICreateProcessDetailsDialogProps extends IDialogComponentProps<ICreateProcessDetailsDialogParams> {}
@@ -26,7 +26,7 @@ export const CreateProcessDetailsDialog: React.FC<ICreateProcessDetailsDialogPro
     const { id } = location;
 
     invariant(location.params != null, 'CreateProcessDetailsDialog: required parameters must be set.');
-    const { daoId, pluginAddress, onStart } = location.params;
+    const { daoId, pluginAddress, onActionClick } = location.params;
 
     const { t } = useTranslations();
 
@@ -51,7 +51,7 @@ export const CreateProcessDetailsDialog: React.FC<ICreateProcessDetailsDialogPro
             description={t('app.createDao.createProcessDetailsDialog.description')}
             steps={steps}
             actionLabel={t('app.createDao.createProcessDetailsDialog.actionLabel')}
-            onActionClick={onStart}
+            onActionClick={onActionClick}
             wizardLink={pluginAddress && daoId ? `/dao/${daoId}/create/${pluginAddress}/process` : undefined}
             infoLink="https://docs.aragon.org/spp/1.x/index.html#staged_governance_processes"
             dialogId={id}
