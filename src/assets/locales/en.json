@@ -491,7 +491,7 @@
         "noCodeSetup": {
           "actionLabel": "Create a DAO",
           "subtitle": "Easily deploy a new DAO on Aragon OSx in minutes with our simple, no-code deployment wizard.",
-          "title": "No code setup"
+          "title": "No-code setup"
         },
         "section": {
           "cta": "Getting started",
@@ -1490,7 +1490,7 @@
               "invalid": "Address is not valid"
             },
             "label": "Member",
-            "placeholder": "ENS or 0x …"
+            "placeholder": "ENS or 0x…"
           },
           "remove": "Remove member"
         }
