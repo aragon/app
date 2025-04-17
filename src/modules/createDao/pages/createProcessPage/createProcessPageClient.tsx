@@ -1,14 +1,11 @@
 'use client';
 
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
+import { useProposalPermissionCheckGuard } from '@/modules/governance/hooks/useProposalPermissionCheckGuard';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { createProcessFormUtils, type ICreateProcessFormData } from '../../components/createProcessForm';
 import { CreateDaoDialogId } from '../../constants/createDaoDialogId';
 import type { IPrepareProcessDialogParams } from '../../dialogs/prepareProcessDialog';
@@ -31,25 +28,12 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const router = useRouter();
 
-    const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress })![0];
-
-    const handlePermissionCheckError = useCallback(() => router.push(`/dao/${daoId}/settings`), [router, daoId]);
-
-    const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
-        permissionNamespace: 'proposal',
-        slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
-        onError: handlePermissionCheckError,
-        plugin,
+    useProposalPermissionCheckGuard({
         daoId,
+        pluginAddress,
+        permissionDeniedRedirectTab: 'settings',
     });
-
-    useEffect(() => {
-        if (!canCreateProposal) {
-            createProposalGuard();
-        }
-    }, [canCreateProposal, createProposalGuard]);
 
     const handleFormSubmit = (values: ICreateProcessFormData) => {
         const dialogParams: IPrepareProcessDialogParams = { daoId, values, pluginAddress };
