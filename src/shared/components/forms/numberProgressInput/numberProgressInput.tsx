@@ -66,7 +66,11 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
                         {...numberField}
                         {...otherProps}
                     />
-                    <div className={classNames('mt-4 flex grow flex-col gap-2 md:mt-0', { 'self-end': totalLabel })}>
+                    <div
+                        className={classNames('mt-4 flex w-full grow flex-col gap-2 md:mt-0', {
+                            'self-end': totalLabel,
+                        })}
+                    >
                         <div className="flex items-center gap-3">
                             {tags && <Tag {...tags[0]} />}
                             <div className="relative flex grow">

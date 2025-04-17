@@ -6,7 +6,8 @@ import { useAdminStatus } from '@/plugins/adminPlugin/hooks/useAdminStatus';
 import { Banner } from '@/shared/components/banner';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, IconType } from '@aragon/gov-ui-kit';
+import { Button, IconType, invariant } from '@aragon/gov-ui-kit';
+import type { Hex } from 'viem';
 
 export interface IBannerDaoProps {
     /**
@@ -21,16 +22,17 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { isAdminMember, hasAdminPlugin } = useAdminStatus({ daoId: id });
+    const { isAdminMember, adminPluginAddress } = useAdminStatus({ daoId: id });
 
     const handleBannerActionClick = () => {
-        const params: ICreateProcessDetailsDialogParams = { daoId: id };
+        invariant(adminPluginAddress != null, 'BannerDao: admin pluginAddress is expected.');
+        const params: ICreateProcessDetailsDialogParams = { daoId: id, pluginAddress: adminPluginAddress as Hex };
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
 
     const displayAdminMemberBanner = isAdminMember && process.env.NEXT_PUBLIC_FEATURE_GOVERNANCE_DESIGNER === 'true';
 
-    const bannerType = displayAdminMemberBanner ? 'adminMember' : hasAdminPlugin ? 'adminPlugin' : null;
+    const bannerType = displayAdminMemberBanner ? 'adminMember' : adminPluginAddress ? 'adminPlugin' : null;
 
     if (bannerType == null) {
         return null;

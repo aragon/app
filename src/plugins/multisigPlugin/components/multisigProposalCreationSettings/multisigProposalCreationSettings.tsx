@@ -36,6 +36,12 @@ export const MultisigProposalCreationSettings: React.FC<IMultisigProposalCreatio
     const checked = canCreateProposal;
 
     return (
-        <CheckboxCard label={name} description={description} onCheckedChange={handleCheckedChange} checked={checked} />
+        <CheckboxCard
+            label={name}
+            description={description}
+            onCheckedChange={handleCheckedChange}
+            checked={checked}
+            className="w-full"
+        />
     );
 };

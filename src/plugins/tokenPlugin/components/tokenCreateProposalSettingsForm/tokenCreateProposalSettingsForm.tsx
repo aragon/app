@@ -32,7 +32,7 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
     useFormField<ICreateProposalEndDateForm, 'minimumDuration'>('minimumDuration', { defaultValue: parsedMinDuration });
 
     return (
-        <>
+        <div className="flex flex-col gap-6 md:gap-12">
             <AdvancedDateInput
                 label={t('app.plugins.token.tokenCreateProposalSettingsForm.startTime.label')}
                 field="startTime"
@@ -51,6 +51,6 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
                 minTime={minEndTime}
                 validateMinDuration={true}
             />
-        </>
+        </div>
     );
 };

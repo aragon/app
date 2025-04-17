@@ -21,7 +21,11 @@ import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
 import { GovernanceType, type ICreateProcessFormData } from '../../components/createProcessForm';
 import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
-import type { IBuildProcessProposalActionsParams, IPrepareProcessMetadata } from './prepareProcessDialogUtils.api';
+import type {
+    IBuildProcessProposalActionsParams,
+    IBuildTransactionParams,
+    IPrepareProcessMetadata,
+} from './prepareProcessDialogUtils.api';
 
 export enum PrepareProcessStep {
     PIN_METADATA = 'PIN_METADATA',
@@ -36,6 +40,10 @@ export interface IPrepareProcessDialogParams {
      * ID of the DAO to prepare the process for.
      */
     daoId: string;
+    /**
+     * Plugin address used to create a proposal for adding a new process.
+     */
+    pluginAddress: string;
 }
 
 export interface IPrepareProcessDialogProps extends IDialogComponentProps<IPrepareProcessDialogParams> {}
@@ -44,7 +52,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     const { location } = props;
 
     invariant(location.params != null, 'PrepareProcessDialog: required parameters must be set.');
-    const { daoId, values } = location.params;
+    const { daoId, values, pluginAddress } = location.params;
 
     const { address } = useAccount();
     invariant(address != null, 'PrepareProcessDialog: user must be connected.');
@@ -56,7 +64,8 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     const [processMetadata, setProcessMetadata] = useState<IPrepareProcessMetadata>();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const [adminPlugin] = useDaoPlugins({ daoId, subdomain: 'admin' }) ?? [];
+    const [plugin] = useDaoPlugins({ daoId, pluginAddress }) ?? [];
+    invariant(!!plugin, `PrepareProcessDialog: plugin with address "${pluginAddress}" not found.`);
 
     const transactionInfo: ITransactionInfo = {
         title: t('app.createDao.prepareProcessDialog.transactionInfoTitle'),
@@ -72,7 +81,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
         invariant(processMetadata != null, 'PrepareProcessDialog: metadata not pinned');
         invariant(dao != null, 'PrepareProcessDialog: DAO cannot be fetched');
 
-        const params = { values, processMetadata, plugin: adminPlugin.meta, dao };
+        const params: IBuildTransactionParams = { values, processMetadata, dao };
         const transaction = await prepareProcessDialogUtils.buildTransaction(params);
 
         return transaction;
@@ -118,7 +127,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
         const params: IPublishProposalDialogParams = {
             proposal: { ...proposalMetadata, resources: [], actions: proposalActions },
             daoId,
-            plugin: adminPlugin.meta,
+            plugin: plugin.meta,
             translationNamespace: 'app.createDao.publishProcessDialog',
             transactionInfo: {
                 title: t('app.createDao.publishProcessDialog.transactionInfoTitle'),

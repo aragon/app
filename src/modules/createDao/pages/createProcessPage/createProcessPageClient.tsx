@@ -17,17 +17,21 @@ export interface ICreateProcessPageClientProps {
      * ID of the current DAO.
      */
     daoId: string;
+    /**
+     * Plugin address used to create a proposal for adding a new process.
+     */
+    pluginAddress: string;
 }
 
 export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = (props) => {
-    const { daoId } = props;
+    const { daoId, pluginAddress } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const { check: checkWalletConnection } = useConnectedWalletGuard();
 
     const handleFormSubmit = (values: ICreateProcessFormData) => {
-        const dialogParams: IPrepareProcessDialogParams = { daoId, values };
+        const dialogParams: IPrepareProcessDialogParams = { daoId, values, pluginAddress };
         checkWalletConnection({
             onSuccess: () => open(CreateDaoDialogId.PREPARE_PROCESS, { params: dialogParams }),
         });

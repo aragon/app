@@ -51,7 +51,7 @@ class PublishProposalDialogUtils {
         })!;
 
         const parsedActions = actions.map(this.actionToTransactionRequest);
-        const buildDataParams: IBuildCreateProposalDataParams = { actions: parsedActions, metadata, proposal };
+        const buildDataParams: IBuildCreateProposalDataParams = { actions: parsedActions, metadata, proposal, plugin };
         const transactionData = buildDataFunction(buildDataParams);
         const transaction = { to: plugin.address as Hex, data: transactionData, value: BigInt(0) };
 
