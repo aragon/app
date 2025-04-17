@@ -320,8 +320,7 @@
       },
       "prepareProcessDialog": {
         "button": {
-          "submit": "Prepare installation",
-          "success": "Finalize installation"
+          "submit": "Prepare installation"
         },
         "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
         "step": {
@@ -347,13 +346,21 @@
         },
         "title": "Publish DAO"
       },
-      "publishProcessDialog": {
+      "publishProcessDialogAdmin": {
         "button": {
           "submit": "Finalize installation"
         },
         "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
         "title": "Publish governance process",
         "transactionInfoTitle": "Finalize installation"
+      },
+      "publishProcessDialog": {
+        "button": {
+          "submit": "Propose process"
+        },
+        "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
+        "title": "Publish governance process",
+        "transactionInfoTitle": "Propose process"
       },
       "setupBodyDialog": {
         "a11y": {

@@ -67,6 +67,9 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     const [plugin] = useDaoPlugins({ daoId, pluginAddress }) ?? [];
     invariant(!!plugin, `PrepareProcessDialog: plugin with address "${pluginAddress}" not found.`);
 
+    const isAdmin = plugin.meta.subdomain === 'admin';
+    const publishProposalTranslationNamespace = `app.createDao.${isAdmin ? 'publishProcessDialogAdmin' : 'publishProcessDialog'}`;
+
     const transactionInfo: ITransactionInfo = {
         title: t('app.createDao.prepareProcessDialog.transactionInfoTitle'),
         current: 1,
@@ -128,9 +131,9 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
             proposal: { ...proposalMetadata, resources: [], actions: proposalActions },
             daoId,
             plugin: plugin.meta,
-            translationNamespace: 'app.createDao.publishProcessDialog',
+            translationNamespace: publishProposalTranslationNamespace,
             transactionInfo: {
-                title: t('app.createDao.publishProcessDialog.transactionInfoTitle'),
+                title: t(`${publishProposalTranslationNamespace}.transactionInfoTitle`),
                 current: 2,
                 total: 2,
             },
