@@ -40,16 +40,18 @@ export const DebugPanel: React.FC<IDebugPanelProps> = () => {
     return (
         <>
             <Button
-                className="fixed bottom-5 right-5"
+                id="debug-button"
+                className="pointer-events-auto fixed bottom-5 right-5 z-30"
                 variant="secondary"
                 iconLeft={IconType.SETTINGS}
                 onClick={togglePanel}
                 size="md"
             />
             <div
+                id="debug-panel"
                 ref={panelRef}
                 className={classNames(
-                    'fixed right-0 z-50 flex h-full w-[480px] flex-col gap-4 border-l border-neutral-100 bg-neutral-0 px-4 py-2',
+                    'pointer-events-auto fixed right-0 z-40 flex h-full w-[480px] flex-col gap-4 border-l border-neutral-100 bg-neutral-0 px-4 py-2',
                     { hidden: !isOpen },
                 )}
             >

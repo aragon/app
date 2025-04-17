@@ -17,8 +17,21 @@ export const NavigationDialog = <TRouteType extends string>(props: INavigationDi
 
     const handleLinksClick = () => onOpenChange?.(false);
 
+    const handleInteractOutside = (event: Event) => {
+        const target = event.target as HTMLElement;
+        const debugPanel = document.getElementById('debug-panel');
+        const debugButton = document.getElementById('debug-button');
+
+        const isInDebugPanel = debugPanel?.contains(target);
+        const isInDebugButton = debugButton?.contains(target);
+
+        if ((isInDebugPanel || isInDebugButton) && event.cancelable) {
+            event.preventDefault();
+        }
+    };
+
     return (
-        <Dialog.Root onOpenChange={onOpenChange} {...otherProps}>
+        <Dialog.Root onOpenChange={onOpenChange} onInteractOutside={handleInteractOutside} {...otherProps}>
             <Dialog.Content className="flex flex-col gap-6 py-7">
                 {children}
                 <NavigationLinks variant="rows" links={links} onClick={handleLinksClick} />

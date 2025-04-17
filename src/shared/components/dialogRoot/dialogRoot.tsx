@@ -30,7 +30,15 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
     const { disableOutsideClick, onClose } = location ?? {};
 
     const handleInteractOutside = (event: Event) => {
-        if (disableOutsideClick) {
+        const target = event.target as HTMLElement;
+
+        const debugPanel = document.getElementById('debug-panel');
+        const debugButton = document.getElementById('debug-button');
+
+        const isInDebugPanel = debugPanel?.contains(target);
+        const isInDebugButton = debugButton?.contains(target);
+
+        if ((disableOutsideClick || isInDebugPanel || isInDebugButton) && event.cancelable) {
             event.preventDefault();
         }
     };
