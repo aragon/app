@@ -2,4 +2,4 @@
 '@aragon/app-next': patch
 ---
 
-Add connection and authentication checks to create process wizard
+Add permission check to process creation flow via new useProposalPermissionCheckGuard hook

@@ -21,36 +21,42 @@ describe('useProposalPermissionCheckGuard hook', () => {
         useRouterSpy.mockReset();
     });
 
-    it('calls createProposalGuard check when canCreateProposal result change to false', () => {
-        const daoId = 'dao-id';
-        const pluginAddress = 'plugin-address';
-        const permissionDeniedRedirectTab = 'settings';
+    it('calls createProposalGuard when canCreateProposal check returns false', () => {
         const checkCreateProposalGuard = jest.fn();
-
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
-        usePermissionCheckGuardSpy
-            .mockReturnValueOnce({
-                result: true,
-                check: checkCreateProposalGuard,
-            })
-            .mockReturnValueOnce({
-                result: false,
-                check: checkCreateProposalGuard,
-            });
+        usePermissionCheckGuardSpy.mockReturnValue({
+            result: false,
+            check: checkCreateProposalGuard,
+        });
 
-        const { rerender } = renderHook(() =>
+        renderHook(() =>
             useProposalPermissionCheckGuard({
-                daoId,
-                pluginAddress,
-                permissionDeniedRedirectTab,
+                daoId: 'dao-id',
+                pluginAddress: 'plugin-address',
+                permissionDeniedRedirectTab: 'settings',
+            }),
+        );
+
+        expect(checkCreateProposalGuard).toHaveBeenCalled();
+    });
+
+    it("doesn't call createProposalGuard when canCreateProposal check returns true", () => {
+        const checkCreateProposalGuard = jest.fn();
+        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
+        usePermissionCheckGuardSpy.mockReturnValue({
+            result: true,
+            check: checkCreateProposalGuard,
+        });
+
+        renderHook(() =>
+            useProposalPermissionCheckGuard({
+                daoId: 'dao-id',
+                pluginAddress: 'plugin-address',
+                permissionDeniedRedirectTab: 'settings',
             }),
         );
 
         expect(checkCreateProposalGuard).not.toHaveBeenCalled();
-
-        rerender();
-
-        expect(checkCreateProposalGuard).toHaveBeenCalled();
     });
 
     it('redirects to the specified tab when permission check fails', () => {
