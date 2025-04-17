@@ -8,13 +8,14 @@ import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { sppPlugin } from '@/plugins/sppPlugin/constants/sppPlugin';
 import { Network } from '@/shared/api/daoService';
-import { generateDao } from '@/shared/testUtils';
+import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import * as Viem from 'viem';
 import { zeroHash } from 'viem';
+import { generateSppPluginSettings } from '../../testUtils';
 import { sppPluginAbi, sppPluginSetupAbi } from './sppPluginAbi';
 import { sppTransactionUtils } from './sppTransactionUtils';
 
@@ -41,9 +42,14 @@ describe('sppTransaction utils', () => {
             const startDate = 12345;
             const proposal = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
             const actions: ITransactionRequest[] = [{ to: '0xAddress', data: '0xdata', value: BigInt(0) }];
+            const plugin = generateDaoPlugin({
+                address: '0x123',
+                subdomain: 'spp',
+                settings: generateSppPluginSettings(),
+            });
             parseStartDateSpy.mockReturnValue(startDate);
 
-            const params = { metadata: '0xmetadata' as Viem.Hex, actions, proposal };
+            const params = { metadata: '0xmetadata' as Viem.Hex, actions, proposal, plugin };
             encodeFunctionDataSpy.mockReturnValue(transactionData);
 
             const result = sppTransactionUtils.buildCreateProposalData(params);

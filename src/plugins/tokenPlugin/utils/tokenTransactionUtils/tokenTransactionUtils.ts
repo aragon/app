@@ -8,6 +8,7 @@ import { encodeAbiParameters, encodeFunctionData, parseUnits, type Hex } from 'v
 import type { ITokenSetupGovernanceForm } from '../../components/tokenSetupGovernance';
 import type { ITokenSetupMembershipForm, ITokenSetupMembershipMember } from '../../components/tokenSetupMembership';
 import { tokenPlugin } from '../../constants/tokenPlugin';
+import type { ITokenPluginSettings } from '../../types';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
 import { tokenPluginAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
 
@@ -22,11 +23,21 @@ export interface IPrepareTokenInstallDataParams
     > {}
 
 class TokenTransactionUtils {
-    buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateTokenProposalFormData>): Hex => {
-        const { metadata, actions, proposal } = params;
+    buildCreateProposalData = (
+        params: IBuildCreateProposalDataParams<ICreateTokenProposalFormData, ITokenPluginSettings>,
+    ): Hex => {
+        const { metadata, actions, proposal, plugin } = params;
+        const { minDuration } = plugin.settings;
 
+        // Handle proposals without time settings in the following way:
+        //   - startDate set to 0
+        //   - if there is minDuration, and minDuration is more than 7 days, set endDate to minDuration
+        //   - otherwise, set endDate to 7 days from now
         const startDate = createProposalUtils.parseStartDate(proposal);
-        const endDate = createProposalUtils.parseEndDate(proposal);
+        const endDate =
+            proposal.endTimeMode != null
+                ? createProposalUtils.parseEndDate(proposal)
+                : createProposalUtils.createDefaultEndDate(minDuration);
 
         const functionArgs = [metadata, actions, BigInt(0), startDate, endDate, 0, false];
         const data = encodeFunctionData({ abi: tokenPluginAbi, functionName: 'createProposal', args: functionArgs });

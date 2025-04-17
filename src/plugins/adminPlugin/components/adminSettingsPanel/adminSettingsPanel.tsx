@@ -18,9 +18,9 @@ export const AdminSettingsPanel: React.FC<IAdminSettingsPanelProps> = (props) =>
 
     const { t } = useTranslations();
 
-    const { hasAdminPlugin } = useAdminStatus({ daoId });
+    const { adminPluginAddress } = useAdminStatus({ daoId });
 
-    if (!hasAdminPlugin) {
+    if (!adminPluginAddress) {
         return null;
     }
 

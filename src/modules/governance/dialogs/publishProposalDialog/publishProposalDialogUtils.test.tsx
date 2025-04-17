@@ -62,6 +62,7 @@ describe('publishProposalDialog utils', () => {
                 actions: [{ ...actionBaseValues, value: BigInt(actionBaseValues.value) }],
                 metadata: '0x697066733a2f2f746573742d636964',
                 proposal,
+                plugin,
             });
 
             expect(transaction.data).toEqual(transactionData);

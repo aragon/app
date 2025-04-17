@@ -4,11 +4,12 @@ import { generateToken } from '@/modules/finance/testUtils';
 import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { tokenPlugin } from '@/plugins/tokenPlugin/constants/tokenPlugin';
-import { generateDao } from '@/shared/testUtils';
+import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import * as Viem from 'viem';
 import { zeroAddress } from 'viem';
+import { generateTokenPluginSettings } from '../../testUtils';
 import { DaoTokenVotingMode } from '../../types';
 import { tokenPluginAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
 import { tokenTransactionUtils } from './tokenTransactionUtils';
@@ -17,6 +18,7 @@ describe('tokenTransaction utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
     const parseStartDateSpy = jest.spyOn(createProposalUtils, 'parseStartDate');
     const parseEndDateSpy = jest.spyOn(createProposalUtils, 'parseEndDate');
+    const createDefaultEndDateSpy = jest.spyOn(createProposalUtils, 'createDefaultEndDate');
     const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');
     const buildPrepareInstallationDataSpy = jest.spyOn(pluginTransactionUtils, 'buildPrepareInstallationData');
 
@@ -24,6 +26,7 @@ describe('tokenTransaction utils', () => {
         encodeFunctionDataSpy.mockReset();
         parseStartDateSpy.mockReset();
         parseEndDateSpy.mockReset();
+        createDefaultEndDateSpy.mockReset();
         encodeAbiParametersSpy.mockReset();
         buildPrepareInstallationDataSpy.mockReset();
     });
@@ -36,19 +39,61 @@ describe('tokenTransaction utils', () => {
             const actions: ITransactionRequest[] = [
                 { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
             ];
-            const params = { metadata: '0xipfs-cid' as const, actions, proposal };
+            const plugin = generateDaoPlugin({
+                subdomain: 'token',
+                settings: generateTokenPluginSettings(),
+            });
+
+            const params = { metadata: '0xipfs-cid' as const, actions, proposal, plugin };
             const transactionData = '0xdata';
             parseStartDateSpy.mockReturnValue(startDate);
             parseEndDateSpy.mockReturnValue(endDate);
+            createDefaultEndDateSpy.mockReturnValue(-1);
             encodeFunctionDataSpy.mockReturnValue(transactionData);
 
             const result = tokenTransactionUtils.buildCreateProposalData(params);
+
+            expect(parseStartDateSpy).toHaveBeenCalledWith(proposal);
+            expect(createDefaultEndDateSpy).not.toHaveBeenCalled();
+            expect(parseEndDateSpy).toHaveBeenCalledWith(proposal);
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: tokenPluginAbi,
                 functionName: 'createProposal',
                 args: [params.metadata, params.actions, BigInt(0), startDate, endDate, 0, false],
             });
             expect(result).toEqual(transactionData);
+        });
+
+        it('correctly sets default startDate and endDate when timing data not provided', () => {
+            const startDate = 0;
+            const endDate = 0;
+            const minDuration = 10 * 24 * 60 * 60;
+            const proposal = generateProposalCreate();
+            const actions: ITransactionRequest[] = [
+                { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
+            ];
+            const plugin = generateDaoPlugin({
+                subdomain: 'token',
+                settings: generateTokenPluginSettings({
+                    minDuration,
+                }),
+            });
+
+            const params = { metadata: '0xipfs-cid' as const, actions, proposal, plugin };
+            parseStartDateSpy.mockReturnValue(startDate);
+            parseEndDateSpy.mockReturnValue(-1);
+            createDefaultEndDateSpy.mockReturnValue(endDate);
+
+            tokenTransactionUtils.buildCreateProposalData(params);
+
+            expect(parseStartDateSpy).toHaveBeenCalledWith(proposal);
+            expect(createDefaultEndDateSpy).toHaveBeenCalledWith(minDuration);
+            expect(parseEndDateSpy).not.toHaveBeenCalled();
+            expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
+                abi: tokenPluginAbi,
+                functionName: 'createProposal',
+                args: [params.metadata, params.actions, BigInt(0), startDate, endDate, 0, false],
+            });
         });
     });
 
