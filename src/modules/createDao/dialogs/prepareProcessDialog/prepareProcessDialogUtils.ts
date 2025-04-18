@@ -30,7 +30,7 @@ class PrepareProcessDialogUtils {
         const processorMetadata = prepareProcessDialogUtils.prepareProcessorMetadata(values);
 
         const pluginsMetadata = activePlugins
-            .filter((body) => body.address != null)
+            .filter((body) => body.address == null)
             .map((plugin) =>
                 isAdvancedGovernance ? prepareProcessDialogUtils.preparePluginMetadata(plugin) : processorMetadata,
             );
