@@ -15,7 +15,7 @@ export const GovernanceStageTypeField: React.FC<IGovernanceStageTypeFieldProps> 
     const { fieldPrefix } = props;
 
     const { t } = useTranslations();
-    const { setValue } = useFormContext();
+    const { setValue, trigger } = useFormContext();
 
     const { onChange: onTypeChange, ...stageTypeField } = useFormField<ICreateProcessFormStage, 'type'>('type', {
         label: t('app.createDao.createProcessForm.governance.stageTypeField.label'),
@@ -31,9 +31,12 @@ export const GovernanceStageTypeField: React.FC<IGovernanceStageTypeFieldProps> 
             setValue(`${fieldPrefix}.earlyStageAdvance`, false);
         }
 
-        // Make sure stage has no bodies when stage type is timelock
+        // Trigger validation and make sure stage has no bodies when stage type is timelock
         if (value === ProcessStageType.TIMELOCK) {
             setValue(`${fieldPrefix}.bodies`, []);
+            // Trigger the bodies validation on the next render to make sure the field is unmounted and the validation
+            // runs with the updates values
+            setTimeout(() => trigger(`${fieldPrefix}.bodies`), 0);
         }
     };
 

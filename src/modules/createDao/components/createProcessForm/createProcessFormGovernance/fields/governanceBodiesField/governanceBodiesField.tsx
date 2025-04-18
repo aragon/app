@@ -1,62 +1,97 @@
+import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
+import type { ISetupBodyDialogParams, ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, IconType, type IInputContainerProps, InputContainer } from '@aragon/gov-ui-kit';
-import { useFormContext } from 'react-hook-form';
-import { GovernanceType, type ICreateProcessFormData } from '../../../createProcessFormDefinitions';
-import type { IUseBodiesFieldReturn } from '../../hooks';
+import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { GovernanceBodiesFieldItem } from './governanceBodiesFieldItem';
 
-export interface IGovernanceBodiesFieldProps extends IUseBodiesFieldReturn {
+export interface IGovernanceBodiesFieldProps {
     /**
-     * Defines if current stage is optimistic or not, only set for advanced governance processes.
+     * ID of the DAO to setup the bodies for.
      */
-    isOptimisticStage?: boolean;
+    daoId: string;
     /**
-     * ID of the stage to add the governance bodies for.
+     * Name of the bodies field.
      */
-    stageId?: string;
+    fieldName: string;
     /**
-     * Type of governance to setup.
+     * Context of the body field label.
+     * @default normal
      */
-    governanceType: GovernanceType;
+    labelContext?: 'veto' | 'normal';
     /**
-     * Alert to be displayed on the field.
+     * Error message displayed on the field.
+     * @default minLength
      */
-    alert?: IInputContainerProps['alert'];
+    errorMessage?: string;
+    /**
+     * Setup the governance bodies as subplugins when set to true.
+     * @default false
+     */
+    subPluginSetup?: boolean;
+    /**
+     * Sets the field as required when
+     */
+    hidden?: boolean;
 }
 
 export const GovernanceBodiesField: React.FC<IGovernanceBodiesFieldProps> = (props) => {
-    const { isOptimisticStage, stageId, governanceType, alert, bodies, addBody, removeBody, editBody } = props;
+    const { daoId, fieldName, errorMessage, labelContext = 'normal', subPluginSetup = false } = props;
 
     const { t } = useTranslations();
-    const { formState } = useFormContext<ICreateProcessFormData>();
+    const { getFieldState } = useFormContext();
+    const { open, close } = useDialogContext();
 
-    const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
-    const filteredBodies = bodies.filter((body) => stageId == null || body.stageId === stageId);
-    const renderAddButton = isAdvancedGovernance || filteredBodies.length === 0;
+    const fieldMessage = errorMessage ?? 'app.createDao.createProcessForm.governance.bodiesField.error.minLength';
+    const { fields, remove, update, append } = useFieldArray<Record<string, ISetupBodyForm[]>>({
+        name: fieldName,
+        rules: { required: { value: true, message: fieldMessage } },
+    });
 
-    const { message: errorMessage } = formState.errors.bodies?.root ?? {};
-    const internalFieldAlert = errorMessage ? { message: t(errorMessage), variant: 'critical' as const } : undefined;
+    const bodiesWatch = useWatch<Record<string, ISetupBodyForm[]>>({ name: fieldName });
+    const bodies = fields.map((field, index) => ({ ...field, ...bodiesWatch[index] }));
 
-    const bodiesLabelContext = isOptimisticStage ? 'vetoing' : 'voting';
+    const handleBodySubmit = (index?: number) => (values: ISetupBodyForm) => {
+        if (index == null) {
+            const bodyId = crypto.randomUUID();
+            append({ ...values, internalId: bodyId });
+        } else {
+            update(index, values);
+        }
+        close();
+    };
+
+    const openSetupBodyDialog = (index?: number) => {
+        const initialValues = index != null ? bodies[index] : undefined;
+        const onSubmit = handleBodySubmit(index);
+        const params: ISetupBodyDialogParams = { onSubmit, initialValues, isSubPlugin: subPluginSetup, daoId };
+        open(CreateDaoDialogId.SETUP_BODY, { params });
+    };
+
+    const renderAddButton = subPluginSetup || bodies.length === 0;
+
+    const { message: fieldErrorMessage } = getFieldState(fieldName).error?.root ?? {};
+    const fieldAlert = fieldErrorMessage ? { message: t(fieldErrorMessage), variant: 'critical' as const } : undefined;
 
     return (
         <>
             <InputContainer
                 className="flex flex-col gap-2"
                 id="bodies"
-                label={t(`app.createDao.createProcessForm.governance.bodiesField.label.${bodiesLabelContext}`)}
+                label={t(`app.createDao.createProcessForm.governance.bodiesField.label.${labelContext}`)}
                 helpText={t('app.createDao.createProcessForm.governance.bodiesField.helpText')}
                 useCustomWrapper={true}
-                alert={alert ?? internalFieldAlert}
+                alert={fieldAlert}
             >
                 <div className="flex flex-col gap-3 md:gap-2">
-                    {filteredBodies.map((body, index) => (
+                    {bodies.map((body, index) => (
                         <GovernanceBodiesFieldItem
                             key={body.id}
                             fieldName={`bodies.${index.toString()}`}
                             body={body}
-                            onEdit={() => editBody(body.internalId)}
-                            onDelete={() => removeBody(body.internalId)}
+                            onEdit={() => openSetupBodyDialog(index)}
+                            onDelete={() => remove(index)}
                         />
                     ))}
                     {renderAddButton && (
@@ -65,7 +100,7 @@ export const GovernanceBodiesField: React.FC<IGovernanceBodiesFieldProps> = (pro
                             variant="tertiary"
                             className="w-fit"
                             iconLeft={IconType.PLUS}
-                            onClick={() => addBody(stageId)}
+                            onClick={() => openSetupBodyDialog()}
                         >
                             {t('app.createDao.createProcessForm.governance.bodiesField.action.add')}
                         </Button>

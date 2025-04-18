@@ -28,6 +28,7 @@ export const generateCreateProcessFormStage = (values?: Partial<ICreateProcessFo
         earlyStageAdvance: false,
     },
     requiredApprovals: 1,
+    bodies: [],
     ...values,
 });
 

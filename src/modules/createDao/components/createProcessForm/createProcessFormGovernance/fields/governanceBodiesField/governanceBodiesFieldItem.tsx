@@ -32,6 +32,7 @@ export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
+
     useFormField<Record<string, ISetupBodyForm>, typeof fieldName>(fieldName);
 
     const processName = useWatch<ICreateProcessFormData, 'name'>({ name: 'name' });

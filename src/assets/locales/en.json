@@ -186,8 +186,8 @@
             },
             "helpText": "These bodies will decide whether or not this stage passes.",
             "label": {
-              "vetoing": "Vetoing bodies",
-              "voting": "Voting bodies"
+              "normal": "Voting bodies",
+              "veto": "Vetoing bodies"
             }
           },
           "stageApprovalsField": {

@@ -23,10 +23,6 @@ export interface ISetupBodyForm<
      */
     description?: string;
     /**
-     * ID of the stage the body is associated with, only defined when setting up advanced governance processes.
-     */
-    stageId?: string;
-    /**
      * Resources of the body.
      */
     resources: IResourcesInputResource[];

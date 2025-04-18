@@ -40,7 +40,7 @@ export interface ICreateProcessFormData {
      */
     stages: ICreateProcessFormStage[];
     /**
-     * List of bodies of the process.
+     * Bodies to be setup on the simple governance process.
      */
     bodies: ISetupBodyForm[];
     /**
@@ -70,6 +70,10 @@ export interface ICreateProcessFormStage {
      * Values related to the timing of the stage.
      */
     timing: ISetupStageTimingForm;
+    /**
+     * List of bodies of the stage.
+     */
+    bodies: ISetupBodyForm[];
     /**
      * Number of bodies required to veto (for optimistic type) or approve.
      */

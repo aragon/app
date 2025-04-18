@@ -191,10 +191,9 @@ describe('sppTransaction utils', () => {
         it('correctly builds the update rules transaction', () => {
             const sppAllowedBody = generateCreateProcessFormBody({ internalId: 'body-1', canCreateProposal: true });
             const sppNotAllowedBody = generateCreateProcessFormBody({ internalId: 'body-2' });
-            const sppStage = generateCreateProcessFormStage({});
+            const sppStage = generateCreateProcessFormStage({ bodies: [sppAllowedBody, sppNotAllowedBody] });
             const values = generateCreateProcessFormData({
                 stages: [sppStage],
-                bodies: [sppAllowedBody, sppNotAllowedBody],
                 proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
             });
 
@@ -245,9 +244,8 @@ describe('sppTransaction utils', () => {
         });
 
         it('correctly builds the update stages transaction', () => {
-            const sppBody = generateCreateProcessFormBody({ stageId: '0' });
-            const sppStage = generateCreateProcessFormStage({ internalId: '0' });
-            const values = generateCreateProcessFormData({ stages: [sppStage], bodies: [sppBody] });
+            const sppBody = generateCreateProcessFormBody();
+            const sppStage = generateCreateProcessFormStage({ internalId: '0', bodies: [sppBody] });
             const transactionData = '0xupdate-stages';
 
             const timing = {
@@ -264,7 +262,7 @@ describe('sppTransaction utils', () => {
 
             const sppAddress = '0xSpp';
             const pluginAddresses = ['0x01'] as Viem.Hex[];
-            const result = sppTransactionUtils['buildUpdateStagesTransaction'](values, sppAddress, pluginAddresses);
+            const result = sppTransactionUtils['buildUpdateStagesTransaction']([sppStage], sppAddress, pluginAddresses);
 
             const expectedProcessedBodies = [
                 { addr: pluginAddresses[0], resultType: 1, isManual: false, tryAdvance: true },

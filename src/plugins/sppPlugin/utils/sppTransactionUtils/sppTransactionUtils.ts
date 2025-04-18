@@ -67,7 +67,7 @@ class SppTransactionUtils {
         const [sppAddress, ...pluginAddresses] = setupData.map((data) => data.pluginAddress);
         const [sppSetupData, ...pluginSetupData] = setupData;
 
-        const updateStages = this.buildUpdateStagesTransaction(values, sppAddress, pluginAddresses);
+        const updateStages = this.buildUpdateStagesTransaction(values.stages, sppAddress, pluginAddresses);
         const updateCreateProposalRules = this.buildUpdateRulesTransaction(values, sppSetupData, pluginSetupData);
 
         const updatePluginPermissions = pluginSetupData
@@ -116,7 +116,7 @@ class SppTransactionUtils {
         sppSetupData: IPluginSetupData,
         pluginSetupData: IPluginSetupData[],
     ): ITransactionRequest | undefined => {
-        const { bodies, proposalCreationMode } = values;
+        const { stages, proposalCreationMode } = values;
 
         const sppRuleConditionContract = sppSetupData.preparedSetupData.helpers[0];
 
@@ -124,14 +124,13 @@ class SppTransactionUtils {
             return undefined;
         }
 
-        const conditionAddresses = bodies
-            .filter((body) => body.address != null)
-            .reduce<string[]>((current, body, bodyIndex) => {
-                const isBodyAllowed = body.canCreateProposal;
-                const bodyConditionAddress = pluginSetupData[bodyIndex].preparedSetupData.helpers[0];
+        const bodies = stages.flatMap((stage) => stage.bodies).filter((body) => body.address == null);
+        const conditionAddresses = bodies.reduce<string[]>((current, body, bodyIndex) => {
+            const isBodyAllowed = body.canCreateProposal;
+            const bodyConditionAddress = pluginSetupData[bodyIndex].preparedSetupData.helpers[0];
 
-                return isBodyAllowed ? [...current, bodyConditionAddress] : current;
-            }, []);
+            return isBodyAllowed ? [...current, bodyConditionAddress] : current;
+        }, []);
 
         const conditionRules = permissionTransactionUtils.buildRuleConditions(conditionAddresses, []);
 
@@ -145,23 +144,20 @@ class SppTransactionUtils {
     };
 
     private buildUpdateStagesTransaction = (
-        values: ICreateProcessFormData,
+        stages: ICreateProcessFormData['stages'],
         sppAddress: Hex,
         bodyAddresses: Hex[],
     ): ITransactionRequest => {
-        const { stages } = values;
-
         const processedBodyAddresses = [...bodyAddresses];
         const processedStages = stages.map((stage) => {
-            const { type, timing, requiredApprovals } = stage;
-            const stageBodies = values.bodies.filter((body) => body.stageId === stage.internalId);
+            const { type, timing, requiredApprovals, bodies } = stage;
 
             const stageTiming = this.processStageTiming(timing);
             const stageApprovals = this.processStageApprovals(requiredApprovals, type);
 
             const resultType = type === ProcessStageType.NORMAL ? SppProposalType.APPROVAL : SppProposalType.VETO;
 
-            const processedBodies = stageBodies.map((body) => ({
+            const processedBodies = bodies.map((body) => ({
                 addr: body.address ?? processedBodyAddresses.shift()!,
                 resultType,
                 tryAdvance: true,

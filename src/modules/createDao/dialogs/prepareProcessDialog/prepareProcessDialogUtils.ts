@@ -6,8 +6,9 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
-import type { ICreateProcessFormData } from '../../components/createProcessForm';
+import { GovernanceType, type ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
+import type { ISetupBodyForm } from '../setupBodyDialog';
 import type {
     IBuildPrepareInstallPluginActionParams,
     IBuildPrepareInstallPluginsActionParams,
@@ -21,20 +22,23 @@ class PrepareProcessDialogUtils {
         summary: 'This proposal applies the plugin installation to create the new process',
     };
 
-    preparePluginMetadata = (plugin: ICreateProcessFormData['bodies'][number]) => {
-        const { name, description, resources: links } = plugin;
+    preparePluginsMetadata = (values: ICreateProcessFormData) => {
+        const { governanceType, stages, bodies } = values;
 
-        return { name, description, links };
+        const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
+        const activePlugins = isAdvancedGovernance ? stages.flatMap((stage) => stage.bodies) : bodies;
+        const processorMetadata = prepareProcessDialogUtils.prepareProcessorMetadata(values);
+
+        const pluginsMetadata = activePlugins
+            .filter((body) => body.address != null)
+            .map((plugin) =>
+                isAdvancedGovernance ? prepareProcessDialogUtils.preparePluginMetadata(plugin) : processorMetadata,
+            );
+
+        return { pluginsMetadata, processorMetadata: isAdvancedGovernance ? processorMetadata : undefined };
     };
 
-    prepareProcessorMetadata = (values: ICreateProcessFormData) => {
-        const { name, description, resources: links, processKey } = values;
-        const stageNames = values.stages.map((stage) => stage.name);
-
-        return { name, description, links, processKey, stageNames };
-    };
-
-    buildTransaction = (params: IBuildTransactionParams) => {
+    buildPrepareProcessTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
         const { values, processMetadata, dao } = params;
 
         const { processor: processorMetadata, plugins: pluginsMetadata } = processMetadata;
@@ -47,11 +51,8 @@ class PrepareProcessDialogUtils {
         const installActionsData =
             processorInstallAction != null ? [processorInstallAction, ...pluginInstallActions] : pluginInstallActions;
 
-        const installActionTransactions = installActionsData.map((data) => ({
-            to: pluginSetupProcessor,
-            data,
-            value: BigInt(0),
-        }));
+        const actionValues = { to: pluginSetupProcessor, value: BigInt(0) };
+        const installActionTransactions = installActionsData.map((data) => ({ ...actionValues, data }));
         const encodedTransaction = transactionUtils.encodeTransactionRequests(installActionTransactions, dao.network);
 
         return Promise.resolve(encodedTransaction);
@@ -74,6 +75,19 @@ class PrepareProcessDialogUtils {
 
     preparePublishProcessProposalMetadata = () => this.publishProcessProposalMetadata;
 
+    private preparePluginMetadata = (plugin: ICreateProcessFormData['bodies'][number]) => {
+        const { name, description, resources: links } = plugin;
+
+        return { name, description, links };
+    };
+
+    private prepareProcessorMetadata = (values: ICreateProcessFormData) => {
+        const { name, description, resources: links, processKey } = values;
+        const stageNames = values.stages.map((stage) => stage.name);
+
+        return { name, description, links, processKey, stageNames };
+    };
+
     private buildPrepareInstallProcessorActionData = (metadata: string, dao: IDao) => {
         const processorMetadata = transactionUtils.cidToHex(metadata);
         const processorInstallData = sppTransactionUtils.buildPreparePluginInstallData(processorMetadata, dao);
@@ -83,19 +97,29 @@ class PrepareProcessDialogUtils {
 
     private buildPrepareInstallPluginsActionData = (params: IBuildPrepareInstallPluginsActionParams) => {
         const { values, pluginsMetadata, dao } = params;
-        const { bodies, stages } = values;
+        const { governanceType, bodies, stages } = values;
 
-        const installActionsData = bodies
+        const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
+        const installBodies = isAdvancedGovernance ? stages.flatMap((stage) => stage.bodies) : bodies;
+
+        const installData = installBodies
             .filter((body) => body.address == null)
             .map((body, index) => {
-                const stage = stages.find(({ internalId }) => internalId === body.stageId);
-                const { votingPeriod: stageVotingPeriod } = stage?.timing ?? {};
+                const stageVotingPeriod = this.getBodyStageVotingPeriod(body, stages);
                 const metadataCid = pluginsMetadata[index];
 
                 return this.buildPrepareInstallPluginActionData({ body, dao, metadataCid, stageVotingPeriod });
             });
 
-        return installActionsData;
+        return installData;
+    };
+
+    private getBodyStageVotingPeriod = (body: ISetupBodyForm, stages: ICreateProcessFormData['stages']) => {
+        const stage = stages.find((stage) =>
+            stage.bodies.flatMap((stageBody) => stageBody.internalId).includes(body.internalId),
+        );
+
+        return stage?.timing.votingPeriod;
     };
 
     private buildPrepareInstallPluginActionData = (params: IBuildPrepareInstallPluginActionParams) => {
