@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { GovernanceType, type ICreateProcessFormData } from '../../../createProcessFormDefinitions';
 
-export interface IGovernanceBodiesFieldItemProps {
+export interface IGovernanceBodyFieldProps {
     /**
      * Name of the body field.
      */
@@ -27,7 +27,7 @@ export interface IGovernanceBodiesFieldItemProps {
     onDelete: () => void;
 }
 
-export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps> = (props) => {
+export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) => {
     const { fieldName, body, onEdit, onDelete } = props;
 
     const { t } = useTranslations();
@@ -64,7 +64,7 @@ export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps
                     />
                     <div className="flex w-full grow justify-between">
                         <Button className="justify-end" variant="secondary" size="md" onClick={onEdit}>
-                            {t('app.createDao.createProcessForm.governance.bodiesField.action.edit')}
+                            {t('app.createDao.createProcessForm.governance.bodyField.action.edit')}
                         </Button>
                         <Dropdown.Container
                             constrainContentWidth={false}
@@ -76,12 +76,12 @@ export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps
                                     size="md"
                                     iconRight={IconType.DOTS_VERTICAL}
                                 >
-                                    {t('app.createDao.createProcessForm.governance.bodiesField.action.more')}
+                                    {t('app.createDao.createProcessForm.governance.bodyField.action.more')}
                                 </Button>
                             }
                         >
                             <Dropdown.Item onClick={onDelete}>
-                                {t('app.createDao.createProcessForm.governance.bodiesField.action.remove')}
+                                {t('app.createDao.createProcessForm.governance.bodyField.action.remove')}
                             </Dropdown.Item>
                         </Dropdown.Container>
                     </div>

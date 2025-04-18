@@ -1,4 +1,4 @@
-import { type ICreateProcessFormData, ProcessStageType } from './createProcessFormDefinitions';
+import { type ICreateProcessFormDataAdvanced, ProcessStageType } from './createProcessFormDefinitions';
 
 class CreateProcessFormUtils {
     private defaultVotingPeriod = { days: 7, minutes: 0, hours: 0 };
@@ -7,7 +7,7 @@ class CreateProcessFormUtils {
 
     private defaultType = ProcessStageType.NORMAL;
 
-    buildDefaultStage = (): ICreateProcessFormData['stages'][number] => {
+    buildDefaultStage = (): ICreateProcessFormDataAdvanced['stages'][number] => {
         const internalId = crypto.randomUUID();
 
         return {

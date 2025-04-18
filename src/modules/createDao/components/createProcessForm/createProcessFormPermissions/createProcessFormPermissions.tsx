@@ -16,7 +16,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     const governanceType = useWatch<ICreateProcessFormData, 'governanceType'>({ name: 'governanceType' });
     const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
 
-    const simpleProcessBodies = useWatch<ICreateProcessFormData, 'bodies'>({ name: 'bodies' });
+    const basicProcessBody = useWatch<ICreateProcessFormData, 'body'>({ name: 'body' });
     const stages = useWatch<ICreateProcessFormData, 'stages'>({ name: 'stages' });
 
     const getBodyFormPrefix = (bodyIndex: number, stageIndex?: number) => {
@@ -25,15 +25,15 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         return stageIndex != null ? `stages.${stageIndex.toString()}.${basePrefix}` : basePrefix;
     };
 
-    const activeBodies = useMemo(() => {
-        const bodies = isAdvancedGovernance
+    const processBodies = useMemo(() => {
+        const processedBodies = isAdvancedGovernance
             ? stages.flatMap((stage, stageIndex) => stage.bodies.map((body) => ({ ...body, stageIndex })))
-            : simpleProcessBodies.map((body) => ({ ...body, stageIndex: undefined }));
+            : [{ ...basicProcessBody, stageIndex: undefined }];
 
-        return bodies.filter((body) => body.address == null);
-    }, [isAdvancedGovernance, stages, simpleProcessBodies]);
+        return processedBodies.filter((body) => body.address == null);
+    }, [isAdvancedGovernance, stages, basicProcessBody]);
 
-    const canBodiesCreateProposals = activeBodies.some((body) => body.canCreateProposal);
+    const canBodiesCreateProposals = processBodies.some((body) => body.canCreateProposal);
     const createProposalsError = 'app.createDao.createProcessForm.permissions.proposalCreation.bodies.error';
 
     const { ANY_WALLET, LISTED_BODIES } = ProposalCreationMode;
@@ -81,14 +81,14 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                 className={mode === ANY_WALLET ? 'hidden' : ''}
                 alert={permissionsAlert}
             >
-                {activeBodies.map((body, index) => (
+                {processBodies.map((body, index) => (
                     <PluginSingleComponent
                         key={body.internalId}
                         pluginId={body.plugin}
                         slotId={CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_SETTINGS}
                         body={body}
                         mode={mode}
-                        disableCheckbox={activeBodies.length === 1}
+                        disableCheckbox={processBodies.length === 1}
                         formPrefix={getBodyFormPrefix(index, body.stageIndex)}
                     />
                 ))}

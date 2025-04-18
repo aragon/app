@@ -1,11 +1,11 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Button, IconType, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
-import { useFieldArray } from 'react-hook-form';
+import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
+import { useFormContext } from 'react-hook-form';
 import { GovernanceType, type ICreateProcessFormData } from '../createProcessFormDefinitions';
 import { createProcessFormUtils } from '../createProcessFormUtils';
-import { GovernanceBodiesField } from './fields/governanceBodiesField';
-import { GovernanceStageField } from './fields/governanceStageField';
+import { GovernanceBasicBodyField } from './fields/governanceBasicBodyField';
+import { GovernanceStagesField } from './fields/governanceStagesField/governanceStagesField';
 
 export interface ICreateProcessFormGovernanceProps {
     /**
@@ -16,7 +16,9 @@ export interface ICreateProcessFormGovernanceProps {
 
 export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceProps> = (props) => {
     const { daoId } = props;
+
     const { t } = useTranslations();
+    const { setValue } = useFormContext();
 
     const {
         value: governanceType,
@@ -28,21 +30,23 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
         rules: { required: true },
     });
 
-    const {
-        fields: stages,
-        append: appendStage,
-        remove: removeStage,
-    } = useFieldArray<ICreateProcessFormData, 'stages'>({ name: 'stages' });
+    const handleGovernanceTypeChange = (value: string) => {
+        if (value === GovernanceType.ADVANCED) {
+            setValue('body', undefined);
+        } else {
+            setValue('stages', [createProcessFormUtils.buildDefaultStage()]);
+        }
+
+        onGovernanceTypeChange(value);
+    };
 
     const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
-
-    const handleAddStage = () => appendStage(createProcessFormUtils.buildDefaultStage());
 
     return (
         <div className="flex w-full flex-col gap-10">
             <RadioGroup
                 helpText={t('app.createDao.createProcessForm.governance.type.helpText')}
-                onValueChange={onGovernanceTypeChange}
+                onValueChange={handleGovernanceTypeChange}
                 className="w-full gap-4 md:flex-row"
                 value={governanceType}
                 {...governanceTypeField}
@@ -56,31 +60,8 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
                     />
                 ))}
             </RadioGroup>
-            {!isAdvancedGovernance && <GovernanceBodiesField daoId={daoId} fieldName="bodies" />}
-            {isAdvancedGovernance && (
-                <div className="flex flex-col gap-2 md:gap-3">
-                    <div className="flex flex-col gap-3 md:gap-2">
-                        {stages.map((stage, index) => (
-                            <GovernanceStageField
-                                key={stage.id}
-                                formPrefix={`stages.${index.toString()}`}
-                                stagesCount={stages.length}
-                                onDelete={() => removeStage(index)}
-                                daoId={daoId}
-                            />
-                        ))}
-                    </div>
-                    <Button
-                        size="md"
-                        variant="tertiary"
-                        className="self-start"
-                        iconLeft={IconType.PLUS}
-                        onClick={handleAddStage}
-                    >
-                        {t('app.createDao.createProcessForm.governance.stageField.action.add')}
-                    </Button>
-                </div>
-            )}
+            {!isAdvancedGovernance && <GovernanceBasicBodyField daoId={daoId} />}
+            {isAdvancedGovernance && <GovernanceStagesField daoId={daoId} />}
         </div>
     );
 };

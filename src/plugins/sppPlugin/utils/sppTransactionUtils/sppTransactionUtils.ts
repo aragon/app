@@ -1,5 +1,5 @@
 import {
-    type ICreateProcessFormData,
+    type ICreateProcessFormDataAdvanced,
     ProcessStageType,
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
@@ -57,7 +57,7 @@ class SppTransactionUtils {
     };
 
     buildPluginsSetupActions = (
-        values: ICreateProcessFormData,
+        values: ICreateProcessFormDataAdvanced,
         setupData: IPluginSetupData[],
         dao: IDao,
     ): ITransactionRequest[] => {
@@ -112,7 +112,7 @@ class SppTransactionUtils {
     };
 
     private buildUpdateRulesTransaction = (
-        values: ICreateProcessFormData,
+        values: ICreateProcessFormDataAdvanced,
         sppSetupData: IPluginSetupData,
         pluginSetupData: IPluginSetupData[],
     ): ITransactionRequest | undefined => {
@@ -144,7 +144,7 @@ class SppTransactionUtils {
     };
 
     private buildUpdateStagesTransaction = (
-        stages: ICreateProcessFormData['stages'],
+        stages: ICreateProcessFormDataAdvanced['stages'],
         sppAddress: Hex,
         bodyAddresses: Hex[],
     ): ITransactionRequest => {

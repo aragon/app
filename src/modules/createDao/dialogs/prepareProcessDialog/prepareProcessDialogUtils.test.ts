@@ -7,9 +7,9 @@ import { type ITransactionRequest, transactionUtils } from '@/shared/utils/trans
 import { type Hex } from 'viem';
 import { GovernanceType } from '../../components/createProcessForm';
 import {
-    generateCreateProcessFormBody,
     generateCreateProcessFormData,
     generateCreateProcessFormStage,
+    generateSetupBodyFormData,
 } from '../../testUtils';
 import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
 import type { IBuildProcessProposalActionsParams } from './prepareProcessDialogUtils.api';
@@ -103,11 +103,7 @@ describe('prepareProcessDialog utils', () => {
     describe('preparePluginMetadata', () => {
         it('maps the plugin form body to metadata', () => {
             const pluginResources = [{ name: 'resource', url: 'resource.com' }];
-            const plugin = generateCreateProcessFormBody({
-                name: 'name',
-                description: 'description',
-                resources: pluginResources,
-            });
+            const plugin = generateSetupBodyFormData({ name: '1', description: '2', resources: pluginResources });
             const result = prepareProcessDialogUtils['preparePluginMetadata'](plugin);
             expect(result).toEqual({ name: plugin.name, description: plugin.description, links: plugin.resources });
         });
@@ -173,10 +169,10 @@ describe('prepareProcessDialog utils', () => {
 
         it('builds the prepare install action of all plugins', () => {
             const bodies = [
-                generateCreateProcessFormBody({ internalId: '0x1' }),
-                generateCreateProcessFormBody({ internalId: '0x2' }),
+                generateSetupBodyFormData({ internalId: '0x1' }),
+                generateSetupBodyFormData({ internalId: '0x2' }),
             ];
-            const values = generateCreateProcessFormData({ bodies });
+            const values = generateCreateProcessFormData({ stages: [generateCreateProcessFormStage({ bodies })] });
             const dao = generateDao();
             const pluginsMetadata = ['metadata1', 'metadata2'];
             const actionsData = ['0x1', '0x2'];
@@ -197,7 +193,7 @@ describe('prepareProcessDialog utils', () => {
 
         it('passes the stage voting period to the build install action function when bodies are setup inside stages', () => {
             const votingPeriod = { days: 7, hours: 0, minutes: 0 };
-            const body = generateCreateProcessFormBody();
+            const body = generateSetupBodyFormData();
             const stage = generateCreateProcessFormStage({
                 timing: { votingPeriod, earlyStageAdvance: false },
                 bodies: [body],
@@ -218,7 +214,7 @@ describe('prepareProcessDialog utils', () => {
             const metadataCid = 'metadataCid';
             const metadata = 'metadataHex' as Hex;
             const dao = generateDao();
-            const body = generateCreateProcessFormBody({ plugin: 'multisig' });
+            const body = generateSetupBodyFormData({ plugin: 'multisig' });
             const transactionData = '0xdata';
             const prepareTransactionMock = jest.fn(() => transactionData);
             getSlotFunctionSpy.mockReturnValue(prepareTransactionMock);

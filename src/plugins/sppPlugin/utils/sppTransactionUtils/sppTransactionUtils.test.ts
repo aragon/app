@@ -1,9 +1,13 @@
-import { ProcessStageType, ProposalCreationMode } from '@/modules/createDao/components/createProcessForm';
 import {
-    generateCreateProcessFormBody,
-    generateCreateProcessFormData,
+    GovernanceType,
+    ProcessStageType,
+    ProposalCreationMode,
+} from '@/modules/createDao/components/createProcessForm';
+import {
+    generateCreateProcessFormDataAdvanced,
     generateCreateProcessFormStage,
-} from '@/modules/createDao/testUtils/generators/createProcessFormData';
+    generateSetupBodyFormData,
+} from '@/modules/createDao/testUtils';
 import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { sppPlugin } from '@/plugins/sppPlugin/constants/sppPlugin';
@@ -122,7 +126,7 @@ describe('sppTransaction utils', () => {
         });
 
         it('correctly builds the install actions for plugins', () => {
-            const values = generateCreateProcessFormData();
+            const values = generateCreateProcessFormDataAdvanced({ governanceType: GovernanceType.ADVANCED });
             const setupData = [generatePluginSetupData(), generatePluginSetupData()];
             const dao = generateDao({ address: '0x123', network: Network.ETHEREUM_SEPOLIA });
             const daoAddress = dao.address as Viem.Hex;
@@ -183,16 +187,18 @@ describe('sppTransaction utils', () => {
         const buildRuleConditionsSpy = jest.spyOn(permissionTransactionUtils, 'buildRuleConditions');
 
         it('returns undefined when proposalCreationMode is ANY_WALLET', () => {
-            const values = generateCreateProcessFormData({ proposalCreationMode: ProposalCreationMode.ANY_WALLET });
+            const values = generateCreateProcessFormDataAdvanced({
+                proposalCreationMode: ProposalCreationMode.ANY_WALLET,
+            });
             const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, generatePluginSetupData(), []);
             expect(result).toBeUndefined();
         });
 
         it('correctly builds the update rules transaction', () => {
-            const sppAllowedBody = generateCreateProcessFormBody({ internalId: 'body-1', canCreateProposal: true });
-            const sppNotAllowedBody = generateCreateProcessFormBody({ internalId: 'body-2' });
+            const sppAllowedBody = generateSetupBodyFormData({ internalId: 'body-1', canCreateProposal: true });
+            const sppNotAllowedBody = generateSetupBodyFormData({ internalId: 'body-2' });
             const sppStage = generateCreateProcessFormStage({ bodies: [sppAllowedBody, sppNotAllowedBody] });
-            const values = generateCreateProcessFormData({
+            const values = generateCreateProcessFormDataAdvanced({
                 stages: [sppStage],
                 proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
             });
@@ -244,7 +250,7 @@ describe('sppTransaction utils', () => {
         });
 
         it('correctly builds the update stages transaction', () => {
-            const sppBody = generateCreateProcessFormBody();
+            const sppBody = generateSetupBodyFormData();
             const sppStage = generateCreateProcessFormStage({ internalId: '0', bodies: [sppBody] });
             const transactionData = '0xupdate-stages';
 

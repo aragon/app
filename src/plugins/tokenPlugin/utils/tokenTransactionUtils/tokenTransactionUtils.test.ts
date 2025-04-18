@@ -1,5 +1,5 @@
 import type { ISetupBodyFormMembership } from '@/modules/createDao/dialogs/setupBodyDialog';
-import { generateCreateProcessFormBody } from '@/modules/createDao/testUtils';
+import { generateSetupBodyFormData } from '@/modules/createDao/testUtils';
 import { generateToken } from '@/modules/finance/testUtils';
 import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
@@ -142,7 +142,7 @@ describe('tokenTransaction utils', () => {
             const metadata = '0xSomeMetadataCID';
             const dao = generateDao({ address: '0x001' });
             const token = { address: zeroAddress, name: '', symbol: '' };
-            const body = generateCreateProcessFormBody({
+            const body = generateSetupBodyFormData({
                 membership: { members: [], token } as ISetupBodyFormMembership,
                 governance: { supportThreshold: 2, minParticipation: 2, minDuration: 1000000 },
             });
@@ -174,7 +174,7 @@ describe('tokenTransaction utils', () => {
             const transactionData = '0xTransactionData';
             const metadata = '0xSomeMetadataCID';
             const dao = generateDao({ address: '0x001' });
-            const body = generateCreateProcessFormBody({
+            const body = generateSetupBodyFormData({
                 membership: { members: [], token: {} } as ISetupBodyFormMembership,
             });
 
@@ -197,7 +197,7 @@ describe('tokenTransaction utils', () => {
         it('correctly builds the target config for advanced governance processes', () => {
             const stageVotingPeriod = { days: 0, hours: 4, minutes: 0 };
             const dao = generateDao();
-            const body = generateCreateProcessFormBody();
+            const body = generateSetupBodyFormData();
             const params = [{ metadata: '', dao, body, stageVotingPeriod }] as unknown as BuildDataParams;
             tokenTransactionUtils.buildPrepareInstallData(...params);
             expect(getPluginTargetConfigSpy).toHaveBeenCalledWith(dao, true);
@@ -239,7 +239,7 @@ describe('tokenTransaction utils', () => {
                 minProposerVotingPower: '100',
             };
             const token = generateToken({ decimals: 18 });
-            const body = generateCreateProcessFormBody({
+            const body = generateSetupBodyFormData({
                 governance: settings,
                 membership: { members: [], token } as ISetupBodyFormMembership,
             });
@@ -260,7 +260,7 @@ describe('tokenTransaction utils', () => {
             const stageVotingPeriod = { days: 1, hours: 0, minutes: 0 };
             const settings = { minDuration: 7200, minProposerVotingPower: '1' };
             const token = generateToken({ decimals: 18 });
-            const body = generateCreateProcessFormBody({
+            const body = generateSetupBodyFormData({
                 governance: settings,
                 membership: { members: [], token } as ISetupBodyFormMembership,
             });

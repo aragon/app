@@ -18,7 +18,7 @@ export enum GovernanceType {
     ADVANCED = 'ADVANCED',
 }
 
-export interface ICreateProcessFormData {
+export interface ICreateProcessFormDataBase {
     /**
      * Name of the process.
      */
@@ -36,14 +36,6 @@ export interface ICreateProcessFormData {
      */
     resources: IResourcesInputResource[];
     /**
-     * List of stages of the process.
-     */
-    stages: ICreateProcessFormStage[];
-    /**
-     * Bodies to be setup on the simple governance process.
-     */
-    bodies: ISetupBodyForm[];
-    /**
      * Defines who can create proposals for this process.
      */
     proposalCreationMode: ProposalCreationMode;
@@ -52,6 +44,30 @@ export interface ICreateProcessFormData {
      */
     governanceType: GovernanceType;
 }
+
+export interface ICreateProcessFormDataBasic extends ICreateProcessFormDataBase {
+    /**
+     * Basic governance type.
+     */
+    governanceType: GovernanceType.BASIC;
+    /**
+     * Body to be setup on the basic governance process.
+     */
+    body: ISetupBodyForm;
+}
+
+export interface ICreateProcessFormDataAdvanced extends ICreateProcessFormDataBase {
+    /**
+     * Advanced governance type.
+     */
+    governanceType: GovernanceType.ADVANCED;
+    /**
+     * Stages of the process.
+     */
+    stages: ICreateProcessFormStage[];
+}
+
+export type ICreateProcessFormData = ICreateProcessFormDataBasic | ICreateProcessFormDataAdvanced;
 
 export interface ICreateProcessFormStage {
     /**

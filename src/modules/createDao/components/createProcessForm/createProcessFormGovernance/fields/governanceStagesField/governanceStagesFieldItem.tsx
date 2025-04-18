@@ -4,12 +4,12 @@ import { Button, Card, Dropdown, IconType, InputText } from '@aragon/gov-ui-kit'
 import type React from 'react';
 import { useWatch } from 'react-hook-form';
 import { type ICreateProcessFormStage, ProcessStageType } from '../../../createProcessFormDefinitions';
-import { GovernanceBodiesField } from '../governanceBodiesField';
 import { GovernanceStageApprovalsField } from '../governanceStageApprovalsField';
+import { GovernanceStageBodiesField } from '../governanceStageBodiesField';
 import { GovernanceStageTimingField } from '../governanceStageTimingField';
 import { GovernanceStageTypeField } from '../governanceStageTypeField';
 
-export interface IGovernanceStageFieldProps {
+export interface IGovernanceStagesFieldItemProps {
     /**
      * Prefix to be prepended to all form fields.
      */
@@ -30,7 +30,7 @@ export interface IGovernanceStageFieldProps {
 
 const nameMaxLength = 40;
 
-export const GovernanceStageField: React.FC<IGovernanceStageFieldProps> = (props) => {
+export const GovernanceStagesFieldItem: React.FC<IGovernanceStagesFieldItemProps> = (props) => {
     const { formPrefix, daoId, stagesCount, onDelete } = props;
 
     const { t } = useTranslations();
@@ -50,7 +50,6 @@ export const GovernanceStageField: React.FC<IGovernanceStageFieldProps> = (props
         defaultValue: '',
     });
 
-    const bodiesFieldName = `${formPrefix}.bodies`;
     const bodiesLabelContext = isOptimisticStage ? 'veto' : 'normal';
 
     return (
@@ -63,13 +62,7 @@ export const GovernanceStageField: React.FC<IGovernanceStageFieldProps> = (props
             <GovernanceStageTypeField fieldPrefix={formPrefix} />
             <GovernanceStageTimingField fieldPrefix={`${formPrefix}.timing`} stageType={stageType} />
             {!isTimelockStage && (
-                <GovernanceBodiesField
-                    fieldName={bodiesFieldName}
-                    daoId={daoId}
-                    subPluginSetup={true}
-                    labelContext={bodiesLabelContext}
-                    errorMessage="app.createDao.createProcessForm.governance.stageField.error.requiredBodies"
-                />
+                <GovernanceStageBodiesField formPrefix={formPrefix} daoId={daoId} labelContext={bodiesLabelContext} />
             )}
             <GovernanceStageApprovalsField fieldPrefix={formPrefix} isOptimisticStage={isOptimisticStage} />
             {stagesCount > 1 && (
