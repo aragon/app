@@ -5,11 +5,18 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import type { ISetupBodyForm } from '../setupBodyDialogDefinitions';
 
-export interface ISetupBodyDialogSelectProps {}
+export interface ISetupBodyDialogSelectProps {
+    /**
+     * Defines if the body is being setup as a sub-plugin or not.
+     */
+    isSubPlugin?: boolean;
+}
 
 export const externalPluginId = 'external';
 
-export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = () => {
+export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (props) => {
+    const { isSubPlugin } = props;
+
     const { t } = useTranslations();
 
     const plugins = pluginRegistryUtils.getPlugins() as IPluginInfo[];
@@ -34,11 +41,13 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = () =
                     value={plugin.id}
                 />
             ))}
-            <RadioCard
-                label="External address"
-                description="Add any address as a body, such as a Safe or Governor"
-                value={externalPluginId}
-            />
+            {isSubPlugin && (
+                <RadioCard
+                    label={t('app.createDao.setupBodyDialog.select.external.label')}
+                    description={t('app.createDao.setupBodyDialog.select.external.description')}
+                    value={externalPluginId}
+                />
+            )}
         </RadioGroup>
     );
 };

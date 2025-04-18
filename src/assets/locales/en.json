@@ -359,6 +359,12 @@
         "a11y": {
           "description": "Create a new voting body for your DAO"
         },
+        "externalAddress": {
+          "address": {
+            "helpText": "Add any address as a body, such as a Safe or Governor",
+            "label": "External address"
+          }
+        },
         "metadata": {
           "name": {
             "label": "Body name"
@@ -372,6 +378,10 @@
           }
         },
         "select": {
+          "external": {
+            "description": "Add any address as a body, such as a Safe or Governor",
+            "label": "External address"
+          },
           "plugin": {
             "helpText": "This determines the governance the body uses to make decisions.",
             "label": "Governance type"
