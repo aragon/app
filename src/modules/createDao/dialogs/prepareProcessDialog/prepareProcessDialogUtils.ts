@@ -4,11 +4,11 @@ import type { IDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
-import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
+import { transactionUtils, type ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
 import { GovernanceType, type ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
-import type { ISetupBodyForm } from '../setupBodyDialog';
+import { SetupBodyType, type ISetupBodyFormNew } from '../setupBodyDialog';
 import type {
     IBuildPrepareInstallPluginActionParams,
     IBuildPrepareInstallPluginsActionParams,
@@ -31,7 +31,9 @@ class PrepareProcessDialogUtils {
             return { pluginsMetadata: [processorMetadata] };
         }
 
-        const newStageBodies = values.stages.flatMap((stage) => stage.bodies).filter((body) => body.address == null);
+        const newStageBodies = values.stages
+            .flatMap((stage) => stage.bodies)
+            .filter((body) => body.type === SetupBodyType.NEW);
         const pluginsMetadata = newStageBodies.map((body) => prepareProcessDialogUtils.preparePluginMetadata(body));
 
         return { pluginsMetadata, processorMetadata };
@@ -74,7 +76,7 @@ class PrepareProcessDialogUtils {
 
     preparePublishProcessProposalMetadata = () => this.publishProcessProposalMetadata;
 
-    private preparePluginMetadata = (plugin: ISetupBodyForm) => {
+    private preparePluginMetadata = (plugin: ISetupBodyFormNew) => {
         const { name, description, resources: links } = plugin;
 
         return { name, description, links };
@@ -109,7 +111,7 @@ class PrepareProcessDialogUtils {
 
         const newStageBodies = values.stages
             .flatMap((stage, stageIndex) => stage.bodies.map((body) => ({ ...body, stageIndex })))
-            .filter((body) => body.address == null);
+            .filter((body) => body.type === SetupBodyType.NEW);
 
         const installData = newStageBodies.map((body, index) => {
             const { votingPeriod: stageVotingPeriod } = values.stages[body.stageIndex].timing;

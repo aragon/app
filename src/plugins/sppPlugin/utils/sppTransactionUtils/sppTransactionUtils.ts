@@ -3,6 +3,7 @@ import {
     ProcessStageType,
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
+import { SetupBodyType } from '@/modules/createDao/dialogs/setupBodyDialog';
 import type { ISetupStageTimingForm } from '@/modules/createDao/dialogs/setupStageTimingDialog';
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
@@ -124,8 +125,8 @@ class SppTransactionUtils {
             return undefined;
         }
 
-        const bodies = stages.flatMap((stage) => stage.bodies).filter((body) => body.address == null);
-        const conditionAddresses = bodies.reduce<string[]>((current, body, bodyIndex) => {
+        const newBodies = stages.flatMap((stage) => stage.bodies).filter((body) => body.type === SetupBodyType.NEW);
+        const conditionAddresses = newBodies.reduce<string[]>((current, body, bodyIndex) => {
             const isBodyAllowed = body.canCreateProposal;
             const bodyConditionAddress = pluginSetupData[bodyIndex].preparedSetupData.helpers[0];
 
@@ -158,10 +159,10 @@ class SppTransactionUtils {
             const resultType = type === ProcessStageType.NORMAL ? SppProposalType.APPROVAL : SppProposalType.VETO;
 
             const processedBodies = bodies.map((body) => ({
-                addr: body.address ?? processedBodyAddresses.shift()!,
+                addr: body.type === SetupBodyType.EXTERNAL ? body.address : processedBodyAddresses.shift()!,
                 resultType,
                 tryAdvance: true,
-                isManual: body.address != null,
+                isManual: body.type === SetupBodyType.EXTERNAL,
             }));
 
             return { bodies: processedBodies, ...stageApprovals, ...stageTiming, cancelable: false, editable: false };

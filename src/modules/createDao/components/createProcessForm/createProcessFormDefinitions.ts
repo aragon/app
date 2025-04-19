@@ -1,5 +1,5 @@
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
-import type { ISetupBodyForm } from '../../dialogs/setupBodyDialog';
+import type { ISetupBodyForm, ISetupBodyFormNew } from '../../dialogs/setupBodyDialog';
 import type { ISetupStageTimingForm } from '../../dialogs/setupStageTimingDialog';
 
 export enum ProposalCreationMode {
@@ -53,7 +53,7 @@ export interface ICreateProcessFormDataBasic extends ICreateProcessFormDataBase 
     /**
      * Body to be setup on the basic governance process.
      */
-    body: ISetupBodyForm;
+    body: ISetupBodyFormNew;
 }
 
 export interface ICreateProcessFormDataAdvanced extends ICreateProcessFormDataBase {

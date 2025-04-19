@@ -4,7 +4,7 @@ import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
-import type { ISetupBodyForm } from './setupBodyDialogDefinitions';
+import { SetupBodyType, type ISetupBodyForm } from './setupBodyDialogDefinitions';
 import { SetupBodyDialogSteps, type ISetupBodyDialogStepsProps } from './setupBodyDialogSteps';
 
 export interface ISetupBodyDialogParams extends ISetupBodyDialogStepsProps {
@@ -26,7 +26,7 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
     const { address } = useAccount();
 
     const processedInitialValues = useMemo(() => {
-        if (initialValues?.membership.members.length) {
+        if (initialValues?.type === SetupBodyType.EXTERNAL || initialValues?.membership.members.length) {
             return initialValues;
         }
 
