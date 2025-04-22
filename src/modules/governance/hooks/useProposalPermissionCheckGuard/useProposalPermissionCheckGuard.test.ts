@@ -40,7 +40,7 @@ describe('useProposalPermissionCheckGuard hook', () => {
         expect(checkCreateProposalGuard).toHaveBeenCalled();
     });
 
-    it("doesn't call createProposalGuard when canCreateProposal check returns true", () => {
+    it("does not call createProposalGuard when canCreateProposal check returns true", () => {
         const checkCreateProposalGuard = jest.fn();
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
         usePermissionCheckGuardSpy.mockReturnValue({
