@@ -334,8 +334,7 @@
       },
       "prepareProcessDialog": {
         "button": {
-          "submit": "Prepare installation",
-          "success": "Finalize installation"
+          "submit": "Prepare installation"
         },
         "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
         "step": {
@@ -362,13 +361,24 @@
         "title": "Publish DAO"
       },
       "publishProcessDialog": {
-        "button": {
-          "submit": "Finalize installation"
+        "admin": {
+          "button": {
+            "submit": "Finalize installation"
+          },
+          "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
+          "title": "Publish governance process",
+          "transactionInfoTitle": "Finalize installation"
         },
-        "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
-        "title": "Publish governance process",
-        "transactionInfoTitle": "Finalize installation"
+        "default": {
+          "button": {
+            "submit": "Propose process"
+          },
+          "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
+          "title": "Publish governance process",
+          "transactionInfoTitle": "Propose process"
+        }
       },
+
       "setupBodyDialog": {
         "a11y": {
           "description": "Create a new voting body for your DAO"
@@ -851,8 +861,14 @@
           "cancel": "Cancel",
           "select": "Create proposal"
         },
-        "description": "Select the proposal type you want to create.",
-        "title": "Create proposal"
+        "process": {
+          "description": "Select the governance process to use for creating the proposal.",
+          "title": "Select process"
+        },
+        "proposal": {
+          "description": "Select the proposal type you want to create.",
+          "title": "Create proposal"
+        }
       },
       "verifySmartContractDialog": {
         "action": {

@@ -13,7 +13,7 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { Button, Card, IconType } from '@aragon/gov-ui-kit';
-import type { Hex } from 'viem';
+import { useRouter } from 'next/navigation';
 import { CreateDaoDialogId } from '../../../createDao/constants/createDaoDialogId';
 import type { ICreateProcessDetailsDialogParams } from '../../../createDao/dialogs/createProcessDetailsDialog';
 import { DaoGovernanceInfo } from '../../components/daoGovernanceInfo';
@@ -33,6 +33,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
+    const router = useRouter();
 
     const daoParams = { urlParams: { id: daoId } };
     const { data: dao } = useDao(daoParams);
@@ -47,16 +48,19 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
         daoId,
     });
 
-    const handlePermissionGuardSuccess = (selectedPlugin: IDaoPlugin) => {
-        const params: ICreateProcessDetailsDialogParams = { daoId, pluginAddress: selectedPlugin.address as Hex };
-        open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
+    const handlePermissionGuardSuccess = (plugin: IDaoPlugin) => {
+        router.push(`/dao/${daoId}/create/${plugin.address}/process`);
     };
-
     const handlePluginSelected = (plugin: IDaoPlugin) => {
-        createProposalGuard({ plugin, onSuccess: () => handlePermissionGuardSuccess(plugin) });
+        createProposalGuard({
+            plugin,
+            onSuccess: () => handlePermissionGuardSuccess(plugin),
+            // on error, go back to the plugin selection
+            onError: handleConfirmProcessCreation,
+        });
     };
 
-    const handleAddGovernanceProcessClick = () => {
+    const handleConfirmProcessCreation = () => {
         // Select a plugin (a process to use to create a new process). If there is only 1 plugin, skip selection step.
         if (processPlugins.length === 1) {
             handlePluginSelected(processPlugins[0].meta);
@@ -66,8 +70,14 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
         const params: ISelectPluginDialogParams = {
             daoId,
             onPluginSelected: handlePluginSelected,
+            variant: 'process',
         };
         open(GovernanceDialogId.SELECT_PLUGIN, { params });
+    };
+
+    const handleAddGovernanceProcessClick = () => {
+        const params: ICreateProcessDetailsDialogParams = { onActionClick: handleConfirmProcessCreation };
+        open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
 
     if (!dao) {
