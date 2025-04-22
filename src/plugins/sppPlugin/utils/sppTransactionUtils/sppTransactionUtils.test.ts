@@ -7,6 +7,7 @@ import {
     generateCreateProcessFormDataAdvanced,
     generateCreateProcessFormStage,
     generateSetupBodyFormData,
+    generateSetupBodyFormNew,
 } from '@/modules/createDao/testUtils';
 import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
@@ -195,8 +196,8 @@ describe('sppTransaction utils', () => {
         });
 
         it('correctly builds the update rules transaction', () => {
-            const sppAllowedBody = generateSetupBodyFormData({ internalId: 'body-1', canCreateProposal: true });
-            const sppNotAllowedBody = generateSetupBodyFormData({ internalId: 'body-2' });
+            const sppAllowedBody = generateSetupBodyFormNew({ internalId: 'body-1', canCreateProposal: true });
+            const sppNotAllowedBody = generateSetupBodyFormNew({ internalId: 'body-2' });
             const sppStage = generateCreateProcessFormStage({ bodies: [sppAllowedBody, sppNotAllowedBody] });
             const values = generateCreateProcessFormDataAdvanced({
                 stages: [sppStage],

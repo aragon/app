@@ -1,9 +1,12 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
-import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
+import {
+    SetupBodyType,
+    type ISetupBodyForm,
+} from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Accordion, Button, Dropdown, Heading, IconType } from '@aragon/gov-ui-kit';
+import { Accordion, addressUtils, Button, Dropdown, Heading, IconType } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { GovernanceType, type ICreateProcessFormData } from '../../../createProcessFormDefinitions';
@@ -53,7 +56,9 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
         <Accordion.Container isMulti={true}>
             <Accordion.Item value={body.internalId}>
                 <Accordion.ItemHeader>
-                    <Heading size="h4">{body.name}</Heading>
+                    <Heading size="h4">
+                        {body.type === SetupBodyType.NEW ? body.name : addressUtils.truncateAddress(body.address)}
+                    </Heading>
                 </Accordion.ItemHeader>
                 <Accordion.ItemContent className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6">
                     <PluginSingleComponent

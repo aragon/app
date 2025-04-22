@@ -8,7 +8,7 @@ import {
     ProcessStageType,
     ProposalCreationMode,
 } from '../../components/createProcessForm';
-import { generateSetupBodyFormData } from './setupBodyForm';
+import { generateSetupBodyFormNew } from './setupBodyForm';
 
 export const generateCreateProcessFormDataBase = (
     values?: Partial<ICreateProcessFormData>,
@@ -28,6 +28,7 @@ export const generateCreateProcessFormDataAdvanced = (
     ...generateCreateProcessFormDataBase(values),
     governanceType: GovernanceType.ADVANCED,
     stages: [],
+    ...values,
 });
 
 export const generateCreateProcessFormDataBasic = (
@@ -35,7 +36,8 @@ export const generateCreateProcessFormDataBasic = (
 ): ICreateProcessFormDataBasic => ({
     ...generateCreateProcessFormDataBase(values),
     governanceType: GovernanceType.BASIC,
-    body: generateSetupBodyFormData(),
+    body: generateSetupBodyFormNew(),
+    ...values,
 });
 
 export const generateCreateProcessFormData = (values?: Partial<ICreateProcessFormData>): ICreateProcessFormData =>

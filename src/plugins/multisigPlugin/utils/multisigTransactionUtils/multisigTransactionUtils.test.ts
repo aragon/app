@@ -1,4 +1,4 @@
-import { generateSetupBodyFormData } from '@/modules/createDao/testUtils';
+import { generateSetupBodyFormData, generateSetupBodyFormNew } from '@/modules/createDao/testUtils';
 import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { multisigPlugin } from '@/plugins/multisigPlugin/constants/multisigPlugin';
@@ -109,7 +109,7 @@ describe('multisigTransaction utils', () => {
             const metadata = 'test-metadata';
             const members = [{ address: '0x1' }, { address: '0x2' }];
             const governance = { minApprovals: 3, onlyListed: true };
-            const body = generateSetupBodyFormData({ membership: { members }, governance });
+            const body = generateSetupBodyFormNew({ membership: { members }, governance });
             const dao = generateDao();
 
             const params = [{ metadata, body, dao }] as unknown as BuildDataParams;
