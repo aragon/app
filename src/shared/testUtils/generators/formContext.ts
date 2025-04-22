@@ -10,6 +10,7 @@ export const generateFormContextState = <TFormValues extends object = object>(
     isSubmitting: false,
     isValidating: false,
     isValid: false,
+    isReady: false,
     disabled: false,
     submitCount: 0,
     dirtyFields: {},
