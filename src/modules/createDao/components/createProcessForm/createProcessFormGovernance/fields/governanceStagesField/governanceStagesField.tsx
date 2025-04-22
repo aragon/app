@@ -7,7 +7,7 @@ import { GovernanceStagesFieldItem } from './governanceStagesFieldItem';
 
 export interface IGovernanceStagesFieldProps {
     /**
-     *
+     * ID of the DAO.
      */
     daoId: string;
 }
