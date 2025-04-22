@@ -1,4 +1,5 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
+import { SetupBodyType } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -30,7 +31,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
             ? stages.flatMap((stage, stageIndex) => stage.bodies.map((body) => ({ ...body, stageIndex })))
             : [{ ...basicProcessBody, stageIndex: undefined }];
 
-        return processedBodies.filter((body) => body.address == null);
+        return processedBodies.filter((body) => body.type === SetupBodyType.NEW);
     }, [isAdvancedGovernance, stages, basicProcessBody]);
 
     const canBodiesCreateProposals = processBodies.some((body) => body.canCreateProposal);
