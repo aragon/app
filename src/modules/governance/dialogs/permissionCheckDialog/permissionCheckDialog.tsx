@@ -4,6 +4,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { DefinitionList, Dialog, IconType, invariant, Link, StateSkeletonBar } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
+import { GovernanceDialogId } from '../../constants/governanceDialogId';
 
 export interface IPermissionCheckDialogParams extends IPermissionCheckGuardParams {
     /**
@@ -45,7 +46,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
 
     const handleDialogClose = useCallback(() => {
         onError?.();
-        close();
+        close(GovernanceDialogId.PERMISSION_CHECK);
     }, [close, onError]);
 
     useEffect(() => {
@@ -53,7 +54,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
             onSuccess?.();
             // Using direct string here to avoid circular dependency
             // this could change in the future if module dialogs are refactored
-            close('PERMISSION_CHECK');
+            close(GovernanceDialogId.PERMISSION_CHECK);
         }
     }, [hasPermission, onSuccess, close]);
 
