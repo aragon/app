@@ -40,7 +40,7 @@ describe('useProposalPermissionCheckGuard hook', () => {
         expect(checkCreateProposalGuard).toHaveBeenCalled();
     });
 
-    it("does not call createProposalGuard when canCreateProposal check returns true", () => {
+    it('does not call createProposalGuard when canCreateProposal check returns true', () => {
         const checkCreateProposalGuard = jest.fn();
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
         usePermissionCheckGuardSpy.mockReturnValue({
@@ -84,9 +84,7 @@ describe('useProposalPermissionCheckGuard hook', () => {
         );
 
         // simulate failed permission check
-        const spyFirstCall = usePermissionCheckGuardSpy.mock.calls[0];
-        const spyFirstCallArgs = spyFirstCall[0];
-        spyFirstCallArgs.onError!();
+        usePermissionCheckGuardSpy.mock.calls[0][0].onError!();
 
         expect(mockRouter.push).toHaveBeenCalledWith(`/dao/${daoId}/${permissionDeniedRedirectTab}`);
     });
