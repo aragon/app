@@ -56,7 +56,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
             plugin,
             onSuccess: () => handlePermissionGuardSuccess(plugin),
             // on error, go back to the plugin selection
-            onError: () => setTimeout(handleConfirmProcessCreation, 0),
+            onError: handleConfirmProcessCreation,
         });
     };
 
