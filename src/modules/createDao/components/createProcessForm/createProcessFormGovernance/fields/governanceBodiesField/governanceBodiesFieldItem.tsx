@@ -1,3 +1,4 @@
+import { GovernanceBodiesFieldItemDefault } from '@/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodiesField/governanceBodiesFieldItemDefault';
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
@@ -60,6 +61,7 @@ export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps
                         slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}
                         body={body}
                         isAdvancedGovernance={isAdvancedGovernance}
+                        Fallback={GovernanceBodiesFieldItemDefault}
                     />
                     <div className="flex w-full grow justify-between">
                         <Button className="justify-end" variant="secondary" size="md" onClick={onEdit}>
