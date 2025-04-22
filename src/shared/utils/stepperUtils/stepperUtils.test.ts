@@ -241,4 +241,34 @@ describe('stepper utils', () => {
             expect(instance.getActiveStep()).toEqual(activeStep);
         });
     });
+
+    describe('syncActiveStep', () => {
+        it('sets the active step to the first step when it is undefined and steps array is not empty', () => {
+            const steps = [
+                { id: '000', order: 0, meta: null },
+                { id: '001', order: 1, meta: null },
+            ];
+            const instance = new StepperUtils(steps);
+            expect(instance.syncActiveStep()).toEqual(steps[0].id);
+            expect(instance.getActiveStep()).toEqual(steps[0].id);
+        });
+
+        it('does not update the active step when it is already defined', () => {
+            const steps = [
+                { id: '000', order: 0, meta: null },
+                { id: '001', order: 1, meta: null },
+            ];
+            const activeStep = steps[1].id;
+            const instance = new StepperUtils(steps, activeStep);
+            expect(instance.syncActiveStep()).toEqual(activeStep);
+            expect(instance.getActiveStep()).toEqual(activeStep);
+        });
+
+        it('does not update the active step when steps array is empty', () => {
+            const activeStep = '001';
+            const instance = new StepperUtils([], activeStep);
+            expect(instance.syncActiveStep()).toEqual(activeStep);
+            expect(instance.getActiveStep()).toEqual(activeStep);
+        });
+    });
 });

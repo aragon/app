@@ -82,9 +82,9 @@ export class StepperUtils<TMeta = undefined, TStepId = string> {
     };
 
     syncActiveStep = () => {
-        const canBeInitialized = this.activeStep == undefined && this.steps.length > 0;
+        const shouldUpdateActiveStep = this.activeStep == undefined && this.steps.length > 0;
 
-        if (canBeInitialized) {
+        if (shouldUpdateActiveStep) {
             this.setActiveStep(this.steps[0].id);
         }
 

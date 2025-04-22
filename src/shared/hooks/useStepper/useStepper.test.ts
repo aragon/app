@@ -20,6 +20,13 @@ describe('useStepper hook', () => {
         expect(result.current.steps).toEqual([newStep]);
     });
 
+    it('registerSteps triggers the active step sync', () => {
+        const newStep = { id: '001', order: 1, meta: null };
+        const { result } = renderHook(() => useStepper());
+        act(() => result.current.registerStep(newStep));
+        expect(result.current.activeStep).toEqual(newStep.id);
+    });
+
     it('unregisterSteps removes the specified step from the steps array', () => {
         const initialSteps = [
             { id: '001', order: 1, meta: null },
