@@ -2,6 +2,7 @@ import { VoteList } from '@/modules/governance/components/voteList';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
+import { sppSettingsUtils } from '@/plugins/sppPlugin/utils/sppSettingsUtils';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
@@ -52,6 +53,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
         params: { daoId, settings: plugin.settings, pluginAddress: plugin.address },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginId: plugin.subdomain,
+        fallback: () => sppSettingsUtils.getFallbackSettings(plugin.address, plugin.subdomain),
     });
 
     // Set parent name and description on sub-proposal to correctly display the proposal info on the vote dialog.

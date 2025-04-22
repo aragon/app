@@ -26,6 +26,24 @@ class SppSettingsUtils {
             },
         ];
     };
+
+    getFallbackSettings = (address: string, ensName?: string): IDaoSettingTermAndDefinition[] => {
+        const settings: IDaoSettingTermAndDefinition[] = [];
+
+        if (ensName) {
+            settings.push({
+                term: 'ENS Name',
+                definition: ensName,
+            });
+        }
+
+        settings.push({
+            term: 'Address',
+            definition: address,
+        });
+
+        return settings;
+    };
 }
 
 export const sppSettingsUtils = new SppSettingsUtils();
