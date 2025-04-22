@@ -1,7 +1,11 @@
 import NextImage from 'next/image';
 import type { ComponentProps } from 'react';
 
-export interface IImageProps extends Omit<ComponentProps<'img'>, 'width' | 'height'> {
+export interface IImageProps extends Omit<ComponentProps<'img'>, 'width' | 'height' | 'src'> {
+    /**
+     * Source of the image.
+     */
+    src?: string;
     /**
      * Width property for the NextJs image.
      */
