@@ -37,7 +37,7 @@ export const PluginSingleComponent: React.FC<IPluginSingleComponentProps> = (pro
     }
 
     return (
-        <div className={classNames({ 'relative w-full rounded border border-primary-400': highlightSlots })}>
+        <div className={classNames('w-full', { 'relative rounded border border-primary-400': highlightSlots })}>
             {highlightSlots && (
                 <p className="absolute -top-6 right-0 z-50 text-neutral-500">
                     {slotId} ({pluginId})
