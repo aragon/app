@@ -24,7 +24,7 @@ jest.mock('@/plugins/adminPlugin/components/adminSettingsPanel', () => ({
     AdminSettingsPanel: () => <div data-testid="admin-settings-mock" />,
 }));
 
-jest.mock('nextjs-toploader/app', () => ({
+jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),
 }));
 
