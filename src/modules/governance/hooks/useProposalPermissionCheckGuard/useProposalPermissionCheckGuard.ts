@@ -15,20 +15,21 @@ export interface IUseProposalPermissionCheckGuardParams {
     pluginAddress: string;
     /**
      * Tab to redirect to if permission check fails.
+     * @default dashboard
      */
-    permissionDeniedRedirectTab?: 'dashboard' | 'proposals' | 'settings';
+    redirectTab?: 'dashboard' | 'proposals' | 'settings';
 }
 
 export const useProposalPermissionCheckGuard = (params: IUseProposalPermissionCheckGuardParams) => {
-    const { daoId, pluginAddress, permissionDeniedRedirectTab = 'dashboard' } = params;
+    const { daoId, pluginAddress, redirectTab = 'dashboard' } = params;
 
     const router = useRouter();
 
     const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress })![0];
 
     const handlePermissionCheckError = useCallback(
-        () => router.push(`/dao/${daoId}/${permissionDeniedRedirectTab}`),
-        [router, daoId, permissionDeniedRedirectTab],
+        () => router.push(`/dao/${daoId}/${redirectTab}`),
+        [router, daoId, redirectTab],
     );
 
     const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
