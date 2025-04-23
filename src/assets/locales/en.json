@@ -124,6 +124,14 @@
             "helpText": "This is shown on the DAO's dashboard and the Explore page so visitors can easily find you.",
             "label": "Description"
           },
+          "ens": {
+            "error": {
+              "invalid": "ENS subdomain is invalid (make sure your chosen ENS name conatains no spaces or underscores)",
+              "taken": "ENS subdomain is not available"
+            },
+            "helpText": "This is a custom onchain identifier for your DAO. It can be used in URLs to access your DAO as well as send assets.",
+            "label": "ENS subame"
+          },
           "name": {
             "label": "DAO name"
           },
