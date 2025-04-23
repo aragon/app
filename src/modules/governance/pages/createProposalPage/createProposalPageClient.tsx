@@ -38,11 +38,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
 
     const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress })![0];
 
-    useProposalPermissionCheckGuard({
-        daoId,
-        pluginAddress,
-        permissionDeniedRedirectTab: 'proposals',
-    });
+    useProposalPermissionCheckGuard({ daoId, pluginAddress, redirectTab: 'proposals' });
 
     const [prepareActions, setPrepareActions] = useState<PrepareProposalActionMap>({});
     const [smartContractAbis, setSmartContractAbis] = useState<ISmartContractAbi[]>([]);

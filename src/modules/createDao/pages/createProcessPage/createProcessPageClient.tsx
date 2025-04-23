@@ -29,11 +29,7 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    useProposalPermissionCheckGuard({
-        daoId,
-        pluginAddress,
-        permissionDeniedRedirectTab: 'settings',
-    });
+    useProposalPermissionCheckGuard({ daoId, pluginAddress, redirectTab: 'settings' });
 
     const handleFormSubmit = (values: ICreateProcessFormData) => {
         const dialogParams: IPrepareProcessDialogParams = { daoId, values, pluginAddress };
