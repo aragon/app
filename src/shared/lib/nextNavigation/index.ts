@@ -1,10 +1,10 @@
 'use client';
 
+import { useRouter as useRouterWithTopLoader } from 'nextjs-toploader/app';
 import { useMemo } from 'react';
 export { useParams, usePathname, useSearchParams } from 'next/navigation-original';
-// override the default useRouter from next/navigation to enable the top loader
-import { useRouter as useRouterWithTopLoader } from 'nextjs-toploader/app';
 
+// override the default useRouter from next/navigation to enable the top loader
 export const useRouter = () => {
     const routerInstance = useRouterWithTopLoader();
 
