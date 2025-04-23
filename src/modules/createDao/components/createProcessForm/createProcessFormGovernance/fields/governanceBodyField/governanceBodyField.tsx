@@ -1,14 +1,17 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
-import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
+import {
+    SetupBodyType,
+    type ISetupBodyForm,
+} from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Accordion, Button, Dropdown, Heading, IconType } from '@aragon/gov-ui-kit';
+import { Accordion, addressUtils, Button, Dropdown, Heading, IconType } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { GovernanceType, type ICreateProcessFormData } from '../../../createProcessFormDefinitions';
 
-export interface IGovernanceBodiesFieldItemProps {
+export interface IGovernanceBodyFieldProps {
     /**
      * Name of the body field.
      */
@@ -27,11 +30,12 @@ export interface IGovernanceBodiesFieldItemProps {
     onDelete: () => void;
 }
 
-export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps> = (props) => {
+export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) => {
     const { fieldName, body, onEdit, onDelete } = props;
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
+
     useFormField<Record<string, ISetupBodyForm>, typeof fieldName>(fieldName);
 
     const processName = useWatch<ICreateProcessFormData, 'name'>({ name: 'name' });
@@ -52,7 +56,9 @@ export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps
         <Accordion.Container isMulti={true}>
             <Accordion.Item value={body.internalId}>
                 <Accordion.ItemHeader>
-                    <Heading size="h4">{body.name}</Heading>
+                    <Heading size="h4">
+                        {body.type === SetupBodyType.NEW ? body.name : addressUtils.truncateAddress(body.address)}
+                    </Heading>
                 </Accordion.ItemHeader>
                 <Accordion.ItemContent className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6">
                     <PluginSingleComponent
@@ -63,7 +69,7 @@ export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps
                     />
                     <div className="flex w-full grow justify-between">
                         <Button className="justify-end" variant="secondary" size="md" onClick={onEdit}>
-                            {t('app.createDao.createProcessForm.governance.bodiesField.action.edit')}
+                            {t('app.createDao.createProcessForm.governance.bodyField.action.edit')}
                         </Button>
                         <Dropdown.Container
                             constrainContentWidth={false}
@@ -75,12 +81,12 @@ export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps
                                     size="md"
                                     iconRight={IconType.DOTS_VERTICAL}
                                 >
-                                    {t('app.createDao.createProcessForm.governance.bodiesField.action.more')}
+                                    {t('app.createDao.createProcessForm.governance.bodyField.action.more')}
                                 </Button>
                             }
                         >
                             <Dropdown.Item onClick={onDelete}>
-                                {t('app.createDao.createProcessForm.governance.bodiesField.action.remove')}
+                                {t('app.createDao.createProcessForm.governance.bodyField.action.remove')}
                             </Dropdown.Item>
                         </Dropdown.Container>
                     </div>

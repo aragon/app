@@ -4,39 +4,17 @@ import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
-import type { ISetupBodyForm } from './setupBodyDialogDefinitions';
-import { SetupBodyDialogGovernance } from './setupBodyDialogGovernance';
-import { SetupBodyDialogMemberhip } from './setupBodyDialogMembership';
-import { SetupBodyDialogMetadata } from './setupBodyDialogMetadata';
-import { SetupBodyDialogSelect } from './setupBodyDialogSelect';
+import { SetupBodyType, type ISetupBodyForm } from './setupBodyDialogDefinitions';
+import { SetupBodyDialogSteps, type ISetupBodyDialogStepsProps } from './setupBodyDialogSteps';
 
-export interface ISetupBodyDialogParams {
+export interface ISetupBodyDialogParams extends ISetupBodyDialogStepsProps {
     /**
      * Callback called on submit.
      */
     onSubmit: (values: ISetupBodyForm) => void;
-    /**
-     * Initial values for the form.
-     */
-    initialValues?: ISetupBodyForm;
-    /**
-     * Defines if the body is being added to the governance process as a sub-plugin or not.
-     */
-    isSubPlugin?: boolean;
-    /**
-     * ID of the DAO.
-     */
-    daoId: string;
 }
 
 export interface ISetupBodyDialogProps extends IDialogComponentProps<ISetupBodyDialogParams> {}
-
-const setupBodySteps = [
-    { id: 'select', order: 1, meta: { name: '' } },
-    { id: 'metadata', order: 2, meta: { name: '' } },
-    { id: 'membership', order: 3, meta: { name: '' } },
-    { id: 'governance', order: 4, meta: { name: '' } },
-];
 
 export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
     const { location } = props;
@@ -48,17 +26,12 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
     const { address } = useAccount();
 
     const processedInitialValues = useMemo(() => {
-        if (initialValues?.membership.members.length) {
+        if (initialValues?.type === SetupBodyType.EXTERNAL || initialValues?.membership.members.length) {
             return initialValues;
         }
 
         return { ...initialValues, membership: { ...initialValues?.membership, members: [{ address }] } };
     }, [initialValues, address]);
-
-    const [selectStep, metadataStep, membershipStep, governanceStep] = setupBodySteps;
-    const initialSteps = setupBodySteps.filter(
-        (step) => (initialValues == null || step.id !== 'select') && (isSubPlugin === true || step.id !== 'metadata'),
-    );
 
     return (
         <WizardDialog.Container
@@ -66,25 +39,9 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
             formId="bodySetup"
             onSubmit={onSubmit}
             defaultValues={processedInitialValues}
-            initialSteps={initialSteps}
             submitLabel={t('app.createDao.setupBodyDialog.submit')}
         >
-            {initialValues == null && (
-                <WizardDialog.Step {...selectStep}>
-                    <SetupBodyDialogSelect />
-                </WizardDialog.Step>
-            )}
-            {isSubPlugin && (
-                <WizardDialog.Step {...metadataStep}>
-                    <SetupBodyDialogMetadata />
-                </WizardDialog.Step>
-            )}
-            <WizardDialog.Step {...membershipStep}>
-                <SetupBodyDialogMemberhip daoId={daoId} />
-            </WizardDialog.Step>
-            <WizardDialog.Step {...governanceStep}>
-                <SetupBodyDialogGovernance isSubPlugin={isSubPlugin} />
-            </WizardDialog.Step>
+            <SetupBodyDialogSteps initialValues={initialValues} daoId={daoId} isSubPlugin={isSubPlugin} />
         </WizardDialog.Container>
     );
 };

@@ -174,20 +174,21 @@
       },
       "createProcessForm": {
         "governance": {
-          "bodiesField": {
+          "basicBodyField": {
             "action": {
-              "add": "Add body",
+              "add": "Add"
+            },
+            "error": {
+              "required": "A body must be added to this process."
+            },
+            "helpText": "Add the governing body that get to determine whether or not proposal passes.",
+            "label": "Voting body"
+          },
+          "bodyField": {
+            "action": {
               "edit": "Edit",
               "more": "More",
               "remove": "Remove body"
-            },
-            "error": {
-              "minLength": "A body must be added to this process."
-            },
-            "helpText": "These bodies will decide whether or not this stage passes.",
-            "label": {
-              "vetoing": "Vetoing bodies",
-              "voting": "Voting bodies"
             }
           },
           "stageApprovalsField": {
@@ -201,14 +202,27 @@
               "label": "Veto threshold"
             }
           },
+          "stageBodiesField": {
+            "action": {
+              "add": "Add body",
+              "edit": "Edit",
+              "more": "More",
+              "remove": "Remove body"
+            },
+            "error": {
+              "required": "At least one body must be added to the stage."
+            },
+            "helpText": "These bodies will decide whether or not this stage passes.",
+            "label": {
+              "normal": "Voting bodies",
+              "veto": "Vetoing bodies"
+            }
+          },
           "stageField": {
             "action": {
               "add": "Add stage",
               "more": "More",
               "remove": "Remove stage"
-            },
-            "error": {
-              "requiredBodies": "At least one body must be added to the stage."
             },
             "name": {
               "helpText": "This is used to identify the stage the proposal is in. For example: Community Review, Guardian Veto, or Founder Signoff",
@@ -320,8 +334,7 @@
       },
       "prepareProcessDialog": {
         "button": {
-          "submit": "Prepare installation",
-          "success": "Finalize installation"
+          "submit": "Prepare installation"
         },
         "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
         "step": {
@@ -348,16 +361,33 @@
         "title": "Publish DAO"
       },
       "publishProcessDialog": {
-        "button": {
-          "submit": "Finalize installation"
+        "admin": {
+          "button": {
+            "submit": "Finalize installation"
+          },
+          "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
+          "title": "Publish governance process",
+          "transactionInfoTitle": "Finalize installation"
         },
-        "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
-        "title": "Publish governance process",
-        "transactionInfoTitle": "Finalize installation"
+        "default": {
+          "button": {
+            "submit": "Propose process"
+          },
+          "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
+          "title": "Publish governance process",
+          "transactionInfoTitle": "Propose process"
+        }
       },
+
       "setupBodyDialog": {
         "a11y": {
           "description": "Create a new voting body for your DAO"
+        },
+        "externalAddress": {
+          "address": {
+            "helpText": "Add any address as a body, such as a Safe or Governor",
+            "label": "External address"
+          }
         },
         "metadata": {
           "name": {
@@ -372,6 +402,10 @@
           }
         },
         "select": {
+          "external": {
+            "description": "Add any address as a body, such as a Safe or Governor",
+            "label": "External address"
+          },
           "plugin": {
             "helpText": "This determines the governance the body uses to make decisions.",
             "label": "Governance type"
@@ -827,8 +861,14 @@
           "cancel": "Cancel",
           "select": "Create proposal"
         },
-        "description": "Select the proposal type you want to create.",
-        "title": "Create proposal"
+        "process": {
+          "description": "Select the governance process to use for creating the proposal.",
+          "title": "Select process"
+        },
+        "proposal": {
+          "description": "Select the proposal type you want to create.",
+          "title": "Create proposal"
+        }
       },
       "verifySmartContractDialog": {
         "action": {

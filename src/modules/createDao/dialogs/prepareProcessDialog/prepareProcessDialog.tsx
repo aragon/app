@@ -10,7 +10,6 @@ import {
     TransactionDialog,
     type TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
-import type { ITransactionInfo } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
@@ -19,7 +18,7 @@ import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
-import { GovernanceType, type ICreateProcessFormData } from '../../components/createProcessForm';
+import { type ICreateProcessFormData } from '../../components/createProcessForm';
 import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
 import type {
     IBuildProcessProposalActionsParams,
@@ -67,11 +66,8 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     const [plugin] = useDaoPlugins({ daoId, pluginAddress }) ?? [];
     invariant(!!plugin, `PrepareProcessDialog: plugin with address "${pluginAddress}" not found.`);
 
-    const transactionInfo: ITransactionInfo = {
-        title: t('app.createDao.prepareProcessDialog.transactionInfoTitle'),
-        current: 1,
-        total: 2,
-    };
+    const isAdmin = plugin.meta.subdomain === 'admin';
+
     const stepper = useStepper<ITransactionDialogStepMeta, PrepareProcessStep | TransactionDialogStep>({
         initialActiveStep: PrepareProcessStep.PIN_METADATA,
     });
@@ -82,28 +78,21 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
         invariant(dao != null, 'PrepareProcessDialog: DAO cannot be fetched');
 
         const params: IBuildTransactionParams = { values, processMetadata, dao };
-        const transaction = await prepareProcessDialogUtils.buildTransaction(params);
+        const transaction = await prepareProcessDialogUtils.buildPrepareProcessTransaction(params);
 
         return transaction;
     };
 
     const handlePinJson = useCallback(
         async (params: ITransactionDialogActionParams) => {
-            const isAdvancedGovernance = values.governanceType === GovernanceType.ADVANCED;
+            const { pluginsMetadata, processorMetadata } = prepareProcessDialogUtils.preparePluginsMetadata(values);
 
-            const pinPluginsMetadataPromises = values.bodies.map((plugin) => {
-                const pluginMetadata = isAdvancedGovernance
-                    ? prepareProcessDialogUtils.preparePluginMetadata(plugin)
-                    : prepareProcessDialogUtils.prepareProcessorMetadata(values);
+            const pinMetadataPromises = pluginsMetadata.map((body) => pinJson({ body }, params));
+            const pluginMetadata = (await Promise.all(pinMetadataPromises)).map(({ IpfsHash }) => IpfsHash);
 
-                return pinJson({ body: pluginMetadata }, params);
-            });
-
-            const pluginMetadata = (await Promise.all(pinPluginsMetadataPromises)).map(({ IpfsHash }) => IpfsHash);
             const metadata: IPrepareProcessMetadata = { plugins: pluginMetadata };
 
-            if (isAdvancedGovernance) {
-                const processorMetadata = prepareProcessDialogUtils.prepareProcessorMetadata(values);
+            if (processorMetadata) {
                 const { IpfsHash: processorMetadataHash } = await pinJson({ body: processorMetadata }, params);
                 metadata.processor = processorMetadataHash;
             }
@@ -123,17 +112,15 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
         const proposalActions = prepareProcessDialogUtils.buildPublishProcessProposalActions(proposalActionParams);
 
         const proposalMetadata = prepareProcessDialogUtils.preparePublishProcessProposalMetadata();
+        const translationNamespace = `app.createDao.publishProcessDialog.${isAdmin ? 'admin' : 'default'}`;
 
+        const txInfo = { title: t(`${translationNamespace}.transactionInfoTitle`), current: 2, total: 2 };
         const params: IPublishProposalDialogParams = {
             proposal: { ...proposalMetadata, resources: [], actions: proposalActions },
             daoId,
             plugin: plugin.meta,
-            translationNamespace: 'app.createDao.publishProcessDialog',
-            transactionInfo: {
-                title: t('app.createDao.publishProcessDialog.transactionInfoTitle'),
-                current: 2,
-                total: 2,
-            },
+            translationNamespace,
+            transactionInfo: txInfo,
         };
         open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
     };
@@ -162,7 +149,11 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
             description={t('app.createDao.prepareProcessDialog.description')}
             submitLabel={t('app.createDao.prepareProcessDialog.button.submit')}
             onSuccess={handlePrepareInstallationSuccess}
-            transactionInfo={transactionInfo}
+            transactionInfo={{
+                title: t('app.createDao.prepareProcessDialog.transactionInfoTitle'),
+                current: 1,
+                total: 2,
+            }}
             stepper={stepper}
             customSteps={customSteps}
             prepareTransaction={handlePrepareTransaction}

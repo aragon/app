@@ -1,4 +1,4 @@
-import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import type { ISetupBodyFormNew } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { DefinitionList, formatterUtils, NumberFormat, Tag } from '@aragon/gov-ui-kit';
@@ -11,7 +11,7 @@ export interface ITokenProcessBodyFieldProps {
     /**
      * The field from the create process form.
      */
-    body: ISetupBodyForm<ITokenSetupGovernanceForm, ITokenSetupMembershipMember, ITokenSetupMembershipForm>;
+    body: ISetupBodyFormNew<ITokenSetupGovernanceForm, ITokenSetupMembershipMember, ITokenSetupMembershipForm>;
     /**
      * Displays / hides some of the token-voting governance settings depending on the process governance type.
      */

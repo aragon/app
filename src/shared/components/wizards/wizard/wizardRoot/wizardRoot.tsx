@@ -38,7 +38,7 @@ export interface IWizardRootProps<TFormData extends FieldValues = FieldValues> {
 }
 
 export const WizardRoot = <TFormData extends FieldValues = FieldValues>(props: IWizardRootProps<TFormData>) => {
-    const { initialSteps = [], children, submitLabel, defaultValues, useDevTool, submitHelpText } = props;
+    const { initialSteps, children, submitLabel, defaultValues, useDevTool, submitHelpText } = props;
 
     const formMethods = useForm<TFormData>({ mode: 'onTouched', defaultValues });
     const { formState, reset, control } = formMethods;
