@@ -1,11 +1,12 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
+import { SetupBodyType } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputContainer, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { ProposalCreationMode, type ICreateProcessFormData } from '../createProcessFormDefinitions';
+import { GovernanceType, ProposalCreationMode, type ICreateProcessFormData } from '../createProcessFormDefinitions';
 
 export interface ICreateProcessFormPermissionProps {}
 
@@ -13,7 +14,26 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     const { t } = useTranslations();
     const { trigger } = useFormContext();
 
-    const processBodies = useWatch<ICreateProcessFormData, 'bodies'>({ name: 'bodies' });
+    const governanceType = useWatch<ICreateProcessFormData, 'governanceType'>({ name: 'governanceType' });
+    const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
+
+    const basicProcessBody = useWatch<ICreateProcessFormData, 'body'>({ name: 'body' });
+    const stages = useWatch<ICreateProcessFormData, 'stages'>({ name: 'stages' });
+
+    const getBodyFormPrefix = (bodyIndex: number, stageIndex?: number) => {
+        const basePrefix = `bodies.${bodyIndex.toString()}`;
+
+        return stageIndex != null ? `stages.${stageIndex.toString()}.${basePrefix}` : basePrefix;
+    };
+
+    const processBodies = useMemo(() => {
+        const processedBodies = isAdvancedGovernance
+            ? stages.flatMap((stage, stageIndex) => stage.bodies.map((body) => ({ ...body, stageIndex })))
+            : [{ ...basicProcessBody, stageIndex: undefined }];
+
+        return processedBodies.filter((body) => body.type === SetupBodyType.NEW);
+    }, [isAdvancedGovernance, stages, basicProcessBody]);
+
     const canBodiesCreateProposals = processBodies.some((body) => body.canCreateProposal);
     const createProposalsError = 'app.createDao.createProcessForm.permissions.proposalCreation.bodies.error';
 
@@ -68,9 +88,9 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                         pluginId={body.plugin}
                         slotId={CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_SETTINGS}
                         body={body}
-                        formPrefix={`bodies.${index.toString()}`}
                         mode={mode}
                         disableCheckbox={processBodies.length === 1}
+                        formPrefix={getBodyFormPrefix(index, body.stageIndex)}
                     />
                 ))}
             </InputContainer>

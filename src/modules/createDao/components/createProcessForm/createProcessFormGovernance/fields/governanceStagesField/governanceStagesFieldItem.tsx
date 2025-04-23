@@ -2,29 +2,22 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, Card, Dropdown, IconType, InputText } from '@aragon/gov-ui-kit';
 import type React from 'react';
-import { useEffect } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
-import {
-    GovernanceType,
-    type ICreateProcessFormData,
-    type ICreateProcessFormStage,
-    ProcessStageType,
-} from '../../../createProcessFormDefinitions';
-import type { IUseBodiesFieldReturn } from '../../hooks';
-import { GovernanceBodiesField } from '../governanceBodiesField';
+import { useWatch } from 'react-hook-form';
+import { type ICreateProcessFormStage, ProcessStageType } from '../../../createProcessFormDefinitions';
 import { GovernanceStageApprovalsField } from '../governanceStageApprovalsField';
+import { GovernanceStageBodiesField } from '../governanceStageBodiesField';
 import { GovernanceStageTimingField } from '../governanceStageTimingField';
 import { GovernanceStageTypeField } from '../governanceStageTypeField';
 
-export interface IGovernanceStageFieldProps extends IUseBodiesFieldReturn {
+export interface IGovernanceStagesFieldItemProps {
     /**
      * Prefix to be prepended to all form fields.
      */
     formPrefix: string;
     /**
-     * Stage to display the details for.
+     * ID of the DAO to setup the stage for.
      */
-    stage: ICreateProcessFormStage;
+    daoId: string;
     /**
      * Current number of stages.
      */
@@ -37,24 +30,14 @@ export interface IGovernanceStageFieldProps extends IUseBodiesFieldReturn {
 
 const nameMaxLength = 40;
 
-export const GovernanceStageField: React.FC<IGovernanceStageFieldProps> = (props) => {
-    const { formPrefix, stage, stagesCount, onDelete, ...bodiesResult } = props;
+export const GovernanceStagesFieldItem: React.FC<IGovernanceStagesFieldItemProps> = (props) => {
+    const { formPrefix, daoId, stagesCount, onDelete } = props;
 
     const { t } = useTranslations();
-    const { trigger } = useFormContext();
+
+    useFormField<Record<string, ICreateProcessFormStage>, typeof formPrefix>(formPrefix);
 
     const stageType = useWatch<Record<string, ICreateProcessFormStage['type']>>({ name: `${formPrefix}.type` });
-
-    const processBodies = useWatch<ICreateProcessFormData, 'bodies'>({ name: 'bodies' });
-    const stageBodies = processBodies.filter((body) => body.stageId === stage.internalId);
-
-    const stageError = 'app.createDao.createProcessForm.governance.stageField.error.requiredBodies';
-    const validateStage = () =>
-        stageType !== ProcessStageType.TIMELOCK && stageBodies.length === 0 ? stageError : undefined;
-
-    const { alert: stageAlert } = useFormField<Record<string, ICreateProcessFormStage>, typeof formPrefix>(formPrefix, {
-        rules: { validate: validateStage },
-    });
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
@@ -67,13 +50,7 @@ export const GovernanceStageField: React.FC<IGovernanceStageFieldProps> = (props
         defaultValue: '',
     });
 
-    // Re-trigger stage required-body validation when user selects timelock stage type or adds a body. Do not trigger
-    // validation on type / stage-bodies change otherwise the component would display the error on mount.
-    useEffect(() => {
-        if (isTimelockStage || stageBodies.length > 0) {
-            void trigger(formPrefix);
-        }
-    }, [trigger, formPrefix, stageType, isTimelockStage, stageBodies.length]);
+    const bodiesLabelContext = isOptimisticStage ? 'veto' : 'normal';
 
     return (
         <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
@@ -85,21 +62,9 @@ export const GovernanceStageField: React.FC<IGovernanceStageFieldProps> = (props
             <GovernanceStageTypeField fieldPrefix={formPrefix} />
             <GovernanceStageTimingField fieldPrefix={`${formPrefix}.timing`} stageType={stageType} />
             {!isTimelockStage && (
-                <GovernanceBodiesField
-                    stageId={stage.internalId}
-                    isOptimisticStage={isOptimisticStage}
-                    governanceType={GovernanceType.ADVANCED}
-                    alert={stageAlert}
-                    {...bodiesResult}
-                />
+                <GovernanceStageBodiesField formPrefix={formPrefix} daoId={daoId} labelContext={bodiesLabelContext} />
             )}
-            {stageBodies.length > 0 && (
-                <GovernanceStageApprovalsField
-                    fieldPrefix={formPrefix}
-                    stageBodiesCount={stageBodies.length}
-                    isOptimisticStage={isOptimisticStage}
-                />
-            )}
+            <GovernanceStageApprovalsField fieldPrefix={formPrefix} isOptimisticStage={isOptimisticStage} />
             {stagesCount > 1 && (
                 <Dropdown.Container
                     constrainContentWidth={false}

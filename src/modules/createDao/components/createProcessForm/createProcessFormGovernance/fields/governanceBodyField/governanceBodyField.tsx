@@ -1,15 +1,18 @@
-import { GovernanceBodiesFieldItemDefault } from '@/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodiesField/governanceBodiesFieldItemDefault';
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
-import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
+import {
+    SetupBodyType,
+    type ISetupBodyForm,
+} from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Accordion, Button, Dropdown, Heading, IconType } from '@aragon/gov-ui-kit';
+import { Accordion, addressUtils, Button, Dropdown, Heading, IconType } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { GovernanceType, type ICreateProcessFormData } from '../../../createProcessFormDefinitions';
+import { GovernanceBodiesFieldItemDefault } from './governanceBodiesFieldItemDefault';
 
-export interface IGovernanceBodiesFieldItemProps {
+export interface IGovernanceBodyFieldProps {
     /**
      * Name of the body field.
      */
@@ -18,10 +21,6 @@ export interface IGovernanceBodiesFieldItemProps {
      * Body to display the details for.
      */
     body: ISetupBodyForm;
-    /**
-     * External body to display the details for.
-     */
-    externalBody?: ISetupBodyForm;
     /**
      * Callback called on edit button click.
      */
@@ -32,11 +31,12 @@ export interface IGovernanceBodiesFieldItemProps {
     onDelete: () => void;
 }
 
-export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps> = (props) => {
-    const { fieldName, body, externalBody, onEdit, onDelete } = props;
+export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) => {
+    const { fieldName, body, onEdit, onDelete } = props;
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
+
     useFormField<Record<string, ISetupBodyForm>, typeof fieldName>(fieldName);
 
     const processName = useWatch<ICreateProcessFormData, 'name'>({ name: 'name' });
@@ -57,24 +57,29 @@ export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps
         <Accordion.Container isMulti={true}>
             <Accordion.Item value={body.internalId}>
                 <Accordion.ItemHeader className="flex flex-col">
-                    <div>
-                        <Heading size="h4">{body.name}</Heading>
-                        {externalBody?.membership.members[0].name && <p>externalBody.membership.members[0].address</p>}
+                    <div className="flex w-full items-center justify-between">
+                        <Heading size="h4">
+                            {body.type === SetupBodyType.NEW ? body.name : addressUtils.truncateAddress(body.address)}
+                        </Heading>
+                        {body.type === SetupBodyType.EXTERNAL && (
+                            <Heading size="h4" className="text-neutral-500">
+                                {addressUtils.truncateAddress(body.address)}
+                            </Heading>
+                        )}
                     </div>
-                    {externalBody && <p>{externalBody.membership.members[0].name}</p>}
+                    {body.type === SetupBodyType.EXTERNAL && <p className="text-neutral-500">External address</p>}
                 </Accordion.ItemHeader>
                 <Accordion.ItemContent className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6">
                     <PluginSingleComponent
                         pluginId={body.plugin}
                         slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}
                         body={body}
-                        externalBody={externalBody}
                         isAdvancedGovernance={isAdvancedGovernance}
                         Fallback={GovernanceBodiesFieldItemDefault}
                     />
                     <div className="flex w-full grow justify-between">
                         <Button className="justify-end" variant="secondary" size="md" onClick={onEdit}>
-                            {t('app.createDao.createProcessForm.governance.bodiesField.action.edit')}
+                            {t('app.createDao.createProcessForm.governance.bodyField.action.edit')}
                         </Button>
                         <Dropdown.Container
                             constrainContentWidth={false}
@@ -86,12 +91,12 @@ export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps
                                     size="md"
                                     iconRight={IconType.DOTS_VERTICAL}
                                 >
-                                    {t('app.createDao.createProcessForm.governance.bodiesField.action.more')}
+                                    {t('app.createDao.createProcessForm.governance.bodyField.action.more')}
                                 </Button>
                             }
                         >
                             <Dropdown.Item onClick={onDelete}>
-                                {t('app.createDao.createProcessForm.governance.bodiesField.action.remove')}
+                                {t('app.createDao.createProcessForm.governance.bodyField.action.remove')}
                             </Dropdown.Item>
                         </Dropdown.Container>
                     </div>

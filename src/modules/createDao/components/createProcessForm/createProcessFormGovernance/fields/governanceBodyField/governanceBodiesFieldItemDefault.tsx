@@ -7,17 +7,11 @@ export interface IGovernanceBodiesFieldItemDefaultProps {
     /**
      * Body to display the details for.
      */
-    body?: ISetupBodyForm;
-    /**
-     * External body details for the voting body.
-     */
-    externalBody?: ISetupBodyForm;
+    body: ISetupBodyForm;
 }
 
 export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldItemDefaultProps> = (props) => {
-    const { body, externalBody } = props;
-
-    const processedBody = body ?? externalBody;
+    const { body } = props;
 
     const { chainId } = useAccount();
 
@@ -25,28 +19,28 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
 
     const { t } = useTranslations();
 
-    if (processedBody == null) {
+    if (body.type === 'NEW') {
         return null;
     }
 
     const bodyAddressLink = buildEntityUrl({
         type: ChainEntityType.ADDRESS,
-        id: processedBody.membership.members[0].address,
+        id: body.address,
         chainId,
     });
 
     return (
         <DefinitionList.Container>
-            {processedBody.membership.members[0].name && (
+            {body.ensName && (
                 <DefinitionList.Item term={t('app.dao.external')}>
                     <Link iconRight={IconType.LINK_EXTERNAL} href={bodyAddressLink} target="_blank">
-                        {processedBody.membership.members[0].name}
+                        {body.ensName}
                     </Link>
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item term={t('app.dao.address')}>
                 <Link iconRight={IconType.LINK_EXTERNAL} href={bodyAddressLink} target="_blank">
-                    {processedBody.membership.members[0].address}
+                    {body.address}
                 </Link>
             </DefinitionList.Item>
         </DefinitionList.Container>

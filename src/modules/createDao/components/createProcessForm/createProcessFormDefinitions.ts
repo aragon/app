@@ -1,5 +1,5 @@
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
-import type { ISetupBodyForm } from '../../dialogs/setupBodyDialog';
+import type { ISetupBodyForm, ISetupBodyFormNew } from '../../dialogs/setupBodyDialog';
 import type { ISetupStageTimingForm } from '../../dialogs/setupStageTimingDialog';
 
 export enum ProposalCreationMode {
@@ -18,7 +18,7 @@ export enum GovernanceType {
     ADVANCED = 'ADVANCED',
 }
 
-export interface ICreateProcessFormData {
+export interface ICreateProcessFormDataBase {
     /**
      * Name of the process.
      */
@@ -36,14 +36,6 @@ export interface ICreateProcessFormData {
      */
     resources: IResourcesInputResource[];
     /**
-     * List of stages of the process.
-     */
-    stages: ICreateProcessFormStage[];
-    /**
-     * List of bodies of the process.
-     */
-    bodies: ISetupBodyForm[];
-    /**
      * Defines who can create proposals for this process.
      */
     proposalCreationMode: ProposalCreationMode;
@@ -52,6 +44,30 @@ export interface ICreateProcessFormData {
      */
     governanceType: GovernanceType;
 }
+
+export interface ICreateProcessFormDataBasic extends ICreateProcessFormDataBase {
+    /**
+     * Basic governance type.
+     */
+    governanceType: GovernanceType.BASIC;
+    /**
+     * Body to be setup on the basic governance process.
+     */
+    body: ISetupBodyFormNew;
+}
+
+export interface ICreateProcessFormDataAdvanced extends ICreateProcessFormDataBase {
+    /**
+     * Advanced governance type.
+     */
+    governanceType: GovernanceType.ADVANCED;
+    /**
+     * Stages of the process.
+     */
+    stages: ICreateProcessFormStage[];
+}
+
+export type ICreateProcessFormData = ICreateProcessFormDataBasic | ICreateProcessFormDataAdvanced;
 
 export interface ICreateProcessFormStage {
     /**
@@ -70,6 +86,10 @@ export interface ICreateProcessFormStage {
      * Values related to the timing of the stage.
      */
     timing: ISetupStageTimingForm;
+    /**
+     * List of bodies of the stage.
+     */
+    bodies: ISetupBodyForm[];
     /**
      * Number of bodies required to veto (for optimistic type) or approve.
      */

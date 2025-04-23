@@ -15,9 +15,17 @@ export const useStepper = <TMeta, TStepId extends string = string>(
     const [steps, setSteps] = useState<Array<IStepperStep<TMeta, TStepId>>>(stepperUtils.getSteps());
     const [activeStep, setActiveStep] = useState<TStepId | undefined>(stepperUtils.getActiveStep());
 
+    const syncActiveStep = useCallback(() => {
+        const newActiveStep = stepperUtils.syncActiveStep();
+        setActiveStep((current) => (newActiveStep != current ? newActiveStep : current));
+    }, [stepperUtils]);
+
     const registerStep = useCallback(
-        (newStep: IStepperStep<TMeta, TStepId>) => setSteps(stepperUtils.addStep(newStep)),
-        [stepperUtils],
+        (newStep: IStepperStep<TMeta, TStepId>) => {
+            setSteps(stepperUtils.addStep(newStep));
+            syncActiveStep();
+        },
+        [stepperUtils, syncActiveStep],
     );
 
     const unregisterStep = useCallback((stepId: TStepId) => setSteps(stepperUtils.removeStep(stepId)), [stepperUtils]);

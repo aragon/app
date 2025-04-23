@@ -1,6 +1,6 @@
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 import type { ProposalCreationMode } from '../components/createProcessForm';
-import type { ISetupBodyForm, ISetupBodyFormMembership } from '../dialogs/setupBodyDialog';
+import type { ISetupBodyFormMembership, ISetupBodyFormNew } from '../dialogs/setupBodyDialog';
 
 export interface IPluginProposalCreationSettingsParams<
     TGovernance = unknown,
@@ -14,7 +14,7 @@ export interface IPluginProposalCreationSettingsParams<
     /**
      * Body to setup the proposal creation params for.
      */
-    body: ISetupBodyForm<TGovernance, TMember, TMembership>;
+    body: ISetupBodyFormNew<TGovernance, TMember, TMembership>;
     /**
      * Current selection for the proposal creation settings.
      */
