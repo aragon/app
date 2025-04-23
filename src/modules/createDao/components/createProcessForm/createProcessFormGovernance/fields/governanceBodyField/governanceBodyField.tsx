@@ -56,17 +56,17 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
     return (
         <Accordion.Container isMulti={true}>
             <Accordion.Item value={body.internalId}>
-                <Accordion.ItemHeader>
+                <Accordion.ItemHeader className="!items-start">
                     <div className="flex w-full flex-col items-start">
                         <div className="flex w-full items-center justify-between">
                             <Heading size="h4">
                                 {body.type === SetupBodyType.NEW
                                     ? body.name
-                                    : (body.ensName ?? addressUtils.truncateAddress(body.address))}
+                                    : (body.external.name ?? addressUtils.truncateAddress(body.external.address))}
                             </Heading>
-                            {body.type === SetupBodyType.EXTERNAL && body.ensName != null && (
+                            {body.type === SetupBodyType.EXTERNAL && body.external.name != null && (
                                 <Heading size="h4" className="!text-neutral-500">
-                                    {addressUtils.truncateAddress(body.address)}
+                                    {addressUtils.truncateAddress(body.external.address)}
                                 </Heading>
                             )}
                         </div>

@@ -1,6 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { AddressInput, addressUtils } from '@aragon/gov-ui-kit';
+import { AddressInput, addressUtils, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import type { ISetupBodyForm } from '../setupBodyDialogDefinitions';
 
@@ -15,9 +15,9 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
         onChange: onReceiverChange,
         value,
         ...addressField
-    } = useFormField<ISetupBodyForm, 'address'>('address', {
+    } = useFormField<ISetupBodyForm, 'external'>('external', {
         label: t('app.createDao.setupBodyDialog.externalAddress.address.label'),
-        rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
+        rules: { required: true, validate: (value) => addressUtils.isAddress(value.address) },
     });
 
     return (
@@ -26,7 +26,16 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
             chainId={1}
             value={addressInput}
             onChange={setAddressInput}
-            onAccept={(value) => onReceiverChange(value?.address)}
+            onAccept={(val) => {
+                if (val?.address) {
+                    const composite: ICompositeAddress = {
+                        address: val.address,
+                        name: val.name,
+                    };
+                    setAddressInput(val.name ?? val.address); // Display ENS or address
+                    onReceiverChange(composite); // Update form state
+                }
+            }}
             {...addressField}
         />
     );

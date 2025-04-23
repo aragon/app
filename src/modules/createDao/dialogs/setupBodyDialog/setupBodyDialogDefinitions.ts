@@ -65,11 +65,7 @@ export interface ISetupBodyFormExternal extends ISetupBodyFormBase {
     /**
      * Address of the existing / external body.
      */
-    address: string;
-    /**
-     * Optional ENS name of the external body.
-     */
-    ensName?: string;
+    external: ICompositeAddress;
 }
 
 export type ISetupBodyForm<

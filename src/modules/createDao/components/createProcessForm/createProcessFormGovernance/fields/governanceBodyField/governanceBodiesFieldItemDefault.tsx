@@ -25,22 +25,22 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
 
     const bodyAddressLink = buildEntityUrl({
         type: ChainEntityType.ADDRESS,
-        id: body.address,
+        id: body.external.address,
         chainId,
     });
 
     return (
         <DefinitionList.Container>
-            {body.ensName && (
+            {body.external.name && (
                 <DefinitionList.Item term={t('app.createDao.createProcessForm.governance.bodyField.default.ens')}>
                     <Link iconRight={IconType.LINK_EXTERNAL} href={bodyAddressLink} target="_blank">
-                        {body.ensName}
+                        {body.external.name}
                     </Link>
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item term={t('app.createDao.createProcessForm.governance.bodyField.default.address')}>
                 <Link iconRight={IconType.LINK_EXTERNAL} href={bodyAddressLink} target="_blank">
-                    {addressUtils.truncateAddress(body.address)}
+                    {addressUtils.truncateAddress(body.external.address)}
                 </Link>
             </DefinitionList.Item>
         </DefinitionList.Container>
