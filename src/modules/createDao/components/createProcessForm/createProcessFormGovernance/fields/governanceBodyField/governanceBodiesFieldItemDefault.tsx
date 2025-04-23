@@ -19,7 +19,7 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
 
     const { t } = useTranslations();
 
-    if (body.type === SetupBodyType.NEW) {
+    if (body.type !== SetupBodyType.EXTERNAL) {
         return null;
     }
 

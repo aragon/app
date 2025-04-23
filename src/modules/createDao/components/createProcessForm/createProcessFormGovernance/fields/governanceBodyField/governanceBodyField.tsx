@@ -56,22 +56,26 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
     return (
         <Accordion.Container isMulti={true}>
             <Accordion.Item value={body.internalId}>
-                <Accordion.ItemHeader className="flex w-full flex-col items-start">
-                    <div className="flex w-full items-center justify-between">
-                        <Heading size="h4">
-                            {body.type === SetupBodyType.NEW ? body.name : addressUtils.truncateAddress(body.address)}
-                        </Heading>
-                        {body.type === SetupBodyType.EXTERNAL && body.ensName != null && (
-                            <Heading size="h4" className="!text-neutral-500">
-                                {addressUtils.truncateAddress(body.address)}
+                <Accordion.ItemHeader>
+                    <div className="flex w-full flex-col items-start">
+                        <div className="flex w-full items-center justify-between">
+                            <Heading size="h4">
+                                {body.type === SetupBodyType.NEW
+                                    ? body.name
+                                    : (body.ensName ?? addressUtils.truncateAddress(body.address))}
                             </Heading>
+                            {body.type === SetupBodyType.EXTERNAL && body.ensName != null && (
+                                <Heading size="h4" className="!text-neutral-500">
+                                    {addressUtils.truncateAddress(body.address)}
+                                </Heading>
+                            )}
+                        </div>
+                        {body.type === SetupBodyType.EXTERNAL && (
+                            <p className="text-neutral-500">
+                                {t('app.createDao.createProcessForm.governance.bodyField.external')}
+                            </p>
                         )}
                     </div>
-                    {body.type === SetupBodyType.EXTERNAL && (
-                        <p className="text-neutral-500">
-                            {t('app.createDao.createProcessForm.governance.bodyField.external')}
-                        </p>
-                    )}
                 </Accordion.ItemHeader>
                 <Accordion.ItemContent className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6">
                     <PluginSingleComponent
