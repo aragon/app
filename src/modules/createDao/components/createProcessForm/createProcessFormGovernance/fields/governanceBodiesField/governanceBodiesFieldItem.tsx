@@ -19,6 +19,10 @@ export interface IGovernanceBodiesFieldItemProps {
      */
     body: ISetupBodyForm;
     /**
+     * External body to display the details for.
+     */
+    externalBody?: ISetupBodyForm;
+    /**
      * Callback called on edit button click.
      */
     onEdit: () => void;
@@ -29,7 +33,7 @@ export interface IGovernanceBodiesFieldItemProps {
 }
 
 export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps> = (props) => {
-    const { fieldName, body, onEdit, onDelete } = props;
+    const { fieldName, body, externalBody, onEdit, onDelete } = props;
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
@@ -52,14 +56,19 @@ export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps
     return (
         <Accordion.Container isMulti={true}>
             <Accordion.Item value={body.internalId}>
-                <Accordion.ItemHeader>
-                    <Heading size="h4">{body.name}</Heading>
+                <Accordion.ItemHeader className="flex flex-col">
+                    <div>
+                        <Heading size="h4">{body.name}</Heading>
+                        {externalBody?.membership.members[0].name && <p>externalBody.membership.members[0].address</p>}
+                    </div>
+                    {externalBody && <p>{externalBody.membership.members[0].name}</p>}
                 </Accordion.ItemHeader>
                 <Accordion.ItemContent className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6">
                     <PluginSingleComponent
                         pluginId={body.plugin}
                         slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}
                         body={body}
+                        externalBody={externalBody}
                         isAdvancedGovernance={isAdvancedGovernance}
                         Fallback={GovernanceBodiesFieldItemDefault}
                     />

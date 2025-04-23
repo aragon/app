@@ -5,13 +5,19 @@ import { useAccount } from 'wagmi';
 
 export interface IGovernanceBodiesFieldItemDefaultProps {
     /**
-     * Account details for the voting body to be added.
+     * Body to display the details for.
      */
-    body: ISetupBodyForm;
+    body?: ISetupBodyForm;
+    /**
+     * External body details for the voting body.
+     */
+    externalBody?: ISetupBodyForm;
 }
 
 export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldItemDefaultProps> = (props) => {
-    const { body } = props;
+    const { body, externalBody } = props;
+
+    const processedBody = body ?? externalBody;
 
     const { chainId } = useAccount();
 
@@ -19,24 +25,28 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
 
     const { t } = useTranslations();
 
+    if (processedBody == null) {
+        return null;
+    }
+
     const bodyAddressLink = buildEntityUrl({
         type: ChainEntityType.ADDRESS,
-        id: body.membership.members[0].address,
+        id: processedBody.membership.members[0].address,
         chainId,
     });
 
     return (
         <DefinitionList.Container>
-            {body.membership.members[0].name && (
+            {processedBody.membership.members[0].name && (
                 <DefinitionList.Item term={t('app.dao.external')}>
                     <Link iconRight={IconType.LINK_EXTERNAL} href={bodyAddressLink} target="_blank">
-                        {body.membership.members[0].name}
+                        {processedBody.membership.members[0].name}
                     </Link>
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item term={t('app.dao.address')}>
                 <Link iconRight={IconType.LINK_EXTERNAL} href={bodyAddressLink} target="_blank">
-                    {body.membership.members[0].address}
+                    {processedBody.membership.members[0].address}
                 </Link>
             </DefinitionList.Item>
         </DefinitionList.Container>
