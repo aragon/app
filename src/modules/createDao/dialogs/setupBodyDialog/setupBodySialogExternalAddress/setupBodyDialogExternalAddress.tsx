@@ -9,8 +9,6 @@ export interface ISetupBodyDialogExternalAddressProps {}
 export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAddressProps> = () => {
     const { t } = useTranslations();
 
-    const [addressInput, setAddressInput] = useState<string | undefined>();
-
     const {
         onChange: onReceiverChange,
         value,
@@ -19,6 +17,8 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
         label: t('app.createDao.setupBodyDialog.externalAddress.address.label'),
         rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
     });
+
+    const [addressInput, setAddressInput] = useState<string | undefined>(value);
 
     return (
         <AddressInput
