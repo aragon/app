@@ -1136,6 +1136,16 @@
         "sppProposalListItem": {
           "stage": "Stage {{stageIndex}}"
         },
+        "sppReportProposalResultDialog": {
+          "button": {
+            "submit": "Submit vote",
+            "success": "View proposal"
+          },
+          "confirmationLabelApprove": "Voting to approve",
+          "confirmationLabelVeto": "Voting to veto",
+          "description": "To submit your vote, confirm the onchain transaction in your wallet.",
+          "title": "Submit vote"
+        },
         "sppStageStatus": {
           "button": {
             "advance": "Advance proposal",
@@ -1152,9 +1162,9 @@
         "sppVotingTerminalBodyVoteDefault": {
           "approve": "Approve proposal",
           "approved": "Approved",
+          "helpText": "If you are an owner of this address you can connect with WalletConnect to vote on this proposal.",
           "veto": "Veto proposal",
-          "vetoed": "Vetoed",
-          "helpText": "If you are an owner of this address you can connect with WalletConnect to vote on this proposal."
+          "vetoed": "Vetoed"
         },
         "sppVotingTerminalStageBodySummaryFooter": {
           "actionRequired": "required to {{action}}",

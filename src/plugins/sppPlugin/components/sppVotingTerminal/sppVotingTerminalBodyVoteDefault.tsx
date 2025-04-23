@@ -4,7 +4,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { Button, IconType } from '@aragon/gov-ui-kit';
-import type { IProposal } from '../../../../modules/governance/api/governanceService';
+import type { ISppProposal } from '../../types';
 
 export interface ISppVotingTerminalBodyVoteDefaultProps {
     /**
@@ -14,7 +14,7 @@ export interface ISppVotingTerminalBodyVoteDefaultProps {
     /**
      * Proposal to submit the vote for.
      */
-    proposal: IProposal;
+    proposal: ISppProposal;
     /**
      *  Defines if the vote is to approve or veto the proposal.
      */
