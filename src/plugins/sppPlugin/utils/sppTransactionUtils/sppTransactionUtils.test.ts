@@ -7,6 +7,7 @@ import {
     generateCreateProcessFormDataAdvanced,
     generateCreateProcessFormStage,
     generateSetupBodyFormData,
+    generateSetupBodyFormExternal,
     generateSetupBodyFormNew,
 } from '@/modules/createDao/testUtils';
 import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
@@ -196,9 +197,10 @@ describe('sppTransaction utils', () => {
         });
 
         it('correctly builds the update rules transaction', () => {
-            const sppAllowedBody = generateSetupBodyFormNew({ internalId: 'body-1', canCreateProposal: true });
-            const sppNotAllowedBody = generateSetupBodyFormNew({ internalId: 'body-2' });
-            const sppStage = generateCreateProcessFormStage({ bodies: [sppAllowedBody, sppNotAllowedBody] });
+            const allowedBody = generateSetupBodyFormNew({ internalId: 'body-1', canCreateProposal: true });
+            const notAllowedBody = generateSetupBodyFormNew({ internalId: 'body-2' });
+            const externalBody = generateSetupBodyFormExternal();
+            const sppStage = generateCreateProcessFormStage({ bodies: [allowedBody, notAllowedBody, externalBody] });
             const values = generateCreateProcessFormDataAdvanced({
                 stages: [sppStage],
                 proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
@@ -252,7 +254,8 @@ describe('sppTransaction utils', () => {
 
         it('correctly builds the update stages transaction', () => {
             const sppBody = generateSetupBodyFormData();
-            const sppStage = generateCreateProcessFormStage({ internalId: '0', bodies: [sppBody] });
+            const externalBody = generateSetupBodyFormExternal({ address: '0xexternal' });
+            const sppStage = generateCreateProcessFormStage({ internalId: '0', bodies: [sppBody, externalBody] });
             const transactionData = '0xupdate-stages';
 
             const timing = {
@@ -273,6 +276,7 @@ describe('sppTransaction utils', () => {
 
             const expectedProcessedBodies = [
                 { addr: pluginAddresses[0], resultType: 1, isManual: false, tryAdvance: true },
+                { addr: externalBody.address, resultType: 1, isManual: true, tryAdvance: true },
             ];
             const expectedProcessedStages = [
                 { bodies: expectedProcessedBodies, ...thresholds, ...timing, cancelable: false, editable: false },
