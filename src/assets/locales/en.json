@@ -30,6 +30,9 @@
           "stats": "Trusted by 7,500+ DAOs and $27B+"
         }
       },
+      "debugPanel": {
+        "title": "App debug"
+      },
       "footer": {
         "copyright": "© {{year}} Aragon",
         "governed": "Governed on",
@@ -317,8 +320,7 @@
       },
       "prepareProcessDialog": {
         "button": {
-          "submit": "Prepare installation",
-          "success": "Finalize installation"
+          "submit": "Prepare installation"
         },
         "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
         "step": {
@@ -345,13 +347,24 @@
         "title": "Publish DAO"
       },
       "publishProcessDialog": {
-        "button": {
-          "submit": "Finalize installation"
+        "admin": {
+          "button": {
+            "submit": "Finalize installation"
+          },
+          "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
+          "title": "Publish governance process",
+          "transactionInfoTitle": "Finalize installation"
         },
-        "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
-        "title": "Publish governance process",
-        "transactionInfoTitle": "Finalize installation"
+        "default": {
+          "button": {
+            "submit": "Propose process"
+          },
+          "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
+          "title": "Publish governance process",
+          "transactionInfoTitle": "Propose process"
+        }
       },
+
       "setupBodyDialog": {
         "a11y": {
           "description": "Create a new voting body for your DAO"
@@ -488,7 +501,7 @@
         "noCodeSetup": {
           "actionLabel": "Create a DAO",
           "subtitle": "Easily deploy a new DAO on Aragon OSx in minutes with our simple, no-code deployment wizard.",
-          "title": "No code setup"
+          "title": "No-code setup"
         },
         "section": {
           "cta": "Getting started",
@@ -824,8 +837,14 @@
           "cancel": "Cancel",
           "select": "Create proposal"
         },
-        "description": "Select the proposal type you want to create.",
-        "title": "Create proposal"
+        "process": {
+          "description": "Select the governance process to use for creating the proposal.",
+          "title": "Select process"
+        },
+        "proposal": {
+          "description": "Select the proposal type you want to create.",
+          "title": "Create proposal"
+        }
       },
       "verifySmartContractDialog": {
         "action": {
@@ -1487,7 +1506,7 @@
               "invalid": "Address is not valid"
             },
             "label": "Member",
-            "placeholder": "ENS or 0x …"
+            "placeholder": "ENS or 0x…"
           },
           "remove": "Remove member"
         }

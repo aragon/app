@@ -26,6 +26,10 @@ export interface ISelectPluginDialogParams {
      * Plugin to preselect.
      */
     initialPlugin?: ITabComponentPlugin<IDaoPlugin>;
+    /**
+     * Variant of the dialog. Used to customize labels.
+     */
+    variant?: 'proposal' | 'process';
 }
 
 export interface ISelectPluginDialogProps extends IDialogComponentProps<ISelectPluginDialogParams> {}
@@ -34,7 +38,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
     const { location } = props;
 
     invariant(location.params != null, 'SelectPluginDialog: params must be set for the dialog to work correctly');
-    const { daoId, excludePluginIds, onPluginSelected, initialPlugin } = location.params;
+    const { daoId, excludePluginIds, onPluginSelected, initialPlugin, variant = 'proposal' } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
@@ -54,8 +58,8 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
 
     return (
         <>
-            <Dialog.Header title={t('app.governance.selectPluginDialog.title')} onClose={close} />
-            <Dialog.Content description={t('app.governance.selectPluginDialog.description')}>
+            <Dialog.Header title={t(`app.governance.selectPluginDialog.${variant}.title`)} onClose={close} />
+            <Dialog.Content description={t(`app.governance.selectPluginDialog.${variant}.description`)}>
                 <div className="flex flex-col gap-2 py-2">
                     {processedDaoPlugins.map((plugin) => (
                         <DataList.Item
