@@ -7,6 +7,7 @@ import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import type { ISppProposal, ISppStagePlugin, ISppSubProposal } from '../../types';
+import { SppVotingTerminalBodyVoteDefault } from './sppVotingTerminalBodyVoteDefault';
 
 export interface ISppVotingTerminalBodyContentProps {
     /**
@@ -76,6 +77,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                                     proposal={processedSubProposal}
                                     daoId={daoId}
                                     isVeto={isVeto}
+                                    Fallback={SppVotingTerminalBodyVoteDefault}
                                 />
                             )}
                             {children}

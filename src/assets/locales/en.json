@@ -1149,6 +1149,13 @@
           "minAdvanceInfo": "until advanceable",
           "minExecuteInfo": "until executable"
         },
+        "sppVotingTerminalBodyVoteDefault": {
+          "approve": "Approve proposal",
+          "approved": "Approved",
+          "veto": "Veto proposal",
+          "vetoed": "Vetoed",
+          "helpText": "If you are an owner of this address you can connect with WalletConnect to vote on this proposal."
+        },
         "sppVotingTerminalStageBodySummaryFooter": {
           "actionRequired": "required to {{action}}",
           "thresholdLabel": "{{count}} {{entityType}}"
