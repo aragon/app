@@ -132,6 +132,9 @@
           }
         },
         "network": {
+          "ethereum-sepolia": {
+            "description": "Recommended for first-time use"
+          },
           "helpText": "The chain you choose is where your tokens and assets are stored.",
           "label": "Select chain",
           "tag": {

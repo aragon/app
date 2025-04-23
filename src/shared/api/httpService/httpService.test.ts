@@ -149,18 +149,20 @@ describe('Http service', () => {
     });
 
     describe('parseQueryParams', () => {
-        it('correctly parses boolean, string, number and null values', () => {
+        it('correctly parses boolean, string, number, null and array values', () => {
             const params = {
                 bool: true,
                 string: 'test',
                 number: 5,
                 null: null,
+                array: ['a', 'b'],
             };
             const expectedResult = new URLSearchParams({
                 bool: params.bool.toString(),
                 string: params.string,
                 number: params.number.toString(),
                 null: 'null',
+                array: params.array.toString(),
             });
             expect(serviceTest['parseQueryParams'](params)).toEqual(expectedResult);
         });

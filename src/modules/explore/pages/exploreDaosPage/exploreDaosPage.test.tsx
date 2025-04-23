@@ -1,3 +1,5 @@
+import type { Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
@@ -40,10 +42,11 @@ describe('<ExploreDaosPage /> component', () => {
         return Component;
     };
 
-    it('prefetches the list of DAOs', async () => {
+    it('prefetches the list of DAOs on mainnet networks', async () => {
+        const networks = (Object.keys(networkDefinitions) as Network[]).filter((n) => !networkDefinitions[n].testnet);
         render(await createTestComponent());
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
-            daoListOptions({ queryParams: { pageSize: 10, page: 1, sort: 'metrics.tvlUSD' } }).queryKey,
+            daoListOptions({ queryParams: { pageSize: 10, page: 1, sort: 'metrics.tvlUSD', networks } }).queryKey,
         );
     });
 
