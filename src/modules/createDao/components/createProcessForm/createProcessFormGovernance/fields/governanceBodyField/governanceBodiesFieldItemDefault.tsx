@@ -1,6 +1,6 @@
-import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { SetupBodyType, type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { ChainEntityType, DefinitionList, IconType, Link, useBlockExplorer } from '@aragon/gov-ui-kit';
+import { addressUtils, ChainEntityType, DefinitionList, IconType, Link, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 
 export interface IGovernanceBodiesFieldItemDefaultProps {
@@ -19,7 +19,7 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
 
     const { t } = useTranslations();
 
-    if (body.type === 'NEW') {
+    if (body.type === SetupBodyType.NEW) {
         return null;
     }
 
@@ -32,15 +32,15 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
     return (
         <DefinitionList.Container>
             {body.ensName && (
-                <DefinitionList.Item term={t('app.dao.external')}>
+                <DefinitionList.Item term={t('app.createDao.createProcessForm.governance.bodyField.default.ens')}>
                     <Link iconRight={IconType.LINK_EXTERNAL} href={bodyAddressLink} target="_blank">
                         {body.ensName}
                     </Link>
                 </DefinitionList.Item>
             )}
-            <DefinitionList.Item term={t('app.dao.address')}>
+            <DefinitionList.Item term={t('app.createDao.createProcessForm.governance.bodyField.default.address')}>
                 <Link iconRight={IconType.LINK_EXTERNAL} href={bodyAddressLink} target="_blank">
-                    {body.address}
+                    {addressUtils.truncateAddress(body.address)}
                 </Link>
             </DefinitionList.Item>
         </DefinitionList.Container>

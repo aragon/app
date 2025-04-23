@@ -189,7 +189,12 @@
               "edit": "Edit",
               "more": "More",
               "remove": "Remove body"
-            }
+            },
+            "default": {
+              "address": "Address",
+              "ens": "ENS name"
+            },
+            "external": "External address"
           },
           "stageApprovalsField": {
             "approve": {
