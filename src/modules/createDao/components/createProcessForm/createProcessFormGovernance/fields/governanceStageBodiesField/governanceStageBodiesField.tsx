@@ -72,6 +72,7 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
                 <div className="flex flex-col gap-3 md:gap-2">
                     {bodies.map((body, index) => (
                         <GovernanceBodyField
+                            daoId={daoId}
                             key={body.id}
                             fieldName={`${formPrefix}.bodies.${index.toString()}`}
                             body={body}

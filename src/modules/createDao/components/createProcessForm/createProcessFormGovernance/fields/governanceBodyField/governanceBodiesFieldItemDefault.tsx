@@ -1,19 +1,29 @@
 import { SetupBodyType, type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { addressUtils, ChainEntityType, DefinitionList, IconType, Link, useBlockExplorer } from '@aragon/gov-ui-kit';
-import { useAccount } from 'wagmi';
 
 export interface IGovernanceBodiesFieldItemDefaultProps {
     /**
      * Body to display the details for.
      */
     body: ISetupBodyForm;
+    /**
+     * ID of the DAO to setup the body for.
+     */
+    daoId: string;
 }
 
 export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldItemDefaultProps> = (props) => {
-    const { body } = props;
+    const { body, daoId } = props;
 
-    const { chainId } = useAccount();
+    const urlParams = { id: daoId };
+    const { data: dao } = useDao({ urlParams });
+
+    const chainId = dao ? networkDefinitions[dao.network].id : undefined;
+
+    console.log('chainId', chainId);
 
     const { buildEntityUrl } = useBlockExplorer();
 

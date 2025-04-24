@@ -18,6 +18,10 @@ export interface IGovernanceBodyFieldProps {
      */
     fieldName: string;
     /**
+     * ID of the DAO to setup the body for.
+     */
+    daoId: string;
+    /**
      * Body to display the details for.
      */
     body: ISetupBodyForm;
@@ -32,7 +36,7 @@ export interface IGovernanceBodyFieldProps {
 }
 
 export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) => {
-    const { fieldName, body, onEdit, onDelete } = props;
+    const { fieldName, daoId, body, onEdit, onDelete } = props;
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
@@ -42,6 +46,9 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
     const processName = useWatch<ICreateProcessFormData, 'name'>({ name: 'name' });
     const governanceType = useWatch<ICreateProcessFormData, 'governanceType'>({ name: 'governanceType' });
     const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
+
+    const bodyName =
+        body.type === SetupBodyType.NEW ? body.name : (body.name ?? addressUtils.truncateAddress(body.address));
 
     // Keep body-name & process-name in sync when setting up a simple governance process. Other metadata (description,
     // process-key, resources) is processed right before pinning the metadata for the simple governance process.
@@ -59,11 +66,7 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
                 <Accordion.ItemHeader>
                     <div className="flex w-full flex-col items-start">
                         <div className="flex w-full items-center justify-between">
-                            <p className="text-base leading-tight text-neutral-800 md:text-lg">
-                                {body.type === SetupBodyType.NEW
-                                    ? body.name
-                                    : (body.name ?? addressUtils.truncateAddress(body.address))}
-                            </p>
+                            <p className="text-base leading-tight text-neutral-800 md:text-lg">{bodyName}</p>
                             {body.type === SetupBodyType.EXTERNAL && body.name != null && (
                                 <p className="text-base leading-tight text-neutral-500 md:text-lg">
                                     {addressUtils.truncateAddress(body.address)}
@@ -81,6 +84,7 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
                     <PluginSingleComponent
                         pluginId={body.plugin}
                         slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}
+                        daoId={daoId}
                         body={body}
                         isAdvancedGovernance={isAdvancedGovernance}
                         Fallback={GovernanceBodiesFieldItemDefault}
