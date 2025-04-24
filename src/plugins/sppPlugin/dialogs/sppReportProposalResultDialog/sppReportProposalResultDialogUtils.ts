@@ -1,14 +1,7 @@
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { encodeFunctionData, type Hex } from 'viem';
-import type { IProposal } from '../../../../modules/governance/api/governanceService';
-import type { IBuildVoteDataParams } from '../../../../modules/governance/types';
+import type { ISppProposal, SppProposalType } from '../../types';
 import { reportProposalResultAbi } from './reportProposalResultAbi';
-
-export enum ResultType {
-    None = 0,
-    Approval = 1,
-    Veto = 2,
-}
 
 export interface IBuildReportProposalResultDataParams {
     /**
@@ -22,25 +15,25 @@ export interface IBuildReportProposalResultDataParams {
     /**
      * The result type being reported (`Approval` or `Veto`)
      */
-    resultType: ResultType;
+    resultType: SppProposalType;
 }
 
 export interface IBuildTransactionParams {
     /**
      * Proposal to submit the vote for.
      */
-    proposal: IProposal;
+    proposal: ISppProposal;
     /**
-     * Vote option selected by the user.
+     * The result type being reported (`Approval` or `Veto`)
      */
-    voteValue?: number;
+    resultType: SppProposalType;
 }
 
 class SppReportProposalResultDialogUtils {
-    buildReportProposalResultData = (params: IBuildVoteDataParams): Hex => {
-        const { proposalIndex } = params;
+    buildReportProposalResultData = (params: IBuildReportProposalResultDataParams): Hex => {
+        const { proposalIndex, stageIndex, resultType } = params;
 
-        const functionArgs = [proposalIndex, false];
+        const functionArgs = [proposalIndex, stageIndex, resultType, false];
         const data = encodeFunctionData({
             abi: reportProposalResultAbi,
             functionName: 'reportProposalResult',
@@ -51,9 +44,13 @@ class SppReportProposalResultDialogUtils {
     };
 
     buildTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
-        const { proposal, voteValue } = params;
+        const { proposal, resultType } = params;
 
-        const buildDataParams: IBuildVoteDataParams = { proposalIndex: proposal.proposalIndex, vote: voteValue };
+        const buildDataParams: IBuildReportProposalResultDataParams = {
+            proposalIndex: proposal.proposalIndex,
+            stageIndex: proposal.stageIndex,
+            resultType,
+        };
         const transactionData = this.buildReportProposalResultData(buildDataParams);
         const transaction = { to: proposal.pluginAddress as Hex, data: transactionData, value: BigInt(0) };
 

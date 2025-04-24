@@ -9,11 +9,11 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { invariant, type VoteIndicator, VoteProposalDataListItemStructure } from '@aragon/gov-ui-kit';
+import { invariant, VoteProposalDataListItemStructure } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
-import type { IProposal } from '../../../../modules/governance/api/governanceService';
 import { proposalUtils } from '../../../../modules/governance/utils/proposalUtils';
+import { type ISppProposal, SppProposalType } from '../../types';
 import { sppReportProposalResultDialogUtils } from './sppReportProposalResultDialogUtils';
 
 export interface ISppReportProposalResultDialogParams {
@@ -22,13 +22,9 @@ export interface ISppReportProposalResultDialogParams {
      */
     daoId: string;
     /**
-     * Vote option.
-     */
-    vote: { value?: number; label: VoteIndicator };
-    /**
      * Proposal to submit the vote for.
      */
-    proposal: IProposal;
+    proposal: ISppProposal;
     /**
      *  Defines if the vote to approve or veto the proposal.
      */
@@ -53,14 +49,17 @@ export const SppReportProposalResultDialog: React.FC<ISppReportProposalResultDia
     const { address } = useAccount();
     invariant(address != null, 'SppReportProposalResultDialog: external wallet must be connected.');
 
-    const { vote, proposal, isVeto, daoId, plugin } = location.params;
+    const { proposal, isVeto, daoId, plugin } = location.params;
 
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
 
     const handlePrepareTransaction = () =>
-        sppReportProposalResultDialogUtils.buildTransaction({ proposal, voteValue: vote.value });
+        sppReportProposalResultDialogUtils.buildTransaction({
+            proposal,
+            resultType: isVeto ? SppProposalType.VETO : SppProposalType.APPROVAL,
+        });
 
     // Fallback to the parent plugin to display the slug of the parent proposal (if exists)
     const pluginAddress = plugin.parentPlugin ?? plugin.address;
@@ -88,7 +87,7 @@ export const SppReportProposalResultDialog: React.FC<ISppReportProposalResultDia
             <VoteProposalDataListItemStructure
                 proposalId={slug}
                 proposalTitle={proposal.title}
-                voteIndicator={vote.label}
+                voteIndicator={isVeto ? 'no' : 'yes'}
                 confirmationLabel={
                     isVeto
                         ? t('app.plugins.spp.sppReportProposalResultDialog.confirmationLabelVeto')
