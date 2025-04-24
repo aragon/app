@@ -1,4 +1,4 @@
-import { backendRequestUtils } from '@/modules/application/utils/backendRequestUtils';
+import { proxyBackendUtils } from '@/modules/application/utils/proxyBackendUtils';
 
-export const GET = backendRequestUtils.request;
-export const POST = backendRequestUtils.request;
+export const GET = proxyBackendUtils.request;
+export const POST = proxyBackendUtils.request;

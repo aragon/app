@@ -4,7 +4,10 @@ import type { IPaginatedResponse } from './domain';
 
 export class AragonBackendService extends HttpService {
     constructor() {
-        super(AragonBackendService.getBaseUrl(), AragonBackendServiceError.fromResponse);
+        // Send the request directly to the backend server when the request is done on the server side, otherwise proxy
+        // it through the /api/backend NextJs route.
+        const baseUrl = typeof window === 'undefined' ? process.env.ARAGON_BACKEND_URL! : '/api/backend';
+        super(baseUrl, AragonBackendServiceError.fromResponse);
     }
 
     getNextPageParams = <TParams extends IRequestQueryParams<object>, TData = unknown>(
@@ -25,15 +28,5 @@ export class AragonBackendService extends HttpService {
                 page: page + 1,
             },
         };
-    };
-
-    // Interact directly to the backend service when the request is done on the server side, otherwise proxy
-    // the request through the /api/backend NextJs route.
-    private static getBaseUrl = (): string => {
-        if (typeof window === 'undefined') {
-            return process.env.ARAGON_BACKEND_URL!;
-        }
-
-        return '/api/backend';
     };
 }
