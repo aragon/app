@@ -20,7 +20,7 @@ export interface IGovernanceBodyFieldProps {
     /**
      * ID of the DAO to setup the body for.
      */
-    daoId: string;
+    daoId?: string;
     /**
      * Body to display the details for.
      */
