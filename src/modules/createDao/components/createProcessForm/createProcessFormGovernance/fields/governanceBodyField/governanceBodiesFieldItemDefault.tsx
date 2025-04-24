@@ -23,8 +23,6 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
 
     const chainId = dao ? networkDefinitions[dao.network].id : undefined;
 
-    console.log('chainId', chainId);
-
     const { buildEntityUrl } = useBlockExplorer();
 
     const { t } = useTranslations();
