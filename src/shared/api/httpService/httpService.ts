@@ -80,7 +80,12 @@ export class HttpService {
         Object.keys(params).forEach((key) => {
             const value = params[key];
 
-            if (typeof value === 'boolean' || typeof value === 'string' || typeof value === 'number') {
+            if (
+                typeof value === 'boolean' ||
+                typeof value === 'string' ||
+                typeof value === 'number' ||
+                Array.isArray(value)
+            ) {
                 parsedParams.append(key, value.toString());
             } else if (typeof value === 'object') {
                 parsedParams.append(key, JSON.stringify(value));
