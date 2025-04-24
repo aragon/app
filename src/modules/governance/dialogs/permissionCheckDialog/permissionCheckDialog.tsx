@@ -4,7 +4,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { DefinitionList, Dialog, IconType, invariant, Link, StateSkeletonBar } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
-import { useAccount } from 'wagmi';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 
 export interface IPermissionCheckDialogParams extends IPermissionCheckGuardParams {
@@ -36,19 +35,13 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
 
     const { t } = useTranslations();
     const { close, updateOptions } = useDialogContext();
-    const { address } = useAccount();
 
-    const checkPermissions =
-        useSlotSingleFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
-            slotId: slotId,
-            pluginId: plugin.subdomain,
-            params: { plugin, ...otherParams },
-        }) ??
-        (!plugin.subdomain
-            ? { hasPermission: plugin.address === address, isLoading: false, settings: [] }
-            : { hasPermission: true, isLoading: false, settings: [] });
+    const checkPermissions = useSlotSingleFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
+        slotId: slotId,
+        pluginId: plugin.subdomain,
+        params: { plugin, ...otherParams },
+    }) ?? { hasPermission: true, isLoading: false, settings: [] };
 
-    console.log('CHECK PERM', address, plugin, checkPermissions);
     const { hasPermission, isLoading, settings } = checkPermissions;
 
     const handleDialogClose = useCallback(() => {
