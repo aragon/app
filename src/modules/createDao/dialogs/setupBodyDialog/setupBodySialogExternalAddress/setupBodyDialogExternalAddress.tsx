@@ -9,8 +9,6 @@ export interface ISetupBodyDialogExternalAddressProps {}
 export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAddressProps> = () => {
     const { t } = useTranslations();
 
-    const [addressInput, setAddressInput] = useState<string | undefined>();
-
     const {
         onChange: onReceiverChange,
         value,
@@ -18,6 +16,11 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
     } = useFormField<ISetupBodyForm, 'external'>('external', {
         label: t('app.createDao.setupBodyDialog.externalAddress.address.label'),
         rules: { required: true, validate: (value) => addressUtils.isAddress(value.address) },
+    });
+
+    const [addressInput, setAddressInput] = useState<string | undefined>(() => {
+        const initial = (value as Partial<ICompositeAddress> | undefined)?.address;
+        return typeof initial === 'string' ? initial : '';
     });
 
     return (
@@ -32,8 +35,8 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
                         address: val.address,
                         name: val.name,
                     };
-                    setAddressInput(val.name ?? val.address); // Display ENS or address
-                    onReceiverChange(composite); // Update form state
+                    setAddressInput(val.name ?? val.address);
+                    onReceiverChange(composite);
                 }
             }}
             {...addressField}
