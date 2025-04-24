@@ -62,16 +62,16 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
                             <Heading size="h4">
                                 {body.type === SetupBodyType.NEW
                                     ? body.name
-                                    : (body.external?.name ?? addressUtils.truncateAddress(body.external?.address))}
+                                    : (body.external.name ?? addressUtils.truncateAddress(body.external.address))}
                             </Heading>
-                            {body.type === SetupBodyType.EXTERNAL && body.external?.name != null && (
+                            {body.type === SetupBodyType.EXTERNAL && body.external.name != null && (
                                 <Heading size="h4" className="!text-neutral-500">
                                     {addressUtils.truncateAddress(body.external.address)}
                                 </Heading>
                             )}
                         </div>
                         {body.type === SetupBodyType.EXTERNAL && (
-                            <p className="text-neutral-500">
+                            <p className="text-sm leading-tight text-neutral-500 md:text-base">
                                 {t('app.createDao.createProcessForm.governance.bodyField.external')}
                             </p>
                         )}

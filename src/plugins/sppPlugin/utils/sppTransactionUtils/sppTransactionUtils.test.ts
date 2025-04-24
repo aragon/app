@@ -276,7 +276,7 @@ describe('sppTransaction utils', () => {
 
             const expectedProcessedBodies = [
                 { addr: pluginAddresses[0], resultType: 1, isManual: false, tryAdvance: true },
-                { addr: externalBody.external?.address, resultType: 1, isManual: true, tryAdvance: true },
+                { addr: externalBody.external.address, resultType: 1, isManual: true, tryAdvance: true },
             ];
             const expectedProcessedStages = [
                 { bodies: expectedProcessedBodies, ...thresholds, ...timing, cancelable: false, editable: false },

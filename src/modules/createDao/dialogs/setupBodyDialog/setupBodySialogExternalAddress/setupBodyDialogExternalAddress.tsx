@@ -15,10 +15,11 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
         ...addressField
     } = useFormField<ISetupBodyForm, 'external'>('external', {
         label: t('app.createDao.setupBodyDialog.externalAddress.address.label'),
-        rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
+        rules: { required: true, validate: (value) => addressUtils.isAddress(value.address) },
+        defaultValue: { address: '' },
     });
 
-    const [addressInput, setAddressInput] = useState<string | undefined>(value?.address ?? undefined);
+    const [addressInput, setAddressInput] = useState<string | undefined>(value.address);
 
     return (
         <AddressInput
