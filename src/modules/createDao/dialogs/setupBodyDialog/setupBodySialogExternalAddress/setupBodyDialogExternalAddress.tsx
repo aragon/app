@@ -18,10 +18,7 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
         rules: { required: true, validate: (value) => addressUtils.isAddress(value.address) },
     });
 
-    const [addressInput, setAddressInput] = useState<string | undefined>(() => {
-        const initial = (value as Partial<ICompositeAddress> | undefined)?.address;
-        return typeof initial === 'string' ? initial : '';
-    });
+    const [addressInput, setAddressInput] = useState<string | undefined>(value.address);
 
     return (
         <AddressInput

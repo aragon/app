@@ -27,7 +27,7 @@ export const generateSetupBodyFormNew = (data?: Partial<ISetupBodyFormNew>): ISe
 export const generateSetupBodyFormExternal = (data?: Partial<ISetupBodyFormExternal>): ISetupBodyFormExternal => ({
     ...generateSetupBodyFormBase(data),
     type: SetupBodyType.EXTERNAL,
-    address: '0x000',
+    external: { address: '0x000' },
     ...data,
 });
 
