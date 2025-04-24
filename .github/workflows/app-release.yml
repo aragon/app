@@ -16,7 +16,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Download infra credentials
-        uses: aragon/github-templates/steps/credential-retrieval@v0.3
+        uses: aragon/github-templates/steps/credential-retrieval@v0.4
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
           op-vault: "kv_app-next_infra"
