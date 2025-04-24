@@ -1,9 +1,9 @@
-import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { Button, IconType } from '@aragon/gov-ui-kit';
+import { SppPluginDialogId } from '../../constants/sppPluginDialogId';
 import type { ISppProposal } from '../../types';
 
 export interface ISppVotingTerminalBodyVoteDefaultProps {
@@ -31,9 +31,9 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
     const voted = false;
 
     const openTransactionDialog = () => {
-        const vote = { label: 'approve' as const };
+        const vote = { label: 'reject' as const };
         const params: IVoteDialogParams = { daoId, proposal, vote, isVeto, plugin };
-        open(GovernanceDialogId.VOTE, { params });
+        open(SppPluginDialogId.REPORT_PROPOSAL_RESULT, { params });
     };
 
     const voteLabel = voted ? (isVeto ? 'vetoed' : 'approved') : isVeto ? 'veto' : 'approve';

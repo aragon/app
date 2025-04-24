@@ -14,9 +14,9 @@ import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import { proposalUtils } from '../../../../modules/governance/utils/proposalUtils';
 import { type ISppProposal, SppProposalType } from '../../types';
-import { sppReportProposalResultDialogUtils } from './sppReportProposalResultDialogUtils';
+import { reportProposalResultDialogUtils } from './reportProposalResultDialogUtils';
 
-export interface ISppReportProposalResultDialogParams {
+export interface IReportProposalResultDialogParams {
     /**
      * ID of the DAO to create the proposal for.
      */
@@ -35,10 +35,9 @@ export interface ISppReportProposalResultDialogParams {
     plugin: IDaoPlugin;
 }
 
-export interface ISppReportProposalResultDialogProps
-    extends IDialogComponentProps<ISppReportProposalResultDialogParams> {}
+export interface IReportProposalResultDialogProps extends IDialogComponentProps<IReportProposalResultDialogParams> {}
 
-export const SppReportProposalResultDialog: React.FC<ISppReportProposalResultDialogProps> = (props) => {
+export const ReportProposalResultDialog: React.FC<IReportProposalResultDialogProps> = (props) => {
     const { location } = props;
 
     const { t } = useTranslations();
@@ -56,7 +55,7 @@ export const SppReportProposalResultDialog: React.FC<ISppReportProposalResultDia
     });
 
     const handlePrepareTransaction = () =>
-        sppReportProposalResultDialogUtils.buildTransaction({
+        reportProposalResultDialogUtils.buildTransaction({
             proposal,
             resultType: isVeto ? SppProposalType.VETO : SppProposalType.APPROVAL,
         });
@@ -87,7 +86,7 @@ export const SppReportProposalResultDialog: React.FC<ISppReportProposalResultDia
             <VoteProposalDataListItemStructure
                 proposalId={slug}
                 proposalTitle={proposal.title}
-                voteIndicator={isVeto ? 'no' : 'yes'}
+                voteIndicator="yes"
                 confirmationLabel={
                     isVeto
                         ? t('app.plugins.spp.sppReportProposalResultDialog.confirmationLabelVeto')

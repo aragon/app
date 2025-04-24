@@ -29,7 +29,7 @@ export interface IBuildTransactionParams {
     resultType: SppProposalType;
 }
 
-class SppReportProposalResultDialogUtils {
+class ReportProposalResultDialogUtils {
     buildReportProposalResultData = (params: IBuildReportProposalResultDataParams): Hex => {
         const { proposalIndex, stageIndex, resultType } = params;
 
@@ -58,4 +58,4 @@ class SppReportProposalResultDialogUtils {
     };
 }
 
-export const sppReportProposalResultDialogUtils = new SppReportProposalResultDialogUtils();
+export const reportProposalResultDialogUtils = new ReportProposalResultDialogUtils();
