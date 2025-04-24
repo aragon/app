@@ -1,3 +1,6 @@
+@import "tailwindcss";
+@source "../../../../../../node_modules/@aragon/gov-ui-kit";
+
 :root {
   --guk-avatar-container-position: relative;
 
