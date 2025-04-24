@@ -43,7 +43,7 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
     const handleVoteClick = () => openTransactionDialog();
 
     return (
-        <div className="w-full">
+        <div className="flex w-full flex-col gap-3">
             <Button
                 onClick={voted ? undefined : handleVoteClick}
                 size="md"
@@ -54,7 +54,7 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
                 {t(`app.plugins.spp.sppVotingTerminalBodyVoteDefault.${voteLabel}`)}
             </Button>
             {!voted && (
-                <p className="text-right text-sm font-normal leading-normal text-neutral-500">
+                <p className="text-center text-sm font-normal leading-normal text-neutral-500 md:text-left">
                     {t('app.plugins.spp.sppVotingTerminalBodyVoteDefault.helpText')}
                 </p>
             )}

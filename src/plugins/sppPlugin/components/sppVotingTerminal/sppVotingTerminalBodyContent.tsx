@@ -60,21 +60,28 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
     const processedSubProposal =
         subProposal != null ? { ...subProposal, title, description, incrementalId } : undefined;
 
+    console.log('plugin', plugin, proposal);
     return (
         <>
-            {processedSubProposal && (
+            {(processedSubProposal || plugin.subdomain == null) && (
                 <>
                     <PluginSingleComponent
                         slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
                         pluginId={plugin.subdomain}
                         proposal={subProposal}
+                        Fallback={({ children }) => (
+                            <>
+                                <h1>HELLO BREAKDOWN TODO</h1>
+                                {children}
+                            </>
+                        )}
                     >
                         <div className="flex flex-col gap-y-4 pt-6 md:pt-8">
                             {canVote && (
                                 <PluginSingleComponent
                                     slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
-                                    pluginId={processedSubProposal.pluginSubdomain}
-                                    proposal={processedSubProposal}
+                                    pluginId={processedSubProposal?.pluginSubdomain ?? plugin.address}
+                                    proposal={processedSubProposal ?? proposal}
                                     daoId={daoId}
                                     isVeto={isVeto}
                                     Fallback={SppVotingTerminalBodyVoteDefault}
