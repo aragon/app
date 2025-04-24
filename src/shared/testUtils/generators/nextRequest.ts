@@ -8,8 +8,9 @@ export const generateNextRequest = (request?: Partial<NextRequest>): NextRequest
     // eslint-disable-next-line @typescript-eslint/no-misused-spread
     ...generateRequest(request),
     cookies: {} as RequestCookies,
-    nextUrl: {} as NextURL,
+    nextUrl: { href: 'http://test.com' } as NextURL,
     page: undefined,
     ua: undefined,
     [INTERNALS]: { cookies: {} as RequestCookies, url: '', nextUrl: {} as NextURL },
+    ...request,
 });

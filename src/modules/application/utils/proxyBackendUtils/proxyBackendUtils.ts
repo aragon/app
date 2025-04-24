@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
-class ProxyBackendUtils {
+export class ProxyBackendUtils {
     private proxyUrl = '/api/backend';
 
     request = async (request: NextRequest) => {
