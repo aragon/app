@@ -1,10 +1,9 @@
-import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, IconType } from '@aragon/gov-ui-kit';
+import { addressUtils, Button, IconType } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
-import type { ISetupBodyFormExternal } from '../../../../modules/createDao/dialogs/setupBodyDialog';
 import { SppPluginDialogId } from '../../constants/sppPluginDialogId';
+import type { IReportProposalResultDialogParams } from '../../dialogs/reportProposalResultDialog';
 import type { ISppProposal } from '../../types';
 
 export interface ISppVotingTerminalBodyVoteDefaultProps {
@@ -17,9 +16,9 @@ export interface ISppVotingTerminalBodyVoteDefaultProps {
      */
     proposal: ISppProposal;
     /**
-     * External body.
+     * External body address.
      */
-    externalBody: ISetupBodyFormExternal;
+    externalAddress: string;
     /**
      *  Defines if the vote is to approve or veto the proposal.
      */
@@ -27,7 +26,7 @@ export interface ISppVotingTerminalBodyVoteDefaultProps {
 }
 
 export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVoteDefaultProps> = (props) => {
-    const { daoId, proposal, isVeto, externalBody } = props;
+    const { daoId, proposal, isVeto, externalAddress } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -36,13 +35,12 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
     const voted = false;
 
     const openTransactionDialog = () => {
-        const vote = { label: 'reject' as const };
-        const params: IVoteDialogParams = { daoId, proposal, vote, isVeto, plugin: {} };
+        const params: IReportProposalResultDialogParams = { daoId, proposal, isVeto };
         open(SppPluginDialogId.REPORT_PROPOSAL_RESULT, { params });
     };
 
     const checkPermissions = () => {
-        if (address !== externalBody.address) {
+        if (!addressUtils.isAddressEqual(address, externalAddress)) {
             open(SppPluginDialogId.INVALID_ADDRESS_CONNECTED, { params: {} });
             return;
         }

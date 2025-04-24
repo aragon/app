@@ -80,11 +80,11 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                             {canVote && (
                                 <PluginSingleComponent
                                     slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
-                                    pluginId={processedSubProposal?.pluginSubdomain ?? plugin.address}
+                                    pluginId={processedSubProposal?.pluginSubdomain ?? 'external'}
                                     proposal={processedSubProposal ?? proposal}
                                     daoId={daoId}
                                     isVeto={isVeto}
-                                    externalBody={processedSubProposal?.pluginSubdomain ? undefined : plugin}
+                                    externalAddress={processedSubProposal?.pluginSubdomain ? undefined : plugin.address}
                                     Fallback={SppVotingTerminalBodyVoteDefault}
                                 />
                             )}
