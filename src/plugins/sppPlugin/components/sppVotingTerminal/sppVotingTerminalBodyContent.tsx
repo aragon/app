@@ -84,6 +84,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                                     proposal={processedSubProposal ?? proposal}
                                     daoId={daoId}
                                     isVeto={isVeto}
+                                    externalBody={processedSubProposal?.pluginSubdomain ? undefined : plugin}
                                     Fallback={SppVotingTerminalBodyVoteDefault}
                                 />
                             )}

@@ -1124,6 +1124,11 @@
           "description": "To advance the proposal to the next stage, confirm the onchain transaction in your wallet.",
           "title": "Advance proposal"
         },
+        "invalidAddressConnectedDialog": {
+          "action": "Close",
+          "description": "Please connect a wallet that is eligible to vote. If you are an owner of this external address you can connect with WalletConnect to vote on this proposal.",
+          "title": "Not eligible to vote"
+        },
         "sppCreateProposalSettingsForm": {
           "startTime": {
             "helpText": "The first stage's voting period begins at this time.",
