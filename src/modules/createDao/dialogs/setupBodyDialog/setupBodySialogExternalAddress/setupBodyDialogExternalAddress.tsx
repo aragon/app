@@ -15,10 +15,10 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
         ...addressField
     } = useFormField<ISetupBodyForm, 'external'>('external', {
         label: t('app.createDao.setupBodyDialog.externalAddress.address.label'),
-        rules: { required: true, validate: (value) => addressUtils.isAddress(value.address) },
+        rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
     });
 
-    const [addressInput, setAddressInput] = useState<string | undefined>(value.address);
+    const [addressInput, setAddressInput] = useState<string | undefined>(value?.address ?? undefined);
 
     return (
         <AddressInput
@@ -26,14 +26,14 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
             chainId={1}
             value={addressInput}
             onChange={setAddressInput}
-            onAccept={(val) => {
-                if (val?.address) {
-                    const composite: ICompositeAddress = {
-                        address: val.address,
-                        name: val.name,
+            onAccept={(value) => {
+                if (value?.address) {
+                    const external: ICompositeAddress = {
+                        address: value.address,
+                        name: value.name,
                     };
-                    setAddressInput(val.name ?? val.address);
-                    onReceiverChange(composite);
+                    setAddressInput(value.name ?? value.address);
+                    onReceiverChange(external);
                 }
             }}
             {...addressField}

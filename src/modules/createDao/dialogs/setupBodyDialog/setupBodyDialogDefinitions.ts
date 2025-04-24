@@ -65,7 +65,7 @@ export interface ISetupBodyFormExternal extends ISetupBodyFormBase {
     /**
      * Address of the existing / external body.
      */
-    external: ICompositeAddress;
+    external?: ICompositeAddress;
 }
 
 export type ISetupBodyForm<
