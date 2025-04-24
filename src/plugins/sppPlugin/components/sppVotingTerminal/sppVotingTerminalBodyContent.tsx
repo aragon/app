@@ -4,6 +4,7 @@ import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { sppSettingsUtils } from '@/plugins/sppPlugin/utils/sppSettingsUtils';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
@@ -45,6 +46,8 @@ const votesPerPage = 6;
 export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyContentProps> = (props) => {
     const { plugin, daoId, subProposal, proposal, canVote, isVeto, children } = props;
 
+    const { t } = useTranslations();
+
     const voteListParams = {
         queryParams: { proposalId: subProposal?.id, pluginAddress: subProposal?.pluginAddress, pageSize: votesPerPage },
     };
@@ -53,7 +56,8 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
         params: { daoId, settings: plugin.settings, pluginAddress: plugin.address },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginId: plugin.subdomain,
-        fallback: () => sppSettingsUtils.getFallbackSettings(plugin.address, plugin.subdomain),
+        fallback: () =>
+            sppSettingsUtils.getFallbackSettings(t, plugin.settings.pluginAddress, plugin.settings.pluginName),
     });
 
     // Set parent name and description on sub-proposal to correctly display the proposal info on the vote dialog.

@@ -1131,6 +1131,10 @@
           }
         },
         "sppGovernanceSettings": {
+          "default": {
+            "address": "Address",
+            "name": "ENS Name"
+          },
           "numberOfStages": "Number of stages"
         },
         "sppProposalList": {
