@@ -159,7 +159,7 @@ class SppTransactionUtils {
             const resultType = type === ProcessStageType.NORMAL ? SppProposalType.APPROVAL : SppProposalType.VETO;
 
             const processedBodies = bodies.map((body) => ({
-                addr: body.type === SetupBodyType.EXTERNAL ? body.external.address : processedBodyAddresses.shift()!,
+                addr: body.type === SetupBodyType.EXTERNAL ? body.address : processedBodyAddresses.shift()!,
                 resultType,
                 tryAdvance: true,
                 isManual: body.type === SetupBodyType.EXTERNAL,

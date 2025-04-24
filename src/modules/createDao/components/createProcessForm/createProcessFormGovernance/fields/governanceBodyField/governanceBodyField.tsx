@@ -62,11 +62,11 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
                             <Heading size="h4">
                                 {body.type === SetupBodyType.NEW
                                     ? body.name
-                                    : (body.external.name ?? addressUtils.truncateAddress(body.external.address))}
+                                    : (body.name ?? addressUtils.truncateAddress(body.address))}
                             </Heading>
-                            {body.type === SetupBodyType.EXTERNAL && body.external.name != null && (
+                            {body.type === SetupBodyType.EXTERNAL && body.name != null && (
                                 <Heading size="h4" className="!text-neutral-500">
-                                    {addressUtils.truncateAddress(body.external.address)}
+                                    {addressUtils.truncateAddress(body.address)}
                                 </Heading>
                             )}
                         </div>

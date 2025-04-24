@@ -254,7 +254,7 @@ describe('sppTransaction utils', () => {
 
         it('correctly builds the update stages transaction', () => {
             const sppBody = generateSetupBodyFormData();
-            const externalBody = generateSetupBodyFormExternal({ external: { address: '0xexternal' } });
+            const externalBody = generateSetupBodyFormExternal({ address: '0xexternal' });
             const sppStage = generateCreateProcessFormStage({ internalId: '0', bodies: [sppBody, externalBody] });
             const transactionData = '0xupdate-stages';
 
@@ -276,7 +276,7 @@ describe('sppTransaction utils', () => {
 
             const expectedProcessedBodies = [
                 { addr: pluginAddresses[0], resultType: 1, isManual: false, tryAdvance: true },
-                { addr: externalBody.external.address, resultType: 1, isManual: true, tryAdvance: true },
+                { addr: externalBody.address, resultType: 1, isManual: true, tryAdvance: true },
             ];
             const expectedProcessedStages = [
                 { bodies: expectedProcessedBodies, ...thresholds, ...timing, cancelable: false, editable: false },
