@@ -1,7 +1,9 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
+import { settingsUtils } from '@/shared/utils/settingsUtils/settingsUtils';
 import { ProposalStatus, ProposalVoting, proposalStatusToVotingStatus } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
@@ -28,6 +30,8 @@ const votesPerPage = 6;
 export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (props) => {
     const { proposal, status, daoId } = props;
 
+    const { t } = useTranslations();
+
     const { address } = useAccount();
 
     const voteListParams = {
@@ -43,6 +47,11 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
         params: { daoId, settings: proposal.settings, pluginAddress: proposal.pluginAddress },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginId: proposal.pluginSubdomain,
+        fallback: () =>
+            settingsUtils.getFallbackSettings({
+                t,
+                settings: { pluginAddress: proposal.settings.pluginAddress, pluginName: proposal.settings.pluginName },
+            }),
     });
 
     return (

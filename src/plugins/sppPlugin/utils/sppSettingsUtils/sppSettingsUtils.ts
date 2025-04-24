@@ -26,28 +26,6 @@ class SppSettingsUtils {
             },
         ];
     };
-
-    getFallbackSettings = (
-        t: TranslationFunction,
-        address: string,
-        ensName?: string,
-    ): IDaoSettingTermAndDefinition[] => {
-        const settings: IDaoSettingTermAndDefinition[] = [];
-
-        if (ensName) {
-            settings.push({
-                term: t('app.plugins.spp.sppGovernanceSettings.default.name'),
-                definition: ensName,
-            });
-        }
-
-        settings.push({
-            term: t('app.plugins.spp.sppGovernanceSettings.default.address'),
-            definition: address,
-        });
-
-        return settings;
-    };
 }
 
 export const sppSettingsUtils = new SppSettingsUtils();
