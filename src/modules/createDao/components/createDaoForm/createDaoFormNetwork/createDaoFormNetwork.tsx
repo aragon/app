@@ -13,7 +13,7 @@ const optimismMainnet = {
     disabled: true,
     testnet: false,
     beta: false,
-    order: 9,
+    order: 8,
 };
 
 export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => {
@@ -42,6 +42,11 @@ export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => 
                     label={name}
                     disabled={disabled}
                     avatar={logo}
+                    description={
+                        key === Network.ETHEREUM_SEPOLIA
+                            ? t(`app.createDao.createDaoForm.network.${key}.description`)
+                            : undefined
+                    }
                 />
             ))}
         </RadioGroup>
