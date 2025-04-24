@@ -60,10 +60,9 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
     const processedSubProposal =
         subProposal != null ? { ...subProposal, title, description, incrementalId } : undefined;
 
-    console.log('plugin', plugin, proposal);
     return (
         <>
-            {(processedSubProposal || plugin.subdomain == null) && (
+            {(!processedSubProposal || !plugin.subdomain) && (
                 <>
                     <PluginSingleComponent
                         slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}

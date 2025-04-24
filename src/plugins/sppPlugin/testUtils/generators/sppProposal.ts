@@ -9,5 +9,6 @@ export const generateSppProposal = (proposal?: Partial<ISppProposal>): ISppPropo
     subProposals: [],
     settings: generateSppPluginSettings(),
     stageExecutions: [],
+    externalBodyResults: [],
     ...proposal,
 });
