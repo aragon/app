@@ -7,6 +7,7 @@ import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import type { ISppProposal, ISppStagePlugin, ISppSubProposal } from '../../types';
+import { SppVotingTerminalBodyBreakdownDefault } from './sppVotingTerminalBodyBreakdownDefault';
 import { SppVotingTerminalBodyVoteDefault } from './sppVotingTerminalBodyVoteDefault';
 
 export interface ISppVotingTerminalBodyContentProps {
@@ -59,21 +60,19 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
     const { title, description, incrementalId } = proposal;
     const processedSubProposal =
         subProposal != null ? { ...subProposal, title, description, incrementalId } : undefined;
-
+    console.log('PASDPOASPDO', plugin, proposal);
     return (
         <>
-            {(!processedSubProposal || !plugin.subdomain) && (
+            {(processedSubProposal != null || !plugin.subdomain) && (
                 <>
                     <PluginSingleComponent
                         slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
                         pluginId={plugin.subdomain}
-                        proposal={subProposal}
-                        Fallback={({ children }) => (
-                            <>
-                                <h1>HELLO BREAKDOWN TODO</h1>
-                                {children}
-                            </>
-                        )}
+                        proposal={subProposal ?? proposal}
+                        externalAddress={processedSubProposal ? undefined : plugin.address}
+                        isVeto={isVeto}
+                        canVote={canVote}
+                        Fallback={SppVotingTerminalBodyBreakdownDefault}
                     >
                         <div className="flex flex-col gap-y-4 pt-6 md:pt-8">
                             {canVote && (

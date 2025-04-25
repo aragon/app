@@ -1167,6 +1167,14 @@
           "minAdvanceInfo": "until advanceable",
           "minExecuteInfo": "until executable"
         },
+        "sppVotingTerminalBodyBreakdownDefault": {
+          "approved": "Approved",
+          "didNotApprove": "Did not approve",
+          "didNotVeto": "Did not veto",
+          "notApprovedYet": "Not approved yet",
+          "notVetoedYet": "Not vetoed yet",
+          "vetoed": "Vetoed"
+        },
         "sppVotingTerminalBodyVoteDefault": {
           "approve": "Approve proposal",
           "approved": "Approved",

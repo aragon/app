@@ -32,9 +32,7 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
     const { open } = useDialogContext();
     const { address } = useAccount();
 
-    const voted = proposal.externalBodyResults.some((result) =>
-        addressUtils.isAddressEqual(result.pluginAddress, externalAddress),
-    );
+    const voted = proposal.result?.some((result) => addressUtils.isAddressEqual(result.pluginAddress, externalAddress));
 
     const openTransactionDialog = () => {
         const params: IReportProposalResultDialogParams = { daoId, proposal, isVeto };
