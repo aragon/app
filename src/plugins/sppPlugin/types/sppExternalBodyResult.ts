@@ -1,6 +1,6 @@
 import type { SppProposalType } from './enum';
 
-export interface ISppExternalBodyResult {
+export interface ISppProposalBodyResult {
     /**
      * External body address.
      */

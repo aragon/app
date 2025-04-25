@@ -1,5 +1,5 @@
 import type { IProposal } from '@/modules/governance/api/governanceService';
-import type { ISppExternalBodyResult } from './sppExternalBodyResult';
+import type { ISppProposalBodyResult } from './sppExternalBodyResult';
 import type { ISppPluginSettings } from './sppPluginSettings';
 import type { ISppProposalExecution } from './sppProposalExecution';
 import type { ISppSubProposal } from './sppSubProposal';
@@ -24,5 +24,5 @@ export interface ISppProposal extends IProposal<ISppPluginSettings> {
     /**
      * External body results. One result per external address/body.
      */
-    result?: ISppExternalBodyResult[];
+    result?: ISppProposalBodyResult[];
 }
