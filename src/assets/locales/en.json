@@ -130,7 +130,7 @@
               "taken": "ENS subdomain is not available"
             },
             "helpText": "This is a custom onchain identifier for your DAO. It can be used in URLs to access your DAO as well as send assets.",
-            "label": "ENS subame"
+            "label": "ENS subname"
           },
           "name": {
             "label": "DAO name"

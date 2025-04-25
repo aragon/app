@@ -41,14 +41,14 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
     const isEthMainnet = networkValue === Network.ETHEREUM_MAINNET;
 
     const validateEnsField = async (value?: string) => {
+        if (!value) {
+            return undefined;
+        }
+
         try {
-            if (!value) {
-                return undefined;
-            }
+            const ensName = `${value}.dao.eth`;
 
-            const ensName = normalize(`${value}.dao.eth`);
-
-            if (`${value}.dao.eth` !== ensName) {
+            if (ensName !== normalize(ensName)) {
                 return 'app.createDao.createDaoForm.metadata.ens.error.invalid';
             }
 
@@ -110,6 +110,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
                     addonPosition="right"
                     maxLength={ensMaxLength}
                     wrapperClassName="w-full md:w-1/2"
+                    isOptional={true}
                     {...ensField}
                 />
             )}

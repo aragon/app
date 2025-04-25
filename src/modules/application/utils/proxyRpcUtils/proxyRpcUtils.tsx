@@ -1,6 +1,6 @@
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export interface IRpcRequestParams {
     /**
@@ -16,7 +16,7 @@ export interface IRpcRequestOptions {
     params: Promise<IRpcRequestParams>;
 }
 
-export class RpcRequestUtils {
+export class ProxyRpcUtils {
     private rpcKey: string;
 
     constructor() {
@@ -27,7 +27,7 @@ export class RpcRequestUtils {
         this.rpcKey = process.env.NEXT_SECRET_RPC_KEY!;
     }
 
-    request = async (request: Request, { params }: IRpcRequestOptions) => {
+    request = async (request: NextRequest, { params }: IRpcRequestOptions) => {
         const { chainId } = await params;
 
         const rpcEndpoint = this.chainIdToRpcEndpoint(chainId);
