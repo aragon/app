@@ -40,7 +40,7 @@ export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalB
     const { t } = useTranslations();
 
     const result = proposal.result?.find((result) => result.pluginAddress === externalAddress);
-    const breakdownStatus: BreakdownStatus = useMemo(() => {
+    const breakdownStatusStyle: BreakdownStatus = useMemo(() => {
         if (result?.resultType === SppProposalType.VETO) {
             return 'failure';
         }
@@ -55,12 +55,12 @@ export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalB
     const voted = !!result?.resultType;
 
     const statusLabelColor =
-        breakdownStatus === 'success'
+        breakdownStatusStyle === 'success'
             ? 'text-success-800'
-            : breakdownStatus === 'failure'
+            : breakdownStatusStyle === 'failure'
               ? 'text-critical-800'
               : 'text-neutral-500';
-    const statusIcon = breakdownStatusToIcon.get(breakdownStatus);
+    const statusIcon = breakdownStatusToIcon.get(breakdownStatusStyle);
 
     const statusLabel = useMemo(() => {
         if (voted) {
