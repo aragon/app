@@ -45,13 +45,13 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
             return undefined;
         }
 
-        const ensName = `${value}.dao.eth`;
-
-        if (ensName !== normalize(ensName)) {
-            return 'app.createDao.createDaoForm.metadata.ens.error.invalid';
-        }
-
         try {
+            const ensName = `${value}.dao.eth`;
+
+            if (ensName !== normalize(ensName)) {
+                return 'app.createDao.createDaoForm.metadata.ens.error.invalid';
+            }
+
             const ensAddress = await getEnsAddress(wagmiConfig, {
                 name: ensName,
                 chainId: 1,
