@@ -61,29 +61,48 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
     const processedSubProposal =
         subProposal != null ? { ...subProposal, title, description, incrementalId } : undefined;
     console.log('PASDPOASPDO', plugin, proposal);
+
+    const submitVoteWrapperClassName = 'flex flex-col gap-y-4 pt-6 md:pt-8';
+
     return (
         <>
-            {(processedSubProposal != null || !plugin.subdomain) && (
+            {/* For external body */}
+            {!plugin.subdomain && processedSubProposal == null && (
+                <SppVotingTerminalBodyBreakdownDefault
+                    proposal={proposal}
+                    isVeto={isVeto}
+                    externalAddress={plugin.address}
+                    canVote={canVote}
+                >
+                    <div className={submitVoteWrapperClassName}>
+                        {canVote && (
+                            <SppVotingTerminalBodyVoteDefault
+                                proposal={proposal}
+                                daoId={daoId}
+                                isVeto={isVeto}
+                                externalAddress={plugin.address}
+                            />
+                        )}
+                        {children}
+                    </div>
+                </SppVotingTerminalBodyBreakdownDefault>
+            )}
+            {/* For standard plugins */}
+            {processedSubProposal != null && (
                 <>
                     <PluginSingleComponent
                         slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
                         pluginId={plugin.subdomain}
-                        proposal={subProposal ?? proposal}
-                        externalAddress={processedSubProposal ? undefined : plugin.address}
-                        isVeto={isVeto}
-                        canVote={canVote}
-                        Fallback={SppVotingTerminalBodyBreakdownDefault}
+                        proposal={subProposal}
                     >
-                        <div className="flex flex-col gap-y-4 pt-6 md:pt-8">
+                        <div className={submitVoteWrapperClassName}>
                             {canVote && (
                                 <PluginSingleComponent
                                     slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
-                                    pluginId={processedSubProposal?.pluginSubdomain ?? 'external'}
-                                    proposal={processedSubProposal ?? proposal}
+                                    pluginId={processedSubProposal.pluginSubdomain}
+                                    proposal={processedSubProposal}
                                     daoId={daoId}
                                     isVeto={isVeto}
-                                    externalAddress={processedSubProposal?.pluginSubdomain ? undefined : plugin.address}
-                                    Fallback={SppVotingTerminalBodyVoteDefault}
                                 />
                             )}
                             {children}
