@@ -7,6 +7,7 @@ import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import type { ISppProposal, ISppStagePlugin, ISppSubProposal } from '../../types';
+import { SppVotingTerminalBodyBreakdownDefault } from './sppVotingTerminalBodyBreakdownDefault';
 import { SppVotingTerminalBodyVoteDefault } from './sppVotingTerminalBodyVoteDefault';
 
 export interface ISppVotingTerminalBodyContentProps {
@@ -59,32 +60,49 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
     const { title, description, incrementalId } = proposal;
     const processedSubProposal =
         subProposal != null ? { ...subProposal, title, description, incrementalId } : undefined;
+    console.log('PASDPOASPDO', plugin, proposal);
+
+    const submitVoteWrapperClassName = 'flex flex-col gap-y-4 pt-6 md:pt-8';
 
     return (
         <>
-            {(!processedSubProposal || !plugin.subdomain) && (
+            {/* For external body */}
+            {!plugin.subdomain && processedSubProposal == null && (
+                <SppVotingTerminalBodyBreakdownDefault
+                    proposal={proposal}
+                    isVeto={isVeto}
+                    externalAddress={plugin.address}
+                    canVote={canVote}
+                >
+                    <div className={submitVoteWrapperClassName}>
+                        {canVote && (
+                            <SppVotingTerminalBodyVoteDefault
+                                proposal={proposal}
+                                daoId={daoId}
+                                isVeto={isVeto}
+                                externalAddress={plugin.address}
+                            />
+                        )}
+                        {children}
+                    </div>
+                </SppVotingTerminalBodyBreakdownDefault>
+            )}
+            {/* For standard plugins */}
+            {processedSubProposal != null && (
                 <>
                     <PluginSingleComponent
                         slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
                         pluginId={plugin.subdomain}
                         proposal={subProposal}
-                        Fallback={({ children }) => (
-                            <>
-                                <h1>HELLO BREAKDOWN TODO</h1>
-                                {children}
-                            </>
-                        )}
                     >
-                        <div className="flex flex-col gap-y-4 pt-6 md:pt-8">
+                        <div className={submitVoteWrapperClassName}>
                             {canVote && (
                                 <PluginSingleComponent
                                     slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
-                                    pluginId={processedSubProposal?.pluginSubdomain ?? 'external'}
-                                    proposal={processedSubProposal ?? proposal}
+                                    pluginId={processedSubProposal.pluginSubdomain}
+                                    proposal={processedSubProposal}
                                     daoId={daoId}
                                     isVeto={isVeto}
-                                    externalAddress={processedSubProposal?.pluginSubdomain ? undefined : plugin.address}
-                                    Fallback={SppVotingTerminalBodyVoteDefault}
                                 />
                             )}
                             {children}
