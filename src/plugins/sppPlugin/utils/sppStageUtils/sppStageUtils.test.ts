@@ -1,4 +1,5 @@
 import { generateProposalAction } from '@/modules/governance/testUtils';
+import { SppResultType } from '@/plugins/sppPlugin/types/sppProposal';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
@@ -244,6 +245,22 @@ describe('SppStageUtils', () => {
             getSlotFunctionSpy.mockReturnValue(() => true);
             const result = sppStageUtils.getSuccessThreshold(proposal, stage);
             expect(result).toBe(1);
+        });
+
+        it('returns correct success threshold based on external results when available', () => {
+            const stage = generateSppStage({ stageIndex: 0 });
+            const proposal = generateSppProposal({
+                results: {
+                    0: {
+                        '0xBody1': SppResultType.APPROVAL,
+                        '0xBody2': SppResultType.NONE,
+                        '0xBody3': SppResultType.APPROVAL,
+                    },
+                },
+            });
+
+            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
+            expect(result).toBe(2);
         });
     });
 

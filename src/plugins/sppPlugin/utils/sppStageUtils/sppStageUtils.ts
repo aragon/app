@@ -1,4 +1,5 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { SppResultType } from '@/plugins/sppPlugin/types/sppProposal';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
@@ -130,6 +131,12 @@ class SppStageUtils {
     };
 
     getSuccessThreshold = (proposal: ISppProposal, stage: ISppStage): number => {
+        const stageResults = proposal.results?.[stage.stageIndex];
+
+        if (stageResults && Object.keys(stageResults).length > 0) {
+            return Object.values(stageResults).filter((result) => result === SppResultType.APPROVAL).length;
+        }
+
         return proposal.subProposals.reduce((count, subProposal) => {
             if (subProposal.stageIndex !== stage.stageIndex) {
                 return count;
