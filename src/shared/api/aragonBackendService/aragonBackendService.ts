@@ -4,7 +4,10 @@ import type { IPaginatedResponse } from './domain';
 
 export class AragonBackendService extends HttpService {
     constructor() {
-        super(process.env.NEXT_PUBLIC_ARAGAGON_BACKEND_URL!, AragonBackendServiceError.fromResponse);
+        // Send the request directly to the backend server when the request is done on the server side, otherwise proxy
+        // it through the /api/backend NextJs route.
+        const baseUrl = typeof window === 'undefined' ? process.env.ARAGON_BACKEND_URL! : '/api/backend';
+        super(baseUrl, AragonBackendServiceError.fromResponse);
     }
 
     getNextPageParams = <TParams extends IRequestQueryParams<object>, TData = unknown>(
