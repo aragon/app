@@ -5,13 +5,13 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
-import { GovernanceType } from '../../components/createProcessForm';
 import {
     generateCreateProcessFormData,
     generateCreateProcessFormDataAdvanced,
     generateCreateProcessFormDataBasic,
     generateCreateProcessFormStage,
     generateSetupBodyFormData,
+    generateSetupBodyFormExternal,
     generateSetupBodyFormNew,
 } from '../../testUtils';
 import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
@@ -24,6 +24,47 @@ describe('prepareProcessDialog utils', () => {
     afterEach(() => {
         cidToHexSpy.mockReset();
         getSlotFunctionSpy.mockReset();
+    });
+
+    describe('preparePluginsMetadata', () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const prepareProcessorMetadataSpy = jest.spyOn(prepareProcessDialogUtils, 'prepareProcessorMetadata' as any);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const preparePluginMetadataSpy = jest.spyOn(prepareProcessDialogUtils, 'preparePluginMetadata' as any);
+
+        afterEach(() => {
+            prepareProcessorMetadataSpy.mockReset();
+            preparePluginMetadataSpy.mockReset();
+        });
+
+        afterAll(() => {
+            prepareProcessorMetadataSpy.mockRestore();
+            preparePluginMetadataSpy.mockRestore();
+        });
+
+        it('returns the processor metadata as plugins metadata for basic governance type', () => {
+            const values = generateCreateProcessFormDataBasic();
+            const processorMetadata = { name: 'processor', description: 'processor-description' };
+            prepareProcessorMetadataSpy.mockReturnValue(processorMetadata);
+            const result = prepareProcessDialogUtils.preparePluginsMetadata(values);
+            expect(result).toEqual({ pluginsMetadata: [processorMetadata] });
+        });
+
+        it('returns the metadata of the processor and the new plugins for advanced governance type', () => {
+            const bodies = [
+                generateSetupBodyFormNew({ name: 'new-1' }),
+                generateSetupBodyFormExternal(),
+                generateSetupBodyFormNew({ name: 'new-2' }),
+            ];
+            const stage = generateCreateProcessFormStage({ bodies });
+            const values = generateCreateProcessFormDataAdvanced({ stages: [stage] });
+            const processorMetadata = { name: 'processor', description: 'processor-description' };
+            const pluginsMetadata = [{ name: 'new-1' }, { name: 'new-2' }];
+            prepareProcessorMetadataSpy.mockReturnValue(processorMetadata);
+            preparePluginMetadataSpy.mockReturnValueOnce(pluginsMetadata[0]).mockReturnValueOnce(pluginsMetadata[1]);
+            const result = prepareProcessDialogUtils.preparePluginsMetadata(values);
+            expect(result).toEqual({ processorMetadata, pluginsMetadata });
+        });
     });
 
     describe('buildPrepareProcessTransaction', () => {
@@ -170,12 +211,37 @@ describe('prepareProcessDialog utils', () => {
             buildPrepareInstallPluginActionDataSpy.mockRestore();
         });
 
-        it('builds the prepare install action of all plugins', () => {
-            const bodies = [
+        it('buld the prepare install action for the single body when governance type is basic', () => {
+            const body = generateSetupBodyFormNew();
+            const values = generateCreateProcessFormDataBasic({ body });
+            const actionData = '0x1';
+            const dao = generateDao();
+            const pluginsMetadata = ['metadata1'];
+            buildPrepareInstallPluginActionDataSpy.mockReturnValue(actionData);
+
+            const params = { values, dao, pluginsMetadata };
+            const result = prepareProcessDialogUtils['buildPrepareInstallPluginsActionData'](params);
+
+            expect(buildPrepareInstallPluginActionDataSpy).toHaveBeenCalledWith({
+                body,
+                dao,
+                metadataCid: pluginsMetadata[0],
+            });
+
+            expect(result).toEqual([actionData]);
+        });
+
+        it('builds the prepare install action of all new plugins for advanced governance processes', () => {
+            const votingPeriod = { days: 7, hours: 0, minutes: 0 };
+            const newBodies = [
                 generateSetupBodyFormData({ internalId: '0x1' }),
                 generateSetupBodyFormData({ internalId: '0x2' }),
             ];
-            const values = generateCreateProcessFormData({ stages: [generateCreateProcessFormStage({ bodies })] });
+            const stage = generateCreateProcessFormStage({
+                bodies: [...newBodies, generateSetupBodyFormNew()],
+                timing: { votingPeriod, earlyStageAdvance: false },
+            });
+            const values = generateCreateProcessFormDataAdvanced({ stages: [stage] });
             const dao = generateDao();
             const pluginsMetadata = ['metadata1', 'metadata2'];
             const actionsData = ['0x1', '0x2'];
@@ -186,29 +252,13 @@ describe('prepareProcessDialog utils', () => {
             const params = { values, dao, pluginsMetadata };
             const result = prepareProcessDialogUtils['buildPrepareInstallPluginsActionData'](params);
 
-            bodies.forEach((body, index) => {
+            newBodies.forEach((body, index) => {
                 const metadataCid = pluginsMetadata[index];
-                const expectedParams = { body, dao, metadataCid };
+                const stageVotingPeriod = votingPeriod;
+                const expectedParams = { body: { ...body, stageIndex: 0 }, dao, metadataCid, stageVotingPeriod };
                 expect(buildPrepareInstallPluginActionDataSpy).toHaveBeenNthCalledWith(index + 1, expectedParams);
             });
             expect(result).toEqual(actionsData);
-        });
-
-        it('passes the stage voting period to the build install action function when bodies are setup inside stages', () => {
-            const votingPeriod = { days: 7, hours: 0, minutes: 0 };
-            const body = generateSetupBodyFormData();
-            const stage = generateCreateProcessFormStage({
-                timing: { votingPeriod, earlyStageAdvance: false },
-                bodies: [body],
-            });
-            const values = generateCreateProcessFormData({ governanceType: GovernanceType.ADVANCED, stages: [stage] });
-
-            const params = { values, dao: generateDao(), pluginsMetadata: [''] };
-            prepareProcessDialogUtils['buildPrepareInstallPluginsActionData'](params);
-
-            expect(buildPrepareInstallPluginActionDataSpy).toHaveBeenCalledWith(
-                expect.objectContaining({ stageVotingPeriod: votingPeriod }),
-            );
         });
     });
 

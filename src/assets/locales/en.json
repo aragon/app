@@ -132,6 +132,9 @@
           }
         },
         "network": {
+          "ethereum-sepolia": {
+            "description": "Recommended for first-time use"
+          },
           "helpText": "The chain you choose is where your tokens and assets are stored.",
           "label": "Select chain",
           "tag": {
@@ -334,8 +337,7 @@
       },
       "prepareProcessDialog": {
         "button": {
-          "submit": "Prepare installation",
-          "success": "Finalize installation"
+          "submit": "Prepare installation"
         },
         "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
         "step": {
@@ -362,13 +364,24 @@
         "title": "Publish DAO"
       },
       "publishProcessDialog": {
-        "button": {
-          "submit": "Finalize installation"
+        "admin": {
+          "button": {
+            "submit": "Finalize installation"
+          },
+          "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
+          "title": "Publish governance process",
+          "transactionInfoTitle": "Finalize installation"
         },
-        "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
-        "title": "Publish governance process",
-        "transactionInfoTitle": "Finalize installation"
+        "default": {
+          "button": {
+            "submit": "Propose process"
+          },
+          "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
+          "title": "Publish governance process",
+          "transactionInfoTitle": "Propose process"
+        }
       },
+
       "setupBodyDialog": {
         "a11y": {
           "description": "Create a new voting body for your DAO"
@@ -851,8 +864,14 @@
           "cancel": "Cancel",
           "select": "Create proposal"
         },
-        "description": "Select the proposal type you want to create.",
-        "title": "Create proposal"
+        "process": {
+          "description": "Select the governance process to use for creating the proposal.",
+          "title": "Select process"
+        },
+        "proposal": {
+          "description": "Select the proposal type you want to create.",
+          "title": "Create proposal"
+        }
       },
       "verifySmartContractDialog": {
         "action": {
@@ -1105,6 +1124,11 @@
           "description": "To advance the proposal to the next stage, confirm the onchain transaction in your wallet.",
           "title": "Advance proposal"
         },
+        "invalidAddressConnectedDialog": {
+          "action": "Close",
+          "description": "Please connect a wallet that is eligible to vote. If you are an owner of this external address you can connect with WalletConnect to vote on this proposal.",
+          "title": "Not eligible to vote"
+        },
         "sppCreateProposalSettingsForm": {
           "startTime": {
             "helpText": "The first stage's voting period begins at this time.",
@@ -1120,6 +1144,16 @@
         "sppProposalListItem": {
           "stage": "Stage {{stageIndex}}"
         },
+        "sppReportProposalResultDialog": {
+          "button": {
+            "submit": "Submit vote",
+            "success": "View proposal"
+          },
+          "confirmationLabelApprove": "Voting to approve",
+          "confirmationLabelVeto": "Voting to veto",
+          "description": "To submit your vote, confirm the onchain transaction in your wallet.",
+          "title": "Submit vote"
+        },
         "sppStageStatus": {
           "button": {
             "advance": "Advance proposal",
@@ -1132,6 +1166,13 @@
           "maxExecuteInfo": "left to execute",
           "minAdvanceInfo": "until advanceable",
           "minExecuteInfo": "until executable"
+        },
+        "sppVotingTerminalBodyVoteDefault": {
+          "approve": "Approve proposal",
+          "approved": "Approved",
+          "helpText": "If you are an owner of this address you can connect with WalletConnect to vote on this proposal.",
+          "veto": "Veto proposal",
+          "vetoed": "Vetoed"
         },
         "sppVotingTerminalStageBodySummaryFooter": {
           "actionRequired": "required to {{action}}",

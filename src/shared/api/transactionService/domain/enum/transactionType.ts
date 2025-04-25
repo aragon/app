@@ -4,4 +4,5 @@ export enum TransactionType {
     PROPOSAL_ADVANCE_STAGE = 'proposalAdvanceStage',
     PROPOSAL_VOTE = 'proposalVote',
     PROPOSAL_EXECUTE = 'proposalExecute',
+    PROPOSAL_REPORT_RESULTS = 'proposalReportResults',
 }

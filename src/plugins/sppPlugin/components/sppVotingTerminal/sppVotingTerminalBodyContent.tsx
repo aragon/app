@@ -7,6 +7,7 @@ import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import type { ISppProposal, ISppStagePlugin, ISppSubProposal } from '../../types';
+import { SppVotingTerminalBodyVoteDefault } from './sppVotingTerminalBodyVoteDefault';
 
 export interface ISppVotingTerminalBodyContentProps {
     /**
@@ -61,21 +62,29 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
 
     return (
         <>
-            {processedSubProposal && (
+            {(!processedSubProposal || !plugin.subdomain) && (
                 <>
                     <PluginSingleComponent
                         slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
                         pluginId={plugin.subdomain}
                         proposal={subProposal}
+                        Fallback={({ children }) => (
+                            <>
+                                <h1>HELLO BREAKDOWN TODO</h1>
+                                {children}
+                            </>
+                        )}
                     >
                         <div className="flex flex-col gap-y-4 pt-6 md:pt-8">
                             {canVote && (
                                 <PluginSingleComponent
                                     slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
-                                    pluginId={processedSubProposal.pluginSubdomain}
-                                    proposal={processedSubProposal}
+                                    pluginId={processedSubProposal?.pluginSubdomain ?? 'external'}
+                                    proposal={processedSubProposal ?? proposal}
                                     daoId={daoId}
                                     isVeto={isVeto}
+                                    externalAddress={processedSubProposal?.pluginSubdomain ? undefined : plugin.address}
+                                    Fallback={SppVotingTerminalBodyVoteDefault}
                                 />
                             )}
                             {children}

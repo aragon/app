@@ -12,7 +12,9 @@
     "paths": {
       "@/*": ["./src/*"],
       "@aragon/gov-ui-kit": ["./src/shared/lib/@aragon/gov-ui-kit"],
-      "@aragon/gov-ui-kit-original": ["./node_modules/@aragon/gov-ui-kit"]
+      "@aragon/gov-ui-kit-original": ["./node_modules/@aragon/gov-ui-kit"],
+      "next/navigation": ["./src/shared/lib/nextNavigation"],
+      "next/navigation-original": ["./node_modules/next/navigation"]
     },
     "plugins": [
       {
