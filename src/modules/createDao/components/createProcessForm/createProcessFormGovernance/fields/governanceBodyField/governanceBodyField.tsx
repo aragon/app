@@ -6,16 +6,21 @@ import {
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Accordion, addressUtils, Button, Dropdown, Heading, IconType } from '@aragon/gov-ui-kit';
+import { Accordion, addressUtils, Button, Dropdown, IconType } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { GovernanceType, type ICreateProcessFormData } from '../../../createProcessFormDefinitions';
+import { GovernanceBodiesFieldItemDefault } from './governanceBodiesFieldItemDefault';
 
 export interface IGovernanceBodyFieldProps {
     /**
      * Name of the body field.
      */
     fieldName: string;
+    /**
+     * ID of the DAO to setup the body for.
+     */
+    daoId?: string;
     /**
      * Body to display the details for.
      */
@@ -31,7 +36,7 @@ export interface IGovernanceBodyFieldProps {
 }
 
 export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) => {
-    const { fieldName, body, onEdit, onDelete } = props;
+    const { fieldName, daoId, body, onEdit, onDelete } = props;
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
@@ -41,6 +46,9 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
     const processName = useWatch<ICreateProcessFormData, 'name'>({ name: 'name' });
     const governanceType = useWatch<ICreateProcessFormData, 'governanceType'>({ name: 'governanceType' });
     const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
+
+    const bodyName =
+        body.type === SetupBodyType.NEW ? body.name : (body.name ?? addressUtils.truncateAddress(body.address));
 
     // Keep body-name & process-name in sync when setting up a simple governance process. Other metadata (description,
     // process-key, resources) is processed right before pinning the metadata for the simple governance process.
@@ -56,16 +64,30 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
         <Accordion.Container isMulti={true}>
             <Accordion.Item value={body.internalId}>
                 <Accordion.ItemHeader>
-                    <Heading size="h4">
-                        {body.type === SetupBodyType.NEW ? body.name : addressUtils.truncateAddress(body.address)}
-                    </Heading>
+                    <div className="flex w-full flex-col items-start">
+                        <div className="flex w-full items-center justify-between">
+                            <p className="text-base leading-tight text-neutral-800 md:text-lg">{bodyName}</p>
+                            {body.type === SetupBodyType.EXTERNAL && body.name != null && (
+                                <p className="text-base leading-tight text-neutral-500 md:text-lg">
+                                    {addressUtils.truncateAddress(body.address)}
+                                </p>
+                            )}
+                        </div>
+                        {body.type === SetupBodyType.EXTERNAL && (
+                            <p className="text-sm leading-tight text-neutral-500 md:text-base">
+                                {t('app.createDao.createProcessForm.governance.bodyField.external')}
+                            </p>
+                        )}
+                    </div>
                 </Accordion.ItemHeader>
                 <Accordion.ItemContent className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6">
                     <PluginSingleComponent
                         pluginId={body.plugin}
                         slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}
+                        daoId={daoId}
                         body={body}
                         isAdvancedGovernance={isAdvancedGovernance}
+                        Fallback={GovernanceBodiesFieldItemDefault}
                     />
                     <div className="flex w-full grow justify-between">
                         <Button className="justify-end" variant="secondary" size="md" onClick={onEdit}>
