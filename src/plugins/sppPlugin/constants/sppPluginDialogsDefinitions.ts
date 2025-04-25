@@ -1,12 +1,12 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { AdvanceStageDialog } from '../dialogs/advanceStageDialog';
+import { SppAdvanceStageDialog } from '../dialogs/sppAdvanceStageDialog';
 import { SppInvalidAddressConnectedDialog } from '../dialogs/sppInvalidAddressConnectedDialog';
 import { SppReportProposalResultDialog } from '../dialogs/sppReportProposalResultDialog';
 import { SppPluginDialogId } from './sppPluginDialogId';
 
 export const sppPluginDialogsDefinitions: Record<SppPluginDialogId, IDialogComponentDefinitions> = {
     [SppPluginDialogId.ADVANCE_STAGE]: {
-        Component: AdvanceStageDialog,
+        Component: SppAdvanceStageDialog,
     },
     [SppPluginDialogId.REPORT_PROPOSAL_RESULT]: {
         Component: SppReportProposalResultDialog,
