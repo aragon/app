@@ -2,12 +2,12 @@ import { type IDialogComponentProps, useDialogContext } from '@/shared/component
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog } from '@aragon/gov-ui-kit';
 
-export interface IInvalidAddressConnectedDialogParams {}
+export interface ISppInvalidAddressConnectedDialogParams {}
 
-export interface IInvalidAddressConnectedDialogProps
-    extends IDialogComponentProps<IInvalidAddressConnectedDialogParams> {}
+export interface ISppInvalidAddressConnectedDialogProps
+    extends IDialogComponentProps<ISppInvalidAddressConnectedDialogParams> {}
 
-export const InvalidAddressConnectedDialog: React.FC<IInvalidAddressConnectedDialogProps> = () => {
+export const SppInvalidAddressConnectedDialog: React.FC<ISppInvalidAddressConnectedDialogProps> = () => {
     const { t } = useTranslations();
     const { close } = useDialogContext();
 

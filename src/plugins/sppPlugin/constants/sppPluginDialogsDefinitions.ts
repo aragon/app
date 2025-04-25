@@ -1,6 +1,6 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { AdvanceStageDialog } from '../dialogs/advanceStageDialog';
-import { InvalidAddressConnectedDialog } from '../dialogs/invalidAddressConnectedDialog';
+import { SppInvalidAddressConnectedDialog } from '../dialogs/sppInvalidAddressConnectedDialog';
 import { SppReportProposalResultDialog } from '../dialogs/sppReportProposalResultDialog';
 import { SppPluginDialogId } from './sppPluginDialogId';
 
@@ -12,6 +12,6 @@ export const sppPluginDialogsDefinitions: Record<SppPluginDialogId, IDialogCompo
         Component: SppReportProposalResultDialog,
     },
     [SppPluginDialogId.INVALID_ADDRESS_CONNECTED]: {
-        Component: InvalidAddressConnectedDialog,
+        Component: SppInvalidAddressConnectedDialog,
     },
 };
