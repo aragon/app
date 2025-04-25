@@ -6,6 +6,10 @@ export interface ISppExternalBodyResult {
      */
     pluginAddress: string;
     /**
+     * Index of the stage on which external body is located.
+     */
+    stageIndex: number;
+    /**
      * Result type being reported (`Approval` or `Veto`)
      */
     resultType: SppProposalType;

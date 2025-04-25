@@ -24,5 +24,5 @@ export interface ISppProposal extends IProposal<ISppPluginSettings> {
     /**
      * External body results. One result per external address/body.
      */
-    result: ISppExternalBodyResult[];
+    result?: ISppExternalBodyResult[];
 }

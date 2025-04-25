@@ -5,6 +5,7 @@ import { useAccount } from 'wagmi';
 import { SppPluginDialogId } from '../../constants/sppPluginDialogId';
 import type { IReportProposalResultDialogParams } from '../../dialogs/reportProposalResultDialog';
 import type { ISppProposal } from '../../types';
+import { sppProposalUtils } from '../../utils/sppProposalUtils';
 
 export interface ISppVotingTerminalBodyVoteDefaultProps {
     /**
@@ -20,19 +21,23 @@ export interface ISppVotingTerminalBodyVoteDefaultProps {
      */
     externalAddress: string;
     /**
+     * Index of the stage on which external body is located.
+     */
+    stageIndex: number;
+    /**
      *  Defines if the vote is to approve or veto the proposal.
      */
     isVeto: boolean;
 }
 
 export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVoteDefaultProps> = (props) => {
-    const { daoId, proposal, isVeto, externalAddress } = props;
+    const { daoId, proposal, isVeto, externalAddress, stageIndex } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const { address } = useAccount();
 
-    const voted = proposal.result?.some((result) => addressUtils.isAddressEqual(result.pluginAddress, externalAddress));
+    const voted = !!sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stageIndex);
 
     const openTransactionDialog = () => {
         const params: IReportProposalResultDialogParams = { daoId, proposal, isVeto };

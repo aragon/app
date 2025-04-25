@@ -3,6 +3,7 @@ import { AvatarIcon, type AvatarIconVariant, IconType, ProposalVotingTab, Tabs }
 import classNames from 'classnames';
 import { useMemo } from 'react';
 import { type ISppProposal, SppProposalType } from '../../types';
+import { sppProposalUtils } from '../../utils/sppProposalUtils';
 
 export interface ISppVotingTerminalBodyBreakdownDefaultProps {
     /**
@@ -13,6 +14,10 @@ export interface ISppVotingTerminalBodyBreakdownDefaultProps {
      * External body address.
      */
     externalAddress: string;
+    /**
+     * Index of the stage on which external body is located.
+     */
+    stageIndex: number;
     /**
      * Defines if the proposal is optimistic.
      */
@@ -36,10 +41,10 @@ const breakdownStatusToIcon = new Map<BreakdownStatus, { icon: IconType; variant
 type BreakdownStatus = 'neutral' | 'success' | 'failure';
 
 export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalBodyBreakdownDefaultProps> = (props) => {
-    const { proposal, externalAddress, isVeto, canVote, children } = props;
+    const { proposal, externalAddress, stageIndex, isVeto, canVote, children } = props;
     const { t } = useTranslations();
 
-    const result = proposal.result?.find((result) => result.pluginAddress === externalAddress);
+    const result = sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stageIndex);
     const breakdownStatusStyle: BreakdownStatus = useMemo(() => {
         if (result?.resultType === SppProposalType.VETO) {
             return 'failure';

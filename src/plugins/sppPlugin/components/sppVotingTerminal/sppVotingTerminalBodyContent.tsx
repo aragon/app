@@ -6,7 +6,7 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
-import type { ISppProposal, ISppStagePlugin, ISppSubProposal } from '../../types';
+import type { ISppProposal, ISppStage, ISppStagePlugin, ISppSubProposal } from '../../types';
 import { SppVotingTerminalBodyBreakdownDefault } from './sppVotingTerminalBodyBreakdownDefault';
 import { SppVotingTerminalBodyVoteDefault } from './sppVotingTerminalBodyVoteDefault';
 
@@ -23,6 +23,10 @@ export interface ISppVotingTerminalBodyContentProps {
      * Sub proposal to display the content for.
      */
     subProposal?: ISppSubProposal;
+    /**
+     * Stage on which sub proposal is created.
+     */
+    stage: ISppStage;
     /**
      * Parent proposal of the stage.
      */
@@ -44,7 +48,7 @@ export interface ISppVotingTerminalBodyContentProps {
 const votesPerPage = 6;
 
 export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyContentProps> = (props) => {
-    const { plugin, daoId, subProposal, proposal, canVote, isVeto, children } = props;
+    const { plugin, daoId, subProposal, stage, proposal, canVote, isVeto, children } = props;
 
     const voteListParams = {
         queryParams: { proposalId: subProposal?.id, pluginAddress: subProposal?.pluginAddress, pageSize: votesPerPage },
@@ -73,6 +77,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                     isVeto={isVeto}
                     externalAddress={plugin.address}
                     canVote={canVote}
+                    stageIndex={stage.stageIndex}
                 >
                     <div className={submitVoteWrapperClassName}>
                         {canVote && (
@@ -81,6 +86,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                                 daoId={daoId}
                                 isVeto={isVeto}
                                 externalAddress={plugin.address}
+                                stageIndex={stage.stageIndex}
                             />
                         )}
                         {children}
