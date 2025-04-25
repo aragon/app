@@ -1,40 +1,61 @@
-import { ProposalStatus } from '@aragon/gov-ui-kit';
-import { DateTime } from 'luxon';
+import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
+import { type ProposalStatus } from '@aragon/gov-ui-kit';
 import { type IMultisigProposal } from '../../types';
 
 class MultisigProposalUtils {
     getProposalStatus = (proposal: IMultisigProposal): ProposalStatus => {
-        const now = DateTime.utc();
+        const isExecuted = proposal.executed.status;
+        const isVetoed = false;
+        const startDate = proposal.startDate;
+        const endDate = proposal.endDate;
+        const paramsMet = this.isApprovalReached(proposal);
+        const hasActions = proposal.actions.length > 0;
+        const canExecuteEarly = paramsMet;
 
-        const startDate = DateTime.fromMillis(proposal.startDate * 1000).toUTC();
-        const endDate = DateTime.fromMillis(proposal.endDate * 1000).toUTC();
+        const status = proposalStatusUtils.getProposalStatus({
+            isExecuted,
+            isVetoed,
+            startDate,
+            endDate,
+            paramsMet,
+            hasActions,
+            executionExpiryDate: endDate,
+            canExecuteEarly,
+        });
 
-        const approvalReached = this.isApprovalReached(proposal);
-        const isSignalingProposal = proposal.actions.length === 0;
+        return status;
 
-        const isExecutable = approvalReached && now <= endDate && !isSignalingProposal;
+        // const now = DateTime.utc();
 
-        if (proposal.executed.status) {
-            return ProposalStatus.EXECUTED;
-        }
+        // const startDate = DateTime.fromMillis(proposal.startDate * 1000).toUTC();
+        // const endDate = DateTime.fromMillis(proposal.endDate * 1000).toUTC();
 
-        if (startDate >= now) {
-            return ProposalStatus.PENDING;
-        }
+        // const approvalReached = this.isApprovalReached(proposal);
+        // const isSignalingProposal = proposal.actions.length === 0;
 
-        if (isExecutable) {
-            return ProposalStatus.EXECUTABLE;
-        }
+        // const isExecutable = approvalReached && now <= endDate && !isSignalingProposal;
 
-        if (now <= endDate) {
-            return ProposalStatus.ACTIVE;
-        }
+        // if (proposal.executed.status) {
+        //     return ProposalStatus.EXECUTED;
+        // }
 
-        if (approvalReached) {
-            return isSignalingProposal ? ProposalStatus.ACCEPTED : ProposalStatus.EXPIRED;
-        }
+        // if (startDate >= now) {
+        //     return ProposalStatus.PENDING;
+        // }
 
-        return ProposalStatus.REJECTED;
+        // if (isExecutable) {
+        //     return ProposalStatus.EXECUTABLE;
+        // }
+
+        // if (now <= endDate) {
+        //     return ProposalStatus.ACTIVE;
+        // }
+
+        // if (approvalReached) {
+        //     return isSignalingProposal ? ProposalStatus.ACCEPTED : ProposalStatus.EXPIRED;
+        // }
+
+        // return ProposalStatus.REJECTED;
     };
 
     isApprovalReached = (proposal: IMultisigProposal): boolean => {

@@ -1,4 +1,5 @@
-import { ProposalStatus } from '@aragon/gov-ui-kit';
+import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
+import { type ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { formatUnits } from 'viem';
 import { DaoTokenVotingMode, VoteOption, type ITokenProposal, type ITokenProposalOptionVotes } from '../../types';
@@ -6,37 +7,50 @@ import { tokenSettingsUtils } from '../tokenSettingsUtils';
 
 class TokenProposalUtils {
     getProposalStatus = (proposal: ITokenProposal): ProposalStatus => {
-        const now = DateTime.utc();
+        //const now = DateTime.utc();
 
-        const startDate = DateTime.fromMillis(proposal.startDate * 1000);
-        const endDate = DateTime.fromMillis(proposal.endDate * 1000);
+        //const startDate = DateTime.fromMillis(proposal.startDate * 1000);
+        //const endDate = DateTime.fromMillis(proposal.endDate * 1000);
 
-        const approvalReached = this.isApprovalReached(proposal);
+        //const approvalReached = this.isApprovalReached(proposal);
         const approvalReachedEarly = this.isApprovalReached(proposal, true);
 
-        const isSignalingProposal = proposal.actions.length === 0;
+        //const isSignalingProposal = proposal.actions.length === 0;
         const isEarlyExecution = proposal.settings.votingMode === DaoTokenVotingMode.EARLY_EXECUTION;
 
-        const isExecutable =
-            ((approvalReached && now >= endDate) || (isEarlyExecution && approvalReachedEarly)) && !isSignalingProposal;
+        // const isExecutable =
+        //     ((approvalReached && now >= endDate) || (isEarlyExecution && approvalReachedEarly)) && !isSignalingProposal;
 
-        if (proposal.executed.status) {
-            return ProposalStatus.EXECUTED;
-        }
+        // if (proposal.executed.status) {
+        //     return ProposalStatus.EXECUTED;
+        // }
 
-        if (startDate >= now) {
-            return ProposalStatus.PENDING;
-        }
+        // if (startDate >= now) {
+        //     return ProposalStatus.PENDING;
+        // }
 
-        if (isExecutable) {
-            return ProposalStatus.EXECUTABLE;
-        }
+        // if (isExecutable) {
+        //     return ProposalStatus.EXECUTABLE;
+        // }
 
-        if (now < endDate) {
-            return ProposalStatus.ACTIVE;
-        }
+        // if (now < endDate) {
+        //     return ProposalStatus.ACTIVE;
+        // }
 
-        return approvalReached && isSignalingProposal ? ProposalStatus.ACCEPTED : ProposalStatus.REJECTED;
+        // return approvalReached && isSignalingProposal ? ProposalStatus.ACCEPTED : ProposalStatus.REJECTED;
+
+        const status = proposalStatusUtils.getProposalStatus({
+            isExecuted: proposal.executed.status,
+            isVetoed: false,
+            startDate: proposal.startDate,
+            endDate: proposal.endDate,
+            paramsMet: isEarlyExecution ? approvalReachedEarly : this.isApprovalReached(proposal),
+            hasActions: proposal.actions.length > 0,
+            executionExpiryDate: proposal.endDate,
+            canExecuteEarly: isEarlyExecution && approvalReachedEarly,
+        });
+
+        return status;
     };
 
     isApprovalReached = (proposal: ITokenProposal, early?: boolean): boolean => {
