@@ -20,7 +20,7 @@ export interface IMultisigSubmitVoteProps {
      */
     proposal: IMultisigProposal;
     /**
-     *  Defines if the vote is to approve or veto the proposal.
+     * Defines if the vote is to approve or veto the proposal.
      */
     isVeto?: boolean;
 }

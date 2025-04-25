@@ -2,6 +2,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, Button, IconType } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
+import { useConnectedWalletGuard } from '../../../../modules/application/hooks/useConnectedWalletGuard';
 import { SppPluginDialogId } from '../../constants/sppPluginDialogId';
 import type { ISppReportProposalResultDialogParams } from '../../dialogs/sppReportProposalResultDialog';
 import type { ISppProposal } from '../../types';
@@ -25,7 +26,7 @@ export interface ISppVotingTerminalBodyVoteDefaultProps {
      */
     stageIndex: number;
     /**
-     *  Defines if the vote is to approve or veto the proposal.
+     * Defines if the vote is to approve or veto the proposal.
      */
     isVeto: boolean;
 }
@@ -37,7 +38,9 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
     const { open } = useDialogContext();
     const { address } = useAccount();
 
-    const voted = !!sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stageIndex);
+    const { check: checkWalletConnection, result: isConnected } = useConnectedWalletGuard();
+
+    const voted = sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stageIndex) != null;
 
     const openTransactionDialog = () => {
         const params: ISppReportProposalResultDialogParams = { daoId, proposal, isVeto };
@@ -54,7 +57,14 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
 
     const voteLabel = voted ? (isVeto ? 'vetoed' : 'approved') : isVeto ? 'veto' : 'approve';
 
-    const handleVoteClick = () => checkPermissions();
+    const handleVoteClick = () => {
+        if (!isConnected) {
+            checkWalletConnection();
+            return;
+        }
+
+        checkPermissions();
+    };
 
     return (
         <div className="flex w-full flex-col gap-3">
