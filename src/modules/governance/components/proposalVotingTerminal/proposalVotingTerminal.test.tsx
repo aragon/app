@@ -65,17 +65,15 @@ describe('<ProposalVotingTerminal /> component', () => {
         useSlotSingleFunctionSpy.mockReturnValue([parsedSettings]);
 
         render(createTestComponent({ daoId, proposal }));
-        expect(useSlotSingleFunctionSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                params: {
-                    daoId,
-                    settings: proposal.settings,
-                    pluginAddress: proposal.pluginAddress,
-                },
-                pluginId: proposal.pluginSubdomain,
-                slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
-            }),
-        );
+        expect(useSlotSingleFunctionSpy).toHaveBeenCalledWith({
+            params: {
+                daoId,
+                settings: proposal.settings,
+                pluginAddress: proposal.pluginAddress,
+            },
+            pluginId: proposal.pluginSubdomain,
+            slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
+        });
         expect(screen.getByText(parsedSettings.term)).toBeInTheDocument();
         expect(screen.getByText(parsedSettings.definition)).toBeInTheDocument();
     });

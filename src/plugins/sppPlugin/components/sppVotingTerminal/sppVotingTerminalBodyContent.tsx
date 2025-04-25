@@ -2,10 +2,10 @@ import { VoteList } from '@/modules/governance/components/voteList';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
+import { sppSettingsUtils } from '@/plugins/sppPlugin/utils/sppSettingsUtils';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { settingsUtils } from '@/shared/utils/settingsUtils/settingsUtils';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import type { ISppProposal, ISppStagePlugin, ISppSubProposal } from '../../types';
@@ -57,9 +57,13 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginId: plugin.subdomain,
         fallback: () =>
-            settingsUtils.getFallbackSettings({
+            sppSettingsUtils.getFallbackSettings({
                 t,
-                settings: { pluginAddress: plugin.settings.pluginAddress, pluginName: plugin.settings.pluginName },
+                settings: {
+                    pluginAddress: plugin.settings.pluginAddress,
+                    pluginName: plugin.settings.pluginName,
+                    stages: [],
+                },
             }),
     });
 

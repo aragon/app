@@ -26,6 +26,27 @@ class SppSettingsUtils {
             },
         ];
     };
+
+    getFallbackSettings = (params: ISppSettingsParseParams): IDaoSettingTermAndDefinition[] => {
+        const { settings, t } = params;
+        const { pluginAddress, pluginName } = settings;
+
+        const fallbackSettings: IDaoSettingTermAndDefinition[] = [];
+
+        if (pluginName) {
+            fallbackSettings.push({
+                term: t('app.plugins.spp.sppGovernanceSettings.default.name'),
+                definition: pluginName,
+            });
+        }
+
+        fallbackSettings.push({
+            term: t('app.plugins.spp.sppGovernanceSettings.default.address'),
+            definition: pluginAddress,
+        });
+
+        return fallbackSettings;
+    };
 }
 
 export const sppSettingsUtils = new SppSettingsUtils();
