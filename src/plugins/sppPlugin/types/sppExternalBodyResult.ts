@@ -8,7 +8,7 @@ export interface ISppProposalBodyResult {
     /**
      * Index of the stage on which external body is located.
      */
-    stageIndex: number;
+    stage: number;
     /**
      * Result type being reported (`Approval` or `Veto`)
      */

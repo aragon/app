@@ -53,9 +53,9 @@ class SppProposalUtils {
         );
 
     getExternalBodyResult = (proposal: ISppProposal, externalAddress: string, stageIndex: number) => {
-        return proposal.result?.find(
+        return proposal.results?.find(
             (result) =>
-                addressUtils.isAddressEqual(result.pluginAddress, externalAddress) && result.stageIndex === stageIndex,
+                addressUtils.isAddressEqual(result.pluginAddress, externalAddress) && result.stage === stageIndex,
         );
     };
 }

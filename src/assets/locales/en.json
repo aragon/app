@@ -907,10 +907,8 @@
           "submit": "Submit vote",
           "success": "View proposal"
         },
-        "confirmationLabel": {
-          "approve": "Voting to approve",
-          "veto": "Voting to veto"
-        },
+        "confirmationLabelApprove": "Voting to approve",
+        "confirmationLabelVeto": "Voting to veto",
         "description": "To submit your vote, confirm the onchain transaction in your wallet.",
         "title": "Submit vote"
       },
@@ -1156,8 +1154,10 @@
             "submit": "Submit vote",
             "success": "View proposal"
           },
-          "confirmationLabelApprove": "Voting to approve",
-          "confirmationLabelVeto": "Voting to veto",
+          "confirmationLabel": {
+            "approve": "Voting to approve",
+            "veto": "Voting to veto"
+          },
           "description": "To submit your vote, confirm the onchain transaction in your wallet.",
           "title": "Submit vote"
         },
