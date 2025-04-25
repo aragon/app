@@ -1,4 +1,4 @@
-export const reportProposalResultAbi = [
+export const sppReportProposalResultAbi = [
     {
         type: 'function',
         name: 'reportProposalResult',

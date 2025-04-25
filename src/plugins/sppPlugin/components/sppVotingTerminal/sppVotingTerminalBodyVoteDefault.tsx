@@ -3,7 +3,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, Button, IconType } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import { SppPluginDialogId } from '../../constants/sppPluginDialogId';
-import type { IReportProposalResultDialogParams } from '../../dialogs/reportProposalResultDialog';
+import type { ISppReportProposalResultDialogParams } from '../../dialogs/sppReportProposalResultDialog';
 import type { ISppProposal } from '../../types';
 import { sppProposalUtils } from '../../utils/sppProposalUtils';
 
@@ -40,7 +40,7 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
     const voted = !!sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stageIndex);
 
     const openTransactionDialog = () => {
-        const params: IReportProposalResultDialogParams = { daoId, proposal, isVeto };
+        const params: ISppReportProposalResultDialogParams = { daoId, proposal, isVeto };
         open(SppPluginDialogId.REPORT_PROPOSAL_RESULT, { params });
     };
 

@@ -1,7 +1,7 @@
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { encodeFunctionData, type Hex } from 'viem';
 import type { ISppProposal, SppProposalType } from '../../types';
-import { reportProposalResultAbi } from './reportProposalResultAbi';
+import { sppReportProposalResultAbi } from './sppReportProposalResultAbi';
 
 export interface IBuildReportProposalResultDataParams {
     /**
@@ -29,13 +29,13 @@ export interface IBuildTransactionParams {
     resultType: SppProposalType;
 }
 
-class ReportProposalResultDialogUtils {
+class SppReportProposalResultDialogUtils {
     buildReportProposalResultData = (params: IBuildReportProposalResultDataParams): Hex => {
         const { proposalIndex, stageIndex, resultType } = params;
 
         const functionArgs = [proposalIndex, stageIndex, resultType, false];
         const data = encodeFunctionData({
-            abi: reportProposalResultAbi,
+            abi: sppReportProposalResultAbi,
             functionName: 'reportProposalResult',
             args: functionArgs,
         });
@@ -58,4 +58,4 @@ class ReportProposalResultDialogUtils {
     };
 }
 
-export const reportProposalResultDialogUtils = new ReportProposalResultDialogUtils();
+export const sppReportProposalResultDialogUtils = new SppReportProposalResultDialogUtils();

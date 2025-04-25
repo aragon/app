@@ -13,9 +13,9 @@ import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import { proposalUtils } from '../../../../modules/governance/utils/proposalUtils';
 import { type ISppProposal, SppProposalType } from '../../types';
-import { reportProposalResultDialogUtils } from './reportProposalResultDialogUtils';
+import { sppReportProposalResultDialogUtils } from './sppReportProposalResultDialogUtils';
 
-export interface IReportProposalResultDialogParams {
+export interface ISppReportProposalResultDialogParams {
     /**
      * ID of the DAO to create the proposal for.
      */
@@ -30,9 +30,10 @@ export interface IReportProposalResultDialogParams {
     isVeto?: boolean;
 }
 
-export interface IReportProposalResultDialogProps extends IDialogComponentProps<IReportProposalResultDialogParams> {}
+export interface ISppReportProposalResultDialogProps
+    extends IDialogComponentProps<ISppReportProposalResultDialogParams> {}
 
-export const ReportProposalResultDialog: React.FC<IReportProposalResultDialogProps> = (props) => {
+export const SppReportProposalResultDialog: React.FC<ISppReportProposalResultDialogProps> = (props) => {
     const { location } = props;
 
     const { t } = useTranslations();
@@ -50,7 +51,7 @@ export const ReportProposalResultDialog: React.FC<IReportProposalResultDialogPro
     });
 
     const handlePrepareTransaction = () =>
-        reportProposalResultDialogUtils.buildTransaction({
+        sppReportProposalResultDialogUtils.buildTransaction({
             proposal,
             resultType: isVeto ? SppProposalType.VETO : SppProposalType.APPROVAL,
         });
