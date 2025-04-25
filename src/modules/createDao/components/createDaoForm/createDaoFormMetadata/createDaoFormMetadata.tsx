@@ -110,6 +110,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
                     addonPosition="right"
                     maxLength={ensMaxLength}
                     wrapperClassName="w-full md:w-1/2"
+                    isOptional={true}
                     {...ensField}
                 />
             )}
