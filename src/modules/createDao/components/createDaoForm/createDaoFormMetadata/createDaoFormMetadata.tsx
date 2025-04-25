@@ -1,8 +1,12 @@
+import { wagmiConfig } from '@/modules/application/constants/wagmi';
+import { Network } from '@/shared/api/daoService';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputFileAvatar, InputText, TextArea } from '@aragon/gov-ui-kit';
 import { useWatch } from 'react-hook-form';
+import { normalize } from 'viem/ens';
+import { getEnsAddress } from 'wagmi/actions';
 import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 
 export interface ICreateDaoFormMetadataProps {
@@ -16,6 +20,7 @@ const nameMaxLength = 128;
 const descriptionMaxLength = 480;
 const maxAvatarFileSize = 1 * 1024 * 1024; // 1 MB in bytes
 const maxAvatarDimension = 1024;
+const ensMaxLength = 18;
 
 export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (props) => {
     const { fieldPrefix } = props;
@@ -28,6 +33,46 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
         rules: { required: true, maxLength: nameMaxLength },
         trimOnBlur: true,
         defaultValue: '',
+    });
+
+    // Watch network field to decide whether or not to show ENS field
+    const networkFieldName = fieldPrefix ? `${fieldPrefix}.network` : 'network';
+    const networkValue = useWatch<Record<string, ICreateDaoFormData['network']>>({ name: networkFieldName });
+    const isEthMainnet = networkValue === Network.ETHEREUM_MAINNET;
+
+    const validateEnsField = async (value?: string) => {
+        if (!value) {
+            return undefined;
+        }
+
+        try {
+            const ensName = `${value}.dao.eth`;
+
+            if (ensName !== normalize(ensName)) {
+                return 'app.createDao.createDaoForm.metadata.ens.error.invalid';
+            }
+
+            const ensAddress = await getEnsAddress(wagmiConfig, {
+                name: ensName,
+                chainId: 1,
+            });
+
+            return ensAddress ? 'app.createDao.createDaoForm.metadata.ens.error.taken' : undefined;
+        } catch {
+            return 'app.createDao.createDaoForm.metadata.ens.error.invalid';
+        }
+    };
+
+    const {
+        value: ensValue,
+        onChange: onChangeEnsField,
+        ...ensField
+    } = useFormField<ICreateDaoFormData, 'ens'>('ens', {
+        label: t('app.createDao.createDaoForm.metadata.ens.label'),
+        fieldPrefix,
+        trimOnBlur: true,
+        defaultValue: '',
+        rules: { maxLength: ensMaxLength, validate: validateEnsField },
     });
 
     const { value, ...avatarField } = useFormField<ICreateDaoFormData, 'avatar'>('avatar', {
@@ -54,6 +99,21 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
     return (
         <div className="flex flex-col gap-10">
             <InputText maxLength={nameMaxLength} {...nameField} />
+            {isEthMainnet && (
+                <InputText
+                    value={ensValue}
+                    onChange={(e) => {
+                        onChangeEnsField(e.target.value.toLowerCase());
+                    }}
+                    helpText={t('app.createDao.createDaoForm.metadata.ens.helpText')}
+                    addon=".dao.eth"
+                    addonPosition="right"
+                    maxLength={ensMaxLength}
+                    wrapperClassName="w-full md:w-1/2"
+                    isOptional={true}
+                    {...ensField}
+                />
+            )}
             <InputFileAvatar
                 value={avatarValue}
                 helpText={t('app.createDao.createDaoForm.metadata.avatar.helpText')}
