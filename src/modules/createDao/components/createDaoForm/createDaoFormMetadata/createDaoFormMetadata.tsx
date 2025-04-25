@@ -41,17 +41,17 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
     const isEthMainnet = networkValue === Network.ETHEREUM_MAINNET;
 
     const validateEnsField = async (value?: string) => {
+        if (!value) {
+            return undefined;
+        }
+
+        const ensName = `${value}.dao.eth`;
+
+        if (ensName !== normalize(ensName)) {
+            return 'app.createDao.createDaoForm.metadata.ens.error.invalid';
+        }
+
         try {
-            if (!value) {
-                return undefined;
-            }
-
-            const ensName = normalize(`${value}.dao.eth`);
-
-            if (`${value}.dao.eth` !== ensName) {
-                return 'app.createDao.createDaoForm.metadata.ens.error.invalid';
-            }
-
             const ensAddress = await getEnsAddress(wagmiConfig, {
                 name: ensName,
                 chainId: 1,
