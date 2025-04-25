@@ -25,7 +25,7 @@ export interface IReportProposalResultDialogParams {
      */
     proposal: ISppProposal;
     /**
-     *  Defines if the vote to approve or veto the proposal.
+     * Defines if the vote to approve or veto the proposal.
      */
     isVeto?: boolean;
 }
