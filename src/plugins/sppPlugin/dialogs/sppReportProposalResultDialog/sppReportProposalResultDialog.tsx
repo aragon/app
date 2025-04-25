@@ -60,6 +60,7 @@ export const SppReportProposalResultDialog: React.FC<ISppReportProposalResultDia
     const processedPlugin = useDaoPlugins({ daoId, pluginAddress, includeSubPlugins: true })?.[0];
 
     const slug = proposalUtils.getProposalSlug(proposal.incrementalId, processedPlugin?.meta);
+    const confirmationContext = isVeto ? 'veto' : 'approve';
 
     return (
         <TransactionDialog
@@ -80,11 +81,9 @@ export const SppReportProposalResultDialog: React.FC<ISppReportProposalResultDia
                 proposalId={slug}
                 proposalTitle={proposal.title}
                 voteIndicator="yes"
-                confirmationLabel={
-                    isVeto
-                        ? t('app.plugins.spp.sppReportProposalResultDialog.confirmationLabelVeto')
-                        : t('app.plugins.spp.sppReportProposalResultDialog.confirmationLabelApprove')
-                }
+                confirmationLabel={t(
+                    `app.plugins.spp.sppReportProposalResultDialog.confirmationLabel.${confirmationContext}`,
+                )}
             />
         </TransactionDialog>
     );

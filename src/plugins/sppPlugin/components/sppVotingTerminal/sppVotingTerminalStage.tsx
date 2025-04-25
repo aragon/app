@@ -107,6 +107,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         proposal={proposal}
                         canVote={canVote}
                         isVeto={isVeto}
+                        stage={stage}
                     >
                         {isSingleBody && <SppStageStatus proposal={proposal} stage={stage} daoId={daoId} />}
                     </SppVotingTerminalBodyContent>
