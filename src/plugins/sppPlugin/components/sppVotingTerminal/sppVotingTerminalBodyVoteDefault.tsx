@@ -1,6 +1,7 @@
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, Button, IconType } from '@aragon/gov-ui-kit';
+import { useEffect, useRef } from 'react';
 import { useAccount } from 'wagmi';
 import { useConnectedWalletGuard } from '../../../../modules/application/hooks/useConnectedWalletGuard';
 import { SppPluginDialogId } from '../../constants/sppPluginDialogId';
@@ -37,8 +38,15 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const { address } = useAccount();
+    const latestAddress = useRef(address);
 
-    const { check: checkWalletConnection, result: isConnected } = useConnectedWalletGuard();
+    useEffect(() => {
+        // Using latestAddress ref to avoid closure issues with capturing stale address state.
+        // This ensures checkPermissions() uses the updated address after wallet connection.
+        latestAddress.current = address;
+    }, [address]);
+
+    const { check: checkWalletConnection } = useConnectedWalletGuard();
 
     const voted = sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stageIndex) != null;
 
@@ -48,8 +56,8 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
     };
 
     const checkPermissions = () => {
-        if (!addressUtils.isAddressEqual(address, externalAddress)) {
-            open(SppPluginDialogId.INVALID_ADDRESS_CONNECTED, { params: {} });
+        if (!addressUtils.isAddressEqual(latestAddress.current, externalAddress)) {
+            open(SppPluginDialogId.INVALID_ADDRESS_CONNECTED);
             return;
         }
         openTransactionDialog();
@@ -57,14 +65,10 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
 
     const voteLabel = voted ? (isVeto ? 'vetoed' : 'approved') : isVeto ? 'veto' : 'approve';
 
-    const handleVoteClick = () => {
-        if (!isConnected) {
-            checkWalletConnection();
-            return;
-        }
-
-        checkPermissions();
-    };
+    const handleVoteClick = () =>
+        checkWalletConnection({
+            onSuccess: () => checkPermissions(),
+        });
 
     return (
         <div className="flex w-full flex-col gap-3">
