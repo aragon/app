@@ -1175,12 +1175,18 @@
           "minExecuteInfo": "until executable"
         },
         "sppVotingTerminalBodyBreakdownDefault": {
-          "approved": "Approved",
-          "didNotApprove": "Did not approve",
-          "didNotVeto": "Did not veto",
-          "notApprovedYet": "Not approved yet",
-          "notVetoedYet": "Not vetoed yet",
-          "vetoed": "Vetoed"
+          "expired": {
+            "approve": "Did not approve",
+            "veto": "Did not veto"
+          },
+          "vote": {
+            "approve": "Approve",
+            "veto": "Veto"
+          },
+          "voted": {
+            "approve": "Approved",
+            "veto": "Vetoed"
+          }
         },
         "sppVotingTerminalBodyVoteDefault": {
           "approve": "Approve proposal",

@@ -1,7 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { AvatarIcon, type AvatarIconVariant, IconType, ProposalVotingTab, Tabs } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { useMemo } from 'react';
 import { type ISppProposal, SppProposalType } from '../../types';
 import { sppProposalUtils } from '../../utils/sppProposalUtils';
 
@@ -45,19 +44,12 @@ export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalB
     const { t } = useTranslations();
 
     const result = sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stageIndex);
-    const breakdownStatusStyle: BreakdownStatus = useMemo(() => {
-        if (result?.resultType === SppProposalType.VETO) {
-            return 'failure';
-        }
-
-        if (result?.resultType === SppProposalType.APPROVAL) {
-            return 'success';
-        }
-
-        return 'neutral';
-    }, [result]);
-
     const voted = !!result?.resultType;
+    const breakdownStatusStyle: BreakdownStatus = voted
+        ? result.resultType === SppProposalType.VETO
+            ? 'failure'
+            : 'success'
+        : 'neutral';
 
     const statusLabelColor =
         breakdownStatusStyle === 'success'
@@ -67,16 +59,8 @@ export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalB
               : 'text-neutral-500';
     const statusIcon = breakdownStatusToIcon.get(breakdownStatusStyle);
 
-    const statusLabel = useMemo(() => {
-        if (voted) {
-            return isVeto ? 'vetoed' : 'approved';
-        }
-
-        if (canVote) {
-            return isVeto ? 'notVetoedYet' : 'notApprovedYet';
-        }
-        return isVeto ? 'didNotVeto' : 'didNotApprove';
-    }, [canVote, isVeto, voted]);
+    const statusLabelContext = voted ? 'voted' : canVote ? 'vote' : 'expired';
+    const statusLabel = `${statusLabelContext}.${isVeto ? 'veto' : 'approve'}`;
 
     return (
         <Tabs.Content value={ProposalVotingTab.BREAKDOWN}>
