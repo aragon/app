@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "../../../../../../node_modules/@aragon/gov-ui-kit/index.css";
+
 @source "../../../../../../node_modules/@aragon/gov-ui-kit";
 
 :root {
