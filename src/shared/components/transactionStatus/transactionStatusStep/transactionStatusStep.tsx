@@ -43,7 +43,7 @@ export const TransactionStatusStep = <
                 {state === 'warning' && <AvatarIcon icon={IconType.WARNING} size="sm" variant="warning" />}
                 {state === 'error' && <AvatarIcon icon={IconType.CRITICAL} size="sm" variant="critical" />}
                 {state === 'success' && <AvatarIcon icon={IconType.CHECKMARK} size="sm" variant="success" />}
-                <p className={classNames('text-base font-normal leading-tight', stateToLabelClassName[state])}>
+                <p className={classNames('text-base leading-tight font-normal', stateToLabelClassName[state])}>
                     {processedLabel}
                 </p>
             </div>
@@ -54,7 +54,7 @@ export const TransactionStatusStep = <
             )}
             {addon != null && !isLinkAddon && (
                 <div className="flex flex-row items-center gap-2">
-                    <p className="text-sm font-normal leading-tight text-neutral-500 md:text-base">{addon.label}</p>
+                    <p className="text-sm leading-tight font-normal text-neutral-500 md:text-base">{addon.label}</p>
                     {addon.icon && (
                         <Icon
                             icon={IconType.BLOCKCHAIN_WALLET}

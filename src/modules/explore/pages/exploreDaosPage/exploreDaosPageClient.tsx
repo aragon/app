@@ -39,22 +39,22 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
             <ExploreNav />
             <div
                 id="explore-page-hero"
-                className="relative mt-[-72px] flex flex-col items-center self-stretch bg-primary-400 pt-[72px] md:-mt-24 md:pt-24"
+                className="bg-primary-400 relative mt-[-72px] flex flex-col items-center self-stretch pt-[72px] md:-mt-24 md:pt-24"
             >
                 <Container className="w-full py-10 md:px-6 md:py-12">
                     <Image
                         src={NetBackground as string}
                         alt="Background Texture"
-                        className="absolute left-0 top-0 size-full object-cover"
+                        className="absolute top-0 left-0 size-full object-cover"
                         priority={true}
                     />
 
                     <div className="relative flex flex-col items-start justify-center gap-2 self-stretch">
                         <div className="flex max-w-[720px] flex-col items-start gap-2 self-stretch md:gap-3">
-                            <h1 className="text-3xl font-normal leading-tight text-neutral-0 md:text-5xl">
+                            <h1 className="text-neutral-0 text-3xl leading-tight font-normal md:text-5xl">
                                 {t('app.explore.exploreDaosPage.hero.title')}
                             </h1>
-                            <h3 className="text-lg font-normal leading-normal text-primary-50 md:text-2xl">
+                            <h3 className="text-primary-50 text-lg leading-normal font-normal md:text-2xl">
                                 {t('app.explore.exploreDaosPage.hero.subtitle')}
                             </h3>
                         </div>

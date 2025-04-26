@@ -74,15 +74,15 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
 
     return (
         <>
-            <Dialog.Content className="flex flex-col gap-6 pb-4 pt-10 md:pb-8">
+            <Dialog.Content className="flex flex-col gap-6 pt-10 pb-4 md:pb-8">
                 <div className="flex flex-col gap-3 md:gap-4">
                     <AragonLogo iconOnly={true} />
-                    <p className="text-lg font-normal leading-tight text-neutral-500 md:text-xl">
+                    <p className="text-lg leading-tight font-normal text-neutral-500 md:text-xl">
                         <span className="block text-neutral-900">{t('app.application.connectWalletDialog.app')}</span>
                         <span>{t('app.application.connectWalletDialog.connect')}</span>
                     </p>
                 </div>
-                <div className="flex flex-col gap-4 text-sm font-normal leading-tight text-neutral-500">
+                <div className="flex flex-col gap-4 text-sm leading-tight font-normal text-neutral-500">
                     <div className="flex flex-row items-center gap-3">
                         <AvatarIcon icon={IconType.CHECKMARK} variant="primary" size="sm" />
                         <p>{t('app.application.connectWalletDialog.feature.permissions')}</p>

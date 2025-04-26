@@ -34,7 +34,7 @@ export const PageMainSection: React.FC<IPageMainSectionProps> = (props) => {
                     <Heading size="h2">{title}</Heading>
                     {icon && <Icon icon={icon} size="md" className="text-warning-500" />}
                 </div>
-                {description && <p className="text-base font-normal leading-normal text-neutral-500">{description}</p>}
+                {description && <p className="text-base leading-normal font-normal text-neutral-500">{description}</p>}
             </div>
             {children}
         </div>

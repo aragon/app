@@ -68,8 +68,8 @@ export const AragonDemoPageHeader: React.FC<IAragonDemoPageHeaderProps> = (props
             />
             <Container className="flex w-full flex-col gap-6 pb-4 pt-10 md:gap-y-10 md:py-16">
                 <div className="flex flex-col gap-y-2 md:gap-y-3">
-                    <h1 className="text-3xl font-normal leading-tight text-neutral-0 md:text-5xl">{title}</h1>
-                    <p className="max-w-screen-md text-base font-normal leading-normal text-neutral-0 md:text-xl">
+                    <h1 className="text-neutral-0 text-3xl font-normal leading-tight md:text-5xl">{title}</h1>
+                    <p className="text-neutral-0 max-w-screen-md text-base font-normal leading-normal md:text-xl">
                         {description}
                     </p>
                 </div>
