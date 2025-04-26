@@ -163,49 +163,45 @@ describe('SppProposalUtils', () => {
     describe('getExternalBodyResult', () => {
         it('returns the result for the given external address and stage index if present', () => {
             const externalAddress = '0x1234567890abcdef1234567890abcdef12345678';
-            const stageIndex = 1;
+            const stage = 1;
             const result = {
                 pluginAddress: externalAddress,
-                stageIndex,
+                stage,
                 resultType: SppProposalType.APPROVAL,
-                transactionHash: '0xabcdefabcdefabcdefabcdefabcdefabcdef',
-                blockNumber: 123456,
             };
             const proposal = generateSppProposal({
-                result: [result],
+                results: [result],
             });
 
-            const externalBodyResult = sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stageIndex);
+            const externalBodyResult = sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stage);
 
             expect(externalBodyResult).toEqual(result);
         });
 
         it('returns undefined if the result for the correct external address but on a different stage index', () => {
             const externalAddress = '0x1234567890abcdef1234567890abcdef12345678';
-            const stageIndex = 1;
+            const stage = 1;
             const proposal = generateSppProposal({
-                result: [
+                results: [
                     {
                         pluginAddress: externalAddress,
-                        stageIndex: 2,
+                        stage: 2,
                         resultType: SppProposalType.APPROVAL,
-                        transactionHash: '0xabcdefabcdefabcdefabcdefabcdefabcdef',
-                        blockNumber: 123456,
                     },
                 ],
             });
 
-            const externalBodyResult = sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stageIndex);
+            const externalBodyResult = sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stage);
 
             expect(externalBodyResult).toBeUndefined();
         });
 
         it('returns undefined if the result is undefined', () => {
             const externalAddress = '0x1234567890abcdef1234567890abcdef12345678';
-            const stageIndex = 1;
+            const stage = 1;
             const proposal = generateSppProposal();
 
-            const externalBodyResult = sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stageIndex);
+            const externalBodyResult = sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stage);
 
             expect(externalBodyResult).toBeUndefined();
         });
