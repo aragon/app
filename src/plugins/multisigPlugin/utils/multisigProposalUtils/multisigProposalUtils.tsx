@@ -16,7 +16,7 @@ class MultisigProposalUtils {
             paramsMet,
             hasActions: actions.length > 0,
             executionExpiryDate: endDate,
-            canExecuteEarly: paramsMet,
+            canExecuteEarly: true,
         });
 
         return status;

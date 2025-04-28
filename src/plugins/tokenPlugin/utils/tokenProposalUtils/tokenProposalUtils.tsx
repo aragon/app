@@ -20,7 +20,7 @@ class TokenProposalUtils {
             endDate,
             paramsMet: isEarlyExecution ? approvalReachedEarly : approvalReached,
             hasActions: actions.length > 0,
-            canExecuteEarly: isEarlyExecution && approvalReachedEarly,
+            canExecuteEarly: isEarlyExecution,
         });
 
         return status;
