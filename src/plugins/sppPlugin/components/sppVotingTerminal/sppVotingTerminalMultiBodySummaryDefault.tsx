@@ -1,4 +1,8 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { addressUtils } from '@aragon/gov-ui-kit';
+import type { Hex } from 'viem';
+import { mainnet } from 'viem/chains';
+import { useEnsName } from 'wagmi';
 import { type ISppProposal, SppProposalType } from '../../types';
 import { sppProposalUtils } from '../../utils/sppProposalUtils';
 
@@ -30,12 +34,13 @@ export const SppVotingTerminalMultiBodySummaryDefault: React.FC<ISppVotingTermin
 ) => {
     const { proposal, externalAddress, stageIndex, canVote, isOptimistic } = props;
     const { t } = useTranslations();
+    const { data: ensName } = useEnsName({ address: externalAddress as Hex, chainId: mainnet.id });
 
     const result = sppProposalUtils.getBodyResult(proposal, externalAddress, stageIndex);
     const voted = !!result?.resultType;
 
-    const statusLabelContext = voted ? 'voted' : canVote ? 'vote' : 'expired';
-    const statusText = `${statusLabelContext}.${isOptimistic ? 'veto' : 'approve'}`;
+    const statusLabelContext = voted ? 'voted' : canVote ? undefined : 'expired';
+    const statusText = statusLabelContext && `${statusLabelContext}.${isOptimistic ? 'veto' : 'approve'}`;
     const statusClass = voted
         ? result.resultType === SppProposalType.VETO
             ? 'text-critical-800'
@@ -44,10 +49,12 @@ export const SppVotingTerminalMultiBodySummaryDefault: React.FC<ISppVotingTermin
 
     return (
         <p>
-            {t('app.plugins.spp.sppVotingTerminalMultiBodySummaryDefault.name')}{' '}
-            <span className={statusClass}>
-                {t(`app.plugins.spp.sppVotingTerminalMultiBodySummaryDefault.${statusText}`)}
-            </span>
+            {ensName ?? addressUtils.truncateAddress(externalAddress)}{' '}
+            {statusText && (
+                <span className={statusClass}>
+                    {t(`app.plugins.spp.sppVotingTerminalMultiBodySummaryDefault.${statusText}`)}
+                </span>
+            )}
         </p>
     );
 };
