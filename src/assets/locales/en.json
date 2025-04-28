@@ -124,6 +124,14 @@
             "helpText": "This is shown on the DAO's dashboard and the Explore page so visitors can easily find you.",
             "label": "Description"
           },
+          "ens": {
+            "error": {
+              "invalid": "ENS subdomain is invalid",
+              "taken": "ENS subdomain is not available"
+            },
+            "helpText": "This is a custom onchain identifier for your DAO. It can be used in URLs to access your DAO as well as send assets.",
+            "label": "ENS subname"
+          },
           "name": {
             "label": "DAO name"
           },
@@ -132,6 +140,9 @@
           }
         },
         "network": {
+          "ethereum-sepolia": {
+            "description": "Recommended for first-time use"
+          },
           "helpText": "The chain you choose is where your tokens and assets are stored.",
           "label": "Select chain",
           "tag": {
@@ -320,8 +331,7 @@
       },
       "prepareProcessDialog": {
         "button": {
-          "submit": "Prepare installation",
-          "success": "Finalize installation"
+          "submit": "Prepare installation"
         },
         "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
         "step": {
@@ -348,13 +358,24 @@
         "title": "Publish DAO"
       },
       "publishProcessDialog": {
-        "button": {
-          "submit": "Finalize installation"
+        "admin": {
+          "button": {
+            "submit": "Finalize installation"
+          },
+          "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
+          "title": "Publish governance process",
+          "transactionInfoTitle": "Finalize installation"
         },
-        "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
-        "title": "Publish governance process",
-        "transactionInfoTitle": "Finalize installation"
+        "default": {
+          "button": {
+            "submit": "Propose process"
+          },
+          "description": "To publish your governance process, confirm the two onchain transactions in your wallet.",
+          "title": "Publish governance process",
+          "transactionInfoTitle": "Propose process"
+        }
       },
+
       "setupBodyDialog": {
         "a11y": {
           "description": "Create a new voting body for your DAO"
@@ -491,7 +512,7 @@
         "noCodeSetup": {
           "actionLabel": "Create a DAO",
           "subtitle": "Easily deploy a new DAO on Aragon OSx in minutes with our simple, no-code deployment wizard.",
-          "title": "No code setup"
+          "title": "No-code setup"
         },
         "section": {
           "cta": "Getting started",
@@ -827,8 +848,14 @@
           "cancel": "Cancel",
           "select": "Create proposal"
         },
-        "description": "Select the proposal type you want to create.",
-        "title": "Create proposal"
+        "process": {
+          "description": "Select the governance process to use for creating the proposal.",
+          "title": "Select process"
+        },
+        "proposal": {
+          "description": "Select the proposal type you want to create.",
+          "title": "Create proposal"
+        }
       },
       "verifySmartContractDialog": {
         "action": {
@@ -1490,7 +1517,7 @@
               "invalid": "Address is not valid"
             },
             "label": "Member",
-            "placeholder": "ENS or 0x …"
+            "placeholder": "ENS or 0x…"
           },
           "remove": "Remove member"
         }

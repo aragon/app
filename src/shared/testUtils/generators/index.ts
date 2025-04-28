@@ -4,6 +4,7 @@ export * from './daoMetrics';
 export * from './daoPlugin';
 export * from './dialogContext';
 export * from './formContext';
+export * from './nextRequest';
 export * from './paginatedResponse';
 export * from './paginatedResponseMetadata';
 export * from './plugin';

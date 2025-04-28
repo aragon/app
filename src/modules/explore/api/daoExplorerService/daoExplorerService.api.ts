@@ -1,7 +1,13 @@
 import type { IOrderedRequest, IPaginatedRequest, ISearchedRequest } from '@/shared/api/aragonBackendService';
+import type { Network } from '@/shared/api/daoService';
 import type { IRequestQueryParams, IRequestUrlQueryParams } from '@/shared/api/httpService';
 
-export interface IGetDaoListQueryParams extends IPaginatedRequest, IOrderedRequest, ISearchedRequest {}
+export interface IGetDaoListQueryParams extends IPaginatedRequest, IOrderedRequest, ISearchedRequest {
+    /**
+     * List of networks to filter the DAOs by.
+     */
+    networks?: Network[];
+}
 
 export interface IGetDaoListParams extends IRequestQueryParams<IGetDaoListQueryParams> {}
 

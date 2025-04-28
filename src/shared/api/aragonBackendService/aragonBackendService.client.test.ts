@@ -3,11 +3,15 @@ import { AragonBackendService } from './aragonBackendService';
 
 class ServiceTest extends AragonBackendService {}
 
-describe('AragonBackend service', () => {
+describe('AragonBackend service (client)', () => {
     let serviceTest = new ServiceTest();
 
     afterEach(() => {
         serviceTest = new ServiceTest();
+    });
+
+    it('initializes the service using the proxy route on client side', () => {
+        expect(serviceTest['baseUrl']).toEqual('/api/backend');
     });
 
     describe('getNextPageParams', () => {

@@ -1,3 +1,3 @@
-import { rpcRequestUtils } from '@/modules/application/utils/rpcRequestUtils';
+import { proxyRpcUtils } from '@/modules/application/utils/proxyRpcUtils';
 
-export const POST = rpcRequestUtils.request;
+export const POST = proxyRpcUtils.request;
