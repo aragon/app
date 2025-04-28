@@ -7,7 +7,6 @@ import { useConnectedWalletGuard } from '../../../../modules/application/hooks/u
 import { SppPluginDialogId } from '../../constants/sppPluginDialogId';
 import type { ISppReportProposalResultDialogParams } from '../../dialogs/sppReportProposalResultDialog';
 import type { ISppProposal, ISppStage } from '../../types';
-import { sppProposalUtils } from '../../utils/sppProposalUtils';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 
 export interface ISppVotingTerminalBodyVoteDefaultProps {
@@ -46,7 +45,7 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
     const { check: checkWalletConnection } = useConnectedWalletGuard();
 
     const isVeto = sppStageUtils.isVeto(stage);
-    const voted = sppProposalUtils.getBodyResult(proposal, externalAddress, stage.stageIndex) != null;
+    const voted = sppStageUtils.getBodyResult(proposal, externalAddress, stage.stageIndex) != null;
 
     const openTransactionDialog = () => {
         const params: ISppReportProposalResultDialogParams = { daoId, proposal, isVeto };

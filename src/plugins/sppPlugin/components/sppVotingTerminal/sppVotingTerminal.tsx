@@ -22,23 +22,10 @@ export const SppVotingTerminal: React.FC<ISppVotingTerminalProps> = (props) => {
     // Update active stage when refetching the proposal (e.g. after advancing a stage)
     useEffect(() => setActiveStage(proposal.stageIndex.toString()), [proposal.stageIndex]);
 
-    const processedStages = proposal.settings.stages.map((stage, index) => ({
-        stage,
-        subProposals: proposal.subProposals.filter((proposal) => proposal.stageIndex === stage.stageIndex),
-        index,
-    }));
-
     return (
         <ProposalVoting.Container activeStage={activeStage} onStageClick={setActiveStage}>
-            {processedStages.map(({ stage, subProposals, index }) => (
-                <SppVotingTerminalStage
-                    key={stage.stageIndex}
-                    daoId={daoId}
-                    subProposals={subProposals}
-                    stage={stage}
-                    index={index}
-                    proposal={proposal}
-                />
+            {proposal.settings.stages.map((stage) => (
+                <SppVotingTerminalStage key={stage.stageIndex} daoId={daoId} stage={stage} proposal={proposal} />
             ))}
         </ProposalVoting.Container>
     );
