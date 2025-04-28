@@ -36,7 +36,6 @@ export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalB
         externalAddress,
         stage,
         canVote,
-        t,
     });
 
     return (
@@ -48,7 +47,7 @@ export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalB
                     statusStyle.label,
                 )}
             >
-                {statusLabel}
+                {t(statusLabel)}
                 {statusStyle.icon != null && <AvatarIcon icon={statusStyle.icon} variant={statusStyle.variant} />}
             </div>
             {children}

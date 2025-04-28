@@ -21,10 +21,6 @@ export interface ISppVotingTerminalMultiBodySummaryDefaultProps {
      */
     stage: ISppStage;
     /**
-     * Defines if the voting is optimistic or not.
-     */
-    isOptimistic: boolean;
-    /**
      * Flag indicating if the user can vote (proposal is in the Active state).
      */
     canVote: boolean;
@@ -34,6 +30,7 @@ export const SppVotingTerminalMultiBodySummaryDefault: React.FC<ISppVotingTermin
     props,
 ) => {
     const { proposal, externalAddress, stage, canVote } = props;
+
     const { t } = useTranslations();
     const { data: ensName } = useEnsName({ address: externalAddress as Hex, chainId: mainnet.id });
 
@@ -42,13 +39,12 @@ export const SppVotingTerminalMultiBodySummaryDefault: React.FC<ISppVotingTermin
         externalAddress,
         stage,
         canVote,
-        t,
     });
 
     return (
         <p>
             {ensName ?? addressUtils.truncateAddress(externalAddress)}{' '}
-            <span className={classNames(statusStyle.label, 'lowercase')}>{statusLabel}</span>
+            <span className={classNames(statusStyle.label, 'lowercase')}>{t(statusLabel)}</span>
         </p>
     );
 };

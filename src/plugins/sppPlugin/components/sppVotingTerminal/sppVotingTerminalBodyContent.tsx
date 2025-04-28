@@ -54,8 +54,9 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
         queryParams: { proposalId: subProposal?.id, pluginAddress: subProposal?.pluginAddress, pageSize: votesPerPage },
     };
 
+    const pluginSettings = plugin.subdomain != null ? plugin.settings : {};
     const proposalSettings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDaoSettingTermAndDefinition[]>({
-        params: { daoId, settings: plugin.subdomain ? plugin.settings : {}, pluginAddress: plugin.address },
+        params: { daoId, settings: pluginSettings, pluginAddress: plugin.address },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginId: plugin.subdomain ?? 'external',
     });
@@ -65,7 +66,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
     const processedSubProposal =
         subProposal != null ? { ...subProposal, title, description, incrementalId } : undefined;
 
-    const isExternalBody = !plugin.subdomain;
+    const isExternalBody = plugin.subdomain == null;
 
     return (
         <>

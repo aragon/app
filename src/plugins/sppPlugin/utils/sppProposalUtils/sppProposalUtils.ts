@@ -1,8 +1,14 @@
-import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import { type AvatarIconVariant, IconType, type ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { type ISppProposal, type ISppStage, SppProposalType } from '../../types';
 import { sppStageUtils } from '../sppStageUtils';
+
+interface IGetBodyStatusLabelDataParams {
+    proposal: ISppProposal;
+    externalAddress: string;
+    stage: ISppStage;
+    canVote: boolean;
+}
 
 // Just an internal type to help with the mapping external voting result to UI properties.
 type LabelState = 'neutral' | 'success' | 'failure';
@@ -62,19 +68,8 @@ class SppProposalUtils {
             (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalVotingStatus.ACCEPTED,
         );
 
-    getBodyStatusLabelData = ({
-        proposal,
-        externalAddress,
-        stage,
-        canVote,
-        t,
-    }: {
-        proposal: ISppProposal;
-        externalAddress: string;
-        stage: ISppStage;
-        canVote: boolean;
-        t: TranslationFunction;
-    }) => {
+    getBodyStatusLabelData = (params: IGetBodyStatusLabelDataParams) => {
+        const { proposal, externalAddress, stage, canVote } = params;
         const { resultType } = sppStageUtils.getBodyResult(proposal, externalAddress, stage.stageIndex) ?? {};
 
         const voted = resultType != null;
@@ -89,7 +84,7 @@ class SppProposalUtils {
         return {
             // currently reused in SppVotingTerminalBodyBreakdownDefault and SppVotingTerminalMultiBodySummaryDefault.
             // If different labels are needed, we can just return the key suffix and let components define labels as needed.
-            statusLabel: t(`app.plugins.spp.sppVotingTerminalBodyBreakdownDefault.${statusLabelKeySuffix}`),
+            statusLabel: `app.plugins.spp.sppVotingTerminalBodyBreakdownDefault.${statusLabelKeySuffix}`,
             statusStyle,
         };
     };

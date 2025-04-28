@@ -67,24 +67,26 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
         >
             <ProposalVoting.BodySummary>
                 <ProposalVoting.BodySummaryList>
-                    {stage.plugins.map((plugin) => (
-                        <ProposalVoting.BodySummaryListItem key={plugin.address} id={plugin.address}>
-                            <PluginSingleComponent
-                                slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY}
-                                pluginId={plugin.subdomain ?? 'external'}
-                                proposal={
-                                    plugin.subdomain
-                                        ? sppStageUtils.getBodySubProposal(proposal, plugin.address, stage.stageIndex)
-                                        : proposal
-                                }
-                                isExecuted={proposal.executed.status}
-                                name={plugin.subdomain && plugin.name}
-                                isOptimistic={isVeto}
-                                canVote={canVote}
-                                stage={stage}
-                                externalAddress={plugin.subdomain ? undefined : plugin.address}
-                                Fallback={SppVotingTerminalMultiBodySummaryDefault}
-                            />
+                    {stage.plugins.map(({ address, ...plugin }) => (
+                        <ProposalVoting.BodySummaryListItem key={address} id={address}>
+                            {plugin.subdomain != null && (
+                                <PluginSingleComponent
+                                    slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY}
+                                    pluginId={plugin.subdomain}
+                                    proposal={sppStageUtils.getBodySubProposal(proposal, address, stage.stageIndex)}
+                                    name={plugin.name}
+                                    isOptimistic={isVeto}
+                                    isExecuted={proposal.executed.status}
+                                />
+                            )}
+                            {plugin.subdomain == null && (
+                                <SppVotingTerminalMultiBodySummaryDefault
+                                    proposal={proposal}
+                                    externalAddress={address}
+                                    stage={stage}
+                                    canVote={canVote}
+                                />
+                            )}
                         </ProposalVoting.BodySummaryListItem>
                     ))}
                 </ProposalVoting.BodySummaryList>
@@ -93,7 +95,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
             </ProposalVoting.BodySummary>
             {stage.plugins.map((plugin) => (
                 <ProposalVoting.BodyContent
-                    name={plugin.subdomain && plugin.name}
+                    name={plugin.subdomain != null ? plugin.name : undefined}
                     key={plugin.address}
                     status={processedStageStatus}
                     bodyId={plugin.address}
