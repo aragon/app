@@ -31,20 +31,20 @@ export interface ISppVotingTerminalBodyBreakdownDefaultProps {
     children: React.ReactNode;
 }
 
+// Just an internal type to help with the mapping external voting result to UI properties.
+type BreakdownStatus = 'neutral' | 'success' | 'failure';
+
 const breakdownStatusToIcon = new Map<BreakdownStatus, { icon: IconType; variant: AvatarIconVariant } | undefined>([
     ['success', { icon: IconType.CHECKMARK, variant: 'success' }],
     ['failure', { icon: IconType.CLOSE, variant: 'critical' }],
 ]);
-
-// Just an internal type to help with the mapping external voting result to UI properties.
-type BreakdownStatus = 'neutral' | 'success' | 'failure';
 
 export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalBodyBreakdownDefaultProps> = (props) => {
     const { proposal, externalAddress, stageIndex, isVeto, canVote, children } = props;
     const { t } = useTranslations();
 
     const result = sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stageIndex);
-    const voted = !!result?.resultType;
+    const voted = result?.resultType != null;
     const breakdownStatusStyle: BreakdownStatus = voted
         ? result.resultType === SppProposalType.VETO
             ? 'failure'
