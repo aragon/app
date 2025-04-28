@@ -7,6 +7,7 @@ import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { SppVotingTerminalBodyContent } from './sppVotingTerminalBodyContent';
 import { SppVotingTerminalBodySummaryFooter } from './sppVotingTerminalBodySummaryFooter';
+import { SppVotingTerminalMultiBodySummaryDefault } from './sppVotingTerminalMultiBodySummaryDefault';
 import { SppVotingTerminalStageTimelock } from './sppVotingTerminalStageTimelock';
 
 export interface IProposalVotingTerminalStageProps {
@@ -84,6 +85,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                                 isExecuted={proposal.executed.status}
                                 name={plugin.name}
                                 isOptimistic={isVeto}
+                                Fallback={SppVotingTerminalMultiBodySummaryDefault}
                             />
                         </ProposalVoting.BodySummaryListItem>
                     ))}
@@ -105,6 +107,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         proposal={proposal}
                         canVote={canVote}
                         isVeto={isVeto}
+                        stage={stage}
                     >
                         {isSingleBody && <SppStageStatus proposal={proposal} stage={stage} daoId={daoId} />}
                     </SppVotingTerminalBodyContent>

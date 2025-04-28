@@ -12,7 +12,7 @@ const advanceStageAbi = [
     },
 ];
 
-class AdvanceStageDialogUtils {
+class SppAdvanceStageDialogUtils {
     buildTransaction = (proposal: ISppProposal): Promise<ITransactionRequest> => {
         const functionArgs = [proposal.proposalIndex];
         const transactionData = encodeFunctionData({
@@ -27,4 +27,4 @@ class AdvanceStageDialogUtils {
     };
 }
 
-export const advanceStageDialogUtils = new AdvanceStageDialogUtils();
+export const sppAdvanceStageDialogUtils = new SppAdvanceStageDialogUtils();

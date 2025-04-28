@@ -1138,11 +1138,28 @@
         "sppGovernanceSettings": {
           "numberOfStages": "Number of stages"
         },
+        "sppInvalidAddressConnectedDialog": {
+          "action": "Close",
+          "description": "Please connect a wallet that is eligible to vote. If you are an owner of this external address you can connect with WalletConnect to vote on this proposal.",
+          "title": "Not eligible to vote"
+        },
         "sppProposalList": {
           "entity": "Proposals"
         },
         "sppProposalListItem": {
           "stage": "Stage {{stageIndex}}"
+        },
+        "sppReportProposalResultDialog": {
+          "button": {
+            "submit": "Submit vote",
+            "success": "View proposal"
+          },
+          "confirmationLabel": {
+            "approve": "Voting to approve",
+            "veto": "Voting to veto"
+          },
+          "description": "To submit your vote, confirm the onchain transaction in your wallet.",
+          "title": "Submit vote"
         },
         "sppStageStatus": {
           "button": {
@@ -1156,6 +1173,27 @@
           "maxExecuteInfo": "left to execute",
           "minAdvanceInfo": "until advanceable",
           "minExecuteInfo": "until executable"
+        },
+        "sppVotingTerminalBodyBreakdownDefault": {
+          "expired": {
+            "approve": "Did not approve",
+            "veto": "Did not veto"
+          },
+          "vote": {
+            "approve": "Approve",
+            "veto": "Veto"
+          },
+          "voted": {
+            "approve": "Approved",
+            "veto": "Vetoed"
+          }
+        },
+        "sppVotingTerminalBodyVoteDefault": {
+          "approve": "Approve proposal",
+          "approved": "Approved",
+          "helpText": "If you are an owner of this address you can connect with WalletConnect to vote on this proposal.",
+          "veto": "Veto proposal",
+          "vetoed": "Vetoed"
         },
         "sppVotingTerminalStageBodySummaryFooter": {
           "actionRequired": "required to {{action}}",
