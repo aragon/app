@@ -33,15 +33,13 @@ describe('useSlotSingleFunction hook', () => {
         const params = 5;
         const pluginId = 'plugin-id';
         const slotId = 'slot-id';
-        const fallbackFunction = jest.fn((value: number) => value * 2);
-        const fallbackFunctionMock = jest.fn(fallbackFunction);
+        const fallbackFunction = (value: number) => value * 2;
         getSlotFunctionSpy.mockReturnValue(undefined);
 
         const { result } = renderHook(() =>
-            useSlotSingleFunction({ slotId, pluginId, params, fallback: fallbackFunctionMock }),
+            useSlotSingleFunction({ slotId, pluginId, params, fallback: fallbackFunction }),
         );
 
-        expect(fallbackFunction).toHaveBeenCalled();
         expect(result.current).toEqual(fallbackFunction(params));
     });
 });
