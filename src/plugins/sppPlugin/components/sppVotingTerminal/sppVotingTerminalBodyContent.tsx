@@ -32,10 +32,6 @@ export interface ISppVotingTerminalBodyContentProps {
      */
     proposal: ISppProposal;
     /**
-     * Flag indicating if the vote is a veto.
-     */
-    isVeto: boolean;
-    /**
      * Flag indicating if the user can vote.
      */
     canVote: boolean;
@@ -48,7 +44,7 @@ export interface ISppVotingTerminalBodyContentProps {
 const votesPerPage = 6;
 
 export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyContentProps> = (props) => {
-    const { plugin, daoId, subProposal, stage, proposal, canVote, isVeto, children } = props;
+    const { plugin, daoId, subProposal, stage, proposal, canVote, children } = props;
 
     const voteListParams = {
         queryParams: { proposalId: subProposal?.id, pluginAddress: subProposal?.pluginAddress, pageSize: votesPerPage },
@@ -76,9 +72,8 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                         pluginId={isExternalBody ? 'external' : plugin.subdomain}
                         proposal={isExternalBody ? proposal : subProposal}
                         externalAddress={isExternalBody ? plugin.address : undefined}
-                        isVeto={isVeto}
                         canVote={canVote}
-                        stageIndex={stage.stageIndex}
+                        stage={stage}
                         Fallback={SppVotingTerminalBodyBreakdownDefault}
                     >
                         <div className="flex flex-col gap-y-4 pt-6 md:pt-8">
@@ -89,8 +84,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                                     proposal={isExternalBody ? proposal : processedSubProposal}
                                     externalAddress={isExternalBody ? plugin.address : undefined}
                                     daoId={daoId}
-                                    isVeto={isVeto}
-                                    stageIndex={stage.stageIndex}
+                                    stage={stage}
                                     Fallback={SppVotingTerminalBodyVoteDefault}
                                 />
                             )}

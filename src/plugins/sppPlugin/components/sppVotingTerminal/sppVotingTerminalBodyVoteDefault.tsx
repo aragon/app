@@ -6,8 +6,9 @@ import { useAccount } from 'wagmi';
 import { useConnectedWalletGuard } from '../../../../modules/application/hooks/useConnectedWalletGuard';
 import { SppPluginDialogId } from '../../constants/sppPluginDialogId';
 import type { ISppReportProposalResultDialogParams } from '../../dialogs/sppReportProposalResultDialog';
-import type { ISppProposal } from '../../types';
+import type { ISppProposal, ISppStage } from '../../types';
 import { sppProposalUtils } from '../../utils/sppProposalUtils';
+import { sppStageUtils } from '../../utils/sppStageUtils';
 
 export interface ISppVotingTerminalBodyVoteDefaultProps {
     /**
@@ -23,17 +24,13 @@ export interface ISppVotingTerminalBodyVoteDefaultProps {
      */
     externalAddress: string;
     /**
-     * Index of the stage on which external body is located.
+     * Stage on which the body is setup.
      */
-    stageIndex: number;
-    /**
-     * Defines if the vote is to approve or veto the proposal.
-     */
-    isVeto: boolean;
+    stage: ISppStage;
 }
 
 export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVoteDefaultProps> = (props) => {
-    const { daoId, proposal, isVeto, externalAddress, stageIndex } = props;
+    const { daoId, proposal, externalAddress, stage } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -48,7 +45,8 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
 
     const { check: checkWalletConnection } = useConnectedWalletGuard();
 
-    const voted = sppProposalUtils.getBodyResult(proposal, externalAddress, stageIndex) != null;
+    const isVeto = sppStageUtils.isVeto(stage);
+    const voted = sppProposalUtils.getBodyResult(proposal, externalAddress, stage.stageIndex) != null;
 
     const openTransactionDialog = () => {
         const params: ISppReportProposalResultDialogParams = { daoId, proposal, isVeto };
@@ -65,10 +63,7 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
 
     const voteLabel = voted ? (isVeto ? 'vetoed' : 'approved') : isVeto ? 'veto' : 'approve';
 
-    const handleVoteClick = () =>
-        checkWalletConnection({
-            onSuccess: () => checkPermissions(),
-        });
+    const handleVoteClick = () => checkWalletConnection({ onSuccess: checkPermissions });
 
     return (
         <div className="flex w-full flex-col gap-3">
