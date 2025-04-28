@@ -115,7 +115,7 @@ const nextConfig = {
         ],
     },
     experimental: {
-        typedRoutes: false,
+        typedRoutes: true,
     },
     env: {
         version: packageInfo.version,
