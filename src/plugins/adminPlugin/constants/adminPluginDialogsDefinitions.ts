@@ -4,7 +4,7 @@ import { AdminUninstallProcessDialogCreate } from '../dialogs/adminUninstallProc
 import { AdminPluginDialogId } from './adminPluginDialogId';
 
 export const adminPluginDialogsDefinitions: Record<AdminPluginDialogId, IDialogComponentDefinitions> = {
-    [AdminPluginDialogId.MANAGE_MEMBERS]: { Component: AdminManageMembersDialog },
+    [AdminPluginDialogId.MANAGE_MEMBERS]: { Component: AdminManageMembersDialog, size: 'lg' },
     [AdminPluginDialogId.UNINSTALL_PROCESS_CREATE]: {
         Component: AdminUninstallProcessDialogCreate,
         size: 'lg',
