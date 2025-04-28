@@ -32,6 +32,19 @@ export interface IPlugin {
      * Name of the plugin.
      */
     name: string;
+    /**
+     * Install version of the plugin
+     */
+    installVersion: {
+        /**
+         * Release version of the plugin.
+         */
+        release: number;
+        /**
+         * Build version of the plugin.
+         */
+        build: number;
+    };
 }
 
 /**
