@@ -45,12 +45,12 @@ class PublishDaoDialogUtils {
 
     buildTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
         const { values, metadataCid, connectedAddress } = params;
-        const { network } = values;
+        const { network, ens } = values;
 
         const { daoFactory } = networkDefinitions[network].addresses;
         const adminPluginRepo = adminPlugin.repositoryAddresses[network];
 
-        const daoSettings = this.buildDaoSettingsParams(metadataCid);
+        const daoSettings = this.buildDaoSettingsParams(metadataCid, ens);
         const pluginSettings = this.buildPluginSettingsParams(adminPluginRepo, connectedAddress);
 
         const transactionData = encodeFunctionData({
@@ -77,11 +77,11 @@ class PublishDaoDialogUtils {
         return daoAddress;
     };
 
-    private buildDaoSettingsParams = (metadataCid: string) => {
+    private buildDaoSettingsParams = (metadataCid: string, ens?: string) => {
         const metadata = transactionUtils.cidToHex(metadataCid);
 
         const createDaoParams = {
-            subdomain: '',
+            subdomain: ens ?? '',
             metadata,
             daoURI: '',
             trustedForwarder: zeroAddress,

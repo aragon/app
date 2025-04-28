@@ -8,7 +8,9 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
-import type { ISppProposal, ISppStagePlugin, ISppSubProposal } from '../../types';
+import type { ISppProposal, ISppStage, ISppStagePlugin, ISppSubProposal } from '../../types';
+import { SppVotingTerminalBodyBreakdownDefault } from './sppVotingTerminalBodyBreakdownDefault';
+import { SppVotingTerminalBodyVoteDefault } from './sppVotingTerminalBodyVoteDefault';
 
 export interface ISppVotingTerminalBodyContentProps {
     /**
@@ -23,6 +25,10 @@ export interface ISppVotingTerminalBodyContentProps {
      * Sub proposal to display the content for.
      */
     subProposal?: ISppSubProposal;
+    /**
+     * Stage on which sub proposal is created.
+     */
+    stage: ISppStage;
     /**
      * Parent proposal of the stage.
      */
@@ -44,7 +50,7 @@ export interface ISppVotingTerminalBodyContentProps {
 const votesPerPage = 6;
 
 export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyContentProps> = (props) => {
-    const { plugin, daoId, subProposal, proposal, canVote, isVeto, children } = props;
+    const { plugin, daoId, subProposal, stage, proposal, canVote, isVeto, children } = props;
 
     const { t } = useTranslations();
 
@@ -52,16 +58,17 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
         queryParams: { proposalId: subProposal?.id, pluginAddress: subProposal?.pluginAddress, pageSize: votesPerPage },
     };
 
+    const pluginSettings = plugin.subdomain != null ? plugin.settings : {};
     const proposalSettings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDaoSettingTermAndDefinition[]>({
-        params: { daoId, settings: plugin.settings, pluginAddress: plugin.address },
+        params: { daoId, settings: pluginSettings, pluginAddress: plugin.address },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
-        pluginId: plugin.subdomain,
+        pluginId: plugin.subdomain ?? 'external',
         fallback: () =>
             sppSettingsUtils.getFallbackSettings({
                 t,
                 settings: {
-                    pluginAddress: plugin.settings.pluginAddress,
-                    pluginName: plugin.settings.pluginName,
+                    pluginAddress: pluginSettings.pluginAddress,
+                    pluginName: pluginSettings.pluginName,
                     stages: [],
                 },
             }),
@@ -72,31 +79,42 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
     const processedSubProposal =
         subProposal != null ? { ...subProposal, title, description, incrementalId } : undefined;
 
+    const isExternalBody = plugin.subdomain == null;
+
     return (
         <>
-            {processedSubProposal && (
+            {(processedSubProposal != null || isExternalBody) && (
                 <>
                     <PluginSingleComponent
                         slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
-                        pluginId={plugin.subdomain}
-                        proposal={subProposal}
+                        pluginId={isExternalBody ? 'external' : plugin.subdomain}
+                        proposal={isExternalBody ? proposal : subProposal}
+                        body={isExternalBody ? plugin.address : undefined}
+                        canVote={canVote}
+                        stage={stage}
+                        Fallback={SppVotingTerminalBodyBreakdownDefault}
                     >
                         <div className="flex flex-col gap-y-4 pt-6 md:pt-8">
                             {canVote && (
                                 <PluginSingleComponent
                                     slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
-                                    pluginId={processedSubProposal.pluginSubdomain}
-                                    proposal={processedSubProposal}
+                                    pluginId={isExternalBody ? 'external' : processedSubProposal!.pluginSubdomain}
+                                    proposal={isExternalBody ? proposal : processedSubProposal}
+                                    externalAddress={isExternalBody ? plugin.address : undefined}
                                     daoId={daoId}
+                                    stage={stage}
                                     isVeto={isVeto}
+                                    Fallback={SppVotingTerminalBodyVoteDefault}
                                 />
                             )}
                             {children}
                         </div>
                     </PluginSingleComponent>
-                    <ProposalVoting.Votes>
-                        <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={plugin.address} />
-                    </ProposalVoting.Votes>
+                    {processedSubProposal && (
+                        <ProposalVoting.Votes>
+                            <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={plugin.address} />
+                        </ProposalVoting.Votes>
+                    )}
                 </>
             )}
             <ProposalVoting.Details settings={proposalSettings} />

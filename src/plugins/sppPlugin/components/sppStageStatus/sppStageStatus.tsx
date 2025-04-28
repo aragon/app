@@ -15,7 +15,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { SppPluginDialogId } from '../../constants/sppPluginDialogId';
-import type { IAdvanceStageDialogParams } from '../../dialogs/advanceStageDialog';
+import type { ISppAdvanceStageDialogParams } from '../../dialogs/sppAdvanceStageDialog';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 
@@ -44,7 +44,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     const openAdvanceStageDialog = () => {
-        const params: IAdvanceStageDialogParams = { daoId, proposal };
+        const params: ISppAdvanceStageDialogParams = { daoId, proposal };
         open(SppPluginDialogId.ADVANCE_STAGE, { params });
     };
 

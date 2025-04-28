@@ -4,7 +4,7 @@ export interface IBuildVoteDataParams {
      */
     proposalIndex: string;
     /**
-     *  The vote option selected by the user for token based DAOs.
+     * The vote option selected by the user for token based DAOs.
      */
     vote?: number;
 }

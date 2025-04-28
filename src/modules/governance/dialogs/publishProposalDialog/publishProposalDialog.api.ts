@@ -44,7 +44,7 @@ export interface IPublishProposalDialogParams<TAction extends IProposalCreateAct
      */
     daoId: string;
     /**
-     *  Plugin used a target for creating the proposal.
+     * Plugin used a target for creating the proposal.
      */
     plugin: IDaoPlugin;
     /**

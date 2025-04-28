@@ -2,12 +2,15 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AddressInput, addressUtils } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import type { ISetupBodyForm } from '../setupBodyDialogDefinitions';
 
 export interface ISetupBodyDialogExternalAddressProps {}
 
 export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAddressProps> = () => {
     const { t } = useTranslations();
+
+    const { setValue } = useFormContext<ISetupBodyForm>();
 
     const {
         onChange: onReceiverChange,
@@ -26,7 +29,10 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
             chainId={1}
             value={addressInput}
             onChange={setAddressInput}
-            onAccept={(value) => onReceiverChange(value?.address)}
+            onAccept={(value) => {
+                onReceiverChange(value?.address);
+                setValue('name', value?.name);
+            }}
             {...addressField}
         />
     );

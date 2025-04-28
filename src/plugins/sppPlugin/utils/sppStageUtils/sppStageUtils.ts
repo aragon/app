@@ -1,6 +1,6 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { ProposalVotingStatus } from '@aragon/gov-ui-kit';
+import { addressUtils, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { type ISppProposal, type ISppStage, type ISppSubProposal } from '../../types';
 
@@ -130,25 +130,37 @@ class SppStageUtils {
     };
 
     getSuccessThreshold = (proposal: ISppProposal, stage: ISppStage): number => {
-        return proposal.subProposals.reduce((count, subProposal) => {
-            if (subProposal.stageIndex !== stage.stageIndex) {
-                return count;
-            }
+        const { plugins, stageIndex } = stage;
 
+        const successCount = plugins.reduce((count, plugin) => {
+            const { address, subdomain } = plugin;
             const getSucceededStatus = pluginRegistryUtils.getSlotFunction<ISppSubProposal, boolean>({
                 slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_SUCCEEDED,
-                pluginId: subProposal.pluginSubdomain,
+                pluginId: subdomain ?? 'external',
             });
 
-            const isSuccessReached = getSucceededStatus?.(subProposal);
+            const subProposal = this.getBodySubProposal(proposal, address, stageIndex);
+            const bodyResult = this.getBodyResult(proposal, address, stageIndex);
 
-            if (isSuccessReached == null) {
-                return subProposal.result ? count + 1 : count;
-            }
+            const isSuccessReached = subProposal != null ? getSucceededStatus?.(subProposal) : bodyResult != null;
 
             return isSuccessReached ? count + 1 : count;
         }, 0);
+
+        return successCount;
     };
+
+    getBodyResult = (proposal: ISppProposal, bodyAddress: string, stageIndex: number) =>
+        proposal.results?.find(
+            ({ pluginAddress, stage }) =>
+                addressUtils.isAddressEqual(pluginAddress, bodyAddress) && stage === stageIndex,
+        );
+
+    getBodySubProposal = (proposal: ISppProposal, body: string, stageIndex: number): ISppSubProposal | undefined =>
+        proposal.subProposals.find(
+            (subProposal) =>
+                addressUtils.isAddressEqual(subProposal.pluginAddress, body) && subProposal.stageIndex === stageIndex,
+        );
 
     isVeto = (stage: ISppStage): boolean => stage.vetoThreshold > 0;
 
