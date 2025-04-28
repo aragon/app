@@ -1,8 +1,8 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { AvatarIcon, type AvatarIconVariant, IconType, ProposalVotingTab, Tabs } from '@aragon/gov-ui-kit';
+import { AvatarIcon, ProposalVotingTab, Tabs } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { type ISppProposal, type ISppStage, SppProposalType } from '../../types';
-import { sppStageUtils } from '../../utils/sppStageUtils';
+import { type ISppProposal, type ISppStage } from '../../types';
+import { sppProposalUtils } from '../../utils/sppProposalUtils';
 
 export interface ISppVotingTerminalBodyBreakdownDefaultProps {
     /**
@@ -27,29 +27,17 @@ export interface ISppVotingTerminalBodyBreakdownDefaultProps {
     children: React.ReactNode;
 }
 
-// Just an internal type to help with the mapping external voting result to UI properties.
-type BreakdownStatus = 'neutral' | 'success' | 'failure';
-
-const statusToStyle: Record<BreakdownStatus, { icon?: IconType; variant?: AvatarIconVariant; label: string }> = {
-    success: { icon: IconType.CHECKMARK, variant: 'success', label: 'text-success-800' },
-    failure: { icon: IconType.CLOSE, variant: 'critical', label: 'text-critical-800' },
-    neutral: { label: 'text-neutral-500' },
-};
-
 export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalBodyBreakdownDefaultProps> = (props) => {
     const { proposal, externalAddress, stage, canVote, children } = props;
 
     const { t } = useTranslations();
-    const { resultType } = sppStageUtils.getBodyResult(proposal, externalAddress, stage.stageIndex) ?? {};
-
-    const voted = resultType != null;
-    const isVeto = sppStageUtils.isVeto(stage);
-
-    const status = voted ? (resultType === SppProposalType.VETO ? 'failure' : 'success') : 'neutral';
-    const statusStyle = statusToStyle[status];
-
-    const statusLabelContext = voted ? 'voted' : canVote ? 'vote' : 'expired';
-    const statusLabel = `${statusLabelContext}.${isVeto ? 'veto' : 'approve'}`;
+    const { statusStyle, statusLabel } = sppProposalUtils.getBodyStatusLabelData({
+        proposal,
+        externalAddress,
+        stage,
+        canVote,
+        t,
+    });
 
     return (
         <Tabs.Content value={ProposalVotingTab.BREAKDOWN}>
@@ -60,7 +48,7 @@ export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalB
                     statusStyle.label,
                 )}
             >
-                {t(`app.plugins.spp.sppVotingTerminalBodyBreakdownDefault.${statusLabel}`)}
+                {statusLabel}
                 {statusStyle.icon != null && <AvatarIcon icon={statusStyle.icon} variant={statusStyle.variant} />}
             </div>
             {children}
