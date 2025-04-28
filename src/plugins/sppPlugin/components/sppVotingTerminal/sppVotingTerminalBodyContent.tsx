@@ -32,6 +32,10 @@ export interface ISppVotingTerminalBodyContentProps {
      */
     proposal: ISppProposal;
     /**
+     * Flag indicating if the vote is a veto.
+     */
+    isVeto: boolean;
+    /**
      * Flag indicating if the user can vote.
      */
     canVote: boolean;
@@ -44,7 +48,7 @@ export interface ISppVotingTerminalBodyContentProps {
 const votesPerPage = 6;
 
 export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyContentProps> = (props) => {
-    const { plugin, daoId, subProposal, stage, proposal, canVote, children } = props;
+    const { plugin, daoId, subProposal, stage, proposal, canVote, isVeto, children } = props;
 
     const voteListParams = {
         queryParams: { proposalId: subProposal?.id, pluginAddress: subProposal?.pluginAddress, pageSize: votesPerPage },
@@ -85,6 +89,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                                     externalAddress={isExternalBody ? plugin.address : undefined}
                                     daoId={daoId}
                                     stage={stage}
+                                    isVeto={isVeto}
                                     Fallback={SppVotingTerminalBodyVoteDefault}
                                 />
                             )}
