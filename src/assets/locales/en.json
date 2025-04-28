@@ -1196,6 +1196,21 @@
             "veto": "Vetoed"
           }
         },
+        "sppVotingTerminalMultiBodySummaryDefault": {
+          "name": "External address",
+          "expired": {
+            "approve": "did not approve",
+            "veto": "did not veto"
+          },
+          "vote": {
+            "approve": "approve",
+            "veto": "veto"
+          },
+          "voted": {
+            "approve": "approved",
+            "veto": "vetoed"
+          }
+        },
         "sppVotingTerminalBodyVoteDefault": {
           "approve": "Approve proposal",
           "approved": "Approved",

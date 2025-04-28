@@ -55,9 +55,9 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
     };
 
     const proposalSettings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDaoSettingTermAndDefinition[]>({
-        params: { daoId, settings: plugin.settings, pluginAddress: plugin.address },
+        params: { daoId, settings: plugin.subdomain ? plugin.settings : {}, pluginAddress: plugin.address },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
-        pluginId: plugin.subdomain,
+        pluginId: plugin.subdomain ?? 'external',
     });
 
     // Set parent name and description on sub-proposal to correctly display the proposal info on the vote dialog.
