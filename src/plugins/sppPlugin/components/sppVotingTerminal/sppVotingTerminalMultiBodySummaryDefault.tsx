@@ -1,5 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import type { Hex } from 'viem';
 import { mainnet } from 'viem/chains';
 import { useEnsName } from 'wagmi';
@@ -36,19 +37,18 @@ export const SppVotingTerminalMultiBodySummaryDefault: React.FC<ISppVotingTermin
     const { t } = useTranslations();
     const { data: ensName } = useEnsName({ address: externalAddress as Hex, chainId: mainnet.id });
 
-    const { statusStyle, statusLabelTranslationKey } = sppProposalUtils.getBodyStatusLabelMetadata({
+    const { statusStyle, statusLabel } = sppProposalUtils.getBodyStatusLabelData({
         proposal,
         externalAddress,
         stage,
         canVote,
+        t,
     });
 
     return (
         <p>
             {ensName ?? addressUtils.truncateAddress(externalAddress)}{' '}
-            <span className={statusStyle.label}>
-                {t(`app.plugins.spp.sppVotingTerminalMultiBodySummaryDefault.${statusLabelTranslationKey}`)}
-            </span>
+            <span className={classNames(statusStyle.label, 'lowercase')}>{statusLabel}</span>
         </p>
     );
 };

@@ -1,3 +1,4 @@
+import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import { type AvatarIconVariant, IconType, type ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { type ISppProposal, type ISppStage, SppProposalType } from '../../types';
@@ -61,16 +62,18 @@ class SppProposalUtils {
             (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalVotingStatus.ACCEPTED,
         );
 
-    getBodyStatusLabelMetadata = ({
+    getBodyStatusLabelData = ({
         proposal,
         externalAddress,
         stage,
         canVote,
+        t,
     }: {
         proposal: ISppProposal;
         externalAddress: string;
         stage: ISppStage;
         canVote: boolean;
+        t: TranslationFunction;
     }) => {
         const { resultType } = sppStageUtils.getBodyResult(proposal, externalAddress, stage.stageIndex) ?? {};
 
@@ -81,10 +84,12 @@ class SppProposalUtils {
         const statusStyle = statusToStyle[status];
 
         const statusLabelContext = voted ? 'voted' : canVote ? 'vote' : 'expired';
-        const statusLabelTranslationKey = `${statusLabelContext}.${isVeto ? 'veto' : 'approve'}`;
+        const statusLabelKeySuffix = `${statusLabelContext}.${isVeto ? 'veto' : 'approve'}`;
 
         return {
-            statusLabelTranslationKey,
+            // currently reused in SppVotingTerminalBodyBreakdownDefault and SppVotingTerminalMultiBodySummaryDefault.
+            // If different labels are needed, we can just return the key suffix and let components define labels as needed.
+            statusLabel: t(`app.plugins.spp.sppVotingTerminalBodyBreakdownDefault.${statusLabelKeySuffix}`),
             statusStyle,
         };
     };

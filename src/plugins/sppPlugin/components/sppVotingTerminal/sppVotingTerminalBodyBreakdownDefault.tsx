@@ -31,11 +31,12 @@ export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalB
     const { proposal, externalAddress, stage, canVote, children } = props;
 
     const { t } = useTranslations();
-    const { statusStyle, statusLabelTranslationKey } = sppProposalUtils.getBodyStatusLabelMetadata({
+    const { statusStyle, statusLabel } = sppProposalUtils.getBodyStatusLabelData({
         proposal,
         externalAddress,
         stage,
         canVote,
+        t,
     });
 
     return (
@@ -47,7 +48,7 @@ export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalB
                     statusStyle.label,
                 )}
             >
-                {t(`app.plugins.spp.sppVotingTerminalBodyBreakdownDefault.${statusLabelTranslationKey}`)}
+                {statusLabel}
                 {statusStyle.icon != null && <AvatarIcon icon={statusStyle.icon} variant={statusStyle.variant} />}
             </div>
             {children}

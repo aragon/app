@@ -1203,20 +1203,6 @@
           "veto": "Veto proposal",
           "vetoed": "Vetoed"
         },
-        "sppVotingTerminalMultiBodySummaryDefault": {
-          "expired": {
-            "approve": "did not approve",
-            "veto": "did not veto"
-          },
-          "vote": {
-            "approve": "not approved yet",
-            "veto": "not vetoed yet"
-          },
-          "voted": {
-            "approve": "approved",
-            "veto": "vetoed"
-          }
-        },
         "sppVotingTerminalStageBodySummaryFooter": {
           "actionRequired": "required to {{action}}",
           "thresholdLabel": "{{count}} {{entityType}}"
