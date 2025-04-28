@@ -4,14 +4,14 @@
 
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { generateRequest, generateResponse } from '@/shared/testUtils';
+import { generateNextRequest, generateRequest, generateResponse } from '@/shared/testUtils';
 import { testLogger } from '@/test/utils';
 import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 import * as NextHeaders from 'next/headers';
 import { NextResponse } from 'next/server';
-import { type IRpcRequestOptions, RpcRequestUtils } from './rpcRequestUtils';
+import { type IRpcRequestOptions, ProxyRpcUtils } from './proxyRpcUtils';
 
-describe('rpcRequest utils', () => {
+describe('proxyRpc utils', () => {
     const originalProcessEnv = process.env;
 
     const fetchSpy = jest.spyOn(global, 'fetch');
@@ -31,7 +31,7 @@ describe('rpcRequest utils', () => {
 
     const createTestClass = (rpcKey?: string) => {
         process.env.NEXT_SECRET_RPC_KEY = rpcKey ?? 'test';
-        return new RpcRequestUtils();
+        return new ProxyRpcUtils();
     };
 
     const createTestOptions = (chainId: string): IRpcRequestOptions => ({ params: Promise.resolve({ chainId }) });
@@ -40,20 +40,20 @@ describe('rpcRequest utils', () => {
         it('throws error when the rpc key is not defined on non CI context', () => {
             testLogger.suppressErrors();
             process.env.CI = 'false';
-            expect(() => new RpcRequestUtils()).toThrow();
+            expect(() => new ProxyRpcUtils()).toThrow();
         });
 
         it('does not throw error when the rpc key is not defined on CI context', () => {
             testLogger.suppressErrors();
             process.env.CI = 'true';
-            expect(() => new RpcRequestUtils()).not.toThrow();
+            expect(() => new ProxyRpcUtils()).not.toThrow();
         });
     });
 
     describe('request', () => {
         it('returns error when network definitions are not found for chain id', async () => {
             const testClass = createTestClass();
-            await testClass.request(generateRequest(), createTestOptions('72983'));
+            await testClass.request(generateNextRequest(), createTestOptions('72983'));
             expect(nextResponseJsonSpy).toHaveBeenCalledWith(
                 { error: expect.stringMatching(/not supported/) as unknown },
                 { status: 501 },
@@ -65,7 +65,7 @@ describe('rpcRequest utils', () => {
             const parsedResponse = { result: 'test' };
             const fetchReturn = generateResponse({ json: jest.fn(() => Promise.resolve(parsedResponse)) });
             fetchSpy.mockResolvedValue(fetchReturn);
-            await testClass.request(generateRequest(), createTestOptions('1'));
+            await testClass.request(generateNextRequest(), createTestOptions('1'));
             expect(fetchSpy).toHaveBeenCalled();
             expect(fetchReturn.json).toHaveBeenCalled();
             expect(nextResponseJsonSpy).toHaveBeenCalledWith(parsedResponse);
