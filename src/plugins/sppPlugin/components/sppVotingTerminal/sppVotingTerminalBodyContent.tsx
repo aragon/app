@@ -76,7 +76,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                         slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
                         pluginId={isExternalBody ? 'external' : plugin.subdomain}
                         proposal={isExternalBody ? proposal : subProposal}
-                        externalAddress={isExternalBody ? plugin.address : undefined}
+                        body={isExternalBody ? plugin.address : undefined}
                         canVote={canVote}
                         stage={stage}
                         Fallback={SppVotingTerminalBodyBreakdownDefault}

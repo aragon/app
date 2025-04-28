@@ -82,7 +82,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                             {plugin.subdomain == null && (
                                 <SppVotingTerminalMultiBodySummaryDefault
                                     proposal={proposal}
-                                    externalAddress={address}
+                                    body={address}
                                     stage={stage}
                                     canVote={canVote}
                                 />

@@ -1,5 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { AvatarIcon, ProposalVotingTab, Tabs } from '@aragon/gov-ui-kit';
+import { AvatarIcon, type AvatarIconVariant, IconType, ProposalVotingTab, Tabs } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { type ISppProposal, type ISppStage } from '../../types';
 import { sppProposalUtils } from '../../utils/sppProposalUtils';
@@ -10,9 +10,9 @@ export interface ISppVotingTerminalBodyBreakdownDefaultProps {
      */
     proposal: ISppProposal;
     /**
-     * External body address.
+     * Address of the body.
      */
-    externalAddress: string;
+    body: string;
     /**
      * Stage on which the body is setup.
      */
@@ -27,16 +27,18 @@ export interface ISppVotingTerminalBodyBreakdownDefaultProps {
     children: React.ReactNode;
 }
 
+const statusToIcon: Record<string, { icon: IconType; variant: AvatarIconVariant } | undefined> = {
+    success: { icon: IconType.CHECKMARK, variant: 'success' },
+    failure: { icon: IconType.CLOSE, variant: 'critical' },
+};
+
 export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalBodyBreakdownDefaultProps> = (props) => {
-    const { proposal, externalAddress, stage, canVote, children } = props;
+    const { proposal, body, stage, canVote, children } = props;
 
     const { t } = useTranslations();
-    const { statusStyle, statusLabel } = sppProposalUtils.getBodyStatusLabelData({
-        proposal,
-        externalAddress,
-        stage,
-        canVote,
-    });
+
+    const { status, label, style } = sppProposalUtils.getBodyResultStatus({ proposal, body, stage, canVote });
+    const statusIcon = statusToIcon[status];
 
     return (
         <Tabs.Content value={ProposalVotingTab.BREAKDOWN}>
@@ -44,11 +46,11 @@ export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalB
                 className={classNames(
                     'rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 shadow-neutral-sm md:px-6 md:py-5',
                     'flex w-full min-w-fit flex-row justify-between gap-2',
-                    statusStyle.label,
+                    style,
                 )}
             >
-                {t(statusLabel)}
-                {statusStyle.icon != null && <AvatarIcon icon={statusStyle.icon} variant={statusStyle.variant} />}
+                {t(label)}
+                {statusIcon != null && <AvatarIcon icon={statusIcon.icon} variant={statusIcon.variant} />}
             </div>
             {children}
         </Tabs.Content>

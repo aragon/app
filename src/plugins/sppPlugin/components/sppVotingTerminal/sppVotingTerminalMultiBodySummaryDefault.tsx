@@ -13,9 +13,9 @@ export interface ISppVotingTerminalMultiBodySummaryDefaultProps {
      */
     proposal: ISppProposal;
     /**
-     * External body address.
+     * Address of the body.
      */
-    externalAddress: string;
+    body: string;
     /**
      * Stage on which external body is located.
      */
@@ -29,22 +29,17 @@ export interface ISppVotingTerminalMultiBodySummaryDefaultProps {
 export const SppVotingTerminalMultiBodySummaryDefault: React.FC<ISppVotingTerminalMultiBodySummaryDefaultProps> = (
     props,
 ) => {
-    const { proposal, externalAddress, stage, canVote } = props;
+    const { proposal, body, stage, canVote } = props;
 
     const { t } = useTranslations();
-    const { data: ensName } = useEnsName({ address: externalAddress as Hex, chainId: mainnet.id });
+    const { data: ensName } = useEnsName({ address: body as Hex, chainId: mainnet.id });
 
-    const { statusStyle, statusLabel } = sppProposalUtils.getBodyStatusLabelData({
-        proposal,
-        externalAddress,
-        stage,
-        canVote,
-    });
+    const { label, style } = sppProposalUtils.getBodyResultStatus({ proposal, body, stage, canVote });
 
     return (
         <p>
-            {ensName ?? addressUtils.truncateAddress(externalAddress)}{' '}
-            <span className={classNames(statusStyle.label, 'lowercase')}>{t(statusLabel)}</span>
+            {ensName ?? addressUtils.truncateAddress(body)}{' '}
+            <span className={classNames(style, 'lowercase')}>{t(label)}</span>
         </p>
     );
 };

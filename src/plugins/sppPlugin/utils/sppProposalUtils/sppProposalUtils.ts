@@ -1,23 +1,26 @@
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
-import { type AvatarIconVariant, IconType, type ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
+import { type ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { type ISppProposal, type ISppStage, SppProposalType } from '../../types';
 import { sppStageUtils } from '../sppStageUtils';
 
 interface IGetBodyStatusLabelDataParams {
+    /**
+     * SPP proposal to check the body status for.
+     */
     proposal: ISppProposal;
-    externalAddress: string;
+    /**
+     * Address of the body.
+     */
+    body: string;
+    /**
+     * Stage on which the body is setup.
+     */
     stage: ISppStage;
+    /**
+     * Flag indicating if the vote is active.
+     */
     canVote: boolean;
 }
-
-// Just an internal type to help with the mapping external voting result to UI properties.
-type LabelState = 'neutral' | 'success' | 'failure';
-
-const statusToStyle: Record<LabelState, { icon?: IconType; variant?: AvatarIconVariant; label: string }> = {
-    success: { icon: IconType.CHECKMARK, variant: 'success', label: 'text-success-800' },
-    failure: { icon: IconType.CLOSE, variant: 'critical', label: 'text-critical-800' },
-    neutral: { label: 'text-neutral-500' },
-};
 
 class SppProposalUtils {
     getProposalStatus = (proposal: ISppProposal): ProposalStatus => {
@@ -68,25 +71,23 @@ class SppProposalUtils {
             (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalVotingStatus.ACCEPTED,
         );
 
-    getBodyStatusLabelData = (params: IGetBodyStatusLabelDataParams) => {
-        const { proposal, externalAddress, stage, canVote } = params;
-        const { resultType } = sppStageUtils.getBodyResult(proposal, externalAddress, stage.stageIndex) ?? {};
+    getBodyResultStatus = (params: IGetBodyStatusLabelDataParams) => {
+        const { proposal, body, stage, canVote } = params;
+        const { resultType } = sppStageUtils.getBodyResult(proposal, body, stage.stageIndex) ?? {};
 
         const voted = resultType != null;
         const isVeto = sppStageUtils.isVeto(stage);
 
         const status = voted ? (resultType === SppProposalType.VETO ? 'failure' : 'success') : 'neutral';
-        const statusStyle = statusToStyle[status];
 
-        const statusLabelContext = voted ? 'voted' : canVote ? 'vote' : 'expired';
-        const statusLabelKeySuffix = `${statusLabelContext}.${isVeto ? 'veto' : 'approve'}`;
+        const labelContext = voted ? 'voted' : canVote ? 'vote' : 'expired';
+        const labelSuffix = `${labelContext}.${isVeto ? 'veto' : 'approve'}`;
 
-        return {
-            // currently reused in SppVotingTerminalBodyBreakdownDefault and SppVotingTerminalMultiBodySummaryDefault.
-            // If different labels are needed, we can just return the key suffix and let components define labels as needed.
-            statusLabel: `app.plugins.spp.sppVotingTerminalBodyBreakdownDefault.${statusLabelKeySuffix}`,
-            statusStyle,
-        };
+        const label = `app.plugins.spp.sppVotingTerminalBodyBreakdownDefault.${labelSuffix}`;
+        const style =
+            status === 'neutral' ? 'text-neutral-500' : status === 'success' ? 'text-success-800' : 'text-critical-800';
+
+        return { status, label, style };
     };
 }
 
