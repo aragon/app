@@ -1196,6 +1196,13 @@
             "veto": "Vetoed"
           }
         },
+        "sppVotingTerminalBodyVoteDefault": {
+          "approve": "Approve proposal",
+          "approved": "Approved",
+          "helpText": "If you are an owner of this address you can connect with WalletConnect to vote on this proposal.",
+          "veto": "Veto proposal",
+          "vetoed": "Vetoed"
+        },
         "sppVotingTerminalMultiBodySummaryDefault": {
           "expired": {
             "approve": "did not approve",
@@ -1209,13 +1216,6 @@
             "approve": "approved",
             "veto": "vetoed"
           }
-        },
-        "sppVotingTerminalBodyVoteDefault": {
-          "approve": "Approve proposal",
-          "approved": "Approved",
-          "helpText": "If you are an owner of this address you can connect with WalletConnect to vote on this proposal.",
-          "veto": "Veto proposal",
-          "vetoed": "Vetoed"
         },
         "sppVotingTerminalStageBodySummaryFooter": {
           "actionRequired": "required to {{action}}",
