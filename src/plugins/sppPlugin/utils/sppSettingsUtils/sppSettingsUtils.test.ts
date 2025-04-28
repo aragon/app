@@ -28,7 +28,7 @@ describe('sppSettings utils', () => {
             const pluginAddress = '0x87654321';
             const pluginName = 'My Plugin A';
             const result = sppSettingsUtils.getFallbackSettings({
-                settings: { pluginAddress, pluginName, stages: [] },
+                settings: { pluginAddress, pluginName },
                 t: (key) => key,
             });
 
@@ -48,7 +48,7 @@ describe('sppSettings utils', () => {
             const pluginAddress = '0x12345678';
             const pluginName = undefined;
             const result = sppSettingsUtils.getFallbackSettings({
-                settings: { pluginAddress, pluginName, stages: [] },
+                settings: { pluginAddress, pluginName },
                 t: (key) => key,
             });
 

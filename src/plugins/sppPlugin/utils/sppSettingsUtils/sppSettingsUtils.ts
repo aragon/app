@@ -1,5 +1,6 @@
 import type { IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import type { IPluginSettings } from '../../../../shared/api/daoService';
 import type { ISppPluginSettings } from '../../types';
 
 export interface ISppSettingsParseParams {
@@ -7,6 +8,17 @@ export interface ISppSettingsParseParams {
      * Settings passed into the function either from the DAO or the proposal.
      */
     settings: ISppPluginSettings;
+    /**
+     * The translation function for internationalization.
+     */
+    t: TranslationFunction;
+}
+
+export interface IGetFallbackSettingsParams {
+    /**
+     * Settings of an external plugin.
+     */
+    settings: IPluginSettings;
     /**
      * The translation function for internationalization.
      */
@@ -27,7 +39,10 @@ class SppSettingsUtils {
         ];
     };
 
-    getFallbackSettings = (params: ISppSettingsParseParams): IDaoSettingTermAndDefinition[] => {
+    /**
+     * Currently related to external plugins, which are handled as fallbacks.
+     */
+    getFallbackSettings = (params: IGetFallbackSettingsParams): IDaoSettingTermAndDefinition[] => {
         const { settings, t } = params;
         const { pluginAddress, pluginName } = settings;
 
