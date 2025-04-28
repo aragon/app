@@ -1208,10 +1208,6 @@
             "approve": "did not approve",
             "veto": "did not veto"
           },
-          "vote": {
-            "approve": "approve",
-            "veto": "veto"
-          },
           "voted": {
             "approve": "approved",
             "veto": "vetoed"
