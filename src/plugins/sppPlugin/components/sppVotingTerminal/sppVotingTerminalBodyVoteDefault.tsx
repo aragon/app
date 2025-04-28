@@ -48,7 +48,7 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
 
     const { check: checkWalletConnection } = useConnectedWalletGuard();
 
-    const voted = sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stageIndex) != null;
+    const voted = sppProposalUtils.getBodyResult(proposal, externalAddress, stageIndex) != null;
 
     const openTransactionDialog = () => {
         const params: ISppReportProposalResultDialogParams = { daoId, proposal, isVeto };

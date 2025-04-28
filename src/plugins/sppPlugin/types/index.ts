@@ -1,7 +1,7 @@
 export * from './enum';
-export type { ISppProposalBodyResult } from './sppExternalBodyResult';
 export type { ISppPluginSettings } from './sppPluginSettings';
 export type { ISppProposal } from './sppProposal';
+export type { ISppProposalBodyResult } from './sppProposalBodyResult';
 export type { ISppProposalExecution } from './sppProposalExecution';
 export type { ISppStage } from './sppStage';
 export type { ISppStagePlugin } from './sppStagePlugin';

@@ -160,21 +160,13 @@ describe('SppProposalUtils', () => {
         });
     });
 
-    describe('getExternalBodyResult', () => {
-        it('returns the result for the given external address and stage index if present', () => {
+    describe('getBodyResult', () => {
+        it('returns the result for the given address and stage index if present', () => {
             const externalAddress = '0x1234567890abcdef1234567890abcdef12345678';
             const stage = 1;
-            const result = {
-                pluginAddress: externalAddress,
-                stage,
-                resultType: SppProposalType.APPROVAL,
-            };
-            const proposal = generateSppProposal({
-                results: [result],
-            });
-
-            const externalBodyResult = sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stage);
-
+            const result = { pluginAddress: externalAddress, stage, resultType: SppProposalType.APPROVAL };
+            const proposal = generateSppProposal({ results: [result] });
+            const externalBodyResult = sppProposalUtils.getBodyResult(proposal, externalAddress, stage);
             expect(externalBodyResult).toEqual(result);
         });
 
@@ -182,17 +174,10 @@ describe('SppProposalUtils', () => {
             const externalAddress = '0x1234567890abcdef1234567890abcdef12345678';
             const stage = 1;
             const proposal = generateSppProposal({
-                results: [
-                    {
-                        pluginAddress: externalAddress,
-                        stage: 2,
-                        resultType: SppProposalType.APPROVAL,
-                    },
-                ],
+                results: [{ pluginAddress: externalAddress, stage: 2, resultType: SppProposalType.APPROVAL }],
             });
 
-            const externalBodyResult = sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stage);
-
+            const externalBodyResult = sppProposalUtils.getBodyResult(proposal, externalAddress, stage);
             expect(externalBodyResult).toBeUndefined();
         });
 
@@ -201,8 +186,7 @@ describe('SppProposalUtils', () => {
             const stage = 1;
             const proposal = generateSppProposal();
 
-            const externalBodyResult = sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stage);
-
+            const externalBodyResult = sppProposalUtils.getBodyResult(proposal, externalAddress, stage);
             expect(externalBodyResult).toBeUndefined();
         });
     });

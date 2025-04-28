@@ -52,12 +52,11 @@ class SppProposalUtils {
             (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalVotingStatus.ACCEPTED,
         );
 
-    getExternalBodyResult = (proposal: ISppProposal, externalAddress: string, stageIndex: number) => {
-        return proposal.results?.find(
-            (result) =>
-                addressUtils.isAddressEqual(result.pluginAddress, externalAddress) && result.stage === stageIndex,
+    getBodyResult = ({ results }: ISppProposal, bodyAddress: string, stageIndex: number) =>
+        results?.find(
+            ({ pluginAddress, stage }) =>
+                addressUtils.isAddressEqual(pluginAddress, bodyAddress) && stage === stageIndex,
         );
-    };
 }
 
 export const sppProposalUtils = new SppProposalUtils();

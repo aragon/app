@@ -43,7 +43,7 @@ export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalB
     const { proposal, externalAddress, stageIndex, isVeto, canVote, children } = props;
     const { t } = useTranslations();
 
-    const result = sppProposalUtils.getExternalBodyResult(proposal, externalAddress, stageIndex);
+    const result = sppProposalUtils.getBodyResult(proposal, externalAddress, stageIndex);
     const voted = result?.resultType != null;
     const breakdownStatusStyle: BreakdownStatus = voted
         ? result.resultType === SppProposalType.VETO

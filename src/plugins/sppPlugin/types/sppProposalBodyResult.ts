@@ -6,7 +6,7 @@ export interface ISppProposalBodyResult {
      */
     pluginAddress: string;
     /**
-     * Index of the stage on which external body is located.
+     * Index of the stage on which body is setup.
      */
     stage: number;
     /**
