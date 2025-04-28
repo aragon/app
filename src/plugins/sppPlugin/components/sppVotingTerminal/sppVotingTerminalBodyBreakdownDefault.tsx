@@ -2,7 +2,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { AvatarIcon, type AvatarIconVariant, IconType, ProposalVotingTab, Tabs } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { type ISppProposal, type ISppStage, SppProposalType } from '../../types';
-import { sppProposalUtils } from '../../utils/sppProposalUtils';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 
 export interface ISppVotingTerminalBodyBreakdownDefaultProps {
@@ -41,7 +40,7 @@ export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalB
     const { proposal, externalAddress, stage, canVote, children } = props;
 
     const { t } = useTranslations();
-    const { resultType } = sppProposalUtils.getBodyResult(proposal, externalAddress, stage.stageIndex) ?? {};
+    const { resultType } = sppStageUtils.getBodyResult(proposal, externalAddress, stage.stageIndex) ?? {};
 
     const voted = resultType != null;
     const isVeto = sppStageUtils.isVeto(stage);

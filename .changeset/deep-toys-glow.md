@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-Update Governance Designer to support external addresses
+Update Governance Designer and Voting Terminal to support external addresses

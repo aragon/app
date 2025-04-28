@@ -1,5 +1,5 @@
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
-import { addressUtils, type ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
+import { type ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../sppStageUtils';
 
@@ -50,12 +50,6 @@ class SppProposalUtils {
     areAllStagesAccepted = (proposal: ISppProposal): boolean =>
         proposal.settings.stages.every(
             (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalVotingStatus.ACCEPTED,
-        );
-
-    getBodyResult = ({ results }: ISppProposal, bodyAddress: string, stageIndex: number) =>
-        results?.find(
-            ({ pluginAddress, stage }) =>
-                addressUtils.isAddressEqual(pluginAddress, bodyAddress) && stage === stageIndex,
         );
 }
 
