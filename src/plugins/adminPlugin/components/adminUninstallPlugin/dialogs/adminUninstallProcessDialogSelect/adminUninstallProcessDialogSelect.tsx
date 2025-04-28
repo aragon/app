@@ -71,6 +71,7 @@ export const AdminUninstallProcessDialogSelect: React.FC<IAdminUninstallProcessD
 
     return (
         <DialogAlert.Root
+            size="lg"
             open={isOpen}
             variant="critical"
             hiddenDescription={t(
