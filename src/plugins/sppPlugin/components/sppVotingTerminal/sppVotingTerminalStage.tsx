@@ -72,12 +72,16 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                             <PluginSingleComponent
                                 slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY}
                                 pluginId={plugin.subdomain ?? 'external'}
-                                proposal={plugin.subdomain ? sppStageUtils.getBodySubProposal(proposal, plugin.address, stage.stageIndex) : proposal}
+                                proposal={
+                                    plugin.subdomain
+                                        ? sppStageUtils.getBodySubProposal(proposal, plugin.address, stage.stageIndex)
+                                        : proposal
+                                }
                                 isExecuted={proposal.executed.status}
                                 name={plugin.subdomain && plugin.name}
                                 isOptimistic={isVeto}
                                 canVote={canVote}
-                                stageIndex={stage.stageIndex}
+                                stage={stage}
                                 externalAddress={plugin.subdomain ? undefined : plugin.address}
                                 Fallback={SppVotingTerminalMultiBodySummaryDefault}
                             />

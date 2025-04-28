@@ -1,7 +1,16 @@
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
-import { type ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
-import type { ISppProposal, ISppStage } from '../../types';
+import { type AvatarIconVariant, IconType, type ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
+import { type ISppProposal, type ISppStage, SppProposalType } from '../../types';
 import { sppStageUtils } from '../sppStageUtils';
+
+// Just an internal type to help with the mapping external voting result to UI properties.
+type LabelState = 'neutral' | 'success' | 'failure';
+
+const statusToStyle: Record<LabelState, { icon?: IconType; variant?: AvatarIconVariant; label: string }> = {
+    success: { icon: IconType.CHECKMARK, variant: 'success', label: 'text-success-800' },
+    failure: { icon: IconType.CLOSE, variant: 'critical', label: 'text-critical-800' },
+    neutral: { label: 'text-neutral-500' },
+};
 
 class SppProposalUtils {
     getProposalStatus = (proposal: ISppProposal): ProposalStatus => {
@@ -51,6 +60,34 @@ class SppProposalUtils {
         proposal.settings.stages.every(
             (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalVotingStatus.ACCEPTED,
         );
+
+    getBodyStatusLabelMetadata = ({
+        proposal,
+        externalAddress,
+        stage,
+        canVote,
+    }: {
+        proposal: ISppProposal;
+        externalAddress: string;
+        stage: ISppStage;
+        canVote: boolean;
+    }) => {
+        const { resultType } = sppStageUtils.getBodyResult(proposal, externalAddress, stage.stageIndex) ?? {};
+
+        const voted = resultType != null;
+        const isVeto = sppStageUtils.isVeto(stage);
+
+        const status = voted ? (resultType === SppProposalType.VETO ? 'failure' : 'success') : 'neutral';
+        const statusStyle = statusToStyle[status];
+
+        const statusLabelContext = voted ? 'voted' : canVote ? 'vote' : 'expired';
+        const statusLabelTranslationKey = `${statusLabelContext}.${isVeto ? 'veto' : 'approve'}`;
+
+        return {
+            statusLabelTranslationKey,
+            statusStyle,
+        };
+    };
 }
 
 export const sppProposalUtils = new SppProposalUtils();
