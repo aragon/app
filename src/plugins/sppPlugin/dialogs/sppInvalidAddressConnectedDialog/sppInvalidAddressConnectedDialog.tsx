@@ -13,14 +13,14 @@ export const SppInvalidAddressConnectedDialog: React.FC<ISppInvalidAddressConnec
 
     return (
         <>
-            <Dialog.Header title={t('app.plugins.spp.invalidAddressConnectedDialog.title')} />
+            <Dialog.Header title={t('app.plugins.spp.sppInvalidAddressConnectedDialog.title')} />
             <Dialog.Content
-                description={t('app.plugins.spp.invalidAddressConnectedDialog.description')}
+                description={t('app.plugins.spp.sppInvalidAddressConnectedDialog.description')}
                 className="pb-4 md:pb-6"
             />
             <Dialog.Footer
                 primaryAction={{
-                    label: t('app.plugins.spp.invalidAddressConnectedDialog.action'),
+                    label: t('app.plugins.spp.sppInvalidAddressConnectedDialog.action'),
                     onClick: () => close(),
                 }}
             />
