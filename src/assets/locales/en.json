@@ -204,8 +204,7 @@
             "default": {
               "address": "Address",
               "ens": "ENS name"
-            },
-            "external": "External address"
+            }
           },
           "stageApprovalsField": {
             "approve": {
@@ -1631,6 +1630,9 @@
           "required": "{{name}} is mandatory.",
           "validate": "{{name}} is invalid."
         }
+      },
+      "governanceBodyInfo": {
+        "external": "External address"
       },
       "page": {
         "header": {

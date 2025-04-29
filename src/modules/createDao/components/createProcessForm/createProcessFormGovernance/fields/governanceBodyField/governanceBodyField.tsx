@@ -1,5 +1,8 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
-import { type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
+import {
+    SetupBodyType,
+    type ISetupBodyForm,
+} from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -8,7 +11,7 @@ import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { GovernanceType, type ICreateProcessFormData } from '../../../createProcessFormDefinitions';
 import { GovernanceBodiesFieldItemDefault } from './governanceBodiesFieldItemDefault';
-import { GovernanceBodyFieldItemHeader } from './governanceBodyFieldItemHeader';
+import { GovernanceBodyInfo } from '@/shared/components/governanceBodyInfo';
 
 export interface IGovernanceBodyFieldProps {
     /**
@@ -59,7 +62,11 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
         <Accordion.Container isMulti={true}>
             <Accordion.Item value={body.internalId}>
                 <Accordion.ItemHeader>
-                    <GovernanceBodyFieldItemHeader body={body} />
+                    <GovernanceBodyInfo
+                        name={body.name}
+                        pluginSubdomain={body.type !== SetupBodyType.EXTERNAL ? body.plugin : undefined}
+                        address={body.type === SetupBodyType.EXTERNAL ? body.address : undefined}
+                    />
                 </Accordion.ItemHeader>
                 <Accordion.ItemContent className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6">
                     <PluginSingleComponent
