@@ -5,7 +5,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputFileAvatar, InputText, TextArea } from '@aragon/gov-ui-kit';
 import { useWatch } from 'react-hook-form';
-import { normalize } from 'viem/ens';
 import { getEnsAddress } from 'wagmi/actions';
 import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 
@@ -21,6 +20,7 @@ const descriptionMaxLength = 480;
 const maxAvatarFileSize = 1 * 1024 * 1024; // 1 MB in bytes
 const maxAvatarDimension = 1024;
 const ensMaxLength = 18;
+const validSubdomain = /^[a-z0-9-]+$/;
 
 export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (props) => {
     const { fieldPrefix } = props;
@@ -45,12 +45,14 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
             return undefined;
         }
 
+        // Check if the value matches the valid pattern from the smart contract
+        // https://github.com/aragon/osx/blob/b817881ec1fd381d823181c26d22f692696a6eeb/packages/contracts/src/framework/utils/RegistryUtils.sol
+        if (!validSubdomain.test(value)) {
+            return 'app.createDao.createDaoForm.metadata.ens.error.invalid';
+        }
+
         try {
             const ensName = `${value}.dao.eth`;
-
-            if (ensName !== normalize(ensName)) {
-                return 'app.createDao.createDaoForm.metadata.ens.error.invalid';
-            }
 
             const ensAddress = await getEnsAddress(wagmiConfig, {
                 name: ensName,
