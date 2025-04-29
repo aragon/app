@@ -14,7 +14,7 @@ export interface ISppSettingsParseParams {
     t: TranslationFunction;
 }
 
-export interface IGetFallbackSettingsParams {
+export interface ISppSettingsFallbackParams {
     /**
      * Settings of an external plugin.
      */
@@ -42,7 +42,7 @@ class SppSettingsUtils {
     /**
      * Currently related to external plugins, which are handled as fallbacks.
      */
-    getFallbackSettings = (params: IGetFallbackSettingsParams): IDaoSettingTermAndDefinition[] => {
+    getFallbackSettings = (params: ISppSettingsFallbackParams): IDaoSettingTermAndDefinition[] => {
         const { settings, t } = params;
         const { pluginAddress, pluginName } = settings;
 
