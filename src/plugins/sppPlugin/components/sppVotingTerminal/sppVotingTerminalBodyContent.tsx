@@ -2,10 +2,15 @@ import { VoteList } from '@/modules/governance/components/voteList';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
+import { sppSettingsUtils } from '@/plugins/sppPlugin/utils/sppSettingsUtils';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
+import type { Hex } from 'viem';
+import { mainnet } from 'viem/chains';
+import { useEnsName } from 'wagmi';
 import type { ISppProposal, ISppStage, ISppStagePlugin, ISppSubProposal } from '../../types';
 import { SppVotingTerminalBodyBreakdownDefault } from './sppVotingTerminalBodyBreakdownDefault';
 import { SppVotingTerminalBodyVoteDefault } from './sppVotingTerminalBodyVoteDefault';
@@ -49,24 +54,39 @@ const votesPerPage = 6;
 
 export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyContentProps> = (props) => {
     const { plugin, daoId, subProposal, stage, proposal, canVote, isVeto, children } = props;
+    const { address: pluginAddress } = plugin;
+    const { t } = useTranslations();
+
+    const isExternalBody = plugin.subdomain == null;
+
+    const { data: externalBodyEnsName } = useEnsName({
+        address: pluginAddress as Hex,
+        query: { enabled: isExternalBody },
+        chainId: mainnet.id,
+    });
+
+    const pluginSettings = isExternalBody
+        ? { pluginAddress, pluginName: externalBodyEnsName ?? undefined }
+        : plugin.settings;
+    const proposalSettings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDaoSettingTermAndDefinition[]>({
+        params: { daoId, settings: pluginSettings, pluginAddress: plugin.address },
+        slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
+        pluginId: plugin.subdomain ?? 'external',
+        fallback: () =>
+            sppSettingsUtils.getFallbackSettings({
+                t,
+                settings: pluginSettings,
+            }),
+    });
 
     const voteListParams = {
         queryParams: { proposalId: subProposal?.id, pluginAddress: subProposal?.pluginAddress, pageSize: votesPerPage },
     };
 
-    const pluginSettings = plugin.subdomain != null ? plugin.settings : {};
-    const proposalSettings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDaoSettingTermAndDefinition[]>({
-        params: { daoId, settings: pluginSettings, pluginAddress: plugin.address },
-        slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
-        pluginId: plugin.subdomain ?? 'external',
-    });
-
     // Set parent name and description on sub-proposal to correctly display the proposal info on the vote dialog.
     const { title, description, incrementalId } = proposal;
     const processedSubProposal =
         subProposal != null ? { ...subProposal, title, description, incrementalId } : undefined;
-
-    const isExternalBody = plugin.subdomain == null;
 
     return (
         <>
