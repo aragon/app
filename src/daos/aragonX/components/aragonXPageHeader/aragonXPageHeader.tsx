@@ -39,7 +39,7 @@ export const AragonXPageHeader: React.FC<IAragonXPageHeaderProps> = (props) => {
         { value: daoTvl, label: t('app.daos.aragonX.aragonXPageHeader.stat.treasury'), suffix: 'USD' },
     ];
 
-    const plugin = useDaoPlugins({ daoId, subdomain: 'multisig' })![0];
+    const plugin = useDaoPlugins({ daoId })![0];
 
     const createProposalUrl: __next_route_internal_types__.DynamicRoutes = `/dao/${daoId}/create/${plugin.meta.address}/proposal`;
 
