@@ -1,4 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
+import type { IPluginInfo } from '@/shared/types';
 import { addressUtils, invariant } from '@aragon/gov-ui-kit';
 
 export interface IGovernanceBodyInfoProps {
@@ -16,21 +17,6 @@ export interface IGovernanceBodyInfoProps {
     pluginInfo?: IPluginInfo;
 }
 
-interface IPluginInfo {
-    /**
-     * Display name of the plugin.
-     */
-    name: string;
-    /**
-     * Version release number.
-     */
-    release: number;
-    /**
-     * Version build number.
-     */
-    build: number;
-}
-
 export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (props) => {
     const { name, pluginInfo, address } = props;
 
@@ -43,7 +29,7 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (props) =>
     const bodyName = name ?? shortenedAddress;
 
     const subtitle = pluginInfo
-        ? `${pluginInfo.name} v${pluginInfo.release.toString()}.${pluginInfo.build.toString()}`
+        ? `${pluginInfo.name} v${pluginInfo.installVersion.release.toString()}.${pluginInfo.installVersion.build.toString()}`
         : t('app.shared.governanceBodyInfo.external');
 
     return (
