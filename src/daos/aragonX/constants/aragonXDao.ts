@@ -1,4 +1,4 @@
 export const aragonXDao = {
-    id: 'ethereum-mainnet-0xDafBD7d63CEe88d73a51592b42f27f7FD6ab7722',
+    id: 'ethereum-sepolia-0xd0ABabB6C7b248Af5A848A828Ee4A5C19F2c0ba0',
     name: 'aragonX',
 };
