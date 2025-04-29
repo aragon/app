@@ -1,6 +1,7 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { GovernanceBodyInfo, type IGovernanceBodyInfoProps } from './governanceBodyInfo';
+import type { IPluginInfo } from '@/shared/types';
 
 describe('<GovernanceBodyInfo /> component', () => {
     const createTestComponent = (props?: Partial<IGovernanceBodyInfoProps>) => {
@@ -19,9 +20,8 @@ describe('<GovernanceBodyInfo /> component', () => {
         const name = 'Test Body';
         const pluginInfo = {
             name: 'test-plugin',
-            release: 1,
-            build: 2,
-        };
+            installVersion: { release: 1, build: 2 },
+        } as IPluginInfo;
         render(createTestComponent({ name, pluginInfo }));
 
         expect(screen.getByText(name)).toBeInTheDocument();
@@ -30,9 +30,8 @@ describe('<GovernanceBodyInfo /> component', () => {
     it('renders the plugin name & version when pluginInfo is present', () => {
         const pluginInfo = {
             name: 'Token Voting',
-            release: 2,
-            build: 4,
-        };
+            installVersion: { release: 2, build: 4 },
+        } as IPluginInfo;
         const address = '0xB017BB3D282a542Ef521F9052Eba61F1e79FC6E8';
         render(createTestComponent({ address, pluginInfo }));
 
