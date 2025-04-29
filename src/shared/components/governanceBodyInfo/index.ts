@@ -1,1 +1,1 @@
-export { GovernanceBodyInfo, type IGovernanceBodyInfoProps}  from './governanceBodyInfo';
+export { GovernanceBodyInfo, type IGovernanceBodyInfoProps } from './governanceBodyInfo';

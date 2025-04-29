@@ -3,6 +3,7 @@ import {
     SetupBodyType,
     type ISetupBodyForm,
 } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
+import { GovernanceBodyInfo } from '@/shared/components/governanceBodyInfo';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -11,7 +12,6 @@ import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { GovernanceType, type ICreateProcessFormData } from '../../../createProcessFormDefinitions';
 import { GovernanceBodiesFieldItemDefault } from './governanceBodiesFieldItemDefault';
-import { GovernanceBodyInfo } from '@/shared/components/governanceBodyInfo';
 
 export interface IGovernanceBodyFieldProps {
     /**

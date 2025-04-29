@@ -20,7 +20,10 @@ export interface IGovernanceBodyInfoProps {
 export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (props) => {
     const { name, pluginSubdomain, address } = props;
 
-    invariant(address != null || pluginSubdomain != null, 'GovernanceBodyInfo: address or pluginSubdomain must be set.');
+    invariant(
+        address != null || pluginSubdomain != null,
+        'GovernanceBodyInfo: address or pluginSubdomain must be set.',
+    );
 
     const { t } = useTranslations();
 
@@ -29,7 +32,8 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (props) =>
     const bodyName = name ?? shortenedAddress;
 
     const plugin = pluginRegistryUtils.getPlugin(pluginSubdomain ?? '');
-    const pluginVersion = plugin && `v${plugin.installVersion.release.toString()}.${plugin.installVersion.build.toString()}`;
+    const pluginVersion =
+        plugin && `v${plugin.installVersion.release.toString()}.${plugin.installVersion.build.toString()}`;
 
     const subtitle = !pluginSubdomain
         ? t('app.shared.governanceBodyInfo.external')
