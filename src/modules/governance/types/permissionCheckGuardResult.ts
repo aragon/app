@@ -1,19 +1,4 @@
-import type { ILinkProps } from '@aragon/gov-ui-kit';
-
-export interface IPermissionCheckGuardSetting {
-    /**
-     * Term of the permission setting.
-     */
-    term: string;
-    /**
-     * Definition of the permission setting.
-     */
-    definition: string;
-    /**
-     * Displays the setting as link when href is set.
-     */
-    link?: ILinkProps;
-}
+import type { IDefinitionSetting } from '@aragon/gov-ui-kit';
 
 export interface IPermissionCheckGuardResult {
     /**
@@ -24,7 +9,7 @@ export interface IPermissionCheckGuardResult {
      * Settings to be displayed as reason on why the user does not have the specified permission.
      * The settings are grouped by condition.
      */
-    settings: IPermissionCheckGuardSetting[][];
+    settings: IDefinitionSetting[][];
     /**
      * Indicates if the slot-function is loading the data needed to check the specific permission.
      */

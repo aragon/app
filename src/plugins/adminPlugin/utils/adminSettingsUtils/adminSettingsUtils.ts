@@ -1,5 +1,5 @@
-import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
-import { type TranslationFunction } from '@/shared/components/translationsProvider';
+import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import type { IDefinitionSetting } from '@aragon/gov-ui-kit';
 
 export interface IAdminSettingsParseParams {
     /**
@@ -9,7 +9,7 @@ export interface IAdminSettingsParseParams {
 }
 
 class AdminSettingsUtils {
-    parseSettings = (params: IAdminSettingsParseParams): IDaoSettingTermAndDefinition[] => {
+    parseSettings = (params: IAdminSettingsParseParams): IDefinitionSetting[] => {
         const { t } = params;
 
         return [

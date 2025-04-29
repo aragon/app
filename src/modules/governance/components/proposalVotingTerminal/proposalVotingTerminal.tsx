@@ -1,8 +1,8 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
+import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { ProposalStatus, ProposalVoting, proposalStatusToVotingStatus } from '@aragon/gov-ui-kit';
+import { IDefinitionSetting, ProposalStatus, ProposalVoting, proposalStatusToVotingStatus } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -39,7 +39,7 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
         },
     };
 
-    const proposalSettings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDaoSettingTermAndDefinition[]>({
+    const proposalSettings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDefinitionSetting[]>({
         params: { daoId, settings: proposal.settings, pluginAddress: proposal.pluginAddress },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginId: proposal.pluginSubdomain,

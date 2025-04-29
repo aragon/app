@@ -1,6 +1,5 @@
-import type { IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
-import { addressUtils, type ILinkProps } from '@aragon/gov-ui-kit';
+import { addressUtils, type IDefinitionSetting, type ILinkProps } from '@aragon/gov-ui-kit';
 import type { ISppPluginSettings } from '../../types';
 
 export interface ISppSettingsParseParams {
@@ -34,7 +33,7 @@ export interface ISppSettingsParseDefaultParams {
 }
 
 class SppSettingsUtils {
-    parseSettings = (params: ISppSettingsParseParams): IDaoSettingTermAndDefinition[] => {
+    parseSettings = (params: ISppSettingsParseParams): IDefinitionSetting[] => {
         const { settings, t } = params;
         const { stages } = settings;
 
@@ -43,10 +42,10 @@ class SppSettingsUtils {
         ];
     };
 
-    parseDefaultSettings = (params: ISppSettingsParseDefaultParams): IDaoSettingTermAndDefinition[] => {
+    parseDefaultSettings = (params: ISppSettingsParseDefaultParams): IDefinitionSetting[] => {
         const { address, name, link, t } = params;
 
-        const settings: IDaoSettingTermAndDefinition[] = [
+        const settings: IDefinitionSetting[] = [
             {
                 term: t('app.plugins.spp.sppGovernanceSettings.default.address'),
                 definition: addressUtils.truncateAddress(address),
