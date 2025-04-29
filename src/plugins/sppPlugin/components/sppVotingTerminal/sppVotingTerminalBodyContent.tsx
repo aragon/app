@@ -3,13 +3,9 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { ChainEntityType, ProposalVoting, useBlockExplorer } from '@aragon/gov-ui-kit';
+import { ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
-import type { Hex } from 'viem';
-import { mainnet } from 'viem/chains';
-import { useEnsName } from 'wagmi';
 import { useSppGovernanceSettingsDefault } from '../../hooks/useSppGovernanceSettingsDefault';
 import type { ISppProposal, ISppStage, ISppStagePlugin, ISppSubProposal } from '../../types';
 import { SppVotingTerminalBodyBreakdownDefault } from './sppVotingTerminalBodyBreakdownDefault';
@@ -54,24 +50,10 @@ const votesPerPage = 6;
 
 export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyContentProps> = (props) => {
     const { plugin, daoId, subProposal, stage, proposal, canVote, isVeto, children } = props;
-    const { address: pluginAddress } = plugin;
 
     const isExternalBody = plugin.subdomain == null;
 
-    const { data: externalBodyEnsName } = useEnsName({
-        address: pluginAddress as Hex,
-        query: { enabled: isExternalBody },
-        chainId: mainnet.id,
-    });
-
-    const { id: chainId } = networkDefinitions[proposal.network];
-    const { buildEntityUrl } = useBlockExplorer({ chainId });
-
-    const pluginHref = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: pluginAddress });
-    const pluginSettings = isExternalBody
-        ? { pluginAddress, pluginName: externalBodyEnsName ?? undefined, link: { href: pluginHref } }
-        : plugin.settings;
-
+    const pluginSettings = isExternalBody ? {} : plugin.settings;
     const proposalSettings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDaoSettingTermAndDefinition[]>({
         params: { daoId, settings: pluginSettings, pluginAddress: plugin.address },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,

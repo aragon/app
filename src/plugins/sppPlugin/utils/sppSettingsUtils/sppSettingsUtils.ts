@@ -1,5 +1,6 @@
 import type { IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { addressUtils, type ILinkProps } from '@aragon/gov-ui-kit';
 import type { ISppPluginSettings } from '../../types';
 
 export interface ISppSettingsParseParams {
@@ -23,6 +24,10 @@ export interface ISppSettingsParseDefaultParams {
      */
     name?: string;
     /**
+     * Link to the deployed plugin.
+     */
+    link?: ILinkProps;
+    /**
      * The translation function for internationalization.
      */
     t: TranslationFunction;
@@ -39,14 +44,18 @@ class SppSettingsUtils {
     };
 
     parseDefaultSettings = (params: ISppSettingsParseDefaultParams): IDaoSettingTermAndDefinition[] => {
-        const { address, name, t } = params;
+        const { address, name, link, t } = params;
 
         const settings: IDaoSettingTermAndDefinition[] = [
-            { term: t('app.plugins.spp.sppGovernanceSettings.default.address'), definition: address },
+            {
+                term: t('app.plugins.spp.sppGovernanceSettings.default.address'),
+                definition: addressUtils.truncateAddress(address),
+                link,
+            },
         ];
 
         if (name != null) {
-            settings.unshift({ term: t('app.plugins.spp.sppGovernanceSettings.default.name'), definition: name });
+            settings.unshift({ term: t('app.plugins.spp.sppGovernanceSettings.default.name'), definition: name, link });
         }
 
         return settings;

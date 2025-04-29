@@ -1,4 +1,4 @@
-import { ILinkProps } from '@aragon/gov-ui-kit';
+import type { ILinkProps } from '@aragon/gov-ui-kit';
 
 export interface IDaoSettingTermAndDefinition {
     /**
