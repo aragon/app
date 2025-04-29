@@ -1,7 +1,7 @@
+import type { IPluginInfo } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { GovernanceBodyInfo, type IGovernanceBodyInfoProps } from './governanceBodyInfo';
-import type { IPluginInfo } from '@/shared/types';
 
 describe('<GovernanceBodyInfo /> component', () => {
     const createTestComponent = (props?: Partial<IGovernanceBodyInfoProps>) => {
