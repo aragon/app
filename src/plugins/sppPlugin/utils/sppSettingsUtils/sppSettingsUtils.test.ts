@@ -1,4 +1,5 @@
 import { generateSppStage } from '@/plugins/sppPlugin/testUtils';
+import { mockTranslations } from '@/test/utils';
 import { sppSettingsUtils } from './sppSettingsUtils';
 
 describe('sppSettings utils', () => {
@@ -23,40 +24,25 @@ describe('sppSettings utils', () => {
         });
     });
 
-    describe('getFallbackSettings', () => {
+    describe('parseDefaultSettings', () => {
         it('returns both pluginName and pluginAddress terms when both are defined', () => {
-            const pluginAddress = '0x87654321';
-            const pluginName = 'My Plugin A';
-            const result = sppSettingsUtils.getFallbackSettings({
-                settings: { pluginAddress, pluginName },
-                t: (key) => key,
-            });
+            const address = '0x87654321';
+            const name = 'My Plugin A';
+            const result = sppSettingsUtils.parseDefaultSettings({ address, name, t: mockTranslations.tMock });
 
             expect(result).toEqual([
-                {
-                    term: 'app.plugins.spp.sppGovernanceSettings.default.name',
-                    definition: pluginName,
-                },
-                {
-                    term: 'app.plugins.spp.sppGovernanceSettings.default.address',
-                    definition: pluginAddress,
-                },
+                { term: 'app.plugins.spp.sppGovernanceSettings.default.name', definition: name },
+                { term: 'app.plugins.spp.sppGovernanceSettings.default.address', definition: address },
             ]);
         });
 
         it('returns only pluginAddress term when pluginName is undefined', () => {
-            const pluginAddress = '0x12345678';
-            const pluginName = undefined;
-            const result = sppSettingsUtils.getFallbackSettings({
-                settings: { pluginAddress, pluginName },
-                t: (key) => key,
-            });
+            const address = '0x12345678';
+            const name = undefined;
+            const result = sppSettingsUtils.parseDefaultSettings({ address, name, t: mockTranslations.tMock });
 
             expect(result).toEqual([
-                {
-                    term: 'app.plugins.spp.sppGovernanceSettings.default.address',
-                    definition: pluginAddress,
-                },
+                { term: 'app.plugins.spp.sppGovernanceSettings.default.address', definition: address },
             ]);
         });
     });

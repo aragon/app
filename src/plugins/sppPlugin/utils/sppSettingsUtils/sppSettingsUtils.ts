@@ -1,6 +1,5 @@
 import type { IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
-import type { IPluginSettings } from '../../../../shared/api/daoService';
 import type { ISppPluginSettings } from '../../types';
 
 export interface ISppSettingsParseParams {
@@ -14,11 +13,15 @@ export interface ISppSettingsParseParams {
     t: TranslationFunction;
 }
 
-export interface ISppSettingsFallbackParams {
+export interface ISppSettingsParseDefaultParams {
     /**
-     * Settings of an external plugin.
+     * Address of the body.
      */
-    settings: IPluginSettings;
+    address: string;
+    /**
+     * ENS name of the body.
+     */
+    name?: string;
     /**
      * The translation function for internationalization.
      */
@@ -28,39 +31,25 @@ export interface ISppSettingsFallbackParams {
 class SppSettingsUtils {
     parseSettings = (params: ISppSettingsParseParams): IDaoSettingTermAndDefinition[] => {
         const { settings, t } = params;
-
         const { stages } = settings;
 
         return [
-            {
-                term: t('app.plugins.spp.sppGovernanceSettings.numberOfStages'),
-                definition: stages.length.toString(),
-            },
+            { term: t('app.plugins.spp.sppGovernanceSettings.numberOfStages'), definition: stages.length.toString() },
         ];
     };
 
-    /**
-     * Currently related to external plugins, which are handled as fallbacks.
-     */
-    getFallbackSettings = (params: ISppSettingsFallbackParams): IDaoSettingTermAndDefinition[] => {
-        const { settings, t } = params;
-        const { pluginAddress, pluginName } = settings;
+    parseDefaultSettings = (params: ISppSettingsParseDefaultParams): IDaoSettingTermAndDefinition[] => {
+        const { address, name, t } = params;
 
-        const fallbackSettings: IDaoSettingTermAndDefinition[] = [];
+        const settings: IDaoSettingTermAndDefinition[] = [
+            { term: t('app.plugins.spp.sppGovernanceSettings.default.address'), definition: address },
+        ];
 
-        if (pluginName) {
-            fallbackSettings.push({
-                term: t('app.plugins.spp.sppGovernanceSettings.default.name'),
-                definition: pluginName,
-            });
+        if (name != null) {
+            settings.unshift({ term: t('app.plugins.spp.sppGovernanceSettings.default.name'), definition: name });
         }
 
-        fallbackSettings.push({
-            term: t('app.plugins.spp.sppGovernanceSettings.default.address'),
-            definition: pluginAddress,
-        });
-
-        return fallbackSettings;
+        return settings;
     };
 }
 
