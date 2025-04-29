@@ -38,6 +38,10 @@ class DaoUtils {
             return plugin.name;
         }
 
+        if (typeof plugin.subdomain !== 'string') {
+            return 'Unknown';
+        }
+
         const parts = plugin.subdomain.split('-');
         return parts.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
     };
