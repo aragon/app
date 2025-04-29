@@ -33,13 +33,13 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (props) =>
 
     const plugin = pluginRegistryUtils.getPlugin(pluginSubdomain ?? '');
     const pluginVersion =
-        plugin && `v${plugin.installVersion.release.toString()}.${plugin.installVersion.build.toString()}`;
+        plugin?.installVersion &&
+        `v${plugin.installVersion.release.toString()}.${plugin.installVersion.build.toString()}`;
 
     const subtitle = !pluginSubdomain
         ? t('app.shared.governanceBodyInfo.external')
-        : plugin
-          ? // at this point plugin version will be defined
-            `${plugin.name} ${pluginVersion!}`
+        : plugin && pluginVersion
+          ? `${plugin.name} ${pluginVersion}`
           : null;
 
     return (

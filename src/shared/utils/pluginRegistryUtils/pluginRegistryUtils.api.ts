@@ -35,7 +35,7 @@ export interface IPlugin {
     /**
      * Install version of the plugin.
      */
-    installVersion: {
+    installVersion?: {
         /**
          * Release number.
          */
