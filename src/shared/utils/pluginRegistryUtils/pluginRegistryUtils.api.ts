@@ -33,7 +33,7 @@ export interface IPlugin {
      */
     name: string;
     /**
-     * Install version of the plugin
+     * Install version of the plugin.
      */
     installVersion: {
         /**
