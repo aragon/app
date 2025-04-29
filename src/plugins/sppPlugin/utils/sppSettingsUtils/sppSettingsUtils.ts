@@ -1,5 +1,6 @@
 import type { IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { addressUtils } from '@aragon/gov-ui-kit';
 import type { IPluginSettings } from '../../../../shared/api/daoService';
 import type { ISppPluginSettings } from '../../types';
 
@@ -44,7 +45,7 @@ class SppSettingsUtils {
      */
     getFallbackSettings = (params: ISppSettingsFallbackParams): IDaoSettingTermAndDefinition[] => {
         const { settings, t } = params;
-        const { pluginAddress, pluginName } = settings;
+        const { pluginAddress, pluginName, link } = settings;
 
         const fallbackSettings: IDaoSettingTermAndDefinition[] = [];
 
@@ -52,12 +53,14 @@ class SppSettingsUtils {
             fallbackSettings.push({
                 term: t('app.plugins.spp.sppGovernanceSettings.default.name'),
                 definition: pluginName,
+                link,
             });
         }
 
         fallbackSettings.push({
             term: t('app.plugins.spp.sppGovernanceSettings.default.address'),
-            definition: pluginAddress,
+            definition: addressUtils.truncateAddress(pluginAddress),
+            link,
         });
 
         return fallbackSettings;

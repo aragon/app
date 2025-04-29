@@ -5,8 +5,9 @@ import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from 
 import { sppSettingsUtils } from '@/plugins/sppPlugin/utils/sppSettingsUtils';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { ProposalVoting } from '@aragon/gov-ui-kit';
+import { ChainEntityType, ProposalVoting, useBlockExplorer } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import type { Hex } from 'viem';
 import { mainnet } from 'viem/chains';
@@ -65,9 +66,14 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
         chainId: mainnet.id,
     });
 
+    const { id: chainId } = networkDefinitions[proposal.network];
+    const { buildEntityUrl } = useBlockExplorer({ chainId });
+
+    const pluginHref = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: pluginAddress });
     const pluginSettings = isExternalBody
-        ? { pluginAddress, pluginName: externalBodyEnsName ?? undefined }
+        ? { pluginAddress, pluginName: externalBodyEnsName ?? undefined, link: { href: pluginHref } }
         : plugin.settings;
+
     const proposalSettings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDaoSettingTermAndDefinition[]>({
         params: { daoId, settings: pluginSettings, pluginAddress: plugin.address },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,

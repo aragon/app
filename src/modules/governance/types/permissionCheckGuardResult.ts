@@ -1,3 +1,5 @@
+import type { ILinkProps } from '@aragon/gov-ui-kit';
+
 export interface IPermissionCheckGuardSetting {
     /**
      * Term of the permission setting.
@@ -8,9 +10,9 @@ export interface IPermissionCheckGuardSetting {
      */
     definition: string;
     /**
-     * Displays the setting as link with the specified url when set.
+     * Displays the setting as link when href is set.
      */
-    href?: string;
+    link?: ILinkProps;
 }
 
 export interface IPermissionCheckGuardResult {
