@@ -37,11 +37,11 @@ export interface IPlugin {
      */
     installVersion: {
         /**
-         * Release version of the plugin.
+         * Release number.
          */
         release: number;
         /**
-         * Build version of the plugin.
+         * Build number.
          */
         build: number;
     };
