@@ -56,7 +56,6 @@ export const GovernanceBasicBodyField: React.FC<IGovernanceBasicBodyFieldProps> 
 
     const handleDelete = () => {
         onBodyChange(undefined);
-        resetField('body');
     };
 
     const isBodySet = body == null;
