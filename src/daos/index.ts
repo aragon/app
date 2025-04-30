@@ -1,5 +1,5 @@
-import { initialiseAragonX } from './aragonX';
+import { initialiseAragonDemo } from './aragonDemo';
 
 export const initialiseDaos = () => {
-    initialiseAragonX();
+    initialiseAragonDemo();
 };
