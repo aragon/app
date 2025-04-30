@@ -1,4 +1,4 @@
-import { generateCreateProcessFormBody } from '@/modules/createDao/testUtils';
+import { generateSetupBodyFormData, generateSetupBodyFormNew } from '@/modules/createDao/testUtils';
 import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { multisigPlugin } from '@/plugins/multisigPlugin/constants/multisigPlugin';
@@ -109,7 +109,7 @@ describe('multisigTransaction utils', () => {
             const metadata = 'test-metadata';
             const members = [{ address: '0x1' }, { address: '0x2' }];
             const governance = { minApprovals: 3, onlyListed: true };
-            const body = generateCreateProcessFormBody({ membership: { members }, governance });
+            const body = generateSetupBodyFormNew({ membership: { members }, governance });
             const dao = generateDao();
 
             const params = [{ metadata, body, dao }] as unknown as BuildDataParams;
@@ -128,7 +128,7 @@ describe('multisigTransaction utils', () => {
 
         it('builds prepare installation data correctly using buildPrepareInstallationData', () => {
             const dao = generateDao({ address: '0x1' });
-            const body = generateCreateProcessFormBody();
+            const body = generateSetupBodyFormData();
             const pluginSettingsData = '0xPluginSettingsData';
             const transactionData = '0xTransactionData';
 
@@ -154,7 +154,7 @@ describe('multisigTransaction utils', () => {
         it('correctly builds the target config for advanced governance processes', () => {
             const stageVotingPeriod = { days: 1, hours: 4, minutes: 0 };
             const dao = generateDao();
-            const body = generateCreateProcessFormBody();
+            const body = generateSetupBodyFormData();
             const params = [{ metadata: '', dao, body, stageVotingPeriod }] as unknown as BuildDataParams;
             multisigTransactionUtils.buildPrepareInstallData(...params);
             expect(getPluginTargetConfigSpy).toHaveBeenCalledWith(dao, true);

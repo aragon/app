@@ -1,15 +1,35 @@
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 
-export interface ISetupBodyForm<
-    TGovernance = unknown,
-    TMember extends ICompositeAddress = ICompositeAddress,
-    TMembership extends ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
-> {
+export enum SetupBodyType {
+    NEW = 'NEW',
+    EXTERNAL = 'EXTERNAL',
+}
+
+export interface ISetupBodyFormBase {
     /**
      * Internal ID of the body used to reference the body.
      */
     internalId: string;
+    /**
+     * Type of the body to setup.
+     */
+    type: SetupBodyType;
+    /**
+     * ID of the plugin defining the membership and governance settings of the body.
+     */
+    plugin: string;
+}
+
+export interface ISetupBodyFormNew<
+    TGovernance = unknown,
+    TMember extends ICompositeAddress = ICompositeAddress,
+    TMembership extends ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
+> extends ISetupBodyFormBase {
+    /**
+     * NEW body type.
+     */
+    type: SetupBodyType.NEW;
     /**
      * Name of the body.
      */
@@ -19,17 +39,9 @@ export interface ISetupBodyForm<
      */
     description?: string;
     /**
-     * ID of the stage the body is associated with, only defined when setting up advanced governance processes.
-     */
-    stageId?: string;
-    /**
      * Resources of the body.
      */
     resources: IResourcesInputResource[];
-    /**
-     * ID of the plugin defining the membership and governance settings of the body.
-     */
-    plugin: string;
     /**
      * Plugin-specific governance settings of the body.
      */
@@ -44,6 +56,19 @@ export interface ISetupBodyForm<
      */
     canCreateProposal: boolean;
 }
+
+export interface ISetupBodyFormExternal extends ISetupBodyFormBase, ICompositeAddress {
+    /**
+     * EXTERNAL body type.
+     */
+    type: SetupBodyType.EXTERNAL;
+}
+
+export type ISetupBodyForm<
+    TGovernance = unknown,
+    TMember extends ICompositeAddress = ICompositeAddress,
+    TMembership extends ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
+> = ISetupBodyFormNew<TGovernance, TMember, TMembership> | ISetupBodyFormExternal;
 
 export interface ISetupBodyFormMembership<TMember extends ICompositeAddress = ICompositeAddress> {
     /**

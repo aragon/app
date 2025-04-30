@@ -12,9 +12,9 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import type { ISppProposal } from '../../types';
-import { advanceStageDialogUtils } from './advanceStageDialogUtils';
+import { sppAdvanceStageDialogUtils } from './sppAdvanceStageDialogUtils';
 
-export interface IAdvanceStageDialogParams {
+export interface ISppAdvanceStageDialogParams {
     /**
      * Proposal to be advanced to the next step.
      */
@@ -25,9 +25,9 @@ export interface IAdvanceStageDialogParams {
     daoId: string;
 }
 
-export interface IAdvanceStageDialogProps extends IDialogComponentProps<IAdvanceStageDialogParams> {}
+export interface ISppAdvanceStageDialogProps extends IDialogComponentProps<ISppAdvanceStageDialogParams> {}
 
-export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) => {
+export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (props) => {
     const { location } = props;
     invariant(location.params != null, 'AdvanceStageDialog: required parameters must be set.');
 
@@ -39,7 +39,7 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
-    const handlePrepareTransaction = () => advanceStageDialogUtils.buildTransaction(proposal);
+    const handlePrepareTransaction = () => sppAdvanceStageDialogUtils.buildTransaction(proposal);
 
     const onSuccessClick = () => {
         router.refresh();

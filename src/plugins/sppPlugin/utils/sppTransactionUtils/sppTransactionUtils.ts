@@ -1,8 +1,9 @@
 import {
-    type ICreateProcessFormData,
+    type ICreateProcessFormDataAdvanced,
     ProcessStageType,
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
+import { SetupBodyType } from '@/modules/createDao/dialogs/setupBodyDialog';
 import type { ISetupStageTimingForm } from '@/modules/createDao/dialogs/setupStageTimingDialog';
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
@@ -57,7 +58,7 @@ class SppTransactionUtils {
     };
 
     buildPluginsSetupActions = (
-        values: ICreateProcessFormData,
+        values: ICreateProcessFormDataAdvanced,
         setupData: IPluginSetupData[],
         dao: IDao,
     ): ITransactionRequest[] => {
@@ -67,7 +68,7 @@ class SppTransactionUtils {
         const [sppAddress, ...pluginAddresses] = setupData.map((data) => data.pluginAddress);
         const [sppSetupData, ...pluginSetupData] = setupData;
 
-        const updateStages = this.buildUpdateStagesTransaction(values, sppAddress, pluginAddresses);
+        const updateStages = this.buildUpdateStagesTransaction(values.stages, sppAddress, pluginAddresses);
         const updateCreateProposalRules = this.buildUpdateRulesTransaction(values, sppSetupData, pluginSetupData);
 
         const updatePluginPermissions = pluginSetupData
@@ -112,11 +113,11 @@ class SppTransactionUtils {
     };
 
     private buildUpdateRulesTransaction = (
-        values: ICreateProcessFormData,
+        values: ICreateProcessFormDataAdvanced,
         sppSetupData: IPluginSetupData,
         pluginSetupData: IPluginSetupData[],
     ): ITransactionRequest | undefined => {
-        const { bodies, proposalCreationMode } = values;
+        const { stages, proposalCreationMode } = values;
 
         const sppRuleConditionContract = sppSetupData.preparedSetupData.helpers[0];
 
@@ -124,7 +125,8 @@ class SppTransactionUtils {
             return undefined;
         }
 
-        const conditionAddresses = bodies.reduce<string[]>((current, body, bodyIndex) => {
+        const newBodies = stages.flatMap((stage) => stage.bodies).filter((body) => body.type === SetupBodyType.NEW);
+        const conditionAddresses = newBodies.reduce<string[]>((current, body, bodyIndex) => {
             const isBodyAllowed = body.canCreateProposal;
             const bodyConditionAddress = pluginSetupData[bodyIndex].preparedSetupData.helpers[0];
 
@@ -143,27 +145,24 @@ class SppTransactionUtils {
     };
 
     private buildUpdateStagesTransaction = (
-        values: ICreateProcessFormData,
+        stages: ICreateProcessFormDataAdvanced['stages'],
         sppAddress: Hex,
         bodyAddresses: Hex[],
     ): ITransactionRequest => {
-        const { stages } = values;
-
         const processedBodyAddresses = [...bodyAddresses];
         const processedStages = stages.map((stage) => {
-            const { type, timing, requiredApprovals } = stage;
-            const stageBodies = values.bodies.filter((body) => body.stageId === stage.internalId);
+            const { type, timing, requiredApprovals, bodies } = stage;
 
             const stageTiming = this.processStageTiming(timing);
             const stageApprovals = this.processStageApprovals(requiredApprovals, type);
 
             const resultType = type === ProcessStageType.NORMAL ? SppProposalType.APPROVAL : SppProposalType.VETO;
 
-            const bodySettings = { isManual: false, tryAdvance: true };
-            const processedBodies = stageBodies.map(() => ({
-                addr: processedBodyAddresses.shift()!,
+            const processedBodies = bodies.map((body) => ({
+                addr: body.type === SetupBodyType.EXTERNAL ? body.address : processedBodyAddresses.shift()!,
                 resultType,
-                ...bodySettings,
+                tryAdvance: true,
+                isManual: body.type === SetupBodyType.EXTERNAL,
             }));
 
             return { bodies: processedBodies, ...stageApprovals, ...stageTiming, cancelable: false, editable: false };

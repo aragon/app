@@ -66,7 +66,11 @@ describe('<ProposalVotingTerminal /> component', () => {
 
         render(createTestComponent({ daoId, proposal }));
         expect(useSlotSingleFunctionSpy).toHaveBeenCalledWith({
-            params: { daoId, settings: proposal.settings, pluginAddress: proposal.pluginAddress },
+            params: {
+                daoId,
+                settings: proposal.settings,
+                pluginAddress: proposal.pluginAddress,
+            },
             pluginId: proposal.pluginSubdomain,
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         });

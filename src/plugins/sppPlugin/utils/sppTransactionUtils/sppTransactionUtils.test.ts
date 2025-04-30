@@ -1,9 +1,15 @@
-import { ProcessStageType, ProposalCreationMode } from '@/modules/createDao/components/createProcessForm';
 import {
-    generateCreateProcessFormBody,
-    generateCreateProcessFormData,
+    GovernanceType,
+    ProcessStageType,
+    ProposalCreationMode,
+} from '@/modules/createDao/components/createProcessForm';
+import {
+    generateCreateProcessFormDataAdvanced,
     generateCreateProcessFormStage,
-} from '@/modules/createDao/testUtils/generators/createProcessFormData';
+    generateSetupBodyFormData,
+    generateSetupBodyFormExternal,
+    generateSetupBodyFormNew,
+} from '@/modules/createDao/testUtils';
 import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { sppPlugin } from '@/plugins/sppPlugin/constants/sppPlugin';
@@ -122,7 +128,7 @@ describe('sppTransaction utils', () => {
         });
 
         it('correctly builds the install actions for plugins', () => {
-            const values = generateCreateProcessFormData();
+            const values = generateCreateProcessFormDataAdvanced({ governanceType: GovernanceType.ADVANCED });
             const setupData = [generatePluginSetupData(), generatePluginSetupData()];
             const dao = generateDao({ address: '0x123', network: Network.ETHEREUM_SEPOLIA });
             const daoAddress = dao.address as Viem.Hex;
@@ -183,18 +189,20 @@ describe('sppTransaction utils', () => {
         const buildRuleConditionsSpy = jest.spyOn(permissionTransactionUtils, 'buildRuleConditions');
 
         it('returns undefined when proposalCreationMode is ANY_WALLET', () => {
-            const values = generateCreateProcessFormData({ proposalCreationMode: ProposalCreationMode.ANY_WALLET });
+            const values = generateCreateProcessFormDataAdvanced({
+                proposalCreationMode: ProposalCreationMode.ANY_WALLET,
+            });
             const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, generatePluginSetupData(), []);
             expect(result).toBeUndefined();
         });
 
         it('correctly builds the update rules transaction', () => {
-            const sppAllowedBody = generateCreateProcessFormBody({ internalId: 'body-1', canCreateProposal: true });
-            const sppNotAllowedBody = generateCreateProcessFormBody({ internalId: 'body-2' });
-            const sppStage = generateCreateProcessFormStage({});
-            const values = generateCreateProcessFormData({
+            const allowedBody = generateSetupBodyFormNew({ internalId: 'body-1', canCreateProposal: true });
+            const notAllowedBody = generateSetupBodyFormNew({ internalId: 'body-2' });
+            const externalBody = generateSetupBodyFormExternal();
+            const sppStage = generateCreateProcessFormStage({ bodies: [allowedBody, notAllowedBody, externalBody] });
+            const values = generateCreateProcessFormDataAdvanced({
                 stages: [sppStage],
-                bodies: [sppAllowedBody, sppNotAllowedBody],
                 proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
             });
 
@@ -245,9 +253,9 @@ describe('sppTransaction utils', () => {
         });
 
         it('correctly builds the update stages transaction', () => {
-            const sppBody = generateCreateProcessFormBody({ stageId: '0' });
-            const sppStage = generateCreateProcessFormStage({ internalId: '0' });
-            const values = generateCreateProcessFormData({ stages: [sppStage], bodies: [sppBody] });
+            const sppBody = generateSetupBodyFormData();
+            const externalBody = generateSetupBodyFormExternal({ address: '0xexternal' });
+            const sppStage = generateCreateProcessFormStage({ internalId: '0', bodies: [sppBody, externalBody] });
             const transactionData = '0xupdate-stages';
 
             const timing = {
@@ -264,10 +272,11 @@ describe('sppTransaction utils', () => {
 
             const sppAddress = '0xSpp';
             const pluginAddresses = ['0x01'] as Viem.Hex[];
-            const result = sppTransactionUtils['buildUpdateStagesTransaction'](values, sppAddress, pluginAddresses);
+            const result = sppTransactionUtils['buildUpdateStagesTransaction']([sppStage], sppAddress, pluginAddresses);
 
             const expectedProcessedBodies = [
                 { addr: pluginAddresses[0], resultType: 1, isManual: false, tryAdvance: true },
+                { addr: externalBody.address, resultType: 1, isManual: true, tryAdvance: true },
             ];
             const expectedProcessedStages = [
                 { bodies: expectedProcessedBodies, ...thresholds, ...timing, cancelable: false, editable: false },

@@ -30,7 +30,7 @@ export interface IVoteDialogParams {
      */
     proposal: IProposal;
     /**
-     *  Defines if the vote to approve or veto the proposal.
+     * Defines if the vote to approve or veto the proposal.
      */
     isVeto?: boolean;
     /**
