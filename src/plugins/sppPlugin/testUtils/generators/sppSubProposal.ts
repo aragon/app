@@ -5,6 +5,5 @@ export const generateSppSubProposal = (proposal?: Partial<ISppSubProposal>): ISp
     ...generateProposal(proposal),
     stageIndex: 0,
     endDate: 0,
-    result: false,
     ...proposal,
 });

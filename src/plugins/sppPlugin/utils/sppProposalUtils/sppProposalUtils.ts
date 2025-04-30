@@ -1,7 +1,26 @@
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
-import { addressUtils, type ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
-import type { ISppProposal, ISppStage } from '../../types';
+import { type ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
+import { type ISppProposal, type ISppStage, SppProposalType } from '../../types';
 import { sppStageUtils } from '../sppStageUtils';
+
+interface IGetBodyStatusLabelDataParams {
+    /**
+     * SPP proposal to check the body status for.
+     */
+    proposal: ISppProposal;
+    /**
+     * Address of the body.
+     */
+    body: string;
+    /**
+     * Stage on which the body is setup.
+     */
+    stage: ISppStage;
+    /**
+     * Flag indicating if the vote is active.
+     */
+    canVote: boolean;
+}
 
 class SppProposalUtils {
     getProposalStatus = (proposal: ISppProposal): ProposalStatus => {
@@ -52,11 +71,24 @@ class SppProposalUtils {
             (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalVotingStatus.ACCEPTED,
         );
 
-    getBodyResult = ({ results }: ISppProposal, bodyAddress: string, stageIndex: number) =>
-        results?.find(
-            ({ pluginAddress, stage }) =>
-                addressUtils.isAddressEqual(pluginAddress, bodyAddress) && stage === stageIndex,
-        );
+    getBodyResultStatus = (params: IGetBodyStatusLabelDataParams) => {
+        const { proposal, body, stage, canVote } = params;
+        const { resultType } = sppStageUtils.getBodyResult(proposal, body, stage.stageIndex) ?? {};
+
+        const voted = resultType != null;
+        const isVeto = sppStageUtils.isVeto(stage);
+
+        const status = voted ? (resultType === SppProposalType.VETO ? 'failure' : 'success') : 'neutral';
+
+        const labelContext = voted ? 'voted' : canVote ? 'vote' : 'expired';
+        const labelSuffix = `${labelContext}.${isVeto ? 'veto' : 'approve'}`;
+
+        const label = `app.plugins.spp.sppVotingTerminalBodyBreakdownDefault.${labelSuffix}`;
+        const style =
+            status === 'neutral' ? 'text-neutral-500' : status === 'success' ? 'text-success-800' : 'text-critical-800';
+
+        return { status, label, style };
+    };
 }
 
 export const sppProposalUtils = new SppProposalUtils();

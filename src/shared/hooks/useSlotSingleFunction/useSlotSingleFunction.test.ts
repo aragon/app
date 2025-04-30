@@ -28,4 +28,18 @@ describe('useSlotSingleFunction hook', () => {
         const { result } = renderHook(() => useSlotSingleFunction({ slotId, pluginId, params: {} }));
         expect(result.current).toBeUndefined();
     });
+
+    it('calls the fallback function when no slot function is found', () => {
+        const params = 5;
+        const pluginId = 'plugin-id';
+        const slotId = 'slot-id';
+        const fallbackFunction = (value: number) => value * 2;
+        getSlotFunctionSpy.mockReturnValue(undefined);
+
+        const { result } = renderHook(() =>
+            useSlotSingleFunction({ slotId, pluginId, params, fallback: fallbackFunction }),
+        );
+
+        expect(result.current).toEqual(fallbackFunction(params));
+    });
 });

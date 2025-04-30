@@ -1,4 +1,5 @@
-import { ProposalStatus } from '@aragon/gov-ui-kit';
+import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
+import { type ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { formatUnits } from 'viem';
 import { DaoTokenVotingMode, VoteOption, type ITokenProposal, type ITokenProposalOptionVotes } from '../../types';
@@ -6,37 +7,23 @@ import { tokenSettingsUtils } from '../tokenSettingsUtils';
 
 class TokenProposalUtils {
     getProposalStatus = (proposal: ITokenProposal): ProposalStatus => {
-        const now = DateTime.utc();
-
-        const startDate = DateTime.fromMillis(proposal.startDate * 1000);
-        const endDate = DateTime.fromMillis(proposal.endDate * 1000);
+        const { startDate, endDate, actions, executed } = proposal;
 
         const approvalReached = this.isApprovalReached(proposal);
         const approvalReachedEarly = this.isApprovalReached(proposal, true);
-
-        const isSignalingProposal = proposal.actions.length === 0;
         const isEarlyExecution = proposal.settings.votingMode === DaoTokenVotingMode.EARLY_EXECUTION;
 
-        const isExecutable =
-            ((approvalReached && now >= endDate) || (isEarlyExecution && approvalReachedEarly)) && !isSignalingProposal;
+        const status = proposalStatusUtils.getProposalStatus({
+            isExecuted: executed.status,
+            isVetoed: false,
+            startDate,
+            endDate,
+            paramsMet: isEarlyExecution ? approvalReachedEarly : approvalReached,
+            hasActions: actions.length > 0,
+            canExecuteEarly: isEarlyExecution,
+        });
 
-        if (proposal.executed.status) {
-            return ProposalStatus.EXECUTED;
-        }
-
-        if (startDate >= now) {
-            return ProposalStatus.PENDING;
-        }
-
-        if (isExecutable) {
-            return ProposalStatus.EXECUTABLE;
-        }
-
-        if (now < endDate) {
-            return ProposalStatus.ACTIVE;
-        }
-
-        return approvalReached && isSignalingProposal ? ProposalStatus.ACCEPTED : ProposalStatus.REJECTED;
+        return status;
     };
 
     isApprovalReached = (proposal: ITokenProposal, early?: boolean): boolean => {

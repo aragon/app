@@ -27,9 +27,12 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     };
 
     const processBodies = useMemo(() => {
+        // we need to keep the original bodyIndex since EXTERNAL bodies are filtered out!
         const processedBodies = isAdvancedGovernance
-            ? stages.flatMap((stage, stageIndex) => stage.bodies.map((body) => ({ ...body, stageIndex })))
-            : [{ ...basicProcessBody, stageIndex: undefined }];
+            ? stages.flatMap((stage, stageIndex) =>
+                  stage.bodies.map((body, index) => ({ ...body, stageIndex, bodyIndex: index })),
+              )
+            : [{ ...basicProcessBody, stageIndex: undefined, bodyIndex: 0 }];
 
         return processedBodies.filter((body) => body.type === SetupBodyType.NEW);
     }, [isAdvancedGovernance, stages, basicProcessBody]);
@@ -82,7 +85,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                 className={mode === ANY_WALLET ? 'hidden' : ''}
                 alert={permissionsAlert}
             >
-                {processBodies.map((body, index) => (
+                {processBodies.map((body) => (
                     <PluginSingleComponent
                         key={body.internalId}
                         pluginId={body.plugin}
@@ -90,7 +93,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                         body={body}
                         mode={mode}
                         disableCheckbox={processBodies.length === 1}
-                        formPrefix={getBodyFormPrefix(index, body.stageIndex)}
+                        formPrefix={getBodyFormPrefix(body.bodyIndex, body.stageIndex)}
                     />
                 ))}
             </InputContainer>

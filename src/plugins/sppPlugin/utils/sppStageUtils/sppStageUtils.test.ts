@@ -104,146 +104,128 @@ describe('SppStageUtils', () => {
     });
 
     describe('isVetoReached', () => {
+        const getSuccessThresholdSpy = jest.spyOn(sppStageUtils, 'getSuccessThreshold');
+
+        afterEach(() => {
+            getSuccessThresholdSpy.mockReset();
+        });
+
         it('returns true when veto count reaches threshold', () => {
-            const stage = generateSppStage({
-                stageIndex: 0,
-                vetoThreshold: 1,
-                plugins: [
-                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO }),
-                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.VETO }),
-                ],
-            });
-            const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({ stages: [stage] }),
-                subProposals: [
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: true }),
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin2', result: false }),
-                ],
-            });
+            const successCount = 1;
+            getSuccessThresholdSpy.mockReturnValue(successCount);
+
+            const stage = generateSppStage({ vetoThreshold: 1 });
+            const proposal = generateSppProposal({ settings: generateSppPluginSettings({ stages: [stage] }) });
 
             expect(sppStageUtils.isVetoReached(proposal, stage)).toBeTruthy();
         });
 
         it('returns false when veto count is below threshold', () => {
-            const stage = generateSppStage({
-                stageIndex: 0,
-                vetoThreshold: 2,
-                plugins: [
-                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO }),
-                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.VETO }),
-                ],
-            });
+            const successCount = 1;
+            getSuccessThresholdSpy.mockReturnValue(successCount);
 
-            const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({ stages: [stage] }),
-                subProposals: [
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: true }),
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin2', result: false }),
-                ],
-            });
+            const stage = generateSppStage({ vetoThreshold: 2 });
+            const proposal = generateSppProposal({ settings: generateSppPluginSettings({ stages: [stage] }) });
 
             expect(sppStageUtils.isVetoReached(proposal, stage)).toBeFalsy();
         });
 
         it('returns false when veto threshold is set to 0', () => {
-            const stage = generateSppStage({
-                stageIndex: 0,
-                vetoThreshold: 0,
-                plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO })],
-            });
+            const successCount = 0;
+            getSuccessThresholdSpy.mockReturnValue(successCount);
 
-            const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({ stages: [stage] }),
-                subProposals: [generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: false })],
-            });
+            const stage = generateSppStage({ vetoThreshold: 0 });
+            const proposal = generateSppProposal({ settings: generateSppPluginSettings({ stages: [stage] }) });
 
             expect(sppStageUtils.isVetoReached(proposal, stage)).toBeFalsy();
         });
     });
 
     describe('isApprovalReached', () => {
+        const getSuccessThresholdSpy = jest.spyOn(sppStageUtils, 'getSuccessThreshold');
+
+        afterEach(() => {
+            getSuccessThresholdSpy.mockReset();
+        });
+
+        afterAll(() => {
+            getSuccessThresholdSpy.mockRestore();
+        });
+
         it('returns true when approval count reaches threshold', () => {
-            const stage = generateSppStage({
-                stageIndex: 0,
-                approvalThreshold: 1,
-                plugins: [
-                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL }),
-                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.APPROVAL }),
-                ],
-            });
-            const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({ stages: [stage] }),
-                subProposals: [
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: true }),
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin2', result: false }),
-                ],
-            });
-            expect(sppStageUtils.isApprovalReached(proposal, stage)).toBeTruthy();
+            const successCount = 1;
+            getSuccessThresholdSpy.mockReturnValue(successCount);
+
+            const stage = generateSppStage({ approvalThreshold: 1 });
+            const proposal = generateSppProposal({ settings: generateSppPluginSettings({ stages: [stage] }) });
+
+            expect(sppStageUtils.isVetoReached(proposal, stage)).toBeTruthy();
         });
 
         it('returns false when approval count is below threshold', () => {
-            const stage = generateSppStage({
-                stageIndex: 0,
-                approvalThreshold: 2,
-                plugins: [
-                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL }),
-                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.APPROVAL }),
-                ],
-            });
-            const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({ stages: [stage] }),
-                subProposals: [
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: true }),
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin2', result: false }),
-                ],
-            });
-            expect(sppStageUtils.isApprovalReached(proposal, stage)).toBeFalsy();
+            const successCount = 0;
+            getSuccessThresholdSpy.mockReturnValue(successCount);
+
+            const stage = generateSppStage({ approvalThreshold: 1 });
+            const proposal = generateSppProposal({ settings: generateSppPluginSettings({ stages: [stage] }) });
+
+            expect(sppStageUtils.isVetoReached(proposal, stage)).toBeFalsy();
         });
     });
 
     describe('getSuccessThreshold', () => {
-        it('returns correct success threshold when getSucceededStatus is null and subProposal result is true', () => {
-            const stage = generateSppStage({ stageIndex: 0 });
-            const proposal = generateSppProposal({
-                subProposals: [generateSppSubProposal({ stageIndex: 0, result: true })],
-            });
+        it('returns correct success threshold when body is external and reported the results', () => {
+            const body = generateSppStagePlugin({ address: '0x1c479675ad559DC151F6Ec7ed3FbF8ceE79582B6' });
+            const stage = generateSppStage({ stageIndex: 0, plugins: [body] });
+            const results = [
+                { pluginAddress: body.address, stage: stage.stageIndex, resultType: SppProposalType.APPROVAL },
+            ];
+            const proposal = generateSppProposal({ results });
 
             getSlotFunctionSpy.mockReturnValue(undefined);
             const result = sppStageUtils.getSuccessThreshold(proposal, stage);
             expect(result).toBe(1);
         });
 
-        it('returns correct success threshold when getSucceededStatus is unsupported and subProposal result is false', () => {
-            const stage = generateSppStage({ stageIndex: 0 });
-            const proposal = generateSppProposal({
-                subProposals: [generateSppSubProposal({ stageIndex: 0, result: false })],
-            });
+        it('returns correct success threshold when body is external and did not report the results', () => {
+            const body = generateSppStagePlugin({ address: '0xE66AA98B55C5A55c9Af9da12FE39B8868af9a346' });
+            const stage = generateSppStage({ stageIndex: 1, plugins: [body] });
+            const results = [{ pluginAddress: body.address, stage: 0, resultType: SppProposalType.APPROVAL }];
+            const proposal = generateSppProposal({ results });
 
             getSlotFunctionSpy.mockReturnValue(undefined);
             const result = sppStageUtils.getSuccessThreshold(proposal, stage);
             expect(result).toBe(0);
         });
 
-        it('returns correct success threshold when getSucceededStatus is not passing and subProposal result is true', () => {
-            const stage = generateSppStage({ stageIndex: 0 });
+        it('returns correct success threshold when body is internal and its sub-proposal passed', () => {
+            const body = generateSppStagePlugin({ address: '0xE66AA98B55C5A55c9Af9da12FE39B8868af9a346' });
+            const stage = generateSppStage({ stageIndex: 0, plugins: [body] });
             const proposal = generateSppProposal({
-                subProposals: [generateSppSubProposal({ stageIndex: 0, result: true })],
-            });
-
-            getSlotFunctionSpy.mockReturnValue(() => false);
-            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
-            expect(result).toBe(0);
-        });
-
-        it('returns correct success threshold when getSucceededStatus is passing and subProposal result is true', () => {
-            const stage = generateSppStage({ stageIndex: 0 });
-            const proposal = generateSppProposal({
-                subProposals: [generateSppSubProposal({ stageIndex: 0, result: true })],
+                subProposals: [generateSppSubProposal({ pluginAddress: body.address, stageIndex: stage.stageIndex })],
             });
 
             getSlotFunctionSpy.mockReturnValue(() => true);
             const result = sppStageUtils.getSuccessThreshold(proposal, stage);
             expect(result).toBe(1);
+        });
+
+        it('returns correct success threshold with mixed bodies', () => {
+            const bodies = [
+                generateSppStagePlugin({ address: '0x08B2072d388Fa354A4B61c25341707E4Fcd56267' }),
+                generateSppStagePlugin({ address: '0x00E84A0B678CD4584A9A377D334c810025970873' }),
+            ];
+            const stage = generateSppStage({ stageIndex: 0, plugins: bodies });
+            const proposal = generateSppProposal({
+                subProposals: [generateSppSubProposal({ stageIndex: 0, pluginAddress: bodies[0].address })],
+                results: [
+                    { pluginAddress: bodies[1].address, stage: stage.stageIndex, resultType: SppProposalType.APPROVAL },
+                ],
+            });
+
+            getSlotFunctionSpy.mockReturnValue(() => true);
+            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
+            expect(result).toBe(2);
         });
     });
 
@@ -576,6 +558,56 @@ describe('SppStageUtils', () => {
             isSignalingProposalSpy.mockReturnValue(false);
 
             expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeFalsy();
+        });
+    });
+
+    describe('getBodySubProposal', () => {
+        it('returns the sub-proposal for the given body address and stage index', () => {
+            const bodyAddress = '0x1234567890abcdef1234567890abcdef12345678';
+            const stage = 1;
+            const subProposal = generateSppSubProposal({ pluginAddress: bodyAddress, stageIndex: stage });
+            const proposal = generateSppProposal({ subProposals: [subProposal] });
+            const externalBodySubProposal = sppStageUtils.getBodySubProposal(proposal, bodyAddress, stage);
+            expect(externalBodySubProposal).toEqual(subProposal);
+        });
+
+        it('returns undefined when SPP proposal has no sub-proposals for the given body address and stage index', () => {
+            const bodyAddress = '0x1234567890abcdef1234567890abcdef12345678';
+            const stage = 1;
+            const subProposal = generateSppSubProposal({ pluginAddress: bodyAddress, stageIndex: 2 });
+            const proposal = generateSppProposal({ subProposals: [subProposal] });
+            expect(sppStageUtils.getBodySubProposal(proposal, bodyAddress, stage)).toBeUndefined();
+        });
+    });
+
+    describe('getBodyResult', () => {
+        it('returns the result for the given address and stage index if present', () => {
+            const externalAddress = '0x1234567890abcdef1234567890abcdef12345678';
+            const stage = 1;
+            const result = { pluginAddress: externalAddress, stage, resultType: SppProposalType.APPROVAL };
+            const proposal = generateSppProposal({ results: [result] });
+            const externalBodyResult = sppStageUtils.getBodyResult(proposal, externalAddress, stage);
+            expect(externalBodyResult).toEqual(result);
+        });
+
+        it('returns undefined if the result for the correct external address but on a different stage index', () => {
+            const externalAddress = '0x1234567890abcdef1234567890abcdef12345678';
+            const stage = 1;
+            const proposal = generateSppProposal({
+                results: [{ pluginAddress: externalAddress, stage: 2, resultType: SppProposalType.APPROVAL }],
+            });
+
+            const externalBodyResult = sppStageUtils.getBodyResult(proposal, externalAddress, stage);
+            expect(externalBodyResult).toBeUndefined();
+        });
+
+        it('returns undefined if the result is undefined', () => {
+            const externalAddress = '0x1234567890abcdef1234567890abcdef12345678';
+            const stage = 1;
+            const proposal = generateSppProposal();
+
+            const externalBodyResult = sppStageUtils.getBodyResult(proposal, externalAddress, stage);
+            expect(externalBodyResult).toBeUndefined();
         });
     });
 });
