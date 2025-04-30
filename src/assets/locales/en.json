@@ -185,21 +185,27 @@
       },
       "createProcessForm": {
         "governance": {
-          "bodiesField": {
+          "basicBodyField": {
             "action": {
-              "add": "Add body",
+              "add": "Add"
+            },
+            "error": {
+              "required": "A body must be added to this process."
+            },
+            "helpText": "Add the governing body that get to determine whether or not proposal passes.",
+            "label": "Voting body"
+          },
+          "bodyField": {
+            "action": {
               "edit": "Edit",
               "more": "More",
               "remove": "Remove body"
             },
-            "error": {
-              "minLength": "A body must be added to this process."
+            "default": {
+              "address": "Address",
+              "ens": "ENS name"
             },
-            "helpText": "These bodies will decide whether or not this stage passes.",
-            "label": {
-              "vetoing": "Vetoing bodies",
-              "voting": "Voting bodies"
-            }
+            "external": "External address"
           },
           "stageApprovalsField": {
             "approve": {
@@ -212,14 +218,27 @@
               "label": "Veto threshold"
             }
           },
+          "stageBodiesField": {
+            "action": {
+              "add": "Add body",
+              "edit": "Edit",
+              "more": "More",
+              "remove": "Remove body"
+            },
+            "error": {
+              "required": "At least one body must be added to the stage."
+            },
+            "helpText": "These bodies will decide whether or not this stage passes.",
+            "label": {
+              "normal": "Voting bodies",
+              "veto": "Vetoing bodies"
+            }
+          },
           "stageField": {
             "action": {
               "add": "Add stage",
               "more": "More",
               "remove": "Remove stage"
-            },
-            "error": {
-              "requiredBodies": "At least one body must be added to the stage."
             },
             "name": {
               "helpText": "This is used to identify the stage the proposal is in. For example: Community Review, Guardian Veto, or Founder Signoff",
@@ -380,6 +399,12 @@
         "a11y": {
           "description": "Create a new voting body for your DAO"
         },
+        "externalAddress": {
+          "address": {
+            "helpText": "Add any address as a body, such as a Safe or Governor",
+            "label": "External address"
+          }
+        },
         "metadata": {
           "name": {
             "label": "Body name"
@@ -393,6 +418,10 @@
           }
         },
         "select": {
+          "external": {
+            "description": "Add any address as a body, such as a Safe or Governor",
+            "label": "External address"
+          },
           "plugin": {
             "helpText": "This determines the governance the body uses to make decisions.",
             "label": "Governance type"
@@ -1115,13 +1144,34 @@
           }
         },
         "sppGovernanceSettings": {
+          "default": {
+            "address": "Address",
+            "name": "ENS Name"
+          },
           "numberOfStages": "Number of stages"
+        },
+        "sppInvalidAddressConnectedDialog": {
+          "action": "Close",
+          "description": "Please connect a wallet that is eligible to vote. If you are an owner of this external address you can connect with WalletConnect to vote on this proposal.",
+          "title": "Not eligible to vote"
         },
         "sppProposalList": {
           "entity": "Proposals"
         },
         "sppProposalListItem": {
           "stage": "Stage {{stageIndex}}"
+        },
+        "sppReportProposalResultDialog": {
+          "button": {
+            "submit": "Submit vote",
+            "success": "View proposal"
+          },
+          "confirmationLabel": {
+            "approve": "Voting to approve",
+            "veto": "Voting to veto"
+          },
+          "description": "To submit your vote, confirm the onchain transaction in your wallet.",
+          "title": "Submit vote"
         },
         "sppStageStatus": {
           "button": {
@@ -1135,6 +1185,27 @@
           "maxExecuteInfo": "left to execute",
           "minAdvanceInfo": "until advanceable",
           "minExecuteInfo": "until executable"
+        },
+        "sppVotingTerminalBodyBreakdownDefault": {
+          "expired": {
+            "approve": "Did not approve",
+            "veto": "Did not veto"
+          },
+          "vote": {
+            "approve": "Not approved yet",
+            "veto": "Not vetoed yet"
+          },
+          "voted": {
+            "approve": "Approved",
+            "veto": "Vetoed"
+          }
+        },
+        "sppVotingTerminalBodyVoteDefault": {
+          "approve": "Approve proposal",
+          "approved": "Approved",
+          "helpText": "If you are an owner of this address you can connect with WalletConnect to vote on this proposal.",
+          "veto": "Veto proposal",
+          "vetoed": "Vetoed"
         },
         "sppVotingTerminalStageBodySummaryFooter": {
           "actionRequired": "required to {{action}}",

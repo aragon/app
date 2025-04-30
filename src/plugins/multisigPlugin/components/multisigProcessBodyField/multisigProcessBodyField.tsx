@@ -1,4 +1,4 @@
-import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import type { ISetupBodyFormNew } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DefinitionList, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import type { IMultisigSetupGovernanceForm } from '../multisigSetupGovernance';
@@ -8,7 +8,7 @@ export interface IMultisigProcessBodyFieldProps {
     /**
      * The body to display the details for.
      */
-    body: ISetupBodyForm<IMultisigSetupGovernanceForm, ICompositeAddress, IMultisigSetupMembershipForm>;
+    body: ISetupBodyFormNew<IMultisigSetupGovernanceForm, ICompositeAddress, IMultisigSetupMembershipForm>;
 }
 
 export const MultisigProcessBodyField = (props: IMultisigProcessBodyFieldProps) => {

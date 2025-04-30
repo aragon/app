@@ -1,3 +1,4 @@
+import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useWatch } from 'react-hook-form';
@@ -9,10 +10,6 @@ export interface IGovernanceStageApprovalsFieldProps {
      */
     fieldPrefix: string;
     /**
-     * Current number of bodies.
-     */
-    stageBodiesCount: number;
-    /**
      * Defines if current stage is optimistic or not.
      */
     isOptimisticStage: boolean;
@@ -21,9 +18,11 @@ export interface IGovernanceStageApprovalsFieldProps {
 const requiredApprovalsDefaultValue = 1;
 
 export const GovernanceStageApprovalsField: React.FC<IGovernanceStageApprovalsFieldProps> = (props) => {
-    const { fieldPrefix, stageBodiesCount, isOptimisticStage } = props;
+    const { fieldPrefix, isOptimisticStage } = props;
 
     const { t } = useTranslations();
+
+    const bodies = useWatch<Record<string, ISetupBodyForm[]>>({ name: `${fieldPrefix}.bodies` });
 
     const fieldName = `${fieldPrefix}.requiredApprovals`;
     const value = useWatch<Record<string, ICreateProcessFormStage['requiredApprovals']>>({
@@ -33,6 +32,10 @@ export const GovernanceStageApprovalsField: React.FC<IGovernanceStageApprovalsFi
 
     const labelContext = isOptimisticStage ? 'veto' : 'approve';
 
+    if (bodies.length === 0) {
+        return null;
+    }
+
     return (
         <NumberProgressInput
             label={t(`app.createDao.createProcessForm.governance.stageApprovalsField.${labelContext}.label`)}
@@ -41,9 +44,9 @@ export const GovernanceStageApprovalsField: React.FC<IGovernanceStageApprovalsFi
             fieldName={fieldName}
             valueLabel={value.toString()}
             defaultValue={requiredApprovalsDefaultValue}
-            total={stageBodiesCount}
+            total={bodies.length}
             totalLabel={t('app.createDao.createProcessForm.governance.stageApprovalsField.summary', {
-                count: stageBodiesCount,
+                count: bodies.length,
             })}
         />
     );

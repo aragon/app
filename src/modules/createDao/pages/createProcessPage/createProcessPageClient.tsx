@@ -49,7 +49,7 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
                 submitHelpText={t('app.createDao.createProcessPage.submitHelpText')}
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
-                defaultValues={{ stages: [createProcessFormUtils.buildDefaultStage()], bodies: [] }}
+                defaultValues={{ stages: [createProcessFormUtils.buildDefaultStage()] }}
             >
                 <CreateProcessPageClientSteps steps={processedSteps} daoId={daoId} />
             </WizardPage.Container>

@@ -3,7 +3,7 @@ import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import { ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { generateSppPluginSettings, generateSppProposal, generateSppStage } from '../../testUtils';
-import type { ISppProposal } from '../../types';
+import { type ISppProposal } from '../../types';
 import { sppStageUtils } from '../sppStageUtils/sppStageUtils';
 import { sppProposalUtils } from './sppProposalUtils';
 
