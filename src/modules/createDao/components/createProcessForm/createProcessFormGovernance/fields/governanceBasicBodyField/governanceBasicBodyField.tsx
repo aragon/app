@@ -52,9 +52,8 @@ export const GovernanceBasicBodyField: React.FC<IGovernanceBasicBodyFieldProps> 
         open(CreateDaoDialogId.SETUP_BODY, { params });
     };
 
-    const handleDelete = () => {
-        onBodyChange(null);
-    };
+    // setting body to undefined does not trigger re-render of the field for some reason!
+    const handleDelete = () => onBodyChange(null);
 
     // Keep body-name & process-name in sync when setting up a simple governance process. Other metadata (description,
     // process-key, resources) is processed right before pinning the metadata for the simple governance process.
