@@ -4,7 +4,6 @@ import type { IPluginProposalCreationSettingsParams } from '@/modules/createDao/
 import { useFormField } from '@/shared/hooks/useFormField';
 import { CheckboxCard, type CheckboxState } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
 import type { IMultisigSetupGovernanceForm } from '../multisigSetupGovernance';
 
 export interface IMultisigProposalCreationSettingsProps extends IPluginProposalCreationSettingsParams {}
@@ -12,10 +11,6 @@ export interface IMultisigProposalCreationSettingsProps extends IPluginProposalC
 export const MultisigProposalCreationSettings: React.FC<IMultisigProposalCreationSettingsProps> = (props) => {
     const { body, formPrefix, mode, disableCheckbox } = props;
     const { name, description } = body;
-    const { getValues } = useFormContext();
-
-    console.log('FORM PREFIX', formPrefix, body);
-    console.log('VALUES', getValues());
 
     const { value: canCreateProposal, onChange: onCreateProposalChange } = useFormField<
         ISetupBodyForm,

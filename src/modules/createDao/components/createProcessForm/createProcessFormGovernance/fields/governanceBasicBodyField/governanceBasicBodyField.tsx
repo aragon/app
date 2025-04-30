@@ -21,7 +21,7 @@ export const GovernanceBasicBodyField: React.FC<IGovernanceBasicBodyFieldProps> 
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
-    const { setValue, resetField } = useFormContext();
+    const { setValue } = useFormContext();
 
     const requiredErrorMessage = 'app.createDao.createProcessForm.governance.basicBodyField.error.required';
     const {
@@ -55,8 +55,11 @@ export const GovernanceBasicBodyField: React.FC<IGovernanceBasicBodyFieldProps> 
     };
 
     const handleDelete = () => {
+        console.log('DELETING');
         onBodyChange(undefined);
     };
+
+    console.log('RENEREE', body);
 
     const isBodySet = body != null;
     // Keep body-name & process-name in sync when setting up a simple governance process. Other metadata (description,
@@ -65,12 +68,10 @@ export const GovernanceBasicBodyField: React.FC<IGovernanceBasicBodyFieldProps> 
         if (!isBodySet) {
             return;
         }
+        console.log('UPDATEIGNG', processName);
 
-        console.log('UPDATING BODY NAME', processName);
         setValue('body.name', processName);
     }, [isBodySet, processName, setValue]);
-
-    console.log('body', body);
 
     return (
         <InputContainer

@@ -22,10 +22,7 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
 
     const { t } = useTranslations();
     const { trigger, setValue } = useFormContext();
-    const { getValues } = useFormContext();
 
-    console.log('FORM PREFIX', formPrefix, body);
-    console.log('VALUES', getValues());
     const { name, description, membership } = body;
     const { totalSupply, decimals } = membership.token;
 
