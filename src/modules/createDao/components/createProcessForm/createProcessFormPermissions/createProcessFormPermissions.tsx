@@ -23,7 +23,8 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     const getBodyFormPrefix = (bodyIndex: number, stageIndex?: number) => {
         const basePrefix = `bodies.${bodyIndex.toString()}`;
 
-        return stageIndex != null ? `stages.${stageIndex.toString()}.${basePrefix}` : basePrefix;
+        // return stageIndex != null ? `stages.${stageIndex.toString()}.${basePrefix}` : basePrefix;
+        return stageIndex != null ? `stages.${stageIndex.toString()}.${basePrefix}` : 'body';
     };
 
     const processBodies = useMemo(() => {
@@ -37,6 +38,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         return processedBodies.filter((body) => body.type === SetupBodyType.NEW);
     }, [isAdvancedGovernance, stages, basicProcessBody]);
 
+    console.log('processBodies', processBodies);
     const canBodiesCreateProposals = processBodies.some((body) => body.canCreateProposal);
     const createProposalsError = 'app.createDao.createProcessForm.permissions.proposalCreation.bodies.error';
 

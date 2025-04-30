@@ -4,6 +4,9 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
+import { useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import type { ICreateProcessFormData } from '../../../createProcessFormDefinitions';
 import { GovernanceBodyField } from '../governanceBodyField';
 
 export interface IGovernanceBasicBodyFieldProps {
@@ -18,6 +21,7 @@ export const GovernanceBasicBodyField: React.FC<IGovernanceBasicBodyFieldProps> 
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
+    const { setValue, resetField } = useFormContext();
 
     const requiredErrorMessage = 'app.createDao.createProcessForm.governance.basicBodyField.error.required';
     const {
@@ -29,10 +33,18 @@ export const GovernanceBasicBodyField: React.FC<IGovernanceBasicBodyFieldProps> 
         label: t('app.createDao.createProcessForm.governance.basicBodyField.label'),
         rules: { required: { value: true, message: requiredErrorMessage } },
     });
+    const processName = useWatch<ICreateProcessFormData, 'name'>({ name: 'name' });
 
     const handleBodySubmit = (values: ISetupBodyForm) => {
         const bodyId = crypto.randomUUID();
-        onBodyChange({ ...values, internalId: bodyId });
+        onBodyChange({
+            ...values,
+            internalId: bodyId,
+            // defaultValue does not set canCreateProposal reliably in every case, so it's important do the init here.
+            canCreateProposal: true,
+            // useForm does not always return the latest value set by setValue in the sync useEffect!
+            name: processName,
+        });
         close();
     };
 
@@ -42,7 +54,24 @@ export const GovernanceBasicBodyField: React.FC<IGovernanceBasicBodyFieldProps> 
         open(CreateDaoDialogId.SETUP_BODY, { params });
     };
 
-    const handleDelete = () => onBodyChange(undefined);
+    const handleDelete = () => {
+        onBodyChange(undefined);
+        resetField('body');
+    };
+
+    const isBodySet = body == null;
+    // Keep body-name & process-name in sync when setting up a simple governance process. Other metadata (description,
+    // process-key, resources) is processed right before pinning the metadata for the simple governance process.
+    useEffect(() => {
+        if (!isBodySet) {
+            return;
+        }
+
+        console.log('UPDATING BODY NAME', processName);
+        setValue('body.name', processName);
+    }, [isBodySet, processName, setValue]);
+
+    console.log('body', body);
 
     return (
         <InputContainer
