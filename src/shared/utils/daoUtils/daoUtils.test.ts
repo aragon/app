@@ -181,4 +181,25 @@ describe('dao utils', () => {
             expect(daoUtils.getDaoPlugins(undefined)).toBeUndefined();
         });
     });
+
+    describe('parsePluginSubdomain', () => {
+        it('correctly parses the plugin subdomain when it has a hyphen', () => {
+            const subdomain = 'token-voting';
+            const expectedResult = 'Token Voting';
+
+            expect(daoUtils.parsePluginSubdomain(subdomain)).toEqual(expectedResult);
+        });
+
+        it('correctly parses the plugin subdomain when it has multiple hyphens', () => {
+            const subdomain = 'token-voting-plugin';
+            const expectedResult = 'Token Voting Plugin';
+            expect(daoUtils.parsePluginSubdomain(subdomain)).toEqual(expectedResult);
+        });
+
+        it('correctly parses the plugin subdomain when it has no hyphen', () => {
+            const subdomain = 'multisig';
+            const expectedResult = 'Multisig';
+            expect(daoUtils.parsePluginSubdomain(subdomain)).toEqual(expectedResult);
+        });
+    });
 });

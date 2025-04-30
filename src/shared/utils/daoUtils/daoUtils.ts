@@ -38,8 +38,7 @@ class DaoUtils {
             return plugin.name;
         }
 
-        const parts = plugin.subdomain.split('-');
-        return parts.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+        return this.parsePluginSubdomain(plugin.subdomain);
     };
 
     getDaoPlugins = (dao?: IDao, params?: IGetDaoPluginsParams) => {
@@ -51,6 +50,11 @@ class DaoUtils {
                 this.filterBySubPlugin(plugin, includeSubPlugins) &&
                 this.filterBySubdomain(plugin, subdomain),
         );
+    };
+
+    parsePluginSubdomain = (subdomain: string): string => {
+        const parts = subdomain.split('-');
+        return parts.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
     };
 
     private filterPluginByAddress = (plugin: IDaoPlugin, address?: string) =>

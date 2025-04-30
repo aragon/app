@@ -204,8 +204,7 @@
             "default": {
               "address": "Address",
               "ens": "ENS name"
-            },
-            "external": "External address"
+            }
           },
           "stageApprovalsField": {
             "approve": {
@@ -460,8 +459,8 @@
       }
     },
     "daos": {
-      "aragonX": {
-        "aragonXPageHeader": {
+      "aragonDemo": {
+        "aragonDemoPageHeader": {
           "cta": "Create proposal",
           "stat": {
             "proposals": "Proposals",
@@ -1635,6 +1634,9 @@
           "required": "{{name}} is mandatory.",
           "validate": "{{name}} is invalid."
         }
+      },
+      "governanceBodyInfo": {
+        "external": "External address"
       },
       "page": {
         "header": {
