@@ -65,13 +65,14 @@ export const GovernanceBasicBodyField: React.FC<IGovernanceBasicBodyFieldProps> 
     // Keep body-name & process-name in sync when setting up a simple governance process. Other metadata (description,
     // process-key, resources) is processed right before pinning the metadata for the simple governance process.
     useEffect(() => {
-        if (!isBodySet) {
+        if (!isBodySet || body?.name === processName) {
             return;
         }
         console.log('UPDATEIGNG', processName);
 
-        setValue('body.name', processName);
-    }, [isBodySet, processName, setValue]);
+        onBodyChange({ ...body, name: processName });
+        // setValue('body.name', processName);
+    }, [body, isBodySet, onBodyChange, processName, setValue]);
 
     return (
         <InputContainer
