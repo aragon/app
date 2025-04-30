@@ -12,7 +12,7 @@ describe('<GovernanceBodyInfo /> component', () => {
         return <GovernanceBodyInfo {...completeProps} />;
     };
 
-    it('throws error if neither address nor pluginSubdomain is provided', () => {
+    it('throws error if neither address nor pluginInfo is provided', () => {
         expect(() => render(createTestComponent())).toThrow();
     });
 
@@ -29,13 +29,12 @@ describe('<GovernanceBodyInfo /> component', () => {
 
     it('renders the plugin name & version when pluginInfo is present', () => {
         const pluginInfo = {
-            name: 'Token Voting',
+            name: 'tokenVoting',
             installVersion: { release: 2, build: 4 },
         } as IPluginInfo;
-        const address = '0xB017BB3D282a542Ef521F9052Eba61F1e79FC6E8';
-        render(createTestComponent({ address, pluginInfo }));
+        render(createTestComponent({ pluginInfo }));
 
-        expect(screen.getByText('Token Voting v2.4')).toBeInTheDocument();
+        expect(screen.getByText('tokenVoting v2.4')).toBeInTheDocument();
     });
 
     it('renders the name, address and external subtitle when both are defined', () => {
@@ -45,6 +44,6 @@ describe('<GovernanceBodyInfo /> component', () => {
 
         expect(screen.getByText(name)).toBeInTheDocument();
         expect(screen.getByText(addressUtils.truncateAddress(address))).toBeInTheDocument();
-        expect(screen.getByText('app.shared.governanceBodyInfo.external')).toBeInTheDocument();
+        expect(screen.getByText(/governanceBodyInfo.external/)).toBeInTheDocument();
     });
 });

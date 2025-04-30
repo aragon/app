@@ -69,7 +69,7 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
                     <GovernanceBodyInfo
                         name={body.name}
                         address={body.type === SetupBodyType.EXTERNAL ? body.address : undefined}
-                        pluginInfo={plugin ?? undefined}
+                        pluginInfo={plugin}
                     />
                 </Accordion.ItemHeader>
                 <Accordion.ItemContent className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6">

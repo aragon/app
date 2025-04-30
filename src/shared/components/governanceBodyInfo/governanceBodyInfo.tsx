@@ -20,7 +20,7 @@ export interface IGovernanceBodyInfoProps {
 export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (props) => {
     const { name, pluginInfo, address } = props;
 
-    invariant(address != null || pluginInfo != null, 'GovernanceBodyInfo: address or subdomain must be set.');
+    invariant(address != null || pluginInfo != null, 'GovernanceBodyInfo: address or pluginInfo must be set.');
 
     const { t } = useTranslations();
 
