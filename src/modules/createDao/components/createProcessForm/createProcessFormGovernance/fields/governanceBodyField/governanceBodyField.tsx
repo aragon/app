@@ -3,10 +3,13 @@ import {
     SetupBodyType,
     type ISetupBodyForm,
 } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
+import { GovernanceBodyInfo } from '@/shared/components/governanceBodyInfo';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Accordion, addressUtils, Button, Dropdown, IconType } from '@aragon/gov-ui-kit';
+import type { IPluginInfo } from '@/shared/types';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { Accordion, Button, Dropdown, IconType } from '@aragon/gov-ui-kit';
 import { useWatch } from 'react-hook-form';
 import { GovernanceType, type ICreateProcessFormData } from '../../../createProcessFormDefinitions';
 import { GovernanceBodiesFieldItemDefault } from './governanceBodiesFieldItemDefault';
@@ -44,28 +47,19 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
     const governanceType = useWatch<ICreateProcessFormData, 'governanceType'>({ name: 'governanceType' });
     const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
 
-    const bodyName =
-        body.type === SetupBodyType.NEW ? body.name : (body.name ?? addressUtils.truncateAddress(body.address));
+    const plugin = pluginRegistryUtils.getPlugin(body.plugin) as IPluginInfo | undefined;
 
     return (
         <Accordion.Container isMulti={true}>
             <Accordion.Item value={body.internalId}>
                 <Accordion.ItemHeader>
-                    <div className="flex w-full flex-col items-start">
-                        <div className="flex w-full items-center justify-between">
-                            <p className="text-base leading-tight text-neutral-800 md:text-lg">{bodyName}</p>
-                            {body.type === SetupBodyType.EXTERNAL && body.name != null && (
-                                <p className="text-base leading-tight text-neutral-500 md:text-lg">
-                                    {addressUtils.truncateAddress(body.address)}
-                                </p>
-                            )}
-                        </div>
-                        {body.type === SetupBodyType.EXTERNAL && (
-                            <p className="text-sm leading-tight text-neutral-500 md:text-base">
-                                {t('app.createDao.createProcessForm.governance.bodyField.external')}
-                            </p>
-                        )}
-                    </div>
+                    <GovernanceBodyInfo
+                        name={body.name}
+                        address={body.type === SetupBodyType.EXTERNAL ? body.address : undefined}
+                        subdomain={plugin?.id}
+                        release={plugin?.installVersion.release.toString()}
+                        build={plugin?.installVersion.build.toString()}
+                    />
                 </Accordion.ItemHeader>
                 <Accordion.ItemContent className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6">
                     <PluginSingleComponent
