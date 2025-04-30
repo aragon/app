@@ -460,8 +460,8 @@
       }
     },
     "daos": {
-      "aragonX": {
-        "aragonXPageHeader": {
+      "aragonDemo": {
+        "aragonDemoPageHeader": {
           "cta": "Create proposal",
           "stat": {
             "proposals": "Proposals",
