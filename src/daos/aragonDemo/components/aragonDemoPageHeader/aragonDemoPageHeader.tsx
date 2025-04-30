@@ -9,7 +9,7 @@ import classNames from 'classnames';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import type { ComponentProps } from 'react';
-import AragonDemoHeader from '../../assets/header.jpg';
+import AragonDemoHeader from '../../assets/aragonDemoHeader.jpg';
 import { AragonDemoPageHeaderStat } from './aragonDemoPageHeaderStat';
 
 export interface IAragonDemoPageHeaderProps extends ComponentProps<'header'> {
