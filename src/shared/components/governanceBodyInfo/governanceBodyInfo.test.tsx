@@ -1,4 +1,3 @@
-import type { IPluginInfo } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { GovernanceBodyInfo, type IGovernanceBodyInfoProps } from './governanceBodyInfo';
@@ -12,29 +11,17 @@ describe('<GovernanceBodyInfo /> component', () => {
         return <GovernanceBodyInfo {...completeProps} />;
     };
 
-    it('throws error if neither address nor pluginInfo is provided', () => {
+    it('throws error if neither address nor subdomain is provided', () => {
         expect(() => render(createTestComponent())).toThrow();
     });
 
-    it('renders the body name if present', () => {
-        const name = 'Test Body';
-        const pluginInfo = {
-            name: 'test-plugin',
-            installVersion: { release: 1, build: 2 },
-        } as IPluginInfo;
-        render(createTestComponent({ name, pluginInfo }));
+    it('renders the subdomain (parsed) and version when provided', () => {
+        const subdomain = 'token-voting';
+        const release = '2';
+        const build = '4';
+        render(createTestComponent({ subdomain, release, build }));
 
-        expect(screen.getByText(name)).toBeInTheDocument();
-    });
-
-    it('renders the plugin name & version when pluginInfo is present', () => {
-        const pluginInfo = {
-            name: 'tokenVoting',
-            installVersion: { release: 2, build: 4 },
-        } as IPluginInfo;
-        render(createTestComponent({ pluginInfo }));
-
-        expect(screen.getByText('tokenVoting v2.4')).toBeInTheDocument();
+        expect(screen.getByText('Token Voting v2.4')).toBeInTheDocument();
     });
 
     it('renders the name, address and external subtitle when both are defined', () => {
