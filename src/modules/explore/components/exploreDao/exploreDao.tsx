@@ -35,7 +35,9 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
 
     const daoListParams = daoFilter === 'all' ? initialParams : undefined;
     const daoListMemberParams =
-        daoFilter === 'member' ? { urlParams: { address: address! }, queryParams: { sort: 'blockNumber' } } : undefined;
+        daoFilter === 'member'
+            ? { urlParams: { address: address! }, queryParams: { sort: 'blockTimestamp' } }
+            : undefined;
 
     return (
         <div className="flex grow flex-col gap-3">
