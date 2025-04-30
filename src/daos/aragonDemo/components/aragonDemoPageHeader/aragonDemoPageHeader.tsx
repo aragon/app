@@ -9,21 +9,20 @@ import classNames from 'classnames';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import type { ComponentProps } from 'react';
-import AragonXHeader from '../../../../assets/images/aragon-x-header.jpg';
-import { AragonXPageHeaderStat } from './aragonXPageHeaderStat';
+import AragonDemoHeader from '../../assets/header.jpg';
+import { AragonDemoPageHeaderStat } from './aragonDemoPageHeaderStat';
 
-export interface IAragonXPageHeaderProps extends ComponentProps<'header'> {
+export interface IAragonDemoPageHeaderProps extends ComponentProps<'header'> {
     /**
      * DAO to display in the header.
      */
     dao: IDao;
 }
 
-export const AragonXPageHeader: React.FC<IAragonXPageHeaderProps> = (props) => {
+export const AragonDemoPageHeader: React.FC<IAragonDemoPageHeaderProps> = (props) => {
     const { dao, className, ...otherProps } = props;
 
     const router = useRouter();
-
     const { t } = useTranslations();
 
     const { name: title, description, id: daoId, metrics } = dao;
@@ -35,8 +34,8 @@ export const AragonXPageHeader: React.FC<IAragonXPageHeaderProps> = (props) => {
     const daoTvl = formatterUtils.formatNumber(metrics.tvlUSD, { format: NumberFormat.FIAT_TOTAL_SHORT });
 
     const stats = [
-        { value: proposalsCreated, label: t('app.daos.aragonX.aragonXPageHeader.stat.proposals') },
-        { value: daoTvl, label: t('app.daos.aragonX.aragonXPageHeader.stat.treasury'), suffix: 'USD' },
+        { value: proposalsCreated, label: t('app.daos.aragonDemo.aragonDemoPageHeader.stat.proposals') },
+        { value: daoTvl, label: t('app.daos.aragonDemo.aragonDemoPageHeader.stat.treasury'), suffix: 'USD' },
     ];
 
     const plugin = useDaoPlugins({ daoId })![0];
@@ -59,8 +58,8 @@ export const AragonXPageHeader: React.FC<IAragonXPageHeaderProps> = (props) => {
             {...otherProps}
         >
             <Image
-                src={AragonXHeader}
-                alt="Aragon X Header"
+                src={AragonDemoHeader}
+                alt="Aragon Demo Header"
                 className="absolute left-0 top-0 -z-10 size-full object-cover"
             />
             <Container className="flex w-full flex-col gap-6 pb-4 pt-10 md:gap-y-10 md:py-16">
@@ -72,11 +71,11 @@ export const AragonXPageHeader: React.FC<IAragonXPageHeaderProps> = (props) => {
                 </div>
                 <div className="flex w-full flex-col-reverse gap-6 md:flex-row md:items-center md:justify-between">
                     <Button className="w-full md:max-w-fit" iconLeft={IconType.PLUS} onClick={handleCtaClick}>
-                        {t(`app.daos.aragonX.aragonXPageHeader.cta`)}
+                        {t(`app.daos.aragonDemo.aragonDemoPageHeader.cta`)}
                     </Button>
                     <div className="flex flex-row gap-10 md:gap-12">
                         {stats.map((stat) => (
-                            <AragonXPageHeaderStat key={stat.label} {...stat} />
+                            <AragonDemoPageHeaderStat key={stat.label} {...stat} />
                         ))}
                     </div>
                 </div>
