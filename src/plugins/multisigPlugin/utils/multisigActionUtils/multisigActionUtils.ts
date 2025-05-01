@@ -23,6 +23,7 @@ import {
 } from '../../types';
 import { multisigSettingsUtils, type IMultisigSettingsParseParams } from '../multisigSettingsUtils';
 import { defaultAddMembers, defaultRemoveMembers, defaultUpdateSettings } from './multisigActionDefinitions';
+import { pluginVersionUtils } from '@/shared/utils/pluginVersionUtils';
 
 export interface IGetMultisigActionsProps {
     /**
@@ -48,8 +49,12 @@ class MultisigActionUtils {
     getMultisigActions = ({ plugin, t }: IGetMultisigActionsProps): IGetMultisigActionsResult => {
         const { address, release, build } = plugin;
 
+        const pluginVersion = { release: Number(release), build: Number(build) };
+        const minMetadataVersion = { release: 1, build: 3 };
+
         // The setMetadata function on the Multisig plugin is only supported from version 1.3 onwards
-        const includePluginMetadataItem = Number(release) > 1 || (Number(release) === 1 && Number(build) >= 3);
+        const { isLessThan } = pluginVersionUtils.compareVersions(pluginVersion, minMetadataVersion);
+        const includePluginMetadataItem = !isLessThan;
 
         return {
             groups: [
