@@ -48,14 +48,14 @@
       "layoutDao": {
         "notFound": {
           "action": "Explore DAOs",
-          "description": "We couldn't find the DAO that you're looking for.",
+          "description": "We couldn't find the DAO you're looking for.",
           "title": "DAO not found"
         }
       },
       "layoutWizard": {
         "notFound": {
           "action": "Explore DAOs",
-          "description": "We couldn't find the DAO that you're looking for.",
+          "description": "We couldn't find the DAO you're looking for.",
           "title": "DAO not found"
         }
       },
@@ -81,12 +81,12 @@
       },
       "notFoundBase": {
         "action": "Explore DAOs",
-        "description": "We couldn't find the page that you're looking for.",
+        "description": "We couldn't find the page you're looking for.",
         "title": "Page not found"
       },
       "notFoundDao": {
         "action": "Go to dashboard",
-        "description": "We couldn't find the page that you're looking for.",
+        "description": "We couldn't find the page you're looking for.",
         "title": "Page not found"
       },
       "userDialog": {
@@ -110,7 +110,7 @@
         "metadata": {
           "avatar": {
             "error": {
-              "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, GIF).",
+              "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g. PNG, JPG, or GIF).",
               "file-too-large": "The file size exceeds the maximum allowed limit of 1 MB.",
               "square-only": "The image must be square. Upload a square image.",
               "too-many-files": "Only one file can be uploaded at a time.",
@@ -126,8 +126,8 @@
           },
           "ens": {
             "error": {
-              "invalid": "ENS subdomain is invalid",
-              "taken": "ENS subdomain is not available"
+              "invalid": "ENS subdomain is invalid.",
+              "taken": "ENS subdomain is not available."
             },
             "helpText": "This is a custom onchain identifier for your DAO. It can be used in URLs to access your DAO as well as send assets.",
             "label": "ENS subname"
@@ -175,7 +175,7 @@
       },
       "createProcessDetailsDialog": {
         "actionLabel": "Get started",
-        "description": "Governance should suit your DAO's needs. Whether it's for asset management, protocol upgrades, or team coordination, you can add a new governance process at any time.",
+        "description": "Governance should suit your DAO's needs. Whether it's for asset management, protocol upgrades, or team coordination, you can propose adding a new governance process at any time.",
         "steps": {
           "describe": "Describe new proposal type",
           "design": "Design the governance process",
@@ -192,7 +192,7 @@
             "error": {
               "required": "A body must be added to this process."
             },
-            "helpText": "Add the governing body that get to determine whether or not proposal passes.",
+            "helpText": "Add the governing body that gets to determine whether the proposal passes.",
             "label": "Voting body"
           },
           "bodyField": {
@@ -227,7 +227,7 @@
             "error": {
               "required": "At least one body must be added to the stage."
             },
-            "helpText": "These bodies will decide whether or not this stage passes.",
+            "helpText": "These bodies will decide whether this stage passes.",
             "label": {
               "normal": "Voting bodies",
               "veto": "Vetoing bodies"
@@ -283,7 +283,7 @@
               "label": "Basic"
             },
             "helpText": "This determines the amount of control and flexibility you need to design your governance process.",
-            "label": "Governance Designer"
+            "label": "Governance designer"
           }
         },
         "metadata": {
@@ -735,7 +735,7 @@
         },
         "notFound": {
           "action": "Explore members",
-          "description": "We couldn't find the member that you're looking for.",
+          "description": "We couldn't find the member you're looking for.",
           "title": "Member not found"
         }
       },
@@ -790,7 +790,7 @@
         },
         "notFound": {
           "action": "Explore proposals",
-          "description": "We couldn't find the proposal that you're looking for.",
+          "description": "We couldn't find the proposal you're looking for.",
           "title": "Proposal not found"
         }
       },
@@ -1107,7 +1107,7 @@
           }
         },
         "multisigSetupMembership": {
-          "helpText": "These addresses will be the only ones able to participate",
+          "helpText": "These addresses will be the only ones able to participate.",
           "item": {
             "alreadyMember": "Address is already a member of the DAO"
           },
@@ -1151,7 +1151,7 @@
         },
         "sppInvalidAddressConnectedDialog": {
           "action": "Close",
-          "description": "Please connect a wallet that is eligible to vote. If you are an owner of this external address you can connect with WalletConnect to vote on this proposal.",
+          "description": "You are not connected to the correct address. If you are one its owner you can connect it with WalletConnect.",
           "title": "Not eligible to vote"
         },
         "sppProposalList": {
@@ -1275,7 +1275,7 @@
         },
         "tokenGovernanceSettings": {
           "approval": "> {{approvalThreshold}}",
-          "approvalThreshold": "Approval threshold",
+          "approvalThreshold": "Support threshold",
           "duration": "{{days}} days {{hours}} hours {{minutes}} minutes",
           "earlyExecution": "Early execution",
           "minimumDuration": "Minimum duration",
@@ -1445,7 +1445,7 @@
             "symbol": {
               "helpText": "This is the abbreviated ticker of the token. For example: UNI",
               "label": "Token symbol",
-              "onlyLetters": "Only letters are allowed"
+              "onlyLetters": "Only letters are allowed."
             }
           },
           "importToken": {
@@ -1461,9 +1461,8 @@
                 "message": "Requires wrapping"
               }
             },
-            "helpText": "The address of the token to be imported",
+            "helpText": "The address must be an ERC-20 token contract deployed on the same chain as your DAO.",
             "label": "Token address",
-            "placeholder": "Enter the token address to import",
             "step": {
               "delegation": "Delegation compatible",
               "erc20": "ERC-20 token standard",
@@ -1471,7 +1470,7 @@
             }
           },
           "type": {
-            "helpText": "You can either import an existing ERC-20 token to be used in governance or create a new one.",
+            "helpText": "You can either create a new ERC-20 token to be used in governance or import an existing one.",
             "label": "ERC-20 token",
             "option": {
               "create": "Create new token",
@@ -1561,7 +1560,7 @@
       },
       "daoSettingsPage": {
         "aside": {
-          "versionInfoTitle": "Version Info"
+          "versionInfoTitle": "Version info"
         },
         "main": {
           "governanceAction": "Add governance",
@@ -1670,7 +1669,7 @@
             "pending": "Awaiting signature"
           },
           "cancel": "Cancel",
-          "proceedAnyway": "Proceed anyway",
+          "proceedAnyway": "Continue in background",
           "retry": "Retry"
         },
         "step": {

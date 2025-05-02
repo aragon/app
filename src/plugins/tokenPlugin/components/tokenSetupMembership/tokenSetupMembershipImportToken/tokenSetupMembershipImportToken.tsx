@@ -120,7 +120,6 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
         <>
             <div className="flex flex-col gap-2 md:gap-3">
                 <AddressInput
-                    placeholder={t('app.plugins.token.tokenSetupMembership.importToken.placeholder')}
                     helpText={t('app.plugins.token.tokenSetupMembership.importToken.helpText')}
                     // Setting address to undefined could trigger some bug from the library in certain cases, so we use an empty string instead!
                     onAccept={(value) => onImportTokenAddressChange(value?.address ?? '')}
