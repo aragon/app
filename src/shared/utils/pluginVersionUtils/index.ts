@@ -1,1 +1,1 @@
-export { pluginVersionUtils } from './pluginVersionUtils'
+export { pluginVersionUtils } from './pluginVersionUtils';

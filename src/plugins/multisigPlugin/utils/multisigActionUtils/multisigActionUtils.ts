@@ -4,6 +4,7 @@ import type { IActionComposerPluginData } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { pluginVersionUtils } from '@/shared/utils/pluginVersionUtils';
 import {
     addressUtils,
     ProposalActionType as GukProposalActionType,
@@ -23,7 +24,6 @@ import {
 } from '../../types';
 import { multisigSettingsUtils, type IMultisigSettingsParseParams } from '../multisigSettingsUtils';
 import { defaultAddMembers, defaultRemoveMembers, defaultUpdateSettings } from './multisigActionDefinitions';
-import { pluginVersionUtils } from '@/shared/utils/pluginVersionUtils';
 
 export interface IGetMultisigActionsProps {
     /**
