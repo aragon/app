@@ -6,9 +6,9 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { PluginType } from '@/shared/types';
+import { pluginVersionUtils } from '@/shared/utils/pluginVersionUtils';
 import { Button, IconType, invariant } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 export interface IUpgradeOsxProps {
     /**
@@ -23,9 +23,14 @@ export const UpgradeOsx: React.FC<IUpgradeOsxProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const daoPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS });
+    const daoPlugins = useDaoPlugins({ daoId });
 
     invariant(daoPlugins != null, 'UpgradeOsx: daoPlugins is undefined');
+
+    const upgradablePlugins = useMemo(
+        () => daoPlugins.filter((plugin) => pluginVersionUtils.needsUpgrade(plugin.meta)),
+        [daoPlugins],
+    );
 
     const [selectedPlugin, setSelectedPlugin] = useState<IDaoPlugin>(daoPlugins[0].meta);
 
@@ -52,6 +57,10 @@ export const UpgradeOsx: React.FC<IUpgradeOsxProps> = (props) => {
     const handleSuccess = (selectedPlugin: IDaoPlugin) => {
         console.log('handleSuccess', selectedPlugin);
     };
+
+    if (upgradablePlugins.length === 0) {
+        return null;
+    }
 
     return (
         <div className="flex flex-col space-y-3">
