@@ -2,7 +2,12 @@ import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { IDefinitionSetting, ProposalStatus, ProposalVoting, proposalStatusToVotingStatus } from '@aragon/gov-ui-kit';
+import {
+    type IDefinitionSetting,
+    ProposalStatus,
+    ProposalVoting,
+    proposalStatusToVotingStatus,
+} from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
