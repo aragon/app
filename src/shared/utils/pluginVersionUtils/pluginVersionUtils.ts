@@ -1,31 +1,28 @@
-import type { IDaoPlugin } from '@/shared/api/daoService';
-import type { IPluginInfo } from '@/shared/types';
-import { pluginRegistryUtils } from '../pluginRegistryUtils';
 import type { IPluginSetupVersionTag } from '../pluginTransactionUtils';
 
+export type Version = IPluginSetupVersionTag | { release: string; build: string } | undefined;
+
 class PluginVersionUtils {
-    compareVersions(current: IPluginSetupVersionTag, target: IPluginSetupVersionTag) {
+    isLessThan = (current: Version, target: Version) => this.compareVersions(current, target) < 0;
+    isGreaterThan = (current: Version, target: Version) => this.compareVersions(current, target) > 0;
+    isGreaterThanOrEqual = (current: Version, target: Version) => this.compareVersions(current, target) >= 0;
+
+    private normaliseVersion = (version: Version) => ({
+        release: Number(version?.release ?? 0),
+        build: Number(version?.build ?? 0),
+    });
+
+    private compareVersions = (current?: Version, target?: Version) => {
+        const currentVersion = this.normaliseVersion(current);
+        const targetVersion = this.normaliseVersion(target);
+
         const diff =
-            current.release !== target.release ? current.release - target.release : current.build - target.build;
+            currentVersion.release !== targetVersion.release
+                ? currentVersion.release - targetVersion.release
+                : currentVersion.build - targetVersion.build;
 
-        return { isEqual: diff === 0, isLessThan: diff < 0, isGreaterThan: diff > 0 };
-    }
-
-    pluginNeedsUpgrade(plugin: IDaoPlugin) {
-        const current = { release: Number(plugin.release), build: Number(plugin.build) };
-        const target = pluginRegistryUtils.getPlugin(plugin.subdomain) as IPluginInfo | undefined;
-
-        if (!target) {
-            return false;
-        }
-
-        const { release, build } = target.installVersion;
-        const targetVersion = { release: Number(release), build: Number(build) };
-
-        const { isLessThan } = this.compareVersions(current, targetVersion);
-
-        return isLessThan;
-    }
+        return diff;
+    };
 }
 
 export const pluginVersionUtils = new PluginVersionUtils();

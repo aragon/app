@@ -7,7 +7,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginVersionUtils } from '@/shared/utils/pluginVersionUtils';
-import { Button, IconType, invariant } from '@aragon/gov-ui-kit';
+import { Button, IconType } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
 
 export interface IOsxUpdatesProps {
@@ -23,9 +23,7 @@ export const OsxUpdates: React.FC<IOsxUpdatesProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const daoPlugins = useDaoPlugins({ daoId });
-
-    invariant(daoPlugins != null, 'OsxUpdates: No plugins');
+    const daoPlugins = useDaoPlugins({ daoId })!;
 
     const [selectedPlugin, setSelectedPlugin] = useState<IDaoPlugin>(daoPlugins[0].meta);
 
@@ -36,7 +34,7 @@ export const OsxUpdates: React.FC<IOsxUpdatesProps> = (props) => {
         daoId,
     });
 
-    const onUpgradeClicked = () => {
+    const handleUpgradeClick = () => {
         const params: ISelectPluginDialogParams = { daoId, onPluginSelected };
 
         open(GovernanceDialogId.SELECT_PLUGIN, { params });
@@ -44,10 +42,10 @@ export const OsxUpdates: React.FC<IOsxUpdatesProps> = (props) => {
 
     const onPluginSelected = (plugin: IDaoPlugin) => {
         setSelectedPlugin(plugin);
-        createProposalGuard({ plugin, onSuccess: () => handleSuccess(plugin) });
+        createProposalGuard({ plugin, onSuccess: () => handlePermissionCheckSuccess(plugin) });
     };
 
-    const handleSuccess = (selectedPlugin: IDaoPlugin) => {
+    const handlePermissionCheckSuccess = (selectedPlugin: IDaoPlugin) => {
         // eslint-disable-next-line no-console
         console.log('handleSuccess', selectedPlugin);
     };
@@ -63,7 +61,7 @@ export const OsxUpdates: React.FC<IOsxUpdatesProps> = (props) => {
 
     return (
         <div className="flex flex-col space-y-3">
-            <Button onClick={onUpgradeClicked} iconLeft={IconType.RELOAD} variant="secondary">
+            <Button onClick={handleUpgradeClick} iconLeft={IconType.RELOAD} variant="secondary">
                 {t('app.settings.osxUpdates.button')}
             </Button>
             <p className="text-sm text-neutral-500">{t('app.settings.osxUpdates.description')}</p>
