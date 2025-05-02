@@ -1463,7 +1463,6 @@
             },
             "helpText": "The address must be an ERC-20 token contract deployed on the same chain as your DAO.",
             "label": "Token address",
-            "placeholder": "",
             "step": {
               "delegation": "Delegation compatible",
               "erc20": "ERC-20 token standard",
