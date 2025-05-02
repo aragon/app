@@ -1574,7 +1574,7 @@
         "osLabel": "Operating system",
         "osValue": "Aragon OSx v{{version}}"
       },
-      "usxUpdates": {
+      "osxUpdates": {
         "button": "Upgrade contracts",
         "description": "There are new updates available for Araogn OSx and plugins."
       }

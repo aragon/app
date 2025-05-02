@@ -50,6 +50,7 @@ export const OsxUpdates: React.FC<IOsxUpdatesProps> = (props) => {
     };
 
     const handleSuccess = (selectedPlugin: IDaoPlugin) => {
+        // eslint-disable-next-line no-console
         console.log('handleSuccess', selectedPlugin);
     };
 
