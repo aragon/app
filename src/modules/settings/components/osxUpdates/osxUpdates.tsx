@@ -25,7 +25,7 @@ export const OsxUpdates: React.FC<IOsxUpdatesProps> = (props) => {
 
     const daoPlugins = useDaoPlugins({ daoId });
 
-    invariant(daoPlugins != null, 'OsxUpdates: daoPlugins is undefined');
+    invariant(daoPlugins != null, 'OsxUpdates: No plugins');
 
     const [selectedPlugin, setSelectedPlugin] = useState<IDaoPlugin>(daoPlugins[0].meta);
 
