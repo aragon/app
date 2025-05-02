@@ -10,8 +10,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import type { IPluginInfo } from '@/shared/types';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { Accordion, Button, Dropdown, IconType } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
 import { GovernanceType, type ICreateProcessFormData } from '../../../createProcessFormDefinitions';
 import { GovernanceBodiesFieldItemDefault } from './governanceBodiesFieldItemDefault';
 
@@ -42,23 +41,11 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
     const { fieldName, daoId, body, onEdit, onDelete } = props;
 
     const { t } = useTranslations();
-    const { setValue } = useFormContext();
 
     useFormField<Record<string, ISetupBodyForm>, typeof fieldName>(fieldName);
 
-    const processName = useWatch<ICreateProcessFormData, 'name'>({ name: 'name' });
     const governanceType = useWatch<ICreateProcessFormData, 'governanceType'>({ name: 'governanceType' });
     const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
-
-    // Keep body-name & process-name in sync when setting up a simple governance process. Other metadata (description,
-    // process-key, resources) is processed right before pinning the metadata for the simple governance process.
-    useEffect(() => {
-        if (isAdvancedGovernance) {
-            return;
-        }
-
-        setValue(`${fieldName}.name`, processName);
-    }, [isAdvancedGovernance, fieldName, processName, setValue]);
 
     const plugin = pluginRegistryUtils.getPlugin(body.plugin) as IPluginInfo | undefined;
 
