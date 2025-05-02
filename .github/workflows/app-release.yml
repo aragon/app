@@ -20,7 +20,6 @@ jobs:
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
           op-vault: "kv_app-next_infra"
-
       - name: Setup
         uses: aragon/app-next/.github/actions/setup@main
         with:

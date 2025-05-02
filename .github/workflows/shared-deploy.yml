@@ -44,7 +44,7 @@ jobs:
         uses: actions/download-artifact@v4.3.0
         with:
           name: nextjs-build
-      - name: Download secrets
+      - name: Setup env file secrets
         uses: aragon/github-templates/steps/credential-retrieval@v0.4
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
