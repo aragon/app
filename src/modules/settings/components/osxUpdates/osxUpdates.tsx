@@ -37,14 +37,12 @@ export const OsxUpdates: React.FC<IOsxUpdatesProps> = (props) => {
     });
 
     const onUpgradeClicked = () => {
-        const params: ISelectPluginDialogParams = {
-            daoId,
-            onPluginSelected: handlePluginSelected,
-        };
+        const params: ISelectPluginDialogParams = { daoId, onPluginSelected };
+
         open(GovernanceDialogId.SELECT_PLUGIN, { params });
     };
 
-    const handlePluginSelected = (plugin: IDaoPlugin) => {
+    const onPluginSelected = (plugin: IDaoPlugin) => {
         setSelectedPlugin(plugin);
         createProposalGuard({ plugin, onSuccess: () => handleSuccess(plugin) });
     };
