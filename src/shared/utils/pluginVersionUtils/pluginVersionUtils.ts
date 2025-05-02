@@ -15,7 +15,7 @@ class PluginVersionUtils {
         };
     }
 
-    needsUpgrade(plugin: IDaoPlugin) {
+    pluginNeedsUpgrade(plugin: IDaoPlugin) {
         const current = {
             release: Number(plugin.release),
             build: Number(plugin.build),

@@ -56,7 +56,7 @@ describe('PluginVersionUtils', () => {
         });
     });
 
-    describe('needsUpgrade', () => {
+    describe('pluginNeedsUpgrade', () => {
         it('returns true when current build is less than target build and release is the same', () => {
             const current = generateDaoPlugin({ subdomain: 'multisig', release: '1', build: '2' });
 
@@ -66,7 +66,7 @@ describe('PluginVersionUtils', () => {
 
             getPluginSpy.mockReturnValue(target);
 
-            const result = pluginVersionUtils.needsUpgrade(current);
+            const result = pluginVersionUtils.pluginNeedsUpgrade(current);
 
             expect(result).toBe(true);
         });
@@ -80,7 +80,7 @@ describe('PluginVersionUtils', () => {
 
             getPluginSpy.mockReturnValue(target);
 
-            const result = pluginVersionUtils.needsUpgrade(current);
+            const result = pluginVersionUtils.pluginNeedsUpgrade(current);
 
             expect(result).toBe(true);
         });
@@ -94,7 +94,7 @@ describe('PluginVersionUtils', () => {
 
             getPluginSpy.mockReturnValue(target);
 
-            const result = pluginVersionUtils.needsUpgrade(current);
+            const result = pluginVersionUtils.pluginNeedsUpgrade(current);
 
             expect(result).toBe(false);
         });

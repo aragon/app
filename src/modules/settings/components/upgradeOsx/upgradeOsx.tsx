@@ -54,7 +54,7 @@ export const UpgradeOsx: React.FC<IUpgradeOsxProps> = (props) => {
     };
 
     const upgradablePlugins = useMemo(
-        () => daoPlugins.filter((plugin) => pluginVersionUtils.needsUpgrade(plugin.meta)),
+        () => daoPlugins.filter((plugin) => pluginVersionUtils.pluginNeedsUpgrade(plugin.meta)),
         [daoPlugins],
     );
 
