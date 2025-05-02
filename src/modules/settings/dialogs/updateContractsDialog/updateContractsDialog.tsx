@@ -3,16 +3,20 @@ import { useDialogContext, type IDialogComponentProps } from "@/shared/component
 import { useTranslations } from "@/shared/components/translationsProvider";
 import { Dialog, invariant } from "@aragon/gov-ui-kit";
 import { PluginCard } from "./pluginCard";
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import type { IPluginInfo } from '@/shared/types';
+import { pluginVersionUtils } from '@/shared/utils/pluginVersionUtils';
 
 export interface IUpdateContractsDialogParams {
-  /**
-  * The plugins that are going to be updated.
-  */
-  plugins: IDaoPlugin[];
-  /**
-  * The process that was selected to publish the proposal.
-  */
-  process: IDaoPlugin
+    /**
+     * The process that was selected to publish the proposal.
+     */
+    process: IDaoPlugin;
+    /**
+     * The ID of the DAO.
+     */
+    daoId: string;
 }
 
 export interface IUpdateContractsDialogProps extends IDialogComponentProps<IUpdateContractsDialogParams> {}
@@ -25,11 +29,21 @@ export const UpdateContractsDialog: React.FC<IUpdateContractsDialogProps> = (pro
 
       invariant(location.params != null, 'UpdateContractsDialog: required parameters must be set.');
 
-      const { plugins, process } = location.params;
+      const { process, daoId } = location.params;
 
       const onPropose = () => {
               console.log('UpdateContractsDialog', plugins, process);
       }
+
+      const daoPlugins = useDaoPlugins({ daoId })!;
+
+      const pluginsToUpdate = daoPlugins.filter((plugin) => {
+          const target = pluginRegistryUtils.getPlugin(plugin.meta.subdomain) as IPluginInfo | undefined;
+
+          return pluginVersionUtils.isLessThan(plugin.meta, target?.installVersion);
+      });
+
+      const plugins = pluginsToUpdate.map((plugin) => plugin.meta);
 
     return (
       <>

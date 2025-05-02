@@ -47,14 +47,11 @@ export type IGetMultisigActionsResult = IActionComposerPluginData<IDaoPlugin<IMu
 
 class MultisigActionUtils {
     getMultisigActions = ({ plugin, t }: IGetMultisigActionsProps): IGetMultisigActionsResult => {
-        const { address, release, build } = plugin;
-
-        const pluginVersion = { release: Number(release), build: Number(build) };
-        const minMetadataVersion = { release: 1, build: 3 };
+        const { address } = plugin;
 
         // The setMetadata function on the Multisig plugin is only supported from version 1.3 onwards
-        const { isLessThan } = pluginVersionUtils.compareVersions(pluginVersion, minMetadataVersion);
-        const includePluginMetadataItem = !isLessThan;
+        const minVersion = { build: 1, release: 3 };
+        const includePluginMetadataAction = pluginVersionUtils.isGreaterOrEqualTo(plugin, minVersion);
 
         return {
             groups: [
@@ -95,7 +92,7 @@ class MultisigActionUtils {
                 {
                     ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),
                     meta: plugin,
-                    hidden: !includePluginMetadataItem,
+                    hidden: !includePluginMetadataAction,
                 },
             ],
             components: {

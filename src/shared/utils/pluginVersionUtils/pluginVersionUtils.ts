@@ -3,13 +3,12 @@ import type { IPluginInfo } from '@/shared/types';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 import type { IPluginSetupVersionTag } from '../pluginTransactionUtils';
 
-class PluginVersionUtils {
-    compareVersions(current: IPluginSetupVersionTag, target: IPluginSetupVersionTag) {
-        const diff =
-            current.release !== target.release ? current.release - target.release : current.build - target.build;
+export type Version = IPluginSetupVersionTag | { release: string; build: string } | undefined;
 
-        return { isEqual: diff === 0, isLessThan: diff < 0, isGreaterThan: diff > 0 };
-    }
+class PluginVersionUtils {
+    isLessThan = (current: Version, target: Version) => this.compareVersions(current, target) < 0;
+    isGreaterThan = (current: Version, target: Version) => this.compareVersions(current, target) > 0;
+    isGreaterOrEqualTo = (current: Version, target: Version) => this.compareVersions(current, target) >= 0;
 
     pluginNeedsUpgrade(plugin: IDaoPlugin) {
         const current = { release: Number(plugin.release), build: Number(plugin.build) };
@@ -19,13 +18,25 @@ class PluginVersionUtils {
             return false;
         }
 
-        const { release, build } = target.installVersion;
-        const targetVersion = { release: Number(release), build: Number(build) };
-
-        const { isLessThan } = this.compareVersions(current, targetVersion);
-
-        return isLessThan;
+        return this.isLessThan(current, target.installVersion);
     }
+
+    private normaliseVersion = (version: Version) => ({
+        release: Number(version?.release ?? 0),
+        build: Number(version?.build ?? 0),
+    });
+
+    private compareVersions = (current?: Version, target?: Version) => {
+        const currentVersion = this.normaliseVersion(current);
+        const targetVersion = this.normaliseVersion(target);
+
+        const diff =
+            currentVersion.release !== targetVersion.release
+                ? currentVersion.release - targetVersion.release
+                : currentVersion.build - targetVersion.build;
+
+        return diff;
+    };
 }
 
 export const pluginVersionUtils = new PluginVersionUtils();

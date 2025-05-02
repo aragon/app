@@ -55,15 +55,12 @@ export type IGetTokenActionsResult = IActionComposerPluginData<IDaoPlugin<IToken
 
 class TokenActionUtils {
     getTokenActions = ({ plugin, t }: IGetTokenActionsProps): IGetTokenActionsResult => {
-        const { address, release, build, settings } = plugin;
+        const { address, settings } = plugin;
         const { address: tokenAddress, name } = settings.token;
 
-        const pluginVersion = { release: Number(release), build: Number(build) };
-        const minMetadataVersion = { release: 1, build: 3 };
-
         // The setMetadata function on the TokenVoting plugin is only supported from version 1.3 onwards
-        const { isLessThan } = pluginVersionUtils.compareVersions(pluginVersion, minMetadataVersion);
-        const includePluginMetadataItem = !isLessThan;
+        const minVersion = { build: 1, release: 3 };
+        const includePluginMetadataAction = pluginVersionUtils.isGreaterOrEqualTo(plugin, minVersion);
 
         return {
             groups: [
@@ -100,7 +97,7 @@ class TokenActionUtils {
                 {
                     ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),
                     meta: plugin,
-                    hidden: !includePluginMetadataItem,
+                    hidden: !includePluginMetadataAction,
                 },
             ],
             components: {

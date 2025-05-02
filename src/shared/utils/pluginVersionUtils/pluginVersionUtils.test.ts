@@ -1,90 +1,104 @@
-import { type IPlugin, pluginRegistryUtils } from '../pluginRegistryUtils';
-import { generateDaoPlugin } from './../../testUtils/generators/daoPlugin';
 import { pluginVersionUtils } from './pluginVersionUtils';
 
-describe('PluginVersionUtils', () => {
-    const getPluginSpy = jest.spyOn(pluginRegistryUtils, 'getPlugin');
-
-    afterEach(() => {
-        getPluginSpy.mockReset();
-    });
-
-    describe('compareVersions', () => {
-        it('returns isEqual when release and build match', () => {
-            const current = { release: 1, build: 3 };
-            const target = { release: 1, build: 3 };
-
-            const result = pluginVersionUtils.compareVersions(current, target);
-
-            expect(result).toEqual({ isEqual: true, isLessThan: false, isGreaterThan: false });
-        });
-
-        it('returns isLessThan when current.release < target.release', () => {
-            const current = { release: 1, build: 3 };
-            const target = { release: 2, build: 1 };
-
-            const result = pluginVersionUtils.compareVersions(current, target);
-
-            expect(result).toEqual({ isEqual: false, isLessThan: true, isGreaterThan: false });
-        });
-
-        it('returns isGreaterThan when current.release > target.release', () => {
-            const current = { release: 2, build: 1 };
-            const target = { release: 1, build: 3 };
-
-            const result = pluginVersionUtils.compareVersions(current, target);
-
-            expect(result).toEqual({ isEqual: false, isLessThan: false, isGreaterThan: true });
-        });
-
-        it('returns isLessThan when same release but current.build < target.build', () => {
+describe('pluginVersion Utils', () => {
+    describe('isLessThan', () => {
+        it('returns true when current < target build', () => {
             const current = { release: 1, build: 2 };
             const target = { release: 1, build: 3 };
 
-            const result = pluginVersionUtils.compareVersions(current, target);
-
-            expect(result).toEqual({ isEqual: false, isLessThan: true, isGreaterThan: false });
+            expect(pluginVersionUtils.isLessThan(current, target)).toBe(true);
         });
 
-        it('returns isGreaterThan when same release but current.build > target.build', () => {
-            const current = { release: 1, build: 4 };
+        it('returns true when current < target release', () => {
+            const current = { release: 1, build: 3 };
+            const target = { release: 2, build: 0 };
+
+            expect(pluginVersionUtils.isLessThan(current, target)).toBe(true);
+        });
+
+        it('returns false when current === target', () => {
+            const current = { release: 1, build: 3 };
             const target = { release: 1, build: 3 };
 
-            const result = pluginVersionUtils.compareVersions(current, target);
+            expect(pluginVersionUtils.isLessThan(current, target)).toBe(false);
+        });
 
-            expect(result).toEqual({ isEqual: false, isLessThan: false, isGreaterThan: true });
+        it('returns false when current > target build', () => {
+            const current = { release: 1, build: 4 };
+            const target = { release: 1, build: 3 };
+            expect(pluginVersionUtils.isLessThan(current, target)).toBe(false);
+        });
+
+        it('handles undefined as 0.0 and returns false', () => {
+            expect(pluginVersionUtils.isLessThan(undefined, { release: 0, build: 1 })).toBe(true);
         });
     });
 
-    describe('pluginNeedsUpgrade', () => {
-        it('returns true when current build is less than target build and release is the same', () => {
-            const current = generateDaoPlugin({ subdomain: 'multisig', release: '1', build: '2' });
+    describe('isGreaterThan', () => {
+        it('returns true when current > target build', () => {
+            const current = { release: 1, build: 4 };
+            const target = { release: 1, build: 3 };
 
-            const target = { installVersion: { release: '1', build: '3' } } as unknown as IPlugin;
-
-            getPluginSpy.mockReturnValue(target);
-
-            expect(pluginVersionUtils.pluginNeedsUpgrade(current)).toBe(true);
+            expect(pluginVersionUtils.isGreaterThan(current, target)).toBe(true);
         });
 
-        it('returns true when current release is less than target release', () => {
-            const current = generateDaoPlugin({ subdomain: 'multisig', release: '1', build: '2' });
+        it('returns true when current > target release', () => {
+            const current = { release: 2, build: 0 };
+            const target = { release: 1, build: 3 };
 
-            const target = { installVersion: { release: '2', build: '0' } } as unknown as IPlugin;
-
-            getPluginSpy.mockReturnValue(target);
-
-            expect(pluginVersionUtils.pluginNeedsUpgrade(current)).toBe(true);
+            expect(pluginVersionUtils.isGreaterThan(current, target)).toBe(true);
         });
 
-        it('returns false when versions are equal', () => {
-            const current = generateDaoPlugin({ subdomain: 'multisig', release: '1', build: '2' });
+        it('returns false when current === target', () => {
+            const current = { release: 1, build: 3 };
+            const target = { release: 1, build: 3 };
 
-            const target = { installVersion: { release: '1', build: '2' } } as unknown as IPlugin;
+            expect(pluginVersionUtils.isGreaterThan(current, target)).toBe(false);
+        });
 
-            getPluginSpy.mockReturnValue(target);
+        it('returns false when current < target build', () => {
+            const current = { release: 1, build: 2 };
+            const target = { release: 1, build: 3 };
 
-            expect(pluginVersionUtils.pluginNeedsUpgrade(current)).toBe(false);
+            expect(pluginVersionUtils.isGreaterThan(current, target)).toBe(false);
+        });
+
+        it('handles undefined as 0.0 and returns true', () => {
+            expect(pluginVersionUtils.isGreaterThan({ release: 0, build: 1 }, undefined)).toBe(true);
+        });
+    });
+
+    describe('isGreaterOrEqualTo', () => {
+        it('returns true when current > target build', () => {
+            const current = { release: 1, build: 4 };
+            const target = { release: 1, build: 3 };
+
+            expect(pluginVersionUtils.isGreaterOrEqualTo(current, target)).toBe(true);
+        });
+
+        it('returns true when current > target release', () => {
+            const current = { release: 2, build: 0 };
+            const target = { release: 1, build: 3 };
+
+            expect(pluginVersionUtils.isGreaterOrEqualTo(current, target)).toBe(true);
+        });
+
+        it('returns true when current === target', () => {
+            const current = { release: 1, build: 3 };
+            const target = { release: 1, build: 3 };
+
+            expect(pluginVersionUtils.isGreaterOrEqualTo(current, target)).toBe(true);
+        });
+
+        it('returns false when current < target build', () => {
+            const current = { release: 1, build: 2 };
+            const target = { release: 1, build: 3 };
+
+            expect(pluginVersionUtils.isGreaterOrEqualTo(current, target)).toBe(false);
+        });
+
+        it('handles undefined as 0.0 and returns false', () => {
+            expect(pluginVersionUtils.isGreaterOrEqualTo(undefined, { release: 0, build: 1 })).toBe(false);
         });
     });
 });
