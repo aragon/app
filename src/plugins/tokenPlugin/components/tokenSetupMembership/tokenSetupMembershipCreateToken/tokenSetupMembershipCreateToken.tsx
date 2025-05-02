@@ -94,8 +94,8 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
                 {...symbolField}
             />
             <InputContainer
-                helpText={t('app.plugins.token.tokenSetupMembership.createToken.recipients.helpText')}
-                label={t('app.plugins.token.tokenSetupMembership.createToken.recipients.label')}
+                helpText={t('app.plugins.token.tokenSetupMembership.createToken.distribute.helpText')}
+                label={t('app.plugins.token.tokenSetupMembership.createToken.distribute.label')}
                 id="distribute"
                 useCustomWrapper={true}
             >

@@ -2,4 +2,4 @@
 '@aragon/app-next': patch
 ---
 
-Add lebel and help text for recipient section when creating new token
+Fix labels and help text on the create new token flow
