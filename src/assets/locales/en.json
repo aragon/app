@@ -1435,8 +1435,12 @@
               }
             },
             "name": {
-              "helpText": "These addresses will receive newly minted tokens.",
+              "helpText": "This is the full name of the token. For example: Uniswap",
               "label": "Token name"
+            },
+            "recipients": {
+              "helpText": "These addresses will receive newly minted tokens.",
+              "label": "Token recipients"
             },
             "symbol": {
               "helpText": "This is the abbreviated ticker of the token. For example: UNI",

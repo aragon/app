@@ -93,7 +93,12 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
                 maxLength={symbolMaxLength}
                 {...symbolField}
             />
-            <InputContainer id="distribute" useCustomWrapper={true}>
+            <InputContainer
+                helpText={t('app.plugins.token.tokenSetupMembership.createToken.recipients.helpText')}
+                label={t('app.plugins.token.tokenSetupMembership.createToken.recipients.label')}
+                id="distribute"
+                useCustomWrapper={true}
+            >
                 {membersField.map((member, index) => (
                     <TokenSetupMembershipCreateTokenMember
                         key={member.id}
