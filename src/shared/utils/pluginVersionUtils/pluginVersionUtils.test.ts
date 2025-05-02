@@ -60,43 +60,31 @@ describe('PluginVersionUtils', () => {
         it('returns true when current build is less than target build and release is the same', () => {
             const current = generateDaoPlugin({ subdomain: 'multisig', release: '1', build: '2' });
 
-            const target = {
-                installVersion: { release: '1', build: '3' },
-            } as unknown as IPlugin;
+            const target = { installVersion: { release: '1', build: '3' } } as unknown as IPlugin;
 
             getPluginSpy.mockReturnValue(target);
 
-            const result = pluginVersionUtils.pluginNeedsUpgrade(current);
-
-            expect(result).toBe(true);
+            expect(pluginVersionUtils.pluginNeedsUpgrade(current)).toBe(true);
         });
 
         it('returns true when current release is less than target release', () => {
             const current = generateDaoPlugin({ subdomain: 'multisig', release: '1', build: '2' });
 
-            const target = {
-                installVersion: { release: '2', build: '0' },
-            } as unknown as IPlugin;
+            const target = { installVersion: { release: '2', build: '0' } } as unknown as IPlugin;
 
             getPluginSpy.mockReturnValue(target);
 
-            const result = pluginVersionUtils.pluginNeedsUpgrade(current);
-
-            expect(result).toBe(true);
+            expect(pluginVersionUtils.pluginNeedsUpgrade(current)).toBe(true);
         });
 
         it('returns false when versions are equal', () => {
             const current = generateDaoPlugin({ subdomain: 'multisig', release: '1', build: '2' });
 
-            const target = {
-                installVersion: { release: '1', build: '2' },
-            } as unknown as IPlugin;
+            const target = { installVersion: { release: '1', build: '2' } } as unknown as IPlugin;
 
             getPluginSpy.mockReturnValue(target);
 
-            const result = pluginVersionUtils.pluginNeedsUpgrade(current);
-
-            expect(result).toBe(false);
+            expect(pluginVersionUtils.pluginNeedsUpgrade(current)).toBe(false);
         });
     });
 });

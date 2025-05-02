@@ -8,29 +8,19 @@ class PluginVersionUtils {
         const diff =
             current.release !== target.release ? current.release - target.release : current.build - target.build;
 
-        return {
-            isEqual: diff === 0,
-            isLessThan: diff < 0,
-            isGreaterThan: diff > 0,
-        };
+        return { isEqual: diff === 0, isLessThan: diff < 0, isGreaterThan: diff > 0 };
     }
 
     pluginNeedsUpgrade(plugin: IDaoPlugin) {
-        const current = {
-            release: Number(plugin.release),
-            build: Number(plugin.build),
-        };
-
+        const current = { release: Number(plugin.release), build: Number(plugin.build) };
         const target = pluginRegistryUtils.getPlugin(plugin.subdomain) as IPluginInfo | undefined;
 
         if (!target) {
             return false;
         }
 
-        const targetVersion = {
-            release: Number(target.installVersion.release),
-            build: Number(target.installVersion.build),
-        };
+        const { release, build } = target.installVersion;
+        const targetVersion = { release: Number(release), build: Number(build) };
 
         const { isLessThan } = this.compareVersions(current, targetVersion);
 
