@@ -68,37 +68,37 @@ describe('pluginVersion Utils', () => {
         });
     });
 
-    describe('isGreaterThanOrEqual', () => {
+    describe('isGreaterOrEqualTo', () => {
         it('returns true when current > target build', () => {
             const current = { release: 1, build: 4 };
             const target = { release: 1, build: 3 };
 
-            expect(pluginVersionUtils.isGreaterThanOrEqual(current, target)).toBe(true);
+            expect(pluginVersionUtils.isGreaterOrEqualTo(current, target)).toBe(true);
         });
 
         it('returns true when current > target release', () => {
             const current = { release: 2, build: 0 };
             const target = { release: 1, build: 3 };
 
-            expect(pluginVersionUtils.isGreaterThanOrEqual(current, target)).toBe(true);
+            expect(pluginVersionUtils.isGreaterOrEqualTo(current, target)).toBe(true);
         });
 
         it('returns true when current === target', () => {
             const current = { release: 1, build: 3 };
             const target = { release: 1, build: 3 };
 
-            expect(pluginVersionUtils.isGreaterThanOrEqual(current, target)).toBe(true);
+            expect(pluginVersionUtils.isGreaterOrEqualTo(current, target)).toBe(true);
         });
 
         it('returns false when current < target build', () => {
             const current = { release: 1, build: 2 };
             const target = { release: 1, build: 3 };
 
-            expect(pluginVersionUtils.isGreaterThanOrEqual(current, target)).toBe(false);
+            expect(pluginVersionUtils.isGreaterOrEqualTo(current, target)).toBe(false);
         });
 
         it('handles undefined as 0.0 and returns false', () => {
-            expect(pluginVersionUtils.isGreaterThanOrEqual(undefined, { release: 0, build: 1 })).toBe(false);
+            expect(pluginVersionUtils.isGreaterOrEqualTo(undefined, { release: 0, build: 1 })).toBe(false);
         });
     });
 });

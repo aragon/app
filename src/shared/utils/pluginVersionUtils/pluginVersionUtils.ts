@@ -5,7 +5,7 @@ export type Version = IPluginSetupVersionTag | { release: string; build: string 
 class PluginVersionUtils {
     isLessThan = (current: Version, target: Version) => this.compareVersions(current, target) < 0;
     isGreaterThan = (current: Version, target: Version) => this.compareVersions(current, target) > 0;
-    isGreaterThanOrEqual = (current: Version, target: Version) => this.compareVersions(current, target) >= 0;
+    isGreaterOrEqualTo = (current: Version, target: Version) => this.compareVersions(current, target) >= 0;
 
     private normaliseVersion = (version: Version) => ({
         release: Number(version?.release ?? 0),

@@ -6,9 +6,11 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import type { IPluginInfo } from '@/shared/types';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginVersionUtils } from '@/shared/utils/pluginVersionUtils';
 import { Button, IconType } from '@aragon/gov-ui-kit';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 export interface IOsxUpdatesProps {
     /**
@@ -50,12 +52,13 @@ export const OsxUpdates: React.FC<IOsxUpdatesProps> = (props) => {
         console.log('handleSuccess', selectedPlugin);
     };
 
-    const upgradablePlugins = useMemo(
-        () => daoPlugins.filter((plugin) => pluginVersionUtils.pluginNeedsUpgrade(plugin.meta)),
-        [daoPlugins],
-    );
+    const showUpdateButton = daoPlugins.some((plugin) => {
+        const target = pluginRegistryUtils.getPlugin(plugin.meta.subdomain) as IPluginInfo | undefined;
 
-    if (upgradablePlugins.length === 0) {
+        return pluginVersionUtils.isLessThan(plugin.meta, target?.installVersion);
+    });
+
+    if (!showUpdateButton) {
         return null;
     }
 
