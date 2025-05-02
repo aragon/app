@@ -10,14 +10,14 @@ import { pluginVersionUtils } from '@/shared/utils/pluginVersionUtils';
 import { Button, IconType, invariant } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
 
-export interface IUpgradeOsxProps {
+export interface IOsxUpdatesProps {
     /**
      * ID of the DAO.
      */
     daoId: string;
 }
 
-export const UpgradeOsx: React.FC<IUpgradeOsxProps> = (props) => {
+export const OsxUpdates: React.FC<IOsxUpdatesProps> = (props) => {
     const { daoId } = props;
 
     const { t } = useTranslations();
@@ -25,7 +25,7 @@ export const UpgradeOsx: React.FC<IUpgradeOsxProps> = (props) => {
 
     const daoPlugins = useDaoPlugins({ daoId });
 
-    invariant(daoPlugins != null, 'UpgradeOsx: daoPlugins is undefined');
+    invariant(daoPlugins != null, 'OsxUpdates: daoPlugins is undefined');
 
     const [selectedPlugin, setSelectedPlugin] = useState<IDaoPlugin>(daoPlugins[0].meta);
 
@@ -65,9 +65,9 @@ export const UpgradeOsx: React.FC<IUpgradeOsxProps> = (props) => {
     return (
         <div className="flex flex-col space-y-3">
             <Button onClick={onUpgradeClicked} iconLeft={IconType.RELOAD} variant="secondary">
-                {t('app.settings.upgradeOsx.button')}
+                {t('app.settings.osxUpdates.button')}
             </Button>
-            <p className="text-sm text-neutral-500">{t('app.settings.upgradeOsx.description')}</p>
+            <p className="text-sm text-neutral-500">{t('app.settings.osxUpdates.description')}</p>
         </div>
     );
 };
