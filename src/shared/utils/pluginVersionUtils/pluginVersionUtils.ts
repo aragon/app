@@ -27,7 +27,12 @@ class PluginVersionUtils {
             return false;
         }
 
-        const { isLessThan } = this.compareVersions(current, target.installVersion);
+        const targetVersion = {
+            release: Number(target.installVersion.release),
+            build: Number(target.installVersion.build),
+        };
+
+        const { isLessThan } = this.compareVersions(current, targetVersion);
 
         return isLessThan;
     }

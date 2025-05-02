@@ -27,11 +27,6 @@ export const UpgradeOsx: React.FC<IUpgradeOsxProps> = (props) => {
 
     invariant(daoPlugins != null, 'UpgradeOsx: daoPlugins is undefined');
 
-    const upgradablePlugins = useMemo(
-        () => daoPlugins.filter((plugin) => pluginVersionUtils.needsUpgrade(plugin.meta)),
-        [daoPlugins],
-    );
-
     const [selectedPlugin, setSelectedPlugin] = useState<IDaoPlugin>(daoPlugins[0].meta);
 
     const { check: createProposalGuard } = usePermissionCheckGuard({
@@ -57,6 +52,11 @@ export const UpgradeOsx: React.FC<IUpgradeOsxProps> = (props) => {
     const handleSuccess = (selectedPlugin: IDaoPlugin) => {
         console.log('handleSuccess', selectedPlugin);
     };
+
+    const upgradablePlugins = useMemo(
+        () => daoPlugins.filter((plugin) => pluginVersionUtils.needsUpgrade(plugin.meta)),
+        [daoPlugins],
+    );
 
     if (upgradablePlugins.length === 0) {
         return null;
