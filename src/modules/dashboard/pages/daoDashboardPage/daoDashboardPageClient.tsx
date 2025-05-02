@@ -127,27 +127,25 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.chain')}>
                                 <p className="text-neutral-500">{networkDefinitions[dao.network].name}</p>
                             </DefinitionList.Item>
-                            <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.address')}>
-                                <Link iconRight={IconType.LINK_EXTERNAL} href={daoAddressLink} target="_blank">
-                                    {truncatedAddress}
-                                </Link>
+                            <DefinitionList.Item
+                                term={t('app.dashboard.daoDashboardPage.aside.details.address')}
+                                link={{ href: daoAddressLink }}
+                            >
+                                {truncatedAddress}
                             </DefinitionList.Item>
                             {daoEns != null && (
-                                <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.ens')}>
-                                    <Link
-                                        iconRight={IconType.LINK_EXTERNAL}
-                                        href={daoAddressLink}
-                                        target="_blank"
-                                        className="max-w-full"
-                                    >
-                                        {daoEns}
-                                    </Link>
+                                <DefinitionList.Item
+                                    term={t('app.dashboard.daoDashboardPage.aside.details.ens')}
+                                    link={{ href: daoAddressLink, className: 'max-w-full' }}
+                                >
+                                    {daoEns}
                                 </DefinitionList.Item>
                             )}
-                            <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.launched')}>
-                                <Link iconRight={IconType.LINK_EXTERNAL} href={daoCreationLink} target="_blank">
-                                    {daoLaunchedAt}
-                                </Link>
+                            <DefinitionList.Item
+                                term={t('app.dashboard.daoDashboardPage.aside.details.launched')}
+                                link={{ href: daoCreationLink }}
+                            >
+                                {daoLaunchedAt}
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Page.AsideCard>

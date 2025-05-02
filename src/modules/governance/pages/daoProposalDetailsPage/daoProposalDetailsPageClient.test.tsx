@@ -142,8 +142,8 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
             proposalIndex: '123',
             blockTimestamp: 1690367967,
             creator: generateAddressInfo({ address: '0x123' }),
-            network: Network.ETHEREUM_SEPOLIA,
-            transactionHash: '0x4654',
+            network: Network.POLYGON_MAINNET,
+            transactionHash: '0x456',
             incrementalId: 3,
         });
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
@@ -166,12 +166,12 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         expect(screen.getByText(/daoProposalDetailsPage.aside.details.published/)).toBeInTheDocument();
         const creationBlockLink = screen.getByRole('link', { name: 'July 26, 2023' });
         expect(creationBlockLink).toBeInTheDocument();
-        expect(creationBlockLink.getAttribute('href')).toEqual('https://sepolia.etherscan.io/tx/0x4654');
+        expect(creationBlockLink.getAttribute('href')).toEqual('https://polygonscan.com/tx/0x456');
 
         expect(screen.getByText(/daoProposalDetailsPage.aside.details.creator/)).toBeInTheDocument();
         const creatorLink = screen.getByRole('link', { name: proposal.creator.address });
         expect(creatorLink).toBeInTheDocument();
-        expect(creatorLink.getAttribute('href')).toEqual('https://sepolia.etherscan.io/address/0x123');
+        expect(creatorLink.getAttribute('href')).toEqual('https://polygonscan.com/address/0x123');
     });
 
     it('renders the proposal resources as external links', () => {

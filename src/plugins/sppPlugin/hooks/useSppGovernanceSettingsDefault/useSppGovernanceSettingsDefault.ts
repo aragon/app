@@ -14,16 +14,13 @@ export const useSppGovernanceSettingsDefault = (params: IUseSppGovernanceSetting
     const { pluginAddress, daoId } = params;
 
     const { t } = useTranslations();
-
-    const { data: bodyName } = useEnsName({ address: pluginAddress as Hex, chainId: mainnet.id });
-
     const { data: dao } = useDao({ urlParams: { id: daoId } });
+
     const { id: chainId } = networkDefinitions[dao!.network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
-    const pluginHref = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: pluginAddress });
-    const link = {
-        href: pluginHref,
-    };
 
-    return sppSettingsUtils.parseDefaultSettings({ t, link, address: pluginAddress, name: bodyName ?? undefined });
+    const { data: bodyName } = useEnsName({ address: pluginAddress as Hex, chainId: mainnet.id });
+    const url = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: pluginAddress })!;
+
+    return sppSettingsUtils.parseDefaultSettings({ t, address: pluginAddress, name: bodyName ?? undefined, url });
 };

@@ -45,7 +45,6 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
             <AddressInput
                 helpText={t('app.finance.transferAssetForm.receiver.helpText')}
                 placeholder={t('app.finance.transferAssetForm.receiver.placeholder')}
-                chainId={1}
                 value={receiverInput}
                 onChange={setReceiverInput}
                 onAccept={onReceiverChange}

@@ -8,7 +8,6 @@ import { Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
 
 export const ExploreNav: React.FC = () => {
@@ -60,7 +59,7 @@ export const ExploreNav: React.FC = () => {
 
             <div className="flex items-center justify-end gap-4 lg:gap-6">
                 <Navigation.AppLinks />
-                <Wallet onClick={handleWalletClick} user={walletUser} chainId={mainnet.id} />
+                <Wallet onClick={handleWalletClick} user={walletUser} />
             </div>
         </Navigation.Container>
     );

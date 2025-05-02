@@ -9,7 +9,6 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { Button, DaoAvatar, IconType, Wallet, addressUtils, clipboardUtils } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import { Navigation, type INavigationContainerProps } from '../navigation';
 import { navigationDaoLinks } from './navigationDaoLinks';
@@ -64,7 +63,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                 </button>
                 <div className="flex flex-row items-center gap-2 md:gap-6">
                     <Navigation.AppLinks dao={dao} />
-                    <Wallet onClick={handleWalletClick} user={walletUser} chainId={mainnet.id} />
+                    <Wallet onClick={handleWalletClick} user={walletUser} />
                     <Navigation.Trigger className="md:hidden" onClick={() => setIsDialogOpen(true)} />
                 </div>
             </div>

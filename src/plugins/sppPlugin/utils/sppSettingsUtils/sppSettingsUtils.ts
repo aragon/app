@@ -1,5 +1,5 @@
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
-import { addressUtils, type IDefinitionSetting, type ILinkProps } from '@aragon/gov-ui-kit';
+import { addressUtils, type IDefinitionSetting } from '@aragon/gov-ui-kit';
 import type { ISppPluginSettings } from '../../types';
 
 export interface ISppSettingsParseParams {
@@ -23,9 +23,9 @@ export interface ISppSettingsParseDefaultParams {
      */
     name?: string;
     /**
-     * Link to the deployed plugin.
+     * Link to the deployed body.
      */
-    link?: ILinkProps;
+    url: string;
     /**
      * The translation function for internationalization.
      */
@@ -43,14 +43,13 @@ class SppSettingsUtils {
     };
 
     parseDefaultSettings = (params: ISppSettingsParseDefaultParams): IDefinitionSetting[] => {
-        const { address, name, link, t } = params;
+        const { address, name, url, t } = params;
+
+        const link = { href: url };
+        const truncatedAddress = addressUtils.truncateAddress(address);
 
         const settings: IDefinitionSetting[] = [
-            {
-                term: t('app.plugins.spp.sppGovernanceSettings.default.address'),
-                definition: addressUtils.truncateAddress(address),
-                link,
-            },
+            { term: t('app.plugins.spp.sppGovernanceSettings.default.address'), definition: truncatedAddress, link },
         ];
 
         if (name != null) {

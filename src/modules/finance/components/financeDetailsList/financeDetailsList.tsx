@@ -8,7 +8,6 @@ import {
     ChainEntityType,
     DefinitionList,
     IconType,
-    Link,
     addressUtils,
     useBlockExplorer,
     type IDefinitionListContainerProps,
@@ -40,21 +39,18 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
                 <DefinitionList.Item term={t('app.finance.financeDetailsList.chain')}>
                     <p className="text-neutral-500">{networkDefinitions[network].name}</p>
                 </DefinitionList.Item>
-                <DefinitionList.Item term={t('app.finance.financeDetailsList.vaultAddress')}>
-                    <Link iconRight={IconType.LINK_EXTERNAL} href={daoAddressLink} target="_blank">
-                        {addressUtils.truncateAddress(address)}
-                    </Link>
+                <DefinitionList.Item
+                    term={t('app.finance.financeDetailsList.vaultAddress')}
+                    link={{ href: daoAddressLink }}
+                >
+                    {addressUtils.truncateAddress(address)}
                 </DefinitionList.Item>
                 {daoEns && (
-                    <DefinitionList.Item term={t('app.finance.financeDetailsList.vaultEns')}>
-                        <Link
-                            iconRight={IconType.LINK_EXTERNAL}
-                            href={daoAddressLink}
-                            target="_blank"
-                            className="max-w-full"
-                        >
-                            {daoEns}
-                        </Link>
+                    <DefinitionList.Item
+                        term={t('app.finance.financeDetailsList.vaultEns')}
+                        link={{ href: daoAddressLink, className: 'max-w-full' }}
+                    >
+                        {daoEns}
                     </DefinitionList.Item>
                 )}
             </DefinitionList.Container>

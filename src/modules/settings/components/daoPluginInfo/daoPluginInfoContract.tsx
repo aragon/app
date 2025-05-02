@@ -8,8 +8,6 @@ import {
     DateFormat,
     DefinitionList,
     formatterUtils,
-    IconType,
-    Link,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 
@@ -41,26 +39,22 @@ export const DaoPluginInfoContract: React.FC<IDaoPluginInfoContractProps> = (pro
     const { id: chainId } = networkDefinitions[dao.network];
     const pluginCreationLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
 
+    const pluginName = daoUtils.getPluginName(plugin);
+    const pluginLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address, chainId });
+
     return (
         <DefinitionList.Container>
-            <DefinitionList.Item term={t('app.settings.daoPluginInfo.contract.plugin')}>
-                <Link
-                    description={addressUtils.truncateAddress(address)}
-                    iconRight={IconType.LINK_EXTERNAL}
-                    href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address, chainId })}
-                    target="_blank"
-                >
-                    {t('app.settings.daoPluginInfo.contract.pluginVersionInfo', {
-                        name: daoUtils.getPluginName(plugin),
-                        release,
-                        build,
-                    })}
-                </Link>
+            <DefinitionList.Item
+                term={t('app.settings.daoPluginInfo.contract.plugin')}
+                link={{ href: pluginLink, description: addressUtils.truncateAddress(address) }}
+            >
+                {t('app.settings.daoPluginInfo.contract.pluginVersionInfo', { name: pluginName, release, build })}
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.settings.daoPluginInfo.contract.launchedAt')}>
-                <Link href={pluginCreationLink} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                    {pluginLaunchedAt}
-                </Link>
+            <DefinitionList.Item
+                term={t('app.settings.daoPluginInfo.contract.launchedAt')}
+                link={{ href: pluginCreationLink }}
+            >
+                {pluginLaunchedAt}
             </DefinitionList.Item>
         </DefinitionList.Container>
     );
