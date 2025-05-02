@@ -20,16 +20,14 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     const basicProcessBody = useWatch<ICreateProcessFormData, 'body'>({ name: 'body' });
     const stages = useWatch<ICreateProcessFormData, 'stages'>({ name: 'stages' });
 
-    const getBodyFormPrefix = (bodyIndex: number, stageIndex?: number) => {
-        const basePrefix = `bodies.${bodyIndex.toString()}`;
-        return stageIndex != null ? `stages.${stageIndex.toString()}.${basePrefix}` : 'body';
-    };
+    const getBodyFormPrefix = (bodyIndex: number, stageIndex?: number) =>
+        stageIndex != null ? `stages.${stageIndex.toString()}.bodies.${bodyIndex.toString()}` : 'body';
 
     const processBodies = useMemo(() => {
         // we need to keep the original bodyIndex since EXTERNAL bodies are filtered out!
         const processedBodies = isAdvancedGovernance
             ? stages.flatMap((stage, stageIndex) =>
-                  stage.bodies.map((body, index) => ({ ...body, stageIndex, bodyIndex: index })),
+                  stage.bodies.map((body, bodyIndex) => ({ ...body, stageIndex, bodyIndex })),
               )
             : [{ ...basicProcessBody, stageIndex: undefined, bodyIndex: 0 }];
 

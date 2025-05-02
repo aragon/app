@@ -36,13 +36,7 @@ export const GovernanceBasicBodyField: React.FC<IGovernanceBasicBodyFieldProps> 
 
     const handleBodySubmit = (values: ISetupBodyForm) => {
         const bodyId = crypto.randomUUID();
-        onBodyChange({
-            ...values,
-            internalId: bodyId,
-            name: processName,
-            // defaultValue does not set canCreateProposal reliably in every case, so it's important do the init here.
-            canCreateProposal: true,
-        });
+        onBodyChange({ ...values, internalId: bodyId, name: processName, canCreateProposal: true });
         close();
     };
 
@@ -52,20 +46,17 @@ export const GovernanceBasicBodyField: React.FC<IGovernanceBasicBodyFieldProps> 
         open(CreateDaoDialogId.SETUP_BODY, { params });
     };
 
-    // setting body to undefined does not trigger re-render of the field for some reason!
+    // Set body to null instead of undefined to make sure react-hook-form library triggers a rerender
     const handleDelete = () => onBodyChange(null);
 
     // Keep body-name & process-name in sync when setting up a simple governance process. Other metadata (description,
     // process-key, resources) is processed right before pinning the metadata for the simple governance process.
     useEffect(() => {
-        if (!body || body.name === processName) {
+        if (body == null || body.name === processName) {
             return;
         }
 
-        onBodyChange({
-            ...body,
-            name: processName,
-        });
+        onBodyChange({ ...body, name: processName });
     }, [body, onBodyChange, processName]);
 
     return (

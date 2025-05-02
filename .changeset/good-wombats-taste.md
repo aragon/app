@@ -2,4 +2,4 @@
 '@aragon/app-next': patch
 ---
 
-Fix simple process validation bug
+Fix validation bug when creating simple governance processes
