@@ -15,6 +15,7 @@ import { AlertCard } from '@aragon/gov-ui-kit-original';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import type { Hash } from 'viem';
+import { mainnet } from 'viem/chains';
 
 type StepState = ITransactionStatusStepMeta['state'];
 
@@ -64,7 +65,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
 
     const { isError, isLoading, token, isDelegationCompatible, isGovernanceCompatible } = useGovernanceToken({
         address: importTokenAddress as Hash,
-        chainId: chainId ?? 1,
+        chainId: chainId ?? mainnet.id,
     });
 
     const [tokenAddressInput, setTokenAddressInput] = useState<string | undefined>(importTokenAddress);

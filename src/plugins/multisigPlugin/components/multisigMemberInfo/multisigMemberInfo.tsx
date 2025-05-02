@@ -2,7 +2,7 @@
 
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { DefinitionList, IconType, Link } from '@aragon/gov-ui-kit';
+import { DefinitionList } from '@aragon/gov-ui-kit';
 import { useMemberList } from '../../../../modules/governance/api/governanceService';
 import type { IMultisigPluginSettings } from '../../types';
 
@@ -24,6 +24,7 @@ export const MultisigMemberInfo: React.FC<IMultisigMemberInfoProps> = (props) =>
     const memberParams = { daoId, pluginAddress: plugin.address };
     const { data: memberList } = useMemberList({ queryParams: memberParams });
 
+    const membersLink = `/dao/${daoId}/members`;
     const memberCount = memberList?.pages[0].metadata.totalRecords;
 
     return (
@@ -31,14 +32,15 @@ export const MultisigMemberInfo: React.FC<IMultisigMemberInfoProps> = (props) =>
             <DefinitionList.Item term={t('app.plugins.multisig.multisigMembersInfo.eligibleVoters')}>
                 <p className="text-neutral-500">{t('app.plugins.multisig.multisigMembersInfo.multisigMembers')}</p>
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.plugins.multisig.multisigMembersInfo.membersLabel')}>
-                <Link
-                    description={t('app.plugins.multisig.multisigMembersInfo.linkDescription')}
-                    iconRight={IconType.LINK_EXTERNAL}
-                    href={`/dao/${daoId}/members`}
-                >
-                    {t('app.plugins.multisig.multisigMembersInfo.membersCount', { count: memberCount })}
-                </Link>
+            <DefinitionList.Item
+                term={t('app.plugins.multisig.multisigMembersInfo.membersLabel')}
+                link={{
+                    href: membersLink,
+                    target: '_self',
+                    description: t('app.plugins.multisig.multisigMembersInfo.linkDescription'),
+                }}
+            >
+                {t('app.plugins.multisig.multisigMembersInfo.membersCount', { count: memberCount })}
             </DefinitionList.Item>
         </DefinitionList.Container>
     );

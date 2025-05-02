@@ -137,7 +137,6 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
                 <form className="flex flex-col gap-3 py-2" onSubmit={handleSubmit(handleFormSubmit)} id={formId}>
                     <AddressInput
                         placeholder={t('app.finance.transferAssetForm.receiver.placeholder')}
-                        chainId={1}
                         value={addressInput}
                         onChange={setAddressInput}
                         onAccept={onSmartContractChange}

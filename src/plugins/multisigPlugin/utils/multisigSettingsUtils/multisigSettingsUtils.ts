@@ -1,6 +1,6 @@
-import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import { type IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 import { type TranslationFunction } from '@/shared/components/translationsProvider';
+import type { IDefinitionSetting } from '@aragon/gov-ui-kit';
 
 export interface IMultisigSettingsParseParams {
     /**
@@ -18,7 +18,7 @@ export interface IMultisigSettingsParseParams {
 }
 
 class MultisigSettingsUtils {
-    parseSettings = (params: IMultisigSettingsParseParams): IDaoSettingTermAndDefinition[] => {
+    parseSettings = (params: IMultisigSettingsParseParams): IDefinitionSetting[] => {
         const { settings, membersCount, t } = params;
         const { minApprovals, onlyListed, historicalMembersCount } = settings;
 

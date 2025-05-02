@@ -61,7 +61,6 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
             <div className="flex w-full flex-col gap-4 md:flex-row">
                 <AddressInput
                     placeholder={t('app.plugins.token.tokenSetupMembership.createToken.member.address.placeholder')}
-                    chainId={1}
                     value={memberInput}
                     onChange={setMemberInput}
                     onAccept={handleAddressAccept}

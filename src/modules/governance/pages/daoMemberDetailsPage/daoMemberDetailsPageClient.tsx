@@ -19,7 +19,6 @@ import {
     Dropdown,
     formatterUtils,
     IconType,
-    Link,
     MemberAvatar,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
@@ -168,18 +167,18 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                 <Page.Aside>
                     <Page.AsideCard title={t('app.governance.daoMemberDetailsPage.aside.details.title')}>
                         <DefinitionList.Container>
-                            <DefinitionList.Item term={t('app.governance.daoMemberDetailsPage.aside.details.address')}>
-                                {addressUrl && (
-                                    <Link iconRight={IconType.LINK_EXTERNAL} href={addressUrl} target="_blank">
-                                        {truncatedAddress}
-                                    </Link>
-                                )}
+                            <DefinitionList.Item
+                                term={t('app.governance.daoMemberDetailsPage.aside.details.address')}
+                                link={{ href: addressUrl }}
+                            >
+                                {truncatedAddress}
                             </DefinitionList.Item>
                             {ens && addressUrl && (
-                                <DefinitionList.Item term={t('app.governance.daoMemberDetailsPage.aside.details.ens')}>
-                                    <Link iconRight={IconType.LINK_EXTERNAL} href={addressUrl} target="_blank">
-                                        {ens}
-                                    </Link>
+                                <DefinitionList.Item
+                                    term={t('app.governance.daoMemberDetailsPage.aside.details.ens')}
+                                    link={{ href: addressUrl }}
+                                >
+                                    {ens}
                                 </DefinitionList.Item>
                             )}
                             <DefinitionList.Item

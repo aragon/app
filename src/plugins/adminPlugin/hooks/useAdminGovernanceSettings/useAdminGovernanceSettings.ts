@@ -1,8 +1,8 @@
 import { adminSettingsUtils } from '@/plugins/adminPlugin/utils/adminSettingsUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import type { IDaoSettingTermAndDefinition } from '../../../../modules/settings/types';
+import type { IDefinitionSetting } from '@aragon/gov-ui-kit';
 
-export const useAdminGovernanceSettings = (): IDaoSettingTermAndDefinition[] => {
+export const useAdminGovernanceSettings = (): IDefinitionSetting[] => {
     const { t } = useTranslations();
 
     return adminSettingsUtils.parseSettings({ t });

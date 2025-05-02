@@ -2,7 +2,7 @@ import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { DefinitionList, Dialog, IconType, invariant, Link, StateSkeletonBar } from '@aragon/gov-ui-kit';
+import { DefinitionList, Dialog, invariant, StateSkeletonBar } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 
@@ -86,19 +86,9 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
                     settings.map((settingsGroup, groupIndex) => (
                         <div key={groupIndex} className="flex flex-col gap-y-1">
                             <DefinitionList.Container>
-                                {settingsGroup.map(({ term, definition, href }, settingIndex) => (
-                                    <DefinitionList.Item key={settingIndex} term={term}>
-                                        {href == null && definition}
-                                        {href != null && (
-                                            <Link
-                                                href={href}
-                                                target="_blank"
-                                                iconRight={IconType.LINK_EXTERNAL}
-                                                textClassName="first-letter:capitalize"
-                                            >
-                                                {definition}
-                                            </Link>
-                                        )}
+                                {settingsGroup.map(({ term, definition, link }, settingIndex) => (
+                                    <DefinitionList.Item key={settingIndex} term={term} link={link}>
+                                        {definition}
                                     </DefinitionList.Item>
                                 ))}
                             </DefinitionList.Container>
