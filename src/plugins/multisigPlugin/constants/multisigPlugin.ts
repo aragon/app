@@ -5,6 +5,7 @@ export const multisigPlugin: IPluginInfo = {
     id: 'multisig',
     name: 'Multisig',
     installVersion: { release: 1, build: 3 },
+    releaseNotesUrl: 'https://github.com/aragon/multisig-plugin/releases/tag/v1.3.0',
     repositoryAddresses: {
         [Network.ARBITRUM_MAINNET]: '0x7553E6Fb020c5740768cF289e603770AA09b7aE2',
         [Network.BASE_MAINNET]: '0xcDC4b0BC63AEfFf3a7826A19D101406C6322A585',

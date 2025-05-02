@@ -9,6 +9,8 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginVersionUtils } from '@/shared/utils/pluginVersionUtils';
 import { Button, IconType, invariant } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
+import type { IUpdateContractsDialogParams } from '../../dialogs/updateContractsDialog';
+import { SettingsDialogId } from '../../constants/settingsDialogId';
 
 export interface IOsxUpdatesProps {
     /**
@@ -48,8 +50,12 @@ export const OsxUpdates: React.FC<IOsxUpdatesProps> = (props) => {
     };
 
     const handleSuccess = (selectedPlugin: IDaoPlugin) => {
-        // eslint-disable-next-line no-console
-        console.log('handleSuccess', selectedPlugin);
+        const params: IUpdateContractsDialogParams = {
+            process: selectedPlugin,
+            plugins: upgradablePlugins.map((plugin) => plugin.meta),
+        };
+
+        open(SettingsDialogId.UPDATE_CONTRACTS, { params });
     };
 
     const upgradablePlugins = useMemo(
