@@ -6,12 +6,14 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, Card, IconType, Link } from '@aragon/gov-ui-kit';
 
 interface IPluginCardProps {
+    /**
+     * The plugin to be updated.
+     */
     plugin: IDaoPlugin;
 }
 
 export const PluginCard: React.FC<IPluginCardProps> = (props) => {
     const { plugin } = props;
-
     const { address, subdomain, release, build } = plugin;
 
     const { t } = useTranslations();
@@ -21,17 +23,19 @@ export const PluginCard: React.FC<IPluginCardProps> = (props) => {
 
     const pluginName = daoUtils.getPluginName(plugin);
     const fromVersion = `${pluginName} v${release}.${build}`;
-    const toVersion =  `${pluginName} v${targetRelease.toString()}.${targetBuild.toString()}`
+    const toVersion = `${pluginName} v${targetRelease.toString()}.${targetBuild.toString()}`;
 
     return (
-        <Card className='border border-neutral-100 p-6 shadow-neutral-sm'>
+        <Card className="border border-neutral-100 p-6 shadow-neutral-sm">
             <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-1.5">
                     <div className="flex items-center justify-between">
                         <p className="text-neutral-800">{pluginName}</p>
                         <p className="text-neutral-500">{addressUtils.truncateAddress(address)}</p>
                     </div>
-                    <p className='text-neutral-500'>{t('app.settings.updateContractsDialog.plugin.update', { from: fromVersion, to: toVersion})}</p>
+                    <p className="text-neutral-500">
+                        {t('app.settings.updateContractsDialog.plugin.update', { from: fromVersion, to: toVersion })}
+                    </p>
                 </div>
                 <Link href={target.releaseNotesUrl} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
                     {t('app.settings.updateContractsDialog.plugin.link')}

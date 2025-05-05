@@ -10,8 +10,8 @@ import type { IPluginInfo } from '@/shared/types';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginVersionUtils } from '@/shared/utils/pluginVersionUtils';
 import { Button, IconType } from '@aragon/gov-ui-kit';
-import type { IUpdateContractsDialogParams } from '../../dialogs/updateContractsDialog';
 import { SettingsDialogId } from '../../constants/settingsDialogId';
+import type { IUpdateContractsDialogParams } from '../../dialogs/updateContractsDialog';
 
 export interface IOsxUpdatesProps {
     /**
@@ -45,12 +45,8 @@ export const OsxUpdates: React.FC<IOsxUpdatesProps> = (props) => {
         createProposalGuard({ plugin, onSuccess: () => handlePermissionCheckSuccess(plugin) });
     };
 
-
     const handlePermissionCheckSuccess = (selectedPlugin: IDaoPlugin) => {
-        const params: IUpdateContractsDialogParams = {
-            process: selectedPlugin,
-            daoId,
-        };
+        const params: IUpdateContractsDialogParams = { process: selectedPlugin, daoId };
 
         open(SettingsDialogId.UPDATE_CONTRACTS, { params });
     };
