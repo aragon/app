@@ -10,7 +10,6 @@ import type { IPluginInfo } from '@/shared/types';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginVersionUtils } from '@/shared/utils/pluginVersionUtils';
 import { Button, IconType } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
 
 export interface IOsxUpdatesProps {
     /**
@@ -27,12 +26,10 @@ export const OsxUpdates: React.FC<IOsxUpdatesProps> = (props) => {
 
     const daoPlugins = useDaoPlugins({ daoId })!;
 
-    const [selectedPlugin, setSelectedPlugin] = useState<IDaoPlugin>(daoPlugins[0].meta);
-
     const { check: createProposalGuard } = usePermissionCheckGuard({
         permissionNamespace: 'proposal',
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
-        plugin: selectedPlugin,
+        plugin: daoPlugins[0].meta,
         daoId,
     });
 
@@ -43,7 +40,6 @@ export const OsxUpdates: React.FC<IOsxUpdatesProps> = (props) => {
     };
 
     const onPluginSelected = (plugin: IDaoPlugin) => {
-        setSelectedPlugin(plugin);
         createProposalGuard({ plugin, onSuccess: () => handlePermissionCheckSuccess(plugin) });
     };
 
