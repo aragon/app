@@ -162,4 +162,25 @@ describe('proposalStatus utils', () => {
             expect(proposalStatusUtils.getProposalStatus(params)).toEqual(ProposalStatus.EXECUTABLE);
         });
     });
+
+    describe('endsInTheFuture', () => {
+        it('returns true when endDate is not defined', () => {
+            const endDate = undefined;
+            expect(proposalStatusUtils.endsInTheFuture(endDate)).toBeTruthy();
+        });
+
+        it('returns true when end date is in the future', () => {
+            const now = '2025-05-05T11:00:00';
+            const endDate = DateTime.fromISO('2025-05-06T09:00:00').toSeconds();
+            timeUtils.setTime(now);
+            expect(proposalStatusUtils.endsInTheFuture(endDate)).toBeTruthy();
+        });
+
+        it('returns false when end date is not in the future', () => {
+            const now = '2024-22-01T08:00:00';
+            const endDate = DateTime.fromISO('2024-10-08T09:00:00').toSeconds();
+            timeUtils.setTime(now);
+            expect(proposalStatusUtils.endsInTheFuture(endDate)).toBeFalsy();
+        });
+    });
 });

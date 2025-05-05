@@ -9,16 +9,19 @@ class TokenProposalUtils {
     getProposalStatus = (proposal: ITokenProposal): ProposalStatus => {
         const { startDate, endDate, actions, executed } = proposal;
 
+        const endsInTheFuture = proposalStatusUtils.endsInTheFuture(endDate);
         const approvalReached = this.isApprovalReached(proposal);
         const approvalReachedEarly = this.isApprovalReached(proposal, true);
+
         const isEarlyExecution = proposal.settings.votingMode === DaoTokenVotingMode.EARLY_EXECUTION;
+        const paramsMet = isEarlyExecution && endsInTheFuture ? approvalReachedEarly : approvalReached;
 
         const status = proposalStatusUtils.getProposalStatus({
             isExecuted: executed.status,
             isVetoed: false,
             startDate,
             endDate,
-            paramsMet: isEarlyExecution ? approvalReachedEarly : approvalReached,
+            paramsMet,
             hasActions: actions.length > 0,
             canExecuteEarly: isEarlyExecution,
         });
