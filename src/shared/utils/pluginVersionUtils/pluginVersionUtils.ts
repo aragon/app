@@ -8,6 +8,7 @@ export interface IPluginVersion {
      */
     build: string | number;
 }
+
 class PluginVersionUtils {
     isLessThan = (current?: IPluginVersion, target?: IPluginVersion) => {
         if (!current || !target) {
