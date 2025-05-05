@@ -1,18 +1,42 @@
-import type { IPluginSetupVersionTag } from '../pluginTransactionUtils';
-
-export type Version = IPluginSetupVersionTag | { release: string; build: string } | undefined;
-
+export interface IPluginVersion {
+    /**
+     * The release of the plugin.
+     */
+    release: string | number;
+    /**
+     * The build of the plugin.
+     */
+    build: string | number;
+}
 class PluginVersionUtils {
-    isLessThan = (current: Version, target: Version) => this.compareVersions(current, target) < 0;
-    isGreaterThan = (current: Version, target: Version) => this.compareVersions(current, target) > 0;
-    isGreaterOrEqualTo = (current: Version, target: Version) => this.compareVersions(current, target) >= 0;
+    isLessThan = (current?: IPluginVersion, target?: IPluginVersion) => {
+        if (!current || !target) {
+            return false;
+        }
 
-    private normaliseVersion = (version: Version) => ({
-        release: Number(version?.release ?? 0),
-        build: Number(version?.build ?? 0),
+        return this.compareVersions(current, target) < 0;
+    };
+    isGreaterThan = (current?: IPluginVersion, target?: IPluginVersion) => {
+        if (!current || !target) {
+            return false;
+        }
+
+        return this.compareVersions(current, target) > 0;
+    };
+    isGreaterOrEqualTo = (current?: IPluginVersion, target?: IPluginVersion) => {
+        if (!current || !target) {
+            return false;
+        }
+
+        return this.compareVersions(current, target) >= 0;
+    };
+
+    private normaliseVersion = (version: IPluginVersion) => ({
+        release: Number(version.release),
+        build: Number(version.build),
     });
 
-    private compareVersions = (current?: Version, target?: Version) => {
+    private compareVersions = (current: IPluginVersion, target: IPluginVersion) => {
         const currentVersion = this.normaliseVersion(current);
         const targetVersion = this.normaliseVersion(target);
 

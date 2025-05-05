@@ -1,4 +1,4 @@
-import { pluginVersionUtils } from './pluginVersionUtils';
+import { pluginVersionUtils } from '@/shared/utils/pluginVersionUtils';
 
 describe('pluginVersion Utils', () => {
     describe('isLessThan', () => {
@@ -29,8 +29,12 @@ describe('pluginVersion Utils', () => {
             expect(pluginVersionUtils.isLessThan(current, target)).toBe(false);
         });
 
-        it('handles undefined as 0.0 and returns false', () => {
-            expect(pluginVersionUtils.isLessThan(undefined, { release: 0, build: 1 })).toBe(true);
+        it('returns false if current is undefined', () => {
+            expect(pluginVersionUtils.isLessThan(undefined, { release: 0, build: 1 })).toBe(false);
+        });
+
+        it('returns false if target is undefined', () => {
+            expect(pluginVersionUtils.isLessThan({ release: 1, build: 3 }, undefined)).toBe(false);
         });
     });
 
@@ -63,8 +67,12 @@ describe('pluginVersion Utils', () => {
             expect(pluginVersionUtils.isGreaterThan(current, target)).toBe(false);
         });
 
-        it('handles undefined as 0.0 and returns true', () => {
-            expect(pluginVersionUtils.isGreaterThan({ release: 0, build: 1 }, undefined)).toBe(true);
+        it('returns false if current is undefined', () => {
+            expect(pluginVersionUtils.isGreaterThan(undefined, { release: 0, build: 1 })).toBe(false);
+        });
+
+        it('returns false if target is undefined', () => {
+            expect(pluginVersionUtils.isGreaterThan({ release: 1, build: 3 }, undefined)).toBe(false);
         });
     });
 
@@ -97,8 +105,12 @@ describe('pluginVersion Utils', () => {
             expect(pluginVersionUtils.isGreaterOrEqualTo(current, target)).toBe(false);
         });
 
-        it('handles undefined as 0.0 and returns false', () => {
+        it('returns false if current is undefined', () => {
             expect(pluginVersionUtils.isGreaterOrEqualTo(undefined, { release: 0, build: 1 })).toBe(false);
+        });
+
+        it('returns false if target is undefined', () => {
+            expect(pluginVersionUtils.isGreaterOrEqualTo({ release: 1, build: 3 }, undefined)).toBe(false);
         });
     });
 });
