@@ -132,9 +132,9 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         privateRpc: 'https://eth-sepolia.g.alchemy.com/v2/',
         order: 0,
         addresses: {
-            daoFactory: '0xB815791c233807D39b7430127975244B36C19C8e',
-            pluginSetupProcessor: '0xC24188a73dc09aA7C721f96Ad8857B469C01dC9f',
-            globalExecutor: '0x7a20760b89EF507759DD2c5A0d1f1657614341A9',
+            daoFactory: '0xb264E0ab1385Bc33b248fEd9319be943C4A2c7E9',
+            pluginSetupProcessor: '0xe3Fea9f51fbCDd459095E852a6ED77c0b5F402E9',
+            globalExecutor: '0x55206711977576D37C302af9b9C6513FAa4Ca274',
         },
     },
     [Network.ZKSYNC_SEPOLIA]: {
