@@ -41,7 +41,7 @@ export const UpdateDaoContractsListDialog: React.FC<IUpdateDaoContractsListDialo
 
     const plugins = pluginsToUpdate.map((plugin) => plugin.meta);
 
-    const onPropose = () => {
+    const handlePrimaryAction = () => {
         // TODO: Open publish proposal dialog
         console.log('plugins', plugins);
         console.log('process', process);
@@ -58,7 +58,7 @@ export const UpdateDaoContractsListDialog: React.FC<IUpdateDaoContractsListDialo
             <Dialog.Footer
                 primaryAction={{
                     label: t('app.settings.updateDaoContractsListDialog.action.confirm'),
-                    onClick: onPropose,
+                    onClick: handlePrimaryAction,
                 }}
                 secondaryAction={{
                     label: t('app.settings.updateDaoContractsListDialog.action.cancel'),
