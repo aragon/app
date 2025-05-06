@@ -13,14 +13,14 @@ import { Button, IconType } from '@aragon/gov-ui-kit';
 import { SettingsDialogId } from '../../constants/settingsDialogId';
 import type { IUpdateContractsDialogParams } from '../../dialogs/updateContractsDialog';
 
-export interface IOsxUpdatesProps {
+export interface IUpdateDaoContractsProps {
     /**
      * ID of the DAO.
      */
     daoId: string;
 }
 
-export const OsxUpdates: React.FC<IOsxUpdatesProps> = (props) => {
+export const UpdateDaoContracts: React.FC<IUpdateDaoContractsProps> = (props) => {
     const { daoId } = props;
 
     const { t } = useTranslations();
@@ -64,9 +64,9 @@ export const OsxUpdates: React.FC<IOsxUpdatesProps> = (props) => {
     return (
         <div className="flex flex-col space-y-3">
             <Button onClick={handleUpgradeClick} iconLeft={IconType.RELOAD} variant="secondary">
-                {t('app.settings.osxUpdates.button')}
+                {t('app.settings.updateDaoContracts.button')}
             </Button>
-            <p className="text-sm text-neutral-500">{t('app.settings.osxUpdates.description')}</p>
+            <p className="text-sm text-neutral-500">{t('app.settings.updateDaoContracts.description')}</p>
         </div>
     );
 };
