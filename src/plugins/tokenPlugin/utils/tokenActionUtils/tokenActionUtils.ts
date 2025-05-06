@@ -22,6 +22,7 @@ import {
 } from '../../types';
 import type { ITokenProposalAction } from '../../types/tokenProposalAction';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
+import { pluginVersionUtils } from './../../../../shared/utils/pluginVersionUtils';
 import { defaultMintAction, defaultUpdateSettings } from './tokenActionDefinitions';
 
 export interface IGetTokenActionsProps {
@@ -54,11 +55,12 @@ export type IGetTokenActionsResult = IActionComposerPluginData<IDaoPlugin<IToken
 
 class TokenActionUtils {
     getTokenActions = ({ plugin, t }: IGetTokenActionsProps): IGetTokenActionsResult => {
-        const { address, release, build, settings } = plugin;
+        const { address, settings } = plugin;
         const { address: tokenAddress, name } = settings.token;
 
         // The setMetadata function on the TokenVoting plugin is only supported from version 1.3 onwards
-        const includePluginMetadataItem = Number(release) > 1 || (Number(release) === 1 && Number(build) >= 3);
+        const minVersion = { build: 1, release: 3 };
+        const includePluginMetadataAction = pluginVersionUtils.isGreaterOrEqualTo(plugin, minVersion);
 
         return {
             groups: [
@@ -95,7 +97,7 @@ class TokenActionUtils {
                 {
                     ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),
                     meta: plugin,
-                    hidden: !includePluginMetadataItem,
+                    hidden: !includePluginMetadataAction,
                 },
             ],
             components: {
