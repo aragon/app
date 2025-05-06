@@ -1578,7 +1578,7 @@
         "button": "Upgrade contracts",
         "description": "There are new updates available for Araogn OSx and plugins."
       },
-      "updateContractsDialog": {
+      "updateDaoContractsListDialog": {
         "action": {
           "cancel": "Cancel",
           "confirm": "Propose"

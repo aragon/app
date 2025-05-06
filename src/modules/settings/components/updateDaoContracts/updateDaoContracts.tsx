@@ -11,7 +11,7 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginVersionUtils } from '@/shared/utils/pluginVersionUtils';
 import { Button, IconType } from '@aragon/gov-ui-kit';
 import { SettingsDialogId } from '../../constants/settingsDialogId';
-import type { IUpdateContractsDialogParams } from '../../dialogs/updateContractsDialog';
+import type { IUpdateDaoContractsListDialogParams } from '../../dialogs/updateDaoContractsListDialog';
 
 export interface IUpdateDaoContractsProps {
     /**
@@ -46,9 +46,9 @@ export const UpdateDaoContracts: React.FC<IUpdateDaoContractsProps> = (props) =>
     };
 
     const handlePermissionCheckSuccess = (selectedPlugin: IDaoPlugin) => {
-        const params: IUpdateContractsDialogParams = { process: selectedPlugin, daoId };
+        const params: IUpdateDaoContractsListDialogParams = { process: selectedPlugin, daoId };
 
-        open(SettingsDialogId.UPDATE_CONTRACTS, { params });
+        open(SettingsDialogId.UPDATE_DAO_CONTRACTS, { params });
     };
 
     const showUpdateButton = daoPlugins.some((plugin) => {

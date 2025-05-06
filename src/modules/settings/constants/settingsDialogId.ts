@@ -1,3 +1,3 @@
 export enum SettingsDialogId {
-    UPDATE_CONTRACTS = 'UPDATE_CONTRACTS',
+    UPDATE_DAO_CONTRACTS = 'UPDATE_DAO_CONTRACTS',
 }

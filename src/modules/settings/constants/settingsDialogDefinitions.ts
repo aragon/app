@@ -1,7 +1,7 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { UpdateContractsDialog } from '../dialogs/updateContractsDialog';
+import { UpdateDaoContractsListDialog } from '../dialogs/updateDaoContractsListDialog';
 import { SettingsDialogId } from './settingsDialogId';
 
 export const settingsDialogDefinitions: Record<SettingsDialogId, IDialogComponentDefinitions> = {
-    [SettingsDialogId.UPDATE_CONTRACTS]: { Component: UpdateContractsDialog, size: 'lg' },
+    [SettingsDialogId.UPDATE_DAO_CONTRACTS]: { Component: UpdateDaoContractsListDialog, size: 'lg' },
 };

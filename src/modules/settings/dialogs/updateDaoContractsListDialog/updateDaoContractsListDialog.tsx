@@ -6,9 +6,9 @@ import type { IPluginInfo } from '@/shared/types';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginVersionUtils } from '@/shared/utils/pluginVersionUtils';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
-import { PluginCard } from './pluginCard';
+import { UpdateDaoContractsCard } from './updateDaoContractsCard';
 
-export interface IUpdateContractsDialogParams {
+export interface IUpdateDaoContractsListDialogParams {
     /**
      * The process that was selected to publish the proposal.
      */
@@ -19,15 +19,15 @@ export interface IUpdateContractsDialogParams {
     daoId: string;
 }
 
-export interface IUpdateContractsDialogProps extends IDialogComponentProps<IUpdateContractsDialogParams> {}
+export interface IUpdateDaoContractsListDialogProps extends IDialogComponentProps<IUpdateDaoContractsListDialogParams> {}
 
-export const UpdateContractsDialog: React.FC<IUpdateContractsDialogProps> = (props) => {
+export const UpdateDaoContractsListDialog: React.FC<IUpdateDaoContractsListDialogProps> = (props) => {
     const { location } = props;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
-    invariant(location.params != null, 'UpdateContractsDialog: required parameters must be set.');
+    invariant(location.params != null, 'UpdateDaoContractsListDialog: required parameters must be set.');
 
     const { process, daoId } = location.params;
 
@@ -49,19 +49,19 @@ export const UpdateContractsDialog: React.FC<IUpdateContractsDialogProps> = (pro
 
     return (
         <>
-            <Dialog.Header onClose={close} title={t('app.settings.updateContractsDialog.title')} />
-            <Dialog.Content description={t('app.settings.updateContractsDialog.description')}>
+            <Dialog.Header onClose={close} title={t('app.settings.updateDaoContractsListDialog.title')} />
+            <Dialog.Content description={t('app.settings.updateDaoContractsListDialog.description')}>
                 {plugins.map((plugin) => (
-                    <PluginCard key={plugin.address} plugin={plugin} />
+                    <UpdateDaoContractsCard key={plugin.address} plugin={plugin} />
                 ))}
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{
-                    label: t('app.settings.updateContractsDialog.action.confirm'),
+                    label: t('app.settings.updateDaoContractsListDialog.action.confirm'),
                     onClick: onPropose,
                 }}
                 secondaryAction={{
-                    label: t('app.settings.updateContractsDialog.action.cancel'),
+                    label: t('app.settings.updateDaoContractsListDialog.action.cancel'),
                     onClick: () => close(),
                 }}
             />
