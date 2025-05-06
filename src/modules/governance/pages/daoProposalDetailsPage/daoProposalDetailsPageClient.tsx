@@ -170,22 +170,15 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.published')}
+                                link={{ href: creationBlockLink, textClassName: 'first-letter:capitalize' }}
                             >
-                                <Link
-                                    href={creationBlockLink}
-                                    target="_blank"
-                                    iconRight={IconType.LINK_EXTERNAL}
-                                    textClassName="first-letter:capitalize"
-                                >
-                                    {formattedCreationDate}
-                                </Link>
+                                {formattedCreationDate}
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.creator')}
+                                link={{ href: creatorLink }}
                             >
-                                <Link href={creatorLink} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                                    {creatorName}
-                                </Link>
+                                {creatorName}
                             </DefinitionList.Item>
                             <DefinitionList.Item term={t('app.governance.daoProposalDetailsPage.aside.details.status')}>
                                 <Tag label={statusTag.label} variant={statusTag.variant} className="w-fit" />

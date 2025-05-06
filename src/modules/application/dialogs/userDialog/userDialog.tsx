@@ -32,7 +32,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     return (
         <Dialog.Content className="flex flex-row justify-between gap-2 pb-6 pt-7">
             <div className="flex min-w-0 flex-col gap-3 md:gap-4">
-                <MemberAvatar address={address} chainId={mainnet.id} size="lg" responsiveSize={{ md: 'xl' }} />
+                <MemberAvatar address={address} size="lg" responsiveSize={{ md: 'xl' }} />
                 <div className="flex flex-col gap-1 truncate font-normal leading-tight md:gap-1.5">
                     <p className="truncate text-xl text-neutral-800">{userName}</p>
                     {ensName != null && <p className="text-base text-neutral-500">{formattedAddress}</p>}

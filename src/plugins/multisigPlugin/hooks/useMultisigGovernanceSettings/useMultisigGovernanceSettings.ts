@@ -1,14 +1,13 @@
 import { useMemberList } from '@/modules/governance/api/governanceService';
 import { multisigSettingsUtils } from '@/plugins/multisigPlugin/utils/multisigSettingsUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '../../../../modules/settings/types';
+import type { IDefinitionSetting } from '@aragon/gov-ui-kit';
+import type { IUseGovernanceSettingsParams } from '../../../../modules/settings/types';
 import type { IMultisigPluginSettings } from '../../types';
 
 export interface IUseMultisigGovernanceSettingsParams extends IUseGovernanceSettingsParams<IMultisigPluginSettings> {}
 
-export const useMultisigGovernanceSettings = (
-    params: IUseMultisigGovernanceSettingsParams,
-): IDaoSettingTermAndDefinition[] => {
+export const useMultisigGovernanceSettings = (params: IUseMultisigGovernanceSettingsParams): IDefinitionSetting[] => {
     const { daoId, pluginAddress, settings } = params;
 
     const { t } = useTranslations();

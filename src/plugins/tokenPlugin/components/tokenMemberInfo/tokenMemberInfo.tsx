@@ -9,8 +9,6 @@ import {
     ChainEntityType,
     DefinitionList,
     formatterUtils,
-    IconType,
-    Link,
     NumberFormat,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
@@ -53,27 +51,27 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
             <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.eligibleVoters')}>
                 <p className="text-neutral-500">{t('app.plugins.token.tokenMemberInfo.tokenHolders')}</p>
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.tokenLabel')}>
-                <Link
-                    description={t('app.plugins.token.tokenMemberInfo.tokenLinkDescription')}
-                    iconRight={IconType.LINK_EXTERNAL}
-                    href={buildEntityUrl({ type: ChainEntityType.TOKEN, id: token.address })}
-                    target="_blank"
-                >
-                    {t('app.plugins.token.tokenMemberInfo.tokenNameAndSymbol', {
-                        tokenName: token.name,
-                        tokenSymbol: token.symbol,
-                    })}
-                </Link>
+            <DefinitionList.Item
+                term={t('app.plugins.token.tokenMemberInfo.tokenLabel')}
+                link={{
+                    href: buildEntityUrl({ type: ChainEntityType.TOKEN, id: token.address }),
+                    description: t('app.plugins.token.tokenMemberInfo.tokenLinkDescription'),
+                }}
+            >
+                {t('app.plugins.token.tokenMemberInfo.tokenNameAndSymbol', {
+                    tokenName: token.name,
+                    tokenSymbol: token.symbol,
+                })}
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.distribution')}>
-                <Link
-                    description={addressUtils.truncateAddress(token.address)}
-                    iconRight={IconType.LINK_EXTERNAL}
-                    href={`/dao/${daoId}/members`}
-                >
-                    {t('app.plugins.token.tokenMemberInfo.tokenDistribution', { count: distribution })}
-                </Link>
+            <DefinitionList.Item
+                term={t('app.plugins.token.tokenMemberInfo.distribution')}
+                link={{
+                    href: `/dao/${daoId}/members`,
+                    description: addressUtils.truncateAddress(token.address),
+                    target: '_self',
+                }}
+            >
+                {t('app.plugins.token.tokenMemberInfo.tokenDistribution', { count: distribution })}
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.supply')}>
                 <p className="text-neutral-500">

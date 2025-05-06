@@ -1,5 +1,5 @@
-import type { IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { addressUtils, type IDefinitionSetting } from '@aragon/gov-ui-kit';
 import type { ISppPluginSettings } from '../../types';
 
 export interface ISppSettingsParseParams {
@@ -23,13 +23,17 @@ export interface ISppSettingsParseDefaultParams {
      */
     name?: string;
     /**
+     * Link to the deployed body.
+     */
+    url: string;
+    /**
      * The translation function for internationalization.
      */
     t: TranslationFunction;
 }
 
 class SppSettingsUtils {
-    parseSettings = (params: ISppSettingsParseParams): IDaoSettingTermAndDefinition[] => {
+    parseSettings = (params: ISppSettingsParseParams): IDefinitionSetting[] => {
         const { settings, t } = params;
         const { stages } = settings;
 
@@ -38,15 +42,18 @@ class SppSettingsUtils {
         ];
     };
 
-    parseDefaultSettings = (params: ISppSettingsParseDefaultParams): IDaoSettingTermAndDefinition[] => {
-        const { address, name, t } = params;
+    parseDefaultSettings = (params: ISppSettingsParseDefaultParams): IDefinitionSetting[] => {
+        const { address, name, url, t } = params;
 
-        const settings: IDaoSettingTermAndDefinition[] = [
-            { term: t('app.plugins.spp.sppGovernanceSettings.default.address'), definition: address },
+        const link = { href: url };
+        const truncatedAddress = addressUtils.truncateAddress(address);
+
+        const settings: IDefinitionSetting[] = [
+            { term: t('app.plugins.spp.sppGovernanceSettings.default.address'), definition: truncatedAddress, link },
         ];
 
         if (name != null) {
-            settings.unshift({ term: t('app.plugins.spp.sppGovernanceSettings.default.name'), definition: name });
+            settings.unshift({ term: t('app.plugins.spp.sppGovernanceSettings.default.name'), definition: name, link });
         }
 
         return settings;

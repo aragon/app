@@ -25,7 +25,7 @@ describe('tokenProposal utils', () => {
 
         it('returns pending status when proposal has not started yet', () => {
             const now = '2022-02-10T07:55:55.868Z';
-            const startDate = DateTime.fromISO('2022-02-10T08:00:00.000Z').toMillis() / 1000;
+            const startDate = DateTime.fromISO('2022-02-10T08:00:00.000Z').toSeconds();
             const proposal = generateTokenProposal({ startDate });
             timeUtils.setTime(now);
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.PENDING);
@@ -33,9 +33,11 @@ describe('tokenProposal utils', () => {
 
         it('returns executable status when approval is reached early, proposal is started, can be executed early and has actions', () => {
             const now = '2022-02-01T07:55:55.868Z';
-            const startDate = DateTime.fromISO('2022-01-10T08:00:00.000Z').toMillis() / 1000;
+            const startDate = DateTime.fromISO('2022-01-10T08:00:00.000Z').toSeconds();
+            const endDate = DateTime.fromISO('2022-02-10T08:00:00.000Z').toSeconds();
             const settings = generateTokenPluginSettings({ votingMode: DaoTokenVotingMode.EARLY_EXECUTION });
-            const proposal = generateTokenProposal({ startDate, settings, actions: [generateProposalAction()] });
+            const actions = [generateProposalAction()];
+            const proposal = generateTokenProposal({ startDate, endDate, settings, actions });
             timeUtils.setTime(now);
             isApprovalReachedSpy.mockReturnValueOnce(false).mockReturnValueOnce(true);
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTABLE);
@@ -43,18 +45,30 @@ describe('tokenProposal utils', () => {
 
         it('returns executable status when approval is reached, proposal is ended and has actions', () => {
             const now = '2022-02-10T08:00:00.868Z';
-            const startDate = DateTime.fromISO('2022-02-05T08:00:00.000Z').toMillis() / 1000;
-            const endDate = DateTime.fromISO('2022-02-08T08:00:00.000Z').toMillis() / 1000;
+            const startDate = DateTime.fromISO('2022-02-05T08:00:00.000Z').toSeconds();
+            const endDate = DateTime.fromISO('2022-02-08T08:00:00.000Z').toSeconds();
             const proposal = generateTokenProposal({ startDate, endDate, actions: [generateProposalAction()] });
             timeUtils.setTime(now);
             isApprovalReachedSpy.mockReturnValue(true);
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTABLE);
         });
 
+        it('returns executable status when approval is reached, proposal has ended, can be executed early and has actions', () => {
+            const now = '2022-01-15T07:55:55.868Z';
+            const startDate = DateTime.fromISO('2022-01-10T08:00:00.000Z').toSeconds();
+            const endDate = DateTime.fromISO('2022-01-10T08:00:00.000Z').toSeconds();
+            const settings = generateTokenPluginSettings({ votingMode: DaoTokenVotingMode.EARLY_EXECUTION });
+            const actions = [generateProposalAction()];
+            const proposal = generateTokenProposal({ startDate, endDate, settings, actions });
+            timeUtils.setTime(now);
+            isApprovalReachedSpy.mockReturnValueOnce(true).mockReturnValueOnce(false);
+            expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTABLE);
+        });
+
         it('returns active status when proposal has not ended yet', () => {
             const now = '2022-02-10T08:00:00.868Z';
-            const startDate = DateTime.fromISO('2022-02-05T08:00:00.000Z').toMillis() / 1000;
-            const endDate = DateTime.fromISO('2022-02-12T08:00:00.000Z').toMillis() / 1000;
+            const startDate = DateTime.fromISO('2022-02-05T08:00:00.000Z').toSeconds();
+            const endDate = DateTime.fromISO('2022-02-12T08:00:00.000Z').toSeconds();
             const proposal = generateTokenProposal({ startDate, endDate });
             timeUtils.setTime(now);
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.ACTIVE);
@@ -62,8 +76,8 @@ describe('tokenProposal utils', () => {
 
         it('returns accepted status when proposal is ended, the approval has been reached and proposal is signaling', () => {
             const now = '2024-10-20T09:49:56.868Z';
-            const startDate = DateTime.fromISO('2024-10-08T09:49:56.868Z').toMillis() / 1000;
-            const endDate = DateTime.fromISO('2024-10-12T09:49:56.868Z').toMillis() / 1000;
+            const startDate = DateTime.fromISO('2024-10-08T09:49:56.868Z').toSeconds();
+            const endDate = DateTime.fromISO('2024-10-12T09:49:56.868Z').toSeconds();
             const actions: IProposalAction[] = [];
             const proposal = generateTokenProposal({ startDate, endDate, actions });
             isApprovalReachedSpy.mockReturnValue(true);
@@ -73,8 +87,8 @@ describe('tokenProposal utils', () => {
 
         it('returns rejected status when proposal is ended and the approval has not been reached', () => {
             const now = '2024-10-20T09:49:56.868Z';
-            const startDate = DateTime.fromISO('2024-10-08T09:49:56.868Z').toMillis() / 1000;
-            const endDate = DateTime.fromISO('2024-10-12T09:49:56.868Z').toMillis() / 1000;
+            const startDate = DateTime.fromISO('2024-10-08T09:49:56.868Z').toSeconds();
+            const endDate = DateTime.fromISO('2024-10-12T09:49:56.868Z').toSeconds();
             const proposal = generateTokenProposal({ startDate, endDate });
             isApprovalReachedSpy.mockReturnValue(false);
             timeUtils.setTime(now);
@@ -95,8 +109,8 @@ describe('tokenProposal utils', () => {
 
         it('returns true if proposal is open, vote mode is not vote-replacement and approval is reached early', () => {
             const now = '2025-01-24T10:00:00.000Z';
-            const startDate = DateTime.fromISO('2025-01-20T10:00:00.000Z').toMillis() / 1000;
-            const endDate = DateTime.fromISO('2025-01-30T10:00:00.000Z').toMillis() / 1000;
+            const startDate = DateTime.fromISO('2025-01-20T10:00:00.000Z').toSeconds();
+            const endDate = DateTime.fromISO('2025-01-30T10:00:00.000Z').toSeconds();
 
             isApprovalReachedSpy.mockReturnValue(true);
             const settings = generateTokenPluginSettings({ votingMode: DaoTokenVotingMode.STANDARD });
@@ -107,8 +121,8 @@ describe('tokenProposal utils', () => {
 
         it('returns false if proposal is open, vote mode is not vote-replacement and approval is not reached early', () => {
             const now = '2025-01-24T10:00:00.000Z';
-            const startDate = DateTime.fromISO('2025-01-20T10:00:00.000Z').toMillis() / 1000;
-            const endDate = DateTime.fromISO('2025-01-30T10:00:00.000Z').toMillis() / 1000;
+            const startDate = DateTime.fromISO('2025-01-20T10:00:00.000Z').toSeconds();
+            const endDate = DateTime.fromISO('2025-01-30T10:00:00.000Z').toSeconds();
 
             isApprovalReachedSpy.mockReturnValue(false);
             const settings = generateTokenPluginSettings({ votingMode: DaoTokenVotingMode.EARLY_EXECUTION });
@@ -119,8 +133,8 @@ describe('tokenProposal utils', () => {
 
         it('returns true if proposal is ended and approval is reached', () => {
             const now = '2025-01-24T10:00:00.000Z';
-            const startDate = DateTime.fromISO('2025-01-20T10:00:00.000Z').toMillis() / 1000;
-            const endDate = DateTime.fromISO('2025-01-22T10:00:00.000Z').toMillis() / 1000;
+            const startDate = DateTime.fromISO('2025-01-20T10:00:00.000Z').toSeconds();
+            const endDate = DateTime.fromISO('2025-01-22T10:00:00.000Z').toSeconds();
 
             isApprovalReachedSpy.mockReturnValue(true);
             const proposal = generateTokenProposal({ startDate, endDate });
@@ -131,8 +145,8 @@ describe('tokenProposal utils', () => {
 
         it('returns false if proposal is ended and approval is not reached', () => {
             const now = '2025-01-24T10:00:00.000Z';
-            const startDate = DateTime.fromISO('2025-01-20T10:00:00.000Z').toMillis() / 1000;
-            const endDate = DateTime.fromISO('2025-01-22T10:00:00.000Z').toMillis() / 1000;
+            const startDate = DateTime.fromISO('2025-01-20T10:00:00.000Z').toSeconds();
+            const endDate = DateTime.fromISO('2025-01-22T10:00:00.000Z').toSeconds();
 
             isApprovalReachedSpy.mockReturnValue(false);
             const proposal = generateTokenProposal({ startDate, endDate });
