@@ -17,6 +17,7 @@ class PluginVersionUtils {
 
         return this.compareVersions(current, target) < 0;
     };
+
     isGreaterThan = (current?: IPluginVersion, target?: IPluginVersion) => {
         if (!current || !target) {
             return false;
@@ -24,6 +25,7 @@ class PluginVersionUtils {
 
         return this.compareVersions(current, target) > 0;
     };
+
     isGreaterOrEqualTo = (current?: IPluginVersion, target?: IPluginVersion) => {
         if (!current || !target) {
             return false;
