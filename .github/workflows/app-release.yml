@@ -15,10 +15,15 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
+      - name: Download infra credentials
+        uses: aragon/github-templates/steps/credential-retrieval@v0.4
+        with:
+          op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
+          op-vault: "kv_app-next_infra"
       - name: Setup
         uses: aragon/app-next/.github/actions/setup@main
         with:
-          token: ${{ secrets.ARABOT_PAT }}
+          token: ${{ env.ARABOT_PAT }}
           node-version: 22
       - name: Setup Git config
         run: |
@@ -32,7 +37,7 @@ jobs:
           yarn changeset version
           yarn prettier --write CHANGELOG.md --print-width 9999999 --ignore-path
         env:
-          GITHUB_TOKEN: ${{ secrets.ARABOT_PAT }}
+          GITHUB_TOKEN: ${{ env.ARABOT_PAT }}
       - name: Create tag
         run: yarn changeset tag
       - name: Get package version
@@ -59,4 +64,4 @@ jobs:
           prerelease: false
           tag_name: "v${{ steps.package-version.outputs.current-version}}"
           body: ${{ steps.read-changelog.outputs.changes }}
-          token: ${{ secrets.ARABOT_PAT }}
+          token: ${{ env.ARABOT_PAT }}
