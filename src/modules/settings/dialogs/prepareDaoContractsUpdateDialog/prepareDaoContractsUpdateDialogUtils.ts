@@ -99,7 +99,7 @@ class PrepareDaoContractsUpdateDialogUtils {
     };
 
     private getOsxUpdateDetails = (dao: IDao) => {
-        const { release, build } = networkDefinitions[dao.network].protocolVersion;
+        const { release, build, releaseNotes, description } = networkDefinitions[dao.network].protocolVersion;
         const updatedVersion = `${release.toString()}.${build.toString()}.0`;
         const { version: currentVersion } = dao;
 
@@ -108,9 +108,9 @@ class PrepareDaoContractsUpdateDialogUtils {
                 <strong>Aragon OSx ${updatedVersion}</strong>
                 <ol>
                     <li><strong>Current version</strong>: ${currentVersion}}</li>
-                    <li><strong>Upgrade description</strong>: {{description}}</li>
+                    <li><strong>Upgrade description</strong>: ${description}}</li>
                     <li><strong>Note</strong>: The DAO's address will never change</li>
-                    <li><a href={{releaseNotesLink}} target=”_blank” rel=”noopener noreferrer”>View Release Notes</a></li>
+                    <li><a href=${releaseNotes}} target="_blank" rel="noopener noreferrer">View Release Notes</a></li>
                 </ol>
             </li>
         `;
@@ -129,7 +129,7 @@ class PrepareDaoContractsUpdateDialogUtils {
                 <ol>
                     <li><strong>Current version</strong>: ${currentVersion}}</li>
                     <li><strong>Upgrade description</strong>: {{description}}</li>
-                    <li><a href={{releaseNotesLink}} target=”_blank” rel=”noopener noreferrer”>View Release Notes</a></li>
+                    <li><a href={{releaseNotesLink}} target="_blank" rel="noopener noreferrer">View Release Notes</a></li>
                 </ol>
             </li>
         `;

@@ -18,6 +18,17 @@ export interface INetworkDefinitionAddresses {
     globalExecutor: Hex;
 }
 
+export interface INetworkProtocolVersion extends IVersion {
+    /**
+     * Link to the release notes of the protocol release.
+     */
+    releaseNotes: string;
+    /**
+     * Short summary of the protocol release.
+     */
+    description: string;
+}
+
 export interface INetworkDefinition extends Chain {
     /**
      * Name of the network.
@@ -38,7 +49,7 @@ export interface INetworkDefinition extends Chain {
     /**
      * Latest version of the OSx framework.
      */
-    protocolVersion: IVersion;
+    protocolVersion: INetworkProtocolVersion;
     /**
      * Order of the network in the network selection.
      */
@@ -53,7 +64,12 @@ export interface INetworkDefinition extends Chain {
     disabled?: boolean;
 }
 
-const latestProtocolVersion: IVersion = { build: 1, release: 4 };
+const latestProtocolVersion: INetworkProtocolVersion = {
+    build: 1,
+    release: 4,
+    releaseNotes: 'https://github.com/aragon/osx/releases/tag/v1.4.0',
+    description: 'TODO',
+};
 
 export const networkDefinitions: Record<Network, INetworkDefinition> = {
     // Mainnets
