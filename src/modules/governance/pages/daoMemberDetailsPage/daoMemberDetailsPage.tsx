@@ -29,7 +29,7 @@ export const DaoMemberDetailsPage: React.FC<IDaoMemberDetailsPageProps> = async 
         return (
             <Page.Error
                 error={JSON.parse(JSON.stringify(error)) as unknown}
-                actionLink={`/dao/${daoId}/members`}
+                actionLink={`/dao/${network}/${id}/members`}
                 notFoundNamespace="app.governance.daoMemberDetailsPage"
             />
         );
