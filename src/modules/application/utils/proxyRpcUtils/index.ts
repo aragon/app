@@ -1,4 +1,2 @@
-import { ProxyRpcUtils } from './proxyRpcUtils';
-
-export const proxyRpcUtils = new ProxyRpcUtils();
+export { ProxyRpcUtils } from './proxyRpcUtils';
 export type { IRpcRequestParams } from './proxyRpcUtils';

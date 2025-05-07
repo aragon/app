@@ -4,15 +4,28 @@ import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { createAppKit } from '@reown/appkit/react';
 import { createClient } from 'viem';
 import { cookieStorage, createStorage, http } from 'wagmi';
+import { ProxyRpcUtils } from '../utils/proxyRpcUtils/proxyRpcUtils';
 
 // Supported chains by the Application.
 const chains = Object.values(networkDefinitions) as [INetworkDefinition, ...INetworkDefinition[]];
+
+const getRpcUrl = (chainId: string): string | undefined => {
+    // Send the request directly to the RPC endpoint when the request is done on the server side, otherwise proxy
+    // it through the /api/rpc NextJs route.
+    if (typeof window !== 'undefined') {
+        return `/api/rpc/${chainId}`;
+    }
+
+    const proxyRpcUtils = new ProxyRpcUtils(); // ProxyRpcUtils throws on client side!
+
+    return proxyRpcUtils.chainIdToRpcEndpoint(chainId);
+};
 
 // Wagmi configuration for the Application.
 const wagmiAdapter = new WagmiAdapter({
     networks: chains,
     ssr: true,
-    client: ({ chain }) => createClient({ chain, transport: http(`/api/rpc/${chain.id.toString()}`) }),
+    client: ({ chain }) => createClient({ chain, transport: http(getRpcUrl(chain.id.toString())) }),
     projectId: walletConnectDefinitions.projectId,
     storage: createStorage({ storage: cookieStorage }),
 });

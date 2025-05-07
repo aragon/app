@@ -1,6 +1,8 @@
+import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
-import { PluginType } from '@/shared/types';
+import { type IDaoPageParams, PluginType } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
+import { getEnsAddress } from 'wagmi/actions';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 
 export interface IGetDaoPluginsParams {
@@ -56,6 +58,30 @@ class DaoUtils {
         const parts = subdomain.split('-');
         return parts.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
     };
+
+    /**
+     * Resolves the DAO ID based on the provided network, address and ENS name.
+     *
+     * @throws Error if the ENS address is not found.
+     */
+    async resolveDaoId(params: IDaoPageParams) {
+        const { id, network } = params;
+
+        if (id.endsWith('.eth')) {
+            const ensAddress = await getEnsAddress(wagmiConfig, {
+                name: id,
+                chainId: 1,
+            });
+
+            if (!ensAddress) {
+                throw new Error('ENS address not found');
+            }
+
+            return `${network}-${ensAddress}`;
+        }
+
+        return `${network}-${id}`;
+    }
 
     private filterPluginByAddress = (plugin: IDaoPlugin, address?: string) =>
         address == null || addressUtils.isAddressEqual(plugin.address, address);
