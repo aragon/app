@@ -48,7 +48,7 @@ export const UpdateDaoContracts: React.FC<IUpdateDaoContractsProps> = (props) =>
     const handlePermissionCheckSuccess = (selectedPlugin: IDaoPlugin) => {
         const params: IUpdateDaoContractsListDialogParams = { process: selectedPlugin, daoId };
 
-        open(SettingsDialogId.UPDATE_DAO_CONTRACTS, { params });
+        open(SettingsDialogId.UPDATE_DAO_CONTRACTS_LIST, { params });
     };
 
     const showUpdateButton = daoPlugins.some((plugin) => {

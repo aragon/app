@@ -3,5 +3,5 @@ import { UpdateDaoContractsListDialog } from '../dialogs/updateDaoContractsListD
 import { SettingsDialogId } from './settingsDialogId';
 
 export const settingsDialogDefinitions: Record<SettingsDialogId, IDialogComponentDefinitions> = {
-    [SettingsDialogId.UPDATE_DAO_CONTRACTS]: { Component: UpdateDaoContractsListDialog, size: 'lg' },
+    [SettingsDialogId.UPDATE_DAO_CONTRACTS_LIST]: { Component: UpdateDaoContractsListDialog, size: 'lg' },
 };
