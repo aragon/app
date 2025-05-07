@@ -1,6 +1,7 @@
 import type * as ReactQuery from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import * as WagmiActions from 'wagmi/actions';
 import { DaoDashboardPage, type IDaoDashboardPageProps } from './daoDashboardPage';
 
 jest.mock('@tanstack/react-query', () => ({
@@ -13,6 +14,16 @@ jest.mock('./daoDashboardPageClient', () => ({
 }));
 
 describe('<DaoDashboardPage /> component', () => {
+    const getEnsAddressSpy = jest.spyOn(WagmiActions, 'getEnsAddress');
+
+    beforeEach(() => {
+        getEnsAddressSpy.mockResolvedValue('0x12345');
+    });
+
+    afterEach(() => {
+        getEnsAddressSpy.mockReset();
+    });
+
     const createTestComponent = async (props?: Partial<IDaoDashboardPageProps>) => {
         const completeProps: IDaoDashboardPageProps = {
             params: Promise.resolve({ id: 'test.dao.eth', network: 'testnet' }),
