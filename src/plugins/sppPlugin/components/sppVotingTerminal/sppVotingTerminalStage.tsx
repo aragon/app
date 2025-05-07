@@ -2,6 +2,7 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SppStageStatus } from '@/plugins/sppPlugin/components/sppStageStatus';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
+import { brandedExternals } from '@/shared/types/brandedExternals';
 import {
     proposalStatusToVotingStatus,
     ProposalVoting,
@@ -68,7 +69,13 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
             <ProposalVoting.BodySummary>
                 <ProposalVoting.BodySummaryList>
                     {stage.plugins.map(({ address, ...plugin }) => (
-                        <ProposalVoting.BodySummaryListItem key={address} id={address}>
+                        <ProposalVoting.BodySummaryListItem
+                            key={address}
+                            id={address}
+                            brandedExternal={
+                                plugin.subdomain === undefined ? brandedExternals[plugin.brandId] : undefined
+                            }
+                        >
                             {plugin.subdomain != null && (
                                 <PluginSingleComponent
                                     slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY}
@@ -100,6 +107,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                     status={processedStageStatus}
                     bodyId={plugin.address}
                     hideTabs={!plugin.subdomain ? [ProposalVotingTab.VOTES] : undefined}
+                    brandedExternal={plugin.subdomain === undefined ? brandedExternals[plugin.brandId] : undefined}
                 >
                     <SppVotingTerminalBodyContent
                         plugin={plugin}

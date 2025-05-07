@@ -1,4 +1,5 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
+import type { VotingBodyBrandIdentity } from '@/shared/types/brandedExternals';
 import type { SppProposalType } from './enum';
 
 export type ISppStagePlugin = ISppStagePluginInternal | ISppStagePluginExternal;
@@ -23,4 +24,8 @@ export interface ISppStagePluginExternal {
      * External plugins are identified by empty subdomain.
      */
     subdomain: undefined;
+    /**
+     * Branded identity of the plugin.
+     */
+    brandId: VotingBodyBrandIdentity;
 }

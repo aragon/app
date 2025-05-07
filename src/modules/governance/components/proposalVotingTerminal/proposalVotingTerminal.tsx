@@ -5,8 +5,8 @@ import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import {
     type IDefinitionSetting,
     ProposalStatus,
-    ProposalVoting,
     proposalStatusToVotingStatus,
+    ProposalVoting,
 } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
