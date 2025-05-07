@@ -34,7 +34,10 @@ export const UpdateDaoContractsCard: React.FC<IUpdateDaoContractsCardProps> = (p
                         <p className="text-neutral-500">{addressUtils.truncateAddress(address)}</p>
                     </div>
                     <p className="text-neutral-500">
-                        {t('app.settings.updateDaoContractsListDialog.plugin.update', { from: fromVersion, to: toVersion })}
+                        {t('app.settings.updateDaoContractsListDialog.plugin.update', {
+                            from: fromVersion,
+                            to: toVersion,
+                        })}
                     </p>
                 </div>
                 <Link href={target.releaseNotesUrl} target="_blank" iconRight={IconType.LINK_EXTERNAL}>

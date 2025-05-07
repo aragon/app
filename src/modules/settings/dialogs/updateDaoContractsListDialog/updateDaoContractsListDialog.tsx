@@ -19,7 +19,8 @@ export interface IUpdateDaoContractsListDialogParams {
     daoId: string;
 }
 
-export interface IUpdateDaoContractsListDialogProps extends IDialogComponentProps<IUpdateDaoContractsListDialogParams> {}
+export interface IUpdateDaoContractsListDialogProps
+    extends IDialogComponentProps<IUpdateDaoContractsListDialogParams> {}
 
 export const UpdateDaoContractsListDialog: React.FC<IUpdateDaoContractsListDialogProps> = (props) => {
     const { location } = props;
@@ -43,8 +44,9 @@ export const UpdateDaoContractsListDialog: React.FC<IUpdateDaoContractsListDialo
 
     const handlePrimaryAction = () => {
         // TODO: Open publish proposal dialog
-        console.log('plugins', plugins);
-        console.log('process', process);
+        // eslint-disable-next-line no-console
+        console.log('Publish proposal for process', process);
+        close();
     };
 
     return (

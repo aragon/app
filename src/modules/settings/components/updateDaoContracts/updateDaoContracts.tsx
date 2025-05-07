@@ -2,6 +2,7 @@ import { GovernanceDialogId } from '@/modules/governance/constants/governanceDia
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
+import { SettingsDialogId } from '@/modules/settings/constants/settingsDialogId';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -10,7 +11,6 @@ import type { IPluginInfo } from '@/shared/types';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginVersionUtils } from '@/shared/utils/pluginVersionUtils';
 import { Button, IconType } from '@aragon/gov-ui-kit';
-import { SettingsDialogId } from '../../constants/settingsDialogId';
 import type { IUpdateDaoContractsListDialogParams } from '../../dialogs/updateDaoContractsListDialog';
 
 export interface IUpdateDaoContractsProps {
