@@ -1,4 +1,5 @@
 import { Page } from '@/shared/components/page';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { QueryClient } from '@tanstack/react-query';
 import { memberOptions } from '../../api/governanceService';
 import { type IDaoMemberPageParams } from '../../types';
@@ -13,7 +14,8 @@ export interface IDaoMemberDetailsPageProps {
 
 export const DaoMemberDetailsPage: React.FC<IDaoMemberDetailsPageProps> = async (props) => {
     const { params } = props;
-    const { address, id: daoId } = await params;
+    const { address, id, network } = await params;
+    const daoId = await daoUtils.resolveDaoId({ id, network });
 
     const queryClient = new QueryClient();
 

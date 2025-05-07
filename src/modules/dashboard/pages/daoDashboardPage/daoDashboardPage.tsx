@@ -1,5 +1,6 @@
 import { Page } from '@/shared/components/page';
 import type { IDaoPageParams } from '@/shared/types';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { DaoDashboardPageClient } from './daoDashboardPageClient';
 
 export interface IDaoDashboardPageProps {
@@ -11,7 +12,8 @@ export interface IDaoDashboardPageProps {
 
 export const DaoDashboardPage: React.FC<IDaoDashboardPageProps> = async (props) => {
     const { params } = props;
-    const { id: daoId } = await params;
+    const daoPageParams = await params;
+    const daoId = await daoUtils.resolveDaoId(daoPageParams);
 
     return (
         <Page.Container>

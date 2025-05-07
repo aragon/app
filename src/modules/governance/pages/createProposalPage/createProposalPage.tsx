@@ -1,4 +1,5 @@
 import { Page } from '@/shared/components/page';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import type { ICreateProposalPageParams } from '../../types';
 import { CreateProposalPageClient } from './createProposalPageClient';
 
@@ -11,11 +12,12 @@ export interface ICreateProposalPageProps {
 
 export const CreateProposalPage: React.FC<ICreateProposalPageProps> = async (props) => {
     const { params } = props;
-    const { id, pluginAddress } = await params;
+    const { id, network, pluginAddress } = await params;
+    const daoId = await daoUtils.resolveDaoId({ id, network });
 
     return (
         <Page.Container>
-            <CreateProposalPageClient daoId={id} pluginAddress={pluginAddress} />
+            <CreateProposalPageClient daoId={daoId} pluginAddress={pluginAddress} />
         </Page.Container>
     );
 };

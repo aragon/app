@@ -4,6 +4,7 @@ import { daoService } from '@/shared/api/daoService';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { metadataUtils } from '@/shared/utils/metadataUtils';
 
+import { daoUtils } from '@/shared/utils/daoUtils';
 import type { Metadata } from 'next';
 
 export interface IGenerateProposalMetadataParams {
@@ -15,15 +16,16 @@ export interface IGenerateProposalMetadataParams {
 
 class GovernanceMetadataUtils {
     generateProposalMetadata = async ({ params }: IGenerateProposalMetadataParams): Promise<Metadata> => {
-        const { proposalSlug, id } = await params;
+        const { proposalSlug, id, network } = await params;
+        const daoId = await daoUtils.resolveDaoId({ id, network });
         const proposal = await governanceService.getProposalBySlug({
             urlParams: { slug: proposalSlug },
-            queryParams: { daoId: id },
+            queryParams: { daoId },
         });
 
         const title = `${proposalSlug}: ${proposal.title}`;
         const description = proposal.summary;
-        const dao = await daoService.getDao({ urlParams: { id } });
+        const dao = await daoService.getDao({ urlParams: { id: daoId } });
         const siteName = `${dao.name} | Governed on Aragon`;
         const image = ipfsUtils.cidToSrc(dao.avatar);
 

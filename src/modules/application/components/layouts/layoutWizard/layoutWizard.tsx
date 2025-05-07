@@ -6,6 +6,7 @@ import {
 import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import type { IDaoPageParams } from '@/shared/types';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 
@@ -29,13 +30,14 @@ export const LayoutWizard = async <IPageParams extends IDaoPageParams = IDaoPage
     props: ILayoutWizardProps<IPageParams>,
 ) => {
     const { params, name, exitPath, queryClient, children } = props;
-    const { id } = (await params) ?? {};
+    const { id, network } = (await params) ?? {};
+    const daoId = id && network && (await daoUtils.resolveDaoId({ id, network }));
 
     const reactQueryClient = queryClient ?? new QueryClient();
 
     try {
-        if (id != null) {
-            const daoUrlParams = { id };
+        if (daoId != null) {
+            const daoUrlParams = { id: daoId };
             await reactQueryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }));
         }
     } catch (error: unknown) {
@@ -50,7 +52,7 @@ export const LayoutWizard = async <IPageParams extends IDaoPageParams = IDaoPage
 
     return (
         <HydrationBoundary state={dehydrate(reactQueryClient)}>
-            <NavigationWizard id={id} name={name} exitPath={exitPath} />
+            <NavigationWizard id={daoId} name={name} exitPath={exitPath} />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );
