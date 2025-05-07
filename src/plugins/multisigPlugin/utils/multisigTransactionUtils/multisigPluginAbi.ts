@@ -19,6 +19,18 @@ export const multisigPluginSetupAbi = [
     { name: 'pluginMetadata', type: 'bytes' },
 ] as const;
 
+export const multisigPluginPrepareUpdateAbi = [
+    {
+        name: 'targetConfig',
+        type: 'tuple',
+        components: [
+            { name: 'target', type: 'address' },
+            { name: 'operation', type: 'uint8' },
+        ],
+    },
+    { name: 'pluginMetadata', type: 'bytes' },
+] as const;
+
 export const multisigPluginAbi = [
     {
         type: 'function',

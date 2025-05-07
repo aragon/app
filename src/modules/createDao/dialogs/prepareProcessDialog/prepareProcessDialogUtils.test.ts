@@ -18,11 +18,11 @@ import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
 import type { IBuildProcessProposalActionsParams } from './prepareProcessDialogUtils.api';
 
 describe('prepareProcessDialog utils', () => {
-    const cidToHexSpy = jest.spyOn(transactionUtils, 'cidToHex');
+    const stringToMetadataHexSpy = jest.spyOn(transactionUtils, 'stringToMetadataHex');
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
 
     afterEach(() => {
-        cidToHexSpy.mockReset();
+        stringToMetadataHexSpy.mockReset();
         getSlotFunctionSpy.mockReset();
     });
 
@@ -189,7 +189,7 @@ describe('prepareProcessDialog utils', () => {
             const dao = generateDao();
             const transactionData = '0xdata';
             buildPreparePluginInstallDataSpy.mockReturnValue(transactionData);
-            cidToHexSpy.mockReturnValue(metadataHex);
+            stringToMetadataHexSpy.mockReturnValue(metadataHex);
             const result = prepareProcessDialogUtils['buildPrepareInstallProcessorActionData'](metadata, dao);
             expect(buildPreparePluginInstallDataSpy).toHaveBeenCalledWith(metadataHex, dao);
             expect(result).toEqual(transactionData);
@@ -271,7 +271,7 @@ describe('prepareProcessDialog utils', () => {
             const transactionData = '0xdata';
             const prepareTransactionMock = jest.fn(() => transactionData);
             getSlotFunctionSpy.mockReturnValue(prepareTransactionMock);
-            cidToHexSpy.mockReturnValue(metadata);
+            stringToMetadataHexSpy.mockReturnValue(metadata);
 
             const params = { metadataCid, dao, body };
             const result = prepareProcessDialogUtils['buildPrepareInstallPluginActionData'](params);

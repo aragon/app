@@ -43,7 +43,7 @@ class PublishProposalDialogUtils {
         const { proposal, metadataCid, plugin } = params;
         const { actions } = proposal;
 
-        const metadata = transactionUtils.cidToHex(metadataCid);
+        const metadata = transactionUtils.stringToMetadataHex(metadataCid);
 
         const buildDataFunction = pluginRegistryUtils.getSlotFunction<IBuildCreateProposalDataParams, Hex>({
             pluginId: plugin.subdomain,

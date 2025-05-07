@@ -68,6 +68,10 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
      */
     slug: string;
     /**
+     * CID of the IPFS file containing the plugin metadata.
+     */
+    metadataIpfs?: string;
+    /**
      * Setup data emitted during the plugin preparation.
      */
     preparedSetupData: IPluginPreparedSetupData;

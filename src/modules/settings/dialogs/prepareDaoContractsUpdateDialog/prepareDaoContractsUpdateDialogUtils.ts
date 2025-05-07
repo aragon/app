@@ -6,7 +6,10 @@ import type { IPluginInfo } from '@/shared/types';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { transactionUtils, type ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
+import { invariant } from '@aragon/gov-ui-kit';
 import { encodeFunctionData, type Hex } from 'viem';
+import { SettingsSlotId } from '../../constants/moduleSlots';
+import type { IBuildPreparePluginUpdateDataParams } from '../../types';
 import { pluginSetupProcessorAbi } from './pluginSetupProcessorAbi';
 
 export interface IBuildPrepareUpdatePluginTransactionsParams {
@@ -45,7 +48,7 @@ class PrepareDaoContractsUpdateDialogUtils {
         const currentVersionTag = versionComparatorUtils.normaliseComparatorInput(plugin)!;
         const { installVersion: newVersionTag } = pluginInfo;
         const pluginSetupRepo = pluginInfo.repositoryAddresses[dao.network];
-        const setupPayload = this.buildPluginSetupPayload(plugin);
+        const setupPayload = this.buildPluginSetupPayload(dao, plugin);
 
         const data = encodeFunctionData({
             abi: pluginSetupProcessorAbi,
@@ -56,11 +59,19 @@ class PrepareDaoContractsUpdateDialogUtils {
         return data;
     };
 
-    private buildPluginSetupPayload = (plugin: IDaoPlugin) => {
-        const { address, preparedSetupData } = plugin;
+    private buildPluginSetupPayload = (dao: IDao, plugin: IDaoPlugin) => {
+        const { address, subdomain, preparedSetupData } = plugin;
 
         const currentHelpers = preparedSetupData.helpers as Hex[];
-        const initializeData = '0x' as Hex;
+        const slotId = SettingsSlotId.SETTINGS_BUILD_PREPARE_PLUGIN_UPDATE_DATA;
+
+        const updateDataBuilder = pluginRegistryUtils.getSlotFunction<IBuildPreparePluginUpdateDataParams, Hex>({
+            slotId,
+            pluginId: subdomain,
+        });
+
+        invariant(updateDataBuilder != null, 'PrepareDaoContractsUpdateDialogUtils: builder function does not exist.');
+        const initializeData = updateDataBuilder({ dao, plugin });
 
         return { plugin: address as Hex, currentHelpers, data: initializeData };
     };
