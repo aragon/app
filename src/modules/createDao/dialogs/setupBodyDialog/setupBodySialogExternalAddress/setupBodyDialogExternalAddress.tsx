@@ -1,6 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { AddressInput, addressUtils } from '@aragon/gov-ui-kit';
+import { AddressInput, addressUtils, type IAddressInputResolvedValue } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import type { ISetupBodyForm } from '../setupBodyDialogDefinitions';
@@ -23,16 +23,17 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
 
     const [addressInput, setAddressInput] = useState<string | undefined>(value);
 
+    const handleAddressAccept = (value?: IAddressInputResolvedValue) => {
+        onReceiverChange(value?.address);
+        setValue('name', value?.name);
+    };
+
     return (
         <AddressInput
             helpText={t('app.createDao.setupBodyDialog.externalAddress.address.helpText')}
-            chainId={1}
             value={addressInput}
             onChange={setAddressInput}
-            onAccept={(value) => {
-                onReceiverChange(value?.address);
-                setValue('name', value?.name);
-            }}
+            onAccept={handleAddressAccept}
             {...addressField}
         />
     );

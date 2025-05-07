@@ -19,7 +19,7 @@ class ProposalStatusUtils {
 
         const now = DateTime.now();
         const startsInTheFuture = now < DateTime.fromSeconds(startDate);
-        const endsInTheFuture = endDate == null || now < DateTime.fromSeconds(endDate);
+        const endsInTheFuture = this.endsInTheFuture(endDate);
         const isExecutionExpired = executionExpiryDate != null && now > DateTime.fromSeconds(executionExpiryDate);
 
         if (isExecuted) {
@@ -57,6 +57,12 @@ class ProposalStatusUtils {
         }
 
         return isExecutionExpired ? ProposalStatus.EXPIRED : ProposalStatus.EXECUTABLE;
+    };
+
+    endsInTheFuture = (endDate?: number) => {
+        const now = DateTime.now();
+
+        return endDate == null || now < DateTime.fromSeconds(endDate);
     };
 }
 

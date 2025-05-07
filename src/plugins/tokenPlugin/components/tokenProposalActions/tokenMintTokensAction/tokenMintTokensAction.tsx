@@ -93,7 +93,6 @@ export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (pro
     return (
         <div className="flex w-full flex-col gap-6">
             <AddressInput
-                chainId={1}
                 placeholder={t('app.plugins.token.tokenMintTokensAction.address.placeholder')}
                 value={receiverInput}
                 onChange={setReceiverInput}

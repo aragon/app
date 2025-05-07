@@ -100,7 +100,6 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
     return (
         <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
             <AddressInput
-                chainId={1}
                 onChange={setAddressInput}
                 value={addressInput}
                 onAccept={handleAddressAccept}

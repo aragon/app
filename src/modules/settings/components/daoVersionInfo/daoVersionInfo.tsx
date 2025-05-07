@@ -20,19 +20,16 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
     const { id: chainId } = networkDefinitions[dao.network];
     const { buildEntityUrl } = useBlockExplorer();
 
+    const daoLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address, chainId });
     const processPlugins = useDaoPlugins({ daoId: dao.id, type: PluginType.PROCESS, includeSubPlugins: true });
 
     return (
         <DefinitionList.Container>
-            <DefinitionList.Item term={t('app.settings.daoVersionInfo.osLabel')}>
-                <Link
-                    description={addressUtils.truncateAddress(dao.address)}
-                    iconRight={IconType.LINK_EXTERNAL}
-                    href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address, chainId })}
-                    target="_blank"
-                >
-                    {t('app.settings.daoVersionInfo.osValue', { version: dao.version })}
-                </Link>
+            <DefinitionList.Item
+                term={t('app.settings.daoVersionInfo.osLabel')}
+                link={{ href: daoLink, description: addressUtils.truncateAddress(dao.address) }}
+            >
+                {t('app.settings.daoVersionInfo.osValue', { version: dao.version })}
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.settings.daoVersionInfo.governanceLabel')}>
                 <div className="flex flex-col gap-3">

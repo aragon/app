@@ -5,6 +5,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputFileAvatar, InputText, TextArea } from '@aragon/gov-ui-kit';
 import { useWatch } from 'react-hook-form';
+import { mainnet } from 'viem/chains';
 import { getEnsAddress } from 'wagmi/actions';
 import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 
@@ -53,11 +54,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
 
         try {
             const ensName = `${value}.dao.eth`;
-
-            const ensAddress = await getEnsAddress(wagmiConfig, {
-                name: ensName,
-                chainId: 1,
-            });
+            const ensAddress = await getEnsAddress(wagmiConfig, { name: ensName, chainId: mainnet.id });
 
             return ensAddress ? 'app.createDao.createDaoForm.metadata.ens.error.taken' : undefined;
         } catch {

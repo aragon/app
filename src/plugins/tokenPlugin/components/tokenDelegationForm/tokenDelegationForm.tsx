@@ -143,7 +143,6 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
             <AddressInput
                 helpText={t('app.plugins.token.tokenDelegationForm.delegate.helpText')}
                 placeholder={t('app.plugins.token.tokenDelegationForm.delegate.placeholder')}
-                chainId={1}
                 value={delegateInput}
                 onChange={setDelegateInput}
                 onAccept={handleDelegateChange}

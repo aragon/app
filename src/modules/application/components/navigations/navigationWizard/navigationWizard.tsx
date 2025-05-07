@@ -10,7 +10,6 @@ import type { ITFuncOptions } from '@/shared/utils/translationsUtils';
 import { DaoAvatar, Icon, IconType, Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { type Route } from 'next';
-import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import { Navigation, type INavigationContainerProps } from '../navigation';
 
@@ -71,7 +70,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
                     )}
                 </div>
             </div>
-            <Wallet onClick={handleWalletClick} user={walletUser} chainId={mainnet.id} />
+            <Wallet onClick={handleWalletClick} user={walletUser} />
         </Navigation.Container>
     );
 };
