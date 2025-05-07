@@ -3,7 +3,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IPluginInfo } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { addressUtils, Card, IconType, Link } from '@aragon/gov-ui-kit';
+import { addressUtils, DataList, IconType, Link } from '@aragon/gov-ui-kit';
 
 interface IUpdateDaoContractsCardProps {
     /**
@@ -22,28 +22,27 @@ export const UpdateDaoContractsCard: React.FC<IUpdateDaoContractsCardProps> = (p
     const { release: targetRelease, build: targetBuild } = target.installVersion;
 
     const pluginName = daoUtils.getPluginName(plugin);
-    const fromVersion = `${pluginName} v${release}.${build}`;
-    const toVersion = `${pluginName} v${targetRelease.toString()}.${targetBuild.toString()}`;
+    const parsedSubdomain = daoUtils.parsePluginSubdomain(plugin.subdomain);
+    const fromVersion = `${parsedSubdomain} v${release}.${build}`;
+    const toVersion = `${parsedSubdomain} v${targetRelease.toString()}.${targetBuild.toString()}`;
 
     return (
-        <Card className="border-x border-b border-neutral-100 p-6 shadow-neutral-sm">
-            <div className="flex flex-col gap-6">
-                <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center justify-between">
-                        <p className="text-neutral-800">{pluginName}</p>
-                        <p className="text-neutral-500">{addressUtils.truncateAddress(address)}</p>
-                    </div>
-                    <p className="text-neutral-500">
-                        {t('app.settings.updateDaoContractsListDialog.plugin.update', {
-                            from: fromVersion,
-                            to: toVersion,
-                        })}
-                    </p>
+        <DataList.Item className="flex flex-col gap-6 py-6">
+            <div className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between">
+                    <p className="text-neutral-800">{pluginName}</p>
+                    <p className="text-neutral-500">{addressUtils.truncateAddress(address)}</p>
                 </div>
-                <Link href={target.releaseNotesUrl} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                    {t('app.settings.updateDaoContractsListDialog.plugin.link')}
-                </Link>
+                <p className="text-neutral-500">
+                    {t('app.settings.updateDaoContractsCard.versionUpdate', {
+                        from: fromVersion,
+                        to: toVersion,
+                    })}
+                </p>
             </div>
-        </Card>
+            <Link href={target.releaseNotesUrl} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
+                {t('app.settings.updateDaoContractsCard.releaseNotes')}
+            </Link>
+        </DataList.Item>
     );
 };

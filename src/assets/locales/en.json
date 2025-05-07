@@ -1581,16 +1581,17 @@
         "button": "Upgrade contracts",
         "description": "There are new updates available for Araogn OSx and plugins."
       },
+      "updateDaoContractsCard": {
+        "releaseNotes": "Release notes",
+        "versionUpdate": "Update {{from}} → {{to}}"
+      },
       "updateDaoContractsListDialog": {
         "action": {
           "cancel": "Cancel",
           "confirm": "Propose"
         },
         "description": "New versions of the following contracts have been released by the Aragon team. To perform an upgrade, you will have to create a proposal and execute it.",
-        "plugin": {
-          "link": "Release notes",
-          "update": "Update {{from}} → {{to}}"
-        },
+
         "title": "Review contacts to upgrade"
       }
     },
