@@ -1,5 +1,7 @@
+import { Network } from '@/shared/api/daoService';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import * as WagmiActions from 'wagmi/actions';
 import { DaoSettingsPage, type IDaoSettingsPageProps } from './daoSettingsPage';
 import { DaoSettingsPageClient } from './daoSettingsPageClient';
 
@@ -8,9 +10,19 @@ jest.mock('./daoSettingsPageClient', () => ({
 }));
 
 describe('<DaoSettingsPage /> component', () => {
+    const getEnsAddressSpy = jest.spyOn(WagmiActions, 'getEnsAddress');
+
+    beforeEach(() => {
+        getEnsAddressSpy.mockResolvedValue('0x12345');
+    });
+
+    afterEach(() => {
+        getEnsAddressSpy.mockReset();
+    });
+
     const createTestComponent = async (props?: Partial<IDaoSettingsPageProps>) => {
         const completeProps: IDaoSettingsPageProps = {
-            params: Promise.resolve({ id: 'dao-id', network: 'network' }),
+            params: Promise.resolve({ id: '0x123', network: Network.ETHEREUM_MAINNET }),
             ...props,
         };
         const Component = await DaoSettingsPage(completeProps);
@@ -19,10 +31,18 @@ describe('<DaoSettingsPage /> component', () => {
     };
 
     it('renders and passes the correct daoId to DaoSettingsPageClient', async () => {
-        const params = { id: 'my-dao', network: 'network' };
+        const daoEns = 'my-dao.dao.eth';
+        const daoAddress = '0x12345';
+        const daoNetwork = Network.ETHEREUM_MAINNET;
+        const params = { id: daoEns, network: daoNetwork };
+        getEnsAddressSpy.mockResolvedValue(daoAddress);
+
         render(await createTestComponent({ params: Promise.resolve(params) }));
 
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
-        expect(DaoSettingsPageClient).toHaveBeenCalledWith(expect.objectContaining({ daoId: params.id }), undefined);
+        expect(DaoSettingsPageClient).toHaveBeenCalledWith(
+            expect.objectContaining({ daoId: `${daoNetwork}-${daoAddress}` }),
+            undefined,
+        );
     });
 });

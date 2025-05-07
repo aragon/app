@@ -1,7 +1,7 @@
 'use client';
 
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
@@ -30,6 +30,9 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
     const { daoId, plugin } = props;
 
     const { t } = useTranslations();
+
+    const daoUrlParams = { id: daoId };
+    const { data: dao } = useDao({ urlParams: daoUrlParams });
 
     const daoMemberParams = { daoId, pluginAddress: plugin.address };
     const { data: memberList } = useMemberList({ queryParams: daoMemberParams });
@@ -66,7 +69,7 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
             <DefinitionList.Item
                 term={t('app.plugins.token.tokenMemberInfo.distribution')}
                 link={{
-                    href: `/dao/${daoId}/members`,
+                    href: dao && `/dao/${dao.network}/${dao.ens ?? dao.address}/members`,
                     description: addressUtils.truncateAddress(token.address),
                     target: '_self',
                 }}

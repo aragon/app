@@ -4,7 +4,7 @@ import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { createAppKit } from '@reown/appkit/react';
 import { createClient } from 'viem';
 import { cookieStorage, createStorage, http } from 'wagmi';
-import { ProxyRpcUtils } from '../utils/proxyRpcUtils/proxyRpcUtils';
+import { Network } from '../../../shared/api/daoService';
 
 // Supported chains by the Application.
 const chains = Object.values(networkDefinitions) as [INetworkDefinition, ...INetworkDefinition[]];
@@ -16,9 +16,14 @@ const getRpcUrl = (chainId: string): string | undefined => {
         return `/api/rpc/${chainId}`;
     }
 
-    const proxyRpcUtils = new ProxyRpcUtils(); // ProxyRpcUtils throws on client side!
+    // TODO: Remove when backend API is ready, or generalize and update proxyRpcUtils.
+    const network = Object.values(Network).find(
+        (network) => networkDefinitions[network as Network].id === Number(chainId),
+    );
 
-    return proxyRpcUtils.chainIdToRpcEndpoint(chainId);
+    const { privateRpc, rpcUrls } = network ? networkDefinitions[network] : {};
+
+    return privateRpc ? `${privateRpc}${process.env.NEXT_SECRET_RPC_KEY!}` : rpcUrls?.default.http[0];
 };
 
 // Wagmi configuration for the Application.

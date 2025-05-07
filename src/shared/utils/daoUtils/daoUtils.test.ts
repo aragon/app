@@ -7,10 +7,6 @@ import { ipfsUtils } from '../ipfsUtils';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 import { daoUtils } from './daoUtils';
 
-jest.mock('@/modules/application/constants/wagmi', () => ({
-    wagmiConfig: {},
-}));
-
 describe('dao utils', () => {
     const getDaoSpy = jest.spyOn(daoService, 'getDao');
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');

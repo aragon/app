@@ -1,10 +1,11 @@
+import { Network } from '@/shared/api/daoService';
 import { render, screen } from '@testing-library/react';
 import { type INotFoundDaoProps, NotFoundDao } from './notFoundDao';
 
 describe('<NotFoundDao /> component', () => {
     const createTestComponent = (props?: Partial<INotFoundDaoProps>) => {
         const completeProps: INotFoundDaoProps = {
-            params: { id: 'test-id' },
+            params: { id: 'test-id', network: Network.ETHEREUM_MAINNET },
             ...props,
         };
 
@@ -12,8 +13,8 @@ describe('<NotFoundDao /> component', () => {
     };
 
     it('renders a not-found page for DAOs', () => {
-        const daoId = 'my-dao-id';
-        const params = { id: daoId };
+        const daoEnsName = 'my-dao.dao.eth';
+        const params = { id: daoEnsName, network: Network.ETHEREUM_MAINNET };
         render(createTestComponent({ params }));
 
         expect(screen.getByText(/notFoundDao.title/)).toBeInTheDocument();
@@ -22,6 +23,6 @@ describe('<NotFoundDao /> component', () => {
 
         const link = screen.getByRole('link', { name: /notFoundDao.action/ });
         expect(link).toBeInTheDocument();
-        expect(link.getAttribute('href')).toEqual(`/dao/${daoId}/dashboard`);
+        expect(link.getAttribute('href')).toEqual(`/dao/${Network.ETHEREUM_MAINNET}/${daoEnsName}/dashboard`);
     });
 });
