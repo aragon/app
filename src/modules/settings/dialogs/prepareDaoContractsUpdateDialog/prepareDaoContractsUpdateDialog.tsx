@@ -38,20 +38,19 @@ export const PrepareDaoContractsUpdateDialog: React.FC<IPrepareDaoContractsUpdat
     const { daoId, plugin } = location.params;
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const { plugins: hasPluginsUpdate } = daoUtils.hasAvailableUpdates(dao);
+    const pluginsUpdate = daoUtils.getAvailablePluginUpdates(dao);
+    const { plugins: hasPluginsUpdate, osx: hasOsxUpdate } = daoUtils.hasAvailableUpdates(dao);
 
     invariant(dao != null, 'PrepareDaoContractsUpdateDialog: DAO must be defined.');
 
     const initialActiveStep = hasPluginsUpdate ? TransactionDialogStep.PREPARE : undefined;
     const stepper = useStepper<ITransactionDialogStepMeta>({ initialActiveStep });
 
-    const handlePrepareTransaction = () => {
-        const plugins = daoUtils.getAvailablePluginUpdates(dao);
-        return prepareDaoContractsUpdateDialogUtils.buildPrepareUpdatePluginsTransaction(dao, plugins);
-    };
+    const handlePrepareTransaction = () =>
+        prepareDaoContractsUpdateDialogUtils.buildPrepareUpdatePluginsTransaction(dao, pluginsUpdate);
 
     const handlePublishUpdateProposal = useCallback(() => {
-        const proposal = prepareDaoContractsUpdateDialogUtils.getApplyUpdateProposal();
+        const proposal = prepareDaoContractsUpdateDialogUtils.getApplyUpdateProposal(dao, pluginsUpdate, hasOsxUpdate);
 
         const translationNamespace = 'app.settings.publishDaoContractsUpdateDialog';
         const transactionInfo = hasPluginsUpdate
@@ -60,7 +59,7 @@ export const PrepareDaoContractsUpdateDialog: React.FC<IPrepareDaoContractsUpdat
 
         const params: IPublishProposalDialogParams = { daoId, plugin, translationNamespace, transactionInfo, proposal };
         open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
-    }, [t, plugin, daoId, hasPluginsUpdate, open]);
+    }, [t, plugin, dao, daoId, hasPluginsUpdate, pluginsUpdate, hasOsxUpdate, open]);
 
     // Open the publish-proposal dialog directly if DAO does not have available plugins updates.
     useEffect(() => {

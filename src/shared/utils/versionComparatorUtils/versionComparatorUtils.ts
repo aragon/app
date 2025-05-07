@@ -7,6 +7,16 @@ class VersionComparatorUtils {
 
     isGreaterOrEqualTo = (...args: ComparatorArgs) => this.compareVersions(...args, (diff) => diff >= 0);
 
+    normaliseComparatorInput = (input: ComparatorInput): IVersion | undefined => {
+        if (input == null) {
+            return undefined;
+        } else if (typeof input === 'string') {
+            return this.normaliseStringVersion(input);
+        }
+
+        return this.normaliseVersion(input);
+    };
+
     private compareVersions = (
         current: ComparatorInput,
         target: ComparatorInput,
@@ -29,16 +39,6 @@ class VersionComparatorUtils {
         const { release: targetRelease, build: targetBuild } = target;
 
         return currentRelease !== targetRelease ? currentRelease - targetRelease : currentBuild - targetBuild;
-    };
-
-    normaliseComparatorInput = (input: ComparatorInput): IVersion | undefined => {
-        if (input == null) {
-            return undefined;
-        } else if (typeof input === 'string') {
-            return this.normaliseStringVersion(input);
-        }
-
-        return this.normaliseVersion(input);
     };
 
     private normaliseStringVersion = (version: string): IVersion => {
