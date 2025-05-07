@@ -3,13 +3,10 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { SettingsDialogId } from '@/modules/settings/constants/settingsDialogId';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import type { IPluginInfo } from '@/shared/types';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { pluginVersionUtils } from '@/shared/utils/pluginVersionUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { Button, IconType } from '@aragon/gov-ui-kit';
 import type { IUpdateDaoContractsListDialogParams } from '../../dialogs/updateDaoContractsListDialog';
 
@@ -26,12 +23,12 @@ export const UpdateDaoContracts: React.FC<IUpdateDaoContractsProps> = (props) =>
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const daoPlugins = useDaoPlugins({ daoId })!;
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const { check: createProposalGuard } = usePermissionCheckGuard({
         permissionNamespace: 'proposal',
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
-        plugin: daoPlugins[0].meta,
+        plugin: dao!.plugins[0],
         daoId,
     });
 
@@ -56,13 +53,9 @@ export const UpdateDaoContracts: React.FC<IUpdateDaoContractsProps> = (props) =>
         open(SettingsDialogId.UPDATE_DAO_CONTRACTS_LIST, { params });
     };
 
-    const showUpdateButton = daoPlugins.some((plugin) => {
-        const target = pluginRegistryUtils.getPlugin(plugin.meta.subdomain) as IPluginInfo | undefined;
+    const availableUpdates = daoUtils.hasAvailableUpdates(dao);
 
-        return pluginVersionUtils.isLessThan(plugin.meta, target?.installVersion);
-    });
-
-    if (!showUpdateButton) {
+    if (!availableUpdates.osx && !availableUpdates.plugins) {
         return null;
     }
 

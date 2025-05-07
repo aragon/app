@@ -1,3 +1,4 @@
+import type { IPluginPreparedSetupData } from './pluginPreparedSetupData';
 import type { IPluginSettings } from './pluginSettings';
 import type { IResource } from './resource';
 
@@ -66,4 +67,8 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
      * Human readable slug of the plugin.
      */
     slug: string;
+    /**
+     * Setup data emitted during the plugin preparation.
+     */
+    preparedSetupData: IPluginPreparedSetupData;
 }

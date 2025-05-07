@@ -4,7 +4,7 @@ import type { IActionComposerPluginData } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { pluginVersionUtils } from '@/shared/utils/pluginVersionUtils';
+import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 import {
     addressUtils,
     ProposalActionType as GukProposalActionType,
@@ -51,7 +51,7 @@ class MultisigActionUtils {
 
         // The setMetadata function on the Multisig plugin is only supported from version 1.3 onwards
         const minVersion = { build: 1, release: 3 };
-        const includePluginMetadataAction = pluginVersionUtils.isGreaterOrEqualTo(plugin, minVersion);
+        const includePluginMetadataAction = versionComparatorUtils.isGreaterOrEqualTo(plugin, minVersion);
 
         return {
             groups: [
