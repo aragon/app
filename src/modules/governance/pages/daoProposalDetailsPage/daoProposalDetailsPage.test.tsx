@@ -2,7 +2,7 @@ import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { proposalBySlugOptions } from '../../api/governanceService';
+import { proposalActionsOptions, proposalBySlugOptions } from '../../api/governanceService';
 import { DaoProposalDetailsPage, type IDaoProposalDetailsPageProps } from './daoProposalDetailsPage';
 
 jest.mock('@tanstack/react-query', () => ({
@@ -50,7 +50,34 @@ describe('<DaoProposalDetailsPage /> component', () => {
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(proposalBySlugOptions(proposalParams).queryKey);
     });
 
+    it('prefetches actions when the proposal hasActions', async () => {
+        const params = { id: 'test-id', proposalSlug: 'test-slug' };
+
+        const proposalParams = {
+            urlParams: { slug: params.proposalSlug },
+            queryParams: { daoId: params.id },
+        };
+
+        const proposalId = 'test-proposal-id';
+
+        fetchQuerySpy.mockResolvedValueOnce({
+            id: proposalId,
+            hasActions: true,
+        });
+        fetchQuerySpy.mockResolvedValueOnce([]);
+
+        render(await createTestComponent({ params: Promise.resolve(params) }));
+
+        expect(fetchQuerySpy).toHaveBeenCalledTimes(2);
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(proposalBySlugOptions(proposalParams).queryKey);
+        expect(fetchQuerySpy.mock.calls[1][0].queryKey).toEqual(
+            proposalActionsOptions({ urlParams: { id: proposalId } }).queryKey,
+        );
+    });
+
     it('renders the page client component', async () => {
+        fetchQuerySpy.mockResolvedValueOnce({ id: 'proposal-id', hasActions: false });
+
         render(await createTestComponent());
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
     });
