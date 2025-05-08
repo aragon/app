@@ -38,7 +38,7 @@ export const UpdateDaoContractsCard: React.FC<IUpdateDaoContractsCardProps> = (p
                     {t('app.settings.updateDaoContractsCard.versionUpdate', { from: fromVersion, to: toVersion })}
                 </p>
             </div>
-            <Link href={target.releaseNotesUrl} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
+            <Link href={target.installVersion.releaseNotes} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
                 {t('app.settings.updateDaoContractsCard.releaseNotes')}
             </Link>
         </DataList.Item>

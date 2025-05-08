@@ -4,8 +4,12 @@ import type { IPluginInfo } from '@/shared/types';
 export const adminPlugin: IPluginInfo = {
     id: 'admin',
     name: 'Admin',
-    installVersion: { release: 1, build: 2 },
-    releaseNotesUrl: 'https://github.com/aragon/admin-plugin/releases/tag/v1.2.0',
+    installVersion: {
+        release: 1,
+        build: 2,
+        releaseNotes: 'https://github.com/aragon/admin-plugin/releases/tag/v1.2.0',
+        description: '',
+    },
     repositoryAddresses: {
         [Network.ARBITRUM_MAINNET]: '0x326A2aee6A8eE78D79E7E956DE60C6E452f76a8e',
         [Network.BASE_MAINNET]: '0x212eF339C77B3390599caB4D46222D79fAabcb5c',

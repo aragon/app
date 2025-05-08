@@ -1,7 +1,7 @@
 import { Network } from '@/shared/api/daoService';
 import type { Chain, Hex } from 'viem';
 import { arbitrum, base, mainnet, peaq, polygon, sepolia, zksync, zksyncSepoliaTestnet } from 'wagmi/chains';
-import type { IVersion } from '../utils/versionComparatorUtils';
+import type { IContractVersionInfo } from '../types';
 
 export interface INetworkDefinitionAddresses {
     /**
@@ -16,17 +16,6 @@ export interface INetworkDefinitionAddresses {
      * Executor address for SPP sub-plugins.
      */
     globalExecutor: Hex;
-}
-
-export interface INetworkProtocolVersion extends IVersion {
-    /**
-     * Link to the release notes of the protocol release.
-     */
-    releaseNotes: string;
-    /**
-     * Short summary of the protocol release.
-     */
-    description: string;
 }
 
 export interface INetworkDefinition extends Chain {
@@ -49,7 +38,7 @@ export interface INetworkDefinition extends Chain {
     /**
      * Latest version of the OSx framework.
      */
-    protocolVersion: INetworkProtocolVersion;
+    protocolVersion: IContractVersionInfo;
     /**
      * Order of the network in the network selection.
      */
@@ -64,7 +53,7 @@ export interface INetworkDefinition extends Chain {
     disabled?: boolean;
 }
 
-const latestProtocolVersion: INetworkProtocolVersion = {
+const latestProtocolVersion: IContractVersionInfo = {
     build: 1,
     release: 4,
     releaseNotes: 'https://github.com/aragon/osx/releases/tag/v1.4.0',
