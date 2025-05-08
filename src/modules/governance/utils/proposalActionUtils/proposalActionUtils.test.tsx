@@ -1,6 +1,5 @@
 import { generateToken } from '@/modules/finance/testUtils';
 import {
-    generateProposal,
     generateProposalAction,
     generateProposalActionUpdateMetadata,
     generateProposalActionUpdatePluginMetadata,
@@ -38,23 +37,22 @@ describe('proposalActionUtils', () => {
         });
 
         it('retrieves and triggers all plugin-specific normalization functions to normalize the proposal actions', () => {
-            const proposal = generateProposal({ actions: [generateProposalAction()] });
             const dao = generateDao({ id: 'test' });
-            const normalizationFunctionOne = jest.fn(() => proposal.actions);
-            const normalizationFunctionTwo = jest.fn(() => proposal.actions);
+            const actions = [generateProposalAction()];
+            const normalizationFunctionOne = jest.fn(() => actions);
+            const normalizationFunctionTwo = jest.fn(() => actions);
             getSlotFunctionsSpy.mockReturnValue([normalizationFunctionOne, normalizationFunctionTwo]);
-            proposalActionUtils.normalizeActions(proposal, dao);
-            const expectedParams = { actions: proposal.actions, daoId: dao.id };
+            proposalActionUtils.normalizeActions(actions, dao);
+            const expectedParams = { actions, daoId: dao.id };
             expect(normalizationFunctionOne).toHaveBeenCalledWith(expectedParams);
             expect(normalizationFunctionTwo).toHaveBeenCalledWith(expectedParams);
         });
 
         it('triggers the default normalization function with the result of the plugin-specific normalization function', () => {
-            const proposal = generateProposal();
             const normalizedActions = [generateProposalAction({ type: '1' }), generateProposalAction({ type: '2' })];
             const pluginNormalizationFunction = () => normalizedActions;
             getSlotFunctionsSpy.mockReturnValue([pluginNormalizationFunction]);
-            proposalActionUtils.normalizeActions(proposal, generateDao());
+            proposalActionUtils.normalizeActions([], generateDao());
             expect(normalizeDefaultActionSpy).toHaveBeenNthCalledWith(1, normalizedActions[0]);
             expect(normalizeDefaultActionSpy).toHaveBeenNthCalledWith(2, normalizedActions[1]);
         });

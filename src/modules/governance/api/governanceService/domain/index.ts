@@ -14,3 +14,4 @@ export type {
 export type { IProposalActionWithdrawToken } from './proposalActionWithdrawToken';
 export type { IProposalExecution } from './proposalExecution';
 export type { IVote } from './vote';
+export type { IProposalActions } from './proposalActions';

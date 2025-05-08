@@ -1,4 +1,3 @@
-import { ProposalActionType, type IProposalAction } from '@/modules/governance/api/governanceService';
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
@@ -34,10 +33,7 @@ describe('multisigProposal utils', () => {
             const now = '2024-10-20T09:49:56.868Z';
             const startDate = DateTime.fromISO('2024-10-15T09:49:56.868Z').toMillis() / 1000;
             const endDate = DateTime.fromISO('2024-10-25T09:49:56.868Z').toMillis() / 1000;
-            const actions: IProposalAction[] = [
-                { from: '0', to: '1', data: '', value: '0', type: ProposalActionType.TRANSFER, inputData: null },
-            ];
-            const proposal = generateMultisigProposal({ startDate, endDate, actions });
+            const proposal = generateMultisigProposal({ startDate, endDate, hasActions: true });
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
             expect(multisigProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTABLE);
@@ -56,8 +52,7 @@ describe('multisigProposal utils', () => {
             const now = '2024-10-20T09:49:56.868Z';
             const startDate = DateTime.fromISO('2024-10-08T09:49:56.868Z').toMillis() / 1000;
             const endDate = DateTime.fromISO('2024-10-12T09:49:56.868Z').toMillis() / 1000;
-            const actions: IProposalAction[] = [];
-            const proposal = generateMultisigProposal({ startDate, endDate, actions });
+            const proposal = generateMultisigProposal({ startDate, endDate, hasActions: false });
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
             expect(multisigProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.ACCEPTED);
@@ -67,10 +62,7 @@ describe('multisigProposal utils', () => {
             const now = '2024-10-20T09:49:56.868Z';
             const startDate = DateTime.fromISO('2024-10-08T09:49:56.868Z').toMillis() / 1000;
             const endDate = DateTime.fromISO('2024-10-12T09:49:56.868Z').toMillis() / 1000;
-            const actions: IProposalAction[] = [
-                { from: '0', to: '1', data: '', value: '0', type: ProposalActionType.TRANSFER, inputData: null },
-            ];
-            const proposal = generateMultisigProposal({ startDate, endDate, actions });
+            const proposal = generateMultisigProposal({ startDate, endDate, hasActions: true });
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
             expect(multisigProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXPIRED);

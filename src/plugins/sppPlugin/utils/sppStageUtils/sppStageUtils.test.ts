@@ -1,4 +1,3 @@
-import { generateProposalAction } from '@/modules/governance/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
@@ -292,7 +291,7 @@ describe('SppStageUtils', () => {
             const endDate = DateTime.fromISO(now).plus({ days: 7 });
             const stage = generateSppStage();
             const settings = generateSppPluginSettings({ stages: [stage] });
-            const proposal = generateSppProposal({ actions: [], settings });
+            const proposal = generateSppProposal({ hasActions: false, settings });
             getStageEndDateSpy.mockReturnValue(endDate);
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
@@ -305,7 +304,7 @@ describe('SppStageUtils', () => {
             const minAdvance = 5 * 60 * 60; // 5 hours
             const endDate = DateTime.fromISO(now).plus({ days: 7 });
             const stage = generateSppStage({ minAdvance });
-            const proposal = generateSppProposal({ actions: [generateProposalAction()] });
+            const proposal = generateSppProposal({ hasActions: true });
             getStageStartDateSpy.mockReturnValue(startDate);
             getStageEndDateSpy.mockReturnValue(endDate);
             isApprovalReachedSpy.mockReturnValue(true);
@@ -318,7 +317,7 @@ describe('SppStageUtils', () => {
             const endDate = DateTime.fromISO(now).minus({ days: 3 });
             const maxAdvance = DateTime.fromISO(now).minus({ days: 2 });
             const stage = generateSppStage();
-            const proposal = generateSppProposal({ actions: [generateProposalAction()] });
+            const proposal = generateSppProposal({ hasActions: true });
             getStageEndDateSpy.mockReturnValue(endDate);
             getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
             isApprovalReachedSpy.mockReturnValue(true);
@@ -345,7 +344,7 @@ describe('SppStageUtils', () => {
             const maxAdvance = DateTime.fromISO(now).minus({ days: 1 });
             const stage = generateSppStage();
             const settings = generateSppPluginSettings({ stages: [stage] });
-            const proposal = generateSppProposal({ actions: [], settings });
+            const proposal = generateSppProposal({ hasActions: false, settings });
             getStageEndDateSpy.mockReturnValue(endDate);
             getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
             isApprovalReachedSpy.mockReturnValue(true);
@@ -405,7 +404,7 @@ describe('SppStageUtils', () => {
         it('returns true when the proposal has no actions and the stage is the last stage', () => {
             const stage = generateSppStage({ stageIndex: 2 });
             const proposal = generateSppProposal({
-                actions: [],
+                hasActions: false,
                 settings: generateSppPluginSettings({
                     stages: [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 }), stage],
                 }),
@@ -417,7 +416,7 @@ describe('SppStageUtils', () => {
         it('returns false when the proposal has actions', () => {
             const stage = generateSppStage({ stageIndex: 2 });
             const proposal = generateSppProposal({
-                actions: [generateProposalAction()],
+                hasActions: true,
                 settings: generateSppPluginSettings({
                     stages: [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 }), stage],
                 }),
@@ -429,7 +428,7 @@ describe('SppStageUtils', () => {
         it('returns false when the stage is not the last stage', () => {
             const stage = generateSppStage({ stageIndex: 1 });
             const proposal = generateSppProposal({
-                actions: [],
+                hasActions: false,
                 settings: generateSppPluginSettings({
                     stages: [generateSppStage({ stageIndex: 0 }), stage, generateSppStage({ stageIndex: 2 })],
                 }),
@@ -441,7 +440,7 @@ describe('SppStageUtils', () => {
         it('returns false when the proposal has actions and the stage is not the last stage', () => {
             const stage = generateSppStage({ stageIndex: 1 });
             const proposal = generateSppProposal({
-                actions: [generateProposalAction()],
+                hasActions: true,
                 settings: generateSppPluginSettings({
                     stages: [generateSppStage({ stageIndex: 0 }), stage, generateSppStage({ stageIndex: 2 })],
                 }),
@@ -549,7 +548,7 @@ describe('SppStageUtils', () => {
             const minAdvanceDate = DateTime.fromISO(now).minus({ minutes: 5 });
             const maxAdvanceDate = DateTime.fromISO(now).plus({ minutes: 10 });
             const stage = generateSppStage({ stageIndex: 0 });
-            const proposal = generateSppProposal({ actions: [generateProposalAction()], stageIndex: 1 });
+            const proposal = generateSppProposal({ hasActions: true, stageIndex: 1 });
 
             timeUtils.setTime(now);
             isApprovalReachedSpy.mockReturnValue(true);

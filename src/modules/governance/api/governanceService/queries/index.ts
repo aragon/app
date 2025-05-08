@@ -5,3 +5,4 @@ export * from './useMemberList';
 export * from './useProposalBySlug';
 export * from './useProposalList';
 export * from './useVoteList';
+export * from './useProposalActions';
