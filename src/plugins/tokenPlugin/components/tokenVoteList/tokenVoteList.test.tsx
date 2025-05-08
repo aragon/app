@@ -2,7 +2,9 @@ import { generateToken } from '@/modules/finance/testUtils';
 import { type IVote } from '@/modules/governance/api/governanceService';
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
 import { generateProposal } from '@/modules/governance/testUtils';
-import { generateAddressInfo } from '@/shared/testUtils';
+import * as daoService from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
+import { generateAddressInfo, generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { addressUtils, GukModulesProvider, type VoteIndicator } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
 import { generateTokenVote } from '../../testUtils';
@@ -12,15 +14,15 @@ import { type ITokenVoteListProps, TokenVoteList } from './tokenVoteList';
 jest.mock('../../../../modules/governance/components/voteList', () => ({
     VoteProposalListItem: ({
         vote,
-        daoId,
+        daoUrl,
         voteIndicator,
     }: {
         vote: IVote;
-        daoId: string;
+        daoUrl: string;
         voteIndicator: VoteIndicator;
     }) => {
         const slug = `TOKENVOTING-${vote.proposal!.incrementalId.toString()}`;
-        const href = `/dao/${daoId}/proposals/${slug}`;
+        const href = `${daoUrl}/proposals/${slug}`;
 
         return (
             <a href={href} data-testid="vote-proposal-list-item-mock">
@@ -33,9 +35,15 @@ jest.mock('../../../../modules/governance/components/voteList', () => ({
 
 describe('<TokenVoteList /> component', () => {
     const useVoteListDataSpy = jest.spyOn(useVoteListData, 'useVoteListData');
+    const useDaoSpy = jest.spyOn(daoService, 'useDao');
+
+    beforeEach(() => {
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+    });
 
     afterEach(() => {
         useVoteListDataSpy.mockReset();
+        useDaoSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITokenVoteListProps>) => {
@@ -81,12 +89,22 @@ describe('<TokenVoteList /> component', () => {
             errorState: { heading: '', description: '' },
         });
 
+        const daoNetwork = Network.ETHEREUM_MAINNET;
+        const daoAddress = '0x12345';
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }),
+        );
+
         render(createTestComponent());
 
         const links = screen.getAllByRole('link');
         expect(links).toHaveLength(2);
-        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/members/${votes[0].member.address}`);
-        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/members/${votes[1].member.address}`);
+        expect(links[0].getAttribute('href')).toBe(
+            `/dao/${daoNetwork}/${daoAddress}/members/${votes[0].member.address}`,
+        );
+        expect(links[1].getAttribute('href')).toBe(
+            `/dao/${daoNetwork}/${daoAddress}/members/${votes[1].member.address}`,
+        );
 
         expect(screen.getByText(addressUtils.truncateAddress(votes[0].member.address))).toBeInTheDocument();
         expect(screen.getByText('997.85K ABC')).toBeInTheDocument();
@@ -126,13 +144,19 @@ describe('<TokenVoteList /> component', () => {
             errorState: { heading: '', description: '' },
         });
 
+        const daoNetwork = Network.ETHEREUM_MAINNET;
+        const daoAddress = '0x12345';
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }),
+        );
+
         render(createTestComponent({ initialParams: { queryParams: { includeInfo: true, pluginAddress: '0x123' } } }));
 
         const links = screen.getAllByTestId('vote-proposal-list-item-mock');
         expect(links).toHaveLength(2);
 
-        expect(links[0]).toHaveAttribute('href', '/dao/test-id/proposals/TOKENVOTING-2');
-        expect(links[1]).toHaveAttribute('href', '/dao/test-id/proposals/TOKENVOTING-3');
+        expect(links[0]).toHaveAttribute('href', `/dao/${daoNetwork}/${daoAddress}/proposals/TOKENVOTING-2`);
+        expect(links[1]).toHaveAttribute('href', `/dao/${daoNetwork}/${daoAddress}/proposals/TOKENVOTING-3`);
 
         expect(within(links[0]).getByTestId('proposal-title')).toHaveTextContent(votes[0].proposal!.title);
         expect(within(links[1]).getByTestId('proposal-title')).toHaveTextContent(votes[1].proposal!.title);

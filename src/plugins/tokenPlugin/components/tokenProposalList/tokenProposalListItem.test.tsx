@@ -23,7 +23,7 @@ describe('<TokenProposalListItem /> component', () => {
     const createTestComponent = (props?: Partial<ITokenProposalListItemProps>) => {
         const completeProps: ITokenProposalListItemProps = {
             proposal: generateTokenProposal(),
-            daoId: 'dao-id',
+            daoUrl: '/test-dao-url',
             plugin: generateDaoPlugin(),
             ...props,
         };
@@ -44,8 +44,8 @@ describe('<TokenProposalListItem /> component', () => {
     it('sets the correct link for proposal page', () => {
         const plugin = generateDaoPlugin({ slug: 'tokenvoting' });
         const proposal = generateTokenProposal({ incrementalId: 3 });
-        const daoId = 'dao-id';
-        render(createTestComponent({ proposal, plugin }));
-        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/TOKENVOTING-3`);
+        const daoUrl = '/dao-url';
+        render(createTestComponent({ proposal, plugin, daoUrl }));
+        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`${daoUrl}/proposals/TOKENVOTING-3`);
     });
 });

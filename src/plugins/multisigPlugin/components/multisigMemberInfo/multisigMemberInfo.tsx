@@ -1,9 +1,10 @@
 'use client';
 
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DefinitionList } from '@aragon/gov-ui-kit';
 import { useMemberList } from '../../../../modules/governance/api/governanceService';
+import { daoUtils } from '../../../../shared/utils/daoUtils';
 import type { IMultisigPluginSettings } from '../../types';
 
 export interface IMultisigMemberInfoProps {
@@ -24,7 +25,14 @@ export const MultisigMemberInfo: React.FC<IMultisigMemberInfoProps> = (props) =>
     const memberParams = { daoId, pluginAddress: plugin.address };
     const { data: memberList } = useMemberList({ queryParams: memberParams });
 
-    const membersLink = `/dao/${daoId}/members`;
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+
+    if (dao == null) {
+        return null;
+    }
+
+    const daoUrl = daoUtils.getDaoUrl(dao);
+    const membersLink = `${daoUrl}/members`;
     const memberCount = memberList?.pages[0].metadata.totalRecords;
 
     return (

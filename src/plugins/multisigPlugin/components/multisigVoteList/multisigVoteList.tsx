@@ -3,6 +3,7 @@ import type { IVoteListProps } from '@/modules/governance/components/voteList';
 import { VoteProposalListItem } from '@/modules/governance/components/voteList';
 import { useVoteListData } from '@/modules/governance/hooks/useVoteListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     DataListContainer,
     DataListPagination,
@@ -10,6 +11,7 @@ import {
     VoteDataListItem,
     VoteProposalDataListItem,
 } from '@aragon/gov-ui-kit';
+import { useDao } from '../../../../shared/api/daoService';
 import { type IMultisigVote } from '../../types';
 
 export interface IMultisigVoteListProps extends IVoteListProps {
@@ -26,6 +28,13 @@ export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, voteList } =
         useVoteListData<IMultisigVote>(initialParams);
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+
+    if (dao == null) {
+        return null;
+    }
+
+    const daoUrl = daoUtils.getDaoUrl(dao);
 
     return (
         <DataListRoot
@@ -50,12 +59,13 @@ export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
                             key={vote.transactionHash}
                             vote={vote}
                             daoId={daoId}
+                            daoUrl={daoUrl}
                             voteIndicator="approve"
                         />
                     ) : (
                         <VoteDataListItem.Structure
                             key={vote.transactionHash}
-                            href={`/dao/${daoId}/members/${vote.member.address}`}
+                            href={`${daoUrl}/members/${vote.member.address}`}
                             voteIndicator="approve"
                             voter={{
                                 address: vote.member.address,

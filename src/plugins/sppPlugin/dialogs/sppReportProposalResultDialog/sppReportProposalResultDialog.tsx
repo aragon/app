@@ -1,3 +1,5 @@
+import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
+import { useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
@@ -8,10 +10,10 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { invariant, VoteProposalDataListItemStructure } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
-import { proposalUtils } from '../../../../modules/governance/utils/proposalUtils';
 import { type ISppProposal, SppProposalType } from '../../types';
 import { sppReportProposalResultDialogUtils } from './sppReportProposalResultDialogUtils';
 
@@ -50,6 +52,8 @@ export const SppReportProposalResultDialog: React.FC<ISppReportProposalResultDia
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
 
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+
     const handlePrepareTransaction = () =>
         sppReportProposalResultDialogUtils.buildTransaction({
             proposal,
@@ -75,7 +79,7 @@ export const SppReportProposalResultDialog: React.FC<ISppReportProposalResultDia
             prepareTransaction={handlePrepareTransaction}
             network={proposal.network}
             transactionType={TransactionType.PROPOSAL_REPORT_RESULTS}
-            indexingFallbackUrl={`/dao/${daoId}/proposals/${slug}`}
+            indexingFallbackUrl={dao && `${daoUtils.getDaoUrl(dao)}/proposals/${slug}`}
         >
             <VoteProposalDataListItemStructure
                 proposalId={slug}

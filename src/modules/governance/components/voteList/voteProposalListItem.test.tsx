@@ -20,6 +20,7 @@ describe('<VoteProposalListItem /> component', () => {
         const completeProps = {
             vote: generateVote(),
             daoId: 'dao-test',
+            daoUrl: '/dao/ethereum-mainnet/0x12345',
             voteIndicator: 'approve' as const,
             ...props,
         };
@@ -36,30 +37,30 @@ describe('<VoteProposalListItem /> component', () => {
             parentProposal: { id: 'parent-id', title: 'Parent Proposal', incrementalId: 3, pluginAddress: '0x123' },
             proposal: generateProposal({ title: 'Child Proposal' }),
         });
-        const daoId = 'dao-test';
-
         const plugin = generateDaoPlugin({ slug: 'parent-slug' });
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ id: 'test-plugin', meta: plugin })]);
+        const daoUrl = '/test-dao-url';
 
-        render(createTestComponent({ vote, daoId }));
+        render(createTestComponent({ vote, daoUrl: daoUrl }));
 
         expect(screen.getByText('Parent Proposal')).toBeInTheDocument();
-        expect(screen.getByRole('link')).toHaveAttribute('href', `/dao/${daoId}/proposals/PARENT-SLUG-3`);
+        expect(screen.getByRole('link')).toHaveAttribute('href', `${daoUrl}/proposals/PARENT-SLUG-3`);
     });
 
     it('renders the child proposal info when parentProposal is not defined', () => {
         const vote = generateVote({
             proposal: generateProposal({ title: 'Child Proposal', incrementalId: 4 }),
         });
-        const daoId = 'dao-test';
 
         const plugin = generateDaoPlugin({ slug: 'child-slug' });
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: plugin })]);
 
-        render(createTestComponent({ vote, daoId }));
+        const daoUrl = '/test-dao-url';
+
+        render(createTestComponent({ vote, daoUrl }));
 
         expect(screen.getByText('Child Proposal')).toBeInTheDocument();
-        expect(screen.getByRole('link')).toHaveAttribute('href', `/dao/${daoId}/proposals/CHILD-SLUG-4`);
+        expect(screen.getByRole('link')).toHaveAttribute('href', `${daoUrl}/proposals/CHILD-SLUG-4`);
     });
 
     it('renders the correct timestamp as a date', () => {

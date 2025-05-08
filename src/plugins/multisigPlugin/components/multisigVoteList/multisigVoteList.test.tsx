@@ -1,7 +1,9 @@
 import type { IVote } from '@/modules/governance/api/governanceService';
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
 import { generateProposal } from '@/modules/governance/testUtils';
-import { generateAddressInfo } from '@/shared/testUtils';
+import * as daoService from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
+import { generateAddressInfo, generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { addressUtils, GukModulesProvider, type VoteIndicator } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
 import { generateMultisigVote } from '../../testUtils';
@@ -10,15 +12,15 @@ import { type IMultisigVoteListProps, MultisigVoteList } from './multisigVoteLis
 jest.mock('../../../../modules/governance/components/voteList', () => ({
     VoteProposalListItem: ({
         vote,
-        daoId,
+        daoUrl,
         voteIndicator,
     }: {
         vote: IVote;
-        daoId: string;
+        daoUrl: string;
         voteIndicator: VoteIndicator;
     }) => {
         const slug = `MULTISIG-${vote.proposal!.incrementalId.toString()}`;
-        const href = `/dao/${daoId}/proposals/${slug}`;
+        const href = `${daoUrl}/proposals/${slug}`;
 
         return (
             <a href={href} data-testid="vote-proposal-list-item-mock">
@@ -31,9 +33,15 @@ jest.mock('../../../../modules/governance/components/voteList', () => ({
 
 describe('<MultisigVoteList /> component', () => {
     const useVoteListDataSpy = jest.spyOn(useVoteListData, 'useVoteListData');
+    const useDaoSpy = jest.spyOn(daoService, 'useDao');
+
+    beforeEach(() => {
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+    });
 
     afterEach(() => {
         useVoteListDataSpy.mockReset();
+        useDaoSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IMultisigVoteListProps>) => {
@@ -51,6 +59,12 @@ describe('<MultisigVoteList /> component', () => {
     };
 
     it('renders a data list with VoteDataListItem when includeInfo is false or not set', () => {
+        const daoNetwork = Network.ETHEREUM_MAINNET;
+        const daoAddress = '0x12345';
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }),
+        );
+
         const votes = [
             generateMultisigVote({
                 transactionHash: '0x123',
@@ -76,8 +90,12 @@ describe('<MultisigVoteList /> component', () => {
 
         const links = screen.getAllByRole('link');
         expect(links).toHaveLength(2);
-        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/members/${votes[0].member.address}`);
-        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/members/${votes[1].member.address}`);
+        expect(links[0].getAttribute('href')).toBe(
+            `/dao/${daoNetwork}/${daoAddress}/members/${votes[0].member.address}`,
+        );
+        expect(links[1].getAttribute('href')).toBe(
+            `/dao/${daoNetwork}/${daoAddress}/members/${votes[1].member.address}`,
+        );
 
         expect(screen.getByText(addressUtils.truncateAddress(votes[0].member.address))).toBeInTheDocument();
         expect(screen.getByText(addressUtils.truncateAddress(votes[1].member.address))).toBeInTheDocument();
@@ -85,6 +103,12 @@ describe('<MultisigVoteList /> component', () => {
     });
 
     it('renders a data list with VoteProposalDataListItem when includeInfo is true', () => {
+        const daoNetwork = Network.ETHEREUM_MAINNET;
+        const daoAddress = '0x12345';
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }),
+        );
+
         const votes = [
             generateMultisigVote({
                 transactionHash: '0x123',
@@ -113,8 +137,8 @@ describe('<MultisigVoteList /> component', () => {
         const links = screen.getAllByTestId('vote-proposal-list-item-mock');
         expect(links).toHaveLength(2);
 
-        expect(links[0]).toHaveAttribute('href', '/dao/test-id/proposals/MULTISIG-4');
-        expect(links[1]).toHaveAttribute('href', '/dao/test-id/proposals/MULTISIG-5');
+        expect(links[0]).toHaveAttribute('href', `/dao/${daoNetwork}/${daoAddress}/proposals/MULTISIG-4`);
+        expect(links[1]).toHaveAttribute('href', `/dao/${daoNetwork}/${daoAddress}/proposals/MULTISIG-5`);
 
         expect(within(links[0]).getByTestId('proposal-title')).toHaveTextContent(votes[0].proposal!.title);
         expect(within(links[1]).getByTestId('proposal-title')).toHaveTextContent(votes[1].proposal!.title);

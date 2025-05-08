@@ -9,9 +9,9 @@ export interface ITokenMemberListItemProps {
      */
     member: ITokenMember;
     /**
-     * ID of the DAO the user is member of.
+     * URL of the DAO the user is member of.
      */
-    daoId: string;
+    daoUrl: string;
     /**
      * Plugin to display the member for.
      */
@@ -19,7 +19,7 @@ export interface ITokenMemberListItemProps {
 }
 
 export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (props) => {
-    const { member, plugin, daoId } = props;
+    const { member, plugin, daoUrl } = props;
 
     const tokenDecimals = plugin.settings.token.decimals;
     const parsedVotingPower = formatUnits(BigInt(member.votingPower ?? '0'), tokenDecimals);
@@ -31,7 +31,7 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (props) 
             tokenAmount={parsedVotingPower}
             ensName={member.ens ?? undefined}
             className="min-w-0"
-            href={`/dao/${daoId}/members/${member.address}`}
+            href={`${daoUrl}/members/${member.address}`}
             delegationCount={member.metrics.delegateReceivedCount}
         />
     );

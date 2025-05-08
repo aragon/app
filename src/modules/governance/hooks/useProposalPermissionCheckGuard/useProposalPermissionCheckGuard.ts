@@ -1,6 +1,8 @@
+import { useDao } from '@/shared/api/daoService';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
-import { useDaoPlugins } from '../../../../shared/hooks/useDaoPlugins';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { usePermissionCheckGuard } from '../usePermissionCheckGuard';
 
@@ -27,9 +29,12 @@ export const useProposalPermissionCheckGuard = (params: IUseProposalPermissionCh
 
     const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress })![0];
 
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const daoUrl = dao && daoUtils.getDaoUrl(dao);
+
     const handlePermissionCheckError = useCallback(
-        () => router.push(`/dao/${daoId}/${redirectTab}`),
-        [router, daoId, redirectTab],
+        () => daoUrl && router.push(`${daoUrl}/${redirectTab}`),
+        [router, daoUrl, redirectTab],
     );
 
     const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({

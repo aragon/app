@@ -13,7 +13,7 @@ describe('<TokenMemberListItem /> component', () => {
     const createTestComponent = (props?: Partial<ITokenMemberListItemProps>) => {
         const completeProps: ITokenMemberListItemProps = {
             member: generateTokenMember(),
-            daoId: 'test-id',
+            daoUrl: '/test-dao-url',
             plugin: generateDaoPlugin({ settings: generateTokenPluginSettings() }),
             ...props,
         };
@@ -44,12 +44,13 @@ describe('<TokenMemberListItem /> component', () => {
     });
 
     it('retrieves the plugin settings to parse the member voting power using the decimals of the governance token', () => {
-        const daoId = 'test-dao-id';
         const token = generateTokenPluginSettingsToken({ decimals: 6 });
         const pluginSettings = generateTokenPluginSettings({ token });
         const member = generateTokenMember({ votingPower: '47928374987234' });
         const plugin = generateDaoPlugin({ settings: pluginSettings });
-        render(createTestComponent({ daoId, member, plugin }));
+        const daoUrl = '/dao-url';
+        render(createTestComponent({ member, plugin, daoUrl }));
         expect(screen.getByRole('heading', { name: /47.93M Voting Power/ })).toBeInTheDocument();
+        expect(screen.getByRole('link').getAttribute('href')).toEqual(`${daoUrl}/members/${member.address}`);
     });
 });

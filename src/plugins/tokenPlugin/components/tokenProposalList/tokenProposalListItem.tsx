@@ -11,9 +11,9 @@ export interface ITokenProposalListItemProps {
      */
     proposal: ITokenProposal;
     /**
-     * ID of the DAO for this proposal.
+     * URL of the DAO for this proposal.
      */
-    daoId: string;
+    daoUrl: string;
     /**
      * Plugin of the proposal.
      */
@@ -21,7 +21,7 @@ export interface ITokenProposalListItemProps {
 }
 
 export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (props) => {
-    const { proposal, daoId, plugin } = props;
+    const { proposal, daoUrl, plugin } = props;
 
     const vote = useUserVote({ proposal });
 
@@ -36,7 +36,7 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
             title={proposal.title}
             summary={proposal.summary}
             date={proposalDate}
-            href={`/dao/${daoId}/proposals/${slug}`}
+            href={`${daoUrl}/proposals/${slug}`}
             status={tokenProposalUtils.getProposalStatus(proposal)}
             voted={vote != null}
             publisher={{

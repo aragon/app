@@ -11,9 +11,9 @@ export interface IMultisigProposalListItemProps {
      */
     proposal: IMultisigProposal;
     /**
-     * ID of the DAO for this proposal.
+     * URL of the DAO for this proposal.
      */
-    daoId: string;
+    daoUrl: string;
     /**
      * Plugin of the proposal.
      */
@@ -21,7 +21,7 @@ export interface IMultisigProposalListItemProps {
 }
 
 export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> = (props) => {
-    const { proposal, daoId, plugin } = props;
+    const { proposal, daoUrl, plugin } = props;
 
     const vote = useUserVote({ proposal });
 
@@ -36,7 +36,7 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
             title={proposal.title}
             summary={proposal.summary}
             date={proposalDate}
-            href={`/dao/${daoId}/proposals/${slug}`}
+            href={`${daoUrl}/proposals/${slug}`}
             status={multisigProposalUtils.getProposalStatus(proposal)}
             voted={vote != null}
             publisher={{
