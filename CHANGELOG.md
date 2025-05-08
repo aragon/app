@@ -1,5 +1,73 @@
 # @aragon/app-next
 
+## 1.3.0
+
+### Minor Changes
+
+- [#528](https://github.com/aragon/app-next/pull/528) [`62e9b1f`](https://github.com/aragon/app-next/commit/62e9b1f8bf655f4b923c786d69c975f89503208d) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Display links to block explorer on external body setup
+
+- [#523](https://github.com/aragon/app-next/pull/523) [`5b2e14a`](https://github.com/aragon/app-next/commit/5b2e14a0ff07d6732798f4eaed31fb5e515f2e9c) Thanks [@dependabot](https://github.com/apps/dependabot)! - Bump actions/download-artifact to 4.3.0
+
+- [#495](https://github.com/aragon/app-next/pull/495) [`d9c0cd5`](https://github.com/aragon/app-next/commit/d9c0cd556bec8a8153b5f24ae57036c3ef92b5e3) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement debug panel
+
+- [#509](https://github.com/aragon/app-next/pull/509) [`ced4fa0`](https://github.com/aragon/app-next/commit/ced4fa08c0c622b637c715a41e7d265b082a317c) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Hide testnet DAOs from all-daos list on explore page
+
+- [#506](https://github.com/aragon/app-next/pull/506) [`25f4f92`](https://github.com/aragon/app-next/commit/25f4f9256eb0e080e49edaa361bc4090bedf39b4) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Update Governance Designer and Voting Terminal to support external addresses
+
+- [#524](https://github.com/aragon/app-next/pull/524) [`ada13c8`](https://github.com/aragon/app-next/commit/ada13c817d14250e72f866a814ce6720f77d2d13) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#518](https://github.com/aragon/app-next/pull/518) [`86c37de`](https://github.com/aragon/app-next/commit/86c37de11c446f7a1457c02c859a742fda56e9bb) Thanks [@shan8851](https://github.com/shan8851)! - Use universal proposal status utility for token and multisig plugins
+
+- [#503](https://github.com/aragon/app-next/pull/503) [`9fbad8f`](https://github.com/aragon/app-next/commit/9fbad8fbbce01d0e9baf23f769f23799e6da43cf) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#513](https://github.com/aragon/app-next/pull/513) [`2ddb6d3`](https://github.com/aragon/app-next/commit/2ddb6d3568980ee407840d059c437a0ec189d944) Thanks [@shan8851](https://github.com/shan8851)! - Add ens subdomain to dao creation on mainnet
+
+- [#527](https://github.com/aragon/app-next/pull/527) [`2dd614a`](https://github.com/aragon/app-next/commit/2dd614abcd8a2d9738e5959e4f504f1d706adb7a) Thanks [@evanaronson](https://github.com/evanaronson)! - Change demo DAO header from Aragon X to the Aragon demo DAO
+
+- [#514](https://github.com/aragon/app-next/pull/514) [`81e9251`](https://github.com/aragon/app-next/commit/81e925125fc9fa626a2bd560f8398a51ad9ea146) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Implement proxy function for backend requests
+
+- [#505](https://github.com/aragon/app-next/pull/505) [`4be4893`](https://github.com/aragon/app-next/commit/4be4893e66f7617e116361a8969dbc607cd4f5c0) Thanks [@dependabot](https://github.com/apps/dependabot)! - Bump softprops/action-gh-release to 2.2.2
+
+- [#492](https://github.com/aragon/app-next/pull/492) [`73f7080`](https://github.com/aragon/app-next/commit/73f7080432457e358b3678fb02d4b5c466e763eb) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#489](https://github.com/aragon/app-next/pull/489) [`8aab0cf`](https://github.com/aragon/app-next/commit/8aab0cf8355a3a4de708f2dd84da07f7da9f977e) Thanks [@milosh86](https://github.com/milosh86)! - Implement new process creation flow via an existing process
+
+### Patch Changes
+
+- [#490](https://github.com/aragon/app-next/pull/490) [`17a570a`](https://github.com/aragon/app-next/commit/17a570a9ee25fe98b7187bd8d181138355647a96) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Increase query params for min dimensions on IPFS asset fetching
+
+- [#529](https://github.com/aragon/app-next/pull/529) [`e44c680`](https://github.com/aragon/app-next/commit/e44c68063a856dff1f185694cd8db535d1367a5d) Thanks [@shan8851](https://github.com/shan8851)! - Fix validation on ens subdomain during DAO creation flow to stop failed transactions
+
+- [#510](https://github.com/aragon/app-next/pull/510) [`019aeea`](https://github.com/aragon/app-next/commit/019aeeac07753e308553877972fd5791f90528dc) Thanks [@shan8851](https://github.com/shan8851)! - Update create DAO form to place Sepolia as first item and add help text recommending Sepolia for first time use
+
+- [#498](https://github.com/aragon/app-next/pull/498) [`b6ec741`](https://github.com/aragon/app-next/commit/b6ec7416865ccb90e1ff0412dc0b02b42f392853) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Fix sizes of AdminManage and AdminUninstall dialogs
+
+- [#491](https://github.com/aragon/app-next/pull/491) [`c8cd33b`](https://github.com/aragon/app-next/commit/c8cd33b1184d16f4e05c8bcc1f7b499429f0ccbc) Thanks [@shan8851](https://github.com/shan8851)! - Adjust CSP to allow for vercel comments outside of production
+
+- [#531](https://github.com/aragon/app-next/pull/531) [`873c0b5`](https://github.com/aragon/app-next/commit/873c0b5cc24823f88e43b4e223f64e24866dbd06) Thanks [@milosh86](https://github.com/milosh86)! - Fix validation bug when creating simple governance processes
+
+- [#532](https://github.com/aragon/app-next/pull/532) [`24d49b1`](https://github.com/aragon/app-next/commit/24d49b14f3b6cde0970cb5697344a56a1371be73) Thanks [@dependabot](https://github.com/apps/dependabot)! - Bump base-x from 5.0.0 to 5.0.1
+
+- [#528](https://github.com/aragon/app-next/pull/528) [`62e9b1f`](https://github.com/aragon/app-next/commit/62e9b1f8bf655f4b923c786d69c975f89503208d) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Fix ENS resolution on DAO members page
+
+- [#538](https://github.com/aragon/app-next/pull/538) [`6cff6b9`](https://github.com/aragon/app-next/commit/6cff6b9bf49b76fde6c532bea90cf22685699488) Thanks [@evanaronson](https://github.com/evanaronson)! - Update strings across app to adhere to style guide
+
+- [#511](https://github.com/aragon/app-next/pull/511) [`9fdce56`](https://github.com/aragon/app-next/commit/9fdce560b3e2ffe45150a37c21b76c713001937f) Thanks [@milosh86](https://github.com/milosh86)! - Fix referential stability issue with useRouter
+
+- [#496](https://github.com/aragon/app-next/pull/496) [`d281ddb`](https://github.com/aragon/app-next/commit/d281ddb38f5bd1ca71cbe4e5670929d5bba04ff2) Thanks [@evanaronson](https://github.com/evanaronson)! - Update strings across app to adhere to style guide
+
+- [#497](https://github.com/aragon/app-next/pull/497) [`8536fd3`](https://github.com/aragon/app-next/commit/8536fd352a300084b40dce1f4fe191f3ff440eca) Thanks [@milosh86](https://github.com/milosh86)! - Add permission check to process creation flow via new useProposalPermissionCheckGuard hook
+
+- [#533](https://github.com/aragon/app-next/pull/533) [`8a69dd8`](https://github.com/aragon/app-next/commit/8a69dd8ee38470a1072f66985f639a7ebb36514f) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Update backend URL on all environments
+
+- [#525](https://github.com/aragon/app-next/pull/525) [`6724f78`](https://github.com/aragon/app-next/commit/6724f7876675bcf53b0f4dd695a9d02ce4367ea0) Thanks [@milosh86](https://github.com/milosh86)! - Update member DAOs sorting to be sorted by the blockTimestamp
+
+- [#526](https://github.com/aragon/app-next/pull/526) [`8a38815`](https://github.com/aragon/app-next/commit/8a38815e32e4345229ad38535f85e2c35faed7eb) Thanks [@shan8851](https://github.com/shan8851)! - Implement shared GovernanceBodyInfo component and use on the process creation flow
+
+- [#535](https://github.com/aragon/app-next/pull/535) [`75e0d68`](https://github.com/aragon/app-next/commit/75e0d683da3bc5552e3b270873397d6b4665cb02) Thanks [@shan8851](https://github.com/shan8851)! - Fix labels and help text on the create new token flow
+
+- [#499](https://github.com/aragon/app-next/pull/499) [`76accf0`](https://github.com/aragon/app-next/commit/76accf0b9fc3a0c9068466ddabc31c81f7770bf1) Thanks [@milosh86](https://github.com/milosh86)! - Update new process proposal labels and dialogs order
+
 ## 1.2.0
 
 ### Minor Changes
