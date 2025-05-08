@@ -35,22 +35,32 @@ class VersionComparatorUtils {
     };
 
     private getVersionDiff = (current: IVersion, target: IVersion): number => {
-        const { release: currentRelease, build: currentBuild } = current;
-        const { release: targetRelease, build: targetBuild } = target;
+        const keys: Array<keyof IVersion> = ['release', 'build', 'patch'];
 
-        return currentRelease !== targetRelease ? currentRelease - targetRelease : currentBuild - targetBuild;
+        for (const key of keys) {
+            const firstValue = current[key] ?? 0;
+            const secondValue = target[key] ?? 0;
+
+            if (firstValue > secondValue) {
+                return 1;
+            } else if (firstValue < secondValue) {
+                return -1;
+            }
+        }
+
+        return 0;
     };
 
     private normaliseStringVersion = (version: string): IVersion => {
-        const [release, build] = version.split('.');
+        const [release, build, patch] = version.split('.');
 
-        return this.normaliseVersion({ release, build });
+        return this.normaliseVersion({ release, build, patch });
     };
 
     private normaliseVersion = (version: IVersion<string> | IVersion): IVersion => {
-        const { release, build } = version;
+        const { release, build, patch } = version;
 
-        return { release: Number(release), build: Number(build) };
+        return { release: Number(release), build: Number(build), patch: Number(patch) };
     };
 }
 

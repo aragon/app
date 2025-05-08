@@ -93,13 +93,13 @@ class PrepareDaoContractsUpdateDialogUtils {
         const { network, address, version } = dao;
         const { dao: daoBaseAddress } = networkDefinitions[network].addresses;
 
-        const { release: currentRelease, build: currentBuild } =
-            versionComparatorUtils.normaliseComparatorInput(version)!;
+        const { release, build, patch } = versionComparatorUtils.normaliseComparatorInput(version)!;
+        const currentVersionArray: [number, number, number] = [release, build, patch!];
 
         const initializeData = encodeFunctionData({
             abi: daoAbi,
             functionName: 'initializeFrom',
-            args: [[currentRelease, currentBuild, 0], '0x'],
+            args: [currentVersionArray, '0x'],
         });
 
         const transactionData = encodeFunctionData({

@@ -7,6 +7,10 @@ export interface IVersion<TType extends number | string = number> {
      * Build number of the version.
      */
     build: TType;
+    /**
+     * Patch number of the version.
+     */
+    patch?: TType;
 }
 
 export type ComparatorInput = IVersion | IVersion<string> | string | undefined;
