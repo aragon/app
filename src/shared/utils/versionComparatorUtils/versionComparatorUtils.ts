@@ -59,8 +59,13 @@ class VersionComparatorUtils {
 
     private normaliseVersion = (version: IVersion<string> | IVersion): IVersion => {
         const { release, build, patch } = version;
+        const normalizedVersion: IVersion = { release: Number(release), build: Number(build) };
 
-        return { release: Number(release), build: Number(build), patch: Number(patch) };
+        if (patch) {
+            normalizedVersion.patch = Number(patch);
+        }
+
+        return normalizedVersion;
     };
 }
 
