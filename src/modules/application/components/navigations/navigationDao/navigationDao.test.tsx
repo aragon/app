@@ -58,7 +58,7 @@ describe('<NavigationDao /> component', () => {
 
     const createTestComponent = (props?: Partial<INavigationDaoProps>) => {
         const completeProps: INavigationDaoProps = {
-            id: 'test-dao',
+            daoId: 'test-dao',
             ...props,
         };
 

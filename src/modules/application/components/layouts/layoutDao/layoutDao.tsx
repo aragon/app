@@ -42,8 +42,8 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <NavigationDao id={daoId} />
-            <BannerDao id={daoId} />
+            <NavigationDao daoId={daoId} />
+            <BannerDao daoId={daoId} {...daoPageParams} />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );

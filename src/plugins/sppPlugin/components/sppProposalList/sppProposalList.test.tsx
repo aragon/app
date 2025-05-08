@@ -1,7 +1,8 @@
 import * as useProposalListData from '@/modules/governance/hooks/useProposalListData';
-import { generateDaoPlugin } from '@/shared/testUtils';
+import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import * as DaoService from '../../../../shared/api/daoService';
 import {
     generateSppPluginSettings,
     generateSppProposal,
@@ -12,6 +13,7 @@ import { SppProposalList, type ISppProposalListProps } from './sppProposalList';
 
 describe('<SppProposalList /> component', () => {
     const useProposalListDataSpy = jest.spyOn(useProposalListData, 'useProposalListData');
+    const useDaoSpy = jest.spyOn(DaoService, 'useDao');
 
     beforeEach(() => {
         useProposalListDataSpy.mockReturnValue({
@@ -23,10 +25,12 @@ describe('<SppProposalList /> component', () => {
             emptyState: { heading: '', description: '' },
             errorState: { heading: '', description: '' },
         });
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
     });
 
     afterEach(() => {
         useProposalListDataSpy.mockReset();
+        useDaoSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ISppProposalListProps>) => {

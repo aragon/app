@@ -17,11 +17,11 @@ export interface INavigationDaoProps extends INavigationContainerProps {
     /**
      * ID of the DAO to display the data for.
      */
-    id: string;
+    daoId: string;
 }
 
 export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
-    const { id, containerClasses, ...otherProps } = props;
+    const { daoId, containerClasses, ...otherProps } = props;
 
     const { t } = useTranslations();
     const { address, isConnected } = useAccount();
@@ -29,7 +29,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    const urlParams = { id };
+    const urlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams });
 
     if (dao == null) {

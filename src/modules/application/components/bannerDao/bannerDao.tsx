@@ -8,25 +8,26 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, invariant } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
+import type { IDaoPageParams } from '../../../../shared/types';
 
-export interface IBannerDaoProps {
+export interface IBannerDaoProps extends IDaoPageParams {
     /**
      * ID of the DAO.
      */
-    id: string;
+    daoId: string;
 }
 
 export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
-    const { id } = props;
+    const { daoId, id, network } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { isAdminMember, adminPluginAddress } = useAdminStatus({ daoId: id });
+    const { isAdminMember, adminPluginAddress } = useAdminStatus({ daoId });
 
     const handleBannerActionClick = () => {
         invariant(adminPluginAddress != null, 'BannerDao: admin pluginAddress is expected.');
-        const params: ICreateProcessDetailsDialogParams = { daoId: id, pluginAddress: adminPluginAddress as Hex };
+        const params: ICreateProcessDetailsDialogParams = { daoId, pluginAddress: adminPluginAddress as Hex };
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
 
@@ -47,12 +48,17 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
                     </Button>
                 )}
                 {bannerType === 'adminPlugin' && (
-                    <Button size="sm" variant="tertiary" href={`/dao/${id}/members`} iconRight={IconType.CHEVRON_RIGHT}>
+                    <Button
+                        size="sm"
+                        variant="tertiary"
+                        href={`/dao/${network}/${id}/members`}
+                        iconRight={IconType.CHEVRON_RIGHT}
+                    >
                         {t(`app.application.bannerDao.adminPlugin.action`)}
                     </Button>
                 )}
                 {isAdminMember && (
-                    <Button href={`/dao/${id}/settings`} size="sm" variant="tertiary">
+                    <Button href={`/dao/${network}/${id}/settings`} size="sm" variant="tertiary">
                         {t('app.application.bannerDao.adminMember.manage')}
                     </Button>
                 )}

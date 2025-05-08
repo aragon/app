@@ -3,6 +3,7 @@ import { useProposalListData } from '@/modules/governance/hooks/useProposalListD
 import type { ISppProposal } from '@/plugins/sppPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
+import { useDao } from '../../../../shared/api/daoService';
 import { SppProposalListItem } from './sppProposalListItem';
 
 export interface ISppProposalListProps extends IDaoProposalListDefaultProps {}
@@ -15,6 +16,7 @@ export const SppProposalList: React.FC<ISppProposalListProps> = (props) => {
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, proposalList } =
         useProposalListData<ISppProposal>(initialParams);
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     return (
         <DataListRoot
@@ -30,9 +32,10 @@ export const SppProposalList: React.FC<ISppProposalListProps> = (props) => {
                 errorState={errorState}
                 emptyState={emptyState}
             >
-                {proposalList?.map((proposal) => (
-                    <SppProposalListItem key={proposal.id} proposal={proposal} daoId={daoId} plugin={plugin} />
-                ))}
+                {dao &&
+                    proposalList?.map((proposal) => (
+                        <SppProposalListItem key={proposal.id} proposal={proposal} dao={dao} plugin={plugin} />
+                    ))}
             </DataListContainer>
             {!hidePagination && <DataListPagination />}
             {children}

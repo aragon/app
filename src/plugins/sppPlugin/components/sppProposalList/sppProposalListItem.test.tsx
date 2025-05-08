@@ -2,7 +2,8 @@ import {
     type ISppProposalListItemProps,
     SppProposalListItem,
 } from '@/plugins/sppPlugin/components/sppProposalList/sppProposalListItem';
-import { generateDaoPlugin } from '@/shared/testUtils';
+import { Network } from '@/shared/api/daoService';
+import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import {
@@ -23,7 +24,7 @@ describe('<SppProposalListItem /> component', () => {
     const createTestComponent = (props?: Partial<ISppProposalListItemProps>) => {
         const completeProps: ISppProposalListItemProps = {
             proposal: generateSppProposal(),
-            daoId: 'dao-id',
+            dao: generateDao(),
             plugin: generateDaoPlugin(),
             ...props,
         };
@@ -55,9 +56,20 @@ describe('<SppProposalListItem /> component', () => {
             settings,
             incrementalId: 5,
         });
-        const daoId = 'dao-id';
-        render(createTestComponent({ plugin, proposal }));
-        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/SPP-5`);
+        const daoEns = 'test.dao.eth';
+        const daoAddress = '0x12345';
+        const daoNetwork = Network.ETHEREUM_MAINNET;
+        const daoId = `${daoNetwork}-${daoAddress}`;
+        const dao = generateDao({
+            id: daoId,
+            ens: daoEns,
+            address: daoAddress,
+            network: daoNetwork,
+        });
+        render(createTestComponent({ plugin, proposal, dao }));
+        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(
+            `/dao/${daoNetwork}/${daoEns}/proposals/SPP-5`,
+        );
     });
 
     it('displays the stage name in status context when proposal is multistage and appropriate for status', () => {
