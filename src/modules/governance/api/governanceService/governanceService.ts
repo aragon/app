@@ -1,5 +1,5 @@
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
-import type { IMember, IProposal, IVote, IProposalAction, IProposalActions } from './domain';
+import type { IMember, IProposal, IProposalAction, IProposalActions, IVote } from './domain';
 import type {
     IGetCanVoteParams,
     IGetMemberExistsParams,
@@ -59,7 +59,7 @@ class GovernanceService extends AragonBackendService {
         return result;
     };
 
-        getProposalActions = async <TAction extends IProposalAction = IProposalAction>(
+    getProposalActions = async <TAction extends IProposalAction = IProposalAction>(
         params: IGetProposalActionsParams,
     ): Promise<IProposalActions<TAction>> => {
         const result = await this.request<IProposalActions<TAction>>(this.urls.proposalActions, params);

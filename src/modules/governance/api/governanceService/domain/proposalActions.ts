@@ -1,4 +1,4 @@
-import type { IProposalAction } from "./proposalAction";
+import type { IProposalAction } from './proposalAction';
 
 export interface IRawAction {
     /**

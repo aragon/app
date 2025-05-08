@@ -3,6 +3,7 @@ export type { IMember } from './member';
 export type { IMemberMetrics } from './memberMetrics';
 export type { IProposal } from './proposal';
 export type { IProposalAction } from './proposalAction';
+export type { IProposalActions } from './proposalActions';
 export type {
     IProposalActionUpdateMetadata,
     IProposalActionUpdateMetadataObject,
@@ -14,4 +15,3 @@ export type {
 export type { IProposalActionWithdrawToken } from './proposalActionWithdrawToken';
 export type { IProposalExecution } from './proposalExecution';
 export type { IVote } from './vote';
-export type { IProposalActions } from './proposalActions';
