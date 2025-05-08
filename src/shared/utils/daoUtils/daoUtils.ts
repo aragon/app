@@ -1,5 +1,5 @@
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
-import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
+import { type IDao, type IDaoPlugin, Network } from '@/shared/api/daoService';
 import { type IDaoPageParams, PluginType } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { getEnsAddress } from 'wagmi/actions';
@@ -64,7 +64,7 @@ class DaoUtils {
      *
      * @throws Error if the ENS address is not found.
      */
-    async resolveDaoId(params: IDaoPageParams) {
+    resolveDaoId = async (params: IDaoPageParams) => {
         const { id, network } = params;
 
         if (id.endsWith('.eth')) {
@@ -81,7 +81,13 @@ class DaoUtils {
         }
 
         return `${network}-${id}`;
-    }
+    };
+
+    getDaoUrl = (dao: IDao): `/dao/${Network}/${string}` => {
+        const { network, address, ens } = dao;
+
+        return `/dao/${network}/${ens ?? address}`;
+    };
 
     private filterPluginByAddress = (plugin: IDaoPlugin, address?: string) =>
         address == null || addressUtils.isAddressEqual(plugin.address, address);

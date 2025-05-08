@@ -1,4 +1,4 @@
-import { daoService } from '@/shared/api/daoService';
+import { daoService, Network } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { PluginType } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
@@ -242,6 +242,24 @@ describe('dao utils', () => {
             getEnsAddressSpy.mockResolvedValue(null);
 
             await expect(daoUtils.resolveDaoId(params)).rejects.toThrow('ENS address not found');
+        });
+    });
+
+    describe('getDaoUrl', () => {
+        it('returns the correct URL for a DAO with ENS', () => {
+            const daoEns = 'test.dao.eth';
+            const daoNetwork = Network.ETHEREUM_MAINNET;
+            const dao = generateDao({ ens: daoEns, network: daoNetwork });
+            const expectedUrl = `/dao/${daoNetwork}/${daoEns}`;
+            expect(daoUtils.getDaoUrl(dao)).toEqual(expectedUrl);
+        });
+
+        it('returns the correct URL for a DAO without ENS', () => {
+            const daoAddress = '0x12345';
+            const daoNetwork = Network.ETHEREUM_MAINNET;
+            const dao = generateDao({ address: daoAddress, network: daoNetwork });
+            const expectedUrl = `/dao/${daoNetwork}/${daoAddress}`;
+            expect(daoUtils.getDaoUrl(dao)).toEqual(expectedUrl);
         });
     });
 });
