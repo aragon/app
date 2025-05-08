@@ -23,6 +23,7 @@ export const UpdateDaoContractsCard: React.FC<IUpdateDaoContractsCardProps> = (p
 
     const pluginName = daoUtils.getPluginName(plugin);
     const parsedSubdomain = daoUtils.parsePluginSubdomain(plugin.subdomain);
+
     const fromVersion = `${parsedSubdomain} v${release}.${build}`;
     const toVersion = `${parsedSubdomain} v${targetRelease.toString()}.${targetBuild.toString()}`;
 
@@ -34,10 +35,7 @@ export const UpdateDaoContractsCard: React.FC<IUpdateDaoContractsCardProps> = (p
                     <p className="text-base text-neutral-500 md:text-lg">{addressUtils.truncateAddress(address)}</p>
                 </div>
                 <p className="text-sm text-neutral-500 md:text-base">
-                    {t('app.settings.updateDaoContractsCard.versionUpdate', {
-                        from: fromVersion,
-                        to: toVersion,
-                    })}
+                    {t('app.settings.updateDaoContractsCard.versionUpdate', { from: fromVersion, to: toVersion })}
                 </p>
             </div>
             <Link href={target.releaseNotesUrl} target="_blank" iconRight={IconType.LINK_EXTERNAL}>

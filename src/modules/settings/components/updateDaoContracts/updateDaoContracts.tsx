@@ -39,17 +39,14 @@ export const UpdateDaoContracts: React.FC<IUpdateDaoContractsProps> = (props) =>
             return;
         }
         const params: ISelectPluginDialogParams = { daoId, onPluginSelected };
-
         open(GovernanceDialogId.SELECT_PLUGIN, { params });
     };
 
-    const onPluginSelected = (plugin: IDaoPlugin) => {
+    const onPluginSelected = (plugin: IDaoPlugin) =>
         createProposalGuard({ plugin, onSuccess: () => handlePermissionCheckSuccess(plugin) });
-    };
 
-    const handlePermissionCheckSuccess = (selectedPlugin: IDaoPlugin) => {
-        const params: IUpdateDaoContractsListDialogParams = { process: selectedPlugin, daoId };
-
+    const handlePermissionCheckSuccess = (plugin: IDaoPlugin) => {
+        const params: IUpdateDaoContractsListDialogParams = { plugin, daoId };
         open(SettingsDialogId.UPDATE_DAO_CONTRACTS_LIST, { params });
     };
 
