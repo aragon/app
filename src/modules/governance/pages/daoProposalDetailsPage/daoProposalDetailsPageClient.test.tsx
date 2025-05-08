@@ -89,6 +89,13 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     it('renders the proposal page breadcrumbs', () => {
         const proposal = generateProposal({ proposalIndex: 'incremental-index', incrementalId: 3 });
         const daoId = 'test-id';
+        const daoEns = 'test.dao.ens';
+        const daoNetwork = Network.ETHEREUM_MAINNET;
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateDao({ id: daoId, ens: daoEns }),
+            }),
+        );
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
 
         const plugin = generateDaoPlugin({ slug: 'test-plugin-slug' });
@@ -101,7 +108,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
         const proposalsLink = screen.getByRole('link', { name: /daoProposalDetailsPage.header.breadcrumb.proposals/ });
         expect(proposalsLink).toBeInTheDocument();
-        expect(proposalsLink.getAttribute('href')).toEqual(`/dao/${daoId}/proposals`);
+        expect(proposalsLink.getAttribute('href')).toEqual(`/dao/${daoNetwork}/${daoEns}/proposals`);
         expect(within(breadcrumbsContainer).getByText('TEST-PLUGIN-SLUG-3')).toBeInTheDocument();
     });
 

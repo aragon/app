@@ -1,11 +1,12 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, EmptyState, invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
+import { daoUtils } from '../../../../shared/utils/daoUtils';
 
 export interface IAdminUninstallProcessDialogCreateParams {
     /**
@@ -31,12 +32,13 @@ export const AdminUninstallProcessDialogCreate: React.FC<IAdminUninstallProcessD
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
-    const createProcessUrl: __next_route_internal_types__.DynamicRoutes = `/dao/${daoId}/create/process`;
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const daoUrl = dao && daoUtils.getDaoUrl(dao);
 
     const handlePermissionGuardSuccess = useCallback(() => {
-        router.push(createProcessUrl);
+        router.push(`${daoUrl!}/create/process`);
         close();
-    }, [router, createProcessUrl, close]);
+    }, [router, daoUrl, close]);
 
     const { check: createProcessGuard, result: canCreateProcess } = usePermissionCheckGuard({
         permissionNamespace: 'proposal',
@@ -69,7 +71,7 @@ export const AdminUninstallProcessDialogCreate: React.FC<IAdminUninstallProcessD
                     )}
                     primaryButton={{
                         label: t('app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogCreate.label'),
-                        href: canCreateProcess ? createProcessUrl : undefined,
+                        href: canCreateProcess && daoUrl ? `${daoUrl}/create/process` : undefined,
                         onClick: handleCreateProcessClick,
                     }}
                 />

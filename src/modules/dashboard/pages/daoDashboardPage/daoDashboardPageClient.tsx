@@ -51,6 +51,8 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
         return null;
     }
 
+    const daoUrl = daoUtils.getDaoUrl(dao);
+
     const proposalListParams = { queryParams: { daoId, pageSize: dashboardProposalsCount } };
     const memberListParams = { queryParams: { daoId, pageSize: dashboardMembersCount } };
     const assetListParams = {
@@ -85,7 +87,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                     variant="tertiary"
                                     size="md"
                                     iconRight={IconType.CHEVRON_RIGHT}
-                                    href={`/dao/${daoId}/proposals`}
+                                    href={`${daoUrl}/proposals`}
                                 >
                                     {t('app.dashboard.daoDashboardPage.main.viewAll')}
                                 </Button>
@@ -100,7 +102,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                     variant="tertiary"
                                     size="md"
                                     iconRight={IconType.CHEVRON_RIGHT}
-                                    href={`/dao/${daoId}/members`}
+                                    href={`${daoUrl}/members`}
                                 >
                                     {t('app.dashboard.daoDashboardPage.main.viewAll')}
                                 </Button>
@@ -114,7 +116,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                 variant="tertiary"
                                 size="md"
                                 iconRight={IconType.CHEVRON_RIGHT}
-                                href={`/dao/${daoId}/assets`}
+                                href={`${daoUrl}/assets`}
                             >
                                 {t('app.dashboard.daoDashboardPage.main.viewAll')}
                             </Button>

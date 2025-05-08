@@ -29,6 +29,7 @@ import {
     useBlockExplorer,
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
+import { daoUtils } from '../../../../shared/utils/daoUtils';
 import { type IProposal, useProposalBySlug } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -97,7 +98,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     };
     const pageBreadcrumbs = [
         {
-            href: `/dao/${daoId}/proposals`,
+            href: `${daoUtils.getDaoUrl(dao)}/proposals`,
             label: t('app.governance.daoProposalDetailsPage.header.breadcrumb.proposals'),
         },
         { label: slug },

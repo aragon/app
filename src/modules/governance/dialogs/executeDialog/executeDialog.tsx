@@ -11,6 +11,8 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { DataList, invariant, ProposalDataListItem, type ProposalStatus } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
+import { useDao } from '../../../../shared/api/daoService';
+import { daoUtils } from '../../../../shared/utils/daoUtils';
 import type { IProposal } from '../../api/governanceService';
 import { proposalUtils } from '../../utils/proposalUtils';
 import { executeDialogUtils } from './executeDialogUtils';
@@ -47,6 +49,9 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
     const { proposal, status, daoId } = location.params;
     const { title, summary, creator, proposalIndex, pluginAddress, network } = proposal;
 
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const daoUrl = dao && daoUtils.getDaoUrl(dao);
+
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
@@ -72,7 +77,7 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
             prepareTransaction={handlePrepareTransaction}
             network={network}
             transactionType={TransactionType.PROPOSAL_EXECUTE}
-            indexingFallbackUrl={`/dao/${daoId}/proposals/${slug}`}
+            indexingFallbackUrl={daoUrl && `${daoUrl}/proposals/${slug}`}
         >
             <DataList.Root entityLabel="">
                 <ProposalDataListItem.Structure

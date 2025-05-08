@@ -23,6 +23,7 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import EfpLogo from '../../../../assets/images/efp-logo.svg';
+import { daoUtils } from '../../../../shared/utils/daoUtils';
 import { useMember } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
 import { VoteList } from '../../components/voteList';
@@ -105,7 +106,10 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const blockExplorer = getBlockExplorer(chainId);
 
     const pageBreadcrumbs = [
-        { href: `/dao/${daoId}/members`, label: t('app.governance.daoMemberDetailsPage.header.breadcrumb.members') },
+        {
+            href: `${daoUtils.getDaoUrl(dao)}/members`,
+            label: t('app.governance.daoMemberDetailsPage.header.breadcrumb.members'),
+        },
         { label: memberName },
     ];
 
