@@ -5,6 +5,7 @@ export const sppPlugin: IPluginInfo = {
     id: 'spp',
     name: 'Staged Proposal Processor',
     installVersion: { release: 1, build: 1 },
+    releaseNotesUrl: 'https://github.com/aragon/staged-proposal-processor-plugin/releases/tag/v1.1.0',
     repositoryAddresses: {
         [Network.ARBITRUM_MAINNET]: '0xe3B00403Cd8cBee7af01961c25220289a4Cc5753',
         [Network.BASE_MAINNET]: '0x3C13098D4e2FE9aCb2fCEb3EE4fBBe33405eD39D',

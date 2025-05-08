@@ -17,4 +17,8 @@ export interface IPluginInfo extends IPlugin {
      * Setup data for plugins that can be included in the governance designer process.
      */
     setup?: IPluginInfoSetup;
+    /**
+     * URL to the release notes of the plugin.
+     */
+    releaseNotesUrl: string;
 }
