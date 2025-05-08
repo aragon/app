@@ -10,6 +10,7 @@ import { invariant } from '@aragon/gov-ui-kit';
 import { encodeFunctionData, type Hex } from 'viem';
 import { SettingsSlotId } from '../../constants/moduleSlots';
 import type { IBuildPreparePluginUpdateDataParams } from '../../types';
+import { daoAbi } from './daoAbi';
 import { pluginSetupProcessorAbi } from './pluginSetupProcessorAbi';
 import type {
     IBuildPrepareUpdatePluginsTransactionParams,
@@ -75,7 +76,7 @@ class PrepareDaoContractsUpdateDialogUtils {
         const transactions: ITransactionRequest[] = [];
 
         if (osxUpdate) {
-            const osxAction = this.buildOsxUpdateAction();
+            const osxAction = this.buildOsxUpdateAction(dao);
             transactions.push(osxAction);
         }
 
@@ -88,8 +89,27 @@ class PrepareDaoContractsUpdateDialogUtils {
         return transactions;
     };
 
-    // TODO
-    private buildOsxUpdateAction = () => ({ to: '0x' as Hex, data: '' as Hex, value: BigInt(0) });
+    private buildOsxUpdateAction = (dao: IDao) => {
+        const { network, address, version } = dao;
+        const { dao: daoBaseAddress } = networkDefinitions[network].addresses;
+
+        const { release: currentRelease, build: currentBuild } =
+            versionComparatorUtils.normaliseComparatorInput(version)!;
+
+        const initializeData = encodeFunctionData({
+            abi: daoAbi,
+            functionName: 'initializeFrom',
+            args: [[currentRelease, currentBuild, 0], '0x'],
+        });
+
+        const transactionData = encodeFunctionData({
+            abi: daoAbi,
+            functionName: 'upgradeToAndCall',
+            args: [daoBaseAddress, initializeData],
+        });
+
+        return { to: address as Hex, data: transactionData, value: BigInt(0) };
+    };
 
     private buildApplyUpdateMetadata = (
         params: IGetApplyUpdateProposalParams,

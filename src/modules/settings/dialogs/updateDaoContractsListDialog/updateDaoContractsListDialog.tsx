@@ -37,7 +37,7 @@ export const UpdateDaoContractsListDialog: React.FC<IUpdateDaoContractsListDialo
     invariant(dao != null, 'UpdateDaoContractsListDialog: DAO must be defined.');
 
     const hasOsxUpdate = daoUtils.hasAvailableOsxUpdate(dao);
-    const newProtocolVersion = networkDefinitions[dao.network].protocolVersion;
+    const { protocolVersion: newProtocolVersion } = networkDefinitions[dao.network];
     const pluginUpdates = daoUtils.getAvailablePluginUpdates(dao);
 
     const handleConfimClick = () => {
