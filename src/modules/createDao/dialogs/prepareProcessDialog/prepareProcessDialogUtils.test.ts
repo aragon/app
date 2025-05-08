@@ -1,6 +1,6 @@
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import { Network } from '@/shared/api/daoService';
-import { generateDao, generatePluginSetupData } from '@/shared/testUtils';
+import { generateDao, generatePluginInstallationSetupData } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
@@ -300,13 +300,13 @@ describe('prepareProcessDialog utils', () => {
         ): IBuildProcessProposalActionsParams => ({
             values: generateCreateProcessFormData(),
             dao: generateDao(),
-            setupData: [generatePluginSetupData()],
+            setupData: [generatePluginInstallationSetupData()],
             ...params,
         });
 
         it('builds the apply-installation actions and passes them to the create proposal plugin function', () => {
             const dao = generateDao();
-            const setupData = [generatePluginSetupData()];
+            const setupData = [generatePluginInstallationSetupData()];
             const values = generateCreateProcessFormDataBasic();
             const installPluginActions = [{ to: '0x123' as Hex, data: '0x' as Hex, value: BigInt(11) }];
 

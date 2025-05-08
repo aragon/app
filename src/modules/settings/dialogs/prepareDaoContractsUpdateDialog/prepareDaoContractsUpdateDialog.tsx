@@ -12,6 +12,7 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
+import type { TransactionReceipt } from 'viem';
 import { prepareDaoContractsUpdateDialogUtils } from './prepareDaoContractsUpdateDialogUtils';
 
 export interface IPrepareDaoContractsUpdateDialogParams {
@@ -47,19 +48,29 @@ export const PrepareDaoContractsUpdateDialog: React.FC<IPrepareDaoContractsUpdat
     const stepper = useStepper<ITransactionDialogStepMeta>({ initialActiveStep });
 
     const handlePrepareTransaction = () =>
-        prepareDaoContractsUpdateDialogUtils.buildPrepareUpdatePluginsTransaction(dao, pluginsUpdate);
+        prepareDaoContractsUpdateDialogUtils.buildPrepareUpdatePluginsTransaction({ dao, plugins: pluginsUpdate });
 
-    const handlePublishUpdateProposal = useCallback(() => {
-        const proposal = prepareDaoContractsUpdateDialogUtils.getApplyUpdateProposal(dao, pluginsUpdate, hasOsxUpdate);
+    const handlePublishUpdateProposal = useCallback(
+        (prepareUpdateReceipt?: TransactionReceipt) => {
+            const getProposalParams = { dao, plugins: pluginsUpdate, osxUpdate: hasOsxUpdate, prepareUpdateReceipt };
+            const proposal = prepareDaoContractsUpdateDialogUtils.getApplyUpdateProposal(getProposalParams);
 
-        const translationNamespace = 'app.settings.publishDaoContractsUpdateDialog';
-        const transactionInfo = hasPluginsUpdate
-            ? { title: t(`${translationNamespace}.transactionInfoTitle`), current: 2, total: 2 }
-            : undefined;
+            const translationNamespace = 'app.settings.publishDaoContractsUpdateDialog';
+            const transactionInfo = hasPluginsUpdate
+                ? { title: t(`${translationNamespace}.transactionInfoTitle`), current: 2, total: 2 }
+                : undefined;
 
-        const params: IPublishProposalDialogParams = { daoId, plugin, translationNamespace, transactionInfo, proposal };
-        open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
-    }, [t, plugin, dao, daoId, hasPluginsUpdate, pluginsUpdate, hasOsxUpdate, open]);
+            const dialogParams: IPublishProposalDialogParams = {
+                daoId,
+                plugin,
+                translationNamespace,
+                transactionInfo,
+                proposal,
+            };
+            open(GovernanceDialogId.PUBLISH_PROPOSAL, { params: dialogParams });
+        },
+        [t, plugin, dao, daoId, hasPluginsUpdate, pluginsUpdate, hasOsxUpdate, open],
+    );
 
     // Open the publish-proposal dialog directly if DAO does not have available plugins updates.
     useEffect(() => {

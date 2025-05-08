@@ -11,7 +11,7 @@ import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/
 import type { IDao } from '@/shared/api/daoService';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
-import { type IPluginSetupData, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import { type IPluginInstallationSetupData, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import { sppPlugin } from '../../constants/sppPlugin';
@@ -59,7 +59,7 @@ class SppTransactionUtils {
 
     buildPluginsSetupActions = (
         values: ICreateProcessFormDataAdvanced,
-        setupData: IPluginSetupData[],
+        setupData: IPluginInstallationSetupData[],
         dao: IDao,
     ): ITransactionRequest[] => {
         const daoAddress = dao.address as Hex;
@@ -79,7 +79,7 @@ class SppTransactionUtils {
     };
 
     private buildBodyPermissionActions = (
-        pluginData: IPluginSetupData,
+        pluginData: IPluginInstallationSetupData,
         daoAddress: Hex,
         sppAddress: Hex,
     ): ITransactionRequest[] => {
@@ -114,8 +114,8 @@ class SppTransactionUtils {
 
     private buildUpdateRulesTransaction = (
         values: ICreateProcessFormDataAdvanced,
-        sppSetupData: IPluginSetupData,
-        pluginSetupData: IPluginSetupData[],
+        sppSetupData: IPluginInstallationSetupData,
+        pluginSetupData: IPluginInstallationSetupData[],
     ): ITransactionRequest | undefined => {
         const { stages, proposalCreationMode } = values;
 

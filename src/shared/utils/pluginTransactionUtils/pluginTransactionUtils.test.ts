@@ -1,6 +1,10 @@
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { generateDao, generatePluginSetupData, generatePluginSetupDataPermission } from '@/shared/testUtils';
+import {
+    generateDao,
+    generatePluginInstallationSetupData,
+    generatePluginSetupDataPermission,
+} from '@/shared/testUtils';
 import type { Hex } from 'viem';
 import * as Viem from 'viem';
 import { permissionTransactionUtils } from '../permissionTransactionUtils';
@@ -20,38 +24,36 @@ describe('pluginTransaction utils', () => {
         encodeFunctionDataSpy.mockReset();
     });
 
-    describe('setupDataToActions', () => {
-        const buildApplyInstallationTransactionSpy = jest.spyOn(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            pluginTransactionUtils as any,
-            'buildApplyInstallationData',
-        );
-        const installDataToActionSpy = jest.spyOn(pluginTransactionUtils, 'installDataToAction');
+    describe('setupInstallationDataToActions', () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const buildInstallatioNDataSpy = jest.spyOn(pluginTransactionUtils as any, 'buildApplyInstallationData');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const installDataToActionSpy = jest.spyOn(pluginTransactionUtils as any, 'installDataToAction');
 
         afterEach(() => {
-            buildApplyInstallationTransactionSpy.mockReset();
+            buildInstallatioNDataSpy.mockReset();
             installDataToActionSpy.mockReset();
         });
 
         afterAll(() => {
-            buildApplyInstallationTransactionSpy.mockRestore();
+            buildInstallatioNDataSpy.mockRestore();
             installDataToActionSpy.mockRestore();
         });
 
         it('builds the transactions for the given setup-data array and DAO', () => {
-            const setupData = [generatePluginSetupData(), generatePluginSetupData()];
+            const setupData = [generatePluginInstallationSetupData(), generatePluginInstallationSetupData()];
             const dao = generateDao({ network: Network.BASE_MAINNET, address: '0x1234' });
 
             const transactionData = '0x123' as Hex;
             const transactionOne = { to: '0x' as Hex, data: transactionData, value: BigInt(0) };
             const transactionTwo = { to: '0x' as Hex, data: transactionData, value: BigInt(0) };
 
-            buildApplyInstallationTransactionSpy.mockReturnValue(transactionData);
+            buildInstallatioNDataSpy.mockReturnValue(transactionData);
             installDataToActionSpy.mockReturnValueOnce(transactionOne).mockReturnValueOnce(transactionTwo);
 
-            const result = pluginTransactionUtils.setupDataToActions(setupData, dao);
-            expect(buildApplyInstallationTransactionSpy).toHaveBeenNthCalledWith(1, setupData[0], dao.address);
-            expect(buildApplyInstallationTransactionSpy).toHaveBeenNthCalledWith(2, setupData[1], dao.address);
+            const result = pluginTransactionUtils['setupInstallationDataToActions'](setupData, dao);
+            expect(buildInstallatioNDataSpy).toHaveBeenNthCalledWith(1, setupData[0], dao.address);
+            expect(buildInstallatioNDataSpy).toHaveBeenNthCalledWith(2, setupData[1], dao.address);
             expect(installDataToActionSpy).toHaveBeenNthCalledWith(1, transactionData, dao.network);
             expect(installDataToActionSpy).toHaveBeenNthCalledWith(2, transactionData, dao.network);
 
@@ -73,7 +75,7 @@ describe('pluginTransaction utils', () => {
 
             parseEventLogsSpy.mockReturnValue([parsedLog as unknown as Viem.Log<bigint, number, false>]);
 
-            const result = pluginTransactionUtils.getPluginSetupData(transaction);
+            const result = pluginTransactionUtils.getPluginInstallationSetupData(transaction);
             expect(parseEventLogsSpy).toHaveBeenCalledWith({
                 abi: pluginSetupProcessorAbi,
                 eventName: 'InstallationPrepared',
@@ -89,7 +91,7 @@ describe('pluginTransaction utils', () => {
         it('returns a transaction targeting the psp with the given transaction data', () => {
             const data = '0x0001';
             const network = Network.ETHEREUM_SEPOLIA;
-            const result = pluginTransactionUtils.installDataToAction(data, network);
+            const result = pluginTransactionUtils['installDataToAction'](data, network);
             expect(result.data).toEqual(data);
             expect(result.to).toEqual(networkDefinitions[network].addresses.pluginSetupProcessor);
         });
@@ -141,7 +143,9 @@ describe('pluginTransaction utils', () => {
     describe('buildApplyPluginsInstallationActions', () => {
         const grantPermissionSpy = jest.spyOn(permissionTransactionUtils, 'buildGrantPermissionTransaction');
         const revokePermissionSpy = jest.spyOn(permissionTransactionUtils, 'buildRevokePermissionTransaction');
-        const setupDataToActionsSpy = jest.spyOn(pluginTransactionUtils, 'setupDataToActions');
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const setupDataToActionsSpy = jest.spyOn(pluginTransactionUtils as any, 'setupInstallationDataToActions');
 
         afterEach(() => {
             grantPermissionSpy.mockReset();
@@ -152,7 +156,7 @@ describe('pluginTransaction utils', () => {
         it('builds the required transaction to apply the plugin installation', () => {
             const daoAddress = '0x123' as Hex;
             const dao = generateDao({ address: daoAddress });
-            const setupData = [generatePluginSetupData(), generatePluginSetupData()];
+            const setupData = [generatePluginInstallationSetupData(), generatePluginInstallationSetupData()];
             const grantAction = { to: daoAddress, data: '0xgrant' as Viem.Hex, value: BigInt(0) };
             const setupActions = [{ to: '0x001' as Viem.Hex, data: '0xsetup' as Viem.Hex, value: BigInt(0) }];
             const revokeAction = { to: daoAddress, data: '0xrevoke' as Viem.Hex, value: BigInt(0) };
@@ -182,7 +186,7 @@ describe('pluginTransaction utils', () => {
             const daoAddress = '0x123';
             const helpersHash = '0x0000001';
             const setupPermissions = [generatePluginSetupDataPermission()];
-            const setupData = generatePluginSetupData({
+            const setupData = generatePluginInstallationSetupData({
                 pluginSetupRepo: '0x123',
                 pluginAddress: '0x456',
                 preparedSetupData: { permissions: setupPermissions, helpers: ['0x000', '0x111'] },
