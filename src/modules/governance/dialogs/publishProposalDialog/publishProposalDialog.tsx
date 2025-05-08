@@ -15,6 +15,7 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo } from 'react';
 import { useAccount } from 'wagmi';
+import { daoUtils } from '../../../../shared/utils/daoUtils';
 import type { IPublishProposalDialogProps } from './publishProposalDialog.api';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
@@ -38,6 +39,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const { setIsBlocked } = useBlockNavigationContext();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const daoUrl = dao && daoUtils.getDaoUrl(dao);
 
     const stepper = useStepper<ITransactionDialogStepMeta, PublishProposalStep | TransactionDialogStep>({
         initialActiveStep: PublishProposalStep.PIN_METADATA,
@@ -74,7 +76,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const getProposalsLink = ({ slug }: IBuildTransactionDialogSuccessLinkHref) => {
         setIsBlocked(false);
 
-        return `/dao/${daoId}/proposals/${slug!}`;
+        return `${daoUrl!}/proposals/${slug!}`;
     };
 
     const customSteps: Array<ITransactionDialogStep<PublishProposalStep>> = useMemo(
@@ -109,7 +111,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
             prepareTransaction={handlePrepareTransaction}
             network={dao?.network}
             transactionType={TransactionType.PROPOSAL_CREATE}
-            indexingFallbackUrl={`/dao/${daoId}/proposals`}
+            indexingFallbackUrl={daoUrl && `${daoUrl}/proposals`}
             transactionInfo={transactionInfo}
         >
             {plugin.subdomain !== 'admin' && (
