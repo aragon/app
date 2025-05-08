@@ -49,7 +49,7 @@ export const UpdateDaoContractsListDialog: React.FC<IUpdateDaoContractsListDialo
         <>
             <Dialog.Header onClose={close} title={t('app.settings.updateDaoContractsListDialog.title')} />
             <Dialog.Content description={t('app.settings.updateDaoContractsListDialog.description')}>
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 pb-6">
                     {hasOsxUpdate && (
                         <UpdateDaoContractsCard
                             key="osx"
