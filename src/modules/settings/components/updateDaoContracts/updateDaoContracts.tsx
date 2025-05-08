@@ -36,6 +36,11 @@ export const UpdateDaoContracts: React.FC<IUpdateDaoContractsProps> = (props) =>
     });
 
     const handleUpgradeClick = () => {
+        // If there is only one plugin then no need to show the select plugin dialog
+        if (daoPlugins.length === 1) {
+            onPluginSelected(daoPlugins[0].meta);
+            return;
+        }
         const params: ISelectPluginDialogParams = { daoId, onPluginSelected };
 
         open(GovernanceDialogId.SELECT_PLUGIN, { params });

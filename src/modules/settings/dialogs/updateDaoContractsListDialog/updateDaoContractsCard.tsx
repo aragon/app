@@ -27,13 +27,13 @@ export const UpdateDaoContractsCard: React.FC<IUpdateDaoContractsCardProps> = (p
     const toVersion = `${parsedSubdomain} v${targetRelease.toString()}.${targetBuild.toString()}`;
 
     return (
-        <DataList.Item className="flex flex-col gap-6 py-6">
-            <div className="flex flex-col gap-1.5">
+        <DataList.Item className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+            <div className="flex flex-col gap-1 md:gap-1.5">
                 <div className="flex items-center justify-between">
-                    <p className="text-neutral-800">{pluginName}</p>
-                    <p className="text-neutral-500">{addressUtils.truncateAddress(address)}</p>
+                    <p className="text-base text-neutral-800 md:text-lg">{pluginName}</p>
+                    <p className="text-base text-neutral-500 md:text-lg">{addressUtils.truncateAddress(address)}</p>
                 </div>
-                <p className="text-neutral-500">
+                <p className="text-sm text-neutral-500 md:text-base">
                     {t('app.settings.updateDaoContractsCard.versionUpdate', {
                         from: fromVersion,
                         to: toVersion,
