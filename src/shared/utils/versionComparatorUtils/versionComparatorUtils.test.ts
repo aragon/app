@@ -2,115 +2,66 @@ import { versionComparatorUtils } from './versionComparatorUtils';
 
 describe('versionComparator Utils', () => {
     describe('isLessThan', () => {
-        it('returns true when current < target build', () => {
-            const current = { release: 1, build: 2 };
-            const target = { release: 1, build: 3 };
-
-            expect(versionComparatorUtils.isLessThan(current, target)).toBe(true);
-        });
-
-        it('returns true when current < target release', () => {
-            const current = { release: 1, build: 3 };
-            const target = { release: 2, build: 0 };
-
-            expect(versionComparatorUtils.isLessThan(current, target)).toBe(true);
-        });
-
-        it('returns false when current === target', () => {
-            const current = { release: 1, build: 3 };
-            const target = { release: 1, build: 3 };
-
-            expect(versionComparatorUtils.isLessThan(current, target)).toBe(false);
-        });
-
-        it('returns false when current > target build', () => {
-            const current = { release: 1, build: 4 };
-            const target = { release: 1, build: 3 };
-            expect(versionComparatorUtils.isLessThan(current, target)).toBe(false);
-        });
-
-        it('returns false if current is undefined', () => {
-            expect(versionComparatorUtils.isLessThan(undefined, { release: 0, build: 1 })).toBe(false);
-        });
-
-        it('returns false if target is undefined', () => {
-            expect(versionComparatorUtils.isLessThan({ release: 1, build: 3 }, undefined)).toBe(false);
+        it.each([
+            { current: { release: 1, build: 2 }, target: { release: 1, build: 3 }, result: true },
+            { current: { release: 1, build: 3 }, target: { release: 2, build: 0 }, result: true },
+            { current: { release: 1, build: 3, patch: 1 }, target: { release: 2, build: 0, patch: 2 }, result: true },
+            { current: { release: 1, build: 3 }, target: { release: 1, build: 3 }, result: false },
+            { current: { release: 1, build: 4 }, target: { release: 1, build: 3 }, result: false },
+            { current: undefined, target: { release: 0, build: 1 }, result: false },
+            { current: { release: 1, build: 3 }, target: undefined, result: false },
+            { current: undefined, target: undefined, result: false },
+        ])('returns $result for versions $current and $target', ({ current, target, result }) => {
+            expect(versionComparatorUtils.isLessThan(current, target)).toEqual(result);
         });
     });
 
     describe('isGreaterThan', () => {
-        it('returns true when current > target build', () => {
-            const current = { release: 1, build: 4 };
-            const target = { release: 1, build: 3 };
-
-            expect(versionComparatorUtils.isGreaterThan(current, target)).toBe(true);
-        });
-
-        it('returns true when current > target release', () => {
-            const current = { release: 2, build: 0 };
-            const target = { release: 1, build: 3 };
-
-            expect(versionComparatorUtils.isGreaterThan(current, target)).toBe(true);
-        });
-
-        it('returns false when current === target', () => {
-            const current = { release: 1, build: 3 };
-            const target = { release: 1, build: 3 };
-
-            expect(versionComparatorUtils.isGreaterThan(current, target)).toBe(false);
-        });
-
-        it('returns false when current < target build', () => {
-            const current = { release: 1, build: 2 };
-            const target = { release: 1, build: 3 };
-
-            expect(versionComparatorUtils.isGreaterThan(current, target)).toBe(false);
-        });
-
-        it('returns false if current is undefined', () => {
-            expect(versionComparatorUtils.isGreaterThan(undefined, { release: 0, build: 1 })).toBe(false);
-        });
-
-        it('returns false if target is undefined', () => {
-            expect(versionComparatorUtils.isGreaterThan({ release: 1, build: 3 }, undefined)).toBe(false);
+        it.each([
+            { current: { release: 1, build: 4 }, target: { release: 1, build: 3 }, result: true },
+            { current: { release: 2, build: 0 }, target: { release: 1, build: 3 }, result: true },
+            { current: { release: 1, build: 3, patch: 3 }, target: { release: 1, build: 3, patch: 1 }, result: true },
+            { current: { release: 1, build: 3 }, target: { release: 1, build: 3 }, result: false },
+            { current: { release: 1, build: 2 }, target: { release: 1, build: 3 }, result: false },
+            { current: undefined, target: { release: 0, build: 1 }, result: false },
+            { current: { release: 1, build: 3 }, target: undefined, result: false },
+            { current: undefined, target: undefined, result: false },
+        ])('returns $result for versions $current and $target', ({ current, target, result }) => {
+            expect(versionComparatorUtils.isGreaterThan(current, target)).toEqual(result);
         });
     });
 
     describe('isGreaterOrEqualTo', () => {
-        it('returns true when current > target build', () => {
-            const current = { release: 1, build: 4 };
-            const target = { release: 1, build: 3 };
+        it.each([
+            { current: { release: 1, build: 4 }, target: { release: 1, build: 3 }, result: true },
+            { current: { release: 2, build: 0 }, target: { release: 1, build: 3 }, result: true },
+            { current: { release: 1, build: 3, patch: 1 }, target: { release: 1, build: 3, patch: 1 }, result: true },
+            { current: { release: 1, build: 2 }, target: { release: 1, build: 3 }, result: false },
+            { current: undefined, target: { release: 0, build: 1 }, result: false },
+            { current: { release: 1, build: 3 }, target: undefined, result: false },
+            { current: undefined, target: undefined, result: false },
+        ])('returns $result for versions $current and $target', ({ current, target, result }) => {
+            expect(versionComparatorUtils.isGreaterOrEqualTo(current, target)).toEqual(result);
+        });
+    });
 
-            expect(versionComparatorUtils.isGreaterOrEqualTo(current, target)).toBe(true);
+    describe('normaliseComparatorInput', () => {
+        it('returns undefined when input is not defined', () => {
+            expect(versionComparatorUtils.normaliseComparatorInput(undefined)).toBeUndefined();
         });
 
-        it('returns true when current > target release', () => {
-            const current = { release: 2, build: 0 };
-            const target = { release: 1, build: 3 };
-
-            expect(versionComparatorUtils.isGreaterOrEqualTo(current, target)).toBe(true);
+        it.each([
+            { value: '1.2.0', result: { release: 1, build: 2, patch: 0 } },
+            { value: '2.10', result: { release: 2, build: 10 } },
+        ])('correctly normalises $value string input', ({ value, result }) => {
+            expect(versionComparatorUtils.normaliseComparatorInput(value)).toEqual(result);
         });
 
-        it('returns true when current === target', () => {
-            const current = { release: 1, build: 3 };
-            const target = { release: 1, build: 3 };
-
-            expect(versionComparatorUtils.isGreaterOrEqualTo(current, target)).toBe(true);
-        });
-
-        it('returns false when current < target build', () => {
-            const current = { release: 1, build: 2 };
-            const target = { release: 1, build: 3 };
-
-            expect(versionComparatorUtils.isGreaterOrEqualTo(current, target)).toBe(false);
-        });
-
-        it('returns false if current is undefined', () => {
-            expect(versionComparatorUtils.isGreaterOrEqualTo(undefined, { release: 0, build: 1 })).toBe(false);
-        });
-
-        it('returns false if target is undefined', () => {
-            expect(versionComparatorUtils.isGreaterOrEqualTo({ release: 1, build: 3 }, undefined)).toBe(false);
+        it.each([
+            { value: { release: '1', build: '2', patch: '0' }, result: { release: 1, build: 2, patch: 0 } },
+            { value: { release: '3', build: '10' }, result: { release: 3, build: 10 } },
+        ])('correctly normalises $value version input', ({ value, result }) => {
+            expect(versionComparatorUtils.normaliseComparatorInput(value)).toEqual(result);
         });
     });
 });
