@@ -98,7 +98,6 @@ class PluginTransactionUtils {
         const { dao, plugins, setupData } = params;
         const daoAddress = dao.address as Hex;
 
-        const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
         const requiresRootPermission = setupData.some((data) => data.preparedSetupData.permissions.length > 0);
 
         const applyUpdateTransactions = plugins
@@ -109,7 +108,7 @@ class PluginTransactionUtils {
             // Grant ROOT_PERMISSION to the PSP contract if some plugin update requires permissions to be granted or revoked
             const [grantRootTx, revokeRootTx] = permissionTransactionUtils.buildGrantRevokePermissionTransactions({
                 where: daoAddress,
-                who: pluginSetupProcessor,
+                who: networkDefinitions[dao.network].addresses.pluginSetupProcessor,
                 what: permissionTransactionUtils.permissionIds.rootPermission,
                 to: daoAddress,
             });
