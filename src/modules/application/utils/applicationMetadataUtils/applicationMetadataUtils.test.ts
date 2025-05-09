@@ -14,11 +14,12 @@ describe('applicationMetadata utils', () => {
 
     describe('generateDaoMetadata', () => {
         it('fetches the DAO with the given id and returns the relative title and description metadata', async () => {
-            const id = 'eth-mainnet-my-dao';
             const dao = generateDao({ name: 'My DAO', description: 'Description' });
             getDaoSpy.mockResolvedValue(dao);
 
-            const metadata = await applicationMetadataUtils.generateDaoMetadata({ params: Promise.resolve({ id }) });
+            const metadata = await applicationMetadataUtils.generateDaoMetadata({
+                params: Promise.resolve({ id: 'test-dao-address', network: 'test-network' }),
+            });
             expect(metadata.title).toEqual(dao.name);
             expect(metadata.openGraph?.siteName).toEqual(`${dao.name} | Governed on Aragon`);
             expect(metadata.description).toEqual(dao.description);
@@ -31,7 +32,7 @@ describe('applicationMetadata utils', () => {
             cidToSrcSpy.mockReturnValue(ipfsUrl);
 
             const metadata = await applicationMetadataUtils.generateDaoMetadata({
-                params: Promise.resolve({ id: 'test' }),
+                params: Promise.resolve({ id: 'test-dao-id', network: 'test-network' }),
             });
             expect(cidToSrcSpy).toHaveBeenCalledWith(dao.avatar);
             expect(metadata.openGraph?.images).toEqual([ipfsUrl]);
@@ -42,7 +43,7 @@ describe('applicationMetadata utils', () => {
             getDaoSpy.mockResolvedValue(dao);
 
             const metadata = await applicationMetadataUtils.generateDaoMetadata({
-                params: Promise.resolve({ id: 'test' }),
+                params: Promise.resolve({ id: 'test-dao-id', network: 'test-network' }),
             });
             expect(metadata.openGraph?.images).toBeUndefined();
         });
