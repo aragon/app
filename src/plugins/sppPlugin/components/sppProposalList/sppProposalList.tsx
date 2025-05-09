@@ -32,10 +32,9 @@ export const SppProposalList: React.FC<ISppProposalListProps> = (props) => {
                 errorState={errorState}
                 emptyState={emptyState}
             >
-                {dao &&
-                    proposalList?.map((proposal) => (
-                        <SppProposalListItem key={proposal.id} proposal={proposal} dao={dao} plugin={plugin} />
-                    ))}
+                {proposalList?.map((proposal) => (
+                    <SppProposalListItem key={proposal.id} proposal={proposal} dao={dao!} plugin={plugin} />
+                ))}
             </DataListContainer>
             {!hidePagination && <DataListPagination />}
             {children}

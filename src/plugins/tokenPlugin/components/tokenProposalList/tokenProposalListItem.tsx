@@ -1,6 +1,7 @@
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { type ITokenProposal } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
@@ -11,9 +12,9 @@ export interface ITokenProposalListItemProps {
      */
     proposal: ITokenProposal;
     /**
-     * URL of the DAO for this proposal.
+     * ID of the DAO for this proposal.
      */
-    daoUrl: string;
+    daoId: string;
     /**
      * Plugin of the proposal.
      */
@@ -21,9 +22,10 @@ export interface ITokenProposalListItemProps {
 }
 
 export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (props) => {
-    const { proposal, daoUrl, plugin } = props;
+    const { proposal, daoId, plugin } = props;
 
     const vote = useUserVote({ proposal });
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const proposalDate = (proposal.executed.blockTimestamp ?? proposal.endDate) * 1000;
 
@@ -36,7 +38,7 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
             title={proposal.title}
             summary={proposal.summary}
             date={proposalDate}
-            href={`${daoUrl}/proposals/${slug}`}
+            href={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
             status={tokenProposalUtils.getProposalStatus(proposal)}
             voted={vote != null}
             publisher={{

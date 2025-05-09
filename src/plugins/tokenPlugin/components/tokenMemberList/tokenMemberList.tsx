@@ -1,8 +1,6 @@
 import type { IDaoMemberListDefaultProps } from '@/modules/governance/components/daoMemberList';
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
-import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { DataListContainer, DataListPagination, DataListRoot, MemberDataListItem } from '@aragon/gov-ui-kit';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
 import { TokenMemberListItem } from './tokenMemberListItem';
@@ -17,7 +15,6 @@ export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, memberList } =
         useMemberListData<ITokenMember>(initialParams);
     const { daoId } = initialParams.queryParams;
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     return (
         <DataListRoot
@@ -33,15 +30,9 @@ export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
                 errorState={errorState}
                 layoutClassName="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
             >
-                {dao &&
-                    memberList?.map((member) => (
-                        <TokenMemberListItem
-                            key={member.address}
-                            member={member}
-                            daoUrl={daoUtils.getDaoUrl(dao)}
-                            plugin={plugin}
-                        />
-                    ))}
+                {memberList?.map((member) => (
+                    <TokenMemberListItem key={member.address} member={member} daoId={daoId} plugin={plugin} />
+                ))}
             </DataListContainer>
             {!hidePagination && <DataListPagination />}
             {children}

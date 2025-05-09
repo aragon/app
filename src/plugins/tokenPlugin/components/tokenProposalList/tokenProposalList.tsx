@@ -1,8 +1,6 @@
 import type { IDaoProposalListDefaultProps } from '@/modules/governance/components/daoProposalList';
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
-import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
 import type { ITokenProposal } from '../../types';
 import { TokenProposalListItem } from './tokenProposalListItem';
@@ -17,7 +15,6 @@ export const TokenProposalList: React.FC<ITokenProposalListProps> = (props) => {
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, proposalList } =
         useProposalListData<ITokenProposal>(initialParams);
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     return (
         <DataListRoot
@@ -33,15 +30,9 @@ export const TokenProposalList: React.FC<ITokenProposalListProps> = (props) => {
                 errorState={errorState}
                 layoutClassName="grid grid-cols-1"
             >
-                {dao &&
-                    proposalList?.map((proposal) => (
-                        <TokenProposalListItem
-                            key={proposal.id}
-                            proposal={proposal}
-                            daoUrl={daoUtils.getDaoUrl(dao)}
-                            plugin={plugin}
-                        />
-                    ))}
+                {proposalList?.map((proposal) => (
+                    <TokenProposalListItem key={proposal.id} proposal={proposal} daoId={daoId} plugin={plugin} />
+                ))}
             </DataListContainer>
             {!hidePagination && <DataListPagination />}
             {children}

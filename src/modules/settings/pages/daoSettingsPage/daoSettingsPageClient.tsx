@@ -12,7 +12,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { Button, Card, IconType, invariant } from '@aragon/gov-ui-kit';
+import { Button, Card, IconType } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { CreateDaoDialogId } from '../../../createDao/constants/createDaoDialogId';
 import type { ICreateProcessDetailsDialogParams } from '../../../createDao/dialogs/createProcessDetailsDialog';
@@ -49,9 +49,11 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     });
 
     const handlePermissionGuardSuccess = (plugin: IDaoPlugin) => {
-        invariant(dao != null, 'DAO is not defined');
-        const daoUrl = daoUtils.getDaoUrl(dao);
-        router.push(`${daoUrl}/create/${plugin.address}/process`);
+        const daoUrl: __next_route_internal_types__.DynamicRoutes = daoUtils.getDaoUrl(
+            dao,
+            `create/${plugin.address}/process`,
+        )!;
+        router.push(daoUrl);
     };
 
     const handlePluginSelected = (plugin: IDaoPlugin) => {

@@ -39,7 +39,6 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const { setIsBlocked } = useBlockNavigationContext();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const daoUrl = dao && daoUtils.getDaoUrl(dao);
 
     const stepper = useStepper<ITransactionDialogStepMeta, PublishProposalStep | TransactionDialogStep>({
         initialActiveStep: PublishProposalStep.PIN_METADATA,
@@ -76,7 +75,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const getProposalsLink = ({ slug }: IBuildTransactionDialogSuccessLinkHref) => {
         setIsBlocked(false);
 
-        return `${daoUrl!}/proposals/${slug!}`;
+        return daoUtils.getDaoUrl(dao, `proposals/${slug!}`)!;
     };
 
     const customSteps: Array<ITransactionDialogStep<PublishProposalStep>> = useMemo(
@@ -111,7 +110,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
             prepareTransaction={handlePrepareTransaction}
             network={dao?.network}
             transactionType={TransactionType.PROPOSAL_CREATE}
-            indexingFallbackUrl={daoUrl && `${daoUrl}/proposals`}
+            indexingFallbackUrl={daoUtils.getDaoUrl(dao, 'proposals')}
             transactionInfo={transactionInfo}
         >
             {plugin.subdomain !== 'admin' && (

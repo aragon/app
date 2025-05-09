@@ -79,7 +79,7 @@ export const SppReportProposalResultDialog: React.FC<ISppReportProposalResultDia
             prepareTransaction={handlePrepareTransaction}
             network={proposal.network}
             transactionType={TransactionType.PROPOSAL_REPORT_RESULTS}
-            indexingFallbackUrl={dao && `${daoUtils.getDaoUrl(dao)}/proposals/${slug}`}
+            indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
         >
             <VoteProposalDataListItemStructure
                 proposalId={slug}

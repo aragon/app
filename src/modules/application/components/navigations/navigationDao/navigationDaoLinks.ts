@@ -7,7 +7,7 @@ type DaoRoutes = INavigationLink<__next_route_internal_types__.DynamicRoutes>;
 
 export const navigationDaoLinks = (dao: IDao): DaoRoutes[] => {
     const isSupported = daoUtils.hasSupportedPlugins(dao);
-    const daoUrl = daoUtils.getDaoUrl(dao);
+    const daoUrl = daoUtils.getDaoUrl(dao)!;
 
     return [
         {

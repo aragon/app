@@ -68,7 +68,7 @@ export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (pro
                 onClick: onSuccessClick,
             }}
             transactionType={TransactionType.PROPOSAL_ADVANCE_STAGE}
-            indexingFallbackUrl={dao && `${daoUtils.getDaoUrl(dao)}/proposals/${slug}`}
+            indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
         >
             <ProposalDataListItem.Structure
                 title={proposal.title}

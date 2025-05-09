@@ -50,7 +50,6 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
     const { title, summary, creator, proposalIndex, pluginAddress, network } = proposal;
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const daoUrl = dao && daoUtils.getDaoUrl(dao);
 
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
@@ -77,7 +76,7 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
             prepareTransaction={handlePrepareTransaction}
             network={network}
             transactionType={TransactionType.PROPOSAL_EXECUTE}
-            indexingFallbackUrl={daoUrl && `${daoUrl}/proposals/${slug}`}
+            indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
         >
             <DataList.Root entityLabel="">
                 <ProposalDataListItem.Structure

@@ -56,7 +56,6 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     const { vote, proposal, isVeto, daoId, plugin } = location.params;
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const daoUrl = dao && daoUtils.getDaoUrl(dao);
 
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
@@ -80,7 +79,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
             prepareTransaction={handlePrepareTransaction}
             network={proposal.network}
             transactionType={TransactionType.PROPOSAL_VOTE}
-            indexingFallbackUrl={daoUrl && `${daoUrl}/proposals/${slug}`}
+            indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
         >
             <VoteProposalDataListItemStructure
                 proposalId={slug}

@@ -236,7 +236,7 @@ describe('dao utils', () => {
     });
 
     describe('getDaoUrl', () => {
-        it('returns the correct URL for a DAO with ENS', () => {
+        it('returns the correct base URL for a DAO with ENS', () => {
             const daoEns = 'test.dao.eth';
             const daoNetwork = Network.ETHEREUM_MAINNET;
             const dao = generateDao({ ens: daoEns, network: daoNetwork });
@@ -244,12 +244,21 @@ describe('dao utils', () => {
             expect(daoUtils.getDaoUrl(dao)).toEqual(expectedUrl);
         });
 
-        it('returns the correct URL for a DAO without ENS', () => {
+        it('returns the correct base URL for a DAO without ENS', () => {
             const daoAddress = '0x12345';
             const daoNetwork = Network.ETHEREUM_MAINNET;
             const dao = generateDao({ address: daoAddress, network: daoNetwork });
             const expectedUrl = `/dao/${daoNetwork}/${daoAddress}`;
             expect(daoUtils.getDaoUrl(dao)).toEqual(expectedUrl);
+        });
+
+        it('appends the provided path to the base URL', () => {
+            const daoAddress = '0x12345';
+            const daoNetwork = Network.ETHEREUM_MAINNET;
+            const dao = generateDao({ address: daoAddress, network: daoNetwork });
+            const path = 'some/path';
+            const expectedUrl = `/dao/${daoNetwork}/${daoAddress}/${path}`;
+            expect(daoUtils.getDaoUrl(dao, path)).toEqual(expectedUrl);
         });
     });
 });

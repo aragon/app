@@ -107,7 +107,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
 
     const pageBreadcrumbs = [
         {
-            href: `${daoUtils.getDaoUrl(dao)}/members`,
+            href: daoUtils.getDaoUrl(dao, 'members'),
             label: t('app.governance.daoMemberDetailsPage.header.breadcrumb.members'),
         },
         { label: memberName },

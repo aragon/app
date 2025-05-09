@@ -2,8 +2,6 @@ import type { IDaoProposalListDefaultProps } from '@/modules/governance/componen
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
-import { useDao } from '../../../../shared/api/daoService';
-import { daoUtils } from '../../../../shared/utils/daoUtils';
 import type { IMultisigProposal } from '../../types';
 import { MultisigProposalListItem } from './multisigProposalListItem';
 
@@ -17,8 +15,6 @@ export const MultisigProposalList: React.FC<IMultisigProposalListProps> = (props
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, proposalList } =
         useProposalListData<IMultisigProposal>(initialParams);
-
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     return (
         <DataListRoot
@@ -34,15 +30,9 @@ export const MultisigProposalList: React.FC<IMultisigProposalListProps> = (props
                 errorState={errorState}
                 emptyState={emptyState}
             >
-                {dao &&
-                    proposalList?.map((proposal) => (
-                        <MultisigProposalListItem
-                            key={proposal.id}
-                            proposal={proposal}
-                            daoUrl={daoUtils.getDaoUrl(dao)}
-                            plugin={plugin}
-                        />
-                    ))}
+                {proposalList?.map((proposal) => (
+                    <MultisigProposalListItem key={proposal.id} daoId={daoId} proposal={proposal} plugin={plugin} />
+                ))}
             </DataListContainer>
             {!hidePagination && <DataListPagination />}
             {children}

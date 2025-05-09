@@ -27,12 +27,7 @@ export const MultisigMemberInfo: React.FC<IMultisigMemberInfoProps> = (props) =>
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    if (dao == null) {
-        return null;
-    }
-
-    const daoUrl = daoUtils.getDaoUrl(dao);
-    const membersLink = `${daoUrl}/members`;
+    const membersLink = daoUtils.getDaoUrl(dao, 'members');
     const memberCount = memberList?.pages[0].metadata.totalRecords;
 
     return (

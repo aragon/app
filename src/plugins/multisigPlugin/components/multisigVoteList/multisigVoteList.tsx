@@ -30,12 +30,6 @@ export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
         useVoteListData<IMultisigVote>(initialParams);
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    if (dao == null) {
-        return null;
-    }
-
-    const daoUrl = daoUtils.getDaoUrl(dao);
-
     return (
         <DataListRoot
             entityLabel={t('app.plugins.multisig.multisigVoteList.entity')}
@@ -59,13 +53,12 @@ export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
                             key={vote.transactionHash}
                             vote={vote}
                             daoId={daoId}
-                            daoUrl={daoUrl}
                             voteIndicator="approve"
                         />
                     ) : (
                         <VoteDataListItem.Structure
                             key={vote.transactionHash}
-                            href={`${daoUrl}/members/${vote.member.address}`}
+                            href={daoUtils.getDaoUrl(dao, `members/${vote.member.address}`)}
                             voteIndicator="approve"
                             voter={{
                                 address: vote.member.address,

@@ -1,6 +1,7 @@
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { MemberDataListItem } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
+import { daoUtils } from '../../../../shared/utils/daoUtils';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
 
 export interface ITokenMemberListItemProps {
@@ -9,9 +10,9 @@ export interface ITokenMemberListItemProps {
      */
     member: ITokenMember;
     /**
-     * URL of the DAO the user is member of.
+     * ID of the DAO the user is member of.
      */
-    daoUrl: string;
+    daoId: string;
     /**
      * Plugin to display the member for.
      */
@@ -19,10 +20,11 @@ export interface ITokenMemberListItemProps {
 }
 
 export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (props) => {
-    const { member, plugin, daoUrl } = props;
+    const { member, plugin, daoId } = props;
 
     const tokenDecimals = plugin.settings.token.decimals;
     const parsedVotingPower = formatUnits(BigInt(member.votingPower ?? '0'), tokenDecimals);
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     return (
         <MemberDataListItem.Structure
@@ -31,7 +33,7 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (props) 
             tokenAmount={parsedVotingPower}
             ensName={member.ens ?? undefined}
             className="min-w-0"
-            href={`${daoUrl}/members/${member.address}`}
+            href={daoUtils.getDaoUrl(dao, `members/${member.address}`)}
             delegationCount={member.metrics.delegateReceivedCount}
         />
     );

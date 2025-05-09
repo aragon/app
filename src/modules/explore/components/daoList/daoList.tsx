@@ -122,7 +122,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
                 {daoList?.map((dao) => (
                     <DaoDataListItem.Structure
                         key={dao.id}
-                        href={`${daoUtils.getDaoUrl(dao)}/dashboard`}
+                        href={daoUtils.getDaoUrl(dao, 'dashboard')}
                         ens={daoUtils.getDaoEns(dao)}
                         address={dao.address}
                         name={dao.name}

@@ -98,7 +98,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     };
     const pageBreadcrumbs = [
         {
-            href: `${daoUtils.getDaoUrl(dao)}/proposals`,
+            href: daoUtils.getDaoUrl(dao, 'proposals'),
             label: t('app.governance.daoProposalDetailsPage.header.breadcrumb.proposals'),
         },
         { label: slug },

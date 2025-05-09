@@ -33,12 +33,12 @@ export const AdminUninstallProcessDialogCreate: React.FC<IAdminUninstallProcessD
     const { close } = useDialogContext();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const daoUrl = dao && daoUtils.getDaoUrl(dao);
+    const createProcessUrl = daoUtils.getDaoUrl(dao, `create/process`) as __next_route_internal_types__.DynamicRoutes;
 
     const handlePermissionGuardSuccess = useCallback(() => {
-        router.push(`${daoUrl!}/create/process`);
+        router.push(createProcessUrl);
         close();
-    }, [router, daoUrl, close]);
+    }, [router, createProcessUrl, close]);
 
     const { check: createProcessGuard, result: canCreateProcess } = usePermissionCheckGuard({
         permissionNamespace: 'proposal',
@@ -71,7 +71,7 @@ export const AdminUninstallProcessDialogCreate: React.FC<IAdminUninstallProcessD
                     )}
                     primaryButton={{
                         label: t('app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogCreate.label'),
-                        href: canCreateProcess && daoUrl ? `${daoUrl}/create/process` : undefined,
+                        href: canCreateProcess ? createProcessUrl : undefined,
                         onClick: handleCreateProcessClick,
                     }}
                 />

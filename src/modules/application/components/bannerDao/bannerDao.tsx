@@ -26,7 +26,7 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
 
     const { isAdminMember, adminPluginAddress } = useAdminStatus({ daoId: dao.id });
 
-    const daoUrl = daoUtils.getDaoUrl(dao);
+    const daoUrl = daoUtils.getDaoUrl(dao)!;
 
     const handleBannerActionClick = () => {
         invariant(adminPluginAddress != null, 'BannerDao: admin pluginAddress is expected.');

@@ -14,6 +14,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useMemberList } from '../../../../modules/governance/api/governanceService';
+import { daoUtils } from '../../../../shared/utils/daoUtils';
 
 export interface ITokenMemberInfoProps {
     /**
@@ -69,7 +70,7 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
             <DefinitionList.Item
                 term={t('app.plugins.token.tokenMemberInfo.distribution')}
                 link={{
-                    href: dao && `/dao/${dao.network}/${dao.ens ?? dao.address}/members`,
+                    href: daoUtils.getDaoUrl(dao, 'members'),
                     description: addressUtils.truncateAddress(token.address),
                     target: '_self',
                 }}

@@ -50,7 +50,7 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (props
     const processedLayoutClassNames = layoutClassNames ?? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3';
 
     const getMemberLink = (member: IMember) =>
-        onMemberClick != null ? undefined : `${daoUtils.getDaoUrl(dao)}/members/${member.address}`;
+        onMemberClick != null ? undefined : daoUtils.getDaoUrl(dao, `members/${member.address}`);
 
     return (
         <DataListRoot

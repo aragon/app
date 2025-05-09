@@ -22,7 +22,7 @@ class SitemapUtils {
 
     private buildDaoPages = (dao: IDao): MetadataRoute.Sitemap => {
         return this.daoPageRoutes.map((daoPageRoute) => ({
-            url: `${daoUtils.getDaoUrl(dao)}/${daoPageRoute}`,
+            url: daoUtils.getDaoUrl(dao, daoPageRoute)!,
             changeFrequency: 'daily',
             priority: 0.8,
         }));

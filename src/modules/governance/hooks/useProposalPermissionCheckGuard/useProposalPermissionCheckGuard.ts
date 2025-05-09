@@ -30,11 +30,10 @@ export const useProposalPermissionCheckGuard = (params: IUseProposalPermissionCh
     const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress })![0];
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const daoUrl = dao && daoUtils.getDaoUrl(dao);
 
     const handlePermissionCheckError = useCallback(
-        () => daoUrl && router.push(`${daoUrl}/${redirectTab}`),
-        [router, daoUrl, redirectTab],
+        () => router.push(daoUtils.getDaoUrl(dao, redirectTab) as __next_route_internal_types__.DynamicRoutes),
+        [router, dao, redirectTab],
     );
 
     const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({

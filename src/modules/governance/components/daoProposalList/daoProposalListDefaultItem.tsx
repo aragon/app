@@ -42,17 +42,11 @@ export const DaoProposalListDefaultItem: React.FC<IDaoProposalListDefaultItemPro
 
     const slug = proposalUtils.getProposalSlug(incrementalId, plugin?.meta);
 
-    if (dao == null) {
-        return null;
-    }
-
-    const daoUrl = daoUtils.getDaoUrl(dao);
-
     const proposalDate = (executed.blockTimestamp ?? endDate) * 1000;
     const processedEndDate = proposalDate === 0 ? undefined : proposalDate;
-    const proposalHref = `${daoUrl}/proposals/${slug}`;
+    const proposalHref = daoUtils.getDaoUrl(dao, `proposals/${slug}`);
 
-    const publisherHref = `${daoUrl}/members/${creator.address}`;
+    const publisherHref = daoUtils.getDaoUrl(dao, `members/${creator.address}`);
     const publisherName = creator.ens ?? undefined;
 
     return (

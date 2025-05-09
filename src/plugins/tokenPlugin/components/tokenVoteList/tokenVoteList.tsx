@@ -38,12 +38,6 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
         useVoteListData<ITokenVote>(initialParams);
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    if (dao == null) {
-        return null;
-    }
-
-    const daoUrl = daoUtils.getDaoUrl(dao);
-
     return (
         <DataListRoot
             entityLabel={t('app.plugins.token.tokenVoteList.entity')}
@@ -67,13 +61,12 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
                             key={vote.transactionHash}
                             vote={vote}
                             daoId={daoId}
-                            daoUrl={daoUrl}
                             voteIndicator={voteOptionToIndicator[vote.voteOption]}
                         />
                     ) : (
                         <VoteDataListItem.Structure
                             key={vote.transactionHash}
-                            href={`${daoUrl}/members/${vote.member.address}`}
+                            href={daoUtils.getDaoUrl(dao, `members/${vote.member.address}`)}
                             voteIndicator={voteOptionToIndicator[vote.voteOption]}
                             voter={{
                                 address: vote.member.address,
