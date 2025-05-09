@@ -12,6 +12,7 @@ import {
     type IProposalActionTokenMint as IGukProposalActionTokenMint,
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
+import { versionComparatorUtils } from '../../../../shared/utils/versionComparatorUtils';
 import { TokenMintTokensAction } from '../../components/tokenProposalActions/tokenMintTokensAction';
 import { TokenUpdateSettingsAction } from '../../components/tokenProposalActions/tokenUpdateSettingsAction';
 import {
@@ -22,7 +23,6 @@ import {
 } from '../../types';
 import type { ITokenProposalAction } from '../../types/tokenProposalAction';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
-import { pluginVersionUtils } from './../../../../shared/utils/pluginVersionUtils';
 import { defaultMintAction, defaultUpdateSettings } from './tokenActionDefinitions';
 
 export interface IGetTokenActionsProps {
@@ -60,7 +60,7 @@ class TokenActionUtils {
 
         // The setMetadata function on the TokenVoting plugin is only supported from version 1.3 onwards
         const minVersion = { build: 1, release: 3 };
-        const includePluginMetadataAction = pluginVersionUtils.isGreaterOrEqualTo(plugin, minVersion);
+        const includePluginMetadataAction = versionComparatorUtils.isGreaterOrEqualTo(plugin, minVersion);
 
         return {
             groups: [

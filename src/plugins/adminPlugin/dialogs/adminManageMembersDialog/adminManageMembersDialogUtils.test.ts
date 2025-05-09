@@ -9,13 +9,13 @@ import { adminManageMembersDialogUtils } from './adminManageMembersDialogUtils';
 
 describe('adminManageMembersDialog utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
-    const cidToHexSpy = jest.spyOn(transactionUtils, 'cidToHex');
+    const stringToMetadataHexSpy = jest.spyOn(transactionUtils, 'stringToMetadataHex');
     const buildCreateProposalDataSpy = jest.spyOn(adminTransactionUtils, 'buildCreateProposalData');
     const isAddressEqualSpy = jest.spyOn(addressUtils, 'isAddressEqual');
 
     afterEach(() => {
         encodeFunctionDataSpy.mockReset();
-        cidToHexSpy.mockReset();
+        stringToMetadataHexSpy.mockReset();
         buildCreateProposalDataSpy.mockReset();
         isAddressEqualSpy.mockReset();
     });

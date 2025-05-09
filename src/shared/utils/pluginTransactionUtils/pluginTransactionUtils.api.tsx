@@ -1,4 +1,4 @@
-import type { IDao } from '@/shared/api/daoService';
+import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { Hex } from 'viem';
 import type { ITransactionRequest } from '../transactionUtils';
 
@@ -49,10 +49,6 @@ export interface IPluginSetupPreparedSetupData {
 
 export interface IPluginSetupData {
     /**
-     * The address of the plugin contract to be installed.
-     */
-    pluginAddress: Hex;
-    /**
      * The setup repo address.
      */
     pluginSetupRepo: Hex;
@@ -66,17 +62,46 @@ export interface IPluginSetupData {
     preparedSetupData: IPluginSetupPreparedSetupData;
 }
 
+export interface IPluginInstallationSetupData extends IPluginSetupData {
+    /**
+     * The address of the plugin contract to be installed.
+     */
+    pluginAddress: Hex;
+}
+
+export interface IPluginUpdateSetupData extends IPluginSetupData {
+    /**
+     * Initialization data to be passed to the contract update function.
+     */
+    initData: Hex;
+}
+
 export interface IBuildApplyPluginsInstallationActionsParams {
     /**
      * DAO to apply the plugin installation for.
      */
     dao: IDao;
     /**
-     * List of plugin setup data to be applied.
+     * List of plugin installation setup data to be applied.
      */
-    setupData: IPluginSetupData[];
+    setupData: IPluginInstallationSetupData[];
     /**
      * Other actions to be added to the installaction action array before the revoke root permission transaction.
      */
     actions?: ITransactionRequest[];
+}
+
+export interface IBuildApplyPluginsUpdateActionsParams {
+    /**
+     * DAO to apply the plugin updates for.
+     */
+    dao: IDao;
+    /**
+     * List of plugins to apply the update for.
+     */
+    plugins: IDaoPlugin[];
+    /**
+     * List of plugin update setup data to be applied.
+     */
+    setupData: IPluginUpdateSetupData[];
 }

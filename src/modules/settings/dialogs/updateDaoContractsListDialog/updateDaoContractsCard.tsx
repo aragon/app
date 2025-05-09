@@ -1,46 +1,55 @@
-import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import type { IPluginInfo } from '@/shared/types';
-import { daoUtils } from '@/shared/utils/daoUtils';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import type { IContractVersionInfo } from '@/shared/types';
+import { versionComparatorUtils, type IVersion } from '@/shared/utils/versionComparatorUtils';
 import { addressUtils, DataList, IconType, Link } from '@aragon/gov-ui-kit';
 
-interface IUpdateDaoContractsCardProps {
+export interface IUpdateDaoContractsCardProps {
     /**
-     * The plugin to be updated.
+     * Name of the update
      */
-    plugin: IDaoPlugin;
+    name: string;
+    /**
+     * Name of the smart contract.
+     */
+    smartContractName: string;
+    /**
+     * Address of the contract.
+     */
+    address: string;
+    /**
+     * Current installed version of the contract.
+     */
+    currentVersion: IVersion<string> | string;
+    /**
+     * Information about the new version to be installed.
+     */
+    newVersion: IContractVersionInfo;
 }
 
 export const UpdateDaoContractsCard: React.FC<IUpdateDaoContractsCardProps> = (props) => {
-    const { plugin } = props;
-    const { address, subdomain, release, build } = plugin;
+    const { name, smartContractName, address, currentVersion, newVersion } = props;
 
     const { t } = useTranslations();
 
-    const target = pluginRegistryUtils.getPlugin(subdomain) as IPluginInfo;
-    const { release: targetRelease, build: targetBuild } = target.installVersion;
+    const processedCurrentVersion = versionComparatorUtils.normaliseComparatorInput(currentVersion)!;
+    const { release: currentRelease, build: currentBuild } = processedCurrentVersion;
+    const { release: newRelease, build: newBuild } = newVersion;
 
-    const pluginName = daoUtils.getPluginName(plugin);
-    const parsedSubdomain = daoUtils.parsePluginSubdomain(plugin.subdomain);
-    const fromVersion = `${parsedSubdomain} v${release}.${build}`;
-    const toVersion = `${parsedSubdomain} v${targetRelease.toString()}.${targetBuild.toString()}`;
+    const fromVersion = `${smartContractName} v${currentRelease.toString()}.${currentBuild.toString()}`;
+    const toVersion = `${smartContractName} v${newRelease.toString()}.${newBuild.toString()}`;
 
     return (
         <DataList.Item className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
             <div className="flex flex-col gap-1 md:gap-1.5">
                 <div className="flex items-center justify-between">
-                    <p className="text-base text-neutral-800 md:text-lg">{pluginName}</p>
+                    <p className="text-base text-neutral-800 md:text-lg">{name}</p>
                     <p className="text-base text-neutral-500 md:text-lg">{addressUtils.truncateAddress(address)}</p>
                 </div>
                 <p className="text-sm text-neutral-500 md:text-base">
-                    {t('app.settings.updateDaoContractsCard.versionUpdate', {
-                        from: fromVersion,
-                        to: toVersion,
-                    })}
+                    {t('app.settings.updateDaoContractsCard.versionUpdate', { from: fromVersion, to: toVersion })}
                 </p>
             </div>
-            <Link href={target.releaseNotesUrl} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
+            <Link href={newVersion.releaseNotes} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
                 {t('app.settings.updateDaoContractsCard.releaseNotes')}
             </Link>
         </DataList.Item>

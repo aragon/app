@@ -20,6 +20,9 @@ jest.mock('@/modules/settings/components/daoGovernanceInfo', () => ({
 jest.mock('@/modules/settings/components/daoMembersInfo', () => ({
     DaoMembersInfo: () => <div data-testid="members-info-mock" />,
 }));
+jest.mock('@/modules/settings/components/updateDaoContracts', () => ({
+    UpdateDaoContracts: () => <div data-testid="update-dao-contracts" />,
+}));
 jest.mock('@/plugins/adminPlugin/components/adminSettingsPanel', () => ({
     AdminSettingsPanel: () => <div data-testid="admin-settings-mock" />,
 }));
@@ -67,7 +70,7 @@ describe('<DaoSettingsPageClient /> component', () => {
         expect(screen.getByText(/daoSettingsPage.main.title/)).toBeInTheDocument();
     });
 
-    it('renders the DaoSettingsInfo and DaoVersionInfo components', () => {
+    it('renders the dao settings, info and contract update components', () => {
         const dao = generateDao({ id: 'my-dao', name: 'My Dao Name' });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent());
@@ -75,6 +78,7 @@ describe('<DaoSettingsPageClient /> component', () => {
         expect(screen.getByText(/daoSettingsPage.aside.versionInfoTitle/)).toBeInTheDocument();
         expect(screen.getByText('My Dao Name')).toBeInTheDocument();
         expect(screen.getByText(/daoVersionInfo.osValue/)).toBeInTheDocument();
+        expect(screen.getByTestId('update-dao-contracts')).toBeInTheDocument();
     });
 
     it('renders the dao governance info when DAO has supported plugins', () => {

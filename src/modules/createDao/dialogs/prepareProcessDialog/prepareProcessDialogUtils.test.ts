@@ -1,6 +1,6 @@
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import { Network } from '@/shared/api/daoService';
-import { generateDao, generatePluginSetupData } from '@/shared/testUtils';
+import { generateDao, generatePluginInstallationSetupData } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
@@ -18,11 +18,11 @@ import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
 import type { IBuildProcessProposalActionsParams } from './prepareProcessDialogUtils.api';
 
 describe('prepareProcessDialog utils', () => {
-    const cidToHexSpy = jest.spyOn(transactionUtils, 'cidToHex');
+    const stringToMetadataHexSpy = jest.spyOn(transactionUtils, 'stringToMetadataHex');
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
 
     afterEach(() => {
-        cidToHexSpy.mockReset();
+        stringToMetadataHexSpy.mockReset();
         getSlotFunctionSpy.mockReset();
     });
 
@@ -189,7 +189,7 @@ describe('prepareProcessDialog utils', () => {
             const dao = generateDao();
             const transactionData = '0xdata';
             buildPreparePluginInstallDataSpy.mockReturnValue(transactionData);
-            cidToHexSpy.mockReturnValue(metadataHex);
+            stringToMetadataHexSpy.mockReturnValue(metadataHex);
             const result = prepareProcessDialogUtils['buildPrepareInstallProcessorActionData'](metadata, dao);
             expect(buildPreparePluginInstallDataSpy).toHaveBeenCalledWith(metadataHex, dao);
             expect(result).toEqual(transactionData);
@@ -271,7 +271,7 @@ describe('prepareProcessDialog utils', () => {
             const transactionData = '0xdata';
             const prepareTransactionMock = jest.fn(() => transactionData);
             getSlotFunctionSpy.mockReturnValue(prepareTransactionMock);
-            cidToHexSpy.mockReturnValue(metadata);
+            stringToMetadataHexSpy.mockReturnValue(metadata);
 
             const params = { metadataCid, dao, body };
             const result = prepareProcessDialogUtils['buildPrepareInstallPluginActionData'](params);
@@ -300,13 +300,13 @@ describe('prepareProcessDialog utils', () => {
         ): IBuildProcessProposalActionsParams => ({
             values: generateCreateProcessFormData(),
             dao: generateDao(),
-            setupData: [generatePluginSetupData()],
+            setupData: [generatePluginInstallationSetupData()],
             ...params,
         });
 
         it('builds the apply-installation actions and passes them to the create proposal plugin function', () => {
             const dao = generateDao();
-            const setupData = [generatePluginSetupData()];
+            const setupData = [generatePluginInstallationSetupData()];
             const values = generateCreateProcessFormDataBasic();
             const installPluginActions = [{ to: '0x123' as Hex, data: '0x' as Hex, value: BigInt(11) }];
 

@@ -2,15 +2,17 @@ import type { IBuildPreparePluginInstallDataParams } from '@/modules/createDao/t
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
+import type { IBuildPreparePluginUpdateDataParams } from '@/modules/settings/types';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
-import { encodeAbiParameters, encodeFunctionData, parseUnits, type Hex } from 'viem';
+import { transactionUtils } from '@/shared/utils/transactionUtils';
+import { encodeAbiParameters, encodeFunctionData, parseUnits, zeroHash, type Hex } from 'viem';
 import type { ITokenSetupGovernanceForm } from '../../components/tokenSetupGovernance';
 import type { ITokenSetupMembershipForm, ITokenSetupMembershipMember } from '../../components/tokenSetupMembership';
 import { tokenPlugin } from '../../constants/tokenPlugin';
 import type { ITokenPluginSettings } from '../../types';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
-import { tokenPluginAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
+import { tokenPluginAbi, tokenPluginPrepareUpdateAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
 
 // The end-date form values are set to "partial" because users can also create proposals without the proposal wizard
 export interface ICreateTokenProposalFormData extends IProposalCreate, Partial<ICreateProposalEndDateForm> {}
@@ -80,6 +82,17 @@ class TokenTransactionUtils {
             pluginSettingsData,
             dao.address as Hex,
         );
+
+        return transactionData;
+    };
+
+    buildPrepareUpdateData = (params: IBuildPreparePluginUpdateDataParams): Hex => {
+        const { plugin, dao } = params;
+        const { isSubPlugin, metadataIpfs } = plugin;
+
+        const targetConfig = pluginTransactionUtils.getPluginTargetConfig(dao, isSubPlugin);
+        const metadata = metadataIpfs != null ? transactionUtils.stringToMetadataHex(metadataIpfs) : zeroHash;
+        const transactionData = encodeAbiParameters(tokenPluginPrepareUpdateAbi, [BigInt(0), targetConfig, metadata]);
 
         return transactionData;
     };

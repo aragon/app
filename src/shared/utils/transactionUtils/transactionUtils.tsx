@@ -1,11 +1,16 @@
 import type { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { encodeFunctionData, type Hex, toHex, zeroHash } from 'viem';
+import { ipfsUtils } from '../ipfsUtils';
 import { globalExecutorAbi } from './globalExecutorAbi';
 import type { ITransactionRequest } from './transactionUtils.api';
 
 class TransactionUtils {
-    cidToHex = (cid: string): Hex => toHex(`ipfs://${cid}`);
+    stringToMetadataHex = (value: string): Hex => {
+        const ipfsUri = ipfsUtils.isUri(value) ? value : ipfsUtils.cidToUri(value)!;
+
+        return toHex(ipfsUri);
+    };
 
     encodeTransactionRequests = (transactions: ITransactionRequest[], network: Network): ITransactionRequest =>
         transactions.length === 1 ? transactions[0] : this.buildExecutorTransaction(transactions, network);

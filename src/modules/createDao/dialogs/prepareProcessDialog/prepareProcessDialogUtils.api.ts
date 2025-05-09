@@ -1,5 +1,5 @@
 import type { IDao } from '@/shared/api/daoService';
-import type { IPluginSetupData } from '@/shared/utils/pluginTransactionUtils';
+import type { IPluginInstallationSetupData } from '@/shared/utils/pluginTransactionUtils';
 import type { ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
 
@@ -63,5 +63,5 @@ export interface IBuildProcessProposalActionsParams {
     /**
      * Address list of the plugins to be installed.
      */
-    setupData: IPluginSetupData[];
+    setupData: IPluginInstallationSetupData[];
 }

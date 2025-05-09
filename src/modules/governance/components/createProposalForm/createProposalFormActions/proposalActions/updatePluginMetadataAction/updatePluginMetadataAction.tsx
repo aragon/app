@@ -43,7 +43,7 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
             }
 
             const ipfsResult = await pinJsonAsync({ body: pluginMetadata });
-            const hexResult = transactionUtils.cidToHex(ipfsResult.IpfsHash);
+            const hexResult = transactionUtils.stringToMetadataHex(ipfsResult.IpfsHash);
             const data = encodeFunctionData({ abi: [setMetadataAbi], args: [hexResult] });
 
             return data;
