@@ -1,6 +1,5 @@
-import * as DaoService from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
-import { generateDao, generateDialogContext, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { generateDao, generateDialogContext } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import type * as GovUiKit from '@aragon/gov-ui-kit';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
@@ -25,7 +24,6 @@ jest.mock('next/navigation', () => ({
 }));
 
 describe('<NavigationWizard /> component', () => {
-    const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
@@ -33,7 +31,6 @@ describe('<NavigationWizard /> component', () => {
     const confirmSpy = jest.spyOn(window, 'confirm');
 
     beforeEach(() => {
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         cidToSrcSpy.mockReturnValue('ipfs://avatar-cid');
         useRouterSpy.mockReturnValue({
             push: jest.fn(),
@@ -45,7 +42,6 @@ describe('<NavigationWizard /> component', () => {
     });
 
     afterEach(() => {
-        useDaoSpy.mockReset();
         cidToSrcSpy.mockReset();
         useRouterSpy.mockReset();
         useAccountSpy.mockReset();
@@ -68,9 +64,8 @@ describe('<NavigationWizard /> component', () => {
 
     it('renders the DAO avatar and name when data is fetched', () => {
         const dao = generateDao({ avatar: 'ipfs://avatar-cid', name: 'Test DAO' });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
 
-        render(createTestComponent());
+        render(createTestComponent({ dao }));
 
         const daoAvatar = screen.getByTestId('dao-avatar-mock');
         expect(daoAvatar).toBeInTheDocument();
