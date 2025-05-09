@@ -22,7 +22,7 @@ class IpfsUtils {
         return processedCid != null ? `${this.ipfsGateway}/ipfs/${processedCid}?${params.toString()}` : undefined;
     };
 
-    isUri = (cid: string) => cid.startsWith(this.ipfsPrefix);
+    isUri = (value: string) => value.startsWith(this.ipfsPrefix);
 
     cidToUri = (cid?: string | null): string | undefined => (cid ? `${this.ipfsPrefix}${cid}` : undefined);
 

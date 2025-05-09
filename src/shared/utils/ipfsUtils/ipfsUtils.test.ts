@@ -30,6 +30,16 @@ describe('ipfs utils', () => {
         });
     });
 
+    describe('isUri', () => {
+        it('returns true when value starts with ipfs prefix', () => {
+            expect(ipfsUtils.isUri('ipfs://test')).toBeTruthy();
+        });
+
+        it('returns false when value does not start with ipfs prefix', () => {
+            expect(ipfsUtils.isUri('test')).toBeFalsy();
+        });
+    });
+
     describe('cidToUri', () => {
         it('returns a valid ipfs:// URI when a CID is provided', () => {
             const cid = 'bafybeigdyrztgvdrx3nldjbk8m7';
