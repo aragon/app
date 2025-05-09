@@ -3,7 +3,7 @@ import {
     type INavigationWizardProps,
     NavigationWizard,
 } from '@/modules/application/components/navigations/navigationWizard';
-import { daoOptions, IDao } from '@/shared/api/daoService';
+import { daoOptions, type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import type { IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
