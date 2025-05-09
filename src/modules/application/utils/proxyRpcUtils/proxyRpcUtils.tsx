@@ -43,7 +43,7 @@ export class ProxyRpcUtils {
         return NextResponse.json(parsedResult);
     };
 
-    chainIdToRpcEndpoint = (chainId: string): string | undefined => {
+    private chainIdToRpcEndpoint = (chainId: string): string | undefined => {
         const network = this.chainIdToNetwork(chainId);
         const { privateRpc, rpcUrls } = network ? networkDefinitions[network] : {};
 

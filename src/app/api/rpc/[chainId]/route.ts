@@ -1,5 +1,3 @@
-import { ProxyRpcUtils } from '@/modules/application/utils/proxyRpcUtils';
-
-const proxyRpcUtils = new ProxyRpcUtils();
+import { proxyRpcUtils } from '@/modules/application/utils/proxyRpcUtils';
 
 export const POST = proxyRpcUtils.request;
