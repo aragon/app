@@ -4,6 +4,7 @@ import { generateToken } from '@/modules/finance/testUtils';
 import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { tokenPlugin } from '@/plugins/tokenPlugin/constants/tokenPlugin';
+import { Network } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
@@ -11,7 +12,7 @@ import * as Viem from 'viem';
 import { zeroAddress } from 'viem';
 import { generateTokenPluginSettings } from '../../testUtils';
 import { DaoTokenVotingMode } from '../../types';
-import { tokenPluginAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
+import { tokenPluginAbi, tokenPluginPrepareUpdateAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
 import { tokenTransactionUtils } from './tokenTransactionUtils';
 
 describe('tokenTransaction utils', () => {
@@ -21,6 +22,7 @@ describe('tokenTransaction utils', () => {
     const createDefaultEndDateSpy = jest.spyOn(createProposalUtils, 'createDefaultEndDate');
     const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');
     const buildPrepareInstallationDataSpy = jest.spyOn(pluginTransactionUtils, 'buildPrepareInstallationData');
+    const getPluginTargetConfigSpy = jest.spyOn(pluginTransactionUtils, 'getPluginTargetConfig');
 
     afterEach(() => {
         encodeFunctionDataSpy.mockReset();
@@ -29,6 +31,7 @@ describe('tokenTransaction utils', () => {
         createDefaultEndDateSpy.mockReset();
         encodeAbiParametersSpy.mockReset();
         buildPrepareInstallationDataSpy.mockReset();
+        getPluginTargetConfigSpy.mockReset();
     });
 
     describe('buildCreateProposalData', () => {
@@ -117,7 +120,6 @@ describe('tokenTransaction utils', () => {
         const votingSettingsSpy = jest.spyOn(tokenTransactionUtils as any, 'buildInstallDataVotingSettings');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const mintSettingsSpy = jest.spyOn(tokenTransactionUtils as any, 'buildInstallDataMintSettings');
-        const getPluginTargetConfigSpy = jest.spyOn(pluginTransactionUtils, 'getPluginTargetConfig');
 
         type BuildDataParams = Parameters<typeof tokenTransactionUtils.buildPrepareInstallData>;
 
@@ -129,7 +131,6 @@ describe('tokenTransaction utils', () => {
             tokenSettingsSpy.mockReset();
             votingSettingsSpy.mockReset();
             mintSettingsSpy.mockReset();
-            getPluginTargetConfigSpy.mockReset();
         });
 
         afterAll(() => {
@@ -201,6 +202,26 @@ describe('tokenTransaction utils', () => {
             const params = [{ metadata: '', dao, body, stageVotingPeriod }] as unknown as BuildDataParams;
             tokenTransactionUtils.buildPrepareInstallData(...params);
             expect(getPluginTargetConfigSpy).toHaveBeenCalledWith(dao, true);
+        });
+    });
+
+    describe('buildPrepareUpdateData', () => {
+        it('encodes the correct data for sub plugins', () => {
+            const dao = generateDao({ network: Network.ETHEREUM_SEPOLIA });
+            const plugin = generateDaoPlugin({ isSubPlugin: true, metadataIpfs: 'ipfs://test' });
+            const expectedParams = [BigInt(0), undefined, '0x697066733a2f2f74657374'];
+            tokenTransactionUtils.buildPrepareUpdateData({ dao, plugin });
+            expect(getPluginTargetConfigSpy).toHaveBeenCalledWith(dao, true);
+            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(tokenPluginPrepareUpdateAbi, expectedParams);
+        });
+
+        it('encodes the correct data legacy plugins', () => {
+            const dao = generateDao({ network: Network.ETHEREUM_SEPOLIA });
+            const plugin = generateDaoPlugin({ isSubPlugin: false, metadataIpfs: undefined });
+            const expectedParams = [BigInt(0), undefined, Viem.zeroHash];
+            tokenTransactionUtils.buildPrepareUpdateData({ dao, plugin });
+            expect(getPluginTargetConfigSpy).toHaveBeenCalledWith(dao, false);
+            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(tokenPluginPrepareUpdateAbi, expectedParams);
         });
     });
 
