@@ -18,7 +18,7 @@ export interface IGetApplyUpdateProposalParams extends IBuildPrepareUpdatePlugin
      */
     osxUpdate: boolean;
     /**
-     * Receipt of the prepare update transaction.
+     * Receipt of the prepare update transaction, only set when the DAO has plugins to be updated.
      */
     prepareUpdateReceipt?: TransactionReceipt;
 }
