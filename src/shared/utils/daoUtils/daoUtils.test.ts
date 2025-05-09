@@ -213,7 +213,7 @@ describe('dao utils', () => {
     describe('resolveDaoId', () => {
         it('returns the daoId when the id is an address', async () => {
             const addressOrEns = '0x1234';
-            const network = 'ethereum-mainnet';
+            const network = Network.ETHEREUM_MAINNET;
             const params = { addressOrEns, network };
             const expectedDaoId = `${network}-${addressOrEns}`;
 
@@ -224,7 +224,7 @@ describe('dao utils', () => {
         it('returns the daoId when the id is an ENS name by resolving name to address', async () => {
             const addressOrEns = 'my-dao.eth';
             const daoAddress = '0x1234';
-            const network = 'ethereum-mainnet';
+            const network = Network.ETHEREUM_MAINNET;
             const params = { addressOrEns, network };
             const expectedDaoId = `${network}-${daoAddress}`;
             getEnsAddressSpy.mockResolvedValue(daoAddress);
@@ -237,7 +237,7 @@ describe('dao utils', () => {
 
         it('throws an error when the ENS address is not found', async () => {
             const addressOrEns = 'my-dao.eth';
-            const network = 'ethereum-mainnet';
+            const network = Network.ETHEREUM_MAINNET;
             const params = { addressOrEns, network };
             getEnsAddressSpy.mockResolvedValue(null);
 

@@ -1,1 +1,1 @@
-export { daoOptions, useDaoByEns } from './useDaoByEns';
+export { daoByEnsOptions, useDaoByEns } from './useDaoByEns';

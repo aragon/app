@@ -1,4 +1,5 @@
 import { type ILayoutWizardProps } from '@/modules/application/components/layouts/layoutWizard';
+import { Network } from '@/shared/api/daoService';
 import { render, screen } from '@testing-library/react';
 import { type ILayoutWizardCreateProcessProps, LayoutWizardCreateProcess } from './layoutWizardCreateProcess';
 
@@ -9,7 +10,7 @@ jest.mock('@/modules/application/components/layouts/layoutWizard', () => ({
 describe('<LayoutWizardCreateProcess /> component', () => {
     const createTestComponent = async (props?: Partial<ILayoutWizardCreateProcessProps>) => {
         const completeProps: ILayoutWizardCreateProcessProps = {
-            params: Promise.resolve({ addressOrEns: 'test-dao-address', network: 'test-network' }),
+            params: Promise.resolve({ addressOrEns: 'test-dao-address', network: Network.ETHEREUM_SEPOLIA }),
             ...props,
         };
 

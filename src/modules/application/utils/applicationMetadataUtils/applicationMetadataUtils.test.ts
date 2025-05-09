@@ -1,4 +1,4 @@
-import { daoService } from '@/shared/api/daoService';
+import { daoService, Network } from '@/shared/api/daoService';
 import { generateDao } from '@/shared/testUtils';
 import { ipfsUtils } from '../../../../shared/utils/ipfsUtils';
 import { applicationMetadataUtils } from './applicationMetadataUtils';
@@ -18,7 +18,7 @@ describe('applicationMetadata utils', () => {
             getDaoSpy.mockResolvedValue(dao);
 
             const metadata = await applicationMetadataUtils.generateDaoMetadata({
-                params: Promise.resolve({ addressOrEns: 'test-dao-address', network: 'test-network' }),
+                params: Promise.resolve({ addressOrEns: 'test-dao-address', network: Network.ETHEREUM_SEPOLIA }),
             });
             expect(metadata.title).toEqual(dao.name);
             expect(metadata.openGraph?.siteName).toEqual(`${dao.name} | Governed on Aragon`);
@@ -32,7 +32,7 @@ describe('applicationMetadata utils', () => {
             cidToSrcSpy.mockReturnValue(ipfsUrl);
 
             const metadata = await applicationMetadataUtils.generateDaoMetadata({
-                params: Promise.resolve({ addressOrEns: 'test-dao-id', network: 'test-network' }),
+                params: Promise.resolve({ addressOrEns: 'test-dao-id', network: Network.ETHEREUM_SEPOLIA }),
             });
             expect(cidToSrcSpy).toHaveBeenCalledWith(dao.avatar);
             expect(metadata.openGraph?.images).toEqual([ipfsUrl]);
@@ -43,7 +43,7 @@ describe('applicationMetadata utils', () => {
             getDaoSpy.mockResolvedValue(dao);
 
             const metadata = await applicationMetadataUtils.generateDaoMetadata({
-                params: Promise.resolve({ addressOrEns: 'test-dao-id', network: 'test-network' }),
+                params: Promise.resolve({ addressOrEns: 'test-dao-id', network: Network.ETHEREUM_SEPOLIA }),
             });
             expect(metadata.openGraph?.images).toBeUndefined();
         });

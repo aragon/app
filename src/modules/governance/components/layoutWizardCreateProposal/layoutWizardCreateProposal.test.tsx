@@ -1,4 +1,5 @@
 import { type ILayoutWizardProps } from '@/modules/application/components/layouts/layoutWizard';
+import { Network } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { mockTranslations } from '@/test/utils';
@@ -25,7 +26,11 @@ describe('<LayoutWizardCreateProposal /> component', () => {
 
     const createTestComponent = async (props?: Partial<ILayoutWizardCreateProposalProps>) => {
         const completeProps: ILayoutWizardCreateProposalProps = {
-            params: Promise.resolve({ addressOrEns: 'dao-address', network: 'test-network', pluginAddress: '0x123' }),
+            params: Promise.resolve({
+                addressOrEns: 'dao-address',
+                network: Network.ETHEREUM_SEPOLIA,
+                pluginAddress: '0x123',
+            }),
             ...props,
         };
 
@@ -38,7 +43,7 @@ describe('<LayoutWizardCreateProposal /> component', () => {
         fetchQuerySpy.mockImplementation(() => {
             throw new Error('fetch DAO error');
         });
-        const params = { addressOrEns: 'dao-address', network: 'test-network', pluginAddress: '0x123' };
+        const params = { addressOrEns: 'dao-address', network: Network.ETHEREUM_SEPOLIA, pluginAddress: '0x123' };
         render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
     });

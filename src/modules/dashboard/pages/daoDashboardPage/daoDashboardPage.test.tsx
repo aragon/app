@@ -1,3 +1,4 @@
+import { Network } from '@/shared/api/daoService';
 import type * as ReactQuery from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
@@ -26,7 +27,7 @@ describe('<DaoDashboardPage /> component', () => {
 
     const createTestComponent = async (props?: Partial<IDaoDashboardPageProps>) => {
         const completeProps: IDaoDashboardPageProps = {
-            params: Promise.resolve({ addressOrEns: 'test.dao.eth', network: 'testnet' }),
+            params: Promise.resolve({ addressOrEns: 'test.dao.eth', network: Network.ETHEREUM_SEPOLIA }),
             ...props,
         };
 
