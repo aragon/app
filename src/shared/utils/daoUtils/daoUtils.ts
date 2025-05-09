@@ -1,5 +1,5 @@
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
-import { type IDao, type IDaoPlugin, Network } from '@/shared/api/daoService';
+import type { IDao, IDaoPlugin, Network } from '@/shared/api/daoService';
 import { type IDaoPageParams, PluginType } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { getEnsAddress } from 'wagmi/actions';
