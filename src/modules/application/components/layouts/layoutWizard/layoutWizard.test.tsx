@@ -1,10 +1,10 @@
 import { daoOptions, Network } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { testLogger } from '@/test/utils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import * as WagmiActions from 'wagmi/actions';
 import { LayoutWizard, type ILayoutWizardProps } from './layoutWizard';
 
 jest.mock('@tanstack/react-query', () => ({
@@ -22,16 +22,16 @@ jest.mock('../../navigations/navigationWizard', () => ({
 
 describe('<LayoutWizard /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
-    const getEnsAddressSpy = jest.spyOn(WagmiActions, 'getEnsAddress');
+    const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
 
     beforeEach(() => {
         fetchQuerySpy.mockImplementation(jest.fn());
-        getEnsAddressSpy.mockResolvedValue('0x12345');
+        resolveDaoIdSpy.mockResolvedValue('test-dao-id');
     });
 
     afterEach(() => {
         fetchQuerySpy.mockReset();
-        getEnsAddressSpy.mockReset();
+        resolveDaoIdSpy.mockReset();
     });
 
     const createTestComponent = async (props?: Partial<ILayoutWizardProps>) => {
@@ -54,10 +54,9 @@ describe('<LayoutWizard /> component', () => {
 
     it('prefetches the DAO and its settings from the given slug', async () => {
         const daoEns = 'test.dao.eth';
-        const daoAddress = '0x12345';
         const daoNetwork = Network.ETHEREUM_MAINNET;
         const params = { addressOrEns: daoEns, network: daoNetwork };
-        const expectedDaoId = `${daoNetwork}-${daoAddress}`;
+        const expectedDaoId = 'test-dao-id';
         render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
             daoOptions({ urlParams: { id: expectedDaoId } }).queryKey,

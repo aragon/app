@@ -6,7 +6,6 @@ import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import * as WagmiActions from 'wagmi/actions';
 import { memberListOptions } from '../../api/governanceService';
 import { daoMembersCount, DaoMembersPage, type IDaoMembersPageProps } from './daoMembersPage';
 
@@ -25,20 +24,20 @@ describe('<DaoMembersPage /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
     const getDaoPluginsSpy = jest.spyOn(daoUtils, 'getDaoPlugins');
     const prefetchInfiniteQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchInfiniteQuery');
-    const getEnsAddressSpy = jest.spyOn(WagmiActions, 'getEnsAddress');
+    const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
 
     beforeEach(() => {
         fetchQuerySpy.mockImplementation(jest.fn());
         prefetchInfiniteQuerySpy.mockImplementation(jest.fn());
         getDaoPluginsSpy.mockReturnValue([generateDaoPlugin()]);
-        getEnsAddressSpy.mockResolvedValue('0x12345');
+        resolveDaoIdSpy.mockResolvedValue('test-dao-id');
     });
 
     afterEach(() => {
         fetchQuerySpy.mockReset();
         prefetchInfiniteQuerySpy.mockReset();
         getDaoPluginsSpy.mockReset();
-        getEnsAddressSpy.mockReset();
+        resolveDaoIdSpy.mockReset();
     });
 
     const createTestComponent = async (props?: Partial<IDaoMembersPageProps>) => {
@@ -52,18 +51,14 @@ describe('<DaoMembersPage /> component', () => {
     };
 
     it('prefetches the DAO member list of the first DAO body plugin', async () => {
-        const daoEns = 'test.dao.eth';
-        const daoAddress = '0x12345';
-        const daoNetwork = Network.ETHEREUM_MAINNET;
-        const expectedDaoId = `${daoNetwork}-${daoAddress}`;
-        const dao = generateDao({ id: expectedDaoId, address: daoAddress, ens: daoEns });
+        const expectedDaoId = `test-dao-id`;
+        const dao = generateDao();
         const bodyPlugin = generateDaoPlugin({ address: '0x123' });
+        resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
         fetchQuerySpy.mockResolvedValue(dao);
         getDaoPluginsSpy.mockReturnValue([bodyPlugin]);
-        getEnsAddressSpy.mockResolvedValue(daoAddress);
 
-        const params = { addressOrEns: daoEns, network: daoNetwork };
-        render(await createTestComponent({ params: Promise.resolve(params) }));
+        render(await createTestComponent());
 
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
             daoOptions({ urlParams: { id: expectedDaoId } }).queryKey,

@@ -10,6 +10,7 @@ import {
     generateReactQueryResultSuccess,
     generateTabComponentPlugin,
 } from '@/shared/testUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { DaoProposalsPageClient, type IDaoProposalsPageClientProps } from './daoProposalsPageClient';
@@ -31,6 +32,7 @@ describe('<DaoProposalsPageClient /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
     const usePermissionCheckGuardSpy = jest.spyOn(usePermissionCheckGuard, 'usePermissionCheckGuard');
+    const getDaoUrlSpy = jest.spyOn(daoUtils, 'getDaoUrl');
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
@@ -43,6 +45,7 @@ describe('<DaoProposalsPageClient /> component', () => {
         useDaoPluginsSpy.mockReset();
         useDialogContextSpy.mockReset();
         usePermissionCheckGuardSpy.mockReset();
+        getDaoUrlSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoProposalsPageClientProps>) => {
@@ -66,20 +69,14 @@ describe('<DaoProposalsPageClient /> component', () => {
     });
 
     it('renders the create proposal button with the correct link and label', () => {
-        const daoEns = 'test.dao.eth';
-        const daoAddress = '0x12345';
-        const daoNetwork = Network.ETHEREUM_MAINNET;
-        const daoId = `${daoNetwork}-${daoAddress}`;
         const pluginAddress = '0x082729';
-        const initialParams = { queryParams: { daoId, pluginAddress } };
+        const initialParams = { queryParams: { daoId: 'test-dao-id', pluginAddress } };
+        const testDaoUrl = `/dao/${Network.ETHEREUM_SEPOLIA}/address`;
+        getDaoUrlSpy.mockReturnValue(testDaoUrl);
         const plugin = generateDaoPlugin({ address: pluginAddress });
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({
-                data: generateDao({
-                    id: daoId,
-                    ens: daoEns,
-                    address: daoAddress,
-                }),
+                data: generateDao(),
             }),
         );
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: plugin })]);
@@ -90,9 +87,6 @@ describe('<DaoProposalsPageClient /> component', () => {
             name: /daoProposalsPage.main.action/,
         });
         expect(createProposalButton).toBeInTheDocument();
-        expect(createProposalButton).toHaveAttribute(
-            'href',
-            `/dao/${daoNetwork}/${daoEns}/create/${pluginAddress}/proposal`,
-        );
+        expect(createProposalButton).toHaveAttribute('href', `${testDaoUrl}/create/${pluginAddress}/proposal`);
     });
 });

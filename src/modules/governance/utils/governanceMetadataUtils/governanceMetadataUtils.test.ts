@@ -2,27 +2,25 @@ import { governanceService } from '@/modules/governance/api/governanceService';
 import { generateProposal } from '@/modules/governance/testUtils';
 import { daoService, Network } from '@/shared/api/daoService';
 import { generateDao } from '@/shared/testUtils';
-import * as WagmiActions from 'wagmi/actions';
-import { ipfsUtils } from '../../../../shared/utils/ipfsUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { governanceMetadataUtils } from './governanceMetadataUtils';
 
 describe('governanceMetadata utils', () => {
     const getDaoSpy = jest.spyOn(daoService, 'getDao');
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const getProposalBySlugSpy = jest.spyOn(governanceService, 'getProposalBySlug');
-    const getEnsAddressSpy = jest.spyOn(WagmiActions, 'getEnsAddress');
+    const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
 
     afterEach(() => {
         getDaoSpy.mockReset();
         cidToSrcSpy.mockReset();
         getProposalBySlugSpy.mockReset();
-        getEnsAddressSpy.mockReset();
+        resolveDaoIdSpy.mockReset();
     });
 
     describe('generateProposalMetadata', () => {
         it('fetches proposal and returns expected metadata including dao avatar', async () => {
-            const daoEns = 'test.dao.eth';
-            const daoAddress = '0x12345';
             const proposalSlug = 'proposal-slug';
             const proposal = generateProposal({
                 title: 'A Big Change',
@@ -30,15 +28,19 @@ describe('governanceMetadata utils', () => {
             });
             const dao = generateDao({ avatar: 'cid123' });
             const ipfsUrl = `https://ipfs.com/ipfs/${dao.avatar!}`;
-            const expectedDaoId = `${Network.ETHEREUM_MAINNET}-${daoAddress}`;
+            const expectedDaoId = `test-dao-id`;
 
             getProposalBySlugSpy.mockResolvedValue(proposal);
             getDaoSpy.mockResolvedValue(dao);
             cidToSrcSpy.mockReturnValue(ipfsUrl);
-            getEnsAddressSpy.mockResolvedValue(daoAddress);
+            resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
 
             const metadata = await governanceMetadataUtils.generateProposalMetadata({
-                params: Promise.resolve({ addressOrEns: daoEns, network: Network.ETHEREUM_MAINNET, proposalSlug }),
+                params: Promise.resolve({
+                    addressOrEns: 'test.dao.eth',
+                    network: Network.ETHEREUM_MAINNET,
+                    proposalSlug,
+                }),
             });
 
             expect(getProposalBySlugSpy).toHaveBeenCalledWith({

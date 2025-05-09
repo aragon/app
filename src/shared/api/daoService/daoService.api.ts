@@ -1,5 +1,5 @@
 import type { IRequestUrlParams } from '../httpService';
-import { Network } from './domain';
+import type { Network } from './domain';
 
 export interface IGetDaoUrlParams {
     /**

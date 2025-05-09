@@ -2,7 +2,6 @@ import { daoService, Network } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { PluginType } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
-import * as WagmiActions from 'wagmi/actions';
 import { ipfsUtils } from '../ipfsUtils';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 import { daoUtils } from './daoUtils';
@@ -13,17 +12,17 @@ jest.mock('@/modules/application/constants/wagmi', () => ({
 
 describe('dao utils', () => {
     const getDaoSpy = jest.spyOn(daoService, 'getDao');
+    const getDaoByEnsSpy = jest.spyOn(daoService, 'getDaoByEns');
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const listContainsRegisteredPluginsSpy = jest.spyOn(pluginRegistryUtils, 'listContainsRegisteredPlugins');
     const isAddressEqualSpy = jest.spyOn(addressUtils, 'isAddressEqual');
-    const getEnsAddressSpy = jest.spyOn(WagmiActions, 'getEnsAddress');
 
     afterEach(() => {
         getDaoSpy.mockReset();
+        getDaoByEnsSpy.mockReset();
         cidToSrcSpy.mockReset();
         listContainsRegisteredPluginsSpy.mockReset();
         isAddressEqualSpy.mockReset();
-        getEnsAddressSpy.mockReset();
     });
 
     describe('hasSupportedPlugins', () => {
@@ -227,21 +226,12 @@ describe('dao utils', () => {
             const network = Network.ETHEREUM_MAINNET;
             const params = { addressOrEns, network };
             const expectedDaoId = `${network}-${daoAddress}`;
-            getEnsAddressSpy.mockResolvedValue(daoAddress);
+            getDaoByEnsSpy.mockResolvedValue(generateDao({ address: daoAddress, network }));
 
             const result = await daoUtils.resolveDaoId(params);
 
-            expect(getEnsAddressSpy).toHaveBeenCalledWith({}, { name: addressOrEns, chainId: 1 });
+            expect(getDaoByEnsSpy).toHaveBeenCalledWith({ urlParams: { network, ens: addressOrEns } });
             expect(result).toEqual(expectedDaoId);
-        });
-
-        it('throws an error when the ENS address is not found', async () => {
-            const addressOrEns = 'my-dao.eth';
-            const network = Network.ETHEREUM_MAINNET;
-            const params = { addressOrEns, network };
-            getEnsAddressSpy.mockResolvedValue(null);
-
-            await expect(daoUtils.resolveDaoId(params)).rejects.toThrow('ENS address not found');
         });
     });
 

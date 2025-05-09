@@ -1,8 +1,8 @@
+import { daoUtils } from '@/shared/utils/daoUtils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import * as WagmiActions from 'wagmi/actions';
 import { Network } from '../../../../shared/api/daoService';
 import { proposalBySlugOptions } from '../../api/governanceService';
 import { DaoProposalDetailsPage, type IDaoProposalDetailsPageProps } from './daoProposalDetailsPage';
@@ -22,16 +22,16 @@ jest.mock('./daoProposalDetailsPageClient', () => ({
 
 describe('<DaoProposalDetailsPage /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
-    const getEnsAddressSpy = jest.spyOn(WagmiActions, 'getEnsAddress');
+    const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
 
     beforeEach(() => {
         fetchQuerySpy.mockImplementation(jest.fn());
-        getEnsAddressSpy.mockResolvedValue('0x12345');
+        resolveDaoIdSpy.mockResolvedValue('test-dao-id');
     });
 
     afterEach(() => {
         fetchQuerySpy.mockReset();
-        getEnsAddressSpy.mockReset();
+        resolveDaoIdSpy.mockReset();
     });
 
     const createTestComponent = async (props?: Partial<IDaoProposalDetailsPageProps>) => {
@@ -59,7 +59,7 @@ describe('<DaoProposalDetailsPage /> component', () => {
             urlParams: { slug: params.proposalSlug },
             queryParams: { daoId: expectedDaoId },
         };
-        getEnsAddressSpy.mockResolvedValue(daoAddress);
+        resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
 
         render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(proposalBySlugOptions(proposalParams).queryKey);
@@ -72,11 +72,9 @@ describe('<DaoProposalDetailsPage /> component', () => {
 
     it('renders error with a link to proposal list page on fetch proposal error', async () => {
         const daoEns = 'test.dao.eth';
-        const daoAddress = '0x12345';
         const daoNetwork = Network.ETHEREUM_MAINNET;
         const params = { addressOrEns: daoEns, network: daoNetwork, proposalSlug: '' };
         fetchQuerySpy.mockRejectedValue('error');
-        getEnsAddressSpy.mockResolvedValue(daoAddress);
 
         render(await createTestComponent({ params: Promise.resolve(params) }));
         const errorLink = screen.getByRole('link', { name: /daoProposalDetailsPage.notFound.action/ });

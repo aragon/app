@@ -1,6 +1,6 @@
 import { generateDao } from '@/shared/testUtils';
 import { daoService } from './daoService';
-import { Network } from './domain';
+import type { Network } from './domain';
 
 describe('dao service', () => {
     const requestSpy = jest.spyOn(daoService, 'request');

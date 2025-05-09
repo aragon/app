@@ -1,9 +1,9 @@
+import { Network } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import * as WagmiActions from 'wagmi/actions';
-import { Network } from '../../../../shared/api/daoService';
 import { memberOptions } from '../../api/governanceService';
 import { DaoMemberDetailsPage, type IDaoMemberDetailsPageProps } from './daoMemberDetailsPage';
 
@@ -22,16 +22,16 @@ jest.mock('./daoMemberDetailsPageClient', () => ({
 
 describe('<DaoMemberDetailsPage /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
-    const getEnsAddressSpy = jest.spyOn(WagmiActions, 'getEnsAddress');
+    const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
 
     beforeEach(() => {
         fetchQuerySpy.mockImplementation(jest.fn());
-        getEnsAddressSpy.mockResolvedValue('0x12345');
+        resolveDaoIdSpy.mockResolvedValue('test-dao-id');
     });
 
     afterEach(() => {
         fetchQuerySpy.mockReset();
-        getEnsAddressSpy.mockReset();
+        resolveDaoIdSpy.mockReset();
     });
 
     const createTestComponent = async (props?: Partial<IDaoMemberDetailsPageProps>) => {
@@ -49,15 +49,13 @@ describe('<DaoMemberDetailsPage /> component', () => {
     };
 
     it('prefetches the DAO member data from the given address and dao ID', async () => {
-        const daoEns = 'test.dao.eth';
-        const daoAddress = '0x12345';
-        const daoNetwork = Network.ETHEREUM_MAINNET;
-        const params = { addressOrEns: daoEns, network: daoNetwork, address: 'test-address' };
-        const expectedDaoId = `${daoNetwork}-${daoAddress}`;
+        const params = { addressOrEns: 'test.dao.eth', network: Network.ETHEREUM_SEPOLIA, address: 'test-address' };
+        const expectedDaoId = 'test-dao-id';
         const memberParams = {
             urlParams: { address: params.address },
             queryParams: { daoId: expectedDaoId },
         };
+        resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
         render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(memberOptions(memberParams).queryKey);
     });

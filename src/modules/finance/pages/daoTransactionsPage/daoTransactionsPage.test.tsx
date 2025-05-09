@@ -1,11 +1,11 @@
 import { transactionListOptions } from '@/modules/finance/api/financeService/queries/useTransactionList/useTransactionList';
 import { daoOptions, Network } from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import * as WagmiActions from 'wagmi/actions';
 import { daoTransactionsCount, DaoTransactionsPage, type IDaoTransactionsPageProps } from './daoTransactionsPage';
 
 jest.mock('@tanstack/react-query', () => ({
@@ -24,18 +24,18 @@ jest.mock('./daoTransactionsPageClient', () => ({
 describe('<DaoTransactionsPage /> component', () => {
     const prefetchInfiniteQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchInfiniteQuery');
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
-    const getEnsAddressSpy = jest.spyOn(WagmiActions, 'getEnsAddress');
+    const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
 
     beforeEach(() => {
         fetchQuerySpy.mockResolvedValue(generateReactQueryResultSuccess({ data: generateDao() }));
         prefetchInfiniteQuerySpy.mockImplementation(jest.fn());
-        getEnsAddressSpy.mockResolvedValue('0x12345');
+        resolveDaoIdSpy.mockResolvedValue('test-dao-id');
     });
 
     afterEach(() => {
         prefetchInfiniteQuerySpy.mockReset();
         fetchQuerySpy.mockReset();
-        getEnsAddressSpy.mockReset();
+        resolveDaoIdSpy.mockReset();
     });
 
     const createTestComponent = async (props?: Partial<IDaoTransactionsPageProps>) => {
@@ -55,20 +55,16 @@ describe('<DaoTransactionsPage /> component', () => {
     });
 
     it('prefetches the DAO and its transaction list', async () => {
-        const daoEns = 'test.dao.eth';
         const daoAddress = '0x12345';
-        const daoNetwork = Network.ETHEREUM_MAINNET;
-        const expectedDaoId = `${daoNetwork}-${daoAddress}`;
+        const expectedDaoId = 'test-dao-id';
         const dao = generateDao({
             id: expectedDaoId,
-            ens: daoEns,
             address: daoAddress,
         });
-        const params = { addressOrEns: daoEns, network: daoNetwork };
         fetchQuerySpy.mockResolvedValue(dao);
-        getEnsAddressSpy.mockResolvedValue(daoAddress);
+        resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
 
-        render(await createTestComponent({ params: Promise.resolve(params) }));
+        render(await createTestComponent());
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
             daoOptions({ urlParams: { id: expectedDaoId } }).queryKey,
         );
