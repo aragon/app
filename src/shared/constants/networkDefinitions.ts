@@ -60,6 +60,7 @@ export interface INetworkDefinition extends Chain {
 const latestProtocolVersion: IContractVersionInfo = {
     release: 1,
     build: 4,
+    patch: 0,
     releaseNotes: 'https://github.com/aragon/osx/releases/tag/v1.4.0',
     description: 'TODO',
 };

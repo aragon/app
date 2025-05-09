@@ -1,6 +1,7 @@
-import { daoService } from '@/shared/api/daoService';
+import { daoService, Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
-import { PluginType } from '@/shared/types';
+import { type IPluginInfo, PluginType } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { ipfsUtils } from '../ipfsUtils';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
@@ -11,12 +12,14 @@ describe('dao utils', () => {
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const listContainsRegisteredPluginsSpy = jest.spyOn(pluginRegistryUtils, 'listContainsRegisteredPlugins');
     const isAddressEqualSpy = jest.spyOn(addressUtils, 'isAddressEqual');
+    const getPluginSpy = jest.spyOn(pluginRegistryUtils, 'getPlugin');
 
     afterEach(() => {
         getDaoSpy.mockReset();
         cidToSrcSpy.mockReset();
         listContainsRegisteredPluginsSpy.mockReset();
         isAddressEqualSpy.mockReset();
+        getPluginSpy.mockReset();
     });
 
     describe('hasSupportedPlugins', () => {
@@ -179,6 +182,84 @@ describe('dao utils', () => {
 
         it('returns undefined when dao parameter is not defined', () => {
             expect(daoUtils.getDaoPlugins(undefined)).toBeUndefined();
+        });
+    });
+
+    describe('hasAvailableUpdates', () => {
+        const hasAvailableOsxUpdateSpy = jest.spyOn(daoUtils, 'hasAvailableOsxUpdate');
+        const getAvailablePluginUpdates = jest.spyOn(daoUtils, 'getAvailablePluginUpdates');
+
+        afterEach(() => {
+            hasAvailableOsxUpdateSpy.mockReset();
+            getAvailablePluginUpdates.mockReset();
+        });
+
+        afterAll(() => {
+            hasAvailableOsxUpdateSpy.mockRestore();
+            getAvailablePluginUpdates.mockRestore();
+        });
+
+        it('returns an object containing information about the available updates for the DAO', () => {
+            const dao = generateDao();
+            hasAvailableOsxUpdateSpy.mockReturnValue(true);
+            getAvailablePluginUpdates.mockReturnValue([]);
+            const result = daoUtils.hasAvailableUpdates(dao);
+            expect(result.osx).toBeTruthy();
+            expect(result.plugins).toBeFalsy();
+        });
+
+        it('returns true for plugins update when DAO has plugins with available updates', () => {
+            const dao = generateDao();
+            getAvailablePluginUpdates.mockReturnValue([generateDaoPlugin()]);
+            expect(daoUtils.hasAvailableUpdates(dao).plugins).toBeTruthy();
+        });
+    });
+
+    describe('hasAvailableOsxUpdate', () => {
+        it('returns true when dao protocol version is lower than the version installed for new DAOs', () => {
+            const dao = generateDao({ version: '1.5.0', network: Network.ETHEREUM_MAINNET });
+            const original = networkDefinitions[dao.network].protocolVersion;
+            networkDefinitions[dao.network].protocolVersion.release = 1;
+            networkDefinitions[dao.network].protocolVersion.build = 6;
+            expect(daoUtils.hasAvailableOsxUpdate(dao)).toBeTruthy();
+            networkDefinitions[dao.network].protocolVersion = original;
+        });
+
+        it('returns false when dao protocol version is equal to the version installed for new DAOs', () => {
+            const dao = generateDao({ version: '2.1.0', network: Network.ETHEREUM_MAINNET });
+            const original = networkDefinitions[dao.network].protocolVersion;
+            networkDefinitions[dao.network].protocolVersion.release = 2;
+            networkDefinitions[dao.network].protocolVersion.build = 1;
+            expect(daoUtils.hasAvailableOsxUpdate(dao)).toBeFalsy();
+            networkDefinitions[dao.network].protocolVersion = original;
+        });
+
+        it('returns false when dao is not defined', () => {
+            expect(daoUtils.hasAvailableOsxUpdate(undefined)).toBeFalsy();
+        });
+    });
+
+    describe('getAvailablePluginUpdates', () => {
+        it('returns the list of plugins that can be updated', () => {
+            const plugins = [
+                generateDaoPlugin({ subdomain: 'multi', release: '1', build: '1' }),
+                generateDaoPlugin({ subdomain: 'admin', release: '1', build: '1' }),
+                generateDaoPlugin({ subdomain: 'token', release: '2', build: '1' }),
+            ];
+            const dao = generateDao({ plugins });
+            const multiPluginInfo = { installVersion: { release: 1, build: 2 } } as IPluginInfo;
+            const adminPluginInfo = { installVersion: { release: 1, build: 1 } } as IPluginInfo;
+            const tokenPluginInfo = { installVersion: { release: 3, build: 0 } } as IPluginInfo;
+            getPluginSpy
+                .mockReturnValueOnce(multiPluginInfo)
+                .mockReturnValueOnce(adminPluginInfo)
+                .mockReturnValueOnce(tokenPluginInfo);
+            const result = daoUtils.getAvailablePluginUpdates(dao);
+            expect(result).toEqual([plugins[0], plugins[2]]);
+        });
+
+        it('returns empty array when dao is not defined', () => {
+            expect(daoUtils.getAvailablePluginUpdates(undefined)).toEqual([]);
         });
     });
 
