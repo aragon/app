@@ -2,12 +2,13 @@ import type { IProposalCreate } from '@/modules/governance/dialogs/publishPropos
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type { IPluginInfo } from '@/shared/types';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils, type ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 import { invariant } from '@aragon/gov-ui-kit';
-import { encodeFunctionData, type Hex } from 'viem';
+import { encodeFunctionData, zeroHash, type Hex } from 'viem';
 import { SettingsSlotId } from '../../constants/moduleSlots';
 import type { IBuildPreparePluginUpdateDataParams } from '../../types';
 import { daoAbi } from './daoAbi';
@@ -99,7 +100,7 @@ class PrepareDaoContractsUpdateDialogUtils {
         const initializeData = encodeFunctionData({
             abi: daoAbi,
             functionName: 'initializeFrom',
-            args: [currentVersionArray, '0x'],
+            args: [currentVersionArray, zeroHash],
         });
 
         const transactionData = encodeFunctionData({
@@ -142,18 +143,18 @@ class PrepareDaoContractsUpdateDialogUtils {
     };
 
     private getOsxUpdateDetails = (dao: IDao) => {
-        const { release, build, releaseNotes, description } = networkDefinitions[dao.network].protocolVersion;
-        const updatedVersion = `${release.toString()}.${build.toString()}.0`;
+        const { release, build, patch, releaseNotes, description } = networkDefinitions[dao.network].protocolVersion;
+        const updatedVersion = `${release.toString()}.${build.toString()}.${patch!.toString()}`;
         const { version: currentVersion } = dao;
 
         return `
             <li>
                 <strong>Aragon OSx ${updatedVersion}</strong>
                 <ol>
-                    <li><strong>Current version</strong>: ${currentVersion}}</li>
-                    <li><strong>Upgrade description</strong>: ${description}}</li>
+                    <li><strong>Current version</strong>: ${currentVersion}</li>
+                    <li><strong>Upgrade description</strong>: ${description}</li>
                     <li><strong>Note</strong>: The DAO's address will never change</li>
-                    <li><a href=${releaseNotes}} target="_blank" rel="noopener noreferrer">View Release Notes</a></li>
+                    <li><a href="${releaseNotes}" target="_blank" rel="noopener noreferrer">View Release Notes</a></li>
                 </ol>
             </li>
         `;
@@ -161,18 +162,20 @@ class PrepareDaoContractsUpdateDialogUtils {
 
     private getPluginUpdateDetails = (plugin: IDaoPlugin) => {
         const { subdomain, release: currentRelease, build: currentBuild } = plugin;
-        const { release, build } = (pluginRegistryUtils.getPlugin(subdomain) as IPluginInfo).installVersion;
+        const { release, build, description, releaseNotes } = (pluginRegistryUtils.getPlugin(subdomain) as IPluginInfo)
+            .installVersion;
 
-        const updatedVersion = `${release.toString()}.${build.toString()}`;
-        const currentVersion = `${currentRelease}.${currentBuild}`;
+        const pluginName = daoUtils.parsePluginSubdomain(subdomain);
+        const updatedVersion = `${pluginName} ${release.toString()}.${build.toString()}`;
+        const currentVersion = `${pluginName} ${currentRelease}.${currentBuild}`;
 
         return `
             <li>
-                <strong>${updatedVersion}}</strong>
+                <strong>${updatedVersion}</strong>
                 <ol>
-                    <li><strong>Current version</strong>: ${currentVersion}}</li>
-                    <li><strong>Upgrade description</strong>: {{description}}</li>
-                    <li><a href={{releaseNotesLink}} target="_blank" rel="noopener noreferrer">View Release Notes</a></li>
+                    <li><strong>Current version</strong>: ${currentVersion}</li>
+                    <li><strong>Upgrade description</strong>: ${description}</li>
+                    <li><a href="${releaseNotes}" target="_blank" rel="noopener noreferrer">View Release Notes</a></li>
                 </ol>
             </li>
         `;
