@@ -8,7 +8,8 @@ export const multisigPlugin: IPluginInfo = {
         release: 1,
         build: 3,
         releaseNotes: 'https://github.com/aragon/multisig-plugin/releases/tag/v1.3.0',
-        description: 'TODO',
+        description:
+            'This optional upgrade introduces minor new features, including the ability to customize metadata for governance plugins.',
     },
     repositoryAddresses: {
         [Network.ARBITRUM_MAINNET]: '0x7553E6Fb020c5740768cF289e603770AA09b7aE2',

@@ -62,7 +62,8 @@ const latestProtocolVersion: IContractVersionInfo = {
     build: 4,
     patch: 0,
     releaseNotes: 'https://github.com/aragon/osx/releases/tag/v1.4.0',
-    description: 'TODO',
+    description:
+        "This optional upgrade introduces minor features that make the DAO compatible with the StagedProposalProcessor plugin, enabling complex multi-body governance structures. The upgrade also includes minor bug fixes and ensures full compatibility with Aragon's governance features.",
 };
 
 export const networkDefinitions: Record<Network, INetworkDefinition> = {

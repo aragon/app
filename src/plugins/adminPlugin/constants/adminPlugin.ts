@@ -8,7 +8,8 @@ export const adminPlugin: IPluginInfo = {
         release: 1,
         build: 2,
         releaseNotes: 'https://github.com/aragon/admin-plugin/releases/tag/v1.2.0',
-        description: '',
+        description:
+            'This optional upgrade adds minor extensions to the contract interfaces to ensure consistency with other plugins.',
     },
     repositoryAddresses: {
         [Network.ARBITRUM_MAINNET]: '0x326A2aee6A8eE78D79E7E956DE60C6E452f76a8e',
