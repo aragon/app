@@ -31,6 +31,7 @@ import {
 import { type IProposal, useProposalActions, useProposalBySlug } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { proposalActionUtils } from '../../utils/proposalActionUtils';
 import { proposalUtils } from '../../utils/proposalUtils';
 
 export interface IDaoProposalDetailsPageClientProps {
@@ -82,7 +83,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     const { blockTimestamp, creator, transactionHash, summary, title, description, resources } = proposal;
 
-    const normalizedProposalActions = actionData ? actionData.actions : [];
+    const normalizedProposalActions = proposalActionUtils.normalizeActions(actionData?.actions ?? [], dao);
     const formattedCreationDate = formatterUtils.formatDate(blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH_DAY,
     });
