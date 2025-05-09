@@ -3,32 +3,37 @@
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import type { ICreateProcessDetailsDialogParams } from '@/modules/createDao/dialogs/createProcessDetailsDialog';
 import { useAdminStatus } from '@/plugins/adminPlugin/hooks/useAdminStatus';
+import type { IDao } from '@/shared/api/daoService';
 import { Banner } from '@/shared/components/banner';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, invariant } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
-import type { IDaoPageParams } from '../../../../shared/types';
+import { daoUtils } from '../../../../shared/utils/daoUtils';
 
-export interface IBannerDaoProps extends IDaoPageParams {
+export interface IBannerDaoProps {
     /**
-     * ID of the DAO.
+     * DAO to check admin status for a user.
      */
-    daoId: string;
+    dao: IDao;
 }
 
 export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
-    const { daoId, addressOrEns, network } = props;
+    const { dao } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const daoUrl = `/dao/${network}/${addressOrEns}`;
-    const { isAdminMember, adminPluginAddress } = useAdminStatus({ daoId });
+    const { isAdminMember, adminPluginAddress } = useAdminStatus({ daoId: dao.id });
+
+    const daoUrl = daoUtils.getDaoUrl(dao);
 
     const handleBannerActionClick = () => {
         invariant(adminPluginAddress != null, 'BannerDao: admin pluginAddress is expected.');
-        const params: ICreateProcessDetailsDialogParams = { daoUrl, pluginAddress: adminPluginAddress as Hex };
+        const params: ICreateProcessDetailsDialogParams = {
+            daoUrl,
+            pluginAddress: adminPluginAddress as Hex,
+        };
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
 

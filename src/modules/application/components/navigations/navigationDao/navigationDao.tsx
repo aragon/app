@@ -1,7 +1,7 @@
 'use client';
 
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
-import { useDao } from '@/shared/api/daoService';
+import { type IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -15,26 +15,19 @@ import { navigationDaoLinks } from './navigationDaoLinks';
 
 export interface INavigationDaoProps extends INavigationContainerProps {
     /**
-     * ID of the DAO to display the data for.
+     * DAO to display the data for.
      */
-    daoId: string;
+    dao: IDao;
 }
 
 export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
-    const { daoId, containerClasses, ...otherProps } = props;
+    const { dao, containerClasses, ...otherProps } = props;
 
     const { t } = useTranslations();
     const { address, isConnected } = useAccount();
     const { open } = useDialogContext();
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-    const urlParams = { id: daoId };
-    const { data: dao } = useDao({ urlParams });
-
-    if (dao == null) {
-        return null;
-    }
 
     const handleCopyClick = () => clipboardUtils.copy(dao.address);
 
