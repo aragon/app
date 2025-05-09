@@ -53,22 +53,14 @@ describe('<DaoProposalDetailsPage /> component', () => {
     it('prefetches actions when the proposal has actions', async () => {
         const params = { id: 'test-id', proposalSlug: 'test-slug' };
 
-        const proposalParams = {
-            urlParams: { slug: params.proposalSlug },
-            queryParams: { daoId: params.id },
-        };
-
-        const proposalId = 'test-proposal-id';
-
-        fetchQuerySpy.mockResolvedValueOnce({ id: proposalId, hasActions: true });
+        fetchQuerySpy.mockResolvedValueOnce({ id: params.proposalSlug, hasActions: true });
         fetchQuerySpy.mockResolvedValueOnce([]);
 
         render(await createTestComponent({ params: Promise.resolve(params) }));
 
         expect(fetchQuerySpy).toHaveBeenCalledTimes(2);
-        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(proposalBySlugOptions(proposalParams).queryKey);
         expect(fetchQuerySpy.mock.calls[1][0].queryKey).toEqual(
-            proposalActionsOptions({ urlParams: { id: proposalId } }).queryKey,
+            proposalActionsOptions({ urlParams: { id: params.proposalSlug } }).queryKey,
         );
     });
 

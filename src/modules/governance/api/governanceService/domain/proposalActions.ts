@@ -1,20 +1,5 @@
 import type { IProposalAction } from './proposalAction';
 
-export interface IRawAction {
-    /**
-     * The address of the contract.
-     */
-    to: string;
-    /**
-     * The value sent with the transaction.
-     */
-    value: string;
-    /**
-     * The raw calldata payload.
-     */
-    data: string;
-}
-
 export interface IProposalActionsResult<TAction extends IProposalAction = IProposalAction> {
     /**
      * Flag indicating if the actions are being decoded.
@@ -27,5 +12,5 @@ export interface IProposalActionsResult<TAction extends IProposalAction = IPropo
     /**
      * The raw actions.
      */
-    rawActions: IRawAction[];
+    rawActions: Pick<IProposalAction, 'to' | 'value' | 'data'>;
 }
