@@ -2,7 +2,7 @@ export interface IDaoPageParams {
     /**
      * Either address or ens name of the DAO.
      */
-    id: string;
+    addressOrEns: string;
     /**
      * Network of the DAO, i.e. ethereum-mainnet.
      */

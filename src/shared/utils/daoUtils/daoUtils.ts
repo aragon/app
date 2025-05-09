@@ -65,11 +65,11 @@ class DaoUtils {
      * @throws Error if the ENS address is not found.
      */
     resolveDaoId = async (params: IDaoPageParams) => {
-        const { id, network } = params;
+        const { addressOrEns, network } = params;
 
-        if (id.endsWith('.eth')) {
+        if (addressOrEns.endsWith('.eth')) {
             const ensAddress = await getEnsAddress(wagmiConfig, {
-                name: id,
+                name: addressOrEns,
                 chainId: 1,
             });
 
@@ -80,7 +80,7 @@ class DaoUtils {
             return `${network}-${ensAddress}`;
         }
 
-        return `${network}-${id}`;
+        return `${network}-${addressOrEns}`;
     };
 
     getDaoUrl = (dao: IDao): `/dao/${Network}/${string}` => {

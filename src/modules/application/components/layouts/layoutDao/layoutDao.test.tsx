@@ -41,7 +41,7 @@ describe('<LayoutDao /> component', () => {
 
     const createTestComponent = async (props?: Partial<ILayoutDaoProps>) => {
         const completeProps: ILayoutDaoProps = {
-            params: Promise.resolve({ id: 'test.dao.eth', network: Network.ETHEREUM_MAINNET }),
+            params: Promise.resolve({ addressOrEns: 'test.dao.eth', network: Network.ETHEREUM_MAINNET }),
             ...props,
         };
 
@@ -61,7 +61,7 @@ describe('<LayoutDao /> component', () => {
         const daoAddress = '0x12345';
         const daoNetwork = Network.ETHEREUM_MAINNET;
         const expectedDaoId = `${daoNetwork}-${daoAddress}`;
-        const params = { id: daoEns, network: daoNetwork };
+        const params = { addressOrEns: daoEns, network: daoNetwork };
 
         render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
@@ -86,7 +86,7 @@ describe('<LayoutDao /> component', () => {
     });
 
     it('renders error with a link to explore page on fetch DAO error', async () => {
-        const params = { id: 'test.dao.eth', network: Network.ETHEREUM_MAINNET };
+        const params = { addressOrEns: 'test.dao.eth', network: Network.ETHEREUM_MAINNET };
         fetchQuerySpy.mockRejectedValue('error');
 
         render(await createTestComponent({ params: Promise.resolve(params) }));

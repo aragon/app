@@ -212,33 +212,33 @@ describe('dao utils', () => {
 
     describe('resolveDaoId', () => {
         it('returns the daoId when the id is an address', async () => {
-            const id = '0x1234';
+            const addressOrEns = '0x1234';
             const network = 'ethereum-mainnet';
-            const params = { id, network };
-            const expectedDaoId = `${network}-${id}`;
+            const params = { addressOrEns, network };
+            const expectedDaoId = `${network}-${addressOrEns}`;
 
             const result = await daoUtils.resolveDaoId(params);
             expect(result).toEqual(expectedDaoId);
         });
 
         it('returns the daoId when the id is an ENS name by resolving name to address', async () => {
-            const id = 'my-dao.eth';
+            const addressOrEns = 'my-dao.eth';
             const daoAddress = '0x1234';
             const network = 'ethereum-mainnet';
-            const params = { id, network };
+            const params = { addressOrEns, network };
             const expectedDaoId = `${network}-${daoAddress}`;
             getEnsAddressSpy.mockResolvedValue(daoAddress);
 
             const result = await daoUtils.resolveDaoId(params);
 
-            expect(getEnsAddressSpy).toHaveBeenCalledWith({}, { name: id, chainId: 1 });
+            expect(getEnsAddressSpy).toHaveBeenCalledWith({}, { name: addressOrEns, chainId: 1 });
             expect(result).toEqual(expectedDaoId);
         });
 
         it('throws an error when the ENS address is not found', async () => {
-            const id = 'my-dao.eth';
+            const addressOrEns = 'my-dao.eth';
             const network = 'ethereum-mainnet';
-            const params = { id, network };
+            const params = { addressOrEns, network };
             getEnsAddressSpy.mockResolvedValue(null);
 
             await expect(daoUtils.resolveDaoId(params)).rejects.toThrow('ENS address not found');

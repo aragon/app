@@ -38,7 +38,7 @@ describe('<DaoProposalDetailsPage /> component', () => {
         const completeProps: IDaoProposalDetailsPageProps = {
             params: Promise.resolve({
                 proposalSlug: 'proposal-id',
-                id: 'test.dao.eth',
+                addressOrEns: 'test.dao.eth',
                 network: Network.ETHEREUM_MAINNET,
             }),
 
@@ -53,7 +53,7 @@ describe('<DaoProposalDetailsPage /> component', () => {
         const daoEns = 'test.dao.eth';
         const daoAddress = '0x12345';
         const daoNetwork = Network.ETHEREUM_MAINNET;
-        const params = { id: daoEns, network: daoNetwork, proposalSlug: 'test-proposal-id' };
+        const params = { addressOrEns: daoEns, network: daoNetwork, proposalSlug: 'test-proposal-id' };
         const expectedDaoId = `${daoNetwork}-${daoAddress}`;
         const proposalParams = {
             urlParams: { slug: params.proposalSlug },
@@ -74,7 +74,7 @@ describe('<DaoProposalDetailsPage /> component', () => {
         const daoEns = 'test.dao.eth';
         const daoAddress = '0x12345';
         const daoNetwork = Network.ETHEREUM_MAINNET;
-        const params = { id: daoEns, network: daoNetwork, proposalSlug: '' };
+        const params = { addressOrEns: daoEns, network: daoNetwork, proposalSlug: '' };
         fetchQuerySpy.mockRejectedValue('error');
         getEnsAddressSpy.mockResolvedValue(daoAddress);
 

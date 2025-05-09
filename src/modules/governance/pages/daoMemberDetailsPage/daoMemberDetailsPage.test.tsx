@@ -36,7 +36,11 @@ describe('<DaoMemberDetailsPage /> component', () => {
 
     const createTestComponent = async (props?: Partial<IDaoMemberDetailsPageProps>) => {
         const completeProps: IDaoMemberDetailsPageProps = {
-            params: Promise.resolve({ address: 'test-address', id: 'test.dao.eth', network: Network.ETHEREUM_MAINNET }),
+            params: Promise.resolve({
+                address: 'test-address',
+                addressOrEns: 'test.dao.eth',
+                network: Network.ETHEREUM_MAINNET,
+            }),
             ...props,
         };
         const Component = await DaoMemberDetailsPage(completeProps);
@@ -48,7 +52,7 @@ describe('<DaoMemberDetailsPage /> component', () => {
         const daoEns = 'test.dao.eth';
         const daoAddress = '0x12345';
         const daoNetwork = Network.ETHEREUM_MAINNET;
-        const params = { id: daoEns, network: daoNetwork, address: 'test-address' };
+        const params = { addressOrEns: daoEns, network: daoNetwork, address: 'test-address' };
         const expectedDaoId = `${daoNetwork}-${daoAddress}`;
         const memberParams = {
             urlParams: { address: params.address },
@@ -66,7 +70,7 @@ describe('<DaoMemberDetailsPage /> component', () => {
     it('renders error with a link to proposal list page on fetch proposal error', async () => {
         const daoEns = 'test.dao.eth';
         const daoNetwork = Network.ETHEREUM_MAINNET;
-        const params = { id: daoEns, network: daoNetwork, address: '' };
+        const params = { addressOrEns: daoEns, network: daoNetwork, address: '' };
 
         fetchQuerySpy.mockRejectedValue('error');
         render(await createTestComponent({ params: Promise.resolve(params) }));

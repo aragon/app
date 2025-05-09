@@ -25,7 +25,7 @@ describe('<LayoutWizardCreateProposal /> component', () => {
 
     const createTestComponent = async (props?: Partial<ILayoutWizardCreateProposalProps>) => {
         const completeProps: ILayoutWizardCreateProposalProps = {
-            params: Promise.resolve({ id: 'dao-address', network: 'test-network', pluginAddress: '0x123' }),
+            params: Promise.resolve({ addressOrEns: 'dao-address', network: 'test-network', pluginAddress: '0x123' }),
             ...props,
         };
 
@@ -38,7 +38,7 @@ describe('<LayoutWizardCreateProposal /> component', () => {
         fetchQuerySpy.mockImplementation(() => {
             throw new Error('fetch DAO error');
         });
-        const params = { id: 'dao-address', network: 'test-network', pluginAddress: '0x123' };
+        const params = { addressOrEns: 'dao-address', network: 'test-network', pluginAddress: '0x123' };
         render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
     });
@@ -51,7 +51,7 @@ describe('<LayoutWizardCreateProposal /> component', () => {
         ];
         fetchQuerySpy.mockResolvedValue(generateDao());
         getDaoPluginsSpy.mockReturnValue(plugins);
-        const params = { id: dao.address, network: dao.network, pluginAddress: plugins[1].address };
+        const params = { addressOrEns: dao.address, network: dao.network, pluginAddress: plugins[1].address };
         render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(screen.getByText(/layoutWizardCreateProposal.namePlugin \(plugin=Multisig\)/)).toBeInTheDocument();
     });
@@ -61,7 +61,7 @@ describe('<LayoutWizardCreateProposal /> component', () => {
         const plugins = [generateDaoPlugin({ subdomain: 'spp', address: '0x123', isProcess: true })];
         fetchQuerySpy.mockResolvedValue(generateDao());
         getDaoPluginsSpy.mockReturnValue(plugins);
-        const params = { id: dao.address, network: dao.network, pluginAddress: plugins[0].address };
+        const params = { addressOrEns: dao.address, network: dao.network, pluginAddress: plugins[0].address };
         render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(screen.getByText(/layoutWizardCreateProposal.name \(plugin=Spp\)/)).toBeInTheDocument();
     });

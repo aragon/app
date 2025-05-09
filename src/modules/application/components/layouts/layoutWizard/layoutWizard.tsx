@@ -30,8 +30,8 @@ export const LayoutWizard = async <IPageParams extends IDaoPageParams = IDaoPage
     props: ILayoutWizardProps<IPageParams>,
 ) => {
     const { params, name, exitPath, queryClient, children } = props;
-    const { id, network } = (await params) ?? {};
-    const daoId = id && network && (await daoUtils.resolveDaoId({ id, network }));
+    const { addressOrEns, network } = (await params) ?? {};
+    const daoId = addressOrEns && network && (await daoUtils.resolveDaoId({ addressOrEns, network }));
 
     const reactQueryClient = queryClient ?? new QueryClient();
 

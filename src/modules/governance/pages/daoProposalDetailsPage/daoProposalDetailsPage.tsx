@@ -14,8 +14,8 @@ export interface IDaoProposalDetailsPageProps {
 
 export const DaoProposalDetailsPage: React.FC<IDaoProposalDetailsPageProps> = async (props) => {
     const { params } = props;
-    const { id, network, proposalSlug } = await params;
-    const daoId = await daoUtils.resolveDaoId({ id, network });
+    const { addressOrEns, network, proposalSlug } = await params;
+    const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
 
     const queryClient = new QueryClient();
 
@@ -30,7 +30,7 @@ export const DaoProposalDetailsPage: React.FC<IDaoProposalDetailsPageProps> = as
         return (
             <Page.Error
                 error={JSON.parse(JSON.stringify(error)) as unknown}
-                actionLink={`/dao/${network}/${id}/proposals`}
+                actionLink={`/dao/${network}/${addressOrEns}/proposals`}
                 notFoundNamespace="app.governance.daoProposalDetailsPage"
             />
         );

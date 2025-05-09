@@ -18,12 +18,12 @@ export interface IBannerDaoProps extends IDaoPageParams {
 }
 
 export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
-    const { daoId, id, network } = props;
+    const { daoId, addressOrEns, network } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const daoUrl = `/dao/${network}/${id}`;
+    const daoUrl = `/dao/${network}/${addressOrEns}`;
     const { isAdminMember, adminPluginAddress } = useAdminStatus({ daoId });
 
     const handleBannerActionClick = () => {

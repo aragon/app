@@ -26,7 +26,7 @@ describe('<DaoDashboardPage /> component', () => {
 
     const createTestComponent = async (props?: Partial<IDaoDashboardPageProps>) => {
         const completeProps: IDaoDashboardPageProps = {
-            params: Promise.resolve({ id: 'test.dao.eth', network: 'testnet' }),
+            params: Promise.resolve({ addressOrEns: 'test.dao.eth', network: 'testnet' }),
             ...props,
         };
 

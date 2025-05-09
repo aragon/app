@@ -56,7 +56,7 @@ describe('<LayoutWizard /> component', () => {
         const daoEns = 'test.dao.eth';
         const daoAddress = '0x12345';
         const daoNetwork = Network.ETHEREUM_MAINNET;
-        const params = { id: daoEns, network: daoNetwork };
+        const params = { addressOrEns: daoEns, network: daoNetwork };
         const expectedDaoId = `${daoNetwork}-${daoAddress}`;
         render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
@@ -86,7 +86,7 @@ describe('<LayoutWizard /> component', () => {
     });
 
     it('renders error with a link to the explore page on fetch DAO error', async () => {
-        const params = { id: 'test.dao.eth', network: Network.ETHEREUM_MAINNET };
+        const params = { addressOrEns: 'test.dao.eth', network: Network.ETHEREUM_MAINNET };
         fetchQuerySpy.mockRejectedValue('error');
 
         render(await createTestComponent({ params: Promise.resolve(params) }));

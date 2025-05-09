@@ -40,7 +40,7 @@ describe('<DaoTransactionsPage /> component', () => {
 
     const createTestComponent = async (props?: Partial<IDaoTransactionsPageProps>) => {
         const completeProps: IDaoTransactionsPageProps = {
-            params: Promise.resolve({ id: 'test.dao.eth', network: Network.ETHEREUM_MAINNET }),
+            params: Promise.resolve({ addressOrEns: 'test.dao.eth', network: Network.ETHEREUM_MAINNET }),
             ...props,
         };
 
@@ -64,7 +64,7 @@ describe('<DaoTransactionsPage /> component', () => {
             ens: daoEns,
             address: daoAddress,
         });
-        const params = { id: daoEns, network: daoNetwork };
+        const params = { addressOrEns: daoEns, network: daoNetwork };
         fetchQuerySpy.mockResolvedValue(dao);
         getEnsAddressSpy.mockResolvedValue(daoAddress);
 

@@ -38,7 +38,7 @@ describe('governanceMetadata utils', () => {
             getEnsAddressSpy.mockResolvedValue(daoAddress);
 
             const metadata = await governanceMetadataUtils.generateProposalMetadata({
-                params: Promise.resolve({ id: daoEns, network: Network.ETHEREUM_MAINNET, proposalSlug }),
+                params: Promise.resolve({ addressOrEns: daoEns, network: Network.ETHEREUM_MAINNET, proposalSlug }),
             });
 
             expect(getProposalBySlugSpy).toHaveBeenCalledWith({

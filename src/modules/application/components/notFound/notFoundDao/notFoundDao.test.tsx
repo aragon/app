@@ -5,7 +5,7 @@ import { type INotFoundDaoProps, NotFoundDao } from './notFoundDao';
 describe('<NotFoundDao /> component', () => {
     const createTestComponent = (props?: Partial<INotFoundDaoProps>) => {
         const completeProps: INotFoundDaoProps = {
-            params: { id: 'test-id', network: Network.ETHEREUM_MAINNET },
+            params: { addressOrEns: 'test-id', network: Network.ETHEREUM_MAINNET },
             ...props,
         };
 
@@ -14,7 +14,7 @@ describe('<NotFoundDao /> component', () => {
 
     it('renders a not-found page for DAOs', () => {
         const daoEnsName = 'my-dao.dao.eth';
-        const params = { id: daoEnsName, network: Network.ETHEREUM_MAINNET };
+        const params = { addressOrEns: daoEnsName, network: Network.ETHEREUM_MAINNET };
         render(createTestComponent({ params }));
 
         expect(screen.getByText(/notFoundDao.title/)).toBeInTheDocument();

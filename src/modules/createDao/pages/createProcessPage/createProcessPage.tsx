@@ -12,8 +12,8 @@ export interface ICreateProcessPageProps {
 
 export const CreateProcessPage: React.FC<ICreateProcessPageProps> = async (props) => {
     const { params } = props;
-    const { id, network, pluginAddress } = await params;
-    const daoId = await daoUtils.resolveDaoId({ id, network });
+    const { addressOrEns, network, pluginAddress } = await params;
+    const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
 
     return (
         <Page.Container>

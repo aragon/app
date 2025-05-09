@@ -17,7 +17,7 @@ describe('<CreateProposalPage /> component', () => {
     const createTestComponent = async (props?: Partial<ICreateProposalPageProps>) => {
         const completeProps: ICreateProposalPageProps = {
             params: Promise.resolve({
-                id: 'test-dao-ens.eth',
+                addressOrEns: '0x987',
                 network: Network.ETHEREUM_MAINNET,
                 pluginAddress: '0x123',
             }),

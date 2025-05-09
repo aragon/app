@@ -11,11 +11,11 @@ export interface ILayoutWizardCreateProcessProps {
 
 export const LayoutWizardCreateProcess: React.FC<ILayoutWizardCreateProcessProps> = async (props) => {
     const { params } = props;
-    const { id, network } = await params;
+    const { addressOrEns, network } = await params;
 
     return (
         <LayoutWizard
-            exitPath={`/dao/${network}/${id}/settings` as Route}
+            exitPath={`/dao/${network}/${addressOrEns}/settings` as Route}
             name="app.createDao.layoutWizardCreateProcess.name"
             {...props}
         />

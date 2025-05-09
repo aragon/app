@@ -43,7 +43,7 @@ describe('<DaoMembersPage /> component', () => {
 
     const createTestComponent = async (props?: Partial<IDaoMembersPageProps>) => {
         const completeProps: IDaoMembersPageProps = {
-            params: Promise.resolve({ id: 'test.dao.eth', network: Network.ETHEREUM_MAINNET }),
+            params: Promise.resolve({ addressOrEns: 'test.dao.eth', network: Network.ETHEREUM_MAINNET }),
             ...props,
         };
         const Component = await DaoMembersPage(completeProps);
@@ -62,7 +62,7 @@ describe('<DaoMembersPage /> component', () => {
         getDaoPluginsSpy.mockReturnValue([bodyPlugin]);
         getEnsAddressSpy.mockResolvedValue(daoAddress);
 
-        const params = { id: daoEns, network: daoNetwork };
+        const params = { addressOrEns: daoEns, network: daoNetwork };
         render(await createTestComponent({ params: Promise.resolve(params) }));
 
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(

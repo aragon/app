@@ -40,7 +40,7 @@ describe('<DaoAssetsPage /> component', () => {
 
     const createTestComponent = async (props?: Partial<IDaoAssetsPageProps>) => {
         const completeProps: IDaoAssetsPageProps = {
-            params: Promise.resolve({ id: 'test.dao.eth', network: Network.ETHEREUM_MAINNET }),
+            params: Promise.resolve({ addressOrEns: 'test.dao.eth', network: Network.ETHEREUM_MAINNET }),
             ...props,
         };
 
@@ -57,7 +57,7 @@ describe('<DaoAssetsPage /> component', () => {
     it('prefetches the DAO and its asset list', async () => {
         const daoEns = 'another-test.dao.eth';
         const daoAddress = '0x12345';
-        const params = { id: daoEns, network: Network.ETHEREUM_MAINNET };
+        const params = { addressOrEns: daoEns, network: Network.ETHEREUM_MAINNET };
         const dao = generateDao({ ens: daoEns, address: daoAddress });
         const expectedDaoId = `${Network.ETHEREUM_MAINNET}-${daoAddress}`;
         fetchQuerySpy.mockResolvedValue(dao);

@@ -22,7 +22,7 @@ describe('<DaoSettingsPage /> component', () => {
 
     const createTestComponent = async (props?: Partial<IDaoSettingsPageProps>) => {
         const completeProps: IDaoSettingsPageProps = {
-            params: Promise.resolve({ id: '0x123', network: Network.ETHEREUM_MAINNET }),
+            params: Promise.resolve({ addressOrEns: '0x123', network: Network.ETHEREUM_MAINNET }),
             ...props,
         };
         const Component = await DaoSettingsPage(completeProps);
@@ -34,7 +34,7 @@ describe('<DaoSettingsPage /> component', () => {
         const daoEns = 'my-dao.dao.eth';
         const daoAddress = '0x12345';
         const daoNetwork = Network.ETHEREUM_MAINNET;
-        const params = { id: daoEns, network: daoNetwork };
+        const params = { addressOrEns: daoEns, network: daoNetwork };
         getEnsAddressSpy.mockResolvedValue(daoAddress);
 
         render(await createTestComponent({ params: Promise.resolve(params) }));
