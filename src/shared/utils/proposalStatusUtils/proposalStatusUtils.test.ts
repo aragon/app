@@ -123,6 +123,7 @@ describe('proposalStatus utils', () => {
                 hasAdvanceableStages: false,
                 hasExpiredStages: false,
                 paramsMet: true,
+                hasActions: false,
             });
             expect(proposalStatusUtils.getProposalStatus(params)).toEqual(ProposalStatus.ACCEPTED);
         });

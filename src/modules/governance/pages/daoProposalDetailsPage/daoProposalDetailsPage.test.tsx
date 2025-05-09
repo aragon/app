@@ -60,10 +60,7 @@ describe('<DaoProposalDetailsPage /> component', () => {
 
         const proposalId = 'test-proposal-id';
 
-        fetchQuerySpy.mockResolvedValueOnce({
-            id: proposalId,
-            hasActions: true,
-        });
+        fetchQuerySpy.mockResolvedValueOnce({ id: proposalId, hasActions: true });
         fetchQuerySpy.mockResolvedValueOnce([]);
 
         render(await createTestComponent({ params: Promise.resolve(params) }));

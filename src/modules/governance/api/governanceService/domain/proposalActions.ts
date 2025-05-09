@@ -15,9 +15,9 @@ export interface IRawAction {
     data: string;
 }
 
-export interface IProposalActions<TAction extends IProposalAction = IProposalAction> {
+export interface IProposalActionsResult<TAction extends IProposalAction = IProposalAction> {
     /**
-     * Flag indicating if the actions are being decoded?
+     * Flag indicating if the actions are being decoded.
      */
     decoding: boolean;
     /**
