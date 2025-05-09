@@ -74,7 +74,7 @@ describe('tokenProposal utils', () => {
             const now = '2024-10-20T09:49:56.868Z';
             const startDate = DateTime.fromISO('2024-10-08T09:49:56.868Z').toSeconds();
             const endDate = DateTime.fromISO('2024-10-12T09:49:56.868Z').toSeconds();
-            const proposal = generateTokenProposal({ startDate, endDate, hasActions: false });
+            const proposal = generateTokenProposal({ startDate, endDate });
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.ACCEPTED);

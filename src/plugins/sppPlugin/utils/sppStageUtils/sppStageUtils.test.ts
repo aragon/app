@@ -291,7 +291,7 @@ describe('SppStageUtils', () => {
             const endDate = DateTime.fromISO(now).plus({ days: 7 });
             const stage = generateSppStage();
             const settings = generateSppPluginSettings({ stages: [stage] });
-            const proposal = generateSppProposal({ hasActions: false, settings });
+            const proposal = generateSppProposal({ settings });
             getStageEndDateSpy.mockReturnValue(endDate);
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
@@ -344,7 +344,7 @@ describe('SppStageUtils', () => {
             const maxAdvance = DateTime.fromISO(now).minus({ days: 1 });
             const stage = generateSppStage();
             const settings = generateSppPluginSettings({ stages: [stage] });
-            const proposal = generateSppProposal({ hasActions: false, settings });
+            const proposal = generateSppProposal({ settings });
             getStageEndDateSpy.mockReturnValue(endDate);
             getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
             isApprovalReachedSpy.mockReturnValue(true);
@@ -404,7 +404,6 @@ describe('SppStageUtils', () => {
         it('returns true when the proposal has no actions and the stage is the last stage', () => {
             const stage = generateSppStage({ stageIndex: 2 });
             const proposal = generateSppProposal({
-                hasActions: false,
                 settings: generateSppPluginSettings({
                     stages: [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 }), stage],
                 }),
@@ -428,7 +427,6 @@ describe('SppStageUtils', () => {
         it('returns false when the stage is not the last stage', () => {
             const stage = generateSppStage({ stageIndex: 1 });
             const proposal = generateSppProposal({
-                hasActions: false,
                 settings: generateSppPluginSettings({
                     stages: [generateSppStage({ stageIndex: 0 }), stage, generateSppStage({ stageIndex: 2 })],
                 }),

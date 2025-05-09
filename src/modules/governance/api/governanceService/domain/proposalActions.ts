@@ -2,11 +2,11 @@ import type { IProposalAction } from './proposalAction';
 
 export interface IRawAction {
     /**
-     * The address of the contract to call.
+     * The address of the contract.
      */
     to: string;
     /**
-     * The value to send with the transaction.
+     * The value sent with the transaction.
      */
     value: string;
     /**
@@ -17,7 +17,7 @@ export interface IRawAction {
 
 export interface IProposalActions<TAction extends IProposalAction = IProposalAction> {
     /**
-     * Are the actions being decoded?
+     * Flag indicating if the actions are being decoded?
      */
     decoding: boolean;
     /**

@@ -24,6 +24,7 @@ export const DaoProposalDetailsPage: React.FC<IDaoProposalDetailsPageProps> = as
 
     try {
         const proposal = await queryClient.fetchQuery(proposalBySlugOptions(proposalParams));
+        // If the proposal has actions then prefetch them, so they are immediately available
         if (proposal.hasActions) {
             await queryClient.fetchQuery(proposalActionsOptions({ urlParams: { id: proposal.id } }));
         }
