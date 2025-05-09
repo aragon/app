@@ -22,12 +22,12 @@ export interface ILayoutDaoProps {
 export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
     const { params, children } = props;
     const daoPageParams = await params;
-    const daoId = await daoUtils.resolveDaoId(daoPageParams);
     let dao: IDao;
 
     const queryClient = new QueryClient();
 
     try {
+        const daoId = await daoUtils.resolveDaoId(daoPageParams);
         const daoUrlParams = { id: daoId };
         dao = await queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }));
     } catch (error: unknown) {

@@ -1,7 +1,7 @@
 'use client';
 
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
-import { useDao } from '@/shared/api/daoService';
+import { type IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Link } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -19,9 +19,9 @@ export interface INavigationWizardProps extends INavigationContainerProps {
      */
     name: string | [string, ITFuncOptions];
     /**
-     * ID of the DAO to display the data for.
+     * DAO to display the data for.
      */
-    id?: string;
+    dao?: IDao;
     /**
      * Exit path to redirect to when exiting the wizard.
      */
@@ -29,7 +29,7 @@ export interface INavigationWizardProps extends INavigationContainerProps {
 }
 
 export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
-    const { name, id, exitPath } = props;
+    const { name, dao, exitPath } = props;
 
     const { address, isConnected } = useAccount();
     const { t } = useTranslations();
@@ -39,9 +39,6 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
         const dialog = isConnected ? ApplicationDialogId.USER : ApplicationDialogId.CONNECT_WALLET;
         open(dialog);
     };
-
-    const daoParams = { id: id! };
-    const { data: dao } = useDao({ urlParams: daoParams }, { enabled: id != null });
 
     const walletUser = address != null ? { address } : undefined;
     const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);

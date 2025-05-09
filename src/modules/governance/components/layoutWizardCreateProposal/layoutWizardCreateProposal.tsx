@@ -32,12 +32,12 @@ const getWizardName = (dao: IDao, pluginAddress: string): ILayoutWizardProps['na
 export const LayoutWizardCreateProposal: React.FC<ILayoutWizardCreateProposalProps> = async (props) => {
     const { params } = props;
     const { addressOrEns, network, pluginAddress } = await params;
-    const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
 
     const queryClient = new QueryClient();
     let wizardName: ILayoutWizardProps['name'] = '';
 
     try {
+        const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
         const dao = await queryClient.fetchQuery(daoOptions({ urlParams: { id: daoId } }));
         wizardName = getWizardName(dao, pluginAddress);
     } catch (error: unknown) {
