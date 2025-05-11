@@ -1,5 +1,7 @@
 import * as useUserVote from '@/modules/governance/hooks/useUserVote';
-import { generateDaoPlugin } from '@/shared/testUtils';
+import * as daoService from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
+import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateTokenProposal, generateTokenVote } from '../../testUtils';
@@ -9,21 +11,24 @@ import { type ITokenProposalListItemProps, TokenProposalListItem } from './token
 describe('<TokenProposalListItem /> component', () => {
     const getProposalStatusSpy = jest.spyOn(tokenProposalUtils, 'getProposalStatus');
     const useUserVoteSpy = jest.spyOn(useUserVote, 'useUserVote');
+    const useDaoSpy = jest.spyOn(daoService, 'useDao');
 
     beforeEach(() => {
         getProposalStatusSpy.mockReturnValue(ProposalStatus.ACCEPTED);
         useUserVoteSpy.mockReturnValue(generateTokenVote());
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
     });
 
     afterEach(() => {
         getProposalStatusSpy.mockReset();
         useUserVoteSpy.mockReset();
+        useDaoSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITokenProposalListItemProps>) => {
         const completeProps: ITokenProposalListItemProps = {
             proposal: generateTokenProposal(),
-            daoUrl: '/test-dao-url',
+            daoId: 'test-dao-id',
             plugin: generateDaoPlugin(),
             ...props,
         };
@@ -44,8 +49,13 @@ describe('<TokenProposalListItem /> component', () => {
     it('sets the correct link for proposal page', () => {
         const plugin = generateDaoPlugin({ slug: 'tokenvoting' });
         const proposal = generateTokenProposal({ incrementalId: 3 });
-        const daoUrl = '/dao-url';
-        render(createTestComponent({ proposal, plugin, daoUrl }));
-        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`${daoUrl}/proposals/TOKENVOTING-3`);
+        const daoAddress = '0x123';
+        const daoNetwork = Network.ETHEREUM_SEPOLIA;
+        const dao = generateDao({ address: daoAddress, network: daoNetwork });
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
+        render(createTestComponent({ proposal, plugin }));
+        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(
+            `/dao/${daoNetwork}/${daoAddress}/proposals/TOKENVOTING-3`,
+        );
     });
 });

@@ -1,12 +1,14 @@
 import { generateProposal, generateVote } from '@/modules/governance/testUtils';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { DateFormat, formatterUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { type IVoteProposalListItemProps, VoteProposalListItem } from './voteProposalListItem';
 
 describe('<VoteProposalListItem /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
+    const getDaoUrlSpy = jest.spyOn(daoUtils, 'getDaoUrl');
 
     beforeEach(() => {
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
@@ -14,13 +16,13 @@ describe('<VoteProposalListItem /> component', () => {
 
     afterEach(() => {
         useDaoPluginsSpy.mockReset();
+        getDaoUrlSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IVoteProposalListItemProps>) => {
         const completeProps = {
             vote: generateVote(),
             daoId: 'dao-test',
-            daoUrl: '/dao/ethereum-mainnet/0x12345',
             voteIndicator: 'approve' as const,
             ...props,
         };
@@ -39,12 +41,14 @@ describe('<VoteProposalListItem /> component', () => {
         });
         const plugin = generateDaoPlugin({ slug: 'parent-slug' });
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ id: 'test-plugin', meta: plugin })]);
-        const daoUrl = '/test-dao-url';
+        const proposalUrl = '/dao/ethereum-sepolia/test-proposal-url';
+        getDaoUrlSpy.mockReturnValue(proposalUrl);
 
-        render(createTestComponent({ vote, daoUrl: daoUrl }));
+        render(createTestComponent({ vote }));
 
         expect(screen.getByText('Parent Proposal')).toBeInTheDocument();
-        expect(screen.getByRole('link')).toHaveAttribute('href', `${daoUrl}/proposals/PARENT-SLUG-3`);
+        expect(screen.getByRole('link')).toHaveAttribute('href', proposalUrl);
+        expect(getDaoUrlSpy.mock.calls[0][1]).toEqual('proposals/PARENT-SLUG-3');
     });
 
     it('renders the child proposal info when parentProposal is not defined', () => {
@@ -55,12 +59,14 @@ describe('<VoteProposalListItem /> component', () => {
         const plugin = generateDaoPlugin({ slug: 'child-slug' });
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: plugin })]);
 
-        const daoUrl = '/test-dao-url';
+        const proposalUrl = '/dao/ethereum-sepolia/test-proposal-url';
+        getDaoUrlSpy.mockReturnValue(proposalUrl);
 
-        render(createTestComponent({ vote, daoUrl }));
+        render(createTestComponent({ vote }));
 
         expect(screen.getByText('Child Proposal')).toBeInTheDocument();
-        expect(screen.getByRole('link')).toHaveAttribute('href', `${daoUrl}/proposals/CHILD-SLUG-4`);
+        expect(screen.getByRole('link')).toHaveAttribute('href', proposalUrl);
+        expect(getDaoUrlSpy.mock.calls[0][1]).toEqual('proposals/CHILD-SLUG-4');
     });
 
     it('renders the correct timestamp as a date', () => {

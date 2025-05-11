@@ -1,15 +1,7 @@
 import * as usePermissionCheckGuard from '@/modules/governance/hooks/usePermissionCheckGuard';
-import * as DaoService from '@/shared/api/daoService';
-import { Network } from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import {
-    generateDao,
-    generateDaoPlugin,
-    generateDialogContext,
-    generateReactQueryResultSuccess,
-    generateTabComponentPlugin,
-} from '@/shared/testUtils';
+import { generateDaoPlugin, generateDialogContext, generateTabComponentPlugin } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
@@ -28,14 +20,12 @@ jest.mock('next/navigation', () => ({
 }));
 
 describe('<DaoProposalsPageClient /> component', () => {
-    const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
     const usePermissionCheckGuardSpy = jest.spyOn(usePermissionCheckGuard, 'usePermissionCheckGuard');
     const getDaoUrlSpy = jest.spyOn(daoUtils, 'getDaoUrl');
 
     beforeEach(() => {
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: false });
@@ -71,14 +61,10 @@ describe('<DaoProposalsPageClient /> component', () => {
     it('renders the create proposal button with the correct link and label', () => {
         const pluginAddress = '0x082729';
         const initialParams = { queryParams: { daoId: 'test-dao-id', pluginAddress } };
-        const testDaoUrl = `/dao/${Network.ETHEREUM_SEPOLIA}/address`;
-        getDaoUrlSpy.mockReturnValue(testDaoUrl);
+        const testCreateProposalUrl = '/dao/ethereum-sepolia/test-proposal-url';
+        getDaoUrlSpy.mockReturnValue(testCreateProposalUrl);
         const plugin = generateDaoPlugin({ address: pluginAddress });
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({
-                data: generateDao(),
-            }),
-        );
+
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: plugin })]);
         usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: true });
 
@@ -87,6 +73,7 @@ describe('<DaoProposalsPageClient /> component', () => {
             name: /daoProposalsPage.main.action/,
         });
         expect(createProposalButton).toBeInTheDocument();
-        expect(createProposalButton).toHaveAttribute('href', `${testDaoUrl}/create/${pluginAddress}/proposal`);
+        expect(createProposalButton).toHaveAttribute('href', testCreateProposalUrl);
+        expect(getDaoUrlSpy.mock.calls[0][1]).toEqual(`create/${pluginAddress}/proposal`);
     });
 });

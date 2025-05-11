@@ -1,4 +1,6 @@
-import { generateDaoPlugin } from '@/shared/testUtils';
+import * as daoService from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
+import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import {
@@ -10,10 +12,20 @@ import {
 import { TokenMemberListItem, type ITokenMemberListItemProps } from './tokenMemberListItem';
 
 describe('<TokenMemberListItem /> component', () => {
+    const useDaoSpy = jest.spyOn(daoService, 'useDao');
+
+    beforeEach(() => {
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+    });
+
+    afterEach(() => {
+        useDaoSpy.mockReset();
+    });
+
     const createTestComponent = (props?: Partial<ITokenMemberListItemProps>) => {
         const completeProps: ITokenMemberListItemProps = {
             member: generateTokenMember(),
-            daoUrl: '/test-dao-url',
+            daoId: 'test-dao-id',
             plugin: generateDaoPlugin({ settings: generateTokenPluginSettings() }),
             ...props,
         };
@@ -48,9 +60,15 @@ describe('<TokenMemberListItem /> component', () => {
         const pluginSettings = generateTokenPluginSettings({ token });
         const member = generateTokenMember({ votingPower: '47928374987234' });
         const plugin = generateDaoPlugin({ settings: pluginSettings });
-        const daoUrl = '/dao-url';
-        render(createTestComponent({ member, plugin, daoUrl }));
+        const daoAddress = '0x123';
+        const daoNetwork = Network.ETHEREUM_SEPOLIA;
+        const dao = generateDao({ address: daoAddress, network: daoNetwork });
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
+
+        render(createTestComponent({ member, plugin }));
         expect(screen.getByRole('heading', { name: /47.93M Voting Power/ })).toBeInTheDocument();
-        expect(screen.getByRole('link').getAttribute('href')).toEqual(`${daoUrl}/members/${member.address}`);
+        expect(screen.getByRole('link').getAttribute('href')).toEqual(
+            `/dao/${daoNetwork}/${daoAddress}/members/${member.address}`,
+        );
     });
 });

@@ -39,10 +39,12 @@ describe('<MultisigProposalListItem /> component', () => {
     });
 
     it('sets the correct link for proposal page', () => {
+        const plugin = generateDaoPlugin({ slug: 'multisig' });
+        const proposal = generateMultisigProposal({ incrementalId: 3 });
         const address = '0x123';
         const network = Network.ETHEREUM_SEPOLIA;
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao({ address, network }) }));
-        render(createTestComponent());
+        render(createTestComponent({ plugin, proposal }));
         expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(
             `/dao/${network}/${address}/proposals/MULTISIG-3`,
         );

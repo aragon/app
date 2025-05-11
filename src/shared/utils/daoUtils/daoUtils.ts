@@ -1,4 +1,4 @@
-import { daoService, type IDao, type IDaoPlugin, Network } from '@/shared/api/daoService';
+import { daoService, type IDao, type IDaoPlugin, type Network } from '@/shared/api/daoService';
 import { type IDaoPageParams, PluginType } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
