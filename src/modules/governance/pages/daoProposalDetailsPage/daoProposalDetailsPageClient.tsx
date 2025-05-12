@@ -1,7 +1,6 @@
 'use client';
 
 import { ProposalExecutionStatus } from '@/modules/governance/components/proposalExecutionStatus';
-import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
@@ -29,9 +28,10 @@ import {
     useBlockExplorer,
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
-import { type IProposal, useProposalBySlug } from '../../api/governanceService';
+import { type IProposal, useProposalActions, useProposalBySlug } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { proposalActionUtils } from '../../utils/proposalActionUtils';
 import { proposalUtils } from '../../utils/proposalUtils';
 
 export interface IDaoProposalDetailsPageClientProps {
@@ -71,6 +71,11 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     const plugin = useDaoPlugins({ daoId, pluginAddress: proposal?.pluginAddress })?.[0];
 
+    const { data: actionData } = useProposalActions(
+        { urlParams: { id: proposal?.id as string } },
+        { enabled: proposal != null },
+    );
+
     if (proposal == null || dao == null) {
         return null;
     }
@@ -79,8 +84,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     const { blockTimestamp, creator, transactionHash, summary, title, description, resources } = proposal;
 
-    const normalizedProposalActions = proposalActionUtils.normalizeActions(proposal, dao);
-
+    const normalizedProposalActions = proposalActionUtils.normalizeActions(actionData?.actions ?? [], dao);
     const formattedCreationDate = formatterUtils.formatDate(blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH_DAY,
     });

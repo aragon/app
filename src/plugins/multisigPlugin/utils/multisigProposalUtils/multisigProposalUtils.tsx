@@ -4,7 +4,7 @@ import { type IMultisigProposal } from '../../types';
 
 class MultisigProposalUtils {
     getProposalStatus = (proposal: IMultisigProposal): ProposalStatus => {
-        const { startDate, endDate, executed, actions } = proposal;
+        const { startDate, endDate, executed, hasActions } = proposal;
 
         const paramsMet = this.isApprovalReached(proposal);
 
@@ -14,7 +14,7 @@ class MultisigProposalUtils {
             startDate,
             endDate,
             paramsMet,
-            hasActions: actions.length > 0,
+            hasActions,
             executionExpiryDate: endDate,
             canExecuteEarly: true,
         });
