@@ -71,9 +71,10 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     const plugin = useDaoPlugins({ daoId, pluginAddress: proposal?.pluginAddress })?.[0];
 
-    // This fallback is needed to satisfy the test for the error case, otherwise the test fails due to proposal id not being present
-    const proposalId = proposal?.id ?? '';
-    const { data: actionData } = useProposalActions({ urlParams: { id: proposalId } }, { enabled: !!proposal });
+    const { data: actionData } = useProposalActions(
+        { urlParams: { id: proposal?.id as string } },
+        { enabled: proposal != null },
+    );
 
     if (proposal == null || dao == null) {
         return null;
