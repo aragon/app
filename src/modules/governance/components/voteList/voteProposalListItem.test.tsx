@@ -41,7 +41,7 @@ describe('<VoteProposalListItem /> component', () => {
         });
         const plugin = generateDaoPlugin({ slug: 'parent-slug' });
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ id: 'test-plugin', meta: plugin })]);
-        const proposalUrl = '/dao/ethereum-sepolia/test-proposal-url';
+        const proposalUrl = '/dao/ethereum-sepolia/0x123/proposals/test-proposal-url';
         getDaoUrlSpy.mockReturnValue(proposalUrl);
 
         render(createTestComponent({ vote }));
@@ -59,7 +59,7 @@ describe('<VoteProposalListItem /> component', () => {
         const plugin = generateDaoPlugin({ slug: 'child-slug' });
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: plugin })]);
 
-        const proposalUrl = '/dao/ethereum-sepolia/test-proposal-url';
+        const proposalUrl = '/dao/ethereum-sepolia/0x123/proposals/test-proposal-url';
         getDaoUrlSpy.mockReturnValue(proposalUrl);
 
         render(createTestComponent({ vote }));

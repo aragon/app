@@ -39,6 +39,7 @@ describe('<CreateProposalPageClient /> component', () => {
         useDialogContextSpy.mockReset();
         usePermissionCheckGuardSpy.mockReset();
         useDaoPluginsSpy.mockReset();
+        useDaoSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ICreateProposalPageClientProps>) => {

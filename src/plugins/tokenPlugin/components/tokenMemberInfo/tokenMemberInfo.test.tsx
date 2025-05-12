@@ -2,6 +2,7 @@ import * as governanceService from '@/modules/governance/api/governanceService';
 import { generateMember } from '@/modules/governance/testUtils';
 import { generateTokenPluginSettings, generateTokenPluginSettingsToken } from '@/plugins/tokenPlugin/testUtils';
 import * as daoService from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
 import {
     generateDao,
     generateDaoPlugin,
@@ -79,17 +80,19 @@ describe('<TokenMemberInfo /> component', () => {
         const membersMetadata = generatePaginatedResponseMetadata({ pageSize: 20, totalRecords: members.length });
         const membersResponse = generatePaginatedResponse({ data: members, metadata: membersMetadata });
 
-        const daoAddress = '0x12345';
-
         useMemberListSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
         );
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress }) }));
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateDao({ address: '0x12345', network: Network.ETHEREUM_MAINNET }),
+            }),
+        );
 
         render(createTestComponent({ plugin }));
         const linkElement = screen.getByRole('link', {
             name: /tokenMemberInfo.tokenDistribution \(count=2\) 0xBtcAddress/,
         });
-        expect(linkElement).toHaveAttribute('href', `/dao/ethereum-mainnet/${daoAddress}/members`);
+        expect(linkElement).toHaveAttribute('href', `/dao/ethereum-mainnet/0x12345/members`);
     });
 });

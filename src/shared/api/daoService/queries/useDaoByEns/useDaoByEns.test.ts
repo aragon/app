@@ -5,7 +5,7 @@ import type { IGetDaoByEnsUrlParams } from '../../daoService.api';
 import { Network } from '../../domain';
 import { useDaoByEns } from './useDaoByEns';
 
-describe('useDao query', () => {
+describe('useDaoByEns query', () => {
     const getDaoByEnsSpy = jest.spyOn(daoService, 'getDaoByEns');
 
     afterEach(() => {

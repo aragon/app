@@ -6,10 +6,6 @@ import { ipfsUtils } from '../ipfsUtils';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 import { daoUtils } from './daoUtils';
 
-jest.mock('@/modules/application/constants/wagmi', () => ({
-    wagmiConfig: {},
-}));
-
 describe('dao utils', () => {
     const getDaoSpy = jest.spyOn(daoService, 'getDao');
     const getDaoByEnsSpy = jest.spyOn(daoService, 'getDaoByEns');
@@ -259,6 +255,10 @@ describe('dao utils', () => {
             const path = 'some/path';
             const expectedUrl = `/dao/${daoNetwork}/${daoAddress}/${path}`;
             expect(daoUtils.getDaoUrl(dao, path)).toEqual(expectedUrl);
+        });
+
+        it('returns undefined when dao parameter is not defined', () => {
+            expect(daoUtils.getDaoUrl(undefined)).toBeUndefined();
         });
     });
 });

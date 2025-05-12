@@ -13,8 +13,7 @@ describe('<NotFoundDao /> component', () => {
     };
 
     it('renders a not-found page for DAOs', () => {
-        const daoEnsName = 'my-dao.dao.eth';
-        const params = { addressOrEns: daoEnsName, network: Network.ETHEREUM_MAINNET };
+        const params = { addressOrEns: 'my-dao.dao.eth', network: Network.ETHEREUM_MAINNET };
         render(createTestComponent({ params }));
 
         expect(screen.getByText(/notFoundDao.title/)).toBeInTheDocument();
@@ -23,6 +22,6 @@ describe('<NotFoundDao /> component', () => {
 
         const link = screen.getByRole('link', { name: /notFoundDao.action/ });
         expect(link).toBeInTheDocument();
-        expect(link.getAttribute('href')).toEqual(`/dao/${Network.ETHEREUM_MAINNET}/${daoEnsName}/dashboard`);
+        expect(link.getAttribute('href')).toEqual(`/dao/${params.network}/${params.addressOrEns}/dashboard`);
     });
 });
