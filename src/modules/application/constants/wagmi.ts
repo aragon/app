@@ -1,4 +1,3 @@
-import { Network } from '@/shared/api/daoService';
 import { type INetworkDefinition, networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { walletConnectDefinitions } from '@/shared/constants/walletConnectDefinitions';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
@@ -9,28 +8,11 @@ import { cookieStorage, createStorage, http } from 'wagmi';
 // Supported chains by the Application.
 const chains = Object.values(networkDefinitions) as [INetworkDefinition, ...INetworkDefinition[]];
 
-const getRpcUrl = (chainId: string): string | undefined => {
-    // Send the request directly to the RPC endpoint when the request is done on the server side, otherwise proxy
-    // it through the /api/rpc NextJs route.
-    if (typeof window !== 'undefined') {
-        return `/api/rpc/${chainId}`;
-    }
-
-    // TODO: Remove when backend API is ready, or generalize and update proxyRpcUtils.
-    const network = Object.values(Network).find(
-        (network) => networkDefinitions[network as Network].id === Number(chainId),
-    );
-
-    const { privateRpc, rpcUrls } = network ? networkDefinitions[network] : {};
-
-    return privateRpc ? `${privateRpc}${process.env.NEXT_SECRET_RPC_KEY!}` : rpcUrls?.default.http[0];
-};
-
 // Wagmi configuration for the Application.
 const wagmiAdapter = new WagmiAdapter({
     networks: chains,
     ssr: true,
-    client: ({ chain }) => createClient({ chain, transport: http(getRpcUrl(chain.id.toString())) }),
+    client: ({ chain }) => createClient({ chain, transport: http(`/api/rpc/${chain.id.toString()}`) }),
     projectId: walletConnectDefinitions.projectId,
     storage: createStorage({ storage: cookieStorage }),
 });
