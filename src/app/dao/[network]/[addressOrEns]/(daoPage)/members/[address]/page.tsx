@@ -1,3 +1,3 @@
-import { DaoMemberDetailsPage } from '../../../../../../../modules/governance/pages/daoMemberDetailsPage';
+import { DaoMemberDetailsPage } from '@/modules/governance/pages/daoMemberDetailsPage';
 
 export default DaoMemberDetailsPage;

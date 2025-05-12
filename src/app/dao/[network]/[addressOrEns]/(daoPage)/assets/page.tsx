@@ -1,3 +1,3 @@
-import { DaoAssetsPage } from '../../../../../../modules/finance/pages/daoAssetsPage';
+import { DaoAssetsPage } from '@/modules/finance/pages/daoAssetsPage';
 
 export default DaoAssetsPage;
