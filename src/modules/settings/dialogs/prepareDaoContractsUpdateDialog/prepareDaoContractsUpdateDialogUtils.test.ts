@@ -5,6 +5,7 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { type IPluginUpdateSetupData, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import * as Viem from 'viem';
+import { settingsService } from '../../api/settingsService';
 import { daoAbi } from './daoAbi';
 import { pluginSetupProcessorAbi } from './pluginSetupProcessorAbi';
 import { prepareDaoContractsUpdateDialogUtils } from './prepareDaoContractsUpdateDialogUtils';
@@ -15,6 +16,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
     const getPluginUpdateSetupDataSpy = jest.spyOn(pluginTransactionUtils, 'getPluginUpdateSetupData');
     const buildApplyPluginsUpdateActionsSpy = jest.spyOn(pluginTransactionUtils, 'buildApplyPluginsUpdateActions');
+    const getPluginInstallationDataSpy = jest.spyOn(settingsService, 'getPluginInstallationData');
 
     afterEach(() => {
         getPluginSpy.mockReset();
@@ -22,6 +24,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
         encodeFunctionDataSpy.mockReset();
         getPluginUpdateSetupDataSpy.mockReset();
         buildApplyPluginsUpdateActionsSpy.mockReset();
+        getPluginInstallationDataSpy.mockReset();
     });
 
     describe('buildPrepareUpdatePluginsTransaction', () => {
@@ -103,7 +106,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
             buildPayloadSpy.mockRestore();
         });
 
-        it('encodes the prepareUpdate transaction for the given plugin', () => {
+        it('encodes the prepareUpdate transaction for the given plugin', async () => {
             const dao = generateDao({ network: Network.ZKSYNC_MAINNET });
             const plugin = generateDaoPlugin({ subdomain: 'multi', release: '1', build: '4' });
             const pluginSetupRepo = '0xrepo';
@@ -117,10 +120,10 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
             const setupPayload = 'test';
             const transactionData = '0xupdate';
             getPluginSpy.mockReturnValue(pluginInfo);
-            buildPayloadSpy.mockReturnValue(setupPayload);
+            buildPayloadSpy.mockResolvedValue(setupPayload);
             encodeFunctionDataSpy.mockReturnValue(transactionData);
 
-            const result = prepareDaoContractsUpdateDialogUtils['buildPrepareUpdateTransaction'](dao, plugin);
+            const result = await prepareDaoContractsUpdateDialogUtils['buildPrepareUpdateTransaction'](dao, plugin);
             expect(getPluginSpy).toHaveBeenCalledWith(plugin.subdomain);
             expect(buildPayloadSpy).toHaveBeenCalledWith(dao, plugin);
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
@@ -136,27 +139,33 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
     });
 
     describe('buildPluginSetupPayload', () => {
-        it('builds the plugin-specific payload data for updating the plugin', () => {
+        it('builds the plugin-specific payload data for updating the plugin', async () => {
+            const preparedSetupData = { helpers: ['0x1'] };
             const dao = generateDao();
-            const plugin = generateDaoPlugin({ address: '0x123', preparedSetupData: { helpers: ['0x1'] } });
+            const plugin = generateDaoPlugin({ address: '0x123' });
             const initializeData = '0xdata';
             const dataBuilder = jest.fn(() => initializeData);
             getSlotFunctionSpy.mockReturnValue(dataBuilder);
+            getPluginInstallationDataSpy.mockResolvedValue(preparedSetupData);
 
-            const result = prepareDaoContractsUpdateDialogUtils['buildPluginSetupPayload'](dao, plugin);
+            const result = await prepareDaoContractsUpdateDialogUtils['buildPluginSetupPayload'](dao, plugin);
             expect(dataBuilder).toHaveBeenCalledWith({ dao, plugin });
             expect(result).toEqual({
                 plugin: plugin.address,
-                currentHelpers: plugin.preparedSetupData.helpers,
+                currentHelpers: preparedSetupData.helpers,
                 data: initializeData,
             });
         });
 
-        it('throws error when the plugin-specific data builder function is not registered', () => {
+        it('throws error when the plugin-specific data builder function is not registered', async () => {
             const dao = generateDao();
             const plugin = generateDaoPlugin();
+            const expectedMessage = expect.stringMatching('builder function does not exist') as unknown;
             getSlotFunctionSpy.mockReturnValue(undefined);
-            expect(() => prepareDaoContractsUpdateDialogUtils['buildPluginSetupPayload'](dao, plugin)).toThrow();
+            getPluginInstallationDataSpy.mockResolvedValue({ helpers: [] });
+            await expect(prepareDaoContractsUpdateDialogUtils['buildPluginSetupPayload'](dao, plugin)).rejects.toEqual(
+                expect.objectContaining({ message: expectedMessage }),
+            );
         });
     });
 

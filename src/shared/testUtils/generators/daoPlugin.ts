@@ -16,6 +16,5 @@ export const generateDaoPlugin = <TSettings extends IPluginSettings = IPluginSet
     blockTimestamp: DateTime.now().toMillis(),
     transactionHash: '0x123',
     slug: 'slug',
-    preparedSetupData: { helpers: [] },
     ...daoPlugin,
 });

@@ -1,4 +1,3 @@
-import type { IPluginPreparedSetupData } from './pluginPreparedSetupData';
 import type { IPluginSettings } from './pluginSettings';
 import type { IResource } from './resource';
 
@@ -71,8 +70,4 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
      * CID of the IPFS file containing the plugin metadata.
      */
     metadataIpfs?: string;
-    /**
-     * Setup data emitted during the plugin preparation.
-     */
-    preparedSetupData: IPluginPreparedSetupData;
 }

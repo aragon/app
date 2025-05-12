@@ -9,6 +9,7 @@ import { transactionUtils, type ITransactionRequest } from '@/shared/utils/trans
 import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 import { invariant } from '@aragon/gov-ui-kit';
 import { encodeFunctionData, zeroHash, type Hex } from 'viem';
+import { settingsService } from '../../api/settingsService';
 import { SettingsSlotId } from '../../constants/moduleSlots';
 import type { IBuildPreparePluginUpdateDataParams } from '../../types';
 import { daoAbi } from './daoAbi';
@@ -19,18 +20,20 @@ import type {
 } from './prepareDaoContractsUpdateDialogUtils.api';
 
 class PrepareDaoContractsUpdateDialogUtils {
-    buildPrepareUpdatePluginsTransaction = (
+    buildPrepareUpdatePluginsTransaction = async (
         params: IBuildPrepareUpdatePluginsTransactionParams,
     ): Promise<ITransactionRequest> => {
         const { dao, plugins } = params;
-        const pluginUpdateData = plugins.map((plugin) => this.buildPrepareUpdateTransaction(dao, plugin));
+        const pluginUpdateDataPromises = plugins.map((plugin) => this.buildPrepareUpdateTransaction(dao, plugin));
+        const pluginUpdateData = await Promise.all(pluginUpdateDataPromises);
+
         const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
 
         const transactionParams = { to: pluginSetupProcessor, value: BigInt(0) };
         const pluginUpdateTransactions = pluginUpdateData.map((data) => ({ ...transactionParams, data }));
         const transaction = transactionUtils.encodeTransactionRequests(pluginUpdateTransactions, dao.network);
 
-        return Promise.resolve(transaction);
+        return transaction;
     };
 
     getApplyUpdateProposal = (params: IGetApplyUpdateProposalParams): IProposalCreate => {
@@ -40,13 +43,13 @@ class PrepareDaoContractsUpdateDialogUtils {
         return { ...metadata, actions, resources: [] };
     };
 
-    private buildPrepareUpdateTransaction = (dao: IDao, plugin: IDaoPlugin) => {
+    private buildPrepareUpdateTransaction = async (dao: IDao, plugin: IDaoPlugin) => {
         const pluginInfo = pluginRegistryUtils.getPlugin(plugin.subdomain) as IPluginInfo;
 
         const currentVersionTag = versionComparatorUtils.normaliseComparatorInput(plugin)!;
         const { installVersion: newVersionTag } = pluginInfo;
         const pluginSetupRepo = pluginInfo.repositoryAddresses[dao.network];
-        const setupPayload = this.buildPluginSetupPayload(dao, plugin);
+        const setupPayload = await this.buildPluginSetupPayload(dao, plugin);
 
         const data = encodeFunctionData({
             abi: pluginSetupProcessorAbi,
@@ -57,10 +60,10 @@ class PrepareDaoContractsUpdateDialogUtils {
         return data;
     };
 
-    private buildPluginSetupPayload = (dao: IDao, plugin: IDaoPlugin) => {
-        const { address, subdomain, preparedSetupData } = plugin;
+    private buildPluginSetupPayload = async (dao: IDao, plugin: IDaoPlugin) => {
+        const { address, subdomain } = plugin;
 
-        const currentHelpers = preparedSetupData.helpers as Hex[];
+        const installationData = await settingsService.getPluginInstallationData({ urlParams: { address } });
         const updateDataBuilder = pluginRegistryUtils.getSlotFunction<IBuildPreparePluginUpdateDataParams, Hex>({
             slotId: SettingsSlotId.SETTINGS_BUILD_PREPARE_PLUGIN_UPDATE_DATA,
             pluginId: subdomain,
@@ -69,7 +72,7 @@ class PrepareDaoContractsUpdateDialogUtils {
         invariant(updateDataBuilder != null, 'PrepareDaoContractsUpdateDialogUtils: builder function does not exist.');
         const initializeData = updateDataBuilder({ dao, plugin });
 
-        return { plugin: address as Hex, currentHelpers, data: initializeData };
+        return { plugin: address as Hex, currentHelpers: installationData.helpers as Hex[], data: initializeData };
     };
 
     private buildApplyUpdateTransactions = (params: IGetApplyUpdateProposalParams): ITransactionRequest[] => {
