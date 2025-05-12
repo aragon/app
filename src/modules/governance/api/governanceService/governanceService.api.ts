@@ -125,3 +125,12 @@ export interface IGetVoteListQueryParams extends IPaginatedRequest {
 }
 
 export interface IGetVoteListParams extends IRequestQueryParams<IGetVoteListQueryParams> {}
+
+export interface IGetProposalActionsUrlParams {
+    /**
+     * The proposal ID to fetch actions for.
+     */
+    id: string;
+}
+
+export interface IGetProposalActionsParams extends IRequestUrlParams<IGetProposalActionsUrlParams> {}

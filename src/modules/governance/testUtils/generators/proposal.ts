@@ -18,9 +18,9 @@ export const generateProposal = (proposal?: Partial<IProposal>): IProposal => ({
     network: Network.ARBITRUM_MAINNET,
     settings: generatePluginSettings(),
     executed: { status: false },
-    actions: [],
     pluginAddress: '0x123',
     pluginSubdomain: 'test',
     incrementalId: 1,
+    hasActions: false,
     ...proposal,
 });
