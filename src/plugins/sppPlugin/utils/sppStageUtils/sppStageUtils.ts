@@ -70,7 +70,7 @@ class SppStageUtils {
 
     // Mark proposal as signaling when main-proposal has no actions and this is processing the status of the last stage
     isSignalingProposal = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        return proposal.actions.length === 0 && this.isLastStage(proposal, stage);
+        return !proposal.hasActions && this.isLastStage(proposal, stage);
     };
 
     isStageUnreached = (proposal: ISppProposal, currentStageIndex: number): boolean => {

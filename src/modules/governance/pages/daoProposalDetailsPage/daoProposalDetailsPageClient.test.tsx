@@ -31,6 +31,7 @@ jest.mock('../../components/proposalExecutionStatus', () => ({
 
 describe('<DaoProposalDetailsPageClient /> component', () => {
     const useProposalSpy = jest.spyOn(governanceService, 'useProposalBySlug');
+    const useProposalActionsSpy = jest.spyOn(governanceService, 'useProposalActions');
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
     const useSlotSingleFunctionSpy = jest.spyOn(useSlotSingleFunction, 'useSlotSingleFunction');
@@ -38,12 +39,16 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
     beforeEach(() => {
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateProposal() }));
+        useProposalActionsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: { decoding: false, actions: [], rawActions: [] } }),
+        );
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ id: 'plugin', meta: generateDaoPlugin() })]);
     });
 
     afterEach(() => {
         useProposalSpy.mockReset();
+        useProposalActionsSpy.mockReset();
         useDaoSpy.mockReset();
         clipboardCopySpy.mockReset();
         useSlotSingleFunctionSpy.mockReset();
@@ -130,6 +135,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
     it('returns empty container on proposal fetch error', () => {
         useProposalSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
+        useProposalActionsSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
         const { container } = render(createTestComponent());
         expect(container).toBeEmptyDOMElement();
     });

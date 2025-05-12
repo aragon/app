@@ -1,4 +1,3 @@
-import { generateProposalAction } from '@/modules/governance/testUtils';
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import { ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
@@ -115,7 +114,7 @@ describe('SppProposalUtils', () => {
         });
 
         it('sets the hasActions param to true if the proposal has actions', () => {
-            const proposal = generateProposalWithStage({ actions: [generateProposalAction()] });
+            const proposal = generateProposalWithStage({ hasActions: true });
             sppProposalUtils.getProposalStatus(proposal);
             expect(getProposalStatusSpy).toHaveBeenCalledWith(expect.objectContaining({ hasActions: true }));
         });
