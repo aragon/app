@@ -55,9 +55,8 @@ describe('<DaoAssetsPage /> component', () => {
     });
 
     it('prefetches the DAO and its asset list', async () => {
-        const daoEns = 'another-test.dao.eth';
         const daoAddress = '0x12345';
-        const dao = generateDao({ ens: daoEns, address: daoAddress });
+        const dao = generateDao({ address: daoAddress });
         const expectedDaoId = 'test-dao-id';
         resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
         fetchQuerySpy.mockResolvedValue(dao);

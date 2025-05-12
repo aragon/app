@@ -233,10 +233,10 @@ describe('dao utils', () => {
 
     describe('getDaoUrl', () => {
         it('returns the correct base URL for a DAO with ENS', () => {
-            const daoEns = 'test.dao.eth';
+            const daoEnsSubdomain = 'test-subdomain';
             const daoNetwork = Network.ETHEREUM_MAINNET;
-            const dao = generateDao({ ens: daoEns, network: daoNetwork });
-            const expectedUrl = `/dao/${daoNetwork}/${daoEns}`;
+            const dao = generateDao({ subdomain: daoEnsSubdomain, network: daoNetwork });
+            const expectedUrl = `/dao/${daoNetwork}/${daoEnsSubdomain}.dao.eth`;
             expect(daoUtils.getDaoUrl(dao)).toEqual(expectedUrl);
         });
 

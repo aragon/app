@@ -74,8 +74,9 @@ class DaoUtils {
             return undefined;
         }
 
-        const { network, address, ens } = dao;
-        const baseUrl = `/dao/${network}/${ens ?? address}`;
+        const { network, address, subdomain } = dao;
+        const ensName = subdomain && `${subdomain}.dao.eth`;
+        const baseUrl = `/dao/${network}/${ensName ?? address}`;
         const fullPath = path != null ? `${baseUrl}/${path}` : baseUrl;
 
         return fullPath as `/dao/${Network}/${string}`;

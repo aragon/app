@@ -13,10 +13,6 @@ export interface IDao {
      */
     address: string;
     /**
-     * ENS name of the DAO.
-     */
-    ens?: string;
-    /**
      * Network of the DAO.
      */
     network: Network;

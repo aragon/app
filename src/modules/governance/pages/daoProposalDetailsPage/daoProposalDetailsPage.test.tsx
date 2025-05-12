@@ -66,7 +66,12 @@ describe('<DaoProposalDetailsPage /> component', () => {
     });
 
     it('prefetches actions when the proposal has actions', async () => {
-        const params = { id: 'test-id', proposalSlug: 'test-slug' };
+        const params = {
+            id: 'test-id',
+            proposalSlug: 'test-slug',
+            addressOrEns: '0x12345',
+            network: Network.ETHEREUM_MAINNET,
+        };
 
         fetchQuerySpy.mockResolvedValueOnce({ id: params.proposalSlug, hasActions: true });
         fetchQuerySpy.mockResolvedValueOnce([]);

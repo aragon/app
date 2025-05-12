@@ -56,19 +56,17 @@ describe('<SppProposalListItem /> component', () => {
             settings,
             incrementalId: 5,
         });
-        const daoEns = 'test.dao.eth';
         const daoAddress = '0x12345';
         const daoNetwork = Network.ETHEREUM_MAINNET;
         const daoId = `${daoNetwork}-${daoAddress}`;
         const dao = generateDao({
             id: daoId,
-            ens: daoEns,
             address: daoAddress,
             network: daoNetwork,
         });
         render(createTestComponent({ plugin, proposal, dao }));
         expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(
-            `/dao/${daoNetwork}/${daoEns}/proposals/SPP-5`,
+            `/dao/${daoNetwork}/${daoAddress}/proposals/SPP-5`,
         );
     });
 
