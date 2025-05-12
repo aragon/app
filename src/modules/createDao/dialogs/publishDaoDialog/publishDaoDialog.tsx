@@ -110,8 +110,8 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         setIsBlocked(false);
 
         const daoAddress = publishDaoDialogUtils.getDaoAddress(receipt)!;
-
-        return `/dao/${network}/${ens ?? daoAddress}`;
+        const daoEnsName = ens ? `${ens}.dao.eth` : undefined; // ens is "" by default!
+        return `/dao/${network}/${daoEnsName ?? daoAddress}`;
     };
 
     const metadataPinAction = values.avatar?.file ? handlePinFile : handlePinData;
