@@ -7,7 +7,7 @@ import { tokenSettingsUtils } from '../tokenSettingsUtils';
 
 class TokenProposalUtils {
     getProposalStatus = (proposal: ITokenProposal): ProposalStatus => {
-        const { startDate, endDate, actions, executed } = proposal;
+        const { startDate, endDate, hasActions, executed } = proposal;
 
         const endsInTheFuture = proposalStatusUtils.endsInTheFuture(endDate);
         const approvalReached = this.isApprovalReached(proposal);
@@ -22,7 +22,7 @@ class TokenProposalUtils {
             startDate,
             endDate,
             paramsMet,
-            hasActions: actions.length > 0,
+            hasActions,
             canExecuteEarly: isEarlyExecution,
         });
 

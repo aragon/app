@@ -24,7 +24,7 @@ interface IGetBodyStatusLabelDataParams {
 
 class SppProposalUtils {
     getProposalStatus = (proposal: ISppProposal): ProposalStatus => {
-        const { executed, actions, settings, startDate } = proposal;
+        const { executed, settings, startDate, hasActions } = proposal;
         const { stages } = settings;
 
         const lastStage = stages[stages.length - 1];
@@ -44,7 +44,6 @@ class SppProposalUtils {
         );
 
         const paramsMet = this.areAllStagesAccepted(proposal);
-        const hasActions = actions.length > 0;
         const canExecuteEarly = lastStage.minAdvance === 0;
 
         return proposalStatusUtils.getProposalStatus({
