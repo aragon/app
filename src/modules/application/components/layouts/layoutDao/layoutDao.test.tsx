@@ -1,11 +1,11 @@
-import { daoOptions } from '@/shared/api/daoService';
+import { daoOptions, Network } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { testLogger } from '@/test/utils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { LayoutDao, type ILayoutDaoProps } from './layoutDao';
+import { type ILayoutDaoProps, LayoutDao } from './layoutDao';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
@@ -41,7 +41,7 @@ describe('<LayoutDao /> component', () => {
 
     const createTestComponent = async (props?: Partial<ILayoutDaoProps>) => {
         const completeProps: ILayoutDaoProps = {
-            params: Promise.resolve(),
+            params: Promise.resolve({ network: Network.ETHEREUM_SEPOLIA, addressOrEns: '0x12345' }),
             ...props,
         };
 

@@ -1,5 +1,5 @@
 import type { IAddressInfo, IPluginSettings, Network } from '@/shared/api/daoService';
-import type { IResource } from '../../../../../shared/api/daoService/domain/resource';
+import type { IResource } from '@/shared/api/daoService/domain/resource';
 import type { IProposalAction } from './proposalAction';
 import type { IProposalExecution } from './proposalExecution';
 

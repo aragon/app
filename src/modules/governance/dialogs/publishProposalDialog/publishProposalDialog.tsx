@@ -12,10 +12,10 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo } from 'react';
 import { useAccount } from 'wagmi';
-import { daoUtils } from '../../../../shared/utils/daoUtils';
 import type { IPublishProposalDialogProps } from './publishProposalDialog.api';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 

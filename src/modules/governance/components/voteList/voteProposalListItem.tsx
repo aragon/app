@@ -1,8 +1,8 @@
 import { type IVote } from '@/modules/governance/api/governanceService';
+import { useDao } from '@/shared/api/daoService';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { VoteProposalDataListItem, type VoteIndicator } from '@aragon/gov-ui-kit';
-import { useDao } from '../../../../shared/api/daoService';
-import { daoUtils } from '../../../../shared/utils/daoUtils';
 import { proposalUtils } from '../../utils/proposalUtils';
 
 export interface IVoteProposalListItemProps {

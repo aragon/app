@@ -57,11 +57,6 @@ class DaoUtils {
         return parts.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
     };
 
-    /**
-     * Resolves the DAO ID based on the provided network, address and ENS name.
-     *
-     * @throws Error if the ENS address is not found.
-     */
     resolveDaoId = async (params: IDaoPageParams) => {
         const { addressOrEns, network } = params;
 

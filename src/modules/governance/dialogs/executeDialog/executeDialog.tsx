@@ -1,3 +1,4 @@
+import { useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
@@ -8,11 +9,10 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { DataList, invariant, ProposalDataListItem, type ProposalStatus } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
-import { useDao } from '../../../../shared/api/daoService';
-import { daoUtils } from '../../../../shared/utils/daoUtils';
 import type { IProposal } from '../../api/governanceService';
 import { proposalUtils } from '../../utils/proposalUtils';
 import { executeDialogUtils } from './executeDialogUtils';

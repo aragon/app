@@ -1,9 +1,9 @@
 import type { IProposal } from '@/modules/governance/api/governanceService';
+import { useDao } from '@/shared/api/daoService';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { ProposalDataListItem, type ProposalStatus } from '@aragon/gov-ui-kit';
-import { useDao } from '../../../../shared/api/daoService';
-import { daoUtils } from '../../../../shared/utils/daoUtils';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { proposalUtils } from '../../utils/proposalUtils';
 

@@ -10,6 +10,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     addressUtils,
     Button,
@@ -29,7 +30,6 @@ import {
     useBlockExplorer,
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
-import { daoUtils } from '../../../../shared/utils/daoUtils';
 import { type IProposal, useProposalBySlug } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';

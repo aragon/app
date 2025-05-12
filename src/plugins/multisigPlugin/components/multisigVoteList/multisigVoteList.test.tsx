@@ -2,9 +2,9 @@ import type { IVote } from '@/modules/governance/api/governanceService';
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
 import { generateProposal } from '@/modules/governance/testUtils';
 import { generateAddressInfo } from '@/shared/testUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, GukModulesProvider, type VoteIndicator } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
-import { daoUtils } from '../../../../shared/utils/daoUtils';
 import { generateMultisigVote } from '../../testUtils';
 import { type IMultisigVoteListProps, MultisigVoteList } from './multisigVoteList';
 

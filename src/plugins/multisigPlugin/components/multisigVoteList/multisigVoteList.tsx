@@ -2,6 +2,7 @@ import type { IGetVoteListParams } from '@/modules/governance/api/governanceServ
 import type { IVoteListProps } from '@/modules/governance/components/voteList';
 import { VoteProposalListItem } from '@/modules/governance/components/voteList';
 import { useVoteListData } from '@/modules/governance/hooks/useVoteListData';
+import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
@@ -11,7 +12,6 @@ import {
     VoteDataListItem,
     VoteProposalDataListItem,
 } from '@aragon/gov-ui-kit';
-import { useDao } from '../../../../shared/api/daoService';
 import { type IMultisigVote } from '../../types';
 
 export interface IMultisigVoteListProps extends IVoteListProps {

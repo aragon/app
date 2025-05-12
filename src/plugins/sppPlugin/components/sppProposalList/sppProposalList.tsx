@@ -1,9 +1,9 @@
 import type { IDaoProposalListDefaultProps } from '@/modules/governance/components/daoProposalList';
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
 import type { ISppProposal } from '@/plugins/sppPlugin/types';
+import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
-import { useDao } from '../../../../shared/api/daoService';
 import { SppProposalListItem } from './sppProposalListItem';
 
 export interface ISppProposalListProps extends IDaoProposalListDefaultProps {}

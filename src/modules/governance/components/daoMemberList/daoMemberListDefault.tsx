@@ -43,10 +43,6 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (props
         useMemberListData(initialParams);
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    if (dao == null) {
-        return null;
-    }
-
     const processedLayoutClassNames = layoutClassNames ?? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3';
 
     const getMemberLink = (member: IMember) =>

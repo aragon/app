@@ -1,9 +1,9 @@
+import { Network } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { Network } from '../../../../shared/api/daoService';
 import { proposalBySlugOptions } from '../../api/governanceService';
 import { DaoProposalDetailsPage, type IDaoProposalDetailsPageProps } from './daoProposalDetailsPage';
 
