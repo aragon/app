@@ -1,4 +1,4 @@
-import type { IBrandedIdentity } from '@aragon/gov-ui-kit';
+import type { IProposalVotingBodyBrand } from '@aragon/gov-ui-kit';
 import safeWallet from '../../assets/images/logos/safeWallet.png';
 
 export enum VotingBodyBrandIdentity {
@@ -6,7 +6,7 @@ export enum VotingBodyBrandIdentity {
     OTHER = 'other',
 }
 
-export const brandedExternals: Record<VotingBodyBrandIdentity, IBrandedIdentity | undefined> = {
+export const brandedExternals: Record<VotingBodyBrandIdentity, IProposalVotingBodyBrand | undefined> = {
     [VotingBodyBrandIdentity.SAFE_WALLET]: {
         logo: safeWallet.src,
         label: 'Safe{Wallet}',

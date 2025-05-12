@@ -72,9 +72,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         <ProposalVoting.BodySummaryListItem
                             key={address}
                             id={address}
-                            brandedExternal={
-                                plugin.subdomain === undefined ? brandedExternals[plugin.brandId] : undefined
-                            }
+                            bodyBrand={plugin.subdomain === undefined ? brandedExternals[plugin.brandId] : undefined}
                         >
                             {plugin.subdomain != null && (
                                 <PluginSingleComponent
@@ -107,7 +105,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                     status={processedStageStatus}
                     bodyId={plugin.address}
                     hideTabs={!plugin.subdomain ? [ProposalVotingTab.VOTES] : undefined}
-                    brandedExternal={plugin.subdomain === undefined ? brandedExternals[plugin.brandId] : undefined}
+                    bodyBrand={plugin.subdomain === undefined ? brandedExternals[plugin.brandId] : undefined}
                 >
                     <SppVotingTerminalBodyContent
                         plugin={plugin}
