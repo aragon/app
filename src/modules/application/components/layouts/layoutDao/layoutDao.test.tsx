@@ -1,4 +1,4 @@
-import { daoOptions, Network } from '@/shared/api/daoService';
+import { daoOptions } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { testLogger } from '@/test/utils';
 import type * as ReactQuery from '@tanstack/react-query';
@@ -41,7 +41,7 @@ describe('<LayoutDao /> component', () => {
 
     const createTestComponent = async (props?: Partial<ILayoutDaoProps>) => {
         const completeProps: ILayoutDaoProps = {
-            params: Promise.resolve({ addressOrEns: 'test.dao.eth', network: Network.ETHEREUM_MAINNET }),
+            params: Promise.resolve(),
             ...props,
         };
 
@@ -83,10 +83,9 @@ describe('<LayoutDao /> component', () => {
     });
 
     it('renders error with a link to explore page on fetch DAO error', async () => {
-        const params = { addressOrEns: 'test.dao.eth', network: Network.ETHEREUM_MAINNET };
         fetchQuerySpy.mockRejectedValue('error');
 
-        render(await createTestComponent({ params: Promise.resolve(params) }));
+        render(await createTestComponent());
         const errorLink = screen.getByRole('link', { name: /layoutDao.notFound.action/ });
         expect(errorLink).toBeInTheDocument();
         expect(errorLink.getAttribute('href')).toEqual(`/`);

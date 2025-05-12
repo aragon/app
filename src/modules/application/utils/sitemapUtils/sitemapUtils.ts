@@ -1,8 +1,8 @@
 import { daoExplorerService } from '@/modules/explore/api/daoExplorerService';
+import type { IDao } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { metadataUtils } from '@/shared/utils/metadataUtils';
 import type { MetadataRoute } from 'next';
-import type { IDao } from '../../../../shared/api/daoService';
-import { daoUtils } from '../../../../shared/utils/daoUtils';
 
 class SitemapUtils {
     private daoPageRoutes = ['assets', 'dashboard', 'members', 'proposals', 'settings', 'transactions'];

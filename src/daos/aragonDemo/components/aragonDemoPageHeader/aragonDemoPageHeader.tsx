@@ -4,12 +4,12 @@ import type { IDao } from '@/shared/api/daoService';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { Button, formatterUtils, IconType, NumberFormat } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import type { ComponentProps } from 'react';
-import { daoUtils } from '../../../../shared/utils/daoUtils';
 import AragonDemoHeader from '../../assets/aragonDemoHeader.jpg';
 import { AragonDemoPageHeaderStat } from './aragonDemoPageHeaderStat';
 
