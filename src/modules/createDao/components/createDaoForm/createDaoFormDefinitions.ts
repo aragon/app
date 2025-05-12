@@ -8,9 +8,9 @@ export interface ICreateDaoFormMetadataData {
      */
     name: string;
     /**
-     * ENS subdomain of the DAO.
+     * ENS subdomain of the DAO. Empty string if not set.
      */
-    ens?: string;
+    ens: string;
     /**
      * Avatar of the DAO.
      */

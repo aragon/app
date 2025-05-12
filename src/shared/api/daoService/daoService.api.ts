@@ -16,7 +16,7 @@ export interface IGetDaoByEnsUrlParams {
      */
     network: Network;
     /**
-     * ENS name of the DAO to be fetched.
+     * ENS subdomain of the DAO to be fetched.
      */
     ens: string;
 }

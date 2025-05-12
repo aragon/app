@@ -110,7 +110,8 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         setIsBlocked(false);
 
         const daoAddress = publishDaoDialogUtils.getDaoAddress(receipt)!;
-        const daoEnsName = ens ? `${ens}.dao.eth` : undefined; // ens is "" by default!
+        const daoEnsName = ens !== '' ? `${ens}.dao.eth` : undefined;
+
         return `/dao/${network}/${daoEnsName ?? daoAddress}`;
     };
 
