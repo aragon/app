@@ -1,10 +1,6 @@
+import { VotingBodyBrandIdentity } from '@/plugins/sppPlugin/types/enum/sppVotingBodyBrandIdentity';
 import type { IProposalVotingBodyBrand } from '@aragon/gov-ui-kit';
-import safeWallet from '../../assets/images/logos/safeWallet.png';
-
-export enum VotingBodyBrandIdentity {
-    SAFE_WALLET = 'safeWallet',
-    OTHER = 'other',
-}
+import safeWallet from '../assets/images/logos/safeWallet.png';
 
 export const brandedExternals: Record<VotingBodyBrandIdentity, IProposalVotingBodyBrand | undefined> = {
     [VotingBodyBrandIdentity.SAFE_WALLET]: {

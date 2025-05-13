@@ -1,8 +1,8 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SppStageStatus } from '@/plugins/sppPlugin/components/sppStageStatus';
+import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
-import { brandedExternals } from '@/shared/types/brandedExternals';
 import {
     proposalStatusToVotingStatus,
     ProposalVoting,

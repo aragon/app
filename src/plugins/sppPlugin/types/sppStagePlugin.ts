@@ -1,5 +1,5 @@
+import type { VotingBodyBrandIdentity } from '@/plugins/sppPlugin/types/enum/sppVotingBodyBrandIdentity';
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import type { VotingBodyBrandIdentity } from '@/shared/types/brandedExternals';
 import type { SppProposalType } from './enum';
 
 export type ISppStagePlugin = ISppStagePluginInternal | ISppStagePluginExternal;
