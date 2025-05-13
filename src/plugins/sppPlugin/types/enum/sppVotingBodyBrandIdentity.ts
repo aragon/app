@@ -1,4 +1,5 @@
 export enum VotingBodyBrandIdentity {
-    SAFE_WALLET = 'safeWallet',
+    EOA = 'eoa',
+    SAFE = 'safe',
     OTHER = 'other',
 }

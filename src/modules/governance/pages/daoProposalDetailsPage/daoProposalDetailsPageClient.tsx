@@ -72,17 +72,13 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     const plugin = useDaoPlugins({ daoId, pluginAddress: proposal?.pluginAddress })?.[0];
 
-    const { data: actionData, isFetching } = useProposalActions(
+    const { data: actionData } = useProposalActions(
         { urlParams: { id: proposal?.id as string } },
         {
             enabled: proposal != null,
-            refetchInterval: (data) => {
-                return data.state.data?.decoding ? 2000 : false;
-            },
+            refetchInterval: ({ state }) => (state.data?.decoding ? 2000 : false),
         },
     );
-
-    const actionsLoading = isFetching || actionData?.decoding;
 
     if (proposal == null || dao == null) {
         return null;
@@ -152,7 +148,10 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         />
                     </Page.MainSection>
                     <Page.MainSection title={t('app.governance.daoProposalDetailsPage.main.actions.header')}>
-                        <ProposalActions.Root isLoading={actionsLoading} actionsCount={actionData?.rawActions.length}>
+                        <ProposalActions.Root
+                            isLoading={actionData?.decoding}
+                            actionsCount={actionData?.rawActions.length}
+                        >
                             <ProposalActions.Container emptyStateDescription="">
                                 {normalizedProposalActions.map((action, index) => (
                                     <ProposalActions.Item key={index} action={action} chainId={chainId} />
