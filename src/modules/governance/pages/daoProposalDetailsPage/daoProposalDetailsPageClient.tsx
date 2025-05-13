@@ -9,6 +9,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     addressUtils,
     Button,
@@ -108,7 +109,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     };
     const pageBreadcrumbs = [
         {
-            href: `/dao/${daoId}/proposals`,
+            href: daoUtils.getDaoUrl(dao, 'proposals'),
             label: t('app.governance.daoProposalDetailsPage.header.breadcrumb.proposals'),
         },
         { label: slug },

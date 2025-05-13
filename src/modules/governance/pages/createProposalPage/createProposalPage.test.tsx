@@ -1,3 +1,4 @@
+import { Network } from '@/shared/api/daoService';
 import type * as ReactQuery from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
@@ -15,7 +16,11 @@ jest.mock('./createProposalPageClient', () => ({
 describe('<CreateProposalPage /> component', () => {
     const createTestComponent = async (props?: Partial<ICreateProposalPageProps>) => {
         const completeProps: ICreateProposalPageProps = {
-            params: Promise.resolve({ id: 'test', pluginAddress: '0x123' }),
+            params: Promise.resolve({
+                addressOrEns: '0x987',
+                network: Network.ETHEREUM_MAINNET,
+                pluginAddress: '0x123',
+            }),
             ...props,
         };
 

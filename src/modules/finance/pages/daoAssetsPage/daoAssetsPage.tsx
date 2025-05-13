@@ -1,8 +1,9 @@
 import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { type IDaoPageParams } from '@/shared/types';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { QueryClient } from '@tanstack/react-query';
-import { assetListOptions } from '../../api/financeService/queries/useAssetList';
+import { assetListOptions } from '../../api/financeService';
 import { DaoAssetsPageClient } from './daoAssetsPageClient';
 
 export interface IDaoAssetsPageProps {
@@ -16,11 +17,12 @@ export const daoAssetsCount = 20;
 
 export const DaoAssetsPage: React.FC<IDaoAssetsPageProps> = async (props) => {
     const { params } = props;
-    const { id } = await params;
+    const daoPageParams = await params;
+    const daoId = await daoUtils.resolveDaoId(daoPageParams);
 
     const queryClient = new QueryClient();
 
-    const useDaoParams = { id };
+    const useDaoParams = { id: daoId };
     const dao = await queryClient.fetchQuery(daoOptions({ urlParams: useDaoParams }));
 
     const assetsQueryParams = { address: dao.address, network: dao.network, pageSize: daoAssetsCount };
@@ -30,7 +32,7 @@ export const DaoAssetsPage: React.FC<IDaoAssetsPageProps> = async (props) => {
 
     return (
         <Page.Container queryClient={queryClient}>
-            <DaoAssetsPageClient id={id} initialParams={assetsParams} />
+            <DaoAssetsPageClient id={daoId} initialParams={assetsParams} />
         </Page.Container>
     );
 };

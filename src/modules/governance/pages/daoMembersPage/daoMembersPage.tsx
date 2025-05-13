@@ -17,7 +17,8 @@ export const daoMembersCount = 18;
 
 export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
     const { params } = props;
-    const { id: daoId } = await params;
+    const daoPageParams = await params;
+    const daoId = await daoUtils.resolveDaoId(daoPageParams);
 
     const queryClient = new QueryClient();
 

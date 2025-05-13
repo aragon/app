@@ -1,11 +1,5 @@
-import * as DaoService from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
-import {
-    generateDao,
-    generateDialogContext,
-    generateReactQueryResultError,
-    generateReactQueryResultSuccess,
-} from '@/shared/testUtils';
+import { generateDao, generateDialogContext } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { GukModulesProvider, IconType, addressUtils, clipboardUtils, type ICompositeAddress } from '@aragon/gov-ui-kit';
@@ -33,7 +27,6 @@ jest.mock('../navigation/navigationTrigger', () => ({
 }));
 
 describe('<NavigationDao /> component', () => {
-    const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const copySpy = jest.spyOn(clipboardUtils, 'copy');
     const hasSupportedPluginsSpy = jest.spyOn(daoUtils, 'hasSupportedPlugins');
@@ -42,14 +35,12 @@ describe('<NavigationDao /> component', () => {
     const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
 
     beforeEach(() => {
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         usePathnameSpy.mockReturnValue('');
         useAccountSpy.mockReturnValue({} as wagmi.UseAccountReturnType);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
     });
 
     afterEach(() => {
-        useDaoSpy.mockReset();
         cidToSrcSpy.mockReset();
         hasSupportedPluginsSpy.mockReset();
         useDialogContextSpy.mockReset();
@@ -58,7 +49,7 @@ describe('<NavigationDao /> component', () => {
 
     const createTestComponent = (props?: Partial<INavigationDaoProps>) => {
         const completeProps: INavigationDaoProps = {
-            id: 'test-dao',
+            dao: generateDao(),
             ...props,
         };
 
@@ -71,9 +62,8 @@ describe('<NavigationDao /> component', () => {
 
     it('renders the dao avatar and name', () => {
         const dao = generateDao({ avatar: 'ipfs://avatar-cid', name: 'MyDao' });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         cidToSrcSpy.mockReturnValue(dao.avatar!);
-        render(createTestComponent());
+        render(createTestComponent({ dao }));
         const daoAvatar = screen.getByTestId('dao-avatar-mock');
         expect(daoAvatar).toBeInTheDocument();
         expect(daoAvatar.dataset.src).toEqual(dao.avatar);
@@ -110,8 +100,7 @@ describe('<NavigationDao /> component', () => {
 
     it('renders the dao information on the navigation dialog', async () => {
         const dao = generateDao({ name: 'dao name', subdomain: 'my-dao' });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
-        render(createTestComponent());
+        render(createTestComponent({ dao }));
         await userEvent.click(screen.getByTestId('nav-trigger-mock'));
 
         const withinDialog = within(screen.getByRole('dialog'));
@@ -123,16 +112,14 @@ describe('<NavigationDao /> component', () => {
     it('renders the truncated address on the navigation dialog when dao has no ENS', async () => {
         const dao = generateDao({ address: '0xDafBD7d63CEe88d73a51592b42f27f7FD6ab7722', subdomain: null });
         const truncatedAddress = addressUtils.truncateAddress(dao.address);
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
-        render(createTestComponent());
+        render(createTestComponent({ dao }));
         await userEvent.click(screen.getByTestId('nav-trigger-mock'));
         expect(screen.getByText(truncatedAddress)).toBeInTheDocument();
     });
 
     it('renders a copy button to copy the DAO address on the navigation dialog', async () => {
         const dao = generateDao({ address: '0x1234' });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
-        render(createTestComponent());
+        render(createTestComponent({ dao }));
         await userEvent.click(screen.getByTestId('nav-trigger-mock'));
 
         const copyButton = screen.getByTestId(IconType.COPY);
@@ -151,12 +138,6 @@ describe('<NavigationDao /> component', () => {
             .find((link) => within(link).queryByTestId(IconType.APP_EXPLORE))!;
         expect(exploreButton).toBeInTheDocument();
         expect(exploreButton.href).toEqual('http://localhost/');
-    });
-
-    it('returns empty container when dao cannot be fetched', () => {
-        useDaoSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
-        const { container } = render(createTestComponent());
-        expect(container).toBeEmptyDOMElement();
     });
 
     it('renders a connect button opening the connect-wallet dialog', async () => {

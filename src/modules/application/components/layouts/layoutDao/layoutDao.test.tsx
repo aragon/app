@@ -1,10 +1,11 @@
-import { daoOptions } from '@/shared/api/daoService';
+import { daoOptions, Network } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { testLogger } from '@/test/utils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { LayoutDao, type ILayoutDaoProps } from './layoutDao';
+import { type ILayoutDaoProps, LayoutDao } from './layoutDao';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
@@ -24,20 +25,23 @@ jest.mock('../../bannerDao', () => ({ BannerDao: () => <div data-testid="banner-
 describe('<LayoutDao /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
     const consoleErrorSpy = jest.spyOn(console, 'error');
+    const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
 
     beforeEach(() => {
         consoleErrorSpy.mockImplementation(jest.fn());
         fetchQuerySpy.mockImplementation(jest.fn());
+        resolveDaoIdSpy.mockResolvedValue('test-dao-id');
     });
 
     afterEach(() => {
         fetchQuerySpy.mockReset();
         consoleErrorSpy.mockReset();
+        resolveDaoIdSpy.mockReset();
     });
 
     const createTestComponent = async (props?: Partial<ILayoutDaoProps>) => {
         const completeProps: ILayoutDaoProps = {
-            params: Promise.resolve({ id: 'test-dao' }),
+            params: Promise.resolve({ network: Network.ETHEREUM_SEPOLIA, addressOrEns: '0x12345' }),
             ...props,
         };
 
@@ -53,9 +57,13 @@ describe('<LayoutDao /> component', () => {
     });
 
     it('prefetches the DAO from the given slug', async () => {
-        const params = { id: 'my-dao' };
-        render(await createTestComponent({ params: Promise.resolve(params) }));
-        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
+        const expectedDaoId = `test-dao-id`;
+        resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
+
+        render(await createTestComponent());
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
+            daoOptions({ urlParams: { id: expectedDaoId } }).queryKey,
+        );
     });
 
     it('dehydrates the query client state', async () => {
@@ -75,9 +83,9 @@ describe('<LayoutDao /> component', () => {
     });
 
     it('renders error with a link to explore page on fetch DAO error', async () => {
-        const params = Promise.resolve({ id: 'daoId' });
         fetchQuerySpy.mockRejectedValue('error');
-        render(await createTestComponent({ params }));
+
+        render(await createTestComponent());
         const errorLink = screen.getByRole('link', { name: /layoutDao.notFound.action/ });
         expect(errorLink).toBeInTheDocument();
         expect(errorLink.getAttribute('href')).toEqual(`/`);

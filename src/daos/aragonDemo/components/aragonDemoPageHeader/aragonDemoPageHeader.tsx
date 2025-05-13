@@ -4,6 +4,7 @@ import type { IDao } from '@/shared/api/daoService';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { Button, formatterUtils, IconType, NumberFormat } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Image from 'next/image';
@@ -40,7 +41,10 @@ export const AragonDemoPageHeader: React.FC<IAragonDemoPageHeaderProps> = (props
 
     const plugin = useDaoPlugins({ daoId })![0];
 
-    const createProposalUrl: __next_route_internal_types__.DynamicRoutes = `/dao/${daoId}/create/${plugin.meta.address}/proposal`;
+    const createProposalUrl: __next_route_internal_types__.DynamicRoutes = daoUtils.getDaoUrl(
+        dao,
+        `create/${plugin.meta.address}/proposal`,
+    )!;
 
     const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
         permissionNamespace: 'proposal',

@@ -1,4 +1,4 @@
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
@@ -9,6 +9,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { invariant, type VoteIndicator, VoteProposalDataListItemStructure } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
@@ -54,6 +55,8 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
 
     const { vote, proposal, isVeto, daoId, plugin } = location.params;
 
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
@@ -76,7 +79,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
             prepareTransaction={handlePrepareTransaction}
             network={proposal.network}
             transactionType={TransactionType.PROPOSAL_VOTE}
-            indexingFallbackUrl={`/dao/${daoId}/proposals/${slug}`}
+            indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
         >
             <VoteProposalDataListItemStructure
                 proposalId={slug}

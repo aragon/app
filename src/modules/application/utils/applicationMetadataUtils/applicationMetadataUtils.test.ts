@@ -1,4 +1,4 @@
-import { daoService } from '@/shared/api/daoService';
+import { daoService, Network } from '@/shared/api/daoService';
 import { generateDao } from '@/shared/testUtils';
 import { ipfsUtils } from '../../../../shared/utils/ipfsUtils';
 import { applicationMetadataUtils } from './applicationMetadataUtils';
@@ -14,11 +14,12 @@ describe('applicationMetadata utils', () => {
 
     describe('generateDaoMetadata', () => {
         it('fetches the DAO with the given id and returns the relative title and description metadata', async () => {
-            const id = 'eth-mainnet-my-dao';
             const dao = generateDao({ name: 'My DAO', description: 'Description' });
             getDaoSpy.mockResolvedValue(dao);
 
-            const metadata = await applicationMetadataUtils.generateDaoMetadata({ params: Promise.resolve({ id }) });
+            const metadata = await applicationMetadataUtils.generateDaoMetadata({
+                params: Promise.resolve({ addressOrEns: 'test-dao-address', network: Network.ETHEREUM_SEPOLIA }),
+            });
             expect(metadata.title).toEqual(dao.name);
             expect(metadata.openGraph?.siteName).toEqual(`${dao.name} | Governed on Aragon`);
             expect(metadata.description).toEqual(dao.description);
@@ -31,7 +32,7 @@ describe('applicationMetadata utils', () => {
             cidToSrcSpy.mockReturnValue(ipfsUrl);
 
             const metadata = await applicationMetadataUtils.generateDaoMetadata({
-                params: Promise.resolve({ id: 'test' }),
+                params: Promise.resolve({ addressOrEns: 'test-dao-id', network: Network.ETHEREUM_SEPOLIA }),
             });
             expect(cidToSrcSpy).toHaveBeenCalledWith(dao.avatar);
             expect(metadata.openGraph?.images).toEqual([ipfsUrl]);
@@ -42,7 +43,7 @@ describe('applicationMetadata utils', () => {
             getDaoSpy.mockResolvedValue(dao);
 
             const metadata = await applicationMetadataUtils.generateDaoMetadata({
-                params: Promise.resolve({ id: 'test' }),
+                params: Promise.resolve({ addressOrEns: 'test-dao-id', network: Network.ETHEREUM_SEPOLIA }),
             });
             expect(metadata.openGraph?.images).toBeUndefined();
         });

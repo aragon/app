@@ -31,23 +31,26 @@ const getWizardName = (dao: IDao, pluginAddress: string): ILayoutWizardProps['na
 
 export const LayoutWizardCreateProposal: React.FC<ILayoutWizardCreateProposalProps> = async (props) => {
     const { params } = props;
-    const { id, pluginAddress } = await params;
+    const { addressOrEns, network, pluginAddress } = await params;
 
     const queryClient = new QueryClient();
     let wizardName: ILayoutWizardProps['name'] = '';
 
     try {
-        const dao = await queryClient.fetchQuery(daoOptions({ urlParams: { id } }));
+        const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
+        const dao = await queryClient.fetchQuery(daoOptions({ urlParams: { id: daoId } }));
         wizardName = getWizardName(dao, pluginAddress);
     } catch (error: unknown) {
         return (
             <Page.Error
                 error={JSON.parse(JSON.stringify(error)) as unknown}
-                actionLink={`/dao/${id}/proposals/`}
+                actionLink={`/dao/${network}/${addressOrEns}/proposals/`}
                 notFoundNamespace="app.application.layoutWizard"
             />
         );
     }
 
-    return <LayoutWizard name={wizardName} exitPath={`/dao/${id}/proposals/` as Route} {...props} />;
+    return (
+        <LayoutWizard name={wizardName} exitPath={`/dao/${network}/${addressOrEns}/proposals/` as Route} {...props} />
+    );
 };

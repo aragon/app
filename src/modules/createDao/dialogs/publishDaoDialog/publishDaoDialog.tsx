@@ -42,7 +42,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
     invariant(address != null, 'PublishDaoDialog: user must be connected.');
 
     const { values } = location.params;
-    const { name, description, network, avatar } = values;
+    const { name, description, network, avatar, ens } = values;
     const { name: networkName } = networkDefinitions[network];
 
     const { t } = useTranslations();
@@ -110,9 +110,9 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         setIsBlocked(false);
 
         const daoAddress = publishDaoDialogUtils.getDaoAddress(receipt)!;
-        const daoId = `${network}-${daoAddress}`;
+        const daoEnsName = ens !== '' ? `${ens}.dao.eth` : undefined;
 
-        return `/dao/${daoId}`;
+        return `/dao/${network}/${daoEnsName ?? daoAddress}`;
     };
 
     const metadataPinAction = values.avatar?.file ? handlePinFile : handlePinData;
