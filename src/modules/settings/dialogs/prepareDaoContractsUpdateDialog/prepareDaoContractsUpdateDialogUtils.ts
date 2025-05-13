@@ -63,7 +63,8 @@ class PrepareDaoContractsUpdateDialogUtils {
     private buildPluginSetupPayload = async (dao: IDao, plugin: IDaoPlugin) => {
         const { address, subdomain } = plugin;
 
-        const installationData = await settingsService.getPluginInstallationData({ urlParams: { address } });
+        const setupDataParams = { pluginAddress: address, network: dao.network };
+        const { preparedSetupData } = await settingsService.getPluginInstallationData({ queryParams: setupDataParams });
         const updateDataBuilder = pluginRegistryUtils.getSlotFunction<IBuildPreparePluginUpdateDataParams, Hex>({
             slotId: SettingsSlotId.SETTINGS_BUILD_PREPARE_PLUGIN_UPDATE_DATA,
             pluginId: subdomain,
@@ -72,7 +73,7 @@ class PrepareDaoContractsUpdateDialogUtils {
         invariant(updateDataBuilder != null, 'PrepareDaoContractsUpdateDialogUtils: builder function does not exist.');
         const initializeData = updateDataBuilder({ dao, plugin });
 
-        return { plugin: address as Hex, currentHelpers: installationData.helpers as Hex[], data: initializeData };
+        return { plugin: address as Hex, currentHelpers: preparedSetupData.helpers as Hex[], data: initializeData };
     };
 
     private buildApplyUpdateTransactions = (params: IGetApplyUpdateProposalParams): ITransactionRequest[] => {

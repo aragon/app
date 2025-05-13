@@ -1,6 +1,8 @@
+import type { IPluginPreparedSetupData } from './pluginPreparedSetupData';
+
 export interface IPluginInstallationData {
     /**
-     * List of helpers needed for the plugin preparation.
+     * Setup data of the plugin.
      */
-    helpers: string[];
+    preparedSetupData: IPluginPreparedSetupData;
 }

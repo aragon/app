@@ -140,19 +140,19 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
 
     describe('buildPluginSetupPayload', () => {
         it('builds the plugin-specific payload data for updating the plugin', async () => {
-            const preparedSetupData = { helpers: ['0x1'] };
+            const installationData = { preparedSetupData: { helpers: ['0x1'] } };
             const dao = generateDao();
             const plugin = generateDaoPlugin({ address: '0x123' });
             const initializeData = '0xdata';
             const dataBuilder = jest.fn(() => initializeData);
             getSlotFunctionSpy.mockReturnValue(dataBuilder);
-            getPluginInstallationDataSpy.mockResolvedValue(preparedSetupData);
+            getPluginInstallationDataSpy.mockResolvedValue(installationData);
 
             const result = await prepareDaoContractsUpdateDialogUtils['buildPluginSetupPayload'](dao, plugin);
             expect(dataBuilder).toHaveBeenCalledWith({ dao, plugin });
             expect(result).toEqual({
                 plugin: plugin.address,
-                currentHelpers: preparedSetupData.helpers,
+                currentHelpers: installationData.preparedSetupData.helpers,
                 data: initializeData,
             });
         });
@@ -162,7 +162,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
             const plugin = generateDaoPlugin();
             const expectedMessage = expect.stringMatching('builder function does not exist') as unknown;
             getSlotFunctionSpy.mockReturnValue(undefined);
-            getPluginInstallationDataSpy.mockResolvedValue({ helpers: [] });
+            getPluginInstallationDataSpy.mockResolvedValue({ preparedSetupData: { helpers: [] } });
             await expect(prepareDaoContractsUpdateDialogUtils['buildPluginSetupPayload'](dao, plugin)).rejects.toEqual(
                 expect.objectContaining({ message: expectedMessage }),
             );
