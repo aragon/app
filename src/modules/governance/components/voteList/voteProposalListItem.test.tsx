@@ -1,6 +1,12 @@
 import { generateProposal, generateVote } from '@/modules/governance/testUtils';
+import * as daoService from '@/shared/api/daoService';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
+import {
+    generateDao,
+    generateDaoPlugin,
+    generateReactQueryResultSuccess,
+    generateTabComponentPlugin,
+} from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { DateFormat, formatterUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
@@ -9,14 +15,17 @@ import { type IVoteProposalListItemProps, VoteProposalListItem } from './votePro
 describe('<VoteProposalListItem /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const getDaoUrlSpy = jest.spyOn(daoUtils, 'getDaoUrl');
+    const useDaoSpy = jest.spyOn(daoService, 'useDao');
 
     beforeEach(() => {
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
     });
 
     afterEach(() => {
         useDaoPluginsSpy.mockReset();
         getDaoUrlSpy.mockReset();
+        useDaoSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IVoteProposalListItemProps>) => {
