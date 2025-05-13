@@ -2,6 +2,7 @@ import type { IVote } from '@/modules/governance/api/governanceService';
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
 import { generateProposal } from '@/modules/governance/testUtils';
 import { generateAddressInfo } from '@/shared/testUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, GukModulesProvider, type VoteIndicator } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
 import { generateMultisigVote } from '../../testUtils';
@@ -9,8 +10,8 @@ import { type IMultisigVoteListProps, MultisigVoteList } from './multisigVoteLis
 
 jest.mock('../../../../modules/governance/components/voteList', () => ({
     VoteProposalListItem: ({
-        vote,
         daoId,
+        vote,
         voteIndicator,
     }: {
         vote: IVote;
@@ -18,7 +19,7 @@ jest.mock('../../../../modules/governance/components/voteList', () => ({
         voteIndicator: VoteIndicator;
     }) => {
         const slug = `MULTISIG-${vote.proposal!.incrementalId.toString()}`;
-        const href = `/dao/${daoId}/proposals/${slug}`;
+        const href = `/test/${daoId}/proposals/${slug}`;
 
         return (
             <a href={href} data-testid="vote-proposal-list-item-mock">
@@ -31,9 +32,11 @@ jest.mock('../../../../modules/governance/components/voteList', () => ({
 
 describe('<MultisigVoteList /> component', () => {
     const useVoteListDataSpy = jest.spyOn(useVoteListData, 'useVoteListData');
+    const getDaoUrlSpy = jest.spyOn(daoUtils, 'getDaoUrl');
 
     afterEach(() => {
         useVoteListDataSpy.mockReset();
+        getDaoUrlSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IMultisigVoteListProps>) => {
@@ -72,12 +75,18 @@ describe('<MultisigVoteList /> component', () => {
             errorState: { heading: '', description: '' },
         });
 
+        const memberLink = '/dao/ethereum-sepolia/test-member-address';
+        getDaoUrlSpy.mockReturnValue(memberLink);
+
         render(createTestComponent());
+
+        expect(getDaoUrlSpy.mock.calls[0][1]).toEqual(`members/${votes[0].member.address}`);
+        expect(getDaoUrlSpy.mock.calls[1][1]).toEqual(`members/${votes[1].member.address}`);
 
         const links = screen.getAllByRole('link');
         expect(links).toHaveLength(2);
-        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/members/${votes[0].member.address}`);
-        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/members/${votes[1].member.address}`);
+        expect(links[0].getAttribute('href')).toBe(memberLink);
+        expect(links[1].getAttribute('href')).toBe(memberLink);
 
         expect(screen.getByText(addressUtils.truncateAddress(votes[0].member.address))).toBeInTheDocument();
         expect(screen.getByText(addressUtils.truncateAddress(votes[1].member.address))).toBeInTheDocument();
@@ -85,6 +94,7 @@ describe('<MultisigVoteList /> component', () => {
     });
 
     it('renders a data list with VoteProposalDataListItem when includeInfo is true', () => {
+        const daoId = 'test-dao-id';
         const votes = [
             generateMultisigVote({
                 transactionHash: '0x123',
@@ -108,13 +118,18 @@ describe('<MultisigVoteList /> component', () => {
             errorState: { heading: '', description: '' },
         });
 
-        render(createTestComponent({ initialParams: { queryParams: { includeInfo: true, pluginAddress: '0x123' } } }));
+        render(
+            createTestComponent({
+                daoId,
+                initialParams: { queryParams: { includeInfo: true, pluginAddress: '0x123' } },
+            }),
+        );
 
         const links = screen.getAllByTestId('vote-proposal-list-item-mock');
         expect(links).toHaveLength(2);
 
-        expect(links[0]).toHaveAttribute('href', '/dao/test-id/proposals/MULTISIG-4');
-        expect(links[1]).toHaveAttribute('href', '/dao/test-id/proposals/MULTISIG-5');
+        expect(links[0]).toHaveAttribute('href', `/test/${daoId}/proposals/MULTISIG-4`);
+        expect(links[1]).toHaveAttribute('href', `/test/${daoId}/proposals/MULTISIG-5`);
 
         expect(within(links[0]).getByTestId('proposal-title')).toHaveTextContent(votes[0].proposal!.title);
         expect(within(links[1]).getByTestId('proposal-title')).toHaveTextContent(votes[1].proposal!.title);

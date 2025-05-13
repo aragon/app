@@ -2,6 +2,8 @@ import * as usePermissionCheckGuard from '@/modules/governance/hooks/usePermissi
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateDaoPlugin, generateDialogContext, generateTabComponentPlugin } from '@/shared/testUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { DaoProposalsPageClient, type IDaoProposalsPageClientProps } from './daoProposalsPageClient';
 
@@ -21,6 +23,7 @@ describe('<DaoProposalsPageClient /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
     const usePermissionCheckGuardSpy = jest.spyOn(usePermissionCheckGuard, 'usePermissionCheckGuard');
+    const getDaoUrlSpy = jest.spyOn(daoUtils, 'getDaoUrl');
 
     beforeEach(() => {
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
@@ -32,6 +35,7 @@ describe('<DaoProposalsPageClient /> component', () => {
         useDaoPluginsSpy.mockReset();
         useDialogContextSpy.mockReset();
         usePermissionCheckGuardSpy.mockReset();
+        getDaoUrlSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoProposalsPageClientProps>) => {
@@ -40,7 +44,11 @@ describe('<DaoProposalsPageClient /> component', () => {
             ...props,
         };
 
-        return <DaoProposalsPageClient {...completeProps} />;
+        return (
+            <GukModulesProvider>
+                <DaoProposalsPageClient {...completeProps} />
+            </GukModulesProvider>
+        );
     };
 
     it('renders the page title, proposals list and proposals page details', () => {
@@ -51,10 +59,12 @@ describe('<DaoProposalsPageClient /> component', () => {
     });
 
     it('renders the create proposal button with the correct link and label', () => {
-        const daoId = 'test-id';
         const pluginAddress = '0x082729';
-        const initialParams = { queryParams: { daoId, pluginAddress } };
+        const initialParams = { queryParams: { daoId: 'test-dao-id', pluginAddress } };
+        const testCreateProposalUrl = '/dao/ethereum-sepolia/test-proposal-url';
+        getDaoUrlSpy.mockReturnValue(testCreateProposalUrl);
         const plugin = generateDaoPlugin({ address: pluginAddress });
+
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: plugin })]);
         usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: true });
 
@@ -63,6 +73,7 @@ describe('<DaoProposalsPageClient /> component', () => {
             name: /daoProposalsPage.main.action/,
         });
         expect(createProposalButton).toBeInTheDocument();
-        expect(createProposalButton).toHaveAttribute('href', `/dao/${daoId}/create/${pluginAddress}/proposal`);
+        expect(createProposalButton).toHaveAttribute('href', testCreateProposalUrl);
+        expect(getDaoUrlSpy.mock.calls[0][1]).toEqual(`create/${pluginAddress}/proposal`);
     });
 });

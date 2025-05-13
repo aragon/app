@@ -9,6 +9,7 @@ import { daoUtils } from './daoUtils';
 
 describe('dao utils', () => {
     const getDaoSpy = jest.spyOn(daoService, 'getDao');
+    const getDaoByEnsSpy = jest.spyOn(daoService, 'getDaoByEns');
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const listContainsRegisteredPluginsSpy = jest.spyOn(pluginRegistryUtils, 'listContainsRegisteredPlugins');
     const isAddressEqualSpy = jest.spyOn(addressUtils, 'isAddressEqual');
@@ -16,6 +17,7 @@ describe('dao utils', () => {
 
     afterEach(() => {
         getDaoSpy.mockReset();
+        getDaoByEnsSpy.mockReset();
         cidToSrcSpy.mockReset();
         listContainsRegisteredPluginsSpy.mockReset();
         isAddressEqualSpy.mockReset();
@@ -281,6 +283,64 @@ describe('dao utils', () => {
             const subdomain = 'multisig';
             const expectedResult = 'Multisig';
             expect(daoUtils.parsePluginSubdomain(subdomain)).toEqual(expectedResult);
+        });
+    });
+
+    describe('resolveDaoId', () => {
+        it('returns the daoId when the id is an address', async () => {
+            const addressOrEns = '0x1234';
+            const network = Network.ETHEREUM_MAINNET;
+            const params = { addressOrEns, network };
+            const expectedDaoId = `${network}-${addressOrEns}`;
+
+            const result = await daoUtils.resolveDaoId(params);
+            expect(result).toEqual(expectedDaoId);
+        });
+
+        it('returns the daoId when the id is an ENS name by resolving name to address', async () => {
+            const ensSubdomain = 'my-dao';
+            const addressOrEns = `${ensSubdomain}.dao.eth`;
+            const daoAddress = '0x1234';
+            const network = Network.ETHEREUM_MAINNET;
+            const params = { addressOrEns, network };
+            const expectedDaoId = `${network}-${daoAddress}`;
+            getDaoByEnsSpy.mockResolvedValue(generateDao({ address: daoAddress, network }));
+
+            const result = await daoUtils.resolveDaoId(params);
+
+            expect(getDaoByEnsSpy).toHaveBeenCalledWith({ urlParams: { network, ens: ensSubdomain } });
+            expect(result).toEqual(expectedDaoId);
+        });
+    });
+
+    describe('getDaoUrl', () => {
+        it('returns the correct base URL for a DAO with ENS', () => {
+            const daoEnsSubdomain = 'test-subdomain';
+            const daoNetwork = Network.ETHEREUM_MAINNET;
+            const dao = generateDao({ subdomain: daoEnsSubdomain, network: daoNetwork });
+            const expectedUrl = `/dao/${daoNetwork}/${daoEnsSubdomain}.dao.eth`;
+            expect(daoUtils.getDaoUrl(dao)).toEqual(expectedUrl);
+        });
+
+        it('returns the correct base URL for a DAO without ENS', () => {
+            const daoAddress = '0x12345';
+            const daoNetwork = Network.ETHEREUM_MAINNET;
+            const dao = generateDao({ address: daoAddress, network: daoNetwork });
+            const expectedUrl = `/dao/${daoNetwork}/${daoAddress}`;
+            expect(daoUtils.getDaoUrl(dao)).toEqual(expectedUrl);
+        });
+
+        it('appends the provided path to the base URL', () => {
+            const daoAddress = '0x12345';
+            const daoNetwork = Network.ETHEREUM_MAINNET;
+            const dao = generateDao({ address: daoAddress, network: daoNetwork });
+            const path = 'some/path';
+            const expectedUrl = `/dao/${daoNetwork}/${daoAddress}/${path}`;
+            expect(daoUtils.getDaoUrl(dao, path)).toEqual(expectedUrl);
+        });
+
+        it('returns undefined when dao parameter is not defined', () => {
+            expect(daoUtils.getDaoUrl(undefined)).toBeUndefined();
         });
     });
 });

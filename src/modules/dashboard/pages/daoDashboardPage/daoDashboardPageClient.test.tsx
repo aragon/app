@@ -132,14 +132,21 @@ describe('<DaoDashboardPageClient /> component', () => {
     it('renders the DAO proposal list with a button to redirect to the proposals page when DAO has supported plugins', () => {
         hasSupportedPluginsSpy.mockReturnValue(true);
         const daoId = 'my-dao';
+        const daoNetwork = Network.ETHEREUM_MAINNET;
+        const daoAddress = '0x12345';
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }),
+        );
+
         render(createTestComponent({ daoId }));
+
         const proposalList = screen.getByTestId('proposal-list-mock');
         expect(proposalList).toBeInTheDocument();
         const proposalPageLink = within(proposalList).getByRole<HTMLAnchorElement>('link', {
             name: /daoDashboardPage.main.viewAll/,
         });
         expect(proposalPageLink).toBeInTheDocument();
-        expect(proposalPageLink.href).toMatch(new RegExp(`dao/${daoId}/proposals`));
+        expect(proposalPageLink.href).toMatch(new RegExp(`dao/${daoNetwork}/${daoAddress}/proposals`));
     });
 
     it('does not render the DAO proposal list when DAO has no supported plugins', () => {
@@ -150,6 +157,12 @@ describe('<DaoDashboardPageClient /> component', () => {
 
     it('renders the DAO asset list with a button to redirect to the asset page', () => {
         const daoId = 'my-dao';
+        const daoNetwork = Network.ETHEREUM_MAINNET;
+        const daoAddress = '0x12345';
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }),
+        );
+
         render(createTestComponent({ daoId }));
         const assetList = screen.getByTestId('asset-list-mock');
         expect(assetList).toBeInTheDocument();
@@ -157,20 +170,27 @@ describe('<DaoDashboardPageClient /> component', () => {
             name: /daoDashboardPage.main.viewAll/,
         });
         expect(assetPageLink).toBeInTheDocument();
-        expect(assetPageLink.href).toMatch(new RegExp(`dao/${daoId}/assets`));
+        expect(assetPageLink.href).toMatch(new RegExp(`dao/${daoNetwork}/${daoAddress}/assets`));
     });
 
     it('renders the DAO member list with a button to redirect to the members page when DAO has supported plugins', () => {
         hasSupportedPluginsSpy.mockReturnValue(true);
         const daoId = 'my-dao';
+        const daoNetwork = Network.ETHEREUM_MAINNET;
+        const daoAddress = '0x12345';
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }),
+        );
+
         render(createTestComponent({ daoId }));
+
         const memberList = screen.getByTestId('member-list-mock');
         expect(memberList).toBeInTheDocument();
         const memberPageLink = within(memberList).getByRole<HTMLAnchorElement>('link', {
             name: /daoDashboardPage.main.viewAll/,
         });
         expect(memberPageLink).toBeInTheDocument();
-        expect(memberPageLink.href).toMatch(new RegExp(`dao/${daoId}/members`));
+        expect(memberPageLink.href).toMatch(new RegExp(`dao/${daoNetwork}/${daoAddress}/members`));
     });
 
     it('does not render the DAO member list when DAO has no supported plugins', () => {

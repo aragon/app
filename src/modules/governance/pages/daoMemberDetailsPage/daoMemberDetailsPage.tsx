@@ -1,4 +1,5 @@
 import { Page } from '@/shared/components/page';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { QueryClient } from '@tanstack/react-query';
 import { memberOptions } from '../../api/governanceService';
 import { type IDaoMemberPageParams } from '../../types';
@@ -13,7 +14,8 @@ export interface IDaoMemberDetailsPageProps {
 
 export const DaoMemberDetailsPage: React.FC<IDaoMemberDetailsPageProps> = async (props) => {
     const { params } = props;
-    const { address, id: daoId } = await params;
+    const { address, addressOrEns, network } = await params;
+    const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
 
     const queryClient = new QueryClient();
 
@@ -27,7 +29,7 @@ export const DaoMemberDetailsPage: React.FC<IDaoMemberDetailsPageProps> = async 
         return (
             <Page.Error
                 error={JSON.parse(JSON.stringify(error)) as unknown}
-                actionLink={`/dao/${daoId}/members`}
+                actionLink={`/dao/${network}/${addressOrEns}/members`}
                 notFoundNamespace="app.governance.daoMemberDetailsPage"
             />
         );

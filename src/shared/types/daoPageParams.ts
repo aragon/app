@@ -1,6 +1,12 @@
+import type { Network } from '../api/daoService';
+
 export interface IDaoPageParams {
     /**
-     * ID of the DAO.
+     * Either address or ens name of the DAO.
      */
-    id: string;
+    addressOrEns: string;
+    /**
+     * Network of the DAO, i.e. ethereum-mainnet.
+     */
+    network: Network;
 }

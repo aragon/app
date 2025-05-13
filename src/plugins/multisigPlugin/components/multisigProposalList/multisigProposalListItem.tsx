@@ -1,7 +1,8 @@
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { ProposalDataListItem } from '@aragon/gov-ui-kit';
+import { daoUtils } from '../../../../shared/utils/daoUtils';
 import { type IMultisigProposal } from '../../types';
 import { multisigProposalUtils } from '../../utils/multisigProposalUtils';
 
@@ -24,6 +25,7 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
     const { proposal, daoId, plugin } = props;
 
     const vote = useUserVote({ proposal });
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const proposalDate = (proposal.executed.blockTimestamp ?? proposal.endDate) * 1000;
 
@@ -36,7 +38,7 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
             title={proposal.title}
             summary={proposal.summary}
             date={proposalDate}
-            href={`/dao/${daoId}/proposals/${slug}`}
+            href={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
             status={multisigProposalUtils.getProposalStatus(proposal)}
             voted={vote != null}
             publisher={{

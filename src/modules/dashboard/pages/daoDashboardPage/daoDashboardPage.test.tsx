@@ -1,3 +1,5 @@
+import { Network } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
@@ -13,9 +15,19 @@ jest.mock('./daoDashboardPageClient', () => ({
 }));
 
 describe('<DaoDashboardPage /> component', () => {
+    const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
+
+    beforeEach(() => {
+        resolveDaoIdSpy.mockResolvedValue('test-dao-id');
+    });
+
+    afterEach(() => {
+        resolveDaoIdSpy.mockReset();
+    });
+
     const createTestComponent = async (props?: Partial<IDaoDashboardPageProps>) => {
         const completeProps: IDaoDashboardPageProps = {
-            params: Promise.resolve({ id: 'dao-id' }),
+            params: Promise.resolve({ addressOrEns: 'test.dao.eth', network: Network.ETHEREUM_SEPOLIA }),
             ...props,
         };
 
