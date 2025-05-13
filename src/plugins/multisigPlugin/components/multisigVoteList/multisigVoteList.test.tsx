@@ -1,7 +1,8 @@
 import type { IVote } from '@/modules/governance/api/governanceService';
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
 import { generateProposal } from '@/modules/governance/testUtils';
-import { generateAddressInfo } from '@/shared/testUtils';
+import * as daoService from '@/shared/api/daoService';
+import { generateAddressInfo, generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, GukModulesProvider, type VoteIndicator } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
@@ -33,10 +34,16 @@ jest.mock('../../../../modules/governance/components/voteList', () => ({
 describe('<MultisigVoteList /> component', () => {
     const useVoteListDataSpy = jest.spyOn(useVoteListData, 'useVoteListData');
     const getDaoUrlSpy = jest.spyOn(daoUtils, 'getDaoUrl');
+    const useDaoSpy = jest.spyOn(daoService, 'useDao');
+
+    beforeEach(() => {
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+    });
 
     afterEach(() => {
         useVoteListDataSpy.mockReset();
         getDaoUrlSpy.mockReset();
+        useDaoSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IMultisigVoteListProps>) => {
