@@ -150,7 +150,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                     <Page.MainSection title={t('app.governance.daoProposalDetailsPage.main.actions.header')}>
                         <ProposalActions.Root
                             isLoading={actionData?.decoding}
-                            actionsCount={actionData?.rawActions.length}
+                            actionsCount={actionData?.rawActions?.length ?? 0}
                         >
                             <ProposalActions.Container emptyStateDescription="">
                                 {normalizedProposalActions.map((action, index) => (

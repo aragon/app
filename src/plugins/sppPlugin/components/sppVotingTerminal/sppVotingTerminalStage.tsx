@@ -4,6 +4,7 @@ import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBranded
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import {
+    addressUtils,
     proposalStatusToVotingStatus,
     ProposalVoting,
     ProposalVotingStatus,
@@ -100,7 +101,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
             </ProposalVoting.BodySummary>
             {stage.plugins.map((plugin) => (
                 <ProposalVoting.BodyContent
-                    name={plugin.subdomain != null ? plugin.name : undefined}
+                    name={plugin.subdomain != null ? plugin.name : addressUtils.truncateAddress(plugin.address)}
                     key={plugin.address}
                     status={processedStageStatus}
                     bodyId={plugin.address}
