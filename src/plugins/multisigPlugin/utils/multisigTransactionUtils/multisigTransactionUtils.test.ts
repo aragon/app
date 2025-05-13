@@ -167,7 +167,7 @@ describe('multisigTransaction utils', () => {
             expect(encodeAbiParametersSpy).toHaveBeenCalledWith(multisigPluginPrepareUpdateAbi, expectedParams);
         });
 
-        it('encodes the correct data legacy plugins', () => {
+        it('encodes the correct data for legacy plugins', () => {
             const dao = generateDao({ network: Network.ETHEREUM_SEPOLIA });
             const plugin = generateDaoPlugin({ isSubPlugin: false, metadataIpfs: undefined });
             const expectedParams = [undefined, Viem.zeroHash];
