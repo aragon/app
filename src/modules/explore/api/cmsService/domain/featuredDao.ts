@@ -26,6 +26,10 @@ export interface IFeaturedDao {
      */
     address?: string;
     /**
+     * ENS name of the DAO.
+     */
+    ens?: string;
+    /**
      * External URL of the DAO. Overrides the default internal URL.
      */
     overrideUrl?: string;

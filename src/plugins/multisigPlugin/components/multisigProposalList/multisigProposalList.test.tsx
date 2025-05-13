@@ -1,6 +1,7 @@
 import * as useProposalListData from '@/modules/governance/hooks/useProposalListData';
 import * as useUserVote from '@/modules/governance/hooks/useUserVote';
-import { generateDaoPlugin } from '@/shared/testUtils';
+import * as daoService from '@/shared/api/daoService';
+import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateMultisigProposal, generateMultisigVote } from '../../testUtils';
@@ -9,6 +10,7 @@ import { MultisigProposalList, type IMultisigProposalListProps } from './multisi
 describe('<MultisigProposalList /> component', () => {
     const useProposalListDataSpy = jest.spyOn(useProposalListData, 'useProposalListData');
     const useUserVoteSpy = jest.spyOn(useUserVote, 'useUserVote');
+    const useDaoSpy = jest.spyOn(daoService, 'useDao');
 
     beforeEach(() => {
         useProposalListDataSpy.mockReturnValue({
@@ -21,10 +23,12 @@ describe('<MultisigProposalList /> component', () => {
             errorState: { heading: '', description: '' },
         });
         useUserVoteSpy.mockReturnValue(generateMultisigVote());
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
     });
 
     afterEach(() => {
         useProposalListDataSpy.mockReset();
+        useDaoSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IMultisigProposalListProps>) => {

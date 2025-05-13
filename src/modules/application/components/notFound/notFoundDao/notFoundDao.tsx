@@ -13,10 +13,11 @@ export interface INotFoundDaoProps {
 
 export const NotFoundDao: React.FC<INotFoundDaoProps> = (props) => {
     const { params } = props;
+    const { network, addressOrEns } = params;
 
     const { t } = useTranslations();
 
-    const dashboardUrl = `/dao/${params.id}/dashboard`;
+    const dashboardUrl = `/dao/${network}/${addressOrEns}/dashboard`;
 
     return (
         <div className="flex grow items-center justify-center">

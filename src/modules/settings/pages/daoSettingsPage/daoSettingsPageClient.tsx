@@ -49,8 +49,13 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     });
 
     const handlePermissionGuardSuccess = (plugin: IDaoPlugin) => {
-        router.push(`/dao/${daoId}/create/${plugin.address}/process`);
+        const daoUrl: __next_route_internal_types__.DynamicRoutes = daoUtils.getDaoUrl(
+            dao,
+            `create/${plugin.address}/process`,
+        )!;
+        router.push(daoUrl);
     };
+
     const handlePluginSelected = (plugin: IDaoPlugin) => {
         createProposalGuard({
             plugin,

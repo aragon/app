@@ -1,4 +1,5 @@
 import { Page } from '@/shared/components/page';
+import { daoUtils } from '../../../../shared/utils/daoUtils';
 import type { ICreateProcessPageParams } from '../../types';
 import { CreateProcessPageClient } from './createProcessPageClient';
 
@@ -11,11 +12,12 @@ export interface ICreateProcessPageProps {
 
 export const CreateProcessPage: React.FC<ICreateProcessPageProps> = async (props) => {
     const { params } = props;
-    const { id, pluginAddress } = await params;
+    const { addressOrEns, network, pluginAddress } = await params;
+    const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
 
     return (
         <Page.Container>
-            <CreateProcessPageClient daoId={id} pluginAddress={pluginAddress} />
+            <CreateProcessPageClient daoId={daoId} pluginAddress={pluginAddress} />
         </Page.Container>
     );
 };

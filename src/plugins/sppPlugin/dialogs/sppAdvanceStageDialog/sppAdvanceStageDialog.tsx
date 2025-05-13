@@ -1,4 +1,5 @@
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
+import { useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
@@ -9,6 +10,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import type { ISppProposal } from '../../types';
@@ -47,6 +49,8 @@ export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (pro
 
     const { address: creatorAddress, ens: creatorEns } = proposal.creator;
 
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+
     const plugin = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress, includeSubPlugins: true })?.[0];
 
     const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
@@ -64,7 +68,7 @@ export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (pro
                 onClick: onSuccessClick,
             }}
             transactionType={TransactionType.PROPOSAL_ADVANCE_STAGE}
-            indexingFallbackUrl={`/dao/${daoId}/proposals/${slug}`}
+            indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
         >
             <ProposalDataListItem.Structure
                 title={proposal.title}

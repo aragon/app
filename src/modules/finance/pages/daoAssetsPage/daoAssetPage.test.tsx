@@ -1,11 +1,12 @@
 import { assetListOptions } from '@/modules/finance/api/financeService';
-import { daoOptions } from '@/shared/api/daoService';
+import { daoOptions, Network } from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { DaoAssetsPage, daoAssetsCount, type IDaoAssetsPageProps } from './daoAssetsPage';
+import { daoAssetsCount, DaoAssetsPage, type IDaoAssetsPageProps } from './daoAssetsPage';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
@@ -23,20 +24,23 @@ jest.mock('./daoAssetsPageClient', () => ({
 describe('<DaoAssetsPage /> component', () => {
     const prefetchInfiniteQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchInfiniteQuery');
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
+    const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
 
     beforeEach(() => {
         fetchQuerySpy.mockResolvedValue(generateReactQueryResultSuccess({ data: generateDao() }));
         prefetchInfiniteQuerySpy.mockImplementation(jest.fn());
+        resolveDaoIdSpy.mockResolvedValue('test-dao-id');
     });
 
     afterEach(() => {
         prefetchInfiniteQuerySpy.mockReset();
         fetchQuerySpy.mockReset();
+        resolveDaoIdSpy.mockReset();
     });
 
     const createTestComponent = async (props?: Partial<IDaoAssetsPageProps>) => {
         const completeProps: IDaoAssetsPageProps = {
-            params: Promise.resolve({ id: 'test-slug' }),
+            params: Promise.resolve({ addressOrEns: 'test.dao.eth', network: Network.ETHEREUM_MAINNET }),
             ...props,
         };
 
@@ -51,13 +55,16 @@ describe('<DaoAssetsPage /> component', () => {
     });
 
     it('prefetches the DAO and its asset list', async () => {
-        const id = 'another-test-slug';
-        const params = { id };
-        const dao = generateDao({ id });
+        const daoAddress = '0x12345';
+        const dao = generateDao({ address: daoAddress });
+        const expectedDaoId = 'test-dao-id';
+        resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
         fetchQuerySpy.mockResolvedValue(dao);
 
-        render(await createTestComponent({ params: Promise.resolve(params) }));
-        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
+        render(await createTestComponent());
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
+            daoOptions({ urlParams: { id: expectedDaoId } }).queryKey,
+        );
 
         const expectedParams = { address: dao.address, network: dao.network, pageSize: daoAssetsCount };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(

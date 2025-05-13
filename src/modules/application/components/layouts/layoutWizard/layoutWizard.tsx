@@ -3,10 +3,11 @@ import {
     type INavigationWizardProps,
     NavigationWizard,
 } from '@/modules/application/components/navigations/navigationWizard';
-import { daoOptions } from '@/shared/api/daoService';
+import { daoOptions, type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import type { IDaoPageParams } from '@/shared/types';
-import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 
 export interface ILayoutWizardProps<IPageParams extends IDaoPageParams = IDaoPageParams>
@@ -29,14 +30,16 @@ export const LayoutWizard = async <IPageParams extends IDaoPageParams = IDaoPage
     props: ILayoutWizardProps<IPageParams>,
 ) => {
     const { params, name, exitPath, queryClient, children } = props;
-    const { id } = (await params) ?? {};
-
+    const { addressOrEns, network } = (await params) ?? {};
     const reactQueryClient = queryClient ?? new QueryClient();
+    let dao: IDao | undefined;
 
     try {
-        if (id != null) {
-            const daoUrlParams = { id };
-            await reactQueryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }));
+        const daoId = addressOrEns && network && (await daoUtils.resolveDaoId({ addressOrEns, network }));
+
+        if (daoId != null) {
+            const daoUrlParams = { id: daoId };
+            dao = await reactQueryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }));
         }
     } catch (error: unknown) {
         return (
@@ -50,7 +53,7 @@ export const LayoutWizard = async <IPageParams extends IDaoPageParams = IDaoPage
 
     return (
         <HydrationBoundary state={dehydrate(reactQueryClient)}>
-            <NavigationWizard id={id} name={name} exitPath={exitPath} />
+            <NavigationWizard dao={dao} name={name} exitPath={exitPath} />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );
