@@ -3,7 +3,7 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { SettingsDialogId } from '@/modules/settings/constants/settingsDialogId';
-import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
+import { type IDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -12,32 +12,30 @@ import type { IUpdateDaoContractsListDialogParams } from '../../dialogs/updateDa
 
 export interface IUpdateDaoContractsProps {
     /**
-     * ID of the DAO.
+     * The DAO to check contracts updates for.
      */
-    daoId: string;
+    dao: IDao;
 }
 
 export const UpdateDaoContracts: React.FC<IUpdateDaoContractsProps> = (props) => {
-    const { daoId } = props;
+    const { dao } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
-
     const { check: createProposalGuard } = usePermissionCheckGuard({
         permissionNamespace: 'proposal',
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
-        plugin: dao!.plugins[0],
-        daoId,
+        plugin: dao.plugins[0],
+        daoId: dao.id,
     });
 
     // Do not show the plugin selector when DAO only has one plugin
     const handleUpgradeClick = () => {
-        if (dao?.plugins.length === 1) {
+        if (dao.plugins.length === 1) {
             onPluginSelected(dao.plugins[0]);
         } else {
-            const params: ISelectPluginDialogParams = { daoId, onPluginSelected };
+            const params: ISelectPluginDialogParams = { daoId: dao.id, onPluginSelected };
             open(GovernanceDialogId.SELECT_PLUGIN, { params });
         }
     };
@@ -46,7 +44,7 @@ export const UpdateDaoContracts: React.FC<IUpdateDaoContractsProps> = (props) =>
         createProposalGuard({ plugin, onSuccess: () => handlePermissionCheckSuccess(plugin) });
 
     const handlePermissionCheckSuccess = (plugin: IDaoPlugin) => {
-        const params: IUpdateDaoContractsListDialogParams = { plugin, daoId };
+        const params: IUpdateDaoContractsListDialogParams = { plugin, daoId: dao.id };
         open(SettingsDialogId.UPDATE_DAO_CONTRACTS_LIST, { params });
     };
 

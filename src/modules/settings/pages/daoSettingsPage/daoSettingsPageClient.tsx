@@ -124,7 +124,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
             <Page.Aside>
                 <Page.AsideCard title={t('app.settings.daoSettingsPage.aside.versionInfoTitle')}>
                     <DaoVersionInfo dao={dao} />
-                    <UpdateDaoContracts daoId={dao.id} />
+                    <UpdateDaoContracts dao={dao} />
                 </Page.AsideCard>
             </Page.Aside>
         </>
