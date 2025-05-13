@@ -4,6 +4,7 @@ import type { IActionComposerPluginData } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 import {
     addressUtils,
     ProposalActionType as GukProposalActionType,
@@ -12,7 +13,6 @@ import {
     type IProposalActionTokenMint as IGukProposalActionTokenMint,
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
-import { versionComparatorUtils } from '../../../../shared/utils/versionComparatorUtils';
 import { TokenMintTokensAction } from '../../components/tokenProposalActions/tokenMintTokensAction';
 import { TokenUpdateSettingsAction } from '../../components/tokenProposalActions/tokenUpdateSettingsAction';
 import {
