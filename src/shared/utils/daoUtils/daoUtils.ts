@@ -1,5 +1,5 @@
-import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
-import { PluginType } from '@/shared/types';
+import { daoService, type IDao, type IDaoPlugin, type Network } from '@/shared/api/daoService';
+import { type IDaoPageParams, PluginType } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 
@@ -55,6 +55,32 @@ class DaoUtils {
     parsePluginSubdomain = (subdomain: string): string => {
         const parts = subdomain.split('-');
         return parts.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+    };
+
+    resolveDaoId = async (params: IDaoPageParams) => {
+        const { addressOrEns, network } = params;
+
+        if (addressOrEns.endsWith('.eth')) {
+            const subdomain = addressOrEns.split('.dao.eth')[0];
+            const dao = await daoService.getDaoByEns({ urlParams: { network, ens: subdomain } });
+
+            return `${network}-${dao.address}`;
+        }
+
+        return `${network}-${addressOrEns}`;
+    };
+
+    getDaoUrl = (dao?: IDao, path?: string): `/dao/${Network}/${string}` | undefined => {
+        if (dao == null) {
+            return undefined;
+        }
+
+        const { network, address, subdomain } = dao;
+        const ensName = subdomain && `${subdomain}.dao.eth`;
+        const baseUrl = `/dao/${network}/${ensName ?? address}`;
+        const fullPath = path != null ? `${baseUrl}/${path}` : baseUrl;
+
+        return fullPath as `/dao/${Network}/${string}`;
     };
 
     private filterPluginByAddress = (plugin: IDaoPlugin, address?: string) =>

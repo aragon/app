@@ -12,6 +12,7 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo } from 'react';
 import { useAccount } from 'wagmi';
@@ -74,7 +75,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const getProposalsLink = ({ slug }: IBuildTransactionDialogSuccessLinkHref) => {
         setIsBlocked(false);
 
-        return `/dao/${daoId}/proposals/${slug!}`;
+        return daoUtils.getDaoUrl(dao, `proposals/${slug!}`)!;
     };
 
     const customSteps: Array<ITransactionDialogStep<PublishProposalStep>> = useMemo(
@@ -109,7 +110,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
             prepareTransaction={handlePrepareTransaction}
             network={dao?.network}
             transactionType={TransactionType.PROPOSAL_CREATE}
-            indexingFallbackUrl={`/dao/${daoId}/proposals`}
+            indexingFallbackUrl={daoUtils.getDaoUrl(dao, 'proposals')}
             transactionInfo={transactionInfo}
         >
             {plugin.subdomain !== 'admin' && (

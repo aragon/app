@@ -1,4 +1,6 @@
 import { daoExplorerService } from '@/modules/explore/api/daoExplorerService';
+import type { IDao } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { metadataUtils } from '@/shared/utils/metadataUtils';
 import type { MetadataRoute } from 'next';
 
@@ -13,14 +15,14 @@ class SitemapUtils {
     public generateSitemap = async (): Promise<MetadataRoute.Sitemap> => {
         const daos = await daoExplorerService.getDaoList({ queryParams: { pageSize: 100 } });
 
-        const daoPages = daos.data.flatMap((dao) => this.buildDaoPages(dao.id));
+        const daoPages = daos.data.flatMap((dao) => this.buildDaoPages(dao));
 
         return this.prependBaseUrl([...this.staticPages, ...daoPages]);
     };
 
-    private buildDaoPages = (daoId: string): MetadataRoute.Sitemap => {
+    private buildDaoPages = (dao: IDao): MetadataRoute.Sitemap => {
         return this.daoPageRoutes.map((daoPageRoute) => ({
-            url: `/dao/${daoId}/${daoPageRoute}`,
+            url: daoUtils.getDaoUrl(dao, daoPageRoute)!,
             changeFrequency: 'daily',
             priority: 0.8,
         }));

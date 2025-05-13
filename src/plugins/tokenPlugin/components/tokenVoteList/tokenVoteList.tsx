@@ -2,7 +2,9 @@ import type { IGetVoteListParams } from '@/modules/governance/api/governanceServ
 import type { IVoteListProps } from '@/modules/governance/components/voteList';
 import { VoteProposalListItem } from '@/modules/governance/components/voteList';
 import { useVoteListData } from '@/modules/governance/hooks/useVoteListData';
+import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     DataListContainer,
     DataListPagination,
@@ -34,6 +36,7 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, voteList } =
         useVoteListData<ITokenVote>(initialParams);
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     return (
         <DataListRoot
@@ -63,7 +66,7 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
                     ) : (
                         <VoteDataListItem.Structure
                             key={vote.transactionHash}
-                            href={`/dao/${daoId}/members/${vote.member.address}`}
+                            href={daoUtils.getDaoUrl(dao, `members/${vote.member.address}`)}
                             voteIndicator={voteOptionToIndicator[vote.voteOption]}
                             voter={{
                                 address: vote.member.address,

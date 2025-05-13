@@ -1,12 +1,14 @@
 import * as useMemberListData from '@/modules/governance/hooks/useMemberListData';
 import { generateMember } from '@/modules/governance/testUtils';
-import { generateDaoPlugin } from '@/shared/testUtils';
+import * as daoService from '@/shared/api/daoService';
+import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { DaoMemberListDefault, type IDaoMemberListDefaultProps } from './daoMemberListDefault';
 
 describe('<DaoMemberListDefault /> component', () => {
     const useMemberListDataSpy = jest.spyOn(useMemberListData, 'useMemberListData');
+    const useDaoSpy = jest.spyOn(daoService, 'useDao');
 
     beforeEach(() => {
         useMemberListDataSpy.mockReturnValue({
@@ -18,10 +20,12 @@ describe('<DaoMemberListDefault /> component', () => {
             emptyState: { heading: '', description: '' },
             errorState: { heading: '', description: '' },
         });
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
     });
 
     afterEach(() => {
         useMemberListDataSpy.mockReset();
+        useDaoSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoMemberListDefaultProps>) => {

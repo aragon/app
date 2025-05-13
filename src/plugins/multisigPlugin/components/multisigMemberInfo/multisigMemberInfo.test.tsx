@@ -1,18 +1,27 @@
+import * as governanceService from '@/modules/governance/api/governanceService';
+import { generateMember } from '@/modules/governance/testUtils';
+import * as daoService from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
 import {
+    generateDao,
     generateDaoPlugin,
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
     generateReactQueryInfiniteResultSuccess,
+    generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import * as governanceService from '../../../../modules/governance/api/governanceService';
-import { generateMember } from '../../../../modules/governance/testUtils';
 import { generateMultisigPluginSettings } from '../../testUtils';
 import { type IMultisigMemberInfoProps, MultisigMemberInfo } from './multisigMemberInfo';
 
 describe('<MultisigMemberInfo /> component', () => {
     const useMemberListSpy = jest.spyOn(governanceService, 'useMemberList');
+    const useDaoSpy = jest.spyOn(daoService, 'useDao');
+
+    beforeEach(() => {
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+    });
 
     afterEach(() => {
         useMemberListSpy.mockReset();
@@ -70,8 +79,15 @@ describe('<MultisigMemberInfo /> component', () => {
         useMemberListSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
         );
+        const daoNetwork = Network.ETHEREUM_MAINNET;
+        const daoAddress = '0x12345';
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }),
+        );
+
         render(createTestComponent({ daoId: 'dao-with-links' }));
+
         const linkElement = screen.getByRole('link');
-        expect(linkElement).toHaveAttribute('href', '/dao/dao-with-links/members');
+        expect(linkElement).toHaveAttribute('href', `/dao/${daoNetwork}/${daoAddress}/members`);
     });
 });

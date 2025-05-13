@@ -3,12 +3,13 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { IGetProposalListParams } from '../../api/governanceService';
@@ -31,11 +32,12 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     const { open } = useDialogContext();
     const router = useRouter();
 
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
     const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
     const [selectedPlugin, setSelectedPlugin] = useState(processPlugins[0]);
 
     const buildProposalUrl = (plugin: IDaoPlugin): __next_route_internal_types__.DynamicRoutes =>
-        `/dao/${daoId}/create/${plugin.address}/proposal`;
+        daoUtils.getDaoUrl(dao, `create/${plugin.address}/proposal`)!;
     const createProposalUrl = buildProposalUrl(selectedPlugin.meta);
 
     const handlePermissionGuardSuccess = (plugin?: IDaoPlugin) =>

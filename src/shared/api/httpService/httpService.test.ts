@@ -86,10 +86,10 @@ describe('Http service', () => {
 
         it('builds the full url from the given base url, query parameters and url parameters', () => {
             const baseUrl = 'https://aragon.com';
-            const url = '/dao/:daoId';
+            const url = '/dao/:network/:id';
             const queryParams = { includeProposals: true, another: 'yes' };
-            const urlParams = { daoId: 'test-dao' };
-            const expectedUrl = `${baseUrl}/dao/${urlParams.daoId}?includeProposals=true&another=yes`;
+            const urlParams = { network: 'network', id: 'address' };
+            const expectedUrl = `${baseUrl}/dao/${urlParams.network}/${urlParams.id}?includeProposals=true&another=yes`;
             serviceTest = generateHttpService(baseUrl);
             expect(serviceTest['buildUrl'](url, { queryParams, urlParams })).toEqual(expectedUrl);
         });
@@ -141,9 +141,9 @@ describe('Http service', () => {
         });
 
         it('correctly sets the url parameters on the given url', () => {
-            const url = '/dao/:daoId/proposals/:proposalId';
-            const params = { daoId: '1234', proposalId: 'abc' };
-            const expectedUrl = `/dao/${params.daoId}/proposals/${params.proposalId}`;
+            const url = '/dao/:network/:id/proposals/:proposalId';
+            const params = { network: 'network', id: 'address', proposalId: 'abc' };
+            const expectedUrl = `/dao/${params.network}/${params.id}/proposals/${params.proposalId}`;
             expect(serviceTest['replaceUrlParams'](url, params)).toEqual(expectedUrl);
         });
     });
