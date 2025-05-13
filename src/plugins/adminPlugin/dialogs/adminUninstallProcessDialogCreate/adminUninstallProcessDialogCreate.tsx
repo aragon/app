@@ -33,7 +33,10 @@ export const AdminUninstallProcessDialogCreate: React.FC<IAdminUninstallProcessD
     const { close } = useDialogContext();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const createProcessUrl: __next_route_internal_types__.DynamicRoutes = daoUtils.getDaoUrl(dao, `create/process`)!;
+    const createProcessUrl: __next_route_internal_types__.DynamicRoutes = daoUtils.getDaoUrl(
+        dao,
+        `create/${adminPlugin.address}/process`,
+    )!;
 
     const handlePermissionGuardSuccess = useCallback(() => {
         router.push(createProcessUrl);
