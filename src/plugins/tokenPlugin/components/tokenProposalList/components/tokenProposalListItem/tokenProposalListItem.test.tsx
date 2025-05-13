@@ -1,11 +1,11 @@
 import * as useUserVote from '@/modules/governance/hooks/useUserVote';
+import { generateTokenProposal, generateTokenVote } from '@/plugins/tokenPlugin/testUtils';
+import { tokenProposalUtils } from '@/plugins/tokenPlugin/utils/tokenProposalUtils';
 import * as daoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { generateTokenProposal, generateTokenVote } from '../../testUtils';
-import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 import { type ITokenProposalListItemProps, TokenProposalListItem } from './tokenProposalListItem';
 
 describe('<TokenProposalListItem /> component', () => {

@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
+import { TokenSetupMembershipCreateToken } from './components/tokenSetupMembershipCreateToken';
+import { TokenSetupMembershipImportToken } from './components/tokenSetupMembershipImportToken';
 import { defaultTokenAddress, defaultTokenDecimals } from './constants/tokenDefaults';
 import type { ITokenSetupMembershipProps } from './tokenSetupMembership.api';
-import { TokenSetupMembershipCreateToken } from './tokenSetupMembershipCreateToken';
-import { TokenSetupMembershipImportToken } from './tokenSetupMembershipImportToken';
 
 export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props) => {
     const { formPrefix, daoId } = props;

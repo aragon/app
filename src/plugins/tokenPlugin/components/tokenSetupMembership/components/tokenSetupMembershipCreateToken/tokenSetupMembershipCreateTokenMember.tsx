@@ -11,7 +11,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useCallback, useState } from 'react';
-import type { ITokenSetupMembershipMember } from '../tokenSetupMembership.api';
+import type { ITokenSetupMembershipMember } from '../../tokenSetupMembership.api';
 
 export interface ITokenSetupMembershipCreateTokenMemberProps {
     /**

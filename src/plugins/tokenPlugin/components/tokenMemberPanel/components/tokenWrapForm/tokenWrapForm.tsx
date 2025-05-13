@@ -2,6 +2,10 @@ import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnecte
 import type { IToken } from '@/modules/finance/api/financeService';
 import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
 import { useMember } from '@/modules/governance/api/governanceService';
+import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
+import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
+import type { ITokenWrapUnwrapDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenWrapUnwrapDialog';
+import type { ITokenMember, ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -12,10 +16,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { erc20Abi, formatUnits, parseUnits, type Hex } from 'viem';
 import { useAccount, useBalance, useReadContract } from 'wagmi';
-import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
-import type { ITokenApproveTokensDialogParams } from '../../dialogs/tokenApproveTokensDialog';
-import type { ITokenWrapUnwrapDialogParams } from '../../dialogs/tokenWrapUnwrapDialog';
-import type { ITokenMember, ITokenPluginSettings } from '../../types';
 
 export interface ITokenWrapFormProps {
     /**

@@ -1,5 +1,4 @@
 import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
-import { useGovernanceToken } from '@/plugins/tokenPlugin/hooks/useGovernanceToken';
 import { useDao } from '@/shared/api/daoService';
 import {
     type ITransactionInfo,
@@ -16,6 +15,7 @@ import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import type { Hash } from 'viem';
 import { mainnet } from 'viem/chains';
+import { useGovernanceToken } from '../../hooks/useGovernanceToken';
 
 type StepState = ITransactionStatusStepMeta['state'];
 

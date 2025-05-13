@@ -1,4 +1,4 @@
-import type { IUseTokenParams, IUseTokenResult } from '@/plugins/tokenPlugin/hooks/useToken';
+import type { IUseTokenParams, IUseTokenResult } from '../useToken';
 
 export interface IUseGovernanceTokenParams extends IUseTokenParams {}
 

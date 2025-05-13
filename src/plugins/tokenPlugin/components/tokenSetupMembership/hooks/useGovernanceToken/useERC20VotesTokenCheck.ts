@@ -1,6 +1,6 @@
-import type { IUseTokenParams } from '@/plugins/tokenPlugin/hooks/useToken';
 import type { Hash } from 'viem';
 import { useReadContracts } from 'wagmi';
+import type { IUseTokenParams } from '../useToken';
 import { erc20VotesAbi } from './erc20VotesAbi';
 
 export interface IUseERC20VotesTokenCheckParams extends IUseTokenParams {

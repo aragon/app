@@ -5,7 +5,7 @@ import { Button, IconType, InputContainer, InputText } from '@aragon/gov-ui-kit'
 import { useEffect } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { parseUnits } from 'viem';
-import { defaultTokenAddress, defaultTokenDecimals } from '../constants/tokenDefaults';
+import { defaultTokenAddress, defaultTokenDecimals } from '../../constants/tokenDefaults';
 import { TokenSetupMembershipCreateTokenMember } from './tokenSetupMembershipCreateTokenMember';
 
 export interface ITokenSetupMembershipCreateTokenProps {

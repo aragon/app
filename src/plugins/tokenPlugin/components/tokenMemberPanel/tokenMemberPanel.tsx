@@ -4,8 +4,8 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Tabs } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import type { ITokenPluginSettings, ITokenPluginSettingsToken } from '../../types';
-import { TokenDelegationForm } from '../tokenDelegationForm';
-import { TokenWrapForm } from '../tokenWrapForm';
+import { TokenDelegationForm } from './components/tokenDelegationForm';
+import { TokenWrapForm } from './components/tokenWrapForm';
 
 export interface ITokenMemberPanelProps {
     /**

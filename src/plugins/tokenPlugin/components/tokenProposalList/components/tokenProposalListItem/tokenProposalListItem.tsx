@@ -1,10 +1,10 @@
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
+import type { ITokenProposal } from '@/plugins/tokenPlugin/types';
+import { tokenProposalUtils } from '@/plugins/tokenPlugin/utils/tokenProposalUtils';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ProposalDataListItem } from '@aragon/gov-ui-kit';
-import { type ITokenProposal } from '../../types';
-import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 
 export interface ITokenProposalListItemProps {
     /**
