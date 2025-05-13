@@ -18,6 +18,7 @@ export const useMultisigPermissionCheckVoteSubmission = (
     const { t } = useTranslations();
 
     const { id, blockTimestamp, network, transactionHash } = proposal!;
+    console.log('addressaddressaddress', address);
     const { data: hasPermission, isLoading } = useCanVote(
         { urlParams: { id }, queryParams: { userAddress: address as string } },
         { enabled: address != null },

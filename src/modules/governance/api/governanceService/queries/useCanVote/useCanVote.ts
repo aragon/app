@@ -14,5 +14,6 @@ export const canVoteOptions = (
 });
 
 export const useCanVote = (params: IGetCanVoteParams, options?: QueryOptions<boolean>) => {
+    console.log('optionsoptions', options);
     return useQuery(canVoteOptions(params, options));
 };
