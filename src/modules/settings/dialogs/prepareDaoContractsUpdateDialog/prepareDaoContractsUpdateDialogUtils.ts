@@ -133,17 +133,16 @@ class PrepareDaoContractsUpdateDialogUtils {
         const osxUpdateEntry = osxUpdate ? this.getOsxUpdateDetails(dao) : '';
         const pluginsUpdateEntry = plugins.map((plugin) => this.getPluginUpdateDetails(plugin)).join(' ');
 
-        return `
-            <p>
-                This proposal contains on-chain transactions that would upgrade specific smart contract components as
-                follows:
-            </p>
+        const body = `
+            <p>This proposal contains on-chain transactions that would upgrade specific smart contract components as follows:</p>
             <ol>${osxUpdateEntry}${pluginsUpdateEntry}</ol>
-            <p>
-                It is essential to consider the implications of upgrades before voting. Read the above release notes and
-                confirm that all of the addresses in the actions correspond with the proposed upgrade.
-            </p>
+            <p>It is essential to consider the implications of upgrades before voting. Read the above release notes and confirm that all of the addresses in the actions correspond with the proposed upgrade.</p>
         `;
+
+        return body
+            .split('\n')
+            .map((line) => line.trim())
+            .join('');
     };
 
     private getOsxUpdateDetails = (dao: IDao) => {
@@ -154,12 +153,12 @@ class PrepareDaoContractsUpdateDialogUtils {
         return `
             <li>
                 <strong>Aragon OSx ${updatedVersion}</strong>
-                <ol>
+                <ul>
                     <li><strong>Current version</strong>: ${currentVersion}</li>
                     <li><strong>Upgrade description</strong>: ${description}</li>
                     <li><strong>Note</strong>: The DAO's address will never change</li>
                     <li><a href="${releaseNotes}" target="_blank" rel="noopener noreferrer">View Release Notes</a></li>
-                </ol>
+                </ul>
             </li>
         `;
     };
@@ -176,11 +175,11 @@ class PrepareDaoContractsUpdateDialogUtils {
         return `
             <li>
                 <strong>${updatedVersion}</strong>
-                <ol>
+                <ul>
                     <li><strong>Current version</strong>: ${currentVersion}</li>
                     <li><strong>Upgrade description</strong>: ${description}</li>
                     <li><a href="${releaseNotes}" target="_blank" rel="noopener noreferrer">View Release Notes</a></li>
-                </ol>
+                </ul>
             </li>
         `;
     };
