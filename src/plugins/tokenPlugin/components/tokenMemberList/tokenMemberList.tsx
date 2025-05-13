@@ -14,6 +14,7 @@ export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, memberList } =
         useMemberListData<ITokenMember>(initialParams);
+    const { daoId } = initialParams.queryParams;
 
     return (
         <DataListRoot
@@ -30,12 +31,7 @@ export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
                 layoutClassName="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
             >
                 {memberList?.map((member) => (
-                    <TokenMemberListItem
-                        key={member.address}
-                        member={member}
-                        daoId={initialParams.queryParams.daoId}
-                        plugin={plugin}
-                    />
+                    <TokenMemberListItem key={member.address} member={member} daoId={daoId} plugin={plugin} />
                 ))}
             </DataListContainer>
             {!hidePagination && <DataListPagination />}

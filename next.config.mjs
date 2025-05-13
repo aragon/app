@@ -70,8 +70,8 @@ const nextConfig = {
     async redirects() {
         return [
             {
-                source: '/dao/:id',
-                destination: '/dao/:id/dashboard',
+                source: '/dao/:network/:addressOrEns',
+                destination: '/dao/:network/:addressOrEns/dashboard',
                 permanent: true,
             },
         ];

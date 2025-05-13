@@ -1,8 +1,9 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { Dialog, EmptyState, invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
@@ -31,7 +32,8 @@ export const AdminUninstallProcessDialogCreate: React.FC<IAdminUninstallProcessD
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
-    const createProcessUrl: __next_route_internal_types__.DynamicRoutes = `/dao/${daoId}/create/process`;
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const createProcessUrl: __next_route_internal_types__.DynamicRoutes = daoUtils.getDaoUrl(dao, `create/process`)!;
 
     const handlePermissionGuardSuccess = useCallback(() => {
         router.push(createProcessUrl);

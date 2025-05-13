@@ -6,9 +6,9 @@ import type { Hex } from 'viem';
 
 export interface ICreateProcessDetailsDialogParams {
     /**
-     * ID of the DAO to create the governance process for.
+     * URL of the DAO to create the governance process for.
      */
-    daoId?: string;
+    daoUrl?: string;
     /**
      * Plugin address used to create a proposal for adding a new process.
      */
@@ -26,7 +26,7 @@ export const CreateProcessDetailsDialog: React.FC<ICreateProcessDetailsDialogPro
     const { id } = location;
 
     invariant(location.params != null, 'CreateProcessDetailsDialog: required parameters must be set.');
-    const { daoId, pluginAddress, onActionClick } = location.params;
+    const { daoUrl, pluginAddress, onActionClick } = location.params;
 
     const { t } = useTranslations();
 
@@ -52,7 +52,7 @@ export const CreateProcessDetailsDialog: React.FC<ICreateProcessDetailsDialogPro
             steps={steps}
             actionLabel={t('app.createDao.createProcessDetailsDialog.actionLabel')}
             onActionClick={onActionClick}
-            wizardLink={pluginAddress && daoId ? `/dao/${daoId}/create/${pluginAddress}/process` : undefined}
+            wizardLink={pluginAddress && daoUrl ? `${daoUrl}/create/${pluginAddress}/process` : undefined}
             infoLink="https://docs.aragon.org/spp/1.x/index.html#staged_governance_processes"
             dialogId={id}
         />

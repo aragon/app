@@ -1,6 +1,7 @@
 import * as useProposalListData from '@/modules/governance/hooks/useProposalListData';
 import * as useUserVote from '@/modules/governance/hooks/useUserVote';
-import { generateDaoPlugin } from '@/shared/testUtils';
+import * as DaoService from '@/shared/api/daoService';
+import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateTokenPluginSettings, generateTokenProposal, generateTokenVote } from '../../testUtils';
@@ -9,6 +10,7 @@ import { TokenProposalList, type ITokenProposalListProps } from './tokenProposal
 describe('<TokenProposalList /> component', () => {
     const useProposalListDataSpy = jest.spyOn(useProposalListData, 'useProposalListData');
     const useUserVoteSpy = jest.spyOn(useUserVote, 'useUserVote');
+    const useDaoSpy = jest.spyOn(DaoService, 'useDao');
 
     beforeEach(() => {
         useProposalListDataSpy.mockReturnValue({
@@ -21,10 +23,12 @@ describe('<TokenProposalList /> component', () => {
             errorState: { heading: '', description: '' },
         });
         useUserVoteSpy.mockReturnValue(generateTokenVote());
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
     });
 
     afterEach(() => {
         useProposalListDataSpy.mockReset();
+        useUserVoteSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITokenProposalListProps>) => {

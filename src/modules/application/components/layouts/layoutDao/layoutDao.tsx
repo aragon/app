@@ -1,6 +1,7 @@
-import { daoOptions } from '@/shared/api/daoService';
+import { daoOptions, type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import type { IDaoPageParams } from '@/shared/types';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { BannerDao } from '../../bannerDao';
@@ -20,13 +21,15 @@ export interface ILayoutDaoProps {
 
 export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
     const { params, children } = props;
-    const { id } = await params;
+    const daoPageParams = await params;
+    let dao: IDao;
 
     const queryClient = new QueryClient();
 
     try {
-        const daoUrlParams = { id };
-        await queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }));
+        const daoId = await daoUtils.resolveDaoId(daoPageParams);
+        const daoUrlParams = { id: daoId };
+        dao = await queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }));
     } catch (error: unknown) {
         return (
             <Page.Error
@@ -39,8 +42,8 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <NavigationDao id={id} />
-            <BannerDao id={id} />
+            <NavigationDao dao={dao} />
+            <BannerDao dao={dao} />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );

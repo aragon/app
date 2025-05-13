@@ -1,5 +1,12 @@
+import * as daoService from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
 import * as UseDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
+import {
+    generateDao,
+    generateDaoPlugin,
+    generateReactQueryResultSuccess,
+    generateTabComponentPlugin,
+} from '@/shared/testUtils';
 import { renderHook } from '@testing-library/react';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import * as NextNavigation from 'next/navigation';
@@ -10,11 +17,17 @@ describe('useProposalPermissionCheckGuard hook', () => {
     const usePermissionCheckGuardSpy = jest.spyOn(UsePermissionCheckGuard, 'usePermissionCheckGuard');
     const useDaoPluginsSpy = jest.spyOn(UseDaoPlugins, 'useDaoPlugins');
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
+    const useDaoSpy = jest.spyOn(daoService, 'useDao');
+
+    beforeEach(() => {
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+    });
 
     afterEach(() => {
         usePermissionCheckGuardSpy.mockReset();
         useDaoPluginsSpy.mockReset();
         useRouterSpy.mockReset();
+        useDaoSpy.mockReset();
     });
 
     it('calls createProposalGuard when canCreateProposal check returns false', () => {
@@ -43,6 +56,11 @@ describe('useProposalPermissionCheckGuard hook', () => {
 
     it('redirects to the specified tab when permission check fails', () => {
         const daoId = 'dao-id';
+        const daoNetwork = Network.ETHEREUM_MAINNET;
+        const daoAddress = '0x12345';
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }),
+        );
         const pluginAddress = 'plugin-address';
         const redirectTab = 'settings';
         const checkCreateProposalGuard = jest.fn();
@@ -56,6 +74,6 @@ describe('useProposalPermissionCheckGuard hook', () => {
 
         // simulate failed permission check
         usePermissionCheckGuardSpy.mock.calls[0][0].onError!();
-        expect(mockRouter.push).toHaveBeenCalledWith(`/dao/${daoId}/${redirectTab}`);
+        expect(mockRouter.push).toHaveBeenCalledWith(`/dao/${daoNetwork}/${daoAddress}/${redirectTab}`);
     });
 });

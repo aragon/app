@@ -1,6 +1,7 @@
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { type ITokenProposal } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
@@ -24,6 +25,7 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
     const { proposal, daoId, plugin } = props;
 
     const vote = useUserVote({ proposal });
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const proposalDate = (proposal.executed.blockTimestamp ?? proposal.endDate) * 1000;
 
@@ -36,7 +38,7 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
             title={proposal.title}
             summary={proposal.summary}
             date={proposalDate}
-            href={`/dao/${daoId}/proposals/${slug}`}
+            href={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
             status={tokenProposalUtils.getProposalStatus(proposal)}
             voted={vote != null}
             publisher={{

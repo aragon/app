@@ -1,20 +1,26 @@
+import * as governanceService from '@/modules/governance/api/governanceService';
+import { generateMember } from '@/modules/governance/testUtils';
 import { generateTokenPluginSettings, generateTokenPluginSettingsToken } from '@/plugins/tokenPlugin/testUtils';
+import * as daoService from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
 import {
+    generateDao,
     generateDaoPlugin,
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
     generateReactQueryInfiniteResultSuccess,
+    generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import * as governanceService from '../../../../modules/governance/api/governanceService';
-import { generateMember } from '../../../../modules/governance/testUtils';
 import { type ITokenMemberInfoProps, TokenMemberInfo } from './tokenMemberInfo';
 
 describe('<TokenMemberInfo /> component', () => {
     const useMemberListSpy = jest.spyOn(governanceService, 'useMemberList');
+    const useDaoSpy = jest.spyOn(daoService, 'useDao');
 
     beforeEach(() => {
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         useMemberListSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({ data: { pages: [], pageParams: [] } }),
         );
@@ -22,6 +28,7 @@ describe('<TokenMemberInfo /> component', () => {
 
     afterEach(() => {
         useMemberListSpy.mockReset();
+        useDaoSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITokenMemberInfoProps>) => {
@@ -76,11 +83,16 @@ describe('<TokenMemberInfo /> component', () => {
         useMemberListSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
         );
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateDao({ address: '0x12345', network: Network.ETHEREUM_MAINNET }),
+            }),
+        );
 
         render(createTestComponent({ plugin }));
         const linkElement = screen.getByRole('link', {
             name: /tokenMemberInfo.tokenDistribution \(count=2\) 0xBtcAddress/,
         });
-        expect(linkElement).toHaveAttribute('href', '/dao/test-id/members');
+        expect(linkElement).toHaveAttribute('href', `/dao/ethereum-mainnet/0x12345/members`);
     });
 });

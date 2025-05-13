@@ -1,4 +1,5 @@
 import type { IRequestUrlParams } from '../httpService';
+import type { Network } from './domain';
 
 export interface IGetDaoUrlParams {
     /**
@@ -8,3 +9,16 @@ export interface IGetDaoUrlParams {
 }
 
 export interface IGetDaoParams extends IRequestUrlParams<IGetDaoUrlParams> {}
+
+export interface IGetDaoByEnsUrlParams {
+    /**
+     * Network of the DAO to be fetched.
+     */
+    network: Network;
+    /**
+     * ENS subdomain of the DAO to be fetched.
+     */
+    ens: string;
+}
+
+export interface IGetDaoByEnsParams extends IRequestUrlParams<IGetDaoByEnsUrlParams> {}
