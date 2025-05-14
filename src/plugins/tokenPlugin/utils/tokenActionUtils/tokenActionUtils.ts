@@ -59,7 +59,7 @@ class TokenActionUtils {
         const { address: tokenAddress, name } = settings.token;
 
         // The setMetadata function on the TokenVoting plugin is only supported from version 1.3 onwards
-        const minVersion = { build: 1, release: 3 };
+        const minVersion = { release: 1, build: 3 };
         const includePluginMetadataAction = versionComparatorUtils.isGreaterOrEqualTo(plugin, minVersion);
 
         return {
