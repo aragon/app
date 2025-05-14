@@ -1,7 +1,9 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import {
+    addressUtils,
     proposalStatusToVotingStatus,
     ProposalVoting,
     ProposalVotingStatus,
@@ -68,7 +70,11 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
             <ProposalVoting.BodySummary>
                 <ProposalVoting.BodySummaryList>
                     {stage.plugins.map(({ address, ...plugin }) => (
-                        <ProposalVoting.BodySummaryListItem key={address} id={address}>
+                        <ProposalVoting.BodySummaryListItem
+                            key={address}
+                            id={address}
+                            bodyBrand={plugin.subdomain === undefined ? brandedExternals[plugin.brandId] : undefined}
+                        >
                             {plugin.subdomain != null && (
                                 <PluginSingleComponent
                                     slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY}
@@ -95,11 +101,12 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
             </ProposalVoting.BodySummary>
             {stage.plugins.map((plugin) => (
                 <ProposalVoting.BodyContent
-                    name={plugin.subdomain != null ? plugin.name : undefined}
+                    name={plugin.subdomain != null ? plugin.name : addressUtils.truncateAddress(plugin.address)}
                     key={plugin.address}
                     status={processedStageStatus}
                     bodyId={plugin.address}
                     hideTabs={!plugin.subdomain ? [ProposalVotingTab.VOTES] : undefined}
+                    bodyBrand={plugin.subdomain === undefined ? brandedExternals[plugin.brandId] : undefined}
                 >
                     <SppVotingTerminalBodyContent
                         plugin={plugin}
