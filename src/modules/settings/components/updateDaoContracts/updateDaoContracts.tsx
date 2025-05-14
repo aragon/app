@@ -56,7 +56,7 @@ export const UpdateDaoContracts: React.FC<IUpdateDaoContractsProps> = (props) =>
 
     return (
         <div className="flex flex-col space-y-3">
-            <Button onClick={handleUpgradeClick} iconLeft={IconType.RELOAD} variant="secondary">
+            <Button onClick={handleUpgradeClick} iconLeft={IconType.RELOAD} variant="secondary" size="md">
                 {t('app.settings.updateDaoContracts.button')}
             </Button>
             <p className="text-sm text-neutral-500">{t('app.settings.updateDaoContracts.description')}</p>
