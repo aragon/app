@@ -1,11 +1,11 @@
 import { AdminPluginDialogId } from '@/plugins/adminPlugin/constants/adminPluginDialogId';
+import type { IAdminUninstallProcessDialogCreateParams } from '@/plugins/adminPlugin/dialogs/adminUninstallProcessDialogCreate';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { Button } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import type { IAdminUninstallProcessDialogCreateParams } from '../../dialogs/adminUninstallProcessDialogCreate';
 import { AdminUninstallProcessDialogSelect } from './dialogs/adminUninstallProcessDialogSelect';
 
 export interface IAdminUninstallPluginProps {

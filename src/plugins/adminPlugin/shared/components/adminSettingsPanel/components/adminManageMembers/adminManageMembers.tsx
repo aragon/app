@@ -1,11 +1,11 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { AdminPluginDialogId } from '@/plugins/adminPlugin/constants/adminPluginDialogId';
+import type { IAdminManageMembersDialogParams } from '@/plugins/adminPlugin/dialogs/adminManageMembersDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { Button } from '@aragon/gov-ui-kit';
-import type { IAdminManageMembersDialogParams } from '../../dialogs/adminManageMembersDialog';
 
 export interface IAdminMangeMembersProps {
     /**

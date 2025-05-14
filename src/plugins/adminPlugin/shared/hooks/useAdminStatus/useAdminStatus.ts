@@ -1,6 +1,6 @@
 import { useMemberExists } from '@/modules/governance/api/governanceService';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useAccount } from 'wagmi';
-import { useDaoPlugins } from '../../../../shared/hooks/useDaoPlugins';
 
 export interface IUseAdminStatusParams {
     /**

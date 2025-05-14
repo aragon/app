@@ -4,7 +4,7 @@ import { GovernanceDialogId } from '@/modules/governance/constants/governanceDia
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
-import { AdminSettingsPanel } from '@/plugins/adminPlugin/components/adminSettingsPanel';
+import { AdminSettingsPanel } from '@/plugins/adminPlugin/shared/components/adminSettingsPanel';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
