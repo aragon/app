@@ -7,7 +7,9 @@ import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissio
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useAdminStatus } from '@/shared/hooks/useAdminStatus';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -19,9 +21,7 @@ import { DaoGovernanceInfo } from '../../components/daoGovernanceInfo';
 import { DaoMembersInfo } from '../../components/daoMembersInfo';
 import { DaoSettingsInfo } from '../../components/daoSettingsInfo';
 import { DaoVersionInfo } from '../../components/daoVersionInfo';
-import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { SettingsSlotId } from '../../constants/moduleSlots';
-import { useAdminStatus } from '@/shared/hooks/useAdminStatus';
 
 export interface IDaoSettingsPageClientProps {
     /**

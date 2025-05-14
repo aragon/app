@@ -20,9 +20,6 @@ jest.mock('@/modules/settings/components/daoGovernanceInfo', () => ({
 jest.mock('@/modules/settings/components/daoMembersInfo', () => ({
     DaoMembersInfo: () => <div data-testid="members-info-mock" />,
 }));
-jest.mock('@/plugins/adminPlugin/shared/components/adminSettingsPanel', () => ({
-    AdminSettingsPanel: () => <div data-testid="admin-settings-mock" />,
-}));
 
 describe('<DaoSettingsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');

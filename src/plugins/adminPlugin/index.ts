@@ -4,12 +4,12 @@ import { useAdminPermissionCheckProposalCreation } from '@/plugins/adminPlugin/h
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { AdminGovernanceInfo } from './components/adminGovernanceInfo';
 import { AdminMemberInfo } from './components/adminMemberInfo';
+import { AdminSettingsPanel } from './components/adminSettingsPanel';
 import { AdminVotingTerminal } from './components/adminVotingTerminal';
 import { adminPlugin } from './constants/adminPlugin';
 import { useAdminGovernanceSettings } from './hooks/useAdminGovernanceSettings';
 import { adminProposalUtils } from './utils/adminProposalUtils';
 import { adminTransactionUtils } from './utils/adminTransactionUtils';
-import { AdminSettingsPanel } from './components/adminSettingsPanel';
 
 export const initialiseAdminPlugin = () => {
     pluginRegistryUtils
