@@ -12,5 +12,5 @@ export interface IProposalActionsResult<TAction extends IProposalAction = IPropo
     /**
      * The raw actions.
      */
-    rawActions: Array<Pick<IProposalAction, 'to' | 'value' | 'data'>>;
+    rawActions?: Array<Pick<IProposalAction, 'to' | 'value' | 'data'>>;
 }
