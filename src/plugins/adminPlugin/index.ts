@@ -9,6 +9,7 @@ import { adminPlugin } from './constants/adminPlugin';
 import { useAdminGovernanceSettings } from './hooks/useAdminGovernanceSettings';
 import { adminProposalUtils } from './utils/adminProposalUtils';
 import { adminTransactionUtils } from './utils/adminTransactionUtils';
+import { AdminSettingsPanel } from './components/adminSettingsPanel';
 
 export const initialiseAdminPlugin = () => {
     pluginRegistryUtils
@@ -51,5 +52,10 @@ export const initialiseAdminPlugin = () => {
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_INFO,
             pluginId: adminPlugin.id,
             component: AdminGovernanceInfo,
+        })
+        .registerSlotComponent({
+            slotId: SettingsSlotId.SETTINGS_PLUGIN_SECTION,
+            pluginId: adminPlugin.id,
+            component: AdminSettingsPanel,
         });
 };

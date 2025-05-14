@@ -4,7 +4,6 @@ import { GovernanceDialogId } from '@/modules/governance/constants/governanceDia
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
-import { AdminSettingsPanel } from '@/plugins/adminPlugin/shared/components/adminSettingsPanel';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
@@ -20,6 +19,9 @@ import { DaoGovernanceInfo } from '../../components/daoGovernanceInfo';
 import { DaoMembersInfo } from '../../components/daoMembersInfo';
 import { DaoSettingsInfo } from '../../components/daoSettingsInfo';
 import { DaoVersionInfo } from '../../components/daoVersionInfo';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { SettingsSlotId } from '../../constants/moduleSlots';
+import { useAdminStatus } from '@/shared/hooks/useAdminStatus';
 
 export interface IDaoSettingsPageClientProps {
     /**
@@ -37,6 +39,8 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
 
     const daoParams = { urlParams: { id: daoId } };
     const { data: dao } = useDao(daoParams);
+
+    const { adminPluginAddress } = useAdminStatus({ daoId });
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
     const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
@@ -92,7 +96,14 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     return (
         <>
             <Page.Main title={t('app.settings.daoSettingsPage.main.title')}>
-                <AdminSettingsPanel daoId={daoId} />
+                {adminPluginAddress && (
+                    <PluginSingleComponent
+                        // Only used by the admin plugin
+                        pluginId="admin"
+                        slotId={SettingsSlotId.SETTINGS_PLUGIN_SECTION}
+                        daoId={daoId}
+                    />
+                )}
                 <Page.MainSection title={t('app.settings.daoSettingsPage.main.settingsInfoTitle')}>
                     <DaoSettingsInfo dao={dao} />
                 </Page.MainSection>

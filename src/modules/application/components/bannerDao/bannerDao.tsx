@@ -2,7 +2,7 @@
 
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import type { ICreateProcessDetailsDialogParams } from '@/modules/createDao/dialogs/createProcessDetailsDialog';
-import { useAdminStatus } from '@/plugins/adminPlugin/shared/hooks/useAdminStatus';
+import { useAdminStatus } from '@/shared/hooks/useAdminStatus';
 import type { IDao } from '@/shared/api/daoService';
 import { Banner } from '@/shared/components/banner';
 import { useDialogContext } from '@/shared/components/dialogProvider';
