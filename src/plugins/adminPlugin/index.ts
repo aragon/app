@@ -4,6 +4,7 @@ import { useAdminPermissionCheckProposalCreation } from '@/plugins/adminPlugin/h
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { AdminGovernanceInfo } from './components/adminGovernanceInfo';
 import { AdminMemberInfo } from './components/adminMemberInfo';
+import { AdminSettingsPanel } from './components/adminSettingsPanel';
 import { AdminVotingTerminal } from './components/adminVotingTerminal';
 import { adminPlugin } from './constants/adminPlugin';
 import { useAdminGovernanceSettings } from './hooks/useAdminGovernanceSettings';
@@ -51,5 +52,10 @@ export const initialiseAdminPlugin = () => {
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_INFO,
             pluginId: adminPlugin.id,
             component: AdminGovernanceInfo,
+        })
+        .registerSlotComponent({
+            slotId: SettingsSlotId.SETTINGS_PANEL,
+            pluginId: adminPlugin.id,
+            component: AdminSettingsPanel,
         });
 };

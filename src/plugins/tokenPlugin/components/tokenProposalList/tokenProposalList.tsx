@@ -3,7 +3,7 @@ import { useProposalListData } from '@/modules/governance/hooks/useProposalListD
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
 import type { ITokenProposal } from '../../types';
-import { TokenProposalListItem } from './tokenProposalListItem';
+import { TokenProposalListItem } from './components/tokenProposalListItem';
 
 export interface ITokenProposalListProps extends IDaoProposalListDefaultProps {}
 

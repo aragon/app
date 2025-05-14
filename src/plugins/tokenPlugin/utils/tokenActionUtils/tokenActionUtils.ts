@@ -12,8 +12,8 @@ import {
     type IProposalActionTokenMint as IGukProposalActionTokenMint,
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
-import { TokenMintTokensAction } from '../../components/tokenProposalActions/tokenMintTokensAction';
-import { TokenUpdateSettingsAction } from '../../components/tokenProposalActions/tokenUpdateSettingsAction';
+import { TokenMintTokensAction } from '../../components/tokenActions/tokenMintTokensAction';
+import { TokenUpdateSettingsAction } from '../../components/tokenActions/tokenUpdateSettingsAction';
 import {
     TokenProposalActionType,
     type ITokenActionChangeSettings,
