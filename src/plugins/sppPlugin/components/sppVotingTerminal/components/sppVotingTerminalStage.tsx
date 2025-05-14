@@ -1,5 +1,4 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { SppStageStatus } from '@/plugins/sppPlugin/components/sppStageStatus';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import {
@@ -8,8 +7,9 @@ import {
     ProposalVotingStatus,
     ProposalVotingTab,
 } from '@aragon/gov-ui-kit';
-import type { ISppProposal, ISppStage } from '../../types';
-import { sppStageUtils } from '../../utils/sppStageUtils';
+import type { ISppProposal, ISppStage } from '../../../types';
+import { sppStageUtils } from '../../../utils/sppStageUtils';
+import { SppStageStatus } from './sppStageStatus';
 import { SppVotingTerminalBodyContent } from './sppVotingTerminalBodyContent';
 import { SppVotingTerminalBodySummaryFooter } from './sppVotingTerminalBodySummaryFooter';
 import { SppVotingTerminalMultiBodySummaryDefault } from './sppVotingTerminalMultiBodySummaryDefault';

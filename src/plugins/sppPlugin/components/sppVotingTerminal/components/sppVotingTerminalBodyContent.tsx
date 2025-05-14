@@ -2,15 +2,14 @@ import { VoteList } from '@/modules/governance/components/voteList';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
+import { useSppGovernanceSettingsDefault } from '@/plugins/sppPlugin/hooks/useSppGovernanceSettingsDefault';
+import type { ISppProposal, ISppStage, ISppStagePlugin, ISppSubProposal } from '@/plugins/sppPlugin/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { type IDefinitionSetting, ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
-import { useSppGovernanceSettingsDefault } from '../../hooks/useSppGovernanceSettingsDefault';
-import type { ISppProposal, ISppStage, ISppStagePlugin, ISppSubProposal } from '../../types';
 import { SppVotingTerminalBodyBreakdownDefault } from './sppVotingTerminalBodyBreakdownDefault';
 import { SppVotingTerminalBodyVoteDefault } from './sppVotingTerminalBodyVoteDefault';
-
 export interface ISppVotingTerminalBodyContentProps {
     /**
      * The plugin that the stage belongs to.

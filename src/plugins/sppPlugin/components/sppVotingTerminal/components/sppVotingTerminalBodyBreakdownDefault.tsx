@@ -1,8 +1,8 @@
+import { type ISppProposal, type ISppStage } from '@/plugins/sppPlugin/types';
+import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { AvatarIcon, type AvatarIconVariant, IconType, ProposalVotingTab, Tabs } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { type ISppProposal, type ISppStage } from '../../types';
-import { sppProposalUtils } from '../../utils/sppProposalUtils';
 
 export interface ISppVotingTerminalBodyBreakdownDefaultProps {
     /**

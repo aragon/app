@@ -1,11 +1,11 @@
+import { type ISppProposal, type ISppStage } from '@/plugins/sppPlugin/types';
+import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { Hex } from 'viem';
 import { mainnet } from 'viem/chains';
 import { useEnsName } from 'wagmi';
-import { type ISppProposal, type ISppStage } from '../../types';
-import { sppProposalUtils } from '../../utils/sppProposalUtils';
 
 export interface ISppVotingTerminalMultiBodySummaryDefaultProps {
     /**

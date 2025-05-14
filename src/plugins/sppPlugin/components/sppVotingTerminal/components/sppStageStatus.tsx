@@ -1,4 +1,8 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
+import { SppPluginDialogId } from '@/plugins/sppPlugin/constants/sppPluginDialogId';
+import { type ISppAdvanceStageDialogParams } from '@/plugins/sppPlugin/dialogs/sppAdvanceStageDialog';
+import { type ISppProposal, type ISppStage } from '@/plugins/sppPlugin/types';
+import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -14,10 +18,6 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import { SppPluginDialogId } from '../../constants/sppPluginDialogId';
-import type { ISppAdvanceStageDialogParams } from '../../dialogs/sppAdvanceStageDialog';
-import type { ISppProposal, ISppStage } from '../../types';
-import { sppStageUtils } from '../../utils/sppStageUtils';
 
 export interface ISppStageStatusProps {
     /**
