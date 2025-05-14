@@ -95,4 +95,3 @@ Each plugin withing the `src/plugins` folder follows a consistent structure:
 - **`/testUtils`**: Contains testing utilities needed for unit tests.
 - **`/types`**: Contains all of the types and enums relating to the plugin.
 - **`/dialogs`**: Contains all dialogs for the plugin.
-- **`/shared`**: Contains any shared components, hooks etc that will be used throughout the application.

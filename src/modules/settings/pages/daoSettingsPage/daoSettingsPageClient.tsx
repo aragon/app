@@ -7,9 +7,8 @@ import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissio
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
-import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { PluginTabComponent } from '@/shared/components/pluginTabComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useAdminStatus } from '@/shared/hooks/useAdminStatus';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -39,8 +38,6 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
 
     const daoParams = { urlParams: { id: daoId } };
     const { data: dao } = useDao(daoParams);
-
-    const { adminPluginAddress } = useAdminStatus({ daoId });
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
     const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
@@ -96,14 +93,8 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     return (
         <>
             <Page.Main title={t('app.settings.daoSettingsPage.main.title')}>
-                {adminPluginAddress && (
-                    <PluginSingleComponent
-                        // Only used by the admin plugin
-                        pluginId="admin"
-                        slotId={SettingsSlotId.SETTINGS_PLUGIN_SECTION}
-                        daoId={daoId}
-                    />
-                )}
+                <PluginTabComponent plugins={processPlugins} slotId={SettingsSlotId.SETTINGS_PANEL} daoId={daoId} />
+
                 <Page.MainSection title={t('app.settings.daoSettingsPage.main.settingsInfoTitle')}>
                     <DaoSettingsInfo dao={dao} />
                 </Page.MainSection>

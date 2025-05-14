@@ -54,7 +54,7 @@ export const initialiseAdminPlugin = () => {
             component: AdminGovernanceInfo,
         })
         .registerSlotComponent({
-            slotId: SettingsSlotId.SETTINGS_PLUGIN_SECTION,
+            slotId: SettingsSlotId.SETTINGS_PANEL,
             pluginId: adminPlugin.id,
             component: AdminSettingsPanel,
         });

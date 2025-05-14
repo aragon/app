@@ -10,6 +10,7 @@ import { type IDefinitionSetting, ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import { SppVotingTerminalBodyBreakdownDefault } from './sppVotingTerminalBodyBreakdownDefault';
 import { SppVotingTerminalBodyVoteDefault } from './sppVotingTerminalBodyVoteDefault';
+
 export interface ISppVotingTerminalBodyContentProps {
     /**
      * The plugin that the stage belongs to.

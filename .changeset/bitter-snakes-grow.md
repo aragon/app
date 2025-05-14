@@ -2,5 +2,4 @@
 '@aragon/app-next': patch
 ---
 
-Refactor plugins directory folder structure to enable the handling of more complex slot components and update
-documentation.
+Refactor plugins directory to improve DX for complex slot components as app complexity grows, update documentation accordingly

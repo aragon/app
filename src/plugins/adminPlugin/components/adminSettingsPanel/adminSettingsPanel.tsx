@@ -1,7 +1,7 @@
-import { AdminGovernanceInfo } from '@/plugins/adminPlugin/components/adminGovernanceInfo/adminGovernanceInfo';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Card, IconType } from '@aragon/gov-ui-kit';
+import { AdminGovernanceInfo } from '../adminGovernanceInfo';
 import { AdminManageMembers } from './components/adminManageMembers';
 import { AdminUninstallPlugin } from './components/adminUninstallPlugin';
 

@@ -1,4 +1,4 @@
-import { type ISppProposal, type ISppStage } from '@/plugins/sppPlugin/types';
+import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { AvatarIcon, type AvatarIconVariant, IconType, ProposalVotingTab, Tabs } from '@aragon/gov-ui-kit';
