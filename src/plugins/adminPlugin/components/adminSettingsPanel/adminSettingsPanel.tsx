@@ -6,7 +6,7 @@ import { AdminManageMembers } from './components/adminManageMembers';
 import { AdminUninstallPlugin } from './components/adminUninstallPlugin';
 
 export interface IAdminSettingsPanelProps {
-    /**S
+    /**
      * ID of the DAO.
      */
     daoId: string;
