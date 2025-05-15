@@ -23,6 +23,7 @@ class PermissionTransactionUtils {
         rootPermission: 'ROOT_PERMISSION',
         createProposalPermission: 'CREATE_PROPOSAL_PERMISSION',
         executePermission: 'EXECUTE_PERMISSION',
+        upgradePluginPermission: 'UPGRADE_PLUGIN_PERMISSION',
     };
 
     buildGrantPermissionTransaction = (params: IUpdatePermissionParams): ITransactionRequest => {
@@ -45,6 +46,15 @@ class PermissionTransactionUtils {
         });
 
         return { to, data: transactionData, value: BigInt(0) };
+    };
+
+    buildGrantRevokePermissionTransactions = (
+        params: IUpdatePermissionParams,
+    ): [ITransactionRequest, ITransactionRequest] => {
+        const grantTransaction = this.buildGrantPermissionTransaction(params);
+        const revokeTransaction = this.buildRevokePermissionTransaction(params);
+
+        return [grantTransaction, revokeTransaction];
     };
 
     buildRuleConditions = (conditionAddresses: string[], conditionRules: IRuledCondition[]): IRuledCondition[] => {

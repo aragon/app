@@ -1,7 +1,9 @@
 import { daoService, type IDao, type IDaoPlugin, type Network } from '@/shared/api/daoService';
-import { type IDaoPageParams, PluginType } from '@/shared/types';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { type IDaoPageParams, type IPluginInfo, PluginType } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
+import { versionComparatorUtils } from '../versionComparatorUtils';
 
 export interface IGetDaoPluginsParams {
     /**
@@ -21,6 +23,17 @@ export interface IGetDaoPluginsParams {
      * Only returns the plugin with the specified subdomain when set.
      */
     subdomain?: string;
+}
+
+export interface IDaoAvailableUpdates {
+    /**
+     * Defines if the OSx version can be updated.
+     */
+    osx: boolean;
+    /**
+     * Defines if the DAO has plugins that can be updated.
+     */
+    plugins: boolean;
 }
 
 class DaoUtils {
@@ -55,6 +68,29 @@ class DaoUtils {
     parsePluginSubdomain = (subdomain: string): string => {
         const parts = subdomain.split('-');
         return parts.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+    };
+
+    hasAvailableUpdates = (dao?: IDao): IDaoAvailableUpdates => {
+        const osx = this.hasAvailableOsxUpdate(dao);
+        const plugins = this.getAvailablePluginUpdates(dao);
+
+        return { osx, plugins: plugins.length > 0 };
+    };
+
+    hasAvailableOsxUpdate = (dao?: IDao): boolean => {
+        const { protocolVersion } = dao != null ? networkDefinitions[dao.network] : {};
+
+        return versionComparatorUtils.isLessThan(dao?.version, protocolVersion);
+    };
+
+    getAvailablePluginUpdates = (dao?: IDao): IDaoPlugin[] => {
+        const availablePluginUpdates = dao?.plugins.filter((plugin) => {
+            const target = pluginRegistryUtils.getPlugin(plugin.subdomain) as IPluginInfo | undefined;
+
+            return versionComparatorUtils.isLessThan(plugin, target?.installVersion);
+        });
+
+        return availablePluginUpdates ?? [];
     };
 
     resolveDaoId = async (params: IDaoPageParams) => {

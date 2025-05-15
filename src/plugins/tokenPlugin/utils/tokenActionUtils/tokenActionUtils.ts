@@ -4,6 +4,7 @@ import type { IActionComposerPluginData } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 import {
     addressUtils,
     ProposalActionType as GukProposalActionType,
@@ -54,11 +55,12 @@ export type IGetTokenActionsResult = IActionComposerPluginData<IDaoPlugin<IToken
 
 class TokenActionUtils {
     getTokenActions = ({ plugin, t }: IGetTokenActionsProps): IGetTokenActionsResult => {
-        const { address, release, build, settings } = plugin;
+        const { address, settings } = plugin;
         const { address: tokenAddress, name } = settings.token;
 
         // The setMetadata function on the TokenVoting plugin is only supported from version 1.3 onwards
-        const includePluginMetadataItem = Number(release) > 1 || (Number(release) === 1 && Number(build) >= 3);
+        const minVersion = { release: 1, build: 3 };
+        const includePluginMetadataAction = versionComparatorUtils.isGreaterOrEqualTo(plugin, minVersion);
 
         return {
             groups: [
@@ -95,7 +97,7 @@ class TokenActionUtils {
                 {
                     ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),
                     meta: plugin,
-                    hidden: !includePluginMetadataItem,
+                    hidden: !includePluginMetadataAction,
                 },
             ],
             components: {

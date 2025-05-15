@@ -134,6 +134,11 @@ export const initialiseTokenPlugin = () => {
             pluginId: tokenPlugin.id,
             component: TokenGovernanceInfo,
         })
+        .registerSlotFunction({
+            slotId: SettingsSlotId.SETTINGS_BUILD_PREPARE_PLUGIN_UPDATE_DATA,
+            pluginId: tokenPlugin.id,
+            function: tokenTransactionUtils.buildPrepareUpdateData,
+        })
 
         // Create DAO module slots
         .registerSlotFunction({

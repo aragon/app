@@ -20,6 +20,7 @@ import { DaoGovernanceInfo } from '../../components/daoGovernanceInfo';
 import { DaoMembersInfo } from '../../components/daoMembersInfo';
 import { DaoSettingsInfo } from '../../components/daoSettingsInfo';
 import { DaoVersionInfo } from '../../components/daoVersionInfo';
+import { UpdateDaoContracts } from '../../components/updateDaoContracts';
 import { SettingsSlotId } from '../../constants/moduleSlots';
 
 export interface IDaoSettingsPageClientProps {
@@ -124,6 +125,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
             <Page.Aside>
                 <Page.AsideCard title={t('app.settings.daoSettingsPage.aside.versionInfoTitle')}>
                     <DaoVersionInfo dao={dao} />
+                    <UpdateDaoContracts dao={dao} />
                 </Page.AsideCard>
             </Page.Aside>
         </>

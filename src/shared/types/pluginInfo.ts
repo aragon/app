@@ -1,14 +1,14 @@
 import type { Hex } from 'viem';
 import type { Network } from '../api/daoService';
 import type { IPlugin } from '../utils/pluginRegistryUtils';
-import type { IPluginSetupVersionTag } from '../utils/pluginTransactionUtils';
+import type { IContractVersionInfo } from './contractVersionInfo';
 import type { IPluginInfoSetup } from './pluginInfoSetup';
 
 export interface IPluginInfo extends IPlugin {
     /**
      * Plugin version to be install on governance designer process.
      */
-    installVersion: IPluginSetupVersionTag;
+    installVersion: IContractVersionInfo;
     /**
      * Repository address of the plugin for each supported network.
      */

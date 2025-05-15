@@ -1576,6 +1576,42 @@
         "governanceValue": "{{name}} v{{release}}.{{build}}",
         "osLabel": "Operating system",
         "osValue": "Aragon OSx v{{version}}"
+      },
+      "prepareDaoContractsUpdateDialog": {
+        "button": {
+          "submit": "Prepare installation"
+        },
+        "description": "To publish the OSx upgrades, confirm the two onchain transactions in your wallet.",
+        "title": "Publish OSx upgrades",
+        "transactionInfoTitle": "Prepare installation"
+      },
+      "publishDaoContractsUpdateDialog": {
+        "button": {
+          "submit": "Propose contract upgrades"
+        },
+        "description": "To publish the OSx upgrades, confirm the two onchain transactions in your wallet.",
+        "title": "Publish OSx upgrades",
+        "transactionInfoTitle": "Propose contract upgrades"
+      },
+      "updateDaoContracts": {
+        "button": "Upgrade contracts",
+        "description": "There are new updates available for Araogn OSx and plugins."
+      },
+      "updateDaoContractsCard": {
+        "releaseNotes": "Release notes",
+        "versionUpdate": "Update {{from}} → {{to}}"
+      },
+      "updateDaoContractsListDialog": {
+        "action": {
+          "cancel": "Cancel",
+          "confirm": "Propose"
+        },
+        "description": "New versions of the following contracts have been released by the Aragon team. To perform an upgrade, you will have to create a proposal and execute it.",
+        "osxUpdate": {
+          "name": "Operating system",
+          "smartContractName": "Aragon OSx"
+        },
+        "title": "Review contacts to upgrade"
       }
     },
     "shared": {

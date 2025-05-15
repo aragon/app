@@ -39,6 +39,19 @@ export const tokenPluginSetupAbi = [
     { name: 'pluginMetadata', type: 'bytes' },
 ] as const;
 
+export const tokenPluginPrepareUpdateAbi = [
+    { name: 'minApprovals', type: 'uint256' },
+    {
+        name: 'targetConfig',
+        type: 'tuple',
+        components: [
+            { name: 'target', type: 'address' },
+            { name: 'operation', type: 'uint8' },
+        ],
+    },
+    { name: 'pluginMetadata', type: 'bytes' },
+] as const;
+
 export const tokenPluginAbi = [
     {
         type: 'function',

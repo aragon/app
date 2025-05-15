@@ -78,7 +78,7 @@ class PublishDaoDialogUtils {
     };
 
     private buildDaoSettingsParams = (metadataCid: string, ens?: string) => {
-        const metadata = transactionUtils.cidToHex(metadataCid);
+        const metadata = transactionUtils.stringToMetadataHex(metadataCid);
 
         const createDaoParams = {
             subdomain: ens ?? '',

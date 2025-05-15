@@ -14878,13 +14878,13 @@ __metadata:
   linkType: hard
 
 "prosemirror-view@npm:^1.0.0, prosemirror-view@npm:^1.1.0, prosemirror-view@npm:^1.27.0, prosemirror-view@npm:^1.31.0, prosemirror-view@npm:^1.37.0, prosemirror-view@npm:^1.39.1":
-  version: 1.39.2
-  resolution: "prosemirror-view@npm:1.39.2"
+  version: 1.39.3
+  resolution: "prosemirror-view@npm:1.39.3"
   dependencies:
     prosemirror-model: "npm:^1.20.0"
     prosemirror-state: "npm:^1.0.0"
     prosemirror-transform: "npm:^1.1.0"
-  checksum: 10c0/b175284082a3ab1be223ba1860931d094f996c0eabf046a78271fc8136c4e9b63de2c9a51c09a1fe73a9618d269402e30a611d260f153fba595fe465f0a94cee
+  checksum: 10c0/9eba336bd74d120131fa4763c79134cecdbb943248221a5bb4dd2ee3fc552ced6a27e4044cac0b4b86bc24dbe30e81fd06a050951a5932ead20fe6dee5df8312
   languageName: node
   linkType: hard
 
