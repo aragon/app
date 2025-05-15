@@ -5,7 +5,7 @@ import { addressUtils, DataList, IconType, Link } from '@aragon/gov-ui-kit';
 
 export interface IUpdateDaoContractsCardProps {
     /**
-     * Name of the update
+     * Name of the update.
      */
     name: string;
     /**
