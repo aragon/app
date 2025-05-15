@@ -83,3 +83,15 @@ plugins include:
   governance process.
 - **`spp`**: The Staged Proposal Processor plugin is a multi-stage proposal processor where proposals progress through
   defined stages.
+
+Each plugin withing the `src/plugins` folder follows a consistent structure:
+
+- **`/components`**: Contains a single directory for each registered slot component. Any additional components or hooks
+  scoped to this slot will be in their respective folders inside the slot component folder. There is one exception to
+  this right now, reserved for plugin actions, which will be stored in a single directory for example `tokenActions`
+- **`/hooks`**: Contains a single directory for each registered slotFunction that is a hook.
+- **`/constants`**: Contains constants reused across the plugin.
+- **`/utils`**: Contains utilities shared within the plugin components and hooks.
+- **`/testUtils`**: Contains testing utilities needed for unit tests.
+- **`/types`**: Contains all of the types and enums relating to the plugin.
+- **`/dialogs`**: Contains all dialogs for the plugin.
