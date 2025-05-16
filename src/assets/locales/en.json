@@ -141,7 +141,7 @@
         },
         "network": {
           "ethereum-sepolia": {
-            "description": " We recommend launching a test DAO your first time."
+            "description": "We recommend launching a test DAO your first time."
           },
           "helpText": "The chain you choose is where your tokens and assets are stored.",
           "label": "Select chain",
