@@ -110,7 +110,7 @@
         "metadata": {
           "avatar": {
             "error": {
-              "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g. PNG, JPG, or GIF).",
+              "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, or GIF).",
               "file-too-large": "The file size exceeds the maximum allowed limit of 1 MB.",
               "square-only": "The image must be square. Upload a square image.",
               "too-many-files": "Only one file can be uploaded at a time.",
@@ -141,7 +141,7 @@
         },
         "network": {
           "ethereum-sepolia": {
-            "description": "Recommended for first-time use"
+            "description": "We recommend launching a test DAO your first time."
           },
           "helpText": "The chain you choose is where your tokens and assets are stored.",
           "label": "Select chain",
@@ -192,7 +192,7 @@
             "error": {
               "required": "A body must be added to this process."
             },
-            "helpText": "Add the governing body that gets to determine whether the proposal passes.",
+            "helpText": "Governing bodies decide whether or not the proposal passes.",
             "label": "Voting body"
           },
           "bodyField": {
@@ -288,7 +288,7 @@
         },
         "metadata": {
           "description": {
-            "helpText": "This is shown on the proposals list.",
+            "helpText": "This is shown on the proposals list to help users understand the governance for proposals of this type.",
             "label": "Description"
           },
           "name": {
@@ -299,7 +299,7 @@
             "label": "Key"
           },
           "resources": {
-            "helpText": "These are shown as links on the proposal list. They can be used to help visitors understand the {{type}}."
+            "helpText": "These are shown as links on the proposal list under the description as additional external resources."
           },
           "type": {
             "plugin": "plugin",
@@ -409,7 +409,7 @@
             "label": "Body name"
           },
           "resources": {
-            "helpText": "These are shown as links on the members list."
+            "helpText": "These are shown as links on the members list under the description as additional external resources."
           },
           "summary": {
             "helpText": "This is shown on the members list to help visitors understand what the body is responsible for.",
@@ -452,7 +452,7 @@
         },
         "title": "Edit timing",
         "votingPeriod": {
-          "helpText": "This is amount of time bodies in this stage have to vote on proposals.",
+          "helpText": "This is the amount of time bodies in this stage have to vote on proposals.",
           "infoText": "Recommended minimum voting period is 7 days.",
           "label": "Voting period"
         }
@@ -921,7 +921,7 @@
       },
       "voteList": {
         "empty": {
-          "description": "No votes have been found.",
+          "description": "No votes found.",
           "title": "No votes found"
         },
         "error": {
@@ -1038,7 +1038,7 @@
         },
         "multisigGovernanceSettings": {
           "anyWallet": "Any wallet",
-          "approvals": "{{min}} of {{max}} authorized addresses",
+          "approvals": "{{min}} of {{max}} addresses that can approve",
           "members": "Multisig members",
           "minimumApproval": "Minimum approval",
           "proposalCreation": "Proposal creation"
@@ -1151,7 +1151,7 @@
         },
         "sppInvalidAddressConnectedDialog": {
           "action": "Close",
-          "description": "You are not connected to the correct address. If you are one its owner you can connect it with WalletConnect.",
+          "description": "You are not connected to the correct address. If you are one of its owners, you can connect it with WalletConnect.",
           "title": "Not eligible to vote"
         },
         "sppProposalList": {
@@ -1595,7 +1595,7 @@
       },
       "updateDaoContracts": {
         "button": "Upgrade contracts",
-        "description": "There are new updates available for Araogn OSx and plugins."
+        "description": "There are updates available for Aragon OSx and its plugin contracts."
       },
       "updateDaoContractsCard": {
         "releaseNotes": "Release notes",
@@ -1611,7 +1611,7 @@
           "name": "Operating system",
           "smartContractName": "Aragon OSx"
         },
-        "title": "Review contacts to upgrade"
+        "title": "Review contracts to upgrade"
       }
     },
     "shared": {
