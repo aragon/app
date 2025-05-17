@@ -3,6 +3,7 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { type IPluginTabComponentProps, PluginTabComponent } from '@/shared/components/pluginTabComponent';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type { ReactNode } from 'react';
@@ -29,6 +30,8 @@ export interface IDaoProposalListContainerProps
 export const DaoProposalListContainer: React.FC<IDaoProposalListContainerProps> = (props) => {
     const { initialParams, ...otherProps } = props;
 
+    const { t } = useTranslations();
+
     const processPlugins = useDaoPlugins({ daoId: initialParams.queryParams.daoId, type: PluginType.PROCESS });
     const processedPlugins = processPlugins?.map((plugin) => {
         const pluginInitialParams = {
@@ -39,10 +42,26 @@ export const DaoProposalListContainer: React.FC<IDaoProposalListContainerProps> 
         return { ...plugin, props: { initialParams: pluginInitialParams, plugin: plugin.meta } };
     });
 
+    const allProposalsPlugin = processPlugins && processPlugins.length > 1
+        ? [{
+              id: 'all-proposals',
+              uniqueId: 'all-proposals',
+              label: t('app.governance.daoProposalsPage.tabs.ALL'),
+              meta: {} as IDaoPlugin,
+              props: {
+                  initialParams: {
+                      ...initialParams,
+                      queryParams: { ...initialParams.queryParams, pluginAddress: '' },
+                  },
+                  plugin: {} as IDaoPlugin,
+              },
+          }, ...processedPlugins]
+        : processedPlugins;
+
     return (
         <PluginTabComponent
             slotId={GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST}
-            plugins={processedPlugins}
+            plugins={allProposalsPlugin}
             Fallback={DaoProposalListDefault}
             {...otherProps}
         />

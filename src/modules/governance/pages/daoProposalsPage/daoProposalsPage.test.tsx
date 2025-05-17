@@ -1,6 +1,7 @@
 import { daoOptions, Network } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { PluginType } from '@/shared/types';
+import { OrderDirection } from '@/shared/api/aragonBackendService';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
@@ -71,6 +72,8 @@ describe('<DaoProposalsPage /> component', () => {
             daoId: expectedDaoId,
             pageSize: daoProposalsCount,
             pluginAddress: bodyPlugin.address,
+            sort: 'blockTimestamp',
+            order: OrderDirection.DESC,
         };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
             proposalListOptions({ queryParams: memberListParams }).queryKey,

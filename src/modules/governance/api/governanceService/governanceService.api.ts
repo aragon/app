@@ -1,7 +1,7 @@
-import type { IPaginatedRequest } from '@/shared/api/aragonBackendService';
+import type { IPaginatedRequest, IOrderedRequest } from '@/shared/api/aragonBackendService';
 import type { IRequestQueryParams, IRequestUrlParams, IRequestUrlQueryParams } from '@/shared/api/httpService';
 
-export interface IGetProposalListQueryParams extends IPaginatedRequest {
+export interface IGetProposalListQueryParams extends IPaginatedRequest, IOrderedRequest {
     /**
      * ID of the Dao to fetch the proposals from.
      */

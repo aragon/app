@@ -809,6 +809,9 @@
         "main": {
           "action": "Proposal",
           "title": "Proposals"
+        },
+        "tabs": {
+          "ALL": "All Proposals"
         }
       },
       "efpCard": {

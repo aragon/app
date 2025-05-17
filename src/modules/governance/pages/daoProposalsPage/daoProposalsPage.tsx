@@ -3,6 +3,7 @@ import { Page } from '@/shared/components/page';
 import { PluginType, type IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { QueryClient } from '@tanstack/react-query';
+import { OrderDirection } from '@/shared/api/aragonBackendService';
 import { proposalListOptions } from '../../api/governanceService';
 import { DaoProposalsPageClient } from './daoProposalsPageClient';
 
@@ -28,7 +29,13 @@ export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (props) 
 
     const { address: processPluginAddress } = daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS })![0];
 
-    const proposalListQueryParams = { daoId, pageSize: daoProposalsCount, pluginAddress: processPluginAddress };
+    const proposalListQueryParams = {
+        daoId,
+        pageSize: daoProposalsCount,
+        pluginAddress: processPluginAddress,
+        sort: 'blockTimestamp',
+        order: OrderDirection.DESC,
+    };
     const proposalListParams = { queryParams: proposalListQueryParams };
     await queryClient.prefetchInfiniteQuery(proposalListOptions(proposalListParams));
 

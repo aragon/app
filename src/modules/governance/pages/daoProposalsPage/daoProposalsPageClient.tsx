@@ -34,11 +34,23 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
-    const [selectedPlugin, setSelectedPlugin] = useState(processPlugins[0]);
+    const allPlugins =
+        processPlugins.length > 1
+            ? [
+                  {
+                      id: 'all-proposals',
+                      uniqueId: 'all-proposals',
+                      label: t('app.governance.daoProposalsPage.tabs.ALL'),
+                      meta: {} as IDaoPlugin,
+                  },
+                  ...processPlugins,
+              ]
+            : processPlugins;
+    const [selectedPlugin, setSelectedPlugin] = useState(allPlugins[0]);
 
     const buildProposalUrl = (plugin: IDaoPlugin): __next_route_internal_types__.DynamicRoutes =>
         daoUtils.getDaoUrl(dao, `create/${plugin.address}/proposal`)!;
-    const createProposalUrl = buildProposalUrl(selectedPlugin.meta);
+    const createProposalUrl = buildProposalUrl(processPlugins[0].meta);
 
     const handlePermissionGuardSuccess = (plugin?: IDaoPlugin) =>
         router.push(buildProposalUrl(plugin ?? selectedPlugin.meta));
@@ -47,7 +59,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
         permissionNamespace: 'proposal',
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
         onSuccess: handlePermissionGuardSuccess,
-        plugin: selectedPlugin.meta,
+        plugin: selectedPlugin.id === 'all-proposals' ? processPlugins[0].meta : selectedPlugin.meta,
         daoId,
     });
 
@@ -83,13 +95,15 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                 />
             </Page.Main>
             <Page.Aside>
-                <Page.AsideCard title={`${selectedPlugin.label} (${selectedPlugin.meta.slug.toUpperCase()})`}>
-                    <DaoPluginInfo
-                        plugin={selectedPlugin.meta}
-                        daoId={initialParams.queryParams.daoId}
-                        type={PluginType.PROCESS}
-                    />
-                </Page.AsideCard>
+                {selectedPlugin.id !== 'all-proposals' && (
+                    <Page.AsideCard title={`${selectedPlugin.label} (${selectedPlugin.meta.slug.toUpperCase()})`}>
+                        <DaoPluginInfo
+                            plugin={selectedPlugin.meta}
+                            daoId={initialParams.queryParams.daoId}
+                            type={PluginType.PROCESS}
+                        />
+                    </Page.AsideCard>
+                )}
             </Page.Aside>
         </>
     );
