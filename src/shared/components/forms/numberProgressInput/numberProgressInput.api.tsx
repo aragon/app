@@ -33,4 +33,9 @@ export interface INumberProgressInputProps extends Omit<IInputNumberProps, 'valu
      * Optional tags to be displayed to the left and right of the progress component. The first tag will be displayed to the left and the second to the right.
      */
     tags?: [ITagProps, ITagProps];
+
+    /**
+     * Custom validation function for the input value.
+     */
+    validate?: (value: number) => boolean | string;
 }

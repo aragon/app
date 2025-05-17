@@ -1406,6 +1406,9 @@
             },
             "helpText": "The percentage of tokens that vote 'Yes' in support of a proposal, out of all tokens that have voted, must be greater than this value.",
             "label": "Support threshold",
+            "error": {
+              "max": "Support threshold can't be 100%"
+            },
             "tag": {
               "no": "No",
               "yes": "Yes"
@@ -1432,7 +1435,8 @@
               },
               "address": {
                 "label": "Address",
-                "placeholder": "ENS or 0x…"
+                "placeholder": "ENS or 0x…",
+                "duplicate": "Address has already been added"
               },
               "tokens": {
                 "label": "Tokens"

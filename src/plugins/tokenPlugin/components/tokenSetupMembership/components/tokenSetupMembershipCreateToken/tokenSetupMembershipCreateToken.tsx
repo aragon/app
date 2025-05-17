@@ -2,7 +2,7 @@ import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, IconType, InputContainer, InputText } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
+import { useEffect, type ChangeEvent } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { parseUnits } from 'viem';
 import { defaultTokenAddress, defaultTokenDecimals } from '../../constants/tokenDefaults';
@@ -52,10 +52,14 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
         fieldPrefix: tokenFormPrefix,
         rules: {
             required: true,
-            validate: (value) =>
-                /^[A-Za-z]+$/.test(value) || t('app.plugins.token.tokenSetupMembership.createToken.symbol.onlyLetters'),
+            pattern: /^[A-Z0-9]+$/,
         },
     });
+
+    const handleSymbolChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const processed = event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        symbolField.onChange(processed);
+    };
 
     const membersFieldName = `${formPrefix}.members`;
     const {
@@ -91,6 +95,7 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
             <InputText
                 helpText={t('app.plugins.token.tokenSetupMembership.createToken.symbol.helpText')}
                 maxLength={symbolMaxLength}
+                onChange={handleSymbolChange}
                 {...symbolField}
             />
             <InputContainer
