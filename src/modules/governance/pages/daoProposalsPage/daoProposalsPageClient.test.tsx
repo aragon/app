@@ -86,4 +86,16 @@ describe('<DaoProposalsPageClient /> component', () => {
         expect(createProposalButton).toHaveAttribute('href', testCreateProposalUrl);
         expect(getDaoUrlSpy.mock.calls[0][1]).toEqual(`create/${pluginAddress}/proposal`);
     });
+
+    it('hides the plugin info sidebar when multiple plugins exist', () => {
+        const plugins = [
+            generateTabComponentPlugin({ meta: generateDaoPlugin({ subdomain: 'token' }) }),
+            generateTabComponentPlugin({ meta: generateDaoPlugin({ subdomain: 'multisig' }) }),
+        ];
+        useDaoPluginsSpy.mockReturnValue(plugins);
+
+        render(createTestComponent());
+
+        expect(screen.queryByTestId('plugin-info-mock')).not.toBeInTheDocument();
+    });
 });
