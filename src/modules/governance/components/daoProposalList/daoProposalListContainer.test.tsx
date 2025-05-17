@@ -36,4 +36,17 @@ describe('<DaoProposalListContainer /> component', () => {
         expect(pluginComponent.dataset.slotid).toEqual(GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST);
         expect(pluginComponent.dataset.plugins).toEqual(plugins[0].id);
     });
+
+    it('adds an all proposals tab when multiple process plugins are available', () => {
+        const plugins = [
+            generateTabComponentPlugin({ id: 'token', meta: generateDaoPlugin() }),
+            generateTabComponentPlugin({ id: 'multisig', meta: generateDaoPlugin() }),
+        ];
+        useDaoPluginsSpy.mockReturnValue(plugins);
+
+        render(createTestComponent());
+
+        const pluginComponent = screen.getByTestId('plugin-component-mock');
+        expect(pluginComponent.dataset.plugins).toEqual('all');
+    });
 });
