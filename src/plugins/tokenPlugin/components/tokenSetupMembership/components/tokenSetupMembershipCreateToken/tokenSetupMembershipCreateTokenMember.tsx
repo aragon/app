@@ -11,6 +11,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useCallback, useState } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import type { ITokenSetupMembershipMember } from '../../tokenSetupMembership.api';
 
 export interface ITokenSetupMembershipCreateTokenMemberProps {
@@ -32,6 +33,11 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
 
     const { t } = useTranslations();
 
+    const { control } = useFormContext();
+    const index = Number(formPrefix.split('.').pop() ?? 0);
+    const membersPath = formPrefix.split('.').slice(0, -1).join('.');
+    const members = useWatch({ name: membersPath, control }) as ITokenSetupMembershipMember[];
+
     const [memberInput, setMemberInput] = useState<string | undefined>(initialValue);
 
     const {
@@ -40,7 +46,16 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
         ...memberField
     } = useFormField<ITokenSetupMembershipMember, 'address'>('address', {
         label: t('app.plugins.token.tokenSetupMembership.createToken.member.address.label'),
-        rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
+        rules: {
+            required: true,
+            validate: (value) => {
+                if (!addressUtils.isAddress(value)) {
+                    return false;
+                }
+                const duplicated = members?.some((m, i) => i !== index && addressUtils.isAddressEqual(m.address, value));
+                return duplicated ? t('app.plugins.token.tokenSetupMembership.createToken.member.address.duplicate') : true;
+            },
+        },
         fieldPrefix: formPrefix,
     });
 
@@ -67,7 +82,7 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
                     className="basis-[65%]"
                     {...memberField}
                 />
-                <InputNumber className="basis-1/3" min={0} {...tokenAmountField} />
+                <InputNumber className="w-full md:basis-1/3" min={0} {...tokenAmountField} />
             </div>
             {onRemove != null && (
                 <Dropdown.Container

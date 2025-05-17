@@ -1,4 +1,5 @@
 import type { IAlertInlineProps, IInputNumberProps, ITagProps } from '@aragon/gov-ui-kit';
+import type { Validate } from 'react-hook-form';
 
 export interface INumberProgressInputProps extends Omit<IInputNumberProps, 'value' | 'alert'> {
     /**
@@ -31,6 +32,21 @@ export interface INumberProgressInputProps extends Omit<IInputNumberProps, 'valu
     thresholdIndicator?: number;
     /**
      * Optional tags to be displayed to the left and right of the progress component. The first tag will be displayed to the left and the second to the right.
-     */
+    */
     tags?: [ITagProps, ITagProps];
+
+    /**
+     * Maximum value allowed for the input.
+     */
+    max?: number;
+
+    /**
+     * Minimum value allowed for the input.
+     */
+    min?: number;
+
+    /**
+     * Custom validation function for the input value.
+     */
+    validate?: Validate<number | undefined, Record<string, number | undefined>>;
 }
