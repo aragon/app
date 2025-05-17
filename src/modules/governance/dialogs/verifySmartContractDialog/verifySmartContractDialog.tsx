@@ -136,6 +136,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
             <Dialog.Content description={t('app.governance.verifySmartContractDialog.description')}>
                 <form className="flex flex-col gap-3 py-2" onSubmit={handleSubmit(handleFormSubmit)} id={formId}>
                     <AddressInput
+                        autoFocus
                         placeholder={t('app.finance.transferAssetForm.receiver.placeholder')}
                         value={addressInput}
                         onChange={setAddressInput}
@@ -151,18 +152,19 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
                     )}
                 </form>
             </Dialog.Content>
-            <Dialog.Footer
-                primaryAction={{
-                    label: t(`app.governance.verifySmartContractDialog.action.${buttonLabel}`),
-                    type: 'submit',
-                    isLoading: isLoadingAbi,
-                    form: formId,
-                }}
-                secondaryAction={{
-                    label: t('app.governance.verifySmartContractDialog.action.cancel'),
-                    onClick: () => close(),
-                }}
-            />
+                <Dialog.Footer
+                    primaryAction={{
+                        label: t(`app.governance.verifySmartContractDialog.action.${buttonLabel}`),
+                        type: 'submit',
+                        isLoading: isLoadingAbi,
+                        form: formId,
+                    }}
+                    secondaryAction={{
+                        label: t('app.governance.verifySmartContractDialog.action.cancel'),
+                        type: 'button',
+                        onClick: () => close(),
+                    }}
+                />
         </>
     );
 };
