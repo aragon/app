@@ -16,7 +16,7 @@ export interface IMinParticipationFieldProps {
     token: ITokenSetupGovernanceProps['membershipSettings']['token'];
 }
 
-const defaultMinParticipation = 1;
+const defaultMinParticipation = 0;
 
 export const MinParticipationField: React.FC<IMinParticipationFieldProps> = (props) => {
     const { formPrefix, token } = props;
@@ -40,7 +40,7 @@ export const MinParticipationField: React.FC<IMinParticipationFieldProps> = (pro
             label={t('app.plugins.token.tokenSetupGovernance.minParticipation.label')}
             helpText={t('app.plugins.token.tokenSetupGovernance.minParticipation.helpText')}
             valueLabel={`${formattedAmount} ${symbol}`}
-            min={1}
+            min={0}
             total={100}
             defaultValue={defaultMinParticipation}
             prefix="≥"

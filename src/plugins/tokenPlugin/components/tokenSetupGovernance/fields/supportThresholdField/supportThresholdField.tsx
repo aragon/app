@@ -42,6 +42,9 @@ export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (pro
             valueLabel={`> ${value.toString()} %`}
             min={1}
             total={100}
+            validate={(v) =>
+                (v ?? 0) < 100 ||
+                t('app.plugins.token.tokenSetupGovernance.supportThreshold.error.max')}
             prefix=">"
             suffix="%"
             alert={alert}
