@@ -34,7 +34,21 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
-    const [selectedPlugin, setSelectedPlugin] = useState(processPlugins[0]);
+
+    const hasMultipleProcesses = processPlugins.length > 1;
+    const allTabPlugin = hasMultipleProcesses
+        ? {
+              id: 'all',
+              uniqueId: `all-${daoId}`,
+              label: t('app.governance.allProposalsTab.label'),
+              meta: {} as IDaoPlugin,
+              props: {},
+          }
+        : undefined;
+
+    const [selectedPlugin, setSelectedPlugin] = useState(
+        hasMultipleProcesses ? allTabPlugin! : processPlugins[0],
+    );
 
     const buildProposalUrl = (plugin: IDaoPlugin): __next_route_internal_types__.DynamicRoutes =>
         daoUtils.getDaoUrl(dao, `create/${plugin.address}/proposal`)!;
@@ -82,15 +96,17 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                     onValueChange={setSelectedPlugin}
                 />
             </Page.Main>
-            <Page.Aside>
-                <Page.AsideCard title={`${selectedPlugin.label} (${selectedPlugin.meta.slug.toUpperCase()})`}>
-                    <DaoPluginInfo
-                        plugin={selectedPlugin.meta}
-                        daoId={initialParams.queryParams.daoId}
-                        type={PluginType.PROCESS}
-                    />
-                </Page.AsideCard>
-            </Page.Aside>
+            {selectedPlugin.meta.slug && (
+                <Page.Aside>
+                    <Page.AsideCard title={`${selectedPlugin.label} (${selectedPlugin.meta.slug.toUpperCase()})`}>
+                        <DaoPluginInfo
+                            plugin={selectedPlugin.meta}
+                            daoId={initialParams.queryParams.daoId}
+                            type={PluginType.PROCESS}
+                        />
+                    </Page.AsideCard>
+                </Page.Aside>
+            )}
         </>
     );
 };

@@ -77,6 +77,22 @@ describe('<DaoProposalsPage /> component', () => {
         );
     });
 
+    it('prefetches all proposals when multiple process plugins exist', async () => {
+        const dao = generateDao();
+        const plugins = [generateDaoPlugin({ address: '0x123' }), generateDaoPlugin({ address: '0x456' })];
+        fetchQuerySpy.mockResolvedValue(dao);
+        getDaoPluginsSpy.mockReturnValue(plugins);
+        const expectedDaoId = 'test-dao-id';
+        resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
+
+        render(await createTestComponent());
+
+        const expectedParams = { daoId: expectedDaoId, pageSize: daoProposalsCount };
+        expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
+            proposalListOptions({ queryParams: expectedParams }).queryKey,
+        );
+    });
+
     it('renders the page client component', async () => {
         render(await createTestComponent());
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
