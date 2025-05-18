@@ -34,7 +34,19 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
-    const [selectedPlugin, setSelectedPlugin] = useState(processPlugins[0]);
+
+    let defaultPlugin = processPlugins[0];
+    if (processPlugins.length > 1) {
+        defaultPlugin = {
+            id: 'all',
+            uniqueId: `all-${daoId}`,
+            label: t('app.governance.allProposalsTab.label'),
+            meta: {} as IDaoPlugin,
+            props: {},
+        };
+    }
+
+    const [selectedPlugin, setSelectedPlugin] = useState(defaultPlugin);
 
     const buildProposalUrl = (plugin: IDaoPlugin): __next_route_internal_types__.DynamicRoutes =>
         daoUtils.getDaoUrl(dao, `create/${plugin.address}/proposal`)!;
@@ -82,15 +94,17 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                     onValueChange={setSelectedPlugin}
                 />
             </Page.Main>
-            <Page.Aside>
-                <Page.AsideCard title={`${selectedPlugin.label} (${selectedPlugin.meta.slug.toUpperCase()})`}>
-                    <DaoPluginInfo
-                        plugin={selectedPlugin.meta}
-                        daoId={initialParams.queryParams.daoId}
-                        type={PluginType.PROCESS}
-                    />
-                </Page.AsideCard>
-            </Page.Aside>
+            {selectedPlugin.id !== 'all' && (
+                <Page.Aside>
+                    <Page.AsideCard title={`${selectedPlugin.label} (${selectedPlugin.meta.slug.toUpperCase()})`}>
+                        <DaoPluginInfo
+                            plugin={selectedPlugin.meta}
+                            daoId={initialParams.queryParams.daoId}
+                            type={PluginType.PROCESS}
+                        />
+                    </Page.AsideCard>
+                </Page.Aside>
+            )}
         </>
     );
 };

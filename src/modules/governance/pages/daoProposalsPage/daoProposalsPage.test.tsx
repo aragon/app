@@ -52,7 +52,7 @@ describe('<DaoProposalsPage /> component', () => {
         return Component;
     };
 
-    it('prefetches the DAO proposal list of the first DAO process plugin', async () => {
+    it('prefetches the DAO proposal list of the first DAO process plugin when only one exists', async () => {
         const dao = generateDao();
         const bodyPlugin = generateDaoPlugin({ address: '0x123' });
         fetchQuerySpy.mockResolvedValue(dao);
@@ -62,18 +62,29 @@ describe('<DaoProposalsPage /> component', () => {
 
         render(await createTestComponent());
 
-        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
-            daoOptions({ urlParams: { id: expectedDaoId } }).queryKey,
-        );
-        expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, { type: PluginType.PROCESS });
-
-        const memberListParams = {
+        const expectedParams = {
             daoId: expectedDaoId,
             pageSize: daoProposalsCount,
             pluginAddress: bodyPlugin.address,
         };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
-            proposalListOptions({ queryParams: memberListParams }).queryKey,
+            proposalListOptions({ queryParams: expectedParams }).queryKey,
+        );
+    });
+
+    it('prefetches all proposals when multiple process plugins exist', async () => {
+        const dao = generateDao();
+        const plugins = [generateDaoPlugin({ address: '0x1' }), generateDaoPlugin({ address: '0x2' })];
+        fetchQuerySpy.mockResolvedValue(dao);
+        getDaoPluginsSpy.mockReturnValue(plugins);
+        const expectedDaoId = 'test-dao-id';
+        resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
+
+        render(await createTestComponent());
+
+        const expectedParams = { daoId: expectedDaoId, pageSize: daoProposalsCount };
+        expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
+            proposalListOptions({ queryParams: expectedParams }).queryKey,
         );
     });
 
