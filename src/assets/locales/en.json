@@ -811,6 +811,9 @@
           "title": "Proposals"
         }
       },
+      "allProposalsTab": {
+        "label": "All Proposals"
+      },
       "efpCard": {
         "cta": "View on EFP",
         "followers": "Followers",
