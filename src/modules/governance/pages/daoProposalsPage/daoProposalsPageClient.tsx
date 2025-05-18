@@ -12,6 +12,7 @@ import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
 import type { IGetProposalListParams } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
@@ -34,7 +35,19 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
-    const [selectedPlugin, setSelectedPlugin] = useState(processPlugins[0]);
+
+    let defaultPlugin: ITabComponentPlugin<IDaoPlugin> = processPlugins[0];
+    if (processPlugins.length > 1) {
+        defaultPlugin = {
+            id: 'all',
+            uniqueId: `all-${daoId}`,
+            label: t('app.governance.allProposalsTab.label'),
+            meta: {} as IDaoPlugin,
+            props: { initialParams, plugin: {} as IDaoPlugin },
+        };
+    }
+
+    const [selectedPlugin, setSelectedPlugin] = useState(defaultPlugin);
 
     const buildProposalUrl = (plugin: IDaoPlugin): __next_route_internal_types__.DynamicRoutes =>
         daoUtils.getDaoUrl(dao, `create/${plugin.address}/proposal`)!;
@@ -82,15 +95,17 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                     onValueChange={setSelectedPlugin}
                 />
             </Page.Main>
-            <Page.Aside>
-                <Page.AsideCard title={`${selectedPlugin.label} (${selectedPlugin.meta.slug.toUpperCase()})`}>
-                    <DaoPluginInfo
-                        plugin={selectedPlugin.meta}
-                        daoId={initialParams.queryParams.daoId}
-                        type={PluginType.PROCESS}
-                    />
-                </Page.AsideCard>
-            </Page.Aside>
+            {selectedPlugin.meta.slug && (
+                <Page.Aside>
+                    <Page.AsideCard title={`${selectedPlugin.label} (${selectedPlugin.meta.slug.toUpperCase()})`}>
+                        <DaoPluginInfo
+                            plugin={selectedPlugin.meta}
+                            daoId={initialParams.queryParams.daoId}
+                            type={PluginType.PROCESS}
+                        />
+                    </Page.AsideCard>
+                </Page.Aside>
+            )}
         </>
     );
 };
