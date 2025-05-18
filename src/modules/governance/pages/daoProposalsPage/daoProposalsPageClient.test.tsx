@@ -68,6 +68,20 @@ describe('<DaoProposalsPageClient /> component', () => {
         expect(screen.getByTestId('plugin-info-mock')).toBeInTheDocument();
     });
 
+    it('hides the plugin info when multiple processes exist', () => {
+        const plugins = [
+            generateTabComponentPlugin({ meta: generateDaoPlugin() }),
+            generateTabComponentPlugin({ meta: generateDaoPlugin() }),
+        ];
+        useDaoPluginsSpy.mockReturnValue(plugins);
+
+        const initialParams = { queryParams: { daoId: 'test-id' } };
+        render(createTestComponent({ initialParams }));
+
+        expect(screen.getByTestId('proposal-list-mock')).toBeInTheDocument();
+        expect(screen.queryByTestId('plugin-info-mock')).not.toBeInTheDocument();
+    });
+
     it('renders the create proposal button with the correct link and label', () => {
         const pluginAddress = '0x082729';
         const initialParams = { queryParams: { daoId: 'test-dao-id', pluginAddress } };

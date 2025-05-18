@@ -3,6 +3,7 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { type IPluginTabComponentProps, PluginTabComponent } from '@/shared/components/pluginTabComponent';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type { ReactNode } from 'react';
@@ -29,8 +30,10 @@ export interface IDaoProposalListContainerProps
 export const DaoProposalListContainer: React.FC<IDaoProposalListContainerProps> = (props) => {
     const { initialParams, ...otherProps } = props;
 
+    const { t } = useTranslations();
+
     const processPlugins = useDaoPlugins({ daoId: initialParams.queryParams.daoId, type: PluginType.PROCESS });
-    const processedPlugins = processPlugins?.map((plugin) => {
+    let processedPlugins = processPlugins?.map((plugin) => {
         const pluginInitialParams = {
             ...initialParams,
             queryParams: { ...initialParams.queryParams, pluginAddress: plugin.meta.address },
@@ -38,6 +41,25 @@ export const DaoProposalListContainer: React.FC<IDaoProposalListContainerProps> 
 
         return { ...plugin, props: { initialParams: pluginInitialParams, plugin: plugin.meta } };
     });
+
+    if (processPlugins && processPlugins.length > 1) {
+        const { pluginAddress, ...restQuery } = initialParams.queryParams as { pluginAddress?: string } &
+            typeof initialParams.queryParams;
+
+        const allInitialParams = {
+            ...initialParams,
+            queryParams: restQuery,
+        } as typeof initialParams;
+
+        const allTabPlugin = {
+            id: 'all',
+            uniqueId: `all-${initialParams.queryParams.daoId}`,
+            label: t('app.governance.allProposalsTab.label'),
+            meta: {} as IDaoPlugin,
+            props: { initialParams: allInitialParams, plugin: {} as IDaoPlugin },
+        };
+        processedPlugins = [allTabPlugin, ...(processedPlugins ?? [])];
+    }
 
     return (
         <PluginTabComponent

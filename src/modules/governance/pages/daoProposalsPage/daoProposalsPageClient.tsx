@@ -4,6 +4,7 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -34,7 +35,17 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
-    const [selectedPlugin, setSelectedPlugin] = useState(processPlugins[0]);
+
+    const allTabPlugin: ITabComponentPlugin<IDaoPlugin> = {
+        id: 'all',
+        uniqueId: `all-${daoId}`,
+        label: t('app.governance.allProposalsTab.label'),
+        meta: {} as IDaoPlugin,
+        props: { initialParams, plugin: {} as IDaoPlugin },
+    };
+
+    const defaultPlugin = processPlugins.length > 1 ? allTabPlugin : processPlugins[0];
+    const [selectedPlugin, setSelectedPlugin] = useState(defaultPlugin);
 
     const buildProposalUrl = (plugin: IDaoPlugin): __next_route_internal_types__.DynamicRoutes =>
         daoUtils.getDaoUrl(dao, `create/${plugin.address}/proposal`)!;
@@ -67,6 +78,8 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
 
     const actionProps = processPlugins.length > 1 ? { onClick: openSelectPluginDialog } : defaultActionProps;
 
+    const showPluginInfo = selectedPlugin.id !== 'all';
+
     return (
         <>
             <Page.Main
@@ -82,15 +95,17 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                     onValueChange={setSelectedPlugin}
                 />
             </Page.Main>
-            <Page.Aside>
-                <Page.AsideCard title={`${selectedPlugin.label} (${selectedPlugin.meta.slug.toUpperCase()})`}>
-                    <DaoPluginInfo
-                        plugin={selectedPlugin.meta}
-                        daoId={initialParams.queryParams.daoId}
-                        type={PluginType.PROCESS}
-                    />
-                </Page.AsideCard>
-            </Page.Aside>
+            {showPluginInfo && (
+                <Page.Aside>
+                    <Page.AsideCard title={`${selectedPlugin.label} (${selectedPlugin.meta.slug.toUpperCase()})`}>
+                        <DaoPluginInfo
+                            plugin={selectedPlugin.meta}
+                            daoId={initialParams.queryParams.daoId}
+                            type={PluginType.PROCESS}
+                        />
+                    </Page.AsideCard>
+                </Page.Aside>
+            )}
         </>
     );
 };
