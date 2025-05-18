@@ -4,6 +4,7 @@ import { PluginType, type IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { QueryClient } from '@tanstack/react-query';
 import { proposalListOptions } from '../../api/governanceService';
+import type { IGetProposalListParams } from '../../api/governanceService';
 import { DaoProposalsPageClient } from './daoProposalsPageClient';
 
 export interface IDaoProposalsPageProps {
@@ -26,10 +27,14 @@ export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (props) 
     const daoParams = { urlParams: daoUrlParams };
     const dao = await queryClient.fetchQuery(daoOptions(daoParams));
 
-    const { address: processPluginAddress } = daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS })![0];
+    const processPlugins = daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS })!;
+    const firstPluginAddress = processPlugins[0]?.address;
 
-    const proposalListQueryParams = { daoId, pageSize: daoProposalsCount, pluginAddress: processPluginAddress };
-    const proposalListParams = { queryParams: proposalListQueryParams };
+    const proposalListQueryParams =
+        processPlugins.length > 1
+            ? { daoId, pageSize: daoProposalsCount }
+            : { daoId, pageSize: daoProposalsCount, pluginAddress: firstPluginAddress };
+    const proposalListParams = { queryParams: proposalListQueryParams } as IGetProposalListParams;
     await queryClient.prefetchInfiniteQuery(proposalListOptions(proposalListParams));
 
     return (
