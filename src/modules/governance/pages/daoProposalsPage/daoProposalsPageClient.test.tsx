@@ -86,4 +86,16 @@ describe('<DaoProposalsPageClient /> component', () => {
         expect(createProposalButton).toHaveAttribute('href', testCreateProposalUrl);
         expect(getDaoUrlSpy.mock.calls[0][1]).toEqual(`create/${pluginAddress}/proposal`);
     });
+
+    it('hides plugin info when multiple plugins exist', () => {
+        const plugins = [
+            generateTabComponentPlugin({ meta: generateDaoPlugin() }),
+            generateTabComponentPlugin({ meta: generateDaoPlugin() }),
+        ];
+        useDaoPluginsSpy.mockReturnValue(plugins);
+
+        render(createTestComponent());
+
+        expect(screen.queryByTestId('plugin-info-mock')).not.toBeInTheDocument();
+    });
 });
