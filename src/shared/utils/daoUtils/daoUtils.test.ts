@@ -298,7 +298,7 @@ describe('dao utils', () => {
         });
 
         it('returns the daoId when the id is an ENS name by resolving name to address', async () => {
-            const addressOrEns = `my-dao.dao.eth`;
+            const addressOrEns = 'my-dao.dao.eth';
             const daoAddress = '0x1234';
             const network = Network.ETHEREUM_MAINNET;
             const params = { addressOrEns, network };
