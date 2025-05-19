@@ -97,8 +97,7 @@ class DaoUtils {
         const { addressOrEns, network } = params;
 
         if (addressOrEns.endsWith('.eth')) {
-            const subdomain = addressOrEns.split('.dao.eth')[0];
-            const dao = await daoService.getDaoByEns({ urlParams: { network, ens: subdomain } });
+            const dao = await daoService.getDaoByEns({ urlParams: { network, ens: addressOrEns } });
 
             return `${network}-${dao.address}`;
         }
