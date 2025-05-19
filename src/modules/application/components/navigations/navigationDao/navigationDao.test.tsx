@@ -2,7 +2,7 @@ import * as useDialogContext from '@/shared/components/dialogProvider';
 import { generateDao, generateDialogContext } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { GukModulesProvider, IconType, addressUtils, clipboardUtils, type ICompositeAddress } from '@aragon/gov-ui-kit';
+import { GukModulesProvider, IconType, addressUtils, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import type * as GovUiKit from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -28,7 +28,6 @@ jest.mock('../navigation/navigationTrigger', () => ({
 
 describe('<NavigationDao /> component', () => {
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
-    const copySpy = jest.spyOn(clipboardUtils, 'copy');
     const hasSupportedPluginsSpy = jest.spyOn(daoUtils, 'hasSupportedPlugins');
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
@@ -74,12 +73,29 @@ describe('<NavigationDao /> component', () => {
         hasSupportedPluginsSpy.mockReturnValue(true);
         const dao = generateDao({ id: 'test' });
         const daoLinks = navigationDaoLinks(dao);
+
         render(createTestComponent({ id: dao.id }));
-        daoLinks.forEach((link) => expect(screen.getByRole('link', { name: link.label })).toBeInTheDocument());
+
+        const excludedLabels = new Set([
+            'app.application.navigationDao.link.dashboard',
+            'app.application.navigationDao.link.settings',
+        ]);
+
+        const expectedLinks = daoLinks.filter((link) => !excludedLabels.has(link.label));
+
+        expectedLinks.forEach((link) => {
+            expect(screen.getByRole('link', { name: link.label })).toBeInTheDocument();
+        });
         // eslint-disable-next-line testing-library/no-node-access
-        expect(screen.getByRole('link', { name: daoLinks[0].label }).parentElement?.className).toContain(
-            'hidden md:flex',
+        expect(screen.getByRole('link', { name: expectedLinks[0].label }).parentElement?.className).toContain(
+            'hidden lg:flex',
         );
+
+        daoLinks
+            .filter((link) => excludedLabels.has(link.label))
+            .forEach((link) => {
+                expect(screen.queryByRole('link', { name: link.label })).not.toBeInTheDocument();
+            });
     });
 
     it('hides the members and proposals links when DAO has no supported plugin', () => {
@@ -115,18 +131,6 @@ describe('<NavigationDao /> component', () => {
         render(createTestComponent({ dao }));
         await userEvent.click(screen.getByTestId('nav-trigger-mock'));
         expect(screen.getByText(truncatedAddress)).toBeInTheDocument();
-    });
-
-    it('renders a copy button to copy the DAO address on the navigation dialog', async () => {
-        const dao = generateDao({ address: '0x1234' });
-        render(createTestComponent({ dao }));
-        await userEvent.click(screen.getByTestId('nav-trigger-mock'));
-
-        const copyButton = screen.getByTestId(IconType.COPY);
-        expect(copyButton).toBeInTheDocument();
-
-        await userEvent.click(copyButton);
-        expect(copySpy).toHaveBeenCalledWith(dao.address);
     });
 
     it('renders a explore button to navigate to the explore page on the navigation dialog', async () => {

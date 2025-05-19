@@ -30,14 +30,14 @@ describe('<Navigation.Links /> component', () => {
     });
 
     it('renders properly on columns variant', () => {
-        const variant = 'columns';
+        const variant = 'row';
         const { container } = render(createTestComponent({ variant }));
         // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
         expect(container.querySelector('.flex-row')).toBeInTheDocument();
     });
 
     it('renders properly on rows variant', () => {
-        const variant = 'rows';
+        const variant = 'column';
         const { container } = render(createTestComponent({ variant }));
         // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
         expect(container.querySelector('.flex-col')).toBeInTheDocument();
