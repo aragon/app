@@ -15,6 +15,7 @@ import {
     Button,
     CardCollapsible,
     ChainEntityType,
+    Clipboard,
     clipboardUtils,
     DateFormat,
     DefinitionList,
@@ -174,22 +175,27 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.onChainId')}
                             >
-                                <p className="break-words text-neutral-500">{proposal.proposalIndex}</p>
+                                <Clipboard copyValue={proposal.proposalIndex} variant="avatar">
+                                    <p className="truncate text-neutral-500">{proposal.proposalIndex}</p>
+                                </Clipboard>
                             </DefinitionList.Item>
                             <DefinitionList.Item term={t('app.governance.daoProposalDetailsPage.aside.details.id')}>
                                 <p className="truncate text-neutral-500">{slug}</p>
+                            </DefinitionList.Item>
+                            <DefinitionList.Item
+                                term={t('app.governance.daoProposalDetailsPage.aside.details.creator')}
+                            >
+                                <Clipboard copyValue={creator.ens ?? creator.address} variant="avatar">
+                                    <Link href={creatorLink} isExternal={true}>
+                                        {creatorName}
+                                    </Link>
+                                </Clipboard>
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.published')}
                                 link={{ href: creationBlockLink, textClassName: 'first-letter:capitalize' }}
                             >
                                 {formattedCreationDate}
-                            </DefinitionList.Item>
-                            <DefinitionList.Item
-                                term={t('app.governance.daoProposalDetailsPage.aside.details.creator')}
-                                link={{ href: creatorLink }}
-                            >
-                                {creatorName}
                             </DefinitionList.Item>
                             <DefinitionList.Item term={t('app.governance.daoProposalDetailsPage.aside.details.status')}>
                                 <Tag label={statusTag.label} variant={statusTag.variant} className="w-fit" />
@@ -200,13 +206,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         <Page.AsideCard title={t('app.governance.daoProposalDetailsPage.aside.links.title')}>
                             <div className="flex flex-col gap-4">
                                 {resources.map((resource) => (
-                                    <Link
-                                        key={resource.name}
-                                        href={resource.url}
-                                        target="_blank"
-                                        iconRight={IconType.LINK_EXTERNAL}
-                                        description={resource.url}
-                                    >
+                                    <Link key={resource.name} href={resource.url} isExternal={true} showUrl={true}>
                                         {resource.name}
                                     </Link>
                                 ))}
