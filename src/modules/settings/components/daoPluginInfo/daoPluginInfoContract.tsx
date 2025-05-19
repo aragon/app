@@ -5,9 +5,11 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     addressUtils,
     ChainEntityType,
+    Clipboard,
     DateFormat,
     DefinitionList,
     formatterUtils,
+    Link,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 
@@ -46,9 +48,17 @@ export const DaoPluginInfoContract: React.FC<IDaoPluginInfoContractProps> = (pro
         <DefinitionList.Container>
             <DefinitionList.Item
                 term={t('app.settings.daoPluginInfo.contract.plugin')}
-                link={{ href: pluginLink, description: addressUtils.truncateAddress(address) }}
+                description={t('app.settings.daoPluginInfo.contract.pluginVersionInfo', {
+                    name: pluginName,
+                    release,
+                    build,
+                })}
             >
-                {t('app.settings.daoPluginInfo.contract.pluginVersionInfo', { name: pluginName, release, build })}
+                <Clipboard copyValue={address} variant="avatar">
+                    <Link href={pluginLink} isExternal={true}>
+                        {addressUtils.truncateAddress(address)}
+                    </Link>
+                </Clipboard>
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t('app.settings.daoPluginInfo.contract.launchedAt')}
