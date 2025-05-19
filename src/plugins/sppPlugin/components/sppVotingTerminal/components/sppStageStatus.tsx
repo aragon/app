@@ -13,7 +13,7 @@ import {
     DateFormat,
     formatterUtils,
     IconType,
-    ProposalVotingStatus,
+    ProposalStatus,
     Rerender,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
@@ -68,8 +68,8 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     // been reached (to display min-advance time). Hide the button/info for the last stage when proposal is signaling
     // to hide executable info text.
     const displayAdvanceButton =
-        (stageStatus === ProposalVotingStatus.ACCEPTED ||
-            (stageStatus === ProposalVotingStatus.ACTIVE &&
+        (stageStatus === ProposalStatus.ACCEPTED ||
+            (stageStatus === ProposalStatus.ACTIVE &&
                 sppStageUtils.isApprovalReached(proposal, stage) &&
                 !sppStageUtils.isVeto(stage))) &&
         !(isSignalingProposal && isLastStage);
@@ -105,7 +105,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         : { time: maxAdvanceTime, info: t(`app.plugins.spp.sppStageStatus.max${advanceTimeContext}Info`) };
 
     // Stage cannot be advanced anymore, display expired info text.
-    if (stageStatus === ProposalVotingStatus.EXPIRED) {
+    if (stageStatus === ProposalStatus.EXPIRED) {
         return (
             <span className="text-right text-neutral-500">
                 {t(`app.plugins.spp.sppStageStatus.expired${advanceTimeContext}`)}

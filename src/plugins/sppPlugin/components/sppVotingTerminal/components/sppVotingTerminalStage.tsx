@@ -2,13 +2,7 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
-import {
-    addressUtils,
-    proposalStatusToVotingStatus,
-    ProposalVoting,
-    ProposalVotingStatus,
-    ProposalVotingTab,
-} from '@aragon/gov-ui-kit';
+import { addressUtils, ProposalStatus, ProposalVoting, ProposalVotingTab } from '@aragon/gov-ui-kit';
 import type { ISppProposal, ISppStage } from '../../../types';
 import { sppStageUtils } from '../../../utils/sppStageUtils';
 import { SppStageStatus } from './sppStageStatus';
@@ -37,22 +31,23 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
 
     const processedStartDate = sppStageUtils.getStageStartDate(proposal, stage)?.toMillis();
     const processedEndDate = sppStageUtils.getStageEndDate(proposal, stage)?.toMillis();
+    const processedMinAdvance = sppStageUtils.getStageMinAdvance(proposal, stage)?.toMillis();
+    const processedMaxAdvance = sppStageUtils.getStageMaxAdvance(proposal, stage)?.toMillis();
 
     // Keep stage status updated for statuses that are time dependent
-    const { ACTIVE, PENDING, ACCEPTED, UNREACHED } = ProposalVotingStatus;
+    const { ACTIVE, PENDING, ACCEPTED } = ProposalStatus;
     const enableDynamicValue = [ACTIVE, PENDING, ACCEPTED].includes(sppStageUtils.getStageStatus(proposal, stage));
     const stageStatus = useDynamicValue({
         callback: () => sppStageUtils.getStageStatus(proposal, stage),
         enabled: enableDynamicValue,
     });
 
-    const processedStageStatus = stageStatus === UNREACHED ? stageStatus : proposalStatusToVotingStatus[stageStatus];
     const bodyList = stage.plugins.map((plugin) => plugin.address);
 
     const isMultiStage = proposal.settings.stages.length > 1;
     const isSingleBody = bodyList.length === 1;
 
-    const canVote = processedStageStatus === ProposalVotingStatus.ACTIVE;
+    const canVote = stageStatus === ProposalStatus.ACTIVE;
 
     const isVeto = sppStageUtils.isVeto(stage);
     const isTimelockStage = !stage.plugins.length;
@@ -60,12 +55,14 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     return (
         <ProposalVoting.Stage
             name={stage.name}
-            status={processedStageStatus}
+            status={stageStatus}
             startDate={processedStartDate}
             endDate={processedEndDate}
             index={stage.stageIndex}
             isMultiStage={isMultiStage}
             bodyList={bodyList}
+            minAdvance={processedMinAdvance}
+            maxAdvance={processedMaxAdvance}
         >
             <ProposalVoting.BodySummary>
                 <ProposalVoting.BodySummaryList>
@@ -103,7 +100,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                 <ProposalVoting.BodyContent
                     name={plugin.subdomain != null ? plugin.name : addressUtils.truncateAddress(plugin.address)}
                     key={plugin.address}
-                    status={processedStageStatus}
+                    status={stageStatus}
                     bodyId={plugin.address}
                     hideTabs={!plugin.subdomain ? [ProposalVotingTab.VOTES] : undefined}
                     bodyBrand={plugin.subdomain === undefined ? brandedExternals[plugin.brandId] : undefined}
