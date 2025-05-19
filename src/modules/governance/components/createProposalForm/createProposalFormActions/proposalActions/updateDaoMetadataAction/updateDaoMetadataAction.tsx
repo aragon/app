@@ -57,7 +57,7 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (p
             const metadata = daoAvatar ? { ...proposedMetadata, avatar: daoAvatar } : proposedMetadata;
 
             const ipfsResult = await pinJsonAsync({ body: metadata });
-            const hexResult = transactionUtils.cidToHex(ipfsResult.IpfsHash);
+            const hexResult = transactionUtils.stringToMetadataHex(ipfsResult.IpfsHash);
             const data = encodeFunctionData({ abi: [setMetadataAbi], args: [hexResult] });
 
             return data;

@@ -3,7 +3,7 @@ import { useProposalListData } from '@/modules/governance/hooks/useProposalListD
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
 import type { IMultisigProposal } from '../../types';
-import { MultisigProposalListItem } from './multisigProposalListItem';
+import { MultisigProposalListItem } from './components/multisigProposalListItem';
 
 export interface IMultisigProposalListProps extends IDaoProposalListDefaultProps {}
 

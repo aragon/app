@@ -47,7 +47,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@aragon/app-next@workspace:."
   dependencies:
-    "@aragon/gov-ui-kit": "npm:0.0.0-20250519104759"
+    "@aragon/gov-ui-kit": "npm:^1.6.0"
     "@changesets/changelog-github": "npm:^0.5.1"
     "@changesets/cli": "npm:^2.29.4"
     "@floating-ui/react": "npm:^0.27.8"
@@ -111,9 +111,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@aragon/gov-ui-kit@npm:0.0.0-20250519104759":
-  version: 0.0.0-20250519104759
-  resolution: "@aragon/gov-ui-kit@npm:0.0.0-20250519104759"
+"@aragon/gov-ui-kit@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "@aragon/gov-ui-kit@npm:1.6.0"
   dependencies:
     "@radix-ui/react-accordion": "npm:^1.2.0"
     "@radix-ui/react-alert-dialog": "npm:^1.1.0"
@@ -154,7 +154,7 @@ __metadata:
     tailwindcss: ^3.4.0
     viem: ^2.29.0
     wagmi: ^2.15.0
-  checksum: 10c0/f66d8bd60a8bb586cc3b0c8005034762bba188d7ea6bc562984793e451cb8358ee3c47df1f1ea7250a4e83640fe30756e7652831f48bb7893729df8ec39401e0
+  checksum: 10c0/05cb6a45ba4c6d8e1f1a4e701250ed1f4a0bcf10f85fbb2e9044f2e3dedd5f9e738d09e9861cbd3927185cee8eb250e173ea97c7fb9be67baf817849f9e417a9
   languageName: node
   linkType: hard
 
@@ -14801,16 +14801,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-model@npm:^1.0.0, prosemirror-model@npm:^1.19.0, prosemirror-model@npm:^1.20.0, prosemirror-model@npm:^1.21.0, prosemirror-model@npm:^1.23.0":
-  version: 1.23.0
-  resolution: "prosemirror-model@npm:1.23.0"
-  dependencies:
-    orderedmap: "npm:^2.0.0"
-  checksum: 10c0/394f8921e723fb5860381cd0b2ff6988025005a6472a886a748cc1ad72055fd194801c1f12f8fbbd54f47f075c95fd23b68ad0811628e649f06f6005fb5790d6
-  languageName: node
-  linkType: hard
-
-"prosemirror-model@npm:^1.25.0":
+"prosemirror-model@npm:^1.0.0, prosemirror-model@npm:^1.19.0, prosemirror-model@npm:^1.20.0, prosemirror-model@npm:^1.21.0, prosemirror-model@npm:^1.23.0, prosemirror-model@npm:^1.25.0":
   version: 1.25.1
   resolution: "prosemirror-model@npm:1.25.1"
   dependencies:
@@ -14877,16 +14868,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-transform@npm:^1.0.0, prosemirror-transform@npm:^1.1.0, prosemirror-transform@npm:^1.10.2, prosemirror-transform@npm:^1.7.3":
-  version: 1.10.2
-  resolution: "prosemirror-transform@npm:1.10.2"
-  dependencies:
-    prosemirror-model: "npm:^1.21.0"
-  checksum: 10c0/4b63879bab3faf4e266a58ae00760f20d87e1fc9a342788276cccba6bdd6cb7b5cfd089f17d975200c0715e07b503126aa752ffe42e8c50761369dc6ff920b05
-  languageName: node
-  linkType: hard
-
-"prosemirror-transform@npm:^1.10.3":
+"prosemirror-transform@npm:^1.0.0, prosemirror-transform@npm:^1.1.0, prosemirror-transform@npm:^1.10.2, prosemirror-transform@npm:^1.10.3, prosemirror-transform@npm:^1.7.3":
   version: 1.10.4
   resolution: "prosemirror-transform@npm:1.10.4"
   dependencies:
@@ -14895,18 +14877,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-view@npm:^1.0.0, prosemirror-view@npm:^1.1.0, prosemirror-view@npm:^1.27.0, prosemirror-view@npm:^1.31.0, prosemirror-view@npm:^1.37.0":
-  version: 1.37.1
-  resolution: "prosemirror-view@npm:1.37.1"
-  dependencies:
-    prosemirror-model: "npm:^1.20.0"
-    prosemirror-state: "npm:^1.0.0"
-    prosemirror-transform: "npm:^1.1.0"
-  checksum: 10c0/19552162446b309d5fe8429591302c72737415c666a43d3d620e40fd2650558a552e8727826fa1b3a5974b849af4a80977aa7288ea3e0f98cc8f42613efd584a
-  languageName: node
-  linkType: hard
-
-"prosemirror-view@npm:^1.39.1":
+"prosemirror-view@npm:^1.0.0, prosemirror-view@npm:^1.1.0, prosemirror-view@npm:^1.27.0, prosemirror-view@npm:^1.31.0, prosemirror-view@npm:^1.37.0, prosemirror-view@npm:^1.39.1":
   version: 1.39.3
   resolution: "prosemirror-view@npm:1.39.3"
   dependencies:

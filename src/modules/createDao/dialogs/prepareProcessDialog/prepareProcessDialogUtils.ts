@@ -92,7 +92,7 @@ class PrepareProcessDialogUtils {
     };
 
     private buildPrepareInstallProcessorActionData = (metadata: string, dao: IDao) => {
-        const processorMetadata = transactionUtils.cidToHex(metadata);
+        const processorMetadata = transactionUtils.stringToMetadataHex(metadata);
         const processorInstallData = sppTransactionUtils.buildPreparePluginInstallData(processorMetadata, dao);
 
         return processorInstallData;
@@ -126,7 +126,7 @@ class PrepareProcessDialogUtils {
     private buildPrepareInstallPluginActionData = (params: IBuildPrepareInstallPluginActionParams) => {
         const { metadataCid, dao, body, stageVotingPeriod } = params;
 
-        const metadata = transactionUtils.cidToHex(metadataCid);
+        const metadata = transactionUtils.stringToMetadataHex(metadataCid);
         const prepareFunctionParams = { metadata, dao, body, stageVotingPeriod };
         const prepareFunction = pluginRegistryUtils.getSlotFunction<IBuildPreparePluginInstallDataParams, Hex>({
             slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA,

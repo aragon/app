@@ -15,7 +15,7 @@ import { createProposalUtils } from '@/modules/governance/utils/createProposalUt
 import { sppPlugin } from '@/plugins/sppPlugin/constants/sppPlugin';
 import { Network } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
-import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
+import { generatePluginInstallationSetupData } from '@/shared/testUtils/generators/pluginSetupData';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
@@ -129,7 +129,7 @@ describe('sppTransaction utils', () => {
 
         it('correctly builds the install actions for plugins', () => {
             const values = generateCreateProcessFormDataAdvanced({ governanceType: GovernanceType.ADVANCED });
-            const setupData = [generatePluginSetupData(), generatePluginSetupData()];
+            const setupData = [generatePluginInstallationSetupData(), generatePluginInstallationSetupData()];
             const dao = generateDao({ address: '0x123', network: Network.ETHEREUM_SEPOLIA });
             const daoAddress = dao.address as Viem.Hex;
 
@@ -148,7 +148,7 @@ describe('sppTransaction utils', () => {
 
     describe('buildBodyPermissionActions', () => {
         it('correctly builds permission actions for the bodies of the SPP', () => {
-            const pluginData = generatePluginSetupData({ pluginAddress: '0x123' });
+            const pluginData = generatePluginInstallationSetupData({ pluginAddress: '0x123' });
             const daoAddress = '0xDao' as Viem.Hex;
             const sppAddress = '0xSpp' as Viem.Hex;
 
@@ -189,10 +189,10 @@ describe('sppTransaction utils', () => {
         const buildRuleConditionsSpy = jest.spyOn(permissionTransactionUtils, 'buildRuleConditions');
 
         it('returns undefined when proposalCreationMode is ANY_WALLET', () => {
-            const values = generateCreateProcessFormDataAdvanced({
-                proposalCreationMode: ProposalCreationMode.ANY_WALLET,
-            });
-            const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, generatePluginSetupData(), []);
+            const proposalCreationMode = ProposalCreationMode.ANY_WALLET;
+            const values = generateCreateProcessFormDataAdvanced({ proposalCreationMode });
+            const setupData = generatePluginInstallationSetupData();
+            const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, setupData, []);
             expect(result).toBeUndefined();
         });
 
@@ -206,13 +206,13 @@ describe('sppTransaction utils', () => {
                 proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
             });
 
-            const sppSetupData = generatePluginSetupData({
+            const sppSetupData = generatePluginInstallationSetupData({
                 preparedSetupData: { helpers: ['0xSppRuleCondition'], permissions: [] },
             });
 
             const pluginSetupData = [
-                generatePluginSetupData({ preparedSetupData: { helpers: ['0x0'], permissions: [] } }),
-                generatePluginSetupData({ preparedSetupData: { helpers: ['0x1'], permissions: [] } }),
+                generatePluginInstallationSetupData({ preparedSetupData: { helpers: ['0x0'], permissions: [] } }),
+                generatePluginInstallationSetupData({ preparedSetupData: { helpers: ['0x1'], permissions: [] } }),
             ];
 
             const expectedConditionRules = [{ id: 202, op: 1, value: '0xTestBodyCondition', permissionId: zeroHash }];

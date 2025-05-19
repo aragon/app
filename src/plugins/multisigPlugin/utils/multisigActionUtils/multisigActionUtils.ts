@@ -4,6 +4,7 @@ import type { IActionComposerPluginData } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 import {
     addressUtils,
     ProposalActionType as GukProposalActionType,
@@ -11,9 +12,9 @@ import {
     type IProposalActionChangeMembers as IGukProposalActionChangeMembers,
     type IProposalActionChangeSettings as IGukProposalActionChangeSettings,
 } from '@aragon/gov-ui-kit';
-import { MultisigAddMembersAction } from '../../components/multisigProposalActions/multisigAddMembersAction';
-import { MultisigRemoveMembersAction } from '../../components/multisigProposalActions/multisigRemoveMembersAction';
-import { MultisigUpdateSettingsAction } from '../../components/multisigProposalActions/multisigUpdateSettingsAction';
+import { MultisigAddMembersAction } from '../../components/multisigActions/multisigAddMembersAction';
+import { MultisigRemoveMembersAction } from '../../components/multisigActions/multisigRemoveMembersAction';
+import { MultisigUpdateSettingsAction } from '../../components/multisigActions/multisigUpdateSettingsAction';
 import {
     MultisigProposalActionType,
     type IMultisigActionChangeMembers,
@@ -46,10 +47,11 @@ export type IGetMultisigActionsResult = IActionComposerPluginData<IDaoPlugin<IMu
 
 class MultisigActionUtils {
     getMultisigActions = ({ plugin, t }: IGetMultisigActionsProps): IGetMultisigActionsResult => {
-        const { address, release, build } = plugin;
+        const { address } = plugin;
 
         // The setMetadata function on the Multisig plugin is only supported from version 1.3 onwards
-        const includePluginMetadataItem = Number(release) > 1 || (Number(release) === 1 && Number(build) >= 3);
+        const minVersion = { release: 1, build: 3 };
+        const includePluginMetadataAction = versionComparatorUtils.isGreaterOrEqualTo(plugin, minVersion);
 
         return {
             groups: [
@@ -90,7 +92,7 @@ class MultisigActionUtils {
                 {
                     ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),
                     meta: plugin,
-                    hidden: !includePluginMetadataItem,
+                    hidden: !includePluginMetadataAction,
                 },
             ],
             components: {

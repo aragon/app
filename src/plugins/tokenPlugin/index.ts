@@ -1,8 +1,6 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import { useTokenPermissionCheckProposalCreation } from '@/plugins/tokenPlugin/hooks/useTokenPermissionCheckProposalCreation';
-import { useTokenPermissionCheckVoteSubmission } from '@/plugins/tokenPlugin/hooks/useTokenPermissionCheckVoteSubmission';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { TokenCreateProposalSettingsForm } from './components/tokenCreateProposalSettingsForm';
 import { TokenGovernanceInfo } from './components/tokenGovernanceInfo';
@@ -23,6 +21,8 @@ import { useTokenActions } from './hooks/useTokenActions';
 import { useTokenGovernanceSettings } from './hooks/useTokenGovernanceSettings';
 import { useTokenMemberStats } from './hooks/useTokenMemberStats';
 import { useTokenNormalizeActions } from './hooks/useTokenNormalizeActions';
+import { useTokenPermissionCheckProposalCreation } from './hooks/useTokenPermissionCheckProposalCreation';
+import { useTokenPermissionCheckVoteSubmission } from './hooks/useTokenPermissionCheckVoteSubmission';
 import { tokenProposalUtils } from './utils/tokenProposalUtils';
 import { tokenTransactionUtils } from './utils/tokenTransactionUtils';
 
@@ -133,6 +133,11 @@ export const initialiseTokenPlugin = () => {
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_INFO,
             pluginId: tokenPlugin.id,
             component: TokenGovernanceInfo,
+        })
+        .registerSlotFunction({
+            slotId: SettingsSlotId.SETTINGS_BUILD_PREPARE_PLUGIN_UPDATE_DATA,
+            pluginId: tokenPlugin.id,
+            function: tokenTransactionUtils.buildPrepareUpdateData,
         })
 
         // Create DAO module slots

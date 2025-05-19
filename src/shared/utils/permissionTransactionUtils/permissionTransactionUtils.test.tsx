@@ -1,5 +1,5 @@
 import * as Viem from 'viem';
-import { encodeFunctionData, type Hex, zeroHash } from 'viem';
+import { encodeFunctionData, zeroHash } from 'viem';
 import { permissionTransactionUtils } from '../permissionTransactionUtils';
 import { permissionManagerAbi } from './abi/permissionManagerAbi';
 
@@ -16,7 +16,7 @@ describe('permissionTransaction utils', () => {
 
     describe('buildGrantPermissionTransaction', () => {
         it('returns a transaction for granting the specified permission', () => {
-            const grantParams = { where: '0x123' as Hex, who: '0x456' as Hex, what: 'what', to: '0x789' as Hex };
+            const grantParams = { where: '0x123', who: '0x456', what: 'what', to: '0x789' } as const;
             const permissionHash = '0x0000';
             const transactionData = '0x0001';
 
@@ -40,7 +40,7 @@ describe('permissionTransaction utils', () => {
 
     describe('buildRevokePermissionTransaction', () => {
         it('returns a transaction for revoking the specified permission', () => {
-            const grantParams = { where: '0x123' as Hex, who: '0x456' as Hex, what: 'what', to: '0x789' as Hex };
+            const grantParams = { where: '0x123', who: '0x456', what: 'what', to: '0x789' } as const;
             const permissionHash = '0x0000';
             const transactionData = '0x0001';
 
@@ -59,6 +59,27 @@ describe('permissionTransaction utils', () => {
 
             const expectedTransaction = { to: grantParams.to, data: transactionData, value: BigInt(0) };
             expect(transaction).toEqual(expectedTransaction);
+        });
+    });
+
+    describe('buildGrantRevokePermissionTransactions', () => {
+        const buildGrantTransactionSpy = jest.spyOn(permissionTransactionUtils, 'buildGrantPermissionTransaction');
+        const buildRevokeTransactionSpy = jest.spyOn(permissionTransactionUtils, 'buildRevokePermissionTransaction');
+
+        afterEach(() => {
+            buildGrantTransactionSpy.mockReset();
+            buildRevokeTransactionSpy.mockReset();
+        });
+
+        it('returns the grant and revoke transactions for the given parameters', () => {
+            const params = { where: '0x1', who: '0x2', what: 'permission-x', to: '0x3' } as const;
+            const grantTransaction = { to: '0x1', data: '0xgrant', value: BigInt(0) } as const;
+            const revokeTransaction = { to: '0x1', data: '0xrevoke', value: BigInt(0) } as const;
+            buildGrantTransactionSpy.mockReturnValue(grantTransaction);
+            buildRevokeTransactionSpy.mockReturnValue(revokeTransaction);
+            const result = permissionTransactionUtils.buildGrantRevokePermissionTransactions(params);
+            expect(result[0]).toEqual(grantTransaction);
+            expect(result[1]).toEqual(revokeTransaction);
         });
     });
 

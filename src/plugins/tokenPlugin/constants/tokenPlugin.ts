@@ -4,7 +4,13 @@ import type { IPluginInfo } from '@/shared/types';
 export const tokenPlugin: IPluginInfo = {
     id: 'token-voting',
     name: 'Token',
-    installVersion: { release: 1, build: 3 },
+    installVersion: {
+        release: 1,
+        build: 3,
+        releaseNotes: 'https://github.com/aragon/token-voting-plugin/releases/tag/v1.3.0',
+        description:
+            'This optional upgrade introduces minor new features, including the ability to customize metadata for governance plugins.',
+    },
     repositoryAddresses: {
         [Network.ARBITRUM_MAINNET]: '0x1AeD2BEb470aeFD65B43f905Bd5371b1E4749d18',
         [Network.BASE_MAINNET]: '0x2532570DcFb749A7F976136CC05648ef2a0f60b0',

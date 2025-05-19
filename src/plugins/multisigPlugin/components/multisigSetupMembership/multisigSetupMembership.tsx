@@ -1,8 +1,8 @@
 import { AddressesInput } from '@/shared/components/forms/addressesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useWatch } from 'react-hook-form';
+import { MultisigSetupMembershipItem } from './components/multisigSetupMembershipItem';
 import type { IMultisigSetupMembershipForm, IMultisigSetupMembershipProps } from './multisigSetupMembership.api';
-import { MultisigSetupMembershipItem } from './multisigSetupMembershipItem';
 
 export const MultisigSetupMembership: React.FC<IMultisigSetupMembershipProps> = (props) => {
     const { formPrefix, disabled, onAddClick, pluginAddress, hideLabel } = props;

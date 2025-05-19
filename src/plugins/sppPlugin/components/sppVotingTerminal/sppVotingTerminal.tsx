@@ -1,7 +1,7 @@
 import { ProposalVoting } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { type ISppProposal } from '../../types';
-import { SppVotingTerminalStage } from './sppVotingTerminalStage';
+import { SppVotingTerminalStage } from './components/sppVotingTerminalStage';
 
 export interface ISppVotingTerminalProps {
     /**

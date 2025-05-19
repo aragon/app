@@ -7,7 +7,7 @@ import { generateTokenMember } from '../../testUtils';
 import type { ITokenMember } from '../../types';
 import { TokenMemberList, type ITokenMemberListProps } from './tokenMemberList';
 
-jest.mock('./tokenMemberListItem', () => ({
+jest.mock('./components/tokenMemberListItem', () => ({
     TokenMemberListItem: (props: { member: ITokenMember }) => (
         <div data-testid="member-mock">{props.member.address}</div>
     ),
