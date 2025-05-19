@@ -12,6 +12,7 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     Button,
     ChainEntityType,
+    Clipboard,
     DateFormat,
     DefinitionList,
     IconType,
@@ -129,18 +130,20 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.chain')}>
                                 <p className="text-neutral-500">{networkDefinitions[dao.network].name}</p>
                             </DefinitionList.Item>
-                            <DefinitionList.Item
-                                term={t('app.dashboard.daoDashboardPage.aside.details.address')}
-                                link={{ href: daoAddressLink }}
-                            >
-                                {truncatedAddress}
+                            <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.address')}>
+                                <Clipboard copyValue={dao.address} variant="avatar">
+                                    <Link href={daoAddressLink} isExternal={true}>
+                                        {truncatedAddress}
+                                    </Link>
+                                </Clipboard>
                             </DefinitionList.Item>
                             {daoEns != null && (
-                                <DefinitionList.Item
-                                    term={t('app.dashboard.daoDashboardPage.aside.details.ens')}
-                                    link={{ href: daoAddressLink, className: 'max-w-full' }}
-                                >
-                                    {daoEns}
+                                <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.ens')}>
+                                    <Clipboard copyValue={daoEns} variant="avatar">
+                                        <Link href={daoAddressLink} isExternal={true} className="max-w-full">
+                                            {daoEns}
+                                        </Link>
+                                    </Clipboard>
                                 </DefinitionList.Item>
                             )}
                             <DefinitionList.Item
@@ -157,13 +160,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             className="flex flex-col gap-4"
                         >
                             {dao.links.map(({ url, name }) => (
-                                <Link
-                                    key={url}
-                                    iconRight={IconType.LINK_EXTERNAL}
-                                    description={url}
-                                    href={url}
-                                    target="_blank"
-                                >
+                                <Link key={url} href={url} isExternal={true} showUrl={true}>
                                     {name}
                                 </Link>
                             ))}
