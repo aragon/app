@@ -28,24 +28,30 @@ export const NavigationLinksItem = (props: INavigationLinksItemProps) => {
     const pathname = usePathname();
     const isActive = href != null && pathname.includes(href);
 
+    const iconClassNames = classNames({ 'text-neutral-300': !isActive }, { 'text-primary-400': isActive });
+    const textClassNames = classNames(
+        'flex flex-row text-base font-normal leading-tight text-neutral-500',
+        { 'text-neutral-500': !isActive },
+        { 'text-neutral-800': isActive },
+        { truncate: variant === 'column' },
+        className,
+    );
+
     return (
         <Link
             href={href}
             aria-current={isActive ? 'page' : undefined}
             className={classNames(
-                'flex flex-row gap-3 py-3 text-neutral-500',
-                { 'rounded-xl px-4 hover:bg-neutral-50': variant === 'rows' },
-                { 'border-b-2 border-primary-400 pb-2.5': isActive && variant === 'columns' },
-                { 'bg-neutral-50': isActive && variant === 'rows' },
+                'flex flex-row items-center gap-2 py-3 text-neutral-500',
+                { 'rounded-xl px-4 hover:bg-neutral-50': variant === 'column' },
+                { 'bg-neutral-50': isActive && variant === 'column' },
                 { 'text-neutral-800': isActive },
                 className,
             )}
             {...otherProps}
         >
-            {variant === 'rows' && <Icon icon={icon} />}
-            <p className={classNames('text-base font-normal leading-tight', { truncate: variant === 'rows' })}>
-                {children}
-            </p>
+            <Icon icon={icon} className={iconClassNames} />
+            <p className={textClassNames}>{children}</p>
         </Link>
     );
 };

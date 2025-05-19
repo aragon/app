@@ -17,7 +17,7 @@ export interface INavigationLinksProps<TRouteType extends string> extends Compon
 }
 
 export const NavigationLinks = <TRouteType extends string>(props: INavigationLinksProps<TRouteType>) => {
-    const { className, links, variant = 'columns', ...otherProps } = props;
+    const { className, links, variant = 'row', ...otherProps } = props;
 
     const { t } = useTranslations();
 
@@ -25,8 +25,8 @@ export const NavigationLinks = <TRouteType extends string>(props: INavigationLin
         <div
             className={classNames(
                 'flex overflow-auto',
-                { 'flex-row gap-10': variant === 'columns' },
-                { 'flex-col gap-1': variant === 'rows' },
+                { 'item-center flex-row gap-x-4 xl:gap-x-10': variant === 'row' },
+                { 'flex-col gap-1': variant === 'column' },
                 className,
             )}
             {...otherProps}

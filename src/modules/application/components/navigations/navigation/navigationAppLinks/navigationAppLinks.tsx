@@ -16,7 +16,7 @@ export const NavigationAppLinks: React.FC<INavigationAppLinksProps> = (props) =>
     const { t } = useTranslations();
 
     return (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
             <Button
                 target="_blank"
                 href="https://aragonassociation.atlassian.net/servicedesk/customer/portal/3"
