@@ -3,7 +3,7 @@ import { type ICreateProcessFormDataAdvanced, ProcessStageType } from './createP
 class CreateProcessFormUtils {
     private defaultVotingPeriod = { days: 7, minutes: 0, hours: 0 };
 
-    private defaultTimingSettings = { votingPeriod: this.defaultVotingPeriod, earlyStageAdvance: false };
+    private defaultTimingSettings = { votingPeriod: this.defaultVotingPeriod, earlyStageAdvance: true };
 
     private defaultType = ProcessStageType.NORMAL;
 
