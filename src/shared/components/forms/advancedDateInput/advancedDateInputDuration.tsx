@@ -76,7 +76,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
     const handleInputBlur = () => trigger(field);
 
     return (
-        <Card className={classNames('flex flex-col gap-4 p-6 shadow-neutral-sm', className)} {...otherProps}>
+        <Card className={classNames('shadow-neutral-sm flex flex-col gap-4 p-6', className)} {...otherProps}>
             <div className="flex flex-col justify-between gap-4 md:flex-row">
                 <InputNumber
                     label={t('app.shared.advancedDateInput.duration.minutes')}

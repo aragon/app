@@ -35,7 +35,7 @@ export const NavigationLinksItem = (props: INavigationLinksItemProps) => {
             className={classNames(
                 'flex flex-row gap-3 py-3 text-neutral-500',
                 { 'rounded-xl px-4 hover:bg-neutral-50': variant === 'rows' },
-                { 'border-b-2 border-primary-400 pb-2.5': isActive && variant === 'columns' },
+                { 'border-primary-400 border-b-2 pb-2.5': isActive && variant === 'columns' },
                 { 'bg-neutral-50': isActive && variant === 'rows' },
                 { 'text-neutral-800': isActive },
                 className,
@@ -43,7 +43,7 @@ export const NavigationLinksItem = (props: INavigationLinksItemProps) => {
             {...otherProps}
         >
             {variant === 'rows' && <Icon icon={icon} />}
-            <p className={classNames('text-base font-normal leading-tight', { truncate: variant === 'rows' })}>
+            <p className={classNames('text-base leading-tight font-normal', { truncate: variant === 'rows' })}>
                 {children}
             </p>
         </Link>

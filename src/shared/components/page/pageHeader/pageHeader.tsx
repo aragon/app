@@ -40,7 +40,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
 
     return (
         <header
-            className={classNames('bg-gradient-to-b from-neutral-0 to-neutral-50 pt-6 md:pt-10', className)}
+            className={classNames('from-neutral-0 bg-gradient-to-b to-neutral-50 pt-6 md:pt-10', className)}
             {...otherProps}
         >
             <Container className="flex flex-col gap-6">

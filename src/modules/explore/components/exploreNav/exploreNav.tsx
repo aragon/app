@@ -47,7 +47,7 @@ export const ExploreNav: React.FC = () => {
         <Navigation.Container
             className={classNames(
                 'border-b-0',
-                isPostHero ? 'bg-primary-400' : 'bg-transparent bg-gradient-to-b from-primary-400 to-transparent',
+                isPostHero ? 'bg-primary-400' : 'from-primary-400 bg-transparent bg-gradient-to-b to-transparent',
             )}
             containerClasses={classNames('flex items-center justify-between gap-6 px-4 py-3 lg:gap-12 lg:px-6 lg:py-5')}
         >
