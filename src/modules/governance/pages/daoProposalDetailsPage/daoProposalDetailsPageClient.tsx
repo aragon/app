@@ -6,22 +6,18 @@ import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     addressUtils,
-    Button,
     CardCollapsible,
     ChainEntityType,
     Clipboard,
-    clipboardUtils,
     DateFormat,
     DefinitionList,
     DocumentParser,
     formatterUtils,
-    IconType,
     Link,
     ProposalActions,
     type ProposalStatus,
@@ -53,7 +49,6 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const { t } = useTranslations();
     const { buildEntityUrl } = useBlockExplorer();
     const { copy } = useGukModulesContext();
-    const pageUrl = useCurrentUrl();
 
     const proposalUrlParams = { slug: proposalSlug };
     const proposalParams = {
@@ -114,18 +109,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     return (
         <>
-            <Page.Header breadcrumbs={pageBreadcrumbs} breadcrumbsTag={statusTag} title={title} description={summary}>
-                <div className="flex flex-row gap-4">
-                    <Button
-                        variant="tertiary"
-                        size="md"
-                        iconRight={IconType.LINK_EXTERNAL}
-                        onClick={() => clipboardUtils.copy(pageUrl)}
-                    >
-                        {t('app.governance.daoProposalDetailsPage.header.action.share')}
-                    </Button>
-                </div>
-            </Page.Header>
+            <Page.Header breadcrumbs={pageBreadcrumbs} breadcrumbsTag={statusTag} title={title} description={summary} />
             <Page.Content>
                 <Page.Main>
                     {description && (

@@ -8,17 +8,15 @@ import { Page } from '@/shared/components/page';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import {
     addressUtils,
     ChainEntityType,
-    clipboardUtils,
+    Clipboard,
     DateFormat,
     DefinitionList,
-    Dropdown,
     formatterUtils,
-    IconType,
+    Link,
     MemberAvatar,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
@@ -49,8 +47,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const { address, daoId } = props;
 
     const { t } = useTranslations();
-    const { getBlockExplorer, buildEntityUrl } = useBlockExplorer();
-    const pageUrl = useCurrentUrl();
+    const { buildEntityUrl } = useBlockExplorer();
 
     const memberUrlParams = { address };
     const memberQueryParams = { daoId };
@@ -103,7 +100,6 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
 
     const { id: chainId } = networkDefinitions[dao.network];
     const addressUrl = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address, chainId });
-    const blockExplorer = getBlockExplorer(chainId);
 
     const pageBreadcrumbs = [
         {
@@ -129,33 +125,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                 stats={stats}
                 title={memberName}
                 avatar={<MemberAvatar size="2xl" ensName={ens ?? undefined} address={address} />}
-            >
-                <div className="flex flex-row gap-4">
-                    <Dropdown.Container
-                        contentClassNames="max-w-52"
-                        constrainContentWidth={false}
-                        size="md"
-                        label={memberName}
-                    >
-                        {ens && (
-                            <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(ens)}>
-                                {ens}
-                            </Dropdown.Item>
-                        )}
-                        <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(address)}>
-                            {truncatedAddress}
-                        </Dropdown.Item>
-                        <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(pageUrl)}>
-                            {pageUrl}
-                        </Dropdown.Item>
-                        {addressUrl && blockExplorer && (
-                            <Dropdown.Item icon={IconType.LINK_EXTERNAL} href={addressUrl} target="_blank">
-                                {blockExplorer.name}
-                            </Dropdown.Item>
-                        )}
-                    </Dropdown.Container>
-                </div>
-            </Page.Header>
+            />
             <Page.Content>
                 <Page.Main>
                     <Page.MainSection title={t('app.governance.daoMemberDetailsPage.main.votingActivity.title')}>
@@ -171,18 +141,20 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                 <Page.Aside>
                     <Page.AsideCard title={t('app.governance.daoMemberDetailsPage.aside.details.title')}>
                         <DefinitionList.Container>
-                            <DefinitionList.Item
-                                term={t('app.governance.daoMemberDetailsPage.aside.details.address')}
-                                link={{ href: addressUrl }}
-                            >
-                                {truncatedAddress}
+                            <DefinitionList.Item term={t('app.governance.daoMemberDetailsPage.aside.details.address')}>
+                                <Clipboard copyValue={address}>
+                                    <Link href={addressUrl} isExternal={true}>
+                                        {truncatedAddress}
+                                    </Link>
+                                </Clipboard>
                             </DefinitionList.Item>
                             {ens && addressUrl && (
-                                <DefinitionList.Item
-                                    term={t('app.governance.daoMemberDetailsPage.aside.details.ens')}
-                                    link={{ href: addressUrl }}
-                                >
-                                    {ens}
+                                <DefinitionList.Item term={t('app.governance.daoMemberDetailsPage.aside.details.ens')}>
+                                    <Clipboard copyValue={ens}>
+                                        <Link href={addressUrl} isExternal={true}>
+                                            {ens}
+                                        </Link>
+                                    </Clipboard>
                                 </DefinitionList.Item>
                             )}
                             <DefinitionList.Item

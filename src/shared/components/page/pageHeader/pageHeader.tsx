@@ -46,7 +46,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
             <Container className="flex flex-col gap-6">
                 {breadcrumbs && <Breadcrumbs links={breadcrumbs} tag={breadcrumbsTag} />}
                 <div className="flex w-full min-w-0 flex-row gap-10 md:gap-16 lg:gap-10 xl:gap-16">
-                    <div className="flex w-full flex-col">
+                    <div className="flex w-full flex-col gap-6">
                         <div className="flex flex-col gap-y-2 md:gap-y-3">
                             <Heading size="h1">{title}</Heading>
                             {description && (
@@ -61,7 +61,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                             )}
                         </div>
                         {stats != null && stats.length > 0 && (
-                            <div className="flex flex-row gap-6 py-4 lg:gap-10 xl:gap-16">
+                            <div className="flex flex-row gap-6 py-3 lg:gap-10 xl:gap-16">
                                 {stats.map((stat) => (
                                     <PageHeaderStat key={stat.label} {...stat} />
                                 ))}
