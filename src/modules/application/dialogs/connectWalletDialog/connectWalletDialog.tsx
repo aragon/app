@@ -93,11 +93,7 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
                     </div>
                     <div className="flex flex-row items-center gap-3">
                         <AvatarIcon icon={IconType.BLOCKCHAIN_SMARTCONTRACT} variant="primary" size="sm" />
-                        <Link
-                            iconRight={IconType.LINK_EXTERNAL}
-                            target="_blank"
-                            href={t('app.application.connectWalletDialog.auditLink')}
-                        >
+                        <Link href={t('app.application.connectWalletDialog.auditLink')} isExternal={true}>
                             <span className="text-sm">
                                 {t('app.application.connectWalletDialog.feature.smartContracts')}
                             </span>

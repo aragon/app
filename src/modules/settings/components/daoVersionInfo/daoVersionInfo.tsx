@@ -1,7 +1,6 @@
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { useApplicationVersion } from '@/shared/hooks/useApplicationVersion';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -18,8 +17,6 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
     const { dao } = props;
     const { t } = useTranslations();
 
-    const version = useApplicationVersion();
-
     const { id: chainId } = networkDefinitions[dao.network];
     const { buildEntityUrl } = useBlockExplorer();
 
@@ -28,11 +25,6 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
 
     return (
         <DefinitionList.Container>
-            <DefinitionList.Item term={t('app.settings.daoVersionInfo.app')}>
-                <Clipboard copyValue={version} variant="avatar">
-                    <p className="truncate">{version}</p>
-                </Clipboard>
-            </DefinitionList.Item>
             <DefinitionList.Item
                 term={t('app.settings.daoVersionInfo.osLabel')}
                 description={t('app.settings.daoVersionInfo.osValue', { version: dao.version })}
@@ -52,7 +44,11 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
                     })}
                 >
                     <Clipboard copyValue={plugin.meta.address} variant="avatar">
-                        <Link href={daoLink}>{addressUtils.truncateAddress(plugin.meta.address)}</Link>
+                        <Link
+                            href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: plugin.meta.address, chainId })}
+                        >
+                            {addressUtils.truncateAddress(plugin.meta.address)}
+                        </Link>
                     </Clipboard>
                 </DefinitionList.Item>
             ))}
