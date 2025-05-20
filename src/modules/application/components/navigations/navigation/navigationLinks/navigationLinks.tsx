@@ -24,9 +24,8 @@ export const NavigationLinks = <TRouteType extends string>(props: INavigationLin
     return (
         <div
             className={classNames(
-                'flex overflow-auto',
                 { 'item-center flex-row gap-x-4 xl:gap-x-10': variant === 'row' },
-                { 'flex-col gap-1': variant === 'column' },
+                { 'gap-y-1': variant === 'column' },
                 className,
             )}
             {...otherProps}

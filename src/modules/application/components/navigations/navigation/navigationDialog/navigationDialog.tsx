@@ -2,6 +2,7 @@ import type { IDao } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { addressUtils, DaoAvatar, Dialog, Icon, IconType, type IDialogRootProps } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import Link from 'next/link';
 import { NavigationLinks, type INavigationLink } from '../navigationLinks';
 
@@ -37,7 +38,7 @@ export const NavigationDialog = <TRouteType extends string>(props: INavigationDi
             <Dialog.Content className="flex flex-col gap-4 py-7">
                 {children}
                 <div className="flex flex-col gap-4 px-4">
-                    <DaoAvatar src={daoAvatar} name={dao.name} size="md" responsiveSize={{ sm: 'lg' }} />
+                    <DaoAvatar src={daoAvatar} name={dao.name} size="lg" responsiveSize={{ sm: 'xl' }} />
                     <div className="flex flex-col gap-1.5 font-normal leading-tight">
                         <p className="truncate text-lg text-neutral-800 sm:text-xl">{dao.name}</p>
                         <p className="truncate text-sm text-neutral-500 sm:text-base">{dialogSubtitle}</p>
@@ -47,20 +48,24 @@ export const NavigationDialog = <TRouteType extends string>(props: INavigationDi
                     variant="column"
                     links={desktopLinks}
                     onClick={handleLinksClick}
-                    className="hidden lg:block"
+                    className="hidden lg:flex lg:flex-col"
                 />
                 <NavigationLinks
                     variant="column"
                     links={links}
                     onClick={handleLinksClick}
-                    className="block lg:hidden"
+                    className="flex flex-col lg:hidden"
                 />
                 <div className="w-full px-4">
                     <div className="border-t border-neutral-100" />
                 </div>
                 <Link
                     href="/"
-                    className="flex flex-row items-center justify-between rounded-xl px-4 py-3 text-neutral-500 hover:bg-neutral-50"
+                    className={classNames(
+                        'group flex flex-row justify-between rounded-xl px-4 py-3 text-neutral-500',
+                        'hover:bg-neutral-50',
+                        'focus:outline-none focus-visible:ring focus-visible:ring-primary focus-visible:ring-offset',
+                    )}
                 >
                     <p>Explore all DAOs</p>
                     <Icon icon={IconType.APP_EXPLORE} size="lg" className="text-neutral-300" />

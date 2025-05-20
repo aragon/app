@@ -28,10 +28,16 @@ export const NavigationLinksItem = (props: INavigationLinksItemProps) => {
     const pathname = usePathname();
     const isActive = href != null && pathname.includes(href);
 
-    const iconClassNames = classNames({ 'text-neutral-300': !isActive }, { 'text-primary-400': isActive });
+    const iconClassNames = classNames(
+        'group-active:text-neutral-500',
+        { 'text-neutral-300': !isActive },
+        { 'text-primary-400': isActive && variant === 'row' },
+        { 'text-neutral-800': isActive && variant === 'column' },
+    );
     const textClassNames = classNames(
         'flex flex-row text-base font-normal leading-tight text-neutral-500',
-        { 'text-neutral-500': !isActive },
+        'group-hover:text-neutral-800',
+        'group-active:text-primary-800',
         { 'text-neutral-800': isActive },
         { truncate: variant === 'column' },
         className,
@@ -42,7 +48,8 @@ export const NavigationLinksItem = (props: INavigationLinksItemProps) => {
             href={href}
             aria-current={isActive ? 'page' : undefined}
             className={classNames(
-                'flex flex-row items-center gap-2 py-3 text-neutral-500',
+                'group flex flex-row items-center gap-2 py-3 text-neutral-500',
+                'focus:outline-none focus-visible:ring focus-visible:ring-primary focus-visible:ring-offset',
                 { 'rounded-xl px-4 hover:bg-neutral-50': variant === 'column' },
                 { 'bg-neutral-50': isActive && variant === 'column' },
                 { 'text-neutral-800': isActive },
