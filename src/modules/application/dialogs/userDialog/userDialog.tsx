@@ -42,8 +42,8 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     }
 
     return (
-        <Dialog.Content className="flex flex-col gap-4 py-7">
-            <div className="flex flex-col gap-y-3">
+        <Dialog.Content className="flex flex-col gap-4 px-4 py-7">
+            <div className="flex flex-col gap-3 px-4">
                 <MemberAvatar address={address} size="lg" responsiveSize={{ sm: 'xl' }} />
                 <div className="flex flex-col gap-1.5 font-normal leading-tight">
                     {ensName != null && <p className="text-base text-neutral-500">{formattedAddress}</p>}

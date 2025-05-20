@@ -37,7 +37,7 @@ export const NavigationDialog = <TRouteType extends string>(props: INavigationDi
         <Dialog.Root onOpenChange={onOpenChange} {...otherProps}>
             <Dialog.Content className="flex flex-col gap-4 py-7">
                 {children}
-                <div className="flex flex-col gap-4 px-4">
+                <div className="flex flex-col gap-3 px-4">
                     <DaoAvatar src={daoAvatar} name={dao.name} size="lg" responsiveSize={{ sm: 'xl' }} />
                     <div className="flex flex-col gap-1.5 font-normal leading-tight">
                         <p className="truncate text-lg text-neutral-800 sm:text-xl">{dao.name}</p>
