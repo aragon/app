@@ -1,8 +1,10 @@
 import { NavigationLinksItem } from '@/modules/application/components/navigations/navigation/navigationLinks/navigationLinksItem';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     addressUtils,
     ChainEntityType,
+    Clipboard,
     Dialog,
     IconType,
     Link,
@@ -17,6 +19,8 @@ export interface IUserDialogProps extends IDialogComponentProps {}
 
 export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     const { id } = props.location;
+
+    const { t } = useTranslations();
 
     const { close } = useDialogContext();
     const { address, chainId } = useAccount();
@@ -47,13 +51,19 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                 <MemberAvatar address={address} size="lg" responsiveSize={{ sm: 'xl' }} />
                 <div className="flex flex-col gap-1.5 leading-tight font-normal">
                     {ensName != null && <p className="text-base text-neutral-500">{formattedAddress}</p>}
-                    <Link href={addressLink} isExternal={true} className="truncate text-lg text-neutral-800 sm:text-xl">
-                        {userName}
-                    </Link>
+                    <Clipboard copyValue={address}>
+                        <Link
+                            href={addressLink}
+                            isExternal={true}
+                            className="truncate text-lg text-neutral-800 sm:text-xl"
+                        >
+                            {userName}
+                        </Link>
+                    </Clipboard>
                 </div>
             </div>
             <NavigationLinksItem onClick={() => disconnect()} icon={IconType.LOGOUT} variant="column">
-                Disconnect
+                {t('app.application.userDialog.disconnect')}
             </NavigationLinksItem>
         </Dialog.Content>
     );

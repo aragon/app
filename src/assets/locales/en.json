@@ -95,7 +95,8 @@
         "a11y": {
           "description": "Information about the connected user",
           "title": "Connected user"
-        }
+        },
+        "disconnect": "Disconnect"
       }
     },
     "createDao": {

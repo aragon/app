@@ -4,7 +4,7 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { testLogger } from '@/test/utils';
 import type * as GovUiKit from '@aragon/gov-ui-kit';
-import { IconType, addressUtils } from '@aragon/gov-ui-kit';
+import { GukModulesProvider, IconType, addressUtils } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { Route } from 'next';
@@ -19,7 +19,7 @@ jest.mock('@aragon/gov-ui-kit', () => ({
     Icon: (props: GovUiKit.IIconProps) => <div data-testid={`icon-${props.icon}`} />,
 }));
 
-describe('<Navigation.Dialog /> component', () => {
+describe('<NavigationDialog /> component', () => {
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const getDaoEnsSpy = jest.spyOn(daoUtils, 'getDaoEns');
@@ -44,7 +44,11 @@ describe('<Navigation.Dialog /> component', () => {
             onOpenChange: jest.fn(),
             ...props,
         };
-        return <NavigationDialog<string> {...completeProps} />;
+        return (
+            <GukModulesProvider>
+                <NavigationDialog {...completeProps} />
+            </GukModulesProvider>
+        );
     };
 
     it('renders the children when open', () => {

@@ -1,8 +1,8 @@
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import { generateDialogContext } from '@/shared/testUtils';
 import type * as GovUiKit from '@aragon/gov-ui-kit';
-import { addressUtils, clipboardUtils, IconType } from '@aragon/gov-ui-kit';
-import { render, screen, within } from '@testing-library/react';
+import { addressUtils, clipboardUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as wagmi from 'wagmi';
 import { type IUserDialogProps, UserDialog } from './userDialog';
@@ -40,7 +40,11 @@ describe('<UserDialog /> component', () => {
             ...props,
         };
 
-        return <UserDialog {...completeProps} />;
+        return (
+            <GukModulesProvider>
+                <UserDialog {...completeProps} />
+            </GukModulesProvider>
+        );
     };
 
     it('renders empty container when address is not defined', () => {
@@ -68,18 +72,7 @@ describe('<UserDialog /> component', () => {
         expect(screen.getByText(addressUtils.truncateAddress(address))).toBeInTheDocument();
     });
 
-    it('renders a copy button to copy the user address', async () => {
-        const address = '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5';
-        useAccountSpy.mockReturnValue({ address } as unknown as wagmi.UseAccountReturnType);
-        render(createTestComponent());
-
-        const copyButton = screen.getAllByRole('button').find((button) => within(button).queryByTestId(IconType.COPY));
-        expect(copyButton).toBeInTheDocument();
-        await userEvent.click(copyButton!);
-        expect(clipboardCopySpy).toHaveBeenCalledWith(address);
-    });
-
-    it('renders a logout button to close the dialog and disconnect the user', async () => {
+    it('renders a disconnect action for the user which disconnects', async () => {
         const disconnect = jest.fn();
         const close = jest.fn();
         useAccountSpy.mockReturnValue({ address: '0x123' } as unknown as wagmi.UseAccountReturnType);
@@ -87,11 +80,14 @@ describe('<UserDialog /> component', () => {
         useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
         render(createTestComponent());
 
-        const disconnectButton = screen
-            .getAllByRole('button')
-            .find((button) => within(button).queryByTestId(IconType.LOGOUT));
-        expect(disconnectButton).toBeInTheDocument();
-        await userEvent.click(disconnectButton!);
+        const logoutIcon = screen.getByTestId('LOGOUT');
+        expect(logoutIcon).toBeInTheDocument();
+
+        // eslint-disable-next-line testing-library/no-node-access
+        const disconnectLink = logoutIcon.closest('a');
+        expect(disconnectLink).toBeInTheDocument();
+
+        await userEvent.click(disconnectLink!);
         expect(disconnect).toHaveBeenCalled();
     });
 
