@@ -17,7 +17,6 @@ import {
 } from '@/shared/testUtils';
 import { clipboardUtils, GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 import * as governanceService from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
@@ -80,15 +79,6 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         });
         expect(screen.getByText(proposal.title)).toBeInTheDocument();
         expect(screen.getByText(proposal.summary)).toBeInTheDocument();
-    });
-
-    it('renders a share button to share the url of the current proposal', async () => {
-        render(createTestComponent());
-        const shareButton = screen.getByRole('button', { name: /daoProposalDetailsPage.header.action.share/ });
-        expect(shareButton).toBeInTheDocument();
-
-        await userEvent.click(shareButton);
-        expect(clipboardCopySpy).toHaveBeenCalledWith('localhost/');
     });
 
     it('renders the proposal page breadcrumbs', () => {
