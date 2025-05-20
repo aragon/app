@@ -53,7 +53,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                 <Navigation.Links className="hidden lg:flex" links={navLinks} />
                 <div className="flex flex-row items-center gap-x-2 lg:gap-x-3">
                     <Navigation.AppLinks dao={dao} />
-                    <Wallet onClick={handleWalletClick} user={walletUser} showTextFrom="xl" />
+                    <Wallet onClick={handleWalletClick} user={walletUser} textClassName="xl:block" />
                     <Navigation.Trigger className="md:hidden" onClick={() => setIsDialogOpen(true)} />
                 </div>
             </div>

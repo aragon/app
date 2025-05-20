@@ -1,5 +1,35 @@
 # @aragon/app-next
 
+## 1.4.0
+
+### Minor Changes
+
+- [#551](https://github.com/aragon/app-next/pull/551) [`0212491`](https://github.com/aragon/app-next/commit/0212491da541561fbcda7b0714c827c0efe270dc) Thanks [@dependabot](https://github.com/apps/dependabot)! - Bump lint-staged to v16
+
+- [#543](https://github.com/aragon/app-next/pull/543) [`f54ea0a`](https://github.com/aragon/app-next/commit/f54ea0ab3138c1e10547527141d6f377d59b2f89) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Implement flow for updating DAO smart contracts (only enabled on non production environments)
+
+- [#549](https://github.com/aragon/app-next/pull/549) [`373102e`](https://github.com/aragon/app-next/commit/373102e75fc80a7dba6cd848e4563584cde13737) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#545](https://github.com/aragon/app-next/pull/545) [`c3e4d26`](https://github.com/aragon/app-next/commit/c3e4d26e5c7fb4595632be142f50e4afb56c96d7) Thanks [@milosh86](https://github.com/milosh86)! - Add support for ENS in DAO urls
+
+- [#542](https://github.com/aragon/app-next/pull/542) [`e40a5f5`](https://github.com/aragon/app-next/commit/e40a5f55d8be82df1cd3a3f78daac1485a7f8cbe) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+### Patch Changes
+
+- [#553](https://github.com/aragon/app-next/pull/553) [`e33baa7`](https://github.com/aragon/app-next/commit/e33baa7719291f7d7d136a45203c6116d6c76c8d) Thanks [@shan8851](https://github.com/shan8851)! - Refactor plugins directory to improve DX for complex slot components as app complexity grows, update documentation accordingly
+
+- [#585](https://github.com/aragon/app-next/pull/585) [`61cb6a8`](https://github.com/aragon/app-next/commit/61cb6a8a8bdad77dcefeea1b954673a292098d8b) Thanks [@milosh86](https://github.com/milosh86)! - Fix calling get-dao-by-ens API to use full ENS name
+
+- [#548](https://github.com/aragon/app-next/pull/548) [`83b3310`](https://github.com/aragon/app-next/commit/83b3310fc4df6bad9d8fbe7c3ec600795aafa407) Thanks [@shan8851](https://github.com/shan8851)! - Update to new simplified proposals endpoint and introduce new getProposalActions endpoint and usage throughout the app
+
+- [#537](https://github.com/aragon/app-next/pull/537) [`43720fe`](https://github.com/aragon/app-next/commit/43720fedecc9395ee6fa2847825d1d38577d5408) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Update release workflow to retrieve secrets from 1Password
+
+- [#546](https://github.com/aragon/app-next/pull/546) [`c92fc7b`](https://github.com/aragon/app-next/commit/c92fc7b373b99d3242562f30c80ee5af905230f2) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement branded external bodies on ProposalVoting, support loading state decoding ProposlActions
+
+- [#554](https://github.com/aragon/app-next/pull/554) [`92fd154`](https://github.com/aragon/app-next/commit/92fd154336398c0e9bdd7193b59c5328c3a2edf0) Thanks [@evanaronson](https://github.com/evanaronson)! - Update strings and resolve typos throughout the app
+
+- [#552](https://github.com/aragon/app-next/pull/552) [`a2ab827`](https://github.com/aragon/app-next/commit/a2ab827d01e4f765b09431224787398c943002d5) Thanks [@milosh86](https://github.com/milosh86)! - Fix test warnings and create process link
+
 ## 1.3.0
 
 ### Minor Changes

@@ -39,7 +39,7 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
     const handleInputBlur = () => trigger(field);
 
     return (
-        <Card className={classNames('flex flex-col gap-4 p-6 shadow-neutral-sm', className)} {...otherProps}>
+        <Card className={classNames('shadow-neutral-sm flex flex-col gap-4 p-6', className)} {...otherProps}>
             <div className="flex flex-col justify-between gap-4 md:flex-row">
                 <InputDate
                     label={t('app.shared.advancedDateInput.fixed.date')}
