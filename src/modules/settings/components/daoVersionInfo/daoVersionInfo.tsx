@@ -38,7 +38,7 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
                     key={plugin.uniqueId}
                     term={daoUtils.getPluginName(plugin.meta)}
                     description={t('app.settings.daoVersionInfo.governanceValue', {
-                        name: daoUtils.getPluginName(plugin.meta),
+                        name: daoUtils.parsePluginSubdomain(plugin.meta.subdomain),
                         release: plugin.meta.release,
                         build: plugin.meta.build,
                     })}

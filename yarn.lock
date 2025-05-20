@@ -47,7 +47,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@aragon/app-next@workspace:."
   dependencies:
-    "@aragon/gov-ui-kit": "npm:0.0.0-20250520121940"
+    "@aragon/gov-ui-kit": "npm:0.0.0-20250520140536"
     "@changesets/changelog-github": "npm:^0.5.1"
     "@changesets/cli": "npm:^2.29.4"
     "@floating-ui/react": "npm:^0.27.8"
@@ -111,9 +111,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@aragon/gov-ui-kit@npm:0.0.0-20250520121940":
-  version: 0.0.0-20250520121940
-  resolution: "@aragon/gov-ui-kit@npm:0.0.0-20250520121940"
+"@aragon/gov-ui-kit@npm:0.0.0-20250520140536":
+  version: 0.0.0-20250520140536
+  resolution: "@aragon/gov-ui-kit@npm:0.0.0-20250520140536"
   dependencies:
     "@radix-ui/react-accordion": "npm:^1.2.0"
     "@radix-ui/react-alert-dialog": "npm:^1.1.0"
@@ -151,10 +151,10 @@ __metadata:
     react: ^18.2.0 || ^19.0.0
     react-dom: ^18.2.0 || ^19.0.0
     react-hook-form: ^7.56.0
-    tailwindcss: ^3.4.0
+    tailwindcss: ^4.1.0
     viem: ^2.29.0
     wagmi: ^2.15.0
-  checksum: 10c0/c11129c27a394de61109c818a87b2276847a4165b59676b21e55690a5980a70467136a94fbcc5b04316eacc7e210e7c47eec587688ea80c02a4802ef9397559c
+  checksum: 10c0/729320447f2c16470b6c177828d20f23f79949e208979261df6424c17f9d9714797e21b8e0323135e39767a3d98c58bb9637d93c58027ee1f0a8e2ef86242416
   languageName: node
   linkType: hard
 
