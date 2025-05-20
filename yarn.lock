@@ -10042,7 +10042,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^12.11.0, framer-motion@npm:^12.12.1":
+"framer-motion@npm:^12.12.0, framer-motion@npm:^12.12.1":
   version: 12.12.1
   resolution: "framer-motion@npm:12.12.1"
   dependencies:
@@ -10060,36 +10060,6 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/369026997d12e51ba5ca12ecf507ccf2108941c9e634d0d57ff93524d56d72dc38cd909ce1272a155d15b92faf0ddf9268942908be29032e36cc535a353fd497
-  languageName: node
-  linkType: hard
-
-"framer-motion@npm:^12.12.0":
-  version: 12.12.1
-  resolution: "framer-motion@npm:12.12.1"
-  dependencies:
-    motion-dom: "npm:^12.12.1"
-    motion-utils: "npm:^12.12.1"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    "@emotion/is-prop-valid": "*"
-    react: ^18.0.0 || ^19.0.0
-    react-dom: ^18.0.0 || ^19.0.0
-  peerDependenciesMeta:
-    "@emotion/is-prop-valid":
-      optional: true
-    react:
-      optional: true
-    react-dom:
-      optional: true
-  checksum: 10c0/a782ffa3613f35d23b550123e5409504dadd1f708af40d6014969a8c78dae31046ab9c35a44cbb768e20cec837675d1e240e06e01818b250386af6d0ff570593
-  languageName: node
-  linkType: hard
-
-"fresh@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "fresh@npm:2.0.0"
-  checksum: 10c0/0557548194cb9a809a435bf92bcfbc20c89e8b5eb38861b73ced36750437251e39a111fc3a18b98531be9dd91fe1411e4969f229dc579ec0251ce6c5d4900bbc
   checksum: 10c0/a782ffa3613f35d23b550123e5409504dadd1f708af40d6014969a8c78dae31046ab9c35a44cbb768e20cec837675d1e240e06e01818b250386af6d0ff570593
   languageName: node
   linkType: hard
@@ -12858,10 +12828,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"motion-utils@npm:^12.9.4":
-  version: 12.9.4
-  resolution: "motion-utils@npm:12.9.4"
-  checksum: 10c0/b6783babfd1282ad320585f7cdac9fe7a1f97b39e07d12a500d3709534441bd9d49b556fa1cd838d1bde188570d4ab6b4c5aa9d297f7f5aa9dc16d600c17afdc
+"motion-utils@npm:^12.12.1":
+  version: 12.12.1
+  resolution: "motion-utils@npm:12.12.1"
+  checksum: 10c0/880a174769d1be42b46cfb34af81b4a629c068d30d5cf7e07d249fbf2f5121d577482d3ea5bdc1db549c0288733e1e987efecb195fae350995270651559c6697
   languageName: node
   linkType: hard
 
