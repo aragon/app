@@ -19,7 +19,7 @@ jest.mock('@aragon/gov-ui-kit', () => ({
     Icon: (props: GovUiKit.IIconProps) => <div data-testid={`icon-${props.icon}`} />,
 }));
 
-describe('<NavigationDialog /> component', () => {
+describe('<Navigation.Dialog /> component', () => {
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const getDaoEnsSpy = jest.spyOn(daoUtils, 'getDaoEns');

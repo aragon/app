@@ -1,4 +1,5 @@
 import type { IDao } from '@/shared/api/daoService';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { addressUtils, DaoAvatar, Dialog, Icon, IconType, type IDialogRootProps } from '@aragon/gov-ui-kit';
@@ -20,6 +21,8 @@ export interface INavigationDialogProps<TRouteType extends string> extends IDial
 export const NavigationDialog = <TRouteType extends string>(props: INavigationDialogProps<TRouteType>) => {
     const { links, dao, children, onOpenChange, ...otherProps } = props;
 
+    const { t } = useTranslations();
+
     const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
 
     const handleLinksClick = () => onOpenChange?.(false);
@@ -39,7 +42,7 @@ export const NavigationDialog = <TRouteType extends string>(props: INavigationDi
                 {children}
                 <div className="flex flex-col gap-3 px-4">
                     <DaoAvatar src={daoAvatar} name={dao.name} size="lg" responsiveSize={{ sm: 'xl' }} />
-                    <div className="flex flex-col gap-1.5 font-normal leading-tight">
+                    <div className="flex flex-col gap-1.5 leading-tight font-normal">
                         <p className="truncate text-lg text-neutral-800 sm:text-xl">{dao.name}</p>
                         <p className="truncate text-sm text-neutral-500 sm:text-base">{dialogSubtitle}</p>
                     </div>
@@ -64,10 +67,10 @@ export const NavigationDialog = <TRouteType extends string>(props: INavigationDi
                     className={classNames(
                         'group flex flex-row justify-between rounded-xl px-4 py-3 text-neutral-500',
                         'hover:bg-neutral-50',
-                        'focus:outline-none focus-visible:ring focus-visible:ring-primary focus-visible:ring-offset',
+                        'focus-visible:ring-primary focus-visible:ring-offset focus:outline-none focus-visible:ring',
                     )}
                 >
-                    <p>Explore all DAOs</p>
+                    <p>{t('app.application.navigationDao.dialog.explore')}</p>
                     <Icon icon={IconType.APP_EXPLORE} size="lg" className="text-neutral-300" />
                 </Link>
             </Dialog.Content>

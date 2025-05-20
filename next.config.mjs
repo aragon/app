@@ -116,6 +116,8 @@ const nextConfig = {
     },
     experimental: {
         typedRoutes: true,
+        workerThreads: true,
+        cpus: 2 
     },
     env: {
         version: packageInfo.version,
