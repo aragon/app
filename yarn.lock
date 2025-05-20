@@ -47,7 +47,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@aragon/app-next@workspace:."
   dependencies:
-    "@aragon/gov-ui-kit": "npm:0.0.0-20250509120756"
+    "@aragon/gov-ui-kit": "npm:0.0.0-20250520140536"
     "@changesets/changelog-github": "npm:^0.5.1"
     "@changesets/cli": "npm:^2.29.4"
     "@floating-ui/react": "npm:^0.27.8"
@@ -110,9 +110,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@aragon/gov-ui-kit@npm:0.0.0-20250509120756":
-  version: 0.0.0-20250509120756
-  resolution: "@aragon/gov-ui-kit@npm:0.0.0-20250509120756"
+"@aragon/gov-ui-kit@npm:0.0.0-20250520140536":
+  version: 0.0.0-20250520140536
+  resolution: "@aragon/gov-ui-kit@npm:0.0.0-20250520140536"
   dependencies:
     "@radix-ui/react-accordion": "npm:^1.2.0"
     "@radix-ui/react-alert-dialog": "npm:^1.1.0"
@@ -138,22 +138,22 @@ __metadata:
     "@tiptap/starter-kit": "npm:^2.12.0"
     blockies-ts: "npm:^1.0.0"
     classnames: "npm:^2.5.0"
-    framer-motion: "npm:^12.11.0"
+    framer-motion: "npm:^12.12.0"
     luxon: "npm:^3.6.0"
     react-dropzone: "npm:^14.3.0"
     react-imask: "npm:^7.6.0"
-    sanitize-html: "npm:^2.16.0"
+    sanitize-html: "npm:^2.17.0"
     tiptap-markdown: "npm:^0.8.10"
   peerDependencies:
     "@tailwindcss/typography": ^0.5.0
-    "@tanstack/react-query": ^5.75.0
+    "@tanstack/react-query": ^5.76.0
     react: ^18.2.0 || ^19.0.0
     react-dom: ^18.2.0 || ^19.0.0
     react-hook-form: ^7.56.0
     tailwindcss: ^4.1.0
-    viem: ^2.28.0
+    viem: ^2.29.0
     wagmi: ^2.15.0
-  checksum: 10c0/211bd696aa6ca7a642ac3325e860f92da2539b2cbb129e2aadeed165f0bb1d1bb4f6e8f1d5ce23889a6382541731da7557e7dcfc77400db118436257cd884d1f
+  checksum: 10c0/729320447f2c16470b6c177828d20f23f79949e208979261df6424c17f9d9714797e21b8e0323135e39767a3d98c58bb9637d93c58027ee1f0a8e2ef86242416
   languageName: node
   linkType: hard
 
@@ -10496,12 +10496,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^12.11.0":
-  version: 12.11.0
-  resolution: "framer-motion@npm:12.11.0"
+"framer-motion@npm:^12.11.0, framer-motion@npm:^12.12.0":
+  version: 12.12.1
+  resolution: "framer-motion@npm:12.12.1"
   dependencies:
-    motion-dom: "npm:^12.11.0"
-    motion-utils: "npm:^12.9.4"
+    motion-dom: "npm:^12.12.1"
+    motion-utils: "npm:^12.12.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
     "@emotion/is-prop-valid": "*"
@@ -10514,7 +10514,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/369026997d12e51ba5ca12ecf507ccf2108941c9e634d0d57ff93524d56d72dc38cd909ce1272a155d15b92faf0ddf9268942908be29032e36cc535a353fd497
+  checksum: 10c0/a782ffa3613f35d23b550123e5409504dadd1f708af40d6014969a8c78dae31046ab9c35a44cbb768e20cec837675d1e240e06e01818b250386af6d0ff570593
   languageName: node
   linkType: hard
 
@@ -13447,19 +13447,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"motion-dom@npm:^12.11.0":
-  version: 12.11.0
-  resolution: "motion-dom@npm:12.11.0"
+"motion-dom@npm:^12.12.1":
+  version: 12.12.1
+  resolution: "motion-dom@npm:12.12.1"
   dependencies:
-    motion-utils: "npm:^12.9.4"
-  checksum: 10c0/9fd7441c38b28560ea2db0f4dbd6f412873e777f5d32e623792cc8ff32c0bbff761f68102115060af81325227cc639e548f6123bdced50722f55bc2abda76b55
+    motion-utils: "npm:^12.12.1"
+  checksum: 10c0/d80cdde894d07042e792ae69f47d7b58aa20691d4e4da7ce803af246295855fd59fdbd7a9e0def8554e22fd105c407cc672bd85e0a79a660d523adee7989d61d
   languageName: node
   linkType: hard
 
-"motion-utils@npm:^12.9.4":
-  version: 12.9.4
-  resolution: "motion-utils@npm:12.9.4"
-  checksum: 10c0/b6783babfd1282ad320585f7cdac9fe7a1f97b39e07d12a500d3709534441bd9d49b556fa1cd838d1bde188570d4ab6b4c5aa9d297f7f5aa9dc16d600c17afdc
+"motion-utils@npm:^12.12.1":
+  version: 12.12.1
+  resolution: "motion-utils@npm:12.12.1"
+  checksum: 10c0/880a174769d1be42b46cfb34af81b4a629c068d30d5cf7e07d249fbf2f5121d577482d3ea5bdc1db549c0288733e1e987efecb195fae350995270651559c6697
   languageName: node
   linkType: hard
 
@@ -15800,9 +15800,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sanitize-html@npm:^2.16.0":
-  version: 2.16.0
-  resolution: "sanitize-html@npm:2.16.0"
+"sanitize-html@npm:^2.17.0":
+  version: 2.17.0
+  resolution: "sanitize-html@npm:2.17.0"
   dependencies:
     deepmerge: "npm:^4.2.2"
     escape-string-regexp: "npm:^4.0.0"
@@ -15810,7 +15810,7 @@ __metadata:
     is-plain-object: "npm:^5.0.0"
     parse-srcset: "npm:^1.0.2"
     postcss: "npm:^8.3.11"
-  checksum: 10c0/c94311c73a8f4b6c5970f4d743e3f1a7f0f6b443b0841a6ec0b88725da16237a5a076534240b042858f964bdc437b421b09a22b76e8e22e6ef2cbba2ed52d77f
+  checksum: 10c0/361f71f70a12f0e7d26c73cae31c926a2a5cf0757bab16faf663b07f723823780fa2642a688eff93ad2d2346baaefc31961b1f22e791f5a4b043778e20c180f4
   languageName: node
   linkType: hard
 
