@@ -29,7 +29,7 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
                 term={t('app.settings.daoVersionInfo.osLabel')}
                 description={t('app.settings.daoVersionInfo.osValue', { version: dao.version })}
             >
-                <Clipboard copyValue={dao.address} variant="avatar">
+                <Clipboard copyValue={dao.address}>
                     <Link href={daoLink}>{addressUtils.truncateAddress(dao.address)}</Link>
                 </Clipboard>
             </DefinitionList.Item>
@@ -43,7 +43,7 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
                         build: plugin.meta.build,
                     })}
                 >
-                    <Clipboard copyValue={plugin.meta.address} variant="avatar">
+                    <Clipboard copyValue={plugin.meta.address}>
                         <Link
                             href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: plugin.meta.address, chainId })}
                         >

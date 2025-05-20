@@ -131,7 +131,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                 <p className="text-neutral-500">{networkDefinitions[dao.network].name}</p>
                             </DefinitionList.Item>
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.address')}>
-                                <Clipboard copyValue={dao.address} variant="avatar">
+                                <Clipboard copyValue={dao.address}>
                                     <Link href={daoAddressLink} isExternal={true}>
                                         {truncatedAddress}
                                     </Link>
@@ -139,8 +139,8 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             </DefinitionList.Item>
                             {daoEns != null && (
                                 <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.ens')}>
-                                    <Clipboard copyValue={daoEns} variant="avatar">
-                                        <Link href={daoAddressLink} isExternal={true} className="max-w-full">
+                                    <Clipboard copyValue={daoEns}>
+                                        <Link href={daoAddressLink} isExternal={true}>
                                             {daoEns}
                                         </Link>
                                     </Clipboard>

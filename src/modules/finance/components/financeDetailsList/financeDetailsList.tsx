@@ -42,7 +42,7 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
                     <p className="text-neutral-500">{networkDefinitions[network].name}</p>
                 </DefinitionList.Item>
                 <DefinitionList.Item term={t('app.finance.financeDetailsList.vaultAddress')}>
-                    <Clipboard copyValue={address} variant="avatar">
+                    <Clipboard copyValue={address}>
                         <Link href={daoAddressLink} isExternal={true}>
                             {addressUtils.truncateAddress(address)}
                         </Link>
@@ -50,7 +50,7 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
                 </DefinitionList.Item>
                 {daoEns && (
                     <DefinitionList.Item term={t('app.finance.financeDetailsList.vaultEns')}>
-                        <Clipboard copyValue={daoEns} variant="avatar">
+                        <Clipboard copyValue={daoEns}>
                             <Link href={daoAddressLink} isExternal={true}>
                                 {daoEns}
                             </Link>

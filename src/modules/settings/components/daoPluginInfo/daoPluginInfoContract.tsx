@@ -54,7 +54,7 @@ export const DaoPluginInfoContract: React.FC<IDaoPluginInfoContractProps> = (pro
                     build,
                 })}
             >
-                <Clipboard copyValue={address} variant="avatar">
+                <Clipboard copyValue={address}>
                     <Link href={pluginLink} isExternal={true}>
                         {addressUtils.truncateAddress(address)}
                     </Link>

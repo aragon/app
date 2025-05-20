@@ -159,7 +159,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.onChainId')}
                             >
-                                <Clipboard copyValue={proposal.proposalIndex} variant="avatar">
+                                <Clipboard copyValue={proposal.proposalIndex}>
                                     <p className="truncate text-neutral-500">{proposal.proposalIndex}</p>
                                 </Clipboard>
                             </DefinitionList.Item>
@@ -169,7 +169,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.creator')}
                             >
-                                <Clipboard copyValue={creator.ens ?? creator.address} variant="avatar">
+                                <Clipboard copyValue={creator.ens ?? creator.address}>
                                     <Link href={creatorLink} isExternal={true}>
                                         {creatorName}
                                     </Link>
