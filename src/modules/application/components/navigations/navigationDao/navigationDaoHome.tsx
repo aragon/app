@@ -26,7 +26,7 @@ export const NavigationDaoHome: React.FC<IWalletProps> = (props) => {
     return (
         <button className={buttonClassName} {...otherProps}>
             <DaoAvatar src={daoAvatar} name={dao.name} size="lg" />
-            <p className="hidden truncate text-base font-normal leading-tight text-neutral-800 md:block">{dao.name}</p>
+            <p className="hidden truncate text-base leading-tight font-normal text-neutral-800 md:block">{dao.name}</p>
         </button>
     );
 };

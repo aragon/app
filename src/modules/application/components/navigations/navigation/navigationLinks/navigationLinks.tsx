@@ -11,7 +11,7 @@ export interface INavigationLinksProps<TRouteType extends string> extends Compon
     links: Array<INavigationLink<TRouteType>>;
     /**
      * Variant of the component.
-     * @default columns
+     * @default row
      */
     variant?: NavigationLinksVariant;
 }
@@ -24,8 +24,9 @@ export const NavigationLinks = <TRouteType extends string>(props: INavigationLin
     return (
         <div
             className={classNames(
+                'flex',
                 { 'item-center flex-row gap-x-4 xl:gap-x-10': variant === 'row' },
-                { 'gap-y-1': variant === 'column' },
+                { 'flex-col gap-y-1': variant === 'column' },
                 className,
             )}
             {...otherProps}

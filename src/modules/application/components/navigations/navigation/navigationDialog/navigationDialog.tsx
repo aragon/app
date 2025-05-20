@@ -1,10 +1,22 @@
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { addressUtils, DaoAvatar, Dialog, Icon, IconType, type IDialogRootProps } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    ChainEntityType,
+    Clipboard,
+    DaoAvatar,
+    Dialog,
+    Icon,
+    IconType,
+    Link,
+    useBlockExplorer,
+    type IDialogRootProps,
+} from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import Link from 'next/link';
+import NextLink from 'next/link';
 import { NavigationLinks, type INavigationLink } from '../navigationLinks';
 
 export interface INavigationDialogProps<TRouteType extends string> extends IDialogRootProps {
@@ -29,6 +41,13 @@ export const NavigationDialog = <TRouteType extends string>(props: INavigationDi
 
     const dialogSubtitle = daoUtils.getDaoEns(dao) ?? addressUtils.truncateAddress(dao.address);
 
+    const { buildEntityUrl } = useBlockExplorer();
+    const addressLink = buildEntityUrl({
+        type: ChainEntityType.ADDRESS,
+        id: dao.address,
+        chainId: networkDefinitions[dao.network].id,
+    });
+
     const desktopOnlyLabels = new Set([
         'app.application.navigationDao.link.dashboard',
         'app.application.navigationDao.link.settings',
@@ -44,7 +63,15 @@ export const NavigationDialog = <TRouteType extends string>(props: INavigationDi
                     <DaoAvatar src={daoAvatar} name={dao.name} size="lg" responsiveSize={{ sm: 'xl' }} />
                     <div className="flex flex-col gap-1.5 leading-tight font-normal">
                         <p className="truncate text-lg text-neutral-800 sm:text-xl">{dao.name}</p>
-                        <p className="truncate text-sm text-neutral-500 sm:text-base">{dialogSubtitle}</p>
+                        <Clipboard copyValue={dao.address} className="w-full">
+                            <Link
+                                href={addressLink}
+                                isExternal={true}
+                                className="truncate text-sm text-neutral-500 sm:text-base"
+                            >
+                                {dialogSubtitle}
+                            </Link>
+                        </Clipboard>
                     </div>
                 </div>
                 <NavigationLinks
@@ -62,7 +89,7 @@ export const NavigationDialog = <TRouteType extends string>(props: INavigationDi
                 <div className="w-full px-4">
                     <div className="border-t border-neutral-100" />
                 </div>
-                <Link
+                <NextLink
                     href="/"
                     className={classNames(
                         'group flex flex-row justify-between rounded-xl px-4 py-3 text-neutral-500',
@@ -72,7 +99,7 @@ export const NavigationDialog = <TRouteType extends string>(props: INavigationDi
                 >
                     <p>{t('app.application.navigationDao.dialog.explore')}</p>
                     <Icon icon={IconType.APP_EXPLORE} size="lg" className="text-neutral-300" />
-                </Link>
+                </NextLink>
             </Dialog.Content>
         </Dialog.Root>
     );

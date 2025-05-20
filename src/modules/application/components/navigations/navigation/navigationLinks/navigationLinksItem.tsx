@@ -49,7 +49,7 @@ export const NavigationLinksItem = (props: INavigationLinksItemProps) => {
             aria-current={isActive ? 'page' : undefined}
             className={classNames(
                 'group flex flex-row items-center gap-2 py-3 text-neutral-500',
-                'focus:outline-none focus-visible:ring focus-visible:ring-primary focus-visible:ring-offset',
+                'focus-visible:ring-primary focus-visible:ring-offset focus:outline-none focus-visible:ring',
                 { 'rounded-xl px-4 hover:bg-neutral-50': variant === 'column' },
                 { 'bg-neutral-50': isActive && variant === 'column' },
                 { 'text-neutral-800': isActive },
