@@ -1,4 +1,4 @@
-import { Button, Dialog, Heading, IconType, IllustrationObject, Link } from '@aragon/gov-ui-kit';
+import { Button, Dialog, Heading, IllustrationObject, Link } from '@aragon/gov-ui-kit';
 import { Description, Title } from '@radix-ui/react-dialog';
 import { useDialogContext } from '../dialogProvider';
 import { useTranslations } from '../translationsProvider';
@@ -26,7 +26,7 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (props) 
                     {description}
                 </Description>
                 {infoLink && (
-                    <Link iconRight={IconType.LINK_EXTERNAL} href={infoLink} target="_blank">
+                    <Link href={infoLink} isExternal={true}>
                         {t('app.shared.wizardDetailsDialog.infoLabel')}
                     </Link>
                 )}

@@ -70,12 +70,7 @@ export const WalletConnectActionDialogListener: React.FC<IWalletConnectActionDia
                         <span className="text-primary-400">{name} </span>
                         <span>{t('app.governance.walletConnectActionDialog.listener.info_2')}</span>
                     </p>
-                    <Link
-                        href="https://www.aragon.org/how-to/dapp-connect"
-                        target="_blank"
-                        variant="neutral"
-                        iconRight={IconType.LINK_EXTERNAL}
-                    >
+                    <Link href="https://www.aragon.org/how-to/dapp-connect" isExternal={true} variant="neutral">
                         {t('app.governance.walletConnectActionDialog.listener.helpLink')}
                     </Link>
                 </div>
