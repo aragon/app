@@ -34,12 +34,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     };
 
     const links = navigationDaoLinks(dao);
-    const excludeLabels = new Set([
-        'app.application.navigationDao.link.dashboard',
-        'app.application.navigationDao.link.settings',
-    ]);
-
-    const navLinks = links.filter((link) => !excludeLabels.has(link.label));
+    const navLinks = links.filter((link) => !['dashboard', 'settings'].some((suffix) => link.label.endsWith(suffix)));
 
     const walletUser = address != null ? { address } : undefined;
 

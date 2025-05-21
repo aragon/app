@@ -25,7 +25,7 @@ export interface INavigationDialogProps<TRouteType extends string> extends IDial
      */
     links: Array<INavigationLink<TRouteType>>;
     /**
-     * const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
+     * DAO where the user is navigating.
      */
     dao: IDao;
 }
@@ -94,7 +94,7 @@ export const NavigationDialog = <TRouteType extends string>(props: INavigationDi
                     className={classNames(
                         'group flex flex-row justify-between rounded-xl px-4 py-3 text-neutral-500',
                         'hover:bg-neutral-50',
-                        'focus-visible:ring-primary focus-visible:ring-offset focus:outline-none focus-visible:ring',
+                        'focus-ring-primary',
                     )}
                 >
                     <p>{t('app.application.navigationDao.dialog.explore')}</p>

@@ -60,26 +60,29 @@ describe('<NavigationLinksItem /> component', () => {
         expect(screen.getByRole('link').className).toContain('bg-neutral-50');
     });
 
-    it('correctly renders the link as active with bg and text in column variant', () => {
+    it('correctly renders the link as active in column variant', () => {
         const href = '/test';
         usePathnameSpy.mockReturnValue(href);
         render(createTestComponent({ variant: 'column', href }));
 
         const link = screen.getByRole('link');
         expect(link).toHaveAttribute('aria-current', 'page');
-        expect(link.className).toContain('bg-neutral-50');
-        expect(link.className).toContain('text-neutral-800');
+        expect(link).toHaveClass('bg-neutral-50 text-neutral-800');
     });
 
-    it('correctly renders the link as active in row variant (text color only)', () => {
+    it('correctly renders the link as active in row variant', () => {
         const href = '/row-test';
+        const icon = IconType.APP_DASHBOARD;
         usePathnameSpy.mockReturnValue(href);
-        render(createTestComponent({ variant: 'row', href }));
+        render(createTestComponent({ icon, variant: 'row', href }));
+
+        const linkIcon = screen.getByTestId(icon);
+        expect(linkIcon).toHaveClass('text-primary-400');
 
         const link = screen.getByRole('link');
         expect(link).toHaveAttribute('aria-current', 'page');
-        expect(link.className).toContain('text-neutral-800');
-        expect(link.className).not.toContain('bg-neutral-50');
+        expect(link).toHaveClass('text-neutral-800');
+        expect(link).not.toHaveClass('bg-neutral-50');
     });
 
     it('renders a link as active when pathname is a subpath of href', () => {

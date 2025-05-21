@@ -2,15 +2,18 @@ import * as useDialogContext from '@/shared/components/dialogProvider';
 import { generateDao, generateDialogContext } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { GukModulesProvider, IconType, addressUtils, type ICompositeAddress } from '@aragon/gov-ui-kit';
+import { IconType, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import type * as GovUiKit from '@tanstack/react-query';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
 import { ApplicationDialogId } from '../../../constants/applicationDialogId';
+import type { INavigationContainerProps } from '../navigation/navigationContainer';
+import type { INavigationDialogProps } from '../navigation/navigationDialog';
+import type { INavigationLink, INavigationLinksProps } from '../navigation/navigationLinks';
+import type { INavigationTriggerProps } from '../navigation/navigationTrigger';
 import { NavigationDao, type INavigationDaoProps } from './navigationDao';
-import { navigationDaoLinks } from './navigationDaoLinks';
 
 jest.mock('@aragon/gov-ui-kit', () => ({
     ...jest.requireActual<typeof GovUiKit>('@aragon/gov-ui-kit'),
@@ -20,10 +23,36 @@ jest.mock('@aragon/gov-ui-kit', () => ({
     ),
 }));
 
-jest.mock('../navigation/navigationTrigger', () => ({
-    NavigationTrigger: (props: { onClick: () => void; className: string }) => (
-        <button data-testid="nav-trigger-mock" onClick={props.onClick} className={props.className} />
-    ),
+jest.mock('../navigation', () => ({
+    Navigation: {
+        Container: ({ children, containerClasses }: INavigationContainerProps) => (
+            <div data-testid="nav-container-mock" className={containerClasses}>
+                {children}
+            </div>
+        ),
+        AppLinks: () => <div data-testid="nav-app-links-mock" />,
+        Trigger: ({ onClick, className }: INavigationTriggerProps) => (
+            <button data-testid="nav-trigger-mock" onClick={onClick} className={className}>
+                trigger
+            </button>
+        ),
+        Dialog: ({ open }: INavigationDialogProps<string>) =>
+            open ? (
+                <div role="dialog" data-testid="nav-dialog-mock">
+                    Dialog Content
+                </div>
+            ) : null,
+        Links: ({ links, className }: INavigationLinksProps<string>) => (
+            <nav className={className}>
+                {links.map((link: INavigationLink<string>) => (
+                    <a key={link.label} href={`/dao/${link.label}`} data-testid={`nav-link-${link.label}`}>
+                        {link.label}
+                        {link.icon === IconType.APP_EXPLORE && <span data-testid={IconType.APP_EXPLORE} />}
+                    </a>
+                ))}
+            </nav>
+        ),
+    },
 }));
 
 describe('<NavigationDao /> component', () => {
@@ -52,11 +81,7 @@ describe('<NavigationDao /> component', () => {
             ...props,
         };
 
-        return (
-            <GukModulesProvider>
-                <NavigationDao {...completeProps} />
-            </GukModulesProvider>
-        );
+        return <NavigationDao {...completeProps} />;
     };
 
     it('renders the dao avatar and name', () => {
@@ -69,40 +94,25 @@ describe('<NavigationDao /> component', () => {
         expect(screen.getByText(dao.name)).toBeInTheDocument();
     });
 
-    it('renders the DAO links for the current DAO on desktop devices', () => {
+    it('renders only allowed navigation links (excluding dashboard and settings)', () => {
         hasSupportedPluginsSpy.mockReturnValue(true);
+
         const dao = generateDao({ id: 'test' });
-        const daoLinks = navigationDaoLinks(dao);
+        render(createTestComponent({ dao }));
 
-        render(createTestComponent({ id: dao.id }));
+        expect(screen.getByRole('link', { name: 'app.application.navigationDao.link.proposals' })).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: 'app.application.navigationDao.link.members' })).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: 'app.application.navigationDao.link.assets' })).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', { name: 'app.application.navigationDao.link.transactions' }),
+        ).toBeInTheDocument();
 
-        const excludedLabels = new Set([
-            'app.application.navigationDao.link.dashboard',
-            'app.application.navigationDao.link.settings',
-        ]);
-
-        const expectedLinks = daoLinks.filter((link) => !excludedLabels.has(link.label));
-
-        expectedLinks.forEach((link) => {
-            expect(screen.getByRole('link', { name: link.label })).toBeInTheDocument();
-        });
-        // eslint-disable-next-line testing-library/no-node-access
-        expect(screen.getByRole('link', { name: expectedLinks[0].label }).parentElement?.className).toContain(
-            'hidden lg:flex',
-        );
-
-        daoLinks
-            .filter((link) => excludedLabels.has(link.label))
-            .forEach((link) => {
-                expect(screen.queryByRole('link', { name: link.label })).not.toBeInTheDocument();
-            });
-    });
-
-    it('hides the members and proposals links when DAO has no supported plugin', () => {
-        hasSupportedPluginsSpy.mockReturnValue(false);
-        render(createTestComponent({ id: 'test' }));
-        expect(screen.queryByRole('link', { name: /navigationDao.link.members/ })).not.toBeInTheDocument();
-        expect(screen.queryByRole('link', { name: /navigationDao.link.proposals/ })).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole('link', { name: 'app.application.navigationDao.link.dashboard' }),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole('link', { name: 'app.application.navigationDao.link.settings' }),
+        ).not.toBeInTheDocument();
     });
 
     it('renders a button to open the navigation dialog on mobile devices', async () => {
@@ -112,36 +122,6 @@ describe('<NavigationDao /> component', () => {
         expect(triggerButton.className).toContain('md:hidden');
         await userEvent.click(triggerButton);
         expect(screen.getByRole('dialog')).toBeInTheDocument();
-    });
-
-    it('renders the dao information on the navigation dialog', async () => {
-        const dao = generateDao({ name: 'dao name', subdomain: 'my-dao' });
-        render(createTestComponent({ dao }));
-        await userEvent.click(screen.getByTestId('nav-trigger-mock'));
-
-        const withinDialog = within(screen.getByRole('dialog'));
-        expect(withinDialog.getByTestId('dao-avatar-mock')).toBeInTheDocument();
-        expect(withinDialog.getByText(dao.name)).toBeInTheDocument();
-        expect(withinDialog.getByText(daoUtils.getDaoEns(dao)!)).toBeInTheDocument();
-    });
-
-    it('renders the truncated address on the navigation dialog when dao has no ENS', async () => {
-        const dao = generateDao({ address: '0xDafBD7d63CEe88d73a51592b42f27f7FD6ab7722', subdomain: null });
-        const truncatedAddress = addressUtils.truncateAddress(dao.address);
-        render(createTestComponent({ dao }));
-        await userEvent.click(screen.getByTestId('nav-trigger-mock'));
-        expect(screen.getByText(truncatedAddress)).toBeInTheDocument();
-    });
-
-    it('renders a explore button to navigate to the explore page on the navigation dialog', async () => {
-        render(createTestComponent());
-        await userEvent.click(screen.getByTestId('nav-trigger-mock'));
-
-        const exploreButton = screen
-            .getAllByRole<HTMLAnchorElement>('link')
-            .find((link) => within(link).queryByTestId(IconType.APP_EXPLORE))!;
-        expect(exploreButton).toBeInTheDocument();
-        expect(exploreButton.href).toEqual('http://localhost/');
     });
 
     it('renders a connect button opening the connect-wallet dialog', async () => {

@@ -4,7 +4,7 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { testLogger } from '@/test/utils';
 import type * as GovUiKit from '@aragon/gov-ui-kit';
-import { GukModulesProvider, IconType, addressUtils } from '@aragon/gov-ui-kit';
+import { addressUtils, GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { Route } from 'next';
@@ -17,9 +17,10 @@ jest.mock('@aragon/gov-ui-kit', () => ({
         <div data-testid="dao-avatar-mock" data-src={props.src} data-name={props.name} />
     ),
     Icon: (props: GovUiKit.IIconProps) => <div data-testid={`icon-${props.icon}`} />,
+    Clipboard: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-describe('<NavigationDialog /> component', () => {
+describe('<Navigation.Dialog /> component', () => {
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const getDaoEnsSpy = jest.spyOn(daoUtils, 'getDaoEns');
@@ -37,13 +38,7 @@ describe('<NavigationDialog /> component', () => {
     });
 
     const createTestComponent = (props?: Partial<INavigationDialogProps<string>>) => {
-        const completeProps: INavigationDialogProps<string> = {
-            links: [],
-            dao: generateDao(),
-            open: true,
-            onOpenChange: jest.fn(),
-            ...props,
-        };
+        const completeProps: INavigationDialogProps<string> = { links: [], dao: generateDao(), ...props };
         return (
             <GukModulesProvider>
                 <NavigationDialog {...completeProps} />
@@ -51,15 +46,17 @@ describe('<NavigationDialog /> component', () => {
         );
     };
 
-    it('renders the children when open', () => {
-        render(createTestComponent({ children: 'test-children', open: true }));
-        expect(screen.getByText('test-children')).toBeInTheDocument();
+    it('renders the children component when open', () => {
+        const children = 'test-children';
+        render(createTestComponent({ children, open: true }));
+        expect(screen.getByText(children)).toBeInTheDocument();
     });
 
-    it('does not render anything when closed', () => {
-        render(createTestComponent({ children: 'closed-dialog', open: false }));
-        expect(screen.queryByText('closed-dialog')).not.toBeInTheDocument();
-        expect(screen.queryByRole('dialog')).toBeNull();
+    it('does not render logo or children when dialog is not open', () => {
+        const children = 'closed-dialog';
+        render(createTestComponent({ children, open: false }));
+        expect(screen.queryByText(children)).not.toBeInTheDocument();
+        expect(screen.queryByTestId('aragon-logo-mock')).not.toBeInTheDocument();
     });
 
     it('renders the defined links', () => {
@@ -107,7 +104,7 @@ describe('<NavigationDialog /> component', () => {
         const dlg = screen.getByRole('dialog');
         const w = within(dlg);
 
-        const explore = w.getByRole('link', { name: /Explore all DAOs/ });
+        const explore = w.getByRole('link', { name: /app.application.navigationDao.dialog.explore/ });
         expect(explore).toHaveAttribute('href', '/');
         expect(w.getByTestId(`icon-${IconType.APP_EXPLORE}`)).toBeInTheDocument();
     });
