@@ -769,6 +769,7 @@
             "title": "Links"
           }
         },
+        "header": {
           "breadcrumb": {
             "proposals": "Proposals"
           }
