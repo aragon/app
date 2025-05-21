@@ -91,7 +91,7 @@ describe('<TokenMemberInfo /> component', () => {
 
         render(createTestComponent({ plugin }));
         const linkElement = screen.getByRole('link', {
-            name: /tokenMemberInfo.tokenDistribution \(count=2\) 0xBtcAddress/,
+            name: /tokenMemberInfo.tokenDistribution \(count=2\)/,
         });
         expect(linkElement).toHaveAttribute('href', `/dao/ethereum-mainnet/0x12345/members`);
     });

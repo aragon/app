@@ -38,7 +38,7 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
     const daoMemberParams = { daoId, pluginAddress: plugin.address };
     const { data: memberList } = useMemberList({ queryParams: daoMemberParams });
 
-    const distribution = memberList?.pages[0]?.metadata.totalRecords;
+    const distribution = memberList?.pages[0]?.metadata.totalRecords ?? '';
 
     const { id: chainId } = networkDefinitions[plugin.settings.token.network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
@@ -59,8 +59,8 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
                 term={t('app.plugins.token.tokenMemberInfo.tokenLabel')}
                 link={{
                     href: buildEntityUrl({ type: ChainEntityType.TOKEN, id: token.address }),
-                    description: t('app.plugins.token.tokenMemberInfo.tokenLinkDescription'),
                 }}
+                description={t('app.plugins.token.tokenMemberInfo.tokenLinkDescription')}
             >
                 {t('app.plugins.token.tokenMemberInfo.tokenNameAndSymbol', {
                     tokenName: token.name,
@@ -71,9 +71,9 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
                 term={t('app.plugins.token.tokenMemberInfo.distribution')}
                 link={{
                     href: daoUtils.getDaoUrl(dao, 'members'),
-                    description: addressUtils.truncateAddress(token.address),
-                    target: '_self',
+                    isExternal: false,
                 }}
+                description={addressUtils.truncateAddress(token.address)}
             >
                 {t('app.plugins.token.tokenMemberInfo.tokenDistribution', { count: distribution })}
             </DefinitionList.Item>

@@ -773,9 +773,6 @@
           }
         },
         "header": {
-          "action": {
-            "share": "Share"
-          },
           "breadcrumb": {
             "proposals": "Proposals"
           }
@@ -1574,8 +1571,6 @@
         }
       },
       "daoVersionInfo": {
-        "app": "App",
-        "governanceLabel": "Governance",
         "governanceValue": "{{name}} v{{release}}.{{build}}",
         "osLabel": "Operating system",
         "osValue": "Aragon OSx v{{version}}"

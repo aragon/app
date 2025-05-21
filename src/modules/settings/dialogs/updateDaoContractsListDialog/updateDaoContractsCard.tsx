@@ -1,7 +1,7 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IContractVersionInfo } from '@/shared/types';
 import { versionComparatorUtils, type IVersion } from '@/shared/utils/versionComparatorUtils';
-import { addressUtils, DataList, IconType, Link } from '@aragon/gov-ui-kit';
+import { addressUtils, DataList, Link } from '@aragon/gov-ui-kit';
 
 export interface IUpdateDaoContractsCardProps {
     /**
@@ -49,7 +49,7 @@ export const UpdateDaoContractsCard: React.FC<IUpdateDaoContractsCardProps> = (p
                     {t('app.settings.updateDaoContractsCard.versionUpdate', { from: fromVersion, to: toVersion })}
                 </p>
             </div>
-            <Link href={newVersion.releaseNotes} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
+            <Link href={newVersion.releaseNotes} isExternal={true}>
                 {t('app.settings.updateDaoContractsCard.releaseNotes')}
             </Link>
         </DataList.Item>

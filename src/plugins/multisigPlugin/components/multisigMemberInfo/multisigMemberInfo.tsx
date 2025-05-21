@@ -28,7 +28,7 @@ export const MultisigMemberInfo: React.FC<IMultisigMemberInfoProps> = (props) =>
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const membersLink = daoUtils.getDaoUrl(dao, 'members');
-    const memberCount = memberList?.pages[0].metadata.totalRecords;
+    const memberCount = memberList?.pages[0].metadata.totalRecords ?? '';
 
     return (
         <DefinitionList.Container>
@@ -39,9 +39,9 @@ export const MultisigMemberInfo: React.FC<IMultisigMemberInfoProps> = (props) =>
                 term={t('app.plugins.multisig.multisigMembersInfo.membersLabel')}
                 link={{
                     href: membersLink,
-                    target: '_self',
-                    description: t('app.plugins.multisig.multisigMembersInfo.linkDescription'),
+                    isExternal: false,
                 }}
+                description={t('app.plugins.multisig.multisigMembersInfo.linkDescription')}
             >
                 {t('app.plugins.multisig.multisigMembersInfo.membersCount', { count: memberCount })}
             </DefinitionList.Item>

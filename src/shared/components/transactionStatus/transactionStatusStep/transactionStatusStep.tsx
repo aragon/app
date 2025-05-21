@@ -48,7 +48,7 @@ export const TransactionStatusStep = <
                 </p>
             </div>
             {isLinkAddon && (
-                <Link href={addon.href} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
+                <Link href={addon.href} isExternal={true}>
                     {addon.label}
                 </Link>
             )}

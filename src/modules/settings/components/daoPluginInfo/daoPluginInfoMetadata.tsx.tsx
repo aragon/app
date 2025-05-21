@@ -1,5 +1,5 @@
 import type { IResource } from '@/shared/api/daoService';
-import { IconType, Link } from '@aragon/gov-ui-kit';
+import { Link } from '@aragon/gov-ui-kit';
 
 export interface IDaoPluginInfoMetadataProps {
     /**
@@ -20,12 +20,7 @@ export const DaoPluginInfoMetadata: React.FC<IDaoPluginInfoMetadataProps> = (pro
             {description && <p className="text-neutral-500">{description}</p>}
             {links?.map((resource: IResource, index: number) => (
                 <div className="flex flex-col gap-y-3" key={index}>
-                    <Link
-                        description={resource.url}
-                        href={resource.url}
-                        target="_blank"
-                        iconRight={IconType.LINK_EXTERNAL}
-                    >
+                    <Link href={resource.url} isExternal={true} showUrl={true}>
                         {resource.name}
                     </Link>
                 </div>
