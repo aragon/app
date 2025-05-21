@@ -769,10 +769,6 @@
             "title": "Links"
           }
         },
-        "header": {
-          "action": {
-            "share": "Share"
-          },
           "breadcrumb": {
             "proposals": "Proposals"
           }
