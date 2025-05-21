@@ -5,7 +5,7 @@ import classNames from 'classnames';
 
 export interface IWalletProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     /**
-     * DAO to display the data for.
+     * DAO to display the home details for.
      */
     dao: IDao;
 }

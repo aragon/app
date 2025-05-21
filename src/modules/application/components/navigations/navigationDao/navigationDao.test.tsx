@@ -10,7 +10,6 @@ import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
 import { ApplicationDialogId } from '../../../constants/applicationDialogId';
 import type { INavigationContainerProps } from '../navigation/navigationContainer';
-import type { INavigationDialogProps } from '../navigation/navigationDialog';
 import type { INavigationLink, INavigationLinksProps } from '../navigation/navigationLinks';
 import type { INavigationTriggerProps } from '../navigation/navigationTrigger';
 import { NavigationDao, type INavigationDaoProps } from './navigationDao';
@@ -36,12 +35,11 @@ jest.mock('../navigation', () => ({
                 trigger
             </button>
         ),
-        Dialog: ({ open }: INavigationDialogProps<string>) =>
-            open ? (
-                <div role="dialog" data-testid="nav-dialog-mock">
-                    Dialog Content
-                </div>
-            ) : null,
+        Dialog: () => (
+            <div role="dialog" data-testid="nav-dialog-mock">
+                Dialog Content
+            </div>
+        ),
         Links: ({ links, className }: INavigationLinksProps<string>) => (
             <nav className={className}>
                 {links.map((link: INavigationLink<string>) => (
