@@ -37,7 +37,7 @@ export const NavigationLinksItem = (props: INavigationLinksItemProps) => {
     const textClassNames = classNames(
         'flex flex-row text-base font-normal leading-tight text-neutral-500',
         'group-hover:text-neutral-800',
-        'group-active:text-primary-800',
+        'group-active:text-neutral-800',
         { 'text-neutral-800': isActive },
         { truncate: variant === 'column' },
         className,

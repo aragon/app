@@ -81,7 +81,7 @@ describe('<NavigationDialog /> component', () => {
         const dao = generateDao({
             avatar: 'ipfs://cid',
             name: 'MyDAO',
-            address: '0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+            address: '0x1234567890123456789012345678901234567890',
             subdomain: null,
         });
 
