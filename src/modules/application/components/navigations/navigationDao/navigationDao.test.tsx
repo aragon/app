@@ -92,7 +92,7 @@ describe('<NavigationDao /> component', () => {
         expect(screen.getByText(dao.name)).toBeInTheDocument();
     });
 
-    it('renders only allowed navigation links (excluding dashboard and settings)', () => {
+    it('renders only allowed navigation links (excluding dashboard and settings for row variant usage on desktop)', () => {
         hasSupportedPluginsSpy.mockReturnValue(true);
 
         const dao = generateDao({ id: 'test' });

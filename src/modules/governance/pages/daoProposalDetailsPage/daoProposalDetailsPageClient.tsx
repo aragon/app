@@ -106,7 +106,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         },
         { label: slug },
     ];
-
+    console.log('description', description);
     return (
         <>
             <Page.Header breadcrumbs={pageBreadcrumbs} breadcrumbsTag={statusTag} title={title} description={summary} />

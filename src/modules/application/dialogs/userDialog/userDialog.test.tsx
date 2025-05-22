@@ -83,11 +83,10 @@ describe('<UserDialog /> component', () => {
         const logoutIcon = screen.getByTestId('LOGOUT');
         expect(logoutIcon).toBeInTheDocument();
 
-        // eslint-disable-next-line testing-library/no-node-access
-        const disconnectLink = logoutIcon.closest('a');
+        const disconnectLink = screen.getByText(/app.application.userDialog.disconnect/);
         expect(disconnectLink).toBeInTheDocument();
 
-        await userEvent.click(disconnectLink!);
+        await userEvent.click(disconnectLink);
         expect(disconnect).toHaveBeenCalled();
     });
 

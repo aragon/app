@@ -81,8 +81,9 @@ describe('<Navigation.Dialog /> component', () => {
             address: '0x1234567890123456789012345678901234567890',
             subdomain: null,
         });
+        const src = 'http://checking-testing';
 
-        cidToSrcSpy.mockReturnValue('http://avatar-url');
+        cidToSrcSpy.mockReturnValue(src);
         getDaoEnsSpy.mockReturnValue(undefined);
 
         const links = navigationDaoLinks(dao);
@@ -92,7 +93,7 @@ describe('<Navigation.Dialog /> component', () => {
         const w = within(dlg);
 
         const avatar = w.getByTestId('dao-avatar-mock');
-        expect(avatar).toHaveAttribute('data-src', 'http://avatar-url');
+        expect(avatar).toHaveAttribute('data-src', src);
         expect(avatar).toHaveAttribute('data-name', 'MyDAO');
 
         expect(w.getByText('MyDAO')).toBeInTheDocument();

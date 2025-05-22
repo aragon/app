@@ -22,43 +22,36 @@ export interface INavigationLinksItemProps extends ILinkProps {
     variant: NavigationLinksVariant;
 }
 
-export const NavigationLinksItem = (props: INavigationLinksItemProps) => {
-    const { href, variant, icon, children, className, ...otherProps } = props;
-
+export const NavigationLinksItem = ({
+    href,
+    variant,
+    icon,
+    children,
+    className,
+    ...otherProps
+}: INavigationLinksItemProps) => {
     const pathname = usePathname();
     const isActive = href != null && pathname.includes(href);
 
-    const iconClassNames = classNames(
-        'group-active:text-neutral-500',
-        { 'text-neutral-300': !isActive },
-        { 'text-primary-400': isActive && variant === 'row' },
-        { 'text-neutral-800': isActive && variant === 'column' },
-    );
-    const textClassNames = classNames(
-        'flex flex-row text-base font-normal leading-tight text-neutral-500',
-        'group-hover:text-neutral-800',
-        'group-active:text-neutral-800',
-        { 'text-neutral-800': isActive },
-        { truncate: variant === 'column' },
+    const linkClassNames = classNames(
+        'text-base font-normal leading-tight text-neutral-500 hover:text-neutral-800 active:text-neutral-800 truncate',
+        'group flex items-center gap-2 py-3 focus-ring-primary',
+        variant === 'column' && 'rounded-xl px-4 hover:bg-neutral-50',
+        isActive && variant === 'column' && 'bg-neutral-50',
+        isActive && 'text-neutral-800',
         className,
     );
 
     return (
-        <Link
-            href={href}
-            aria-current={isActive ? 'page' : undefined}
-            className={classNames(
-                'group flex flex-row items-center gap-2 py-3 text-neutral-500',
-                'focus-ring-primary',
-                { 'rounded-xl px-4 hover:bg-neutral-50': variant === 'column' },
-                { 'bg-neutral-50': isActive && variant === 'column' },
-                { 'text-neutral-800': isActive },
-                className,
-            )}
-            {...otherProps}
-        >
-            <Icon icon={icon} className={iconClassNames} />
-            <p className={textClassNames}>{children}</p>
+        <Link href={href} aria-current={isActive ? 'page' : undefined} className={linkClassNames} {...otherProps}>
+            <Icon
+                icon={icon}
+                className={classNames(
+                    !isActive ? 'text-neutral-300' : variant === 'row' ? 'text-primary-400' : 'text-neutral-800',
+                    'group-active:text-neutral-500',
+                )}
+            />
+            <p>{children}</p>
         </Link>
     );
 };
