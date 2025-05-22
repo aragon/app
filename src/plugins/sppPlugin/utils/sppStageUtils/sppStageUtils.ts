@@ -16,32 +16,33 @@ class SppStageUtils {
 
         const approvalReached = this.isApprovalReached(proposal, stage);
         const isSignalling = this.isSignalingProposal(proposal, stage);
-        const vetoed = this.isVetoReached(proposal, stage);
-        const unreached = this.isStageUnreached(proposal, stageIndex);
+        const isVetoed = this.isVetoReached(proposal, stage);
+        const isUnreached = this.isStageUnreached(proposal, stageIndex);
 
         const startsInFuture = startDate != null && now < startDate;
         const endsInFuture = endDate != null && now < endDate;
-        const pending = startsInFuture || stageIndex > currentStage;
+        const isPending = startsInFuture || stageIndex > currentStage;
 
-        const active = endsInFuture && (!approvalReached || isSignalling);
+        const isActive = endsInFuture && (!approvalReached || isSignalling);
 
         const isAdvanceable = stageIndex === currentStage && endsInFuture && approvalReached && !isSignalling;
 
-        const expired = !isSignalling && stageIndex === currentStage && maxAdvanceDate != null && now > maxAdvanceDate;
+        const isExpired =
+            !isSignalling && stageIndex === currentStage && maxAdvanceDate != null && now > maxAdvanceDate;
 
-        if (vetoed) {
+        if (isVetoed) {
             return ProposalStatus.VETOED;
         }
 
-        if (unreached) {
+        if (isUnreached) {
             return ProposalStatus.UNREACHED;
         }
 
-        if (pending) {
+        if (isPending) {
             return ProposalStatus.PENDING;
         }
 
-        if (active) {
+        if (isActive) {
             return ProposalStatus.ACTIVE;
         }
 
@@ -53,7 +54,7 @@ class SppStageUtils {
             return ProposalStatus.REJECTED;
         }
 
-        if (expired) {
+        if (isExpired) {
             return ProposalStatus.EXPIRED;
         }
 

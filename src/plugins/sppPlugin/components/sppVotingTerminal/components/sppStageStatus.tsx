@@ -53,11 +53,9 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     });
 
     const isLastStage = sppStageUtils.isLastStage(proposal, stage);
-    const isSignalingProposal = !proposal.hasActions;
 
-    // Display button when status is advanceable. Hide the button/info for the last stage when proposal is signaling
-    // to hide executable info text.
-    const displayAdvanceButton = stageStatus === ProposalStatus.ADVANCEABLE && !(isSignalingProposal && isLastStage);
+    // Display button when status is advanceable except for the last stage.
+    const displayAdvanceButton = stageStatus === ProposalStatus.ADVANCEABLE && !isLastStage;
 
     const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);
 
@@ -92,7 +90,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         );
     }
 
-    if (!displayAdvanceButton || isLastStage) {
+    if (!displayAdvanceButton) {
         return null;
     }
 
