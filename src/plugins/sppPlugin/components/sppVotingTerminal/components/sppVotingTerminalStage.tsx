@@ -35,8 +35,10 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const processedMaxAdvance = sppStageUtils.getStageMaxAdvance(proposal, stage)?.toMillis();
 
     // Keep stage status updated for statuses that are time dependent
-    const { ACTIVE, PENDING, ACCEPTED } = ProposalStatus;
-    const enableDynamicValue = [ACTIVE, PENDING, ACCEPTED].includes(sppStageUtils.getStageStatus(proposal, stage));
+    const { ACTIVE, PENDING, ACCEPTED, ADVANCEABLE } = ProposalStatus;
+    const enableDynamicValue = [ACTIVE, PENDING, ACCEPTED, ADVANCEABLE].includes(
+        sppStageUtils.getStageStatus(proposal, stage),
+    );
     const stageStatus = useDynamicValue({
         callback: () => sppStageUtils.getStageStatus(proposal, stage),
         enabled: enableDynamicValue,
