@@ -29,10 +29,10 @@ export interface IProposalVotingTerminalStageProps {
 export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps> = (props) => {
     const { stage, daoId, proposal } = props;
 
-    const processedStartDate = sppStageUtils.getStageStartDate(proposal, stage)?.toMillis();
-    const processedEndDate = sppStageUtils.getStageEndDate(proposal, stage)?.toMillis();
-    const processedMinAdvance = sppStageUtils.getStageMinAdvance(proposal, stage)?.toMillis();
-    const processedMaxAdvance = sppStageUtils.getStageMaxAdvance(proposal, stage)?.toMillis();
+    // const processedStartDate = sppStageUtils.getStageStartDate(proposal, stage)?.toMillis();
+    // const processedEndDate = sppStageUtils.getStageEndDate(proposal, stage)?.toMillis();
+    // const processedMinAdvance = sppStageUtils.getStageMinAdvance(proposal, stage)?.toMillis();
+    // const processedMaxAdvance = sppStageUtils.getStageMaxAdvance(proposal, stage)?.toMillis();
 
     // Keep stage status updated for statuses that are time dependent
     const { ACTIVE, PENDING, ACCEPTED, ADVANCEABLE } = ProposalStatus;
@@ -41,6 +41,25 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     );
     const stageStatus = useDynamicValue({
         callback: () => sppStageUtils.getStageStatus(proposal, stage),
+        enabled: enableDynamicValue,
+    });
+
+    const processedStartDate = useDynamicValue({
+        callback: () => sppStageUtils.getStageStartDate(proposal, stage)?.toMillis(),
+        enabled: enableDynamicValue,
+    });
+
+    const processedEndDate = useDynamicValue({
+        callback: () => sppStageUtils.getStageEndDate(proposal, stage)?.toMillis(),
+        enabled: enableDynamicValue,
+    });
+
+    const processedMinAdvance = useDynamicValue({
+        callback: () => sppStageUtils.getStageMinAdvance(proposal, stage)?.toMillis(),
+        enabled: enableDynamicValue,
+    });
+    const processedMaxAdvance = useDynamicValue({
+        callback: () => sppStageUtils.getStageMaxAdvance(proposal, stage)?.toMillis(),
         enabled: enableDynamicValue,
     });
 

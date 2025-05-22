@@ -25,7 +25,13 @@ class SppStageUtils {
 
         const isActive = endsInFuture && (!approvalReached || isSignalling);
 
-        const isAdvanceable = stageIndex === currentStage && endsInFuture && approvalReached && !isSignalling;
+        const isAdvanceable =
+            maxAdvanceDate != null &&
+            stageIndex === currentStage &&
+            approvalReached &&
+            now < maxAdvanceDate &&
+            !isSignalling &&
+            !this.isLastStage(proposal, stage);
 
         const isExpired =
             !isSignalling && stageIndex === currentStage && maxAdvanceDate != null && now > maxAdvanceDate;
