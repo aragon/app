@@ -43,10 +43,10 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
             containerClasses={classNames('flex flex-col gap-2 py-3 md:py-5 lg:gap-3', containerClasses)}
             {...otherProps}
         >
-            <div className="flex flex-row items-center justify-between gap-1">
+            <div className="flex items-center justify-between gap-1">
                 <NavigationDaoHome dao={dao} onClick={() => setIsDialogOpen(true)} />
                 <Navigation.Links className="hidden lg:flex" links={navLinks} />
-                <div className="flex flex-row items-center gap-x-2 lg:gap-x-3">
+                <div className="flex items-center gap-x-2 lg:gap-x-3">
                     <Navigation.AppLinks dao={dao} />
                     <Wallet onClick={handleWalletClick} user={walletUser} textClassName="xl:block" />
                     <Navigation.Trigger className="md:hidden" onClick={() => setIsDialogOpen(true)} />

@@ -92,13 +92,17 @@ export const NavigationDialog = <TRouteType extends string>(props: INavigationDi
                 <NextLink
                     href="/"
                     className={classNames(
-                        'group flex flex-row justify-between rounded-xl px-4 py-3 text-neutral-500',
-                        'hover:bg-neutral-50',
+                        'group flex flex-row justify-between truncate rounded-xl px-4 py-3 text-base leading-tight font-normal text-neutral-500',
+                        'hover:bg-neutral-50 hover:text-neutral-800 active:text-neutral-800',
                         'focus-ring-primary',
                     )}
                 >
                     <p>{t('app.application.navigationDao.dialog.explore')}</p>
-                    <Icon icon={IconType.APP_EXPLORE} size="lg" className="text-neutral-300" />
+                    <Icon
+                        icon={IconType.APP_EXPLORE}
+                        size="lg"
+                        className="text-neutral-300 group-active:text-neutral-500"
+                    />
                 </NextLink>
             </Dialog.Content>
         </Dialog.Root>

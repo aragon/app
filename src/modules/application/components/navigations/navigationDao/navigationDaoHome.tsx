@@ -3,14 +3,14 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoAvatar } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 
-export interface IWalletProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface INavigationDaoHome extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     /**
      * DAO to display the home details for.
      */
     dao: IDao;
 }
 
-export const NavigationDaoHome: React.FC<IWalletProps> = (props) => {
+export const NavigationDaoHome: React.FC<INavigationDaoHome> = (props) => {
     const { dao, className, ...otherProps } = props;
 
     const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
