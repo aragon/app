@@ -62,7 +62,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);
 
     const canAdvance = useDynamicValue({
-        callback: () => minAdvanceTime != null && DateTime.now() >= minAdvanceTime,
+        callback: () => DateTime.now() >= minAdvanceTime!,
         enabled: displayAdvanceButton && minAdvanceTime != null,
     });
 

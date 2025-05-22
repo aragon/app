@@ -2,7 +2,14 @@ import { DaoList } from '@/modules/explore/components/daoList';
 import * as efpService from '@/modules/governance/api/efpService';
 import * as daoService from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { addressUtils, clipboardUtils, DateFormat, formatterUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    clipboardUtils,
+    DateFormat,
+    formatterUtils,
+    GukModulesProvider,
+    IconType,
+} from '@aragon/gov-ui-kit';
 import type * as ReactQuery from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -81,33 +88,18 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         expect(container).toBeEmptyDOMElement();
     });
 
-    it('renders a dropdown with some member information to copy on the clipboard', async () => {
+    it('supports member address and ens copy', async () => {
         const ens = 'member.eth';
         const address = '0x1234567890123456789012345678901234567890';
         const member = generateMember({ ens, address });
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
         render(createTestComponent({ address }));
-
-        const dropdownButton = screen.getByRole('button', { name: ens });
-        expect(dropdownButton).toBeInTheDocument();
-
-        await userEvent.click(dropdownButton);
-        const ensItem = screen.getByRole('menuitem', { name: ens });
-        expect(ensItem).toBeInTheDocument();
-        await userEvent.click(ensItem);
+        const clipboards = screen.getAllByTestId(IconType.COPY);
+        expect(clipboards.length).toBe(2);
+        await userEvent.click(clipboards[0]);
+        expect(clipboardCopySpy).toHaveBeenCalledWith(address);
+        await userEvent.click(clipboards[1]);
         expect(clipboardCopySpy).toHaveBeenCalledWith(ens);
-
-        await userEvent.click(dropdownButton);
-        const addressItem = screen.getByRole('menuitem', { name: addressUtils.truncateAddress(member.address) });
-        expect(addressItem).toBeInTheDocument();
-        await userEvent.click(addressItem);
-        expect(clipboardCopySpy).toHaveBeenCalledWith(member.address);
-
-        await userEvent.click(dropdownButton);
-        const memberLinkItem = screen.getByRole('menuitem', { name: 'localhost/' });
-        expect(memberLinkItem).toBeInTheDocument();
-        await userEvent.click(memberLinkItem);
-        expect(clipboardCopySpy).toHaveBeenCalledWith('localhost/');
     });
 
     it('renders the member information', () => {

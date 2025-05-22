@@ -50,7 +50,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
             <div className="flex flex-row justify-between gap-1">
                 <button className="flex min-w-0 flex-row items-center gap-3 p-1">
                     <DaoAvatar src={daoAvatar} name={dao.name} size="lg" />
-                    <p className="hidden truncate text-base font-normal leading-tight text-neutral-800 md:block">
+                    <p className="hidden truncate text-base leading-tight font-normal text-neutral-800 md:block">
                         {dao.name}
                     </p>
                 </button>
@@ -88,7 +88,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                             />
                         </div>
                     </div>
-                    <div className="flex flex-col gap-1.5 font-normal leading-tight">
+                    <div className="flex flex-col gap-1.5 leading-tight font-normal">
                         <p className="truncate text-lg text-neutral-800 sm:text-xl">{dao.name}</p>
                         <p className="truncate text-sm text-neutral-500 sm:text-base">{dialogSubtitle}</p>
                     </div>

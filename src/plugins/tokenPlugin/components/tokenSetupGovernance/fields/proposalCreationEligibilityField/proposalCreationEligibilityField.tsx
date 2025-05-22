@@ -33,7 +33,7 @@ export const ProposalCreationEligibilityField: React.FC<IProposalCreationEligibi
     const handleRadioChange = (value: string) => onChange(value === 'members' ? '1' : '0');
 
     return (
-        <Card className="flex flex-col gap-6 border border-neutral-100 p-6 shadow-neutral-sm">
+        <Card className="shadow-neutral-sm flex flex-col gap-6 border border-neutral-100 p-6">
             <RadioGroup
                 label={t('app.plugins.token.tokenSetupGovernance.eligibleField.label')}
                 helpText={t('app.plugins.token.tokenSetupGovernance.eligibleField.helpText')}

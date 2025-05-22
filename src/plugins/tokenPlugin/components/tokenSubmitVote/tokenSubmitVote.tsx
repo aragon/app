@@ -131,7 +131,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                 </div>
             )}
             {showOptions && (
-                <Card className="border border-neutral-100 p-6 shadow-neutral-sm">
+                <Card className="shadow-neutral-sm border border-neutral-100 p-6">
                     <RadioGroup
                         label={t('app.plugins.token.tokenSubmitVote.options.label', {
                             label: isVeto

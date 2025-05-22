@@ -57,7 +57,7 @@ export const WalletConnectActionDialogListener: React.FC<IWalletConnectActionDia
                     <Avatar src={icons[0]} size="md" />
                     <Heading size="h3">{name}</Heading>
                     <div className="flex flex-row gap-3">
-                        <p className="text-base font-normal leading-tight text-primary-400">
+                        <p className="text-primary-400 text-base leading-tight font-normal">
                             {t('app.governance.walletConnectActionDialog.listener.progress')}
                         </p>
                         <Spinner variant="primary" size="md" />
@@ -65,17 +65,12 @@ export const WalletConnectActionDialogListener: React.FC<IWalletConnectActionDia
                 </div>
                 <div className="h-[1px] w-full bg-neutral-100" />
                 <div className="flex flex-col gap-3 md:gap-4">
-                    <p className="text-balance font-normal leading-normal text-neutral-500">
+                    <p className="leading-normal font-normal text-balance text-neutral-500">
                         <span>{t('app.governance.walletConnectActionDialog.listener.info_1')}</span>
                         <span className="text-primary-400">{name} </span>
                         <span>{t('app.governance.walletConnectActionDialog.listener.info_2')}</span>
                     </p>
-                    <Link
-                        href="https://www.aragon.org/how-to/dapp-connect"
-                        target="_blank"
-                        variant="neutral"
-                        iconRight={IconType.LINK_EXTERNAL}
-                    >
+                    <Link href="https://www.aragon.org/how-to/dapp-connect" isExternal={true} variant="neutral">
                         {t('app.governance.walletConnectActionDialog.listener.helpLink')}
                     </Link>
                 </div>
