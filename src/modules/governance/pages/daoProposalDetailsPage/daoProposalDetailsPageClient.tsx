@@ -13,7 +13,6 @@ import {
     addressUtils,
     CardCollapsible,
     ChainEntityType,
-    Clipboard,
     DateFormat,
     DefinitionList,
     DocumentParser,
@@ -158,22 +157,19 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         <DefinitionList.Container>
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.onChainId')}
+                                copyValue={proposal.proposalIndex}
                             >
-                                <Clipboard copyValue={proposal.proposalIndex}>
-                                    <p className="truncate text-neutral-500">{proposal.proposalIndex}</p>
-                                </Clipboard>
+                                <p className="truncate text-neutral-500">{proposal.proposalIndex}</p>
                             </DefinitionList.Item>
                             <DefinitionList.Item term={t('app.governance.daoProposalDetailsPage.aside.details.id')}>
                                 <p className="truncate text-neutral-500">{slug}</p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.creator')}
+                                copyValue={creator.ens ?? creator.address}
+                                link={{ href: creatorLink }}
                             >
-                                <Clipboard copyValue={creator.ens ?? creator.address}>
-                                    <Link href={creatorLink} isExternal={true}>
-                                        {creatorName}
-                                    </Link>
-                                </Clipboard>
+                                {creatorName}
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.published')}

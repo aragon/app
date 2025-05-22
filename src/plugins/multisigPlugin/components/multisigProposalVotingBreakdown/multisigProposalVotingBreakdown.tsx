@@ -20,6 +20,7 @@ export const MultisigProposalVotingBreakdown: React.FC<IMultisigProposalVotingBr
         <ProposalVoting.BreakdownMultisig
             approvalsAmount={proposal.metrics.totalVotes}
             minApprovals={proposal.settings.minApprovals}
+            membersCount={Number(proposal.settings.historicalMembersCount)}
         >
             {children}
         </ProposalVoting.BreakdownMultisig>
