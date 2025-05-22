@@ -156,10 +156,9 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...peaq,
         name: 'Peaq',
         logo: 'https://assets.coingecko.com/coins/images/51415/large/peaq-token-brand-icon_%281%29.png',
-        order: process.env.NEXT_PUBLIC_FEATURE_NETWORK_PEAQ !== 'true' ? 9 : 7,
+        order: 7,
         protocolVersion: latestProtocolVersion,
         beta: true,
-        disabled: process.env.NEXT_PUBLIC_FEATURE_NETWORK_PEAQ !== 'true',
         addresses: {
             dao: '0xa8a4Dc9B6f16BEe4E527CEA47FBeb6e0802030e1',
             daoFactory: '0x35B62715459cB60bf6dC17fF8cfe138EA305E7Ee',
