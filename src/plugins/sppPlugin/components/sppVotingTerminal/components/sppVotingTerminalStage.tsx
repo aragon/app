@@ -29,12 +29,7 @@ export interface IProposalVotingTerminalStageProps {
 export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps> = (props) => {
     const { stage, daoId, proposal } = props;
 
-    // const processedStartDate = sppStageUtils.getStageStartDate(proposal, stage)?.toMillis();
-    // const processedEndDate = sppStageUtils.getStageEndDate(proposal, stage)?.toMillis();
-    // const processedMinAdvance = sppStageUtils.getStageMinAdvance(proposal, stage)?.toMillis();
-    // const processedMaxAdvance = sppStageUtils.getStageMaxAdvance(proposal, stage)?.toMillis();
-
-    // Keep stage status updated for statuses that are time dependent
+    // Keep stage status and timings updated for statuses that are time dependent
     const { ACTIVE, PENDING, ACCEPTED, ADVANCEABLE } = ProposalStatus;
     const enableDynamicValue = [ACTIVE, PENDING, ACCEPTED, ADVANCEABLE].includes(
         sppStageUtils.getStageStatus(proposal, stage),

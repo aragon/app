@@ -22,16 +22,13 @@ class SppStageUtils {
         const startsInFuture = startDate != null && now < startDate;
         const endsInFuture = endDate != null && now < endDate;
         const isPending = startsInFuture || stageIndex > currentStage;
+        const isLastStage = this.isLastStage(proposal, stage);
+        const isWithinMaxAdvance = maxAdvanceDate != null && now < maxAdvanceDate;
 
         const isActive = endsInFuture && (!approvalReached || isSignalling);
 
         const isAdvanceable =
-            maxAdvanceDate != null &&
-            stageIndex === currentStage &&
-            approvalReached &&
-            now < maxAdvanceDate &&
-            !isSignalling &&
-            !this.isLastStage(proposal, stage);
+            stageIndex === currentStage && approvalReached && isWithinMaxAdvance && !isSignalling && !isLastStage;
 
         const isExpired =
             !isSignalling && stageIndex === currentStage && maxAdvanceDate != null && now > maxAdvanceDate;
