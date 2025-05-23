@@ -31,11 +31,19 @@ export const NavigationLinks = <TRouteType extends string>(props: INavigationLin
             )}
             {...otherProps}
         >
-            {links.map(({ link, label, icon }) => (
-                <NavigationLinksItem key={link} href={link} icon={icon} variant={variant}>
-                    {t(label)}
-                </NavigationLinksItem>
-            ))}
+            {links
+                .filter((link) => !link.hidden)
+                .map(({ link, label, icon, mdHidden }) => (
+                    <NavigationLinksItem
+                        key={link}
+                        href={link}
+                        icon={icon}
+                        variant={variant}
+                        className={classNames({ 'lg:hidden': variant === 'column' && mdHidden })}
+                    >
+                        {t(label)}
+                    </NavigationLinksItem>
+                ))}
         </div>
     );
 };

@@ -10,64 +10,51 @@ export interface INavigationDaoLinksParams {
      * The DAO being navigated.
      */
     dao: IDao;
-    /**
-     * The context in which the navigation links are being used.
-     */
-    context: 'page' | 'dialog' | 'full';
 }
 
-export function navigationDaoLinks(dao: IDao, context?: 'page' | 'dialog' | 'full'): DaoRoutes[] {
+export function navigationDaoLinks(dao: IDao, isPage: boolean): DaoRoutes[] {
     const isSupported = daoUtils.hasSupportedPlugins(dao);
-    const base = daoUtils.getDaoUrl(dao)!;
+    const daoUrl = daoUtils.getDaoUrl(dao)!;
 
-    const all: DaoRoutes[] = [
+    return [
         {
             label: 'app.application.navigationDao.link.dashboard',
-            link: `${base}/dashboard`,
+            link: `${daoUrl}/dashboard`,
             icon: IconType.APP_DASHBOARD,
+            hidden: isPage,
         },
         {
             label: 'app.application.navigationDao.link.proposals',
-            link: `${base}/proposals`,
+            link: `${daoUrl}/proposals`,
             icon: IconType.APP_PROPOSALS,
+            hidden: !isSupported,
+            mdHidden: true,
         },
         {
             label: 'app.application.navigationDao.link.members',
-            link: `${base}/members`,
+            link: `${daoUrl}/members`,
             icon: IconType.APP_MEMBERS,
+            hidden: !isSupported,
+            mdHidden: true,
         },
         {
             label: 'app.application.navigationDao.link.assets',
-            link: `${base}/assets`,
+            link: `${daoUrl}/assets`,
             icon: IconType.APP_ASSETS,
+
+            mdHidden: true,
         },
         {
             label: 'app.application.navigationDao.link.transactions',
-            link: `${base}/transactions`,
+            link: `${daoUrl}/transactions`,
             icon: IconType.APP_TRANSACTIONS,
+            mdHidden: true,
         },
         {
             label: 'app.application.navigationDao.link.settings',
-            link: `${base}/settings`,
+            link: `${daoUrl}/settings`,
             icon: IconType.SETTINGS,
+            hidden: isPage,
         },
     ];
-
-    return all.filter((link) => {
-        const id = link.link.split('/').pop()!;
-
-        if ((id === 'proposals' || id === 'members') && !isSupported) {
-            return false;
-        }
-
-        if (context === 'page') {
-            return id !== 'dashboard' && id !== 'settings';
-        }
-
-        if (context === 'dialog') {
-            return id === 'dashboard' || id === 'settings';
-        }
-
-        return true;
-    });
 }

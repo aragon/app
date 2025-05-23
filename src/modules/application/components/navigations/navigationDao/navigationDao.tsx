@@ -62,7 +62,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
         >
             <div className="flex items-center justify-between gap-1">
                 <NavigationDaoHome dao={dao} onClick={() => setIsDialogOpen(true)} />
-                <Navigation.Links className="hidden lg:flex" links={navigationDaoLinks(dao, 'page')} />
+                <Navigation.Links className="hidden lg:flex" links={navigationDaoLinks(dao, true)} />
                 <div className="flex items-center gap-x-2 lg:gap-x-3">
                     <Navigation.AppLinks dao={dao} />
                     <Wallet onClick={handleWalletClick} user={walletUser} textClassName="xl:block" />
@@ -70,8 +70,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                 </div>
             </div>
             <Navigation.Dialog
-                links={navigationDaoLinks(dao)}
-                filteredLinks={navigationDaoLinks(dao, 'dialog')}
+                links={navigationDaoLinks(dao, false)}
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
                 hiddenTitle={t('app.application.navigationDao.a11y.title')}

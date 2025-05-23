@@ -16,4 +16,12 @@ export interface INavigationLink<TRouteType extends string> {
      * Icon of the route.
      */
     icon: IconType;
+    /**
+     * Whether the route is hidden.
+     */
+    hidden?: boolean;
+    /**
+     * Whether the route is hidden on medium screens.
+     */
+    mdHidden?: boolean;
 }
