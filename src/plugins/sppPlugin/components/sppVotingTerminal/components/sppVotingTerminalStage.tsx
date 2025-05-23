@@ -29,6 +29,9 @@ export interface IProposalVotingTerminalStageProps {
 export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps> = (props) => {
     const { stage, daoId, proposal } = props;
 
+    const processedStartDate = sppStageUtils.getStageStartDate(proposal, stage)?.toMillis();
+    const processedEndDate = sppStageUtils.getStageEndDate(proposal, stage)?.toMillis();
+
     // Keep stage status and timings updated for statuses that are time dependent
     const { ACTIVE, PENDING, ACCEPTED, ADVANCEABLE } = ProposalStatus;
     const enableDynamicValue = [ACTIVE, PENDING, ACCEPTED, ADVANCEABLE].includes(
@@ -36,16 +39,6 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     );
     const stageStatus = useDynamicValue({
         callback: () => sppStageUtils.getStageStatus(proposal, stage),
-        enabled: enableDynamicValue,
-    });
-
-    const processedStartDate = useDynamicValue({
-        callback: () => sppStageUtils.getStageStartDate(proposal, stage)?.toMillis(),
-        enabled: enableDynamicValue,
-    });
-
-    const processedEndDate = useDynamicValue({
-        callback: () => sppStageUtils.getStageEndDate(proposal, stage)?.toMillis(),
         enabled: enableDynamicValue,
     });
 
@@ -78,8 +71,8 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
             index={stage.stageIndex}
             isMultiStage={isMultiStage}
             bodyList={bodyList}
-            minAdvance={processedMinAdvance}
-            maxAdvance={processedMaxAdvance}
+            minAdvance={processedMinAdvance ?? stage.minAdvance}
+            maxAdvance={processedMaxAdvance ?? stage.maxAdvance}
         >
             <ProposalVoting.BodySummary>
                 <ProposalVoting.BodySummaryList>
