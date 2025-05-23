@@ -1528,11 +1528,6 @@
     "settings": {
       "daoPluginInfo": {
         "bodyName": "Body name",
-        "contract": {
-          "launchedAt": "Launched",
-          "plugin": "Plugin address",
-          "pluginVersionInfo": "{{name}} v{{release}}.{{build}}"
-        },
         "processKey": "Process key",
         "processName": "Process name",
         "tabs": {
@@ -1647,6 +1642,11 @@
       },
       "confirmWizardExit": {
         "message": "If you leave this process, you'll lose all the information you've entered so far."
+      },
+      "daoPluginInfo": {
+        "launchedAt": "Launched",
+        "plugin": "Plugin address",
+        "pluginVersionInfo": "{{name}} v{{release}}.{{build}}"
       },
       "errorFeedback": {
         "description": "If you'd like to help, you can report the issue to our team.",

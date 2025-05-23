@@ -4,7 +4,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { addressUtils, ChainEntityType, Clipboard, DefinitionList, Link, useBlockExplorer } from '@aragon/gov-ui-kit';
+import { addressUtils, ChainEntityType, DefinitionList, useBlockExplorer } from '@aragon/gov-ui-kit';
 
 export interface IDaoVersionInfoProps {
     /**
@@ -28,28 +28,24 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
             <DefinitionList.Item
                 term={t('app.settings.daoVersionInfo.osLabel')}
                 description={t('app.settings.daoVersionInfo.osValue', { version: dao.version })}
+                copyValue={dao.address}
+                link={{ href: daoLink, isExternal: false }}
             >
-                <Clipboard copyValue={dao.address}>
-                    <Link href={daoLink}>{addressUtils.truncateAddress(dao.address)}</Link>
-                </Clipboard>
+                {addressUtils.truncateAddress(dao.address)}
             </DefinitionList.Item>
             {processPlugins?.map((plugin) => (
                 <DefinitionList.Item
                     key={plugin.uniqueId}
                     term={daoUtils.getPluginName(plugin.meta)}
+                    copyValue={plugin.meta.address}
+                    link={{ href: buildEntityUrl({ type: ChainEntityType.ADDRESS, id: plugin.meta.address, chainId }) }}
                     description={t('app.settings.daoVersionInfo.governanceValue', {
                         name: daoUtils.parsePluginSubdomain(plugin.meta.subdomain),
                         release: plugin.meta.release,
                         build: plugin.meta.build,
                     })}
                 >
-                    <Clipboard copyValue={plugin.meta.address}>
-                        <Link
-                            href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: plugin.meta.address, chainId })}
-                        >
-                            {addressUtils.truncateAddress(plugin.meta.address)}
-                        </Link>
-                    </Clipboard>
+                    {addressUtils.truncateAddress(plugin.meta.address)}
                 </DefinitionList.Item>
             ))}
         </DefinitionList.Container>
