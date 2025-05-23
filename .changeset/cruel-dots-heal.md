@@ -2,4 +2,4 @@
 '@aragon/app-next': patch
 ---
 
-Fix SppVotingTerminalStage to ensure stable values for min and max advance
+Fix SppVotingTerminalStage to ensure stable values for min and max advance when transitioning between stages
