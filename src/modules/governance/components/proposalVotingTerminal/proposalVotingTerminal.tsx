@@ -1,13 +1,9 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import {
-    type IDefinitionSetting,
-    ProposalStatus,
-    ProposalVoting,
-    proposalStatusToVotingStatus,
-} from '@aragon/gov-ui-kit';
+import { type IDefinitionSetting, ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -44,20 +40,22 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
         },
     };
 
-    const proposalSettings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDefinitionSetting[]>({
+    const pluginSettings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDefinitionSetting[]>({
         params: { daoId, settings: proposal.settings, pluginAddress: proposal.pluginAddress },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginId: proposal.pluginSubdomain,
     });
 
+    const proposalSettings = useDaoPluginInfo({ daoId, address: proposal.pluginAddress, settings: pluginSettings });
+
     return (
         <ProposalVoting.Container>
             <ProposalVoting.Stage
-                status={proposalStatusToVotingStatus[status]}
+                status={status}
                 startDate={proposal.startDate * 1000}
                 endDate={proposal.endDate * 1000}
             >
-                <ProposalVoting.BodyContent status={proposalStatusToVotingStatus[status]}>
+                <ProposalVoting.BodyContent status={status}>
                     <PluginSingleComponent
                         slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
                         pluginId={proposal.pluginSubdomain}

@@ -1,4 +1,5 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
+import * as useDaoPluginInfo from '@/shared/hooks/useDaoPluginInfo';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
 import { generatePluginSettings } from '@/shared/testUtils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
@@ -20,14 +21,17 @@ jest.mock('../voteList', () => ({ VoteList: () => <div data-testid="vote-list-mo
 describe('<ProposalVotingTerminal /> component', () => {
     const useSlotSingleFunctionSpy = jest.spyOn(useSlotSingleFunction, 'useSlotSingleFunction');
     const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
+    const useDaoPluginInfoSpy = jest.spyOn(useDaoPluginInfo, 'useDaoPluginInfo');
 
     beforeEach(() => {
         useAccountSpy.mockReturnValue({} as wagmi.UseAccountReturnType);
+        useDaoPluginInfoSpy.mockReturnValue([]);
     });
 
     afterEach(() => {
         useAccountSpy.mockReset();
         useSlotSingleFunctionSpy.mockReset();
+        useDaoPluginInfoSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IProposalVotingTerminalProps>) => {
@@ -56,21 +60,20 @@ describe('<ProposalVotingTerminal /> component', () => {
         expect(screen.getByTestId('vote-list-mock')).toBeInTheDocument();
     });
 
-    it('renders the proposal settings', () => {
+    it('renders the plugin info and proposal settings', () => {
         const daoId = 'test-id';
         const settings = generatePluginSettings();
         const parsedSettings = { term: 'plugin-term', definition: 'plugin-value' };
         const proposal = generateProposal({ settings, pluginSubdomain: 'plugin-id' });
 
         useSlotSingleFunctionSpy.mockReturnValue([parsedSettings]);
+        useDaoPluginInfoSpy.mockImplementation((params) => params.settings!);
 
         render(createTestComponent({ daoId, proposal }));
+        expect(useDaoPluginInfoSpy).toHaveBeenCalled();
+        const expectedParams = { daoId, settings: proposal.settings, pluginAddress: proposal.pluginAddress };
         expect(useSlotSingleFunctionSpy).toHaveBeenCalledWith({
-            params: {
-                daoId,
-                settings: proposal.settings,
-                pluginAddress: proposal.pluginAddress,
-            },
+            params: expectedParams,
             pluginId: proposal.pluginSubdomain,
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         });

@@ -5,6 +5,7 @@ import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { useSppGovernanceSettingsDefault } from '@/plugins/sppPlugin/hooks/useSppGovernanceSettingsDefault';
 import type { ISppProposal, ISppStage, ISppStagePlugin, ISppSubProposal } from '@/plugins/sppPlugin/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { type IDefinitionSetting, ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
@@ -54,12 +55,14 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
     const isExternalBody = plugin.subdomain == null;
 
     const pluginSettings = isExternalBody ? {} : plugin.settings;
-    const proposalSettings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDefinitionSetting[]>({
+    const settings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDefinitionSetting[]>({
         params: { daoId, settings: pluginSettings, pluginAddress: plugin.address },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginId: plugin.subdomain ?? 'external',
         fallback: useSppGovernanceSettingsDefault,
     });
+
+    const proposalSettings = useDaoPluginInfo({ daoId, address: proposal.pluginAddress, settings });
 
     const voteListParams = {
         queryParams: { proposalId: subProposal?.id, pluginAddress: subProposal?.pluginAddress, pageSize: votesPerPage },

@@ -12,11 +12,9 @@ import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import {
     addressUtils,
     ChainEntityType,
-    Clipboard,
     DateFormat,
     DefinitionList,
     formatterUtils,
-    Link,
     MemberAvatar,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
@@ -141,20 +139,20 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                 <Page.Aside>
                     <Page.AsideCard title={t('app.governance.daoMemberDetailsPage.aside.details.title')}>
                         <DefinitionList.Container>
-                            <DefinitionList.Item term={t('app.governance.daoMemberDetailsPage.aside.details.address')}>
-                                <Clipboard copyValue={address}>
-                                    <Link href={addressUrl} isExternal={true}>
-                                        {truncatedAddress}
-                                    </Link>
-                                </Clipboard>
+                            <DefinitionList.Item
+                                term={t('app.governance.daoMemberDetailsPage.aside.details.address')}
+                                copyValue={address}
+                                link={{ href: addressUrl }}
+                            >
+                                {truncatedAddress}
                             </DefinitionList.Item>
                             {ens && addressUrl && (
-                                <DefinitionList.Item term={t('app.governance.daoMemberDetailsPage.aside.details.ens')}>
-                                    <Clipboard copyValue={ens}>
-                                        <Link href={addressUrl} isExternal={true}>
-                                            {ens}
-                                        </Link>
-                                    </Clipboard>
+                                <DefinitionList.Item
+                                    term={t('app.governance.daoMemberDetailsPage.aside.details.ens')}
+                                    copyValue={ens}
+                                    link={{ href: addressUrl }}
+                                >
+                                    {ens}
                                 </DefinitionList.Item>
                             )}
                             <DefinitionList.Item
