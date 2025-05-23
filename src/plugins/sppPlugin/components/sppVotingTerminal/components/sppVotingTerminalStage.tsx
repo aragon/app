@@ -42,15 +42,15 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
         enabled: enableDynamicValue,
     });
 
-    const processedMinAdvance = useDynamicValue({
-        callback: () => sppStageUtils.getStageMinAdvance(proposal, stage)?.toMillis(),
-        enabled: enableDynamicValue,
-    });
+    const processedMinAdvance =
+        stageStatus === ProposalStatus.ADVANCEABLE
+            ? sppStageUtils.getStageMinAdvance(proposal, stage)?.toMillis()
+            : undefined;
 
-    const processedMaxAdvance = useDynamicValue({
-        callback: () => sppStageUtils.getStageMaxAdvance(proposal, stage)?.toMillis(),
-        enabled: enableDynamicValue,
-    });
+    const processedMaxAdvance =
+        stageStatus === ProposalStatus.ADVANCEABLE
+            ? sppStageUtils.getStageMaxAdvance(proposal, stage)?.toMillis()
+            : undefined;
 
     const bodyList = stage.plugins.map((plugin) => plugin.address);
 
@@ -71,8 +71,8 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
             index={stage.stageIndex}
             isMultiStage={isMultiStage}
             bodyList={bodyList}
-            minAdvance={processedMinAdvance ?? stage.minAdvance}
-            maxAdvance={processedMaxAdvance ?? stage.maxAdvance}
+            minAdvance={processedMinAdvance}
+            maxAdvance={processedMaxAdvance}
         >
             <ProposalVoting.BodySummary>
                 <ProposalVoting.BodySummaryList>
