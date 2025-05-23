@@ -34,30 +34,24 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
 
     // Keep stage status and timings updated for statuses that are time dependent
     const { ACTIVE, PENDING, ACCEPTED, ADVANCEABLE } = ProposalStatus;
-    const enableDynamicValue = [ACTIVE, PENDING, ACCEPTED, ADVANCEABLE].includes(
-        sppStageUtils.getStageStatus(proposal, stage),
-    );
-    const stageStatus = useDynamicValue({
-        callback: () => sppStageUtils.getStageStatus(proposal, stage),
-        enabled: enableDynamicValue,
+
+    const { status, minAdvance, maxAdvance } = useDynamicValue({
+        enabled: [ACTIVE, PENDING, ACCEPTED, ADVANCEABLE].includes(sppStageUtils.getStageStatus(proposal, stage)),
+        callback: () => {
+            const status = sppStageUtils.getStageStatus(proposal, stage);
+            const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage)?.toMillis();
+            const maxAdvance = sppStageUtils.getStageMaxAdvance(proposal, stage)?.toMillis();
+
+            return { status, minAdvance, maxAdvance };
+        },
     });
-
-    const processedMinAdvance =
-        stageStatus === ProposalStatus.ADVANCEABLE
-            ? sppStageUtils.getStageMinAdvance(proposal, stage)?.toMillis()
-            : undefined;
-
-    const processedMaxAdvance =
-        stageStatus === ProposalStatus.ADVANCEABLE
-            ? sppStageUtils.getStageMaxAdvance(proposal, stage)?.toMillis()
-            : undefined;
 
     const bodyList = stage.plugins.map((plugin) => plugin.address);
 
     const isMultiStage = proposal.settings.stages.length > 1;
     const isSingleBody = bodyList.length === 1;
 
-    const canVote = stageStatus === ProposalStatus.ACTIVE;
+    const canVote = status === ProposalStatus.ACTIVE;
 
     const isVeto = sppStageUtils.isVeto(stage);
     const isTimelockStage = !stage.plugins.length;
@@ -65,14 +59,14 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     return (
         <ProposalVoting.Stage
             name={stage.name}
-            status={stageStatus}
+            status={status}
             startDate={processedStartDate}
             endDate={processedEndDate}
             index={stage.stageIndex}
             isMultiStage={isMultiStage}
             bodyList={bodyList}
-            minAdvance={processedMinAdvance}
-            maxAdvance={processedMaxAdvance}
+            minAdvance={minAdvance}
+            maxAdvance={maxAdvance}
         >
             <ProposalVoting.BodySummary>
                 <ProposalVoting.BodySummaryList>
@@ -110,7 +104,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                 <ProposalVoting.BodyContent
                     name={plugin.subdomain != null ? plugin.name : addressUtils.truncateAddress(plugin.address)}
                     key={plugin.address}
-                    status={stageStatus}
+                    status={status}
                     bodyId={plugin.address}
                     hideTabs={!plugin.subdomain ? [ProposalVotingTab.VOTES] : undefined}
                     bodyBrand={plugin.subdomain === undefined ? brandedExternals[plugin.brandId] : undefined}
