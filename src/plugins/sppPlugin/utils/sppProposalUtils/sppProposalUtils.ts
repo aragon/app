@@ -1,5 +1,5 @@
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
-import { type ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
+import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { type ISppProposal, type ISppStage, SppProposalType } from '../../types';
 import { sppStageUtils } from '../sppStageUtils';
 
@@ -30,10 +30,10 @@ class SppProposalUtils {
         const lastStage = stages[stages.length - 1];
 
         const isExecuted = executed.status;
-        const isVetoed = this.hasAnyStageStatus(proposal, ProposalVotingStatus.VETOED);
+        const isVetoed = this.hasAnyStageStatus(proposal, ProposalStatus.VETOED);
 
-        const hasUnreachedStages = this.hasAnyStageStatus(proposal, ProposalVotingStatus.UNREACHED);
-        const hasExpiredStages = this.hasAnyStageStatus(proposal, ProposalVotingStatus.EXPIRED);
+        const hasUnreachedStages = this.hasAnyStageStatus(proposal, ProposalStatus.UNREACHED);
+        const hasExpiredStages = this.hasAnyStageStatus(proposal, ProposalStatus.EXPIRED);
 
         // Set end date to 0 to mark SPP proposals as "ended" when one or more stages are unreached
         const endDate = !hasUnreachedStages ? sppStageUtils.getStageEndDate(proposal, lastStage)?.toSeconds() : 0;
@@ -60,14 +60,14 @@ class SppProposalUtils {
         });
     };
 
-    hasAnyStageStatus = (proposal: ISppProposal, status: ProposalVotingStatus): boolean =>
+    hasAnyStageStatus = (proposal: ISppProposal, status: ProposalStatus): boolean =>
         proposal.settings.stages.some((stage) => sppStageUtils.getStageStatus(proposal, stage) === status);
 
     getCurrentStage = (proposal: ISppProposal): ISppStage => proposal.settings.stages[proposal.stageIndex];
 
     areAllStagesAccepted = (proposal: ISppProposal): boolean =>
         proposal.settings.stages.every(
-            (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalVotingStatus.ACCEPTED,
+            (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalStatus.ACCEPTED,
         );
 
     getBodyResultStatus = (params: IGetBodyStatusLabelDataParams) => {
