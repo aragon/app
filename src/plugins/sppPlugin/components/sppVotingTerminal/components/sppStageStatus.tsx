@@ -7,16 +7,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
-import {
-    Button,
-    ChainEntityType,
-    DateFormat,
-    formatterUtils,
-    IconType,
-    ProposalVotingStatus,
-    Rerender,
-    useBlockExplorer,
-} from '@aragon/gov-ui-kit';
+import { Button, ChainEntityType, IconType, ProposalStatus, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 
 export interface ISppStageStatusProps {
@@ -62,27 +53,16 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     });
 
     const isLastStage = sppStageUtils.isLastStage(proposal, stage);
-    const isSignalingProposal = !proposal.hasActions;
 
-    // Only display the advance button if stage has been accepted or non veto stage is still active but approval has already
-    // been reached (to display min-advance time). Hide the button/info for the last stage when proposal is signaling
-    // to hide executable info text.
-    const displayAdvanceButton =
-        (stageStatus === ProposalVotingStatus.ACCEPTED ||
-            (stageStatus === ProposalVotingStatus.ACTIVE &&
-                sppStageUtils.isApprovalReached(proposal, stage) &&
-                !sppStageUtils.isVeto(stage))) &&
-        !(isSignalingProposal && isLastStage);
+    // Display button when status is advanceable except for the last stage.
+    const displayAdvanceButton = stageStatus === ProposalStatus.ADVANCEABLE && !isLastStage;
 
-    const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
     const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);
 
-    const displayMinAdvanceTime = useDynamicValue({
-        callback: () => minAdvanceTime != null && DateTime.now() < minAdvanceTime,
-        enabled: minAdvanceTime != null && displayAdvanceButton,
+    const canAdvance = useDynamicValue({
+        callback: () => DateTime.now() >= minAdvanceTime!,
+        enabled: displayAdvanceButton && minAdvanceTime != null,
     });
-    const displayMaxAdvanceTime =
-        maxAdvanceTime != null && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
 
     const { label: buttonLabel, ...buttonProps } = isStageAdvanced
         ? {
@@ -96,16 +76,13 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
               label: 'advance',
               onClick: () => (isConnected ? openAdvanceStageDialog() : promptWalletConnection()),
               variant: 'primary' as const,
-              disabled: displayMinAdvanceTime,
+              disabled: !canAdvance,
           };
 
     const advanceTimeContext = isLastStage ? 'Execute' : 'Advance';
-    const advanceTimeInfo = displayMinAdvanceTime
-        ? { time: minAdvanceTime, info: t(`app.plugins.spp.sppStageStatus.min${advanceTimeContext}Info`) }
-        : { time: maxAdvanceTime, info: t(`app.plugins.spp.sppStageStatus.max${advanceTimeContext}Info`) };
 
     // Stage cannot be advanced anymore, display expired info text.
-    if (stageStatus === ProposalVotingStatus.EXPIRED) {
+    if (stageStatus === ProposalStatus.EXPIRED) {
         return (
             <span className="text-right text-neutral-500">
                 {t(`app.plugins.spp.sppStageStatus.expired${advanceTimeContext}`)}
@@ -118,25 +95,8 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     }
 
     return (
-        <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
-            {!isLastStage && (
-                <Button size="md" {...buttonProps}>
-                    {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
-                </Button>
-            )}
-
-            {(displayMinAdvanceTime || displayMaxAdvanceTime) && (
-                <div className="flex flex-row justify-center gap-1">
-                    <Rerender>
-                        {() => (
-                            <span className="text-neutral-800">
-                                {formatterUtils.formatDate(advanceTimeInfo.time, { format: DateFormat.DURATION })}
-                            </span>
-                        )}
-                    </Rerender>
-                    <span className="text-neutral-500">{advanceTimeInfo.info}</span>
-                </div>
-            )}
-        </div>
+        <Button className="w-full md:w-fit" size="md" {...buttonProps}>
+            {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
+        </Button>
     );
 };

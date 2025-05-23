@@ -28,7 +28,7 @@ export const GovernanceStageTypeField: React.FC<IGovernanceStageTypeFieldProps> 
 
         // Make sure earlyStageAdvance is false when stage type is optimistic or timelock
         if (value === ProcessStageType.OPTIMISTIC || value === ProcessStageType.TIMELOCK) {
-            setValue(`${fieldPrefix}.earlyStageAdvance`, false);
+            setValue(`${fieldPrefix}.timing.earlyStageAdvance`, false);
         }
 
         // Trigger validation and make sure stage has no bodies when stage type is timelock

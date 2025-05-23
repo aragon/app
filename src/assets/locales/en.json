@@ -1176,11 +1176,7 @@
             "vote": "Vote on proposal"
           },
           "expiredAdvance": "Proposal not advanced in time",
-          "expiredExecute": "Proposal not executed in time",
-          "maxAdvanceInfo": "left to advance",
-          "maxExecuteInfo": "left to execute",
-          "minAdvanceInfo": "until advanceable",
-          "minExecuteInfo": "until executable"
+          "expiredExecute": "Proposal not executed in time"
         },
         "sppVotingTerminalBodyBreakdownDefault": {
           "expired": {
