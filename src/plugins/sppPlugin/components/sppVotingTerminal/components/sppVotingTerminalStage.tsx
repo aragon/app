@@ -53,6 +53,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
         callback: () => sppStageUtils.getStageMinAdvance(proposal, stage)?.toMillis(),
         enabled: enableDynamicValue,
     });
+
     const processedMaxAdvance = useDynamicValue({
         callback: () => sppStageUtils.getStageMaxAdvance(proposal, stage)?.toMillis(),
         enabled: enableDynamicValue,
