@@ -28,27 +28,27 @@ export function navigationDaoLinks(dao: IDao, isPage: boolean): DaoRoutes[] {
             link: `${daoUrl}/proposals`,
             icon: IconType.APP_PROPOSALS,
             hidden: !isSupported,
-            mdHidden: true,
+            lgHidden: true,
         },
         {
             label: 'app.application.navigationDao.link.members',
             link: `${daoUrl}/members`,
             icon: IconType.APP_MEMBERS,
             hidden: !isSupported,
-            mdHidden: true,
+            lgHidden: true,
         },
         {
             label: 'app.application.navigationDao.link.assets',
             link: `${daoUrl}/assets`,
             icon: IconType.APP_ASSETS,
 
-            mdHidden: true,
+            lgHidden: true,
         },
         {
             label: 'app.application.navigationDao.link.transactions',
             link: `${daoUrl}/transactions`,
             icon: IconType.APP_TRANSACTIONS,
-            mdHidden: true,
+            lgHidden: true,
         },
         {
             label: 'app.application.navigationDao.link.settings',

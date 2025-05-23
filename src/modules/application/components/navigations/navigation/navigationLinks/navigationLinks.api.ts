@@ -21,7 +21,7 @@ export interface INavigationLink<TRouteType extends string> {
      */
     hidden?: boolean;
     /**
-     * Whether the route is hidden on medium screens.
+     * Whether the route is hidden on lg screens.
      */
-    mdHidden?: boolean;
+    lgHidden?: boolean;
 }

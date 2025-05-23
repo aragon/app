@@ -33,13 +33,13 @@ export const NavigationLinks = <TRouteType extends string>(props: INavigationLin
         >
             {links
                 .filter((link) => !link.hidden)
-                .map(({ link, label, icon, mdHidden }) => (
+                .map(({ link, label, icon, lgHidden }) => (
                     <NavigationLinksItem
                         key={link}
                         href={link}
                         icon={icon}
                         variant={variant}
-                        className={classNames({ 'lg:hidden': variant === 'column' && mdHidden })}
+                        className={classNames({ 'lg:hidden': variant === 'column' && lgHidden })}
                     >
                         {t(label)}
                     </NavigationLinksItem>
