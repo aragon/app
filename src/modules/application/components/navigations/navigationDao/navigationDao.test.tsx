@@ -2,16 +2,14 @@ import * as useDialogContext from '@/shared/components/dialogProvider';
 import { generateDao, generateDialogContext } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { IconType, type ICompositeAddress } from '@aragon/gov-ui-kit';
+import { GukModulesProvider, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import type * as GovUiKit from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
 import { ApplicationDialogId } from '../../../constants/applicationDialogId';
-import type { INavigationContainerProps } from '../navigation/navigationContainer';
-import type { INavigationLink, INavigationLinksProps } from '../navigation/navigationLinks';
-import type { INavigationTriggerProps } from '../navigation/navigationTrigger';
+import { INavigationDialogProps } from '../navigation/navigationDialog';
 import { NavigationDao, type INavigationDaoProps } from './navigationDao';
 
 jest.mock('@aragon/gov-ui-kit', () => ({
@@ -22,35 +20,16 @@ jest.mock('@aragon/gov-ui-kit', () => ({
     ),
 }));
 
-jest.mock('../navigation', () => ({
-    Navigation: {
-        Container: ({ children, containerClasses }: INavigationContainerProps) => (
-            <div data-testid="nav-container-mock" className={containerClasses}>
-                {children}
-            </div>
-        ),
-        AppLinks: () => <div data-testid="nav-app-links-mock" />,
-        Trigger: ({ onClick, className }: INavigationTriggerProps) => (
-            <button data-testid="nav-trigger-mock" onClick={onClick} className={className}>
-                trigger
-            </button>
-        ),
-        Dialog: () => (
-            <div role="dialog" data-testid="nav-dialog-mock">
-                Dialog Content
-            </div>
-        ),
-        Links: ({ links, className }: INavigationLinksProps<string>) => (
-            <nav className={className}>
-                {links.map((link: INavigationLink<string>) => (
-                    <a key={link.label} href={`/dao/${link.label}`} data-testid={`nav-link-${link.label}`}>
-                        {link.label}
-                        {link.icon === IconType.APP_EXPLORE && <span data-testid={IconType.APP_EXPLORE} />}
-                    </a>
-                ))}
-            </nav>
-        ),
-    },
+jest.mock('../navigation/navigationTrigger', () => ({
+    NavigationTrigger: (props: { onClick: () => void; className: string }) => (
+        <button data-testid="nav-trigger-mock" onClick={props.onClick} className={props.className} />
+    ),
+}));
+
+jest.mock('../navigation/navigationDialog', () => ({
+    NavigationDialog: (props: INavigationDialogProps<string>) => (
+        <div data-testid="nav-dialog-mock" className={props.className} />
+    ),
 }));
 
 describe('<NavigationDao /> component', () => {
@@ -79,7 +58,11 @@ describe('<NavigationDao /> component', () => {
             ...props,
         };
 
-        return <NavigationDao {...completeProps} />;
+        return (
+            <GukModulesProvider>
+                <NavigationDao {...completeProps} />
+            </GukModulesProvider>
+        );
     };
 
     it('renders the dao avatar and name', () => {
@@ -98,28 +81,20 @@ describe('<NavigationDao /> component', () => {
         const dao = generateDao({ id: 'test' });
         render(createTestComponent({ dao }));
 
-        expect(screen.getByRole('link', { name: 'app.application.navigationDao.link.proposals' })).toBeInTheDocument();
-        expect(screen.getByRole('link', { name: 'app.application.navigationDao.link.members' })).toBeInTheDocument();
-        expect(screen.getByRole('link', { name: 'app.application.navigationDao.link.assets' })).toBeInTheDocument();
-        expect(
-            screen.getByRole('link', { name: 'app.application.navigationDao.link.transactions' }),
-        ).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: /navigationDao.link.proposals/ })).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: /navigationDao.link.members/ })).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: /navigationDao.link.assets/ })).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: /navigationDao.link.transactions/ })).toBeInTheDocument();
 
-        expect(
-            screen.queryByRole('link', { name: 'app.application.navigationDao.link.dashboard' }),
-        ).not.toBeInTheDocument();
-        expect(
-            screen.queryByRole('link', { name: 'app.application.navigationDao.link.settings' }),
-        ).not.toBeInTheDocument();
+        expect(screen.queryByRole('link', { name: /navigationDao.link.dashboard/ })).not.toBeInTheDocument();
+        expect(screen.queryByRole('link', { name: /navigationDao.link.settings/ })).not.toBeInTheDocument();
     });
 
     it('renders a button to open the navigation dialog on mobile devices', async () => {
         render(createTestComponent());
-        const triggerButton = screen.getByTestId('nav-trigger-mock');
-        expect(triggerButton).toBeInTheDocument();
-        expect(triggerButton.className).toContain('md:hidden');
-        await userEvent.click(triggerButton);
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
+        await userEvent.click(screen.getByTestId('nav-trigger-mock'));
+
+        expect(screen.getByTestId('nav-dialog-mock')).toBeInTheDocument();
     });
 
     it('renders a connect button opening the connect-wallet dialog', async () => {

@@ -1,7 +1,7 @@
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import { generateDialogContext } from '@/shared/testUtils';
 import type * as GovUiKit from '@aragon/gov-ui-kit';
-import { addressUtils, clipboardUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
+import { addressUtils, clipboardUtils, GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as wagmi from 'wagmi';
@@ -80,7 +80,7 @@ describe('<UserDialog /> component', () => {
         useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
         render(createTestComponent());
 
-        const logoutIcon = screen.getByTestId('LOGOUT');
+        const logoutIcon = screen.getByTestId(IconType.LOGOUT);
         expect(logoutIcon).toBeInTheDocument();
 
         const disconnectLink = screen.getByText(/app.application.userDialog.disconnect/);

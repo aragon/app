@@ -1,5 +1,3 @@
-import { navigationDaoLinks } from '@/modules/application/components/navigations/navigationDao/navigationDaoLinks';
-import { generateDao } from '@/shared/testUtils';
 import { IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as NextNavigation from 'next/navigation';
@@ -31,24 +29,6 @@ describe('<NavigationLinksItem /> component', () => {
         const href = '/test';
         render(createTestComponent({ children, href }));
         expect(screen.getByRole('link', { name: children })).toBeInTheDocument();
-    });
-
-    it('renders all link icons correctly in column variant', () => {
-        const dao = generateDao({ id: 'test' });
-        const links = navigationDaoLinks(dao);
-
-        links.forEach((link) => {
-            render(
-                createTestComponent({
-                    children: link.label,
-                    href: link.link,
-                    icon: link.icon,
-                    variant: 'column',
-                }),
-            );
-
-            expect(screen.getByTestId(link.icon)).toBeInTheDocument();
-        });
     });
 
     it('correctly renders the link as row and active when href matches current pathname', () => {

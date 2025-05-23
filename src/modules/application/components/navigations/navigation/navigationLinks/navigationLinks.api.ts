@@ -16,8 +16,4 @@ export interface INavigationLink<TRouteType extends string> {
      * Icon of the route.
      */
     icon: IconType;
-    /**
-     * Hides the link when set to true.
-     */
-    hidden?: boolean;
 }

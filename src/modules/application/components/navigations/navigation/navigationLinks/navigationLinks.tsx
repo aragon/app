@@ -31,13 +31,11 @@ export const NavigationLinks = <TRouteType extends string>(props: INavigationLin
             )}
             {...otherProps}
         >
-            {links
-                .filter((link) => !link.hidden)
-                .map(({ link, label, icon }) => (
-                    <NavigationLinksItem key={link} href={link} icon={icon} variant={variant}>
-                        {t(label)}
-                    </NavigationLinksItem>
-                ))}
+            {links.map(({ link, label, icon }) => (
+                <NavigationLinksItem key={link} href={link} icon={icon} variant={variant}>
+                    {t(label)}
+                </NavigationLinksItem>
+            ))}
         </div>
     );
 };

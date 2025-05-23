@@ -16,10 +16,9 @@ export const NavigationDaoHome: React.FC<INavigationDaoHome> = (props) => {
     const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
 
     const buttonClassName = classNames(
-        'p-1 md:pr-4',
+        'p-1 md:pr-4 cursor-pointer',
         'flex max-w-44 items-center gap-3 rounded-full border border-neutral-100 bg-neutral-0 text-neutral-500 transition-all',
-        'hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800',
-        'focus:outline-none focus-visible:ring focus-visible:ring-primary focus-visible:ring-offset',
+        'hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800 focus-ring-primary',
         className,
     );
 
