@@ -7,18 +7,10 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import {
-    Button,
-    Card,
-    ChainEntityType,
-    IconType,
-    RadioCard,
-    RadioGroup,
-    useBlockExplorer,
-    type VoteIndicator,
-} from '@aragon/gov-ui-kit';
+import { Button, Card, ChainEntityType, IconType, useBlockExplorer, type VoteIndicator } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useState } from 'react';
 import { DaoTokenVotingMode, VoteOption, type ITokenProposal, type ITokenVote } from '../../types';
+import { TokenVoteOptions } from './components/tokenVoteOptions';
 
 export interface ITokenSubmitVoteProps {
     /**
@@ -82,11 +74,22 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
 
     const handleVoteClick = () => (canSubmitVote ? setShowOptions(true) : submitVoteGuard());
 
-    const currentTag = { variant: 'info' as const, label: t('app.plugins.token.tokenSubmitVote.options.current') };
     const voteOptions = [
-        { label: t('app.plugins.token.tokenSubmitVote.options.yes'), value: VoteOption.YES.toString() },
-        { label: t('app.plugins.token.tokenSubmitVote.options.abstain'), value: VoteOption.ABSTAIN.toString() },
-        { label: t('app.plugins.token.tokenSubmitVote.options.no'), value: VoteOption.NO.toString() },
+        {
+            label: t('app.plugins.token.tokenSubmitVote.options.yes'),
+            value: VoteOption.YES.toString(),
+            variant: 'success',
+        },
+        {
+            label: t('app.plugins.token.tokenSubmitVote.options.abstain'),
+            value: VoteOption.ABSTAIN.toString(),
+            variant: 'neutral',
+        },
+        {
+            label: t('app.plugins.token.tokenSubmitVote.options.no'),
+            value: VoteOption.NO.toString(),
+            variant: 'critical',
+        },
     ];
 
     useEffect(() => {
@@ -132,24 +135,38 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
             )}
             {showOptions && (
                 <Card className="shadow-neutral-sm border border-neutral-100 p-6">
-                    <RadioGroup
-                        label={t('app.plugins.token.tokenSubmitVote.options.label', {
-                            label: isVeto
-                                ? t('app.plugins.token.tokenSubmitVote.options.vetoLabel')
-                                : t('app.plugins.token.tokenSubmitVote.options.approveLabel'),
-                        })}
-                        value={selectedOption ?? ''}
-                        onValueChange={setSelectedOption}
-                    >
-                        {voteOptions.map(({ label, value }) => (
-                            <RadioCard
-                                key={value}
-                                label={label}
-                                tag={latestVote?.voteOption.toString() === value ? currentTag : undefined}
-                                value={value}
-                            />
-                        ))}
-                    </RadioGroup>
+                    <TokenVoteOptions value={selectedOption} onChange={setSelectedOption} isVeto={isVeto} />
+                    {/*<InputContainer*/}
+                    {/*    id={proposal.id}*/}
+                    {/*    useCustomWrapper={true}*/}
+                    {/*    label={t('app.plugins.token.tokenSubmitVote.options.label', {*/}
+                    {/*        label: isVeto*/}
+                    {/*            ? t('app.plugins.token.tokenSubmitVote.options.vetoLabel')*/}
+                    {/*            : t('app.plugins.token.tokenSubmitVote.options.approveLabel'),*/}
+                    {/*    })}*/}
+                    {/*>*/}
+                    {/*    <ToggleGroup*/}
+                    {/*        isMultiSelect={false}*/}
+                    {/*        orientation="vertical"*/}
+                    {/*        value={selectedOption ?? ''}*/}
+                    {/*        onChange={setSelectedOption}*/}
+                    {/*    >*/}
+                    {/*        {voteOptions.map(({ label, value }) => (*/}
+                    {/*            <TokenVoteOptionToggle*/}
+                    {/*                key={value}*/}
+                    {/*                label={label}*/}
+                    {/*                value={value}*/}
+                    {/*                isSelected={value === selectedOption}*/}
+                    {/*            />*/}
+                    {/*            // <RadioCard*/}
+                    {/*            //     key={value}*/}
+                    {/*            //     label={label}*/}
+                    {/*            //     tag={latestVote?.voteOption.toString() === value ? currentTag : undefined}*/}
+                    {/*            //     value={value}*/}
+                    {/*            // />*/}
+                    {/*        ))}*/}
+                    {/*    </ToggleGroup>*/}
+                    {/*</InputContainer>*/}
                 </Card>
             )}
             {showOptions && (

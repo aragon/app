@@ -1487,10 +1487,13 @@
           "options": {
             "abstain": "Abstain",
             "approveLabel": "approve",
-            "current": "Current",
+            "approveYesDescription": ", I approve",
+            "approveNoDescription": ", I don't approve",
             "label": "Do you want to {{label}} this proposal?",
             "no": "No",
             "vetoLabel": "veto",
+            "vetoYesDescription": ", I veto",
+            "vetoNoDescription": ", I don't veto",
             "yes": "Yes"
           }
         },
