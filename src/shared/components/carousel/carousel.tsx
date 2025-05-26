@@ -35,6 +35,11 @@ export interface ICarouselProps {
      */
     animationDelay?: number;
     /**
+     * Enables manual dragging of the carousel content.
+     * @default false
+     */
+    isDraggable?: boolean;
+    /**
      * Additional class name to apply to the component.
      */
     className?: string;
@@ -48,6 +53,7 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         speed = 100,
         speedOnHoverFactor = 1,
         animationDelay = 0,
+        isDraggable = false,
         className,
     } = props;
 
@@ -101,11 +107,29 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
     return (
         <div className={classNames('overflow-hidden', className)}>
             <motion.div
-                className="flex w-max will-change-transform"
+                className={classNames(
+                    'flex w-max will-change-transform',
+                    isDraggable && 'cursor-grab active:cursor-grabbing',
+                )}
                 style={containerStyle}
                 ref={ref}
+                drag={isDraggable ? 'x' : false}
+                dragConstraints={isDraggable ? { left: finalPosition, right: 0 } : undefined}
+                dragElastic={isDraggable ? 0.05 : false}
                 onHoverStart={() => updateAnimationSpeed(speedOnHoverFactor)}
                 onHoverEnd={() => updateAnimationSpeed(1)}
+                onDragStart={() => isDraggable && animationControlsRef.current?.stop()}
+                onDragEnd={() => {
+                    if (!isDraggable) return;
+                    const distanceToTravel = Math.abs(finalPosition);
+                    const duration = distanceToTravel / speed;
+                    animationControlsRef.current = animate(translation, [translation.get(), finalPosition], {
+                        ease: 'linear',
+                        duration,
+                        repeat: Infinity,
+                        repeatType: 'loop',
+                    });
+                }}
             >
                 {children}
                 {children}
