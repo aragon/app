@@ -1,4 +1,3 @@
-import { generateDao } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { testLogger } from '@/test/utils';
@@ -27,7 +26,7 @@ describe('<Navigation.Dialog /> component', () => {
     });
 
     const createTestComponent = (props?: Partial<INavigationDialogProps<string>>) => {
-        const completeProps: INavigationDialogProps<string> = { links: [], dao: generateDao(), ...props };
+        const completeProps: INavigationDialogProps<string> = { links: [], ...props };
 
         return (
             <GukModulesProvider>
