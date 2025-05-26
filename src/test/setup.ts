@@ -20,7 +20,7 @@ timeUtils.setup();
 // Globally setup TextEncoder/TextDecoder needed by viem
 Object.assign(global, { TextDecoder, TextEncoder });
 
-// Mock ResideObserver functionality
+// Mock ResizeObserver functionality
 global.ResizeObserver = jest
     .fn()
     .mockImplementation(() => ({ observe: jest.fn(), unobserve: jest.fn(), disconnect: jest.fn() }));
