@@ -56,7 +56,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
 
     const pluginSettings = isExternalBody ? {} : plugin.settings;
     const settings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDefinitionSetting[]>({
-        params: { daoId, settings: pluginSettings, pluginAddress: plugin.address },
+        params: { daoId, settings: pluginSettings, isVeto, pluginAddress: plugin.address },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginId: plugin.subdomain ?? 'external',
         fallback: useSppGovernanceSettingsDefault,
@@ -84,6 +84,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                         body={isExternalBody ? plugin.address : undefined}
                         canVote={canVote}
                         stage={stage}
+                        isVeto={isVeto}
                         Fallback={SppVotingTerminalBodyBreakdownDefault}
                     >
                         <div className="flex flex-col gap-y-4 pt-6 md:pt-8">

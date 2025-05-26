@@ -1038,9 +1038,10 @@
         },
         "multisigGovernanceSettings": {
           "anyWallet": "Any wallet",
-          "approvals": "{{min}} of {{max}} addresses that can approve",
+          "approvals": "{{min}} of {{max}} members",
           "members": "Multisig members",
           "minimumApproval": "Minimum approval",
+          "minimumVeto": "Minimum veto",
           "proposalCreation": "Proposal creation"
         },
         "multisigMembersInfo": {
@@ -1270,7 +1271,7 @@
           "submit": "Delegate voting power"
         },
         "tokenGovernanceSettings": {
-          "approval": "> {{approvalThreshold}}",
+          "threshold": "> {{threshold}}",
           "approvalThreshold": "Support threshold",
           "duration": "{{days}} days {{hours}} hours {{minutes}} minutes",
           "earlyExecution": "Early execution",
@@ -1280,6 +1281,7 @@
           "participation": "≥ {{participation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
           "proposalAccess": "Members with ≥ {{balance}} {{symbol}} voting power or balance",
           "proposalThreshold": "Proposal threshold",
+          "vetoThreshold": "Veto support threshold",
           "voteChange": "Vote change",
           "yes": "Enabled"
         },
@@ -1486,13 +1488,13 @@
           "options": {
             "abstain": "Abstain",
             "approveLabel": "approve",
-            "approveYesDescription": ", I approve",
             "approveNoDescription": ", I don't approve",
+            "approveYesDescription": ", I approve",
             "label": "Do you want to {{label}} this proposal?",
             "no": "No",
             "vetoLabel": "veto",
-            "vetoYesDescription": ", I veto",
             "vetoNoDescription": ", I don't veto",
+            "vetoYesDescription": ", I veto",
             "yes": "Yes"
           }
         },

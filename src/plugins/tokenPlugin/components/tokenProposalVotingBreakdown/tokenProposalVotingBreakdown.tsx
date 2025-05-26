@@ -12,13 +12,17 @@ export interface ITokenProposalVotingBreakdownProps {
      */
     proposal: ITokenProposal;
     /**
+     * Defines if the voting is optimistic/veto or not.
+     */
+    isVeto?: boolean;
+    /**
      * Additional children to render.
      */
     children?: ReactNode;
 }
 
 export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdownProps> = (props) => {
-    const { proposal, children } = props;
+    const { proposal, children, isVeto } = props;
 
     const { symbol, decimals } = proposal.settings.token;
     const { minParticipation, supportThreshold, historicalTotalSupply } = proposal.settings;
@@ -29,6 +33,7 @@ export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdow
 
     return (
         <ProposalVoting.BreakdownToken
+            isVeto={isVeto ?? false}
             totalYes={yesVotes}
             totalNo={noVotes}
             totalAbstain={abstainVotes}

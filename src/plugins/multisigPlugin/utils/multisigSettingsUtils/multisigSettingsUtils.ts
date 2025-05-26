@@ -12,6 +12,10 @@ export interface IMultisigSettingsParseParams {
      */
     membersCount: number;
     /**
+     * Defines if the voting is optimistic/veto or not.
+     */
+    isVeto?: boolean;
+    /**
      * The translation function for internationalization.
      */
     t: TranslationFunction;
@@ -19,14 +23,16 @@ export interface IMultisigSettingsParseParams {
 
 class MultisigSettingsUtils {
     parseSettings = (params: IMultisigSettingsParseParams): IDefinitionSetting[] => {
-        const { settings, membersCount, t } = params;
+        const { settings, membersCount, isVeto, t } = params;
         const { minApprovals, onlyListed, historicalMembersCount } = settings;
 
         const processedMembersCount = historicalMembersCount ?? membersCount;
 
         return [
             {
-                term: t('app.plugins.multisig.multisigGovernanceSettings.minimumApproval'),
+                term: t(
+                    `app.plugins.multisig.multisigGovernanceSettings.${isVeto ? 'minimumVeto' : 'minimumApproval'}`,
+                ),
                 definition: t('app.plugins.multisig.multisigGovernanceSettings.approvals', {
                     min: minApprovals,
                     max: processedMembersCount,

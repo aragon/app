@@ -10,6 +10,10 @@ export interface IParseTokenSettingsParams {
      */
     settings: ITokenPluginSettings;
     /**
+     * Defines if the voting is optimistic/veto or not.
+     */
+    isVeto?: boolean;
+    /**
      * The translation function for internationalization.
      */
     t: TranslationFunction;
@@ -29,7 +33,7 @@ class TokenSettingsUtils {
     percentageToRatio = (percentage: number) => Math.round(percentage * 10 ** 4);
 
     parseSettings = (params: IParseTokenSettingsParams): IDefinitionSetting[] => {
-        const { settings, t } = params;
+        const { settings, isVeto, t } = params;
         const {
             supportThreshold,
             minParticipation,
@@ -74,9 +78,9 @@ class TokenSettingsUtils {
 
         return [
             {
-                term: t('app.plugins.token.tokenGovernanceSettings.approvalThreshold'),
-                definition: t('app.plugins.token.tokenGovernanceSettings.approval', {
-                    approvalThreshold: formattedApproveThreshold,
+                term: t(`app.plugins.token.tokenGovernanceSettings.${isVeto ? 'vetoThreshold' : 'approvalThreshold'}`),
+                definition: t('app.plugins.token.tokenGovernanceSettings.threshold', {
+                    threshold: formattedApproveThreshold,
                 }),
             },
             {
