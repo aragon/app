@@ -22,6 +22,7 @@ export interface INavigationLinksItemProps extends ILinkProps {
     variant: NavigationLinksVariant;
     /**
      * Icon side of the navigation link.
+     * @default 'left'
      */
     iconSide?: 'left' | 'right';
 }
@@ -38,7 +39,7 @@ export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (props) 
         { 'bg-neutral-50': isActive && variant === 'column' },
         { 'text-neutral-800': isActive },
         { 'gap-2': iconSide === 'left' },
-        { 'justify-between': iconSide === 'right' },
+        { 'justify-between flex-row-reverse': iconSide === 'right' },
         className,
     );
 
@@ -49,9 +50,8 @@ export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (props) 
 
     return (
         <Link href={href} aria-current={isActive ? 'page' : undefined} className={linkClassNames} {...otherProps}>
-            {iconSide === 'left' && <Icon icon={icon} className={iconClassNames} />}
+            <Icon icon={icon} className={iconClassNames} />
             {children}
-            {iconSide === 'right' && <Icon icon={icon} className={iconClassNames} />}
         </Link>
     );
 };

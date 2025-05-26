@@ -29,4 +29,14 @@ describe('<Navigation.Links /> component', () => {
         expect(screen.getByRole('link', { name: links[0].label })).toBeInTheDocument();
         expect(screen.getByRole('link', { name: links[1].label })).toBeInTheDocument();
     });
+
+    it('does not render the links marked as hidden', () => {
+        const links = [
+            { label: 'hidden-link', link: '/hidden' as Route, icon: IconType.APP_ASSETS, hidden: true },
+            { label: 'visible-link', link: '/visible' as Route, icon: IconType.APP_MEMBERS, hidden: false },
+        ];
+        render(createTestComponent({ links }));
+        expect(screen.queryByRole('link', { name: links[0].label })).not.toBeInTheDocument();
+        expect(screen.getByRole('link', { name: links[1].label })).toBeInTheDocument();
+    });
 });

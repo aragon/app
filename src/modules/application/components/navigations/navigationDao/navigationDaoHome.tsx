@@ -2,8 +2,9 @@ import type { IDao } from '@/shared/api/daoService';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoAvatar } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
+import type { ComponentProps } from 'react';
 
-export interface INavigationDaoHome extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface INavigationDaoHome extends ComponentProps<'button'> {
     /**
      * DAO to display the home details for.
      */

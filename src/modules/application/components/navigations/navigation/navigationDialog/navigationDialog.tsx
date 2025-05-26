@@ -1,4 +1,3 @@
-import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, IconType, type IDialogRootProps } from '@aragon/gov-ui-kit';
 import { NavigationLinks, type INavigationLink } from '../navigationLinks';
@@ -9,14 +8,10 @@ export interface INavigationDialogProps<TRouteType extends string> extends IDial
      * Links of the application.
      */
     links: Array<INavigationLink<TRouteType>>;
-    /**
-     * DAO where the user is navigating.
-     */
-    dao?: IDao;
 }
 
 export const NavigationDialog = <TRouteType extends string>(props: INavigationDialogProps<TRouteType>) => {
-    const { links, dao, children, onOpenChange, ...otherProps } = props;
+    const { links, children, onOpenChange, ...otherProps } = props;
 
     const { t } = useTranslations();
     const handleLinksClick = () => onOpenChange?.(false);

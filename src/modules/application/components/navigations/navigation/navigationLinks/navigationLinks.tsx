@@ -39,7 +39,7 @@ export const NavigationLinks = <TRouteType extends string>(props: INavigationLin
                         href={link}
                         icon={icon}
                         variant={variant}
-                        className={classNames({ 'lg:hidden': variant === 'column' && lgHidden })}
+                        className={classNames({ 'lg:hidden': lgHidden })}
                     >
                         {t(label)}
                     </NavigationLinksItem>

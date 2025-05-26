@@ -2,19 +2,12 @@ import { generateDao } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { testLogger } from '@/test/utils';
-import type * as GovUiKit from '@aragon/gov-ui-kit';
 import { GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { Route } from 'next';
 import * as NextNavigation from 'next/navigation';
 import { NavigationDialog, type INavigationDialogProps } from './navigationDialog';
-
-jest.mock('@aragon/gov-ui-kit', () => ({
-    ...jest.requireActual<typeof GovUiKit>('@aragon/gov-ui-kit'),
-    Icon: (props: GovUiKit.IIconProps) => <div data-testid={`icon-${props.icon}`} />,
-    Clipboard: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
 
 describe('<Navigation.Dialog /> component', () => {
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
@@ -35,6 +28,7 @@ describe('<Navigation.Dialog /> component', () => {
 
     const createTestComponent = (props?: Partial<INavigationDialogProps<string>>) => {
         const completeProps: INavigationDialogProps<string> = { links: [], dao: generateDao(), ...props };
+
         return (
             <GukModulesProvider>
                 <NavigationDialog {...completeProps} />
@@ -71,11 +65,11 @@ describe('<Navigation.Dialog /> component', () => {
 
     it('renders the "Explore all DAOs" link with icon', () => {
         render(createTestComponent({ open: true }));
-        const dlg = screen.getByRole('dialog');
-        const w = within(dlg);
-        const explore = w.getByRole('link', { name: /app.application.navigationDao.dialog.explore/ });
+        const dialog = screen.getByRole('dialog');
+        const withinDialog = within(dialog);
+        const explore = withinDialog.getByRole('link', { name: /navigationDao.dialog.explore/ });
         expect(explore).toHaveAttribute('href', '/');
-        expect(w.getByTestId(`icon-${IconType.APP_EXPLORE}`)).toBeInTheDocument();
+        expect(withinDialog.getByTestId(IconType.APP_EXPLORE)).toBeInTheDocument();
     });
 
     it('does not crash when onOpenChange property is not defined', async () => {
@@ -83,6 +77,6 @@ describe('<Navigation.Dialog /> component', () => {
         const links = [{ link: '/link' as Route, label: 'link', icon: IconType.APP_ASSETS }];
         render(createTestComponent({ links, open: true, onOpenChange: undefined }));
         await userEvent.click(screen.getByRole('link', { name: links[0].label }));
-        expect(screen.getByTestId(`icon-${IconType.APP_EXPLORE}`)).toBeInTheDocument();
+        expect(screen.getByTestId(IconType.APP_EXPLORE)).toBeInTheDocument();
     });
 });

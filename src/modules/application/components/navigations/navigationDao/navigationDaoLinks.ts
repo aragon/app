@@ -5,13 +5,6 @@ import type { INavigationLink } from '../navigation';
 
 type DaoRoutes = INavigationLink<__next_route_internal_types__.DynamicRoutes>;
 
-export interface INavigationDaoLinksParams {
-    /**
-     * The DAO being navigated.
-     */
-    dao: IDao;
-}
-
 export function navigationDaoLinks(dao: IDao, isPage: boolean): DaoRoutes[] {
     const isSupported = daoUtils.hasSupportedPlugins(dao);
     const daoUrl = daoUtils.getDaoUrl(dao)!;
@@ -28,27 +21,26 @@ export function navigationDaoLinks(dao: IDao, isPage: boolean): DaoRoutes[] {
             link: `${daoUrl}/proposals`,
             icon: IconType.APP_PROPOSALS,
             hidden: !isSupported,
-            lgHidden: true,
+            lgHidden: !isPage,
         },
         {
             label: 'app.application.navigationDao.link.members',
             link: `${daoUrl}/members`,
             icon: IconType.APP_MEMBERS,
             hidden: !isSupported,
-            lgHidden: true,
+            lgHidden: !isPage,
         },
         {
             label: 'app.application.navigationDao.link.assets',
             link: `${daoUrl}/assets`,
             icon: IconType.APP_ASSETS,
-
-            lgHidden: true,
+            lgHidden: !isPage,
         },
         {
             label: 'app.application.navigationDao.link.transactions',
             link: `${daoUrl}/transactions`,
             icon: IconType.APP_TRANSACTIONS,
-            lgHidden: true,
+            lgHidden: !isPage,
         },
         {
             label: 'app.application.navigationDao.link.settings',
