@@ -1271,7 +1271,6 @@
           "submit": "Delegate voting power"
         },
         "tokenGovernanceSettings": {
-          "threshold": "> {{threshold}}",
           "approvalThreshold": "Support threshold",
           "duration": "{{days}} days {{hours}} hours {{minutes}} minutes",
           "earlyExecution": "Early execution",
@@ -1281,6 +1280,7 @@
           "participation": "≥ {{participation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
           "proposalAccess": "Members with ≥ {{balance}} {{symbol}} voting power or balance",
           "proposalThreshold": "Proposal threshold",
+          "threshold": "> {{threshold}}",
           "vetoThreshold": "Veto support threshold",
           "voteChange": "Vote change",
           "yes": "Enabled"
@@ -1499,6 +1499,10 @@
           }
         },
         "tokenVoteList": {
+          "description": {
+            "approve": "to approve",
+            "veto": "to veto"
+          },
           "entity": "Votes"
         },
         "tokenWrapForm": {

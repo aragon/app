@@ -15,13 +15,17 @@ export interface IVoteProposalListItemProps {
      */
     voteIndicator: VoteIndicator;
     /**
+     * Description for the vote indicator.
+     */
+    voteIndicatorDescription?: string;
+    /**
      * ID of the DAO related to the votes.
      */
     daoId: string;
 }
 
 export const VoteProposalListItem: React.FC<IVoteProposalListItemProps> = (props) => {
-    const { vote, daoId, voteIndicator } = props;
+    const { vote, daoId, voteIndicator, voteIndicatorDescription } = props;
 
     const proposal = vote.parentProposal ?? vote.proposal!;
 
@@ -35,6 +39,7 @@ export const VoteProposalListItem: React.FC<IVoteProposalListItemProps> = (props
             key={vote.transactionHash}
             href={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
             voteIndicator={voteIndicator}
+            voteIndicatorDescription={voteIndicatorDescription}
             proposalId={slug}
             proposalTitle={proposal.title}
             date={vote.blockTimestamp * 1000}

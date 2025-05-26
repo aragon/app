@@ -105,7 +105,12 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                     </PluginSingleComponent>
                     {processedSubProposal && (
                         <ProposalVoting.Votes>
-                            <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={plugin.address} />
+                            <VoteList
+                                initialParams={voteListParams}
+                                daoId={daoId}
+                                pluginAddress={plugin.address}
+                                isVeto={isVeto}
+                            />
                         </ProposalVoting.Votes>
                     )}
                 </>
