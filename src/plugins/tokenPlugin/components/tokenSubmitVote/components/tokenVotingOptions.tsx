@@ -1,9 +1,9 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { InputContainer, ToggleGroup, useRandomId } from '@aragon/gov-ui-kit';
 import { VoteOption } from '../../../types';
-import { TokenVoteOptionToggle } from './tokenVoteOptionToggle';
+import { TokenVotingOptionToggle } from './tokenVotingOptionToggle';
 
-export interface ITokenVoteOptionsProps {
+export interface ITokenVotingOptionsProps {
     /**
      * Is the proposal in optimistic/veto mode.
      */
@@ -18,7 +18,7 @@ export interface ITokenVoteOptionsProps {
     onChange: (value: string | undefined) => void;
 }
 
-export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
+export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (props) => {
     const { isVeto, value: selectedValue, onChange } = props;
     const { t } = useTranslations();
     const id = useRandomId();
@@ -60,7 +60,7 @@ export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
         >
             <ToggleGroup isMultiSelect={false} orientation="vertical" value={selectedValue ?? ''} onChange={onChange}>
                 {voteOptions.map(({ label, value, variant, description }) => (
-                    <TokenVoteOptionToggle
+                    <TokenVotingOptionToggle
                         key={value}
                         label={label}
                         value={value}

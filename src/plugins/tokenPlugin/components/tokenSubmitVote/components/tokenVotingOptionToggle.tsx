@@ -3,7 +3,7 @@ import { ToggleGroupItem as RadixToggle } from '@radix-ui/react-toggle-group';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 
-export interface ITokenVoteOptionToggleProps extends Omit<ComponentProps<'button'>, 'ref'> {
+export interface ITokenVotingOptionToggleProps extends Omit<ComponentProps<'button'>, 'ref'> {
     /**
      * Value of the toggle.
      */
@@ -31,13 +31,8 @@ export interface ITokenVoteOptionToggleProps extends Omit<ComponentProps<'button
  *
  * **NOTE**: The component must be used inside a `<ToggleGroup />` component in order to work properly.
  */
-export const TokenVoteOptionToggle: React.FC<ITokenVoteOptionToggleProps> = (props) => {
+export const TokenVotingOptionToggle: React.FC<ITokenVotingOptionToggleProps> = (props) => {
     const { className, label, description, value, disabled, variant = 'neutral', isSelected, ...otherProps } = props;
-
-    // Cover the following states and variants:
-    // changing elements: shadow, border, label, description, icon
-    // states: default, focus, hover, active
-    // variants: success, neutral, critical
 
     const successClasses = classNames(
         'active:border-success-500 active:shadow-none',
@@ -54,7 +49,7 @@ export const TokenVoteOptionToggle: React.FC<ITokenVoteOptionToggleProps> = (pro
 
     const toggleClasses = classNames(
         'flex items-center justify-between gap-3 rounded-xl border py-2 pl-4 pr-3',
-        // 'outline-hidden cursor-pointer bg-neutral-0 transition-all focus-visible:ring-primary',
+        'cursor-pointer bg-neutral-0 transition-all',
         'focus:outline-none focus-visible:ring-3 focus-visible:ring-primary focus-visible:ring-offset-3',
         'border-neutral-100 text-neutral-500 shadow-neutral-sm',
         'hover:border-neutral-200 hover:shadow-neutral',
