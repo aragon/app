@@ -1,7 +1,7 @@
 import type { IconType } from '@aragon/gov-ui-kit';
 import type { Route } from 'next';
 
-export type NavigationLinksVariant = 'columns' | 'rows';
+export type NavigationLinksVariant = 'column' | 'row';
 
 export interface INavigationLink<TRouteType extends string> {
     /**
@@ -17,7 +17,11 @@ export interface INavigationLink<TRouteType extends string> {
      */
     icon: IconType;
     /**
-     * Hides the link when set to true.
+     * Whether the route is hidden.
      */
     hidden?: boolean;
+    /**
+     * Whether the route is hidden on lg screens.
+     */
+    lgHidden?: boolean;
 }

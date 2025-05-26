@@ -21,7 +21,6 @@
           "cancel": "Cancel",
           "connect": "Connect"
         },
-        "app": "Aragon App",
         "auditLink": "https://github.com/aragon/osx/blob/main/audits/Halborn_AragonOSx_v1_4_Smart_Contract_Security_Assessment_Report_2025_01_03.pdf",
         "connect": "wants to connect to your wallet",
         "feature": {
@@ -70,6 +69,9 @@
           "description": "This dialog provides key DAO details and links to governance, treasury, and community pages",
           "title": "DAO navigation menu"
         },
+        "dialog": {
+          "explore": "Explore all DAOs"
+        },
         "link": {
           "assets": "Assets",
           "dashboard": "Dashboard",
@@ -93,7 +95,8 @@
         "a11y": {
           "description": "Information about the connected user",
           "title": "Connected user"
-        }
+        },
+        "disconnect": "Disconnect"
       }
     },
     "createDao": {
@@ -1176,11 +1179,7 @@
             "vote": "Vote on proposal"
           },
           "expiredAdvance": "Proposal not advanced in time",
-          "expiredExecute": "Proposal not executed in time",
-          "maxAdvanceInfo": "left to advance",
-          "maxExecuteInfo": "left to execute",
-          "minAdvanceInfo": "until advanceable",
-          "minExecuteInfo": "until executable"
+          "expiredExecute": "Proposal not executed in time"
         },
         "sppVotingTerminalBodyBreakdownDefault": {
           "expired": {
@@ -1535,11 +1534,6 @@
     "settings": {
       "daoPluginInfo": {
         "bodyName": "Body name",
-        "contract": {
-          "launchedAt": "Launched",
-          "plugin": "Plugin address",
-          "pluginVersionInfo": "{{name}} v{{release}}.{{build}}"
-        },
         "processKey": "Process key",
         "processName": "Process name",
         "tabs": {
@@ -1654,6 +1648,11 @@
       },
       "confirmWizardExit": {
         "message": "If you leave this process, you'll lose all the information you've entered so far."
+      },
+      "daoPluginInfo": {
+        "launchedAt": "Launched",
+        "plugin": "Plugin address",
+        "pluginVersionInfo": "{{name}} v{{release}}.{{build}}"
       },
       "errorFeedback": {
         "description": "If you'd like to help, you can report the issue to our team.",

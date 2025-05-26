@@ -6,7 +6,7 @@ export const walletConnectDefinitions = {
     metadata: {
         name: 'Aragon App',
         description: 'Aragon App',
-        url: 'https://app.aragon.org/',
+        url: 'https://app.aragon.org',
         icons: ['https://app.aragon.org/icon.svg'],
     },
 };

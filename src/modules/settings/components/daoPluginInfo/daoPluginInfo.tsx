@@ -1,23 +1,24 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { PluginType } from '@/shared/types';
-import { Tabs } from '@aragon/gov-ui-kit';
+import { DefinitionList, Tabs } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo, useState } from 'react';
 import { DaoGovernanceInfo } from '../daoGovernanceInfo';
 import { DaoMembersInfo } from '../daoMembersInfo';
 import { DaoPluginInfoTabId, type IDaoPlugInfoProps } from './daoPluginInfo.api';
-import { DaoPluginInfoContract } from './daoPluginInfoContract';
-import { DaoPluginInfoMetadata } from './daoPluginInfoMetadata.tsx';
+import { DaoPluginInfoMetadata } from './daoPluginInfoMetadata';
 
 export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     const { plugin, daoId, type } = props;
 
-    const { description, links } = plugin;
+    const { description, links = [] } = plugin;
 
     const { t } = useTranslations();
+    const pluginInfo = useDaoPluginInfo({ daoId, address: plugin.address });
 
     const tabs = useMemo(
         () => [
-            { id: DaoPluginInfoTabId.DESCRIPTION, hidden: !description && !links?.length },
+            { id: DaoPluginInfoTabId.DESCRIPTION, hidden: description == null && links.length === 0 },
             { id: DaoPluginInfoTabId.CONTRACT },
             { id: DaoPluginInfoTabId.SETTINGS },
         ],
@@ -41,7 +42,13 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
                 <DaoPluginInfoMetadata description={description} links={links} />
             </Tabs.Content>
             <Tabs.Content value={DaoPluginInfoTabId.CONTRACT}>
-                <DaoPluginInfoContract plugin={plugin} daoId={daoId} />
+                <DefinitionList.Container>
+                    {pluginInfo.map(({ term, definition, ...other }) => (
+                        <DefinitionList.Item key={term} term={term} {...other}>
+                            {definition}
+                        </DefinitionList.Item>
+                    ))}
+                </DefinitionList.Container>
             </Tabs.Content>
             <Tabs.Content value={DaoPluginInfoTabId.SETTINGS}>
                 {type === PluginType.BODY && <DaoMembersInfo daoId={daoId} plugin={plugin} />}

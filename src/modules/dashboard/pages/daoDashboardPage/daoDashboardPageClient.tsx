@@ -12,7 +12,6 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     Button,
     ChainEntityType,
-    Clipboard,
     DateFormat,
     DefinitionList,
     IconType,
@@ -130,20 +129,20 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.chain')}>
                                 <p className="text-neutral-500">{networkDefinitions[dao.network].name}</p>
                             </DefinitionList.Item>
-                            <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.address')}>
-                                <Clipboard copyValue={dao.address}>
-                                    <Link href={daoAddressLink} isExternal={true}>
-                                        {truncatedAddress}
-                                    </Link>
-                                </Clipboard>
+                            <DefinitionList.Item
+                                term={t('app.dashboard.daoDashboardPage.aside.details.address')}
+                                copyValue={dao.address}
+                                link={{ href: daoAddressLink }}
+                            >
+                                {truncatedAddress}
                             </DefinitionList.Item>
                             {daoEns != null && (
-                                <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.ens')}>
-                                    <Clipboard copyValue={daoEns}>
-                                        <Link href={daoAddressLink} isExternal={true}>
-                                            {daoEns}
-                                        </Link>
-                                    </Clipboard>
+                                <DefinitionList.Item
+                                    term={t('app.dashboard.daoDashboardPage.aside.details.ens')}
+                                    copyValue={daoEns}
+                                    link={{ href: daoAddressLink }}
+                                >
+                                    {daoEns}
                                 </DefinitionList.Item>
                             )}
                             <DefinitionList.Item

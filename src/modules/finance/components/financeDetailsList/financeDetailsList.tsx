@@ -6,10 +6,8 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     Button,
     ChainEntityType,
-    Clipboard,
     DefinitionList,
     IconType,
-    Link,
     addressUtils,
     useBlockExplorer,
     type IDefinitionListContainerProps,
@@ -41,20 +39,20 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
                 <DefinitionList.Item term={t('app.finance.financeDetailsList.chain')}>
                     <p className="text-neutral-500">{networkDefinitions[network].name}</p>
                 </DefinitionList.Item>
-                <DefinitionList.Item term={t('app.finance.financeDetailsList.vaultAddress')}>
-                    <Clipboard copyValue={address}>
-                        <Link href={daoAddressLink} isExternal={true}>
-                            {addressUtils.truncateAddress(address)}
-                        </Link>
-                    </Clipboard>
+                <DefinitionList.Item
+                    term={t('app.finance.financeDetailsList.vaultAddress')}
+                    copyValue={address}
+                    link={{ href: daoAddressLink }}
+                >
+                    {addressUtils.truncateAddress(address)}
                 </DefinitionList.Item>
                 {daoEns && (
-                    <DefinitionList.Item term={t('app.finance.financeDetailsList.vaultEns')}>
-                        <Clipboard copyValue={daoEns}>
-                            <Link href={daoAddressLink} isExternal={true}>
-                                {daoEns}
-                            </Link>
-                        </Clipboard>
+                    <DefinitionList.Item
+                        term={t('app.finance.financeDetailsList.vaultEns')}
+                        copyValue={daoEns}
+                        link={{ href: daoAddressLink }}
+                    >
+                        {daoEns}
                     </DefinitionList.Item>
                 )}
             </DefinitionList.Container>
