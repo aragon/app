@@ -41,8 +41,8 @@ export const useTokenPermissionCheckProposalCreation = (
         { enabled: address != null },
     );
 
-    // As the GET /member endpoint returns outdated balance and/or voting power in some scenarios, here we use the
-    // GET /can-create-proposal endpoint which fetches the user balance on the fly (to be removed, APP-4261)
+    // As the /member endpoint returns outdated balance and/or voting power in some scenarios, here we use the
+    // /can-create-proposal endpoint which fetches the user balance on the fly (to be removed, APP-4261)
     const checkQueryParams = {
         memberAddress: address as string,
         pluginAddress: plugin.address,
