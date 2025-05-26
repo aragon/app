@@ -51,7 +51,6 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
 
     const bodyList = stage.plugins.map((plugin) => plugin.address);
 
-    const isMultiStage = proposal.settings.stages.length > 1;
     const isSingleBody = bodyList.length === 1;
 
     const canVote = status === ProposalStatus.ACTIVE;
@@ -66,7 +65,6 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
             startDate={processedStartDate}
             endDate={processedEndDate}
             index={stage.stageIndex}
-            isMultiStage={isMultiStage}
             bodyList={bodyList}
             minAdvance={minAdvance}
             maxAdvance={maxAdvance}
@@ -105,7 +103,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
             </ProposalVoting.BodySummary>
             {stage.plugins.map((plugin) => (
                 <ProposalVoting.BodyContent
-                    name={plugin.subdomain != null ? plugin.name : addressUtils.truncateAddress(plugin.address)}
+                    name={plugin.subdomain != null ? plugin.name! : addressUtils.truncateAddress(plugin.address)}
                     key={plugin.address}
                     status={status}
                     bodyId={plugin.address}
