@@ -57,11 +57,7 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         className,
     } = props;
 
-    // animation `delay` is not working as expected in combination with the `speed` mutation, so we need to track the animation start manually!
-    // issue observed in framer-motion version ^12.4.0
     const [hasAnimationStarted, setHasAnimationStarted] = useState(false);
-
-    // useMeasure is used to get and track (on resize) the width of the carousel content in a performant way.
     const [ref, { width }] = useMeasure();
     const translation = useMotionValue(0);
 
@@ -70,39 +66,45 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
 
     const animationControlsRef = useRef<ReturnType<typeof animate> | null>(null);
 
-    const updateAnimationSpeed = (value: number) => {
-        if (animationControlsRef.current) {
-            animationControlsRef.current.speed = value;
+    const startAnimation = (customSpeed: number = speed) => {
+        const distanceToTravel = Math.abs(finalPosition - translation.get());
+        const duration = distanceToTravel / customSpeed;
+
+        animationControlsRef.current?.stop();
+        animationControlsRef.current = animate(translation, [translation.get(), finalPosition], {
+            ease: 'linear',
+            duration,
+            repeat: Infinity,
+            repeatType: 'loop',
+        });
+    };
+
+    const updateAnimationSpeed = (factor: number) => {
+        if (!animationControlsRef.current) return;
+
+        if (factor === 0) {
+            animationControlsRef.current.stop();
+        } else {
+            // If speed was zero (paused), restart animation
+            startAnimation(speed * factor);
         }
     };
 
     useEffect(() => {
         const timeoutHandle = setTimeout(() => setHasAnimationStarted(true), animationDelay * 1000);
-
         return () => clearTimeout(timeoutHandle);
     }, [animationDelay]);
 
     useEffect(() => {
-        // wait for animation delay and width to be calculated before starting the animation
-        if (!hasAnimationStarted || finalPosition === 0) {
-            return;
-        }
+        if (!hasAnimationStarted || finalPosition === 0) return;
+        startAnimation();
+    }, [hasAnimationStarted, finalPosition]);
 
-        const distanceToTravel = Math.abs(finalPosition);
-        const duration = distanceToTravel / speed;
-
-        // speed is mutated directly on hover, but all other properties will trigger a new animation, causing position to reset!
-        animationControlsRef.current?.stop();
-        animationControlsRef.current = animate(translation, [0, finalPosition], {
-            ease: 'linear',
-            duration: duration,
-            repeat: Infinity,
-            repeatType: 'loop',
-            repeatDelay: 0,
-        });
-    }, [speed, finalPosition, translation, hasAnimationStarted]);
-
-    const containerStyle = { x: translation, gap: `${String(gap)}px`, paddingLeft: `${String(initialOffset)}px` };
+    const containerStyle = {
+        x: translation,
+        gap: `${String(gap)}px`,
+        paddingLeft: `${String(initialOffset)}px`,
+    };
 
     return (
         <div className={classNames('overflow-hidden', className)}>
@@ -121,14 +123,7 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
                 onDragStart={() => isDraggable && animationControlsRef.current?.stop()}
                 onDragEnd={() => {
                     if (!isDraggable) return;
-                    const distanceToTravel = Math.abs(finalPosition);
-                    const duration = distanceToTravel / speed;
-                    animationControlsRef.current = animate(translation, [translation.get(), finalPosition], {
-                        ease: 'linear',
-                        duration,
-                        repeat: Infinity,
-                        repeatType: 'loop',
-                    });
+                    startAnimation();
                 }}
             >
                 {children}

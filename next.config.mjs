@@ -124,6 +124,14 @@ const nextConfig = {
         // Configs needed by wallet-connect (see https://docs.walletconnect.com/appkit/next/core/installation#extra-configuration)
         config.externals.push('pino-pretty', 'lokijs', 'encoding');
 
+        config.module.rules.push({
+            test: /\.(mp4|webm|ogg)$/,
+            type: 'asset/resource',
+            generator: {
+                filename: 'static/media/[name].[hash][ext]',
+            },
+        });
+
         return config;
     },
 };
