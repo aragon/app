@@ -9,7 +9,6 @@ import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
 import { ApplicationDialogId } from '../../../constants/applicationDialogId';
-import type { INavigationDialogProps } from '../navigation/navigationDialog';
 import { NavigationDao, type INavigationDaoProps } from './navigationDao';
 
 jest.mock('@aragon/gov-ui-kit', () => ({
@@ -23,12 +22,6 @@ jest.mock('@aragon/gov-ui-kit', () => ({
 jest.mock('../navigation/navigationTrigger', () => ({
     NavigationTrigger: (props: { onClick: () => void; className: string }) => (
         <button data-testid="nav-trigger-mock" onClick={props.onClick} className={props.className} />
-    ),
-}));
-
-jest.mock('../navigation/navigationDialog', () => ({
-    NavigationDialog: (props: INavigationDialogProps<string>) => (
-        <div data-testid="nav-dialog-mock" className={props.className} />
     ),
 }));
 
@@ -90,11 +83,20 @@ describe('<NavigationDao /> component', () => {
         expect(screen.queryByRole('link', { name: /navigationDao.link.settings/ })).not.toBeInTheDocument();
     });
 
+    it('hides the members and proposals links when DAO has no supported plugin', () => {
+        hasSupportedPluginsSpy.mockReturnValue(false);
+        render(createTestComponent({ id: 'test' }));
+        expect(screen.queryByRole('link', { name: /navigationDao.link.members/ })).not.toBeInTheDocument();
+        expect(screen.queryByRole('link', { name: /navigationDao.link.proposals/ })).not.toBeInTheDocument();
+    });
+
     it('renders a button to open the navigation dialog on mobile devices', async () => {
         render(createTestComponent());
-        await userEvent.click(screen.getByTestId('nav-trigger-mock'));
-
-        expect(screen.getByTestId('nav-dialog-mock')).toBeInTheDocument();
+        const triggerButton = screen.getByTestId('nav-trigger-mock');
+        expect(triggerButton).toBeInTheDocument();
+        expect(triggerButton.className).toContain('md:hidden');
+        await userEvent.click(triggerButton);
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
     });
 
     it('renders a connect button opening the connect-wallet dialog', async () => {
