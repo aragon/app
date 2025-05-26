@@ -82,7 +82,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                                     pluginId={plugin.subdomain}
                                     proposal={sppStageUtils.getBodySubProposal(proposal, address, stage.stageIndex)}
                                     name={plugin.name}
-                                    isOptimistic={isVeto}
+                                    isVeto={isVeto}
                                     isExecuted={proposal.executed.status}
                                 />
                             )}

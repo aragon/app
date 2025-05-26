@@ -1076,7 +1076,7 @@
           "memberCount": "of {{count}} members",
           "notApproved": "did not approve",
           "notVetoed": "did not veto",
-          "optimisticApprovalLabel": "veto approval",
+          "optimisticApprovalLabel": "veto",
           "vetoed": "vetoed"
         },
         "multisigRemoveMembersAction": {
