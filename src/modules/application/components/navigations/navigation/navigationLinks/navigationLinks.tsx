@@ -11,30 +11,36 @@ export interface INavigationLinksProps<TRouteType extends string> extends Compon
     links: Array<INavigationLink<TRouteType>>;
     /**
      * Variant of the component.
-     * @default columns
+     * @default row
      */
     variant?: NavigationLinksVariant;
 }
 
 export const NavigationLinks = <TRouteType extends string>(props: INavigationLinksProps<TRouteType>) => {
-    const { className, links, variant = 'columns', ...otherProps } = props;
+    const { className, links, variant = 'row', ...otherProps } = props;
 
     const { t } = useTranslations();
 
     return (
         <div
             className={classNames(
-                'flex overflow-auto',
-                { 'flex-row gap-10': variant === 'columns' },
-                { 'flex-col gap-1': variant === 'rows' },
+                'flex',
+                { 'item-center flex-row gap-x-4 xl:gap-x-10': variant === 'row' },
+                { 'flex-col gap-y-1': variant === 'column' },
                 className,
             )}
             {...otherProps}
         >
             {links
                 .filter((link) => !link.hidden)
-                .map(({ link, label, icon }) => (
-                    <NavigationLinksItem key={link} href={link} icon={icon} variant={variant}>
+                .map(({ link, label, icon, lgHidden }) => (
+                    <NavigationLinksItem
+                        key={link}
+                        href={link}
+                        icon={icon}
+                        variant={variant}
+                        className={classNames({ 'lg:hidden': lgHidden })}
+                    >
                         {t(label)}
                     </NavigationLinksItem>
                 ))}

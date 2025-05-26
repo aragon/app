@@ -37,8 +37,7 @@ describe('<ConnectWalletDialog /> component', () => {
 
     it('renders some information about Aragon app', () => {
         render(createTestComponent());
-        expect(screen.getByRole('img', { name: 'Aragon icon logo' })).toBeInTheDocument();
-        expect(screen.getByText(/connectWalletDialog.app/)).toBeInTheDocument();
+        expect(screen.getByRole('img', { name: 'Aragon logo' })).toBeInTheDocument();
         expect(screen.getByText(/connectWalletDialog.connect/)).toBeInTheDocument();
         expect(screen.getByText(/connectWalletDialog.feature.permissions/)).toBeInTheDocument();
         expect(screen.getByText(/connectWalletDialog.feature.stats/)).toBeInTheDocument();

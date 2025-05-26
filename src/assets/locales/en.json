@@ -21,7 +21,6 @@
           "cancel": "Cancel",
           "connect": "Connect"
         },
-        "app": "Aragon App",
         "auditLink": "https://github.com/aragon/osx/blob/main/audits/Halborn_AragonOSx_v1_4_Smart_Contract_Security_Assessment_Report_2025_01_03.pdf",
         "connect": "wants to connect to your wallet",
         "feature": {
@@ -70,6 +69,9 @@
           "description": "This dialog provides key DAO details and links to governance, treasury, and community pages",
           "title": "DAO navigation menu"
         },
+        "dialog": {
+          "explore": "Explore all DAOs"
+        },
         "link": {
           "assets": "Assets",
           "dashboard": "Dashboard",
@@ -93,7 +95,8 @@
         "a11y": {
           "description": "Information about the connected user",
           "title": "Connected user"
-        }
+        },
+        "disconnect": "Disconnect"
       }
     },
     "createDao": {

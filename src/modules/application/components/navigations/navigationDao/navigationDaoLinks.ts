@@ -5,7 +5,7 @@ import type { INavigationLink } from '../navigation';
 
 type DaoRoutes = INavigationLink<__next_route_internal_types__.DynamicRoutes>;
 
-export const navigationDaoLinks = (dao: IDao): DaoRoutes[] => {
+export function navigationDaoLinks(dao: IDao, isPage: boolean): DaoRoutes[] {
     const isSupported = daoUtils.hasSupportedPlugins(dao);
     const daoUrl = daoUtils.getDaoUrl(dao)!;
 
@@ -14,33 +14,39 @@ export const navigationDaoLinks = (dao: IDao): DaoRoutes[] => {
             label: 'app.application.navigationDao.link.dashboard',
             link: `${daoUrl}/dashboard`,
             icon: IconType.APP_DASHBOARD,
+            hidden: isPage,
         },
         {
             label: 'app.application.navigationDao.link.proposals',
             link: `${daoUrl}/proposals`,
             icon: IconType.APP_PROPOSALS,
             hidden: !isSupported,
+            lgHidden: !isPage,
         },
         {
             label: 'app.application.navigationDao.link.members',
             link: `${daoUrl}/members`,
             icon: IconType.APP_MEMBERS,
             hidden: !isSupported,
+            lgHidden: !isPage,
         },
         {
             label: 'app.application.navigationDao.link.assets',
             link: `${daoUrl}/assets`,
             icon: IconType.APP_ASSETS,
+            lgHidden: !isPage,
         },
         {
             label: 'app.application.navigationDao.link.transactions',
             link: `${daoUrl}/transactions`,
             icon: IconType.APP_TRANSACTIONS,
+            lgHidden: !isPage,
         },
         {
             label: 'app.application.navigationDao.link.settings',
             link: `${daoUrl}/settings`,
             icon: IconType.SETTINGS,
+            hidden: isPage,
         },
     ];
-};
+}
