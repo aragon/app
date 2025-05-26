@@ -39,7 +39,7 @@ export const useTokenPermissionCheckVoteSubmission = (
         {
             term: t('app.plugins.token.tokenPermissionCheckVoteSubmission.createdAt'),
             definition: formattedCreationDate!,
-            link: { href: proposalCreationUrl },
+            link: { href: proposalCreationUrl, textClassname: 'first-letter:capitalize' },
         },
         {
             term: t('app.plugins.token.tokenPermissionCheckVoteSubmission.membership'),
