@@ -9,7 +9,7 @@ import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
 import { ApplicationDialogId } from '../../../constants/applicationDialogId';
-import { INavigationDialogProps } from '../navigation/navigationDialog';
+import type { INavigationDialogProps } from '../navigation/navigationDialog';
 import { NavigationDao, type INavigationDaoProps } from './navigationDao';
 
 jest.mock('@aragon/gov-ui-kit', () => ({
