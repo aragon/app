@@ -1,3 +1,4 @@
+import { Network } from '@/shared/api/daoService';
 import { generateMember, generateProposal, generateVote } from '../../testUtils';
 import { governanceService } from './governanceService';
 
@@ -53,6 +54,30 @@ describe('governance service', () => {
 
         expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].proposalBySlug, proposalParams);
         expect(result).toEqual(proposal);
+    });
+
+    it('getCanVote fetches if the member can vote on the specified proposal', async () => {
+        const canVote = true;
+        const params = { urlParams: { id: 'proposal-id' }, queryParams: { userAddress: '0x123' } };
+
+        requestSpy.mockResolvedValue(canVote);
+        const result = await governanceService.getCanVote(params);
+
+        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].canVote, params);
+        expect(result).toEqual(canVote);
+    });
+
+    it('getCanCreateProposal fetches if the member can create a proposal on the specified plugin', async () => {
+        const canCreateProposal = true;
+        const params = {
+            queryParams: { memberAddress: '0x123', pluginAddress: '0x456', network: Network.BASE_MAINNET },
+        };
+
+        requestSpy.mockResolvedValue(canCreateProposal);
+        const result = await governanceService.getCanCreateProposal(params);
+
+        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].canCreateProposal, params);
+        expect(result).toEqual(canCreateProposal);
     });
 
     it('getVoteList fetches the votes of a specific proposal', async () => {
