@@ -37,8 +37,9 @@ export const SppVotingTerminalStageBodyContent: React.FC<ISppVotingTerminalStage
 
     const status = sppStageUtils.getStageStatus(proposal, stage);
 
+    const isExternalPlugin = plugin.subdomain == null;
     const defaultName = pluginEns ?? addressUtils.truncateAddress(plugin.address);
-    const pluginName = plugin.subdomain != null && plugin.name != null ? plugin.name : defaultName;
+    const pluginName = !isExternalPlugin && plugin.name != null ? plugin.name : defaultName;
 
     return (
         <ProposalVoting.BodyContent
@@ -46,8 +47,8 @@ export const SppVotingTerminalStageBodyContent: React.FC<ISppVotingTerminalStage
             key={plugin.address}
             status={status}
             bodyId={plugin.address}
-            hideTabs={!plugin.subdomain ? [ProposalVotingTab.VOTES] : undefined}
-            bodyBrand={plugin.subdomain === undefined ? brandedExternals[plugin.brandId] : undefined}
+            hideTabs={isExternalPlugin ? [ProposalVotingTab.VOTES] : undefined}
+            bodyBrand={isExternalPlugin ? brandedExternals[plugin.brandId] : undefined}
         >
             <SppVotingTerminalBodyContent
                 plugin={plugin}
