@@ -2,17 +2,16 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
-import { addressUtils, ProposalStatus, ProposalVoting, ProposalVotingTab } from '@aragon/gov-ui-kit';
+import { ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
 import { useCallback } from 'react';
 import type { ISppProposal, ISppStage } from '../../../types';
 import { sppStageUtils } from '../../../utils/sppStageUtils';
-import { SppStageStatus } from './sppStageStatus';
-import { SppVotingTerminalBodyContent } from './sppVotingTerminalBodyContent';
 import { SppVotingTerminalBodySummaryFooter } from './sppVotingTerminalBodySummaryFooter';
 import { SppVotingTerminalMultiBodySummaryDefault } from './sppVotingTerminalMultiBodySummaryDefault';
+import { SppVotingTerminalStageBodyContent } from './sppVotingTerminalStageBodyContent';
 import { SppVotingTerminalStageTimelock } from './sppVotingTerminalStageTimelock';
 
-export interface IProposalVotingTerminalStageProps {
+export interface ISppVotingTerminalStageProps {
     /**
      * ID of the DAO related to the proposal.
      */
@@ -27,7 +26,7 @@ export interface IProposalVotingTerminalStageProps {
     proposal: ISppProposal;
 }
 
-export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps> = (props) => {
+export const SppVotingTerminalStage: React.FC<ISppVotingTerminalStageProps> = (props) => {
     const { stage, daoId, proposal } = props;
 
     const processedStartDate = sppStageUtils.getStageStartDate(proposal, stage)?.toMillis();
@@ -49,18 +48,17 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
         callback: getStageDetails,
     });
 
+    const stageName = stage.name ?? stage.stageIndex.toString();
     const bodyList = stage.plugins.map((plugin) => plugin.address);
-
-    const isSingleBody = bodyList.length === 1;
-
     const canVote = status === ProposalStatus.ACTIVE;
 
+    const isSingleBody = bodyList.length === 1;
     const isVeto = sppStageUtils.isVeto(stage);
     const isTimelockStage = !stage.plugins.length;
 
     return (
         <ProposalVoting.Stage
-            name={stage.name}
+            name={stageName}
             status={status}
             startDate={processedStartDate}
             endDate={processedEndDate}
@@ -102,26 +100,15 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                 <SppVotingTerminalBodySummaryFooter proposal={proposal} stage={stage} daoId={daoId} />
             </ProposalVoting.BodySummary>
             {stage.plugins.map((plugin) => (
-                <ProposalVoting.BodyContent
-                    name={plugin.subdomain != null ? plugin.name! : addressUtils.truncateAddress(plugin.address)}
+                <SppVotingTerminalStageBodyContent
                     key={plugin.address}
+                    plugin={plugin}
+                    displayStatus={isSingleBody}
                     status={status}
-                    bodyId={plugin.address}
-                    hideTabs={!plugin.subdomain ? [ProposalVotingTab.VOTES] : undefined}
-                    bodyBrand={plugin.subdomain === undefined ? brandedExternals[plugin.brandId] : undefined}
-                >
-                    <SppVotingTerminalBodyContent
-                        plugin={plugin}
-                        daoId={daoId}
-                        subProposal={sppStageUtils.getBodySubProposal(proposal, plugin.address, stage.stageIndex)}
-                        proposal={proposal}
-                        canVote={canVote}
-                        isVeto={isVeto}
-                        stage={stage}
-                    >
-                        {isSingleBody && <SppStageStatus proposal={proposal} stage={stage} daoId={daoId} />}
-                    </SppVotingTerminalBodyContent>
-                </ProposalVoting.BodyContent>
+                    proposal={proposal}
+                    daoId={daoId}
+                    stage={stage}
+                />
             ))}
         </ProposalVoting.Stage>
     );

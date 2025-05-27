@@ -4,7 +4,8 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { addressUtils, type IDefinitionSetting, ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
-import { useAccount } from 'wagmi';
+import type { Hex } from 'viem';
+import { useAccount, useEnsName } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { VoteList } from '../voteList';
@@ -30,6 +31,7 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
     const { proposal, status, daoId } = props;
 
     const { address } = useAccount();
+    const { data: pluginEnsName } = useEnsName({ address: proposal.pluginAddress as Hex });
 
     const voteListParams = {
         queryParams: {
@@ -47,11 +49,11 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
     });
 
     const proposalSettings = useDaoPluginInfo({ daoId, address: proposal.pluginAddress, settings: pluginSettings });
-    const truncatedPluginAddress = addressUtils.truncateAddress(proposal.pluginAddress);
+    const pluginName = pluginEnsName ?? addressUtils.truncateAddress(proposal.pluginAddress);
 
     return (
         <ProposalVoting.Container status={status}>
-            <ProposalVoting.BodyContent name={truncatedPluginAddress} status={status}>
+            <ProposalVoting.BodyContent name={pluginName} status={status}>
                 <PluginSingleComponent
                     slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
                     pluginId={proposal.pluginSubdomain}
