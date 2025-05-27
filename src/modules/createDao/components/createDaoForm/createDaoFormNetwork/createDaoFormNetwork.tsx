@@ -7,15 +7,6 @@ import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 
 export interface ICreateDaoFormNetworkProps {}
 
-const optimismMainnet = {
-    name: 'Optimism',
-    logo: 'https://assets.coingecko.com/coins/images/25244/large/Optimism.png',
-    disabled: true,
-    testnet: false,
-    beta: false,
-    order: 8,
-};
-
 export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => {
     const { t } = useTranslations();
 
@@ -28,7 +19,7 @@ export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => 
     const disabledTag = { variant: 'info' as const, label: t('app.createDao.createDaoForm.network.tag.disabled') };
     const betaTag = { variant: 'info' as const, label: t('app.createDao.createDaoForm.network.tag.beta') };
 
-    const sortedNetworks = Object.entries({ ...networkDefinitions, 'optimism-mainnet': optimismMainnet }).sort(
+    const sortedNetworks = Object.entries(networkDefinitions).sort(
         ([, networkA], [, networkB]) => networkA.order - networkB.order,
     );
 
