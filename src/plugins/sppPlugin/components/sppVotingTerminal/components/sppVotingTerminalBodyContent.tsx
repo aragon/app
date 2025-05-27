@@ -4,10 +4,11 @@ import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { useSppGovernanceSettingsDefault } from '@/plugins/sppPlugin/hooks/useSppGovernanceSettingsDefault';
 import type { ISppProposal, ISppStage, ISppStagePlugin, ISppSubProposal } from '@/plugins/sppPlugin/types';
+import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { type IDefinitionSetting, ProposalVoting } from '@aragon/gov-ui-kit';
+import { type IDefinitionSetting, ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import { SppVotingTerminalBodyBreakdownDefault } from './sppVotingTerminalBodyBreakdownDefault';
 import { SppVotingTerminalBodyVoteDefault } from './sppVotingTerminalBodyVoteDefault';
@@ -34,14 +35,6 @@ export interface ISppVotingTerminalBodyContentProps {
      */
     proposal: ISppProposal;
     /**
-     * Flag indicating if the vote is a veto.
-     */
-    isVeto: boolean;
-    /**
-     * Flag indicating if the user can vote.
-     */
-    canVote: boolean;
-    /**
      * Children of the component.
      */
     children?: ReactNode;
@@ -50,9 +43,13 @@ export interface ISppVotingTerminalBodyContentProps {
 const votesPerPage = 6;
 
 export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyContentProps> = (props) => {
-    const { plugin, daoId, subProposal, stage, proposal, canVote, isVeto, children } = props;
+    const { plugin, daoId, subProposal, stage, proposal, children } = props;
+
+    const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
+    const canVote = stageStatus === ProposalStatus.ACTIVE;
 
     const isExternalBody = plugin.subdomain == null;
+    const isVeto = sppStageUtils.isVeto(stage);
 
     const pluginSettings = isExternalBody ? {} : plugin.settings;
     const settings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDefinitionSetting[]>({
@@ -82,8 +79,8 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                         pluginId={isExternalBody ? 'external' : plugin.subdomain}
                         proposal={isExternalBody ? proposal : subProposal}
                         body={isExternalBody ? plugin.address : undefined}
-                        canVote={canVote}
                         stage={stage}
+                        canVote={canVote}
                         Fallback={SppVotingTerminalBodyBreakdownDefault}
                     >
                         <div className="flex flex-col gap-y-4 pt-6 md:pt-8">
