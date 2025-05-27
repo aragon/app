@@ -67,9 +67,7 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
                             key={vote.transactionHash}
                             vote={vote}
                             daoId={daoId}
-                            isVeto={isVeto}
                             voteIndicator={voteIndicator}
-                            voteIndicatorDescription={voteIndicatorDescription}
                         />
                     ) : (
                         <VoteDataListItem.Structure

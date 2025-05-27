@@ -927,9 +927,6 @@
         "error": {
           "description": "There was an error loading the votes. Try again later.",
           "title": "Error loading votes"
-        },
-        "proposalListItem": {
-          "voteTagPrefix": "Voted"
         }
       },
       "walletConnectActionDialog": {
