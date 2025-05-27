@@ -15,7 +15,7 @@ export interface ITokenVotingOptionsProps {
     /**
      * Callback to set the selected vote option.
      */
-    onChange: (value: string | undefined) => void;
+    onChange: (value?: string) => void;
 }
 
 export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (props) => {

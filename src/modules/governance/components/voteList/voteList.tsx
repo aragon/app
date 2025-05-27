@@ -22,7 +22,7 @@ export interface IVoteListProps {
      */
     pluginAddress?: string;
     /**
-     * Defines if the voting is optimistic/veto or not.
+     * Defines if the voting is to veto or not.
      */
     isVeto?: boolean;
 }

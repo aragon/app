@@ -13,7 +13,7 @@ export interface IMultisigProposalVotingSummaryProps {
      */
     name: string;
     /**
-     * Defines if the voting is optimistic or not.
+     * Defines if the voting is to veto or not.
      */
     isVeto: boolean;
     /**
