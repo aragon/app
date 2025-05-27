@@ -40,7 +40,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@aragon/app-next@workspace:."
   dependencies:
-    "@aragon/gov-ui-kit": "npm:0.0.0-20250523151833"
+    "@aragon/gov-ui-kit": "npm:0.0.0-20250527101820"
     "@changesets/changelog-github": "npm:^0.5.1"
     "@changesets/cli": "npm:^2.29.4"
     "@floating-ui/react": "npm:^0.27.8"
@@ -103,9 +103,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@aragon/gov-ui-kit@npm:0.0.0-20250523151833":
-  version: 0.0.0-20250523151833
-  resolution: "@aragon/gov-ui-kit@npm:0.0.0-20250523151833"
+"@aragon/gov-ui-kit@npm:0.0.0-20250527101820":
+  version: 0.0.0-20250527101820
+  resolution: "@aragon/gov-ui-kit@npm:0.0.0-20250527101820"
   dependencies:
     "@radix-ui/react-accordion": "npm:^1.2.0"
     "@radix-ui/react-alert-dialog": "npm:^1.1.0"
@@ -131,7 +131,7 @@ __metadata:
     "@tiptap/starter-kit": "npm:^2.12.0"
     blockies-ts: "npm:^1.0.0"
     classnames: "npm:^2.5.0"
-    framer-motion: "npm:^12.12.0"
+    framer-motion: "npm:^12.14.0"
     luxon: "npm:^3.6.0"
     react-dropzone: "npm:^14.3.0"
     react-imask: "npm:^7.6.0"
@@ -139,14 +139,14 @@ __metadata:
     tiptap-markdown: "npm:^0.8.10"
   peerDependencies:
     "@tailwindcss/typography": ^0.5.0
-    "@tanstack/react-query": ^5.76.0
+    "@tanstack/react-query": ^5.77.0
     react: ^18.2.0 || ^19.0.0
     react-dom: ^18.2.0 || ^19.0.0
     react-hook-form: ^7.56.0
     tailwindcss: ^4.1.0
-    viem: ^2.29.0
+    viem: ^2.30.0
     wagmi: ^2.15.0
-  checksum: 10c0/ee7ac5d7d5b14d9c5a01b6ba17ac0fbed8cfb25f5f54e3ea9b4c72934a2d502ccdf7030bf56360a9957feb4f8cfbb9ed3dbe64b39bfcdf8a6aa1dbb8dc65e3a6
+  checksum: 10c0/780dced35da793cfdd8749732d27f7230d7af90897d6c1dc77156702987dc7524f20b68f5497912157fbf4af771ec3370b87c0673bd89131a742d0a3812f84bc
   languageName: node
   linkType: hard
 
@@ -9572,7 +9572,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^12.12.0, framer-motion@npm:^12.12.1":
+"framer-motion@npm:^12.12.1":
   version: 12.12.1
   resolution: "framer-motion@npm:12.12.1"
   dependencies:
@@ -9591,6 +9591,28 @@ __metadata:
     react-dom:
       optional: true
   checksum: 10c0/a782ffa3613f35d23b550123e5409504dadd1f708af40d6014969a8c78dae31046ab9c35a44cbb768e20cec837675d1e240e06e01818b250386af6d0ff570593
+  languageName: node
+  linkType: hard
+
+"framer-motion@npm:^12.14.0":
+  version: 12.14.0
+  resolution: "framer-motion@npm:12.14.0"
+  dependencies:
+    motion-dom: "npm:^12.14.0"
+    motion-utils: "npm:^12.12.1"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    "@emotion/is-prop-valid": "*"
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    "@emotion/is-prop-valid":
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 10c0/c6dc690bfd6737bb816f36b1ff05b379e5533b1df6fcfe2aed5537e7f30b069087313cdefb4006952412ee997bd40733a24d724b5cc12a69cf489219dad9de90
   languageName: node
   linkType: hard
 
@@ -12271,6 +12293,15 @@ __metadata:
   dependencies:
     motion-utils: "npm:^12.12.1"
   checksum: 10c0/d80cdde894d07042e792ae69f47d7b58aa20691d4e4da7ce803af246295855fd59fdbd7a9e0def8554e22fd105c407cc672bd85e0a79a660d523adee7989d61d
+  languageName: node
+  linkType: hard
+
+"motion-dom@npm:^12.14.0":
+  version: 12.14.0
+  resolution: "motion-dom@npm:12.14.0"
+  dependencies:
+    motion-utils: "npm:^12.12.1"
+  checksum: 10c0/a51367ae45af014f80e2ec3151dd81f259b980a56621a78cd9ea80bfaf6d9e97b137e2e32251d5a70ce82914067b5d9b54d3a146a2fdc563c3e132eba89d7ac9
   languageName: node
   linkType: hard
 
