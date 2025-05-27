@@ -17,7 +17,7 @@ export const NavigationDialog = <TRouteType extends string>(props: INavigationDi
     const handleLinksClick = () => onOpenChange?.(false);
 
     return (
-        <Dialog.Root size="md" onOpenChange={onOpenChange} {...otherProps}>
+        <Dialog.Root onOpenChange={onOpenChange} {...otherProps}>
             <Dialog.Content noInset={true} className="flex flex-col gap-4 pt-8 pb-4">
                 {children}
                 <div className="flex flex-col gap-4 px-4">
