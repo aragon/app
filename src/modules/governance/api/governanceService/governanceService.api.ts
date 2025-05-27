@@ -1,4 +1,5 @@
 import type { IPaginatedRequest } from '@/shared/api/aragonBackendService';
+import type { Network } from '@/shared/api/daoService';
 import type { IRequestQueryParams, IRequestUrlParams, IRequestUrlQueryParams } from '@/shared/api/httpService';
 
 export interface IGetProposalListQueryParams extends IPaginatedRequest {
@@ -96,6 +97,23 @@ export interface IGetCanVoteQueryParams {
 }
 
 export interface IGetCanVoteParams extends IRequestUrlQueryParams<IGetCanVoteUrlParams, IGetCanVoteQueryParams> {}
+
+export interface IGetCanCreateProposalQueryParams {
+    /**
+     * Address of the member to check the permission for.
+     */
+    memberAddress: string;
+    /**
+     * Address of the plugin to create the proposal on.
+     */
+    pluginAddress: string;
+    /**
+     * Network of the plugin.
+     */
+    network: Network;
+}
+
+export interface IGetCanCreateProposalParams extends IRequestQueryParams<IGetCanCreateProposalQueryParams> {}
 
 export interface IGetVoteListQueryParams extends IPaginatedRequest {
     /**

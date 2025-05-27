@@ -3,6 +3,7 @@ import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBranded
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import { addressUtils, ProposalStatus, ProposalVoting, ProposalVotingTab } from '@aragon/gov-ui-kit';
+import { useCallback } from 'react';
 import type { ISppProposal, ISppStage } from '../../../types';
 import { sppStageUtils } from '../../../utils/sppStageUtils';
 import { SppStageStatus } from './sppStageStatus';
@@ -35,15 +36,17 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     // Keep stage status and timings updated for statuses that are time dependent
     const { ACTIVE, PENDING, ACCEPTED, ADVANCEABLE } = ProposalStatus;
 
+    const getStageDetails = useCallback(() => {
+        const status = sppStageUtils.getStageStatus(proposal, stage);
+        const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage)?.toMillis();
+        const maxAdvance = sppStageUtils.getStageMaxAdvance(proposal, stage)?.toMillis();
+
+        return { status, minAdvance, maxAdvance };
+    }, [proposal, stage]);
+
     const { status, minAdvance, maxAdvance } = useDynamicValue({
         enabled: [ACTIVE, PENDING, ACCEPTED, ADVANCEABLE].includes(sppStageUtils.getStageStatus(proposal, stage)),
-        callback: () => {
-            const status = sppStageUtils.getStageStatus(proposal, stage);
-            const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage)?.toMillis();
-            const maxAdvance = sppStageUtils.getStageMaxAdvance(proposal, stage)?.toMillis();
-
-            return { status, minAdvance, maxAdvance };
-        },
+        callback: getStageDetails,
     });
 
     const bodyList = stage.plugins.map((plugin) => plugin.address);
