@@ -33,7 +33,7 @@ export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdow
 
     return (
         <ProposalVoting.BreakdownToken
-            isVeto={isVeto ?? false}
+            isVeto={isVeto}
             totalYes={yesVotes}
             totalNo={noVotes}
             totalAbstain={abstainVotes}
