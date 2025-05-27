@@ -52,7 +52,7 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
     const pluginName = pluginEnsName ?? addressUtils.truncateAddress(proposal.pluginAddress);
 
     return (
-        <ProposalVoting.Container status={status}>
+        <ProposalVoting.Container status={status} endDate={proposal.endDate * 1000}>
             <ProposalVoting.BodyContent name={pluginName} status={status}>
                 <PluginSingleComponent
                     slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
