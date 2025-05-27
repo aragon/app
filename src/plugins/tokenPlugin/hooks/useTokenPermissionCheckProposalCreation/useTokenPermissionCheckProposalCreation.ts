@@ -1,6 +1,8 @@
 import { useMember } from '@/modules/governance/api/governanceService';
+import { useCanCreateProposal } from '@/modules/governance/api/governanceService/queries/useCanCreateProposal';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import type { ITokenMember, ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
+import { type Network, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
@@ -17,6 +19,8 @@ export const useTokenPermissionCheckProposalCreation = (
 
     const { address } = useAccount();
     const { t } = useTranslations();
+
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const pluginName = daoUtils.getPluginName(plugin);
 
@@ -37,11 +41,20 @@ export const useTokenPermissionCheckProposalCreation = (
         { enabled: address != null },
     );
 
+    // As the /member endpoint returns outdated balance and/or voting power in some scenarios, here we use the
+    // /can-create-proposal endpoint which fetches the user balance on the fly (to be removed, APP-4261)
+    const checkQueryParams = {
+        memberAddress: address as string,
+        pluginAddress: plugin.address,
+        network: dao?.network as Network,
+    };
+    const { data: canCreateProposal } = useCanCreateProposal(
+        { queryParams: checkQueryParams },
+        { enabled: address != null && dao != null },
+    );
+
     const userVotingPower = BigInt(member?.votingPower ?? '0');
     const userBalance = BigInt(member?.tokenBalance ?? '0');
-
-    const hasPermission =
-        userVotingPower >= BigInt(minProposerVotingPower) || userBalance >= BigInt(minProposerVotingPower);
 
     const parsedMemberVotingPower = formatUnits(userVotingPower, tokenDecimals);
     const formattedMemberVotingPower = formatterUtils.formatNumber(parsedMemberVotingPower, {
@@ -75,7 +88,7 @@ export const useTokenPermissionCheckProposalCreation = (
     const isRestricted = BigInt(minProposerVotingPower) > 0;
 
     return {
-        hasPermission,
+        hasPermission: Boolean(canCreateProposal),
         settings: [settings],
         isLoading,
         isRestricted,

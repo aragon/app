@@ -35,7 +35,7 @@ export const useMultisigPermissionCheckVoteSubmission = (
         {
             term: t('app.plugins.multisig.multisigPermissionCheckVoteSubmission.createdAt'),
             definition: formattedCreationDate!,
-            link: { href: proposalCreationUrl },
+            link: { href: proposalCreationUrl, textClassName: 'first-letter:capitalize' },
         },
         {
             term: t('app.plugins.multisig.multisigPermissionCheckVoteSubmission.membership'),
