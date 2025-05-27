@@ -1,6 +1,6 @@
 import { Network } from '@/shared/api/daoService';
 import type { Chain, Hex } from 'viem';
-import { arbitrum, base, mainnet, peaq, polygon, sepolia, zksync, zksyncSepoliaTestnet } from 'wagmi/chains';
+import { arbitrum, base, mainnet, optimism, peaq, polygon, sepolia, zksync, zksyncSepoliaTestnet } from 'wagmi/chains';
 import type { IContractVersionInfo } from '../types';
 
 export interface INetworkDefinitionAddresses {
@@ -124,12 +124,26 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             globalExecutor: '0x198b64a53b39f454e56626d9262cBf67E7C13138',
         },
     },
+    [Network.OPTIMISM_MAINNET]: {
+        ...optimism,
+        name: 'Optimism',
+        logo: 'https://www.optimism.io/brand/optimism-logo.svg',
+        privateRpc: 'https://opt-mainnet.g.alchemy.com/v2/',
+        order: 5,
+        protocolVersion: latestProtocolVersion,
+        addresses: {
+            dao: '0x42D24803D8697050CA59f6E306322eC9fce8D7e9',
+            daoFactory: '0xB001Bd6A21056c2a7FB5A5b9005cf896b181e74d',
+            pluginSetupProcessor: '0x2379Dc18B4A939a2B76F5c79f58aa49193DA56C2',
+            globalExecutor: '0x3A8bd3C4Dd02340868c75b5B671673EA094a75bB',
+        },
+    },
     [Network.ZKSYNC_MAINNET]: {
         ...zksync,
         name: 'zkSync',
         logo: 'https://assets.coingecko.com/coins/images/38043/large/ZKTokenBlack.png',
         privateRpc: 'https://zksync-mainnet.g.alchemy.com/v2/',
-        order: 5,
+        order: 6,
         protocolVersion: latestProtocolVersion,
         addresses: {
             dao: '0x9B43625b28fa32CaB68d84F1B46E2721DD70Ba42',
@@ -142,10 +156,9 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...peaq,
         name: 'Peaq',
         logo: 'https://assets.coingecko.com/coins/images/51415/large/peaq-token-brand-icon_%281%29.png',
-        order: process.env.NEXT_PUBLIC_FEATURE_NETWORK_PEAQ !== 'true' ? 9 : 6,
+        order: 7,
         protocolVersion: latestProtocolVersion,
         beta: true,
-        disabled: process.env.NEXT_PUBLIC_FEATURE_NETWORK_PEAQ !== 'true',
         addresses: {
             dao: '0xa8a4Dc9B6f16BEe4E527CEA47FBeb6e0802030e1',
             daoFactory: '0x35B62715459cB60bf6dC17fF8cfe138EA305E7Ee',
@@ -174,7 +187,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         name: 'zkSync Sepolia',
         logo: 'https://assets.coingecko.com/coins/images/38043/large/ZKTokenBlack.png',
         privateRpc: 'https://zksync-sepolia.g.alchemy.com/v2/',
-        order: 7,
+        order: 8,
         protocolVersion: latestProtocolVersion,
         addresses: {
             dao: '0x39e836A6c32163733929B213965e3feC0007914a',
