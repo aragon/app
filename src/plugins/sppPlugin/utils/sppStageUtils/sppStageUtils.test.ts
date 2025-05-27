@@ -309,7 +309,7 @@ describe('SppStageUtils', () => {
 
             const stages = [
                 generateSppStage({ stageIndex: 0 }),
-                generateSppStage({ stageIndex: 1 }),
+                generateSppStage({ stageIndex: 1, vetoThreshold: 0 }),
                 generateSppStage({ stageIndex: 2 }),
             ];
             const proposal = generateSppProposal({
@@ -337,7 +337,7 @@ describe('SppStageUtils', () => {
 
             const stages = [
                 generateSppStage({ stageIndex: 0 }),
-                generateSppStage({ stageIndex: 1 }),
+                generateSppStage({ stageIndex: 1, vetoThreshold: 0 }),
                 generateSppStage({ stageIndex: 2 }),
             ];
             const proposal = generateSppProposal({
@@ -351,6 +351,63 @@ describe('SppStageUtils', () => {
             getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
             getStageMinAdvanceSpy.mockReturnValue(minAdvance);
             isApprovalReachedSpy.mockReturnValue(true);
+            timeUtils.setTime(now);
+
+            expect(sppStageUtils.getStageStatus(proposal, stages[1])).toBe(ProposalStatus.ADVANCEABLE);
+        });
+
+        it('returns active when stage has not ended yet, approval has been reached, proposal has actions and stage is optimistic', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ days: 2 });
+            const minAdvance = DateTime.fromISO(now).minus({ days: 1 });
+            const maxAdvance = DateTime.fromISO(now).plus({ days: 3 });
+            const endDate = DateTime.fromISO(now).plus({ days: 10 });
+
+            const stages = [
+                generateSppStage({ stageIndex: 0 }),
+                generateSppStage({ stageIndex: 1, vetoThreshold: 1 }),
+                generateSppStage({ stageIndex: 2 }),
+            ];
+            const proposal = generateSppProposal({
+                hasActions: true,
+                stageIndex: 1,
+                settings: generateSppPluginSettings({ stages }),
+            });
+
+            getStageStartDateSpy.mockReturnValue(startDate);
+            getStageEndDateSpy.mockReturnValue(endDate);
+            getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
+            getStageMinAdvanceSpy.mockReturnValue(minAdvance);
+            isApprovalReachedSpy.mockReturnValue(true);
+            timeUtils.setTime(now);
+
+            expect(sppStageUtils.getStageStatus(proposal, stages[1])).toBe(ProposalStatus.ACTIVE);
+        });
+
+        it('returns advanceable for optimistic stage once voting period is over and not vetoed', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ days: 2 });
+            const minAdvance = DateTime.fromISO(now).minus({ minutes: 30 });
+            const maxAdvance = DateTime.fromISO(now).plus({ days: 1 });
+            const endDate = DateTime.fromISO(now).minus({ hours: 1 });
+
+            const stages = [
+                generateSppStage({ stageIndex: 0 }),
+                generateSppStage({ stageIndex: 1, vetoThreshold: 1 }),
+                generateSppStage({ stageIndex: 2 }),
+            ];
+            const proposal = generateSppProposal({
+                hasActions: true,
+                stageIndex: 1,
+                settings: generateSppPluginSettings({ stages }),
+            });
+
+            getStageStartDateSpy.mockReturnValue(startDate);
+            getStageEndDateSpy.mockReturnValue(endDate);
+            getStageMinAdvanceSpy.mockReturnValue(minAdvance);
+            getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
+            isApprovalReachedSpy.mockReturnValue(true);
+            isVetoReachedSpy.mockReturnValue(false);
             timeUtils.setTime(now);
 
             expect(sppStageUtils.getStageStatus(proposal, stages[1])).toBe(ProposalStatus.ADVANCEABLE);
