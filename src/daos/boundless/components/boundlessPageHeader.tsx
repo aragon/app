@@ -31,12 +31,18 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (props) 
             )}
             {...otherProps}
         >
-            <video className="absolute inset-0 -z-30 h-full w-full object-cover" autoPlay loop muted playsInline>
+            <video
+                className="absolute inset-0 -z-30 size-full object-cover"
+                autoPlay={true}
+                loop={true}
+                muted={true}
+                playsInline={true}
+            >
                 <source src={BoundlessVideo} type="video/mp4" />
             </video>
             <Container className="flex w-full flex-col gap-y-12">
-                <div className="flex max-w-[720px] flex-col gap-3 text-center md:text-left">
-                    <p className="text-3xl text-[#000000] md:text-5xl">
+                <div className="flex max-w-[720px] flex-col gap-1.5 text-center md:gap-3 md:text-left">
+                    <p className="text-3xl leading-tight text-[#000000] md:text-5xl">
                         Welcome {ensName && <span className="text-[#537263]">{ensName}</span>}
                         <br />
                         to Boundless DAO
@@ -46,7 +52,7 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (props) 
                         every blockchain, developer, and everyone in between.
                     </p>
                 </div>
-
+                {/* Static row for desktop view */}
                 <div className="hidden w-full items-center justify-between gap-4 lg:flex">
                     {actions.map((action) => (
                         <BoundlessActionItem
@@ -59,8 +65,9 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (props) 
                     ))}
                 </div>
             </Container>
+            {/* Draggable unbounded carousel for mobile view */}
             <div className="block lg:hidden">
-                <Carousel speed={40} speedOnHoverFactor={0} animationDelay={2} gap={16}>
+                <Carousel speed={40} speedOnHoverFactor={0} animationDelay={2} gap={16} isDraggable={true}>
                     {actions.map((action) => (
                         <BoundlessActionItem
                             key={action.title}

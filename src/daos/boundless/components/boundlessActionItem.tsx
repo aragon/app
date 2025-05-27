@@ -1,9 +1,9 @@
 import { useRouter } from '@/shared/lib/nextNavigation';
-import { AvatarIcon, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Image, { type StaticImageData } from 'next/image';
 import { ComponentProps } from 'react';
 import BackgroundImage from '../assets/boundless-img-background.png';
+import { BoundlessAvatarIcon } from './boundlessAvatarIcon';
 
 export interface IBoundlessActionItemProps extends ComponentProps<'button'> {
     /**
@@ -32,23 +32,19 @@ export const BoundlessActionItem: React.FC<IBoundlessActionItemProps> = (props) 
     return (
         <button
             className={classNames(
-                'group relative flex h-40 w-[400px] items-center justify-between overflow-hidden rounded-lg p-6 transition-all',
+                'group relative flex h-40 w-80 items-center justify-between overflow-hidden rounded-lg p-4 transition-all md:w-[400px] md:p-6',
                 className,
             )}
             onClick={() => router.push(href)}
             {...otherProps}
         >
             <Image src={BackgroundImage} alt="" fill className="absolute inset-0 -z-20 object-cover" />
-            <div className="z-10 flex h-full w-full flex-col justify-center transition-all duration-300 group-hover:justify-between">
-                <div className="flex flex-col items-start transition-all duration-300 group-hover:translate-y-[-0.5rem]">
+            <div className="z-10 flex h-full w-full flex-col justify-between transition-all duration-300 md:justify-center md:group-hover:justify-between">
+                <div className="flex flex-col items-start transition-all duration-300 md:group-hover:translate-y-[-0.5rem]">
                     <p className="text-2xl leading-tight text-[#000000]">{title}</p>
                     <p className="text-nowrap text-lg leading-tight text-[#78716C]">{description}</p>
                 </div>
-                <AvatarIcon
-                    size="lg"
-                    icon={IconType.LINK_EXTERNAL}
-                    className="bg-transparent opacity-0 transition-all duration-300 group-hover:opacity-100"
-                />
+                <BoundlessAvatarIcon className="md:bg-transparent md:opacity-0 md:transition-all md:duration-300 md:group-hover:opacity-100" />
             </div>
             <Image
                 src={image}
