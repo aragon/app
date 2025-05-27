@@ -1,5 +1,6 @@
 import { type IVote } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { VoteProposalDataListItem, type VoteIndicator } from '@aragon/gov-ui-kit';
@@ -22,10 +23,17 @@ export interface IVoteProposalListItemProps {
      * ID of the DAO related to the votes.
      */
     daoId: string;
+    /**
+     * Defines if the voting is for vetoing the proposal or not.
+     * @default false
+     */
+    isVeto?: boolean;
 }
 
 export const VoteProposalListItem: React.FC<IVoteProposalListItemProps> = (props) => {
-    const { vote, daoId, voteIndicator, voteIndicatorDescription } = props;
+    const { vote, daoId, voteIndicator, isVeto } = props;
+
+    const { t } = useTranslations();
 
     const proposal = vote.parentProposal ?? vote.proposal!;
 
@@ -38,8 +46,9 @@ export const VoteProposalListItem: React.FC<IVoteProposalListItemProps> = (props
         <VoteProposalDataListItem.Structure
             key={vote.transactionHash}
             href={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
+            isVeto={isVeto}
             voteIndicator={voteIndicator}
-            voteIndicatorDescription={voteIndicatorDescription}
+            confirmationLabel={t('app.governance.voteList.proposalListItem.voteTagPrefix')}
             proposalId={slug}
             proposalTitle={proposal.title}
             date={vote.blockTimestamp * 1000}

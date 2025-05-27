@@ -29,12 +29,6 @@ const voteOptionToIndicator: Record<VoteOption, VoteIndicator> = {
     [VoteOption.YES]: 'yes',
 };
 
-const vetoVoteOptionToIndicator: Record<VoteOption, VoteIndicator> = {
-    [VoteOption.ABSTAIN]: 'abstain',
-    [VoteOption.NO]: 'noVeto',
-    [VoteOption.YES]: 'yesVeto',
-};
-
 export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
     const { initialParams, daoId, isVeto } = props;
 
@@ -62,9 +56,7 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
                 errorState={errorState}
             >
                 {voteList?.map((vote) => {
-                    const voteIndicator = isVeto
-                        ? vetoVoteOptionToIndicator[vote.voteOption]
-                        : voteOptionToIndicator[vote.voteOption];
+                    const voteIndicator = voteOptionToIndicator[vote.voteOption];
                     const voteIndicatorDescription =
                         voteIndicator !== 'abstain'
                             ? t(`app.plugins.token.tokenVoteList.description.${isVeto ? 'veto' : 'approve'}`)
@@ -75,6 +67,7 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
                             key={vote.transactionHash}
                             vote={vote}
                             daoId={daoId}
+                            isVeto={isVeto}
                             voteIndicator={voteIndicator}
                             voteIndicatorDescription={voteIndicatorDescription}
                         />
@@ -82,6 +75,7 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
                         <VoteDataListItem.Structure
                             key={vote.transactionHash}
                             href={daoUtils.getDaoUrl(dao, `members/${vote.member.address}`)}
+                            isVeto={isVeto}
                             voteIndicator={voteIndicator}
                             voteIndicatorDescription={voteIndicatorDescription}
                             voter={{
