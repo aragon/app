@@ -17,16 +17,18 @@ export const NavigationDialog = <TRouteType extends string>(props: INavigationDi
     const handleLinksClick = () => onOpenChange?.(false);
 
     return (
-        <Dialog.Root onOpenChange={onOpenChange} {...otherProps}>
-            <Dialog.Content className="flex flex-col gap-4 py-7">
+        <Dialog.Root size="md" onOpenChange={onOpenChange} {...otherProps}>
+            <Dialog.Content noInset={true} className="flex flex-col gap-4 pt-8 pb-4">
                 {children}
-                <NavigationLinks variant="column" links={links} onClick={handleLinksClick} />
-                <div className="w-full px-4">
-                    <div className="border-t border-neutral-100" />
+                <div className="flex flex-col gap-4 px-4">
+                    <NavigationLinks variant="column" links={links} onClick={handleLinksClick} />
+                    <div className="w-full px-4">
+                        <div className="border-t border-neutral-100" />
+                    </div>
+                    <NavigationLinksItem href="/" variant="column" icon={IconType.APP_EXPLORE} iconSide="right">
+                        {t('app.application.navigationDao.dialog.explore')}
+                    </NavigationLinksItem>
                 </div>
-                <NavigationLinksItem href="/" variant="column" icon={IconType.APP_EXPLORE} iconSide="right">
-                    {t('app.application.navigationDao.dialog.explore')}
-                </NavigationLinksItem>
             </Dialog.Content>
         </Dialog.Root>
     );

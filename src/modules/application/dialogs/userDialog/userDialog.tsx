@@ -29,7 +29,6 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     const { data: ensName } = useEnsName({ address, query: { enabled: address != null }, chainId: mainnet.id });
 
     const formattedAddress = addressUtils.truncateAddress(address);
-    const userName = ensName ?? formattedAddress;
 
     const { buildEntityUrl } = useBlockExplorer();
     const addressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address, chainId });
@@ -46,25 +45,23 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     }
 
     return (
-        <Dialog.Content className="flex flex-col gap-4 px-4 py-7">
-            <div className="flex flex-col gap-3 px-4">
+        <Dialog.Content noInset={true} className="flex flex-col gap-4 pt-8 pb-4">
+            <div className="flex flex-col gap-3 px-8">
                 <MemberAvatar address={address} size="lg" responsiveSize={{ sm: 'xl' }} />
                 <div className="flex flex-col gap-1.5 leading-tight font-normal">
-                    {ensName != null && <p className="text-base text-neutral-500">{formattedAddress}</p>}
+                    {ensName != null && <p className="text-lg text-neutral-500 md:text-xl">{ensName}</p>}
                     <Clipboard copyValue={address}>
-                        <Link
-                            href={addressLink}
-                            isExternal={true}
-                            className="truncate text-lg text-neutral-800 sm:text-xl"
-                        >
-                            {userName}
+                        <Link href={addressLink} isExternal={true} className="truncate text-sm md:text-base">
+                            {formattedAddress}
                         </Link>
                     </Clipboard>
                 </div>
             </div>
-            <NavigationLinksItem onClick={() => disconnect()} icon={IconType.LOGOUT} variant="column">
-                {t('app.application.userDialog.disconnect')}
-            </NavigationLinksItem>
+            <div className="flex flex-col gap-1 px-4">
+                <NavigationLinksItem onClick={() => disconnect()} icon={IconType.LOGOUT} variant="column">
+                    {t('app.application.userDialog.disconnect')}
+                </NavigationLinksItem>
+            </div>
         </Dialog.Content>
     );
 };
