@@ -9,6 +9,8 @@ class SppStageUtils {
         const { stageIndex: currentStage } = proposal;
         const { stageIndex } = stage;
 
+        const isOptimisticStage = this.isVeto(stage);
+
         const now = DateTime.now();
         const startDate = this.getStageStartDate(proposal, stage);
         const endDate = this.getStageEndDate(proposal, stage);
@@ -25,7 +27,7 @@ class SppStageUtils {
         const isLastStage = this.isLastStage(proposal, stage);
         const isWithinMaxAdvance = maxAdvanceDate != null && now < maxAdvanceDate;
 
-        const isActive = endsInFuture && (!approvalReached || isSignalling);
+        const isActive = isOptimisticStage ? endsInFuture : endsInFuture && (!approvalReached || isSignalling);
 
         const isAdvanceable =
             stageIndex === currentStage && approvalReached && isWithinMaxAdvance && !isSignalling && !isLastStage;
