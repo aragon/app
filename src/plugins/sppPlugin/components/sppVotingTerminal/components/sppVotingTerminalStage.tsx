@@ -104,7 +104,6 @@ export const SppVotingTerminalStage: React.FC<ISppVotingTerminalStageProps> = (p
                     key={plugin.address}
                     plugin={plugin}
                     displayStatus={isSingleBody}
-                    status={status}
                     proposal={proposal}
                     daoId={daoId}
                     stage={stage}
