@@ -2,4 +2,4 @@
 '@aragon/app-next': patch
 ---
 
-Fix stage utils to correctly handle optimistic stages
+Update SppStageUtils to correctly handle optimistic stages
