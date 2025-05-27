@@ -30,9 +30,7 @@ describe('tokenSettings utils', () => {
             const [approvalThresholdTerm] = result;
 
             expect(approvalThresholdTerm.term).toMatch(/tokenGovernanceSettings.approvalThreshold/);
-            expect(approvalThresholdTerm.definition).toMatch(
-                /tokenGovernanceSettings.approval \(approvalThreshold=30%\)/,
-            );
+            expect(approvalThresholdTerm.definition).toMatch(/tokenGovernanceSettings.threshold \(threshold=30%\)/);
         });
 
         it('correctly formats and displays the minimum participation', () => {

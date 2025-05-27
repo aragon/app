@@ -48,6 +48,7 @@ export const VoteProposalListItem: React.FC<IVoteProposalListItemProps> = (props
             href={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
             isVeto={isVeto}
             voteIndicator={voteIndicator}
+            tagVariant="neutral"
             confirmationLabel={t('app.governance.voteList.proposalListItem.voteTagPrefix')}
             proposalId={slug}
             proposalTitle={proposal.title}
