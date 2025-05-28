@@ -59,7 +59,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
         fallback: useSppGovernanceSettingsDefault,
     });
 
-    const proposalSettings = useDaoPluginInfo({ daoId, address: proposal.pluginAddress, settings });
+    const proposalSettings = useDaoPluginInfo({ daoId, address: plugin.address, settings });
 
     const voteListParams = {
         queryParams: { proposalId: subProposal?.id, pluginAddress: subProposal?.pluginAddress, pageSize: votesPerPage },
