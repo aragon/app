@@ -30,7 +30,7 @@ const voteOptionToIndicator: Record<VoteOption, VoteIndicator> = {
 };
 
 export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
-    const { initialParams, daoId } = props;
+    const { initialParams, daoId, isVeto } = props;
 
     const { t } = useTranslations();
 
@@ -55,19 +55,27 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
                 emptyState={emptyState}
                 errorState={errorState}
             >
-                {voteList?.map((vote) =>
-                    initialParams.queryParams.includeInfo === true ? (
+                {voteList?.map((vote) => {
+                    const voteIndicator = voteOptionToIndicator[vote.voteOption];
+                    const voteIndicatorDescription =
+                        voteIndicator !== 'abstain'
+                            ? t(`app.plugins.token.tokenVoteList.description.${isVeto ? 'veto' : 'approve'}`)
+                            : undefined;
+
+                    return initialParams.queryParams.includeInfo === true ? (
                         <VoteProposalListItem
                             key={vote.transactionHash}
                             vote={vote}
                             daoId={daoId}
-                            voteIndicator={voteOptionToIndicator[vote.voteOption]}
+                            voteIndicator={voteIndicator}
                         />
                     ) : (
                         <VoteDataListItem.Structure
                             key={vote.transactionHash}
                             href={daoUtils.getDaoUrl(dao, `members/${vote.member.address}`)}
-                            voteIndicator={voteOptionToIndicator[vote.voteOption]}
+                            isVeto={isVeto}
+                            voteIndicator={voteIndicator}
+                            voteIndicatorDescription={voteIndicatorDescription}
                             voter={{
                                 address: vote.member.address,
                                 avatarSrc: vote.member.avatar ?? undefined,
@@ -76,8 +84,8 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
                             votingPower={formatUnits(BigInt(vote.votingPower), vote.token.decimals)}
                             tokenSymbol={vote.token.symbol}
                         />
-                    ),
-                )}
+                    );
+                })}
             </DataListContainer>
             <DataListPagination />
         </DataListRoot>

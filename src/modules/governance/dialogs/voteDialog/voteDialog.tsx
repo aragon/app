@@ -85,11 +85,12 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
                 proposalId={slug}
                 proposalTitle={proposal.title}
                 voteIndicator={vote.label}
-                confirmationLabel={
+                voteIndicatorDescription={
                     isVeto
-                        ? t('app.governance.voteDialog.confirmationLabelVeto')
-                        : t('app.governance.voteDialog.confirmationLabelApprove')
+                        ? t('app.governance.voteDialog.voteDescriptionVeto')
+                        : t('app.governance.voteDialog.voteDescriptionApprove')
                 }
+                isVeto={isVeto}
             />
         </TransactionDialog>
     );
