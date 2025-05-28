@@ -16,7 +16,7 @@ export interface IBoundlessAnimatedActionImageProps {
     isHovered: boolean;
 }
 
-const MotionImage = motion(Image);
+const MotionImage = motion.create(Image);
 
 export const BoundlessAnimatedActionImage: React.FC<IBoundlessAnimatedActionImageProps> = (props) => {
     const { image, alt, isHovered } = props;
