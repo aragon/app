@@ -18,7 +18,7 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
 
     const tabs = useMemo(
         () => [
-            { id: DaoPluginInfoTabId.DESCRIPTION, hidden: description == null && links.length === 0 },
+            { id: DaoPluginInfoTabId.DESCRIPTION, hidden: !description && links.length === 0 },
             { id: DaoPluginInfoTabId.CONTRACT },
             { id: DaoPluginInfoTabId.SETTINGS },
         ],
