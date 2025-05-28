@@ -40,7 +40,7 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
     const voteTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: userVote?.transactionHash });
 
     const openTransactionDialog = () => {
-        const vote = { label: 'approve' as const };
+        const vote = { label: isVeto ? 'veto' : 'approve' } as const;
         const params: IVoteDialogParams = { daoId, proposal, vote, isVeto, plugin };
         open(GovernanceDialogId.VOTE, { params });
     };

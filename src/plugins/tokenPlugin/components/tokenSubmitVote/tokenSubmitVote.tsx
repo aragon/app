@@ -52,7 +52,14 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
 
     const openTransactionDialog = () => {
         const voteLabel = voteOptionToIndicator[selectedOption ?? ''];
-        const vote = { value: Number(selectedOption), label: voteLabel };
+        const vote = {
+            value: Number(selectedOption),
+            label: voteLabel,
+            labelDescription:
+                voteLabel === 'abstain'
+                    ? undefined
+                    : t(`app.plugins.token.tokenSubmitVote.voteDescription.${isVeto ? 'veto' : 'approve'}`),
+        };
         const params: IVoteDialogParams = { daoId, proposal, vote, isVeto, plugin };
 
         open(GovernanceDialogId.VOTE, { params });
