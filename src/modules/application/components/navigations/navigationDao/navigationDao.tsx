@@ -5,7 +5,6 @@ import { type IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import {
     addressUtils,
@@ -37,7 +36,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const { address, isConnected } = useAccount();
     const { open } = useDialogContext();
 
-    const dialogSubtitle = daoUtils.getDaoEns(dao) ?? addressUtils.truncateAddress(dao.address);
+    const dialogSubtitle = addressUtils.truncateAddress(dao.address);
 
     const { buildEntityUrl } = useBlockExplorer();
     const addressLink = buildEntityUrl({
