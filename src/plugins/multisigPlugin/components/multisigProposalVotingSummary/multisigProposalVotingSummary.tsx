@@ -13,9 +13,9 @@ export interface IMultisigProposalVotingSummaryProps {
      */
     name: string;
     /**
-     * Defines if the voting is optimistic or not.
+     * Defines if the voting is to veto or not.
      */
-    isOptimistic: boolean;
+    isVeto: boolean;
     /**
      * Additional executed status when plugin is a sub-plugin.
      */
@@ -23,7 +23,7 @@ export interface IMultisigProposalVotingSummaryProps {
 }
 
 export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSummaryProps> = (props) => {
-    const { proposal, name, isOptimistic, isExecuted } = props;
+    const { proposal, name, isVeto, isExecuted } = props;
 
     const { t } = useTranslations();
 
@@ -53,10 +53,10 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
     if (status !== ProposalStatus.ACTIVE || isExecuted) {
         const approvalText = isApprovalReached ? 'approved' : 'notApproved';
         const vetoText = isApprovalReached ? 'vetoed' : 'notVetoed';
-        const statusText = isOptimistic ? vetoText : approvalText;
+        const statusText = isVeto ? vetoText : approvalText;
 
         const statusClass =
-            isApprovalReached && isOptimistic
+            isApprovalReached && isVeto
                 ? 'text-critical-800'
                 : isApprovalReached
                   ? 'text-success-800'
@@ -74,10 +74,10 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
 
     return (
         <div className="flex w-full flex-col gap-3">
-            <p className="text-neutral-800">
+            <p className="text-base font-normal leading-tight text-neutral-800 md:text-lg">
                 {name}{' '}
                 <span className="text-neutral-500">
-                    {isOptimistic
+                    {isVeto
                         ? t('app.plugins.multisig.multisigProposalVotingSummary.optimisticApprovalLabel')
                         : t('app.plugins.multisig.multisigProposalVotingSummary.approvalLabel')}
                 </span>
@@ -87,7 +87,7 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
                 value={currentApprovalsPercentage}
                 thresholdIndicator={minApprovalPercentage}
             />
-            <p className="text-neutral-800">
+            <p className="text-sm font-normal leading-tight text-neutral-800 md:text-base">
                 {formattedApprovalsAmount}{' '}
                 <span className="text-neutral-500">
                     {t('app.plugins.multisig.multisigProposalVotingSummary.memberCount', {

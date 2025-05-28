@@ -21,13 +21,16 @@ export interface IVoteListProps {
      * Plugin address to fetch the votes for.
      */
     pluginAddress?: string;
+    /**
+     * Defines if the voting is to veto or not.
+     */
+    isVeto?: boolean;
 }
 
 export const VoteList: React.FC<IVoteListProps> = (props) => {
-    const { initialParams, daoId, pluginAddress } = props;
+    const { initialParams, daoId, pluginAddress, isVeto } = props;
 
     const processPlugins = useDaoPlugins({ daoId, type: PluginType.BODY, pluginAddress, includeSubPlugins: true });
-
     const processedPlugins = processPlugins?.map((plugin) => {
         const pluginInitialParams = {
             ...initialParams,
@@ -41,6 +44,7 @@ export const VoteList: React.FC<IVoteListProps> = (props) => {
             slotId={GovernanceSlotId.GOVERNANCE_VOTE_LIST}
             plugins={processedPlugins}
             daoId={daoId}
+            isVeto={isVeto}
             Fallback={VoteListFallback}
         />
     );
