@@ -20,6 +20,7 @@ export const tokenPlugin: IPluginInfo = {
         [Network.ZKSYNC_MAINNET]: '0xE8F4C59f83CeE31A867E61c9959533A6e95ebCB3',
         [Network.ZKSYNC_SEPOLIA]: '0x1f5f8f677164AA4D9b4465A99D22e1e01dC24160',
         [Network.PEAQ_MAINNET]: '0xFBFbE98845B4E2751a8A004B5A1759e3A278FC68',
+        [Network.OPTIMISM_MAINNET]: '0x666bFa1c64c40faEE8582496B040AAE35E25c19d',
     },
     setup: {
         nameKey: 'app.plugins.token.setup.name',
