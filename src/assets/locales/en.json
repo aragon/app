@@ -914,10 +914,10 @@
           "submit": "Submit vote",
           "success": "View proposal"
         },
-        "confirmationLabelApprove": "Voting to approve",
-        "confirmationLabelVeto": "Voting to veto",
         "description": "To submit your vote, confirm the onchain transaction in your wallet.",
-        "title": "Submit vote"
+        "title": "Submit vote",
+        "voteDescriptionApprove": "to approve",
+        "voteDescriptionVeto": "to veto"
       },
       "voteList": {
         "empty": {
