@@ -72,7 +72,7 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
                   : 'text-neutral-500';
 
         return (
-            <p>
+            <p className="text-base leading-tight font-normal md:text-lg">
                 {name}{' '}
                 <span className={statusClass}>{t(`app.plugins.token.tokenProposalVotingSummary.${statusText}`)}</span>
             </p>
