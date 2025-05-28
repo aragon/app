@@ -34,7 +34,7 @@ export const useDaoPluginInfo = (params: IUseDaoPluginInfoParams): IDefinitionSe
     const { buildEntityUrl } = useBlockExplorer();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const plugin = useDaoPlugins({ daoId, pluginAddress: address })?.[0];
+    const plugin = useDaoPlugins({ daoId, pluginAddress: address, includeSubPlugins: true })?.[0];
 
     if (dao == null || plugin == null) {
         return settings;
