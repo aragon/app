@@ -5,7 +5,7 @@ import { multisigProposalUtils } from '../../utils/multisigProposalUtils';
 
 export interface IMultisigProposalVotingSummaryProps {
     /**
-     * Proposal to be used to display the breakdown.
+     * Proposal to be used to display the voting summary.
      */
     proposal?: IMultisigProposal;
     /**
@@ -31,19 +31,22 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
         return <p className="text-neutral-800">{name}</p>;
     }
 
+    const { settings, metrics } = proposal;
     const status = multisigProposalUtils.getProposalStatus(proposal);
 
-    const minApprovals = proposal.settings.minApprovals;
-    const approvalsAmount = proposal.metrics.totalVotes;
+    const { minApprovals, historicalMembersCount } = settings;
+    const { totalVotes: approvalsAmount } = metrics;
+    const membersCount = Number(historicalMembersCount);
 
-    invariant(minApprovals > 0, 'multisigProposalVotingSummary: minApprovals property must be a positive number');
+    invariant(membersCount > 0, 'multisigProposalVotingSummary: membersCount property must be a positive number');
 
-    const currentApprovalsPercentage = (approvalsAmount / minApprovals) * 100;
+    const currentApprovalsPercentage = (approvalsAmount / membersCount) * 100;
+    const minApprovalPercentage = (minApprovals / membersCount) * 100;
 
     const formattedApprovalsAmount = formatterUtils.formatNumber(approvalsAmount, {
         format: NumberFormat.GENERIC_SHORT,
     });
-    const formattedMinApprovals = formatterUtils.formatNumber(minApprovals, { format: NumberFormat.GENERIC_SHORT })!;
+    const formattedMembersCount = formatterUtils.formatNumber(membersCount, { format: NumberFormat.GENERIC_SHORT })!;
 
     const isApprovalReached = multisigProposalUtils.isApprovalReached(proposal);
 
@@ -80,14 +83,15 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
                 </span>
             </p>
             <Progress
-                variant={approvalsAmount >= minApprovals ? 'primary' : 'neutral'}
+                variant={isApprovalReached ? 'primary' : 'neutral'}
                 value={currentApprovalsPercentage}
+                thresholdIndicator={minApprovalPercentage}
             />
             <p className="text-neutral-800">
                 {formattedApprovalsAmount}{' '}
                 <span className="text-neutral-500">
                     {t('app.plugins.multisig.multisigProposalVotingSummary.memberCount', {
-                        count: formattedMinApprovals,
+                        count: formattedMembersCount,
                     })}
                 </span>
             </p>
