@@ -124,8 +124,9 @@ const nextConfig = {
         // Configs needed by wallet-connect (see https://docs.walletconnect.com/appkit/next/core/installation#extra-configuration)
         config.externals.push('pino-pretty', 'lokijs', 'encoding');
 
+        // Loader needed for mp4 files (background textures)
         config.module.rules.push({
-            test: /\.(mp4|webm|ogg)$/,
+            test: /\.mp4$/,
             type: 'asset/resource',
             generator: {
                 filename: 'static/media/[name].[hash][ext]',

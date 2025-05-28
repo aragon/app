@@ -90,7 +90,6 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         if (factor === 0) {
             animationControlsRef.current.stop();
         } else {
-            // If speed was zero (paused), restart animation
             startAnimation(speed * factor);
         }
     };
