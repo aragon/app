@@ -85,8 +85,8 @@ export const SppReportProposalResultDialog: React.FC<ISppReportProposalResultDia
                 proposalId={slug}
                 proposalTitle={proposal.title}
                 voteIndicator="yes"
-                confirmationLabel={t(
-                    `app.plugins.spp.sppReportProposalResultDialog.confirmationLabel.${confirmationContext}`,
+                voteIndicatorDescription={t(
+                    `app.plugins.spp.sppReportProposalResultDialog.voteDescription.${confirmationContext}`,
                 )}
             />
         </TransactionDialog>

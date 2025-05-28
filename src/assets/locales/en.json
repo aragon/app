@@ -1166,12 +1166,12 @@
             "submit": "Submit vote",
             "success": "View proposal"
           },
-          "confirmationLabel": {
-            "approve": "Voting to approve",
-            "veto": "Voting to veto"
-          },
           "description": "To submit your vote, confirm the onchain transaction in your wallet.",
-          "title": "Submit vote"
+          "title": "Submit vote",
+          "voteDescription": {
+            "approve": "to approve",
+            "veto": "to veto"
+          }
         },
         "sppStageStatus": {
           "button": {
