@@ -1,9 +1,9 @@
 import { useRouter } from '@/shared/lib/nextNavigation';
 import classNames from 'classnames';
 import Image, { type StaticImageData } from 'next/image';
-import { ComponentProps } from 'react';
+import { ComponentProps, useState } from 'react';
 import BackgroundImage from '../assets/boundless-img-background.png';
-import { BoundlessAvatarIcon } from './boundlessAvatarIcon';
+import { BoundlessAnimatedActionImage, BoundlessAnimatedActionText, BoundlessAnimatedAvatarIcon } from './animated';
 
 export interface IBoundlessActionItemProps extends ComponentProps<'button'> {
     /**
@@ -26,6 +26,7 @@ export interface IBoundlessActionItemProps extends ComponentProps<'button'> {
 
 export const BoundlessActionItem: React.FC<IBoundlessActionItemProps> = (props) => {
     const { title, description, image, href, className, ...otherProps } = props;
+    const [isHovered, setIsHovered] = useState(false);
 
     const router = useRouter();
 
@@ -36,23 +37,16 @@ export const BoundlessActionItem: React.FC<IBoundlessActionItemProps> = (props) 
                 className,
             )}
             onClick={() => router.push(href)}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
             {...otherProps}
         >
             <Image src={BackgroundImage} alt="" fill className="absolute inset-0 -z-20 object-cover" />
-            <div className="z-10 flex h-full w-full flex-col justify-between transition-all duration-300 md:justify-center md:group-hover:justify-between">
-                <div className="flex flex-col items-start transition-all duration-300 md:group-hover:translate-y-[-0.5rem]">
-                    <p className="text-2xl leading-tight text-[#000000]">{title}</p>
-                    <p className="text-nowrap text-lg leading-tight text-[#78716C]">{description}</p>
-                </div>
-                <BoundlessAvatarIcon className="md:bg-transparent md:opacity-0 md:transition-all md:duration-300 md:group-hover:opacity-100" />
+            <div className="relative z-10 flex h-full w-full flex-col justify-between transition-all duration-300 md:justify-center md:group-hover:justify-between">
+                <BoundlessAnimatedActionText title={title} description={description} isHovered={isHovered} />
+                <BoundlessAnimatedAvatarIcon isHovered={isHovered} />
             </div>
-            <Image
-                src={image}
-                alt={title}
-                width={144}
-                height={144}
-                className="-z-10 transition-transform duration-300 ease-in-out group-hover:translate-x-2 group-hover:translate-y-8 group-hover:scale-[2.25]"
-            />
+            <BoundlessAnimatedActionImage image={image} alt={title} isHovered={isHovered} />
         </button>
     );
 };

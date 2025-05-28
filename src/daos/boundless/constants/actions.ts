@@ -4,20 +4,20 @@ import StakeImage from '../assets/boundless-img-stake.png';
 
 export const actions = [
     {
-        title: 'Claim',
-        description: 'Your $ZKC token',
+        title: 'app.daos.boundless.boundlessPageHeader.actions.claim.title',
+        description: 'app.daos.boundless.boundlessPageHeader.actions.claim.description',
         image: ClaimImage,
         href: '/claim',
     },
     {
-        title: 'Stake',
-        description: 'To participate',
+        title: 'app.daos.boundless.boundlessPageHeader.actions.stake.title',
+        description: 'app.daos.boundless.boundlessPageHeader.actions.stake.description',
         image: StakeImage,
         href: '/stake',
     },
     {
-        title: 'Govern',
-        description: 'The protocol together',
+        title: 'app.daos.boundless.boundlessPageHeader.actions.govern.title',
+        description: 'app.daos.boundless.boundlessPageHeader.actions.govern.description',
         image: GovernImage,
         href: '/govern',
     },

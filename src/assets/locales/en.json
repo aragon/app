@@ -467,6 +467,24 @@
             "treasury": "Treasury"
           }
         }
+      },
+      "boundless": {
+        "boundlessPageHeader": {
+          "actions": {
+            "claim": {
+              "description": "your $ZKC token",
+              "title": "Claim"
+            },
+            "govern": {
+              "description": "the protocol together",
+              "title": "Govern"
+            },
+            "stake": {
+              "description": "to participate",
+              "title": "Stake"
+            }
+          }
+        }
       }
     },
     "dashboard": {

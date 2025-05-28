@@ -1,4 +1,4 @@
 export const boundless = {
-    id: 'ethereum-sepolia-0x3eb4fc049637ddb6c4C0c06f4709Ac6BC8cd829e',
+    id: 'ethereum-sepolia-0xc5dBb05Cf34Ef0Fe75cf8c7Dcc73Da471652BBE8',
     name: 'boundless',
 };
