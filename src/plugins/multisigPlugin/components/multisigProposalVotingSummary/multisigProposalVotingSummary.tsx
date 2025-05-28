@@ -74,7 +74,7 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
 
     return (
         <div className="flex w-full flex-col gap-3">
-            <p className="text-base font-normal leading-tight text-neutral-800 md:text-lg">
+            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
                 {name}{' '}
                 <span className="text-neutral-500">
                     {isVeto
@@ -87,7 +87,7 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
                 value={currentApprovalsPercentage}
                 thresholdIndicator={minApprovalPercentage}
             />
-            <p className="text-sm font-normal leading-tight text-neutral-800 md:text-base">
+            <p className="text-sm leading-tight font-normal text-neutral-800 md:text-base">
                 {formattedApprovalsAmount}{' '}
                 <span className="text-neutral-500">
                     {t('app.plugins.multisig.multisigProposalVotingSummary.memberCount', {

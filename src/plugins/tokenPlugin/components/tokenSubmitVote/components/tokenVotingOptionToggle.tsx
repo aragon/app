@@ -74,7 +74,7 @@ export const TokenVotingOptionToggle: React.FC<ITokenVotingOptionToggleProps> = 
 
     return (
         <RadixToggle className={toggleClasses} disabled={disabled} value={value} {...otherProps}>
-            <p className="text-sm font-normal leading-tight md:text-base">
+            <p className="text-sm leading-tight font-normal md:text-base">
                 {label}
                 {description && <span className="text-neutral-500">{description}</span>}
             </p>
