@@ -65,7 +65,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                 <Navigation.Links className="hidden lg:flex" links={navigationDaoLinks(dao, true)} />
                 <div className="flex items-center gap-x-2 lg:gap-x-3">
                     <Navigation.AppLinks dao={dao} />
-                    <Wallet onClick={handleWalletClick} user={walletUser} textClassName="xl:block" />
+                    <Wallet onClick={handleWalletClick} user={walletUser} />
                     <Navigation.Trigger className="md:hidden" onClick={() => setIsDialogOpen(true)} />
                 </div>
             </div>
@@ -76,7 +76,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                 hiddenTitle={t('app.application.navigationDao.a11y.title')}
                 hiddenDescription={t('app.application.navigationDao.a11y.description')}
             >
-                <div className="flex flex-col gap-3 px-4">
+                <div className="flex flex-col gap-3 px-8">
                     <DaoAvatar src={daoAvatar} name={dao.name} size="lg" responsiveSize={{ sm: 'xl' }} />
                     <div className="flex flex-col gap-1.5 leading-tight font-normal">
                         <p className="truncate text-lg text-neutral-800 sm:text-xl">{dao.name}</p>

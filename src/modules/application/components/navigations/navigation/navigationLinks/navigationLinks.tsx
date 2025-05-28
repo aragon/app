@@ -25,7 +25,7 @@ export const NavigationLinks = <TRouteType extends string>(props: INavigationLin
         <div
             className={classNames(
                 'flex',
-                { 'item-center flex-row gap-x-4 xl:gap-x-10': variant === 'row' },
+                { 'item-center flex-row gap-x-6 xl:gap-x-10': variant === 'row' },
                 { 'flex-col gap-y-1': variant === 'column' },
                 className,
             )}
