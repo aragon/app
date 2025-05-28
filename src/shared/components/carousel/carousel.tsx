@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { animate, motion, useMotionValue } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import useMeasure from 'react-use-measure';
 
 export interface ICarouselProps {
@@ -66,21 +66,26 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
 
     const animationControlsRef = useRef<ReturnType<typeof animate> | null>(null);
 
-    const startAnimation = (customSpeed: number = speed) => {
-        const distanceToTravel = Math.abs(finalPosition - translation.get());
-        const duration = distanceToTravel / customSpeed;
+    const startAnimation = useCallback(
+        (customSpeed: number = speed) => {
+            const distanceToTravel = Math.abs(finalPosition - translation.get());
+            const duration = distanceToTravel / customSpeed;
 
-        animationControlsRef.current?.stop();
-        animationControlsRef.current = animate(translation, [translation.get(), finalPosition], {
-            ease: 'linear',
-            duration,
-            repeat: Infinity,
-            repeatType: 'loop',
-        });
-    };
+            animationControlsRef.current?.stop();
+            animationControlsRef.current = animate(translation, [translation.get(), finalPosition], {
+                ease: 'linear',
+                duration,
+                repeat: Infinity,
+                repeatType: 'loop',
+            });
+        },
+        [finalPosition, speed, translation],
+    );
 
     const updateAnimationSpeed = (factor: number) => {
-        if (!animationControlsRef.current) return;
+        if (!animationControlsRef.current) {
+            return;
+        }
 
         if (factor === 0) {
             animationControlsRef.current.stop();
@@ -96,9 +101,11 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
     }, [animationDelay]);
 
     useEffect(() => {
-        if (!hasAnimationStarted || finalPosition === 0) return;
+        if (!hasAnimationStarted || finalPosition === 0) {
+            return;
+        }
         startAnimation();
-    }, [hasAnimationStarted, finalPosition]);
+    }, [hasAnimationStarted, finalPosition, startAnimation]);
 
     const containerStyle = {
         x: translation,
@@ -122,7 +129,9 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
                 onHoverEnd={() => updateAnimationSpeed(1)}
                 onDragStart={() => isDraggable && animationControlsRef.current?.stop()}
                 onDragEnd={() => {
-                    if (!isDraggable) return;
+                    if (!isDraggable) {
+                        return;
+                    }
                     startAnimation();
                 }}
             >

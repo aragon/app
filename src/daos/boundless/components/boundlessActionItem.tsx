@@ -1,7 +1,7 @@
 import { useRouter } from '@/shared/lib/nextNavigation';
 import classNames from 'classnames';
 import Image, { type StaticImageData } from 'next/image';
-import { ComponentProps, useState } from 'react';
+import { type ComponentProps, useState } from 'react';
 import BackgroundImage from '../assets/boundless-img-background.png';
 import { BoundlessAnimatedActionImage, BoundlessAnimatedActionText, BoundlessAnimatedAvatarIcon } from './animated';
 
@@ -41,8 +41,8 @@ export const BoundlessActionItem: React.FC<IBoundlessActionItemProps> = (props) 
             onMouseLeave={() => setIsHovered(false)}
             {...otherProps}
         >
-            <Image src={BackgroundImage} alt="" fill className="absolute inset-0 -z-20 object-cover" />
-            <div className="relative z-10 flex h-full w-full flex-col justify-between transition-all duration-300 md:justify-center md:group-hover:justify-between">
+            <Image src={BackgroundImage} alt="" fill={true} className="absolute inset-0 -z-20 object-cover" />
+            <div className="relative z-10 flex size-full flex-col justify-between transition-all duration-300 md:justify-center md:group-hover:justify-between">
                 <BoundlessAnimatedActionText title={title} description={description} isHovered={isHovered} />
                 <BoundlessAnimatedAvatarIcon isHovered={isHovered} />
             </div>
