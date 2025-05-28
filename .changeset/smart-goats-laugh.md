@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-Implement improved DAO navigation with updates to Navigation.Dialog and Navigation.Links
+Update style and layout of navigation on DAO pages

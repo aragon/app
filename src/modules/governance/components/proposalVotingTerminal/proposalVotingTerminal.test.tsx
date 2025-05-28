@@ -21,11 +21,13 @@ jest.mock('../voteList', () => ({ VoteList: () => <div data-testid="vote-list-mo
 describe('<ProposalVotingTerminal /> component', () => {
     const useSlotSingleFunctionSpy = jest.spyOn(useSlotSingleFunction, 'useSlotSingleFunction');
     const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
+    const useEnsNameSpy = jest.spyOn(wagmi, 'useEnsName');
     const useDaoPluginInfoSpy = jest.spyOn(useDaoPluginInfo, 'useDaoPluginInfo');
 
     beforeEach(() => {
         useAccountSpy.mockReturnValue({} as wagmi.UseAccountReturnType);
         useDaoPluginInfoSpy.mockReturnValue([]);
+        useEnsNameSpy.mockReturnValue({} as wagmi.UseEnsNameReturnType);
     });
 
     afterEach(() => {
