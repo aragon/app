@@ -8,7 +8,7 @@ import type { IMultisigPluginSettings } from '../../types';
 export interface IUseMultisigGovernanceSettingsParams extends IUseGovernanceSettingsParams<IMultisigPluginSettings> {}
 
 export const useMultisigGovernanceSettings = (params: IUseMultisigGovernanceSettingsParams): IDefinitionSetting[] => {
-    const { daoId, pluginAddress, settings } = params;
+    const { daoId, pluginAddress, settings, isVeto } = params;
 
     const { t } = useTranslations();
 
@@ -22,6 +22,7 @@ export const useMultisigGovernanceSettings = (params: IUseMultisigGovernanceSett
     return multisigSettingsUtils.parseSettings({
         settings,
         membersCount: memberList.pages[0].metadata.totalRecords,
+        isVeto,
         t,
     });
 };

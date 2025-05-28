@@ -15,9 +15,9 @@ export interface ITokenProposalVotingSummaryProps {
      */
     name: string;
     /**
-     * Defines if the voting is optimistic or not.
+     * Defines if the voting is to veto or not.
      */
-    isOptimistic: boolean;
+    isVeto: boolean;
     /**
      * Additional executed status when plugin is a sub-plugin.
      */
@@ -25,7 +25,7 @@ export interface ITokenProposalVotingSummaryProps {
 }
 
 export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryProps> = (props) => {
-    const { proposal, name, isOptimistic, isExecuted } = props;
+    const { proposal, name, isVeto, isExecuted } = props;
 
     const { t } = useTranslations();
 
@@ -62,10 +62,10 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
     if (status !== ProposalStatus.ACTIVE || isExecuted) {
         const approvalText = isApprovalReached ? 'approved' : 'notApproved';
         const vetoText = isApprovalReached ? 'vetoed' : 'notVetoed';
-        const statusText = isOptimistic ? vetoText : approvalText;
+        const statusText = isVeto ? vetoText : approvalText;
 
         const statusClass =
-            isApprovalReached && isOptimistic
+            isApprovalReached && isVeto
                 ? 'text-critical-800'
                 : isApprovalReached
                   ? 'text-success-800'
@@ -84,7 +84,7 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
             <p className="text-neutral-800">
                 {name}{' '}
                 <span className="text-neutral-500">
-                    {isOptimistic
+                    {isVeto
                         ? t('app.plugins.token.tokenProposalVotingSummary.optimisticSupportLabel')
                         : t('app.plugins.token.tokenProposalVotingSummary.supportLabel')}
                 </span>

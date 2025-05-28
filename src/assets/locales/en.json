@@ -914,10 +914,10 @@
           "submit": "Submit vote",
           "success": "View proposal"
         },
-        "confirmationLabelApprove": "Voting to approve",
-        "confirmationLabelVeto": "Voting to veto",
         "description": "To submit your vote, confirm the onchain transaction in your wallet.",
-        "title": "Submit vote"
+        "title": "Submit vote",
+        "voteDescriptionApprove": "to approve",
+        "voteDescriptionVeto": "to veto"
       },
       "voteList": {
         "empty": {
@@ -1038,9 +1038,10 @@
         },
         "multisigGovernanceSettings": {
           "anyWallet": "Any wallet",
-          "approvals": "{{min}} of {{max}} addresses that can approve",
+          "approvals": "{{min}} of {{max}} members",
           "members": "Multisig members",
           "minimumApproval": "Minimum approval",
+          "minimumVeto": "Minimum veto",
           "proposalCreation": "Proposal creation"
         },
         "multisigMembersInfo": {
@@ -1075,7 +1076,7 @@
           "memberCount": "of {{count}} members",
           "notApproved": "did not approve",
           "notVetoed": "did not veto",
-          "optimisticApprovalLabel": "veto approval",
+          "optimisticApprovalLabel": "veto",
           "vetoed": "vetoed"
         },
         "multisigRemoveMembersAction": {
@@ -1165,12 +1166,12 @@
             "submit": "Submit vote",
             "success": "View proposal"
           },
-          "confirmationLabel": {
-            "approve": "Voting to approve",
-            "veto": "Voting to veto"
-          },
           "description": "To submit your vote, confirm the onchain transaction in your wallet.",
-          "title": "Submit vote"
+          "title": "Submit vote",
+          "voteDescription": {
+            "approve": "to approve",
+            "veto": "to veto"
+          }
         },
         "sppStageStatus": {
           "button": {
@@ -1270,7 +1271,6 @@
           "submit": "Delegate voting power"
         },
         "tokenGovernanceSettings": {
-          "approval": "> {{approvalThreshold}}",
           "approvalThreshold": "Support threshold",
           "duration": "{{days}} days {{hours}} hours {{minutes}} minutes",
           "earlyExecution": "Early execution",
@@ -1280,6 +1280,8 @@
           "participation": "≥ {{participation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
           "proposalAccess": "Members with ≥ {{balance}} {{symbol}} voting power or balance",
           "proposalThreshold": "Proposal threshold",
+          "threshold": "> {{threshold}}",
+          "vetoThreshold": "Veto support threshold",
           "voteChange": "Vote change",
           "yes": "Enabled"
         },
@@ -1486,14 +1488,21 @@
           "options": {
             "abstain": "Abstain",
             "approveLabel": "approve",
-            "current": "Current",
+            "approveNoDescription": ", I don't approve",
+            "approveYesDescription": ", I approve",
             "label": "Do you want to {{label}} this proposal?",
             "no": "No",
             "vetoLabel": "veto",
+            "vetoNoDescription": ", I don't veto",
+            "vetoYesDescription": ", I veto",
             "yes": "Yes"
           }
         },
         "tokenVoteList": {
+          "description": {
+            "approve": "to approve",
+            "veto": "to veto"
+          },
           "entity": "Votes"
         },
         "tokenWrapForm": {

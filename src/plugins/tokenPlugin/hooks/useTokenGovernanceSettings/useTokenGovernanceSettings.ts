@@ -7,9 +7,9 @@ import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
 export interface IUseTokenGovernanceSettingsParams extends IUseGovernanceSettingsParams<ITokenPluginSettings> {}
 
 export const useTokenGovernanceSettings = (params: IUseTokenGovernanceSettingsParams): IDefinitionSetting[] => {
-    const { settings } = params;
+    const { settings, isVeto } = params;
 
     const { t } = useTranslations();
 
-    return tokenSettingsUtils.parseSettings({ settings, t });
+    return tokenSettingsUtils.parseSettings({ settings, isVeto, t });
 };

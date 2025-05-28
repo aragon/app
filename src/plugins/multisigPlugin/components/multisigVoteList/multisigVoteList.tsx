@@ -1,6 +1,5 @@
 import type { IGetVoteListParams } from '@/modules/governance/api/governanceService';
-import type { IVoteListProps } from '@/modules/governance/components/voteList';
-import { VoteProposalListItem } from '@/modules/governance/components/voteList';
+import { type IVoteListProps, VoteProposalListItem } from '@/modules/governance/components/voteList';
 import { useVoteListData } from '@/modules/governance/hooks/useVoteListData';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -22,7 +21,7 @@ export interface IMultisigVoteListProps extends IVoteListProps {
 }
 
 export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
-    const { initialParams, daoId } = props;
+    const { initialParams, daoId, isVeto } = props;
 
     const { t } = useTranslations();
 
@@ -47,27 +46,29 @@ export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
                 emptyState={emptyState}
                 errorState={errorState}
             >
-                {voteList?.map((vote) =>
-                    initialParams.queryParams.includeInfo === true ? (
+                {voteList?.map((vote) => {
+                    const votingIndicator = isVeto ? 'veto' : 'approve';
+
+                    return initialParams.queryParams.includeInfo === true ? (
                         <VoteProposalListItem
                             key={vote.transactionHash}
                             vote={vote}
                             daoId={daoId}
-                            voteIndicator="approve"
+                            voteIndicator={votingIndicator}
                         />
                     ) : (
                         <VoteDataListItem.Structure
                             key={vote.transactionHash}
                             href={daoUtils.getDaoUrl(dao, `members/${vote.member.address}`)}
-                            voteIndicator="approve"
+                            voteIndicator={votingIndicator}
                             voter={{
                                 address: vote.member.address,
                                 avatarSrc: vote.member.avatar ?? undefined,
                                 name: vote.member.ens ?? undefined,
                             }}
                         />
-                    ),
-                )}
+                    );
+                })}
             </DataListContainer>
             <DataListPagination />
         </DataListRoot>
