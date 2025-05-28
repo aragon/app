@@ -23,9 +23,9 @@ export const BoundlessAnimatedActionText: React.FC<IBoundlessAnimatedActionTextP
 
     return (
         <motion.div
-            initial={{ y: 0 }}
-            animate={isHovered ? { y: -8 } : { y: 0 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            initial={{ y: 0, scale: 1 }}
+            animate={isHovered ? { y: -10, scale: 1.03 } : { y: 0, scale: 1 }}
+            transition={{ type: 'spring', stiffness: 250, damping: 20 }}
             className="flex flex-col items-start"
         >
             <p className="text-2xl leading-tight text-[#000000]">{t(title)}</p>

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import Image, { StaticImageData } from 'next/image';
+import Image, { type StaticImageData } from 'next/image';
 
 export interface IBoundlessAnimatedActionImageProps {
     /**
@@ -16,17 +16,21 @@ export interface IBoundlessAnimatedActionImageProps {
     isHovered: boolean;
 }
 
+const MotionImage = motion(Image);
+
 export const BoundlessAnimatedActionImage: React.FC<IBoundlessAnimatedActionImageProps> = (props) => {
     const { image, alt, isHovered } = props;
 
     return (
-        <motion.div
+        <MotionImage
+            src={image}
+            alt={alt}
+            width={144}
+            height={144}
+            className="-z-10"
             initial={{ scale: 1, x: 0, y: 0 }}
             animate={isHovered ? { scale: 2.25, x: 8, y: 32 } : { scale: 1, x: 0, y: 0 }}
             transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-            className="-z-10"
-        >
-            <Image src={image} alt={alt} width={144} height={144} />
-        </motion.div>
+        />
     );
 };
