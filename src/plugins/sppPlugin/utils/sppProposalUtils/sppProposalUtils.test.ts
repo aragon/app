@@ -1,5 +1,5 @@
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
-import { ProposalVotingStatus } from '@aragon/gov-ui-kit';
+import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { generateSppPluginSettings, generateSppProposal, generateSppStage } from '../../testUtils';
 import { type ISppProposal } from '../../types';
@@ -142,7 +142,7 @@ describe('SppProposalUtils', () => {
             const stages = [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 })];
             const settings = generateSppPluginSettings({ stages });
             const proposal = generateSppProposal({ settings });
-            getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACCEPTED);
+            getStageStatusSpy.mockReturnValue(ProposalStatus.ACCEPTED);
             expect(sppProposalUtils.areAllStagesAccepted(proposal)).toBeTruthy();
         });
 
@@ -152,7 +152,7 @@ describe('SppProposalUtils', () => {
             const proposal = generateSppProposal({ settings });
 
             getStageStatusSpy.mockImplementation((_, stage) =>
-                stage.stageIndex === 0 ? ProposalVotingStatus.ACCEPTED : ProposalVotingStatus.REJECTED,
+                stage.stageIndex === 0 ? ProposalStatus.ACCEPTED : ProposalStatus.REJECTED,
             );
 
             expect(sppProposalUtils.areAllStagesAccepted(proposal)).toBeFalsy();

@@ -173,7 +173,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     return (
         <FormProvider {...formValues}>
             <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
-                <p className="text-base font-normal leading-normal text-neutral-500">
+                <p className="text-base leading-normal font-normal text-neutral-500">
                     {t('app.plugins.token.tokenWrapForm.info', { underlyingSymbol: underlyingToken.symbol })}
                 </p>
                 <div className="flex flex-col gap-3">
@@ -218,7 +218,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                             })}
                         </Button>
                     )}
-                    <p className="text-center text-sm font-normal leading-normal text-neutral-500">
+                    <p className="text-center text-sm leading-normal font-normal text-neutral-500">
                         {t('app.plugins.token.tokenWrapForm.footerInfo')}
                     </p>
                 </div>

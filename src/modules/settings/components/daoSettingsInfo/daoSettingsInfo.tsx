@@ -4,13 +4,11 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import {
-    addressUtils,
     Card,
     ChainEntityType,
     Collapsible,
     DaoAvatar,
     DefinitionList,
-    IconType,
     Link,
     Tag,
     useBlockExplorer,
@@ -51,10 +49,8 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                     <DefinitionList.Item term={t('app.settings.daoSettingsInfo.ens')}>
                         <div className="flex items-center justify-between gap-2">
                             <Link
-                                description={addressUtils.truncateAddress(dao.address)}
                                 href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address })}
-                                iconRight={IconType.LINK_EXTERNAL}
-                                target="_blank"
+                                isExternal={true}
                             >
                                 {daoUtils.getDaoEns(dao)}
                             </Link>
@@ -76,13 +72,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                     <DefinitionList.Item term={t('app.settings.daoSettingsInfo.links')}>
                         <div className="flex flex-col gap-3">
                             {dao.links.map((link) => (
-                                <Link
-                                    key={link.url}
-                                    description={link.url}
-                                    iconRight={IconType.LINK_EXTERNAL}
-                                    href={link.url}
-                                    target="_blank"
-                                >
+                                <Link key={link.url} href={link.url} isExternal={true} showUrl={true}>
                                     {link.name}
                                 </Link>
                             ))}

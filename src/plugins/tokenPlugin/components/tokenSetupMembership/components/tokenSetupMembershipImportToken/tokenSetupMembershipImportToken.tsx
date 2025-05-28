@@ -9,7 +9,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
-import { AddressInput, addressUtils, IconType, Link } from '@aragon/gov-ui-kit';
+import { AddressInput, addressUtils, Link } from '@aragon/gov-ui-kit';
 import { AlertCard } from '@aragon/gov-ui-kit-original';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -149,8 +149,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
                         </div>
                         <Link
                             href="https://docs.aragon.org/token-voting/1.x/importing-existent-tokens.html"
-                            target="_blank"
-                            iconRight={IconType.LINK_EXTERNAL}
+                            isExternal={true}
                             variant="neutral"
                         >
                             {t('app.plugins.token.tokenSetupMembership.importToken.alert.infoLabel')}
