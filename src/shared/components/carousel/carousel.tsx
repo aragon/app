@@ -132,8 +132,12 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
     return (
         <div className={classNames('overflow-hidden', className)}>
             <motion.div
-                className="flex w-max will-change-transform"
-                style={containerStyle}
+                className={classNames('flex w-max will-change-transform', isDraggable && 'cursor-grab')}
+                style={{
+                    ...containerStyle,
+                    touchAction: 'pan-y',
+                    userSelect: 'none',
+                }}
                 ref={ref}
                 {...(!isDraggable && {
                     onHoverStart: () => updateAnimationSpeed(speedOnHoverFactor),
@@ -141,9 +145,9 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
                 })}
                 {...(isDraggable && {
                     drag: 'x' as const,
-                    dragConstraints: { left: finalPosition, right: 0 },
-                    dragElastic: 1,
+                    dragMomentum: false,
                 })}
+                whileTap={isDraggable ? { cursor: 'grabbing' } : undefined}
             >
                 {children}
                 {children}
