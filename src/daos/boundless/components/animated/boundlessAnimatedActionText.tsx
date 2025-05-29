@@ -26,7 +26,7 @@ export const BoundlessAnimatedActionText: React.FC<IBoundlessAnimatedActionTextP
             {/* Static for small screens */}
             <div className="flex flex-col items-start md:hidden">
                 <p className="text-2xl leading-tight text-[#000000]">{t(title)}</p>
-                <p className="text-nowrap text-lg leading-tight text-[#78716C]">{t(description)}</p>
+                <p className="text-lg leading-tight text-nowrap text-[#78716C]">{t(description)}</p>
             </div>
 
             {/* Animated for md+ screens */}
@@ -37,7 +37,7 @@ export const BoundlessAnimatedActionText: React.FC<IBoundlessAnimatedActionTextP
                 className="hidden flex-col items-start md:flex"
             >
                 <p className="text-2xl leading-tight text-[#000000]">{t(title)}</p>
-                <p className="text-nowrap text-lg leading-tight text-[#78716C]">{t(description)}</p>
+                <p className="text-lg leading-tight text-nowrap text-[#78716C]">{t(description)}</p>
             </motion.div>
         </>
     );
