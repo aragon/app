@@ -49,7 +49,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
             <div className="flex flex-col gap-3 px-8">
                 <MemberAvatar address={address} size="lg" responsiveSize={{ sm: 'xl' }} />
                 <div className="flex flex-col gap-1.5 leading-tight font-normal">
-                    {ensName != null && <p className="text-lg text-neutral-500 md:text-xl">{ensName}</p>}
+                    {ensName != null && <p className="text-lg text-neutral-800 md:text-xl">{ensName}</p>}
                     <Clipboard copyValue={address}>
                         <Link href={addressLink} isExternal={true} className="truncate text-sm md:text-base">
                             {formattedAddress}

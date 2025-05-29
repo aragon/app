@@ -935,9 +935,7 @@
           "success": "View proposal"
         },
         "description": "To submit your vote, confirm the onchain transaction in your wallet.",
-        "title": "Submit vote",
-        "voteDescriptionApprove": "to approve",
-        "voteDescriptionVeto": "to veto"
+        "title": "Submit vote"
       },
       "voteList": {
         "empty": {
@@ -1516,6 +1514,10 @@
             "vetoNoDescription": ", I don't veto",
             "vetoYesDescription": ", I veto",
             "yes": "Yes"
+          },
+          "voteDescription": {
+            "approve": "to approve",
+            "veto": "to veto"
           }
         },
         "tokenVoteList": {
