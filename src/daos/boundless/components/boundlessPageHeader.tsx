@@ -1,6 +1,9 @@
+'use client';
+
 import type { IDao } from '@/shared/api/daoService';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 import { useAccount, useEnsName } from 'wagmi';
@@ -23,10 +26,12 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (props) 
         chainId: 1,
     });
 
+    const { t } = useTranslations();
+
     return (
         <header
             className={classNames(
-                'relative flex h-fit flex-col gap-y-4 pb-4 pt-6 md:gap-y-12 md:pb-10 md:pt-16',
+                'relative flex h-fit flex-col gap-y-4 pt-6 pb-4 md:gap-y-12 md:pt-16 md:pb-10',
                 className,
             )}
             {...otherProps}
@@ -43,13 +48,13 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (props) 
             <Container className="flex w-full flex-col gap-y-12">
                 <div className="flex max-w-[720px] flex-col gap-1.5 text-center md:gap-3 md:text-left">
                     <p className="text-3xl leading-tight text-[#000000] md:text-5xl">
-                        Welcome {ensName && <span className="text-[#537263]">{ensName}</span>}
+                        {t('app.daos.boundless.boundlessPageHeader.welcome')}{' '}
+                        {ensName && <span className="text-[#537263]">{ensName}</span>}
                         <br />
-                        to Boundless DAO
+                        {t('app.daos.boundless.boundlessPageHeader.to')}
                     </p>
                     <p className="text-lg text-[#2D2C2B] md:text-xl">
-                        Boundless DAO is a community-led organization advancing the Boundless vision: bringing ZK to
-                        every blockchain, developer, and everyone in between.
+                        {t('app.daos.boundless.boundlessPageHeader.info')}
                     </p>
                 </div>
                 {/* Static row for desktop view */}
@@ -66,8 +71,21 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (props) 
                 </div>
             </Container>
             {/* Draggable unbounded carousel for mobile view */}
-            <div className="block lg:hidden">
-                <Carousel speed={40} speedOnHoverFactor={0} animationDelay={2} gap={16} isDraggable={true}>
+            <div className="hidden md:block lg:hidden">
+                <Carousel speed={40} speedOnHoverFactor={0.2} animationDelay={2} gap={16}>
+                    {actions.map((action) => (
+                        <BoundlessActionItem
+                            key={action.title}
+                            title={action.title}
+                            description={action.description}
+                            image={action.image}
+                            href={action.href}
+                        />
+                    ))}
+                </Carousel>
+            </div>
+            <div className="block md:hidden">
+                <Carousel speed={40} speedOnHoverFactor={0.2} animationDelay={2} gap={16} isDraggable={true}>
                     {actions.map((action) => (
                         <BoundlessActionItem
                             key={action.title}

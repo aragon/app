@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { animate, motion, useMotionValue } from 'framer-motion';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useMeasure from 'react-use-measure';
 
 export interface ICarouselProps {
@@ -35,14 +35,14 @@ export interface ICarouselProps {
      */
     animationDelay?: number;
     /**
-     * Enables manual dragging of the carousel content.
-     * @default false
-     */
-    isDraggable?: boolean;
-    /**
      * Additional class name to apply to the component.
      */
     className?: string;
+    /**
+     * When true, enables drag-to-scroll and disables auto-scroll animation.
+     * @default false
+     */
+    isDraggable?: boolean;
 }
 
 export const Carousel: React.FC<ICarouselProps> = (props) => {
@@ -53,11 +53,15 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         speed = 100,
         speedOnHoverFactor = 1,
         animationDelay = 0,
-        isDraggable = false,
         className,
+        isDraggable = false,
     } = props;
 
+    // animation `delay` is not working as expected in combination with the `speed` mutation, so we need to track the animation start manually!
+    // issue observed in framer-motion version ^12.4.0
     const [hasAnimationStarted, setHasAnimationStarted] = useState(false);
+
+    // useMeasure is used to get and track (on resize) the width of the carousel content in a performant way.
     const [ref, { width }] = useMeasure();
     const translation = useMotionValue(0);
 
@@ -66,73 +70,80 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
 
     const animationControlsRef = useRef<ReturnType<typeof animate> | null>(null);
 
-    const startAnimation = useCallback(
-        (customSpeed: number = speed) => {
-            const distanceToTravel = Math.abs(finalPosition - translation.get());
-            const duration = distanceToTravel / customSpeed;
-
-            animationControlsRef.current?.stop();
-            animationControlsRef.current = animate(translation, [translation.get(), finalPosition], {
-                ease: 'linear',
-                duration,
-                repeat: Infinity,
-                repeatType: 'loop',
-            });
-        },
-        [finalPosition, speed, translation],
-    );
-
-    const updateAnimationSpeed = (factor: number) => {
-        if (!animationControlsRef.current) {
-            return;
-        }
-
-        if (factor === 0) {
-            animationControlsRef.current.stop();
-        } else {
-            startAnimation(speed * factor);
+    const updateAnimationSpeed = (value: number) => {
+        if (animationControlsRef.current) {
+            animationControlsRef.current.speed = value;
         }
     };
 
     useEffect(() => {
         const timeoutHandle = setTimeout(() => setHasAnimationStarted(true), animationDelay * 1000);
+
         return () => clearTimeout(timeoutHandle);
     }, [animationDelay]);
 
+    // handles auto scrolling animation when isDraggable is false
     useEffect(() => {
+        // isDraggable disables automatic marquee animation
+        if (isDraggable) {
+            animationControlsRef.current?.stop();
+            return;
+        }
+
+        // wait for animation delay and width to be calculated before starting the animation
         if (!hasAnimationStarted || finalPosition === 0) {
             return;
         }
-        startAnimation();
-    }, [hasAnimationStarted, finalPosition, startAnimation]);
 
-    const containerStyle = {
-        x: translation,
-        gap: `${String(gap)}px`,
-        paddingLeft: `${String(initialOffset)}px`,
-    };
+        const distanceToTravel = Math.abs(finalPosition);
+        const duration = distanceToTravel / speed;
+
+        // speed is mutated directly on hover, but all other properties will trigger a new animation, causing position to reset!
+        animationControlsRef.current?.stop();
+        animationControlsRef.current = animate(translation, [0, finalPosition], {
+            ease: 'linear',
+            duration: duration,
+            repeat: Infinity,
+            repeatType: 'loop',
+            repeatDelay: 0,
+        });
+    }, [hasAnimationStarted, finalPosition, speed, translation, isDraggable]);
+
+    // handles infinite drag wrap when isDraggable is true
+    useEffect(() => {
+        if (!isDraggable) {
+            return;
+        }
+
+        // subscribe to x value changes for infinite wrap
+        const unsubscribe = translation.on('change', (latest) => {
+            if (latest <= finalPosition) {
+                translation.set(latest - finalPosition);
+            } else if (latest >= 0) {
+                translation.set(latest + finalPosition);
+            }
+        });
+
+        return unsubscribe;
+    }, [isDraggable, translation, finalPosition]);
+
+    const containerStyle = { x: translation, gap: `${String(gap)}px`, paddingLeft: `${String(initialOffset)}px` };
 
     return (
         <div className={classNames('overflow-hidden', className)}>
             <motion.div
-                className={classNames(
-                    'flex w-max will-change-transform',
-                    isDraggable && 'cursor-grab active:cursor-grabbing',
-                )}
+                className="flex w-max will-change-transform"
                 style={containerStyle}
                 ref={ref}
-                drag={isDraggable ? 'x' : false}
-                dragConstraints={isDraggable ? { left: finalPosition, right: 0 } : undefined}
-                dragElastic={isDraggable ? 0.05 : false}
-                onHoverStart={() => updateAnimationSpeed(speedOnHoverFactor)}
-                onHoverEnd={() => updateAnimationSpeed(1)}
-                onDragStart={() => isDraggable && animationControlsRef.current?.stop()}
-                onDragEnd={() => {
-                    if (!isDraggable) {
-                        return;
-                    }
-                    startAnimation();
-                }}
+                {...(!isDraggable && {
+                    onHoverStart: () => updateAnimationSpeed(speedOnHoverFactor),
+                    onHoverEnd: () => updateAnimationSpeed(1),
+                })}
+                {...(isDraggable && {
+                    drag: 'x' as const,
+                    dragConstraints: { left: finalPosition, right: 0 },
+                    dragElastic: 1,
+                })}
             >
                 {children}
                 {children}
