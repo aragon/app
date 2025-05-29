@@ -6,6 +6,7 @@ import { useState } from 'react';
 import type { ITokenPluginSettings, ITokenPluginSettingsToken } from '../../types';
 import { TokenDelegationForm } from './components/tokenDelegationForm';
 import { TokenWrapForm } from './components/tokenWrapForm';
+import { TokenLockForm } from '@/plugins/tokenPlugin/components/tokenMemberPanel/components/tokenLockForm';
 
 export interface ITokenMemberPanelProps {
     /**
@@ -21,10 +22,12 @@ export interface ITokenMemberPanelProps {
 enum TokenMemberPanelTab {
     DELEGATE = 'DELEGATE',
     WRAP = 'WRAP',
+    LOCK = 'LOCK',
 }
 
 const getTabsDefinitions = (token: ITokenPluginSettingsToken) => [
     { value: TokenMemberPanelTab.WRAP, hidden: token.underlying == null },
+    { value: TokenMemberPanelTab.LOCK, hidden: false },
     { value: TokenMemberPanelTab.DELEGATE, hidden: !token.hasDelegate },
 ];
 
@@ -67,6 +70,9 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
                         />
                     ))}
                 </Tabs.List>
+                <Tabs.Content value={TokenMemberPanelTab.LOCK}>
+                    <TokenLockForm daoId={daoId} plugin={plugin} underlyingToken={underlyingToken} />
+                </Tabs.Content>
                 <Tabs.Content value={TokenMemberPanelTab.WRAP}>
                     <TokenWrapForm daoId={daoId} plugin={plugin} underlyingToken={underlyingToken} />
                 </Tabs.Content>

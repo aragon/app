@@ -1287,6 +1287,21 @@
           "voteChange": "Vote change",
           "yes": "Enabled"
         },
+        "tokenLockForm": {
+          "footerInfo": "Locking tokens will transfer them out of your wallet to the locking contract, where they can be withdrawn back to your wallet after the minimum locktime.",
+          "locks": "View {{count}} locks",
+          "percentage": {
+            "0": "None",
+            "100": "100%",
+            "25": "25%",
+            "50": "50%",
+            "75": "75%"
+          },
+          "submit": {
+            "lock": "Lock {{underlyingSymbol}}",
+            "unlock": "Unlock {{amount}} {{symbol}}"
+          }
+        },
         "tokenMemberInfo": {
           "distribution": "Distribution",
           "eligibleVoters": "Eligible voters",
@@ -1305,6 +1320,7 @@
         "tokenMemberPanel": {
           "tabs": {
             "DELEGATE": "Delegate",
+            "LOCK": "Lock",
             "WRAP": "Wrap"
           }
         },
