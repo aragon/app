@@ -4,7 +4,7 @@ import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialog
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
 import { DaoList } from '../../components/daoList';
@@ -32,6 +32,13 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
             setDaoFilter(value);
         }
     };
+
+    // When the user disconnects while on the "member" tab, reset the filter
+    useEffect(() => {
+        if (address == null && daoFilter === 'member') {
+            setDaoFilter('all');
+        }
+    }, [address, daoFilter]);
 
     const daoListParams = daoFilter === 'all' ? initialParams : undefined;
     const daoListMemberParams =
