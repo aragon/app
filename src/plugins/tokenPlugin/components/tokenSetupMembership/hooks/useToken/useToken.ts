@@ -3,11 +3,8 @@ import { erc20Abi } from 'viem';
 import { useReadContracts } from 'wagmi';
 import type { IUseTokenParams, IUseTokenResult } from './useToken.api';
 
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000' as const;
-
 export const useToken = (params: IUseTokenParams): IUseTokenResult => {
     const { address, chainId } = params;
-
 
     const {
         isError: balanceOfError,
@@ -20,7 +17,7 @@ export const useToken = (params: IUseTokenParams): IUseTokenResult => {
                 address,
                 abi: erc20Abi,
                 functionName: 'balanceOf',
-                args: [ZERO_ADDRESS],
+                args: ['0xdead000000000000000000000000000000000000'],
             },
         ],
     });
