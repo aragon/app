@@ -3,13 +3,12 @@ import { erc20Abi } from 'viem';
 import { useReadContracts } from 'wagmi';
 import type { IUseTokenParams, IUseTokenResult } from './useToken.api';
 
+const BALANCE_CHECK_ADDRESS = '0xdead000000000000000000000000000000000000';
+
 export const useToken = (params: IUseTokenParams): IUseTokenResult => {
     const { address, chainId } = params;
 
-    const {
-        isError: balanceOfError,
-        isLoading: balanceOfLoading,
-    } = useReadContracts({
+    const { isError: balanceOfError, isLoading: balanceOfLoading } = useReadContracts({
         allowFailure: false,
         contracts: [
             {
@@ -17,15 +16,12 @@ export const useToken = (params: IUseTokenParams): IUseTokenResult => {
                 address,
                 abi: erc20Abi,
                 functionName: 'balanceOf',
-                args: ['0xdead000000000000000000000000000000000000'],
+                args: [BALANCE_CHECK_ADDRESS],
             },
         ],
     });
 
-    const {
-        data: metaData,
-        isLoading: metaLoading,
-    } = useReadContracts({
+    const { data: metaData, isLoading: metaLoading } = useReadContracts({
         allowFailure: true,
         contracts: [
             { chainId, address, abi: erc20Abi, functionName: 'name' },
@@ -36,7 +32,7 @@ export const useToken = (params: IUseTokenParams): IUseTokenResult => {
     });
 
     const token = useMemo(() => {
-        if (balanceOfError) {
+        if (balanceOfError || metaData == null) {
             return null;
         }
         const [
@@ -48,18 +44,15 @@ export const useToken = (params: IUseTokenParams): IUseTokenResult => {
 
         const name = nameRes.status === 'success' ? nameRes.result : 'Unknown';
         const symbol = symbolRes.status === 'success' ? symbolRes.result : 'UNKNOWN';
-        const decimals = decimalsRes.status === 'success' ? decimalsRes.result : 17;
-        const totalSupply = totalSupplyRes.status === 'success'
-            ? totalSupplyRes.result.toString()
-            : '0';
+        const decimals = decimalsRes.status === 'success' ? decimalsRes.result : 18;
+        const totalSupply = totalSupplyRes.status === 'success' ? totalSupplyRes.result.toString() : '0';
 
         return { name, symbol, decimals, totalSupply };
     }, [balanceOfError, metaData]);
 
-    /* ------------------------------------------------------------------ */
     return {
         token,
-        isError: balanceOfError,               // only balanceOf failure is fatal
+        isError: balanceOfError,
         isLoading: balanceOfLoading || metaLoading,
     };
 };
