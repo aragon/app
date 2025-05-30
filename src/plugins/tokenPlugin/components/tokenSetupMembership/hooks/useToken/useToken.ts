@@ -3,11 +3,33 @@ import { erc20Abi } from 'viem';
 import { useReadContracts } from 'wagmi';
 import type { IUseTokenParams, IUseTokenResult } from './useToken.api';
 
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000' as const;
+
 export const useToken = (params: IUseTokenParams): IUseTokenResult => {
     const { address, chainId } = params;
 
-    const { data, isError, isLoading } = useReadContracts({
+
+    const {
+        isError: balanceOfError,
+        isLoading: balanceOfLoading,
+    } = useReadContracts({
         allowFailure: false,
+        contracts: [
+            {
+                chainId,
+                address,
+                abi: erc20Abi,
+                functionName: 'balanceOf',
+                args: [ZERO_ADDRESS],
+            },
+        ],
+    });
+
+    const {
+        data: metaData,
+        isLoading: metaLoading,
+    } = useReadContracts({
+        allowFailure: true,
         contracts: [
             { chainId, address, abi: erc20Abi, functionName: 'name' },
             { chainId, address, abi: erc20Abi, functionName: 'symbol' },
@@ -17,14 +39,30 @@ export const useToken = (params: IUseTokenParams): IUseTokenResult => {
     });
 
     const token = useMemo(() => {
-        if (data == null || isError) {
+        if (balanceOfError) {
             return null;
         }
+        const [
+            nameRes = { status: 'failure' },
+            symbolRes = { status: 'failure' },
+            decimalsRes = { status: 'failure' },
+            totalSupplyRes = { status: 'failure' },
+        ] = metaData ?? [];
 
-        const [name, symbol, decimals, totalSupply] = data;
+        const name = nameRes.status === 'success' ? nameRes.result : 'Unknown';
+        const symbol = symbolRes.status === 'success' ? symbolRes.result : 'UNKNOWN';
+        const decimals = decimalsRes.status === 'success' ? decimalsRes.result : 17;
+        const totalSupply = totalSupplyRes.status === 'success'
+            ? totalSupplyRes.result.toString()
+            : '0';
 
-        return { name, symbol, decimals, totalSupply: totalSupply.toString() };
-    }, [data, isError]);
+        return { name, symbol, decimals, totalSupply };
+    }, [balanceOfError, metaData]);
 
-    return { token, isError, isLoading };
+    /* ------------------------------------------------------------------ */
+    return {
+        token,
+        isError: balanceOfError,               // only balanceOf failure is fatal
+        isLoading: balanceOfLoading || metaLoading,
+    };
 };
