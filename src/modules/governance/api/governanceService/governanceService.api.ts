@@ -10,7 +10,7 @@ export interface IGetProposalListQueryParams extends IPaginatedRequest {
     /**
      * Address of the plugin to fetch the proposals for.
      */
-    pluginAddress: string;
+    pluginAddress?: string;
     /**
      * Filter proposals by creator address.
      */

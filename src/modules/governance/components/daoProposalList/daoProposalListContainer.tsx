@@ -29,12 +29,15 @@ export interface IDaoProposalListContainerProps
 export const DaoProposalListContainer: React.FC<IDaoProposalListContainerProps> = (props) => {
     const { initialParams, ...otherProps } = props;
 
-    const processPlugins = useDaoPlugins({ daoId: initialParams.queryParams.daoId, type: PluginType.PROCESS });
+    const processPlugins = useDaoPlugins({
+        daoId: initialParams.queryParams.daoId,
+        type: PluginType.PROCESS,
+        includeGroupedItem: true,
+    });
+
     const processedPlugins = processPlugins?.map((plugin) => {
-        const pluginInitialParams = {
-            ...initialParams,
-            queryParams: { ...initialParams.queryParams, pluginAddress: plugin.meta.address },
-        };
+        const pluginAddress = plugin.id === 'all' ? undefined : plugin.meta.address;
+        const pluginInitialParams = { ...initialParams, queryParams: { ...initialParams.queryParams, pluginAddress } };
 
         return { ...plugin, props: { initialParams: pluginInitialParams, plugin: plugin.meta } };
     });

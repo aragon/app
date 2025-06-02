@@ -8,3 +8,4 @@ export const DaoProposalList = {
 
 export type { IDaoProposalListContainerProps } from './daoProposalListContainer';
 export type { IDaoProposalListDefaultProps } from './daoProposalListDefault';
+export type { IDaoProposalListDefaultItemProps } from './daoProposalListDefaultItem';

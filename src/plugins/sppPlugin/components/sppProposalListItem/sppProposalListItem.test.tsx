@@ -1,7 +1,7 @@
 import {
     type ISppProposalListItemProps,
     SppProposalListItem,
-} from '@/plugins/sppPlugin/components/sppProposalList/sppProposalListItem';
+} from '@/plugins/sppPlugin/components/sppProposalListItem/sppProposalListItem';
 import { Network } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
@@ -24,7 +24,7 @@ describe('<SppProposalListItem /> component', () => {
     const createTestComponent = (props?: Partial<ISppProposalListItemProps>) => {
         const completeProps: ISppProposalListItemProps = {
             proposal: generateSppProposal(),
-            dao: generateDao(),
+            daoId: 'ethereum-mainnet-0x123',
             plugin: generateDaoPlugin(),
             ...props,
         };
