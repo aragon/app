@@ -1064,9 +1064,6 @@
           "thresholdDefinition": "{{threshold}} of {{count}}",
           "thresholdTerm": "Multisig threshold"
         },
-        "multisigProposalList": {
-          "entity": "Proposals"
-        },
         "multisigProposalVotingSummary": {
           "approvalLabel": "approval",
           "approved": "approved",
@@ -1151,9 +1148,6 @@
           "action": "Close",
           "description": "You are not connected to the correct address. If you are one of its owners, you can connect it with WalletConnect.",
           "title": "Not eligible to vote"
-        },
-        "sppProposalList": {
-          "entity": "Proposals"
         },
         "sppProposalListItem": {
           "stage": "Stage {{stageIndex}}"
@@ -1348,9 +1342,6 @@
           "helpText": "The voting power or token balance required to create proposals.",
           "label": "Minimum requirement",
           "placeholder": "≥ 1"
-        },
-        "tokenProposalList": {
-          "entity": "Proposals"
         },
         "tokenProposalVotingSummary": {
           "approved": "approved",

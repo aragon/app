@@ -33,7 +33,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     const router = useRouter();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
+    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeGroupedItem: true })!;
     const [selectedPlugin, setSelectedPlugin] = useState(processPlugins[0]);
 
     const buildProposalUrl = (plugin: IDaoPlugin): __next_route_internal_types__.DynamicRoutes =>
