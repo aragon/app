@@ -34,6 +34,8 @@ export interface ITokenVeLocksDialogParams {
 
 export interface ITokenVeLocksDialogProps extends IDialogComponentProps<ITokenVeLocksDialogParams> {}
 
+// TODO: remove warmup! https://discord.com/channels/672466989217873929/1371806076374089798/1376832017139892325
+
 export type VeLockStatus = 'warmup' | 'active' | 'cooldown' | 'available';
 
 const statusToVariant: Record<VeLockStatus, TagVariant> = {
