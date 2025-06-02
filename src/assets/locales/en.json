@@ -1498,6 +1498,11 @@
           }
         },
         "tokenVeLocksDialog": {
+          "actions": {
+            "unlock": "Unlock {{underlyingSymbol}}",
+            "withdraw": "Withdraw {{underlyingSymbol}}"
+          },
+
           "description": "Unlock or withdraw your PDT tokens",
           "entityLabel": "veLocks",
           "metrics": {
@@ -1505,6 +1510,8 @@
             "multiplier": "Multiplier",
             "votingPower": "Voting power"
           },
+          "minLockTimeLeftSuffix": "left until unlockable",
+          "withdrawTimeLeftSuffix": "left until withdrawable",
           "statusLabel": {
             "active": "Active",
             "available": "Available",

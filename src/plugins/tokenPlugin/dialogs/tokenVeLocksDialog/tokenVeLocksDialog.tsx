@@ -183,29 +183,69 @@ export const TokenVeLocksDialog: React.FC<ITokenVeLocksDialogProps> = (props) =>
                                             ))}
                                     </div>
                                     <div className="flex flex-col items-center gap-3 md:flex-row md:gap-4">
-                                        {now > minLockTime && status === 'active' && (
+                                        {/* TODO: simplify buttons! too verbose and with duplication.  */}
+                                        {status === 'active' && (
                                             <>
                                                 <Button
-                                                    disabled={true}
+                                                    className="w-full md:w-auto"
+                                                    variant="secondary"
+                                                    size="md"
+                                                    disabled={now < minLockTime}
+                                                    onClick={() => {
+                                                        // handle unlock action
+                                                    }}
+                                                >
+                                                    {t(`app.plugins.token.tokenVeLocksDialog.actions.unlock`, {
+                                                        underlyingSymbol: token.symbol,
+                                                    })}
+                                                </Button>
+                                                {now < minLockTime && (
+                                                    <p className="text-sm leading-normal text-neutral-500">
+                                                        {formatterUtils.formatDate((minLockTime - now) * 1000, {
+                                                            format: DateFormat.DURATION,
+                                                        })}{' '}
+                                                        {t(
+                                                            'app.plugins.token.tokenVeLocksDialog.minLockTimeLeftSuffix',
+                                                        )}
+                                                    </p>
+                                                )}
+                                            </>
+                                        )}
+                                        {status === 'cooldown' && (
+                                            <>
+                                                <Button
                                                     className="w-full md:w-auto"
                                                     variant="tertiary"
                                                     size="md"
+                                                    disabled={true}
                                                 >
-                                                    Withdraw PDT
+                                                    {t(`app.plugins.token.tokenVeLocksDialog.actions.withdraw`, {
+                                                        underlyingSymbol: token.symbol,
+                                                    })}
                                                 </Button>
+
+                                                <p className="text-sm leading-normal text-neutral-500">
+                                                    {formatterUtils.formatDate(timeLeft! * 1000, {
+                                                        format: DateFormat.DURATION,
+                                                    })}{' '}
+                                                    {t('app.plugins.token.tokenVeLocksDialog.withdrawTimeLeftSuffix')}
+                                                </p>
                                             </>
                                         )}
-                                        <Button
-                                            disabled={true}
-                                            className="w-full md:w-auto"
-                                            variant="tertiary"
-                                            size="md"
-                                        >
-                                            Withdraw PDT
-                                        </Button>
-                                        <p className="text-sm leading-normal text-neutral-500">
-                                            5 days left until withdrawable
-                                        </p>
+                                        {status === 'available' && (
+                                            <Button
+                                                className="w-full md:w-auto"
+                                                variant="tertiary"
+                                                size="md"
+                                                onClick={() => {
+                                                    // handle withdraw action
+                                                }}
+                                            >
+                                                {t(`app.plugins.token.tokenVeLocksDialog.actions.withdraw`, {
+                                                    underlyingSymbol: token.symbol,
+                                                })}
+                                            </Button>
+                                        )}
                                     </div>
                                 </DataList.Item>
                             );
