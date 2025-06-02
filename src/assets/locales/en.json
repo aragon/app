@@ -1498,9 +1498,21 @@
           }
         },
         "tokenVeLocksDialog": {
-          "title": "Your locks",
           "description": "Unlock or withdraw your PDT tokens",
-          "entityLabel": "veLocks"
+          "entityLabel": "veLocks",
+          "metrics": {
+            "locked": "Locked",
+            "multiplier": "Multiplier",
+            "votingPower": "Voting power"
+          },
+          "statusLabel": {
+            "active": "Active",
+            "available": "Available",
+            "cooldown": "In cooldown",
+            "warmup": "In warmup"
+          },
+          "timeLeftSuffix": "left",
+          "title": "Your locks"
         },
         "tokenVoteList": {
           "entity": "Votes"

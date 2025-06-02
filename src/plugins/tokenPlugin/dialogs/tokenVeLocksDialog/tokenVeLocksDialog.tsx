@@ -1,6 +1,17 @@
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Avatar, Button, DataList, Dialog, Heading, invariant, Tag, type TagVariant } from '@aragon/gov-ui-kit';
+import {
+    Avatar,
+    Button,
+    DataList,
+    DateFormat,
+    Dialog,
+    formatterUtils,
+    Heading,
+    invariant,
+    Tag,
+    type TagVariant,
+} from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { useRouter } from 'next/navigation';
 import type { IToken } from '../../../../modules/finance/api/financeService';
@@ -41,26 +52,64 @@ export const TokenVeLocksDialog: React.FC<ITokenVeLocksDialogProps> = (props) =>
     const { t } = useTranslations();
     const router = useRouter();
 
-    const hasMultiplier = true;
-
-    const getLockStatus = (lock: ITokenVeLock): VeLockStatus => {
-        invariant(settings.votingEscrow != null, 'TokenVeLocksDialog: votingEscrow settings must exist.');
+    const getLockStatusAndTiming = (lock: ITokenVeLock): { status: VeLockStatus; timeLeft?: number } => {
+        invariant(
+            settings.votingEscrow != null,
+            'TokenVeLocksDialog(getLockStatusAndTiming): votingEscrow settings must exist.',
+        );
         const { warmupPeriod } = settings.votingEscrow;
         const { epochStartAt, lockExit } = lock;
 
-        if (DateTime.now().toSeconds() < epochStartAt + warmupPeriod) {
-            return 'warmup';
+        const activeAt = epochStartAt + warmupPeriod;
+        const now = DateTime.now().toSeconds();
+
+        if (now < activeAt) {
+            return { status: 'warmup', timeLeft: activeAt - now };
         }
 
         if (!lockExit.status) {
-            return 'active';
+            return { status: 'active' };
         }
 
-        if (lockExit.exitDateAt != null && DateTime.now().toSeconds() < lockExit.exitDateAt) {
-            return 'cooldown';
+        if (lockExit.exitDateAt != null && now < lockExit.exitDateAt) {
+            return { status: 'cooldown', timeLeft: lockExit.exitDateAt - now };
         }
 
-        return 'available';
+        return { status: 'available' };
+    };
+
+    const calcMultiplier = (lock: ITokenVeLock): number => {
+        invariant(
+            settings.votingEscrow != null,
+            'TokenVeLocksDialog(calcMultiplier): votingEscrow settings must exist.',
+        );
+
+        const { warmupPeriod, maxTime, slope } = settings.votingEscrow;
+        const { epochStartAt, amount } = lock;
+        // TODO: is this ok? Is amount a big number? How do we handle big number arithmetic?
+        const lockedAmount = Number(amount);
+        const now = DateTime.now().toSeconds();
+        const activeAt = epochStartAt + warmupPeriod;
+        const activePeriod = now - activeAt;
+        const votingPower = Math.min(activePeriod, maxTime) * lockedAmount * slope;
+        const multiplier = Math.max(votingPower / lockedAmount, 1);
+
+        return multiplier;
+    };
+
+    const getMinLockTime = (lock: ITokenVeLock): number => {
+        invariant(
+            settings.votingEscrow != null,
+            'TokenVeLocksDialog(getMinLockTime): votingEscrow settings must exist.',
+        );
+
+        const { warmupPeriod, minLockTime } = settings.votingEscrow;
+        const { epochStartAt } = lock;
+        const activeAt = epochStartAt + warmupPeriod;
+        // TODO: is it activeAt + minLockTime or lockedAt + minLockTime? (we don't have lockedAt coming from backend?)
+        const minLockTimeAt = activeAt + minLockTime;
+
+        return minLockTimeAt;
     };
 
     return (
@@ -79,7 +128,12 @@ export const TokenVeLocksDialog: React.FC<ITokenVeLocksDialogProps> = (props) =>
                 >
                     <DataList.Container>
                         {locks.map((lock) => {
-                            const status = getLockStatus(lock);
+                            const { status, timeLeft } = getLockStatusAndTiming(lock);
+                            const { amount } = lock;
+                            const multiplier = calcMultiplier(lock);
+                            const votingPower = Number(amount) * multiplier;
+                            const minLockTime = getMinLockTime(lock);
+                            const now = DateTime.now().toSeconds();
 
                             return (
                                 <DataList.Item key={lock.id} className="flex flex-col gap-4 py-4 md:py-6">
@@ -89,18 +143,36 @@ export const TokenVeLocksDialog: React.FC<ITokenVeLocksDialogProps> = (props) =>
                                             <Heading size="h4">ID: {lock.tokenId}</Heading>
                                         </div>
                                         <div className="flex items-center gap-2 md:gap-3">
-                                            <p className="text-sm leading-tight text-neutral-500 md:text-base">
-                                                3 days left
-                                            </p>
-                                            <Tag label={status} variant={statusToVariant[status]} />
+                                            {timeLeft && (
+                                                <p className="text-sm leading-tight text-neutral-500 md:text-base">
+                                                    {formatterUtils.formatDate(timeLeft * 1000, {
+                                                        format: DateFormat.DURATION,
+                                                    })}{' '}
+                                                    {t('app.plugins.token.tokenVeLocksDialog.timeLeftSuffix')}
+                                                </p>
+                                            )}
+                                            <Tag
+                                                label={t(`app.plugins.token.tokenVeLocksDialog.statusLabel.${status}`)}
+                                                variant={statusToVariant[status]}
+                                            />
                                         </div>
                                     </div>
                                     <hr className="border-neutral-100" />
                                     <div className="grid grid-cols-3 gap-4 text-base leading-tight text-neutral-800 md:text-lg">
                                         {[
-                                            { label: 'Locked', value: '280.2' },
-                                            { label: 'Multiplier', value: '3.5x', hidden: hasMultiplier },
-                                            { label: 'Voting power', value: '1280.2' },
+                                            {
+                                                label: t('app.plugins.token.tokenVeLocksDialog.metrics.locked'),
+                                                value: amount,
+                                            },
+                                            {
+                                                label: t('app.plugins.token.tokenVeLocksDialog.metrics.multiplier'),
+                                                value: `${multiplier.toString()}x`,
+                                                hidden: multiplier <= 1,
+                                            },
+                                            {
+                                                label: t('app.plugins.token.tokenVeLocksDialog.metrics.votingPower'),
+                                                value: votingPower,
+                                            },
                                         ]
                                             .filter((val) => !val.hidden)
                                             .map(({ label, value }) => (
@@ -111,6 +183,18 @@ export const TokenVeLocksDialog: React.FC<ITokenVeLocksDialogProps> = (props) =>
                                             ))}
                                     </div>
                                     <div className="flex flex-col items-center gap-3 md:flex-row md:gap-4">
+                                        {now > minLockTime && status === 'active' && (
+                                            <>
+                                                <Button
+                                                    disabled={true}
+                                                    className="w-full md:w-auto"
+                                                    variant="tertiary"
+                                                    size="md"
+                                                >
+                                                    Withdraw PDT
+                                                </Button>
+                                            </>
+                                        )}
                                         <Button
                                             disabled={true}
                                             className="w-full md:w-auto"

@@ -12,6 +12,10 @@ export interface ITokenVeLock {
      */
     epochStartAt: number;
     /**
+     * Amount of tokens locked (emitted by the Deposit event).
+     */
+    amount: string;
+    /**
      *
      */
     lockExit: {
