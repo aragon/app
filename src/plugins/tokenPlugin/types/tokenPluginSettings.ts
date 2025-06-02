@@ -31,4 +31,13 @@ export interface ITokenPluginSettings extends IPluginSettings {
      * Total supply of the token only set when settings are fetched for a specific block number (e.g. settings when a proposal was created)
      */
     historicalTotalSupply?: string;
+    // probably a conflict with Asam's PR ... just override it!
+    votingEscrow?: {
+        minDeposit: string;
+        minLockTime: number;
+        cooldown: number;
+        warmupPeriod: number;
+        maxTime: number;
+        slope: number;
+    };
 }

@@ -1497,6 +1497,11 @@
             "yes": "Yes"
           }
         },
+        "tokenVeLocksDialog": {
+          "title": "Your locks",
+          "description": "Unlock or withdraw your PDT tokens",
+          "entityLabel": "veLocks"
+        },
         "tokenVoteList": {
           "entity": "Votes"
         },
