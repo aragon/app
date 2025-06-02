@@ -23,7 +23,7 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
     const { address } = useAccount();
     const { open } = useDialogContext();
 
-    const [daoFilter, setDaoFilter] = useState<string | undefined>('all');
+    const [daoFilter, setDaoFilter] = useState('all');
 
     // Only update filter when value is defined and not empty string to ensure that one of the filters is always selected
     // Note: value comes back as empty string when toggle is deselected
@@ -33,7 +33,7 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
         }
     };
 
-    // When the user disconnects while on the "member" tab, reset the filter
+    // Reset the filter to "all" when the user disconnects while on the "member" tab
     useEffect(() => {
         if (address == null && daoFilter === 'member') {
             setDaoFilter('all');
