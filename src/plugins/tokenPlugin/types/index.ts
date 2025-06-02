@@ -8,4 +8,5 @@ export type { ITokenPluginSettingsToken } from './tokenPluginSettingsToken';
 export type { ITokenProposal } from './tokenProposal';
 export type { ITokenProposalAction } from './tokenProposalAction';
 export type { ITokenProposalOptionVotes } from './tokenProposalOptionVotes';
+export type { ITokenVeLock } from './tokenVeLock';
 export type { ITokenVote } from './tokenVote';

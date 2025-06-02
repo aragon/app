@@ -8,4 +8,5 @@ export const tokenPluginDialogsDefinitions: Record<TokenPluginDialogId, IDialogC
     [TokenPluginDialogId.DELEGATE]: { Component: TokenDelegationDialog },
     [TokenPluginDialogId.APPROVE_TOKENS]: { Component: TokenApproveTokensDialog },
     [TokenPluginDialogId.WRAP_UNWRAP]: { Component: TokenWrapUnwrapDialog },
+    [TokenPluginDialogId.VE_LOCKS]: { Component: TokenWrapUnwrapDialog }, // Reusing the same dialog for ve locks
 };
