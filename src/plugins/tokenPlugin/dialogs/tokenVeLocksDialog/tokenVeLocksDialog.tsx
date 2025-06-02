@@ -1,6 +1,6 @@
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Avatar, Button, DataList, Dialog, Heading, invariant, Tag } from '@aragon/gov-ui-kit';
+import { Avatar, Button, DataList, Dialog, Heading, invariant, Tag, type TagVariant } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { useRouter } from 'next/navigation';
 import type { IToken } from '../../../../modules/finance/api/financeService';
@@ -21,9 +21,16 @@ export interface ITokenVeLocksDialogParams {
     settings: ITokenPluginSettings;
 }
 
+export interface ITokenVeLocksDialogProps extends IDialogComponentProps<ITokenVeLocksDialogParams> {}
+
 export type VeLockStatus = 'warmup' | 'active' | 'cooldown' | 'available';
 
-export interface ITokenVeLocksDialogProps extends IDialogComponentProps<ITokenVeLocksDialogParams> {}
+const statusToVariant: Record<VeLockStatus, TagVariant> = {
+    warmup: 'info',
+    active: 'primary',
+    cooldown: 'info',
+    available: 'success',
+};
 
 export const TokenVeLocksDialog: React.FC<ITokenVeLocksDialogProps> = (props) => {
     const { location } = props;
@@ -71,45 +78,54 @@ export const TokenVeLocksDialog: React.FC<ITokenVeLocksDialogProps> = (props) =>
                     // state={state}
                 >
                     <DataList.Container>
-                        {locks.map((lock) => (
-                            <DataList.Item key={lock.id} className="flex flex-col gap-4 py-4 md:py-6">
-                                <div className="flex justify-between">
-                                    <div className="flex items-center gap-3 md:gap-4">
-                                        <Avatar src={token.logo} size="md" className="shrink-0" />
-                                        <Heading size="h4">ID: {lock.tokenId}</Heading>
+                        {locks.map((lock) => {
+                            const status = getLockStatus(lock);
+
+                            return (
+                                <DataList.Item key={lock.id} className="flex flex-col gap-4 py-4 md:py-6">
+                                    <div className="flex justify-between">
+                                        <div className="flex items-center gap-3 md:gap-4">
+                                            <Avatar src={token.logo} size="md" className="shrink-0" />
+                                            <Heading size="h4">ID: {lock.tokenId}</Heading>
+                                        </div>
+                                        <div className="flex items-center gap-2 md:gap-3">
+                                            <p className="text-sm leading-tight text-neutral-500 md:text-base">
+                                                3 days left
+                                            </p>
+                                            <Tag label={status} variant={statusToVariant[status]} />
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-2 md:gap-3">
-                                        <p className="text-sm leading-tight text-neutral-500 md:text-base">
-                                            3 days left
+                                    <hr className="border-neutral-100" />
+                                    <div className="grid grid-cols-3 gap-4 text-base leading-tight text-neutral-800 md:text-lg">
+                                        {[
+                                            { label: 'Locked', value: '280.2' },
+                                            { label: 'Multiplier', value: '3.5x', hidden: hasMultiplier },
+                                            { label: 'Voting power', value: '1280.2' },
+                                        ]
+                                            .filter((val) => !val.hidden)
+                                            .map(({ label, value }) => (
+                                                <div key="label" className="flex flex-col">
+                                                    <div className="text-sm text-neutral-500 md:text-base">{label}</div>
+                                                    <div>{value}</div>
+                                                </div>
+                                            ))}
+                                    </div>
+                                    <div className="flex flex-col items-center gap-3 md:flex-row md:gap-4">
+                                        <Button
+                                            disabled={true}
+                                            className="w-full md:w-auto"
+                                            variant="tertiary"
+                                            size="md"
+                                        >
+                                            Withdraw PDT
+                                        </Button>
+                                        <p className="text-sm leading-normal text-neutral-500">
+                                            5 days left until withdrawable
                                         </p>
-                                        <Tag label="Active" variant="primary" />
                                     </div>
-                                </div>
-                                <hr className="border-neutral-100" />
-                                <div className="grid grid-cols-3 gap-4 text-base leading-tight text-neutral-800 md:text-lg">
-                                    {[
-                                        { label: 'Locked', value: '280.2' },
-                                        { label: 'Multiplier', value: '3.5x', hidden: hasMultiplier },
-                                        { label: 'Voting power', value: '1280.2' },
-                                    ]
-                                        .filter((val) => !val.hidden)
-                                        .map(({ label, value }) => (
-                                            <div key="label" className="flex flex-col">
-                                                <div className="text-sm text-neutral-500 md:text-base">{label}</div>
-                                                <div>{value}</div>
-                                            </div>
-                                        ))}
-                                </div>
-                                <div className="flex flex-col items-center gap-3 md:flex-row md:gap-4">
-                                    <Button disabled={true} className="w-full md:w-auto" variant="tertiary" size="md">
-                                        Withdraw PDT
-                                    </Button>
-                                    <p className="text-sm leading-normal text-neutral-500">
-                                        5 days left until withdrawable
-                                    </p>
-                                </div>
-                            </DataList.Item>
-                        ))}
+                                </DataList.Item>
+                            );
+                        })}
                     </DataList.Container>
                     <DataList.Pagination />
                 </DataList.Root>
