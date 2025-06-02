@@ -152,3 +152,24 @@ export interface IGetProposalActionsUrlParams {
 }
 
 export interface IGetProposalActionsParams extends IRequestUrlParams<IGetProposalActionsUrlParams> {}
+
+export interface IGetMemberLocksUrlParams {
+    /**
+     * Address of the member to fetch the locks for.
+     */
+    address: string;
+}
+
+export interface IGetMemberLocksQueryParams extends IPaginatedRequest {
+    /**
+     * ID of the DAO to fetch the locks from.
+     */
+    daoId: string;
+    /**
+     * Address of the plugin to fetch the locks for.
+     */
+    pluginAddress?: string;
+}
+
+export interface IGetMemberLocksParams
+    extends IRequestUrlQueryParams<IGetMemberLocksUrlParams, IGetMemberLocksQueryParams> {}

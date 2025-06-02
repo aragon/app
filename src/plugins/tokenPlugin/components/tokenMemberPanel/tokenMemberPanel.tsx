@@ -37,6 +37,8 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const { token } = plugin.settings;
     const { underlying } = token;
 
+    console.log('TOKEN =>', token);
+
     const { t } = useTranslations();
 
     const initialSelectedTab = underlying != null ? TokenMemberPanelTab.WRAP : TokenMemberPanelTab.DELEGATE;

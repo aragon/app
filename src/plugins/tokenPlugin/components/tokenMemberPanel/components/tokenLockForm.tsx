@@ -41,6 +41,11 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
+    // const lockParams = { daoId, pluginAddress: plugin.address };
+    // const { data: lockList } = useMemberLocks({ urlParams: { address: address ?? '' }, queryParams: lockParams });
+
+    // console.log('Lock list:', lockList);
+
     const [percentageValue, setPercentageValue] = useState<string>('100');
 
     const { result: isConnected, check: walletGuard } = useConnectedWalletGuard();
@@ -58,10 +63,11 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     console.log('Token allowance:', tokenAllowance);
 
-    const {
-        data: unlockedBalance,
-        status: unlockedBalanceStatus,
-    } = useBalance({ address, token: underlyingAddress, chainId });
+    const { data: unlockedBalance, status: unlockedBalanceStatus } = useBalance({
+        address,
+        token: underlyingAddress,
+        chainId,
+    });
 
     const parsedUnlockedAmount = formatUnits(unlockedBalance?.value ?? BigInt(0), decimals);
 
@@ -125,7 +131,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     return (
         <FormProvider {...formValues}>
             <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
-
                 <div className="flex flex-col gap-3">
                     <AssetInput
                         onAmountChange={() => setPercentageValue('')}
@@ -161,11 +166,11 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                         })}
                     </Button>
 
-                        <Button variant="secondary" size="lg" onClick={handleViewLocks}>
-                            {t('app.plugins.token.tokenLockForm.locks', {
-                                count: lockCount,
-                            })}
-                        </Button>
+                    <Button variant="secondary" size="lg" onClick={handleViewLocks}>
+                        {t('app.plugins.token.tokenLockForm.locks', {
+                            count: lockCount,
+                        })}
+                    </Button>
 
                     <p className="text-center text-sm font-normal leading-normal text-neutral-500">
                         {t('app.plugins.token.tokenLockForm.footerInfo')}

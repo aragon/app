@@ -6,3 +6,4 @@ export * from './useProposalActions';
 export * from './useProposalBySlug';
 export * from './useProposalList';
 export * from './useVoteList';
+export * from './useMemberLocks';
