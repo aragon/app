@@ -1,6 +1,7 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { TokenApproveTokensDialog } from '../dialogs/tokenApproveTokensDialog';
 import { TokenDelegationDialog } from '../dialogs/tokenDelegationDialog';
+import { TokenVeLocksDialog } from '../dialogs/tokenVeLocksDialog';
 import { TokenWrapUnwrapDialog } from '../dialogs/tokenWrapUnwrapDialog';
 import { TokenPluginDialogId } from './tokenPluginDialogId';
 
@@ -8,5 +9,5 @@ export const tokenPluginDialogsDefinitions: Record<TokenPluginDialogId, IDialogC
     [TokenPluginDialogId.DELEGATE]: { Component: TokenDelegationDialog },
     [TokenPluginDialogId.APPROVE_TOKENS]: { Component: TokenApproveTokensDialog },
     [TokenPluginDialogId.WRAP_UNWRAP]: { Component: TokenWrapUnwrapDialog },
-    [TokenPluginDialogId.VE_LOCKS]: { Component: TokenWrapUnwrapDialog }, // Reusing the same dialog for ve locks
+    [TokenPluginDialogId.VE_LOCKS]: { Component: TokenVeLocksDialog },
 };

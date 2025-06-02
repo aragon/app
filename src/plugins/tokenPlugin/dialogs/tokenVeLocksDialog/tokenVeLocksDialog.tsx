@@ -1,3 +1,4 @@
+import type { IToken } from '@/modules/finance/api/financeService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
@@ -14,7 +15,6 @@ import {
 } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { useRouter } from 'next/navigation';
-import type { IToken } from '../../../../modules/finance/api/financeService';
 import type { ITokenPluginSettings, ITokenVeLock } from '../../types';
 
 export interface ITokenVeLocksDialogParams {
@@ -47,6 +47,7 @@ export const TokenVeLocksDialog: React.FC<ITokenVeLocksDialogProps> = (props) =>
     const { location } = props;
     invariant(location.params != null, 'TokenVeLocksDialog: required parameters must be set.');
 
+    // TODO: when hook is ready, fetch locks instead of passing them as a param!
     const { locks, token, settings } = location.params;
 
     const { t } = useTranslations();
@@ -78,6 +79,7 @@ export const TokenVeLocksDialog: React.FC<ITokenVeLocksDialogProps> = (props) =>
         return { status: 'available' };
     };
 
+    // TODO: reconsider when beckend is updated to return multiplier/votingPower directly!
     const calcMultiplier = (lock: ITokenVeLock): number => {
         invariant(
             settings.votingEscrow != null,
