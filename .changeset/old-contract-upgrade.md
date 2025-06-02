@@ -1,5 +1,5 @@
 ---
-'@aragon/app-next': major
+'@aragon/app-next': minor
 ---
 
 Enable feature to upgrade OSx smart contracts on production and staging environments
