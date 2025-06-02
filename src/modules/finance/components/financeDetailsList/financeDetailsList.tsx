@@ -41,6 +41,7 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
                 </DefinitionList.Item>
                 <DefinitionList.Item
                     term={t('app.finance.financeDetailsList.vaultAddress')}
+                    copyValue={address}
                     link={{ href: daoAddressLink }}
                 >
                     {addressUtils.truncateAddress(address)}
@@ -48,7 +49,8 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
                 {daoEns && (
                     <DefinitionList.Item
                         term={t('app.finance.financeDetailsList.vaultEns')}
-                        link={{ href: daoAddressLink, className: 'max-w-full' }}
+                        copyValue={daoEns}
+                        link={{ href: daoAddressLink }}
                     >
                         {daoEns}
                     </DefinitionList.Item>

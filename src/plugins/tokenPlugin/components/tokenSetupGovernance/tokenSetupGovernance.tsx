@@ -39,7 +39,7 @@ export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (props
                     helpText={t('app.plugins.token.tokenSetupGovernance.minDuration.helpText')}
                     label={t('app.plugins.token.tokenSetupGovernance.minDuration.label')}
                 >
-                    <Card className="flex flex-col gap-6 border border-neutral-100 p-6 shadow-neutral-sm">
+                    <Card className="shadow-neutral-sm flex flex-col gap-6 border border-neutral-100 p-6">
                         <AdvancedDateInputDuration
                             field={`${formPrefix}.minDuration`}
                             label={t('app.plugins.token.tokenSetupGovernance.minDuration.label')}

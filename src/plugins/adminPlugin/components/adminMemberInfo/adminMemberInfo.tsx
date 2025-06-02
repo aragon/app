@@ -23,7 +23,7 @@ export const AdminMemberInfo: React.FC<IAdminMemberInfoProps> = (props) => {
     const memberParams = { daoId, pluginAddress: plugin.address };
     const { data: memberList } = useMemberList({ queryParams: memberParams });
 
-    const memberCount = memberList?.pages[0].metadata.totalRecords;
+    const memberCount = memberList?.pages[0].metadata.totalRecords ?? '';
 
     return (
         <DefinitionList.Container>

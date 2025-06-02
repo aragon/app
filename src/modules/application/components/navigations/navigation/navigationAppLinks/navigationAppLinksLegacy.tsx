@@ -53,7 +53,14 @@ export const NavigationAppLinksLegacy: React.FC<INavigationAppLinksLegacyProps> 
     }
 
     return (
-        <Button target="_blank" href={legacyUrl} iconRight={IconType.LINK_EXTERNAL} variant="tertiary" size="sm">
+        <Button
+            target="_blank"
+            href={legacyUrl}
+            iconRight={IconType.LINK_EXTERNAL}
+            variant="tertiary"
+            size="sm"
+            className="text-nowrap"
+        >
             {t('app.application.navigation.appLinks.legacy')}
         </Button>
     );
