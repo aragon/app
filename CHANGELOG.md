@@ -1,5 +1,43 @@
 # @aragon/app-next
 
+## 2.0.0
+
+### Major Changes
+
+- [#608](https://github.com/aragon/app-next/pull/608) [`ddfbd7a`](https://github.com/aragon/app-next/commit/ddfbd7a85ff53b405e706d7b9cbbe083f875f9c4) Thanks [@evanaronson](https://github.com/evanaronson)! - Enable feature to upgrade OSx smart contracts on production and staging environments
+
+### Minor Changes
+
+- [#598](https://github.com/aragon/app-next/pull/598) [`b674a31`](https://github.com/aragon/app-next/commit/b674a31d5d5e859430757f887c8ab269d84aa461) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#589](https://github.com/aragon/app-next/pull/589) [`132fb1d`](https://github.com/aragon/app-next/commit/132fb1dcf513e2c7f1e697d073e83fd6e785a36b) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#592](https://github.com/aragon/app-next/pull/592) [`38a793f`](https://github.com/aragon/app-next/commit/38a793f43b7f7a80c0435ae806f9c2677d51c1e5) Thanks [@milosh86](https://github.com/milosh86)! - Add support for Optimism network
+
+- [#595](https://github.com/aragon/app-next/pull/595) [`ce51275`](https://github.com/aragon/app-next/commit/ce512756a222905777e9f25fcb545fbcf8f54a96) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Use /can-create-proposal endpoint to check user proposal-creation permission
+
+- [#522](https://github.com/aragon/app-next/pull/522) [`e65598e`](https://github.com/aragon/app-next/commit/e65598e725d12eb8cbc333e458e9b8b33827f077) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Implement quick copy with `Clipboard` component
+
+- [#599](https://github.com/aragon/app-next/pull/599) [`9cc4c5a`](https://github.com/aragon/app-next/commit/9cc4c5a8d26a50fb178896bf90f5557218d14de7) Thanks [@dependabot](https://github.com/apps/dependabot)! - Bump vercel to v42
+
+- [#522](https://github.com/aragon/app-next/pull/522) [`e65598e`](https://github.com/aragon/app-next/commit/e65598e725d12eb8cbc333e458e9b8b33827f077) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Improve veto communications in voting terminal and vote dialog
+
+- [#522](https://github.com/aragon/app-next/pull/522) [`e65598e`](https://github.com/aragon/app-next/commit/e65598e725d12eb8cbc333e458e9b8b33827f077) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Display plugin info on settings tab of voting terminal
+
+- [#597](https://github.com/aragon/app-next/pull/597) [`8c2e7dd`](https://github.com/aragon/app-next/commit/8c2e7dd765faeb43c7d3924858ab40b0365e7582) Thanks [@evanaronson](https://github.com/evanaronson)! - Fix casing issue on a string on the voting guard
+
+- [#522](https://github.com/aragon/app-next/pull/522) [`e65598e`](https://github.com/aragon/app-next/commit/e65598e725d12eb8cbc333e458e9b8b33827f077) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Update style and layout of navigation on DAO pages
+
+- [#522](https://github.com/aragon/app-next/pull/522) [`e65598e`](https://github.com/aragon/app-next/commit/e65598e725d12eb8cbc333e458e9b8b33827f077) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Migrate Tailwind CSS library to v4
+
+- [#587](https://github.com/aragon/app-next/pull/587) [`40644bd`](https://github.com/aragon/app-next/commit/40644bd135e068a1f5ea54ffae7b0f864807ad82) Thanks [@evanaronson](https://github.com/evanaronson)! - Set "Early Stage Advance" as the default setting in the Governance Designer
+
+### Patch Changes
+
+- [#522](https://github.com/aragon/app-next/pull/522) [`e65598e`](https://github.com/aragon/app-next/commit/e65598e725d12eb8cbc333e458e9b8b33827f077) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Update SPP utilities to correctly handle optimistic stages
+
+- [#522](https://github.com/aragon/app-next/pull/522) [`e65598e`](https://github.com/aragon/app-next/commit/e65598e725d12eb8cbc333e458e9b8b33827f077) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Fix crash on Explore page on user disconnect
+
 ## 1.4.0
 
 ### Minor Changes
