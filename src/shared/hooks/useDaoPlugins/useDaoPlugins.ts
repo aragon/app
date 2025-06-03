@@ -23,27 +23,25 @@ export interface IUseDaoPluginsParams {
     /**
      * Adds an "all" tab component item when set to true and DAO has more than one plugin.
      */
-    includeGroupedItem?: boolean;
+    includeGroupTab?: boolean;
     /**
      * Only returns the plugin with the specified subdomain when set.
      */
     subdomain?: string;
 }
 
-const groupedPluginItem: ITabComponentPlugin<IDaoPlugin> = {
+export const pluginGroupTab: ITabComponentPlugin<IDaoPlugin> = {
     id: 'all',
     uniqueId: 'all',
-    label: 'All',
-    meta: { slug: '' } as IDaoPlugin,
+    label: '',
+    meta: {} as IDaoPlugin,
     props: {},
 };
 
 export const useDaoPlugins = (params: IUseDaoPluginsParams): Array<ITabComponentPlugin<IDaoPlugin>> | undefined => {
-    const { daoId, type, pluginAddress, includeSubPlugins, includeGroupedItem, subdomain } = params;
+    const { daoId, type, pluginAddress, includeSubPlugins, includeGroupTab, subdomain } = params;
 
-    const daoParams = { id: daoId };
-    const { data: dao } = useDao({ urlParams: daoParams });
-
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
     const plugins = daoUtils.getDaoPlugins(dao, { type, pluginAddress, includeSubPlugins, subdomain });
 
     const processedPlugins = plugins?.map((plugin) => ({
@@ -54,7 +52,7 @@ export const useDaoPlugins = (params: IUseDaoPluginsParams): Array<ITabComponent
         props: {},
     }));
 
-    const addGroupedItem = includeGroupedItem && processedPlugins != null && processedPlugins.length > 1;
+    const addGroupTab = includeGroupTab && processedPlugins != null && processedPlugins.length > 1;
 
-    return addGroupedItem ? [groupedPluginItem].concat(processedPlugins) : processedPlugins;
+    return addGroupTab ? [pluginGroupTab].concat(processedPlugins) : processedPlugins;
 };
