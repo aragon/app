@@ -1,10 +1,6 @@
 # @aragon/app-next
 
-## 2.0.0
-
-### Major Changes
-
-- [#608](https://github.com/aragon/app-next/pull/608) [`ddfbd7a`](https://github.com/aragon/app-next/commit/ddfbd7a85ff53b405e706d7b9cbbe083f875f9c4) Thanks [@evanaronson](https://github.com/evanaronson)! - Enable feature to upgrade OSx smart contracts on production and staging environments
+## 1.5.0
 
 ### Minor Changes
 
@@ -19,6 +15,8 @@
 - [#522](https://github.com/aragon/app-next/pull/522) [`e65598e`](https://github.com/aragon/app-next/commit/e65598e725d12eb8cbc333e458e9b8b33827f077) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Implement quick copy with `Clipboard` component
 
 - [#599](https://github.com/aragon/app-next/pull/599) [`9cc4c5a`](https://github.com/aragon/app-next/commit/9cc4c5a8d26a50fb178896bf90f5557218d14de7) Thanks [@dependabot](https://github.com/apps/dependabot)! - Bump vercel to v42
+
+- [#608](https://github.com/aragon/app-next/pull/608) [`ddfbd7a`](https://github.com/aragon/app-next/commit/ddfbd7a85ff53b405e706d7b9cbbe083f875f9c4) Thanks [@evanaronson](https://github.com/evanaronson)! - Enable feature to upgrade OSx smart contracts on production and staging environments
 
 - [#522](https://github.com/aragon/app-next/pull/522) [`e65598e`](https://github.com/aragon/app-next/commit/e65598e725d12eb8cbc333e458e9b8b33827f077) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Improve veto communications in voting terminal and vote dialog
 
