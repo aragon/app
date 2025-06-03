@@ -1,1 +1,1 @@
-export * from './useMemberLocks';
+export * from './useTokenLocks';

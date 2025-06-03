@@ -1,1 +1,1 @@
-export type { IMemberLock } from './memberLock';
+export type { ITokenLock } from './tokenLock';

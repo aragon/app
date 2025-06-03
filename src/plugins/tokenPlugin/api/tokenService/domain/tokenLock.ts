@@ -1,7 +1,7 @@
 import type { Network } from '@/shared/api/daoService';
 import type { Hex } from 'viem';
 
-export interface IMemberLock {
+export interface ITokenLock {
     /**
      * Unique identifier for the member lock.
      */
