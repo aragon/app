@@ -7,7 +7,7 @@ import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { pluginGroupTab, useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useRouter } from 'next/navigation';
@@ -33,12 +33,10 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     const router = useRouter();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeGroupedItem: true })!;
+    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeGroupTab: true })!;
     const [selectedPlugin, setSelectedPlugin] = useState(processPlugins[0]);
 
-    const buildProposalUrl = (plugin: IDaoPlugin): __next_route_internal_types__.DynamicRoutes =>
-        daoUtils.getDaoUrl(dao, `create/${plugin.address}/proposal`)!;
-    const createProposalUrl = buildProposalUrl(selectedPlugin.meta);
+    const buildProposalUrl = (plugin: IDaoPlugin) => daoUtils.getDaoUrl(dao, `create/${plugin.address}/proposal`)!;
 
     const handlePermissionGuardSuccess = (plugin?: IDaoPlugin) =>
         router.push(buildProposalUrl(plugin ?? selectedPlugin.meta));
@@ -62,10 +60,15 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
 
     const defaultActionProps = {
         onClick: canCreateProposal ? undefined : createProposalGuard,
-        href: canCreateProposal ? createProposalUrl : undefined,
+        href: canCreateProposal ? buildProposalUrl(selectedPlugin.meta) : undefined,
     };
 
     const actionProps = processPlugins.length > 1 ? { onClick: openSelectPluginDialog } : defaultActionProps;
+
+    const allProposalsSelected = selectedPlugin.id === pluginGroupTab.id;
+    const asideCardTitle = allProposalsSelected
+        ? 'All proposals'
+        : `${selectedPlugin.label} (${selectedPlugin.meta.slug.toUpperCase()})`;
 
     return (
         <>
@@ -83,12 +86,15 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                 />
             </Page.Main>
             <Page.Aside>
-                <Page.AsideCard title={`${selectedPlugin.label} (${selectedPlugin.meta.slug.toUpperCase()})`}>
-                    <DaoPluginInfo
-                        plugin={selectedPlugin.meta}
-                        daoId={initialParams.queryParams.daoId}
-                        type={PluginType.PROCESS}
-                    />
+                <Page.AsideCard title={asideCardTitle}>
+                    {allProposalsSelected && <p>TODO</p>}
+                    {!allProposalsSelected && (
+                        <DaoPluginInfo
+                            plugin={selectedPlugin.meta}
+                            daoId={initialParams.queryParams.daoId}
+                            type={PluginType.PROCESS}
+                        />
+                    )}
                 </Page.AsideCard>
             </Page.Aside>
         </>

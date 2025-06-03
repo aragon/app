@@ -27,6 +27,8 @@ export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (props) 
     const daoParams = { urlParams: daoUrlParams };
     const dao = await queryClient.fetchQuery(daoOptions(daoParams));
 
+    // Set pluginAddress parameter to undefined when DAO has more than one plugin as the UI will display an "All proposals"
+    // tab that is selected by default
     const processPlugins = daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS })!;
     const pluginAddress = processPlugins.length > 1 ? undefined : processPlugins[0].address;
 

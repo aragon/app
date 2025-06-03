@@ -802,7 +802,8 @@
         "error": {
           "description": "There was an error loading the DAO proposals. Try again later.",
           "title": "Error loading proposals"
-        }
+        },
+        "groupTab": "All proposals"
       },
       "daoProposalsPage": {
         "main": {
