@@ -130,7 +130,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                         <VoteList initialParams={votesByMemberParams} daoId={daoId} />
                     </Page.MainSection>
                     <Page.MainSection title={t('app.governance.daoMemberDetailsPage.main.proposalCreation.title')}>
-                        <DaoProposalList.Container initialParams={proposalsByMemberParams} />
+                        <DaoProposalList initialParams={proposalsByMemberParams} />
                     </Page.MainSection>
                     <Page.MainSection title={t('app.governance.daoMemberDetailsPage.main.daoMemberships.title')}>
                         <DaoList daoListByMemberParams={daoListByMemberParams} layoutClassNames="grid grid-cols-1" />

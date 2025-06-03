@@ -1,9 +1,11 @@
 import * as useProposalListData from '@/modules/governance/hooks/useProposalListData';
-import { generateDaoPlugin } from '@/shared/testUtils';
+import * as useDao from '@/shared/api/daoService';
+import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import type { IProposal } from '../../api/governanceService';
 import { generateProposal } from '../../testUtils';
+import { proposalUtils } from '../../utils/proposalUtils';
 import { DaoProposalListDefault, type IDaoProposalListDefaultProps } from './daoProposalListDefault';
 
 jest.mock('./daoProposalListDefaultItem', () => ({
@@ -14,8 +16,11 @@ jest.mock('./daoProposalListDefaultItem', () => ({
 
 describe('<DaoProposalListDefault /> component', () => {
     const useProposalListDataSpy = jest.spyOn(useProposalListData, 'useProposalListData');
+    const useDaoSpy = jest.spyOn(useDao, 'useDao');
+    const getProposalSlugSpy = jest.spyOn(proposalUtils, 'getProposalSlug');
 
     beforeEach(() => {
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         useProposalListDataSpy.mockReturnValue({
             proposalList: [],
             onLoadMore: jest.fn(),
@@ -25,10 +30,13 @@ describe('<DaoProposalListDefault /> component', () => {
             emptyState: { heading: '', description: '' },
             errorState: { heading: '', description: '' },
         });
+        getProposalSlugSpy.mockReturnValue('proposal-1');
     });
 
     afterEach(() => {
         useProposalListDataSpy.mockReset();
+        useDaoSpy.mockReset();
+        getProposalSlugSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoProposalListDefaultProps>) => {
@@ -70,7 +78,7 @@ describe('<DaoProposalListDefault /> component', () => {
     it('does not render the data-list pagination when hidePagination is set to true', () => {
         const hidePagination = true;
         useProposalListDataSpy.mockReturnValue({
-            proposalList: [generateProposal()],
+            proposalList: [],
             onLoadMore: jest.fn(),
             state: 'idle',
             pageSize: 10,
