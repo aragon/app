@@ -9,7 +9,6 @@ import { MultisigGovernanceInfo } from './components/multisigGovernanceInfo';
 import { MultisigMemberInfo } from './components/multisigMemberInfo';
 import { MultisigProcessBodyField } from './components/multisigProcessBodyField';
 import { MultisigProposalCreationSettings } from './components/multisigProposalCreationSettings';
-import { MultisigProposalListItem } from './components/multisigProposalListItem';
 import { MultisigProposalVotingBreakdown } from './components/multisigProposalVotingBreakdown';
 import { MultisigProposalVotingSummary } from './components/multisigProposalVotingSummary';
 import { MultisigSetupGovernance } from './components/multisigSetupGovernance';
@@ -29,11 +28,6 @@ export const initialiseMultisigPlugin = () => {
         .registerPlugin(multisigPlugin)
 
         // Governance module slots
-        .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST_ITEM,
-            pluginId: multisigPlugin.id,
-            component: MultisigProposalListItem,
-        })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN,
             pluginId: multisigPlugin.id,

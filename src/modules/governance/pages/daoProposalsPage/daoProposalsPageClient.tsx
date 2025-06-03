@@ -76,7 +76,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                     ...actionProps,
                 }}
             >
-                <DaoProposalList.Container
+                <DaoProposalList
                     initialParams={initialParams}
                     value={selectedPlugin}
                     onValueChange={setSelectedPlugin}

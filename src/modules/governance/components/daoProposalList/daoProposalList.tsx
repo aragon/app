@@ -10,8 +10,7 @@ import type { IGetProposalListParams } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DaoProposalListDefault } from './daoProposalListDefault';
 
-export interface IDaoProposalListContainerProps
-    extends Pick<IPluginTabComponentProps<IDaoPlugin>, 'value' | 'onValueChange'> {
+export interface IDaoProposalListProps extends Pick<IPluginTabComponentProps<IDaoPlugin>, 'value' | 'onValueChange'> {
     /**
      * Parameters to use for fetching the proposal list.
      */
@@ -26,7 +25,7 @@ export interface IDaoProposalListContainerProps
     children?: ReactNode;
 }
 
-export const DaoProposalListContainer: React.FC<IDaoProposalListContainerProps> = (props) => {
+export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
     const { initialParams, ...otherProps } = props;
 
     const processPlugins = useDaoPlugins({
