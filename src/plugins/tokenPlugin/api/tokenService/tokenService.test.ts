@@ -1,5 +1,5 @@
 import { generateTokenLock } from './../../testUtils/generators/tokenLock';
-import { tokenService } from "@/plugins/tokenPlugin/api/tokenService/tokenService";
+import { tokenService } from '../tokenService';
 
 describe('token service', () => {
     const requestSpy = jest.spyOn(tokenService, 'request');

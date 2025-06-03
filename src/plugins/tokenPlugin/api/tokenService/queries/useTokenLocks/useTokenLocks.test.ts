@@ -1,8 +1,8 @@
-import { useTokenLocks } from '@/plugins/tokenPlugin/api/tokenService/queries/useTokenLocks/useTokenLocks';
-import { tokenService } from '@/plugins/tokenPlugin/api/tokenService/tokenService';
 import { generatePaginatedResponse, ReactQueryWrapper } from '@/shared/testUtils';
 import { renderHook, waitFor } from '@testing-library/react';
+import { tokenService } from '../../tokenService';
 import { generateTokenLock } from './../../../../testUtils/generators/tokenLock';
+import { useTokenLocks } from './useTokenLocks';
 
 describe('useTokenLocks query', () => {
     const tokenServiceSpy = jest.spyOn(tokenService, 'getTokenLocks');

@@ -4,9 +4,10 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Tabs } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import type { ITokenPluginSettings, ITokenPluginSettingsToken } from '../../types';
+import type { ITokenPluginSettings } from '../../types';
 import { TokenDelegationForm } from './components/tokenDelegationForm';
 import { TokenWrapForm } from './components/tokenWrapForm';
+import { generateToken } from '@/modules/finance/testUtils';
 
 export interface ITokenMemberPanelProps {
     /**
@@ -25,26 +26,29 @@ enum TokenMemberPanelTab {
     LOCK = 'LOCK',
 }
 
-const getTabsDefinitions = (token: ITokenPluginSettingsToken) => [
-    { value: TokenMemberPanelTab.WRAP, hidden: token.underlying == null },
+const dummyToken = generateToken({ symbol: 'DUMMY', totalSupply: '10000' });
+
+const getTabsDefinitions = (settings: ITokenPluginSettings) => [
+    // { value: TokenMemberPanelTab.WRAP, hidden: settings.votingEscrow ?? settings.token.underlying == null },
+    // { value: TokenMemberPanelTab.LOCK, hidden: !settings.votingEscrow },
+    { value: TokenMemberPanelTab.WRAP, hidden: true },
     { value: TokenMemberPanelTab.LOCK, hidden: false },
-    { value: TokenMemberPanelTab.DELEGATE, hidden: !token.hasDelegate },
+    //{ value: TokenMemberPanelTab.DELEGATE, hidden: !settings.token.hasDelegate },
+    { value: TokenMemberPanelTab.DELEGATE, hidden: false },
 ];
 
 export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const { plugin, daoId } = props;
 
-    const { token } = plugin.settings;
+    const token = { ...dummyToken, underlying: null, hasDelegate: true };
     const { underlying } = token;
-
-    console.log('TOKEN =>', plugin);
 
     const { t } = useTranslations();
 
     const initialSelectedTab = underlying != null ? TokenMemberPanelTab.WRAP : TokenMemberPanelTab.DELEGATE;
     const [selectedTab, setSelectedTab] = useState<string | undefined>(initialSelectedTab);
 
-    const visibleTabs = getTabsDefinitions(token).filter((tab) => !tab.hidden);
+    const visibleTabs = getTabsDefinitions(plugin.settings).filter((tab) => !tab.hidden);
 
     // Remove the "g" and "Governance" prefixes from the token symbol / name
     const underlyingToken = {

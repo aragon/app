@@ -1,6 +1,8 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import type { IToken } from '@/modules/finance/api/financeService';
 import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
+import { generateToken } from '@/modules/finance/testUtils';
+import { useTokenLocks } from '@/plugins/tokenPlugin/api/tokenService';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -21,7 +23,7 @@ export interface ITokenLockFormProps {
      */
     daoId: string;
     /**
-     * Underlying token of the lock governance token.
+     * Underlying token of the locked governance token.
      */
     underlyingToken: IToken;
 }
@@ -30,16 +32,38 @@ export interface ITokenLockFormData extends IAssetInputFormData {}
 
 const valuePercentages = ['0', '25', '50', '75', '100'];
 
+const dummyToken = generateToken({ symbol: 'DUMMY', totalSupply: '10000' });
+
+const dummyVeSettings = {
+    minDeposit: '1000',
+    minLockTime: 7 * 24 * 60 * 60,
+    cooldown: 7 * 24 * 60 * 60,
+    warmupPeriod: 3 * 24 * 60 * 60,
+    maxTime: 365 * 24 * 60 * 60,
+    slope: 0.1,
+};
+
 export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { plugin, daoId, underlyingToken } = props;
 
-    const { token } = plugin.settings;
+    const token = useMemo(() => ({ ...dummyToken, underlying: null, hasDelegate: true }), []);
     const { decimals } = token;
+
     const underlyingAddress = underlyingToken.address as Hex;
+
+    const minDepositWei = useMemo(() => parseUnits(dummyVeSettings.minDeposit, decimals), [decimals]);
 
     const { t } = useTranslations();
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
+
+    const lockParams = {
+        urlParams: { address: address! },
+        queryParams: { pluginAddress: plugin.address },
+    };
+    const { data: lockData } = useTokenLocks(lockParams, { enabled: !!address });
+
+    const lockCount = lockData?.pages[0]?.metadata.totalRecords ?? 0;
 
     const [percentageValue, setPercentageValue] = useState<string>('100');
 
@@ -56,23 +80,22 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         chainId,
     });
 
-    console.log('Token allowance:', tokenAllowance);
-
     const { data: unlockedBalance, status: unlockedBalanceStatus } = useBalance({
         address,
         token: underlyingAddress,
         chainId,
+        query: {
+            initialData: { value: BigInt(5000), decimals: token.decimals, symbol: token.symbol, formatted: '5,000' },
+            enabled: false,
+        },
     });
 
     const parsedUnlockedAmount = formatUnits(unlockedBalance?.value ?? BigInt(0), decimals);
 
-    const userAsset = useMemo(
-        () => ({ token: underlyingToken, amount: parsedUnlockedAmount }),
-        [underlyingToken, parsedUnlockedAmount],
-    );
+    const userAsset = useMemo(() => ({ token, amount: parsedUnlockedAmount }), [token, parsedUnlockedAmount]);
 
     const formValues = useForm<ITokenLockFormData>({ mode: 'onSubmit', defaultValues: { asset: userAsset } });
-    const { control, setValue, handleSubmit } = formValues;
+    const { control, setValue, handleSubmit, setError, clearErrors } = formValues;
 
     const lockAmount = useWatch<ITokenLockFormData, 'amount'>({ control, name: 'amount' });
     const lockAmountWei = parseUnits(lockAmount ?? '0', token.decimals);
@@ -80,8 +103,8 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const needsApproval = isConnected && (tokenAllowance == null || tokenAllowance < lockAmountWei);
 
     const handleFormSubmit = () => {
-        console.log('Form submitted with values:', formValues.getValues());
-        console.log('Needs approval:', needsApproval);
+        // TODO: Handle submit
+        console.log(needsApproval);
     };
 
     const updateAmountField = useCallback(
@@ -91,10 +114,23 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
             }
 
             const processedValue = (unlockedBalance.value * BigInt(value)) / BigInt(100);
+
+            if (processedValue < minDepositWei) {
+                setError('amount', {
+                    type: 'validate',
+                    message: t('app.plugins.token.tokenLockForm.minDepositError', {
+                        minDeposit: dummyVeSettings.minDeposit,
+                        symbol: token.symbol,
+                    }),
+                });
+            } else {
+                clearErrors('amount');
+            }
+
             const parsedValue = formatUnits(processedValue, decimals);
             setValue('amount', parsedValue);
         },
-        [unlockedBalance, decimals, setValue],
+        [unlockedBalance, decimals, setValue, setError, clearErrors, minDepositWei, t, token.symbol],
     );
 
     const handlePercentageChange = useCallback(
@@ -106,7 +142,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     );
 
     const handleViewLocks = () => {
-        console.log('Handle view locks');
+        // TODO: Handle view locks
     };
 
     // Update amount field and percentage value to 100% of user unlocked balance on user balance change
@@ -119,9 +155,22 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         }
     }, [setValue, unlockedBalanceStatus, userAsset]);
 
-    const disableSubmit = unlockedBalance?.value === BigInt(0);
+    // Trigger validation if user manually enters amount in input
+    useEffect(() => {
+        if (lockAmountWei < minDepositWei) {
+            setError('amount', {
+                type: 'minDeposit',
+                message: t('app.plugins.token.tokenLockForm.minDepositError', {
+                    minDeposit: dummyVeSettings.minDeposit,
+                    symbol: token.symbol,
+                }),
+            });
+        } else {
+            clearErrors('amount');
+        }
+    }, [lockAmountWei, minDepositWei, setError, clearErrors, t, token.symbol]);
 
-    const lockCount = 3; // Placeholder for lock count
+    const disableSubmit = unlockedBalance?.value === BigInt(0);
 
     return (
         <FormProvider {...formValues}>
@@ -157,15 +206,17 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                         size="lg"
                     >
                         {t(`app.plugins.token.tokenLockForm.submit.lock`, {
-                            underlyingSymbol: underlyingToken.symbol,
+                            symbol: token.symbol,
                         })}
                     </Button>
 
-                    <Button variant="secondary" size="lg" onClick={handleViewLocks}>
-                        {t('app.plugins.token.tokenLockForm.locks', {
-                            count: lockCount,
-                        })}
-                    </Button>
+                    {lockCount > 0 && (
+                        <Button variant="secondary" size="lg" onClick={handleViewLocks}>
+                            {t('app.plugins.token.tokenLockForm.locks', {
+                                count: lockCount,
+                            })}
+                        </Button>
+                    )}
 
                     <p className="text-center text-sm font-normal leading-normal text-neutral-500">
                         {t('app.plugins.token.tokenLockForm.footerInfo')}

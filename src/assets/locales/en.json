@@ -1290,6 +1290,7 @@
         "tokenLockForm": {
           "footerInfo": "Locking tokens will transfer them out of your wallet to the locking contract, where they can be withdrawn back to your wallet after the minimum locktime.",
           "locks": "View {{count}} locks",
+          "minDepositError": "Lock amount must be at least {{minDeposit}} {{symbol}}",
           "percentage": {
             "0": "None",
             "100": "100%",
@@ -1298,7 +1299,7 @@
             "75": "75%"
           },
           "submit": {
-            "lock": "Lock {{underlyingSymbol}}",
+            "lock": "Lock {{symbol}}",
             "unlock": "Unlock {{amount}} {{symbol}}"
           }
         },

@@ -2,6 +2,33 @@ import type { IPluginSettings } from '@/shared/api/daoService';
 import type { DaoTokenVotingMode } from './enum';
 import type { ITokenPluginSettingsToken } from './tokenPluginSettingsToken';
 
+interface EscrowSettings {
+    /**
+     * The minimum deposit required to lock.
+     */
+    minDeposit: string;
+    /**
+     * The minimum lock time.
+     */
+    minLockTime: number;
+    /**
+     * The cooldown period.
+     */
+    cooldown: number;
+    /**
+     * The warmup period.
+     */
+    warmupPeriod: number;
+    /**
+     * The maximum time the lock can be active.
+     */
+    maxTime: number;
+    /**
+     * The slope of the lock.
+     */
+    slope: number;
+}
+
 export interface ITokenPluginSettings extends IPluginSettings {
     /**
      * Amount of tokens that need to vote "Yes" for a proposal to pass.
@@ -31,4 +58,8 @@ export interface ITokenPluginSettings extends IPluginSettings {
      * Total supply of the token only set when settings are fetched for a specific block number (e.g. settings when a proposal was created)
      */
     historicalTotalSupply?: string;
+    /**
+     * The settings of the voting escrow
+     */
+    votingEscrow?: EscrowSettings;
 }

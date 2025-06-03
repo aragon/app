@@ -1,6 +1,6 @@
-import type { ITokenLock } from '@/plugins/tokenPlugin/api/tokenService/domain/tokenLock';
-import type { IGetTokenLocksParams } from '@/plugins/tokenPlugin/api/tokenService/tokenService.api';
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
+import type { ITokenLock } from './domain';
+import type { IGetTokenLocksParams } from './tokenService.api';
 
 class TokenService extends AragonBackendService {
     private urls = {
