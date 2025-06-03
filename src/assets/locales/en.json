@@ -806,6 +806,9 @@
         "groupTab": "All proposals"
       },
       "daoProposalsPage": {
+        "aside": {
+          "stats": "All proposals"
+        },
         "main": {
           "action": "Proposal",
           "title": "Proposals"
