@@ -37,7 +37,7 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const { token } = plugin.settings;
     const { underlying } = token;
 
-    console.log('TOKEN =>', token);
+    console.log('TOKEN =>', plugin);
 
     const { t } = useTranslations();
 

@@ -3,7 +3,6 @@ import type {
     IGetCanVoteParams,
     IGetMemberExistsParams,
     IGetMemberListParams,
-    IGetMemberLocksParams,
     IGetMemberParams,
     IGetProposalActionsParams,
     IGetProposalBySlugParams,
@@ -20,7 +19,6 @@ export enum GovernanceServiceKey {
     MEMBER_LIST = 'MEMBER_LIST',
     MEMBER = 'MEMBER',
     MEMBER_EXISTS = 'MEMBER_EXISTS',
-    MEMBER_LOCKS = 'MEMBER_LOCKS',
     VOTE_LIST = 'VOTE_LIST',
 }
 
@@ -33,6 +31,5 @@ export const governanceServiceKeys = {
     memberList: (params: IGetMemberListParams) => [GovernanceServiceKey.MEMBER_LIST, params],
     member: (params: IGetMemberParams) => [GovernanceServiceKey.MEMBER, params],
     memberExists: (params: IGetMemberExistsParams) => [GovernanceServiceKey.MEMBER_EXISTS, params],
-    memberLocks: (params: IGetMemberLocksParams) => [GovernanceServiceKey.MEMBER_LOCKS, params],
     voteList: (params: IGetVoteListParams) => [GovernanceServiceKey.VOTE_LIST, params],
 };

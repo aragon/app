@@ -1,11 +1,10 @@
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
-import type { IMember, IMemberLock, IProposal, IProposalAction, IProposalActionsResult, IVote } from './domain';
+import type { IMember, IProposal, IProposalAction, IProposalActionsResult, IVote } from './domain';
 import type {
     IGetCanCreateProposalParams,
     IGetCanVoteParams,
     IGetMemberExistsParams,
     IGetMemberListParams,
-    IGetMemberLocksParams,
     IGetMemberParams,
     IGetProposalActionsParams,
     IGetProposalBySlugParams,
@@ -18,7 +17,6 @@ class GovernanceService extends AragonBackendService {
         members: '/members',
         member: '/members/:address',
         memberExists: '/members/:memberAddress/:pluginAddress/exists',
-        memberLocks: '/members/:address/locks',
         proposals: '/proposals',
         proposalBySlug: '/proposals/slug/:slug',
         proposalActions: '/proposals/:id/actions',
@@ -44,13 +42,6 @@ class GovernanceService extends AragonBackendService {
     getMemberExists = async (params: IGetMemberExistsParams): Promise<boolean> => {
         const result = await this.request<boolean>(this.urls.memberExists, params);
 
-        return result;
-    };
-
-    getMemberLocks = async <TLock extends IMemberLock = IMemberLock>(
-        params: IGetMemberLocksParams,
-    ): Promise<IPaginatedResponse<TLock>> => {
-        const result = await this.request<IPaginatedResponse<TLock>>(this.urls.memberLocks, params);
         return result;
     };
 

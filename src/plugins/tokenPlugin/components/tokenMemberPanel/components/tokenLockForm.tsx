@@ -41,11 +41,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    // const lockParams = { daoId, pluginAddress: plugin.address };
-    // const { data: lockList } = useMemberLocks({ urlParams: { address: address ?? '' }, queryParams: lockParams });
-
-    // console.log('Lock list:', lockList);
-
     const [percentageValue, setPercentageValue] = useState<string>('100');
 
     const { result: isConnected, check: walletGuard } = useConnectedWalletGuard();
