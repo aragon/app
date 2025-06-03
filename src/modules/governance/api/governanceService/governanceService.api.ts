@@ -152,5 +152,3 @@ export interface IGetProposalActionsUrlParams {
 }
 
 export interface IGetProposalActionsParams extends IRequestUrlParams<IGetProposalActionsUrlParams> {}
-
-

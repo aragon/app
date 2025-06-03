@@ -1,3 +1,4 @@
+import { TokenLockForm } from '@/plugins/tokenPlugin/components/tokenMemberPanel/components/tokenLockForm';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -6,7 +7,6 @@ import { useState } from 'react';
 import type { ITokenPluginSettings, ITokenPluginSettingsToken } from '../../types';
 import { TokenDelegationForm } from './components/tokenDelegationForm';
 import { TokenWrapForm } from './components/tokenWrapForm';
-import { TokenLockForm } from '@/plugins/tokenPlugin/components/tokenMemberPanel/components/tokenLockForm';
 
 export interface ITokenMemberPanelProps {
     /**
