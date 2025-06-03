@@ -25,6 +25,9 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
     const defaultStageName = t('app.plugins.spp.sppProposalListItem.stage', { stageIndex: stageIndex + 1 });
     const statusContext = settings.stages.length > 1 ? (currentStage.name ?? defaultStageName) : undefined;
 
+    const proposalLink = daoUtils.getDaoUrl(dao, `proposals/${proposalSlug}`);
+    const publisherLink = daoUtils.getDaoUrl(dao, `members/${creator.address}`);
+
     return (
         <ProposalDataListItem.Structure
             className="min-w-0"
@@ -32,14 +35,10 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
             title={title}
             summary={summary}
             date={proposalDate}
-            href={daoUtils.getDaoUrl(dao, `proposals/${proposalSlug}`)}
+            href={proposalLink}
             status={proposalStatus}
             statusContext={statusContext}
-            publisher={{
-                address: creator.address,
-                name: creator.ens ?? undefined,
-                link: `members/${creator.address}`,
-            }}
+            publisher={{ address: creator.address, name: creator.ens ?? undefined, link: publisherLink }}
         />
     );
 };

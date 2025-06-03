@@ -81,7 +81,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                 <Page.Main>
                     {hasSupportedPlugins && (
                         <Page.MainSection title={t('app.dashboard.daoDashboardPage.main.proposals.title')}>
-                            <DaoProposalList.Container initialParams={proposalListParams} hidePagination={true}>
+                            <DaoProposalList initialParams={proposalListParams} hidePagination={true}>
                                 <Button
                                     className="self-start"
                                     variant="tertiary"
@@ -91,7 +91,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                 >
                                     {t('app.dashboard.daoDashboardPage.main.viewAll')}
                                 </Button>
-                            </DaoProposalList.Container>
+                            </DaoProposalList>
                         </Page.MainSection>
                     )}
                     {hasSupportedPlugins && (

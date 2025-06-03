@@ -2,16 +2,10 @@ import {
     type ISppProposalListItemProps,
     SppProposalListItem,
 } from '@/plugins/sppPlugin/components/sppProposalListItem/sppProposalListItem';
-import { Network } from '@/shared/api/daoService';
-import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
+import { generateDao } from '@/shared/testUtils';
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import {
-    generateSppPluginSettings,
-    generateSppProposal,
-    generateSppStage,
-    generateSppSubProposal,
-} from '../../testUtils';
+import { generateSppPluginSettings, generateSppProposal, generateSppStage } from '../../testUtils';
 import { sppProposalUtils } from '../../utils/sppProposalUtils';
 
 describe('<SppProposalListItem /> component', () => {
@@ -23,9 +17,9 @@ describe('<SppProposalListItem /> component', () => {
 
     const createTestComponent = (props?: Partial<ISppProposalListItemProps>) => {
         const completeProps: ISppProposalListItemProps = {
+            dao: generateDao(),
             proposal: generateSppProposal(),
-            daoId: 'ethereum-mainnet-0x123',
-            plugin: generateDaoPlugin(),
+            proposalSlug: 'spp-1',
             ...props,
         };
 
@@ -36,67 +30,31 @@ describe('<SppProposalListItem /> component', () => {
         );
     };
 
-    it('renders the spp proposal', () => {
-        const subProposals = [generateSppSubProposal()];
-        const settings = generateSppPluginSettings({ stages: [generateSppStage()] });
-        const proposal = generateSppProposal({
-            subProposals,
-            settings,
-        });
+    it('renders the SPP proposal', () => {
+        const proposal = generateSppProposal({ title: 'SPP Proposal' });
         render(createTestComponent({ proposal }));
         expect(screen.getByText(proposal.title)).toBeInTheDocument();
     });
 
     it('sets the correct link for proposal page', () => {
-        const plugin = generateDaoPlugin({ slug: 'spp' });
-        const subProposals = [generateSppSubProposal()];
-        const settings = generateSppPluginSettings({ stages: [generateSppStage()] });
-        const proposal = generateSppProposal({
-            subProposals,
-            settings,
-            incrementalId: 5,
-        });
-        const daoAddress = '0x12345';
-        const daoNetwork = Network.ETHEREUM_MAINNET;
-        const daoId = `${daoNetwork}-${daoAddress}`;
-        const dao = generateDao({
-            id: daoId,
-            address: daoAddress,
-            network: daoNetwork,
-        });
-        render(createTestComponent({ plugin, proposal, dao }));
-        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(
-            `/dao/${daoNetwork}/${daoAddress}/proposals/SPP-5`,
-        );
+        const proposalSlug = 'SPP-5';
+        render(createTestComponent({ proposalSlug }));
+        expect(screen.getAllByRole('link')[0].getAttribute('href')).toMatch('proposals/SPP-5');
     });
 
-    it('displays the stage name in status context when proposal is multistage and appropriate for status', () => {
-        const subProposals = [generateSppSubProposal()];
-        const settings = generateSppPluginSettings({
-            stages: [generateSppStage({ name: 'stage-name' }), generateSppStage()],
-        });
-        const proposal = generateSppProposal({
-            subProposals,
-            settings,
-        });
+    it('renders the stage name in status context when proposal is multistage', () => {
+        const stages = [generateSppStage({ name: 'stage-name' }), generateSppStage()];
+        const proposal = generateSppProposal({ stageIndex: 0, settings: generateSppPluginSettings({ stages }) });
         getProposalStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
         render(createTestComponent({ proposal }));
-        expect(screen.getByText('stage-name')).toBeInTheDocument();
+        expect(screen.getByText(stages[0].name!)).toBeInTheDocument();
     });
 
-    it('displays "Stage" with number in status context when proposal is multistage and no stage name is returned', () => {
-        const subProposals = [generateSppSubProposal(), generateSppSubProposal(), generateSppSubProposal()];
-        const settings = generateSppPluginSettings({
-            stages: [generateSppStage(), generateSppStage({ name: undefined }), generateSppStage()],
-        });
-        const proposal = generateSppProposal({
-            subProposals,
-            settings,
-            stageIndex: 1,
-        });
+    it('renders default stage label with index in status context when proposal is multistage and active stage has no name', () => {
+        const stages = [generateSppStage({ name: 'first-stage' }), generateSppStage({ name: undefined })];
+        const proposal = generateSppProposal({ stageIndex: 1, settings: generateSppPluginSettings({ stages }) });
         getProposalStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
         render(createTestComponent({ proposal }));
-
-        expect(screen.getByText(/spp.sppProposalListItem.stage \(stageIndex=2/)).toBeInTheDocument();
+        expect(screen.getByText(/sppProposalListItem.stage \(stageIndex=2/)).toBeInTheDocument();
     });
 });

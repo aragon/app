@@ -15,6 +15,14 @@ export interface IGetProposalListQueryParams extends IPaginatedRequest, IOrdered
      * Filter proposals by creator address.
      */
     creatorAddress?: string;
+    /**
+     * Filters proposals for their sub-proposal status when set.
+     */
+    isSubProposal?: boolean;
+    /**
+     * Filters proposals for their executed status when set.
+     */
+    isExecuted?: boolean;
 }
 
 export interface IGetProposalListParams extends IRequestQueryParams<IGetProposalListQueryParams> {}

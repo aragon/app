@@ -31,7 +31,8 @@ describe('<DaoProposalListDefaultItem /> component', () => {
     const createTestComponent = (props?: Partial<IDaoProposalListDefaultItemProps>) => {
         const completeProps: IDaoProposalListDefaultItemProps = {
             proposal: generateProposal(),
-            daoId: 'dao-test',
+            dao: generateDao(),
+            proposalSlug: 'admin-1',
             ...props,
         };
 
