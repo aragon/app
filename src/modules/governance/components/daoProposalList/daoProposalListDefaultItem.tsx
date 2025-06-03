@@ -4,6 +4,7 @@ import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ProposalDataListItem, type ProposalStatus } from '@aragon/gov-ui-kit';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { useUserVote } from '../../hooks/useUserVote';
 
 export interface IDaoProposalListDefaultItemProps<TProposal extends IProposal = IProposal> {
     /**
@@ -25,6 +26,8 @@ export const DaoProposalListDefaultItem: React.FC<IDaoProposalListDefaultItemPro
 
     const { id, title, summary, executed, endDate, creator, pluginSubdomain: pluginId } = proposal;
 
+    const userVote = useUserVote({ proposal });
+
     const slotId = GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS;
     const proposalStatus = useSlotSingleFunction<IProposal, ProposalStatus>({ params: proposal, slotId, pluginId })!;
 
@@ -44,6 +47,7 @@ export const DaoProposalListDefaultItem: React.FC<IDaoProposalListDefaultItemPro
             summary={summary}
             date={processedEndDate}
             href={proposalHref}
+            voted={userVote != null}
             publisher={{ address: creator.address, link: publisherHref, name: publisherName }}
         />
     );

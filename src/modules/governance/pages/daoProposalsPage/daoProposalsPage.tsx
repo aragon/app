@@ -28,8 +28,8 @@ export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (props) 
 
     const processPlugins = daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS })!;
 
-    const pluginAddressParam = processPlugins.length > 1 ? undefined : processPlugins[0].address;
-    const proposalListQueryParams = { daoId, pageSize: daoProposalsCount, pluginAddress: pluginAddressParam };
+    const pluginAddress = processPlugins.length > 1 ? undefined : processPlugins[0].address;
+    const proposalListQueryParams = { daoId, pageSize: daoProposalsCount, pluginAddress, sort: 'blockTimestamp' };
     const proposalListParams = { queryParams: proposalListQueryParams };
     await queryClient.prefetchInfiniteQuery(proposalListOptions(proposalListParams));
 

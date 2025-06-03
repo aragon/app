@@ -1,11 +1,3 @@
-import { DaoProposalListContainer } from './daoProposalListContainer';
-import { DaoProposalListDefault } from './daoProposalListDefault';
-
-export const DaoProposalList = {
-    Container: DaoProposalListContainer,
-    Default: DaoProposalListDefault,
-};
-
-export type { IDaoProposalListContainerProps } from './daoProposalListContainer';
+export { DaoProposalList, type IDaoProposalListProps } from './daoProposalList';
 export type { IDaoProposalListDefaultProps } from './daoProposalListDefault';
 export type { IDaoProposalListDefaultItemProps } from './daoProposalListDefaultItem';
