@@ -1299,8 +1299,24 @@
             "75": "75%"
           },
           "submit": {
+            "approve": "Approve {{underlyingSymbol}}",
             "lock": "Lock {{symbol}}",
             "unlock": "Unlock {{amount}} {{symbol}}"
+          }
+        },
+        "tokenLockUnlockDialog": {
+          "lock": {
+            "cancel": "Cancel",
+            "description": "To lock your {{symbol}}, confirm the two onchain transactions in your wallet.",
+            "submit": "Lock",
+            "success": "View your veLock",
+            "title": "Lock {{symbol}}"
+          },
+          "unlock": {
+            "description": "To unlock your {{symbol}}, confirm the onchain transaction in your wallet.",
+            "submit": "Unlock {{symbol}}",
+            "success": "View locks",
+            "title": "Unlock {{symbol}}"
           }
         },
         "tokenMemberInfo": {

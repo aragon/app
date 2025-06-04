@@ -4,27 +4,27 @@ import type { ITokenPluginSettingsToken } from './tokenPluginSettingsToken';
 
 interface EscrowSettings {
     /**
-     * The minimum deposit required to lock.
+     * The minimum amount required to lock.
      */
     minDeposit: string;
     /**
-     * The minimum lock time.
+     * The minimum lock time before unlocking is available.
      */
     minLockTime: number;
     /**
-     * The cooldown period.
+     * The time in seconds between unlock and withdrawal.
      */
     cooldown: number;
     /**
-     * The warmup period.
+     * The warmup period before locks become active.
      */
     warmupPeriod: number;
     /**
-     * The maximum time the lock can be active.
+     * The maximum time the voting power can increase.
      */
     maxTime: number;
     /**
-     * The slope of the lock.
+     * The coefficient used to calculate the voting power increase over time.
      */
     slope: number;
 }

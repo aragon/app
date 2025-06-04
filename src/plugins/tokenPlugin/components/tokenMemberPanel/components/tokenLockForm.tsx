@@ -3,11 +3,16 @@ import type { IToken } from '@/modules/finance/api/financeService';
 import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
 import { generateToken } from '@/modules/finance/testUtils';
 import { useTokenLocks } from '@/plugins/tokenPlugin/api/tokenService';
+import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
+import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
+import type { ITokenLockUnlockDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenLockUnlockDialog';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { Button, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { erc20Abi, formatUnits, parseUnits, type Hex } from 'viem';
@@ -53,9 +58,11 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     const minDepositWei = useMemo(() => parseUnits(dummyVeSettings.minDeposit, decimals), [decimals]);
 
+    const { open } = useDialogContext();
     const { t } = useTranslations();
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const queryClient = useQueryClient();
 
     const lockParams = {
         urlParams: { address: address! },
@@ -71,7 +78,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     const { id: chainId } = networkDefinitions[dao!.network];
 
-    const { data: tokenAllowance } = useReadContract({
+    const { data: tokenAllowance, queryKey: allowanceQueryKey } = useReadContract({
         abi: erc20Abi,
         functionName: 'allowance',
         address: underlyingAddress,
@@ -80,7 +87,11 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         chainId,
     });
 
-    const { data: unlockedBalance, status: unlockedBalanceStatus } = useBalance({
+    const {
+        data: unlockedBalance,
+        queryKey: unlockedBalanceKey,
+        status: unlockedBalanceStatus,
+    } = useBalance({
         address,
         token: underlyingAddress,
         chainId,
@@ -102,10 +113,40 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     const needsApproval = isConnected && (tokenAllowance == null || tokenAllowance < lockAmountWei);
 
-    const handleFormSubmit = () => {
-        // TODO: Handle submit
-        console.log(needsApproval);
+    const handleTransactionSuccess = () => {
+        void queryClient.invalidateQueries({ queryKey: allowanceQueryKey });
+        void queryClient.invalidateQueries({ queryKey: unlockedBalanceKey });
     };
+
+    const handleFormSubmit = () => {
+        const dialogType = needsApproval ? 'approve' : 'lock';
+        const dialogProps = getDialogProps(lockAmountWei);
+
+        if (dialogType === 'approve') {
+            const params: ITokenApproveTokensDialogParams = {
+                ...dialogProps,
+                onApproveSuccess: () => handleApproveSuccess(dialogProps), // open lock dialog with the same params!
+            };
+            open(TokenPluginDialogId.APPROVE_TOKENS, { params });
+        } else {
+            const params: ITokenLockUnlockDialogParams = { ...dialogProps, action: 'lock' };
+            open(TokenPluginDialogId.LOCK_UNLOCK, { params });
+        }
+    };
+
+    const handleApproveSuccess = (dialogProps: ReturnType<typeof getDialogProps>) => {
+        const params: ITokenLockUnlockDialogParams = { ...dialogProps, action: 'lock' };
+        open(TokenPluginDialogId.LOCK_UNLOCK, { params });
+    };
+
+    const getDialogProps = (confirmAmount: bigint) => ({
+        token,
+        underlyingToken,
+        amount: confirmAmount,
+        network: dao!.network,
+        onSuccess: handleTransactionSuccess,
+        spender: 've contract address' as Hex,
+    });
 
     const updateAmountField = useCallback(
         (value?: string) => {
@@ -170,6 +211,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         }
     }, [lockAmountWei, minDepositWei, setError, clearErrors, t, token.symbol]);
 
+    const submitLabel = needsApproval ? 'approve' : 'wrap';
     const disableSubmit = unlockedBalance?.value === BigInt(0);
 
     return (
@@ -192,7 +234,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                             <Toggle
                                 key={value}
                                 value={value}
-                                label={t(`app.plugins.token.tokenLockForm.percentage.${value}`)}
+                                label={t(`app.plugins.token.tokenLockUnlockForm.percentage.${value}`)}
                             />
                         ))}
                     </ToggleGroup>
@@ -205,21 +247,21 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                         variant="primary"
                         size="lg"
                     >
-                        {t(`app.plugins.token.tokenLockForm.submit.lock`, {
-                            symbol: token.symbol,
+                        {t(`app.plugins.token.tokenLockUnlockForm.submit.${submitLabel}`, {
+                            underlyingSymbol: underlyingToken.symbol,
                         })}
                     </Button>
 
                     {lockCount > 0 && (
                         <Button variant="secondary" size="lg" onClick={handleViewLocks}>
-                            {t('app.plugins.token.tokenLockForm.locks', {
+                            {t('app.plugins.token.tokenLockUnlockForm.locks', {
                                 count: lockCount,
                             })}
                         </Button>
                     )}
 
                     <p className="text-center text-sm font-normal leading-normal text-neutral-500">
-                        {t('app.plugins.token.tokenLockForm.footerInfo')}
+                        {t('app.plugins.token.tokenLockUnlockForm.footerInfo')}
                     </p>
                 </div>
             </form>
