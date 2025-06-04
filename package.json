@@ -1,6 +1,6 @@
 {
   "name": "@aragon/app-next",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Human-centered DAO infrastructure",
   "author": "Aragon Association",
   "homepage": "https://github.com/aragon/app-next#readme",
@@ -22,7 +22,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@aragon/gov-ui-kit": "0.0.0-20250528104441",
+    "@aragon/gov-ui-kit": "^1.7.0",
     "@floating-ui/react": "^0.27.9",
     "@reown/appkit": "^1.7.6",
     "@reown/appkit-adapter-wagmi": "^1.7.6",
