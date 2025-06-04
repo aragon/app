@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { IGetProposalListParams } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
+import { ProposalListStatistics } from '../../components/proposalListStatistics';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { ISelectPluginDialogParams } from '../../dialogs/selectPluginDialog';
 
@@ -87,7 +88,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
             </Page.Main>
             <Page.Aside>
                 <Page.AsideCard title={asideCardTitle}>
-                    {allProposalsSelected && <p>TODO</p>}
+                    {allProposalsSelected && <ProposalListStatistics dao={dao} />}
                     {!allProposalsSelected && (
                         <DaoPluginInfo plugin={selectedPlugin.meta} daoId={daoId} type={PluginType.PROCESS} />
                     )}
