@@ -1,5 +1,4 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
-import type { IToken } from '@/modules/finance/api/financeService';
 import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
 import { generateToken } from '@/modules/finance/testUtils';
 import { useTokenLocks } from '@/plugins/tokenPlugin/api/tokenService';
@@ -27,17 +26,17 @@ export interface ITokenLockFormProps {
      * ID of the DAO.
      */
     daoId: string;
-    /**
-     * Underlying token of the locked governance token.
-     */
-    underlyingToken: IToken;
 }
 
 export interface ITokenLockFormData extends IAssetInputFormData {}
 
 const valuePercentages = ['0', '25', '50', '75', '100'];
 
-const dummyToken = generateToken({ symbol: 'DUMMY', totalSupply: '10000' });
+const dummyToken = generateToken({
+    symbol: 'DUMMY',
+    totalSupply: '10000',
+    address: '0xEDc278C1DFAD001e875bb75064fC68099Ab65f88',
+});
 
 const dummyVeSettings = {
     minDeposit: '1000',
@@ -49,13 +48,13 @@ const dummyVeSettings = {
 };
 
 export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
-    const { plugin, daoId, underlyingToken } = props;
+    const { plugin, daoId } = props;
 
-    const token = useMemo(() => ({ ...dummyToken, underlying: null, hasDelegate: true }), []);
+    const token = useMemo(
+        () => ({ ...dummyToken, underlying: '0xEDc278C1DFAD001e875bb75064fC68099Ab65f88', hasDelegate: true }),
+        [],
+    );
     const { decimals } = token;
-
-    const underlyingAddress = underlyingToken.address as Hex;
-
     const minDepositWei = useMemo(() => parseUnits(dummyVeSettings.minDeposit, decimals), [decimals]);
 
     const { open } = useDialogContext();
@@ -64,10 +63,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const queryClient = useQueryClient();
 
-    const lockParams = {
-        urlParams: { address: address! },
-        queryParams: { pluginAddress: plugin.address },
-    };
+    const lockParams = { urlParams: { address: address! }, queryParams: { pluginAddress: plugin.address } };
     const { data: lockData } = useTokenLocks(lockParams, { enabled: !!address });
 
     const lockCount = lockData?.pages[0]?.metadata.totalRecords ?? 0;
@@ -81,11 +77,13 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { data: tokenAllowance, queryKey: allowanceQueryKey } = useReadContract({
         abi: erc20Abi,
         functionName: 'allowance',
-        address: underlyingAddress,
+        address: token.address as Hex,
         args: [address!, token.address as Hex],
         query: { enabled: address != null },
         chainId,
     });
+
+    console.log('tokenAllowance', tokenAllowance);
 
     const {
         data: unlockedBalance,
@@ -93,8 +91,9 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         status: unlockedBalanceStatus,
     } = useBalance({
         address,
-        token: underlyingAddress,
+        token: token.address as Hex,
         chainId,
+        // TODO: Remove when data is coming from the backend
         query: {
             initialData: { value: BigInt(5000), decimals: token.decimals, symbol: token.symbol, formatted: '5,000' },
             enabled: false,
@@ -125,6 +124,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         if (dialogType === 'approve') {
             const params: ITokenApproveTokensDialogParams = {
                 ...dialogProps,
+                translationNamespace: 'LOCK',
                 onApproveSuccess: () => handleApproveSuccess(dialogProps), // open lock dialog with the same params!
             };
             open(TokenPluginDialogId.APPROVE_TOKENS, { params });
@@ -133,20 +133,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
             open(TokenPluginDialogId.LOCK_UNLOCK, { params });
         }
     };
-
-    const handleApproveSuccess = (dialogProps: ReturnType<typeof getDialogProps>) => {
-        const params: ITokenLockUnlockDialogParams = { ...dialogProps, action: 'lock' };
-        open(TokenPluginDialogId.LOCK_UNLOCK, { params });
-    };
-
-    const getDialogProps = (confirmAmount: bigint) => ({
-        token,
-        underlyingToken,
-        amount: confirmAmount,
-        network: dao!.network,
-        onSuccess: handleTransactionSuccess,
-        spender: 've contract address' as Hex,
-    });
 
     const updateAmountField = useCallback(
         (value?: string) => {
@@ -185,6 +171,21 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const handleViewLocks = () => {
         // TODO: Handle view locks
     };
+
+    const handleApproveSuccess = (dialogProps: ReturnType<typeof getDialogProps>) => {
+        const params: ITokenLockUnlockDialogParams = { ...dialogProps, action: 'lock' };
+        open(TokenPluginDialogId.LOCK_UNLOCK, { params });
+    };
+
+    const getDialogProps = (confirmAmount: bigint) => ({
+        token,
+        underlyingToken: token,
+        amount: confirmAmount,
+        network: dao!.network,
+        onSuccess: handleTransactionSuccess,
+        // spender: token.address as Hex
+        spender: '0xe398B1b8863345Ce681E0f9246EeF168b538C8f6' as Hex,
+    });
 
     // Update amount field and percentage value to 100% of user unlocked balance on user balance change
     useEffect(() => handlePercentageChange('100'), [handlePercentageChange]);
@@ -234,7 +235,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                             <Toggle
                                 key={value}
                                 value={value}
-                                label={t(`app.plugins.token.tokenLockUnlockForm.percentage.${value}`)}
+                                label={t(`app.plugins.token.tokenLockForm.percentage.${value}`)}
                             />
                         ))}
                     </ToggleGroup>
@@ -247,21 +248,21 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                         variant="primary"
                         size="lg"
                     >
-                        {t(`app.plugins.token.tokenLockUnlockForm.submit.${submitLabel}`, {
-                            underlyingSymbol: underlyingToken.symbol,
+                        {t(`app.plugins.token.tokenLockForm.submit.${submitLabel}`, {
+                            symbol: token.symbol,
                         })}
                     </Button>
 
                     {lockCount > 0 && (
                         <Button variant="secondary" size="lg" onClick={handleViewLocks}>
-                            {t('app.plugins.token.tokenLockUnlockForm.locks', {
+                            {t('app.plugins.token.tokenLockForm.locks', {
                                 count: lockCount,
                             })}
                         </Button>
                     )}
 
                     <p className="text-center text-sm font-normal leading-normal text-neutral-500">
-                        {t('app.plugins.token.tokenLockUnlockForm.footerInfo')}
+                        {t('app.plugins.token.tokenLockForm.footerInfo')}
                     </p>
                 </div>
             </form>

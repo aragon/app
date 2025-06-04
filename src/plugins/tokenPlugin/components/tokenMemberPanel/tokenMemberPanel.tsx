@@ -45,7 +45,12 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const initialSelectedTab = underlying != null ? TokenMemberPanelTab.WRAP : TokenMemberPanelTab.DELEGATE;
+    const initialSelectedTab = plugin.settings.votingEscrow
+        ? TokenMemberPanelTab.LOCK
+        : underlying != null
+          ? TokenMemberPanelTab.WRAP
+          : TokenMemberPanelTab.DELEGATE;
+
     const [selectedTab, setSelectedTab] = useState<string | undefined>(initialSelectedTab);
 
     const visibleTabs = getTabsDefinitions(plugin.settings).filter((tab) => !tab.hidden);
@@ -77,7 +82,7 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
                     ))}
                 </Tabs.List>
                 <Tabs.Content value={TokenMemberPanelTab.LOCK}>
-                    <TokenLockForm daoId={daoId} plugin={plugin} underlyingToken={underlyingToken} />
+                    <TokenLockForm daoId={daoId} plugin={plugin} />
                 </Tabs.Content>
                 <Tabs.Content value={TokenMemberPanelTab.WRAP}>
                     <TokenWrapForm daoId={daoId} plugin={plugin} underlyingToken={underlyingToken} />

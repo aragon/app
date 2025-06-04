@@ -1235,10 +1235,18 @@
           "UpdateVoteSettings": "Update settings"
         },
         "tokenApproveTokensDialog": {
-          "description": "To approve wrapping your tokens, confirm the onchain transaction in your wallet.",
-          "submit": "Approve tokens",
-          "success": "Wrap tokens",
-          "title": "Approve wrapping"
+          "LOCK": {
+            "description": "To approve locking your tokens, confirm the onchain transaction in your wallet.",
+            "submit": "Approve tokens",
+            "success": "Lock tokens",
+            "title": "Approve locking"
+          },
+          "WRAP": {
+            "description": "To approve wrapping your tokens, confirm the onchain transaction in your wallet.",
+            "submit": "Approve tokens",
+            "success": "Wrap tokens",
+            "title": "Approve wrapping"
+          }
         },
         "tokenCreateProposalSettingsForm": {
           "endTime": {
@@ -1299,7 +1307,7 @@
             "75": "75%"
           },
           "submit": {
-            "approve": "Approve {{underlyingSymbol}}",
+            "approve": "Approve {{symbol}}",
             "lock": "Lock {{symbol}}",
             "unlock": "Unlock {{amount}} {{symbol}}"
           }

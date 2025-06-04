@@ -43,6 +43,10 @@ export interface ITokenApproveTokensDialogParams {
      * First argument of the approve function, which is the address of the spender.
      */
     spender: Hex;
+    /**
+     * Translation namespace for the dialog.
+     */
+    translationNamespace: 'WRAP' | 'LOCK';
 }
 
 export interface ITokenApproveTokensDialogProps extends IDialogComponentProps<ITokenApproveTokensDialogParams> {}
@@ -54,7 +58,8 @@ export const TokenApproveTokensDialog: React.FC<ITokenApproveTokensDialogProps> 
     const { address } = useAccount();
     invariant(address != null, 'TokenApproveTokensDialog: user must be connected.');
 
-    const { token, underlyingToken, amount, network, onApproveSuccess, onSuccess, spender } = location.params;
+    const { token, underlyingToken, amount, network, onApproveSuccess, onSuccess, spender, translationNamespace } =
+        location.params;
 
     const { t } = useTranslations();
 
@@ -72,15 +77,15 @@ export const TokenApproveTokensDialog: React.FC<ITokenApproveTokensDialogProps> 
 
     return (
         <TransactionDialog
-            title={t('app.plugins.token.tokenApproveTokensDialog.title')}
-            description={t('app.plugins.token.tokenApproveTokensDialog.description')}
-            submitLabel={t('app.plugins.token.tokenApproveTokensDialog.submit')}
+            title={t(`app.plugins.token.tokenApproveTokensDialog.${translationNamespace}.title`)}
+            description={t(`app.plugins.token.tokenApproveTokensDialog.${translationNamespace}.description`)}
+            submitLabel={t(`app.plugins.token.tokenApproveTokensDialog.${translationNamespace}.submit`)}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
             network={network}
             onSuccess={onSuccess}
             successLink={{
-                label: t('app.plugins.token.tokenApproveTokensDialog.success'),
+                label: t(`app.plugins.token.tokenApproveTokensDialog.${translationNamespace}.success`),
                 onClick: onSuccessClick,
             }}
         >
