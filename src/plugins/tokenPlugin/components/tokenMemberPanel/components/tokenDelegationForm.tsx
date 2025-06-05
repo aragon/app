@@ -157,7 +157,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
                 >
                     {t('app.plugins.token.tokenDelegationForm.submit')}
                 </Button>
-                <p className="text-center text-sm font-normal leading-normal text-neutral-500">
+                <p className="text-center text-sm leading-normal font-normal text-neutral-500">
                     {t('app.plugins.token.tokenDelegationForm.info')}
                 </p>
             </div>

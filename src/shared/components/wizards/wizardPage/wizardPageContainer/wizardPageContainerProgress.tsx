@@ -21,7 +21,7 @@ export const WizardPageContainerProgress = (props: IWizardPageContainerProgressP
     return (
         <div className="flex flex-col gap-1.5 md:gap-3">
             <div className="flex flex-row justify-between">
-                <div className="flex flex-row gap-1 text-base font-normal leading-tight">
+                <div className="flex flex-row gap-1 text-base leading-tight font-normal">
                     <span className="text-primary-400">
                         {t('app.shared.wizardPage.container.step', { number: activeStepIndex + 1 })}
                     </span>
@@ -30,7 +30,7 @@ export const WizardPageContainerProgress = (props: IWizardPageContainerProgressP
                     </span>
                 </div>
                 {nextStepName != null && (
-                    <div className="flex flex-row gap-1 text-base font-normal leading-tight">
+                    <div className="flex flex-row gap-1 text-base leading-tight font-normal">
                         <span className="text-neutral-500">{t('app.shared.wizardPage.container.next')}</span>
                         <span className="text-neutral-800">{nextStepName}</span>
                     </div>

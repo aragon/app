@@ -39,9 +39,9 @@ createAppKit({
         legalCheckbox: true,
     },
     themeVariables: {
-        '--w3m-font-family': 'var(--guk-font-family)',
-        '--w3m-accent': 'var(--guk-color-primary-400)',
-        '--w3m-color-mix': 'var(--guk-color-neutral-100)',
+        '--w3m-font-family': 'var(--font-sans)',
+        '--w3m-accent': 'var(--color-primary-400)',
+        '--w3m-color-mix': 'var(--color-neutral-100)',
         '--w3m-border-radius-master': '1.3px',
     },
     privacyPolicyUrl: 'https://www.aragon.org/privacy-policy',
