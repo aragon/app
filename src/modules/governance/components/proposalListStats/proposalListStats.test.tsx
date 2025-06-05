@@ -69,18 +69,18 @@ describe('<ProposalListStats /> component', () => {
 
         render(createTestComponent());
 
-        expect(screen.getByText(/stats.total/)).toBeInTheDocument();
+        expect(screen.getByText(/proposalListStats.total/)).toBeInTheDocument();
         expect(screen.getByText('20')).toBeInTheDocument();
 
-        expect(screen.getByText(/stats.executed/)).toBeInTheDocument();
+        expect(screen.getByText(/proposalListStats.executed/)).toBeInTheDocument();
         expect(screen.getByText('5')).toBeInTheDocument();
 
-        expect(screen.getByText(/stats.types/)).toBeInTheDocument();
+        expect(screen.getByText(/proposalListStats.types/)).toBeInTheDocument();
         expect(screen.getByText('2')).toBeInTheDocument();
 
-        expect(screen.getByText(/stats.mostRecent/)).toBeInTheDocument();
+        expect(screen.getByText(/proposalListStats.mostRecent/)).toBeInTheDocument();
         expect(screen.getByText('13')).toBeInTheDocument();
-        expect(screen.getByText('days ago')).toBeInTheDocument();
+        expect(screen.getByText(/proposalListStats.recentUnit/)).toBeInTheDocument();
     });
 
     it('renders "-" when data is missing', () => {
@@ -140,7 +140,7 @@ describe('<ProposalListStats /> component', () => {
         render(createTestComponent({ dao }));
 
         const button = screen.getByRole('link', {
-            name: /stats.button/,
+            name: /proposalListStats.button/,
         });
 
         expect(button).toBeInTheDocument();
