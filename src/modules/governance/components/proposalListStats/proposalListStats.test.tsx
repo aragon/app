@@ -23,7 +23,6 @@ describe('<ProposalListStats /> component', () => {
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
-
         useProposalListDataSpy.mockReturnValue({
             proposalList: [],
             onLoadMore: jest.fn(),
@@ -33,13 +32,15 @@ describe('<ProposalListStats /> component', () => {
             emptyState: { heading: '', description: '' },
             errorState: { heading: '', description: '' },
         });
-
         useDaoPluginsSpy.mockReturnValue([]);
         formatDateSpy.mockReturnValue('-');
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        useDaoSpy.mockReset();
+        useProposalListDataSpy.mockReset();
+        useDaoPluginsSpy.mockReset();
+        formatDateSpy.mockReset();
     });
 
     it('renders all stats with valid data and formatted relative date', () => {
@@ -111,5 +112,40 @@ describe('<ProposalListStats /> component', () => {
         render(createTestComponent());
 
         expect(screen.getAllByText('-')).toHaveLength(4);
+    });
+
+    it('renders settings button with correct href and label', () => {
+        const subdomain = 'testdao';
+        const mockDao = generateDao({ subdomain });
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: mockDao }));
+
+        useProposalListDataSpy
+            .mockReturnValueOnce({
+                proposalList: [generateProposal({ blockTimestamp: 1720000000 })],
+                onLoadMore: jest.fn(),
+                state: 'idle',
+                pageSize: 10,
+                itemsCount: 1,
+                emptyState: { heading: '', description: '' },
+                errorState: { heading: '', description: '' },
+            })
+            .mockReturnValueOnce({
+                proposalList: [],
+                onLoadMore: jest.fn(),
+                state: 'idle',
+                pageSize: 10,
+                itemsCount: 1,
+                emptyState: { heading: '', description: '' },
+                errorState: { heading: '', description: '' },
+            });
+
+        render(createTestComponent());
+
+        const button = screen.getByRole('link', {
+            name: /stats.button/,
+        });
+
+        expect(button).toBeInTheDocument();
+        expect(button).toHaveAttribute('href', `/dao/ethereum-mainnet/${subdomain}.dao.eth/settings`);
     });
 });

@@ -87,7 +87,7 @@ export const ProposalListStats: React.FC<IProposalListStatsProps> = (props) => {
                     </div>
                 ))}
             </div>
-            <Button variant="tertiary" size="md" iconRight={IconType.CHEVRON_RIGHT} href={`/${daoUrl!}/settings`}>
+            <Button variant="tertiary" size="md" iconRight={IconType.CHEVRON_RIGHT} href={`${daoUrl!}/settings`}>
                 {t('app.governance.daoProposalsPage.aside.stats.button')}
             </Button>
         </div>
