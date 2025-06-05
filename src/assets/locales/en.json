@@ -807,7 +807,15 @@
       },
       "daoProposalsPage": {
         "aside": {
-          "stats": "All proposals"
+          "proposalListStats": {
+            "button": "View governance settings",
+            "executed": "Executed",
+            "heading": "All proposals",
+            "mostRecent": "Most recent",
+            "recentUnit": " {{unit}} ago",
+            "total": "Total",
+            "types": "Types"
+          }
         },
         "main": {
           "action": "Proposal",
