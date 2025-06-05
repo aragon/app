@@ -13,7 +13,7 @@ import { AddressInput, addressUtils, IconType, Link } from '@aragon/gov-ui-kit';
 import { AlertCard } from '@aragon/gov-ui-kit-original';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import type { Hash } from 'viem';
+import type { Hex } from 'viem';
 import { mainnet } from 'viem/chains';
 import { useGovernanceToken } from '../../hooks/useGovernanceToken';
 
@@ -63,10 +63,12 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
         },
     });
 
-    const { isError, isLoading, token, isDelegationCompatible, isGovernanceCompatible } = useGovernanceToken({
-        address: importTokenAddress as Hash,
+    const { isError, isLoading, data } = useGovernanceToken({
+        address: importTokenAddress as Hex,
         chainId: chainId ?? mainnet.id,
     });
+
+    const { token, isDelegationCompatible, isGovernanceCompatible } = data;
 
     const [tokenAddressInput, setTokenAddressInput] = useState<string | undefined>(importTokenAddress);
 
