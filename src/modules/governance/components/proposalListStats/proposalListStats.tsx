@@ -1,4 +1,4 @@
-import { useDao } from '@/shared/api/daoService';
+import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
@@ -10,15 +10,15 @@ export interface IProposalListStatsProps {
     /**
      * The DAO ID for which the proposal list statistics are being displayed.
      */
-    daoId: string;
+    dao: IDao;
 }
 
 export const ProposalListStats: React.FC<IProposalListStatsProps> = (props) => {
-    const { daoId } = props;
+    const { dao } = props;
+
+    const daoId = dao.id;
 
     const { t } = useTranslations();
-
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const daoUrl = daoUtils.getDaoUrl(dao);
 

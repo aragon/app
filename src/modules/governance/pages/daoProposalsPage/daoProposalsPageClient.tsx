@@ -88,7 +88,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
             </Page.Main>
             <Page.Aside>
                 <Page.AsideCard title={asideCardTitle}>
-                    {allProposalsSelected && <ProposalListStats daoId={daoId} />}
+                    {allProposalsSelected && <ProposalListStats dao={dao!} />}
                     {!allProposalsSelected && (
                         <DaoPluginInfo plugin={selectedPlugin.meta} daoId={daoId} type={PluginType.PROCESS} />
                     )}

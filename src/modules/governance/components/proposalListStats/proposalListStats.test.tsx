@@ -15,7 +15,7 @@ describe('<ProposalListStats /> component', () => {
 
     const createTestComponent = (props?: Partial<IProposalListStatsProps>) => {
         const completeProps: IProposalListStatsProps = {
-            daoId: 'test-dao',
+            dao: generateDao(),
             ...props,
         };
         return <ProposalListStats {...completeProps} />;
@@ -44,11 +44,9 @@ describe('<ProposalListStats /> component', () => {
     });
 
     it('renders all stats with valid data and formatted relative date', () => {
-        const mockProposal = generateProposal({ blockTimestamp: 1720000000 });
-
         useProposalListDataSpy
             .mockReturnValueOnce({
-                proposalList: [mockProposal],
+                proposalList: [generateProposal({ blockTimestamp: 1720000000 })],
                 onLoadMore: jest.fn(),
                 state: 'idle',
                 pageSize: 10,
@@ -115,9 +113,9 @@ describe('<ProposalListStats /> component', () => {
     });
 
     it('renders settings button with correct href and label', () => {
-        const subdomain = 'testdao';
-        const mockDao = generateDao({ subdomain });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: mockDao }));
+        const address = '0xTest';
+        const dao = generateDao({ address });
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
 
         useProposalListDataSpy
             .mockReturnValueOnce({
@@ -139,13 +137,13 @@ describe('<ProposalListStats /> component', () => {
                 errorState: { heading: '', description: '' },
             });
 
-        render(createTestComponent());
+        render(createTestComponent({ dao }));
 
         const button = screen.getByRole('link', {
             name: /stats.button/,
         });
 
         expect(button).toBeInTheDocument();
-        expect(button).toHaveAttribute('href', `/dao/ethereum-mainnet/${subdomain}.dao.eth/settings`);
+        expect(button).toHaveAttribute('href', `/dao/ethereum-mainnet/${address}/settings`);
     });
 });
