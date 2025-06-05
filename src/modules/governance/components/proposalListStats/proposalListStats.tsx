@@ -8,7 +8,7 @@ import { useProposalListData } from '../../hooks/useProposalListData';
 
 export interface IProposalListStatsProps {
     /**
-     * The DAO ID for which the proposal list statistics are being displayed.
+     * The DAO for which the proposal list statistics are being displayed.
      */
     dao: IDao;
 }
