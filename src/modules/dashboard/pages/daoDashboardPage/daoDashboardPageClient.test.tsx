@@ -10,7 +10,7 @@ import {
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import type * as GovUiKit from '@aragon/gov-ui-kit';
-import { addressUtils, clipboardUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
+import { addressUtils, clipboardUtils, GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { ReactNode } from 'react';
@@ -100,33 +100,6 @@ describe('<DaoDashboardPageClient /> component', () => {
 
         expect(screen.getByText(/dashboardDefaultHeader.stat.treasury/)).toBeInTheDocument();
         expect(screen.getByText('$4.73T')).toBeInTheDocument();
-    });
-
-    it('renders a dropdown with some DAO information to copy on the clipboard', async () => {
-        const dao = generateDao({ address: '0xCbC0eC10e302DD29C25dff712BC0d300978F26cE', subdomain: 'subdomain' });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
-        render(createTestComponent());
-
-        const dropdownButton = screen.getByRole('button', { name: daoUtils.getDaoEns(dao) });
-        expect(dropdownButton).toBeInTheDocument();
-
-        await userEvent.click(dropdownButton);
-        const ensItem = screen.getByRole('menuitem', { name: daoUtils.getDaoEns(dao) });
-        expect(ensItem).toBeInTheDocument();
-        await userEvent.click(ensItem);
-        expect(clipboardCopySpy).toHaveBeenCalledWith(daoUtils.getDaoEns(dao));
-
-        await userEvent.click(dropdownButton);
-        const addressItem = screen.getByRole('menuitem', { name: addressUtils.truncateAddress(dao.address) });
-        expect(addressItem).toBeInTheDocument();
-        await userEvent.click(addressItem);
-        expect(clipboardCopySpy).toHaveBeenCalledWith(dao.address);
-
-        await userEvent.click(dropdownButton);
-        const daoLinkItem = screen.getByRole('menuitem', { name: 'localhost/' });
-        expect(daoLinkItem).toBeInTheDocument();
-        await userEvent.click(daoLinkItem);
-        expect(clipboardCopySpy).toHaveBeenCalledWith('localhost/');
     });
 
     it('renders the DAO proposal list with a button to redirect to the proposals page when DAO has supported plugins', () => {
@@ -228,6 +201,18 @@ describe('<DaoDashboardPageClient /> component', () => {
         const daoCreationLink = screen.getByRole('link', { name: 'December 2023' });
         expect(daoCreationLink).toBeInTheDocument();
         expect(daoCreationLink).toHaveAttribute('href', expect.stringMatching(dao.transactionHash));
+    });
+
+    it('supports dao address and ens copy', async () => {
+        const dao = generateDao({ address: '0xeed34C7B9B9A7B16B26125650C0f7202D4018620', subdomain: 'test-dao' });
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
+        render(createTestComponent());
+        const clipboards = screen.getAllByTestId(IconType.COPY);
+        expect(clipboards.length).toBe(2);
+        await userEvent.click(clipboards[0]);
+        expect(clipboardCopySpy).toHaveBeenCalledWith(dao.address);
+        await userEvent.click(clipboards[1]);
+        expect(clipboardCopySpy).toHaveBeenCalledWith(daoUtils.getDaoEns(dao));
     });
 
     it('renders the dao links', () => {

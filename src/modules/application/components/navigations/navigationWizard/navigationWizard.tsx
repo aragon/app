@@ -45,8 +45,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
 
     const linkClassName = classNames(
         'items-center gap-3 rounded-full border border-neutral-100 p-4 text-neutral-300 transition-all',
-        'hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800',
-        'focus:outline-none focus-visible:ring focus-visible:ring-primary focus-visible:ring-offset',
+        'hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800 focus-ring-primary',
     );
 
     const wizardName = typeof name === 'string' ? t(name) : t(...name);
@@ -58,10 +57,10 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
                     <Icon icon={IconType.CLOSE} size="md" />
                 </Link>
                 <div className="flex min-w-0 flex-col gap-y-0.5">
-                    <p className="text-nowrap text-base leading-tight text-neutral-800">{wizardName}</p>
+                    <p className="text-base leading-tight text-nowrap text-neutral-800">{wizardName}</p>
                     {dao != null && (
                         <div className="flex items-center gap-x-2">
-                            <p className="truncate text-nowrap text-sm leading-tight text-neutral-500">{dao.name}</p>
+                            <p className="truncate text-sm leading-tight text-nowrap text-neutral-500">{dao.name}</p>
                             <DaoAvatar name={dao.name} src={daoAvatar} size="sm" />
                         </div>
                     )}

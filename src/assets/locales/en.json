@@ -21,7 +21,6 @@
           "cancel": "Cancel",
           "connect": "Connect"
         },
-        "app": "Aragon App",
         "auditLink": "https://github.com/aragon/osx/blob/main/audits/Halborn_AragonOSx_v1_4_Smart_Contract_Security_Assessment_Report_2025_01_03.pdf",
         "connect": "wants to connect to your wallet",
         "feature": {
@@ -61,7 +60,6 @@
       },
       "navigation": {
         "appLinks": {
-          "contact": "Feedback",
           "legacy": "Legacy app"
         }
       },
@@ -69,6 +67,9 @@
         "a11y": {
           "description": "This dialog provides key DAO details and links to governance, treasury, and community pages",
           "title": "DAO navigation menu"
+        },
+        "dialog": {
+          "explore": "Explore all DAOs"
         },
         "link": {
           "assets": "Assets",
@@ -93,7 +94,8 @@
         "a11y": {
           "description": "Information about the connected user",
           "title": "Connected user"
-        }
+        },
+        "disconnect": "Disconnect"
       }
     },
     "createDao": {
@@ -770,9 +772,6 @@
           }
         },
         "header": {
-          "action": {
-            "share": "Share"
-          },
           "breadcrumb": {
             "proposals": "Proposals"
           }
@@ -914,8 +913,6 @@
           "submit": "Submit vote",
           "success": "View proposal"
         },
-        "confirmationLabelApprove": "Voting to approve",
-        "confirmationLabelVeto": "Voting to veto",
         "description": "To submit your vote, confirm the onchain transaction in your wallet.",
         "title": "Submit vote"
       },
@@ -1038,9 +1035,10 @@
         },
         "multisigGovernanceSettings": {
           "anyWallet": "Any wallet",
-          "approvals": "{{min}} of {{max}} addresses that can approve",
+          "approvals": "{{min}} of {{max}} members",
           "members": "Multisig members",
           "minimumApproval": "Minimum approval",
+          "minimumVeto": "Minimum veto",
           "proposalCreation": "Proposal creation"
         },
         "multisigMembersInfo": {
@@ -1075,7 +1073,7 @@
           "memberCount": "of {{count}} members",
           "notApproved": "did not approve",
           "notVetoed": "did not veto",
-          "optimisticApprovalLabel": "veto approval",
+          "optimisticApprovalLabel": "veto",
           "vetoed": "vetoed"
         },
         "multisigRemoveMembersAction": {
@@ -1165,12 +1163,12 @@
             "submit": "Submit vote",
             "success": "View proposal"
           },
-          "confirmationLabel": {
-            "approve": "Voting to approve",
-            "veto": "Voting to veto"
-          },
           "description": "To submit your vote, confirm the onchain transaction in your wallet.",
-          "title": "Submit vote"
+          "title": "Submit vote",
+          "voteDescription": {
+            "approve": "to approve",
+            "veto": "to veto"
+          }
         },
         "sppStageStatus": {
           "button": {
@@ -1179,11 +1177,7 @@
             "vote": "Vote on proposal"
           },
           "expiredAdvance": "Proposal not advanced in time",
-          "expiredExecute": "Proposal not executed in time",
-          "maxAdvanceInfo": "left to advance",
-          "maxExecuteInfo": "left to execute",
-          "minAdvanceInfo": "until advanceable",
-          "minExecuteInfo": "until executable"
+          "expiredExecute": "Proposal not executed in time"
         },
         "sppVotingTerminalBodyBreakdownDefault": {
           "expired": {
@@ -1282,7 +1276,6 @@
           "submit": "Delegate voting power"
         },
         "tokenGovernanceSettings": {
-          "approval": "> {{approvalThreshold}}",
           "approvalThreshold": "Support threshold",
           "duration": "{{days}} days {{hours}} hours {{minutes}} minutes",
           "earlyExecution": "Early execution",
@@ -1292,6 +1285,8 @@
           "participation": "≥ {{participation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
           "proposalAccess": "Members with ≥ {{balance}} {{symbol}} voting power or balance",
           "proposalThreshold": "Proposal threshold",
+          "threshold": "> {{threshold}}",
+          "vetoThreshold": "Veto support threshold",
           "voteChange": "Vote change",
           "yes": "Enabled"
         },
@@ -1531,14 +1526,25 @@
           "options": {
             "abstain": "Abstain",
             "approveLabel": "approve",
-            "current": "Current",
+            "approveNoDescription": ", I don't approve",
+            "approveYesDescription": ", I approve",
             "label": "Do you want to {{label}} this proposal?",
             "no": "No",
             "vetoLabel": "veto",
+            "vetoNoDescription": ", I don't veto",
+            "vetoYesDescription": ", I veto",
             "yes": "Yes"
+          },
+          "voteDescription": {
+            "approve": "to approve",
+            "veto": "to veto"
           }
         },
         "tokenVoteList": {
+          "description": {
+            "approve": "to approve",
+            "veto": "to veto"
+          },
           "entity": "Votes"
         },
         "tokenWrapForm": {
@@ -1576,11 +1582,6 @@
     "settings": {
       "daoPluginInfo": {
         "bodyName": "Body name",
-        "contract": {
-          "launchedAt": "Launched",
-          "plugin": "Plugin address",
-          "pluginVersionInfo": "{{name}} v{{release}}.{{build}}"
-        },
         "processKey": "Process key",
         "processName": "Process name",
         "tabs": {
@@ -1612,8 +1613,6 @@
         }
       },
       "daoVersionInfo": {
-        "app": "App",
-        "governanceLabel": "Governance",
         "governanceValue": "{{name}} v{{release}}.{{build}}",
         "osLabel": "Operating system",
         "osValue": "Aragon OSx v{{version}}"
@@ -1697,6 +1696,11 @@
       },
       "confirmWizardExit": {
         "message": "If you leave this process, you'll lose all the information you've entered so far."
+      },
+      "daoPluginInfo": {
+        "launchedAt": "Launched",
+        "plugin": "Plugin address",
+        "pluginVersionInfo": "{{name}} v{{release}}.{{build}}"
       },
       "errorFeedback": {
         "description": "If you'd like to help, you can report the issue to our team.",
