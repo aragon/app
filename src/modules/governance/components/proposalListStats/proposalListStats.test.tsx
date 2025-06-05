@@ -16,6 +16,7 @@ describe('<ProposalListStats /> component', () => {
     const createTestComponent = (props?: Partial<IProposalListStatsProps>) => {
         const completeProps: IProposalListStatsProps = {
             dao: generateDao(),
+            initialParams: { queryParams: { daoId: 'dao-id' } },
             ...props,
         };
         return <ProposalListStats {...completeProps} />;
