@@ -37,8 +37,7 @@ export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (props) 
         pageSize: daoProposalsCount,
         pluginAddress,
         sort: daoProposalsSort,
-        // TODO: enable when supported
-        // isSubProposal: false,
+        isSubProposal: false,
     };
     const proposalListParams = { queryParams: proposalListQueryParams };
 

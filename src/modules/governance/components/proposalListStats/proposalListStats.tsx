@@ -4,6 +4,7 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { Button, DateFormat, formatterUtils, Heading, IconType } from '@aragon/gov-ui-kit';
+import type { IGetProposalListParams } from '../../api/governanceService';
 import { useProposalListData } from '../../hooks/useProposalListData';
 
 export interface IProposalListStatsProps {
@@ -11,76 +12,41 @@ export interface IProposalListStatsProps {
      * The DAO for which the proposal list statistics are being displayed.
      */
     dao: IDao;
+    /**
+     * Initial parameters to use to fetch the DAO proposal list.
+     */
+    initialParams: IGetProposalListParams;
 }
 
 export const ProposalListStats: React.FC<IProposalListStatsProps> = (props) => {
-    const { dao } = props;
+    const { dao, initialParams } = props;
 
     const daoId = dao.id;
 
     const { t } = useTranslations();
 
-    const daoUrl = daoUtils.getDaoUrl(dao, 'settings');
+    const { proposalList, itemsCount } = useProposalListData(initialParams);
 
-    const queryParams = {
-        daoId,
-        sort: 'blockTimestamp',
-        isSubProposal: false,
-    };
-
-    const { proposalList, itemsCount } = useProposalListData({ queryParams });
-
-    const executedQueryParams = {
-        ...queryParams,
-        isExecuted: true,
-    };
-
-    const { itemsCount: executedCount } = useProposalListData({ queryParams: executedQueryParams });
+    const executedParams = { ...initialParams, queryParams: { ...initialParams.queryParams, isExecuted: true } };
+    const { itemsCount: executedCount } = useProposalListData(executedParams);
 
     const plugins = useDaoPlugins({ daoId, type: PluginType.PROCESS });
+    const buttonUrl = daoUtils.getDaoUrl(dao, 'settings');
 
-    const formatMostRecent = () => {
-        const formattedDate =
-            formatterUtils.formatDate(proposalList != null ? proposalList[0].blockTimestamp * 1000 : undefined, {
-                format: DateFormat.RELATIVE,
-            }) ?? '-';
+    const latestProposalDate = proposalList != null ? proposalList[0].blockTimestamp * 1000 : undefined;
+    const formattedProposalDate = formatterUtils.formatDate(latestProposalDate, { format: DateFormat.RELATIVE });
 
-        const [value, unit] = formattedDate.split(' ');
-
-        if (!value || !unit) {
-            return { value: formattedDate, suffix: '' };
-        }
-
-        const suffix = t('app.governance.daoProposalsPage.aside.proposalListStats.recentUnit', {
-            unit,
-        });
-
-        return { value, suffix };
-    };
-
-    const formattedMostRecent = formatMostRecent();
+    const [proposalDateValue, proposalDateUnit] = formattedProposalDate?.split(' ') ?? [undefined, undefined];
+    const proposalDateSuffix = t('app.governance.proposalListStats.recentUnit', { unit: proposalDateUnit });
 
     const stats = [
+        { label: t('app.governance.proposalListStats.total'), value: itemsCount ?? '-' },
+        { label: t('app.governance.proposalListStats.types'), value: plugins?.length ?? '-' },
+        { label: t('app.governance.proposalListStats.executed'), value: executedCount ?? '-' },
         {
-            id: 'total',
-            label: t('app.governance.daoProposalsPage.aside.proposalListStats.total'),
-            value: itemsCount ?? '-',
-        },
-        {
-            id: 'types',
-            label: t('app.governance.daoProposalsPage.aside.proposalListStats.types'),
-            value: plugins?.length ?? '-',
-        },
-        {
-            id: 'executed',
-            label: t('app.governance.daoProposalsPage.aside.proposalListStats.executed'),
-            value: executedCount ?? '-',
-        },
-        {
-            id: 'mostRecent',
-            label: t('app.governance.daoProposalsPage.aside.proposalListStats.mostRecent'),
-            value: formattedMostRecent.value,
-            suffix: formattedMostRecent.suffix,
+            label: t('app.governance.proposalListStats.mostRecent'),
+            value: proposalDateValue ?? '-',
+            suffix: proposalDateUnit ? proposalDateSuffix : undefined,
         },
     ];
 
@@ -88,7 +54,7 @@ export const ProposalListStats: React.FC<IProposalListStatsProps> = (props) => {
         <div className="flex w-full flex-col gap-y-4 md:gap-y-6">
             <div className="grid w-full grid-cols-2 gap-3">
                 {stats.map((stat) => (
-                    <div key={stat.id} className="flex flex-col gap-y-1 rounded-xl bg-neutral-50 p-4">
+                    <div key={stat.label} className="flex flex-col gap-y-1 rounded-xl bg-neutral-50 p-4">
                         <Heading size="h3">
                             {stat.value}
                             {stat.suffix != null && (
@@ -99,8 +65,8 @@ export const ProposalListStats: React.FC<IProposalListStatsProps> = (props) => {
                     </div>
                 ))}
             </div>
-            <Button variant="tertiary" size="md" iconRight={IconType.CHEVRON_RIGHT} href={daoUrl}>
-                {t('app.governance.daoProposalsPage.aside.proposalListStats.button')}
+            <Button variant="tertiary" size="md" iconRight={IconType.CHEVRON_RIGHT} href={buttonUrl}>
+                {t('app.governance.proposalListStats.button')}
             </Button>
         </div>
     );

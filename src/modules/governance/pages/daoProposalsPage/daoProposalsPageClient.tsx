@@ -68,7 +68,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
 
     const allProposalsSelected = selectedPlugin.id === pluginGroupTab.id;
     const asideCardTitle = allProposalsSelected
-        ? t('app.governance.daoProposalsPage.aside.proposalListStats.heading')
+        ? t('app.governance.daoProposalsPage.aside.stats')
         : `${selectedPlugin.label} (${selectedPlugin.meta.slug.toUpperCase()})`;
 
     return (
@@ -88,7 +88,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
             </Page.Main>
             <Page.Aside>
                 <Page.AsideCard title={asideCardTitle}>
-                    {allProposalsSelected && <ProposalListStats dao={dao!} />}
+                    {allProposalsSelected && <ProposalListStats initialParams={initialParams} dao={dao!} />}
                     {!allProposalsSelected && (
                         <DaoPluginInfo plugin={selectedPlugin.meta} daoId={daoId} type={PluginType.PROCESS} />
                     )}

@@ -807,15 +807,7 @@
       },
       "daoProposalsPage": {
         "aside": {
-          "proposalListStats": {
-            "button": "View governance settings",
-            "executed": "Executed",
-            "heading": "All proposals",
-            "mostRecent": "Most recent",
-            "recentUnit": " {{unit}} ago",
-            "total": "Total",
-            "types": "Types"
-          }
+          "stats": "All proposals"
         },
         "main": {
           "action": "Proposal",
@@ -867,6 +859,14 @@
           "tryAgain": "Try again"
         },
         "notExecutable": "The proposal must pass before its actions can be executed."
+      },
+      "proposalListStats": {
+        "button": "View governance settings",
+        "executed": "Executed",
+        "mostRecent": "Most recent",
+        "recentUnit": " {{unit}} ago",
+        "total": "Total",
+        "types": "Types"
       },
       "publishProposalDialog": {
         "button": {
