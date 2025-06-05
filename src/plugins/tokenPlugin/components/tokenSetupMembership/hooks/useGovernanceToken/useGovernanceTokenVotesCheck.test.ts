@@ -29,7 +29,7 @@ describe('useGovernanceTokenVotesCheck hook', () => {
         expect(result.current.isLoading).toBeFalsy();
     });
 
-    it('returns negative result flag when one of the votes checks fails', () => {
+    it('returns negative result when one of the votes checks fails', () => {
         const governanceContractsFailureResponse = [
             { result: 0, status: 'success' },
             { result: 0, status: 'failure' },
