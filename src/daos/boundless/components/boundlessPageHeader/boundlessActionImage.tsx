@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import Image, { type StaticImageData } from 'next/image';
 
-export interface IBoundlessAnimatedActionImageProps {
+export interface IBoundlessActionImageProps {
     /**
      * The image to be displayed.
      */
@@ -18,7 +18,7 @@ export interface IBoundlessAnimatedActionImageProps {
 
 const MotionImage = motion.create(Image);
 
-export const BoundlessAnimatedActionImage: React.FC<IBoundlessAnimatedActionImageProps> = (props) => {
+export const BoundlessActionImage: React.FC<IBoundlessActionImageProps> = (props) => {
     const { image, alt, isHovered } = props;
 
     return (

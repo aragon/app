@@ -7,8 +7,8 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 import { useAccount, useEnsName } from 'wagmi';
-import BoundlessVideo from '../assets/boundless-header-video.mp4';
-import { actions } from '../constants/actions';
+import BoundlessVideo from '../../assets/boundless-header-video.mp4';
+import { actions } from '../../constants/actions';
 import { BoundlessActionItem } from './boundlessActionItem';
 
 export interface IBoundlessPageHeaderProps extends ComponentProps<'header'> {
@@ -43,7 +43,7 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (props) 
                 muted={true}
                 playsInline={true}
             >
-                <source src={BoundlessVideo} type="video/mp4" />
+                <source src={BoundlessVideo as unknown as string} type="video/mp4" />
             </video>
             <Container className="flex w-full flex-col gap-y-12">
                 <div className="flex max-w-[720px] flex-col gap-1.5 text-center md:gap-3 md:text-left">

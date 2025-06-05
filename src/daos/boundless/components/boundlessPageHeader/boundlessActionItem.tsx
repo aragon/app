@@ -3,8 +3,10 @@ import type { Route } from 'next';
 import Image, { type StaticImageData } from 'next/image';
 import Link from 'next/link';
 import { type ComponentProps, useState } from 'react';
-import BackgroundImage from '../assets/boundless-img-background.png';
-import { BoundlessAnimatedActionImage, BoundlessAnimatedActionText, BoundlessAnimatedAvatarIcon } from './animated';
+import BackgroundImage from '../../assets/boundless-img-background.png';
+import { BoundlessActionImage } from './boundlessActionImage';
+import { BoundlessActionText } from './boundlessActionText';
+import { BoundlessActionAvatarIcon } from './boundlessAvatarIcon';
 
 export interface IBoundlessActionItemProps extends ComponentProps<'button'> {
     /**
@@ -41,10 +43,10 @@ export const BoundlessActionItem: React.FC<IBoundlessActionItemProps> = (props) 
         >
             <Image src={BackgroundImage} alt="" fill={true} className="absolute inset-0 -z-20 object-cover" />
             <div className="relative z-10 flex size-full flex-col justify-between transition-all duration-300 md:justify-center md:group-hover:justify-between">
-                <BoundlessAnimatedActionText title={title} description={description} isHovered={isHovered} />
-                <BoundlessAnimatedAvatarIcon isHovered={isHovered} />
+                <BoundlessActionText title={title} description={description} isHovered={isHovered} />
+                <BoundlessActionAvatarIcon isHovered={isHovered} />
             </div>
-            <BoundlessAnimatedActionImage image={image} alt={title} isHovered={isHovered} />
+            <BoundlessActionImage image={image} alt={title} isHovered={isHovered} />
         </Link>
     );
 };

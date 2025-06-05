@@ -1,7 +1,7 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { motion } from 'framer-motion';
 
-export interface IBoundlessAnimatedActionTextProps {
+export interface IBoundlessActionTextProps {
     /**
      * Title of the action text.
      */
@@ -16,7 +16,7 @@ export interface IBoundlessAnimatedActionTextProps {
     isHovered: boolean;
 }
 
-export const BoundlessAnimatedActionText: React.FC<IBoundlessAnimatedActionTextProps> = (props) => {
+export const BoundlessActionText: React.FC<IBoundlessActionTextProps> = (props) => {
     const { title, description, isHovered } = props;
 
     const { t } = useTranslations();

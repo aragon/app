@@ -1,14 +1,14 @@
 import { Icon, IconType } from '@aragon/gov-ui-kit';
 import { motion } from 'framer-motion';
 
-export interface IBoundlessAnimatedAvatarIconProps {
+export interface IBoundlessActionAvatarIconProps {
     /**
      * Whether the parent action item is hovered.
      */
     isHovered: boolean;
 }
 
-export const BoundlessAnimatedAvatarIcon: React.FC<IBoundlessAnimatedAvatarIconProps> = (props) => {
+export const BoundlessActionAvatarIcon: React.FC<IBoundlessActionAvatarIconProps> = (props) => {
     const { isHovered } = props;
 
     return (
