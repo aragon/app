@@ -2,6 +2,29 @@ import type { IPluginSettings } from '@/shared/api/daoService';
 import type { DaoTokenVotingMode } from './enum';
 import type { ITokenPluginSettingsToken } from './tokenPluginSettingsToken';
 
+interface EscrowSettings {
+    /**
+     * The minimum amount required to lock.
+     */
+    minDeposit: string;
+    /**
+     * The minimum lock time before unlocking is available.
+     */
+    minLockTime: number;
+    /**
+     * The time in seconds between unlock and withdrawal.
+     */
+    cooldown: number;
+    /**
+     * The maximum time the voting power can increase.
+     */
+    maxTime: number;
+    /**
+     * The coefficient used to calculate the voting power increase over time.
+     */
+    slope: number;
+}
+
 export interface ITokenPluginSettings extends IPluginSettings {
     /**
      * Amount of tokens that need to vote "Yes" for a proposal to pass.
@@ -31,13 +54,8 @@ export interface ITokenPluginSettings extends IPluginSettings {
      * Total supply of the token only set when settings are fetched for a specific block number (e.g. settings when a proposal was created)
      */
     historicalTotalSupply?: string;
-    // probably a conflict with Asam's PR ... just override it!
-    votingEscrow?: {
-        minDeposit: string;
-        minLockTime: number;
-        cooldown: number;
-        warmupPeriod: number;
-        maxTime: number;
-        slope: number;
-    };
+    /**
+     * The settings of the voting escrow
+     */
+    votingEscrow?: EscrowSettings;
 }

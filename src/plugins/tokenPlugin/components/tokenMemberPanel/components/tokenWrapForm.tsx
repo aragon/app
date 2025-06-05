@@ -102,6 +102,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         if (dialogType === 'approve') {
             const params: ITokenApproveTokensDialogParams = {
                 ...dialogProps,
+                translationNamespace: 'WRAP',
                 onApproveSuccess: () => handleApproveSuccess(dialogProps), // open wrap dialog with the same params!
             };
             open(TokenPluginDialogId.APPROVE_TOKENS, { params });
@@ -148,6 +149,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         amount: confirmAmount,
         network: dao!.network,
         onSuccess: handleTransactionSuccess,
+        spender: token.address as Hex,
     });
 
     // Update amount field and percentage value to 100% of user unwrapped balance on user balance change
@@ -173,7 +175,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     return (
         <FormProvider {...formValues}>
             <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
-                <p className="text-base font-normal leading-normal text-neutral-500">
+                <p className="text-base leading-normal font-normal text-neutral-500">
                     {t('app.plugins.token.tokenWrapForm.info', { underlyingSymbol: underlyingToken.symbol })}
                 </p>
                 <div className="flex flex-col gap-3">
@@ -218,7 +220,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                             })}
                         </Button>
                     )}
-                    <p className="text-center text-sm font-normal leading-normal text-neutral-500">
+                    <p className="text-center text-sm leading-normal font-normal text-neutral-500">
                         {t('app.plugins.token.tokenWrapForm.footerInfo')}
                     </p>
                 </div>

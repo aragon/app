@@ -23,10 +23,10 @@ export const SppVotingTerminal: React.FC<ISppVotingTerminalProps> = (props) => {
     useEffect(() => setActiveStage(proposal.stageIndex.toString()), [proposal.stageIndex]);
 
     return (
-        <ProposalVoting.Container activeStage={activeStage} onStageClick={setActiveStage}>
+        <ProposalVoting.StageContainer activeStage={activeStage} onStageClick={setActiveStage}>
             {proposal.settings.stages.map((stage) => (
                 <SppVotingTerminalStage key={stage.stageIndex} daoId={daoId} stage={stage} proposal={proposal} />
             ))}
-        </ProposalVoting.Container>
+        </ProposalVoting.StageContainer>
     );
 };

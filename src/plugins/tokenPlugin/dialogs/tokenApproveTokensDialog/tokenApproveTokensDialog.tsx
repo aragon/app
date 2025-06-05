@@ -9,7 +9,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
-import { formatUnits } from 'viem';
+import { formatUnits, type Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ITokenPluginSettingsToken } from '../../types';
 import { tokenApproveTokensDialogUtils } from './tokenApproveTokensDialogUtils';
@@ -39,6 +39,14 @@ export interface ITokenApproveTokensDialogParams {
      * Callback called on approve transaction success.
      */
     onSuccess?: () => void;
+    /**
+     * First argument of the approve function, which is the address of the spender.
+     */
+    spender: Hex;
+    /**
+     * Translation namespace for the dialog.
+     */
+    translationNamespace: 'WRAP' | 'LOCK';
 }
 
 export interface ITokenApproveTokensDialogProps extends IDialogComponentProps<ITokenApproveTokensDialogParams> {}
@@ -50,14 +58,16 @@ export const TokenApproveTokensDialog: React.FC<ITokenApproveTokensDialogProps> 
     const { address } = useAccount();
     invariant(address != null, 'TokenApproveTokensDialog: user must be connected.');
 
-    const { token, underlyingToken, amount, network, onApproveSuccess, onSuccess } = location.params;
+    const { token, underlyingToken, amount, network, onApproveSuccess, onSuccess, spender, translationNamespace } =
+        location.params;
 
     const { t } = useTranslations();
 
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
-    const handlePrepareTransaction = () => tokenApproveTokensDialogUtils.buildApproveTransaction({ token, amount });
+    const handlePrepareTransaction = () =>
+        tokenApproveTokensDialogUtils.buildApproveTransaction({ token, amount, spender });
 
     const onSuccessClick = () => {
         onApproveSuccess();
@@ -67,15 +77,15 @@ export const TokenApproveTokensDialog: React.FC<ITokenApproveTokensDialogProps> 
 
     return (
         <TransactionDialog
-            title={t('app.plugins.token.tokenApproveTokensDialog.title')}
-            description={t('app.plugins.token.tokenApproveTokensDialog.description')}
-            submitLabel={t('app.plugins.token.tokenApproveTokensDialog.submit')}
+            title={t(`app.plugins.token.tokenApproveTokensDialog.${translationNamespace}.title`)}
+            description={t(`app.plugins.token.tokenApproveTokensDialog.${translationNamespace}.description`)}
+            submitLabel={t(`app.plugins.token.tokenApproveTokensDialog.${translationNamespace}.submit`)}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
             network={network}
             onSuccess={onSuccess}
             successLink={{
-                label: t('app.plugins.token.tokenApproveTokensDialog.success'),
+                label: t(`app.plugins.token.tokenApproveTokensDialog.${translationNamespace}.success`),
                 onClick: onSuccessClick,
             }}
         >

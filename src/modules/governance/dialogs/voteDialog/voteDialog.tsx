@@ -25,7 +25,7 @@ export interface IVoteDialogParams {
     /**
      * Vote option.
      */
-    vote: { value?: number; label: VoteIndicator };
+    vote: { value?: number; label: VoteIndicator; labelDescription?: string };
     /**
      * Proposal to submit the vote for.
      */
@@ -82,14 +82,11 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
             indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
         >
             <VoteProposalDataListItemStructure
+                isVeto={isVeto}
                 proposalId={slug}
                 proposalTitle={proposal.title}
                 voteIndicator={vote.label}
-                confirmationLabel={
-                    isVeto
-                        ? t('app.governance.voteDialog.confirmationLabelVeto')
-                        : t('app.governance.voteDialog.confirmationLabelApprove')
-                }
+                voteIndicatorDescription={vote.labelDescription}
             />
         </TransactionDialog>
     );

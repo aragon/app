@@ -1,9 +1,10 @@
+import { TokenLockForm } from '@/plugins/tokenPlugin/components/tokenMemberPanel/components/tokenLockForm';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Tabs } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import type { ITokenPluginSettings, ITokenPluginSettingsToken } from '../../types';
+import type { ITokenPluginSettings } from '../../types';
 import { TokenDelegationForm } from './components/tokenDelegationForm';
 import { TokenWrapForm } from './components/tokenWrapForm';
 
@@ -21,25 +22,31 @@ export interface ITokenMemberPanelProps {
 enum TokenMemberPanelTab {
     DELEGATE = 'DELEGATE',
     WRAP = 'WRAP',
+    LOCK = 'LOCK',
 }
 
-const getTabsDefinitions = (token: ITokenPluginSettingsToken) => [
-    { value: TokenMemberPanelTab.WRAP, hidden: token.underlying == null },
-    { value: TokenMemberPanelTab.DELEGATE, hidden: !token.hasDelegate },
+const getTabsDefinitions = (settings: ITokenPluginSettings) => [
+    { value: TokenMemberPanelTab.WRAP, hidden: settings.votingEscrow ?? settings.token.underlying == null },
+    { value: TokenMemberPanelTab.LOCK, hidden: !settings.votingEscrow },
+    { value: TokenMemberPanelTab.DELEGATE, hidden: !settings.token.hasDelegate },
 ];
 
 export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const { plugin, daoId } = props;
-
     const { token } = plugin.settings;
     const { underlying } = token;
 
     const { t } = useTranslations();
 
-    const initialSelectedTab = underlying != null ? TokenMemberPanelTab.WRAP : TokenMemberPanelTab.DELEGATE;
+    const initialSelectedTab = plugin.settings.votingEscrow
+        ? TokenMemberPanelTab.LOCK
+        : underlying != null
+          ? TokenMemberPanelTab.WRAP
+          : TokenMemberPanelTab.DELEGATE;
+
     const [selectedTab, setSelectedTab] = useState<string | undefined>(initialSelectedTab);
 
-    const visibleTabs = getTabsDefinitions(token).filter((tab) => !tab.hidden);
+    const visibleTabs = getTabsDefinitions(plugin.settings).filter((tab) => !tab.hidden);
 
     // Remove the "g" and "Governance" prefixes from the token symbol / name
     const underlyingToken = {
@@ -67,6 +74,9 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
                         />
                     ))}
                 </Tabs.List>
+                <Tabs.Content value={TokenMemberPanelTab.LOCK}>
+                    <TokenLockForm daoId={daoId} plugin={plugin} />
+                </Tabs.Content>
                 <Tabs.Content value={TokenMemberPanelTab.WRAP}>
                     <TokenWrapForm daoId={daoId} plugin={plugin} underlyingToken={underlyingToken} />
                 </Tabs.Content>

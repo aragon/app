@@ -1,3 +1,4 @@
+import type { Hex } from 'viem';
 import type { ITokenPluginSettingsToken } from '../../types';
 
 export interface IBuildApproveTransactionParams {
@@ -9,4 +10,8 @@ export interface IBuildApproveTransactionParams {
      * Amount of tokens to be approved.
      */
     amount: bigint;
+    /**
+     * First argument of the approve function, which is the address of the spender.
+     */
+    spender: Hex;
 }

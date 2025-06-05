@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-Add support for Optimism network
+Add veLocker to token panel
