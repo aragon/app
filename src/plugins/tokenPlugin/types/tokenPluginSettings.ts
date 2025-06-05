@@ -16,10 +16,6 @@ interface EscrowSettings {
      */
     cooldown: number;
     /**
-     * The warmup period before locks become active.
-     */
-    warmupPeriod: number;
-    /**
      * The maximum time the voting power can increase.
      */
     maxTime: number;

@@ -11,6 +11,7 @@ import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import { tokenLockUnlockDialogUtils } from './tokenLockUnlockDialogUtils';
+import type { ITokenPluginSettingsToken } from '@/plugins/tokenPlugin/types';
 
 export interface ITokenLockUnlockDialogParams {
     /**
@@ -22,6 +23,10 @@ export interface ITokenLockUnlockDialogParams {
      */
     amount: bigint;
     /**
+     * The contract address of the voting escrow
+     */
+    escrowContract: string;
+    /**
      * Network used for the transaction.
      */
     network: Network;
@@ -29,6 +34,10 @@ export interface ITokenLockUnlockDialogParams {
      * Callback called on lock / unlock transaction success.
      */
     onSuccess?: () => void;
+    /**
+     * Token to be locked.
+     */
+    token: ITokenPluginSettingsToken;
 }
 
 export interface ITokenLockUnlockDialogProps extends IDialogComponentProps<ITokenLockUnlockDialogParams> {}
@@ -40,7 +49,7 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
     const { address } = useAccount();
     invariant(address != null, 'TokenLockUnlockDialog: user must be connected to perform the action');
 
-    const { action, amount, network, onSuccess } = location.params;
+    const { action, amount, network, onSuccess, escrowContract, token } = location.params;
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -50,7 +59,7 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
 
     const handlePrepareTransaction = () =>
         action === 'lock'
-            ? tokenLockUnlockDialogUtils.buildLockTransaction(amount)
+            ? tokenLockUnlockDialogUtils.buildLockTransaction(amount, escrowContract)
             : tokenLockUnlockDialogUtils.buildUnlockTransaction();
 
     const onSuccessClick = () => {
@@ -59,8 +68,8 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
 
     return (
         <TransactionDialog
-            title={t(`app.plugins.token.tokenLockUnlockDialog.${action}.title`)}
-            description={t(`app.plugins.token.tokenLockUnlockDialog.${action}.description`)}
+            title={t(`app.plugins.token.tokenLockUnlockDialog.${action}.title`, { symbol: token.symbol })}
+            description={t(`app.plugins.token.tokenLockUnlockDialog.${action}.description`, { symbol: token.symbol })}
             submitLabel={t(`app.plugins.token.tokenLockUnlockDialog.${action}.submit`)}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}

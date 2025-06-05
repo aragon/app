@@ -7,7 +7,6 @@ import { useState } from 'react';
 import type { ITokenPluginSettings } from '../../types';
 import { TokenDelegationForm } from './components/tokenDelegationForm';
 import { TokenWrapForm } from './components/tokenWrapForm';
-import { generateToken } from '@/modules/finance/testUtils';
 
 export interface ITokenMemberPanelProps {
     /**
@@ -26,21 +25,15 @@ enum TokenMemberPanelTab {
     LOCK = 'LOCK',
 }
 
-const dummyToken = generateToken({ symbol: 'DUMMY', totalSupply: '10000' });
-
 const getTabsDefinitions = (settings: ITokenPluginSettings) => [
-    // { value: TokenMemberPanelTab.WRAP, hidden: settings.votingEscrow ?? settings.token.underlying == null },
-    // { value: TokenMemberPanelTab.LOCK, hidden: !settings.votingEscrow },
-    { value: TokenMemberPanelTab.WRAP, hidden: true },
-    { value: TokenMemberPanelTab.LOCK, hidden: false },
-    //{ value: TokenMemberPanelTab.DELEGATE, hidden: !settings.token.hasDelegate },
-    { value: TokenMemberPanelTab.DELEGATE, hidden: false },
+    { value: TokenMemberPanelTab.WRAP, hidden: settings.votingEscrow ?? settings.token.underlying == null },
+    { value: TokenMemberPanelTab.LOCK, hidden: !settings.votingEscrow },
+    { value: TokenMemberPanelTab.DELEGATE, hidden: !settings.token.hasDelegate },
 ];
 
 export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const { plugin, daoId } = props;
-
-    const token = { ...dummyToken, underlying: null, hasDelegate: true };
+    const { token } = plugin.settings;
     const { underlying } = token;
 
     const { t } = useTranslations();

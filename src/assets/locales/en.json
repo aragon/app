@@ -1315,7 +1315,7 @@
         "tokenLockUnlockDialog": {
           "lock": {
             "cancel": "Cancel",
-            "description": "To lock your {{symbol}}, confirm the two onchain transactions in your wallet.",
+            "description": "To lock your {{symbol}}, confirm the onchain transaction in your wallet.",
             "submit": "Lock",
             "success": "View your veLock",
             "title": "Lock {{symbol}}"

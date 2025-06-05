@@ -13,20 +13,22 @@ const lockAbi = [
 
 
 class TokenLockUnlockDialogUtils {
-  buildLockTransaction = (amount: bigint) => {
-          const transactionData = encodeFunctionData({
+    buildLockTransaction = (amount: bigint, escrowContract: string) => {
+        const transactionData = encodeFunctionData({
             abi: lockAbi,
             functionName: 'createLock',
             args: [amount],
         });
-    const transaction = { to: '0x' as Hex, data: transactionData, value: BigInt(0) };
-    return Promise.resolve(transaction);
-  }
+        const transaction = { to: escrowContract as Hex, data: transactionData, value: BigInt(0) };
 
-  buildUnlockTransaction = () => {
-    const transaction = { to: '0x' as Hex, data: '0x' as Hex, value: BigInt(0) };
-    return Promise.resolve(transaction);
-  }
+        return Promise.resolve(transaction);
+    };
+
+    buildUnlockTransaction = () => {
+    // TODO:: implement unlock
+        const transaction = { to: '0x' as Hex, data: '0x' as Hex, value: BigInt(0) };
+        return Promise.resolve(transaction);
+    };
 }
 
 export const tokenLockUnlockDialogUtils = new TokenLockUnlockDialogUtils()

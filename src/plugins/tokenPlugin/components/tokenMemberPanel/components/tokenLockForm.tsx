@@ -1,6 +1,5 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
-import { generateToken } from '@/modules/finance/testUtils';
 import { useTokenLocks } from '@/plugins/tokenPlugin/api/tokenService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
@@ -10,7 +9,7 @@ import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { Button, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
+import { Button, invariant, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
@@ -32,30 +31,14 @@ export interface ITokenLockFormData extends IAssetInputFormData {}
 
 const valuePercentages = ['0', '25', '50', '75', '100'];
 
-const dummyToken = generateToken({
-    symbol: 'DUMMY',
-    totalSupply: '10000',
-    address: '0xEDc278C1DFAD001e875bb75064fC68099Ab65f88',
-});
-
-const dummyVeSettings = {
-    minDeposit: '1000',
-    minLockTime: 7 * 24 * 60 * 60,
-    cooldown: 7 * 24 * 60 * 60,
-    warmupPeriod: 3 * 24 * 60 * 60,
-    maxTime: 365 * 24 * 60 * 60,
-    slope: 0.1,
-};
-
 export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { plugin, daoId } = props;
+    const { votingEscrow, token } = plugin.settings;
 
-    const token = useMemo(
-        () => ({ ...dummyToken, underlying: '0xEDc278C1DFAD001e875bb75064fC68099Ab65f88', hasDelegate: true }),
-        [],
-    );
+    invariant(votingEscrow != null && plugin.votingEscrow != null, 'Token lock form requires voting escrow settings');
+
     const { decimals } = token;
-    const minDepositWei = useMemo(() => parseUnits(dummyVeSettings.minDeposit, decimals), [decimals]);
+    const minDepositWei = BigInt(votingEscrow.minDeposit);
 
     const { open } = useDialogContext();
     const { t } = useTranslations();
@@ -77,13 +60,11 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { data: tokenAllowance, queryKey: allowanceQueryKey } = useReadContract({
         abi: erc20Abi,
         functionName: 'allowance',
-        address: token.address as Hex,
-        args: [address!, token.address as Hex],
+        address: token.underlying as Hex,
+        args: [address!, plugin.votingEscrow.escrowAddress as Hex],
         query: { enabled: address != null },
         chainId,
     });
-
-    console.log('tokenAllowance', tokenAllowance);
 
     const {
         data: unlockedBalance,
@@ -91,13 +72,8 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         status: unlockedBalanceStatus,
     } = useBalance({
         address,
-        token: token.address as Hex,
+        token: token.underlying as Hex,
         chainId,
-        // TODO: Remove when data is coming from the backend
-        query: {
-            initialData: { value: BigInt(5000), decimals: token.decimals, symbol: token.symbol, formatted: '5,000' },
-            enabled: false,
-        },
     });
 
     const parsedUnlockedAmount = formatUnits(unlockedBalance?.value ?? BigInt(0), decimals);
@@ -146,7 +122,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                 setError('amount', {
                     type: 'validate',
                     message: t('app.plugins.token.tokenLockForm.minDepositError', {
-                        minDeposit: dummyVeSettings.minDeposit,
+                        minDeposit: votingEscrow.minDeposit,
                         symbol: token.symbol,
                     }),
                 });
@@ -157,7 +133,17 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
             const parsedValue = formatUnits(processedValue, decimals);
             setValue('amount', parsedValue);
         },
-        [unlockedBalance, decimals, setValue, setError, clearErrors, minDepositWei, t, token.symbol],
+        [
+            unlockedBalance,
+            decimals,
+            setValue,
+            setError,
+            clearErrors,
+            minDepositWei,
+            t,
+            token.symbol,
+            votingEscrow.minDeposit,
+        ],
     );
 
     const handlePercentageChange = useCallback(
@@ -183,8 +169,8 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         amount: confirmAmount,
         network: dao!.network,
         onSuccess: handleTransactionSuccess,
-        // spender: token.address as Hex
-        spender: '0xe398B1b8863345Ce681E0f9246EeF168b538C8f6' as Hex,
+        spender: plugin.votingEscrow?.escrowAddress as Hex,
+        escrowContract: plugin.votingEscrow?.escrowAddress as Hex,
     });
 
     // Update amount field and percentage value to 100% of user unlocked balance on user balance change
@@ -203,16 +189,16 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
             setError('amount', {
                 type: 'minDeposit',
                 message: t('app.plugins.token.tokenLockForm.minDepositError', {
-                    minDeposit: dummyVeSettings.minDeposit,
+                    minDeposit: votingEscrow.minDeposit,
                     symbol: token.symbol,
                 }),
             });
         } else {
             clearErrors('amount');
         }
-    }, [lockAmountWei, minDepositWei, setError, clearErrors, t, token.symbol]);
+    }, [lockAmountWei, minDepositWei, setError, clearErrors, t, token.symbol, votingEscrow.minDeposit]);
 
-    const submitLabel = needsApproval ? 'approve' : 'wrap';
+    const submitLabel = needsApproval ? 'approve' : 'lock';
     const disableSubmit = unlockedBalance?.value === BigInt(0);
 
     return (
