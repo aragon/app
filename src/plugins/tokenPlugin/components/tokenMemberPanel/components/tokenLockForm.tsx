@@ -4,6 +4,7 @@ import { useTokenLocks } from '@/plugins/tokenPlugin/api/tokenService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import type { ITokenLockUnlockDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenLockUnlockDialog';
+import type { ITokenVeLocksDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenVeLocksDialog';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -155,7 +156,8 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     );
 
     const handleViewLocks = () => {
-        // TODO: Handle view locks
+        const params: ITokenVeLocksDialogParams = { token, votingEscrow, initialParams: lockParams };
+        open(TokenPluginDialogId.VE_LOCKS, { params });
     };
 
     const handleApproveSuccess = (dialogProps: ReturnType<typeof getDialogProps>) => {

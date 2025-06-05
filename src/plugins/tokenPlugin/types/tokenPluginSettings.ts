@@ -2,7 +2,7 @@ import type { IPluginSettings } from '@/shared/api/daoService';
 import type { DaoTokenVotingMode } from './enum';
 import type { ITokenPluginSettingsToken } from './tokenPluginSettingsToken';
 
-interface EscrowSettings {
+export interface EscrowSettings {
     /**
      * The minimum amount required to lock.
      */
