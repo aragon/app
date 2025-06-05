@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { IGetProposalListParams } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
-import { ProposalListStatistics } from '../../components/proposalListStatistics';
+import { ProposalListStats } from '../../components/proposalListStats';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { ISelectPluginDialogParams } from '../../dialogs/selectPluginDialog';
 
@@ -68,7 +68,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
 
     const allProposalsSelected = selectedPlugin.id === pluginGroupTab.id;
     const asideCardTitle = allProposalsSelected
-        ? t('app.governance.daoProposalsPage.aside.stats')
+        ? t('app.governance.daoProposalsPage.aside.stats.heading')
         : `${selectedPlugin.label} (${selectedPlugin.meta.slug.toUpperCase()})`;
 
     return (
@@ -88,7 +88,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
             </Page.Main>
             <Page.Aside>
                 <Page.AsideCard title={asideCardTitle}>
-                    {allProposalsSelected && <ProposalListStatistics dao={dao!} />}
+                    {allProposalsSelected && <ProposalListStats daoId={daoId} />}
                     {!allProposalsSelected && (
                         <DaoPluginInfo plugin={selectedPlugin.meta} daoId={daoId} type={PluginType.PROCESS} />
                     )}
