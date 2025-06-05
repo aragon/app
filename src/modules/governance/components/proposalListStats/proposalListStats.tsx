@@ -1,6 +1,7 @@
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { Button, DateFormat, formatterUtils, Heading, IconType } from '@aragon/gov-ui-kit';
 import { useProposalListData } from '../../hooks/useProposalListData';
@@ -24,6 +25,7 @@ export const ProposalListStats: React.FC<IProposalListStatsProps> = (props) => {
     const queryParams = {
         daoId,
         sort: 'blockTimestamp',
+        isSubProposal: false,
     };
 
     const { proposalList, itemsCount } = useProposalListData({ queryParams });
@@ -35,7 +37,7 @@ export const ProposalListStats: React.FC<IProposalListStatsProps> = (props) => {
 
     const { itemsCount: executedCount } = useProposalListData({ queryParams: executedQueryParams });
 
-    const plugins = useDaoPlugins({ daoId });
+    const plugins = useDaoPlugins({ daoId, type: PluginType.PROCESS });
 
     const stats = [
         { id: 'total', label: t('app.governance.daoProposalsPage.aside.stats.total'), value: itemsCount ?? '-' },
@@ -53,7 +55,7 @@ export const ProposalListStats: React.FC<IProposalListStatsProps> = (props) => {
             id: 'mostRecent',
             label: t('app.governance.daoProposalsPage.aside.stats.mostRecent'),
             value:
-                formatterUtils.formatDate(proposalList ? proposalList[0].blockTimestamp * 1000 : undefined, {
+                formatterUtils.formatDate(proposalList != null ? proposalList[0].blockTimestamp * 1000 : undefined, {
                     format: DateFormat.RELATIVE,
                 }) ?? '-',
         },
