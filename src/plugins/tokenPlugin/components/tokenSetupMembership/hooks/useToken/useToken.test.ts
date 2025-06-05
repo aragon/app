@@ -26,8 +26,8 @@ describe('useToken hook', () => {
         const { result } = renderHook(() => useToken({ address: '0x111', chainId: 1 }));
 
         expect(result.current.data).toEqual(token);
-        expect(result.current.isError).toBe(false);
-        expect(result.current.isLoading).toBe(false);
+        expect(result.current.isError).toBeFalsy();
+        expect(result.current.isLoading).toBeFalsy();
     });
 
     it('returns null data and error when errored', () => {
@@ -40,8 +40,8 @@ describe('useToken hook', () => {
         const { result } = renderHook(() => useToken({ address: '0x000', chainId: 42 }));
 
         expect(result.current.data).toBeNull();
-        expect(result.current.isError).toBe(true);
-        expect(result.current.isLoading).toBe(false);
+        expect(result.current.isError).toBeTruthy();
+        expect(result.current.isLoading).toBeFalsy();
     });
 
     it('returns null data when loading', () => {
@@ -54,7 +54,7 @@ describe('useToken hook', () => {
         const { result } = renderHook(() => useToken({ address: '0x123', chainId: 1 }));
 
         expect(result.current.data).toBeNull();
-        expect(result.current.isError).toBe(false);
-        expect(result.current.isLoading).toBe(true);
+        expect(result.current.isError).toBeFalsy();
+        expect(result.current.isLoading).toBeTruthy();
     });
 });
