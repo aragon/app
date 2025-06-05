@@ -8,18 +8,24 @@ export interface IMultisigProposalVotingBreakdownProps {
      */
     proposal: IMultisigProposal;
     /**
+     * Defines if the voting is to veto or not.
+     */
+    isVeto?: boolean;
+    /**
      * Additional children to render.
      */
     children?: ReactNode;
 }
 
 export const MultisigProposalVotingBreakdown: React.FC<IMultisigProposalVotingBreakdownProps> = (props) => {
-    const { proposal, children } = props;
+    const { proposal, isVeto, children } = props;
 
     return (
         <ProposalVoting.BreakdownMultisig
+            isVeto={isVeto}
             approvalsAmount={proposal.metrics.totalVotes}
             minApprovals={proposal.settings.minApprovals}
+            membersCount={Number(proposal.settings.historicalMembersCount)}
         >
             {children}
         </ProposalVoting.BreakdownMultisig>

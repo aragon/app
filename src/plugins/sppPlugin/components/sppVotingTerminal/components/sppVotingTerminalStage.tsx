@@ -2,22 +2,16 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
-import {
-    addressUtils,
-    proposalStatusToVotingStatus,
-    ProposalVoting,
-    ProposalVotingStatus,
-    ProposalVotingTab,
-} from '@aragon/gov-ui-kit';
+import { ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
+import { useCallback } from 'react';
 import type { ISppProposal, ISppStage } from '../../../types';
 import { sppStageUtils } from '../../../utils/sppStageUtils';
-import { SppStageStatus } from './sppStageStatus';
-import { SppVotingTerminalBodyContent } from './sppVotingTerminalBodyContent';
 import { SppVotingTerminalBodySummaryFooter } from './sppVotingTerminalBodySummaryFooter';
 import { SppVotingTerminalMultiBodySummaryDefault } from './sppVotingTerminalMultiBodySummaryDefault';
+import { SppVotingTerminalStageBodyContent } from './sppVotingTerminalStageBodyContent';
 import { SppVotingTerminalStageTimelock } from './sppVotingTerminalStageTimelock';
 
-export interface IProposalVotingTerminalStageProps {
+export interface ISppVotingTerminalStageProps {
     /**
      * ID of the DAO related to the proposal.
      */
@@ -32,40 +26,46 @@ export interface IProposalVotingTerminalStageProps {
     proposal: ISppProposal;
 }
 
-export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps> = (props) => {
+export const SppVotingTerminalStage: React.FC<ISppVotingTerminalStageProps> = (props) => {
     const { stage, daoId, proposal } = props;
 
     const processedStartDate = sppStageUtils.getStageStartDate(proposal, stage)?.toMillis();
     const processedEndDate = sppStageUtils.getStageEndDate(proposal, stage)?.toMillis();
 
-    // Keep stage status updated for statuses that are time dependent
-    const { ACTIVE, PENDING, ACCEPTED, UNREACHED } = ProposalVotingStatus;
-    const enableDynamicValue = [ACTIVE, PENDING, ACCEPTED].includes(sppStageUtils.getStageStatus(proposal, stage));
-    const stageStatus = useDynamicValue({
-        callback: () => sppStageUtils.getStageStatus(proposal, stage),
-        enabled: enableDynamicValue,
+    // Keep stage status and timings updated for statuses that are time dependent
+    const { ACTIVE, PENDING, ACCEPTED, ADVANCEABLE } = ProposalStatus;
+
+    const getStageDetails = useCallback(() => {
+        const status = sppStageUtils.getStageStatus(proposal, stage);
+        const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage)?.toMillis();
+        const maxAdvance = sppStageUtils.getStageMaxAdvance(proposal, stage)?.toMillis();
+
+        return { status, minAdvance, maxAdvance };
+    }, [proposal, stage]);
+
+    const { status, minAdvance, maxAdvance } = useDynamicValue({
+        enabled: [ACTIVE, PENDING, ACCEPTED, ADVANCEABLE].includes(sppStageUtils.getStageStatus(proposal, stage)),
+        callback: getStageDetails,
     });
 
-    const processedStageStatus = stageStatus === UNREACHED ? stageStatus : proposalStatusToVotingStatus[stageStatus];
+    const stageName = stage.name ?? stage.stageIndex.toString();
     const bodyList = stage.plugins.map((plugin) => plugin.address);
+    const canVote = status === ProposalStatus.ACTIVE;
 
-    const isMultiStage = proposal.settings.stages.length > 1;
     const isSingleBody = bodyList.length === 1;
-
-    const canVote = processedStageStatus === ProposalVotingStatus.ACTIVE;
-
     const isVeto = sppStageUtils.isVeto(stage);
     const isTimelockStage = !stage.plugins.length;
 
     return (
         <ProposalVoting.Stage
-            name={stage.name}
-            status={processedStageStatus}
+            name={stageName}
+            status={status}
             startDate={processedStartDate}
             endDate={processedEndDate}
             index={stage.stageIndex}
-            isMultiStage={isMultiStage}
             bodyList={bodyList}
+            minAdvance={minAdvance}
+            maxAdvance={maxAdvance}
         >
             <ProposalVoting.BodySummary>
                 <ProposalVoting.BodySummaryList>
@@ -81,7 +81,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                                     pluginId={plugin.subdomain}
                                     proposal={sppStageUtils.getBodySubProposal(proposal, address, stage.stageIndex)}
                                     name={plugin.name}
-                                    isOptimistic={isVeto}
+                                    isVeto={isVeto}
                                     isExecuted={proposal.executed.status}
                                 />
                             )}
@@ -100,26 +100,14 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                 <SppVotingTerminalBodySummaryFooter proposal={proposal} stage={stage} daoId={daoId} />
             </ProposalVoting.BodySummary>
             {stage.plugins.map((plugin) => (
-                <ProposalVoting.BodyContent
-                    name={plugin.subdomain != null ? plugin.name : addressUtils.truncateAddress(plugin.address)}
+                <SppVotingTerminalStageBodyContent
                     key={plugin.address}
-                    status={processedStageStatus}
-                    bodyId={plugin.address}
-                    hideTabs={!plugin.subdomain ? [ProposalVotingTab.VOTES] : undefined}
-                    bodyBrand={plugin.subdomain === undefined ? brandedExternals[plugin.brandId] : undefined}
-                >
-                    <SppVotingTerminalBodyContent
-                        plugin={plugin}
-                        daoId={daoId}
-                        subProposal={sppStageUtils.getBodySubProposal(proposal, plugin.address, stage.stageIndex)}
-                        proposal={proposal}
-                        canVote={canVote}
-                        isVeto={isVeto}
-                        stage={stage}
-                    >
-                        {isSingleBody && <SppStageStatus proposal={proposal} stage={stage} daoId={daoId} />}
-                    </SppVotingTerminalBodyContent>
-                </ProposalVoting.BodyContent>
+                    plugin={plugin}
+                    displayStatus={isSingleBody}
+                    proposal={proposal}
+                    daoId={daoId}
+                    stage={stage}
+                />
             ))}
         </ProposalVoting.Stage>
     );

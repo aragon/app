@@ -131,6 +131,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 term={t('app.dashboard.daoDashboardPage.aside.details.address')}
+                                copyValue={dao.address}
                                 link={{ href: daoAddressLink }}
                             >
                                 {truncatedAddress}
@@ -138,7 +139,8 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             {daoEns != null && (
                                 <DefinitionList.Item
                                     term={t('app.dashboard.daoDashboardPage.aside.details.ens')}
-                                    link={{ href: daoAddressLink, className: 'max-w-full' }}
+                                    copyValue={daoEns}
+                                    link={{ href: daoAddressLink }}
                                 >
                                     {daoEns}
                                 </DefinitionList.Item>
@@ -157,13 +159,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             className="flex flex-col gap-4"
                         >
                             {dao.links.map(({ url, name }) => (
-                                <Link
-                                    key={url}
-                                    iconRight={IconType.LINK_EXTERNAL}
-                                    description={url}
-                                    href={url}
-                                    target="_blank"
-                                >
+                                <Link key={url} href={url} isExternal={true} showUrl={true}>
                                     {name}
                                 </Link>
                             ))}

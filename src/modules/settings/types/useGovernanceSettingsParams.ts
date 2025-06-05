@@ -11,4 +11,8 @@ export interface IUseGovernanceSettingsParams<TSettings = unknown> {
      * Plugin-specific settings object to be parsed.
      */
     settings: TSettings;
+    /**
+     * Defines if the voting is to veto or not.
+     */
+    isVeto?: boolean;
 }

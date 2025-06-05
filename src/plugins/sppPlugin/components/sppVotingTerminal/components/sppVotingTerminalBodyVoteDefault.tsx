@@ -76,7 +76,7 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
                 {t(`app.plugins.spp.sppVotingTerminalBodyVoteDefault.${voteLabel}`)}
             </Button>
             {!voted && (
-                <p className="text-center text-sm font-normal leading-normal text-neutral-500 md:text-left">
+                <p className="text-center text-sm leading-normal font-normal text-neutral-500 md:text-left">
                     {t('app.plugins.spp.sppVotingTerminalBodyVoteDefault.helpText')}
                 </p>
             )}

@@ -64,12 +64,12 @@ export const AragonDemoPageHeader: React.FC<IAragonDemoPageHeaderProps> = (props
             <Image
                 src={AragonDemoHeader}
                 alt="Aragon Demo Header"
-                className="absolute left-0 top-0 -z-10 size-full object-cover"
+                className="absolute top-0 left-0 -z-10 size-full object-cover"
             />
-            <Container className="flex w-full flex-col gap-6 pb-4 pt-10 md:gap-y-10 md:py-16">
+            <Container className="flex w-full flex-col gap-6 pt-10 pb-4 md:gap-y-10 md:py-16">
                 <div className="flex flex-col gap-y-2 md:gap-y-3">
-                    <h1 className="text-3xl font-normal leading-tight text-neutral-0 md:text-5xl">{title}</h1>
-                    <p className="max-w-screen-md text-base font-normal leading-normal text-neutral-0 md:text-xl">
+                    <h1 className="text-neutral-0 text-3xl leading-tight font-normal md:text-5xl">{title}</h1>
+                    <p className="text-neutral-0 max-w-screen-md text-base leading-normal font-normal md:text-xl">
                         {description}
                     </p>
                 </div>

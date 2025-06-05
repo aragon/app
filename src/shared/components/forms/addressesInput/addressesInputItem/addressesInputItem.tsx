@@ -98,7 +98,7 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
     }, [trigger, memberFieldName, isAlreadyInList, value.address]);
 
     return (
-        <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
+        <Card className="shadow-neutral-sm flex flex-col gap-3 border border-neutral-100 p-6 md:flex-row md:gap-2">
             <AddressInput
                 onChange={setAddressInput}
                 value={addressInput}
