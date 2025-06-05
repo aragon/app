@@ -33,7 +33,8 @@ export const ProposalListStats: React.FC<IProposalListStatsProps> = (props) => {
     const plugins = useDaoPlugins({ daoId, type: PluginType.PROCESS });
     const buttonUrl = daoUtils.getDaoUrl(dao, 'settings');
 
-    const latestProposalDate = proposalList != null ? proposalList[0].blockTimestamp * 1000 : undefined;
+    const latestProposalDate =
+        proposalList != null && proposalList.length > 0 ? proposalList[0].blockTimestamp * 1000 : undefined;
     const formattedProposalDate = formatterUtils.formatDate(latestProposalDate, { format: DateFormat.RELATIVE });
 
     const [proposalDateValue, proposalDateUnit] = formattedProposalDate?.split(' ') ?? [undefined, undefined];

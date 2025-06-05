@@ -7,6 +7,19 @@ import * as proposalHooks from '../../hooks/useProposalListData';
 import { generateProposal } from '../../testUtils';
 import { ProposalListStats, type IProposalListStatsProps } from './proposalListStats';
 
+const createProposalListData = (
+    values?: Partial<ReturnType<typeof proposalHooks.useProposalListData>>,
+): ReturnType<typeof proposalHooks.useProposalListData> => ({
+    proposalList: [],
+    onLoadMore: jest.fn(),
+    state: 'idle',
+    pageSize: 10,
+    itemsCount: 0,
+    emptyState: { heading: '', description: '' },
+    errorState: { heading: '', description: '' },
+    ...values,
+});
+
 describe('<ProposalListStats /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useDaoPluginsSpy = jest.spyOn(pluginHooks, 'useDaoPlugins');
@@ -24,15 +37,7 @@ describe('<ProposalListStats /> component', () => {
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
-        useProposalListDataSpy.mockReturnValue({
-            proposalList: [],
-            onLoadMore: jest.fn(),
-            state: 'idle',
-            pageSize: 10,
-            itemsCount: 0,
-            emptyState: { heading: '', description: '' },
-            errorState: { heading: '', description: '' },
-        });
+        useProposalListDataSpy.mockReturnValue(createProposalListData());
         useDaoPluginsSpy.mockReturnValue([]);
         formatDateSpy.mockReturnValue('-');
     });
@@ -45,25 +50,10 @@ describe('<ProposalListStats /> component', () => {
     });
 
     it('renders all stats with valid data and formatted relative date', () => {
+        const proposals = [generateProposal({ blockTimestamp: 1720000000 })];
         useProposalListDataSpy
-            .mockReturnValueOnce({
-                proposalList: [generateProposal({ blockTimestamp: 1720000000 })],
-                onLoadMore: jest.fn(),
-                state: 'idle',
-                pageSize: 10,
-                itemsCount: 20,
-                emptyState: { heading: '', description: '' },
-                errorState: { heading: '', description: '' },
-            })
-            .mockReturnValueOnce({
-                proposalList: [],
-                onLoadMore: jest.fn(),
-                state: 'idle',
-                pageSize: 10,
-                itemsCount: 5,
-                emptyState: { heading: '', description: '' },
-                errorState: { heading: '', description: '' },
-            });
+            .mockReturnValueOnce(createProposalListData({ proposalList: proposals, itemsCount: 20 }))
+            .mockReturnValueOnce(createProposalListData({ proposalList: [], itemsCount: 5 }));
 
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin(), generateTabComponentPlugin()]);
         formatDateSpy.mockReturnValue('13 days ago');
@@ -86,30 +76,13 @@ describe('<ProposalListStats /> component', () => {
 
     it('renders "-" when data is missing', () => {
         useProposalListDataSpy
-            .mockReturnValueOnce({
-                proposalList: undefined,
-                onLoadMore: jest.fn(),
-                state: 'idle',
-                pageSize: 10,
-                itemsCount: undefined,
-                emptyState: { heading: '', description: '' },
-                errorState: { heading: '', description: '' },
-            })
-            .mockReturnValueOnce({
-                proposalList: undefined,
-                onLoadMore: jest.fn(),
-                state: 'idle',
-                pageSize: 10,
-                itemsCount: undefined,
-                emptyState: { heading: '', description: '' },
-                errorState: { heading: '', description: '' },
-            });
+            .mockReturnValueOnce(createProposalListData({ itemsCount: undefined }))
+            .mockReturnValueOnce(createProposalListData({ itemsCount: undefined }));
 
         useDaoPluginsSpy.mockReturnValue(undefined);
         formatDateSpy.mockReturnValue('-');
 
         render(createTestComponent());
-
         expect(screen.getAllByText('-')).toHaveLength(4);
     });
 
@@ -118,32 +91,9 @@ describe('<ProposalListStats /> component', () => {
         const dao = generateDao({ address });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
 
-        useProposalListDataSpy
-            .mockReturnValueOnce({
-                proposalList: [generateProposal({ blockTimestamp: 1720000000 })],
-                onLoadMore: jest.fn(),
-                state: 'idle',
-                pageSize: 10,
-                itemsCount: 1,
-                emptyState: { heading: '', description: '' },
-                errorState: { heading: '', description: '' },
-            })
-            .mockReturnValueOnce({
-                proposalList: [],
-                onLoadMore: jest.fn(),
-                state: 'idle',
-                pageSize: 10,
-                itemsCount: 1,
-                emptyState: { heading: '', description: '' },
-                errorState: { heading: '', description: '' },
-            });
-
         render(createTestComponent({ dao }));
 
-        const button = screen.getByRole('link', {
-            name: /proposalListStats.button/,
-        });
-
+        const button = screen.getByRole('link', { name: /proposalListStats.button/ });
         expect(button).toBeInTheDocument();
         expect(button).toHaveAttribute('href', `/dao/ethereum-mainnet/${address}/settings`);
     });
