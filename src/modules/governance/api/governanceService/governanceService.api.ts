@@ -152,32 +152,3 @@ export interface IGetProposalActionsUrlParams {
 }
 
 export interface IGetProposalActionsParams extends IRequestUrlParams<IGetProposalActionsUrlParams> {}
-
-export interface IGetTokenLocksUrlParams {
-    /**
-     * Address of the member to fetch the locks for.
-     */
-    address: string;
-}
-
-export interface IGetTokenLocksQueryParams extends IPaginatedRequest {
-    /**
-     * Address of the plugin
-     */
-    pluginAddress?: string;
-    /**
-     * Network of the lock
-     */
-    network?: Network;
-    /**
-     * Flag to determine whether or not to fetch only active locks
-     */
-    onlyActive?: boolean;
-    /**
-     * Address of the locked token
-     */
-    tokenAddress?: string;
-}
-
-export interface IGetTokenLocksParams
-    extends IRequestUrlQueryParams<IGetTokenLocksUrlParams, IGetTokenLocksQueryParams> {}

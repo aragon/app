@@ -38,7 +38,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     invariant(votingEscrow != null && plugin.votingEscrow != null, 'Token lock form requires voting escrow settings');
 
     const { decimals } = token;
-    const minDepositWei = BigInt(votingEscrow.minDeposit);
 
     const { open } = useDialogContext();
     const { t } = useTranslations();
@@ -115,6 +114,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         }
     };
 
+    const minDepositWei = BigInt(votingEscrow.minDeposit);
     const formattedMinDeposit = formatUnits(minDepositWei, decimals);
 
     const updateAmountField = useCallback(

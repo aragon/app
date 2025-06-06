@@ -15,7 +15,7 @@ describe('useTokenLocks query', () => {
         const locksResult = generatePaginatedResponse({ data: [generateTokenLock()] });
         tokenServiceSpy.mockResolvedValue(locksResult);
 
-        const urlParams = { address: '0xmember' };
+        const urlParams = { address: '0x123' };
         const queryParams = {};
         const { result } = renderHook(() => useTokenLocks({ urlParams, queryParams }), { wrapper: ReactQueryWrapper });
 

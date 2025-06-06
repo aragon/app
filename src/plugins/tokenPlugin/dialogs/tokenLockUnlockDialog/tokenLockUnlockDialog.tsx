@@ -23,7 +23,7 @@ export interface ITokenLockUnlockDialogParams {
      */
     amount: bigint;
     /**
-     * The contract address of the voting escrow
+     * The contract address of the voting escrow.
      */
     escrowContract: string;
     /**

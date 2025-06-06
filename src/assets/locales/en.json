@@ -1230,13 +1230,13 @@
         },
         "tokenApproveTokensDialog": {
           "LOCK": {
-            "description": "To approve locking your tokens, confirm the onchain transaction in your wallet.",
+            "description": "To lock your tokens, confirm the two onchain transactions in your wallet.",
             "submit": "Approve tokens",
             "success": "Lock tokens",
             "title": "Approve locking"
           },
           "WRAP": {
-            "description": "To approve wrapping your tokens, confirm the onchain transaction in your wallet.",
+            "description": "To wrap your tokens, confirm the two onchain transaction in your wallet.",
             "submit": "Approve tokens",
             "success": "Wrap tokens",
             "title": "Approve wrapping"
@@ -1311,14 +1311,14 @@
         "tokenLockUnlockDialog": {
           "lock": {
             "cancel": "Cancel",
-            "description": "To lock your {{symbol}}, confirm the two onchain transaction in your wallet.",
+            "description": "To lock your {{symbol}}, confirm the two onchain transactions in your wallet.",
             "submit": "Lock",
             "success": "View your veLock",
             "title": "Lock {{symbol}}",
             "transactionInfoTitle": "Lock {{symbol}}"
           },
           "unlock": {
-            "description": "To unlock your {{symbol}}, confirm the two onchain transaction in your wallet.",
+            "description": "To unlock your {{symbol}}, confirm the two onchain transactions in your wallet.",
             "submit": "Unlock {{symbol}}",
             "success": "View locks",
             "title": "Unlock {{symbol}}",
@@ -1569,13 +1569,13 @@
         },
         "tokenWrapUnwrapDialog": {
           "unwrap": {
-            "description": "To unwrap your tokens, confirm the two onchain transaction in your wallet.",
+            "description": "To unwrap your tokens, confirm the two onchain transactions in your wallet.",
             "submit": "Unwrap tokens",
             "success": "View members",
             "title": "Unwrap tokens"
           },
           "wrap": {
-            "description": "To wrap your tokens, confirm the two onchain transaction in your wallet.",
+            "description": "To wrap your tokens, confirm the two onchain transactions in your wallet.",
             "submit": "Wrap tokens",
             "success": "View members",
             "title": "Wrap tokens"

@@ -11,19 +11,19 @@ export interface IGetTokenLocksUrlParams {
 
 export interface IGetTokenLocksQueryParams extends IPaginatedRequest {
     /**
-     * Address of the plugin
+     * Address of the plugin.
      */
     pluginAddress?: string;
     /**
-     * Network of the lock
+     * Network of the lock.
      */
     network?: Network;
     /**
-     * Flag to determine whether or not to fetch only active locks
+     * Flag to determine whether or not to fetch only active locks.
      */
     onlyActive?: boolean;
     /**
-     * Address of the locked token
+     * Address of the locked token.
      */
     tokenAddress?: string;
 }
