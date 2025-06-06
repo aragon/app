@@ -1,3 +1,4 @@
+import type { ITokenPluginSettingsToken } from '@/plugins/tokenPlugin/types';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
@@ -11,7 +12,6 @@ import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import { tokenLockUnlockDialogUtils } from './tokenLockUnlockDialogUtils';
-import type { ITokenPluginSettingsToken } from '@/plugins/tokenPlugin/types';
 
 export interface ITokenLockUnlockDialogParams {
     /**

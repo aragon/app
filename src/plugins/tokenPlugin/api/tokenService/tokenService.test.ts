@@ -1,5 +1,5 @@
-import { generateTokenLock } from './../../testUtils/generators/tokenLock';
 import { tokenService } from '../tokenService';
+import { generateTokenLock } from './../../testUtils/generators/tokenLock';
 
 describe('token service', () => {
     const requestSpy = jest.spyOn(tokenService, 'request');
@@ -11,8 +11,8 @@ describe('token service', () => {
     it('getMemberLocks fetches the locks of the specified members', async () => {
         const locks = [generateTokenLock()];
         const params = {
-            urlParams: { address: '0xmember' },
-            queryParams: {  },
+            urlParams: { address: '0x123' },
+            queryParams: {},
         };
 
         requestSpy.mockResolvedValue(locks);
@@ -21,4 +21,4 @@ describe('token service', () => {
         expect(requestSpy).toHaveBeenCalledWith(tokenService['urls'].memberLocks, params);
         expect(result).toEqual(locks);
     });
-})
+});

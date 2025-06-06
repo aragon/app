@@ -247,7 +247,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                         </Button>
                     )}
 
-                    <p className="text-center text-sm font-normal leading-normal text-neutral-500">
+                    <p className="text-center text-sm leading-normal font-normal text-neutral-500">
                         {t('app.plugins.token.tokenLockForm.footerInfo')}
                     </p>
                 </div>
