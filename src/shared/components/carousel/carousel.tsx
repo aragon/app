@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { animate, motion, MotionStyle, useMotionValue } from 'framer-motion';
+import { animate, motion, type MotionStyle, useMotionValue } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import useMeasure from 'react-use-measure';
 
