@@ -110,6 +110,8 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         }
     };
 
+    const formattedMinDeposit = formatUnits(minDepositWei, decimals);
+
     const updateAmountField = useCallback(
         (value?: string) => {
             if (unlockedBalance == null || value == null) {
@@ -118,32 +120,10 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
             const processedValue = (unlockedBalance.value * BigInt(value)) / BigInt(100);
 
-            if (processedValue < minDepositWei) {
-                setError('amount', {
-                    type: 'validate',
-                    message: t('app.plugins.token.tokenLockForm.minDepositError', {
-                        minDeposit: votingEscrow.minDeposit,
-                        symbol: token.symbol,
-                    }),
-                });
-            } else {
-                clearErrors('amount');
-            }
-
             const parsedValue = formatUnits(processedValue, decimals);
             setValue('amount', parsedValue);
         },
-        [
-            unlockedBalance,
-            decimals,
-            setValue,
-            setError,
-            clearErrors,
-            minDepositWei,
-            t,
-            token.symbol,
-            votingEscrow.minDeposit,
-        ],
+        [unlockedBalance, decimals, setValue],
     );
 
     const handlePercentageChange = useCallback(
@@ -189,14 +169,14 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
             setError('amount', {
                 type: 'minDeposit',
                 message: t('app.plugins.token.tokenLockForm.minDepositError', {
-                    minDeposit: votingEscrow.minDeposit,
+                    minDeposit: formattedMinDeposit,
                     symbol: token.symbol,
                 }),
             });
         } else {
             clearErrors('amount');
         }
-    }, [lockAmountWei, minDepositWei, setError, clearErrors, t, token.symbol, votingEscrow.minDeposit]);
+    }, [lockAmountWei, minDepositWei, setError, clearErrors, t, token.symbol, formattedMinDeposit]);
 
     const submitLabel = needsApproval ? 'approve' : 'lock';
     const disableSubmit = unlockedBalance?.value === BigInt(0);

@@ -55,7 +55,7 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
         symbol: token.symbol.substring(1),
         name: token.name.substring(11),
     };
-    const titleToken = underlying != null ? underlyingToken : token;
+    const titleToken = !plugin.settings.votingEscrow && underlying != null ? underlyingToken : token;
     const cardTitle = `${titleToken.name} (${titleToken.symbol})`;
 
     if (!visibleTabs.length) {
