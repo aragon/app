@@ -33,7 +33,7 @@ export interface ITokenPluginSettings extends IPluginSettings {
      */
     historicalTotalSupply?: string;
     /**
-     * The settings of the voting escrow
+     * The settings of the voting escrow.
      */
     votingEscrow?: ITokenPluginSettingsEscrowSettings;
 }

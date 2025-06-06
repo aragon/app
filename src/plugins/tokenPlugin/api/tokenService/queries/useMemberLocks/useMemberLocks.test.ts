@@ -4,7 +4,7 @@ import { generateTokenLock } from '../../../../testUtils/generators/tokenLock';
 import { tokenService } from '../../tokenService';
 import { useMemberLocks } from './useMemberLocks';
 
-describe('useTokenLocks query', () => {
+describe('useMemberLocks query', () => {
     const tokenServiceSpy = jest.spyOn(tokenService, 'getMemberLocks');
 
     afterEach(() => {
