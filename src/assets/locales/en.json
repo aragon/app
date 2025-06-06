@@ -1242,7 +1242,7 @@
             "title": "Approve locking"
           },
           "WRAP": {
-            "description": "To wrap your tokens, confirm the two onchain transaction in your wallet.",
+            "description": "To wrap your tokens, confirm the two onchain transactions in your wallet.",
             "submit": "Approve tokens",
             "success": "Wrap tokens",
             "title": "Approve wrapping"
