@@ -1,6 +1,5 @@
 import { type IVote } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { VoteProposalDataListItem, type VoteIndicator } from '@aragon/gov-ui-kit';
 import { proposalUtils } from '../../utils/proposalUtils';
@@ -25,10 +24,8 @@ export const VoteProposalListItem: React.FC<IVoteProposalListItemProps> = (props
 
     const proposal = vote.parentProposal ?? vote.proposal!;
 
-    const plugin = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress, includeSubPlugins: true })?.[0];
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-
-    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
+    const slug = proposalUtils.getProposalSlug(proposal, dao);
 
     return (
         <VoteProposalDataListItem.Structure

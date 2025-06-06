@@ -802,9 +802,13 @@
         "error": {
           "description": "There was an error loading the DAO proposals. Try again later.",
           "title": "Error loading proposals"
-        }
+        },
+        "groupTab": "All proposals"
       },
       "daoProposalsPage": {
+        "aside": {
+          "stats": "All proposals"
+        },
         "main": {
           "action": "Proposal",
           "title": "Proposals"
@@ -855,6 +859,14 @@
           "tryAgain": "Try again"
         },
         "notExecutable": "The proposal must pass before its actions can be executed."
+      },
+      "proposalListStats": {
+        "button": "View governance settings",
+        "executed": "Executed",
+        "mostRecent": "Most recent",
+        "recentUnit": " {{unit}} ago",
+        "total": "Total",
+        "types": "Types"
       },
       "publishProposalDialog": {
         "button": {
@@ -1064,9 +1076,6 @@
           "thresholdDefinition": "{{threshold}} of {{count}}",
           "thresholdTerm": "Multisig threshold"
         },
-        "multisigProposalList": {
-          "entity": "Proposals"
-        },
         "multisigProposalVotingSummary": {
           "approvalLabel": "approval",
           "approved": "approved",
@@ -1151,9 +1160,6 @@
           "action": "Close",
           "description": "You are not connected to the correct address. If you are one of its owners, you can connect it with WalletConnect.",
           "title": "Not eligible to vote"
-        },
-        "sppProposalList": {
-          "entity": "Proposals"
         },
         "sppProposalListItem": {
           "stage": "Stage {{stageIndex}}"
@@ -1390,9 +1396,6 @@
           "helpText": "The voting power or token balance required to create proposals.",
           "label": "Minimum requirement",
           "placeholder": "≥ 1"
-        },
-        "tokenProposalList": {
-          "entity": "Proposals"
         },
         "tokenProposalVotingSummary": {
           "approved": "approved",

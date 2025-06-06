@@ -53,7 +53,9 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
 
     const daoUrl = daoUtils.getDaoUrl(dao)!;
 
-    const proposalListParams = { queryParams: { daoId, pageSize: dashboardProposalsCount } };
+    const proposalListParams = {
+        queryParams: { daoId, pageSize: dashboardProposalsCount, sort: 'blockTimestamp', isSubProposal: false },
+    };
     const memberListParams = { queryParams: { daoId, pageSize: dashboardMembersCount } };
     const assetListParams = {
         queryParams: { address: dao.address, network: dao.network, pageSize: dashboardAssetsCount },
@@ -81,7 +83,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                 <Page.Main>
                     {hasSupportedPlugins && (
                         <Page.MainSection title={t('app.dashboard.daoDashboardPage.main.proposals.title')}>
-                            <DaoProposalList.Container initialParams={proposalListParams} hidePagination={true}>
+                            <DaoProposalList initialParams={proposalListParams} hidePagination={true}>
                                 <Button
                                     className="self-start"
                                     variant="tertiary"
@@ -91,7 +93,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                 >
                                     {t('app.dashboard.daoDashboardPage.main.viewAll')}
                                 </Button>
-                            </DaoProposalList.Container>
+                            </DaoProposalList>
                         </Page.MainSection>
                     )}
                     {hasSupportedPlugins && (

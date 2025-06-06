@@ -8,7 +8,6 @@ import {
     type ITransactionDialogStepMeta,
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/gov-ui-kit';
@@ -37,23 +36,17 @@ export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (pro
 
     const { t } = useTranslations();
     const router = useRouter();
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
     const handlePrepareTransaction = () => sppAdvanceStageDialogUtils.buildTransaction(proposal);
 
-    const onSuccessClick = () => {
-        router.refresh();
-    };
+    const onSuccessClick = () => router.refresh();
 
     const { address: creatorAddress, ens: creatorEns } = proposal.creator;
-
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
-
-    const plugin = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress, includeSubPlugins: true })?.[0];
-
-    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
+    const slug = proposalUtils.getProposalSlug(proposal, dao);
 
     return (
         <TransactionDialog

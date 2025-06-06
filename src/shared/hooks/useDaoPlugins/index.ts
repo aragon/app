@@ -1,1 +1,1 @@
-export { useDaoPlugins, type IUseDaoPluginsParams } from './useDaoPlugins';
+export { pluginGroupTab, useDaoPlugins, type IUseDaoPluginsParams } from './useDaoPlugins';

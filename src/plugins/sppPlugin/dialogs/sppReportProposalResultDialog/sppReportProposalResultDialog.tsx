@@ -8,7 +8,6 @@ import {
     TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { invariant, VoteProposalDataListItemStructure } from '@aragon/gov-ui-kit';
@@ -54,16 +53,13 @@ export const SppReportProposalResultDialog: React.FC<ISppReportProposalResultDia
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const handlePrepareTransaction = () =>
-        sppReportProposalResultDialogUtils.buildTransaction({
-            proposal,
-            resultType: isVeto ? SppProposalType.VETO : SppProposalType.APPROVAL,
-        });
+    const handlePrepareTransaction = () => {
+        const resultType = isVeto ? SppProposalType.VETO : SppProposalType.APPROVAL;
 
-    const pluginAddress = proposal.pluginAddress;
-    const processedPlugin = useDaoPlugins({ daoId, pluginAddress, includeSubPlugins: true })?.[0];
+        return sppReportProposalResultDialogUtils.buildTransaction({ proposal, resultType });
+    };
 
-    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, processedPlugin?.meta);
+    const slug = proposalUtils.getProposalSlug(proposal, dao);
     const confirmationContext = isVeto ? 'veto' : 'approve';
 
     return (

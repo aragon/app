@@ -1,101 +1,52 @@
 import { generateToken } from '@/modules/finance/testUtils';
 import { renderHook } from '@testing-library/react';
-import * as useTokenModule from '../useToken';
-import * as useERC20VotesTokenCheckModule from './useERC20VotesTokenCheck';
+import * as useToken from '../useToken';
 import { useGovernanceToken } from './useGovernanceToken';
+import * as useGovernanceTokenDelegationCheck from './useGovernanceTokenDelegationCheck';
+import * as useGovernanceTokenErc20Check from './useGovernanceTokenErc20Check';
+import * as useGovernanceTokenVotesCheck from './useGovernanceTokenVotesCheck';
 
 describe('useGovernanceToken hook', () => {
-    const useTokenSpy = jest.spyOn(useTokenModule, 'useToken');
-    const useERC20VotesTokenCheckSpy = jest.spyOn(useERC20VotesTokenCheckModule, 'useERC20VotesTokenCheck');
+    const useTokenSpy = jest.spyOn(useToken, 'useToken');
+    const useDelegationCheckSpy = jest.spyOn(useGovernanceTokenDelegationCheck, 'useGovernanceTokenDelegationCheck');
+    const useErc20CheckSpy = jest.spyOn(useGovernanceTokenErc20Check, 'useGovernanceTokenErc20Check');
+    const useVotesCheckSpy = jest.spyOn(useGovernanceTokenVotesCheck, 'useGovernanceTokenVotesCheck');
+
+    beforeEach(() => {
+        useTokenSpy.mockReturnValue({ isError: false, isLoading: true, data: null });
+        useErc20CheckSpy.mockReturnValue({ isError: false, isLoading: true, data: false });
+        useDelegationCheckSpy.mockReturnValue({ isError: false, isLoading: true, data: false });
+        useVotesCheckSpy.mockReturnValue({ isError: false, isLoading: true, data: false });
+    });
 
     afterEach(() => {
         useTokenSpy.mockReset();
-        useERC20VotesTokenCheckSpy.mockReset();
+        useDelegationCheckSpy.mockReset();
+        useErc20CheckSpy.mockReset();
+        useVotesCheckSpy.mockReset();
     });
 
-    it('does not trigger ERC20Votes checks if ERC20 check fails', () => {
-        // Mock the useToken hook failure
-        useTokenSpy.mockReturnValue({
-            isLoading: false,
-            isError: true,
-            token: null,
-        });
-
-        // Set useERC20VotesTokenCheck to initial disabled state
-        useERC20VotesTokenCheckSpy.mockReturnValue({
-            isLoading: false,
-            isGovernanceCompatible: false,
-            isDelegationCompatible: false,
-            isError: false,
-        });
-
+    it('does not trigger delegation and votes checks if ERC20 check fails', () => {
+        useErc20CheckSpy.mockReturnValue({ isLoading: false, isError: true, data: false });
         const { result } = renderHook(() => useGovernanceToken({ address: '0x123', chainId: 123 }));
 
-        expect(result.current.token).toBe(null);
-        expect(result.current.isError).toBe(true);
-        expect(result.current.isLoading).toBe(false);
-        expect(result.current.isGovernanceCompatible).toBe(false);
-        expect(result.current.isDelegationCompatible).toBe(false);
+        expect(result.current.data.token).toBeNull();
+        expect(result.current.data.isDelegationCompatible).toBeFalsy();
+        expect(result.current.data.isGovernanceCompatible).toBeFalsy();
 
-        // useERC20VotesTokenCheck not called with enabled: true query param!
-        expect(useERC20VotesTokenCheckSpy).toHaveBeenCalledTimes(1);
-        expect(useERC20VotesTokenCheckSpy).toHaveBeenCalledWith({
-            address: '0x123',
-            chainId: 123,
-            enabled: false,
-        });
+        expect(useDelegationCheckSpy).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
+        expect(useVotesCheckSpy).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
     });
 
-    it('still returns loading state without token while ERC20Votes checks are in progress', () => {
+    it('correctly return the token and check results', () => {
         const token = generateToken();
-
-        // Mock the useToken hook success
-        useTokenSpy.mockReturnValue({
-            isLoading: false,
-            isError: false,
-            token,
-        });
-
-        // Mock ERC20Votes loading state
-        useERC20VotesTokenCheckSpy.mockReturnValue({
-            isLoading: true,
-            isGovernanceCompatible: undefined,
-            isDelegationCompatible: undefined,
-            isError: false,
-        });
-
+        useTokenSpy.mockReturnValue({ isLoading: false, isError: false, data: token });
+        useDelegationCheckSpy.mockReturnValue({ isLoading: false, isError: false, data: true });
+        useVotesCheckSpy.mockReturnValue({ isLoading: false, isError: false, data: true });
         const { result } = renderHook(() => useGovernanceToken({ address: '0x123', chainId: 123 }));
 
-        expect(result.current.token).toBe(token);
-        expect(result.current.isLoading).toBe(true);
-        expect(result.current.isGovernanceCompatible).toBe(undefined);
-        expect(result.current.isDelegationCompatible).toBe(undefined);
-    });
-
-    it('returns both token and governance check flags in success case', () => {
-        const token = generateToken();
-
-        // Mock the useToken hook success
-        useTokenSpy.mockReturnValue({
-            isLoading: false,
-            isError: false,
-            token,
-        });
-
-        // Mock ERC20Votes success
-        useERC20VotesTokenCheckSpy.mockReturnValue({
-            isLoading: false,
-            isGovernanceCompatible: true,
-            isDelegationCompatible: true,
-            isError: false,
-        });
-
-        const { result } = renderHook(() => useGovernanceToken({ address: '0x123', chainId: 123 }));
-
-        expect(result.current.token).toEqual(token);
-        expect(result.current.isGovernanceCompatible).toBe(true);
-        expect(result.current.isDelegationCompatible).toBe(true);
-        expect(result.current.isLoading).toBe(false);
-        expect(result.current.isError).toBe(false);
+        expect(result.current.data.token).toEqual(token);
+        expect(result.current.data.isDelegationCompatible).toBeTruthy();
+        expect(result.current.data.isGovernanceCompatible).toBeTruthy();
     });
 });

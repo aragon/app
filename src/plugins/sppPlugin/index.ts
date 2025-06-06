@@ -1,9 +1,9 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import { SppProposalList } from '@/plugins/sppPlugin/components/sppProposalList';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { SppCreateProposalSettingsForm } from './components/sppCreateProposalSettingsForm';
 import { SppGovernanceInfo } from './components/sppGovernanceInfo';
+import { SppProposalListItem } from './components/sppProposalListItem';
 import { SppVotingTerminal } from './components/sppVotingTerminal';
 import { sppPlugin } from './constants/sppPlugin';
 import { useSppActions } from './hooks/useSppActions';
@@ -44,9 +44,9 @@ export const initialiseSppPlugin = () => {
             function: useSppActions,
         })
         .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST,
+            slotId: GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST_ITEM,
             pluginId: sppPlugin.id,
-            component: SppProposalList,
+            component: SppProposalListItem,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
