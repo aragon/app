@@ -1,12 +1,12 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { useTokenLocksListData } from '../../../hooks/useTokenLocksListData';
-import type { ITokenVeLocksDialogParams } from '../tokenVeLocksDialog';
-import { TokenVeLocksListItem } from './tokenVeLocksListItem';
+import type { ITokenLocksDialogParams } from '../tokenLocksDialog';
+import { TokenLocksListItem } from './tokenLocksListItem';
 
-export interface ITokenVeLocksListProps extends ITokenVeLocksDialogParams {}
+export interface ITokenLocksListProps extends ITokenLocksDialogParams {}
 
-export const TokenVeLocksList: React.FC<ITokenVeLocksListProps> = (props) => {
+export const TokenLocksList: React.FC<ITokenLocksListProps> = (props) => {
     const { initialParams, votingEscrow, token } = props;
     const { t } = useTranslations();
     const { locksList, onLoadMore, state, pageSize, itemsCount, errorState, emptyState } =
@@ -14,7 +14,7 @@ export const TokenVeLocksList: React.FC<ITokenVeLocksListProps> = (props) => {
 
     return (
         <DataListRoot
-            entityLabel={t('app.plugins.token.tokenVeLocksList.entity')}
+            entityLabel={t('app.plugins.token.tokenLocksList.entity')}
             onLoadMore={onLoadMore}
             state={state}
             pageSize={pageSize}
@@ -26,7 +26,7 @@ export const TokenVeLocksList: React.FC<ITokenVeLocksListProps> = (props) => {
                 emptyState={emptyState}
             >
                 {locksList?.map((lock) => (
-                    <TokenVeLocksListItem key={lock.id} lock={lock} votingEscrow={votingEscrow} token={token} />
+                    <TokenLocksListItem key={lock.id} lock={lock} votingEscrow={votingEscrow} token={token} />
                 ))}
             </DataListContainer>
             <DataListPagination />

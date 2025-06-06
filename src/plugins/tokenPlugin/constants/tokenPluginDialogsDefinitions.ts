@@ -2,7 +2,7 @@ import { TokenLockUnlockDialog } from '@/plugins/tokenPlugin/dialogs/tokenLockUn
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { TokenApproveTokensDialog } from '../dialogs/tokenApproveTokensDialog';
 import { TokenDelegationDialog } from '../dialogs/tokenDelegationDialog';
-import { TokenVeLocksDialog } from '../dialogs/tokenVeLocksDialog';
+import { TokenVeLocksDialog } from '../dialogs/tokenLocksDialog';
 import { TokenWrapUnwrapDialog } from '../dialogs/tokenWrapUnwrapDialog';
 import { TokenPluginDialogId } from './tokenPluginDialogId';
 

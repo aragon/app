@@ -1,10 +1,10 @@
 import { DateTime } from 'luxon';
 import type { ITokenLock } from '../../api/tokenService';
 import type { EscrowSettings } from '../../types';
-import type { VeLockStatus } from './tokenVeLocksDialog';
+import type { LockStatus } from './tokenLocksDialog';
 
-class TokenVeLocksDialogUtils {
-    getLockStatusAndTiming(lock: ITokenLock): { status: VeLockStatus; timeLeft?: number } {
+class TokenLocksDialogUtils {
+    getLockStatusAndTiming(lock: ITokenLock): { status: LockStatus; timeLeft?: number } {
         const { lockExit } = lock;
 
         const now = DateTime.now().toSeconds();
@@ -38,4 +38,4 @@ class TokenVeLocksDialogUtils {
     }
 }
 
-export const tokenVeLocksDialogUtils = new TokenVeLocksDialogUtils();
+export const tokenLocksDialogUtils = new TokenLocksDialogUtils();

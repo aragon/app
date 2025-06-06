@@ -5,9 +5,9 @@ import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import { type IGetTokenLocksParams } from '../../api/tokenService';
 import type { EscrowSettings } from '../../types';
-import { TokenVeLocksList } from './components/tokenVeLocksList';
+import { TokenLocksList } from './components/tokenLocksList';
 
-export interface ITokenVeLocksDialogParams {
+export interface ITokenLocksDialogParams {
     /**
      * Initial parameters to use for fetching the token locks.
      */
@@ -22,27 +22,24 @@ export interface ITokenVeLocksDialogParams {
     votingEscrow: EscrowSettings;
 }
 
-export interface ITokenVeLocksDialogProps extends IDialogComponentProps<ITokenVeLocksDialogParams> {}
+export interface ITokenLocksDialogProps extends IDialogComponentProps<ITokenLocksDialogParams> {}
 
-export type VeLockStatus = 'active' | 'cooldown' | 'available';
+export type LockStatus = 'active' | 'cooldown' | 'available';
 
-export const TokenVeLocksDialog: React.FC<ITokenVeLocksDialogProps> = (props) => {
+export const TokenLocksDialog: React.FC<ITokenLocksDialogProps> = (props) => {
     const { location } = props;
-    invariant(location.params != null, 'TokenVeLocksDialog: required parameters must be set.');
+    invariant(location.params != null, 'TokenLocksDialog: required parameters must be set.');
 
     const { address } = useAccount();
-    invariant(address != null, 'TokenVeLocksDialog: user must be connected.');
+    invariant(address != null, 'TokenLocksDialog: user must be connected.');
 
     const { t } = useTranslations();
 
     return (
         <>
-            <Dialog.Header title={t('app.plugins.token.tokenVeLocksDialog.title')} />
-            <Dialog.Content
-                description={t('app.plugins.token.tokenVeLocksDialog.description')}
-                className="pb-4 md:pb-6"
-            >
-                <TokenVeLocksList {...location.params} />
+            <Dialog.Header title={t('app.plugins.token.tokenLocksDialog.title')} />
+            <Dialog.Content description={t('app.plugins.token.tokenLocksDialog.description')} className="pb-4 md:pb-6">
+                <TokenLocksList {...location.params} />
             </Dialog.Content>
         </>
     );

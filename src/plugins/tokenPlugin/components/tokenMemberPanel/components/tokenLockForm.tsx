@@ -4,7 +4,6 @@ import { useTokenLocks } from '@/plugins/tokenPlugin/api/tokenService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import type { ITokenLockUnlockDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenLockUnlockDialog';
-import type { ITokenVeLocksDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenVeLocksDialog';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -16,6 +15,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { erc20Abi, formatUnits, parseUnits, type Hex } from 'viem';
 import { useAccount, useBalance, useReadContract } from 'wagmi';
+import type { ITokenVeLocksDialogParams } from '../../../dialogs/tokenLocksDialog';
 
 export interface ITokenLockFormProps {
     /**

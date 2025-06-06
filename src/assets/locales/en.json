@@ -1540,7 +1540,7 @@
             "veto": "to veto"
           }
         },
-        "tokenVeLocksDialog": {
+        "tokenLocksDialog": {
           "actions": {
             "unlock": "Unlock {{underlyingSymbol}}",
             "withdraw": "Withdraw {{underlyingSymbol}}"
@@ -1548,7 +1548,7 @@
           "description": "Unlock or withdraw your PDT tokens",
           "title": "Your locks"
         },
-        "tokenVeLocksList": {
+        "tokenLocksList": {
           "empty": {
             "description": "This will show relevant locks when available.",
             "title": "No locks found"

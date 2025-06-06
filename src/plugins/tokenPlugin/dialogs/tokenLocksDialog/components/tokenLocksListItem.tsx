@@ -11,30 +11,30 @@ import {
 } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import type { ITokenLock } from '../../../api/tokenService';
-import type { ITokenVeLocksDialogParams, VeLockStatus } from '../tokenVeLocksDialog';
-import { tokenVeLocksDialogUtils } from '../tokenVeLocksDialogUtils';
+import type { ITokenLocksDialogParams, LockStatus } from '../tokenLocksDialog';
+import { tokenLocksDialogUtils } from '../tokenLocksDialogUtils';
 
-export interface ITokenVeLocksDataListItemProps extends Pick<ITokenVeLocksDialogParams, 'votingEscrow' | 'token'> {
+export interface ITokenLocksDataListItemProps extends Pick<ITokenLocksDialogParams, 'votingEscrow' | 'token'> {
     /**
      * VE lock to display.
      */
     lock: ITokenLock;
 }
 
-const statusToVariant: Record<VeLockStatus, TagVariant> = {
+const statusToVariant: Record<LockStatus, TagVariant> = {
     active: 'primary',
     cooldown: 'info',
     available: 'success',
 };
 
-export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = (props) => {
+export const TokenLocksListItem: React.FC<ITokenLocksDataListItemProps> = (props) => {
     const { lock, votingEscrow, token } = props;
     const { t } = useTranslations();
 
-    const { status, timeLeft } = tokenVeLocksDialogUtils.getLockStatusAndTiming(lock);
+    const { status, timeLeft } = tokenLocksDialogUtils.getLockStatusAndTiming(lock);
     const { amount } = lock;
-    const { multiplier, votingPower } = tokenVeLocksDialogUtils.getMultiplierAndVotingPower(lock);
-    const minLockTime = tokenVeLocksDialogUtils.getMinLockTime(lock, votingEscrow);
+    const { multiplier, votingPower } = tokenLocksDialogUtils.getMultiplierAndVotingPower(lock);
+    const minLockTime = tokenLocksDialogUtils.getMinLockTime(lock, votingEscrow);
     const now = DateTime.now().toSeconds();
 
     return (
@@ -50,11 +50,11 @@ export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = (p
                             {formatterUtils.formatDate(timeLeft * 1000, {
                                 format: DateFormat.DURATION,
                             })}{' '}
-                            {t('app.plugins.token.tokenVeLocksList.item.timeLeftSuffix')}
+                            {t('app.plugins.token.tokenLocksList.item.timeLeftSuffix')}
                         </p>
                     )}
                     <Tag
-                        label={t(`app.plugins.token.tokenVeLocksList.item.statusLabel.${status}`)}
+                        label={t(`app.plugins.token.tokenLocksList.item.statusLabel.${status}`)}
                         variant={statusToVariant[status]}
                     />
                 </div>
@@ -63,16 +63,16 @@ export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = (p
             <div className="grid grid-cols-3 gap-4 text-base leading-tight text-neutral-800 md:text-lg">
                 {[
                     {
-                        label: t('app.plugins.token.tokenVeLocksList.item.metrics.locked'),
+                        label: t('app.plugins.token.tokenLocksList.item.metrics.locked'),
                         value: amount,
                     },
                     {
-                        label: t('app.plugins.token.tokenVeLocksList.item.metrics.multiplier'),
+                        label: t('app.plugins.token.tokenLocksList.item.metrics.multiplier'),
                         value: `${multiplier.toString()}x`,
                         hidden: multiplier <= 1,
                     },
                     {
-                        label: t('app.plugins.token.tokenVeLocksList.item.metrics.votingPower'),
+                        label: t('app.plugins.token.tokenLocksList.item.metrics.votingPower'),
                         value: votingPower,
                     },
                 ]
@@ -97,7 +97,7 @@ export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = (p
                                 // handle unlock action
                             }}
                         >
-                            {t(`app.plugins.token.tokenVeLocksList.item.actions.unlock`, {
+                            {t(`app.plugins.token.tokenLocksList.item.actions.unlock`, {
                                 underlyingSymbol: token.symbol,
                             })}
                         </Button>
@@ -106,7 +106,7 @@ export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = (p
                                 {formatterUtils.formatDate((minLockTime - now) * 1000, {
                                     format: DateFormat.DURATION,
                                 })}{' '}
-                                {t('app.plugins.token.tokenVeLocksList.item.minLockTimeLeftSuffix')}
+                                {t('app.plugins.token.tokenLocksList.item.minLockTimeLeftSuffix')}
                             </p>
                         )}
                     </>
@@ -114,7 +114,7 @@ export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = (p
                 {status === 'cooldown' && (
                     <>
                         <Button className="w-full md:w-auto" variant="tertiary" size="md" disabled={true}>
-                            {t(`app.plugins.token.tokenVeLocksList.item.actions.withdraw`, {
+                            {t(`app.plugins.token.tokenLocksList.item.actions.withdraw`, {
                                 underlyingSymbol: token.symbol,
                             })}
                         </Button>
@@ -123,7 +123,7 @@ export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = (p
                             {formatterUtils.formatDate(timeLeft! * 1000, {
                                 format: DateFormat.DURATION,
                             })}{' '}
-                            {t('app.plugins.token.tokenVeLocksList.item.withdrawTimeLeftSuffix')}
+                            {t('app.plugins.token.tokenLocksList.item.withdrawTimeLeftSuffix')}
                         </p>
                     </>
                 )}
@@ -136,7 +136,7 @@ export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = (p
                             // handle withdraw action
                         }}
                     >
-                        {t(`app.plugins.token.tokenVeLocksList.item.actions.withdraw`, {
+                        {t(`app.plugins.token.tokenLocksList.item.actions.withdraw`, {
                             underlyingSymbol: token.symbol,
                         })}
                     </Button>
