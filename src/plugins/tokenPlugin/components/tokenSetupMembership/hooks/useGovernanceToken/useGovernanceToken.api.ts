@@ -2,11 +2,22 @@ import type { IUseTokenParams, IUseTokenResult } from '../useToken';
 
 export interface IUseGovernanceTokenParams extends IUseTokenParams {}
 
-export interface IUseGovernanceTokenResult {
+export interface IUseGovernanceTokenResultData {
     /**
-     * Token data result.
+     * Information about the token.
      */
-    token: IUseTokenResult['token'];
+    token: IUseTokenResult['data'];
+    /**
+     * Whether the token is governance compatible.
+     */
+    isGovernanceCompatible?: boolean;
+    /**
+     * Whether the token is delegation compatible.
+     */
+    isDelegationCompatible?: boolean;
+}
+
+export interface IUseGovernanceTokenResult {
     /**
      * Defines if an error occurred while fetching the token governance data.
      */
@@ -16,11 +27,7 @@ export interface IUseGovernanceTokenResult {
      */
     isLoading: boolean;
     /**
-     * Whether the token is governance compatible.
+     * Results of the token governance checks.
      */
-    isGovernanceCompatible?: boolean;
-    /**
-     * Whether the token is delegation compatible.
-     */
-    isDelegationCompatible?: boolean;
+    data: IUseGovernanceTokenResultData;
 }
