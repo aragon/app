@@ -56,6 +56,7 @@ class DaoUtils {
 
     getDaoPlugins = (dao?: IDao, params?: IGetDaoPluginsParams) => {
         const { type, pluginAddress, includeSubPlugins = false, subdomain } = params ?? {};
+
         return dao?.plugins.filter(
             (plugin) =>
                 this.filterPluginByAddress(plugin, pluginAddress) &&
@@ -67,6 +68,7 @@ class DaoUtils {
 
     parsePluginSubdomain = (subdomain: string): string => {
         const parts = subdomain.split('-');
+
         return parts.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
     };
 

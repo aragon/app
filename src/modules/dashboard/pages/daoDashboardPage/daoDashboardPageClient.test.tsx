@@ -22,9 +22,7 @@ jest.mock('@aragon/gov-ui-kit', () => ({
 }));
 
 jest.mock('@/modules/governance/components/daoProposalList', () => ({
-    DaoProposalList: {
-        Container: (props: { children: ReactNode }) => <div data-testid="proposal-list-mock">{props.children}</div>,
-    },
+    DaoProposalList: (props: { children: ReactNode }) => <div data-testid="proposal-list-mock">{props.children}</div>,
 }));
 
 jest.mock('@/modules/governance/components/daoMemberList', () => ({
