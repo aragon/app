@@ -1,9 +1,12 @@
 import type { IGetProposalListParams } from '@/modules/governance/api/governanceService';
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
-import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
+import { useDao, type IDaoPlugin, type IPluginSettings } from '@/shared/api/daoService';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
+import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { proposalUtils } from '../../utils/proposalUtils';
 import { DaoProposalListDefaultItem } from './daoProposalListDefaultItem';
 
 export interface IDaoProposalListDefaultProps<TSettings extends IPluginSettings = IPluginSettings> {
@@ -30,6 +33,7 @@ export const DaoProposalListDefault: React.FC<IDaoProposalListDefaultProps> = (p
     const { daoId } = initialParams.queryParams;
 
     const { t } = useTranslations();
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, proposalList } =
         useProposalListData(initialParams);
@@ -49,7 +53,15 @@ export const DaoProposalListDefault: React.FC<IDaoProposalListDefaultProps> = (p
                 layoutClassName="grid grid-cols-1"
             >
                 {proposalList?.map((proposal) => (
-                    <DaoProposalListDefaultItem key={proposal.id} daoId={daoId} proposal={proposal} />
+                    <PluginSingleComponent
+                        key={proposal.id}
+                        pluginId={proposal.pluginSubdomain}
+                        slotId={GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST_ITEM}
+                        dao={dao}
+                        proposal={proposal}
+                        proposalSlug={proposalUtils.getProposalSlug(proposal, dao)}
+                        Fallback={DaoProposalListDefaultItem}
+                    />
                 ))}
             </DataListContainer>
             {!hidePagination && <DataListPagination />}

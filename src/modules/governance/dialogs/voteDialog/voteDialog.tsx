@@ -7,7 +7,6 @@ import {
     TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { invariant, type VoteIndicator, VoteProposalDataListItemStructure } from '@aragon/gov-ui-kit';
@@ -65,9 +64,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
 
     // Fallback to the parent plugin to display the slug of the parent proposal (if exists)
     const pluginAddress = plugin.parentPlugin ?? plugin.address;
-    const processedPlugin = useDaoPlugins({ daoId, pluginAddress, includeSubPlugins: true })?.[0];
-
-    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, processedPlugin?.meta);
+    const slug = proposalUtils.getProposalSlug({ ...proposal, pluginAddress }, dao);
 
     return (
         <TransactionDialog

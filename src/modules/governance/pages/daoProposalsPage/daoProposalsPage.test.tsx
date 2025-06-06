@@ -7,7 +7,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { proposalListOptions } from '../../api/governanceService';
-import { daoProposalsCount, DaoProposalsPage, type IDaoProposalsPageProps } from './daoProposalsPage';
+import { daoProposalsCount, DaoProposalsPage, daoProposalsSort, type IDaoProposalsPageProps } from './daoProposalsPage';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
@@ -53,24 +53,23 @@ describe('<DaoProposalsPage /> component', () => {
     };
 
     it('prefetches the DAO proposal list of the first DAO process plugin', async () => {
-        const dao = generateDao();
+        const dao = generateDao({ id: 'dao-id' });
         const bodyPlugin = generateDaoPlugin({ address: '0x123' });
         fetchQuerySpy.mockResolvedValue(dao);
         getDaoPluginsSpy.mockReturnValue([bodyPlugin]);
-        const expectedDaoId = 'test-dao-id';
-        resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
+        resolveDaoIdSpy.mockResolvedValue(dao.id);
 
         render(await createTestComponent());
 
-        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
-            daoOptions({ urlParams: { id: expectedDaoId } }).queryKey,
-        );
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: { id: dao.id } }).queryKey);
         expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, { type: PluginType.PROCESS });
 
         const memberListParams = {
-            daoId: expectedDaoId,
+            daoId: dao.id,
             pageSize: daoProposalsCount,
             pluginAddress: bodyPlugin.address,
+            sort: daoProposalsSort,
+            isSubProposal: false,
         };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
             proposalListOptions({ queryParams: memberListParams }).queryKey,

@@ -7,7 +7,6 @@ import {
     TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { DataList, invariant, ProposalDataListItem, type ProposalStatus } from '@aragon/gov-ui-kit';
@@ -55,13 +54,9 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
 
-    const handlePrepareTransaction = async () => {
-        return await executeDialogUtils.buildTransaction({ pluginAddress, proposalIndex });
-    };
+    const handlePrepareTransaction = () => executeDialogUtils.buildTransaction({ pluginAddress, proposalIndex });
 
-    const plugin = useDaoPlugins({ daoId, pluginAddress })?.[0];
-
-    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
+    const slug = proposalUtils.getProposalSlug(proposal, dao);
 
     return (
         <TransactionDialog

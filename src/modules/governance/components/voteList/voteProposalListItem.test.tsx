@@ -1,29 +1,24 @@
 import { generateProposal, generateVote } from '@/modules/governance/testUtils';
 import * as daoService from '@/shared/api/daoService';
-import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import {
-    generateDao,
-    generateDaoPlugin,
-    generateReactQueryResultSuccess,
-    generateTabComponentPlugin,
-} from '@/shared/testUtils';
+import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { DateFormat, formatterUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import { proposalUtils } from '../../utils/proposalUtils';
 import { type IVoteProposalListItemProps, VoteProposalListItem } from './voteProposalListItem';
 
 describe('<VoteProposalListItem /> component', () => {
-    const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const getDaoUrlSpy = jest.spyOn(daoUtils, 'getDaoUrl');
+    const getProposalSlugSpy = jest.spyOn(proposalUtils, 'getProposalSlug');
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
 
     beforeEach(() => {
-        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
+        getProposalSlugSpy.mockReturnValue('admin-1');
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
     });
 
     afterEach(() => {
-        useDaoPluginsSpy.mockReset();
+        getProposalSlugSpy.mockReset();
         getDaoUrlSpy.mockReset();
         useDaoSpy.mockReset();
     });
@@ -43,64 +38,38 @@ describe('<VoteProposalListItem /> component', () => {
         );
     };
 
-    it('renders the parent proposal info when parentProposal is defined', () => {
-        const vote = generateVote({
-            parentProposal: { id: 'parent-id', title: 'Parent Proposal', incrementalId: 3, pluginAddress: '0x123' },
-            proposal: generateProposal({ title: 'Child Proposal' }),
-        });
-        const plugin = generateDaoPlugin({ slug: 'parent-slug' });
-        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ id: 'test-plugin', meta: plugin })]);
-        const proposalUrl = '/dao/ethereum-sepolia/0x123/proposals/test-proposal-url';
-        getDaoUrlSpy.mockReturnValue(proposalUrl);
-
+    it('renders the parent proposal info when parent proposal is defined', () => {
+        const parentProposal = generateProposal({ title: 'Parent Proposal' });
+        const vote = generateVote({ parentProposal, proposal: generateProposal() });
+        const dao = generateDao();
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent({ vote }));
-
-        expect(screen.getByText('Parent Proposal')).toBeInTheDocument();
-        expect(screen.getByRole('link')).toHaveAttribute('href', proposalUrl);
-        expect(getDaoUrlSpy.mock.calls[0][1]).toEqual('proposals/PARENT-SLUG-3');
+        expect(getProposalSlugSpy).toHaveBeenCalledWith(parentProposal, dao);
+        expect(screen.getByText(parentProposal.title)).toBeInTheDocument();
     });
 
-    it('renders the child proposal info when parentProposal is not defined', () => {
-        const vote = generateVote({
-            proposal: generateProposal({ title: 'Child Proposal', incrementalId: 4 }),
-        });
-
-        const plugin = generateDaoPlugin({ slug: 'child-slug' });
-        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: plugin })]);
-
-        const proposalUrl = '/dao/ethereum-sepolia/0x123/proposals/test-proposal-url';
-        getDaoUrlSpy.mockReturnValue(proposalUrl);
-
+    it('renders the child proposal info when parent proposal is not defined', () => {
+        const proposal = generateProposal({ title: 'Proposal' });
+        const vote = generateVote({ proposal, parentProposal: undefined });
+        const dao = generateDao();
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent({ vote }));
-
-        expect(screen.getByText('Child Proposal')).toBeInTheDocument();
-        expect(screen.getByRole('link')).toHaveAttribute('href', proposalUrl);
-        expect(getDaoUrlSpy.mock.calls[0][1]).toEqual('proposals/CHILD-SLUG-4');
+        expect(screen.getByText(proposal.title)).toBeInTheDocument();
+        expect(getProposalSlugSpy).toHaveBeenCalledWith(proposal, dao);
     });
 
-    it('renders the correct timestamp as a date', () => {
+    it('correctly renders the vote timestamp', () => {
         const blockTimestamp = 1672531200;
-        const vote = generateVote({
-            proposal: generateProposal({ title: 'Proposal with Date' }),
-            blockTimestamp,
-        });
-        const daoId = 'dao-test';
-
-        render(createTestComponent({ vote, daoId }));
-
+        const vote = generateVote({ blockTimestamp, proposal: generateProposal() });
+        render(createTestComponent({ vote }));
         const expectedDate = formatterUtils.formatDate(blockTimestamp * 1000, { format: DateFormat.DURATION });
         expect(screen.getByText(`${expectedDate!} ago`)).toBeInTheDocument();
     });
 
     it('renders the correct vote indicator', () => {
-        const vote = generateVote({
-            proposal: generateProposal({ title: 'Child Proposal' }),
-        });
-        const daoId = 'dao-test';
+        const vote = generateVote({ proposal: generateProposal() });
         const voteIndicator = 'yes';
-
-        render(createTestComponent({ vote, daoId, voteIndicator }));
-
+        render(createTestComponent({ vote, voteIndicator }));
         expect(screen.getByText(voteIndicator)).toBeInTheDocument();
     });
 });
