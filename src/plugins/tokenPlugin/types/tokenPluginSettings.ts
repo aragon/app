@@ -1,7 +1,7 @@
 import type { IPluginSettings } from '@/shared/api/daoService';
 import type { DaoTokenVotingMode } from './enum';
-import type { ITokenPluginSettingsToken } from './tokenPluginSettingsToken';
 import type { ITokenPluginSettingsEscrowSettings } from './tokenPluginSettingsEscrowSettings';
+import type { ITokenPluginSettingsToken } from './tokenPluginSettingsToken';
 
 export interface ITokenPluginSettings extends IPluginSettings {
     /**
