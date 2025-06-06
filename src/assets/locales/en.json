@@ -1304,13 +1304,11 @@
           },
           "submit": {
             "approve": "Approve {{symbol}}",
-            "lock": "Lock {{symbol}}",
-            "unlock": "Unlock {{amount}} {{symbol}}"
+            "lock": "Lock {{symbol}}"
           }
         },
         "tokenLockUnlockDialog": {
           "lock": {
-            "cancel": "Cancel",
             "description": "To lock your {{symbol}}, confirm the two onchain transactions in your wallet.",
             "submit": "Lock",
             "success": "View your veLock",

@@ -1,6 +1,6 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
-import { useTokenLocks } from '@/plugins/tokenPlugin/api/tokenService';
+import { useMemberLocks } from '@/plugins/tokenPlugin/api/tokenService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import type { ITokenLockUnlockDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenLockUnlockDialog';
@@ -46,7 +46,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const queryClient = useQueryClient();
 
     const lockParams = { urlParams: { address: address! }, queryParams: {} };
-    const { data: lockData } = useTokenLocks(lockParams, { enabled: !!address });
+    const { data: lockData } = useMemberLocks(lockParams, { enabled: !!address });
     const lockCount = lockData?.pages[0]?.metadata.totalRecords ?? 0;
 
     const [percentageValue, setPercentageValue] = useState<string>('100');

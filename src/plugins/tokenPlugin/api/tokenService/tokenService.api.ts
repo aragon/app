@@ -2,14 +2,14 @@ import type { IPaginatedRequest } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
 import type { IRequestUrlQueryParams } from '@/shared/api/httpService';
 
-export interface IGetTokenLocksUrlParams {
+export interface IGetMemberLocksUrlParams {
     /**
      * Address of the member to fetch the locks for.
      */
     address: string;
 }
 
-export interface IGetTokenLocksQueryParams extends IPaginatedRequest {
+export interface IGetMemberLocksQueryParams extends IPaginatedRequest {
     /**
      * Address of the plugin.
      */
@@ -28,5 +28,5 @@ export interface IGetTokenLocksQueryParams extends IPaginatedRequest {
     tokenAddress?: string;
 }
 
-export interface IGetTokenLocksParams
-    extends IRequestUrlQueryParams<IGetTokenLocksUrlParams, IGetTokenLocksQueryParams> {}
+export interface IGetMemberLocksParams
+    extends IRequestUrlQueryParams<IGetMemberLocksUrlParams, IGetMemberLocksQueryParams> {}

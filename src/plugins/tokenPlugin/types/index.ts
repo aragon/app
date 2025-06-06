@@ -5,6 +5,7 @@ export type { ITokenMember } from './tokenMember';
 export type { ITokenMemberMetrics } from './tokenMemberMetrics';
 export type { ITokenPluginSettings } from './tokenPluginSettings';
 export type { ITokenPluginSettingsToken } from './tokenPluginSettingsToken';
+export type { ITokenPluginSettingsEscrowSettings } from './tokenPluginSettingsEscrowSettings';
 export type { ITokenProposal } from './tokenProposal';
 export type { ITokenProposalAction } from './tokenProposalAction';
 export type { ITokenProposalOptionVotes } from './tokenProposalOptionVotes';

@@ -16,7 +16,7 @@ describe('token service', () => {
         };
 
         requestSpy.mockResolvedValue(locks);
-        const result = await tokenService.getTokenLocks(params);
+        const result = await tokenService.getMemberLocks(params);
 
         expect(requestSpy).toHaveBeenCalledWith(tokenService['urls'].memberLocks, params);
         expect(result).toEqual(locks);

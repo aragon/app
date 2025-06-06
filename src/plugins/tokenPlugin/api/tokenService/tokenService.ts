@@ -1,14 +1,14 @@
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
-import type { ITokenLock } from './domain';
-import type { IGetTokenLocksParams } from './tokenService.api';
+import type { IMemberLock } from './domain';
+import type { IGetMemberLocksParams } from './tokenService.api';
 
 class TokenService extends AragonBackendService {
     private urls = {
         memberLocks: '/members/:address/locks',
     };
 
-    getTokenLocks = async (params: IGetTokenLocksParams): Promise<IPaginatedResponse<ITokenLock>> => {
-        const result = await this.request<IPaginatedResponse<ITokenLock>>(this.urls.memberLocks, params);
+    getMemberLocks = async (params: IGetMemberLocksParams): Promise<IPaginatedResponse<IMemberLock>> => {
+        const result = await this.request<IPaginatedResponse<IMemberLock>>(this.urls.memberLocks, params);
         return result;
     };
 }

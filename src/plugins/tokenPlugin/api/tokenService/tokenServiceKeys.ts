@@ -1,9 +1,9 @@
-import type { IGetTokenLocksParams } from './tokenService.api';
+import type { IGetMemberLocksParams } from './tokenService.api';
 
 export enum TokenServiceKey {
-    TOKEN_LOCKS = 'TOKEN_LOCKS',
+    MEMBER_LOCKS = 'MEMBER_LOCKS',
 }
 
 export const tokenServiceKeys = {
-    tokenLocks: (params: IGetTokenLocksParams) => [TokenServiceKey.TOKEN_LOCKS, params],
+    memberLocks: (params: IGetMemberLocksParams) => [TokenServiceKey.MEMBER_LOCKS, params],
 };
