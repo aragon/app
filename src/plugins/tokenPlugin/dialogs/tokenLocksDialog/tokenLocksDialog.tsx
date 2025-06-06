@@ -3,15 +3,15 @@ import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
-import { type IGetTokenLocksParams } from '../../api/tokenService';
-import type { EscrowSettings } from '../../types';
+import type { IGetMemberLocksParams } from '../../api/tokenService';
+import type { ITokenPluginSettingsEscrowSettings } from '../../types';
 import { TokenLocksList } from './components/tokenLocksList';
 
 export interface ITokenLocksDialogParams {
     /**
      * Initial parameters to use for fetching the token locks.
      */
-    initialParams: IGetTokenLocksParams;
+    initialParams: IGetMemberLocksParams;
     /**
      * Token for which the ve locks are displayed.
      */
@@ -19,7 +19,7 @@ export interface ITokenLocksDialogParams {
     /**
      * Token voting escrow settings.
      */
-    votingEscrow: EscrowSettings;
+    votingEscrow: ITokenPluginSettingsEscrowSettings;
 }
 
 export interface ITokenLocksDialogProps extends IDialogComponentProps<ITokenLocksDialogParams> {}

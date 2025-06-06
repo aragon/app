@@ -15,7 +15,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { erc20Abi, formatUnits, parseUnits, type Hex } from 'viem';
 import { useAccount, useBalance, useReadContract } from 'wagmi';
-import type { ITokenVeLocksDialogParams } from '../../../dialogs/tokenLocksDialog';
+import type { ITokenLocksDialogParams } from '../../../dialogs/tokenLocksDialog';
 
 export interface ITokenLockFormProps {
     /**
@@ -140,7 +140,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     );
 
     const handleViewLocks = () => {
-        const params: ITokenVeLocksDialogParams = { token, votingEscrow, initialParams: lockParams };
+        const params: ITokenLocksDialogParams = { token, votingEscrow, initialParams: lockParams };
         open(TokenPluginDialogId.VIEW_LOCKS, { params });
     };
 

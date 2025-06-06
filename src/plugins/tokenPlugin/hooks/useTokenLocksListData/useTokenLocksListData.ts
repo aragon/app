@@ -1,11 +1,11 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
-import { type IGetTokenLocksParams, useTokenLocks } from '../../api/tokenService';
+import { type IGetMemberLocksParams, useMemberLocks } from '../../api/tokenService';
 
-export const useTokenLocksListData = (params: IGetTokenLocksParams) => {
+export const useTokenLocksListData = (params: IGetMemberLocksParams) => {
     const { t } = useTranslations();
 
-    const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage } = useTokenLocks(params);
+    const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage } = useMemberLocks(params);
 
     const locksList = data?.pages.flatMap((page) => page.data);
 

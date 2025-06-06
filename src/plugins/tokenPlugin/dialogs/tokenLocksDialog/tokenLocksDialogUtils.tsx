@@ -1,10 +1,10 @@
 import { DateTime } from 'luxon';
-import type { ITokenLock } from '../../api/tokenService';
-import type { EscrowSettings } from '../../types';
+import type { IMemberLock } from '../../api/tokenService';
+import type { ITokenPluginSettingsEscrowSettings } from '../../types';
 import type { LockStatus } from './tokenLocksDialog';
 
 class TokenLocksDialogUtils {
-    getLockStatusAndTiming(lock: ITokenLock): { status: LockStatus; timeLeft?: number } {
+    getLockStatusAndTiming(lock: IMemberLock): { status: LockStatus; timeLeft?: number } {
         const { lockExit } = lock;
 
         const now = DateTime.now().toSeconds();
@@ -20,13 +20,13 @@ class TokenLocksDialogUtils {
         return { status: 'available' };
     }
 
-    getMultiplierAndVotingPower(lock: ITokenLock) {
+    getMultiplierAndVotingPower(lock: IMemberLock) {
         const { amount, votingPower } = lock;
 
         return { votingPower: Number(votingPower), multiplier: Number(votingPower) / Number(amount) };
     }
 
-    getMinLockTime(lock: ITokenLock, votingEscrow: EscrowSettings): number {
+    getMinLockTime(lock: IMemberLock, votingEscrow: ITokenPluginSettingsEscrowSettings): number {
         const { minLockTime } = votingEscrow;
         const { epochStartAt } = lock;
         const activeAt = epochStartAt;

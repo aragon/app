@@ -1,9 +1,8 @@
-import { TokenLockUnlockDialog } from '@/plugins/tokenPlugin/dialogs/tokenLockUnlockDialog';
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { TokenLockUnlockDialog } from '..//dialogs/tokenLockUnlockDialog';
 import { TokenApproveTokensDialog } from '../dialogs/tokenApproveTokensDialog';
 import { TokenDelegationDialog } from '../dialogs/tokenDelegationDialog';
-import { TokenVeLocksDialog } from '../dialogs/tokenLocksDialog';
+import { TokenLocksDialog } from '../dialogs/tokenLocksDialog';
+import { TokenLockUnlockDialog } from '../dialogs/tokenLockUnlockDialog';
 import { TokenWrapUnwrapDialog } from '../dialogs/tokenWrapUnwrapDialog';
 import { TokenPluginDialogId } from './tokenPluginDialogId';
 
@@ -12,5 +11,5 @@ export const tokenPluginDialogsDefinitions: Record<TokenPluginDialogId, IDialogC
     [TokenPluginDialogId.APPROVE_TOKENS]: { Component: TokenApproveTokensDialog },
     [TokenPluginDialogId.WRAP_UNWRAP]: { Component: TokenWrapUnwrapDialog },
     [TokenPluginDialogId.LOCK_UNLOCK]: { Component: TokenLockUnlockDialog },
-    [TokenPluginDialogId.VIEW_LOCKS]: { Component: TokenVeLocksDialog },
+    [TokenPluginDialogId.VIEW_LOCKS]: { Component: TokenLocksDialog },
 };

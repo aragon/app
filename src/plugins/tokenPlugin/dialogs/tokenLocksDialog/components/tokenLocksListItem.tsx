@@ -10,7 +10,7 @@ import {
     type TagVariant,
 } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import type { ITokenLock } from '../../../api/tokenService';
+import type { IMemberLock } from '../../../api/tokenService';
 import type { ITokenLocksDialogParams, LockStatus } from '../tokenLocksDialog';
 import { tokenLocksDialogUtils } from '../tokenLocksDialogUtils';
 
@@ -18,7 +18,7 @@ export interface ITokenLocksDataListItemProps extends Pick<ITokenLocksDialogPara
     /**
      * VE lock to display.
      */
-    lock: ITokenLock;
+    lock: IMemberLock;
 }
 
 const statusToVariant: Record<LockStatus, TagVariant> = {
