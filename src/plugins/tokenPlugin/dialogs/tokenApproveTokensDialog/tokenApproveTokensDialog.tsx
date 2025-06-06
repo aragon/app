@@ -6,6 +6,7 @@ import {
     TransactionDialogStep,
     type ITransactionDialogStepMeta,
 } from '@/shared/components/transactionDialog';
+import { ITransactionInfo } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
@@ -13,7 +14,6 @@ import { formatUnits, type Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ITokenPluginSettingsToken } from '../../types';
 import { tokenApproveTokensDialogUtils } from './tokenApproveTokensDialogUtils';
-import { ITransactionInfo } from '@/shared/components/transactionStatus';
 
 export interface ITokenApproveTokensDialogParams {
     /**
