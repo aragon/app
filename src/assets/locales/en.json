@@ -1291,6 +1291,7 @@
           "yes": "Enabled"
         },
         "tokenLockForm": {
+          "approveTransactionInfoTitle": "Approve {{symbol}}",
           "footerInfo": "Locking tokens will transfer them out of your wallet to the locking contract, where they can be withdrawn back to your wallet after the minimum locktime.",
           "locks": "View {{count}} locks",
           "minDepositError": "Lock amount must be at least {{minDeposit}} {{symbol}}",
@@ -1310,16 +1311,18 @@
         "tokenLockUnlockDialog": {
           "lock": {
             "cancel": "Cancel",
-            "description": "To lock your {{symbol}}, confirm the onchain transaction in your wallet.",
+            "description": "To lock your {{symbol}}, confirm the two onchain transaction in your wallet.",
             "submit": "Lock",
             "success": "View your veLock",
-            "title": "Lock {{symbol}}"
+            "title": "Lock {{symbol}}",
+            "transactionInfoTitle": "Lock {{symbol}}"
           },
           "unlock": {
-            "description": "To unlock your {{symbol}}, confirm the onchain transaction in your wallet.",
+            "description": "To unlock your {{symbol}}, confirm the two onchain transaction in your wallet.",
             "submit": "Unlock {{symbol}}",
             "success": "View locks",
-            "title": "Unlock {{symbol}}"
+            "title": "Unlock {{symbol}}",
+            "transactionInfoTitle": "Unlock {{symbol}}"
           }
         },
         "tokenMemberInfo": {
@@ -1548,6 +1551,7 @@
           "entity": "Votes"
         },
         "tokenWrapForm": {
+          "approveTransactionInfoTitle": "Approve {{symbol}}",
           "footerInfo": "Wrapping tokens will transfer them out of your wallet to the wrapping contract, where they can be withdrawn back to your wallet at any time.",
           "info": "Wrap {{underlyingSymbol}} to increase your voting power.",
           "percentage": {
@@ -1565,13 +1569,13 @@
         },
         "tokenWrapUnwrapDialog": {
           "unwrap": {
-            "description": "To unwrap your tokens, confirm the onchain transaction in your wallet.",
+            "description": "To unwrap your tokens, confirm the two onchain transaction in your wallet.",
             "submit": "Unwrap tokens",
             "success": "View members",
             "title": "Unwrap tokens"
           },
           "wrap": {
-            "description": "To wrap your tokens, confirm the onchain transaction in your wallet.",
+            "description": "To wrap your tokens, confirm the two onchain transaction in your wallet.",
             "submit": "Wrap tokens",
             "success": "View members",
             "title": "Wrap tokens"

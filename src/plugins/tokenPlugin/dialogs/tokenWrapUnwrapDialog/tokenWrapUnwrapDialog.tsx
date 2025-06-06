@@ -84,6 +84,13 @@ export const TokenWrapUnwrapDialog: React.FC<ITokenWrapUnwrapDialogProps> = (pro
                 label: t(`app.plugins.token.tokenWrapUnwrapDialog.${action}.success`),
                 onClick: onSuccessClick,
             }}
+            transactionInfo={{
+                title: t('app.plugins.token.tokenWrapUnwrapDialog.transactionInfoTitle', {
+                    symbol: assetToken.symbol,
+                }),
+                current: 2,
+                total: 2,
+            }}
         >
             <AssetDataListItem.Structure
                 logoSrc={assetToken.logo}

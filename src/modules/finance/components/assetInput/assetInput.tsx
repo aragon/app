@@ -45,10 +45,22 @@ export interface IAssetInputProps {
      * Hides the amount label when set to true.
      */
     hideAmountLabel?: boolean;
+    /**
+     * Callback custom validation function for the amount field.
+     */
+    customAmountValidation?: (value?: string) => string | undefined;
 }
 
 export const AssetInput: React.FC<IAssetInputProps> = (props) => {
-    const { fetchAssetsParams, fieldPrefix, onAmountChange, disableAssetField, hideMax, hideAmountLabel } = props;
+    const {
+        fetchAssetsParams,
+        fieldPrefix,
+        onAmountChange,
+        disableAssetField,
+        hideMax,
+        hideAmountLabel,
+        customAmountValidation,
+    } = props;
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
@@ -56,13 +68,20 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
 
     const assetField = useFormField<IAssetInputFormData, 'asset'>('asset', { rules: { required: true }, fieldPrefix });
 
+    const onValidateAmount = (value?: string) => {
+        if (customAmountValidation) {
+            return customAmountValidation(value);
+        }
+        return parseFloat(value ?? '') > 0;
+    };
+
     const {
         label: amountLabel,
         onChange: onAmountFieldChange,
         ...amountField
     } = useFormField<IAssetInputFormData, 'amount'>('amount', {
         label: t('app.finance.transferAssetForm.amount.label'),
-        rules: { required: true, max: assetField.value?.amount, validate: (value) => parseFloat(value ?? '') > 0 },
+        rules: { required: true, max: assetField.value?.amount, validate: onValidateAmount },
         fieldPrefix,
     });
 

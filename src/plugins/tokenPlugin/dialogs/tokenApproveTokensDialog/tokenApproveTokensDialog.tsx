@@ -13,6 +13,7 @@ import { formatUnits, type Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ITokenPluginSettingsToken } from '../../types';
 import { tokenApproveTokensDialogUtils } from './tokenApproveTokensDialogUtils';
+import { ITransactionInfo } from '@/shared/components/transactionStatus';
 
 export interface ITokenApproveTokensDialogParams {
     /**
@@ -47,6 +48,10 @@ export interface ITokenApproveTokensDialogParams {
      * Translation namespace for the dialog.
      */
     translationNamespace: 'WRAP' | 'LOCK';
+    /**
+     * Transaction info for the dialog.
+     */
+    transactionInfo: ITransactionInfo;
 }
 
 export interface ITokenApproveTokensDialogProps extends IDialogComponentProps<ITokenApproveTokensDialogParams> {}
@@ -58,8 +63,17 @@ export const TokenApproveTokensDialog: React.FC<ITokenApproveTokensDialogProps> 
     const { address } = useAccount();
     invariant(address != null, 'TokenApproveTokensDialog: user must be connected.');
 
-    const { token, underlyingToken, amount, network, onApproveSuccess, onSuccess, spender, translationNamespace } =
-        location.params;
+    const {
+        token,
+        underlyingToken,
+        amount,
+        network,
+        onApproveSuccess,
+        onSuccess,
+        spender,
+        translationNamespace,
+        transactionInfo,
+    } = location.params;
 
     const { t } = useTranslations();
 
@@ -88,6 +102,7 @@ export const TokenApproveTokensDialog: React.FC<ITokenApproveTokensDialogProps> 
                 label: t(`app.plugins.token.tokenApproveTokensDialog.${translationNamespace}.success`),
                 onClick: onSuccessClick,
             }}
+            transactionInfo={transactionInfo}
         >
             <AssetDataListItem.Structure
                 logoSrc={underlyingToken.logo}

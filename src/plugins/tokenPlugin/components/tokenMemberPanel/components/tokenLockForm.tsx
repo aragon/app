@@ -80,8 +80,8 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     const userAsset = useMemo(() => ({ token, amount: parsedUnlockedAmount }), [token, parsedUnlockedAmount]);
 
-    const formValues = useForm<ITokenLockFormData>({ mode: 'onSubmit', defaultValues: { asset: userAsset } });
-    const { control, setValue, handleSubmit, setError, clearErrors } = formValues;
+    const formValues = useForm<ITokenLockFormData>({ mode: 'onChange', defaultValues: { asset: userAsset } });
+    const { control, setValue, handleSubmit } = formValues;
 
     const lockAmount = useWatch<ITokenLockFormData, 'amount'>({ control, name: 'amount' });
     const lockAmountWei = parseUnits(lockAmount ?? '0', token.decimals);
@@ -102,6 +102,11 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                 ...dialogProps,
                 translationNamespace: 'LOCK',
                 onApproveSuccess: () => handleApproveSuccess(dialogProps), // open lock dialog with the same params!
+                transactionInfo: {
+                    title: t('app.plugins.token.tokenLockForm.approveTransactionInfoTitle', { symbol: token.symbol }),
+                    current: 1,
+                    total: 2,
+                },
             };
             open(TokenPluginDialogId.APPROVE_TOKENS, { params });
         } else {
@@ -163,23 +168,19 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         }
     }, [setValue, unlockedBalanceStatus, userAsset]);
 
-    // Trigger validation if user manually enters amount in input
-    useEffect(() => {
-        if (lockAmountWei < minDepositWei) {
-            setError('amount', {
-                type: 'minDeposit',
-                message: t('app.plugins.token.tokenLockForm.minDepositError', {
-                    minDeposit: formattedMinDeposit,
-                    symbol: token.symbol,
-                }),
-            });
-        } else {
-            clearErrors('amount');
-        }
-    }, [lockAmountWei, minDepositWei, setError, clearErrors, t, token.symbol, formattedMinDeposit]);
-
     const submitLabel = needsApproval ? 'approve' : 'lock';
     const disableSubmit = unlockedBalance?.value === BigInt(0);
+
+    const validateMinDeposit = (value?: string) => {
+        const parsedValue = parseUnits(value ?? '0', decimals);
+        if (parsedValue < minDepositWei) {
+            return t('app.plugins.token.tokenLockForm.minDepositError', {
+                minDeposit: formattedMinDeposit,
+                symbol: token.symbol,
+            });
+        }
+        return undefined;
+    };
 
     return (
         <FormProvider {...formValues}>
@@ -190,6 +191,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                         disableAssetField={true}
                         hideMax={true}
                         hideAmountLabel={true}
+                        customAmountValidation={validateMinDeposit}
                     />
                     <ToggleGroup
                         isMultiSelect={false}

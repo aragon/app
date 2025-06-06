@@ -79,6 +79,13 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
                 label: t(`app.plugins.token.tokenLockUnlockDialog.${action}.success`),
                 onClick: onSuccessClick,
             }}
+            transactionInfo={{
+                title: t(`app.plugins.token.tokenLockUnlockDialog.${action}.transactionInfoTitle`, {
+                    symbol: token.symbol,
+                }),
+                current: 2,
+                total: 2,
+            }}
         />
     );
 };
