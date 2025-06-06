@@ -157,7 +157,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     const handleViewLocks = () => {
         const params: ITokenVeLocksDialogParams = { token, votingEscrow, initialParams: lockParams };
-        open(TokenPluginDialogId.VE_LOCKS, { params });
+        open(TokenPluginDialogId.VIEW_LOCKS, { params });
     };
 
     const handleApproveSuccess = (dialogProps: ReturnType<typeof getDialogProps>) => {
@@ -249,7 +249,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                         </Button>
                     )}
 
-                    <p className="text-center text-sm font-normal leading-normal text-neutral-500">
+                    <p className="text-center text-sm leading-normal font-normal text-neutral-500">
                         {t('app.plugins.token.tokenLockForm.footerInfo')}
                     </p>
                 </div>

@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { ITokenLock } from '../../api/tokenService';
+import type { ITokenLock } from '../../api/tokenService';
 import type { EscrowSettings } from '../../types';
 import type { VeLockStatus } from './tokenVeLocksDialog';
 

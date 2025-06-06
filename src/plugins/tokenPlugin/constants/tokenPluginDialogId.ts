@@ -3,5 +3,5 @@ export enum TokenPluginDialogId {
     APPROVE_TOKENS = 'APPROVE_TOKENS',
     WRAP_UNWRAP = 'WRAP_UNWRAP',
     LOCK_UNLOCK = 'LOCK_UNLOCK',
-    VE_LOCKS = 'VE_LOCKS',
+    VIEW_LOCKS = 'VIEW_LOCKS',
 }

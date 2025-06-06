@@ -5,7 +5,7 @@ import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import { type IGetTokenLocksParams } from '../../api/tokenService';
 import type { EscrowSettings } from '../../types';
-import { TokenVeLocksList } from './tokenVeLocksList';
+import { TokenVeLocksList } from './components/tokenVeLocksList';
 
 export interface ITokenVeLocksDialogParams {
     /**

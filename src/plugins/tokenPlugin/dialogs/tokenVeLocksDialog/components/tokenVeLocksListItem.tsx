@@ -10,9 +10,9 @@ import {
     type TagVariant,
 } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import type { ITokenLock } from '../../api/tokenService';
-import type { ITokenVeLocksDialogParams, VeLockStatus } from './tokenVeLocksDialog';
-import { tokenVeLocksDialogUtils } from './tokenVeLocksDialogUtils';
+import type { ITokenLock } from '../../../api/tokenService';
+import type { ITokenVeLocksDialogParams, VeLockStatus } from '../tokenVeLocksDialog';
+import { tokenVeLocksDialogUtils } from '../tokenVeLocksDialogUtils';
 
 export interface ITokenVeLocksDataListItemProps extends Pick<ITokenVeLocksDialogParams, 'votingEscrow' | 'token'> {
     /**

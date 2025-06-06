@@ -1,7 +1,7 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
-import { useTokenLocksListData } from '../../hooks/useTokenLocksListData';
-import type { ITokenVeLocksDialogParams } from './tokenVeLocksDialog';
+import { useTokenLocksListData } from '../../../hooks/useTokenLocksListData';
+import type { ITokenVeLocksDialogParams } from '../tokenVeLocksDialog';
 import { TokenVeLocksListItem } from './tokenVeLocksListItem';
 
 export interface ITokenVeLocksListProps extends ITokenVeLocksDialogParams {}
