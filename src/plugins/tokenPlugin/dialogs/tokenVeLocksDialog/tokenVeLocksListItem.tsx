@@ -1,20 +1,17 @@
-import type { IToken } from '@/modules/finance/api/financeService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Avatar, Button, DataList, DateFormat, formatterUtils, Heading, Tag } from '@aragon/gov-ui-kit';
-import type { ITokenVeLock } from '../../types';
+import type { ITokenLock } from '../../api/tokenService';
+import type { ITokenVeLocksDialogParams } from './tokenVeLocksDialog';
 
-export interface ITokenVeLocksDataListItemProps {
+export interface ITokenVeLocksDataListItemProps extends Pick<ITokenVeLocksDialogParams, 'votingEscrow' | 'token'> {
     /**
-     * Lock to display.
+     * VE lock to display.
      */
-    lock: ITokenVeLock;
-    /**
-     * Token for which the ve locks are displayed.
-     */
-    token: IToken;
+    lock: ITokenLock;
 }
 
-export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = ({ token, lock }) => {
+export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = (props) => {
+    const { lock, votingEscrow, token } = props;
     const { t } = useTranslations();
 
     return (
