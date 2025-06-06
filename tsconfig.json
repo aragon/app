@@ -29,5 +29,5 @@
   },
   "exclude": ["node_modules", ".next/**/*", ".vercel/**/*", "coverage", ".yarn/**/*", "public/web-workers/**/*"],
   "files": [".next/types/link.d.ts"],
-  "include": ["*.config.js", "*.config.ts", "*.config.mjs", ".eslintrc.js", "next-env.d.ts", "src", ".next/types/**/*.ts"]
+  "include": ["*.config.js", "*.config.ts", "*.config.mjs", ".eslintrc.js", "next-env.d.ts", "src", ".next/types/**/*.ts", "./src/shared/types/media.d.ts"]
 }

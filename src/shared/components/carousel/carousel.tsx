@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { animate, motion, useMotionValue } from 'framer-motion';
+import { animate, motion, type MotionStyle, useMotionValue } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import useMeasure from 'react-use-measure';
 
@@ -38,6 +38,11 @@ export interface ICarouselProps {
      * Additional class name to apply to the component.
      */
     className?: string;
+    /**
+     * When true, enables drag-to-scroll and disables auto-scroll animation.
+     * @default false
+     */
+    isDraggable?: boolean;
 }
 
 export const Carousel: React.FC<ICarouselProps> = (props) => {
@@ -49,6 +54,7 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         speedOnHoverFactor = 1,
         animationDelay = 0,
         className,
+        isDraggable = false,
     } = props;
 
     // animation `delay` is not working as expected in combination with the `speed` mutation, so we need to track the animation start manually!
@@ -76,7 +82,14 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         return () => clearTimeout(timeoutHandle);
     }, [animationDelay]);
 
+    // handles auto scrolling animation when isDraggable is false
     useEffect(() => {
+        // isDraggable disables automatic marquee animation
+        if (isDraggable) {
+            animationControlsRef.current?.stop();
+            return;
+        }
+
         // wait for animation delay and width to be calculated before starting the animation
         if (!hasAnimationStarted || finalPosition === 0) {
             return;
@@ -94,18 +107,49 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
             repeatType: 'loop',
             repeatDelay: 0,
         });
-    }, [speed, finalPosition, translation, hasAnimationStarted]);
+    }, [hasAnimationStarted, finalPosition, speed, translation, isDraggable]);
 
-    const containerStyle = { x: translation, gap: `${String(gap)}px`, paddingLeft: `${String(initialOffset)}px` };
+    // handles infinite drag wrap when isDraggable is true
+    useEffect(() => {
+        if (!isDraggable) {
+            return;
+        }
+
+        // subscribe to x value changes for infinite wrap
+        const unsubscribe = translation.on('change', (latest) => {
+            if (latest <= finalPosition) {
+                translation.set(latest - finalPosition);
+            } else if (latest >= 0) {
+                translation.set(latest + finalPosition);
+            }
+        });
+
+        return unsubscribe;
+    }, [isDraggable, translation, finalPosition]);
+
+    const containerStyle: MotionStyle = {
+        x: translation,
+        gap: `${String(gap)}px`,
+        paddingLeft: `${String(initialOffset)}px`,
+        touchAction: 'pan-y',
+        userSelect: 'none',
+    };
 
     return (
         <div className={classNames('overflow-hidden', className)}>
             <motion.div
-                className="flex w-max will-change-transform"
+                className={classNames('flex w-max will-change-transform', isDraggable && 'cursor-grab')}
                 style={containerStyle}
                 ref={ref}
-                onHoverStart={() => updateAnimationSpeed(speedOnHoverFactor)}
-                onHoverEnd={() => updateAnimationSpeed(1)}
+                {...(!isDraggable && {
+                    onHoverStart: () => updateAnimationSpeed(speedOnHoverFactor),
+                    onHoverEnd: () => updateAnimationSpeed(1),
+                })}
+                {...(isDraggable && {
+                    drag: 'x' as const,
+                    dragMomentum: false,
+                })}
+                whileTap={isDraggable ? { cursor: 'grabbing' } : undefined}
             >
                 {children}
                 {children}
