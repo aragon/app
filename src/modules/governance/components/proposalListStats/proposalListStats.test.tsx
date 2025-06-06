@@ -95,6 +95,6 @@ describe('<ProposalListStats /> component', () => {
 
         const button = screen.getByRole('link', { name: /proposalListStats.button/ });
         expect(button).toBeInTheDocument();
-        expect(button).toHaveAttribute('href', `/dao/ethereum-mainnet/${address}/settings`);
+        expect(button).toHaveAttribute('href', `/dao/ethereum-mainnet/${address}/settings#governance`);
     });
 });
