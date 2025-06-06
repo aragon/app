@@ -1329,6 +1329,41 @@
             "transactionInfoTitle": "Unlock {{symbol}}"
           }
         },
+        "tokenLocksDialog": {
+          "actions": {
+            "unlock": "Unlock {{underlyingSymbol}}",
+            "withdraw": "Withdraw {{underlyingSymbol}}"
+          },
+          "description": "Unlock or withdraw your PDT tokens",
+          "title": "Your locks"
+        },
+        "tokenLocksList": {
+          "empty": {
+            "description": "This will show relevant locks when available.",
+            "title": "No locks found"
+          },
+          "entity": "veLocks",
+          "error": {
+            "description": "There was an error loading the locks. Try again later.",
+            "title": "Error loading locks"
+          },
+          "item": {
+            "metrics": {
+              "locked": "Locked",
+              "multiplier": "Multiplier",
+              "votingPower": "Voting power"
+            },
+            "minLockTimeLeftSuffix": "left until unlockable",
+            "statusLabel": {
+              "active": "Active",
+              "available": "Available",
+              "cooldown": "In cooldown",
+              "warmup": "In warmup"
+            },
+            "timeLeftSuffix": "left",
+            "withdrawTimeLeftSuffix": "left until withdrawable"
+          }
+        },
         "tokenMemberInfo": {
           "distribution": "Distribution",
           "eligibleVoters": "Eligible voters",
@@ -1542,41 +1577,6 @@
           "voteDescription": {
             "approve": "to approve",
             "veto": "to veto"
-          }
-        },
-        "tokenLocksDialog": {
-          "actions": {
-            "unlock": "Unlock {{underlyingSymbol}}",
-            "withdraw": "Withdraw {{underlyingSymbol}}"
-          },
-          "description": "Unlock or withdraw your PDT tokens",
-          "title": "Your locks"
-        },
-        "tokenLocksList": {
-          "empty": {
-            "description": "This will show relevant locks when available.",
-            "title": "No locks found"
-          },
-          "entity": "veLocks",
-          "error": {
-            "description": "There was an error loading the locks. Try again later.",
-            "title": "Error loading locks"
-          },
-          "item": {
-            "metrics": {
-              "locked": "Locked",
-              "multiplier": "Multiplier",
-              "votingPower": "Voting power"
-            },
-            "minLockTimeLeftSuffix": "left until unlockable",
-            "statusLabel": {
-              "active": "Active",
-              "available": "Available",
-              "cooldown": "In cooldown",
-              "warmup": "In warmup"
-            },
-            "timeLeftSuffix": "left",
-            "withdrawTimeLeftSuffix": "left until withdrawable"
           }
         },
         "tokenVoteList": {
