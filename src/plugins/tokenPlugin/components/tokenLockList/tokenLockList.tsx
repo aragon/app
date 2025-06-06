@@ -1,12 +1,12 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
-import { useTokenLocksListData } from '../../../hooks/useTokenLocksListData';
-import type { ITokenLocksDialogParams } from '../tokenLocksDialog';
-import { TokenLocksListItem } from './tokenLocksListItem';
+import type { ITokenLocksDialogParams } from '../../dialogs/tokenLocksDialog';
+import { useTokenLocksListData } from '../../hooks/useTokenLocksListData';
+import { TokenLockListItem } from './components/tokenLockListItem';
 
-export interface ITokenLocksListProps extends ITokenLocksDialogParams {}
+export interface ITokenLockListProps extends ITokenLocksDialogParams {}
 
-export const TokenLocksList: React.FC<ITokenLocksListProps> = (props) => {
+export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
     const { initialParams, votingEscrow, token } = props;
     const { t } = useTranslations();
     const { locksList, onLoadMore, state, pageSize, itemsCount, errorState, emptyState } =
@@ -21,12 +21,12 @@ export const TokenLocksList: React.FC<ITokenLocksListProps> = (props) => {
             itemsCount={itemsCount}
         >
             <DataListContainer
-                SkeletonElement={ProposalDataListItem.Skeleton} // TODO: create skeleton for ve locks
+                SkeletonElement={ProposalDataListItem.Skeleton} // TODO: create skeleton for ve locks, but maybe this one fits!
                 errorState={errorState}
                 emptyState={emptyState}
             >
                 {locksList?.map((lock) => (
-                    <TokenLocksListItem key={lock.id} lock={lock} votingEscrow={votingEscrow} token={token} />
+                    <TokenLockListItem key={lock.id} lock={lock} votingEscrow={votingEscrow} token={token} />
                 ))}
             </DataListContainer>
             <DataListPagination />

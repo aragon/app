@@ -11,10 +11,10 @@ import {
 } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import type { IMemberLock } from '../../../api/tokenService';
-import type { ITokenLocksDialogParams, LockStatus } from '../tokenLocksDialog';
-import { tokenLocksDialogUtils } from '../tokenLocksDialogUtils';
+import type { ITokenLocksDialogParams, LockStatus } from '../../../dialogs/tokenLocksDialog/tokenLocksDialog';
+import { tokenLocksDialogUtils } from '../../../dialogs/tokenLocksDialog/tokenLocksDialogUtils';
 
-export interface ITokenLocksDataListItemProps extends Pick<ITokenLocksDialogParams, 'votingEscrow' | 'token'> {
+export interface ITokenLockListItemProps extends Pick<ITokenLocksDialogParams, 'votingEscrow' | 'token'> {
     /**
      * VE lock to display.
      */
@@ -27,7 +27,7 @@ const statusToVariant: Record<LockStatus, TagVariant> = {
     available: 'success',
 };
 
-export const TokenLocksListItem: React.FC<ITokenLocksDataListItemProps> = (props) => {
+export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const { lock, votingEscrow, token } = props;
     const { t } = useTranslations();
 

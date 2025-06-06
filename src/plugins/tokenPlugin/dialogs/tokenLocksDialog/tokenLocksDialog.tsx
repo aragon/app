@@ -4,8 +4,8 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import type { IGetMemberLocksParams } from '../../api/tokenService';
+import { TokenLockList } from '../../components/tokenLockList';
 import type { ITokenPluginSettingsEscrowSettings } from '../../types';
-import { TokenLocksList } from './components/tokenLocksList';
 
 export interface ITokenLocksDialogParams {
     /**
@@ -39,7 +39,7 @@ export const TokenLocksDialog: React.FC<ITokenLocksDialogProps> = (props) => {
         <>
             <Dialog.Header title={t('app.plugins.token.tokenLocksDialog.title')} />
             <Dialog.Content description={t('app.plugins.token.tokenLocksDialog.description')} className="pb-4 md:pb-6">
-                <TokenLocksList {...location.params} />
+                <TokenLockList {...location.params} />
             </Dialog.Content>
         </>
     );
