@@ -73,6 +73,7 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
     /**
      * The voting escrow settings of the plugin.
      */
+    // TODO: move to ITokenPluginSettingsEscrowSettings once backend makes change
     votingEscrow?: {
         /**
          * The address of the curve contract.

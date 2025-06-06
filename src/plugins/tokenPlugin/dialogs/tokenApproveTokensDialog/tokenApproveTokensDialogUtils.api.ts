@@ -11,7 +11,7 @@ export interface IBuildApproveTransactionParams {
      */
     amount: bigint;
     /**
-     * First argument of the approve function, which is the address of the spender.
+     * Spender address used in the approve function.
      */
     spender: Hex;
 }

@@ -1,6 +1,6 @@
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { encodeFunctionData, erc20Abi, type Hex } from 'viem';
-import type { IBuildApproveTransactionParams } from './tokenWrapFormDialogUtils.api';
+import type { IBuildApproveTransactionParams } from './tokenApproveTokensDialogUtils.api';
 
 class TokenApproveTokensDialogUtils {
     buildApproveTransaction = (params: IBuildApproveTransactionParams): Promise<ITransactionRequest> => {

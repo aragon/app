@@ -2,7 +2,8 @@
 
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { type IPluginTabComponentProps, PluginTabComponent } from '@/shared/components/pluginTabComponent';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { pluginGroupTab, useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type { ReactNode } from 'react';
@@ -10,8 +11,7 @@ import type { IGetProposalListParams } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DaoProposalListDefault } from './daoProposalListDefault';
 
-export interface IDaoProposalListContainerProps
-    extends Pick<IPluginTabComponentProps<IDaoPlugin>, 'value' | 'onValueChange'> {
+export interface IDaoProposalListProps extends Pick<IPluginTabComponentProps<IDaoPlugin>, 'value' | 'onValueChange'> {
     /**
      * Parameters to use for fetching the proposal list.
      */
@@ -26,17 +26,23 @@ export interface IDaoProposalListContainerProps
     children?: ReactNode;
 }
 
-export const DaoProposalListContainer: React.FC<IDaoProposalListContainerProps> = (props) => {
+export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
     const { initialParams, ...otherProps } = props;
+    const { daoId } = initialParams.queryParams;
 
-    const processPlugins = useDaoPlugins({ daoId: initialParams.queryParams.daoId, type: PluginType.PROCESS });
+    const { t } = useTranslations();
+    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeGroupTab: true });
+
     const processedPlugins = processPlugins?.map((plugin) => {
-        const pluginInitialParams = {
-            ...initialParams,
-            queryParams: { ...initialParams.queryParams, pluginAddress: plugin.meta.address },
-        };
+        const { id, label, meta } = plugin;
 
-        return { ...plugin, props: { initialParams: pluginInitialParams, plugin: plugin.meta } };
+        const isGroupTab = id === pluginGroupTab.id;
+        const processedLabel = isGroupTab ? t('app.governance.daoProposalList.groupTab') : label;
+
+        const pluginAddress = isGroupTab ? undefined : meta.address;
+        const pluginInitialParams = { ...initialParams, queryParams: { ...initialParams.queryParams, pluginAddress } };
+
+        return { ...plugin, label: processedLabel, props: { initialParams: pluginInitialParams, plugin: meta } };
     });
 
     return (

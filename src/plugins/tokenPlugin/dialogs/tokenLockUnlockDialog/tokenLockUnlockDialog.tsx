@@ -1,3 +1,4 @@
+import type { ITokenPluginSettingsToken } from '@/plugins/tokenPlugin/types';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
@@ -11,7 +12,6 @@ import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import { tokenLockUnlockDialogUtils } from './tokenLockUnlockDialogUtils';
-import type { ITokenPluginSettingsToken } from '@/plugins/tokenPlugin/types';
 
 export interface ITokenLockUnlockDialogParams {
     /**
@@ -23,7 +23,7 @@ export interface ITokenLockUnlockDialogParams {
      */
     amount: bigint;
     /**
-     * The contract address of the voting escrow
+     * The contract address of the voting escrow.
      */
     escrowContract: string;
     /**
@@ -78,6 +78,13 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
             successLink={{
                 label: t(`app.plugins.token.tokenLockUnlockDialog.${action}.success`),
                 onClick: onSuccessClick,
+            }}
+            transactionInfo={{
+                title: t(`app.plugins.token.tokenLockUnlockDialog.${action}.transactionInfoTitle`, {
+                    symbol: token.symbol,
+                }),
+                current: 2,
+                total: 2,
             }}
         />
     );

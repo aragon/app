@@ -1,16 +1,13 @@
-import { encodeFunctionData, type Hex } from "viem";
+import { encodeFunctionData, type Hex } from 'viem';
 
 const lockAbi = [
     {
         type: 'function',
         name: 'createLock',
-        inputs: [
-            { name: 'value', type: 'uint256' },
-        ],
+        inputs: [{ name: 'value', type: 'uint256' }],
         outputs: [],
     },
 ];
-
 
 class TokenLockUnlockDialogUtils {
     buildLockTransaction = (amount: bigint, escrowContract: string) => {
@@ -25,10 +22,10 @@ class TokenLockUnlockDialogUtils {
     };
 
     buildUnlockTransaction = () => {
-    // TODO:: implement unlock
+        // TODO:: implement unlock
         const transaction = { to: '0x' as Hex, data: '0x' as Hex, value: BigInt(0) };
         return Promise.resolve(transaction);
     };
 }
 
-export const tokenLockUnlockDialogUtils = new TokenLockUnlockDialogUtils()
+export const tokenLockUnlockDialogUtils = new TokenLockUnlockDialogUtils();

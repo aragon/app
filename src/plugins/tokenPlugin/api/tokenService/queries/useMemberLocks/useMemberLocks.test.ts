@@ -1,11 +1,11 @@
 import { generatePaginatedResponse, ReactQueryWrapper } from '@/shared/testUtils';
 import { renderHook, waitFor } from '@testing-library/react';
+import { generateTokenLock } from '../../../../testUtils/generators/memberLock';
 import { tokenService } from '../../tokenService';
-import { generateTokenLock } from './../../../../testUtils/generators/tokenLock';
-import { useTokenLocks } from './useTokenLocks';
+import { useMemberLocks } from './useMemberLocks';
 
-describe('useTokenLocks query', () => {
-    const tokenServiceSpy = jest.spyOn(tokenService, 'getTokenLocks');
+describe('useMemberLocks query', () => {
+    const tokenServiceSpy = jest.spyOn(tokenService, 'getMemberLocks');
 
     afterEach(() => {
         tokenServiceSpy.mockReset();
@@ -15,9 +15,9 @@ describe('useTokenLocks query', () => {
         const locksResult = generatePaginatedResponse({ data: [generateTokenLock()] });
         tokenServiceSpy.mockResolvedValue(locksResult);
 
-        const urlParams = { address: '0xmember' };
+        const urlParams = { address: '0x123' };
         const queryParams = {};
-        const { result } = renderHook(() => useTokenLocks({ urlParams, queryParams }), { wrapper: ReactQueryWrapper });
+        const { result } = renderHook(() => useMemberLocks({ urlParams, queryParams }), { wrapper: ReactQueryWrapper });
 
         await waitFor(() => expect(result.current.data?.pages[0]).toEqual(locksResult));
     });

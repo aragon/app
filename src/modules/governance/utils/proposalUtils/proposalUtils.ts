@@ -1,12 +1,14 @@
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDao } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { invariant } from '@aragon/gov-ui-kit';
+import type { IProposal } from '../../api/governanceService';
 
 class ProposalUtils {
-    getProposalSlug = (incrementalId?: number, plugin?: IDaoPlugin): string => {
-        invariant(
-            incrementalId != null && plugin != null,
-            'getProposalSlug: Both incrementalId and plugin must be provided.',
-        );
+    getProposalSlug = (proposal: Pick<IProposal, 'incrementalId' | 'pluginAddress'>, dao?: IDao): string => {
+        const { incrementalId, pluginAddress } = proposal;
+        const plugin = daoUtils.getDaoPlugins(dao, { pluginAddress, includeSubPlugins: true })?.[0];
+
+        invariant(plugin != null, 'getProposalSlug: proposal plugin not found');
 
         return `${plugin.slug}-${incrementalId.toString()}`.toUpperCase();
     };

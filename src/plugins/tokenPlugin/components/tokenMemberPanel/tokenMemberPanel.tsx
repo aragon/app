@@ -1,4 +1,3 @@
-import { TokenLockForm } from '@/plugins/tokenPlugin/components/tokenMemberPanel/components/tokenLockForm';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -6,6 +5,7 @@ import { Tabs } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import type { ITokenPluginSettings } from '../../types';
 import { TokenDelegationForm } from './components/tokenDelegationForm';
+import { TokenLockForm } from './components/tokenLockForm';
 import { TokenWrapForm } from './components/tokenWrapForm';
 
 export interface ITokenMemberPanelProps {
@@ -55,7 +55,7 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
         symbol: token.symbol.substring(1),
         name: token.name.substring(11),
     };
-    const titleToken = underlying != null ? underlyingToken : token;
+    const titleToken = !plugin.settings.votingEscrow && underlying != null ? underlyingToken : token;
     const cardTitle = `${titleToken.name} (${titleToken.symbol})`;
 
     if (!visibleTabs.length) {

@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-Add veLocker to token panel
+Add VE-locks support to token-member panel

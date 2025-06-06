@@ -1,8 +1,8 @@
-import type { IPaginatedRequest } from '@/shared/api/aragonBackendService';
+import type { IOrderedRequest, IPaginatedRequest } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
 import type { IRequestQueryParams, IRequestUrlParams, IRequestUrlQueryParams } from '@/shared/api/httpService';
 
-export interface IGetProposalListQueryParams extends IPaginatedRequest {
+export interface IGetProposalListQueryParams extends IPaginatedRequest, IOrderedRequest {
     /**
      * ID of the Dao to fetch the proposals from.
      */
@@ -10,11 +10,19 @@ export interface IGetProposalListQueryParams extends IPaginatedRequest {
     /**
      * Address of the plugin to fetch the proposals for.
      */
-    pluginAddress: string;
+    pluginAddress?: string;
     /**
      * Filter proposals by creator address.
      */
     creatorAddress?: string;
+    /**
+     * Filters proposals for their sub-proposal status when set.
+     */
+    isSubProposal?: boolean;
+    /**
+     * Filters proposals for their executed status when set.
+     */
+    isExecuted?: boolean;
 }
 
 export interface IGetProposalListParams extends IRequestQueryParams<IGetProposalListQueryParams> {}
@@ -152,32 +160,3 @@ export interface IGetProposalActionsUrlParams {
 }
 
 export interface IGetProposalActionsParams extends IRequestUrlParams<IGetProposalActionsUrlParams> {}
-
-export interface IGetTokenLocksUrlParams {
-    /**
-     * Address of the member to fetch the locks for.
-     */
-    address: string;
-}
-
-export interface IGetTokenLocksQueryParams extends IPaginatedRequest {
-    /**
-     * Address of the plugin
-     */
-    pluginAddress?: string;
-    /**
-     * Network of the lock
-     */
-    network?: Network;
-    /**
-     * Flag to determine whether or not to fetch only active locks
-     */
-    onlyActive?: boolean;
-    /**
-     * Address of the locked token
-     */
-    tokenAddress?: string;
-}
-
-export interface IGetTokenLocksParams
-    extends IRequestUrlQueryParams<IGetTokenLocksUrlParams, IGetTokenLocksQueryParams> {}

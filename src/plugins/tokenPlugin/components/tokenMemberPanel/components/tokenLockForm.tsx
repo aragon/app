@@ -1,6 +1,6 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
-import { useTokenLocks } from '@/plugins/tokenPlugin/api/tokenService';
+import { useMemberLocks } from '@/plugins/tokenPlugin/api/tokenService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import type { ITokenLockUnlockDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenLockUnlockDialog';
@@ -39,7 +39,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     invariant(votingEscrow != null && plugin.votingEscrow != null, 'Token lock form requires voting escrow settings');
 
     const { decimals } = token;
-    const minDepositWei = BigInt(votingEscrow.minDeposit);
 
     const { open } = useDialogContext();
     const { t } = useTranslations();
@@ -47,9 +46,8 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const queryClient = useQueryClient();
 
-    const lockParams = { urlParams: { address: address! }, queryParams: { pluginAddress: plugin.address } };
-    const { data: lockData } = useTokenLocks(lockParams, { enabled: !!address });
-
+    const lockParams = { urlParams: { address: address! }, queryParams: {} };
+    const { data: lockData } = useMemberLocks(lockParams, { enabled: !!address });
     const lockCount = lockData?.pages[0]?.metadata.totalRecords ?? 0;
 
     const [percentageValue, setPercentageValue] = useState<string>('100');
@@ -81,8 +79,8 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     const userAsset = useMemo(() => ({ token, amount: parsedUnlockedAmount }), [token, parsedUnlockedAmount]);
 
-    const formValues = useForm<ITokenLockFormData>({ mode: 'onSubmit', defaultValues: { asset: userAsset } });
-    const { control, setValue, handleSubmit, setError, clearErrors } = formValues;
+    const formValues = useForm<ITokenLockFormData>({ mode: 'onChange', defaultValues: { asset: userAsset } });
+    const { control, setValue, handleSubmit } = formValues;
 
     const lockAmount = useWatch<ITokenLockFormData, 'amount'>({ control, name: 'amount' });
     const lockAmountWei = parseUnits(lockAmount ?? '0', token.decimals);
@@ -103,6 +101,11 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                 ...dialogProps,
                 translationNamespace: 'LOCK',
                 onApproveSuccess: () => handleApproveSuccess(dialogProps), // open lock dialog with the same params!
+                transactionInfo: {
+                    title: t('app.plugins.token.tokenLockForm.approveTransactionInfoTitle', { symbol: token.symbol }),
+                    current: 1,
+                    total: 2,
+                },
             };
             open(TokenPluginDialogId.APPROVE_TOKENS, { params });
         } else {
@@ -110,6 +113,9 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
             open(TokenPluginDialogId.LOCK_UNLOCK, { params });
         }
     };
+
+    const minDepositWei = BigInt(votingEscrow.minDeposit);
+    const formattedMinDeposit = formatUnits(minDepositWei, decimals);
 
     const updateAmountField = useCallback(
         (value?: string) => {
@@ -119,32 +125,10 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
             const processedValue = (unlockedBalance.value * BigInt(value)) / BigInt(100);
 
-            if (processedValue < minDepositWei) {
-                setError('amount', {
-                    type: 'validate',
-                    message: t('app.plugins.token.tokenLockForm.minDepositError', {
-                        minDeposit: votingEscrow.minDeposit,
-                        symbol: token.symbol,
-                    }),
-                });
-            } else {
-                clearErrors('amount');
-            }
-
             const parsedValue = formatUnits(processedValue, decimals);
             setValue('amount', parsedValue);
         },
-        [
-            unlockedBalance,
-            decimals,
-            setValue,
-            setError,
-            clearErrors,
-            minDepositWei,
-            t,
-            token.symbol,
-            votingEscrow.minDeposit,
-        ],
+        [unlockedBalance, decimals, setValue],
     );
 
     const handlePercentageChange = useCallback(
@@ -175,6 +159,17 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         escrowContract: plugin.votingEscrow?.escrowAddress as Hex,
     });
 
+    const validateMinDeposit = (value?: string) => {
+        const parsedValue = parseUnits(value ?? '0', decimals);
+        if (parsedValue < minDepositWei) {
+            return t('app.plugins.token.tokenLockForm.minDepositError', {
+                minDeposit: formattedMinDeposit,
+                symbol: token.symbol,
+            });
+        }
+        return undefined;
+    };
+
     // Update amount field and percentage value to 100% of user unlocked balance on user balance change
     useEffect(() => handlePercentageChange('100'), [handlePercentageChange]);
 
@@ -184,21 +179,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
             setValue('asset', userAsset);
         }
     }, [setValue, unlockedBalanceStatus, userAsset]);
-
-    // Trigger validation if user manually enters amount in input
-    useEffect(() => {
-        if (lockAmountWei < minDepositWei) {
-            setError('amount', {
-                type: 'minDeposit',
-                message: t('app.plugins.token.tokenLockForm.minDepositError', {
-                    minDeposit: votingEscrow.minDeposit,
-                    symbol: token.symbol,
-                }),
-            });
-        } else {
-            clearErrors('amount');
-        }
-    }, [lockAmountWei, minDepositWei, setError, clearErrors, t, token.symbol, votingEscrow.minDeposit]);
 
     const submitLabel = needsApproval ? 'approve' : 'lock';
     const disableSubmit = unlockedBalance?.value === BigInt(0);
@@ -212,6 +192,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                         disableAssetField={true}
                         hideMax={true}
                         hideAmountLabel={true}
+                        customAmountValidation={validateMinDeposit}
                     />
                     <ToggleGroup
                         isMultiSelect={false}

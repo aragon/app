@@ -6,7 +6,6 @@ import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
@@ -29,7 +28,6 @@ import { type IProposal, useProposalActions, useProposalBySlug } from '../../api
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
-import { proposalUtils } from '../../utils/proposalUtils';
 
 export interface IDaoProposalDetailsPageClientProps {
     /**
@@ -50,10 +48,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const { copy } = useGukModulesContext();
 
     const proposalUrlParams = { slug: proposalSlug };
-    const proposalParams = {
-        urlParams: proposalUrlParams,
-        queryParams: { daoId },
-    };
+    const proposalParams = { urlParams: proposalUrlParams, queryParams: { daoId } };
     const { data: proposal } = useProposalBySlug(proposalParams);
 
     const daoParams = { id: daoId };
@@ -65,21 +60,14 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         pluginId: proposal?.pluginSubdomain ?? '',
     })!;
 
-    const plugin = useDaoPlugins({ daoId, pluginAddress: proposal?.pluginAddress })?.[0];
-
     const { data: actionData } = useProposalActions(
         { urlParams: { id: proposal?.id as string } },
-        {
-            enabled: proposal != null,
-            refetchInterval: ({ state }) => (state.data?.decoding ? 2000 : false),
-        },
+        { enabled: proposal != null, refetchInterval: ({ state }) => (state.data?.decoding ? 2000 : false) },
     );
 
     if (proposal == null || dao == null) {
         return null;
     }
-
-    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
 
     const { blockTimestamp, creator, transactionHash, summary, title, description, resources } = proposal;
 
@@ -103,7 +91,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
             href: daoUtils.getDaoUrl(dao, 'proposals'),
             label: t('app.governance.daoProposalDetailsPage.header.breadcrumb.proposals'),
         },
-        { label: slug },
+        { label: proposalSlug },
     ];
 
     return (
@@ -162,7 +150,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                 <p className="truncate text-neutral-500">{proposal.proposalIndex}</p>
                             </DefinitionList.Item>
                             <DefinitionList.Item term={t('app.governance.daoProposalDetailsPage.aside.details.id')}>
-                                <p className="truncate text-neutral-500">{slug}</p>
+                                <p className="truncate text-neutral-500">{proposalSlug}</p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.creator')}
