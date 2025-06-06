@@ -1,10 +1,10 @@
-import { invariant } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import type { ITokenPluginSettings, ITokenVeLock } from '../../types';
+import { ITokenLock } from '../../api/tokenService';
+import type { EscrowSettings } from '../../types';
 import type { VeLockStatus } from './tokenVeLocksDialog';
 
 class TokenVeLocksDialogUtils {
-    getLockStatusAndTiming(lock: ITokenVeLock): { status: VeLockStatus; timeLeft?: number } {
+    getLockStatusAndTiming(lock: ITokenLock): { status: VeLockStatus; timeLeft?: number } {
         const { lockExit } = lock;
 
         const now = DateTime.now().toSeconds();
@@ -20,13 +20,8 @@ class TokenVeLocksDialogUtils {
         return { status: 'available' };
     }
 
-    calcMultiplier(lock: ITokenVeLock, settings: ITokenPluginSettings): number {
-        invariant(
-            settings.votingEscrow != null,
-            'TokenVeLocksDialogUtils(calcMultiplier): votingEscrow settings must exist.',
-        );
-
-        const { maxTime, slope } = settings.votingEscrow;
+    calcMultiplier(lock: ITokenLock, votingEscrow: EscrowSettings): number {
+        const { maxTime, slope } = votingEscrow;
         const { epochStartAt, amount } = lock;
         // TODO: is this ok? Is amount a big number? How do we handle big number arithmetic?
         const lockedAmount = Number(amount);
@@ -39,13 +34,8 @@ class TokenVeLocksDialogUtils {
         return multiplier;
     }
 
-    getMinLockTime(lock: ITokenVeLock, settings: ITokenPluginSettings): number {
-        invariant(
-            settings.votingEscrow != null,
-            'TokenVeLocksDialogUtils(getMinLockTime): votingEscrow settings must exist.',
-        );
-
-        const { minLockTime } = settings.votingEscrow;
+    getMinLockTime(lock: ITokenLock, votingEscrow: EscrowSettings): number {
+        const { minLockTime } = votingEscrow;
         const { epochStartAt } = lock;
         const activeAt = epochStartAt;
         // TODO: is it activeAt + minLockTime or lockedAt + minLockTime? (we don't have lockedAt coming from backend?)

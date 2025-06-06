@@ -2,9 +2,10 @@ import type { IToken } from '@/modules/finance/api/financeService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
-import { useRouter } from 'next/navigation';
-import type { IGetTokenLocksParams } from '../../api/tokenService';
+import { useAccount } from 'wagmi';
+import { type IGetTokenLocksParams } from '../../api/tokenService';
 import type { EscrowSettings } from '../../types';
+import { TokenVeLocksList } from './tokenVeLocksList';
 
 export interface ITokenVeLocksDialogParams {
     /**
@@ -23,14 +24,16 @@ export interface ITokenVeLocksDialogParams {
 
 export interface ITokenVeLocksDialogProps extends IDialogComponentProps<ITokenVeLocksDialogParams> {}
 
+export type VeLockStatus = 'active' | 'cooldown' | 'available';
+
 export const TokenVeLocksDialog: React.FC<ITokenVeLocksDialogProps> = (props) => {
     const { location } = props;
     invariant(location.params != null, 'TokenVeLocksDialog: required parameters must be set.');
 
-    const { initialParams, votingEscrow, token } = location.params;
+    const { address } = useAccount();
+    invariant(address != null, 'TokenVeLocksDialog: user must be connected.');
 
     const { t } = useTranslations();
-    const router = useRouter();
 
     return (
         <>
@@ -39,7 +42,7 @@ export const TokenVeLocksDialog: React.FC<ITokenVeLocksDialogProps> = (props) =>
                 description={t('app.plugins.token.tokenVeLocksDialog.description')}
                 className="pb-4 md:pb-6"
             >
-                Hello
+                <TokenVeLocksList {...location.params} />
             </Dialog.Content>
         </>
     );

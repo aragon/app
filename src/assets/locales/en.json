@@ -1547,14 +1547,12 @@
           },
 
           "description": "Unlock or withdraw your PDT tokens",
-          "entityLabel": "veLocks",
           "metrics": {
             "locked": "Locked",
             "multiplier": "Multiplier",
             "votingPower": "Voting power"
           },
           "minLockTimeLeftSuffix": "left until unlockable",
-          "withdrawTimeLeftSuffix": "left until withdrawable",
           "statusLabel": {
             "active": "Active",
             "available": "Available",
@@ -1562,7 +1560,22 @@
             "warmup": "In warmup"
           },
           "timeLeftSuffix": "left",
-          "title": "Your locks"
+          "title": "Your locks",
+          "withdrawTimeLeftSuffix": "left until withdrawable"
+        },
+        "tokenVeLocksList": {
+          "entity": "veLocks",
+          "empty": {
+            "description": "This will show relevant locks when available.",
+            "title": "No locks found"
+          },
+          "error": {
+            "description": "There was an error loading the locks. Try again later.",
+            "title": "Error loading locks"
+          },
+          "item": {
+
+          }
         },
         "tokenVoteList": {
           "description": {

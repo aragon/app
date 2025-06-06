@@ -14,7 +14,7 @@ export interface ITokenVeLocksDataListItemProps {
     token: IToken;
 }
 
-const TokenVeLocksDataListItem: React.FC<ITokenVeLocksDataListItemProps> = ({ token, lock }) => {
+export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = ({ token, lock }) => {
     const { t } = useTranslations();
 
     return (

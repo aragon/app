@@ -15,11 +15,8 @@ import {
 } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { useRouter } from 'next/navigation';
-import type { ITokenPluginSettings, ITokenVeLock } from '../../types';
-import type {
-    IGetProposalListParams
-} from '../../../../modules/governance/api/governanceService';
 import type { IGetTokenLocksParams } from '../../api/tokenService';
+import type { ITokenPluginSettings, ITokenVeLock } from '../../types';
 
 export interface ITokenVeLocksDialogParams {
     /**
@@ -45,7 +42,7 @@ export interface ITokenVeLocksDialogProps extends IDialogComponentProps<ITokenVe
 
 // TODO: remove warmup! https://discord.com/channels/672466989217873929/1371806076374089798/1376832017139892325
 
-export type VeLockStatus = 'warmup' | 'active' | 'cooldown' | 'available';
+type VeLockStatus = 'warmup' | 'active' | 'cooldown' | 'available';
 
 const statusToVariant: Record<VeLockStatus, TagVariant> = {
     warmup: 'info',

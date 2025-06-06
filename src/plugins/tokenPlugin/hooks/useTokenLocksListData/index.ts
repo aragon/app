@@ -1,0 +1,1 @@
+export { useTokenLocksListData } from './useTokenLocksListData';
