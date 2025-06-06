@@ -47,7 +47,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     const lockParams = { urlParams: { address: address! }, queryParams: {} };
     const { data: lockData } = useTokenLocks(lockParams, { enabled: !!address });
-
     const lockCount = lockData?.pages[0]?.metadata.totalRecords ?? 0;
 
     const [percentageValue, setPercentageValue] = useState<string>('100');
@@ -158,6 +157,17 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         escrowContract: plugin.votingEscrow?.escrowAddress as Hex,
     });
 
+    const validateMinDeposit = (value?: string) => {
+        const parsedValue = parseUnits(value ?? '0', decimals);
+        if (parsedValue < minDepositWei) {
+            return t('app.plugins.token.tokenLockForm.minDepositError', {
+                minDeposit: formattedMinDeposit,
+                symbol: token.symbol,
+            });
+        }
+        return undefined;
+    };
+
     // Update amount field and percentage value to 100% of user unlocked balance on user balance change
     useEffect(() => handlePercentageChange('100'), [handlePercentageChange]);
 
@@ -170,17 +180,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     const submitLabel = needsApproval ? 'approve' : 'lock';
     const disableSubmit = unlockedBalance?.value === BigInt(0);
-
-    const validateMinDeposit = (value?: string) => {
-        const parsedValue = parseUnits(value ?? '0', decimals);
-        if (parsedValue < minDepositWei) {
-            return t('app.plugins.token.tokenLockForm.minDepositError', {
-                minDeposit: formattedMinDeposit,
-                symbol: token.symbol,
-            });
-        }
-        return undefined;
-    };
 
     return (
         <FormProvider {...formValues}>
