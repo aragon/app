@@ -1,0 +1,39 @@
+import { renderHook } from '@testing-library/react';
+import * as wagmi from 'wagmi';
+import { useGovernanceTokenErc20Check } from './useGovernanceTokenErc20Check';
+
+describe('useGovernanceTokenErc20Check hook', () => {
+    const useReadContractSpy = jest.spyOn(wagmi, 'useReadContract');
+
+    afterEach(() => {
+        useReadContractSpy.mockReset();
+    });
+
+    it('returns positive result when ERC20 check pass', () => {
+        useReadContractSpy.mockReturnValue({
+            data: BigInt(0),
+            isError: false,
+            isLoading: false,
+        } as unknown as wagmi.UseReadContractReturnType);
+
+        const { result } = renderHook(() => useGovernanceTokenErc20Check({ address: '0x123', chainId: 123 }));
+
+        expect(result.current.data).toBeTruthy();
+        expect(result.current.isError).toBeFalsy();
+        expect(result.current.isLoading).toBeFalsy();
+    });
+
+    it('returns negative result when ERC20 check fails', () => {
+        useReadContractSpy.mockReturnValueOnce({
+            data: null,
+            isError: true,
+            isLoading: false,
+        } as unknown as wagmi.UseReadContractReturnType);
+
+        const { result } = renderHook(() => useGovernanceTokenErc20Check({ address: '0x123', chainId: 123 }));
+
+        expect(result.current.data).toBeFalsy();
+        expect(result.current.isError).toBeTruthy();
+        expect(result.current.isLoading).toBeFalsy();
+    });
+});
