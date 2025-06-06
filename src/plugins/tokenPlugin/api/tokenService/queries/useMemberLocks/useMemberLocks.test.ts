@@ -1,6 +1,6 @@
 import { generatePaginatedResponse, ReactQueryWrapper } from '@/shared/testUtils';
 import { renderHook, waitFor } from '@testing-library/react';
-import { generateTokenLock } from '../../../../testUtils/generators/tokenLock';
+import { generateTokenLock } from '../../../../testUtils/generators/memberLock';
 import { tokenService } from '../../tokenService';
 import { useMemberLocks } from './useMemberLocks';
 
