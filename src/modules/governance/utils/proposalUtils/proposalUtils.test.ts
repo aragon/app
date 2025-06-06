@@ -1,23 +1,32 @@
-import { generateDaoPlugin } from '@/shared/testUtils';
+import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { generateProposal } from '../../testUtils';
 import { proposalUtils } from './proposalUtils';
 
 describe('proposalUtils', () => {
-    describe('getProposalSlug', () => {
-        it('throws an error if incrementalId is not provided', () => {
-            const plugin = generateDaoPlugin();
-            expect(() => proposalUtils.getProposalSlug(undefined, plugin)).toThrow();
-        });
+    const getDaoPluginsSpy = jest.spyOn(daoUtils, 'getDaoPlugins');
 
-        it('throws an error if plugin is not provided', () => {
-            const incrementalId = 1;
-            expect(() => proposalUtils.getProposalSlug(incrementalId, undefined)).toThrow();
+    afterEach(() => {
+        getDaoPluginsSpy.mockReset();
+    });
+
+    describe('getProposalSlug', () => {
+        it('throws an error when plugin is not found', () => {
+            getDaoPluginsSpy.mockReturnValue(undefined);
+            expect(() => proposalUtils.getProposalSlug(generateProposal())).toThrow();
         });
 
         it('returns the correct proposal slug', () => {
-            const incrementalId = 1;
+            const dao = generateDao();
+            const proposal = generateProposal({ incrementalId: 1, pluginAddress: '0x123' });
             const plugin = generateDaoPlugin({ slug: 'plugin-slug' });
-            const result = proposalUtils.getProposalSlug(incrementalId, plugin);
-            expect(result).toBe('PLUGIN-SLUG-1');
+            getDaoPluginsSpy.mockReturnValue([plugin]);
+            const result = proposalUtils.getProposalSlug(proposal, dao);
+            expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, {
+                pluginAddress: proposal.pluginAddress,
+                includeSubPlugins: true,
+            });
+            expect(result).toEqual('PLUGIN-SLUG-1');
         });
     });
 });
