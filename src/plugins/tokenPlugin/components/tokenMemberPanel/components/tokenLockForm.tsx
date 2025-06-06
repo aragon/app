@@ -46,7 +46,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const queryClient = useQueryClient();
 
-    const lockParams = { urlParams: { address: address! }, queryParams: { pluginAddress: plugin.address } };
+    const lockParams = { urlParams: { address: address! }, queryParams: {} };
     const { data: lockData } = useTokenLocks(lockParams, { enabled: !!address });
 
     const lockCount = lockData?.pages[0]?.metadata.totalRecords ?? 0;
