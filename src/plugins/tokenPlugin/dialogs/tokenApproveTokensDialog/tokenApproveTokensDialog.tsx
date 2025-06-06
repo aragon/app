@@ -6,7 +6,7 @@ import {
     TransactionDialogStep,
     type ITransactionDialogStepMeta,
 } from '@/shared/components/transactionDialog';
-import { ITransactionInfo } from '@/shared/components/transactionStatus';
+import type { ITransactionInfo } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
