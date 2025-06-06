@@ -20,18 +20,10 @@ class TokenVeLocksDialogUtils {
         return { status: 'available' };
     }
 
-    calcMultiplier(lock: ITokenLock, votingEscrow: EscrowSettings): number {
-        const { maxTime, slope } = votingEscrow;
-        const { epochStartAt, amount } = lock;
-        // TODO: is this ok? Is amount a big number? How do we handle big number arithmetic?
-        const lockedAmount = Number(amount);
-        const now = DateTime.now().toSeconds();
-        const activeAt = epochStartAt;
-        const activePeriod = now - activeAt;
-        const votingPower = Math.min(activePeriod, maxTime) * lockedAmount * slope;
-        const multiplier = Math.max(votingPower / lockedAmount, 1);
+    getMultiplierAndVotingPower(lock: ITokenLock) {
+        const { amount, votingPower } = lock;
 
-        return multiplier;
+        return { votingPower: Number(votingPower), multiplier: Number(votingPower) / Number(amount) };
     }
 
     getMinLockTime(lock: ITokenLock, votingEscrow: EscrowSettings): number {

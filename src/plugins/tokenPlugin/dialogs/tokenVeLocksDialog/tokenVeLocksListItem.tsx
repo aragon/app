@@ -1,7 +1,18 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Avatar, Button, DataList, DateFormat, formatterUtils, Heading, Tag } from '@aragon/gov-ui-kit';
+import {
+    Avatar,
+    Button,
+    DataList,
+    DateFormat,
+    formatterUtils,
+    Heading,
+    Tag,
+    type TagVariant,
+} from '@aragon/gov-ui-kit';
+import { DateTime } from 'luxon';
 import type { ITokenLock } from '../../api/tokenService';
-import type { ITokenVeLocksDialogParams } from './tokenVeLocksDialog';
+import type { ITokenVeLocksDialogParams, VeLockStatus } from './tokenVeLocksDialog';
+import { tokenVeLocksDialogUtils } from './tokenVeLocksDialogUtils';
 
 export interface ITokenVeLocksDataListItemProps extends Pick<ITokenVeLocksDialogParams, 'votingEscrow' | 'token'> {
     /**
@@ -10,9 +21,21 @@ export interface ITokenVeLocksDataListItemProps extends Pick<ITokenVeLocksDialog
     lock: ITokenLock;
 }
 
+const statusToVariant: Record<VeLockStatus, TagVariant> = {
+    active: 'primary',
+    cooldown: 'info',
+    available: 'success',
+};
+
 export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = (props) => {
     const { lock, votingEscrow, token } = props;
     const { t } = useTranslations();
+
+    const { status, timeLeft } = tokenVeLocksDialogUtils.getLockStatusAndTiming(lock);
+    const { amount } = lock;
+    const { multiplier, votingPower } = tokenVeLocksDialogUtils.getMultiplierAndVotingPower(lock);
+    const minLockTime = tokenVeLocksDialogUtils.getMinLockTime(lock, votingEscrow);
+    const now = DateTime.now().toSeconds();
 
     return (
         <DataList.Item className="flex flex-col gap-4 py-4 md:py-6">
@@ -27,11 +50,11 @@ export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = (p
                             {formatterUtils.formatDate(timeLeft * 1000, {
                                 format: DateFormat.DURATION,
                             })}{' '}
-                            {t('app.plugins.token.tokenVeLocksDialog.timeLeftSuffix')}
+                            {t('app.plugins.token.tokenVeLocksList.item.timeLeftSuffix')}
                         </p>
                     )}
                     <Tag
-                        label={t(`app.plugins.token.tokenVeLocksDialog.statusLabel.${status}`)}
+                        label={t(`app.plugins.token.tokenVeLocksList.item.statusLabel.${status}`)}
                         variant={statusToVariant[status]}
                     />
                 </div>
@@ -40,20 +63,20 @@ export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = (p
             <div className="grid grid-cols-3 gap-4 text-base leading-tight text-neutral-800 md:text-lg">
                 {[
                     {
-                        label: t('app.plugins.token.tokenVeLocksDialog.metrics.locked'),
+                        label: t('app.plugins.token.tokenVeLocksList.item.metrics.locked'),
                         value: amount,
                     },
                     {
-                        label: t('app.plugins.token.tokenVeLocksDialog.metrics.multiplier'),
+                        label: t('app.plugins.token.tokenVeLocksList.item.metrics.multiplier'),
                         value: `${multiplier.toString()}x`,
                         hidden: multiplier <= 1,
                     },
                     {
-                        label: t('app.plugins.token.tokenVeLocksDialog.metrics.votingPower'),
+                        label: t('app.plugins.token.tokenVeLocksList.item.metrics.votingPower'),
                         value: votingPower,
                     },
                 ]
-                    .filter((val) => !val.hidden)
+                    .filter((metric) => !metric.hidden)
                     .map(({ label, value }) => (
                         <div key="label" className="flex flex-col">
                             <div className="text-sm text-neutral-500 md:text-base">{label}</div>
@@ -62,7 +85,7 @@ export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = (p
                     ))}
             </div>
             <div className="flex flex-col items-center gap-3 md:flex-row md:gap-4">
-                {/* TODO: simplify buttons! too verbose and with duplication.  */}
+                {/* TODO: try to simplify buttons!. */}
                 {status === 'active' && (
                     <>
                         <Button
@@ -74,7 +97,7 @@ export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = (p
                                 // handle unlock action
                             }}
                         >
-                            {t(`app.plugins.token.tokenVeLocksDialog.actions.unlock`, {
+                            {t(`app.plugins.token.tokenVeLocksList.item.actions.unlock`, {
                                 underlyingSymbol: token.symbol,
                             })}
                         </Button>
@@ -83,7 +106,7 @@ export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = (p
                                 {formatterUtils.formatDate((minLockTime - now) * 1000, {
                                     format: DateFormat.DURATION,
                                 })}{' '}
-                                {t('app.plugins.token.tokenVeLocksDialog.minLockTimeLeftSuffix')}
+                                {t('app.plugins.token.tokenVeLocksList.item.minLockTimeLeftSuffix')}
                             </p>
                         )}
                     </>
@@ -91,7 +114,7 @@ export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = (p
                 {status === 'cooldown' && (
                     <>
                         <Button className="w-full md:w-auto" variant="tertiary" size="md" disabled={true}>
-                            {t(`app.plugins.token.tokenVeLocksDialog.actions.withdraw`, {
+                            {t(`app.plugins.token.tokenVeLocksList.item.actions.withdraw`, {
                                 underlyingSymbol: token.symbol,
                             })}
                         </Button>
@@ -100,7 +123,7 @@ export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = (p
                             {formatterUtils.formatDate(timeLeft! * 1000, {
                                 format: DateFormat.DURATION,
                             })}{' '}
-                            {t('app.plugins.token.tokenVeLocksDialog.withdrawTimeLeftSuffix')}
+                            {t('app.plugins.token.tokenVeLocksList.item.withdrawTimeLeftSuffix')}
                         </p>
                     </>
                 )}
@@ -113,7 +136,7 @@ export const TokenVeLocksListItem: React.FC<ITokenVeLocksDataListItemProps> = (p
                             // handle withdraw action
                         }}
                     >
-                        {t(`app.plugins.token.tokenVeLocksDialog.actions.withdraw`, {
+                        {t(`app.plugins.token.tokenVeLocksList.item.actions.withdraw`, {
                             underlyingSymbol: token.symbol,
                         })}
                     </Button>

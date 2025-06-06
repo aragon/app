@@ -16,6 +16,10 @@ export interface ITokenLock {
      */
     amount: string;
     /**
+     * Current voting power of the lock.
+     */
+    votingPower: string;
+    /**
      *
      */
     lockExit: {
