@@ -1,5 +1,5 @@
 ---
-'@aragon/app-next': patch
+'@aragon/app-next': minor
 ---
 
-Display token address with copy option on members page and remove unused translation.
+Change how to display token address with copy button on members page

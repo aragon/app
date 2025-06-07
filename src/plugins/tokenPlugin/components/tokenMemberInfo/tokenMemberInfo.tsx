@@ -74,7 +74,6 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
                     href: daoUtils.getDaoUrl(dao, 'members'),
                     isExternal: false,
                 }}
-                description={addressUtils.truncateAddress(token.address)}
             >
                 {t('app.plugins.token.tokenMemberInfo.tokenDistribution', { count: distribution })}
             </DefinitionList.Item>
