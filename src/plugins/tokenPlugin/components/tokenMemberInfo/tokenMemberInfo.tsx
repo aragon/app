@@ -60,12 +60,10 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
                 link={{
                     href: buildEntityUrl({ type: ChainEntityType.TOKEN, id: token.address }),
                 }}
-                description={t('app.plugins.token.tokenMemberInfo.tokenLinkDescription')}
+                copyValue={token.address}
+                description={token.name}
             >
-                {t('app.plugins.token.tokenMemberInfo.tokenNameAndSymbol', {
-                    tokenName: token.name,
-                    tokenSymbol: token.symbol,
-                })}
+                {addressUtils.truncateAddress(token.address)}
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t('app.plugins.token.tokenMemberInfo.distribution')}

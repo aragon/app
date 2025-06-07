@@ -54,7 +54,7 @@ describe('<TokenMemberInfo /> component', () => {
         expect(screen.getByText(/tokenMemberInfo.eligibleVoters/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.tokenHolders/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.tokenLabel/)).toBeInTheDocument();
-        expect(screen.getByText(/tokenMemberInfo.tokenLinkDescription/)).toBeInTheDocument();
+        expect(screen.getByText(token.name)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.distribution/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.supply/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.tokenSupply \(supply=300,symbol=BTC\)/)).toBeInTheDocument();
@@ -66,8 +66,9 @@ describe('<TokenMemberInfo /> component', () => {
 
         render(createTestComponent({ plugin }));
 
-        const link = screen.getByRole<HTMLAnchorElement>('link', { name: /tokenMemberInfo.tokenNameAndSymbol/ });
-        expect(link.text).toContain('tokenName=Wrapped ETH,tokenSymbol=WETH');
+        const truncated = addressUtils.truncateAddress(token.address);
+        const link = screen.getByRole<HTMLAnchorElement>('link', { name: truncated });
+        expect(link.text).toBe(truncated);
         expect(link.href).toContain(token.address);
     });
 
