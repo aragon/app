@@ -11,7 +11,7 @@ import {
     generateReactQueryInfiniteResultSuccess,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { GukModulesProvider, addressUtils } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { type ITokenMemberInfoProps, TokenMemberInfo } from './tokenMemberInfo';
 
@@ -54,7 +54,13 @@ describe('<TokenMemberInfo /> component', () => {
         expect(screen.getByText(/tokenMemberInfo.eligibleVoters/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.tokenHolders/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.tokenLabel/)).toBeInTheDocument();
-        expect(screen.getByText(token.name)).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                new RegExp(
+                    `tokenMemberInfo.tokenNameAndSymbol \(tokenName=${token.name},tokenSymbol=${token.symbol}\)`,
+                ),
+            ),
+        ).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.distribution/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.supply/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.tokenSupply \(supply=300,symbol=BTC\)/)).toBeInTheDocument();

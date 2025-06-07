@@ -61,7 +61,10 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
                     href: buildEntityUrl({ type: ChainEntityType.TOKEN, id: token.address }),
                 }}
                 copyValue={token.address}
-                description={token.name}
+                description={t('app.plugins.token.tokenMemberInfo.tokenNameAndSymbol', {
+                    tokenName: token.name,
+                    tokenSymbol: token.symbol,
+                })}
             >
                 {addressUtils.truncateAddress(token.address)}
             </DefinitionList.Item>
