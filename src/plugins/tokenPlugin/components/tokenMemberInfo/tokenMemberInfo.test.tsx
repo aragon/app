@@ -55,11 +55,7 @@ describe('<TokenMemberInfo /> component', () => {
         expect(screen.getByText(/tokenMemberInfo.tokenHolders/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.tokenLabel/)).toBeInTheDocument();
         expect(
-            screen.getByText(
-                new RegExp(
-                    `tokenMemberInfo.tokenNameAndSymbol \(tokenName=${token.name},tokenSymbol=${token.symbol}\)`,
-                ),
-            ),
+            screen.getByText(`${token.name} (${token.symbol})`),
         ).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.distribution/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.supply/)).toBeInTheDocument();
@@ -72,9 +68,10 @@ describe('<TokenMemberInfo /> component', () => {
 
         render(createTestComponent({ plugin }));
 
-        const truncated = addressUtils.truncateAddress(token.address);
-        const link = screen.getByRole<HTMLAnchorElement>('link', { name: truncated });
-        expect(link.text).toBe(truncated);
+        const link = screen.getByRole<HTMLAnchorElement>('link', {
+            name: addressUtils.truncateAddress(token.address),
+        });
+        expect(link).toHaveTextContent(addressUtils.truncateAddress(token.address));
         expect(link.href).toContain(token.address);
     });
 
