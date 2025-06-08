@@ -55,7 +55,11 @@ describe('<TokenMemberInfo /> component', () => {
         expect(screen.getByText(/tokenMemberInfo.tokenHolders/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.tokenLabel/)).toBeInTheDocument();
         expect(
-            screen.getByText(`${token.name} (${token.symbol})`),
+            screen.getByText(
+                new RegExp(
+                    `tokenMemberInfo.tokenNameAndSymbol \\(tokenName=${token.name},tokenSymbol=${token.symbol}\\)`,
+                ),
+            ),
         ).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.distribution/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.supply/)).toBeInTheDocument();
