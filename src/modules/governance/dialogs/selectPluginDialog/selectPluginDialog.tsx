@@ -2,7 +2,7 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { pluginGroupTab, useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { DataList, Dialog, invariant } from '@aragon/gov-ui-kit';
@@ -91,7 +91,6 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
                 primaryAction={{
                     label: t('app.governance.selectPluginDialog.action.select'),
                     onClick: handleConfirm,
-                    disabled: selectedPlugin.id === pluginGroupTab.id,
                 }}
                 secondaryAction={{
                     label: t('app.governance.selectPluginDialog.action.cancel'),
