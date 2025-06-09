@@ -46,7 +46,7 @@ describe('<TokenMemberInfo /> component', () => {
     };
 
     it('renders the component with the correct eligible voters and members info', () => {
-        const token = generateTokenPluginSettingsToken({ symbol: 'BTC', totalSupply: '300' });
+        const token = generateTokenPluginSettingsToken({ name: 'Bitcoin', symbol: 'BTC', totalSupply: '300' });
         const plugin = generateDaoPlugin({ settings: generateTokenPluginSettings({ token }) });
 
         render(createTestComponent({ plugin }));
@@ -54,13 +54,7 @@ describe('<TokenMemberInfo /> component', () => {
         expect(screen.getByText(/tokenMemberInfo.eligibleVoters/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.tokenHolders/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.tokenLabel/)).toBeInTheDocument();
-        expect(
-            screen.getByText(
-                new RegExp(
-                    `tokenMemberInfo.tokenNameAndSymbol \\(tokenName=${token.name},tokenSymbol=${token.symbol}\\)`,
-                ),
-            ),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/tokenNameAndSymbol \(tokenName=Bitcoin,tokenSymbol=BTC/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.distribution/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.supply/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.tokenSupply \(supply=300,symbol=BTC\)/)).toBeInTheDocument();
@@ -72,10 +66,9 @@ describe('<TokenMemberInfo /> component', () => {
 
         render(createTestComponent({ plugin }));
 
-        const link = screen.getByRole<HTMLAnchorElement>('link', {
-            name: addressUtils.truncateAddress(token.address),
-        });
-        expect(link).toHaveTextContent(addressUtils.truncateAddress(token.address));
+        const linkName = addressUtils.truncateAddress(token.address);
+        const link = screen.getByRole<HTMLAnchorElement>('link', { name: linkName });
+        expect(link).toBeInTheDocument();
         expect(link.href).toContain(token.address);
     });
 
