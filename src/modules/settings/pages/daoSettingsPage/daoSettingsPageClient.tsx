@@ -14,7 +14,6 @@ import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { Button, Card, IconType } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { CreateDaoDialogId } from '../../../createDao/constants/createDaoDialogId';
 import type { ICreateProcessDetailsDialogParams } from '../../../createDao/dialogs/createProcessDetailsDialog';
 import { DaoGovernanceInfo } from '../../components/daoGovernanceInfo';
@@ -87,16 +86,6 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
         const params: ICreateProcessDetailsDialogParams = { onActionClick: handleConfirmProcessCreation };
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
-
-    useEffect(() => {
-        if (typeof window !== 'undefined' && window.location.hash) {
-            const id = window.location.hash.slice(1);
-            const el = document.getElementById(id);
-            if (el) {
-                el.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-    }, []);
 
     if (!dao) {
         return null;
