@@ -17,7 +17,7 @@ export interface IGetMemberLocksQueryParams extends IPaginatedRequest {
     /**
      * Network of the lock.
      */
-    network?: Network;
+    network: Network;
     /**
      * Flag to determine whether or not to fetch only active locks.
      */
