@@ -41,6 +41,7 @@ export const DaoProposalListDefaultItem: React.FC<IDaoProposalListDefaultItemPro
     return (
         <ProposalDataListItem.Structure
             className="min-w-0"
+            id={proposalSlug}
             status={proposalStatus}
             key={id}
             title={title}
