@@ -126,7 +126,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     };
 
     return (
-        <DataList.Item className="flex flex-col gap-4 py-4 md:py-6">
+        <div className="flex flex-col gap-4 py-4 md:py-6 w-full rounded-xl border border-neutral-100 bg-neutral-0 px-4 text-left shadow-neutral-sm transition-all md:px-6">
             <div className="flex justify-between">
                 <div className="flex items-center gap-3 md:gap-4">
                     <Avatar src={token.logo} size="md" className="shrink-0" />
@@ -179,7 +179,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                             className="w-full md:w-auto"
                             variant="secondary"
                             size="md"
-                            // disabled={now < minLockTime}
+                            disabled={now < minLockTime}
                             onClick={handleUnlock}
                         >
                             {t(`app.plugins.token.tokenLockList.item.actions.unlock`, {
@@ -220,6 +220,6 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                     </Button>
                 )}
             </div>
-        </DataList.Item>
+        </div>
     );
 };
