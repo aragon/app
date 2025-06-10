@@ -101,7 +101,6 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
             // Show unlock dialog directly
             const unlockParams: ITokenLockUnlockDialogParams = {
                 action: 'unlock',
-                amount: BigInt(amount),
                 escrowContract: plugin.votingEscrow!.escrowAddress,
                 network,
                 token,
@@ -111,6 +110,19 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                 params: unlockParams,
             });
         }
+    };
+
+    const handleWithdraw = () => {
+        const withdrawParams: ITokenLockUnlockDialogParams = {
+            action: 'withdraw',
+            escrowContract: plugin.votingEscrow!.escrowAddress,
+            network,
+            token,
+            tokenId: BigInt(lock.tokenId),
+        };
+        open(TokenPluginDialogId.LOCK_UNLOCK, {
+            params: withdrawParams,
+        });
     };
 
     return (
@@ -201,14 +213,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                     </>
                 )}
                 {status === 'available' && (
-                    <Button
-                        className="w-full md:w-auto"
-                        variant="tertiary"
-                        size="md"
-                        onClick={() => {
-                            // handle withdraw action
-                        }}
-                    >
+                    <Button className="w-full md:w-auto" variant="tertiary" size="md" onClick={handleWithdraw}>
                         {t(`app.plugins.token.tokenLockList.item.actions.withdraw`, {
                             underlyingSymbol: token.symbol,
                         })}
