@@ -2,7 +2,7 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
 import type { IGetMemberLocksParams } from '../../api/tokenService';
-import { useTokenLocksListData } from '../../hooks/useTokenLocksListData';
+import { useTokenLockListData } from '../../hooks/useTokenLockListData';
 import type { ITokenPluginSettings } from '../../types';
 import { TokenLockListItem } from './components/tokenLockListItem';
 
@@ -21,11 +21,11 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
     const { initialParams, plugin } = props;
     const { t } = useTranslations();
     const { locksList, onLoadMore, state, pageSize, itemsCount, errorState, emptyState } =
-        useTokenLocksListData(initialParams);
+        useTokenLockListData(initialParams);
 
     return (
         <DataListRoot
-            entityLabel={t('app.plugins.token.tokenLocksList.entity')}
+            entityLabel={t('app.plugins.token.tokenLockList.entity')}
             onLoadMore={onLoadMore}
             state={state}
             pageSize={pageSize}

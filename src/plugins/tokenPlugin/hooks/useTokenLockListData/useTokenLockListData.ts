@@ -2,7 +2,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { type IGetMemberLocksParams, useMemberLocks } from '../../api/tokenService';
 
-export const useTokenLocksListData = (params: IGetMemberLocksParams) => {
+export const useTokenLockListData = (params: IGetMemberLocksParams) => {
     const { t } = useTranslations();
 
     const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage } = useMemberLocks(params);
@@ -20,13 +20,13 @@ export const useTokenLocksListData = (params: IGetMemberLocksParams) => {
     const itemsCount = data?.pages[0].metadata.totalRecords;
 
     const errorState = {
-        heading: t('app.plugins.token.tokenVeLocksList.error.title'),
-        description: t('app.plugins.token.tokenVeLocksList.error.description'),
+        heading: t('app.plugins.token.tokenLockList.error.title'),
+        description: t('app.plugins.token.tokenLockList.error.description'),
     };
 
     const emptyState = {
-        heading: t('app.plugins.token.tokenVeLocksList.empty.title'),
-        description: t('app.plugins.token.tokenVeLocksList.empty.description'),
+        heading: t('app.plugins.token.tokenLockList.empty.title'),
+        description: t('app.plugins.token.tokenLockList.empty.description'),
     };
 
     return { locksList, onLoadMore: fetchNextPage, state, pageSize, itemsCount, emptyState, errorState };

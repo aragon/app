@@ -11,7 +11,7 @@ import {
     type TagVariant,
 } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import { erc721Abi, type Hex } from 'viem';
+import { erc721Abi, formatUnits, type Hex } from 'viem';
 import { useReadContract } from 'wagmi';
 import type { IMemberLock } from '../../../api/tokenService';
 import type { LockStatus } from '../../../dialogs/tokenLocksDialog/tokenLocksDialog';
@@ -57,6 +57,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
 
     const needsApproval = status === 'active' && approvedAddress !== plugin.votingEscrow!.escrowAddress;
     console.log('needsApproval', needsApproval);
+
     return (
         <DataList.Item className="flex flex-col gap-4 py-4 md:py-6">
             <div className="flex justify-between">
@@ -70,11 +71,11 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                             {formatterUtils.formatDate(timeLeft * 1000, {
                                 format: DateFormat.DURATION,
                             })}{' '}
-                            {t('app.plugins.token.tokenLocksList.item.timeLeftSuffix')}
+                            {t('app.plugins.token.tokenLockList.item.timeLeftSuffix')}
                         </p>
                     )}
                     <Tag
-                        label={t(`app.plugins.token.tokenLocksList.item.statusLabel.${status}`)}
+                        label={t(`app.plugins.token.tokenLockList.item.statusLabel.${status}`)}
                         variant={statusToVariant[status]}
                     />
                 </div>
@@ -83,22 +84,22 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
             <div className="grid grid-cols-3 gap-4 text-base leading-tight text-neutral-800 md:text-lg">
                 {[
                     {
-                        label: t('app.plugins.token.tokenLocksList.item.metrics.locked'),
-                        value: amount,
+                        label: t('app.plugins.token.tokenLockList.item.metrics.locked'),
+                        value: formatUnits(BigInt(amount), token.decimals),
                     },
                     {
-                        label: t('app.plugins.token.tokenLocksList.item.metrics.multiplier'),
+                        label: t('app.plugins.token.tokenLockList.item.metrics.multiplier'),
                         value: `${multiplier.toString()}x`,
                         hidden: multiplier <= 1,
                     },
                     {
-                        label: t('app.plugins.token.tokenLocksList.item.metrics.votingPower'),
-                        value: votingPower,
+                        label: t('app.plugins.token.tokenLockList.item.metrics.votingPower'),
+                        value: formatUnits(BigInt(votingPower), token.decimals),
                     },
                 ]
                     .filter((metric) => !metric.hidden)
                     .map(({ label, value }) => (
-                        <div key="label" className="flex flex-col">
+                        <div key={label} className="flex flex-col">
                             <div className="text-sm text-neutral-500 md:text-base">{label}</div>
                             <div>{value}</div>
                         </div>
@@ -116,16 +117,16 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                                 // handle unlock action
                             }}
                         >
-                            {t(`app.plugins.token.tokenLocksList.item.actions.unlock}`, {
+                            {t(`app.plugins.token.tokenLockList.item.actions.unlock`, {
                                 underlyingSymbol: token.symbol,
                             })}
                         </Button>
                         {now < minLockTime && (
                             <p className="text-sm leading-normal text-neutral-500">
-                                {formatterUtils.formatDate((minLockTime - now) * 1000, {
+                                {formatterUtils.formatDate(minLockTime * 1000, {
                                     format: DateFormat.DURATION,
                                 })}{' '}
-                                {t('app.plugins.token.tokenLocksList.item.minLockTimeLeftSuffix')}
+                                {t('app.plugins.token.tokenLockList.item.minLockTimeLeftSuffix')}
                             </p>
                         )}
                     </>
@@ -133,7 +134,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                 {status === 'cooldown' && (
                     <>
                         <Button className="w-full md:w-auto" variant="tertiary" size="md" disabled={true}>
-                            {t(`app.plugins.token.tokenLocksList.item.actions.withdraw`, {
+                            {t(`app.plugins.token.tokenLockList.item.actions.withdraw`, {
                                 underlyingSymbol: token.symbol,
                             })}
                         </Button>
@@ -142,7 +143,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                             {formatterUtils.formatDate(timeLeft! * 1000, {
                                 format: DateFormat.DURATION,
                             })}{' '}
-                            {t('app.plugins.token.tokenLocksList.item.withdrawTimeLeftSuffix')}
+                            {t('app.plugins.token.tokenLockList.item.withdrawTimeLeftSuffix')}
                         </p>
                     </>
                 )}
@@ -155,7 +156,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                             // handle withdraw action
                         }}
                     >
-                        {t(`app.plugins.token.tokenLocksList.item.actions.withdraw`, {
+                        {t(`app.plugins.token.tokenLockList.item.actions.withdraw`, {
                             underlyingSymbol: token.symbol,
                         })}
                     </Button>

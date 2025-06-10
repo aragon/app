@@ -1363,7 +1363,7 @@
           "description": "Unlock or withdraw your PDT tokens",
           "title": "Your locks"
         },
-        "tokenLocksList": {
+        "tokenLockList": {
           "empty": {
             "description": "This will show relevant locks when available.",
             "title": "No locks found"
