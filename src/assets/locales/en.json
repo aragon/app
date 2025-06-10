@@ -1358,7 +1358,6 @@
           "tokenDistribution": "{{count}} token holders",
           "tokenHolders": "Token holders",
           "tokenLabel": "Token",
-          "tokenLinkDescription": "View all token holders",
           "tokenNameAndSymbol": "{{tokenName}} ({{tokenSymbol}})",
           "tokenSupply": "{{supply}} {{symbol}}"
         },

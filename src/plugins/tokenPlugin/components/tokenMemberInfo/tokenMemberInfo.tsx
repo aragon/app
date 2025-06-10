@@ -60,12 +60,13 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
                 link={{
                     href: buildEntityUrl({ type: ChainEntityType.TOKEN, id: token.address }),
                 }}
-                description={t('app.plugins.token.tokenMemberInfo.tokenLinkDescription')}
-            >
-                {t('app.plugins.token.tokenMemberInfo.tokenNameAndSymbol', {
+                copyValue={token.address}
+                description={t('app.plugins.token.tokenMemberInfo.tokenNameAndSymbol', {
                     tokenName: token.name,
                     tokenSymbol: token.symbol,
                 })}
+            >
+                {addressUtils.truncateAddress(token.address)}
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t('app.plugins.token.tokenMemberInfo.distribution')}
@@ -73,7 +74,6 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
                     href: daoUtils.getDaoUrl(dao, 'members'),
                     isExternal: false,
                 }}
-                description={addressUtils.truncateAddress(token.address)}
             >
                 {t('app.plugins.token.tokenMemberInfo.tokenDistribution', { count: distribution })}
             </DefinitionList.Item>
