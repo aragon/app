@@ -11,7 +11,7 @@ import {
     generateReactQueryInfiniteResultSuccess,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { GukModulesProvider, addressUtils } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { type ITokenMemberInfoProps, TokenMemberInfo } from './tokenMemberInfo';
 
@@ -46,7 +46,7 @@ describe('<TokenMemberInfo /> component', () => {
     };
 
     it('renders the component with the correct eligible voters and members info', () => {
-        const token = generateTokenPluginSettingsToken({ symbol: 'BTC', totalSupply: '300' });
+        const token = generateTokenPluginSettingsToken({ name: 'Bitcoin', symbol: 'BTC', totalSupply: '300' });
         const plugin = generateDaoPlugin({ settings: generateTokenPluginSettings({ token }) });
 
         render(createTestComponent({ plugin }));
@@ -54,7 +54,7 @@ describe('<TokenMemberInfo /> component', () => {
         expect(screen.getByText(/tokenMemberInfo.eligibleVoters/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.tokenHolders/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.tokenLabel/)).toBeInTheDocument();
-        expect(screen.getByText(/tokenMemberInfo.tokenLinkDescription/)).toBeInTheDocument();
+        expect(screen.getByText(/tokenNameAndSymbol \(tokenName=Bitcoin,tokenSymbol=BTC/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.distribution/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.supply/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.tokenSupply \(supply=300,symbol=BTC\)/)).toBeInTheDocument();
@@ -66,8 +66,9 @@ describe('<TokenMemberInfo /> component', () => {
 
         render(createTestComponent({ plugin }));
 
-        const link = screen.getByRole<HTMLAnchorElement>('link', { name: /tokenMemberInfo.tokenNameAndSymbol/ });
-        expect(link.text).toContain('tokenName=Wrapped ETH,tokenSymbol=WETH');
+        const linkName = addressUtils.truncateAddress(token.address);
+        const link = screen.getByRole<HTMLAnchorElement>('link', { name: linkName });
+        expect(link).toBeInTheDocument();
         expect(link.href).toContain(token.address);
     });
 
