@@ -1,7 +1,7 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { TokenLockUnlockDialog } from '..//dialogs/tokenLockUnlockDialog';
 import { TokenApproveTokensDialog } from '../dialogs/tokenApproveTokensDialog';
 import { TokenDelegationDialog } from '../dialogs/tokenDelegationDialog';
+import { TokenLockUnlockDialog } from '../dialogs/tokenLockUnlockDialog';
 import { TokenWrapUnwrapDialog } from '../dialogs/tokenWrapUnwrapDialog';
 import { TokenPluginDialogId } from './tokenPluginDialogId';
 
