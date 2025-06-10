@@ -1,5 +1,6 @@
-import { tokenService } from '../tokenService';
+import { Network } from '@/shared/api/daoService';
 import { generateTokenLock } from '../../testUtils/generators/memberLock';
+import { tokenService } from '../tokenService';
 
 describe('token service', () => {
     const requestSpy = jest.spyOn(tokenService, 'request');
@@ -12,7 +13,7 @@ describe('token service', () => {
         const locks = [generateTokenLock()];
         const params = {
             urlParams: { address: '0x123' },
-            queryParams: {},
+            queryParams: { network: Network.ETHEREUM_SEPOLIA },
         };
 
         requestSpy.mockResolvedValue(locks);
