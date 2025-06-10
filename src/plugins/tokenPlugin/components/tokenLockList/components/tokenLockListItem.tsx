@@ -35,6 +35,10 @@ export interface ITokenLockListItemProps {
      * Network of the DAO.
      */
     network: Network;
+    /**
+     * Callback called on lock dialog close.
+     */
+    onLockDialogClose: () => void;
 }
 
 const statusToVariant: Record<LockStatus, TagVariant> = {
@@ -44,7 +48,7 @@ const statusToVariant: Record<LockStatus, TagVariant> = {
 };
 
 export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
-    const { lock, plugin, network } = props;
+    const { lock, plugin, network, onLockDialogClose } = props;
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const token = plugin.settings.token;
@@ -75,6 +79,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                 spender: plugin.votingEscrow!.escrowAddress as Hex,
                 network,
                 translationNamespace: 'UNLOCK',
+                onClose: onLockDialogClose,
                 onApproveSuccess: () => {
                     const unlockParams: ITokenLockUnlockDialogParams = {
                         action: 'unlock',
@@ -83,6 +88,8 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                         network,
                         token,
                         tokenId: BigInt(lock.tokenId),
+                        onClose: onLockDialogClose,
+                        onSuccessClick: onLockDialogClose,
                     };
                     open(TokenPluginDialogId.LOCK_UNLOCK, { params: unlockParams });
                 },
@@ -105,6 +112,8 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                 network,
                 token,
                 tokenId: BigInt(lock.tokenId),
+                onClose: onLockDialogClose,
+                onSuccessClick: onLockDialogClose,
             };
             open(TokenPluginDialogId.LOCK_UNLOCK, {
                 params: unlockParams,
@@ -119,6 +128,8 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
             network,
             token,
             tokenId: BigInt(lock.tokenId),
+            onClose: onLockDialogClose,
+            onSuccessClick: onLockDialogClose,
         };
         open(TokenPluginDialogId.LOCK_UNLOCK, {
             params: withdrawParams,

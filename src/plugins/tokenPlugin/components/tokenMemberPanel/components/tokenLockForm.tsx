@@ -145,7 +145,10 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     };
 
     const handleApproveSuccess = (dialogProps: ReturnType<typeof getDialogProps>) => {
-        const params: ITokenLockUnlockDialogParams = { ...dialogProps, action: 'lock' };
+        const params: ITokenLockUnlockDialogParams = {
+            ...dialogProps,
+            action: 'lock',
+        };
         open(TokenPluginDialogId.LOCK_UNLOCK, { params });
     };
 
@@ -155,6 +158,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         amount: confirmAmount,
         network: dao!.network,
         onSuccess: handleTransactionSuccess,
+        onSuccessClick: handleViewLocks,
         spender: plugin.votingEscrow?.escrowAddress as Hex,
         escrowContract: plugin.votingEscrow?.escrowAddress as Hex,
     });

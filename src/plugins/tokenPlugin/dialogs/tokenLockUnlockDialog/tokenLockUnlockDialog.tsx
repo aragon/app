@@ -36,6 +36,14 @@ export interface ITokenLockUnlockDialogParams {
      */
     onSuccess?: () => void;
     /**
+     * Callback called on success button click.
+     */
+    onSuccessClick?: () => void;
+    /**
+     * Callback called on cancel button click.
+     */
+    onClose?: () => void;
+    /**
      * Token to be locked.
      */
     token: ITokenPluginSettingsToken;
@@ -55,7 +63,8 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
     const { address } = useAccount();
     invariant(address != null, 'TokenLockUnlockDialog: user must be connected to perform the action');
 
-    const { action, amount, network, onSuccess, escrowContract, token, tokenId } = location.params;
+    const { action, amount, network, onSuccess, onSuccessClick, onClose, escrowContract, token, tokenId } =
+        location.params;
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -76,8 +85,9 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
         }
     };
 
-    const onSuccessClick = () => {
+    const handleSuccessClick = () => {
         router.refresh();
+        onSuccessClick?.();
     };
 
     const tokenSymbol = token.symbol;
@@ -93,7 +103,7 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
             onSuccess={onSuccess}
             successLink={{
                 label: t(`app.plugins.token.tokenLockUnlockDialog.${action}.success`),
-                onClick: onSuccessClick,
+                onClick: handleSuccessClick,
             }}
             transactionInfo={{
                 title: t(`app.plugins.token.tokenLockUnlockDialog.${action}.transactionInfoTitle`, {
@@ -102,6 +112,7 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
                 current: 2,
                 total: 2,
             }}
+            onCancelClick={onClose}
         />
     );
 };

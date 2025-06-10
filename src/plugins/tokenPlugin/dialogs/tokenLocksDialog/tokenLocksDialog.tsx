@@ -1,8 +1,9 @@
-import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import { type ITokenLockListProps, TokenLockList } from '../../components/tokenLockList';
+import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
 
 export interface ITokenLocksDialogParams extends ITokenLockListProps {}
 
@@ -18,12 +19,17 @@ export const TokenLocksDialog: React.FC<ITokenLocksDialogProps> = (props) => {
     invariant(address != null, 'TokenLocksDialog: user must be connected.');
 
     const { t } = useTranslations();
+    const { open, close } = useDialogContext();
+
+    const handleLockDialogClose = () => {
+        open(TokenPluginDialogId.VIEW_LOCKS, { params: location.params });
+    };
 
     return (
         <>
-            <Dialog.Header title={t('app.plugins.token.tokenLocksDialog.title')} />
+            <Dialog.Header title={t('app.plugins.token.tokenLocksDialog.title')} onClose={close} />
             <Dialog.Content description={t('app.plugins.token.tokenLocksDialog.description')} className="pb-4 md:pb-6">
-                <TokenLockList {...location.params} />
+                <TokenLockList {...location.params} onLockDialogClose={handleLockDialogClose} />
             </Dialog.Content>
         </>
     );

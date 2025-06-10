@@ -39,6 +39,10 @@ export interface ITokenApproveNftDialogParams {
      */
     onSuccess?: () => void;
     /**
+     * Callback called on cancel button click.
+     */
+    onClose?: () => void;
+    /**
      * First argument of the approve function, which is the address of the spender.
      */
     spender: Hex;
@@ -68,6 +72,7 @@ export const TokenApproveNftDialog: React.FC<ITokenApproveNftDialogProps> = (pro
         network,
         onApproveSuccess,
         onSuccess,
+        onClose,
         spender,
         translationNamespace,
         transactionInfo,
@@ -94,6 +99,7 @@ export const TokenApproveNftDialog: React.FC<ITokenApproveNftDialogProps> = (pro
             prepareTransaction={handlePrepareTransaction}
             network={network}
             onSuccess={onSuccess}
+            onCancelClick={onClose}
             successLink={{
                 label: t(`app.plugins.token.tokenApproveNftDialog.${translationNamespace}.success`),
                 onClick: onSuccessClick,
