@@ -38,6 +38,10 @@ export interface ITokenLockUnlockDialogParams {
      * Token to be locked.
      */
     token: ITokenPluginSettingsToken;
+    /**
+     * Flag indicating whether to show the transaction info step in the dialog. Only shown when part of a two step transaction.
+     */
+    showTransactionInfo: boolean;
 }
 
 export interface ITokenLockUnlockDialogProps extends IDialogComponentProps<ITokenLockUnlockDialogParams> {}
@@ -49,7 +53,7 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
     const { address } = useAccount();
     invariant(address != null, 'TokenLockUnlockDialog: user must be connected to perform the action');
 
-    const { action, amount, network, onSuccess, escrowContract, token } = location.params;
+    const { action, amount, network, onSuccess, escrowContract, token, showTransactionInfo } = location.params;
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -79,13 +83,17 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
                 label: t(`app.plugins.token.tokenLockUnlockDialog.${action}.success`),
                 onClick: onSuccessClick,
             }}
-            transactionInfo={{
-                title: t(`app.plugins.token.tokenLockUnlockDialog.${action}.transactionInfoTitle`, {
-                    symbol: token.symbol,
-                }),
-                current: 2,
-                total: 2,
-            }}
+            transactionInfo={
+                showTransactionInfo
+                    ? {
+                          title: t(`app.plugins.token.tokenLockUnlockDialog.${action}.transactionInfoTitle`, {
+                              symbol: token.symbol,
+                          }),
+                          current: 2,
+                          total: 2,
+                      }
+                    : undefined
+            }
         />
     );
 };

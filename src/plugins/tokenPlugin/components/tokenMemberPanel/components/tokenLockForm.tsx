@@ -146,6 +146,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         onSuccess: invalidateQueries,
         spender: plugin.votingEscrow?.escrowAddress as Hex,
         escrowContract: plugin.votingEscrow?.escrowAddress as Hex,
+        showTransactionInfo: needsApproval,
     });
 
     // Update amount field and percentage value to 100% of user unlocked balance on user balance change
