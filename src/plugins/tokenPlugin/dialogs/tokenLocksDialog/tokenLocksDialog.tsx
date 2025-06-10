@@ -1,26 +1,10 @@
-import type { IToken } from '@/modules/finance/api/financeService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
-import type { IGetMemberLocksParams } from '../../api/tokenService';
-import { TokenLockList } from '../../components/tokenLockList';
-import type { ITokenPluginSettingsEscrowSettings } from '../../types';
+import { type ITokenLockListProps, TokenLockList } from '../../components/tokenLockList';
 
-export interface ITokenLocksDialogParams {
-    /**
-     * Initial parameters to use for fetching the token locks.
-     */
-    initialParams: IGetMemberLocksParams;
-    /**
-     * Token for which the ve locks are displayed.
-     */
-    token: IToken;
-    /**
-     * Token voting escrow settings.
-     */
-    votingEscrow: ITokenPluginSettingsEscrowSettings;
-}
+export interface ITokenLocksDialogParams extends ITokenLockListProps {}
 
 export interface ITokenLocksDialogProps extends IDialogComponentProps<ITokenLocksDialogParams> {}
 

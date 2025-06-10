@@ -1339,10 +1339,6 @@
           }
         },
         "tokenLocksDialog": {
-          "actions": {
-            "unlock": "Unlock {{underlyingSymbol}}",
-            "withdraw": "Withdraw {{underlyingSymbol}}"
-          },
           "description": "Unlock or withdraw your PDT tokens",
           "title": "Your locks"
         },
@@ -1357,6 +1353,10 @@
             "title": "Error loading locks"
           },
           "item": {
+            "actions": {
+              "unlock": "Unlock {{underlyingSymbol}}",
+              "withdraw": "Withdraw {{underlyingSymbol}}"
+            },
             "metrics": {
               "locked": "Locked",
               "multiplier": "Multiplier",

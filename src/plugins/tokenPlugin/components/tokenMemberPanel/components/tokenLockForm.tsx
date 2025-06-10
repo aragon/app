@@ -140,7 +140,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     );
 
     const handleViewLocks = () => {
-        const params: ITokenLocksDialogParams = { token, votingEscrow, initialParams: lockParams };
+        const params: ITokenLocksDialogParams = { plugin, initialParams: lockParams };
         open(TokenPluginDialogId.VIEW_LOCKS, { params });
     };
 

@@ -1,13 +1,24 @@
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
-import type { ITokenLocksDialogParams } from '../../dialogs/tokenLocksDialog';
+import type { IGetMemberLocksParams } from '../../api/tokenService';
 import { useTokenLocksListData } from '../../hooks/useTokenLocksListData';
+import type { ITokenPluginSettings } from '../../types';
 import { TokenLockListItem } from './components/tokenLockListItem';
 
-export interface ITokenLockListProps extends ITokenLocksDialogParams {}
+export interface ITokenLockListProps {
+    /**
+     * Initial parameters to use for fetching the token locks.
+     */
+    initialParams: IGetMemberLocksParams;
+    /**
+     * Token plugin containing voting escrow settings.
+     */
+    plugin: IDaoPlugin<ITokenPluginSettings>;
+}
 
 export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
-    const { initialParams, votingEscrow, token } = props;
+    const { initialParams, plugin } = props;
     const { t } = useTranslations();
     const { locksList, onLoadMore, state, pageSize, itemsCount, errorState, emptyState } =
         useTokenLocksListData(initialParams);
@@ -25,9 +36,7 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
                 errorState={errorState}
                 emptyState={emptyState}
             >
-                {locksList?.map((lock) => (
-                    <TokenLockListItem key={lock.id} lock={lock} votingEscrow={votingEscrow} token={token} />
-                ))}
+                {locksList?.map((lock) => <TokenLockListItem key={lock.id} lock={lock} plugin={plugin} />)}
             </DataListContainer>
             <DataListPagination />
         </DataListRoot>
