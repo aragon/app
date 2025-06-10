@@ -71,7 +71,6 @@ export const TokenApproveNftDialog: React.FC<ITokenApproveNftDialogProps> = (pro
         spender,
         translationNamespace,
         transactionInfo,
-        onClose,
     } = location.params;
 
     const { t } = useTranslations();
