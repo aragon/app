@@ -38,7 +38,7 @@ export interface ITokenLockListItemProps {
     /**
      * Callback called on lock dialog close.
      */
-    onLockDialogClose: () => void;
+    onLockDialogClose?: () => void;
 }
 
 const statusToVariant: Record<LockStatus, TagVariant> = {

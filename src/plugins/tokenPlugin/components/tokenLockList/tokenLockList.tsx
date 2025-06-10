@@ -18,7 +18,7 @@ export interface ITokenLockListProps {
     /**
      * Callback called on lock dialog close.
      */
-    onLockDialogClose: () => void;
+    onLockDialogClose?: () => void;
 }
 
 export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {

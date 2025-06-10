@@ -11,5 +11,8 @@ export const generateTokenLock = (lock?: Partial<IMemberLock>): IMemberLock => (
         status: false,
         exitDateAt: null,
     },
+    nft: {
+        name: 'VE NFT',
+    },
     ...lock,
 });
