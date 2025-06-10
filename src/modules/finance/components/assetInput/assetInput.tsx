@@ -49,10 +49,6 @@ export interface IAssetInputProps {
      * Minimum value for the amount field.
      */
     minAmount?: number;
-    /**
-     * Custom error message to be displayed when the amount validation fails.
-     */
-    errorMessage?: string;
 }
 
 export const AssetInput: React.FC<IAssetInputProps> = (props) => {
@@ -64,7 +60,6 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         hideMax,
         hideAmountLabel,
         minAmount = 0,
-        errorMessage,
     } = props;
 
     const { t } = useTranslations();
@@ -73,20 +68,18 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
 
     const assetField = useFormField<IAssetInputFormData, 'asset'>('asset', { rules: { required: true }, fieldPrefix });
 
-    const validateAmount = (value?: string) => {
-        if (parseFloat(value ?? '') < minAmount) {
-            return errorMessage ?? false;
-        }
-        return true;
-    };
-
     const {
         label: amountLabel,
         onChange: onAmountFieldChange,
         ...amountField
     } = useFormField<IAssetInputFormData, 'amount'>('amount', {
         label: t('app.finance.transferAssetForm.amount.label'),
-        rules: { required: true, max: assetField.value?.amount, validate: validateAmount },
+        rules: {
+            required: true,
+            max: assetField.value?.amount,
+            min: minAmount,
+            validate: (value) => parseFloat(value ?? '') > 0,
+        },
         fieldPrefix,
     });
 
