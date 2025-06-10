@@ -1389,6 +1389,13 @@
             "success": "View locks",
             "title": "Unlock {{symbol}}",
             "transactionInfoTitle": "Unlock {{symbol}}"
+          },
+          "withdraw": {
+            "description": "To withdraw your {{symbol}}, confirm the onchain transactions in your wallet.",
+            "submit": "Withdraw",
+            "success": "View locks",
+            "title": "Withdraw {{symbol}}",
+            "transactionInfoTitle": "Withdraw {{symbol}}"
           }
         },
         "tokenLocksDialog": {

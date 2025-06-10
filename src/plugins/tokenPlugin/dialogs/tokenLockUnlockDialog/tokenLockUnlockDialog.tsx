@@ -17,7 +17,7 @@ export interface ITokenLockUnlockDialogParams {
     /**
      * Action to be performed.
      */
-    action: 'lock' | 'unlock';
+    action: 'lock' | 'unlock' | 'withdraw';
     /**
      * Amount of tokens to be locked / unlocked in WEI format.
      */
@@ -39,7 +39,7 @@ export interface ITokenLockUnlockDialogParams {
      */
     token: ITokenPluginSettingsToken;
     /**
-     * Token ID for unlock action.
+     * Token ID for unlock/withdraw action.
      */
     tokenId?: bigint;
 }
@@ -61,10 +61,15 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
-    const handlePrepareTransaction = () =>
-        action === 'lock'
-            ? tokenLockUnlockDialogUtils.buildLockTransaction(amount, escrowContract)
-            : tokenLockUnlockDialogUtils.buildUnlockTransaction(tokenId!, escrowContract);
+    const handlePrepareTransaction = () => {
+        if (action === 'lock') {
+            return tokenLockUnlockDialogUtils.buildLockTransaction(amount, escrowContract);
+        } else if (action === 'unlock') {
+            return tokenLockUnlockDialogUtils.buildUnlockTransaction(tokenId!, escrowContract);
+        } else {
+            return tokenLockUnlockDialogUtils.buildWithdrawTransaction(tokenId!, escrowContract);
+        }
+    };
 
     const onSuccessClick = () => {
         router.refresh();
