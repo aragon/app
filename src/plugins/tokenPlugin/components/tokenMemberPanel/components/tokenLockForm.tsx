@@ -35,7 +35,10 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { plugin, daoId } = props;
     const { votingEscrow, token } = plugin.settings;
 
-    invariant(votingEscrow != null && plugin.votingEscrow != null, 'Token lock form requires voting escrow settings');
+    invariant(
+        votingEscrow != null && plugin.votingEscrow != null,
+        'TokenLockForm: voting escrow settings are required',
+    );
 
     const { decimals } = token;
 
@@ -157,17 +160,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         escrowContract: plugin.votingEscrow?.escrowAddress as Hex,
     });
 
-    const validateMinDeposit = (value?: string) => {
-        const parsedValue = parseUnits(value ?? '0', decimals);
-        if (parsedValue < minDepositWei) {
-            return t('app.plugins.token.tokenLockForm.minDepositError', {
-                minDeposit: formattedMinDeposit,
-                symbol: token.symbol,
-            });
-        }
-        return undefined;
-    };
-
     // Update amount field and percentage value to 100% of user unlocked balance on user balance change
     useEffect(() => handlePercentageChange('100'), [handlePercentageChange]);
 
@@ -190,7 +182,11 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                         disableAssetField={true}
                         hideMax={true}
                         hideAmountLabel={true}
-                        customAmountValidation={validateMinDeposit}
+                        minAmount={parseFloat(formattedMinDeposit)}
+                        errorMessage={t('app.plugins.token.tokenLockForm.minDepositError', {
+                            minDeposit: formattedMinDeposit,
+                            symbol: token.symbol,
+                        })}
                     />
                     <ToggleGroup
                         isMultiSelect={false}

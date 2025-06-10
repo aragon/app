@@ -46,9 +46,13 @@ export interface IAssetInputProps {
      */
     hideAmountLabel?: boolean;
     /**
-     * Callback custom validation function for the amount field.
+     * Minimum value for the amount field.
      */
-    customAmountValidation?: (value?: string) => string | undefined;
+    minAmount?: number;
+    /**
+     * Custom error message to be displayed when the amount validation fails.
+     */
+    errorMessage?: string;
 }
 
 export const AssetInput: React.FC<IAssetInputProps> = (props) => {
@@ -59,7 +63,8 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         disableAssetField,
         hideMax,
         hideAmountLabel,
-        customAmountValidation,
+        minAmount = 0,
+        errorMessage,
     } = props;
 
     const { t } = useTranslations();
@@ -68,11 +73,11 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
 
     const assetField = useFormField<IAssetInputFormData, 'asset'>('asset', { rules: { required: true }, fieldPrefix });
 
-    const onValidateAmount = (value?: string) => {
-        if (customAmountValidation) {
-            return customAmountValidation(value);
+    const validateAmount = (value?: string) => {
+        if (parseFloat(value ?? '') < minAmount) {
+            return errorMessage ?? false;
         }
-        return parseFloat(value ?? '') > 0;
+        return true;
     };
 
     const {
@@ -81,7 +86,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         ...amountField
     } = useFormField<IAssetInputFormData, 'amount'>('amount', {
         label: t('app.finance.transferAssetForm.amount.label'),
-        rules: { required: true, max: assetField.value?.amount, validate: onValidateAmount },
+        rules: { required: true, max: assetField.value?.amount, validate: validateAmount },
         fieldPrefix,
     });
 
