@@ -23,6 +23,10 @@ export interface ITokenApproveNftDialogParams {
      */
     tokenId: bigint;
     /**
+     * The token name.
+     */
+    tokenName?: string;
+    /**
      * Network used for the transaction.
      */
     network: Network;
@@ -60,12 +64,14 @@ export const TokenApproveNftDialog: React.FC<ITokenApproveNftDialogProps> = (pro
     const {
         tokenAddress,
         tokenId,
+        tokenName,
         network,
         onApproveSuccess,
         onSuccess,
         spender,
         translationNamespace,
         transactionInfo,
+        onClose,
     } = location.params;
 
     const { t } = useTranslations();
@@ -96,7 +102,7 @@ export const TokenApproveNftDialog: React.FC<ITokenApproveNftDialogProps> = (pro
             transactionInfo={transactionInfo}
         >
             <AssetDataListItem.Structure
-                name={t(`app.plugins.token.tokenApproveNftDialog.${translationNamespace}.nftName`)}
+                name={tokenName ?? t(`app.plugins.token.tokenApproveNftDialog.${translationNamespace}.nftName`)}
                 amount={1}
                 symbol={`#${tokenId.toString()}`}
                 hideValue={true}

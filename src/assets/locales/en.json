@@ -1258,10 +1258,10 @@
         "tokenApproveNftDialog": {
           "UNLOCK": {
             "description": "To unlock your tokens, confirm the two onchain transactions in your wallet.",
+            "nftName": "Lock NFT",
             "submit": "Approve NFT",
             "success": "Unlock tokens",
-            "title": "Approve unlocking",
-            "nftName": "Lock NFT"
+            "title": "Approve unlocking"
           }
         },
         "tokenApproveTokensDialog": {
@@ -1343,26 +1343,6 @@
             "lock": "Lock {{symbol}}"
           }
         },
-        "tokenLockUnlockDialog": {
-          "lock": {
-            "description": "To lock your {{symbol}}, confirm the two onchain transactions in your wallet.",
-            "submit": "Lock",
-            "success": "View your veLock",
-            "title": "Lock {{symbol}}",
-            "transactionInfoTitle": "Lock {{symbol}}"
-          },
-          "unlock": {
-            "description": "To unlock your {{symbol}}, confirm the two onchain transactions in your wallet.",
-            "submit": "Unlock {{symbol}}",
-            "success": "View locks",
-            "title": "Unlock {{symbol}}",
-            "transactionInfoTitle": "Unlock {{symbol}}"
-          }
-        },
-        "tokenLocksDialog": {
-          "description": "Unlock or withdraw your PDT tokens",
-          "title": "Your locks"
-        },
         "tokenLockList": {
           "empty": {
             "description": "This will show relevant locks when available.",
@@ -1391,8 +1371,29 @@
               "warmup": "In warmup"
             },
             "timeLeftSuffix": "left",
+            "transactionInfoTitle": "Approve NFT #{{tokenId}}",
             "withdrawTimeLeftSuffix": "left until withdrawable"
           }
+        },
+        "tokenLockUnlockDialog": {
+          "lock": {
+            "description": "To lock your {{symbol}}, confirm the two onchain transactions in your wallet.",
+            "submit": "Lock",
+            "success": "View your veLock",
+            "title": "Lock {{symbol}}",
+            "transactionInfoTitle": "Lock {{symbol}}"
+          },
+          "unlock": {
+            "description": "To unlock your {{symbol}}, confirm the two onchain transactions in your wallet.",
+            "submit": "Unlock",
+            "success": "View locks",
+            "title": "Unlock {{symbol}}",
+            "transactionInfoTitle": "Unlock {{symbol}}"
+          }
+        },
+        "tokenLocksDialog": {
+          "description": "Unlock or withdraw your PDT tokens",
+          "title": "Your locks"
         },
         "tokenMemberInfo": {
           "distribution": "Distribution",

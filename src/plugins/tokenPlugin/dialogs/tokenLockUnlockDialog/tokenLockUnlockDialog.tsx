@@ -38,6 +38,10 @@ export interface ITokenLockUnlockDialogParams {
      * Token to be locked.
      */
     token: ITokenPluginSettingsToken;
+    /**
+     * Token ID for unlock action.
+     */
+    tokenId?: bigint;
 }
 
 export interface ITokenLockUnlockDialogProps extends IDialogComponentProps<ITokenLockUnlockDialogParams> {}
@@ -49,7 +53,7 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
     const { address } = useAccount();
     invariant(address != null, 'TokenLockUnlockDialog: user must be connected to perform the action');
 
-    const { action, amount, network, onSuccess, escrowContract, token } = location.params;
+    const { action, amount, network, onSuccess, escrowContract, token, tokenId } = location.params;
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -60,7 +64,7 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
     const handlePrepareTransaction = () =>
         action === 'lock'
             ? tokenLockUnlockDialogUtils.buildLockTransaction(amount, escrowContract)
-            : tokenLockUnlockDialogUtils.buildUnlockTransaction();
+            : tokenLockUnlockDialogUtils.buildUnlockTransaction(tokenId!, escrowContract);
 
     const onSuccessClick = () => {
         router.refresh();

@@ -1,4 +1,5 @@
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPlugin, Network } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     Avatar,
@@ -14,6 +15,9 @@ import { DateTime } from 'luxon';
 import { erc721Abi, formatUnits, type Hex } from 'viem';
 import { useReadContract } from 'wagmi';
 import type { IMemberLock } from '../../../api/tokenService';
+import { TokenPluginDialogId } from '../../../constants/tokenPluginDialogId';
+import type { ITokenApproveNftDialogParams } from '../../../dialogs/tokenApproveNftDialog';
+import type { ITokenLockUnlockDialogParams } from '../../../dialogs/tokenLockUnlockDialog';
 import type { LockStatus } from '../../../dialogs/tokenLocksDialog/tokenLocksDialog';
 import { tokenLocksDialogUtils } from '../../../dialogs/tokenLocksDialog/tokenLocksDialogUtils';
 import type { ITokenPluginSettings } from '../../../types';
@@ -27,6 +31,10 @@ export interface ITokenLockListItemProps {
      * Token plugin containing voting escrow settings.
      */
     plugin: IDaoPlugin<ITokenPluginSettings>;
+    /**
+     * Network of the DAO.
+     */
+    network: Network;
 }
 
 const statusToVariant: Record<LockStatus, TagVariant> = {
@@ -36,8 +44,9 @@ const statusToVariant: Record<LockStatus, TagVariant> = {
 };
 
 export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
-    const { lock, plugin } = props;
+    const { lock, plugin, network } = props;
     const { t } = useTranslations();
+    const { open } = useDialogContext();
     const token = plugin.settings.token;
 
     const { status, timeLeft } = tokenLocksDialogUtils.getLockStatusAndTiming(lock);
@@ -56,7 +65,53 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     });
 
     const needsApproval = status === 'active' && approvedAddress !== plugin.votingEscrow!.escrowAddress;
-    console.log('needsApproval', needsApproval);
+
+    const handleUnlock = () => {
+        if (needsApproval) {
+            const approveParams: ITokenApproveNftDialogParams = {
+                tokenAddress: plugin.votingEscrow!.nftLockAddress as Hex,
+                tokenId: BigInt(lock.tokenId),
+                tokenName: lock.nft.name,
+                spender: plugin.votingEscrow!.escrowAddress as Hex,
+                network,
+                translationNamespace: 'UNLOCK',
+                onApproveSuccess: () => {
+                    const unlockParams: ITokenLockUnlockDialogParams = {
+                        action: 'unlock',
+                        amount: BigInt(amount),
+                        escrowContract: plugin.votingEscrow!.escrowAddress,
+                        network,
+                        token,
+                        tokenId: BigInt(lock.tokenId),
+                    };
+                    open(TokenPluginDialogId.LOCK_UNLOCK, { params: unlockParams });
+                },
+                transactionInfo: {
+                    title: t('app.plugins.token.tokenLockList.item.transactionInfoTitle', {
+                        tokenId: lock.tokenId,
+                    }),
+                    current: 1,
+                    total: 2,
+                },
+            };
+            open(TokenPluginDialogId.APPROVE_NFT, {
+                params: approveParams,
+            });
+        } else {
+            // Show unlock dialog directly
+            const unlockParams: ITokenLockUnlockDialogParams = {
+                action: 'unlock',
+                amount: BigInt(amount),
+                escrowContract: plugin.votingEscrow!.escrowAddress,
+                network,
+                token,
+                tokenId: BigInt(lock.tokenId),
+            };
+            open(TokenPluginDialogId.LOCK_UNLOCK, {
+                params: unlockParams,
+            });
+        }
+    };
 
     return (
         <DataList.Item className="flex flex-col gap-4 py-4 md:py-6">
@@ -101,7 +156,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                     .map(({ label, value }) => (
                         <div key={label} className="flex flex-col">
                             <div className="text-sm text-neutral-500 md:text-base">{label}</div>
-                            <div>{value}</div>
+                            <div className="truncate">{value}</div>
                         </div>
                     ))}
             </div>
@@ -112,10 +167,8 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                             className="w-full md:w-auto"
                             variant="secondary"
                             size="md"
-                            disabled={now < minLockTime}
-                            onClick={() => {
-                                // handle unlock action
-                            }}
+                            // disabled={now < minLockTime}
+                            onClick={handleUnlock}
                         >
                             {t(`app.plugins.token.tokenLockList.item.actions.unlock`, {
                                 underlyingSymbol: token.symbol,

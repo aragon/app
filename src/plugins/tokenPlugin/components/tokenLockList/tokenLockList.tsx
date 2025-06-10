@@ -22,6 +22,7 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
     const { t } = useTranslations();
     const { locksList, onLoadMore, state, pageSize, itemsCount, errorState, emptyState } =
         useTokenLockListData(initialParams);
+    const network = initialParams.queryParams.network;
 
     return (
         <DataListRoot
@@ -32,11 +33,13 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
             itemsCount={itemsCount}
         >
             <DataListContainer
-                SkeletonElement={ProposalDataListItem.Skeleton} // TODO: create skeleton for ve locks, but maybe this one fits!
+                SkeletonElement={ProposalDataListItem.Skeleton}
                 errorState={errorState}
                 emptyState={emptyState}
             >
-                {locksList?.map((lock) => <TokenLockListItem key={lock.id} lock={lock} plugin={plugin} />)}
+                {locksList?.map((lock) => (
+                    <TokenLockListItem key={lock.id} lock={lock} plugin={plugin} network={network} />
+                ))}
             </DataListContainer>
             <DataListPagination />
         </DataListRoot>

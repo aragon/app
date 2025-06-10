@@ -1,4 +1,4 @@
-import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
