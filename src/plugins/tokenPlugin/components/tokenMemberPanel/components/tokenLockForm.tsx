@@ -5,8 +5,8 @@ import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPlugin
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import type { ITokenLockUnlockDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenLockUnlockDialog';
 import { useCheckAllowance } from '@/plugins/tokenPlugin/hooks/useCheckAllowance';
-import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
+import type { ITokenPlugin } from '@/plugins/tokenPlugin/types';
+import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -20,7 +20,7 @@ export interface ITokenLockFormProps {
     /**
      * DAO plugin for the token locking.
      */
-    plugin: IDaoPlugin<ITokenPluginSettings>;
+    plugin: ITokenPlugin;
     /**
      * ID of the DAO.
      */

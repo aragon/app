@@ -70,34 +70,4 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
      * CID of the IPFS file containing the plugin metadata.
      */
     metadataIpfs?: string;
-    /**
-     * The voting escrow settings of the plugin.
-     */
-    // TODO: move to ITokenPluginSettingsEscrowSettings once backend makes change
-    votingEscrow?: {
-        /**
-         * The address of the curve contract.
-         */
-        curveAddress: string;
-        /**
-         * The address of the exit queue contract.
-         */
-        exitQueueAddress: string;
-        /**
-         * The address of the voting escrow contract.
-         */
-        escrowAddress: string;
-        /**
-         * The address of the clock contract.
-         */
-        clockAddress: string;
-        /**
-         * The address of the NFT lock contract.
-         */
-        nftLockAddress: string;
-        /**
-         * The address of the underlying token contract.
-         */
-        underlying: string;
-    };
 }
