@@ -1255,6 +1255,15 @@
           "Mint": "Mint",
           "UpdateVoteSettings": "Update settings"
         },
+        "tokenApproveNftDialog": {
+          "UNLOCK": {
+            "description": "To unlock your tokens, confirm the two onchain transactions in your wallet.",
+            "submit": "Approve NFT",
+            "success": "Unlock tokens",
+            "title": "Approve unlocking",
+            "nftName": "Lock NFT"
+          }
+        },
         "tokenApproveTokensDialog": {
           "LOCK": {
             "description": "To lock your tokens, confirm the two onchain transactions in your wallet.",
@@ -1351,10 +1360,6 @@
           }
         },
         "tokenLocksDialog": {
-          "actions": {
-            "unlock": "Unlock {{underlyingSymbol}}",
-            "withdraw": "Withdraw {{underlyingSymbol}}"
-          },
           "description": "Unlock or withdraw your PDT tokens",
           "title": "Your locks"
         },
@@ -1369,6 +1374,10 @@
             "title": "Error loading locks"
           },
           "item": {
+            "actions": {
+              "unlock": "Unlock {{underlyingSymbol}}",
+              "withdraw": "Withdraw {{underlyingSymbol}}"
+            },
             "metrics": {
               "locked": "Locked",
               "multiplier": "Multiplier",

@@ -9,6 +9,15 @@ const lockAbi = [
     },
 ];
 
+const unlockAbi = [
+    {
+        type: 'function',
+        name: 'beginWithdrawal',
+        inputs: [{ name: 'tokenId', type: 'uint256' }],
+        outputs: [],
+    },
+];
+
 class TokenLockUnlockDialogUtils {
     buildLockTransaction = (amount: bigint, escrowContract: string) => {
         const transactionData = encodeFunctionData({
@@ -21,9 +30,14 @@ class TokenLockUnlockDialogUtils {
         return Promise.resolve(transaction);
     };
 
-    buildUnlockTransaction = () => {
-        // TODO:: implement unlock
-        const transaction = { to: '0x' as Hex, data: '0x' as Hex, value: BigInt(0) };
+    buildUnlockTransaction = (tokenId: bigint, escrowContract: string) => {
+        const transactionData = encodeFunctionData({
+            abi: unlockAbi,
+            functionName: 'beginWithdrawal',
+            args: [tokenId],
+        });
+        const transaction = { to: escrowContract as Hex, data: transactionData, value: BigInt(0) };
+
         return Promise.resolve(transaction);
     };
 }

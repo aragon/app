@@ -1,3 +1,4 @@
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     Avatar,
@@ -10,15 +11,22 @@ import {
     type TagVariant,
 } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import { erc721Abi, type Hex } from 'viem';
+import { useReadContract } from 'wagmi';
 import type { IMemberLock } from '../../../api/tokenService';
-import type { ITokenLocksDialogParams, LockStatus } from '../../../dialogs/tokenLocksDialog/tokenLocksDialog';
+import type { LockStatus } from '../../../dialogs/tokenLocksDialog/tokenLocksDialog';
 import { tokenLocksDialogUtils } from '../../../dialogs/tokenLocksDialog/tokenLocksDialogUtils';
+import type { ITokenPluginSettings } from '../../../types';
 
-export interface ITokenLockListItemProps extends Pick<ITokenLocksDialogParams, 'votingEscrow' | 'token'> {
+export interface ITokenLockListItemProps {
     /**
      * VE lock to display.
      */
     lock: IMemberLock;
+    /**
+     * Token plugin containing voting escrow settings.
+     */
+    plugin: IDaoPlugin<ITokenPluginSettings>;
 }
 
 const statusToVariant: Record<LockStatus, TagVariant> = {
@@ -28,15 +36,27 @@ const statusToVariant: Record<LockStatus, TagVariant> = {
 };
 
 export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
-    const { lock, votingEscrow, token } = props;
+    const { lock, plugin } = props;
     const { t } = useTranslations();
+    const token = plugin.settings.token;
 
     const { status, timeLeft } = tokenLocksDialogUtils.getLockStatusAndTiming(lock);
     const { amount } = lock;
     const { multiplier, votingPower } = tokenLocksDialogUtils.getMultiplierAndVotingPower(lock);
-    const minLockTime = tokenLocksDialogUtils.getMinLockTime(lock, votingEscrow);
+    const minLockTime = tokenLocksDialogUtils.getMinLockTime(lock, plugin.settings.votingEscrow!);
     const now = DateTime.now().toSeconds();
 
+    // Check if the NFT is approved for the escrow contract
+    const { data: approvedAddress } = useReadContract({
+        abi: erc721Abi,
+        address: plugin.votingEscrow!.nftLockAddress as Hex,
+        functionName: 'getApproved',
+        args: [BigInt(lock.tokenId)],
+        query: { enabled: status === 'active' },
+    });
+
+    const needsApproval = status === 'active' && approvedAddress !== plugin.votingEscrow!.escrowAddress;
+    console.log('needsApproval', needsApproval);
     return (
         <DataList.Item className="flex flex-col gap-4 py-4 md:py-6">
             <div className="flex justify-between">
@@ -85,7 +105,6 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                     ))}
             </div>
             <div className="flex flex-col items-center gap-3 md:flex-row md:gap-4">
-                {/* TODO: try to simplify buttons!. */}
                 {status === 'active' && (
                     <>
                         <Button
@@ -97,7 +116,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                                 // handle unlock action
                             }}
                         >
-                            {t(`app.plugins.token.tokenLocksList.item.actions.unlock`, {
+                            {t(`app.plugins.token.tokenLocksList.item.actions.unlock}`, {
                                 underlyingSymbol: token.symbol,
                             })}
                         </Button>
