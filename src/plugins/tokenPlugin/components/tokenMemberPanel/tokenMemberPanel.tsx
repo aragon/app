@@ -1,9 +1,8 @@
-import type { IDaoPlugin } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Tabs } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import type { ITokenPluginSettings } from '../../types';
+import type { ITokenPlugin, ITokenPluginSettings } from '../../types';
 import { TokenDelegationForm } from './components/tokenDelegationForm';
 import { TokenLockForm } from './components/tokenLockForm';
 import { TokenWrapForm } from './components/tokenWrapForm';
@@ -12,7 +11,7 @@ export interface ITokenMemberPanelProps {
     /**
      * DAO plugin to display the member panel for.
      */
-    plugin: IDaoPlugin<ITokenPluginSettings>;
+    plugin: ITokenPlugin;
     /**
      * ID of the DAO with token-voting plugin.
      */

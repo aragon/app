@@ -4,24 +4,24 @@ import { useMemberLocks } from '@/plugins/tokenPlugin/api/tokenService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import type { ITokenLockUnlockDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenLockUnlockDialog';
-import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
+import { useCheckAllowance } from '@/plugins/tokenPlugin/hooks/useCheckAllowance';
+import type { ITokenPlugin } from '@/plugins/tokenPlugin/types';
+import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { Button, invariant, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
-import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { erc20Abi, formatUnits, parseUnits, type Hex } from 'viem';
-import { useAccount, useBalance, useReadContract } from 'wagmi';
+import { formatUnits, parseUnits, type Hex } from 'viem';
+import { useAccount } from 'wagmi';
 import type { ITokenLocksDialogParams } from '../../../dialogs/tokenLocksDialog';
 
 export interface ITokenLockFormProps {
     /**
      * DAO plugin for the token locking.
      */
-    plugin: IDaoPlugin<ITokenPluginSettings>;
+    plugin: ITokenPlugin;
     /**
      * ID of the DAO.
      */
@@ -36,7 +36,10 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { plugin, daoId } = props;
     const { votingEscrow, token } = plugin.settings;
 
-    invariant(votingEscrow != null && plugin.votingEscrow != null, 'Token lock form requires voting escrow settings');
+    invariant(
+        votingEscrow != null && plugin.votingEscrow != null,
+        'TokenLockForm: voting escrow settings are required',
+    );
 
     const { decimals } = token;
 
@@ -44,10 +47,9 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { t } = useTranslations();
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const queryClient = useQueryClient();
 
     const lockParams = { urlParams: { address: address! }, queryParams: { network: dao!.network } };
-    const { data: lockData } = useMemberLocks(lockParams, { enabled: !!address });
+    const { data: lockData, refetch: refetchLocks } = useMemberLocks(lockParams, { enabled: !!address });
     const lockCount = lockData?.pages[0]?.metadata.totalRecords ?? 0;
 
     const [percentageValue, setPercentageValue] = useState<string>('100');
@@ -56,23 +58,17 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     const { id: chainId } = networkDefinitions[dao!.network];
 
-    const { data: tokenAllowance, queryKey: allowanceQueryKey } = useReadContract({
-        abi: erc20Abi,
-        functionName: 'allowance',
-        address: token.underlying as Hex,
-        args: [address!, plugin.votingEscrow.escrowAddress as Hex],
-        query: { enabled: address != null },
-        chainId,
-    });
-
     const {
-        data: unlockedBalance,
-        queryKey: unlockedBalanceKey,
+        allowance,
+        balance: unlockedBalance,
         status: unlockedBalanceStatus,
-    } = useBalance({
-        address,
-        token: token.underlying as Hex,
+        invalidateQueries,
+    } = useCheckAllowance({
+        owner: address!,
+        spender: plugin.votingEscrow.escrowAddress as Hex,
+        tokenAddress: token.underlying as Hex,
         chainId,
+        enabled: address != null,
     });
 
     const parsedUnlockedAmount = formatUnits(unlockedBalance?.value ?? BigInt(0), decimals);
@@ -85,12 +81,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const lockAmount = useWatch<ITokenLockFormData, 'amount'>({ control, name: 'amount' });
     const lockAmountWei = parseUnits(lockAmount ?? '0', token.decimals);
 
-    const needsApproval = isConnected && (tokenAllowance == null || tokenAllowance < lockAmountWei);
-
-    const handleTransactionSuccess = () => {
-        void queryClient.invalidateQueries({ queryKey: allowanceQueryKey });
-        void queryClient.invalidateQueries({ queryKey: unlockedBalanceKey });
-    };
+    const needsApproval = isConnected && (allowance == null || allowance < lockAmountWei);
 
     const handleFormSubmit = () => {
         const dialogType = needsApproval ? 'approve' : 'lock';
@@ -152,6 +143,11 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         open(TokenPluginDialogId.LOCK_UNLOCK, { params });
     };
 
+    const handleTransactionSuccess = () => {
+        invalidateQueries();
+        void refetchLocks();
+    };
+
     const getDialogProps = (confirmAmount: bigint) => ({
         token,
         underlyingToken: token,
@@ -161,18 +157,8 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         onSuccessClick: handleViewLocks,
         spender: plugin.votingEscrow?.escrowAddress as Hex,
         escrowContract: plugin.votingEscrow?.escrowAddress as Hex,
+        showTransactionInfo: needsApproval,
     });
-
-    const validateMinDeposit = (value?: string) => {
-        const parsedValue = parseUnits(value ?? '0', decimals);
-        if (parsedValue < minDepositWei) {
-            return t('app.plugins.token.tokenLockForm.minDepositError', {
-                minDeposit: formattedMinDeposit,
-                symbol: token.symbol,
-            });
-        }
-        return undefined;
-    };
 
     // Update amount field and percentage value to 100% of user unlocked balance on user balance change
     useEffect(() => handlePercentageChange('100'), [handlePercentageChange]);
@@ -196,7 +182,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                         disableAssetField={true}
                         hideMax={true}
                         hideAmountLabel={true}
-                        customAmountValidation={validateMinDeposit}
+                        minAmount={parseFloat(formattedMinDeposit)}
                     />
                     <ToggleGroup
                         isMultiSelect={false}

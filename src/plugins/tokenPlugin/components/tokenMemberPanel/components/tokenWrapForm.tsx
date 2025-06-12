@@ -5,17 +5,17 @@ import { useMember } from '@/modules/governance/api/governanceService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import type { ITokenWrapUnwrapDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenWrapUnwrapDialog';
+import { useCheckAllowance } from '@/plugins/tokenPlugin/hooks/useCheckAllowance';
 import type { ITokenMember, ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { Button, formatterUtils, NumberFormat, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
-import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { erc20Abi, formatUnits, parseUnits, type Hex } from 'viem';
-import { useAccount, useBalance, useReadContract } from 'wagmi';
+import { formatUnits, parseUnits, type Hex } from 'viem';
+import { useAccount } from 'wagmi';
 
 export interface ITokenWrapFormProps {
     /**
@@ -47,7 +47,6 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     const { t } = useTranslations();
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const queryClient = useQueryClient();
 
     const [percentageValue, setPercentageValue] = useState<string>('100');
 
@@ -59,20 +58,18 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     );
 
     const { id: chainId } = networkDefinitions[dao!.network];
-    const { data: tokenAllowance, queryKey: allowanceQueryKey } = useReadContract({
-        abi: erc20Abi,
-        functionName: 'allowance',
-        address: underlyingAddress,
-        args: [address!, token.address as Hex],
-        query: { enabled: address != null },
-        chainId,
-    });
-
     const {
-        data: unwrappedBalance,
-        queryKey: unwrappedBalanceKey,
+        allowance,
+        balance: unwrappedBalance,
         status: unwrappedBalanceStatus,
-    } = useBalance({ address, token: underlyingAddress, chainId });
+        invalidateQueries,
+    } = useCheckAllowance({
+        owner: address!,
+        spender: underlyingAddress,
+        tokenAddress: token.address as Hex,
+        chainId,
+        enabled: address != null,
+    });
 
     const parsedUnwrappedAmount = formatUnits(unwrappedBalance?.value ?? BigInt(0), decimals);
 
@@ -87,11 +84,10 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     const wrapAmount = useWatch<ITokenWrapFormData, 'amount'>({ control, name: 'amount' });
     const wrapAmountWei = parseUnits(wrapAmount ?? '0', token.decimals);
 
-    const needsApproval = isConnected && (tokenAllowance == null || tokenAllowance < wrapAmountWei);
+    const needsApproval = isConnected && (allowance == null || allowance < wrapAmountWei);
 
     const handleTransactionSuccess = () => {
-        void queryClient.invalidateQueries({ queryKey: allowanceQueryKey });
-        void queryClient.invalidateQueries({ queryKey: unwrappedBalanceKey });
+        invalidateQueries();
         void refetchMember();
     };
 

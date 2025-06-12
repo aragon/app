@@ -1,0 +1,1 @@
+export { useCheckAllowance } from './useCheckAllowance';

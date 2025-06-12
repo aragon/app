@@ -52,6 +52,10 @@ export interface ITokenLockUnlockDialogParams {
      * Required for unlock and withdraw actions.
      */
     tokenId?: bigint;
+    /**
+     * Flag indicating whether to show the transaction info step in the dialog. Only shown when part of a two step transaction.
+     */
+    showTransactionInfo: boolean;
 }
 
 export interface ITokenLockUnlockDialogProps extends IDialogComponentProps<ITokenLockUnlockDialogParams> {}
@@ -63,7 +67,7 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
     const { address } = useAccount();
     invariant(address != null, 'TokenLockUnlockDialog: user must be connected to perform the action');
 
-    const { action, amount, network, onSuccess, onSuccessClick, onClose, escrowContract, token, tokenId } =
+    const { action, amount, network, onSuccess, onSuccessClick, onClose, escrowContract, token, tokenId, showTransactionInfo } =
         location.params;
 
     const { t } = useTranslations();
@@ -92,6 +96,16 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
 
     const tokenSymbol = token.symbol;
 
+    const transactionInfo = showTransactionInfo
+        ? {
+              title: t(`app.plugins.token.tokenLockUnlockDialog.${action}.transactionInfoTitle`, {
+                  symbol: tokenSymbol,
+              }),
+              current: 2,
+              total: 2,
+          }
+        : undefined;
+
     return (
         <TransactionDialog
             title={t(`app.plugins.token.tokenLockUnlockDialog.${action}.title`, { symbol: tokenSymbol })}
@@ -105,14 +119,8 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
                 label: t(`app.plugins.token.tokenLockUnlockDialog.${action}.success`),
                 onClick: handleSuccessClick,
             }}
-            transactionInfo={{
-                title: t(`app.plugins.token.tokenLockUnlockDialog.${action}.transactionInfoTitle`, {
-                    symbol: tokenSymbol,
-                }),
-                current: 2,
-                total: 2,
-            }}
             onCancelClick={onClose}
+            transactionInfo={transactionInfo}
         />
     );
 };
