@@ -67,8 +67,18 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
     const { address } = useAccount();
     invariant(address != null, 'TokenLockUnlockDialog: user must be connected to perform the action');
 
-    const { action, amount, network, onSuccess, onSuccessClick, onClose, escrowContract, token, tokenId, showTransactionInfo } =
-        location.params;
+    const {
+        action,
+        amount,
+        network,
+        onSuccess,
+        onSuccessClick,
+        onClose,
+        escrowContract,
+        token,
+        tokenId,
+        showTransactionInfo,
+    } = location.params;
 
     const { t } = useTranslations();
     const router = useRouter();
