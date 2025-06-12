@@ -13,7 +13,7 @@ export interface IGetMemberLocksQueryParams extends IPaginatedRequest {
     /**
      * Address of the plugin.
      */
-    pluginAddress?: string;
+    pluginAddress: string;
     /**
      * Network of the lock.
      */
