@@ -1,6 +1,8 @@
 export enum TokenPluginDialogId {
     DELEGATE = 'DELEGATE',
     APPROVE_TOKENS = 'APPROVE_TOKENS',
+    APPROVE_NFT = 'APPROVE_NFT',
     WRAP_UNWRAP = 'WRAP_UNWRAP',
     LOCK_UNLOCK = 'LOCK_UNLOCK',
+    VIEW_LOCKS = 'VIEW_LOCKS',
 }

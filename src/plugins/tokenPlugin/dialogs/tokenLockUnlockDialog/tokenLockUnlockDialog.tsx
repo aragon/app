@@ -17,11 +17,12 @@ export interface ITokenLockUnlockDialogParams {
     /**
      * Action to be performed.
      */
-    action: 'lock' | 'unlock';
+    action: 'lock' | 'unlock' | 'withdraw';
     /**
      * Amount of tokens to be locked / unlocked in WEI format.
+     * Required for lock action.
      */
-    amount: bigint;
+    amount?: bigint;
     /**
      * The contract address of the voting escrow.
      */
@@ -35,9 +36,22 @@ export interface ITokenLockUnlockDialogParams {
      */
     onSuccess?: () => void;
     /**
+     * Callback called on success button click.
+     */
+    onSuccessClick?: () => void;
+    /**
+     * Callback called on cancel button click.
+     */
+    onClose?: () => void;
+    /**
      * Token to be locked.
      */
     token: ITokenPluginSettingsToken;
+    /**
+     * Token ID for unlock/withdraw action.
+     * Required for unlock and withdraw actions.
+     */
+    tokenId?: bigint;
     /**
      * Flag indicating whether to show the transaction info step in the dialog. Only shown when part of a two step transaction.
      */
@@ -53,7 +67,8 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
     const { address } = useAccount();
     invariant(address != null, 'TokenLockUnlockDialog: user must be connected to perform the action');
 
-    const { action, amount, network, onSuccess, escrowContract, token, showTransactionInfo } = location.params;
+    const { action, amount, network, onSuccess, onSuccessClick, onClose, escrowContract, token, tokenId, showTransactionInfo } =
+        location.params;
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -61,19 +76,30 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
-    const handlePrepareTransaction = () =>
-        action === 'lock'
-            ? tokenLockUnlockDialogUtils.buildLockTransaction(amount, escrowContract)
-            : tokenLockUnlockDialogUtils.buildUnlockTransaction();
-
-    const onSuccessClick = () => {
-        router.refresh();
+    const handlePrepareTransaction = () => {
+        if (action === 'lock') {
+            invariant(amount != null, 'TokenLockUnlockDialog: amount is required for lock action');
+            return tokenLockUnlockDialogUtils.buildLockTransaction(amount, escrowContract);
+        } else if (action === 'unlock') {
+            invariant(tokenId != null, 'TokenLockUnlockDialog: tokenId is required for unlock action');
+            return tokenLockUnlockDialogUtils.buildUnlockTransaction(tokenId, escrowContract);
+        } else {
+            invariant(tokenId != null, 'TokenLockUnlockDialog: tokenId is required for withdraw action');
+            return tokenLockUnlockDialogUtils.buildWithdrawTransaction(tokenId, escrowContract);
+        }
     };
+
+    const handleSuccessClick = () => {
+        router.refresh();
+        onSuccessClick?.();
+    };
+
+    const tokenSymbol = token.symbol;
 
     const transactionInfo = showTransactionInfo
         ? {
               title: t(`app.plugins.token.tokenLockUnlockDialog.${action}.transactionInfoTitle`, {
-                  symbol: token.symbol,
+                  symbol: tokenSymbol,
               }),
               current: 2,
               total: 2,
@@ -82,8 +108,8 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
 
     return (
         <TransactionDialog
-            title={t(`app.plugins.token.tokenLockUnlockDialog.${action}.title`, { symbol: token.symbol })}
-            description={t(`app.plugins.token.tokenLockUnlockDialog.${action}.description`, { symbol: token.symbol })}
+            title={t(`app.plugins.token.tokenLockUnlockDialog.${action}.title`, { symbol: tokenSymbol })}
+            description={t(`app.plugins.token.tokenLockUnlockDialog.${action}.description`, { symbol: tokenSymbol })}
             submitLabel={t(`app.plugins.token.tokenLockUnlockDialog.${action}.submit`)}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
@@ -91,8 +117,9 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
             onSuccess={onSuccess}
             successLink={{
                 label: t(`app.plugins.token.tokenLockUnlockDialog.${action}.success`),
-                onClick: onSuccessClick,
+                onClick: handleSuccessClick,
             }}
+            onCancelClick={onClose}
             transactionInfo={transactionInfo}
         />
     );

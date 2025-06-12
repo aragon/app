@@ -1255,6 +1255,15 @@
           "Mint": "Mint",
           "UpdateVoteSettings": "Update settings"
         },
+        "tokenApproveNftDialog": {
+          "UNLOCK": {
+            "description": "To unlock your tokens, confirm the two onchain transactions in your wallet.",
+            "nftName": "Lock NFT",
+            "submit": "Approve NFT",
+            "success": "Unlock tokens",
+            "title": "Approve unlocking"
+          }
+        },
         "tokenApproveTokensDialog": {
           "LOCK": {
             "description": "To lock your tokens, confirm the two onchain transactions in your wallet.",
@@ -1334,6 +1343,38 @@
             "lock": "Lock {{symbol}}"
           }
         },
+        "tokenLockList": {
+          "empty": {
+            "description": "This will show relevant locks when available.",
+            "title": "No locks found"
+          },
+          "entity": "veLocks",
+          "error": {
+            "description": "There was an error loading the locks. Try again later.",
+            "title": "Error loading locks"
+          },
+          "item": {
+            "actions": {
+              "unlock": "Unlock {{underlyingSymbol}}",
+              "withdraw": "Withdraw {{underlyingSymbol}}"
+            },
+            "approveTransactionInfoTitle": "Approve NFT #{{tokenId}}",
+            "metrics": {
+              "locked": "Locked",
+              "multiplier": "Multiplier",
+              "votingPower": "Voting power"
+            },
+            "minLockTimeLeftSuffix": "left until unlockable",
+            "statusLabel": {
+              "active": "Active",
+              "available": "Available",
+              "cooldown": "In cooldown",
+              "warmup": "In warmup"
+            },
+            "timeLeftSuffix": "left",
+            "withdrawTimeLeftSuffix": "left until withdrawable"
+          }
+        },
         "tokenLockUnlockDialog": {
           "lock": {
             "description": "To lock your {{symbol}}, confirm the two onchain transactions in your wallet.",
@@ -1344,11 +1385,22 @@
           },
           "unlock": {
             "description": "To unlock your {{symbol}}, confirm the two onchain transactions in your wallet.",
-            "submit": "Unlock {{symbol}}",
+            "submit": "Unlock",
             "success": "View locks",
             "title": "Unlock {{symbol}}",
             "transactionInfoTitle": "Unlock {{symbol}}"
+          },
+          "withdraw": {
+            "description": "To withdraw your {{symbol}}, confirm the onchain transactions in your wallet.",
+            "submit": "Withdraw",
+            "success": "View locks",
+            "title": "Withdraw {{symbol}}",
+            "transactionInfoTitle": "Withdraw {{symbol}}"
           }
+        },
+        "tokenLocksDialog": {
+          "description": "Unlock or withdraw your PDT tokens",
+          "title": "Your locks"
         },
         "tokenMemberInfo": {
           "distribution": "Distribution",

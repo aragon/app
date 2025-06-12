@@ -15,6 +15,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits, type Hex } from 'viem';
 import { useAccount } from 'wagmi';
+import type { ITokenLocksDialogParams } from '../../../dialogs/tokenLocksDialog';
 
 export interface ITokenLockFormProps {
     /**
@@ -130,11 +131,15 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     );
 
     const handleViewLocks = () => {
-        // TODO: Handle view locks
+        const params: ITokenLocksDialogParams = { plugin, initialParams: lockParams };
+        open(TokenPluginDialogId.VIEW_LOCKS, { params });
     };
 
     const handleApproveSuccess = (dialogProps: ReturnType<typeof getDialogProps>) => {
-        const params: ITokenLockUnlockDialogParams = { ...dialogProps, action: 'lock' };
+        const params: ITokenLockUnlockDialogParams = {
+            ...dialogProps,
+            action: 'lock',
+        };
         open(TokenPluginDialogId.LOCK_UNLOCK, { params });
     };
 
@@ -149,6 +154,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         amount: confirmAmount,
         network: dao!.network,
         onSuccess: handleTransactionSuccess,
+        onSuccessClick: handleViewLocks,
         spender: plugin.votingEscrow?.escrowAddress as Hex,
         escrowContract: plugin.votingEscrow?.escrowAddress as Hex,
         showTransactionInfo: needsApproval,
