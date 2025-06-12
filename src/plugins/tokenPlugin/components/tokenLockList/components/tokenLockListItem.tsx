@@ -144,6 +144,9 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const formattedVotingPower = formatterUtils.formatNumber(formatUnits(BigInt(votingPower), token.decimals), {
         format: NumberFormat.GENERIC_SHORT,
     });
+    const formattedMultiplier = formatterUtils.formatNumber(multiplier, {
+        format: NumberFormat.GENERIC_SHORT,
+    });
 
     return (
         <DataList.Item className="flex flex-col gap-4 py-4 md:py-6">
@@ -176,7 +179,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                     },
                     {
                         label: t('app.plugins.token.tokenLockList.item.metrics.multiplier'),
-                        value: `${multiplier.toString()}x`,
+                        value: `${formattedMultiplier!}x`,
                         hidden: multiplier <= 1,
                     },
                     {
