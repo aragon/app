@@ -1358,6 +1358,7 @@
               "unlock": "Unlock {{underlyingSymbol}}",
               "withdraw": "Withdraw {{underlyingSymbol}}"
             },
+            "approveTransactionInfoTitle": "Approve NFT #{{tokenId}}",
             "metrics": {
               "locked": "Locked",
               "multiplier": "Multiplier",
@@ -1371,7 +1372,6 @@
               "warmup": "In warmup"
             },
             "timeLeftSuffix": "left",
-            "transactionInfoTitle": "Approve NFT #{{tokenId}}",
             "withdrawTimeLeftSuffix": "left until withdrawable"
           }
         },

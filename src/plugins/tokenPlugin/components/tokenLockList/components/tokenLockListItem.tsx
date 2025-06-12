@@ -1,4 +1,4 @@
-import type { IDaoPlugin, Network } from '@/shared/api/daoService';
+import type { Network } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
@@ -21,7 +21,7 @@ import type { ITokenApproveNftDialogParams } from '../../../dialogs/tokenApprove
 import type { ITokenLockUnlockDialogParams } from '../../../dialogs/tokenLockUnlockDialog';
 import type { LockStatus } from '../../../dialogs/tokenLocksDialog/tokenLocksDialog';
 import { tokenLocksDialogUtils } from '../../../dialogs/tokenLocksDialog/tokenLocksDialogUtils';
-import type { ITokenPluginSettings } from '../../../types';
+import type { ITokenPlugin } from '../../../types';
 
 export interface ITokenLockListItemProps {
     /**
@@ -31,7 +31,7 @@ export interface ITokenLockListItemProps {
     /**
      * Token plugin containing voting escrow settings.
      */
-    plugin: IDaoPlugin<ITokenPluginSettings>;
+    plugin: ITokenPlugin;
     /**
      * Network of the DAO.
      */
@@ -91,11 +91,13 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                         tokenId: BigInt(lock.tokenId),
                         onClose: onLockDialogClose,
                         onSuccessClick: onLockDialogClose,
+                        showTransactionInfo: true,
                     };
+
                     open(TokenPluginDialogId.LOCK_UNLOCK, { params: unlockParams });
                 },
                 transactionInfo: {
-                    title: t('app.plugins.token.tokenLockList.item.transactionInfoTitle', {
+                    title: t('app.plugins.token.tokenLockList.item.approveTransactionInfoTitle', {
                         tokenId: lock.tokenId,
                     }),
                     current: 1,
@@ -115,6 +117,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                 tokenId: BigInt(lock.tokenId),
                 onClose: onLockDialogClose,
                 onSuccessClick: onLockDialogClose,
+                showTransactionInfo: false,
             };
             open(TokenPluginDialogId.LOCK_UNLOCK, {
                 params: unlockParams,
@@ -131,6 +134,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
             tokenId: BigInt(lock.tokenId),
             onClose: onLockDialogClose,
             onSuccessClick: onLockDialogClose,
+            showTransactionInfo: false,
         };
         open(TokenPluginDialogId.LOCK_UNLOCK, {
             params: withdrawParams,
