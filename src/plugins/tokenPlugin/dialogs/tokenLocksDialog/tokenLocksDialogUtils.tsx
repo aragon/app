@@ -31,7 +31,7 @@ class TokenLocksDialogUtils {
         const bias = 1000000000000000000; // TODO: get this from the backend
 
         const activeTime = Math.round(DateTime.now().toSeconds() - epochStartAt);
-        const processedActiveTime = Math.max(activeTime, maxTime);
+        const processedActiveTime = Math.min(activeTime, maxTime);
 
         const slopeAmount = BigInt(amount) * BigInt(slope);
         const biasAmount = BigInt(amount) * BigInt(bias);
@@ -43,10 +43,11 @@ class TokenLocksDialogUtils {
 
     getMultiplier = (lock: IMemberLock, settings: ITokenPluginSettings) => {
         const { amount } = lock;
-        const votingPower = this.getVotingPower(lock, settings);
-        const multiplier = BigInt(votingPower) / BigInt(amount);
 
-        return multiplier;
+        const votingPower = this.getVotingPower(lock, settings);
+        const parsedAmount = formatUnits(BigInt(amount), settings.token.decimals);
+
+        return Number(votingPower) / Number(parsedAmount);
     };
 
     getMinLockTime = (lock: IMemberLock, settings: ITokenPluginSettingsEscrowSettings): number => {
