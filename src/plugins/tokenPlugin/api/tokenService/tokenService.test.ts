@@ -13,7 +13,7 @@ describe('token service', () => {
         const locks = [generateTokenLock()];
         const params = {
             urlParams: { address: '0x123' },
-            queryParams: { network: Network.ETHEREUM_SEPOLIA },
+            queryParams: { network: Network.ETHEREUM_SEPOLIA, pluginAddress: '0x456' },
         };
 
         requestSpy.mockResolvedValue(locks);
