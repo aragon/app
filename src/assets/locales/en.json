@@ -1377,14 +1377,14 @@
         },
         "tokenLockUnlockDialog": {
           "lock": {
-            "description": "To lock your {{symbol}}, confirm the two onchain transactions in your wallet.",
+            "description": "To lock your {{symbol}}, confirm the onchain transaction in your wallet.",
             "submit": "Lock",
             "success": "View your veLock",
             "title": "Lock {{symbol}}",
             "transactionInfoTitle": "Lock {{symbol}}"
           },
           "unlock": {
-            "description": "To unlock your {{symbol}}, confirm the two onchain transactions in your wallet.",
+            "description": "To unlock your {{symbol}}, confirm the onchain transaction in your wallet.",
             "submit": "Unlock",
             "success": "View locks",
             "title": "Unlock {{symbol}}",
