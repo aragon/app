@@ -48,7 +48,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const lockParams = { urlParams: { address: address! }, queryParams: { network: dao!.network } };
-    const { data: lockData } = useMemberLocks(lockParams, { enabled: !!address });
+    const { data: lockData, refetch: refetchLocks } = useMemberLocks(lockParams, { enabled: !!address });
     const lockCount = lockData?.pages[0]?.metadata.totalRecords ?? 0;
 
     const [percentageValue, setPercentageValue] = useState<string>('100');
@@ -138,12 +138,17 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         open(TokenPluginDialogId.LOCK_UNLOCK, { params });
     };
 
+    const handleTransactionSuccess = () => {
+        invalidateQueries();
+        void refetchLocks();
+    };
+
     const getDialogProps = (confirmAmount: bigint) => ({
         token,
         underlyingToken: token,
         amount: confirmAmount,
         network: dao!.network,
-        onSuccess: invalidateQueries,
+        onSuccess: handleTransactionSuccess,
         spender: plugin.votingEscrow?.escrowAddress as Hex,
         escrowContract: plugin.votingEscrow?.escrowAddress as Hex,
         showTransactionInfo: needsApproval,

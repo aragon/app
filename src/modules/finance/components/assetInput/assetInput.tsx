@@ -52,15 +52,8 @@ export interface IAssetInputProps {
 }
 
 export const AssetInput: React.FC<IAssetInputProps> = (props) => {
-    const {
-        fetchAssetsParams,
-        fieldPrefix,
-        onAmountChange,
-        disableAssetField,
-        hideMax,
-        hideAmountLabel,
-        minAmount = 0,
-    } = props;
+    const { fetchAssetsParams, fieldPrefix, onAmountChange, disableAssetField, hideMax, hideAmountLabel, minAmount } =
+        props;
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();

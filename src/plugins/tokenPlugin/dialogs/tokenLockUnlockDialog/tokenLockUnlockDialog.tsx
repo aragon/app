@@ -70,6 +70,16 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
         router.refresh();
     };
 
+    const transactionInfo = showTransactionInfo
+        ? {
+              title: t(`app.plugins.token.tokenLockUnlockDialog.${action}.transactionInfoTitle`, {
+                  symbol: token.symbol,
+              }),
+              current: 2,
+              total: 2,
+          }
+        : undefined;
+
     return (
         <TransactionDialog
             title={t(`app.plugins.token.tokenLockUnlockDialog.${action}.title`, { symbol: token.symbol })}
@@ -83,17 +93,7 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
                 label: t(`app.plugins.token.tokenLockUnlockDialog.${action}.success`),
                 onClick: onSuccessClick,
             }}
-            transactionInfo={
-                showTransactionInfo
-                    ? {
-                          title: t(`app.plugins.token.tokenLockUnlockDialog.${action}.transactionInfoTitle`, {
-                              symbol: token.symbol,
-                          }),
-                          current: 2,
-                          total: 2,
-                      }
-                    : undefined
-            }
+            transactionInfo={transactionInfo}
         />
     );
 };
