@@ -8,6 +8,7 @@ import {
     DateFormat,
     formatterUtils,
     Heading,
+    NumberFormat,
     Tag,
     type TagVariant,
 } from '@aragon/gov-ui-kit';
@@ -136,6 +137,13 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
         });
     };
 
+    const formattedLockedAmount = formatterUtils.formatNumber(formatUnits(BigInt(amount), token.decimals), {
+        format: NumberFormat.GENERIC_SHORT,
+    });
+    const formattedVotingPower = formatterUtils.formatNumber(formatUnits(BigInt(votingPower), token.decimals), {
+        format: NumberFormat.GENERIC_SHORT,
+    });
+
     return (
         <DataList.Item className="flex flex-col gap-4 py-4 md:py-6">
             <div className="flex justify-between">
@@ -163,7 +171,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                 {[
                     {
                         label: t('app.plugins.token.tokenLockList.item.metrics.locked'),
-                        value: formatUnits(BigInt(amount), token.decimals),
+                        value: formattedLockedAmount,
                     },
                     {
                         label: t('app.plugins.token.tokenLockList.item.metrics.multiplier'),
@@ -172,7 +180,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                     },
                     {
                         label: t('app.plugins.token.tokenLockList.item.metrics.votingPower'),
-                        value: formatUnits(BigInt(votingPower), token.decimals),
+                        value: formattedVotingPower,
                     },
                 ]
                     .filter((metric) => !metric.hidden)
