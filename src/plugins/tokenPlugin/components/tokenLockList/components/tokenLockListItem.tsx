@@ -1,6 +1,7 @@
 import type { Network } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     Avatar,
     Button,
@@ -13,14 +14,14 @@ import {
     type TagVariant,
 } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import { erc721Abi, formatUnits, type Hex } from 'viem';
-import { useReadContract } from 'wagmi';
+import { formatUnits, type Hex } from 'viem';
 import type { IMemberLock } from '../../../api/tokenService';
 import { TokenPluginDialogId } from '../../../constants/tokenPluginDialogId';
 import type { ITokenApproveNftDialogParams } from '../../../dialogs/tokenApproveNftDialog';
 import type { ITokenLockUnlockDialogParams } from '../../../dialogs/tokenLockUnlockDialog';
 import type { LockStatus } from '../../../dialogs/tokenLocksDialog/tokenLocksDialog';
 import { tokenLocksDialogUtils } from '../../../dialogs/tokenLocksDialog/tokenLocksDialogUtils';
+import { useNftNeedsApproval } from '../../../hooks/useNftNeedsApproval';
 import type { ITokenPlugin } from '../../../types';
 
 export interface ITokenLockListItemProps {
@@ -53,6 +54,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const token = plugin.settings.token;
+    const { id: chainId } = networkDefinitions[network];
 
     const { status, timeLeft } = tokenLocksDialogUtils.getLockStatusAndTiming(lock);
     const { amount } = lock;
@@ -61,17 +63,25 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const now = DateTime.now().toSeconds();
 
     // Check if the NFT is approved for the escrow contract
-    const { data: approvedAddress } = useReadContract({
-        abi: erc721Abi,
-        address: plugin.votingEscrow!.nftLockAddress as Hex,
-        functionName: 'getApproved',
-        args: [BigInt(lock.tokenId)],
-        query: { enabled: status === 'active' },
+    const needsApproval = useNftNeedsApproval({
+        spender: plugin.votingEscrow!.escrowAddress as Hex,
+        tokenAddress: plugin.votingEscrow!.nftLockAddress as Hex,
+        tokenId: BigInt(lock.tokenId),
+        chainId,
+        enabled: status === 'active',
     });
 
-    const needsApproval = status === 'active' && approvedAddress !== plugin.votingEscrow!.escrowAddress;
-
     const handleUnlock = () => {
+        const unlockDialogProps = {
+            action: 'unlock',
+            escrowContract: plugin.votingEscrow!.escrowAddress,
+            network,
+            token,
+            tokenId: BigInt(lock.tokenId),
+            onClose: onLockDialogClose,
+            onSuccessClick: onLockDialogClose,
+        } as const;
+
         if (needsApproval) {
             const approveParams: ITokenApproveNftDialogParams = {
                 tokenAddress: plugin.votingEscrow!.nftLockAddress as Hex,
@@ -83,14 +93,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                 onClose: onLockDialogClose,
                 onApproveSuccess: () => {
                     const unlockParams: ITokenLockUnlockDialogParams = {
-                        action: 'unlock',
-                        amount: BigInt(amount),
-                        escrowContract: plugin.votingEscrow!.escrowAddress,
-                        network,
-                        token,
-                        tokenId: BigInt(lock.tokenId),
-                        onClose: onLockDialogClose,
-                        onSuccessClick: onLockDialogClose,
+                        ...unlockDialogProps,
                         showTransactionInfo: true,
                     };
 
@@ -110,13 +113,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
         } else {
             // Show unlock dialog directly
             const unlockParams: ITokenLockUnlockDialogParams = {
-                action: 'unlock',
-                escrowContract: plugin.votingEscrow!.escrowAddress,
-                network,
-                token,
-                tokenId: BigInt(lock.tokenId),
-                onClose: onLockDialogClose,
-                onSuccessClick: onLockDialogClose,
+                ...unlockDialogProps,
                 showTransactionInfo: false,
             };
             open(TokenPluginDialogId.LOCK_UNLOCK, {
