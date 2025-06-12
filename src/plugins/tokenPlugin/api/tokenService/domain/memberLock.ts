@@ -4,21 +4,17 @@ export interface IMemberLock {
      */
     id: string;
     /**
-     * ID of the received NFT (emitted by the Deposit event).
+     * ID of the lock.
      */
     tokenId: string;
     /**
-     * Timestamp of the lock epoch (emitted by the Deposit event). Measured in seconds.
+     * Timestamp of the lock epoch in seconds.
      */
     epochStartAt: number;
     /**
-     * Amount of tokens locked (emitted by the Deposit event).
+     * Amount of tokens locked.
      */
     amount: string;
-    /**
-     * Current voting power of the lock.
-     */
-    votingPower: string;
     /**
      * Lock exit details.
      */

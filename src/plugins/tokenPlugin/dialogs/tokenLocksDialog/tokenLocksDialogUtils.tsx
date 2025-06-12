@@ -1,41 +1,61 @@
 import { DateTime } from 'luxon';
+import { formatUnits } from 'viem';
 import type { IMemberLock } from '../../api/tokenService';
-import type { ITokenPluginSettingsEscrowSettings } from '../../types';
-import type { LockStatus } from './tokenLocksDialog';
+import type { ITokenPluginSettings, ITokenPluginSettingsEscrowSettings } from '../../types';
 
 class TokenLocksDialogUtils {
-    getLockStatusAndTiming(lock: IMemberLock): { status: LockStatus; timeLeft?: number } {
+    getLockStatus = (lock: IMemberLock) => {
         const { lockExit } = lock;
+        const { status, exitDateAt } = lockExit;
 
         const now = DateTime.now().toSeconds();
 
-        if (!lockExit.status) {
-            return { status: 'active' };
+        const isActive = !status;
+        const inCooldown = exitDateAt != null && now < exitDateAt;
+
+        if (isActive) {
+            return 'active';
         }
 
-        if (lockExit.exitDateAt != null && now < lockExit.exitDateAt) {
-            return { status: 'cooldown', timeLeft: lockExit.exitDateAt - now };
+        if (inCooldown) {
+            return 'cooldown';
         }
 
-        return { status: 'available' };
-    }
+        return 'available';
+    };
 
-    getMultiplierAndVotingPower(lock: IMemberLock) {
-        const { amount, votingPower } = lock;
+    getVotingPower = (lock: IMemberLock, settings: ITokenPluginSettings) => {
+        const { amount, epochStartAt } = lock;
+        const { token, votingEscrow } = settings;
+        const { slope, maxTime } = votingEscrow!;
+        const bias = 1000000000000000000; // TODO: get this from the backend
 
-        return { votingPower: Number(votingPower), multiplier: Number(votingPower) / Number(amount) };
-    }
+        const activeTime = Math.round(DateTime.now().toSeconds() - epochStartAt);
+        const processedActiveTime = Math.max(activeTime, maxTime);
 
-    getMinLockTime(lock: IMemberLock, votingEscrow: ITokenPluginSettingsEscrowSettings): number {
-        const { minLockTime } = votingEscrow;
+        const slopeAmount = BigInt(amount) * BigInt(slope);
+        const biasAmount = BigInt(amount) * BigInt(bias);
+
+        const votingPower = (slopeAmount * BigInt(processedActiveTime) + biasAmount) / BigInt(1e18);
+
+        return formatUnits(votingPower, token.decimals);
+    };
+
+    getMultiplier = (lock: IMemberLock, settings: ITokenPluginSettings) => {
+        const { amount } = lock;
+        const votingPower = this.getVotingPower(lock, settings);
+        const multiplier = BigInt(votingPower) / BigInt(amount);
+
+        return multiplier;
+    };
+
+    getMinLockTime = (lock: IMemberLock, settings: ITokenPluginSettingsEscrowSettings): number => {
+        const { minLockTime } = settings;
         const { epochStartAt } = lock;
-        const activeAt = epochStartAt;
-        // TODO: is it activeAt + minLockTime or lockedAt + minLockTime? (we don't have lockedAt coming from backend?)
-        // now when there is no warmup period, it makes sense to use activeAt + minLockTime, but do check!
-        const minLockTimeAt = activeAt + minLockTime;
+        const minLockTimeAt = epochStartAt + minLockTime;
 
         return minLockTimeAt;
-    }
+    };
 }
 
 export const tokenLocksDialogUtils = new TokenLocksDialogUtils();
