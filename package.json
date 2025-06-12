@@ -24,6 +24,8 @@
   "dependencies": {
     "@aragon/gov-ui-kit": "^1.7.0",
     "@floating-ui/react": "^0.27.11",
+    "@nivo/core": "^0.99.0",
+    "@nivo/line": "^0.99.0",
     "@reown/appkit": "^1.7.7",
     "@reown/appkit-adapter-wagmi": "^1.7.7",
     "@reown/walletkit": "^1.2.5",

@@ -15,6 +15,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { erc20Abi, formatUnits, parseUnits, type Hex } from 'viem';
 import { useAccount, useBalance, useReadContract } from 'wagmi';
+import { TokenLockFormChart } from './tokenLockFormChart';
 
 export interface ITokenLockFormProps {
     /**
@@ -185,6 +186,12 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         <FormProvider {...formValues}>
             <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
                 <div className="flex flex-col gap-3">
+                    <TokenLockFormChart
+                        slope={0.000001}
+                        bias={0.05}
+                        amount={Number(lockAmount)}
+                        maxTime={86400 * 180}
+                    />
                     <AssetInput
                         onAmountChange={() => setPercentageValue('')}
                         disableAssetField={true}
