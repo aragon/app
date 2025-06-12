@@ -24,8 +24,16 @@ export interface ITokenLockListProps {
 export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
     const { initialParams, plugin, onLockDialogClose } = props;
     const { t } = useTranslations();
-    const { locksList, onLoadMore, state, pageSize, itemsCount, errorState, emptyState } =
-        useTokenLockListData(initialParams);
+    const {
+        locksList,
+        onLoadMore,
+        state,
+        pageSize,
+        itemsCount,
+        errorState,
+        emptyState,
+        refetch: refetchLocks,
+    } = useTokenLockListData(initialParams);
     const network = initialParams.queryParams.network;
 
     return (
@@ -48,6 +56,7 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
                         plugin={plugin}
                         network={network}
                         onLockDialogClose={onLockDialogClose}
+                        onRefreshNeeded={refetchLocks}
                     />
                 ))}
             </DataListContainer>

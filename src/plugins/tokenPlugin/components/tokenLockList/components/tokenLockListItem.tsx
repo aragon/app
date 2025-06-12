@@ -41,6 +41,10 @@ export interface ITokenLockListItemProps {
      * Callback called on lock dialog close.
      */
     onLockDialogClose?: () => void;
+    /**
+     * Callback called when a refresh is needed, e.g., after an unlock or withdraw action.
+     */
+    onRefreshNeeded?: () => void;
 }
 
 const statusToVariant: Record<LockStatus, TagVariant> = {
@@ -50,7 +54,7 @@ const statusToVariant: Record<LockStatus, TagVariant> = {
 };
 
 export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
-    const { lock, plugin, network, onLockDialogClose } = props;
+    const { lock, plugin, network, onLockDialogClose, onRefreshNeeded } = props;
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const token = plugin.settings.token;
@@ -79,7 +83,10 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
             token,
             tokenId: BigInt(lock.tokenId),
             onClose: onLockDialogClose,
-            onSuccessClick: onLockDialogClose,
+            onSuccessClick: () => {
+                onLockDialogClose?.();
+                onRefreshNeeded?.();
+            },
         } as const;
 
         if (needsApproval) {
@@ -130,7 +137,10 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
             token,
             tokenId: BigInt(lock.tokenId),
             onClose: onLockDialogClose,
-            onSuccessClick: onLockDialogClose,
+            onSuccessClick: () => {
+                onLockDialogClose?.();
+                onRefreshNeeded?.();
+            },
             showTransactionInfo: false,
         };
         open(TokenPluginDialogId.LOCK_UNLOCK, {
