@@ -5,7 +5,9 @@ import { type IGetMemberLocksParams, useMemberLocks } from '../../api/tokenServi
 export const useTokenLockListData = (params: IGetMemberLocksParams) => {
     const { t } = useTranslations();
 
-    const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage, refetch } = useMemberLocks(params);
+    const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage, refetch } = useMemberLocks(params, {
+        enabled: !!params.urlParams.address,
+    });
 
     const locksList = data?.pages.flatMap((page) => page.data);
 
