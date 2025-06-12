@@ -3,6 +3,7 @@ export type { ITokenActionChangeSettings } from './tokenActionChangeSettings';
 export type { ITokenActionTokenMint } from './tokenActionTokenMint';
 export type { ITokenMember } from './tokenMember';
 export type { ITokenMemberMetrics } from './tokenMemberMetrics';
+export type { ITokenPlugin } from './tokenPlugin';
 export type { ITokenPluginSettings } from './tokenPluginSettings';
 export type { ITokenPluginSettingsEscrowSettings } from './tokenPluginSettingsEscrowSettings';
 export type { ITokenPluginSettingsToken } from './tokenPluginSettingsToken';
