@@ -28,7 +28,12 @@ export const TokenLocksDialog: React.FC<ITokenLocksDialogProps> = (props) => {
     return (
         <>
             <Dialog.Header title={t('app.plugins.token.tokenLocksDialog.title')} onClose={close} />
-            <Dialog.Content description={t('app.plugins.token.tokenLocksDialog.description')} className="pb-4 md:pb-6">
+            <Dialog.Content
+                description={t('app.plugins.token.tokenLocksDialog.description', {
+                    symbol: location.params.plugin.settings.token.symbol,
+                })}
+                className="pb-4 md:pb-6"
+            >
                 <TokenLockList {...location.params} onLockDialogClose={handleLockDialogClose} />
             </Dialog.Content>
         </>

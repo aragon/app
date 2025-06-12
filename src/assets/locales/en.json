@@ -1399,7 +1399,7 @@
           }
         },
         "tokenLocksDialog": {
-          "description": "Unlock or withdraw your PDT tokens",
+          "description": "Unlock or withdraw your {{symbol}} tokens",
           "title": "Your locks"
         },
         "tokenMemberInfo": {
