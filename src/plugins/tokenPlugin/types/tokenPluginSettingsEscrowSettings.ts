@@ -16,7 +16,11 @@ export interface ITokenPluginSettingsEscrowSettings {
      */
     maxTime: number;
     /**
-     * The coefficient used to calculate the voting power increase over time.
+     * The linear coefficient used to calculate the voting power increase over time.
      */
     slope: number;
+    /**
+     * The constant coefficient used to calculate the voting power increase over time.
+     */
+    bias: number;
 }

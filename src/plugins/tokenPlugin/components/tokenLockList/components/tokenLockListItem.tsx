@@ -14,6 +14,7 @@ import {
     Tag,
     type TagVariant,
 } from '@aragon/gov-ui-kit';
+import NumberFlow from '@number-flow/react';
 import { DateTime } from 'luxon';
 import { formatUnits, type Hex } from 'viem';
 import type { IMemberLock } from '../../../api/tokenService';
@@ -141,8 +142,8 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const canUnlock = DateTime.now().toSeconds() > minLockTime;
     const formattedMinLock = formatterUtils.formatDate(minLockTime * 1000, { format: DateFormat.DURATION });
 
-    const exitDuration = (lock.lockExit.exitDateAt ?? 0) - DateTime.now().toSeconds();
-    const formattedExitDuration = formatterUtils.formatDate(exitDuration * 1000, { format: DateFormat.DURATION });
+    const parsedExitDate = (lock.lockExit.exitDateAt ?? 0) * 1000;
+    const formattedExitDate = formatterUtils.formatDate(parsedExitDate, { format: DateFormat.DURATION });
 
     const parsedLockedAmount = formatUnits(BigInt(amount), token.decimals);
     const formattedLockedAmount = formatterUtils.formatNumber(parsedLockedAmount, {
@@ -164,7 +165,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                 <div className="flex items-center gap-2 md:gap-3">
                     {status === 'cooldown' && (
                         <p className="text-sm leading-tight text-neutral-500 md:text-base">
-                            {formattedExitDuration} {t('app.plugins.token.tokenLockList.item.timeLeftSuffix')}
+                            {formattedExitDate} {t('app.plugins.token.tokenLockList.item.timeLeftSuffix')}
                         </p>
                     )}
                     <Tag
@@ -195,14 +196,13 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                     </div>
                     <div className="truncate">
                         <Rerender>
-                            {() => {
-                                const votingPower = tokenLocksDialogUtils.getVotingPower(lock, plugin.settings);
-                                const formattedVotingPower = formatterUtils.formatNumber(votingPower, {
-                                    format: NumberFormat.TOKEN_AMOUNT_SHORT,
-                                });
-
-                                return formattedVotingPower;
-                            }}
+                            {() => (
+                                <NumberFlow
+                                    className="w-full"
+                                    value={parseFloat(tokenLocksDialogUtils.getVotingPower(lock, plugin.settings))}
+                                    format={{ notation: 'compact', minimumFractionDigits: 4 }}
+                                />
+                            )}
                         </Rerender>
                     </div>
                 </div>
@@ -236,7 +236,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                             })}
                         </Button>
                         <p className="text-sm leading-normal text-neutral-500">
-                            {formattedExitDuration} {t('app.plugins.token.tokenLockList.item.withdrawTimeLeftSuffix')}
+                            {formattedExitDate} {t('app.plugins.token.tokenLockList.item.withdrawTimeLeftSuffix')}
                         </p>
                     </>
                 )}
