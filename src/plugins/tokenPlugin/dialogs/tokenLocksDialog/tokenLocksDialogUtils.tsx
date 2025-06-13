@@ -26,9 +26,12 @@ class TokenLocksDialogUtils {
 
     getLockVotingPower = (lock: IMemberLock, settings: ITokenPluginSettings) => {
         const { amount, epochStartAt } = lock;
-        const activeTime = Math.round(DateTime.now().toSeconds() - epochStartAt);
+        const status = this.getLockStatus(lock);
 
-        return this.calculateVotingPower(amount, activeTime, settings);
+        const activeTime = Math.round(DateTime.now().toSeconds() - epochStartAt);
+        const votingPower = this.calculateVotingPower(amount, activeTime, settings);
+
+        return status === 'active' ? votingPower : '0';
     };
 
     calculateVotingPower = (amount: string, time: number, settings: ITokenPluginSettings) => {

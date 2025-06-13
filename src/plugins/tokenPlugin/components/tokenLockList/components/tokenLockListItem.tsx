@@ -182,28 +182,32 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                     </div>
                     <div className="truncate">{formattedLockedAmount}</div>
                 </div>
-                {multiplier > 1 && (
-                    <div className="flex flex-col">
-                        <div className="text-sm text-neutral-500 md:text-base">
-                            {t('app.plugins.token.tokenLockList.item.metrics.multiplier')}
-                        </div>
-                        <div className="truncate">{`${formattedMultiplier!}x`}</div>
+                <div className="flex flex-col">
+                    <div className="text-sm text-neutral-500 md:text-base">
+                        {t('app.plugins.token.tokenLockList.item.metrics.multiplier')}
                     </div>
-                )}
+                    <div className="truncate">{`${formattedMultiplier!}x`}</div>
+                </div>
                 <div className="flex flex-col">
                     <div className="text-sm text-neutral-500 md:text-base">
                         {t('app.plugins.token.tokenLockList.item.metrics.votingPower')}
                     </div>
                     <div className="truncate">
-                        <Rerender>
-                            {() => (
-                                <NumberFlow
-                                    className="w-full"
-                                    value={parseFloat(tokenLocksDialogUtils.getLockVotingPower(lock, plugin.settings))}
-                                    format={{ notation: 'compact', minimumFractionDigits: 4 }}
-                                />
-                            )}
-                        </Rerender>
+                        {status === 'active' && (
+                            <Rerender>
+                                {() => (
+                                    <NumberFlow
+                                        className="w-full"
+                                        value={parseFloat(
+                                            tokenLocksDialogUtils.getLockVotingPower(lock, plugin.settings),
+                                        )}
+                                        format={{ notation: 'compact', minimumFractionDigits: 4 }}
+                                        trend={-1}
+                                    />
+                                )}
+                            </Rerender>
+                        )}
+                        {status != 'active' && '0'}
                     </div>
                 </div>
             </div>
