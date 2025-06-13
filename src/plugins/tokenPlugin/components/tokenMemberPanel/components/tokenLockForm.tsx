@@ -10,12 +10,13 @@ import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { Button, invariant, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
+import { Button, invariant, Toggle, ToggleGroup, useDebouncedValue } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits, type Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ITokenLocksDialogParams } from '../../../dialogs/tokenLocksDialog';
+import { TokenLockFormChart } from './tokenLockFormChart';
 
 export interface ITokenLockFormProps {
     /**
@@ -83,6 +84,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     const lockAmount = useWatch<ITokenLockFormData, 'amount'>({ control, name: 'amount' });
     const lockAmountWei = parseUnits(lockAmount ?? '0', token.decimals);
+    const [lockAmountDebounced] = useDebouncedValue(lockAmount, { delay: 1000 });
 
     const needsApproval = isConnected && (allowance == null || allowance < lockAmountWei);
 
@@ -180,6 +182,12 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         <FormProvider {...formValues}>
             <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
                 <div className="flex flex-col gap-3">
+                    <TokenLockFormChart
+                        slope={BigInt(1653439153439)}
+                        bias={BigInt(1000000000000000000)}
+                        amount={Number(lockAmountDebounced)}
+                        maxTime={86400 * 180}
+                    />
                     <AssetInput
                         onAmountChange={() => setPercentageValue('')}
                         disableAssetField={true}
