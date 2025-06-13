@@ -182,12 +182,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         <FormProvider {...formValues}>
             <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
                 <div className="flex flex-col gap-3">
-                    <TokenLockFormChart
-                        slope={BigInt(1653439153439)}
-                        bias={BigInt(1000000000000000000)}
-                        amount={Number(lockAmountDebounced)}
-                        maxTime={86400 * 180}
-                    />
+                    <TokenLockFormChart amount={Number(lockAmountDebounced)} settings={plugin.settings} />
                     <AssetInput
                         onAmountChange={() => setPercentageValue('')}
                         disableAssetField={true}

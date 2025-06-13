@@ -1,8 +1,10 @@
+import { tokenLocksDialogUtils } from '@/plugins/tokenPlugin/dialogs/tokenLocksDialog/tokenLocksDialogUtils';
+import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import type { DotsItemSymbolProps } from '@nivo/core';
 import { ResponsiveLine } from '@nivo/line';
 import { DateTime } from 'luxon';
-import { formatUnits } from 'viem';
+import { parseUnits } from 'viem';
 
 export interface IDatum {
     /**
@@ -17,21 +19,13 @@ export interface IDatum {
 
 export interface ITokenLockFormChartProps {
     /**
-     * The projected yield slope of the line chart.
-     */
-    slope: bigint;
-    /**
-     * The projected yield bias of the line chart.
-     */
-    bias: bigint;
-    /**
      * The amount of tokens used to compute voting power.
      */
     amount: number;
     /**
-     * Maximum future time in seconds to calculate projection for.
+     * Settings of the token plugin with escrow contract.
      */
-    maxTime: number;
+    settings: ITokenPluginSettings;
 }
 
 const FirstPointSymbol = ({ datum }: DotsItemSymbolProps<IDatum['data'][number]>) => {
@@ -39,47 +33,44 @@ const FirstPointSymbol = ({ datum }: DotsItemSymbolProps<IDatum['data'][number]>
         return null;
     }
 
-    const isNow = datum.x === 'Now';
-    return isNow ? <circle r={5} fill="#2979FF" /> : null;
+    return datum.x === 'Now' ? <circle r={5} fill="#2979FF" /> : null;
 };
 
 export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) => {
-    const { amount, maxTime, slope, bias } = props;
+    const { amount, settings } = props;
 
-    const safeAmount = isNaN(amount) || amount < 0 ? 0 : amount;
+    const { maxTime } = settings.votingEscrow!;
 
-    const now = DateTime.now();
+    const processedAmount = isNaN(amount) || amount < 0 ? 0 : amount;
+    const parsedAmount = parseUnits(processedAmount.toString(), 18);
+
     const numPoints = 6;
     const step = maxTime / (numPoints - 1);
 
-    const falseZero = 250;
-
-    const slopeNum = Number(formatUnits(slope, 18));
-    const biasNum = Number(formatUnits(bias, 18));
-
-    const computedVotingPower = (time: number) =>
-        safeAmount === 0 ? falseZero : safeAmount * (slopeNum * time + biasNum);
-
     const points = Array.from({ length: numPoints }, (_, i) => {
         const seconds = i * step;
-        const label = i === 0 ? 'Now' : now.plus({ seconds }).toFormat('LLL d');
-        return { x: label, y: computedVotingPower(seconds) };
+        const label = i === 0 ? 'Now' : DateTime.now().plus({ seconds }).toFormat('LLL d');
+        const votingPower = tokenLocksDialogUtils.calculateVotingPower(parsedAmount.toString(), seconds, settings);
+
+        return { x: label, y: parseFloat(votingPower) };
     });
 
     const trendLine: IDatum = { id: 'Voting power', data: points };
 
     const data = [trendLine];
 
-    const isFlat = safeAmount === 0;
-    const maxY = isFlat ? 12500 : computedVotingPower(maxTime);
-    const tickStep = maxY / 5;
+    const isFlat = processedAmount === 0;
+    const maxY = isFlat
+        ? '12500'
+        : tokenLocksDialogUtils.calculateVotingPower(parsedAmount.toString(), maxTime, settings);
+    const tickStep = parseFloat(maxY) / 5;
     const tickValues = Array.from({ length: 6 }, (_, i) => Math.round(i * tickStep));
 
     return (
         <div className="relative h-[300px] w-full">
             <div className="absolute top-4 left-4">
                 <p className="font-semibold!">
-                    {formatterUtils.formatNumber(safeAmount, { format: NumberFormat.TOKEN_AMOUNT_SHORT })}{' '}
+                    {formatterUtils.formatNumber(processedAmount, { format: NumberFormat.TOKEN_AMOUNT_SHORT })}{' '}
                     <span className="font-normal">{trendLine.id}</span>
                 </p>
                 <span className="text-sm text-neutral-500 md:text-base">Now</span>
@@ -88,7 +79,7 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
             <ResponsiveLine
                 data={data}
                 xScale={{ type: 'point' }}
-                yScale={{ type: 'linear', min: 0, max: maxY, stacked: false }}
+                yScale={{ type: 'linear', min: 0, max: parseFloat(maxY), stacked: false }}
                 margin={{ top: 24, right: 60, bottom: 40, left: 24 }}
                 axisBottom={{
                     tickPadding: 12,
