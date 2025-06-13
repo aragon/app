@@ -6,13 +6,7 @@ export const generateTokenLock = (lock?: Partial<IMemberLock>): IMemberLock => (
     tokenId: 'token-id',
     epochStartAt: DateTime.now().toSeconds(),
     amount: '1000',
-    votingPower: '1000',
-    lockExit: {
-        status: false,
-        exitDateAt: null,
-    },
-    nft: {
-        name: 'VE NFT',
-    },
+    lockExit: { status: false, exitDateAt: null },
+    nft: { name: 'VE NFT' },
     ...lock,
 });

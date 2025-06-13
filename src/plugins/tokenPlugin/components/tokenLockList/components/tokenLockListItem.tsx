@@ -10,9 +10,11 @@ import {
     formatterUtils,
     Heading,
     NumberFormat,
+    Rerender,
     Tag,
     type TagVariant,
 } from '@aragon/gov-ui-kit';
+import NumberFlow from '@number-flow/react';
 import { DateTime } from 'luxon';
 import { formatUnits, type Hex } from 'viem';
 import type { IMemberLock } from '../../../api/tokenService';
@@ -55,55 +57,52 @@ const statusToVariant: Record<LockStatus, TagVariant> = {
 
 export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const { lock, plugin, network, onLockDialogClose, onRefreshNeeded } = props;
+
+    const { escrowAddress, nftLockAddress } = plugin.votingEscrow!;
+    const { token, votingEscrow } = plugin.settings;
+    const { amount, epochStartAt } = lock;
+
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const token = plugin.settings.token;
+
     const { id: chainId } = networkDefinitions[network];
+    const status = tokenLocksDialogUtils.getLockStatus(lock);
 
-    const { status, timeLeft } = tokenLocksDialogUtils.getLockStatusAndTiming(lock);
-    const { amount } = lock;
-    const { multiplier, votingPower } = tokenLocksDialogUtils.getMultiplierAndVotingPower(lock);
-    const minLockTime = tokenLocksDialogUtils.getMinLockTime(lock, plugin.settings.votingEscrow!);
-    const now = DateTime.now().toSeconds();
-
-    // Check if the NFT is approved for the escrow contract
     const needsApproval = useNftNeedsApproval({
-        spender: plugin.votingEscrow!.escrowAddress as Hex,
-        tokenAddress: plugin.votingEscrow!.nftLockAddress as Hex,
+        spender: escrowAddress as Hex,
+        tokenAddress: nftLockAddress as Hex,
         tokenId: BigInt(lock.tokenId),
         chainId,
         enabled: status === 'active',
     });
 
+    const handleUnlockSuccess = () => {
+        onLockDialogClose?.();
+        onRefreshNeeded?.();
+    };
+
     const handleUnlock = () => {
-        const unlockDialogProps = {
-            action: 'unlock',
-            escrowContract: plugin.votingEscrow!.escrowAddress,
+        const dialogProps = {
+            action: 'unlock' as const,
+            escrowContract: escrowAddress,
             network,
             token,
             tokenId: BigInt(lock.tokenId),
             onClose: onLockDialogClose,
-            onSuccessClick: () => {
-                onLockDialogClose?.();
-                onRefreshNeeded?.();
-            },
-        } as const;
+            onSuccessClick: handleUnlockSuccess,
+        };
 
         if (needsApproval) {
             const approveParams: ITokenApproveNftDialogParams = {
-                tokenAddress: plugin.votingEscrow!.nftLockAddress as Hex,
+                tokenAddress: nftLockAddress as Hex,
                 tokenId: BigInt(lock.tokenId),
                 tokenName: lock.nft.name,
-                spender: plugin.votingEscrow!.escrowAddress as Hex,
+                spender: escrowAddress as Hex,
                 network,
                 translationNamespace: 'UNLOCK',
                 onClose: onLockDialogClose,
                 onApproveSuccess: () => {
-                    const unlockParams: ITokenLockUnlockDialogParams = {
-                        ...unlockDialogProps,
-                        showTransactionInfo: true,
-                    };
-
+                    const unlockParams: ITokenLockUnlockDialogParams = { ...dialogProps, showTransactionInfo: true };
                     open(TokenPluginDialogId.LOCK_UNLOCK, { params: unlockParams });
                 },
                 transactionInfo: {
@@ -114,25 +113,18 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                     total: 2,
                 },
             };
-            open(TokenPluginDialogId.APPROVE_NFT, {
-                params: approveParams,
-            });
+            open(TokenPluginDialogId.APPROVE_NFT, { params: approveParams });
         } else {
             // Show unlock dialog directly
-            const unlockParams: ITokenLockUnlockDialogParams = {
-                ...unlockDialogProps,
-                showTransactionInfo: false,
-            };
-            open(TokenPluginDialogId.LOCK_UNLOCK, {
-                params: unlockParams,
-            });
+            const unlockParams: ITokenLockUnlockDialogParams = { ...dialogProps, showTransactionInfo: false };
+            open(TokenPluginDialogId.LOCK_UNLOCK, { params: unlockParams });
         }
     };
 
     const handleWithdraw = () => {
         const withdrawParams: ITokenLockUnlockDialogParams = {
             action: 'withdraw',
-            escrowContract: plugin.votingEscrow!.escrowAddress,
+            escrowContract: escrowAddress,
             network,
             token,
             tokenId: BigInt(lock.tokenId),
@@ -143,18 +135,23 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
             },
             showTransactionInfo: false,
         };
-        open(TokenPluginDialogId.LOCK_UNLOCK, {
-            params: withdrawParams,
-        });
+        open(TokenPluginDialogId.LOCK_UNLOCK, { params: withdrawParams });
     };
 
-    const formattedLockedAmount = formatterUtils.formatNumber(formatUnits(BigInt(amount), token.decimals), {
-        format: NumberFormat.GENERIC_SHORT,
+    const minLockTime = epochStartAt + (votingEscrow?.minLockTime ?? 0);
+    const canUnlock = DateTime.now().toSeconds() > minLockTime;
+    const formattedMinLock = formatterUtils.formatDate(minLockTime * 1000, { format: DateFormat.DURATION });
+
+    const parsedExitDate = (lock.lockExit.exitDateAt ?? 0) * 1000;
+    const formattedExitDate = formatterUtils.formatDate(parsedExitDate, { format: DateFormat.DURATION });
+
+    const parsedLockedAmount = formatUnits(BigInt(amount), token.decimals);
+    const formattedLockedAmount = formatterUtils.formatNumber(parsedLockedAmount, {
+        format: NumberFormat.TOKEN_AMOUNT_SHORT,
     });
-    const formattedVotingPower = formatterUtils.formatNumber(formatUnits(BigInt(votingPower), token.decimals), {
-        format: NumberFormat.GENERIC_SHORT,
-    });
-    const formattedMultiplier = formatterUtils.formatNumber(multiplier, {
+
+    const multiplier = tokenLocksDialogUtils.getMultiplier(lock, plugin.settings);
+    const formattedMultiplier = formatterUtils.formatNumber(multiplier.toString(), {
         format: NumberFormat.GENERIC_SHORT,
     });
 
@@ -166,12 +163,9 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                     <Heading size="h4">ID: {lock.tokenId}</Heading>
                 </div>
                 <div className="flex items-center gap-2 md:gap-3">
-                    {timeLeft && (
+                    {status === 'cooldown' && (
                         <p className="text-sm leading-tight text-neutral-500 md:text-base">
-                            {formatterUtils.formatDate(timeLeft * 1000, {
-                                format: DateFormat.DURATION,
-                            })}{' '}
-                            {t('app.plugins.token.tokenLockList.item.timeLeftSuffix')}
+                            {formattedExitDate} {t('app.plugins.token.tokenLockList.item.timeLeftSuffix')}
                         </p>
                     )}
                     <Tag
@@ -182,28 +176,40 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
             </div>
             <hr className="border-neutral-100" />
             <div className="grid grid-cols-3 gap-4 text-base leading-tight text-neutral-800 md:text-lg">
-                {[
-                    {
-                        label: t('app.plugins.token.tokenLockList.item.metrics.locked'),
-                        value: formattedLockedAmount,
-                    },
-                    {
-                        label: t('app.plugins.token.tokenLockList.item.metrics.multiplier'),
-                        value: `${formattedMultiplier!}x`,
-                        hidden: multiplier <= 1,
-                    },
-                    {
-                        label: t('app.plugins.token.tokenLockList.item.metrics.votingPower'),
-                        value: formattedVotingPower,
-                    },
-                ]
-                    .filter((metric) => !metric.hidden)
-                    .map(({ label, value }) => (
-                        <div key={label} className="flex flex-col">
-                            <div className="text-sm text-neutral-500 md:text-base">{label}</div>
-                            <div className="truncate">{value}</div>
-                        </div>
-                    ))}
+                <div className="flex flex-col">
+                    <div className="text-sm text-neutral-500 md:text-base">
+                        {t('app.plugins.token.tokenLockList.item.metrics.locked')}
+                    </div>
+                    <div className="truncate">{formattedLockedAmount}</div>
+                </div>
+                <div className="flex flex-col">
+                    <div className="text-sm text-neutral-500 md:text-base">
+                        {t('app.plugins.token.tokenLockList.item.metrics.multiplier')}
+                    </div>
+                    <div className="truncate">{`${formattedMultiplier!}x`}</div>
+                </div>
+                <div className="flex flex-col">
+                    <div className="text-sm text-neutral-500 md:text-base">
+                        {t('app.plugins.token.tokenLockList.item.metrics.votingPower')}
+                    </div>
+                    <div className="truncate">
+                        {status === 'active' && (
+                            <Rerender>
+                                {() => (
+                                    <NumberFlow
+                                        className="w-full"
+                                        value={parseFloat(
+                                            tokenLocksDialogUtils.getLockVotingPower(lock, plugin.settings),
+                                        )}
+                                        format={{ notation: 'compact', minimumFractionDigits: 4 }}
+                                        trend={-1}
+                                    />
+                                )}
+                            </Rerender>
+                        )}
+                        {status != 'active' && '0'}
+                    </div>
+                </div>
             </div>
             <div className="flex flex-col items-center gap-3 md:flex-row md:gap-4">
                 {status === 'active' && (
@@ -212,19 +218,16 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                             className="w-full md:w-auto"
                             variant="secondary"
                             size="md"
-                            disabled={now < minLockTime}
+                            disabled={!canUnlock}
                             onClick={handleUnlock}
                         >
                             {t(`app.plugins.token.tokenLockList.item.actions.unlock`, {
                                 underlyingSymbol: token.symbol,
                             })}
                         </Button>
-                        {now < minLockTime && (
+                        {!canUnlock && (
                             <p className="text-sm leading-normal text-neutral-500">
-                                {formatterUtils.formatDate(minLockTime * 1000, {
-                                    format: DateFormat.DURATION,
-                                })}{' '}
-                                {t('app.plugins.token.tokenLockList.item.minLockTimeLeftSuffix')}
+                                {formattedMinLock} {t('app.plugins.token.tokenLockList.item.minLockTimeLeftSuffix')}
                             </p>
                         )}
                     </>
@@ -236,20 +239,14 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                                 underlyingSymbol: token.symbol,
                             })}
                         </Button>
-
                         <p className="text-sm leading-normal text-neutral-500">
-                            {formatterUtils.formatDate(timeLeft! * 1000, {
-                                format: DateFormat.DURATION,
-                            })}{' '}
-                            {t('app.plugins.token.tokenLockList.item.withdrawTimeLeftSuffix')}
+                            {formattedExitDate} {t('app.plugins.token.tokenLockList.item.withdrawTimeLeftSuffix')}
                         </p>
                     </>
                 )}
                 {status === 'available' && (
                     <Button className="w-full md:w-auto" variant="tertiary" size="md" onClick={handleWithdraw}>
-                        {t(`app.plugins.token.tokenLockList.item.actions.withdraw`, {
-                            underlyingSymbol: token.symbol,
-                        })}
+                        {t(`app.plugins.token.tokenLockList.item.actions.withdraw`, { underlyingSymbol: token.symbol })}
                     </Button>
                 )}
             </div>
