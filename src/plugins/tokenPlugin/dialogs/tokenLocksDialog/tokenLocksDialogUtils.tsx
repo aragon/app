@@ -24,19 +24,24 @@ class TokenLocksDialogUtils {
         return 'available';
     };
 
-    getVotingPower = (lock: IMemberLock, settings: ITokenPluginSettings) => {
+    getLockVotingPower = (lock: IMemberLock, settings: ITokenPluginSettings) => {
         const { amount, epochStartAt } = lock;
+        const activeTime = Math.round(DateTime.now().toSeconds() - epochStartAt);
+
+        return this.calculateVotingPower(amount, activeTime, settings);
+    };
+
+    calculateVotingPower = (amount: string, time: number, settings: ITokenPluginSettings) => {
         const { token, votingEscrow } = settings;
         const { slope, maxTime } = votingEscrow!;
         const bias = 1000000000000000000; // TODO: get this from the backend
 
-        const activeTime = Math.round(DateTime.now().toSeconds() - epochStartAt);
-        const processedActiveTime = Math.min(activeTime, maxTime);
+        const processedTime = Math.min(time, maxTime);
 
         const slopeAmount = BigInt(amount) * BigInt(slope);
         const biasAmount = BigInt(amount) * BigInt(bias);
 
-        const votingPower = (slopeAmount * BigInt(processedActiveTime) + biasAmount) / BigInt(1e18);
+        const votingPower = (slopeAmount * BigInt(processedTime) + biasAmount) / BigInt(1e18);
 
         return formatUnits(votingPower, token.decimals);
     };
@@ -44,7 +49,7 @@ class TokenLocksDialogUtils {
     getMultiplier = (lock: IMemberLock, settings: ITokenPluginSettings) => {
         const { amount } = lock;
 
-        const votingPower = this.getVotingPower(lock, settings);
+        const votingPower = this.getLockVotingPower(lock, settings);
         const parsedAmount = formatUnits(BigInt(amount), settings.token.decimals);
 
         return Number(votingPower) / Number(parsedAmount);

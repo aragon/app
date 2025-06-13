@@ -199,7 +199,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                             {() => (
                                 <NumberFlow
                                     className="w-full"
-                                    value={parseFloat(tokenLocksDialogUtils.getVotingPower(lock, plugin.settings))}
+                                    value={parseFloat(tokenLocksDialogUtils.getLockVotingPower(lock, plugin.settings))}
                                     format={{ notation: 'compact', minimumFractionDigits: 4 }}
                                 />
                             )}
