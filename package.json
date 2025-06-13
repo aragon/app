@@ -24,8 +24,6 @@
   "dependencies": {
     "@aragon/gov-ui-kit": "^1.7.0",
     "@floating-ui/react": "^0.27.12",
-    "@nivo/core": "^0.99.0",
-    "@nivo/line": "^0.99.0",
     "@number-flow/react": "^0.5.10",
     "@reown/appkit": "^1.7.8",
     "@reown/appkit-adapter-wagmi": "^1.7.8",
@@ -43,6 +41,7 @@
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.57.0",
     "react-use-measure": "^2.1.7",
+    "recharts": "^2.15.3",
     "server-only": "^0.0.1",
     "viem": "^2.31.0",
     "wagmi": "^2.15.6"

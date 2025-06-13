@@ -10,7 +10,7 @@ import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { Button, invariant, Toggle, ToggleGroup, useDebouncedValue } from '@aragon/gov-ui-kit';
+import { Button, invariant, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits, type Hex } from 'viem';
@@ -84,7 +84,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     const lockAmount = useWatch<ITokenLockFormData, 'amount'>({ control, name: 'amount' });
     const lockAmountWei = parseUnits(lockAmount ?? '0', token.decimals);
-    const [lockAmountDebounced] = useDebouncedValue(lockAmount, { delay: 1000 });
 
     const needsApproval = isConnected && (allowance == null || allowance < lockAmountWei);
 
@@ -182,7 +181,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         <FormProvider {...formValues}>
             <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
                 <div className="flex flex-col gap-3">
-                    <TokenLockFormChart amount={Number(lockAmountDebounced)} settings={plugin.settings} />
+                    <TokenLockFormChart amount={Number(lockAmount)} settings={plugin.settings} />
                     <AssetInput
                         onAmountChange={() => setPercentageValue('')}
                         disableAssetField={true}

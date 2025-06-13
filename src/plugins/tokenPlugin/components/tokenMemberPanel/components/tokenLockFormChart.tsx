@@ -1,9 +1,8 @@
 import { tokenLocksDialogUtils } from '@/plugins/tokenPlugin/dialogs/tokenLocksDialog/tokenLocksDialogUtils';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
-import type { DotsItemSymbolProps } from '@nivo/core';
-import { ResponsiveLine } from '@nivo/line';
 import { DateTime } from 'luxon';
+import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { parseUnits } from 'viem';
 
 export interface IDatum {
@@ -28,14 +27,6 @@ export interface ITokenLockFormChartProps {
     settings: ITokenPluginSettings;
 }
 
-const FirstPointSymbol = ({ datum }: DotsItemSymbolProps<IDatum['data'][number]>) => {
-    if (!datum.x) {
-        return null;
-    }
-
-    return datum.x === 'Now' ? <circle r={5} fill="#2979FF" /> : null;
-};
-
 export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) => {
     const { amount, settings } = props;
 
@@ -55,70 +46,55 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
         return { x: label, y: parseFloat(votingPower) };
     });
 
-    const trendLine: IDatum = { id: 'Voting power', data: points };
-
-    const data = [trendLine];
-
-    const isFlat = processedAmount === 0;
-    const maxY = isFlat
-        ? '12500'
-        : tokenLocksDialogUtils.calculateVotingPower(parsedAmount.toString(), maxTime, settings);
-    const tickStep = parseFloat(maxY) / 5;
-    const tickValues = Array.from({ length: 6 }, (_, i) => Math.round(i * tickStep));
-
     return (
-        <div className="relative h-[300px] w-full">
-            <div className="absolute top-4 left-4">
+        <div className="w-full">
+            <div className="-mb-10">
                 <p className="font-semibold!">
                     {formatterUtils.formatNumber(processedAmount, { format: NumberFormat.TOKEN_AMOUNT_SHORT })}{' '}
-                    <span className="font-normal">{trendLine.id}</span>
+                    <span className="font-normal">Voting power</span>
                 </p>
                 <span className="text-sm text-neutral-500 md:text-base">Now</span>
             </div>
-
-            <ResponsiveLine
-                data={data}
-                xScale={{ type: 'point' }}
-                yScale={{ type: 'linear', min: 0, max: parseFloat(maxY), stacked: false }}
-                margin={{ top: 24, right: 60, bottom: 40, left: 24 }}
-                axisBottom={{
-                    tickPadding: 12,
-                    renderTick: (tick) => (
-                        <text x={tick.x} y={tick.y + 32} className="fill-gray-500 text-sm" textAnchor="middle">
-                            {tick.value}
-                        </text>
-                    ),
-                }}
-                axisLeft={null}
-                axisRight={{
-                    tickValues,
-                    renderTick: (tick) => (
-                        <text x={tick.x + 8} y={tick.y} className="fill-gray-500 text-sm">
-                            {formatterUtils.formatNumber(tick.value as number, {
-                                format: NumberFormat.TOKEN_AMOUNT_SHORT,
-                            })}
-                        </text>
-                    ),
-                }}
-                enableGridX={false}
-                enableGridY={false}
-                enableArea={true}
-                areaOpacity={1}
-                defs={[
-                    {
-                        id: 'gradientA',
-                        type: 'linearGradient',
-                        colors: [
-                            { offset: 0, color: '#3164fa', opacity: 0.35 },
-                            { offset: 100, color: '#3164fa', opacity: 0 },
-                        ],
-                    },
-                ]}
-                fill={[{ match: '*', id: 'gradientA' }]}
-                colors="#3164fa"
-                enablePoints={true}
-                pointSymbol={FirstPointSymbol}
-            />
+            <ResponsiveContainer width="100%" height={200}>
+                <AreaChart data={points}>
+                    <defs>
+                        <linearGradient id="colorY" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#3164fa" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="#3164fa" stopOpacity={0} />
+                        </linearGradient>
+                    </defs>
+                    <XAxis
+                        dataKey="x"
+                        className="text-xs"
+                        tickLine={false}
+                        axisLine={false}
+                        type="category"
+                        tickCount={points.length}
+                        tick={{ dx: -25 }}
+                    />
+                    <YAxis
+                        tickFormatter={(value) =>
+                            formatterUtils.formatNumber(value as number, { format: NumberFormat.GENERIC_SHORT }) ?? ''
+                        }
+                        className="text-xs"
+                        width={25}
+                        tickLine={false}
+                        axisLine={false}
+                        type="number"
+                        tickCount={points.length}
+                        dataKey="y"
+                        orientation="right"
+                    />
+                    <Area
+                        type="monotone"
+                        dataKey="y"
+                        stroke="#3164FA"
+                        strokeWidth={1}
+                        fillOpacity={1}
+                        fill="url(#colorY)"
+                    />
+                </AreaChart>
+            </ResponsiveContainer>
         </div>
     );
 };
