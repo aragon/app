@@ -1355,8 +1355,8 @@
           },
           "item": {
             "actions": {
-              "unlock": "Unlock {{underlyingSymbol}}",
-              "withdraw": "Withdraw {{underlyingSymbol}}"
+              "unlock": "Unlock {{symbol}}",
+              "withdraw": "Withdraw {{symbol}}"
             },
             "approveTransactionInfoTitle": "Approve NFT #{{tokenId}}",
             "metrics": {

@@ -192,23 +192,18 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                     <div className="text-sm text-neutral-500 md:text-base">
                         {t('app.plugins.token.tokenLockList.item.metrics.votingPower')}
                     </div>
-                    <div className="truncate">
-                        {status === 'active' && (
-                            <Rerender>
-                                {() => (
-                                    <NumberFlow
-                                        className="w-full"
-                                        value={parseFloat(
-                                            tokenLocksDialogUtils.getLockVotingPower(lock, plugin.settings),
-                                        )}
-                                        format={{ notation: 'compact', minimumFractionDigits: 4 }}
-                                        trend={-1}
-                                    />
-                                )}
-                            </Rerender>
-                        )}
-                        {status != 'active' && '0'}
-                    </div>
+                    {status === 'active' && (
+                        <Rerender>
+                            {() => (
+                                <NumberFlow
+                                    value={parseFloat(tokenLocksDialogUtils.getLockVotingPower(lock, plugin.settings))}
+                                    format={{ notation: 'compact', minimumFractionDigits: 4 }}
+                                    trend={-1}
+                                />
+                            )}
+                        </Rerender>
+                    )}
+                    {status !== 'active' && '0'}
                 </div>
             </div>
             <div className="flex flex-col items-center gap-3 md:flex-row md:gap-4">
@@ -221,9 +216,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                             disabled={!canUnlock}
                             onClick={handleUnlock}
                         >
-                            {t(`app.plugins.token.tokenLockList.item.actions.unlock`, {
-                                underlyingSymbol: token.symbol,
-                            })}
+                            {t(`app.plugins.token.tokenLockList.item.actions.unlock`, { symbol: token.symbol })}
                         </Button>
                         {!canUnlock && (
                             <p className="text-sm leading-normal text-neutral-500">
@@ -235,9 +228,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                 {status === 'cooldown' && (
                     <>
                         <Button className="w-full md:w-auto" variant="tertiary" size="md" disabled={true}>
-                            {t(`app.plugins.token.tokenLockList.item.actions.withdraw`, {
-                                underlyingSymbol: token.symbol,
-                            })}
+                            {t(`app.plugins.token.tokenLockList.item.actions.withdraw`, { symbol: token.symbol })}
                         </Button>
                         <p className="text-sm leading-normal text-neutral-500">
                             {formattedExitDate} {t('app.plugins.token.tokenLockList.item.withdrawTimeLeftSuffix')}
@@ -246,7 +237,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                 )}
                 {status === 'available' && (
                     <Button className="w-full md:w-auto" variant="tertiary" size="md" onClick={handleWithdraw}>
-                        {t(`app.plugins.token.tokenLockList.item.actions.withdraw`, { underlyingSymbol: token.symbol })}
+                        {t(`app.plugins.token.tokenLockList.item.actions.withdraw`, { symbol: token.symbol })}
                     </Button>
                 )}
             </div>
