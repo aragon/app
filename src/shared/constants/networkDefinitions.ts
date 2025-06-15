@@ -178,20 +178,6 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             globalExecutor: '0xCFE83d0079c9455eF1e11864D701d6e1bDf8Ff2a',
         },
     },
-    [Network.CHILIZ_MAINNET]: {
-        ...chiliz,
-        name: 'Chiliz',
-        logo: 'https://assets.coingecko.com/coins/images/8834/large/CHZ_Token_updated.png',
-        order: 8,
-        protocolVersion: latestProtocolVersion,
-        beta: true,
-        addresses: {
-            dao: '0x221B2d4fF2dEf7Bb1Da68460760B299e4c2D8AdD',
-            daoFactory: '0xdD68D6b46b887AcB795eCC3Fc7bb3fEf2Dfebf8f',
-            pluginSetupProcessor: '0xD39Fd78987000C1aa96209d76bec576F31DbC9bE',
-            globalExecutor: '0xcF34b77813f5d5daBa0A6F085bf0911e00E7b99A',
-        },
-    },
     [Network.PEAQ_MAINNET]: {
         ...peaq,
         name: 'Peaq',
