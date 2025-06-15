@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-Add support for Corn and Chiliz networks
+Add support for Corn network
