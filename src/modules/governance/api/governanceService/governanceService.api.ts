@@ -23,6 +23,10 @@ export interface IGetProposalListQueryParams extends IPaginatedRequest, IOrdered
      * Filters proposals for their executed status when set.
      */
     isExecuted?: boolean;
+    /**
+     * Filter proposals only from currently installed plugins.
+     */
+    onlyActive?: boolean;
 }
 
 export interface IGetProposalListParams extends IRequestQueryParams<IGetProposalListQueryParams> {}
