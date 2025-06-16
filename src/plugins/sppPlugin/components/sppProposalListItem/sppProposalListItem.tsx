@@ -31,6 +31,7 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
     return (
         <ProposalDataListItem.Structure
             className="min-w-0"
+            id={proposalSlug}
             key={id}
             title={title}
             summary={summary}

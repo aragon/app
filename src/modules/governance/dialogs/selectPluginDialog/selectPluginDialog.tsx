@@ -47,13 +47,11 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
 
     const processedDaoPlugins = daoPlugins.filter((plugin) => !excludePluginIds?.includes(plugin.id));
 
-    const [selectedPlugin, setSelectedPlugin] = useState<ITabComponentPlugin<IDaoPlugin>>(
-        initialPlugin ?? processedDaoPlugins[0],
-    );
+    const [selectedPlugin, setSelectedPlugin] = useState(initialPlugin);
 
     const handleConfirm = () => {
         close();
-        onPluginSelected?.(selectedPlugin.meta);
+        onPluginSelected?.(selectedPlugin!.meta);
     };
 
     return (
@@ -67,7 +65,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
                             onClick={() => setSelectedPlugin(plugin)}
                             className={classNames('px-4 py-3 md:p-6', {
                                 'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary':
-                                    plugin.uniqueId === selectedPlugin.uniqueId,
+                                    plugin.uniqueId === selectedPlugin?.uniqueId,
                             })}
                         >
                             <div className="flex flex-col gap-y-1">
@@ -91,6 +89,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
                 primaryAction={{
                     label: t('app.governance.selectPluginDialog.action.select'),
                     onClick: handleConfirm,
+                    disabled: selectedPlugin == null,
                 }}
                 secondaryAction={{
                     label: t('app.governance.selectPluginDialog.action.cancel'),
