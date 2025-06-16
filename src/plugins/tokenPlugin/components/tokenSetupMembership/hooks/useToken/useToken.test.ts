@@ -13,12 +13,7 @@ describe('useToken hook', () => {
         const token = { name: 'MockToken', symbol: 'MTK', decimals: 18, totalSupply: '100000000' };
 
         useReadContractsSpy.mockReturnValue({
-            data: [
-                { status: 'success', result: token.name },
-                { status: 'success', result: token.symbol },
-                { status: 'success', result: token.decimals },
-                { status: 'success', result: token.totalSupply },
-            ],
+            data: [token.name, token.symbol, token.decimals, token.totalSupply],
             isError: false,
             isLoading: false,
         } as unknown as wagmi.UseReadContractsReturnType);
