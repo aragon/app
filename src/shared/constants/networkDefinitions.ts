@@ -3,7 +3,6 @@ import type { Chain, Hex } from 'viem';
 import {
     arbitrum,
     base,
-    chiliz,
     corn,
     mainnet,
     optimism,
