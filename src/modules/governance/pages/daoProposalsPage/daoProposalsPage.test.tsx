@@ -70,6 +70,7 @@ describe('<DaoProposalsPage /> component', () => {
             pluginAddress: bodyPlugin.address,
             sort: daoProposalsSort,
             isSubProposal: false,
+            onlyActive: false,
         };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
             proposalListOptions({ queryParams: memberListParams }).queryKey,
