@@ -1790,7 +1790,7 @@
       "formField": {
         "error": {
           "max": "{{name}} must be less than {{value}}.",
-          "min": "{{name}} must be greater than {{value}}.",
+          "min": "{{name}} must be at least {{value}}.",
           "pattern": "Invalid {{name}} format.",
           "required": "{{name}} is mandatory.",
           "validate": "{{name}} is invalid."

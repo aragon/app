@@ -60,17 +60,28 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     const inputId = useId();
 
     const assetField = useFormField<IAssetInputFormData, 'asset'>('asset', { rules: { required: true }, fieldPrefix });
+    const tokenSymbol = assetField.value?.token.symbol;
+    const amountLabel = t('app.finance.transferAssetForm.amount.label');
+    const availableAssetAmount = assetField.value?.amount;
 
-    const {
+    const { onChange: onAmountFieldChange, ...amountField } = useFormField<IAssetInputFormData, 'amount'>('amount', {
         label: amountLabel,
-        onChange: onAmountFieldChange,
-        ...amountField
-    } = useFormField<IAssetInputFormData, 'amount'>('amount', {
-        label: t('app.finance.transferAssetForm.amount.label'),
         rules: {
             required: true,
-            max: assetField.value?.amount,
-            min: minAmount,
+            max: availableAssetAmount && {
+                value: availableAssetAmount,
+                message: t('app.shared.formField.error.max', {
+                    name: availableAssetAmount,
+                    value: tokenSymbol ? `${availableAssetAmount.toString()} ${tokenSymbol}` : availableAssetAmount,
+                }),
+            },
+            min: minAmount && {
+                value: minAmount,
+                message: t('app.shared.formField.error.min', {
+                    name: amountLabel,
+                    value: tokenSymbol ? `${minAmount.toString()} ${tokenSymbol}` : minAmount,
+                }),
+            },
             validate: (value) => parseFloat(value ?? '') > 0,
         },
         fieldPrefix,
