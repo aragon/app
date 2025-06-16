@@ -3,7 +3,7 @@ import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
-import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, ReferenceDot, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { parseUnits } from 'viem';
 
 export interface IChartPoint {
@@ -114,6 +114,14 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
                         strokeWidth={1}
                         fillOpacity={1}
                         fill="url(#colorY)"
+                    />
+                    <ReferenceDot
+                        x={displayPoint.x}
+                        y={displayPoint.y}
+                        r={4}
+                        fill="#3164FA"
+                        stroke="#ffffff"
+                        strokeWidth={1}
                     />
                 </AreaChart>
             </ResponsiveContainer>
