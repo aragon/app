@@ -1,6 +1,17 @@
 import { Network } from '@/shared/api/daoService';
 import type { Chain, Hex } from 'viem';
-import { arbitrum, base, mainnet, optimism, peaq, polygon, sepolia, zksync, zksyncSepoliaTestnet } from 'wagmi/chains';
+import {
+    arbitrum,
+    base,
+    corn,
+    mainnet,
+    optimism,
+    peaq,
+    polygon,
+    sepolia,
+    zksync,
+    zksyncSepoliaTestnet,
+} from 'wagmi/chains';
 import type { IContractVersionInfo } from '../types';
 
 export interface INetworkDefinitionAddresses {
@@ -152,11 +163,25 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             globalExecutor: '0x581F87d3d3aE015c912Cb6E7B521A130493Cc497',
         },
     },
+    [Network.CORN_MAINNET]: {
+        ...corn,
+        name: 'Corn',
+        logo: 'https://assets.coingecko.com/coins/images/54471/large/corn.jpg',
+        order: 7,
+        protocolVersion: latestProtocolVersion,
+        beta: true,
+        addresses: {
+            dao: '0x604953e159562FeEfF38961541415B0C0694Ef5A',
+            daoFactory: '0x72f635574C797Bab5eB82489Aa906cE23d9aAD6f',
+            pluginSetupProcessor: '0x63054EbE143cFaa5e463256462a6FC56C6fc56d4',
+            globalExecutor: '0xCFE83d0079c9455eF1e11864D701d6e1bDf8Ff2a',
+        },
+    },
     [Network.PEAQ_MAINNET]: {
         ...peaq,
         name: 'Peaq',
         logo: 'https://assets.coingecko.com/coins/images/51415/large/peaq-token-brand-icon_%281%29.png',
-        order: 7,
+        order: 9,
         protocolVersion: latestProtocolVersion,
         beta: true,
         addresses: {
@@ -187,7 +212,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         name: 'zkSync Sepolia',
         logo: 'https://assets.coingecko.com/coins/images/38043/large/ZKTokenBlack.png',
         privateRpc: 'https://zksync-sepolia.g.alchemy.com/v2/',
-        order: 8,
+        order: 10,
         protocolVersion: latestProtocolVersion,
         addresses: {
             dao: '0x39e836A6c32163733929B213965e3feC0007914a',
