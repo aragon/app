@@ -40,10 +40,9 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
         const processedLabel = isGroupTab ? t('app.governance.daoProposalList.groupTab') : label;
 
         const pluginAddress = isGroupTab ? undefined : meta.address;
-        const onlyActive = pluginAddress == null;
         const pluginInitialParams = {
             ...initialParams,
-            queryParams: { ...initialParams.queryParams, pluginAddress, onlyActive },
+            queryParams: { ...initialParams.queryParams, pluginAddress, onlyActive: isGroupTab },
         };
 
         return { ...plugin, label: processedLabel, props: { initialParams: pluginInitialParams, plugin: meta } };
