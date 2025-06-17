@@ -53,13 +53,8 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
             payload: IChartPoint;
         }>;
     }) => {
-        if (data.activePayload?.[0]) {
-            const point = data.activePayload[0].payload;
-            setHoveredPoint(point);
-        } else {
-            // If the mouse is not over a data point, clear the hovered data
-            setHoveredPoint(null);
-        }
+        const point = data.activePayload?.[0].payload ?? null;
+        setHoveredPoint(point);
     };
 
     const handleMouseLeave = () => {
@@ -81,8 +76,8 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
                 <AreaChart data={points} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
                     <defs>
                         <linearGradient id="colorY" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#3164fa" stopOpacity={0.8} />
-                            <stop offset="95%" stopColor="#3164fa" stopOpacity={0} />
+                            <stop offset="5%" stopColor="var(--color-primary-400)" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="var(--color-primary-400)" stopOpacity={0} />
                         </linearGradient>
                     </defs>
                     <XAxis
@@ -110,7 +105,7 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
                     <Area
                         type="monotone"
                         dataKey="y"
-                        stroke="#3164FA"
+                        stroke="var(--color-primary-400)"
                         strokeWidth={1}
                         fillOpacity={1}
                         fill="url(#colorY)"
@@ -119,8 +114,8 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
                         x={displayPoint.x}
                         y={displayPoint.y}
                         r={4}
-                        fill="#3164FA"
-                        stroke="#ffffff"
+                        fill="var(--color-primary-400)"
+                        stroke="white"
                         strokeWidth={1}
                     />
                 </AreaChart>
