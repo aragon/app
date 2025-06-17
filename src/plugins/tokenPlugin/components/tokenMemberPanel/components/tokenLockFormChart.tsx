@@ -30,7 +30,7 @@ export interface ITokenLockFormChartProps {
 
 export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) => {
     const { amount, settings } = props;
-    const [hoveredPoint, setHoveredPoint] = useState<IChartPoint | null>(null);
+    const [hoveredPoint, setHoveredPoint] = useState<IChartPoint>();
 
     const { maxTime } = settings.votingEscrow!;
 
@@ -53,12 +53,12 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
             payload: IChartPoint;
         }>;
     }) => {
-        const point = data.activePayload?.[0].payload ?? null;
+        const point = data.activePayload?.[0].payload;
         setHoveredPoint(point);
     };
 
     const handleMouseLeave = () => {
-        setHoveredPoint(null);
+        setHoveredPoint(undefined);
     };
 
     const displayPoint = hoveredPoint ?? points[0];
