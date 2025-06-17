@@ -1,5 +1,5 @@
 ---
-'@aragon/app-next': minor
+'@aragon/app-next': patch
 ---
 
-Sort member profile proposals created
+Fix order of proposals on member pages

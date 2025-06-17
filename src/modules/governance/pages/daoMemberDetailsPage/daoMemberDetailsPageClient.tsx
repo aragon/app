@@ -21,7 +21,6 @@ import {
 import EfpLogo from '../../../../assets/images/efp-logo.svg';
 import { daoUtils } from '../../../../shared/utils/daoUtils';
 import { useMember } from '../../api/governanceService';
-import { daoProposalsSort } from '../daoProposalsPage/daoProposalsPage'
 import { DaoProposalList } from '../../components/daoProposalList';
 import { VoteList } from '../../components/voteList';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -108,7 +107,9 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         { label: memberName },
     ];
 
-    const proposalsByMemberParams = { queryParams: { daoId, creatorAddress: address, pageSize: memberProposalsCount, sort: daoProposalsSort } };
+    const proposalsByMemberParams = {
+        queryParams: { daoId, creatorAddress: address, pageSize: memberProposalsCount, sort: 'blockTimestamp' },
+    };
 
     const votesByMemberParams = { queryParams: { daoId, address, includeInfo: true, pageSize: memberVotesCount } };
 
