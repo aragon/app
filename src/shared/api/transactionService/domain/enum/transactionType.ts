@@ -5,4 +5,7 @@ export enum TransactionType {
     PROPOSAL_VOTE = 'proposalVote',
     PROPOSAL_EXECUTE = 'proposalExecute',
     PROPOSAL_REPORT_RESULTS = 'proposalReportResults',
+    TOKEN_LOCK = 'tokenLock',
+    TOKEN_UNLOCK = 'tokenUnlock',
+    TOKEN_WITHDRAW = 'tokenWithdraw',
 }

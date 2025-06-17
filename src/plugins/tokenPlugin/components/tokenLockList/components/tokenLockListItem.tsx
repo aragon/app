@@ -57,7 +57,6 @@ const statusToVariant: Record<LockStatus, TagVariant> = {
 
 export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const { lock, plugin, network, onLockDialogClose, onRefreshNeeded } = props;
-
     const { escrowAddress, nftLockAddress } = plugin.votingEscrow!;
     const { token, votingEscrow } = plugin.settings;
     const { amount, epochStartAt } = lock;
@@ -84,6 +83,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const handleUnlock = () => {
         const dialogProps = {
             action: 'unlock' as const,
+            daoId: 'plugin',
             escrowContract: escrowAddress,
             network,
             token,
@@ -124,6 +124,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const handleWithdraw = () => {
         const withdrawParams: ITokenLockUnlockDialogParams = {
             action: 'withdraw',
+            daoId: 'plugin',
             escrowContract: escrowAddress,
             network,
             token,

@@ -1,5 +1,5 @@
 import type { ITokenPluginSettingsToken } from '@/plugins/tokenPlugin/types';
-import type { Network } from '@/shared/api/daoService';
+import { type Network, useDao } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
     type ITransactionDialogStepMeta,
@@ -11,13 +11,21 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
+import { TransactionType } from '../../../../shared/api/transactionService';
+import { daoUtils } from '../../../../shared/utils/daoUtils';
 import { tokenLockUnlockDialogUtils } from './tokenLockUnlockDialogUtils';
+
+type ActionType = 'lock' | 'unlock' | 'withdraw';
 
 export interface ITokenLockUnlockDialogParams {
     /**
      * Action to be performed.
      */
-    action: 'lock' | 'unlock' | 'withdraw';
+    action: ActionType;
+    /**
+     * ID of the DAO.
+     */
+    daoId: string;
     /**
      * Amount of tokens to be locked / unlocked in WEI format.
      * Required for lock action.
@@ -69,6 +77,7 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
 
     const {
         action,
+        daoId,
         amount,
         network,
         onSuccess,
@@ -82,6 +91,7 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
 
     const { t } = useTranslations();
     const router = useRouter();
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
@@ -96,6 +106,17 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
         } else {
             invariant(tokenId != null, 'TokenLockUnlockDialog: tokenId is required for withdraw action');
             return tokenLockUnlockDialogUtils.buildWithdrawTransaction(tokenId, escrowContract);
+        }
+    };
+
+    const getTransactionType = (action: ActionType) => {
+        switch (action) {
+            case 'lock':
+                return TransactionType.TOKEN_LOCK;
+            case 'unlock':
+                return TransactionType.TOKEN_UNLOCK;
+            case 'withdraw':
+                return TransactionType.TOKEN_WITHDRAW;
         }
     };
 
@@ -131,6 +152,8 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
             }}
             onCancelClick={onClose}
             transactionInfo={transactionInfo}
+            transactionType={getTransactionType(action)}
+            indexingFallbackUrl={daoUtils.getDaoUrl(dao, 'members')}
         />
     );
 };

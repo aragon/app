@@ -104,7 +104,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
             };
             open(TokenPluginDialogId.APPROVE_TOKENS, { params });
         } else {
-            const params: ITokenLockUnlockDialogParams = { ...dialogProps, action: 'lock' };
+            const params: ITokenLockUnlockDialogParams = { ...dialogProps, action: 'lock', daoId };
             open(TokenPluginDialogId.LOCK_UNLOCK, { params });
         }
     };
@@ -143,6 +143,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         const params: ITokenLockUnlockDialogParams = {
             ...dialogProps,
             action: 'lock',
+            daoId,
         };
         open(TokenPluginDialogId.LOCK_UNLOCK, { params });
     };
