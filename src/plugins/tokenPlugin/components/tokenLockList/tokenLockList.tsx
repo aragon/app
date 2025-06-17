@@ -16,13 +16,17 @@ export interface ITokenLockListProps {
      */
     plugin: IDaoPlugin<ITokenPluginSettings>;
     /**
+     * ID of the DAO.
+     */
+    daoId: string;
+    /**
      * Callback called on lock dialog close.
      */
     onLockDialogClose?: () => void;
 }
 
 export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
-    const { initialParams, plugin, onLockDialogClose } = props;
+    const { initialParams, plugin, daoId, onLockDialogClose } = props;
     const { t } = useTranslations();
     const {
         locksList,
@@ -55,6 +59,7 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
                         lock={lock}
                         plugin={plugin}
                         network={network}
+                        daoId={daoId}
                         onLockDialogClose={onLockDialogClose}
                         onRefreshNeeded={refetchLocks}
                     />
