@@ -115,7 +115,7 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
                         y={displayPoint.y}
                         r={4}
                         fill="var(--color-primary-400)"
-                        stroke="white"
+                        stroke="var(--color-neutral-0)"
                         strokeWidth={1}
                     />
                 </AreaChart>
