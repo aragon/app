@@ -1,11 +1,14 @@
-import { useToken } from '../useToken';
+import { type IUseTokenResult, useToken } from '../useToken';
 import type { IUseGovernanceTokenParams, IUseGovernanceTokenResult } from './useGovernanceToken.api';
 import { useGovernanceTokenDelegationCheck } from './useGovernanceTokenDelegationCheck';
 import { useGovernanceTokenErc20Check } from './useGovernanceTokenErc20Check';
 import { useGovernanceTokenVotesCheck } from './useGovernanceTokenVotesCheck';
 
+// Fallback to "unknown" token when token passes the ERC20 checks but has no valid token attributes
+const tokenFallback: IUseTokenResult['data'] = { name: 'Unknown', decimals: 18, symbol: 'UNKNOWN', totalSupply: '0' };
+
 export const useGovernanceToken = (params: IUseGovernanceTokenParams): IUseGovernanceTokenResult => {
-    const { isLoading: isTokenLoading, isError: isTokenError, data: token } = useToken(params);
+    const { isLoading: isTokenLoading, data: tokenResult } = useToken(params);
 
     const {
         data: isErc20Token,
@@ -25,8 +28,9 @@ export const useGovernanceToken = (params: IUseGovernanceTokenParams): IUseGover
         isError: isVotesCheckError,
     } = useGovernanceTokenVotesCheck({ ...params, enabled: isErc20Token });
 
+    const token = isErc20Token ? (tokenResult ?? tokenFallback) : null;
     const isLoading = isErc20CheckLoading || isDelegationCheckLoading || isVotesCheckLoading || isTokenLoading;
-    const isError = isErc20CheckError || isDelegationCheckError || isVotesCheckError || isTokenError;
+    const isError = isErc20CheckError || isDelegationCheckError || isVotesCheckError;
 
     const data = { token, isGovernanceCompatible, isDelegationCompatible };
 

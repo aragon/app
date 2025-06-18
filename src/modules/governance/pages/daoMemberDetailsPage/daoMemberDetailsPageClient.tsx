@@ -107,7 +107,9 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         { label: memberName },
     ];
 
-    const proposalsByMemberParams = { queryParams: { daoId, creatorAddress: address, pageSize: memberProposalsCount } };
+    const proposalsByMemberParams = {
+        queryParams: { daoId, creatorAddress: address, pageSize: memberProposalsCount, sort: 'blockTimestamp' },
+    };
 
     const votesByMemberParams = { queryParams: { daoId, address, includeInfo: true, pageSize: memberVotesCount } };
 
