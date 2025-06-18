@@ -1,5 +1,6 @@
 import type { ITokenPluginSettingsToken } from '@/plugins/tokenPlugin/types';
 import { type Network, useDao } from '@/shared/api/daoService';
+import { TransactionType } from '@/shared/api/transactionService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
     type ITransactionDialogStepMeta,
@@ -8,11 +9,10 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
-import { TransactionType } from '../../../../shared/api/transactionService';
-import { daoUtils } from '../../../../shared/utils/daoUtils';
 import { tokenLockUnlockDialogUtils } from './tokenLockUnlockDialogUtils';
 
 type ActionType = 'lock' | 'unlock' | 'withdraw';
