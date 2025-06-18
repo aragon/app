@@ -42,7 +42,11 @@ class TokenTransactionUtils {
                 : createProposalUtils.createDefaultEndDate(minDuration);
 
         const functionArgs = [metadata, actions, BigInt(0), startDate, endDate, 0, false];
-        const data = encodeFunctionData({ abi: tokenPluginAbi, functionName: 'createProposal', args: functionArgs });
+        const data = encodeFunctionData({
+            abi: tokenPluginAbi,
+            functionName: 'createProposal',
+            args: functionArgs,
+        });
 
         return data;
     };
@@ -74,6 +78,7 @@ class TokenTransactionUtils {
             tokenTarget,
             BigInt(0),
             metadata,
+            [],
         ]);
 
         const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
