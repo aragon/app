@@ -1,3 +1,5 @@
+'use client';
+
 import { ProposalVoting } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { type ISppProposal } from '../../types';

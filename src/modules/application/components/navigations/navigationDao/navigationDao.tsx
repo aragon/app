@@ -31,21 +31,15 @@ export interface INavigationDaoProps extends INavigationContainerProps {
 
 export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const { dao, containerClasses, ...otherProps } = props;
+
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+
     const { t } = useTranslations();
     const { address, isConnected } = useAccount();
     const { open } = useDialogContext();
 
-    const dialogSubtitle = addressUtils.truncateAddress(dao.address);
-
-    const { buildEntityUrl } = useBlockExplorer();
-    const addressLink = buildEntityUrl({
-        type: ChainEntityType.ADDRESS,
-        id: dao.address,
-        chainId: networkDefinitions[dao.network].id,
-    });
-
-    const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
+    const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[dao.network].id });
+    const addressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address });
 
     const handleWalletClick = () => {
         const dialog = isConnected ? ApplicationDialogId.USER : ApplicationDialogId.CONNECT_WALLET;
@@ -53,6 +47,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     };
 
     const walletUser = address != null ? { address } : undefined;
+    const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
 
     return (
         <Navigation.Container
@@ -61,7 +56,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
         >
             <div className="flex items-center justify-between gap-1">
                 <NavigationDaoHome dao={dao} onClick={() => setIsDialogOpen(true)} />
-                <Navigation.Links className="hidden lg:flex" links={navigationDaoLinks(dao, true)} />
+                <Navigation.Links className="hidden lg:flex" links={navigationDaoLinks(dao, 'page')} />
                 <div className="flex items-center gap-x-2 lg:gap-x-3">
                     <Navigation.AppLinks dao={dao} />
                     <Wallet onClick={handleWalletClick} user={walletUser} />
@@ -69,7 +64,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                 </div>
             </div>
             <Navigation.Dialog
-                links={navigationDaoLinks(dao, false)}
+                links={navigationDaoLinks(dao, 'dialog')}
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
                 hiddenTitle={t('app.application.navigationDao.a11y.title')}
@@ -85,7 +80,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                                 isExternal={true}
                                 className="truncate text-sm text-neutral-500 sm:text-base"
                             >
-                                {dialogSubtitle}
+                                {addressUtils.truncateAddress(dao.address)}
                             </Link>
                         </Clipboard>
                     </div>

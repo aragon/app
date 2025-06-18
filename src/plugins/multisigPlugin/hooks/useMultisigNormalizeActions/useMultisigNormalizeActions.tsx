@@ -1,3 +1,5 @@
+'use client';
+
 import { useMemberList } from '@/modules/governance/api/governanceService';
 import type { INormalizeActionsParams } from '@/modules/governance/types';
 import { useTranslations } from '@/shared/components/translationsProvider';

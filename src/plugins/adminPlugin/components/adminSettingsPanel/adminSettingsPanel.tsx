@@ -1,3 +1,5 @@
+'use client';
+
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Card, IconType } from '@aragon/gov-ui-kit';

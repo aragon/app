@@ -127,6 +127,7 @@ export class PluginRegistryUtils {
 
     registerSlotComponent = (params: IRegisterSlotComponentParams): this => {
         const { slotId, pluginId, component } = params;
+
         this.pluginRegistry = {
             ...this.pluginRegistry,
             slotComponents: {
