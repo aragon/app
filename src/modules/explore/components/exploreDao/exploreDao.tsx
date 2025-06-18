@@ -3,6 +3,7 @@
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkUtils } from '@/shared/utils/networkUtils';
 import { Button, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
@@ -43,7 +44,13 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
     const daoListParams = daoFilter === 'all' ? initialParams : undefined;
     const daoListMemberParams =
         daoFilter === 'member'
-            ? { urlParams: { address: address! }, queryParams: { sort: 'blockTimestamp' } }
+            ? { 
+                urlParams: { address: address! }, 
+                queryParams: { 
+                    sort: 'blockTimestamp',
+                    networks: networkUtils.getMainnetNetworks()
+                } 
+            }
             : undefined;
 
     return (

@@ -147,7 +147,11 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             expect.objectContaining({
                 daoListByMemberParams: {
                     urlParams: { address },
-                    queryParams: { pageSize, excludeDaoId },
+                    queryParams: { 
+                        pageSize, 
+                        excludeDaoId,
+                        networks: expect.any(Array)
+                    },
                 },
             }),
             undefined,
