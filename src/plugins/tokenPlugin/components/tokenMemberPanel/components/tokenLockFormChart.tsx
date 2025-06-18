@@ -73,7 +73,12 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
                 <span className="text-sm text-neutral-500 md:text-base">{displayPoint.x}</span>
             </div>
             <ResponsiveContainer width="100%" height={200}>
-                <AreaChart data={points} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
+                <AreaChart
+                    data={points}
+                    onMouseMove={handleMouseMove}
+                    onMouseLeave={handleMouseLeave}
+                    margin={{ right: 16, left: 4 }}
+                >
                     <defs>
                         <linearGradient id="colorY" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="5%" stopColor="var(--color-primary-400)" stopOpacity={0.8} />
