@@ -135,6 +135,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     );
 
     const handleViewLocks = () => {
+        void refetchLocks();
         const params: ITokenLocksDialogParams = { daoId, plugin, initialParams: lockParams };
         open(TokenPluginDialogId.VIEW_LOCKS, { params });
     };
@@ -150,7 +151,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     const handleTransactionSuccess = () => {
         invalidateQueries();
-        void refetchLocks();
     };
 
     const getDialogProps = (confirmAmount: bigint) => ({

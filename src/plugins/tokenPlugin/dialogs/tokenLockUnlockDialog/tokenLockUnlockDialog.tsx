@@ -112,11 +112,11 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
     const getTransactionType = (action: ActionType) => {
         switch (action) {
             case 'lock':
-                return TransactionType.TOKEN_LOCK;
+                return TransactionType.LOCK_CREATE;
             case 'unlock':
-                return TransactionType.TOKEN_UNLOCK;
+                return TransactionType.EXIT_CREATE;
             case 'withdraw':
-                return TransactionType.TOKEN_WITHDRAW;
+                return TransactionType.WITHDRAW_CREATE;
         }
     };
 
