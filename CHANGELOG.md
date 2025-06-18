@@ -1,5 +1,41 @@
 # @aragon/app-next
 
+## 1.6.0
+
+### Minor Changes
+
+- [#615](https://github.com/aragon/app-next/pull/615) [`81c9193`](https://github.com/aragon/app-next/commit/81c91936b7a76e3156d982ba2c660cf84deac1de) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Implement "all" proposals tab on DAO proposals page
+
+- [#620](https://github.com/aragon/app-next/pull/620) [`6c14e18`](https://github.com/aragon/app-next/commit/6c14e182b0edaed67067042a5ad5faa25698ef44) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#601](https://github.com/aragon/app-next/pull/601) [`bb4bd7a`](https://github.com/aragon/app-next/commit/bb4bd7a70210f5283946cb89a7b4fa11bc81441a) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement custom dashboard page header for Boundless DAO
+
+- [#630](https://github.com/aragon/app-next/pull/630) [`620c865`](https://github.com/aragon/app-next/commit/620c8656a2067e425103844919d8486174185448) Thanks [@dependabot](https://github.com/apps/dependabot)! - Bump vercel to 43.2.0
+
+- [#619](https://github.com/aragon/app-next/pull/619) [`5beca0a`](https://github.com/aragon/app-next/commit/5beca0a0de299b11658c3132667f9dd565e803b7) Thanks [@evanaronson](https://github.com/evanaronson)! - Display token with copy button on members settings
+
+- [#621](https://github.com/aragon/app-next/pull/621) [`675f1b7`](https://github.com/aragon/app-next/commit/675f1b73e45a21555bac3dcb8e4dc6cea421bc2e) Thanks [@dependabot](https://github.com/apps/dependabot)! - Bump `brace-expansion` to 1.1.12
+
+- [#629](https://github.com/aragon/app-next/pull/629) [`b2c0094`](https://github.com/aragon/app-next/commit/b2c0094b2f3afe9721a130a702164adc5f832b52) Thanks [@dependabot](https://github.com/apps/dependabot)! - Bump @types/node to v24
+
+- [#623](https://github.com/aragon/app-next/pull/623) [`76f0fa8`](https://github.com/aragon/app-next/commit/76f0fa88acec3dc18d185a7dc0400598b13e0746) Thanks [@milosh86](https://github.com/milosh86)! - Add support for Corn network
+
+- [#626](https://github.com/aragon/app-next/pull/626) [`0724e18`](https://github.com/aragon/app-next/commit/0724e1899f207d2ea73603b60220568d0ec1fe5b) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update jest to v30
+
+- [#614](https://github.com/aragon/app-next/pull/614) [`988584d`](https://github.com/aragon/app-next/commit/988584d329d91639582fef5da93757da0d88b89e) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#631](https://github.com/aragon/app-next/pull/631) [`8b4e2a2`](https://github.com/aragon/app-next/commit/8b4e2a2b6cf7b4e36cd436d9ded501baad4fd23f) Thanks [@dependabot](https://github.com/apps/dependabot)! - Bump softprops/action-gh-release to 2.3.2
+
+### Patch Changes
+
+- [#625](https://github.com/aragon/app-next/pull/625) [`9ead3e6`](https://github.com/aragon/app-next/commit/9ead3e6b5bbd81fa72b25983a49df32dcb6637c0) Thanks [@evanaronson](https://github.com/evanaronson)! - Fix order of proposals on member pages
+
+- [#624](https://github.com/aragon/app-next/pull/624) [`ef92185`](https://github.com/aragon/app-next/commit/ef9218515d93e61472fa4bdb8da04f6a6371af55) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Fix token validation to block wizard when address is not a valid token
+
+- [#618](https://github.com/aragon/app-next/pull/618) [`aef1bae`](https://github.com/aragon/app-next/commit/aef1baeb650850e5dbe0d20d042372460d1c2dce) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Correctly display proposals slug, hide proposals created on uninstalled plugins
+
+- [#607](https://github.com/aragon/app-next/pull/607) [`ab2b7d5`](https://github.com/aragon/app-next/commit/ab2b7d5cde137fba83e4332a840d95b74dff2057) Thanks [@evanaronson](https://github.com/evanaronson)! - Fix governance token checks for ERC20 compatibility
+
 ## 1.5.0
 
 ### Minor Changes
