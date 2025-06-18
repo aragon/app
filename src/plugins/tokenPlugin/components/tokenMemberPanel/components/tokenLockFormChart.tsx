@@ -2,18 +2,19 @@ import { tokenLocksDialogUtils } from '@/plugins/tokenPlugin/dialogs/tokenLocksD
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { useState } from 'react';
+import { Area, AreaChart, ReferenceDot, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { parseUnits } from 'viem';
 
-export interface IDatum {
+export interface IChartPoint {
     /**
-     * Unique identifier for the data point.
+     * The x-axis label of the chart point - time.
      */
-    id: string;
+    x: string;
     /**
-     * Array of data points for the line chart.
+     * The y-axis value of the chart point - voting power.
      */
-    data: Array<{ x: string | number; y: number }>;
+    y: number;
 }
 
 export interface ITokenLockFormChartProps {
@@ -29,6 +30,7 @@ export interface ITokenLockFormChartProps {
 
 export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) => {
     const { amount, settings } = props;
+    const [hoveredPoint, setHoveredPoint] = useState<IChartPoint>();
 
     const { maxTime } = settings.votingEscrow!;
 
@@ -38,7 +40,7 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
     const numPoints = 6;
     const step = maxTime / (numPoints - 1);
 
-    const points = Array.from({ length: numPoints }, (_, i) => {
+    const points: IChartPoint[] = Array.from({ length: numPoints }, (_, i) => {
         const seconds = i * step;
         const label = i === 0 ? 'Now' : DateTime.now().plus({ seconds }).toFormat('LLL d');
         const votingPower = tokenLocksDialogUtils.calculateVotingPower(parsedAmount.toString(), seconds, settings);
@@ -46,21 +48,36 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
         return { x: label, y: parseFloat(votingPower) };
     });
 
+    const handleMouseMove = (data: {
+        activePayload?: Array<{
+            payload: IChartPoint;
+        }>;
+    }) => {
+        const point = data.activePayload?.[0].payload;
+        setHoveredPoint(point);
+    };
+
+    const handleMouseLeave = () => {
+        setHoveredPoint(undefined);
+    };
+
+    const displayPoint = hoveredPoint ?? points[0];
+
     return (
         <div className="w-full">
             <div className="-mb-10">
                 <p className="font-semibold!">
-                    {formatterUtils.formatNumber(processedAmount, { format: NumberFormat.TOKEN_AMOUNT_SHORT })}{' '}
+                    {formatterUtils.formatNumber(displayPoint.y, { format: NumberFormat.TOKEN_AMOUNT_SHORT })}{' '}
                     <span className="font-normal">Voting power</span>
                 </p>
-                <span className="text-sm text-neutral-500 md:text-base">Now</span>
+                <span className="text-sm text-neutral-500 md:text-base">{displayPoint.x}</span>
             </div>
             <ResponsiveContainer width="100%" height={200}>
-                <AreaChart data={points}>
+                <AreaChart data={points} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
                     <defs>
                         <linearGradient id="colorY" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#3164fa" stopOpacity={0.8} />
-                            <stop offset="95%" stopColor="#3164fa" stopOpacity={0} />
+                            <stop offset="5%" stopColor="var(--color-primary-400)" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="var(--color-primary-400)" stopOpacity={0} />
                         </linearGradient>
                     </defs>
                     <XAxis
@@ -88,10 +105,18 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
                     <Area
                         type="monotone"
                         dataKey="y"
-                        stroke="#3164FA"
+                        stroke="var(--color-primary-400)"
                         strokeWidth={1}
                         fillOpacity={1}
                         fill="url(#colorY)"
+                    />
+                    <ReferenceDot
+                        x={displayPoint.x}
+                        y={displayPoint.y}
+                        r={4}
+                        fill="var(--color-primary-400)"
+                        stroke="var(--color-neutral-0)"
+                        strokeWidth={1}
                     />
                 </AreaChart>
             </ResponsiveContainer>
