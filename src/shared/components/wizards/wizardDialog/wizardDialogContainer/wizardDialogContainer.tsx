@@ -3,6 +3,7 @@ import { Dialog } from '@aragon/gov-ui-kit';
 import type { FieldValues } from 'react-hook-form';
 import { type IWizardFormProps, type IWizardRootProps, Wizard } from '../../wizard';
 import { WizardDialogContainerFooter } from './wizardDialogContainerFooter';
+import { useEffect } from 'react';
 
 export interface IWizardDialogContainerProps<TFormData extends FieldValues = FieldValues>
     extends IWizardRootProps<TFormData>,
@@ -15,14 +16,33 @@ export interface IWizardDialogContainerProps<TFormData extends FieldValues = Fie
      * ID of the form, needed to link the submit button to the form element.
      */
     formId: string;
+    /**
+     * Disable outside click to close the dialog.
+     * @default false
+     */
+    disableOutsideClick?: boolean;
 }
 
 export const WizardDialogContainer = <TFormData extends FieldValues = FieldValues>(
     props: IWizardDialogContainerProps<TFormData>,
 ) => {
-    const { title, formId, initialSteps, submitLabel, onSubmit, children, defaultValues, ...formProps } = props;
+    const {
+        title,
+        formId,
+        initialSteps,
+        submitLabel,
+        onSubmit,
+        children,
+        defaultValues,
+        disableOutsideClick,
+        ...formProps
+    } = props;
 
-    const { close } = useDialogContext();
+    const { close, updateOptions } = useDialogContext();
+
+    useEffect(() => {
+        updateOptions({ disableOutsideClick });
+    }, [disableOutsideClick, updateOptions]);
 
     return (
         <>
