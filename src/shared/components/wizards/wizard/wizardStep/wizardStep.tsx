@@ -7,10 +7,14 @@ export interface IWizardStepProps extends IWizardStepperStep, Omit<ComponentProp
      * Hides the step when set to true.
      */
     hidden?: boolean;
+    /**
+     * Flag to override the default scroll behavior of the dialog.
+     */
+    disableScrollToTop?: boolean;
 }
 
 export const WizardStep: React.FC<IWizardStepProps> = (props) => {
-    const { id, hidden, meta, order, children, className, ...otherProps } = props;
+    const { id, hidden, meta, order, children, className, disableScrollToTop, ...otherProps } = props;
 
     const { activeStep, registerStep, unregisterStep } = useWizardContext();
 
@@ -23,10 +27,10 @@ export const WizardStep: React.FC<IWizardStepProps> = (props) => {
     }, [hidden, unregisterStep, registerStep, id, order, meta]);
 
     useEffect(() => {
-        if (activeStep === id) {
+        if (activeStep === id && !disableScrollToTop) {
             window.scrollTo(0, 0);
         }
-    }, [activeStep, id]);
+    }, [activeStep, id, disableScrollToTop]);
 
     if (activeStep !== id) {
         return null;
