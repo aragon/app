@@ -20,4 +20,4 @@ class NetworkUtils {
     };
 }
 
-export const networkUtils = new NetworkUtils(); 
+export const networkUtils = new NetworkUtils();

@@ -1,6 +1,7 @@
 import { DaoList } from '@/modules/explore/components/daoList';
 import * as efpService from '@/modules/governance/api/efpService';
 import * as daoService from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import {
     addressUtils,
@@ -147,10 +148,10 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             expect.objectContaining({
                 daoListByMemberParams: {
                     urlParams: { address },
-                    queryParams: { 
-                        pageSize, 
+                    queryParams: {
+                        pageSize,
                         excludeDaoId,
-                        networks: expect.any(Array)
+                        networks: expect.any(Array) as Network[],
                     },
                 },
             }),

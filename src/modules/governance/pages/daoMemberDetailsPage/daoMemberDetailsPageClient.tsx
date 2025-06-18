@@ -8,8 +8,8 @@ import { Page } from '@/shared/components/page';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { networkUtils } from '@/shared/utils/networkUtils';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
+import { networkUtils } from '@/shared/utils/networkUtils';
 import {
     addressUtils,
     ChainEntityType,
@@ -114,10 +114,10 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
 
     const daoListByMemberParams = {
         urlParams: { address },
-        queryParams: { 
-            pageSize: memberDaosCount, 
+        queryParams: {
+            pageSize: memberDaosCount,
             excludeDaoId: daoId,
-            networks: networkUtils.getMainnetNetworks()
+            networks: networkUtils.getMainnetNetworks(),
         },
     };
 
