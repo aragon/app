@@ -19,7 +19,7 @@ export interface IPluginInfo extends IPlugin {
      */
     setup?: IPluginInfoSetup;
     /**
-     *
+     * Plugin-specific pages shown on the DAO navigation.
      */
     pages?: (baseUrl: string, context: string) => INavigationLink[];
 }

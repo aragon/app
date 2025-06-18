@@ -2,6 +2,11 @@ import { Network } from '@/shared/api/daoService';
 import type { IPluginInfo } from '@/shared/types';
 import { IconType } from '@aragon/gov-ui-kit';
 
+export enum CapitalDistributorPluginPages {
+    REWARDS = 'rewards',
+}
+
+// TODO: update values
 export const capitalDistributorPlugin: IPluginInfo = {
     id: 'capital-distributor',
     name: 'Capital Distributor',
@@ -21,7 +26,7 @@ export const capitalDistributorPlugin: IPluginInfo = {
     pages: (baseUrl, context) => [
         {
             label: 'app.plugins.capitalDistributor.meta.link.rewards',
-            link: `${baseUrl}/rewards`,
+            link: `${baseUrl}/${CapitalDistributorPluginPages.REWARDS}`,
             icon: IconType.APP_ASSETS,
             lgHidden: context === 'dialog',
         },

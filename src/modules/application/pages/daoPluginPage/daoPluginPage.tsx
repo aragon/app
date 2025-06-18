@@ -30,7 +30,7 @@ export const DaoPluginPage: React.FC<IDaoPluginPageProps> = async (props) => {
     const daoParams = { urlParams: { id: daoId } };
     const dao = await queryClient.fetchQuery(daoOptions(daoParams));
 
-    const slotId = `${ApplicationSlotId.APPLICATION_PLUGIN_PAGE}-${segments.toString()}`;
+    const slotId = pluginRegistryUtils.getPageSlotId(ApplicationSlotId.APPLICATION_PLUGIN_PAGE, segments);
     const [Component] = dao.plugins.reduce<Array<PluginComponent | undefined>>((current, plugin) => {
         const pluginComponent = pluginRegistryUtils.getSlotComponent({ slotId, pluginId: plugin.subdomain });
         return current.concat(pluginComponent ?? []);

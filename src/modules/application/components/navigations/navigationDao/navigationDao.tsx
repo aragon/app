@@ -20,7 +20,7 @@ import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { Navigation, type INavigationContainerProps } from '../navigation';
 import { NavigationDaoHome } from './navigationDaoHome';
-import { navigationDaoLinks } from './navigationDaoLinks';
+import { navigationDaoUtils } from './navigationDaoUtils';
 
 export interface INavigationDaoProps extends INavigationContainerProps {
     /**
@@ -56,7 +56,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
         >
             <div className="flex items-center justify-between gap-1">
                 <NavigationDaoHome dao={dao} onClick={() => setIsDialogOpen(true)} />
-                <Navigation.Links className="hidden lg:flex" links={navigationDaoLinks(dao, 'page')} />
+                <Navigation.Links className="hidden lg:flex" links={navigationDaoUtils.buildLinks(dao, 'page')} />
                 <div className="flex items-center gap-x-2 lg:gap-x-3">
                     <Navigation.AppLinks dao={dao} />
                     <Wallet onClick={handleWalletClick} user={walletUser} />
@@ -64,7 +64,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                 </div>
             </div>
             <Navigation.Dialog
-                links={navigationDaoLinks(dao, 'dialog')}
+                links={navigationDaoUtils.buildLinks(dao, 'dialog')}
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
                 hiddenTitle={t('app.application.navigationDao.a11y.title')}
