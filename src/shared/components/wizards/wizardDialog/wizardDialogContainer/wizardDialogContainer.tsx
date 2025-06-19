@@ -40,7 +40,9 @@ export const WizardDialogContainer = <TFormData extends FieldValues = FieldValue
     const { close, updateOptions } = useDialogContext();
 
     useEffect(() => {
-        updateOptions({ disableOutsideClick });
+        if (disableOutsideClick) {
+            updateOptions({ disableOutsideClick });
+        }
     }, [disableOutsideClick, updateOptions]);
 
     return (
