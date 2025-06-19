@@ -120,7 +120,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
             pageSize: memberDaosCount,
             excludeDaoId: daoId,
             sort: 'blockTimestamp',
-            networks: networkUtils.getMainnetNetworks(),
+            networks: networkUtils.getSupportedNetworks(),
         },
     };
 

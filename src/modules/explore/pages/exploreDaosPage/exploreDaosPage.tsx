@@ -12,9 +12,12 @@ const daosPerPage = 10;
 export const ExploreDaosPage: React.FC<IExploreDaosPageProps> = async () => {
     const queryClient = new QueryClient();
 
-    const mainnetNetworks = networkUtils.getMainnetNetworks();
-
-    const daoListQueryParams = { pageSize: daosPerPage, page: 1, sort: 'metrics.tvlUSD', networks: mainnetNetworks };
+    const daoListQueryParams = {
+        pageSize: daosPerPage,
+        page: 1,
+        sort: 'metrics.tvlUSD',
+        networks: networkUtils.getMainnetNetworks(),
+    };
     const daoListParams = { queryParams: daoListQueryParams };
     await queryClient.prefetchInfiniteQuery(daoListOptions(daoListParams));
     await queryClient.prefetchQuery(featuredDaosOptions());

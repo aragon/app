@@ -45,7 +45,7 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
         daoFilter === 'member' && address != null
             ? {
                   urlParams: { address },
-                  queryParams: { sort: 'blockTimestamp', networks: networkUtils.getMainnetNetworks() },
+                  queryParams: { sort: 'blockTimestamp', networks: networkUtils.getSupportedNetworks() },
               }
             : undefined;
 
