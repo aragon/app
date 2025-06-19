@@ -8,7 +8,7 @@ export interface IWizardStepProps extends IWizardStepperStep, Omit<ComponentProp
      */
     hidden?: boolean;
     /**
-     * Flag to override the default scroll behavior of the dialog.
+     * Flag to override the default scroll behavior of the wizard step, primarily when step is inside a dialog.
      */
     disableScrollToTop?: boolean;
 }
