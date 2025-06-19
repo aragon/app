@@ -30,7 +30,7 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
     const { t } = useTranslations();
 
     if (!proposal) {
-        return <p className="text-neutral-800">{name}</p>;
+        return <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">{name}</p>;
     }
 
     const { supportThreshold, historicalTotalSupply } = proposal.settings;
