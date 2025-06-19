@@ -1,9 +1,9 @@
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Dialog } from '@aragon/gov-ui-kit';
+import { useEffect } from 'react';
 import type { FieldValues } from 'react-hook-form';
 import { type IWizardFormProps, type IWizardRootProps, Wizard } from '../../wizard';
 import { WizardDialogContainerFooter } from './wizardDialogContainerFooter';
-import { useEffect } from 'react';
 
 export interface IWizardDialogContainerProps<TFormData extends FieldValues = FieldValues>
     extends IWizardRootProps<TFormData>,
