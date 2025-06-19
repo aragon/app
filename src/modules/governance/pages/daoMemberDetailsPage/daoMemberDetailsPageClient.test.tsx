@@ -1,6 +1,5 @@
 import { DaoList } from '@/modules/explore/components/daoList';
 import * as efpService from '@/modules/governance/api/efpService';
-import type { Network } from '@/shared/api/daoService';
 import * as daoService from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import {
@@ -14,6 +13,7 @@ import {
 import type * as ReactQuery from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { networkUtils } from '../../../../shared/utils/networkUtils';
 import * as governanceService from '../../api/governanceService';
 import { generateMember, generateMemberMetrics } from '../../testUtils';
 import { DaoMemberDetailsPageClient, type IDaoMemberDetailsPageClientProps } from './daoMemberDetailsPageClient';
@@ -144,7 +144,12 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         render(createTestComponent({ address, daoId }));
         const expectedParams = {
             urlParams: { address },
-            queryParams: { pageSize, excludeDaoId, sort: 'blockTimestamp', networks: expect.any(Array) as Network[] },
+            queryParams: {
+                pageSize,
+                excludeDaoId,
+                sort: 'blockTimestamp',
+                networks: networkUtils.getSupportedNetworks(),
+            },
         };
         expect(DaoList).toHaveBeenCalledWith(expect.objectContaining({ memberParams: expectedParams }), undefined);
     });
