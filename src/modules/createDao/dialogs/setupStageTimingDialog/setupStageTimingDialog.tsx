@@ -26,6 +26,7 @@ export interface ISetupStageTimingDialogParams {
 export interface ISetupStageTimingDialogProps extends IDialogComponentProps<ISetupStageTimingDialogParams> {}
 
 const defaultExpiration = { days: 7, hours: 0, minutes: 0 };
+const defaultStageDuration = { days: 0, hours: 1, minutes: 0 };
 
 const formId = 'stageTimingForm';
 
@@ -92,6 +93,9 @@ export const SetupStageTimingDialog: React.FC<ISetupStageTimingDialogProps> = (p
                                 label={t(`app.createDao.setupStageTimingDialog.${context}.label`)}
                                 infoDisplay="inline"
                                 infoText={votingPeriodInfoText}
+                                validateMinDuration={true}
+                                minDuration={defaultStageDuration}
+                                validateOnChange={true}
                             />
                         </Card>
                     </InputContainer>
@@ -132,6 +136,10 @@ export const SetupStageTimingDialog: React.FC<ISetupStageTimingDialogProps> = (p
                     label: t('app.createDao.setupStageTimingDialog.action.save'),
                     type: 'submit',
                     form: formId,
+                    // Disable save button if the form is invalid
+                    // This is needed because parent form does not show validation
+                    // and just reverts to default 7 days when the form is invalid
+                    disabled: !formMethods.formState.isValid,
                 }}
                 secondaryAction={{
                     label: t('app.createDao.setupStageTimingDialog.action.cancel'),

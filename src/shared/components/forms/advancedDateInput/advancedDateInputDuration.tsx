@@ -20,6 +20,11 @@ export interface IAdvancedDateInputDurationProps
      * Exposes the duration as seconds on the form when set to true.
      */
     useSecondsFormat?: boolean;
+    /**
+     * Flag to determine whether we should validate on change.
+     * @default false
+     */
+    validateOnChange?: boolean;
 }
 
 export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps> = (props) => {
@@ -33,6 +38,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
         className,
         defaultValue,
         useSecondsFormat,
+        validateOnChange = false,
         ...otherProps
     } = props;
     const { t } = useTranslations();
@@ -70,7 +76,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
         const numericValue = isNaN(parsedValue) ? 0 : parsedValue;
         const newValue = { ...currentDurationObject, [type]: numericValue };
         const processedNewValue = useSecondsFormat ? dateUtils.durationToSeconds(newValue) : newValue;
-        setValue(field, processedNewValue, { shouldValidate: false });
+        setValue(field, processedNewValue, { shouldValidate: validateOnChange });
     };
 
     const handleInputBlur = () => trigger(field);
