@@ -7,7 +7,7 @@ import { Button, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
-import { DaoList } from '../../components/daoList';
+import { DaoList } from '../daoList';
 
 export interface IExploreDaosProps {
     /**
@@ -40,10 +40,9 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
         }
     }, [address, daoFilter]);
 
-    const daoListParams = daoFilter === 'all' ? initialParams : undefined;
-    const daoListMemberParams =
-        daoFilter === 'member'
-            ? { urlParams: { address: address! }, queryParams: { sort: 'blockTimestamp' } }
+    const memberParams =
+        daoFilter === 'member' && address != null
+            ? { urlParams: { address }, queryParams: { sort: 'blockTimestamp' } }
             : undefined;
 
     return (
@@ -71,7 +70,7 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
                     {t('app.explore.exploreDao.createDao')}
                 </Button>
             </div>
-            <DaoList initialParams={daoListParams} daoListByMemberParams={daoListMemberParams} showSearch={true} />
+            <DaoList initialParams={initialParams} memberParams={memberParams} showSearch={true} />
         </div>
     );
 };
