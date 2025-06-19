@@ -18,7 +18,6 @@ export interface IWizardDialogContainerProps<TFormData extends FieldValues = Fie
     formId: string;
     /**
      * Disable outside click to close the dialog.
-     * @default false
      */
     disableOutsideClick?: boolean;
 }

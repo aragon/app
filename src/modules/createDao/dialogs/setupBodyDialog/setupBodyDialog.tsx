@@ -42,12 +42,7 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
             submitLabel={t('app.createDao.setupBodyDialog.submit')}
             disableOutsideClick={true}
         >
-            <SetupBodyDialogSteps
-                initialValues={initialValues}
-                daoId={daoId}
-                isSubPlugin={isSubPlugin}
-                disableScrollToTop={true}
-            />
+            <SetupBodyDialogSteps initialValues={initialValues} daoId={daoId} isSubPlugin={isSubPlugin} />
         </WizardDialog.Container>
     );
 };
