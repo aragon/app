@@ -30,7 +30,9 @@ export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (props
     return (
         <div className="flex w-full flex-col gap-y-6">
             <SupportThresholdField formPrefix={formPrefix} />
-            <MinParticipationField formPrefix={formPrefix} token={membershipSettings.token} />
+            {membershipSettings.token.totalSupply !== '0' && (
+                <MinParticipationField formPrefix={formPrefix} token={membershipSettings.token} />
+            )}
             {!isSubPlugin && (
                 <InputContainer
                     className="flex flex-col gap-6"
