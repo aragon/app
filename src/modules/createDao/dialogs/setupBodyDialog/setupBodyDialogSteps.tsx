@@ -2,7 +2,7 @@ import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import { useWatch } from 'react-hook-form';
 import type { ISetupBodyForm } from './setupBodyDialogDefinitions';
 import { SetupBodyDialogGovernance } from './setupBodyDialogGovernance';
-import { SetupBodyDialogMemberhip } from './setupBodyDialogMembership';
+import { SetupBodyDialogMembership } from './setupBodyDialogMembership';
 import { SetupBodyDialogMetadata } from './setupBodyDialogMetadata';
 import { externalPluginId, SetupBodyDialogSelect } from './setupBodyDialogSelect';
 import { SetupBodyDialogExternalAddress } from './setupBodySialogExternalAddress';
@@ -20,10 +20,6 @@ export interface ISetupBodyDialogStepsProps {
      * ID of the DAO.
      */
     daoId: string;
-    /**
-     * Flag to override the default scroll behavior of the dialog.
-     */
-    disableScrollToTop?: boolean;
 }
 
 const setupBodySteps = [
@@ -35,7 +31,7 @@ const setupBodySteps = [
 ];
 
 export const SetupBodyDialogSteps: React.FC<ISetupBodyDialogStepsProps> = (props) => {
-    const { initialValues, isSubPlugin, daoId, disableScrollToTop } = props;
+    const { initialValues, isSubPlugin, daoId } = props;
 
     const selectedPlugin = useWatch<ISetupBodyForm, 'plugin'>({ name: 'plugin' });
     const isExternalPlugin = selectedPlugin === externalPluginId;
@@ -44,23 +40,19 @@ export const SetupBodyDialogSteps: React.FC<ISetupBodyDialogStepsProps> = (props
 
     return (
         <>
-            <WizardDialog.Step disableScrollToTop={disableScrollToTop} {...selectStep} hidden={initialValues != null}>
+            <WizardDialog.Step {...selectStep} hidden={initialValues != null}>
                 <SetupBodyDialogSelect isSubPlugin={isSubPlugin} />
             </WizardDialog.Step>
-            <WizardDialog.Step
-                disableScrollToTop={disableScrollToTop}
-                {...metadataStep}
-                hidden={!isSubPlugin || isExternalPlugin}
-            >
+            <WizardDialog.Step {...metadataStep} hidden={!isSubPlugin || isExternalPlugin}>
                 <SetupBodyDialogMetadata />
             </WizardDialog.Step>
-            <WizardDialog.Step disableScrollToTop={disableScrollToTop} {...externalAddress} hidden={!isExternalPlugin}>
+            <WizardDialog.Step {...externalAddress} hidden={!isExternalPlugin}>
                 <SetupBodyDialogExternalAddress />
             </WizardDialog.Step>
-            <WizardDialog.Step disableScrollToTop={disableScrollToTop} {...membershipStep} hidden={isExternalPlugin}>
-                <SetupBodyDialogMemberhip daoId={daoId} />
+            <WizardDialog.Step {...membershipStep} hidden={isExternalPlugin}>
+                <SetupBodyDialogMembership daoId={daoId} />
             </WizardDialog.Step>
-            <WizardDialog.Step disableScrollToTop={disableScrollToTop} {...governanceStep} hidden={isExternalPlugin}>
+            <WizardDialog.Step {...governanceStep} hidden={isExternalPlugin}>
                 <SetupBodyDialogGovernance isSubPlugin={isSubPlugin} />
             </WizardDialog.Step>
         </>
