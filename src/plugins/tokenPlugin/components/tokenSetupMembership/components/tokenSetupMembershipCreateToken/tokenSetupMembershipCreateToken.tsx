@@ -57,9 +57,7 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
             fieldPrefix: tokenFormPrefix,
             rules: {
                 required: true,
-                validate: (value) =>
-                    symbolRegex.test(value) ||
-                    'app.plugins.token.tokenSetupMembership.createToken.symbol.validationText',
+                // symbol validation enforced by the regex in handleSymbolChange, so no need to validate it here!
             },
         },
     );
