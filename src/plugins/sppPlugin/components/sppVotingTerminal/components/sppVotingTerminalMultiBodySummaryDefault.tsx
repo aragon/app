@@ -2,7 +2,7 @@ import { type ISppProposal, type ISppStage } from '@/plugins/sppPlugin/types';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { addressUtils } from '@aragon/gov-ui-kit';
+import { addressUtils, ProposalStatus } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { Hex } from 'viem';
 import { mainnet } from 'viem/chains';
@@ -37,9 +37,10 @@ export const SppVotingTerminalMultiBodySummaryDefault: React.FC<ISppVotingTermin
 
     const subProposal = sppStageUtils.getBodySubProposal(proposal, body, stage.stageIndex);
 
+    const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
     const { label, style } = sppProposalUtils.getBodyResultStatus({ proposal, body, stage, canVote });
 
-    if (subProposal == null) {
+    if (stageStatus === ProposalStatus.PENDING) {
         return (
             <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
                 {ensName ?? addressUtils.truncateAddress(body)}
