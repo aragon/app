@@ -58,7 +58,8 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
             rules: {
                 required: true,
                 validate: (value) =>
-                    symbolRegex.test(value) || 'app.plugins.token.tokenSetupMembership.createToken.symbol.onlyLetters',
+                    symbolRegex.test(value) ||
+                    'app.plugins.token.tokenSetupMembership.createToken.symbol.validationText',
             },
         },
     );
