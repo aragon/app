@@ -1,7 +1,7 @@
 import { DaoList } from '@/modules/explore/components/daoList';
 import * as efpService from '@/modules/governance/api/efpService';
+import type { Network } from '@/shared/api/daoService';
 import * as daoService from '@/shared/api/daoService';
-import { Network } from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import {
     addressUtils,

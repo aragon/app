@@ -116,7 +116,12 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
 
     const daosByMemberParams = {
         urlParams: { address },
-        queryParams: { pageSize: memberDaosCount, excludeDaoId: daoId, sort: 'blockTimestamp', networks: networkUtils.getMainnetNetworks() },
+        queryParams: {
+            pageSize: memberDaosCount,
+            excludeDaoId: daoId,
+            sort: 'blockTimestamp',
+            networks: networkUtils.getMainnetNetworks(),
+        },
     };
 
     return (
