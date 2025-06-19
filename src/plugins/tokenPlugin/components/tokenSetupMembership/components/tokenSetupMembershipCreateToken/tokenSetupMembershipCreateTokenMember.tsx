@@ -49,9 +49,9 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
         const errorNamespace = 'app.shared.addressesInput.item.input.error';
 
         if (!addressUtils.isAddress(value)) {
-            return t(`${errorNamespace}.invalid`);
+            return `${errorNamespace}.invalid`;
         } else if (checkIsAlreadyInList(index, value)) {
-            return t(`${errorNamespace}.alreadyInList`);
+            return `${errorNamespace}.alreadyInList`;
         }
 
         return true;
