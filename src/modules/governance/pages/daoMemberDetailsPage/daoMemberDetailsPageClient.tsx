@@ -108,17 +108,15 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         { label: memberName },
     ];
 
-    const proposalsByMemberParams = { queryParams: { daoId, creatorAddress: address, pageSize: memberProposalsCount } };
+    const proposalsByMemberParams = {
+        queryParams: { daoId, creatorAddress: address, pageSize: memberProposalsCount, sort: 'blockTimestamp' },
+    };
 
     const votesByMemberParams = { queryParams: { daoId, address, includeInfo: true, pageSize: memberVotesCount } };
 
-    const daoListByMemberParams = {
+    const daosByMemberParams = {
         urlParams: { address },
-        queryParams: {
-            pageSize: memberDaosCount,
-            excludeDaoId: daoId,
-            networks: networkUtils.getMainnetNetworks(),
-        },
+        queryParams: { pageSize: memberDaosCount, excludeDaoId: daoId, sort: 'blockTimestamp', networks: networkUtils.getMainnetNetworks() },
     };
 
     return (
@@ -138,7 +136,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                         <DaoProposalList initialParams={proposalsByMemberParams} />
                     </Page.MainSection>
                     <Page.MainSection title={t('app.governance.daoMemberDetailsPage.main.daoMemberships.title')}>
-                        <DaoList daoListByMemberParams={daoListByMemberParams} layoutClassNames="grid grid-cols-1" />
+                        <DaoList memberParams={daosByMemberParams} layoutClassNames="grid grid-cols-1" />
                     </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>

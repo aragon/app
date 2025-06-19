@@ -38,8 +38,9 @@ describe('useGovernanceToken hook', () => {
         expect(useVotesCheckSpy).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
     });
 
-    it('correctly return the token and check results', () => {
+    it('returns the token and results of the checks', () => {
         const token = generateToken();
+        useErc20CheckSpy.mockReturnValue({ isLoading: false, isError: false, data: true });
         useTokenSpy.mockReturnValue({ isLoading: false, isError: false, data: token });
         useDelegationCheckSpy.mockReturnValue({ isLoading: false, isError: false, data: true });
         useVotesCheckSpy.mockReturnValue({ isLoading: false, isError: false, data: true });
@@ -48,5 +49,18 @@ describe('useGovernanceToken hook', () => {
         expect(result.current.data.token).toEqual(token);
         expect(result.current.data.isDelegationCompatible).toBeTruthy();
         expect(result.current.data.isGovernanceCompatible).toBeTruthy();
+    });
+
+    it('returns fallback token when ERC20 check succeed but token data fetch does not', () => {
+        useTokenSpy.mockReturnValue({ isLoading: false, isError: true, data: null });
+        useErc20CheckSpy.mockReturnValue({ isLoading: false, isError: false, data: true });
+        const { result } = renderHook(() => useGovernanceToken({ address: '0x123', chainId: 1 }));
+        expect(result.current.data.token?.name).toEqual('Unknown');
+    });
+
+    it('returns null token when ERC20 check fails', () => {
+        useErc20CheckSpy.mockReturnValue({ isLoading: false, isError: true, data: false });
+        const { result } = renderHook(() => useGovernanceToken({ address: '0x123', chainId: 1 }));
+        expect(result.current.data.token).toBeNull();
     });
 });
