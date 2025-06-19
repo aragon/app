@@ -11,7 +11,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useCallback, useState } from 'react';
-import type { ITokenSetupMembershipMember } from '../../tokenSetupMembership.api';
+import type { ITokenSetupMembershipForm, ITokenSetupMembershipMember } from '../../tokenSetupMembership.api';
 
 export interface ITokenSetupMembershipCreateTokenMemberProps {
     /**
@@ -26,13 +26,36 @@ export interface ITokenSetupMembershipCreateTokenMemberProps {
      * Callback triggered on remove button click.
      */
     onRemove?: () => void;
+    /**
+     * Current index of this member in the array
+     */
+    index: number;
+    /**
+     * All members in the list for duplicate checking
+     */
+    allMembers: ITokenSetupMembershipForm['members'];
 }
 export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembershipCreateTokenMemberProps> = (props) => {
-    const { formPrefix, onRemove, initialValue } = props;
+    const { formPrefix, onRemove, initialValue, index, allMembers } = props;
 
     const { t } = useTranslations();
 
     const [memberInput, setMemberInput] = useState<string | undefined>(initialValue);
+
+    const checkIsAlreadyInList = (currentIndex: number, address: string) =>
+        allMembers.slice(0, currentIndex).some((member) => addressUtils.isAddressEqual(member.address, address));
+
+    const validateAddress = (value: string) => {
+        const errorNamespace = 'app.shared.addressesInput.item.input.error';
+
+        if (!addressUtils.isAddress(value)) {
+            return t(`${errorNamespace}.invalid`);
+        } else if (checkIsAlreadyInList(index, value)) {
+            return t(`${errorNamespace}.alreadyInList`);
+        }
+
+        return true;
+    };
 
     const {
         onChange: onMemberChange,
@@ -40,7 +63,7 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
         ...memberField
     } = useFormField<ITokenSetupMembershipMember, 'address'>('address', {
         label: t('app.plugins.token.tokenSetupMembership.createToken.member.address.label'),
-        rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
+        rules: { required: true, validate: validateAddress },
         fieldPrefix: formPrefix,
     });
 

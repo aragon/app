@@ -104,6 +104,8 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
                         key={member.id}
                         formPrefix={`${membersFieldName}.${index.toString()}`}
                         initialValue={member.address}
+                        index={index}
+                        allMembers={controlledMembersField}
                         onRemove={membersField.length > 1 ? () => removeMember(index) : undefined}
                     />
                 ))}
