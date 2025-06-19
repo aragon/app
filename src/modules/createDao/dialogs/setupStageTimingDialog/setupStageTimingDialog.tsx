@@ -42,7 +42,8 @@ export const SetupStageTimingDialog: React.FC<ISetupStageTimingDialogProps> = (p
     const [displayExpiration, setDisplayExpiration] = useState(defaultValues.stageExpiration != null);
 
     const formMethods = useForm<ISetupStageTimingForm>({ mode: 'onTouched', defaultValues });
-    const { control, handleSubmit, setValue } = formMethods;
+    const { control, handleSubmit, setValue, formState } = formMethods;
+    const { isValid } = formState;
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
@@ -67,7 +68,9 @@ export const SetupStageTimingDialog: React.FC<ISetupStageTimingDialogProps> = (p
         event.preventDefault();
         event.stopPropagation();
         void handleSubmit(onSubmit)(event);
-        close();
+        if (isValid) {
+            close();
+        }
     };
 
     const context = isTimelockStage ? 'timelockPeriod' : 'votingPeriod';
@@ -136,10 +139,6 @@ export const SetupStageTimingDialog: React.FC<ISetupStageTimingDialogProps> = (p
                     label: t('app.createDao.setupStageTimingDialog.action.save'),
                     type: 'submit',
                     form: formId,
-                    // Disable save button if the form is invalid
-                    // This is needed because parent form does not show validation
-                    // and just reverts to default 7 days when the form is invalid
-                    disabled: !formMethods.formState.isValid,
                 }}
                 secondaryAction={{
                     label: t('app.createDao.setupStageTimingDialog.action.cancel'),
