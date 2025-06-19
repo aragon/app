@@ -28,9 +28,9 @@ export interface IDaoListProps {
      */
     initialParams?: IGetDaoListParams;
     /**
-     * Member parameters to use for fetching the list of DAOs for a given address.
+     * Parameters to use for fetching the list of DAOs for a given address. Overrides the initialParams when set.
      */
-    daoListByMemberParams?: IGetDaoListByMemberAddressParams;
+    memberParams?: IGetDaoListByMemberAddressParams;
     /**
      * Overrides the custom layout classes when set.
      */
@@ -42,49 +42,36 @@ export interface IDaoListProps {
 }
 
 export const DaoList: React.FC<IDaoListProps> = (props) => {
-    const { initialParams, daoListByMemberParams, layoutClassNames, showSearch } = props;
+    const { initialParams, memberParams, layoutClassNames, showSearch } = props;
     const { t } = useTranslations();
 
     invariant(
-        !((!initialParams && !daoListByMemberParams) || (initialParams && daoListByMemberParams)),
-        'Either `initialParams` or `daoListByMemberParams` must be provided. You can not provide both.',
+        initialParams != null || memberParams != null,
+        'DaoList: either initialParams or memberParams must be provided',
     );
 
     const [searchValue, setSearchValue] = useState<string>();
     const [searchValueDebounced] = useDebouncedValue(searchValue, { delay: 500 });
 
-    const enableDaoList = initialParams != null && !daoListByMemberParams;
-    const daoListResult = useDaoList(
-        {
-            // Add search value to the query params
-            ...initialParams,
-            queryParams: { ...initialParams?.queryParams, search: searchValueDebounced },
-        },
-        { enabled: enableDaoList },
+    const defaultResult = useDaoList(
+        { ...initialParams, queryParams: { ...initialParams?.queryParams, search: searchValueDebounced } },
+        { enabled: initialParams != null && memberParams == null },
     );
 
-    const enableDaoListByMember = daoListByMemberParams != null && !initialParams;
-    const daoListByMember = useDaoListByMemberAddress(
-        {
-            // Add search value to the query params
-            ...daoListByMemberParams!,
-            queryParams: { ...daoListByMemberParams?.queryParams, search: searchValueDebounced },
-        },
-        { enabled: enableDaoListByMember },
+    const memberResult = useDaoListByMemberAddress(
+        { ...memberParams!, queryParams: { ...memberParams?.queryParams, search: searchValueDebounced } },
+        { enabled: memberParams != null },
     );
 
-    const { data, fetchNextPage, status, fetchStatus, isFetchingNextPage } = initialParams
-        ? daoListResult
-        : daoListByMember;
+    const { data, fetchNextPage, status, fetchStatus, isFetchingNextPage } =
+        memberParams != null ? memberResult : defaultResult;
 
     const daoList = data?.pages.flatMap((page) => page.data);
 
     const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
 
     const pageSize =
-        initialParams?.queryParams.pageSize ??
-        daoListByMemberParams?.queryParams.pageSize ??
-        data?.pages[0]?.metadata?.pageSize;
+        initialParams?.queryParams.pageSize ?? memberParams?.queryParams.pageSize ?? data?.pages[0]?.metadata?.pageSize;
 
     const itemsCount = data?.pages[0]?.metadata?.totalRecords;
 
