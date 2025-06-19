@@ -27,11 +27,11 @@ export interface ITokenSetupMembershipCreateTokenMemberProps {
      */
     onRemove?: () => void;
     /**
-     * Current index of this member in the array
+     * Current index of this member in the array.
      */
     index: number;
     /**
-     * All members in the list for duplicate checking
+     * All members in the list for duplicate checking.
      */
     allMembers: ITokenSetupMembershipForm['members'];
 }
