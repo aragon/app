@@ -35,8 +35,6 @@ export const SppVotingTerminalMultiBodySummaryDefault: React.FC<ISppVotingTermin
     const { t } = useTranslations();
     const { data: ensName } = useEnsName({ address: body as Hex, chainId: mainnet.id });
 
-    const subProposal = sppStageUtils.getBodySubProposal(proposal, body, stage.stageIndex);
-
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
     const { label, style } = sppProposalUtils.getBodyResultStatus({ proposal, body, stage, canVote });
 
