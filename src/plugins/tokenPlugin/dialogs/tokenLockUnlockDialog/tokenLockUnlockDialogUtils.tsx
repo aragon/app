@@ -1,24 +1,18 @@
 import { encodeFunctionData, type Hex } from 'viem';
 
-const lockAbi = [
+const veAbi = [
     {
         type: 'function',
         name: 'createLock',
         inputs: [{ name: 'value', type: 'uint256' }],
         outputs: [],
     },
-];
-
-const unlockAbi = [
     {
         type: 'function',
         name: 'beginWithdrawal',
         inputs: [{ name: 'tokenId', type: 'uint256' }],
         outputs: [],
     },
-];
-
-const withdrawAbi = [
     {
         type: 'function',
         name: 'withdraw',
@@ -30,7 +24,7 @@ const withdrawAbi = [
 class TokenLockUnlockDialogUtils {
     buildLockTransaction = (amount: bigint, escrowContract: string) => {
         const transactionData = encodeFunctionData({
-            abi: lockAbi,
+            abi: veAbi,
             functionName: 'createLock',
             args: [amount],
         });
@@ -41,7 +35,7 @@ class TokenLockUnlockDialogUtils {
 
     buildUnlockTransaction = (tokenId: bigint, escrowContract: string) => {
         const transactionData = encodeFunctionData({
-            abi: unlockAbi,
+            abi: veAbi,
             functionName: 'beginWithdrawal',
             args: [tokenId],
         });
@@ -52,7 +46,7 @@ class TokenLockUnlockDialogUtils {
 
     buildWithdrawTransaction = (tokenId: bigint, escrowContract: string) => {
         const transactionData = encodeFunctionData({
-            abi: withdrawAbi,
+            abi: veAbi,
             functionName: 'withdraw',
             args: [tokenId],
         });

@@ -40,6 +40,10 @@ export interface ITokenWrapUnwrapDialogParams {
      * Callback called on wrap / unwrap transaction success.
      */
     onSuccess?: () => void;
+    /**
+     * Flag indicating whether to show the transaction info step in the dialog. Only shown when part of a two step transaction.
+     */
+    showTransactionInfo: boolean;
 }
 
 export interface ITokenWrapUnwrapDialogProps extends IDialogComponentProps<ITokenWrapUnwrapDialogParams> {}
@@ -51,7 +55,7 @@ export const TokenWrapUnwrapDialog: React.FC<ITokenWrapUnwrapDialogProps> = (pro
     const { address } = useAccount();
     invariant(address != null, 'TokenWrapUnwrapDialog: user must be connected to perform the action');
 
-    const { action, token, underlyingToken, amount, network, onSuccess } = location.params;
+    const { action, token, underlyingToken, amount, network, onSuccess, showTransactionInfo } = location.params;
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -71,6 +75,16 @@ export const TokenWrapUnwrapDialog: React.FC<ITokenWrapUnwrapDialogProps> = (pro
     const parsedAmount = formatUnits(amount, token.decimals);
     const assetToken = action === 'wrap' ? underlyingToken : token;
 
+    const transactionInfo = showTransactionInfo
+        ? {
+              title: t('app.plugins.token.tokenWrapUnwrapDialog.transactionInfoTitle', {
+                  symbol: assetToken.symbol,
+              }),
+              current: 2,
+              total: 2,
+          }
+        : undefined;
+
     return (
         <TransactionDialog
             title={t(`app.plugins.token.tokenWrapUnwrapDialog.${action}.title`)}
@@ -84,13 +98,7 @@ export const TokenWrapUnwrapDialog: React.FC<ITokenWrapUnwrapDialogProps> = (pro
                 label: t(`app.plugins.token.tokenWrapUnwrapDialog.${action}.success`),
                 onClick: onSuccessClick,
             }}
-            transactionInfo={{
-                title: t('app.plugins.token.tokenWrapUnwrapDialog.transactionInfoTitle', {
-                    symbol: assetToken.symbol,
-                }),
-                current: 2,
-                total: 2,
-            }}
+            transactionInfo={transactionInfo}
         >
             <AssetDataListItem.Structure
                 logoSrc={assetToken.logo}

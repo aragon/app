@@ -19,7 +19,7 @@ export interface ITokenApproveNftDialogParams {
      */
     tokenAddress: Hex;
     /**
-     * The token ID to approve.
+     * The ID of the token to approve.
      */
     tokenId: bigint;
     /**

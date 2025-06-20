@@ -36,12 +36,14 @@ const valuePercentages = ['0', '25', '50', '75', '100'];
 export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { plugin, daoId } = props;
     const { votingEscrow, token } = plugin.settings;
+    const { votingEscrow: votingEscrowAddresses } = plugin;
 
     invariant(
-        votingEscrow != null && plugin.votingEscrow != null,
+        votingEscrow != null && votingEscrowAddresses != null,
         'TokenLockForm: voting escrow settings are required',
     );
 
+    const { escrowAddress } = votingEscrowAddresses;
     const { decimals } = token;
 
     const { open } = useDialogContext();
@@ -69,7 +71,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         invalidateQueries,
     } = useCheckAllowance({
         owner: address!,
-        spender: plugin.votingEscrow.escrowAddress as Hex,
+        spender: escrowAddress as Hex,
         tokenAddress: token.underlying as Hex,
         chainId,
         enabled: address != null,
@@ -160,8 +162,8 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         network: dao!.network,
         onSuccess: handleTransactionSuccess,
         onSuccessClick: handleViewLocks,
-        spender: plugin.votingEscrow?.escrowAddress as Hex,
-        escrowContract: plugin.votingEscrow?.escrowAddress as Hex,
+        spender: escrowAddress as Hex,
+        escrowContract: escrowAddress as Hex,
         showTransactionInfo: needsApproval,
     });
 
@@ -217,7 +219,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                             symbol: token.symbol,
                         })}
                     </Button>
-
                     {lockCount > 0 && (
                         <Button variant="secondary" size="lg" onClick={handleViewLocks}>
                             {t('app.plugins.token.tokenLockForm.locks', {

@@ -1,10 +1,13 @@
+import type { ILockExit } from './lockExit';
+import type { ILockNft } from './lockNft';
+
 export interface IMemberLock {
     /**
      * Unique identifier for the member lock.
      */
     id: string;
     /**
-     * ID of the lock.
+     * ID of the token being locked.
      */
     tokenId: string;
     /**
@@ -18,23 +21,9 @@ export interface IMemberLock {
     /**
      * Lock exit details.
      */
-    lockExit: {
-        /**
-         * Whether the lock is currently in cooldown or not.
-         */
-        status: boolean;
-        /**
-         * Timestamp when the lock will be available for withdrawal. Measured in seconds.
-         */
-        exitDateAt: number | null;
-    };
+    lockExit: ILockExit;
     /**
      * VE NFT details.
      */
-    nft: {
-        /**
-         * Name of the NFT contract.
-         */
-        name: string;
-    };
+    nft: ILockNft;
 }

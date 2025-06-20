@@ -109,15 +109,10 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
         }
     };
 
-    const getTransactionType = (action: ActionType) => {
-        switch (action) {
-            case 'lock':
-                return TransactionType.LOCK_CREATE;
-            case 'unlock':
-                return TransactionType.EXIT_CREATE;
-            case 'withdraw':
-                return TransactionType.WITHDRAW_CREATE;
-        }
+    const transactionTypeMap = {
+        lock: TransactionType.LOCK_CREATE,
+        unlock: TransactionType.EXIT_CREATE,
+        withdraw: TransactionType.WITHDRAW_CREATE,
     };
 
     const handleSuccessClick = () => {
@@ -152,7 +147,7 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
             }}
             onCancelClick={onClose}
             transactionInfo={transactionInfo}
-            transactionType={getTransactionType(action)}
+            transactionType={transactionTypeMap[action]}
             indexingFallbackUrl={daoUtils.getDaoUrl(dao, 'members')}
         />
     );

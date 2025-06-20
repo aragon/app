@@ -153,6 +153,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         network: dao!.network,
         onSuccess: handleTransactionSuccess,
         spender: token.address as Hex,
+        showTransactionInfo: needsApproval,
     });
 
     // Update amount field and percentage value to 100% of user unwrapped balance on user balance change
