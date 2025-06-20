@@ -46,7 +46,7 @@ class PublishProposalDialogUtils {
         const metadata = transactionUtils.stringToMetadataHex(metadataCid);
 
         const buildDataFunction = pluginRegistryUtils.getSlotFunction<IBuildCreateProposalDataParams, Hex>({
-            pluginId: plugin.interfaceType,
+            pluginId: plugin.subdomain,
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
         })!;
 

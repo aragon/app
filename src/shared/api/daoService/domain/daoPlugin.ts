@@ -26,7 +26,6 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
      * Subdomain of the plugin.
      */
     subdomain: string;
-    interfaceType: string;
     /**
      * Release number of the plugin.
      */
