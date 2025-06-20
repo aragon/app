@@ -1,5 +1,5 @@
 ---
-'@aragon/app-next': patch
+'@aragon/app-next': minor
 ---
 
-Add Correct Versioning to Aragon Backend Endpoint URLs
+Implement versioning for Aragon backend endpoints
