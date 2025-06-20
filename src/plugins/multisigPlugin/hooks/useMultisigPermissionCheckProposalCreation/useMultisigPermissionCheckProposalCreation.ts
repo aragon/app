@@ -22,7 +22,6 @@ export const useMultisigPermissionCheckProposalCreation = (
     const memberExistsParams = { memberAddress: address as string, pluginAddress: plugin.address };
     const { data, isLoading } = useMemberExists({ urlParams: memberExistsParams }, { enabled: address != null });
 
-
     const hasPermission = data?.status === true || !onlyListed;
 
     const settings = [

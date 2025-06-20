@@ -1,9 +1,9 @@
 import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
 import { useQuery } from '@tanstack/react-query';
+import type { ICanCreateProposalResult } from '../../../../types';
 import { governanceService } from '../../governanceService';
 import type { IGetCanCreateProposalParams } from '../../governanceService.api';
 import { governanceServiceKeys } from '../../governanceServiceKeys';
-import type { ICanCreateProposalResult } from '../../../../types';
 
 export const canCreateProposalOptions = (
     params: IGetCanCreateProposalParams,
