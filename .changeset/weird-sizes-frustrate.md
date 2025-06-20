@@ -1,5 +1,5 @@
 ---
-'@aragon/app-next': minor
+'@aragon/app-next': patch
 ---
 
-Fixed formatting inconsistencies in the body overview of the voting terminal
+Fix style and formatting inconsistencies in the body overview of the voting terminal
