@@ -27,17 +27,17 @@ export const DaoPluginPage: React.FC<IDaoPluginPageProps> = async (props) => {
     const queryClient = new QueryClient();
 
     const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
-    const daoParams = { urlParams: { id: daoId } };
-    const dao = await queryClient.fetchQuery(daoOptions(daoParams));
+    const dao = await queryClient.fetchQuery(daoOptions({ urlParams: { id: daoId } }));
 
     const slotId = pluginRegistryUtils.getPageSlotId(ApplicationSlotId.APPLICATION_PLUGIN_PAGE, segments);
     const [Component] = dao.plugins.reduce<Array<PluginComponent | undefined>>((current, plugin) => {
         const pluginComponent = pluginRegistryUtils.getSlotComponent({ slotId, pluginId: plugin.subdomain });
+
         return current.concat(pluginComponent ?? []);
     }, []);
 
     if (Component != null) {
-        return <Component params={params} />;
+        return <Component params={params} dao={dao} />;
     }
 
     return <NotFoundDao params={params} />;
