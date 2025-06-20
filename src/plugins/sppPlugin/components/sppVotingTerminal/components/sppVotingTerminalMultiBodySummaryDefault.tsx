@@ -36,20 +36,14 @@ export const SppVotingTerminalMultiBodySummaryDefault: React.FC<ISppVotingTermin
     const { data: ensName } = useEnsName({ address: body as Hex, chainId: mainnet.id });
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
+    const displayName = ensName ?? addressUtils.truncateAddress(body);
+    const showStatus = stageStatus !== ProposalStatus.PENDING;
     const { label, style } = sppProposalUtils.getBodyResultStatus({ proposal, body, stage, canVote });
-
-    if (stageStatus === ProposalStatus.PENDING) {
-        return (
-            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
-                {ensName ?? addressUtils.truncateAddress(body)}
-            </p>
-        );
-    }
 
     return (
         <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
-            {ensName ?? addressUtils.truncateAddress(body)}{' '}
-            <span className={classNames(style, 'lowercase')}>{t(label)}</span>
+            {displayName}
+            {showStatus && <span className={classNames(style, 'lowercase')}> {t(label)}</span>}
         </p>
     );
 };
