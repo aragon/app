@@ -20,9 +20,12 @@ export const useMultisigPermissionCheckProposalCreation = (
     const pluginName = daoUtils.getPluginName(plugin);
 
     const memberExistsParams = { memberAddress: address as string, pluginAddress: plugin.address };
-    const { data, isLoading } = useMemberExists({ urlParams: memberExistsParams }, { enabled: address != null });
+    const { data: memberExists, isLoading } = useMemberExists(
+        { urlParams: memberExistsParams },
+        { enabled: address != null },
+    );
 
-    const hasPermission = data?.status === true || !onlyListed;
+    const hasPermission = memberExists?.status === true || !onlyListed;
 
     const settings = [
         {

@@ -48,11 +48,10 @@ export const useTokenPermissionCheckProposalCreation = (
         pluginAddress: plugin.address,
         network: dao?.network as Network,
     };
-    const { data } = useCanCreateProposal(
+    const { data: canCreateProposal } = useCanCreateProposal(
         { queryParams: checkQueryParams },
         { enabled: address != null && dao != null },
     );
-    const canCreateProposal = data?.status === true;
 
     const userVotingPower = BigInt(member?.votingPower ?? '0');
     const userBalance = BigInt(member?.tokenBalance ?? '0');
@@ -89,7 +88,7 @@ export const useTokenPermissionCheckProposalCreation = (
     const isRestricted = BigInt(minProposerVotingPower) > 0;
 
     return {
-        hasPermission: canCreateProposal,
+        hasPermission: canCreateProposal?.status === true,
         settings: [settings],
         isLoading,
         isRestricted,

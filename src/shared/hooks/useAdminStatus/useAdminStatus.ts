@@ -19,17 +19,15 @@ export const useAdminStatus = (params: IUseAdminStatusParams) => {
 
     const memberExistsParams = { memberAddress: memberAddress as string, pluginAddress: adminPluginAddress! };
 
-    const { data } = useMemberExists(
+    const { data: isAdminMember } = useMemberExists(
         { urlParams: memberExistsParams },
         { enabled: memberAddress != null && adminPluginAddress != null },
     );
 
     const adminFeatureEnabled = process.env.NEXT_PUBLIC_FEATURE_GOVERNANCE_DESIGNER === 'true';
 
-    const isAdminMember = data?.status === true;
-
     return {
-        isAdminMember: isAdminMember && adminFeatureEnabled,
+        isAdminMember: isAdminMember?.status === true && adminFeatureEnabled,
         adminPluginAddress,
     };
 };
