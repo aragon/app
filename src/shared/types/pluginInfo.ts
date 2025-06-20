@@ -1,4 +1,4 @@
-import type { INavigationLink } from '@/modules/application/components/navigations/navigation';
+import type { INavigationLink } from '@/shared/components/navigation';
 import type { Hex } from 'viem';
 import type { Network } from '../api/daoService';
 import type { IPlugin } from '../utils/pluginRegistryUtils';

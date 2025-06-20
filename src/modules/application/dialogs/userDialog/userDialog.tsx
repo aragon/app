@@ -1,5 +1,5 @@
-import { NavigationLinksItem } from '@/modules/application/components/navigations/navigation/navigationLinks/navigationLinksItem';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import { NavigationLinksItem } from '@/shared/components/navigation/navigationLinks/navigationLinksItem';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     addressUtils,

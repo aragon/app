@@ -3,6 +3,7 @@
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { type IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { Navigation, type INavigationContainerProps } from '@/shared/components/navigation';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
@@ -18,7 +19,6 @@ import {
 import classNames from 'classnames';
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
-import { Navigation, type INavigationContainerProps } from '../navigation';
 import { NavigationDaoHome } from './navigationDaoHome';
 import { navigationDaoUtils } from './navigationDaoUtils';
 

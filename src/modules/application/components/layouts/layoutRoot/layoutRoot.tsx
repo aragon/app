@@ -27,7 +27,7 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const wagmiInitialState = cookieToInitialState(wagmiConfig, requestHeaders.get('cookie'));
 
     // Initialise the plugin registry on both server & client side (on <Providers /> component) to make sure that the
-    // server-side plugin and dao specific components (e.g. Pages) are registered during server rendering
+    // server-side plugin and dao specific components (e.g. pages) are registered during server rendering
     initPluginRegistry();
 
     return (

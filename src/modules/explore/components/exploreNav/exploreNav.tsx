@@ -1,9 +1,9 @@
 'use client';
 
-import { Navigation } from '@/modules/application/components/navigations/navigation';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { AragonLogo } from '@/shared/components/aragonLogo';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { Navigation } from '@/shared/components/navigation';
 import { Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Link from 'next/link';

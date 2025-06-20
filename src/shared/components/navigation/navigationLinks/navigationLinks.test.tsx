@@ -11,8 +11,8 @@ describe('<Navigation.Links /> component', () => {
         usePathnameSpy.mockReturnValue('');
     });
 
-    const createTestComponent = (props?: Partial<INavigationLinksProps<string>>) => {
-        const completeProps: INavigationLinksProps<string> = {
+    const createTestComponent = (props?: Partial<INavigationLinksProps>) => {
+        const completeProps: INavigationLinksProps = {
             links: [],
             ...props,
         };
