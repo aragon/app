@@ -1,7 +1,8 @@
 import { type ISppProposal, type ISppStage } from '@/plugins/sppPlugin/types';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
+import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { addressUtils } from '@aragon/gov-ui-kit';
+import { addressUtils, ProposalStatus } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { Hex } from 'viem';
 import { mainnet } from 'viem/chains';
@@ -34,12 +35,15 @@ export const SppVotingTerminalMultiBodySummaryDefault: React.FC<ISppVotingTermin
     const { t } = useTranslations();
     const { data: ensName } = useEnsName({ address: body as Hex, chainId: mainnet.id });
 
+    const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
+    const displayName = ensName ?? addressUtils.truncateAddress(body);
+    const showStatus = stageStatus !== ProposalStatus.PENDING;
     const { label, style } = sppProposalUtils.getBodyResultStatus({ proposal, body, stage, canVote });
 
     return (
-        <p>
-            {ensName ?? addressUtils.truncateAddress(body)}{' '}
-            <span className={classNames(style, 'lowercase')}>{t(label)}</span>
+        <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
+            {displayName}
+            {showStatus && <span className={classNames(style, 'lowercase')}> {t(label)}</span>}
         </p>
     );
 };
