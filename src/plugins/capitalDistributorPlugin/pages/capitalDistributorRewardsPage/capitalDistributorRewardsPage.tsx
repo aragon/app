@@ -1,7 +1,8 @@
 import type { IDaoPluginPageProps } from '@/modules/application/types';
 import { daoOptions } from '@/shared/api/daoService';
-import { PageAside, PageAsideCard, PageContainer, PageContent, PageMain } from '@/shared/components/page';
+import { Page } from '@/shared/components/page';
 import { QueryClient } from '@tanstack/react-query';
+import { CapitalDistributorRewardsPageClient } from './capitalDistributorRewardsPageClient';
 
 export interface ICapitalDistributorRewardsPageProps extends IDaoPluginPageProps {}
 
@@ -12,17 +13,8 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
     queryClient.setQueryData(daoOptions({ urlParams: { id: dao.id } }).queryKey, dao);
 
     return (
-        <PageContainer queryClient={queryClient}>
-            <PageContent>
-                <PageMain title="Rewards">
-                    <p>Rewards List for {dao.name}</p>
-                </PageMain>
-                <PageAside>
-                    <PageAsideCard title="All your rewards">
-                        <p>Rewards Stats</p>
-                    </PageAsideCard>
-                </PageAside>
-            </PageContent>
-        </PageContainer>
+        <Page.Container queryClient={queryClient}>
+            <CapitalDistributorRewardsPageClient dao={dao} />
+        </Page.Container>
     );
 };
