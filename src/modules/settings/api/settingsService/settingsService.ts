@@ -4,7 +4,7 @@ import type { IGetPluginInstallationDataParams } from './settingsService.api';
 
 class SettingsService extends AragonBackendService {
     private urls = {
-        pluginInstallationData: '/plugins/installation-data',
+        pluginInstallationData: '/v1/plugins/installation-data',
     };
 
     getPluginInstallationData = async ({

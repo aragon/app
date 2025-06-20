@@ -15,10 +15,8 @@ export const useAdminPermissionCheckProposalCreation = (
     const { t } = useTranslations();
 
     const memberExistsParams = { memberAddress: address as string, pluginAddress: plugin.address };
-    const { data: hasPermission, isLoading } = useMemberExists(
-        { urlParams: memberExistsParams },
-        { enabled: address != null },
-    );
+    const { data, isLoading } = useMemberExists({ urlParams: memberExistsParams }, { enabled: address != null });
+    const hasPermission = data?.status === true;
 
     const pluginName = daoUtils.getPluginName(plugin);
 
@@ -34,7 +32,7 @@ export const useAdminPermissionCheckProposalCreation = (
     ];
 
     return {
-        hasPermission: !!hasPermission,
+        hasPermission,
         settings: [settings],
         isLoading,
         isRestricted: true,

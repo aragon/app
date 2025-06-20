@@ -25,7 +25,7 @@ export const useMultisigPermissionCheckProposalCreation = (
         { enabled: address != null },
     );
 
-    const hasPermission = memberExists === true || !onlyListed;
+    const hasPermission = memberExists?.status === true || !onlyListed;
 
     const settings = [
         {

@@ -1,1 +1,1 @@
-export { SetupBodyDialogMemberhip, type ISetupBodyDialogMembershipProps } from './setupBodyDialogMembership';
+export { SetupBodyDialogMembership, type ISetupBodyDialogMembershipProps } from './setupBodyDialogMembership';

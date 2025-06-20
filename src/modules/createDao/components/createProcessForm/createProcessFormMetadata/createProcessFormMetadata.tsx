@@ -72,8 +72,6 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
                 <InputText
                     helpText={t('app.createDao.createProcessForm.metadata.processKey.helpText')}
                     maxLength={processKeyMaxLength}
-                    addon={processKeyField.value != '' ? '-01' : undefined}
-                    addonPosition="right"
                     onChange={handleKeyFieldChange}
                     {...processKeyField}
                 />
