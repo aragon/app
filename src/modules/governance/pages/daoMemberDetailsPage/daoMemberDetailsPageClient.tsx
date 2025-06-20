@@ -9,6 +9,7 @@ import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHe
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
+import { networkUtils } from '@/shared/utils/networkUtils';
 import {
     addressUtils,
     ChainEntityType,
@@ -115,7 +116,12 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
 
     const daosByMemberParams = {
         urlParams: { address },
-        queryParams: { pageSize: memberDaosCount, excludeDaoId: daoId, sort: 'blockTimestamp' },
+        queryParams: {
+            pageSize: memberDaosCount,
+            excludeDaoId: daoId,
+            sort: 'blockTimestamp',
+            networks: networkUtils.getSupportedNetworks(),
+        },
     };
 
     return (
