@@ -3,7 +3,7 @@ import { AdvancedDateInputDuration } from '@/shared/components/forms/advancedDat
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Card, Dialog, InputContainer, invariant, Switch } from '@aragon/gov-ui-kit';
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { ProcessStageType } from '../../components/createProcessForm';
 import type { ISetupStageTimingForm } from './setupStageTimingDialogDefinitions';
@@ -26,6 +26,7 @@ export interface ISetupStageTimingDialogParams {
 export interface ISetupStageTimingDialogProps extends IDialogComponentProps<ISetupStageTimingDialogParams> {}
 
 const defaultExpiration = { days: 7, hours: 0, minutes: 0 };
+const minVotingPeriod = { days: 0, hours: 1, minutes: 0 };
 
 const formId = 'stageTimingForm';
 
@@ -62,10 +63,8 @@ export const SetupStageTimingDialog: React.FC<ISetupStageTimingDialogProps> = (p
         setTimeout(() => setValue('stageExpiration', checked ? defaultExpiration : undefined), 0);
     };
 
-    const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        event.stopPropagation();
-        void handleSubmit(onSubmit)(event);
+    const onFormSubmit = (values: ISetupStageTimingForm) => {
+        onSubmit(values);
         close();
     };
 
@@ -78,7 +77,7 @@ export const SetupStageTimingDialog: React.FC<ISetupStageTimingDialogProps> = (p
         <FormProvider {...formMethods}>
             <Dialog.Header title={t('app.createDao.setupStageTimingDialog.title')} />
             <Dialog.Content>
-                <form className="flex flex-col gap-6 py-4" onSubmit={handleFormSubmit} id={formId}>
+                <form className="flex flex-col gap-6 py-4" onSubmit={handleSubmit(onFormSubmit)} id={formId}>
                     <InputContainer
                         className="flex flex-col"
                         id="minDuration"
@@ -92,6 +91,8 @@ export const SetupStageTimingDialog: React.FC<ISetupStageTimingDialogProps> = (p
                                 label={t(`app.createDao.setupStageTimingDialog.${context}.label`)}
                                 infoDisplay="inline"
                                 infoText={votingPeriodInfoText}
+                                validateMinDuration={true}
+                                minDuration={minVotingPeriod}
                             />
                         </Card>
                     </InputContainer>
