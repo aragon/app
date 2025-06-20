@@ -16,7 +16,7 @@ import { useFeaturedDaos } from '../../api/cmsService';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
 import { CtaCard } from '../../components/ctaCard';
 import { DaoCarouselCard } from '../../components/daoCarouselCard';
-import { ExploreDaos } from '../../components/exploreDao';
+import { ExploreDaos } from '../../components/exploreDaos';
 import { ExploreNav } from '../../components/exploreNav';
 import { ExploreSection } from '../../components/exploreSection';
 

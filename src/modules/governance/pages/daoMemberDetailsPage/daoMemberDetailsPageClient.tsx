@@ -9,6 +9,7 @@ import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHe
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
+import { networkUtils } from '@/shared/utils/networkUtils';
 import {
     addressUtils,
     ChainEntityType,
@@ -113,9 +114,14 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
 
     const votesByMemberParams = { queryParams: { daoId, address, includeInfo: true, pageSize: memberVotesCount } };
 
-    const daoListByMemberParams = {
+    const daosByMemberParams = {
         urlParams: { address },
-        queryParams: { pageSize: memberDaosCount, excludeDaoId: daoId },
+        queryParams: {
+            pageSize: memberDaosCount,
+            excludeDaoId: daoId,
+            sort: 'blockTimestamp',
+            networks: networkUtils.getSupportedNetworks(),
+        },
     };
 
     return (
@@ -135,7 +141,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                         <DaoProposalList initialParams={proposalsByMemberParams} />
                     </Page.MainSection>
                     <Page.MainSection title={t('app.governance.daoMemberDetailsPage.main.daoMemberships.title')}>
-                        <DaoList daoListByMemberParams={daoListByMemberParams} layoutClassNames="grid grid-cols-1" />
+                        <DaoList memberParams={daosByMemberParams} layoutClassNames="grid grid-cols-1" />
                     </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>

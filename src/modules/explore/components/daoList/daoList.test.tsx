@@ -1,9 +1,4 @@
-import {
-    generateDao,
-    generatePaginatedResponse,
-    generatePaginatedResponseMetadata,
-    generateReactQueryInfiniteResultSuccess,
-} from '@/shared/testUtils';
+import { generateDao, generatePaginatedResponse, generateReactQueryInfiniteResultSuccess } from '@/shared/testUtils';
 import { testLogger } from '@/test/utils';
 import { render, screen } from '@testing-library/react';
 import * as daoExplorerService from '../../api/daoExplorerService';
@@ -34,66 +29,63 @@ describe('<DaoList /> component', () => {
         return <DaoList {...completeProps} />;
     };
 
-    it('renders the list of DAOs with initialParams', () => {
+    it('renders a list of DAOs using the parameters set on the initialParams prop', () => {
         const daos = [generateDao({ id: '1', name: 'DAO 1' }), generateDao({ id: '2', name: 'DAO 2' })];
-        const daosResponse = generatePaginatedResponse({ data: daos });
-        const initialParams = { queryParams: { pageSize: 20 } };
-        const daoListByMemberParams = undefined;
-
-        useDaoListSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({ data: { pages: [daosResponse], pageParams: [] } }),
-        );
-
-        render(createTestComponent({ initialParams, daoListByMemberParams }));
-
-        expect(screen.getAllByRole('link').length).toEqual(daos.length);
-        expect(screen.getByText(daos[0].name)).toBeInTheDocument();
-        expect(screen.getByText(daos[1].name)).toBeInTheDocument();
-    });
-
-    it('renders the list of DAOs by member address when daoListByMemberParams is provided', () => {
-        const daos = [generateDao({ id: '1', name: 'DAO 1' }), generateDao({ id: '2', name: 'DAO 2' })];
-        const daosResponse = generatePaginatedResponse({
-            data: daos,
-            metadata: generatePaginatedResponseMetadata(),
+        const queryResult = generateReactQueryInfiniteResultSuccess({
+            data: { pages: [generatePaginatedResponse({ data: daos })], pageParams: [] },
         });
-        const initialParams = undefined;
-        const daoListByMemberParams = { urlParams: { address: 'testAddress' }, queryParams: {} };
+        const initialParams = { queryParams: { pageSize: 20 } };
 
-        useDaoListByMemberAddressSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({ data: { pages: [daosResponse], pageParams: [] } }),
+        useDaoListSpy.mockReturnValue(queryResult);
+        render(createTestComponent({ initialParams, memberParams: undefined }));
+
+        expect(useDaoListSpy).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ enabled: true }));
+        expect(useDaoListByMemberAddressSpy).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({ enabled: false }),
         );
-
-        render(createTestComponent({ initialParams, daoListByMemberParams }));
-
-        expect(screen.getAllByRole('link').length).toEqual(daos.length);
+        expect(screen.getAllByRole('link')).toHaveLength(daos.length);
         expect(screen.getByText(daos[0].name)).toBeInTheDocument();
         expect(screen.getByText(daos[1].name)).toBeInTheDocument();
     });
 
-    it('renders the list of DAOs with search input when showSearch flag is set', () => {
+    it('renders a list of DAOs by member address using the parameters set on the memberParams prop', () => {
+        const daos = [generateDao({ id: '1', name: 'DAO 1' }), generateDao({ id: '2', name: 'DAO 2' })];
+        const queryResult = generateReactQueryInfiniteResultSuccess({
+            data: { pages: [generatePaginatedResponse({ data: daos })], pageParams: [] },
+        });
+        const initialParams = { queryParams: { pageSize: 20 } };
+        const memberParams = { urlParams: { address: 'testAddress' }, queryParams: {} };
+
+        useDaoListByMemberAddressSpy.mockReturnValue(queryResult);
+        render(createTestComponent({ initialParams, memberParams }));
+
+        expect(useDaoListSpy).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ enabled: false }));
+        expect(useDaoListByMemberAddressSpy).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({ enabled: true }),
+        );
+        expect(screen.getAllByRole('link')).toHaveLength(daos.length);
+        expect(screen.getByText(daos[0].name)).toBeInTheDocument();
+        expect(screen.getByText(daos[1].name)).toBeInTheDocument();
+    });
+
+    it('renders a search input when the showSearch prop is set', () => {
         useDaoListSpy.mockReturnValue(generateReactQueryInfiniteResultSuccess({ data: { pages: [], pageParams: [] } }));
         render(createTestComponent({ showSearch: true }));
         expect(screen.getByRole('searchbox')).toBeInTheDocument();
     });
 
-    it('renders the list of DAOs without search input when showSearch flag is not set', () => {
+    it('does not render a search input when the showSearch prop is not set', () => {
         useDaoListSpy.mockReturnValue(generateReactQueryInfiniteResultSuccess({ data: { pages: [], pageParams: [] } }));
         render(createTestComponent({ showSearch: false }));
         expect(screen.queryByRole('searchbox')).not.toBeInTheDocument();
     });
 
-    it('throws an error when both initialParams and daoListByMemberParams are not provided', () => {
+    it('throws error when both initialParams and memberParams are not provided', () => {
         testLogger.suppressErrors();
         const initialParams = undefined;
-        const daoListByMemberParams = undefined;
-        expect(() => render(createTestComponent({ initialParams, daoListByMemberParams }))).toThrow();
-    });
-
-    it('throws an error when both initialParams and daoListByMemberParams are provided', () => {
-        testLogger.suppressErrors();
-        const initialParams = { queryParams: { pageSize: 10 } };
-        const daoListByMemberParams = { urlParams: { address: 'testAddress' }, queryParams: {} };
-        expect(() => render(createTestComponent({ initialParams, daoListByMemberParams }))).toThrow();
+        const memberParams = undefined;
+        expect(() => render(createTestComponent({ initialParams, memberParams }))).toThrow();
     });
 });
