@@ -1,4 +1,5 @@
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
+import type { IMemberExistsResult } from './../../types';
 import type { IMember, IProposal, IProposalAction, IProposalActionsResult, IVote } from './domain';
 import type {
     IGetCanCreateProposalParams,
@@ -39,8 +40,8 @@ class GovernanceService extends AragonBackendService {
         return result;
     };
 
-    getMemberExists = async (params: IGetMemberExistsParams): Promise<boolean> => {
-        const result = await this.request<boolean>(this.urls.memberExists, params);
+    getMemberExists = async (params: IGetMemberExistsParams): Promise<IMemberExistsResult> => {
+        const result = await this.request<IMemberExistsResult>(this.urls.memberExists, params);
 
         return result;
     };
