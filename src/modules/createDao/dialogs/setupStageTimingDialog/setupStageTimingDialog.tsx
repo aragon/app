@@ -26,7 +26,7 @@ export interface ISetupStageTimingDialogParams {
 export interface ISetupStageTimingDialogProps extends IDialogComponentProps<ISetupStageTimingDialogParams> {}
 
 const defaultExpiration = { days: 7, hours: 0, minutes: 0 };
-const defaultStageDuration = { days: 0, hours: 1, minutes: 0 };
+const minVotingPeriod = { days: 0, hours: 1, minutes: 0 };
 
 const formId = 'stageTimingForm';
 
@@ -68,8 +68,6 @@ export const SetupStageTimingDialog: React.FC<ISetupStageTimingDialogProps> = (p
         close();
     };
 
-    const handleFormSubmit = handleSubmit(onFormSubmit);
-
     const context = isTimelockStage ? 'timelockPeriod' : 'votingPeriod';
     const votingPeriodInfoText = !isTimelockStage
         ? t('app.createDao.setupStageTimingDialog.votingPeriod.infoText')
@@ -79,7 +77,7 @@ export const SetupStageTimingDialog: React.FC<ISetupStageTimingDialogProps> = (p
         <FormProvider {...formMethods}>
             <Dialog.Header title={t('app.createDao.setupStageTimingDialog.title')} />
             <Dialog.Content>
-                <form className="flex flex-col gap-6 py-4" onSubmit={handleFormSubmit} id={formId}>
+                <form className="flex flex-col gap-6 py-4" onSubmit={handleSubmit(onFormSubmit)} id={formId}>
                     <InputContainer
                         className="flex flex-col"
                         id="minDuration"
@@ -94,7 +92,7 @@ export const SetupStageTimingDialog: React.FC<ISetupStageTimingDialogProps> = (p
                                 infoDisplay="inline"
                                 infoText={votingPeriodInfoText}
                                 validateMinDuration={true}
-                                minDuration={defaultStageDuration}
+                                minDuration={minVotingPeriod}
                             />
                         </Card>
                     </InputContainer>
