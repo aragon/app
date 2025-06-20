@@ -9,3 +9,4 @@ export type { IPermissionCheckGuardParams } from './permissionCheckGuardParams';
 export type { IPermissionCheckGuardResult } from './permissionCheckGuardResult';
 export type { IUsePluginMemberStatsParams } from './usePluginMemberStatsParams';
 export type { IMemberExistsResult } from './memberExistsResult';
+export type { ICanCreateProposalResult } from './canCreateProposalResult';
