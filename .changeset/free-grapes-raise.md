@@ -2,4 +2,4 @@
 '@aragon/app-next': patch
 ---
 
-UX and form improvements to governance designer flow
+Implement UX and form validation improvements on governance designer flow

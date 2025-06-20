@@ -3,7 +3,7 @@ import { AdvancedDateInputDuration } from '@/shared/components/forms/advancedDat
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Card, Dialog, InputContainer, invariant, Switch } from '@aragon/gov-ui-kit';
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { ProcessStageType } from '../../components/createProcessForm';
 import type { ISetupStageTimingForm } from './setupStageTimingDialogDefinitions';
@@ -42,8 +42,7 @@ export const SetupStageTimingDialog: React.FC<ISetupStageTimingDialogProps> = (p
     const [displayExpiration, setDisplayExpiration] = useState(defaultValues.stageExpiration != null);
 
     const formMethods = useForm<ISetupStageTimingForm>({ mode: 'onTouched', defaultValues });
-    const { control, handleSubmit, setValue, formState } = formMethods;
-    const { isValid } = formState;
+    const { control, handleSubmit, setValue } = formMethods;
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
@@ -64,14 +63,12 @@ export const SetupStageTimingDialog: React.FC<ISetupStageTimingDialogProps> = (p
         setTimeout(() => setValue('stageExpiration', checked ? defaultExpiration : undefined), 0);
     };
 
-    const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        event.stopPropagation();
-        void handleSubmit(onSubmit)(event);
-        if (isValid) {
-            close();
-        }
+    const onFormSubmit = (values: ISetupStageTimingForm) => {
+        onSubmit(values);
+        close();
     };
+
+    const handleFormSubmit = handleSubmit(onFormSubmit);
 
     const context = isTimelockStage ? 'timelockPeriod' : 'votingPeriod';
     const votingPeriodInfoText = !isTimelockStage
@@ -98,7 +95,6 @@ export const SetupStageTimingDialog: React.FC<ISetupStageTimingDialogProps> = (p
                                 infoText={votingPeriodInfoText}
                                 validateMinDuration={true}
                                 minDuration={defaultStageDuration}
-                                validateOnChange={true}
                             />
                         </Card>
                     </InputContainer>

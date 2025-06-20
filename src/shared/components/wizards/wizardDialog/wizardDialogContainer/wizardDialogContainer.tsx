@@ -16,34 +16,18 @@ export interface IWizardDialogContainerProps<TFormData extends FieldValues = Fie
      * ID of the form, needed to link the submit button to the form element.
      */
     formId: string;
-    /**
-     * Disable outside click to close the dialog.
-     */
-    disableOutsideClick?: boolean;
 }
 
 export const WizardDialogContainer = <TFormData extends FieldValues = FieldValues>(
     props: IWizardDialogContainerProps<TFormData>,
 ) => {
-    const {
-        title,
-        formId,
-        initialSteps,
-        submitLabel,
-        onSubmit,
-        children,
-        defaultValues,
-        disableOutsideClick,
-        ...formProps
-    } = props;
+    const { title, formId, initialSteps, submitLabel, onSubmit, children, defaultValues, ...formProps } = props;
 
     const { close, updateOptions } = useDialogContext();
 
     useEffect(() => {
-        if (disableOutsideClick) {
-            updateOptions({ disableOutsideClick });
-        }
-    }, [disableOutsideClick, updateOptions]);
+        updateOptions({ disableOutsideClick: true });
+    }, [updateOptions]);
 
     return (
         <>
