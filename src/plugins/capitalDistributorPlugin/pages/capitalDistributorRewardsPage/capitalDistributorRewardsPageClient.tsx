@@ -15,7 +15,7 @@ export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRe
         <>
             <Page.Content>
                 <Page.Main title="Rewards">
-                    <p>Rewards List for {dao.name}</p>
+                    <p>Rewards List ({dao.name})</p>
                 </Page.Main>
                 <Page.Aside>
                     <Page.AsideCard title="All your rewards">
