@@ -5,8 +5,8 @@ import type { IDecodeTransactionParams, IGetAbiParams } from './smartContractSer
 
 class SmartContractService extends AragonBackendService {
     private urls = {
-        abi: '/contract/:network/:address',
-        decodeTransaction: '/contract/:network/:address/decode',
+        abi: '/v1/contract/:network/:address',
+        decodeTransaction: '/v1/contract/:network/:address/decode',
     };
 
     getAbi = async (params: IGetAbiParams): Promise<ISmartContractAbi | undefined> => {

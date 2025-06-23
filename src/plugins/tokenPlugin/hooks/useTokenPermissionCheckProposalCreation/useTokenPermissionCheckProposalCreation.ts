@@ -88,7 +88,7 @@ export const useTokenPermissionCheckProposalCreation = (
     const isRestricted = BigInt(minProposerVotingPower) > 0;
 
     return {
-        hasPermission: Boolean(canCreateProposal),
+        hasPermission: canCreateProposal?.status === true,
         settings: [settings],
         isLoading,
         isRestricted,

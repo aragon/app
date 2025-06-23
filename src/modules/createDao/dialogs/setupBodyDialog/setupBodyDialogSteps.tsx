@@ -2,7 +2,7 @@ import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import { useWatch } from 'react-hook-form';
 import type { ISetupBodyForm } from './setupBodyDialogDefinitions';
 import { SetupBodyDialogGovernance } from './setupBodyDialogGovernance';
-import { SetupBodyDialogMemberhip } from './setupBodyDialogMembership';
+import { SetupBodyDialogMembership } from './setupBodyDialogMembership';
 import { SetupBodyDialogMetadata } from './setupBodyDialogMetadata';
 import { externalPluginId, SetupBodyDialogSelect } from './setupBodyDialogSelect';
 import { SetupBodyDialogExternalAddress } from './setupBodySialogExternalAddress';
@@ -50,7 +50,7 @@ export const SetupBodyDialogSteps: React.FC<ISetupBodyDialogStepsProps> = (props
                 <SetupBodyDialogExternalAddress />
             </WizardDialog.Step>
             <WizardDialog.Step {...membershipStep} hidden={isExternalPlugin}>
-                <SetupBodyDialogMemberhip daoId={daoId} />
+                <SetupBodyDialogMembership daoId={daoId} />
             </WizardDialog.Step>
             <WizardDialog.Step {...governanceStep} hidden={isExternalPlugin}>
                 <SetupBodyDialogGovernance isSubPlugin={isSubPlugin} />
