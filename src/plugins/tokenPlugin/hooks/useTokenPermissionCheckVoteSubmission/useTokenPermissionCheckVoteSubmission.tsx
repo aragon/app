@@ -40,7 +40,7 @@ export const useTokenPermissionCheckVoteSubmission = (
         chainId: networkDefinitions[network].id,
         abi: tokenVotingAbi,
         functionName: 'canVote',
-        args: [BigInt(proposalIndex), address as Hex, VoteOption.YES], // Just passing YES as we are only checking permssion to vote
+        args: [BigInt(proposalIndex), address as Hex, VoteOption.YES], // Just passing YES as we are only checking permission to vote so option itself doesn't matter
         query: { enabled: address != null },
     });
 

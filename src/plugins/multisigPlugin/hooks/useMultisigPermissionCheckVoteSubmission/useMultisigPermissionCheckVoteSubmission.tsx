@@ -31,6 +31,7 @@ export const useMultisigPermissionCheckVoteSubmission = (
     const { t } = useTranslations();
 
     const { blockTimestamp, network, transactionHash, proposalIndex, pluginAddress } = proposal!;
+
     const { data: hasPermission, isLoading } = useReadContract({
         address: pluginAddress as Hex,
         chainId: networkDefinitions[network].id,
