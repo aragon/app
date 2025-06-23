@@ -2,7 +2,6 @@ import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, IconType, InputContainer, InputText } from '@aragon/gov-ui-kit';
-import type { ChangeEvent } from 'react';
 import { useEffect } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { parseUnits } from 'viem';
@@ -57,17 +56,10 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
             fieldPrefix: tokenFormPrefix,
             rules: {
                 required: true,
-                // symbol validation enforced by the regex in handleSymbolChange, so no need to validate it here!
+                pattern: symbolRegex,
             },
         },
     );
-
-    const handleSymbolChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const upperValue = event.target.value.toUpperCase();
-        if (symbolRegex.test(upperValue) || upperValue === '') {
-            onSymbolChange(upperValue);
-        }
-    };
 
     const membersFieldName = `${formPrefix}.members`;
     const {
@@ -103,7 +95,7 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
             <InputText
                 helpText={t('app.plugins.token.tokenSetupMembership.createToken.symbol.helpText')}
                 maxLength={symbolMaxLength}
-                onChange={handleSymbolChange}
+                onChange={onSymbolChange}
                 {...symbolField}
             />
             <InputContainer
@@ -118,7 +110,7 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
                         formPrefix={`${membersFieldName}.${index.toString()}`}
                         initialValue={member.address}
                         index={index}
-                        allMembers={controlledMembersField}
+                        members={controlledMembersField}
                         onRemove={membersField.length > 1 ? () => removeMember(index) : undefined}
                     />
                 ))}

@@ -1452,6 +1452,10 @@
                 "label": "Address",
                 "placeholder": "ENS or 0x…"
               },
+              "error": {
+                "alreadyInList": "Address has already been added",
+                "invalid": "Address is not valid"
+              },
               "tokens": {
                 "label": "Tokens"
               }

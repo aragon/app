@@ -1,5 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { addressesListUtils } from '@/shared/utils/addressesListUtils';
 import {
     AddressInput,
     addressUtils,
@@ -27,33 +28,15 @@ export interface IAddressesInputItemProps extends ComponentProps<'div'> {
     /**
      * Custom validator function that extends the default validation.
      */
-    customValidator?: (member: ICompositeAddress) => string | boolean;
+    customValidator?: (member: ICompositeAddress) => string | true;
 }
-
-const validateMember = (
-    member: ICompositeAddress,
-    isAlreadyInList: boolean,
-    customValidator?: IAddressesInputItemProps['customValidator'],
-) => {
-    const errorNamespace = 'app.shared.addressesInput.item.input.error';
-
-    if (!addressUtils.isAddress(member.address)) {
-        return `${errorNamespace}.invalid`;
-    } else if (isAlreadyInList) {
-        return `${errorNamespace}.alreadyInList`;
-    }
-
-    if (customValidator) {
-        return customValidator(member);
-    }
-
-    return true;
-};
 
 export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) => {
     const { index, disabled, customValidator } = props;
 
     const { t } = useTranslations();
+
+    const errorNamespace = 'app.shared.addressesInput.item.input.error';
 
     const { trigger } = useFormContext();
 
@@ -61,12 +44,6 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
 
     const membersField = useWatch<AddressListInputBaseForm>({ name: fieldName });
 
-    const checkIsAlreadyInList = (currentIndex: number) =>
-        membersField
-            .slice(0, currentIndex)
-            .some((field) => addressUtils.isAddressEqual(field.address, membersField[currentIndex].address));
-
-    const isAlreadyInList = checkIsAlreadyInList(index);
     const canRemove = membersField.length > 1;
 
     const memberFieldName = `${fieldName}.[${index.toString()}]`;
@@ -79,7 +56,8 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
         label: t('app.shared.addressesInput.item.input.label'),
         rules: {
             required: true,
-            validate: (value) => validateMember(value, isAlreadyInList, customValidator),
+            validate: (value) =>
+                addressesListUtils.validateAddress(membersField, index, value, errorNamespace, customValidator),
         },
     });
 
@@ -95,7 +73,7 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
         if (addressUtils.isAddress(value.address)) {
             void trigger(memberFieldName);
         }
-    }, [trigger, memberFieldName, isAlreadyInList, value.address]);
+    }, [trigger, memberFieldName, value.address]);
 
     return (
         <Card className="shadow-neutral-sm flex flex-col gap-3 border border-neutral-100 p-6 md:flex-row md:gap-2">

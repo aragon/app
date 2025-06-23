@@ -39,7 +39,7 @@ export const MinParticipationField: React.FC<IMinParticipationFieldProps> = (pro
             fieldName={fieldName}
             label={t('app.plugins.token.tokenSetupGovernance.minParticipation.label')}
             helpText={t('app.plugins.token.tokenSetupGovernance.minParticipation.helpText')}
-            valueLabel={`${formattedAmount} ${symbol}`}
+            valueLabel={token.totalSupply === '0' ? undefined : `${formattedAmount} ${symbol}`}
             min={0}
             total={100}
             defaultValue={defaultMinParticipation}

@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-Token voting setup dialog wizard form improvements
+Implement form validation improvements on TokenVoting setup wizard

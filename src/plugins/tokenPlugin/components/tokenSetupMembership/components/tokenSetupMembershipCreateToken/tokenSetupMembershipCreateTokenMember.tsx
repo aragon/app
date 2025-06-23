@@ -1,8 +1,8 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { addressesListUtils } from '@/shared/utils/addressesListUtils';
 import {
     AddressInput,
-    addressUtils,
     Button,
     Dropdown,
     type IAddressInputResolvedValue,
@@ -33,29 +33,16 @@ export interface ITokenSetupMembershipCreateTokenMemberProps {
     /**
      * All members in the list for duplicate checking.
      */
-    allMembers: ITokenSetupMembershipForm['members'];
+    members: ITokenSetupMembershipForm['members'];
 }
 export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembershipCreateTokenMemberProps> = (props) => {
-    const { formPrefix, onRemove, initialValue, index, allMembers } = props;
+    const { formPrefix, onRemove, initialValue, index, members } = props;
+
+    const errorNamespace = 'app.plugins.token.tokenSetupMembership.createToken.member.error';
 
     const { t } = useTranslations();
 
     const [memberInput, setMemberInput] = useState<string | undefined>(initialValue);
-
-    const checkIsAlreadyInList = (currentIndex: number, address: string) =>
-        allMembers.slice(0, currentIndex).some((member) => addressUtils.isAddressEqual(member.address, address));
-
-    const validateAddress = (value: string) => {
-        const errorNamespace = 'app.shared.addressesInput.item.input.error';
-
-        if (!addressUtils.isAddress(value)) {
-            return `${errorNamespace}.invalid`;
-        } else if (checkIsAlreadyInList(index, value)) {
-            return `${errorNamespace}.alreadyInList`;
-        }
-
-        return true;
-    };
 
     const {
         onChange: onMemberChange,
@@ -63,7 +50,10 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
         ...memberField
     } = useFormField<ITokenSetupMembershipMember, 'address'>('address', {
         label: t('app.plugins.token.tokenSetupMembership.createToken.member.address.label'),
-        rules: { required: true, validate: validateAddress },
+        rules: {
+            required: true,
+            validate: (value) => addressesListUtils.validateAddress(members, index, { address: value }, errorNamespace),
+        },
         fieldPrefix: formPrefix,
     });
 
