@@ -1,12 +1,26 @@
-import { useCanVote } from '@/modules/governance/api/governanceService';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
-import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
+import { VoteOption, type ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ChainEntityType, DateFormat, formatterUtils, useBlockExplorer } from '@aragon/gov-ui-kit';
-import { useAccount } from 'wagmi';
+import type { Hex } from 'viem';
+import { useAccount, useReadContract } from 'wagmi';
 
 export interface ITokenPermissionCheckVoteSubmissionParams extends IPermissionCheckGuardParams<ITokenPluginSettings> {}
+
+const tokenVotingAbi = [
+    {
+        type: 'function',
+        inputs: [
+            { name: '_proposalId', internalType: 'uint256', type: 'uint256' },
+            { name: '_voter', internalType: 'address', type: 'address' },
+            { name: '_voteOption', internalType: 'uint8', type: 'uint8' },
+        ],
+        name: 'canVote',
+        outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+        stateMutability: 'view',
+    },
+] as const;
 
 export const useTokenPermissionCheckVoteSubmission = (
     params: ITokenPermissionCheckVoteSubmissionParams,
@@ -19,12 +33,16 @@ export const useTokenPermissionCheckVoteSubmission = (
 
     const tokenSymbol = plugin.settings.token.symbol;
 
-    const { id, blockTimestamp, network, transactionHash } = proposal!;
+    const { blockTimestamp, network, transactionHash, proposalIndex, pluginAddress } = proposal!;
 
-    const { data: hasPermission, isLoading } = useCanVote(
-        { urlParams: { id }, queryParams: { userAddress: address as string } },
-        { enabled: address != null },
-    );
+    const { data: hasPermission, isLoading } = useReadContract({
+        address: pluginAddress as Hex,
+        chainId: networkDefinitions[network].id,
+        abi: tokenVotingAbi,
+        functionName: 'canVote',
+        args: [BigInt(proposalIndex), address as Hex, VoteOption.YES],
+        query: { enabled: address != null },
+    });
 
     const formattedCreationDate = formatterUtils.formatDate(blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH_DAY,
