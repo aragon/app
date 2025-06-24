@@ -51,6 +51,7 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
     } = useFormField<ITokenSetupMembershipMember, 'address'>('address', {
         label: t('app.plugins.token.tokenSetupMembership.createToken.member.address.label'),
         rules: {
+            required: true,
             validate: () => addressesListUtils.validateAddress(members, index, errorNamespace),
         },
         fieldPrefix: formPrefix,
