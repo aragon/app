@@ -1044,7 +1044,20 @@
           "title": "Automatic execution"
         }
       },
+      "capitalDistributor": {
+        "meta": {
+          "link": {
+            "rewards": "Rewards"
+          }
+        }
+      },
       "multisig": {
+        "meta": {
+          "setup": {
+            "description": "Designated members must reach a minimum approval threshold",
+            "name": "Multisig"
+          }
+        },
         "multisigActions": {
           "MultisigAddMembers": "Add members",
           "MultisigRemoveMembers": "Remove members",
@@ -1144,10 +1157,6 @@
         },
         "multisigVoteList": {
           "entity": "Votes"
-        },
-        "setup": {
-          "description": "Designated members must reach a minimum approval threshold",
-          "name": "Multisig"
         }
       },
       "spp": {
@@ -1242,9 +1251,11 @@
         }
       },
       "token": {
-        "setup": {
-          "description": "Majority voting based on token voting power",
-          "name": "Token voting"
+        "meta": {
+          "setup": {
+            "description": "Majority voting based on token voting power",
+            "name": "Token voting"
+          }
         },
         "tokenActions": {
           "Mint": "Mint",

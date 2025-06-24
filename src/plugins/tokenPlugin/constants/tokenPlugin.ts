@@ -24,7 +24,7 @@ export const tokenPlugin: IPluginInfo = {
         [Network.CORN_MAINNET]: '0x67C579fC2676a496DCE7dAB9695D323219d339EB',
     },
     setup: {
-        nameKey: 'app.plugins.token.setup.name',
-        descriptionKey: 'app.plugins.token.setup.description',
+        nameKey: 'app.plugins.token.meta.setup.name',
+        descriptionKey: 'app.plugins.token.meta.setup.description',
     },
 };

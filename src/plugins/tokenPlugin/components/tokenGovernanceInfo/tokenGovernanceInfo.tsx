@@ -1,3 +1,5 @@
+'use client';
+
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { DefinitionList } from '@aragon/gov-ui-kit';
 import { useTokenGovernanceSettings } from '../../hooks/useTokenGovernanceSettings';
