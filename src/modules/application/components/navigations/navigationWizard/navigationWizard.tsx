@@ -4,6 +4,7 @@ import { ApplicationDialogId } from '@/modules/application/constants/application
 import { type IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Link } from '@/shared/components/link';
+import { Navigation, type INavigationContainerProps } from '@/shared/components/navigation';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import type { ITFuncOptions } from '@/shared/utils/translationsUtils';
@@ -11,7 +12,6 @@ import { DaoAvatar, Icon, IconType, Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { type Route } from 'next';
 import { useAccount } from 'wagmi';
-import { Navigation, type INavigationContainerProps } from '../navigation';
 
 export interface INavigationWizardProps extends INavigationContainerProps {
     /**

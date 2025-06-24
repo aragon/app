@@ -1,3 +1,4 @@
+import type { INavigationLink } from '@/shared/components/navigation';
 import type { Hex } from 'viem';
 import type { Network } from '../api/daoService';
 import type { IPlugin } from '../utils/pluginRegistryUtils';
@@ -17,4 +18,8 @@ export interface IPluginInfo extends IPlugin {
      * Setup data for plugins that can be included in the governance designer process.
      */
     setup?: IPluginInfoSetup;
+    /**
+     * Plugin-specific pages shown on the DAO navigation.
+     */
+    pages?: (baseUrl: string, context: string) => INavigationLink[];
 }

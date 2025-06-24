@@ -1,3 +1,5 @@
+'use client';
+
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';

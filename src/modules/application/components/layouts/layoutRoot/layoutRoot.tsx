@@ -1,3 +1,4 @@
+import { initPluginRegistry } from '@/initPluginRegistry';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { translations } from '@/shared/constants/translations';
 import { headers } from 'next/headers';
@@ -24,6 +25,10 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
 
     const requestHeaders = await headers();
     const wagmiInitialState = cookieToInitialState(wagmiConfig, requestHeaders.get('cookie'));
+
+    // Initialise the plugin registry on both server & client side (on <Providers /> component) to make sure that the
+    // server-side plugin and dao specific components (e.g. pages) are registered during server rendering
+    initPluginRegistry();
 
     return (
         <html lang="en" className="h-full">

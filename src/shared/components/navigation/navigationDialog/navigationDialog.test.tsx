@@ -25,8 +25,8 @@ describe('<Navigation.Dialog /> component', () => {
         getDaoEnsSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<INavigationDialogProps<string>>) => {
-        const completeProps: INavigationDialogProps<string> = { links: [], ...props };
+    const createTestComponent = (props?: Partial<INavigationDialogProps>) => {
+        const completeProps: INavigationDialogProps = { links: [], ...props };
 
         return (
             <GukModulesProvider>

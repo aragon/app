@@ -1,3 +1,5 @@
+'use client';
+
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';

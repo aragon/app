@@ -1,3 +1,5 @@
+'use client';
+
 import { AdvancedDateInput } from '@/shared/components/forms/advancedDateInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DateTime } from 'luxon';

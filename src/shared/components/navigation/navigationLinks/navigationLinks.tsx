@@ -4,11 +4,11 @@ import type { ComponentProps } from 'react';
 import type { INavigationLink, NavigationLinksVariant } from './navigationLinks.api';
 import { NavigationLinksItem } from './navigationLinksItem';
 
-export interface INavigationLinksProps<TRouteType extends string> extends ComponentProps<'div'> {
+export interface INavigationLinksProps extends ComponentProps<'div'> {
     /**
      * Links of the application.
      */
-    links: Array<INavigationLink<TRouteType>>;
+    links: INavigationLink[];
     /**
      * Variant of the component.
      * @default row
@@ -16,7 +16,7 @@ export interface INavigationLinksProps<TRouteType extends string> extends Compon
     variant?: NavigationLinksVariant;
 }
 
-export const NavigationLinks = <TRouteType extends string>(props: INavigationLinksProps<TRouteType>) => {
+export const NavigationLinks: React.FC<INavigationLinksProps> = (props) => {
     const { className, links, variant = 'row', ...otherProps } = props;
 
     const { t } = useTranslations();

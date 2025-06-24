@@ -5,13 +5,7 @@ import { SppReportProposalResultDialog } from '../dialogs/sppReportProposalResul
 import { SppPluginDialogId } from './sppPluginDialogId';
 
 export const sppPluginDialogsDefinitions: Record<SppPluginDialogId, IDialogComponentDefinitions> = {
-    [SppPluginDialogId.ADVANCE_STAGE]: {
-        Component: SppAdvanceStageDialog,
-    },
-    [SppPluginDialogId.REPORT_PROPOSAL_RESULT]: {
-        Component: SppReportProposalResultDialog,
-    },
-    [SppPluginDialogId.INVALID_ADDRESS_CONNECTED]: {
-        Component: SppInvalidAddressConnectedDialog,
-    },
+    [SppPluginDialogId.ADVANCE_STAGE]: { Component: SppAdvanceStageDialog },
+    [SppPluginDialogId.REPORT_PROPOSAL_RESULT]: { Component: SppReportProposalResultDialog },
+    [SppPluginDialogId.INVALID_ADDRESS_CONNECTED]: { Component: SppInvalidAddressConnectedDialog },
 };

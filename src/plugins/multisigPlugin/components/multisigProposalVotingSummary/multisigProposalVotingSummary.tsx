@@ -1,3 +1,5 @@
+'use client';
+
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, invariant, NumberFormat, Progress, ProposalStatus } from '@aragon/gov-ui-kit';
 import type { IMultisigProposal } from '../../types';

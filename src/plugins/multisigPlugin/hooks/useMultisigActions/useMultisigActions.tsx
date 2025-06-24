@@ -1,3 +1,5 @@
+'use client';
+
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IMultisigPluginSettings } from '../../types';

@@ -1,7 +1,6 @@
 'use client';
 
-import { initialiseDaos } from '@/daos';
-import { initialisePlugins } from '@/plugins';
+import { initPluginRegistry } from '@/initPluginRegistry';
 import { BlockNavigationContextProvider } from '@/shared/components/blockNavigationContext';
 import { DebugContextProvider } from '@/shared/components/debugProvider/debugProvider';
 import { DialogProvider } from '@/shared/components/dialogProvider';
@@ -38,8 +37,7 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
     const { translations, wagmiInitialState, children } = props;
 
     const queryClient = queryClientUtils.getQueryClient();
-    initialisePlugins();
-    initialiseDaos();
+    initPluginRegistry();
 
     return (
         <DebugContextProvider>

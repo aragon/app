@@ -3,14 +3,14 @@ import { Dialog, IconType, type IDialogRootProps } from '@aragon/gov-ui-kit';
 import { NavigationLinks, type INavigationLink } from '../navigationLinks';
 import { NavigationLinksItem } from '../navigationLinks/navigationLinksItem';
 
-export interface INavigationDialogProps<TRouteType extends string> extends IDialogRootProps {
+export interface INavigationDialogProps extends IDialogRootProps {
     /**
      * Links of the application.
      */
-    links: Array<INavigationLink<TRouteType>>;
+    links: INavigationLink[];
 }
 
-export const NavigationDialog = <TRouteType extends string>(props: INavigationDialogProps<TRouteType>) => {
+export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
     const { links, children, onOpenChange, ...otherProps } = props;
 
     const { t } = useTranslations();
