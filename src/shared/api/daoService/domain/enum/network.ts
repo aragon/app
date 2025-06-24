@@ -9,4 +9,5 @@ export enum Network {
     PEAQ_MAINNET = 'peaq-mainnet',
     OPTIMISM_MAINNET = 'optimism-mainnet',
     CORN_MAINNET = 'corn-mainnet',
+    CHILIZ_MAINNET = 'chiliz-mainnet',
 }

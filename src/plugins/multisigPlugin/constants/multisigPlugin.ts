@@ -22,6 +22,7 @@ export const multisigPlugin: IPluginInfo = {
         [Network.PEAQ_MAINNET]: '0x83a977d564349586936f17D9536b2c5702B4Fe20',
         [Network.OPTIMISM_MAINNET]: '0xe903df20cD497F0CC12E870d784aCAd53CC5c9d6',
         [Network.CORN_MAINNET]: '0xf3793d55C5fef8AFB5CDF305996A93281C6Bd220',
+        [Network.CHILIZ_MAINNET]: '0x60C2b0B6CB2EB83349eB770f76a1C6dF611E5f03',
     },
     setup: {
         nameKey: 'app.plugins.multisig.setup.name',
