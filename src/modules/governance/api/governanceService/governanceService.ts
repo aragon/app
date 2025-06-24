@@ -3,7 +3,6 @@ import type { ICanCreateProposalResult, IMemberExistsResult } from './../../type
 import type { IMember, IProposal, IProposalAction, IProposalActionsResult, IVote } from './domain';
 import type {
     IGetCanCreateProposalParams,
-    IGetCanVoteParams,
     IGetMemberExistsParams,
     IGetMemberListParams,
     IGetMemberParams,
@@ -21,7 +20,6 @@ class GovernanceService extends AragonBackendService {
         proposals: '/v1/proposals',
         proposalBySlug: '/v1/proposals/slug/:slug',
         proposalActions: '/v1/proposals/:id/actions',
-        canVote: '/v2/proposals/:id/can-vote',
         canCreateProposal: '/v2/proposals/can-create-proposal',
         votes: '/v1/votes',
     };
@@ -66,12 +64,6 @@ class GovernanceService extends AragonBackendService {
         params: IGetProposalActionsParams,
     ): Promise<IProposalActionsResult<TAction>> => {
         const result = await this.request<IProposalActionsResult<TAction>>(this.urls.proposalActions, params);
-
-        return result;
-    };
-
-    getCanVote = async (params: IGetCanVoteParams): Promise<boolean> => {
-        const result = await this.request<boolean>(this.urls.canVote, params);
 
         return result;
     };
