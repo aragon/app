@@ -3,18 +3,20 @@ import { render, screen } from '@testing-library/react';
 import { type INotFoundDaoProps, NotFoundDao } from './notFoundDao';
 
 describe('<NotFoundDao /> component', () => {
-    const createTestComponent = (props?: Partial<INotFoundDaoProps>) => {
+    const createTestComponent = async (props?: Partial<INotFoundDaoProps>) => {
         const completeProps: INotFoundDaoProps = {
-            params: { addressOrEns: 'test-id', network: Network.ETHEREUM_MAINNET },
+            params: Promise.resolve({ addressOrEns: 'test-id', network: Network.ETHEREUM_MAINNET }),
             ...props,
         };
 
-        return <NotFoundDao {...completeProps} />;
+        const Component = await NotFoundDao(completeProps);
+
+        return Component;
     };
 
-    it('renders a not-found page for DAOs', () => {
+    it('renders a not-found page for DAOs', async () => {
         const params = { addressOrEns: 'my-dao.dao.eth', network: Network.ETHEREUM_MAINNET };
-        render(createTestComponent({ params }));
+        render(await createTestComponent({ params: Promise.resolve(params) }));
 
         expect(screen.getByText(/notFoundDao.title/)).toBeInTheDocument();
         expect(screen.getByText(/notFoundDao.description/)).toBeInTheDocument();

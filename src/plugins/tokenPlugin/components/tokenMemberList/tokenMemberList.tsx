@@ -1,3 +1,5 @@
+'use client';
+
 import type { IDaoMemberListDefaultProps } from '@/modules/governance/components/daoMemberList';
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
 import { useTranslations } from '@/shared/components/translationsProvider';

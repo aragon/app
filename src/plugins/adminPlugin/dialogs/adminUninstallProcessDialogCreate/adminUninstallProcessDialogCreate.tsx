@@ -1,3 +1,5 @@
+'use client';
+
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
@@ -33,10 +35,7 @@ export const AdminUninstallProcessDialogCreate: React.FC<IAdminUninstallProcessD
     const { close } = useDialogContext();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const createProcessUrl: __next_route_internal_types__.DynamicRoutes = daoUtils.getDaoUrl(
-        dao,
-        `create/${adminPlugin.address}/process`,
-    )!;
+    const createProcessUrl = daoUtils.getDaoUrl(dao, `create/${adminPlugin.address}/process`)!;
 
     const handlePermissionGuardSuccess = useCallback(() => {
         router.push(createProcessUrl);

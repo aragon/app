@@ -1,3 +1,5 @@
+'use client';
+
 import type { IGetVoteListParams } from '@/modules/governance/api/governanceService';
 import { type IVoteListProps, VoteProposalListItem } from '@/modules/governance/components/voteList';
 import { useVoteListData } from '@/modules/governance/hooks/useVoteListData';

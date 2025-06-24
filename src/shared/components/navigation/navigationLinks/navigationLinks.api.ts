@@ -1,9 +1,8 @@
 import type { IconType } from '@aragon/gov-ui-kit';
-import type { Route } from 'next';
 
 export type NavigationLinksVariant = 'column' | 'row';
 
-export interface INavigationLink<TRouteType extends string> {
+export interface INavigationLink {
     /**
      * Label of the route.
      */
@@ -11,7 +10,7 @@ export interface INavigationLink<TRouteType extends string> {
     /**
      * URL of the route.
      */
-    link: Route<TRouteType>;
+    link: string;
     /**
      * Icon of the route.
      */

@@ -1,3 +1,5 @@
+'use client';
+
 import { DefinitionList } from '@aragon/gov-ui-kit';
 import { useAdminGovernanceSettings } from '../../hooks/useAdminGovernanceSettings';
 

@@ -1,3 +1,5 @@
+'use client';
+
 import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { AdvancedDateInput } from '@/shared/components/forms/advancedDateInput';
 import { useTranslations } from '@/shared/components/translationsProvider';

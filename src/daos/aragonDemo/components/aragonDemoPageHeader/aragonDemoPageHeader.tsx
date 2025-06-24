@@ -1,3 +1,5 @@
+'use client';
+
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import type { IDao } from '@/shared/api/daoService';
@@ -41,10 +43,7 @@ export const AragonDemoPageHeader: React.FC<IAragonDemoPageHeaderProps> = (props
 
     const plugin = useDaoPlugins({ daoId })![0];
 
-    const createProposalUrl: __next_route_internal_types__.DynamicRoutes = daoUtils.getDaoUrl(
-        dao,
-        `create/${plugin.meta.address}/proposal`,
-    )!;
+    const createProposalUrl = daoUtils.getDaoUrl(dao, `create/${plugin.meta.address}/proposal`)!;
 
     const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
         permissionNamespace: 'proposal',
