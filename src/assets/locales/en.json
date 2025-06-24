@@ -1452,10 +1452,6 @@
                 "label": "Address",
                 "placeholder": "ENS or 0x…"
               },
-              "error": {
-                "alreadyInList": "Address has already been added",
-                "invalid": "Address is not valid"
-              },
               "tokens": {
                 "label": "Tokens"
               }
@@ -1648,7 +1644,7 @@
           "input": {
             "error": {
               "alreadyInList": "Address has already been added",
-              "invalid": "Address is not valid"
+              "invalid": "Valid address is mandatory"
             },
             "label": "Member",
             "placeholder": "ENS or 0x…"

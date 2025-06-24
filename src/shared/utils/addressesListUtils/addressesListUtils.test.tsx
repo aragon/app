@@ -3,7 +3,7 @@ import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { addressesListUtils } from './addressesListUtils';
 
-describe('addressesListUtils', () => {
+describe('addressesList Utils', () => {
     const isAddressSpy = jest.spyOn(addressUtils, 'isAddress');
     const isAddressEqualSpy = jest.spyOn(addressUtils, 'isAddressEqual');
 
@@ -19,7 +19,7 @@ describe('addressesListUtils', () => {
             const members: ITokenSetupMembershipMember[] = [{ address: '0x123' }, { address: '0x456' }];
             const result = addressesListUtils.checkIsAlreadyInList(members, 2, '0x123');
 
-            expect(result).toBe(true);
+            expect(result).toBeTruthy();
             expect(isAddressEqualSpy).toHaveBeenCalledWith('0x123', '0x123');
         });
 
@@ -29,7 +29,7 @@ describe('addressesListUtils', () => {
             const members: ITokenSetupMembershipMember[] = [{ address: '0xabc' }, { address: '0xdef' }];
             const result = addressesListUtils.checkIsAlreadyInList(members, 2, '0x999');
 
-            expect(result).toBe(false);
+            expect(result).toBeFalsy();
         });
     });
 
@@ -40,7 +40,7 @@ describe('addressesListUtils', () => {
 
             const result = addressesListUtils.validateAddress([], 0, member, 'error', customValidator);
 
-            expect(result).toBe(true);
+            expect(result).toBeTruthy();
             expect(customValidator).toHaveBeenCalledWith(member);
         });
 
@@ -80,7 +80,7 @@ describe('addressesListUtils', () => {
 
             const result = addressesListUtils.validateAddress(members, 1, member, 'test-three');
 
-            expect(result).toBe(true);
+            expect(result).toBeTruthy();
             expect(isAddressSpy).toHaveBeenCalledWith('0xbbb');
             expect(isAddressEqualSpy).toHaveBeenCalledWith('0xaaa', '0xbbb');
         });

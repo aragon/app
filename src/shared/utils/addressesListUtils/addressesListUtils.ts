@@ -9,17 +9,18 @@ class AddressesListUtils {
     validateAddress = (
         members: ITokenSetupMembershipMember[],
         index: number,
-        member: ICompositeAddress,
         errorNamespace: string,
         customValidator?: (member: ICompositeAddress) => true | string,
     ): true | string => {
         if (customValidator) {
-            return customValidator(member);
+            return customValidator(members[index]);
         }
 
-        if (!addressUtils.isAddress(member.address, { strict: true })) {
+        if (!members[index].address) {
+            return false;
+        } else if (!addressUtils.isAddress(members[index].address, { strict: true })) {
             return `${errorNamespace}.invalid`;
-        } else if (this.checkIsAlreadyInList(members, index, member.address)) {
+        } else if (this.checkIsAlreadyInList(members, index, members[index].address)) {
             return `${errorNamespace}.alreadyInList`;
         }
 
