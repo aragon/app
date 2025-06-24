@@ -16,9 +16,7 @@ class AddressesListUtils {
             return customValidator(members[index]);
         }
 
-        if (!members[index].address) {
-            return false;
-        } else if (!addressUtils.isAddress(members[index].address, { strict: true })) {
+        if (!addressUtils.isAddress(members[index].address)) {
             return `${errorNamespace}.invalid`;
         } else if (this.checkIsAlreadyInList(members, index, members[index].address)) {
             return `${errorNamespace}.alreadyInList`;

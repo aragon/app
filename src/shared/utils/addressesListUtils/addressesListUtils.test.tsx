@@ -1,5 +1,4 @@
 import type { ITokenSetupMembershipMember } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
-import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { addressesListUtils } from './addressesListUtils';
 
@@ -36,53 +35,55 @@ describe('addressesList Utils', () => {
     describe('validateAddress', () => {
         it('returns true if customValidator returns true', () => {
             const customValidator = jest.fn().mockReturnValue(true);
-            const member: ICompositeAddress = { address: '0xabc' };
+            const address = '0x123';
 
-            const result = addressesListUtils.validateAddress([], 0, member, 'error', customValidator);
+            const result = addressesListUtils.validateAddress([{ address }], 0, 'error', customValidator);
 
             expect(result).toBeTruthy();
-            expect(customValidator).toHaveBeenCalledWith(member);
+            expect(customValidator).toHaveBeenCalledWith({ address });
         });
 
         it('returns errorNamespace.invalid if address is invalid', () => {
             isAddressSpy.mockReturnValue(false);
 
-            const member: ICompositeAddress = { address: '0xinvalid' };
+            const address = '0xinvalid';
+            const members: ITokenSetupMembershipMember[] = [{ address }];
             const errorNamespace = 'test-one';
 
-            const result = addressesListUtils.validateAddress([], 0, member, errorNamespace);
+            const result = addressesListUtils.validateAddress(members, 0, errorNamespace);
 
             expect(result).toBe(`${errorNamespace}.invalid`);
-            expect(isAddressSpy).toHaveBeenCalledWith('0xinvalid');
+            expect(isAddressSpy).toHaveBeenCalledWith(address);
         });
 
         it('returns errorNamespace.alreadyInList if address is already in list', () => {
             isAddressSpy.mockReturnValue(true);
             isAddressEqualSpy.mockReturnValue(true);
 
-            const members: ITokenSetupMembershipMember[] = [{ address: '0xaaa' }];
-            const member: ICompositeAddress = { address: '0xaaa' };
+            const address = '0xaaa';
+            const members: ITokenSetupMembershipMember[] = [{ address }, { address }];
             const errorNamespace = 'test-two';
 
-            const result = addressesListUtils.validateAddress(members, 1, member, errorNamespace);
+            const result = addressesListUtils.validateAddress(members, 1, errorNamespace);
 
             expect(result).toBe(`${errorNamespace}.alreadyInList`);
-            expect(isAddressSpy).toHaveBeenCalledWith('0xaaa');
-            expect(isAddressEqualSpy).toHaveBeenCalledWith('0xaaa', '0xaaa');
+            expect(isAddressSpy).toHaveBeenCalledWith(address);
+            expect(isAddressEqualSpy).toHaveBeenCalledWith(address, address);
         });
 
         it('returns true if address is valid and not already in list', () => {
             isAddressSpy.mockReturnValue(true);
             isAddressEqualSpy.mockReturnValue(false);
 
-            const members: ITokenSetupMembershipMember[] = [{ address: '0xaaa' }];
-            const member: ICompositeAddress = { address: '0xbbb' };
+            const addressOne = '0xbbb';
+            const addressTwo = '0xccc';
+            const members: ITokenSetupMembershipMember[] = [{ address: addressOne }, { address: addressTwo }];
 
-            const result = addressesListUtils.validateAddress(members, 1, member, 'test-three');
+            const result = addressesListUtils.validateAddress(members, 1, 'test-three');
 
             expect(result).toBeTruthy();
-            expect(isAddressSpy).toHaveBeenCalledWith('0xbbb');
-            expect(isAddressEqualSpy).toHaveBeenCalledWith('0xaaa', '0xbbb');
+            expect(isAddressSpy).toHaveBeenCalledWith(addressTwo);
+            expect(isAddressEqualSpy).toHaveBeenCalledWith(addressOne, addressTwo);
         });
     });
 });
