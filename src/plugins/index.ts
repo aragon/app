@@ -1,5 +1,6 @@
 import { initialiseAdminPlugin } from './adminPlugin';
 import { adminPluginDialogsDefinitions } from './adminPlugin/constants/adminPluginDialogsDefinitions';
+import { initialiseCapitalDistributorPlugin } from './capitalDistributorPlugin';
 import { initialiseMultisigPlugin } from './multisigPlugin';
 import { multisigPluginDialogsDefinitions } from './multisigPlugin/constants/multisigPluginDialogsDefinitions';
 import { initialiseSppPlugin } from './sppPlugin';
@@ -12,6 +13,7 @@ export const initialisePlugins = () => {
     initialiseTokenPlugin();
     initialiseSppPlugin();
     initialiseAdminPlugin();
+    initialiseCapitalDistributorPlugin();
 };
 
 export const pluginDialogsDefinitions = {

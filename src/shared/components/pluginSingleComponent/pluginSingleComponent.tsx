@@ -1,3 +1,5 @@
+'use client';
+
 import { pluginRegistryUtils, type PluginId, type SlotId } from '@/shared/utils/pluginRegistryUtils';
 import classNames from 'classnames';
 import { useDebugContext } from '../debugProvider';

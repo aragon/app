@@ -1,3 +1,5 @@
+'use client';
+
 import { ProposalCreationMode } from '@/modules/createDao/components/createProcessForm';
 import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import type { IPluginProposalCreationSettingsParams } from '@/modules/createDao/types';

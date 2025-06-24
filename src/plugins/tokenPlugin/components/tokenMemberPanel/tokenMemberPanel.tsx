@@ -1,3 +1,5 @@
+'use client';
+
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';

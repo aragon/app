@@ -24,7 +24,7 @@ export const multisigPlugin: IPluginInfo = {
         [Network.CORN_MAINNET]: '0xf3793d55C5fef8AFB5CDF305996A93281C6Bd220',
     },
     setup: {
-        nameKey: 'app.plugins.multisig.setup.name',
-        descriptionKey: 'app.plugins.multisig.setup.description',
+        nameKey: 'app.plugins.multisig.meta.setup.name',
+        descriptionKey: 'app.plugins.multisig.meta.setup.description',
     },
 };

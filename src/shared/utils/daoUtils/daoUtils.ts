@@ -1,4 +1,4 @@
-import { daoService, type IDao, type IDaoPlugin, type Network } from '@/shared/api/daoService';
+import { daoService, type IDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { type IDaoPageParams, type IPluginInfo, PluginType } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
@@ -107,17 +107,18 @@ class DaoUtils {
         return `${network}-${addressOrEns}`;
     };
 
-    getDaoUrl = (dao?: IDao, path?: string): `/dao/${Network}/${string}` | undefined => {
+    getDaoUrl = (dao?: IDao, path?: string): string | undefined => {
         if (dao == null) {
             return undefined;
         }
 
-        const { network, address, subdomain } = dao;
-        const ensName = subdomain && `${subdomain}.dao.eth`;
+        const { network, address } = dao;
+
+        const ensName = this.getDaoEns(dao);
         const baseUrl = `/dao/${network}/${ensName ?? address}`;
         const fullPath = path != null ? `${baseUrl}/${path}` : baseUrl;
 
-        return fullPath as `/dao/${Network}/${string}`;
+        return fullPath;
     };
 
     private filterPluginByAddress = (plugin: IDaoPlugin, address?: string) =>

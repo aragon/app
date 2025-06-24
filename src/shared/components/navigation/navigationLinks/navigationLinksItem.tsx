@@ -29,6 +29,7 @@ export interface INavigationLinksItemProps extends ILinkProps {
 
 export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (props) => {
     const { href, variant, icon, iconSide = 'left', children, className, ...otherProps } = props;
+
     const pathname = usePathname();
     const isActive = href != null && pathname.includes(href) && href !== '/';
 
