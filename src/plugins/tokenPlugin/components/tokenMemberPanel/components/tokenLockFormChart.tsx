@@ -21,37 +21,36 @@ export interface ITokenLockFormChartProps {
     /**
      * The amount of tokens used to compute voting power.
      */
-    amount: number;
+    amount?: string;
     /**
      * Settings of the token plugin with escrow contract.
      */
     settings: ITokenPluginSettings;
 }
 
-export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) => {
-    const { amount, settings } = props;
-    const [hoveredPoint, setHoveredPoint] = useState<IChartPoint>();
+const chartPoints = 6;
 
+export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) => {
+    const { amount = '0', settings } = props;
     const { maxTime } = settings.votingEscrow!;
 
-    const processedAmount = isNaN(amount) || amount < 0 ? 0 : amount;
-    const parsedAmount = parseUnits(processedAmount.toString(), 18);
+    const [hoveredPoint, setHoveredPoint] = useState<IChartPoint>();
 
-    const numPoints = 6;
-    const step = maxTime / (numPoints - 1);
+    const parsedAmount = parseUnits(amount, 18);
+    const processedAmount = parsedAmount > BigInt(1e30) ? BigInt(1e30) : parsedAmount;
 
-    const points: IChartPoint[] = Array.from({ length: numPoints }, (_, i) => {
+    const points: IChartPoint[] = Array.from({ length: chartPoints }, (_, i) => {
+        const step = maxTime / (chartPoints - 1);
         const seconds = i * step;
+
         const label = i === 0 ? 'Now' : DateTime.now().plus({ seconds }).toFormat('LLL d');
-        const votingPower = tokenLocksDialogUtils.calculateVotingPower(parsedAmount.toString(), seconds, settings);
+        const votingPower = tokenLocksDialogUtils.calculateVotingPower(processedAmount.toString(), seconds, settings);
 
         return { x: label, y: parseFloat(votingPower) };
     });
 
-    const handleMouseMove = (data: { activePayload?: Array<{ payload: IChartPoint }> }) => {
-        const point = data.activePayload?.[0].payload;
-        setHoveredPoint(point);
-    };
+    const handleMouseMove = (data: { activePayload?: Array<{ payload: IChartPoint }> }) =>
+        setHoveredPoint(data.activePayload?.[0].payload);
 
     const handleMouseLeave = () => setHoveredPoint(undefined);
 

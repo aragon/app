@@ -88,12 +88,13 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const handleFormSubmit = () => {
         const dialogType = needsApproval ? 'approve' : 'lock';
         const dialogProps = getDialogProps(lockAmountWei);
+        const viewLocksParams = { ...dialogProps, action: 'lock', daoId };
 
         if (dialogType === 'approve') {
             const params: ITokenApproveTokensDialogParams = {
                 ...dialogProps,
                 translationNamespace: 'LOCK',
-                onApproveSuccess: () => handleApproveSuccess(dialogProps), // open lock dialog with the same params!
+                onApproveSuccess: () => open(TokenPluginDialogId.VIEW_LOCKS, { params: viewLocksParams }),
                 transactionInfo: {
                     title: t('app.plugins.token.tokenLockForm.approveTransactionInfoTitle', { symbol: token.symbol }),
                     current: 1,
@@ -137,11 +138,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         open(TokenPluginDialogId.VIEW_LOCKS, { params });
     };
 
-    const handleApproveSuccess = (dialogProps: ReturnType<typeof getDialogProps>) => {
-        const params: ITokenLockUnlockDialogParams = { ...dialogProps, action: 'lock', daoId };
-        open(TokenPluginDialogId.LOCK_UNLOCK, { params });
-    };
-
     const getDialogProps = (confirmAmount: bigint) => ({
         token,
         underlyingToken: token,
@@ -171,7 +167,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         <FormProvider {...formValues}>
             <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
                 <div className="flex flex-col gap-3">
-                    <TokenLockFormChart amount={Number(lockAmount)} settings={plugin.settings} />
+                    <TokenLockFormChart amount={lockAmount} settings={plugin.settings} />
                     <AssetInput
                         onAmountChange={() => setPercentageValue('')}
                         disableAssetField={true}
