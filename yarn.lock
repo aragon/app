@@ -97,7 +97,7 @@ __metadata:
     ts-jest: "npm:^29.4.0"
     typescript: "npm:^5.8.3"
     typescript-eslint: "npm:^8.34.1"
-    vercel: "npm:^43.3.0"
+    vercel: "npm:^44.1.0"
     viem: "npm:^2.31.3"
     wagmi: "npm:^2.15.6"
   languageName: unknown
@@ -16296,9 +16296,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vercel@npm:^43.3.0":
-  version: 43.3.0
-  resolution: "vercel@npm:43.3.0"
+"vercel@npm:^44.1.0":
+  version: 44.1.0
+  resolution: "vercel@npm:44.1.0"
   dependencies:
     "@vercel/blob": "npm:1.0.2"
     "@vercel/build-utils": "npm:10.6.1"
@@ -16317,7 +16317,7 @@ __metadata:
   bin:
     vc: dist/vc.js
     vercel: dist/vc.js
-  checksum: 10c0/4a0876a8eb886036a6e1d09fea28987c22e0a0947590c31e3c6cb3bf298cee188d6424e934e5b19128687876b52d232ff0a92e8980db72a7e3f79e6949527ed4
+  checksum: 10c0/a04bc7dc4c4a2c38d7c0e7ab7c5e40ff7daf687aa2f47164da2e05aedc14649dc33ef48a93b94a38daf1652d40b49b6bcadd85043492bc94d54700907554835d
   languageName: node
   linkType: hard
 
