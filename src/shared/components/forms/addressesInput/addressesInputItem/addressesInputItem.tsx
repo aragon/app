@@ -56,7 +56,7 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
         label: t('app.shared.addressesInput.item.input.label'),
         rules: {
             required: true,
-            validate: () => addressesListUtils.validateAddress(membersField, index, errorNamespace, customValidator),
+            validate: () => addressesListUtils.validateAddress(membersField, index, customValidator),
         },
     });
 

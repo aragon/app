@@ -38,8 +38,6 @@ export interface ITokenSetupMembershipCreateTokenMemberProps {
 export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembershipCreateTokenMemberProps> = (props) => {
     const { formPrefix, onRemove, initialValue, index, members } = props;
 
-    const errorNamespace = 'app.shared.addressesInput.item.input.error';
-
     const { t } = useTranslations();
 
     const [memberInput, setMemberInput] = useState<string | undefined>(initialValue);
@@ -52,7 +50,7 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
         label: t('app.plugins.token.tokenSetupMembership.createToken.member.address.label'),
         rules: {
             required: true,
-            validate: () => addressesListUtils.validateAddress(members, index, errorNamespace),
+            validate: () => addressesListUtils.validateAddress(members, index),
         },
         fieldPrefix: formPrefix,
     });

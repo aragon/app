@@ -9,9 +9,10 @@ class AddressesListUtils {
     validateAddress = (
         members: ITokenSetupMembershipMember[],
         index: number,
-        errorNamespace: string,
         customValidator?: (member: ICompositeAddress) => true | string,
     ): true | string => {
+        const errorNamespace = 'app.shared.addressesInput.item.input.error';
+
         if (customValidator) {
             return customValidator(members[index]);
         }
