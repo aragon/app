@@ -174,7 +174,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                         hideMax={true}
                         hideAmountLabel={true}
                         minAmount={parseFloat(formattedMinDeposit)}
-                        maxInputValue={1e12}
                     />
                     <ToggleGroup
                         isMultiSelect={false}
