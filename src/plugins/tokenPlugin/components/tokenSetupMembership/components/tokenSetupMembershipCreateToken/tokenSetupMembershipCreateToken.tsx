@@ -18,7 +18,7 @@ export interface ITokenSetupMembershipCreateTokenProps {
 const nameMaxLength = 40;
 const symbolMaxLength = 12;
 // Only allow symbols that start with a letter, followed by letters or numbers
-const symbolRegex = /^[A-Z][A-Z0-9]*$/;
+const symbolRegex = /^[a-zA-Z][a-zA-Z0-9]*$/;
 
 export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCreateTokenProps> = (props) => {
     const { formPrefix } = props;
