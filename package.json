@@ -22,18 +22,18 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@aragon/gov-ui-kit": "^1.7.0",
+    "@aragon/gov-ui-kit": "^1.8.0",
     "@floating-ui/react": "^0.27.12",
     "@number-flow/react": "^0.5.10",
     "@reown/appkit": "^1.7.10",
     "@reown/appkit-adapter-wagmi": "^1.7.10",
     "@reown/walletkit": "^1.2.7",
-    "@sentry/nextjs": "^9.30.0",
-    "@tanstack/react-query": "^5.80.10",
+    "@sentry/nextjs": "^9.31.0",
+    "@tanstack/react-query": "^5.81.2",
     "@walletconnect/core": "^2.21.3",
     "@walletconnect/utils": "^2.21.3",
     "classnames": "^2.5.1",
-    "framer-motion": "^12.18.1",
+    "framer-motion": "^12.19.1",
     "luxon": "^3.6.1",
     "next": "^15.3.4",
     "nextjs-toploader": "^3.8.16",
@@ -43,7 +43,7 @@
     "react-use-measure": "^2.1.7",
     "recharts": "^2.15.3",
     "server-only": "^0.0.1",
-    "viem": "^2.31.3",
+    "viem": "^2.31.4",
     "wagmi": "^2.15.6"
   },
   "devDependencies": {
@@ -65,7 +65,7 @@
     "cross-env": "^7.0.3",
     "eslint": "^9.29.0",
     "eslint-config-next": "^15.3.4",
-    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
@@ -76,7 +76,7 @@
     "jest-environment-jsdom": "^30.0.2",
     "lint-staged": "^16.1.2",
     "postcss": "^8.5.6",
-    "prettier": "^3.5.3",
+    "prettier": "^3.6.0",
     "prettier-plugin-organize-imports": "^4.1.0",
     "prettier-plugin-sort-json": "^4.1.1",
     "prettier-plugin-tailwindcss": "^0.6.13",
@@ -84,7 +84,7 @@
     "tailwindcss-fluid-type": "^2.0.7",
     "ts-jest": "^29.4.0",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.34.1",
+    "typescript-eslint": "^8.35.0",
     "vercel": "^44.1.0"
   },
   "repository": {
