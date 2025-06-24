@@ -1,3 +1,5 @@
+'use client';
+
 import type { ITokenPluginSettingsToken } from '@/plugins/tokenPlugin/types';
 import { type Network, useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
