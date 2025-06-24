@@ -29,10 +29,12 @@ export const MultisigSetupMembershipItem: React.FC<IMultisigSetupMembershipItemP
     const { disabled, index, pluginAddress, member } = props;
 
     const memberExistsParams = { memberAddress: member.address, pluginAddress: pluginAddress! };
-    const { data: isMember } = useMemberExists(
+    const { data } = useMemberExists(
         { urlParams: memberExistsParams },
         { enabled: pluginAddress != null && addressUtils.isAddress(member.address) },
     );
+
+    const isMember = data?.status === true;
 
     const customValidator = () => (isMember ? 'app.plugins.multisig.multisigSetupMembership.item.alreadyMember' : true);
 

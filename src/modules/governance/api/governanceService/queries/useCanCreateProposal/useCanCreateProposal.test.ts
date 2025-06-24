@@ -12,7 +12,7 @@ describe('useCanCreateProposal query', () => {
     });
 
     it('fetches if the user can create proposal on the specified plugin', async () => {
-        const canCreateProposal = true;
+        const canCreateProposal = { status: true };
         getCanCreateProposalSpy.mockResolvedValue(canCreateProposal);
 
         const queryParams = { memberAddress: '0x123', pluginAddress: '0x456', network: Network.ARBITRUM_MAINNET };
