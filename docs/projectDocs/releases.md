@@ -28,18 +28,15 @@ releases consistent.
 ### Steps:
 
 1. **Branching**:
-
     - Identify the latest release commit (e.g., `Release v1.0.5`).
     - Create a new hotfix branch from that commit, following the naming convention: `HOTFIX-v{{version}}` (e.g.,
       `HOTFIX-v1.0.5`).
 
 2. **Development & Testing**:
-
     - Implement the fix on the new hotfix branch.
     - Deploy the changes to the staging environment through the **App Staging** workflow for testing and QA.
 
 3. **Deploying the Hotfix**:
-
     - Once the fix is verified, manually trigger the **App Production** workflow on the `HOTFIX-v{{version}}` branch to
       deploy it to production.
 
