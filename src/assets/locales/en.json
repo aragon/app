@@ -58,11 +58,6 @@
           "title": "DAO not found"
         }
       },
-      "navigation": {
-        "appLinks": {
-          "legacy": "Legacy app"
-        }
-      },
       "navigationDao": {
         "a11y": {
           "description": "This dialog provides key DAO details and links to governance, treasury, and community pages",
