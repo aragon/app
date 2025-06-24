@@ -58,7 +58,6 @@ export const ExploreNav: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-end gap-4 lg:gap-6">
-                <Navigation.AppLinks />
                 <Wallet onClick={handleWalletClick} user={walletUser} />
             </div>
         </Navigation.Container>
