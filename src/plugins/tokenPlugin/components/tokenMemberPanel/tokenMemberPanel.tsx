@@ -3,7 +3,7 @@
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Tabs } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ITokenPlugin, ITokenPluginSettings } from '../../types';
 import { TokenDelegationForm } from './components/tokenDelegationForm';
 import { TokenLockForm } from './components/tokenLockForm';
@@ -26,38 +26,35 @@ enum TokenMemberPanelTab {
     LOCK = 'LOCK',
 }
 
-const getTabsDefinitions = (settings: ITokenPluginSettings) => [
-    { value: TokenMemberPanelTab.WRAP, hidden: settings.votingEscrow ?? settings.token.underlying == null },
-    { value: TokenMemberPanelTab.LOCK, hidden: !settings.votingEscrow },
-    { value: TokenMemberPanelTab.DELEGATE, hidden: !settings.token.hasDelegate },
+const getTabsDefinitions = ({ votingEscrow, token }: ITokenPluginSettings) => [
+    { value: TokenMemberPanelTab.WRAP, hidden: votingEscrow != null || token.underlying == null },
+    { value: TokenMemberPanelTab.LOCK, hidden: votingEscrow == null },
+    { value: TokenMemberPanelTab.DELEGATE, hidden: !token.hasDelegate },
 ];
 
 export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const { plugin, daoId } = props;
-    const { token } = plugin.settings;
-    const { underlying } = token;
+
+    const { token, votingEscrow } = plugin.settings;
+    const { underlying, symbol, name } = token;
 
     const { t } = useTranslations();
-
-    const initialSelectedTab = plugin.settings.votingEscrow
-        ? TokenMemberPanelTab.LOCK
-        : underlying != null
-          ? TokenMemberPanelTab.WRAP
-          : TokenMemberPanelTab.DELEGATE;
-
-    const [selectedTab, setSelectedTab] = useState<string | undefined>(initialSelectedTab);
+    const [selectedTab, setSelectedTab] = useState<string>();
 
     const visibleTabs = getTabsDefinitions(plugin.settings).filter((tab) => !tab.hidden);
 
     // Remove the "g" and "Governance" prefixes from the token symbol / name
-    const underlyingToken = {
-        ...token,
-        address: underlying!,
-        symbol: token.symbol.substring(1),
-        name: token.name.substring(11),
-    };
-    const titleToken = !plugin.settings.votingEscrow && underlying != null ? underlyingToken : token;
+    const underlyingToken = { ...token, address: underlying!, symbol: symbol.substring(1), name: name.substring(11) };
+
+    const titleToken = !votingEscrow && underlying != null ? underlyingToken : token;
     const cardTitle = `${titleToken.name} (${titleToken.symbol})`;
+
+    // Update the initial selected tab on plugin property change
+    useEffect(() => {
+        const { LOCK, WRAP, DELEGATE } = TokenMemberPanelTab;
+        const initialSelectedTab = votingEscrow ? LOCK : underlying != null ? WRAP : DELEGATE;
+        setSelectedTab(initialSelectedTab);
+    }, [votingEscrow, underlying]);
 
     if (!visibleTabs.length) {
         return null;
@@ -67,17 +64,19 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
         <Page.AsideCard title={cardTitle}>
             <Tabs.Root value={selectedTab} onValueChange={setSelectedTab}>
                 <Tabs.List className="pb-4">
-                    {visibleTabs.map((tab) => (
+                    {visibleTabs.map(({ value }) => (
                         <Tabs.Trigger
-                            key={tab.value}
-                            label={t(`app.plugins.token.tokenMemberPanel.tabs.${tab.value}`)}
-                            value={tab.value}
+                            key={value}
+                            label={t(`app.plugins.token.tokenMemberPanel.tabs.${value}`)}
+                            value={value}
                         />
                     ))}
                 </Tabs.List>
-                <Tabs.Content value={TokenMemberPanelTab.LOCK}>
-                    <TokenLockForm daoId={daoId} plugin={plugin} />
-                </Tabs.Content>
+                {votingEscrow != null && (
+                    <Tabs.Content value={TokenMemberPanelTab.LOCK}>
+                        <TokenLockForm daoId={daoId} plugin={plugin} />
+                    </Tabs.Content>
+                )}
                 <Tabs.Content value={TokenMemberPanelTab.WRAP}>
                     <TokenWrapForm daoId={daoId} plugin={plugin} underlyingToken={underlyingToken} />
                 </Tabs.Content>

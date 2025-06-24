@@ -48,18 +48,12 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
         return { x: label, y: parseFloat(votingPower) };
     });
 
-    const handleMouseMove = (data: {
-        activePayload?: Array<{
-            payload: IChartPoint;
-        }>;
-    }) => {
+    const handleMouseMove = (data: { activePayload?: Array<{ payload: IChartPoint }> }) => {
         const point = data.activePayload?.[0].payload;
         setHoveredPoint(point);
     };
 
-    const handleMouseLeave = () => {
-        setHoveredPoint(undefined);
-    };
+    const handleMouseLeave = () => setHoveredPoint(undefined);
 
     const displayPoint = hoveredPoint ?? points[0];
 

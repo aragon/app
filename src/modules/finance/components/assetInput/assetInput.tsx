@@ -42,6 +42,10 @@ export interface IAssetInputProps {
      */
     hideMax?: boolean;
     /**
+     * When set, the component will ignore values greater than the specified amount.
+     */
+    maxInputValue?: number;
+    /**
      * Hides the amount label when set to true.
      */
     hideAmountLabel?: boolean;
@@ -52,8 +56,16 @@ export interface IAssetInputProps {
 }
 
 export const AssetInput: React.FC<IAssetInputProps> = (props) => {
-    const { fetchAssetsParams, fieldPrefix, onAmountChange, disableAssetField, hideMax, hideAmountLabel, minAmount } =
-        props;
+    const {
+        fetchAssetsParams,
+        fieldPrefix,
+        onAmountChange,
+        disableAssetField,
+        hideMax,
+        maxInputValue,
+        hideAmountLabel,
+        minAmount,
+    } = props;
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
@@ -76,9 +88,13 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         fieldPrefix,
     });
 
-    const handleAmountFieldChange = (amount?: string | ChangeEvent) => {
-        onAmountFieldChange(amount);
-        onAmountChange?.();
+    const handleAmountFieldChange = (amount?: string | ChangeEvent<HTMLInputElement>) => {
+        const newAmount = typeof amount === 'string' ? amount : amount?.target.value;
+
+        if (maxInputValue == null || parseFloat(newAmount ?? '0') < maxInputValue) {
+            onAmountFieldChange(amount);
+            onAmountChange?.();
+        }
     };
 
     const handleOpenDialog = () => {

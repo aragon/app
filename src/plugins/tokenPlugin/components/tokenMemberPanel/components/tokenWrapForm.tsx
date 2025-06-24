@@ -72,7 +72,6 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     });
 
     const parsedUnwrappedAmount = formatUnits(unwrappedBalance?.value ?? BigInt(0), decimals);
-
     const userAsset = useMemo(
         () => ({ token: underlyingToken, amount: parsedUnwrappedAmount }),
         [underlyingToken, parsedUnwrappedAmount],

@@ -35,13 +35,11 @@ const valuePercentages = ['0', '25', '50', '75', '100'];
 
 export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { plugin, daoId } = props;
+
     const { votingEscrow, token } = plugin.settings;
     const { votingEscrow: votingEscrowAddresses } = plugin;
 
-    invariant(
-        votingEscrow != null && votingEscrowAddresses != null,
-        'TokenLockForm: voting escrow settings are required',
-    );
+    invariant(votingEscrow != null && votingEscrowAddresses != null, 'TokenLockForm: escrow settings are required');
 
     const { escrowAddress } = votingEscrowAddresses;
     const { decimals } = token;
@@ -55,8 +53,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         urlParams: { address: address! },
         queryParams: { network: dao!.network, pluginAddress: plugin.address },
     };
-    const { itemsCount, refetch: refetchLocks } = useTokenLockListData(lockParams);
-    const lockCount = itemsCount ?? 0;
+    const { itemsCount: locksCount = 0, refetch: refetchLocks } = useTokenLockListData(lockParams);
 
     const [percentageValue, setPercentageValue] = useState<string>('100');
 
@@ -78,10 +75,9 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     });
 
     const parsedUnlockedAmount = formatUnits(unlockedBalance?.value ?? BigInt(0), decimals);
-
     const userAsset = useMemo(() => ({ token, amount: parsedUnlockedAmount }), [token, parsedUnlockedAmount]);
 
-    const formValues = useForm<ITokenLockFormData>({ mode: 'onChange', defaultValues: { asset: userAsset } });
+    const formValues = useForm<ITokenLockFormData>({ mode: 'onSubmit', defaultValues: { asset: userAsset } });
     const { control, setValue, handleSubmit } = formValues;
 
     const lockAmount = useWatch<ITokenLockFormData, 'amount'>({ control, name: 'amount' });
@@ -121,7 +117,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
             }
 
             const processedValue = (unlockedBalance.value * BigInt(value)) / BigInt(100);
-
             const parsedValue = formatUnits(processedValue, decimals);
             setValue('amount', parsedValue);
         },
@@ -143,16 +138,8 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     };
 
     const handleApproveSuccess = (dialogProps: ReturnType<typeof getDialogProps>) => {
-        const params: ITokenLockUnlockDialogParams = {
-            ...dialogProps,
-            action: 'lock',
-            daoId,
-        };
+        const params: ITokenLockUnlockDialogParams = { ...dialogProps, action: 'lock', daoId };
         open(TokenPluginDialogId.LOCK_UNLOCK, { params });
-    };
-
-    const handleTransactionSuccess = () => {
-        invalidateQueries();
     };
 
     const getDialogProps = (confirmAmount: bigint) => ({
@@ -160,7 +147,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         underlyingToken: token,
         amount: confirmAmount,
         network: dao!.network,
-        onSuccess: handleTransactionSuccess,
+        onSuccess: invalidateQueries,
         onSuccessClick: handleViewLocks,
         spender: escrowAddress as Hex,
         escrowContract: escrowAddress as Hex,
@@ -191,6 +178,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                         hideMax={true}
                         hideAmountLabel={true}
                         minAmount={parseFloat(formattedMinDeposit)}
+                        maxInputValue={1e12}
                     />
                     <ToggleGroup
                         isMultiSelect={false}
@@ -219,14 +207,11 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                             symbol: token.symbol,
                         })}
                     </Button>
-                    {lockCount > 0 && (
+                    {locksCount > 0 && (
                         <Button variant="secondary" size="lg" onClick={handleViewLocks}>
-                            {t('app.plugins.token.tokenLockForm.locks', {
-                                count: lockCount,
-                            })}
+                            {t('app.plugins.token.tokenLockForm.locks', { count: locksCount })}
                         </Button>
                     )}
-
                     <p className="text-center text-sm leading-normal font-normal text-neutral-500">
                         {t('app.plugins.token.tokenLockForm.footerInfo')}
                     </p>
