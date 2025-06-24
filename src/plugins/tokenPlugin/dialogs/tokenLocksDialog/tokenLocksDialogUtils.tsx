@@ -36,8 +36,7 @@ class TokenLocksDialogUtils {
 
     calculateVotingPower = (amount: string, time: number, settings: ITokenPluginSettings) => {
         const { token, votingEscrow } = settings;
-        const { slope, maxTime } = votingEscrow!;
-        const bias = 1000000000000000000; // TODO: get this from the backend
+        const { slope, maxTime, bias } = votingEscrow!;
 
         const processedTime = Math.min(time, maxTime);
 
