@@ -100,7 +100,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                 </Page.MainSection>
                 {hasSupportedPlugins && (
                     <Page.MainSection title={t('app.settings.daoSettingsPage.main.governanceInfoTitle')}>
-                        <Card className="flex flex-col gap-4 p-6">
+                        <Card className="flex flex-col gap-4 p-6" id="governance">
                             <DaoGovernanceInfo daoId={daoId} />
                             <Button
                                 size="md"

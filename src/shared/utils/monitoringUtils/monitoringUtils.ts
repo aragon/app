@@ -1,5 +1,10 @@
 import type { ClientOptions } from '@sentry/core';
-import { captureException, captureRequestError, withServerActionInstrumentation } from '@sentry/nextjs';
+import {
+    captureException,
+    captureRequestError,
+    captureRouterTransitionStart,
+    withServerActionInstrumentation,
+} from '@sentry/nextjs';
 
 export interface ILogErrorParams {
     /**
@@ -26,6 +31,8 @@ class MonitoringUtils {
     };
 
     logRequestError = captureRequestError;
+
+    logTransitionStart = captureRouterTransitionStart;
 
     serverActionWrapper = withServerActionInstrumentation;
 

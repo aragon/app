@@ -13,6 +13,7 @@ import {
 import type * as ReactQuery from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { networkUtils } from '../../../../shared/utils/networkUtils';
 import * as governanceService from '../../api/governanceService';
 import { generateMember, generateMemberMetrics } from '../../testUtils';
 import { DaoMemberDetailsPageClient, type IDaoMemberDetailsPageClientProps } from './daoMemberDetailsPageClient';
@@ -22,7 +23,7 @@ jest.mock('@aragon/gov-ui-kit', () => ({
     MemberAvatar: (props: { src: string }) => <div data-testid="avatar-mock" data-src={props.src} />,
 }));
 
-jest.mock('../../../explore/components/daoList', () => ({
+jest.mock('@/modules/explore/components/daoList', () => ({
     DaoList: jest.fn(() => <div data-testid="dao-list-mock" />),
 }));
 
@@ -127,7 +128,6 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
 
     it('renders the formatted member stats', () => {
         render(createTestComponent());
-
         expect(screen.getByText(/daoMemberDetailsPage.header.stat.latestActivity/)).toBeInTheDocument();
     });
 
@@ -142,16 +142,16 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
 
         render(createTestComponent({ address, daoId }));
-
-        expect(DaoList).toHaveBeenCalledWith(
-            expect.objectContaining({
-                daoListByMemberParams: {
-                    urlParams: { address },
-                    queryParams: { pageSize, excludeDaoId },
-                },
-            }),
-            undefined,
-        );
+        const expectedParams = {
+            urlParams: { address },
+            queryParams: {
+                pageSize,
+                excludeDaoId,
+                sort: 'blockTimestamp',
+                networks: networkUtils.getSupportedNetworks(),
+            },
+        };
+        expect(DaoList).toHaveBeenCalledWith(expect.objectContaining({ memberParams: expectedParams }), undefined);
     });
 
     it('renders fallback of `-` when lastActivity is null', () => {

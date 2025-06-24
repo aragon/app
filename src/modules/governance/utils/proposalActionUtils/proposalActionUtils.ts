@@ -92,7 +92,7 @@ class ProposalActionUtils {
         links.map(({ name, url }) => ({ label: name, href: url }));
 
     isWithdrawTokenAction = (action: Partial<IProposalAction>): action is IProposalActionWithdrawToken =>
-        action.type === ProposalActionType.TRANSFER;
+        action.type === ProposalActionType.TRANSFER || action.type === ProposalActionType.TRANSFER_NATIVE;
 
     isUpdateMetadataAction = (action: Partial<IProposalAction>): action is IProposalActionUpdateMetadata =>
         action.type === ProposalActionType.METADATA_UPDATE || action.type === ProposalActionType.METADATA_PLUGIN_UPDATE;

@@ -1,4 +1,5 @@
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
+import type { ICanCreateProposalResult, IMemberExistsResult } from './../../types';
 import type { IMember, IProposal, IProposalAction, IProposalActionsResult, IVote } from './domain';
 import type {
     IGetCanCreateProposalParams,
@@ -14,15 +15,15 @@ import type {
 
 class GovernanceService extends AragonBackendService {
     private urls = {
-        members: '/members',
-        member: '/members/:address',
-        memberExists: '/members/:memberAddress/:pluginAddress/exists',
-        proposals: '/proposals',
-        proposalBySlug: '/proposals/slug/:slug',
-        proposalActions: '/proposals/:id/actions',
-        canVote: '/proposals/:id/can-vote',
-        canCreateProposal: '/proposals/can-create-proposal',
-        votes: '/votes',
+        members: '/v1/members',
+        member: '/v1/members/:address',
+        memberExists: '/v2/members/:memberAddress/:pluginAddress/exists',
+        proposals: '/v1/proposals',
+        proposalBySlug: '/v1/proposals/slug/:slug',
+        proposalActions: '/v1/proposals/:id/actions',
+        canVote: '/v2/proposals/:id/can-vote',
+        canCreateProposal: '/v2/proposals/can-create-proposal',
+        votes: '/v1/votes',
     };
 
     getMemberList = async <TMember extends IMember = IMember>(
@@ -39,8 +40,8 @@ class GovernanceService extends AragonBackendService {
         return result;
     };
 
-    getMemberExists = async (params: IGetMemberExistsParams): Promise<boolean> => {
-        const result = await this.request<boolean>(this.urls.memberExists, params);
+    getMemberExists = async (params: IGetMemberExistsParams): Promise<IMemberExistsResult> => {
+        const result = await this.request<IMemberExistsResult>(this.urls.memberExists, params);
 
         return result;
     };
@@ -75,8 +76,8 @@ class GovernanceService extends AragonBackendService {
         return result;
     };
 
-    getCanCreateProposal = async (params: IGetCanCreateProposalParams): Promise<boolean> => {
-        const result = await this.request<boolean>(this.urls.canCreateProposal, params);
+    getCanCreateProposal = async (params: IGetCanCreateProposalParams): Promise<ICanCreateProposalResult> => {
+        const result = await this.request<ICanCreateProposalResult>(this.urls.canCreateProposal, params);
 
         return result;
     };

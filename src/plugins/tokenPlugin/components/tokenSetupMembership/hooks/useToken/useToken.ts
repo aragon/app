@@ -7,7 +7,7 @@ export const useToken = (params: IUseTokenParams): IUseTokenResult => {
     const { address, chainId, enabled = true } = params;
 
     const { data, isLoading, isError } = useReadContracts({
-        allowFailure: true,
+        allowFailure: false,
         query: { enabled },
         contracts: [
             { chainId, address, abi: erc20Abi, functionName: 'name' },
@@ -24,12 +24,7 @@ export const useToken = (params: IUseTokenParams): IUseTokenResult => {
 
         const [name, symbol, decimals, totalSupply] = data;
 
-        return {
-            name: name.result ?? 'Unknown',
-            symbol: symbol.result ?? 'UNKNOWN',
-            decimals: decimals.result ?? 18,
-            totalSupply: totalSupply.result?.toString() ?? '0',
-        };
+        return { name, symbol, decimals, totalSupply: totalSupply.toString() };
     }, [data, isLoading]);
 
     return { data: token, isError, isLoading };

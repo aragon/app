@@ -1,5 +1,6 @@
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Dialog } from '@aragon/gov-ui-kit';
+import { useEffect } from 'react';
 import type { FieldValues } from 'react-hook-form';
 import { type IWizardFormProps, type IWizardRootProps, Wizard } from '../../wizard';
 import { WizardDialogContainerFooter } from './wizardDialogContainerFooter';
@@ -22,7 +23,11 @@ export const WizardDialogContainer = <TFormData extends FieldValues = FieldValue
 ) => {
     const { title, formId, initialSteps, submitLabel, onSubmit, children, defaultValues, ...formProps } = props;
 
-    const { close } = useDialogContext();
+    const { close, updateOptions } = useDialogContext();
+
+    useEffect(() => {
+        updateOptions({ disableOutsideClick: true });
+    }, [updateOptions]);
 
     return (
         <>

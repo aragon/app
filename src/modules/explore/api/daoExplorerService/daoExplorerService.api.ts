@@ -23,6 +23,10 @@ export interface IGetDaoListByMemberQueryParams extends IPaginatedRequest, IOrde
      * DAO ID to filter out from the list
      */
     excludeDaoId?: string;
+    /**
+     * List of networks to filter the DAOs by.
+     */
+    networks?: Network[];
 }
 
 export interface IGetDaoListByMemberAddressParams

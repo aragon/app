@@ -212,6 +212,11 @@ describe('proposalActionUtils', () => {
             expect(proposalActionUtils.isWithdrawTokenAction(action)).toBeTruthy();
         });
 
+        it('returns true when action is of native transfer type', () => {
+            const action = generateProposalAction({ type: ProposalActionType.TRANSFER_NATIVE });
+            expect(proposalActionUtils.isWithdrawTokenAction(action)).toBeTruthy();
+        });
+
         it('returns false when action is not of transfer type', () => {
             const action = generateProposalAction({ type: ProposalActionType.METADATA_UPDATE });
             expect(proposalActionUtils.isWithdrawTokenAction(action)).toBeFalsy();
