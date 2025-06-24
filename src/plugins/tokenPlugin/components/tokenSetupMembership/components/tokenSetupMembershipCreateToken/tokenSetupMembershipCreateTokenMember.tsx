@@ -50,7 +50,7 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
         label: t('app.plugins.token.tokenSetupMembership.createToken.member.address.label'),
         rules: {
             required: true,
-            validate: () => addressesListUtils.validateAddress(members, index),
+            validate: (address) => addressesListUtils.validateAddress(address, members, index),
         },
         fieldPrefix: formPrefix,
     });

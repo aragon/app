@@ -1,13 +1,13 @@
-import type { ITokenSetupMembershipMember } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import { addressUtils, type ICompositeAddress } from '@aragon/gov-ui-kit';
 
 class AddressesListUtils {
-    checkIsAlreadyInList = (members: ITokenSetupMembershipMember[], currentIndex: number, address: string): boolean => {
+    checkIsAlreadyInList = (members: ICompositeAddress[], currentIndex: number, address?: string): boolean => {
         return members.slice(0, currentIndex).some((member) => addressUtils.isAddressEqual(member.address, address));
     };
 
     validateAddress = (
-        members: ITokenSetupMembershipMember[],
+        address: string,
+        members: ICompositeAddress[],
         index: number,
         customValidator?: (member: ICompositeAddress) => true | string,
     ): true | string => {
@@ -17,9 +17,9 @@ class AddressesListUtils {
             return customValidator(members[index]);
         }
 
-        if (!addressUtils.isAddress(members[index].address)) {
+        if (!addressUtils.isAddress(address)) {
             return `${errorNamespace}.invalid`;
-        } else if (this.checkIsAlreadyInList(members, index, members[index].address)) {
+        } else if (this.checkIsAlreadyInList(members, index, address)) {
             return `${errorNamespace}.alreadyInList`;
         }
 

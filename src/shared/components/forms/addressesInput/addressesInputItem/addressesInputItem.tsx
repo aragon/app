@@ -28,15 +28,13 @@ export interface IAddressesInputItemProps extends ComponentProps<'div'> {
     /**
      * Custom validator function that extends the default validation.
      */
-    customValidator?: (member: ICompositeAddress) => string | true;
+    customValidator?: (member: IAddressInputResolvedValue) => string | true;
 }
 
 export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) => {
     const { index, disabled, customValidator } = props;
 
     const { t } = useTranslations();
-
-    const errorNamespace = 'app.shared.addressesInput.item.input.error';
 
     const { trigger } = useFormContext();
 
@@ -56,14 +54,15 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
         label: t('app.shared.addressesInput.item.input.label'),
         rules: {
             required: true,
-            validate: () => addressesListUtils.validateAddress(membersField, index, customValidator),
+            validate: (member) =>
+                addressesListUtils.validateAddress(member.address, membersField, index, customValidator),
         },
     });
 
     const [addressInput, setAddressInput] = useState<string | undefined>(value.address);
 
     const handleAddressAccept = useCallback(
-        (value?: IAddressInputResolvedValue) => onAddressChange({ address: value?.address ?? '', name: value?.name }),
+        (value?: IAddressInputResolvedValue) => onAddressChange({ address: value?.address, name: value?.name }),
         [onAddressChange],
     );
 

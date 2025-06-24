@@ -37,7 +37,7 @@ describe('addressesList Utils', () => {
             const customValidator = jest.fn().mockReturnValue(true);
             const address = '0x123';
 
-            const result = addressesListUtils.validateAddress([{ address }], 0, customValidator);
+            const result = addressesListUtils.validateAddress(address, [{ address }], 0, customValidator);
 
             expect(result).toBeTruthy();
             expect(customValidator).toHaveBeenCalledWith({ address });
@@ -49,7 +49,7 @@ describe('addressesList Utils', () => {
             const address = '0xinvalid';
             const members: ITokenSetupMembershipMember[] = [{ address }];
 
-            const result = addressesListUtils.validateAddress(members, 0);
+            const result = addressesListUtils.validateAddress(address, members, 0);
 
             expect(result).toMatch(/invalid/);
             expect(isAddressSpy).toHaveBeenCalledWith(address);
@@ -62,7 +62,7 @@ describe('addressesList Utils', () => {
             const address = '0xaaa';
             const members: ITokenSetupMembershipMember[] = [{ address }, { address }];
 
-            const result = addressesListUtils.validateAddress(members, 1);
+            const result = addressesListUtils.validateAddress(address, members, 1);
 
             expect(result).toMatch(/alreadyInList/);
             expect(isAddressSpy).toHaveBeenCalledWith(address);
@@ -77,7 +77,7 @@ describe('addressesList Utils', () => {
             const addressTwo = '0xccc';
             const members: ITokenSetupMembershipMember[] = [{ address: addressOne }, { address: addressTwo }];
 
-            const result = addressesListUtils.validateAddress(members, 1);
+            const result = addressesListUtils.validateAddress(addressTwo, members, 1);
 
             expect(result).toBeTruthy();
             expect(isAddressSpy).toHaveBeenCalledWith(addressTwo);
