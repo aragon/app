@@ -1,3 +1,5 @@
+'use client';
+
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { InputContainer, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useState } from 'react';

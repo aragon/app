@@ -127,6 +127,7 @@ export class PluginRegistryUtils {
 
     registerSlotComponent = (params: IRegisterSlotComponentParams): this => {
         const { slotId, pluginId, component } = params;
+
         this.pluginRegistry = {
             ...this.pluginRegistry,
             slotComponents: {
@@ -147,6 +148,8 @@ export class PluginRegistryUtils {
 
         return component;
     };
+
+    getPageSlotId = (slotId: string, segments: string[]) => `${slotId}-${segments.toString()}`;
 
     listContainsRegisteredPlugins = (pluginIds: string[] = []) => {
         const registeredPluginIds = this.pluginRegistry.plugins.map((plugin) => plugin.id);

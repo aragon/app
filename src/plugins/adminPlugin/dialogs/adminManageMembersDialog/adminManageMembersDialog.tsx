@@ -1,3 +1,5 @@
+'use client';
+
 import { useMemberList } from '@/modules/governance/api/governanceService';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';

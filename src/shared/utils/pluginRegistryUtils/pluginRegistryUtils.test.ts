@@ -172,6 +172,13 @@ describe('pluginRegistry utils', () => {
         });
     });
 
+    describe('getPageSlotId', () => {
+        it('correctly parses slot IDs for pages', () => {
+            expect(pluginRegistryUtils.getPageSlotId('app', ['page', 'test'])).toEqual('app-page,test');
+            expect(pluginRegistryUtils.getPageSlotId('app-plugin', ['rewards'])).toEqual('app-plugin-rewards');
+        });
+    });
+
     describe('listContainsRegisteredPlugins', () => {
         it('returns true when list contains a registered plugin', () => {
             const plugins = [generatePlugin({ id: '1' }), generatePlugin({ id: '2' })];

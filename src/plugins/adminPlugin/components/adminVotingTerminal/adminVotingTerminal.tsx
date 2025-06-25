@@ -1,3 +1,5 @@
+'use client';
+
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { CardEmptyState } from '@aragon/gov-ui-kit';
 

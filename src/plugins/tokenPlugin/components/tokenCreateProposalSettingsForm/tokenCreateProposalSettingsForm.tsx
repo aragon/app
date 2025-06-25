@@ -1,3 +1,5 @@
+'use client';
+
 import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { AdvancedDateInput } from '@/shared/components/forms/advancedDateInput';

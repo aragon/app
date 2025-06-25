@@ -1,32 +1,22 @@
-'use client';
-
-import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IDaoPageParams } from '@/shared/types';
-import { EmptyState } from '@aragon/gov-ui-kit';
+import { NotFoundDaoError } from './notFoundDaoError';
 
 export interface INotFoundDaoProps {
     /**
      * DAO page parameters.
      */
-    params: IDaoPageParams;
+    params: Promise<IDaoPageParams>;
 }
 
-export const NotFoundDao: React.FC<INotFoundDaoProps> = (props) => {
+export const NotFoundDao: React.FC<INotFoundDaoProps> = async (props) => {
     const { params } = props;
-    const { network, addressOrEns } = params;
-
-    const { t } = useTranslations();
+    const { network, addressOrEns } = await params;
 
     const dashboardUrl = `/dao/${network}/${addressOrEns}/dashboard`;
 
     return (
         <div className="flex grow items-center justify-center">
-            <EmptyState
-                heading={t('app.application.notFoundDao.title')}
-                description={t('app.application.notFoundDao.description')}
-                objectIllustration={{ object: 'MAGNIFYING_GLASS' }}
-                primaryButton={{ label: t('app.application.notFoundDao.action'), href: dashboardUrl }}
-            />
+            <NotFoundDaoError url={dashboardUrl} />
         </div>
     );
 };

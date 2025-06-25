@@ -58,9 +58,6 @@ const sentryConfig = {
     sourcemaps: { deleteSourcemapsAfterUpload: true },
     // Disable sending data to Sentry
     telemetry: false,
-    // Fix "out of memory" error from Sentry but disable source-maps for server-side errors
-    // (see https://github.com/getsentry/sentry-javascript/issues/10468#issuecomment-2004710692)
-    disableServerWebpackPlugin: true,
     // Options to optimise the bundle size
     bundleSizeOptimizations: {
         // Exclude replay worker from bundle as self-hosted for current CSP policies
@@ -116,9 +113,6 @@ const nextConfig = {
                 port: '',
             },
         ],
-    },
-    experimental: {
-        typedRoutes: true,
     },
     env: {
         version: packageInfo.version,

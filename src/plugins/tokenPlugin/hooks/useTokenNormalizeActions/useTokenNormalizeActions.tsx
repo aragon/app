@@ -1,3 +1,5 @@
+'use client';
+
 import type { INormalizeActionsParams } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';

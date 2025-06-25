@@ -1,5 +1,5 @@
-import { NavigationLinksItem } from '@/modules/application/components/navigations/navigation/navigationLinks/navigationLinksItem';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import { Navigation } from '@/shared/components/navigation';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     addressUtils,
@@ -58,9 +58,9 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                 </div>
             </div>
             <div className="flex flex-col gap-1 px-4">
-                <NavigationLinksItem onClick={() => disconnect()} icon={IconType.LOGOUT} variant="column">
+                <Navigation.Item onClick={() => disconnect()} icon={IconType.LOGOUT} variant="column">
                     {t('app.application.userDialog.disconnect')}
-                </NavigationLinksItem>
+                </Navigation.Item>
             </div>
         </Dialog.Content>
     );
