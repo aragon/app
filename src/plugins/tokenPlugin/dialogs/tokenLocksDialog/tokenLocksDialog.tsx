@@ -23,9 +23,7 @@ export const TokenLocksDialog: React.FC<ITokenLocksDialogProps> = (props) => {
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
 
-    const handleLockDialogClose = () => {
-        open(TokenPluginDialogId.VIEW_LOCKS, { params: location.params });
-    };
+    const handleLockDialogClose = () => open(TokenPluginDialogId.VIEW_LOCKS, { params: location.params });
 
     return (
         <>

@@ -1,9 +1,9 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
-import type { IGetMemberLocksParams } from '../../../../api/tokenService';
+import { useMemberLocks, type IGetMemberLocksParams } from '../../../../api/tokenService';
 import type { ITokenPluginSettings } from '../../../../types';
-import { useTokenLockListData } from '../useTokenLockListData';
 import { TokenLockListItem } from './tokenLockListItem';
 
 export interface ITokenLockListProps {
@@ -27,23 +27,33 @@ export interface ITokenLockListProps {
 
 export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
     const { initialParams, plugin, daoId, onLockDialogClose } = props;
+
     const { t } = useTranslations();
-    const {
-        locksList,
-        onLoadMore,
-        state,
-        pageSize,
-        itemsCount,
-        errorState,
-        emptyState,
-        refetch: refetchLocks,
-    } = useTokenLockListData(initialParams);
-    const network = initialParams.queryParams.network;
+
+    const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage, refetch } = useMemberLocks(initialParams, {
+        enabled: !!initialParams.urlParams.address,
+    });
+
+    const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
+    const locksList = data?.pages.flatMap((page) => page.data);
+
+    const pageSize = initialParams.queryParams.pageSize ?? data?.pages[0].metadata.pageSize;
+    const itemsCount = data?.pages[0].metadata.totalRecords;
+
+    const errorState = {
+        heading: t('app.plugins.token.tokenLockList.error.title'),
+        description: t('app.plugins.token.tokenLockList.error.description'),
+    };
+
+    const emptyState = {
+        heading: t('app.plugins.token.tokenLockList.empty.title'),
+        description: t('app.plugins.token.tokenLockList.empty.description'),
+    };
 
     return (
         <DataListRoot
             entityLabel={t('app.plugins.token.tokenLockList.entity')}
-            onLoadMore={onLoadMore}
+            onLoadMore={fetchNextPage}
             state={state}
             pageSize={pageSize}
             itemsCount={itemsCount}
@@ -58,10 +68,10 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
                         key={lock.id}
                         lock={lock}
                         plugin={plugin}
-                        network={network}
+                        network={initialParams.queryParams.network}
                         daoId={daoId}
                         onLockDialogClose={onLockDialogClose}
-                        onRefreshNeeded={refetchLocks}
+                        onRefreshNeeded={refetch}
                     />
                 ))}
             </DataListContainer>

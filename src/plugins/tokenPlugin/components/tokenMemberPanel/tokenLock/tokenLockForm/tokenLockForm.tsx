@@ -1,5 +1,6 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
+import { useMemberLocks } from '@/plugins/tokenPlugin/api/tokenService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import type { ITokenLockUnlockDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenLockUnlockDialog';
@@ -14,7 +15,6 @@ import { formatUnits, parseUnits, type Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ITokenLocksDialogParams } from '../../../../dialogs/tokenLocksDialog';
 import { useCheckTokenAllowance } from '../../hooks/useCheckTokenAllowance';
-import { useTokenLockListData } from '../useTokenLockListData';
 import { TokenLockFormChart } from './tokenLockFormChart';
 
 export interface ITokenLockFormProps {
@@ -52,7 +52,8 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         urlParams: { address: address! },
         queryParams: { network: dao!.network, pluginAddress: plugin.address, onlyActive: true },
     };
-    const { itemsCount: locksCount = 0, refetch: refetchLocks } = useTokenLockListData(lockParams);
+    const { data: memberLocks, refetch: refetchLocks } = useMemberLocks(lockParams, { enabled: address != null });
+    const locksCount = memberLocks?.pages[0].metadata.totalRecords ?? 0;
 
     const [percentageValue, setPercentageValue] = useState<string>('100');
 
