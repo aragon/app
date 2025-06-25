@@ -1,4 +1,5 @@
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
@@ -29,47 +30,53 @@ export interface ITokenLockFormChartProps {
 }
 
 const chartPoints = 6;
+const maxAmount = 1_000_000_000_000;
 
 export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) => {
     const { amount = '0', settings } = props;
     const { maxTime } = settings.votingEscrow!;
 
+    const { t } = useTranslations();
+
     const [hoveredPoint, setHoveredPoint] = useState<IChartPoint>();
 
-    const parsedAmount = parseUnits(amount, 18);
-    const processedAmount = parsedAmount > BigInt(1e30) ? BigInt(1e30) : parsedAmount;
+    const processedAmount = parseFloat(amount) > maxAmount ? maxAmount.toString() : amount;
+    const processedAmountWei = parseUnits(processedAmount, 18).toString();
 
-    const points: IChartPoint[] = Array.from({ length: chartPoints }, (_, i) => {
-        const step = maxTime / (chartPoints - 1);
-        const seconds = i * step;
+    const secondsStep = maxTime / (chartPoints - 1);
+    const nowLabel = t('app.plugins.token.tokenLockForm.chart.now');
 
-        const label = i === 0 ? 'Now' : DateTime.now().plus({ seconds }).toFormat('LLL d');
-        const votingPower = tokenLockUtils.calculateVotingPower(processedAmount.toString(), seconds, settings);
+    const points: IChartPoint[] = Array.from({ length: chartPoints }, (_, index) => {
+        const pointSeconds = index * secondsStep;
 
-        return { x: label, y: parseFloat(votingPower) };
+        const dateLabel = index === 0 ? nowLabel : DateTime.now().plus({ seconds: pointSeconds }).toFormat('LLL d');
+        const votingPower = tokenLockUtils.calculateVotingPower(processedAmountWei, pointSeconds, settings);
+
+        return { x: dateLabel, y: parseFloat(votingPower) };
     });
 
+    const formatVotingPower = (value: number) =>
+        formatterUtils.formatNumber(value, { format: NumberFormat.GENERIC_SHORT }) ?? '';
+
     const handleMouseMove = (data: { activePayload?: Array<{ payload: IChartPoint }> }) =>
-        setHoveredPoint(data.activePayload?.[0].payload);
+        setHoveredPoint(data.activePayload?.[0].payload ?? points[0]);
 
-    const handleMouseLeave = () => setHoveredPoint(undefined);
-
-    const displayPoint = hoveredPoint ?? points[0];
+    const activePoint = hoveredPoint ?? points[0];
 
     return (
         <div className="w-full">
             <div className="-mb-10">
                 <p className="font-semibold!">
-                    {formatterUtils.formatNumber(displayPoint.y, { format: NumberFormat.TOKEN_AMOUNT_SHORT })}{' '}
-                    <span className="font-normal">Voting power</span>
+                    {formatterUtils.formatNumber(activePoint.y, { format: NumberFormat.TOKEN_AMOUNT_SHORT })}{' '}
+                    <span className="font-normal">{t('app.plugins.token.tokenLockForm.chart.votingPower')}</span>
                 </p>
-                <span className="text-sm text-neutral-500 md:text-base">{displayPoint.x}</span>
+                <span className="text-sm text-neutral-500 md:text-base">{activePoint.x}</span>
             </div>
             <ResponsiveContainer width="100%" height={200}>
                 <AreaChart
                     data={points}
                     onMouseMove={handleMouseMove}
-                    onMouseLeave={handleMouseLeave}
+                    onMouseLeave={() => setHoveredPoint(undefined)}
                     margin={{ right: 16, left: 4 }}
                 >
                     <defs>
@@ -88,9 +95,7 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
                         tick={{ dx: -25 }}
                     />
                     <YAxis
-                        tickFormatter={(value) =>
-                            formatterUtils.formatNumber(value as number, { format: NumberFormat.GENERIC_SHORT }) ?? ''
-                        }
+                        tickFormatter={formatVotingPower}
                         className="text-xs"
                         width={25}
                         tickLine={false}
@@ -109,8 +114,8 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
                         fill="url(#colorY)"
                     />
                     <ReferenceDot
-                        x={displayPoint.x}
-                        y={displayPoint.y}
+                        x={activePoint.x}
+                        y={activePoint.y}
                         r={4}
                         fill="var(--color-primary-400)"
                         stroke="var(--color-neutral-0)"

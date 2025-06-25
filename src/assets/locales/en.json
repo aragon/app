@@ -1331,6 +1331,10 @@
         },
         "tokenLockForm": {
           "approveTransactionInfoTitle": "Approve {{symbol}}",
+          "chart": {
+            "now": "Now",
+            "votingPower": "Voting power"
+          },
           "footerInfo": "Locking tokens will transfer them out of your wallet to the locking contract, where they can be withdrawn back to your wallet after the minimum locktime.",
           "locks": "View {{count}} locks",
           "percentage": {
