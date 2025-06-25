@@ -37,7 +37,6 @@ jobs:
           passphrase: ${{ steps.load-secrets.outputs.GPG_PASSPHRASE }}
           git_user_signingkey: true
           git_commit_gpgsign: true
-
       - name: Update version and changelog
         # Run prettier on CHANGELOG.md file (used for Github release notes) to remove automatic formatting applied by
         # changeset as Github does not support soft line breaks.
