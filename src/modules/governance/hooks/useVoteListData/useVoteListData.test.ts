@@ -1,3 +1,4 @@
+import { Network } from '@/shared/api/daoService';
 import {
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
@@ -9,7 +10,6 @@ import { renderHook } from '@testing-library/react';
 import * as governanceService from '../../api/governanceService';
 import { generateVote } from '../../testUtils';
 import { useVoteListData } from './useVoteListData';
-import { Network } from '@/shared/api/daoService';
 
 describe('useVoteListData hook', () => {
     const useVoteListSpy = jest.spyOn(governanceService, 'useVoteList');

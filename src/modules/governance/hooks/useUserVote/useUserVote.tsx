@@ -1,6 +1,6 @@
+import type { Network } from '@/shared/api/daoService';
 import { useAccount } from 'wagmi';
 import { useVoteList, type IProposal, type IVote } from '../../api/governanceService';
-import type { Network } from '@/shared/api/daoService';
 
 export interface IUseUserVoteParams {
     /**

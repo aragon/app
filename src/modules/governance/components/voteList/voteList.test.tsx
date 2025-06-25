@@ -1,10 +1,10 @@
+import { Network } from '@/shared/api/daoService';
 import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { VoteList, type IVoteListProps } from './voteList';
-import { Network } from '@/shared/api/daoService';
 
 jest.mock('@/shared/components/pluginTabComponent', () => ({
     PluginTabComponent: (props: { slotId: string; plugins: ITabComponentPlugin[] }) => (

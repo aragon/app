@@ -8,11 +8,11 @@ import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { type IDefinitionSetting, ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import { SppVotingTerminalBodyBreakdownDefault } from './sppVotingTerminalBodyBreakdownDefault';
 import { SppVotingTerminalBodyVoteDefault } from './sppVotingTerminalBodyVoteDefault';
-import { daoUtils } from '@/shared/utils/daoUtils';
 
 export interface ISppVotingTerminalBodyContentProps {
     /**

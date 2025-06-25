@@ -3,13 +3,13 @@ import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, type IDefinitionSetting, ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import { useAccount, useEnsName } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { VoteList } from '../voteList';
-import { daoUtils } from '@/shared/utils/daoUtils';
 
 export interface IProposalVotingTerminalProps {
     /**
