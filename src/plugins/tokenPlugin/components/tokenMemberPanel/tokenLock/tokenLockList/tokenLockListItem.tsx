@@ -1,7 +1,6 @@
 import type { Network } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     Avatar,
     Button,
@@ -24,7 +23,7 @@ import type { ITokenLockUnlockDialogParams } from '../../../../dialogs/tokenLock
 import type { LockStatus } from '../../../../dialogs/tokenLocksDialog/tokenLocksDialog';
 import { tokenLocksDialogUtils } from '../../../../dialogs/tokenLocksDialog/tokenLocksDialogUtils';
 import type { ITokenPlugin } from '../../../../types';
-import { useNftNeedsApproval } from '../../hooks/useNftNeedsApproval';
+import { useCheckNftAllowance } from '../../hooks/useCheckNftAllowance';
 
 export interface ITokenLockListItemProps {
     /**
@@ -61,6 +60,7 @@ const statusToVariant: Record<LockStatus, TagVariant> = {
 
 export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const { lock, plugin, network, daoId, onLockDialogClose, onRefreshNeeded } = props;
+
     const { escrowAddress, nftLockAddress } = plugin.votingEscrow!;
     const { token, votingEscrow } = plugin.settings;
     const { amount, epochStartAt } = lock;
@@ -68,14 +68,12 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { id: chainId } = networkDefinitions[network];
     const status = tokenLocksDialogUtils.getLockStatus(lock);
-
-    const needsApproval = useNftNeedsApproval({
-        spender: escrowAddress as Hex,
-        tokenAddress: nftLockAddress as Hex,
-        tokenId: BigInt(lock.tokenId),
-        chainId,
+    const { needsApproval } = useCheckNftAllowance({
+        spender: escrowAddress,
+        nft: nftLockAddress,
+        nftId: BigInt(lock.tokenId),
+        network,
         enabled: status === 'active',
     });
 

@@ -9,13 +9,12 @@ import type { ITokenMember, ITokenPluginSettings } from '@/plugins/tokenPlugin/t
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { Button, formatterUtils, NumberFormat, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits, type Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import { useCheckAllowance } from '../hooks/useCheckAllowance';
+import { useCheckTokenAllowance } from '../hooks/useCheckTokenAllowance';
 
 export interface ITokenWrapFormProps {
     /**
@@ -41,7 +40,6 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
 
     const { token } = plugin.settings;
     const { symbol, decimals } = token;
-    const underlyingAddress = underlyingToken.address as Hex;
 
     const { open } = useDialogContext();
     const { t } = useTranslations();
@@ -57,19 +55,12 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         { enabled: address != null },
     );
 
-    const { id: chainId } = networkDefinitions[dao!.network];
     const {
         allowance,
         balance: unwrappedBalance,
         status: unwrappedBalanceStatus,
         invalidateQueries,
-    } = useCheckAllowance({
-        owner: address!,
-        spender: underlyingAddress,
-        tokenAddress: token.address as Hex,
-        chainId,
-        enabled: address != null,
-    });
+    } = useCheckTokenAllowance({ spender: underlyingToken.address, token });
 
     const parsedUnwrappedAmount = formatUnits(unwrappedBalance?.value ?? BigInt(0), decimals);
     const userAsset = useMemo(

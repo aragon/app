@@ -7,14 +7,13 @@ import type { ITokenPlugin } from '@/plugins/tokenPlugin/types';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { Button, invariant, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits, type Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ITokenLocksDialogParams } from '../../../../dialogs/tokenLocksDialog';
-import { useCheckAllowance } from '../../hooks/useCheckAllowance';
+import { useCheckTokenAllowance } from '../../hooks/useCheckTokenAllowance';
 import { useTokenLockListData } from '../useTokenLockListData';
 import { TokenLockFormChart } from './tokenLockFormChart';
 
@@ -59,20 +58,12 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     const { result: isConnected, check: walletGuard } = useConnectedWalletGuard();
 
-    const { id: chainId } = networkDefinitions[dao!.network];
-
     const {
         allowance,
         balance: unlockedBalance,
         status: unlockedBalanceStatus,
         invalidateQueries,
-    } = useCheckAllowance({
-        owner: address!,
-        spender: escrowAddress as Hex,
-        tokenAddress: token.underlying as Hex,
-        chainId,
-        enabled: address != null,
-    });
+    } = useCheckTokenAllowance({ spender: escrowAddress, token: { ...token, address: token.underlying! } });
 
     const parsedUnlockedAmount = formatUnits(unlockedBalance?.value ?? BigInt(0), decimals);
     const userAsset = useMemo(() => ({ token, amount: parsedUnlockedAmount }), [token, parsedUnlockedAmount]);
