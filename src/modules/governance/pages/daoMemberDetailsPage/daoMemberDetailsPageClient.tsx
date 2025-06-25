@@ -48,16 +48,16 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const { t } = useTranslations();
     const { buildEntityUrl } = useBlockExplorer();
 
-    const memberUrlParams = { address };
-    const memberQueryParams = { daoId };
-    const memberParams = { urlParams: memberUrlParams, queryParams: memberQueryParams };
-    const { data: member } = useMember(memberParams);
-
     const efpParams = { urlParams: { address } };
     const { data: efpStats } = useEfpStats(efpParams);
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
+
+    const memberUrlParams = { address };
+    const memberQueryParams = { daoId, pluginAddress: dao!.plugins[0].address };
+    const memberParams = { urlParams: memberUrlParams, queryParams: memberQueryParams };
+    const { data: member } = useMember(memberParams);
 
     const memberStatsParams = { daoId, address, plugin: dao!.plugins[0] };
     const pluginStats = useSlotSingleFunction<IUsePluginMemberStatsParams, IPageHeaderStat[]>({

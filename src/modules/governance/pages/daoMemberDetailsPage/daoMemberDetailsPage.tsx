@@ -1,3 +1,4 @@
+import { daoService } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { QueryClient } from '@tanstack/react-query';
@@ -16,11 +17,12 @@ export const DaoMemberDetailsPage: React.FC<IDaoMemberDetailsPageProps> = async 
     const { params } = props;
     const { address, addressOrEns, network } = await params;
     const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
+    const dao = await daoService.getDao({ urlParams: { id: daoId } });
 
     const queryClient = new QueryClient();
 
     const memberUrlParams = { address };
-    const memberQueryParams = { daoId };
+    const memberQueryParams = { daoId, pluginAddress: dao.plugins[0].address };
     const memberParams = { urlParams: memberUrlParams, queryParams: memberQueryParams };
 
     try {

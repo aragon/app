@@ -59,7 +59,7 @@ export interface IGetMemberQueryParams {
     /**
      * Address of the plugin used to include the member stats.
      */
-    pluginAddress?: string;
+    pluginAddress: string;
 }
 
 export interface IGetMemberParams extends IRequestUrlQueryParams<IGetMemberUrlParams, IGetMemberQueryParams> {}

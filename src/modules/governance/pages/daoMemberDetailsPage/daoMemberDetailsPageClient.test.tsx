@@ -1,7 +1,12 @@
 import { DaoList } from '@/modules/explore/components/daoList';
 import * as efpService from '@/modules/governance/api/efpService';
 import * as daoService from '@/shared/api/daoService';
-import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import {
+    generateDao,
+    generateDaoPlugin,
+    generateReactQueryResultError,
+    generateReactQueryResultSuccess,
+} from '@/shared/testUtils';
 import {
     addressUtils,
     clipboardUtils,
@@ -38,7 +43,9 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     const useEfpStatsSpy = jest.spyOn(efpService, 'useEfpStats');
 
     beforeEach(() => {
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao({ plugins: [generateDaoPlugin()] }) }),
+        );
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember() }));
         useEfpStatsSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: { followers_count: 1, following_count: 2 } }),
@@ -68,14 +75,20 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     };
 
     it('fetches and renders the member ens and avatar', () => {
+        const dao = generateDao({ address: 'dao-id', plugins: [generateDaoPlugin({ address: 'plugin-address' })] });
         const address = '0x1234567890123456789012345678901234567890';
-        const daoId = 'dao-id';
         const ens = 'member.eth';
         const member = generateMember({ ens, address });
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
-        render(createTestComponent({ address, daoId }));
 
-        expect(useMemberSpy).toHaveBeenCalledWith({ urlParams: { address }, queryParams: { daoId } });
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
+
+        render(createTestComponent({ address, daoId: dao.id }));
+
+        expect(useMemberSpy).toHaveBeenCalledWith({
+            urlParams: { address },
+            queryParams: { daoId: dao.id, pluginAddress: dao.plugins[0].address },
+        });
         const ensHeading = screen.getByRole('heading', { level: 1, name: ens });
         expect(ensHeading).toBeInTheDocument();
 
@@ -132,16 +145,16 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     });
 
     it('passes the correct params to the DaoList component', () => {
+        const dao = generateDao({ address: 'dao-id', plugins: [generateDaoPlugin({ address: 'plugin-address' })] });
         const address = '0x1234567890123456789012345678901234567890';
-        const daoId = 'dao-id';
         const member = generateMember({ ens: 'member.eth', address });
         const pageSize = 3;
-        const excludeDaoId = daoId;
+        const excludeDaoId = dao.id;
 
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
 
-        render(createTestComponent({ address, daoId }));
+        render(createTestComponent({ address, daoId: dao.id }));
         const expectedParams = {
             urlParams: { address },
             queryParams: {

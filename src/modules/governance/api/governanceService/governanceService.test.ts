@@ -22,7 +22,10 @@ describe('governance service', () => {
 
     it('getMember fetches the member of the specified DAO by address', async () => {
         const member = generateMember({ address: '0x123' });
-        const params = { urlParams: { address: member.address }, queryParams: { daoId: 'dao-id-test' } };
+        const params = {
+            urlParams: { address: member.address },
+            queryParams: { daoId: 'dao-id-test', pluginAddress: 'test-plugin-address' },
+        };
 
         requestSpy.mockResolvedValue(member);
         const result = await governanceService.getMember(params);
