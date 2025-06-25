@@ -75,10 +75,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
         render(createTestComponent({ address, daoId }));
 
-        expect(useMemberSpy).toHaveBeenCalledWith({
-            urlParams: { address },
-            queryParams: { daoId, pluginAddress: '' },
-        });
+        expect(useMemberSpy).toHaveBeenCalledWith({ urlParams: { address }, queryParams: { daoId } });
         const ensHeading = screen.getByRole('heading', { level: 1, name: ens });
         expect(ensHeading).toBeInTheDocument();
 

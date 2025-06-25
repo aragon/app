@@ -51,10 +51,7 @@ describe('<DaoMemberDetailsPage /> component', () => {
     it('prefetches the DAO member data from the given address and dao ID', async () => {
         const params = { addressOrEns: 'test.dao.eth', network: Network.ETHEREUM_SEPOLIA, address: 'test-address' };
         const expectedDaoId = 'test-dao-id';
-        const memberParams = {
-            urlParams: { address: params.address },
-            queryParams: { daoId: expectedDaoId, pluginAddress: '' },
-        };
+        const memberParams = { urlParams: { address: params.address }, queryParams: { daoId: expectedDaoId } };
         resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
         render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(memberOptions(memberParams).queryKey);
