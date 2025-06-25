@@ -1,24 +1,36 @@
 'use client';
 
+import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
-import { type ITokenLockListProps, TokenLockList } from '../../components/tokenMemberPanel/tokenLock/tokenLockList';
+import { TokenLockList } from '../../components/tokenMemberPanel/tokenLock';
 import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
+import type { ITokenPluginSettings } from '../../types';
 
-export interface ITokenLocksDialogParams extends ITokenLockListProps {}
+export interface ITokenLocksDialogParams {
+    /**
+     * DAO with the token-voting plugin.
+     */
+    dao: IDao;
+    /**
+     * Token plugin containing voting escrow settings.
+     */
+    plugin: IDaoPlugin<ITokenPluginSettings>;
+}
 
 export interface ITokenLocksDialogProps extends IDialogComponentProps<ITokenLocksDialogParams> {}
-
-export type LockStatus = 'active' | 'cooldown' | 'available';
 
 export const TokenLocksDialog: React.FC<ITokenLocksDialogProps> = (props) => {
     const { location } = props;
     invariant(location.params != null, 'TokenLocksDialog: required parameters must be set.');
+    const { plugin, dao } = location.params;
 
     const { address } = useAccount();
     invariant(address != null, 'TokenLocksDialog: user must be connected.');
+
+    const { token } = plugin.settings;
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
@@ -29,12 +41,10 @@ export const TokenLocksDialog: React.FC<ITokenLocksDialogProps> = (props) => {
         <>
             <Dialog.Header title={t('app.plugins.token.tokenLocksDialog.title')} onClose={close} />
             <Dialog.Content
-                description={t('app.plugins.token.tokenLocksDialog.description', {
-                    symbol: location.params.plugin.settings.token.symbol,
-                })}
+                description={t('app.plugins.token.tokenLocksDialog.description', { symbol: token.symbol })}
                 className="pb-4 md:pb-6"
             >
-                <TokenLockList {...location.params} onLockDialogClose={handleLockDialogClose} />
+                <TokenLockList dao={dao} plugin={plugin} onLockDialogClose={handleLockDialogClose} />
             </Dialog.Content>
         </>
     );

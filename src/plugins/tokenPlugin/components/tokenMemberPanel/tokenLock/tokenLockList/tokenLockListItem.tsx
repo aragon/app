@@ -1,4 +1,4 @@
-import type { Network } from '@/shared/api/daoService';
+import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
@@ -20,10 +20,9 @@ import type { IMemberLock } from '../../../../api/tokenService';
 import { TokenPluginDialogId } from '../../../../constants/tokenPluginDialogId';
 import type { ITokenApproveNftDialogParams } from '../../../../dialogs/tokenApproveNftDialog';
 import type { ITokenLockUnlockDialogParams } from '../../../../dialogs/tokenLockUnlockDialog';
-import type { LockStatus } from '../../../../dialogs/tokenLocksDialog/tokenLocksDialog';
 import type { ITokenPlugin } from '../../../../types';
 import { useCheckNftAllowance } from '../../hooks/useCheckNftAllowance';
-import { tokenLockUtils } from '../tokenLockUtils';
+import { type TokenLockStatus, tokenLockUtils } from '../tokenLockUtils';
 
 export interface ITokenLockListItemProps {
     /**
@@ -35,13 +34,9 @@ export interface ITokenLockListItemProps {
      */
     plugin: ITokenPlugin;
     /**
-     * Network of the DAO.
+     * DAO with the token-voting plugin.
      */
-    network: Network;
-    /**
-     * ID of the DAO.
-     */
-    daoId: string;
+    dao: IDao;
     /**
      * Callback called on lock dialog close.
      */
@@ -52,14 +47,14 @@ export interface ITokenLockListItemProps {
     onRefreshNeeded?: () => void;
 }
 
-const statusToVariant: Record<LockStatus, TagVariant> = {
+const statusToVariant: Record<TokenLockStatus, TagVariant> = {
     active: 'primary',
     cooldown: 'info',
     available: 'success',
 };
 
 export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
-    const { lock, plugin, network, daoId, onLockDialogClose, onRefreshNeeded } = props;
+    const { lock, plugin, dao, onLockDialogClose, onRefreshNeeded } = props;
 
     const { escrowAddress, nftLockAddress } = plugin.votingEscrow!;
     const { token, votingEscrow } = plugin.settings;
@@ -73,7 +68,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
         spender: escrowAddress,
         nft: nftLockAddress,
         nftId: BigInt(lock.tokenId),
-        network,
+        network: dao.network,
         enabled: status === 'active',
     });
 
@@ -85,9 +80,9 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const handleUnlock = () => {
         const dialogProps = {
             action: 'unlock' as const,
-            daoId,
+            daoId: dao.id,
             escrowContract: escrowAddress,
-            network,
+            network: dao.network,
             token,
             tokenId: BigInt(lock.tokenId),
             onClose: onLockDialogClose,
@@ -100,7 +95,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                 tokenId: BigInt(lock.tokenId),
                 tokenName: lock.nft.name,
                 spender: escrowAddress as Hex,
-                network,
+                network: dao.network,
                 translationNamespace: 'UNLOCK',
                 onClose: onLockDialogClose,
                 onApproveSuccess: () => {
@@ -126,9 +121,9 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const handleWithdraw = () => {
         const withdrawParams: ITokenLockUnlockDialogParams = {
             action: 'withdraw',
-            daoId,
+            daoId: dao.id,
             escrowContract: escrowAddress,
-            network,
+            network: dao.network,
             token,
             tokenId: BigInt(lock.tokenId),
             onClose: onLockDialogClose,

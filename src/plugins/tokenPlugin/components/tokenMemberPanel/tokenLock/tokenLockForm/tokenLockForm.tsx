@@ -48,11 +48,11 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const lockParams = {
-        urlParams: { address: address! },
-        queryParams: { network: dao!.network, pluginAddress: plugin.address, onlyActive: true },
-    };
-    const { data: memberLocks, refetch: refetchLocks } = useMemberLocks(lockParams, { enabled: address != null });
+    const memberLocksQueryParams = { network: dao!.network, pluginAddress: plugin.address, onlyActive: true };
+    const { data: memberLocks } = useMemberLocks(
+        { urlParams: { address: address! }, queryParams: memberLocksQueryParams },
+        { enabled: address != null },
+    );
     const locksCount = memberLocks?.pages[0].metadata.totalRecords ?? 0;
 
     const [percentageValue, setPercentageValue] = useState<string>('100');
@@ -122,8 +122,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     );
 
     const handleViewLocks = () => {
-        void refetchLocks();
-        const params: ITokenLocksDialogParams = { daoId, plugin, initialParams: lockParams };
+        const params: ITokenLocksDialogParams = { dao: dao!, plugin };
         open(TokenPluginDialogId.VIEW_LOCKS, { params });
     };
 

@@ -1,24 +1,21 @@
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
-import { useMemberLocks, type IGetMemberLocksParams } from '../../../../api/tokenService';
+import { useAccount } from 'wagmi';
+import { useMemberLocks } from '../../../../api/tokenService';
 import type { ITokenPluginSettings } from '../../../../types';
 import { TokenLockListItem } from './tokenLockListItem';
 
 export interface ITokenLockListProps {
     /**
-     * Initial parameters to use for fetching the token locks.
+     * DAO with the token-voting plugin.
      */
-    initialParams: IGetMemberLocksParams;
+    dao: IDao;
     /**
      * Token plugin containing voting escrow settings.
      */
     plugin: IDaoPlugin<ITokenPluginSettings>;
-    /**
-     * ID of the DAO.
-     */
-    daoId: string;
     /**
      * Callback called on lock dialog close.
      */
@@ -26,18 +23,21 @@ export interface ITokenLockListProps {
 }
 
 export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
-    const { initialParams, plugin, daoId, onLockDialogClose } = props;
+    const { dao, plugin, onLockDialogClose } = props;
 
     const { t } = useTranslations();
+    const { address } = useAccount();
 
-    const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage, refetch } = useMemberLocks(initialParams, {
-        enabled: !!initialParams.urlParams.address,
-    });
+    const memberLocksQueryParams = { network: dao.network, pluginAddress: plugin.address, onlyActive: true };
+    const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage, refetch } = useMemberLocks(
+        { urlParams: { address: address! }, queryParams: memberLocksQueryParams },
+        { enabled: address != null },
+    );
 
     const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
     const locksList = data?.pages.flatMap((page) => page.data);
 
-    const pageSize = initialParams.queryParams.pageSize ?? data?.pages[0].metadata.pageSize;
+    const pageSize = data?.pages[0].metadata.pageSize;
     const itemsCount = data?.pages[0].metadata.totalRecords;
 
     const errorState = {
@@ -68,8 +68,7 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
                         key={lock.id}
                         lock={lock}
                         plugin={plugin}
-                        network={initialParams.queryParams.network}
-                        daoId={daoId}
+                        dao={dao}
                         onLockDialogClose={onLockDialogClose}
                         onRefreshNeeded={refetch}
                     />

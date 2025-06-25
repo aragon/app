@@ -3,8 +3,10 @@ import { formatUnits } from 'viem';
 import type { IMemberLock } from '../../../api/tokenService';
 import type { ITokenPluginSettings, ITokenPluginSettingsEscrowSettings } from '../../../types';
 
+export type TokenLockStatus = 'active' | 'cooldown' | 'available';
+
 class TokenLockUtils {
-    getLockStatus = (lock: IMemberLock) => {
+    getLockStatus = (lock: IMemberLock): TokenLockStatus => {
         const { lockExit } = lock;
         const { status, exitDateAt } = lockExit;
 
