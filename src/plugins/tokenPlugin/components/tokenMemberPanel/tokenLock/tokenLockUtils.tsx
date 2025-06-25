@@ -1,9 +1,9 @@
 import { DateTime } from 'luxon';
 import { formatUnits } from 'viem';
-import type { IMemberLock } from '../../api/tokenService';
-import type { ITokenPluginSettings, ITokenPluginSettingsEscrowSettings } from '../../types';
+import type { IMemberLock } from '../../../api/tokenService';
+import type { ITokenPluginSettings, ITokenPluginSettingsEscrowSettings } from '../../../types';
 
-class TokenLocksDialogUtils {
+class TokenLockUtils {
     getLockStatus = (lock: IMemberLock) => {
         const { lockExit } = lock;
         const { status, exitDateAt } = lockExit;
@@ -66,4 +66,4 @@ class TokenLocksDialogUtils {
     };
 }
 
-export const tokenLocksDialogUtils = new TokenLocksDialogUtils();
+export const tokenLockUtils = new TokenLockUtils();

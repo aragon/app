@@ -1,10 +1,10 @@
-import { tokenLocksDialogUtils } from '@/plugins/tokenPlugin/dialogs/tokenLocksDialog/tokenLocksDialogUtils';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { Area, AreaChart, ReferenceDot, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { parseUnits } from 'viem';
+import { tokenLockUtils } from '../tokenLockUtils';
 
 export interface IChartPoint {
     /**
@@ -44,7 +44,7 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
         const seconds = i * step;
 
         const label = i === 0 ? 'Now' : DateTime.now().plus({ seconds }).toFormat('LLL d');
-        const votingPower = tokenLocksDialogUtils.calculateVotingPower(processedAmount.toString(), seconds, settings);
+        const votingPower = tokenLockUtils.calculateVotingPower(processedAmount.toString(), seconds, settings);
 
         return { x: label, y: parseFloat(votingPower) };
     });

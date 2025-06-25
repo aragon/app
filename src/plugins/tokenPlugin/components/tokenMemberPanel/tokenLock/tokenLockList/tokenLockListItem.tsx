@@ -21,9 +21,9 @@ import { TokenPluginDialogId } from '../../../../constants/tokenPluginDialogId';
 import type { ITokenApproveNftDialogParams } from '../../../../dialogs/tokenApproveNftDialog';
 import type { ITokenLockUnlockDialogParams } from '../../../../dialogs/tokenLockUnlockDialog';
 import type { LockStatus } from '../../../../dialogs/tokenLocksDialog/tokenLocksDialog';
-import { tokenLocksDialogUtils } from '../../../../dialogs/tokenLocksDialog/tokenLocksDialogUtils';
 import type { ITokenPlugin } from '../../../../types';
 import { useCheckNftAllowance } from '../../hooks/useCheckNftAllowance';
+import { tokenLockUtils } from '../tokenLockUtils';
 
 export interface ITokenLockListItemProps {
     /**
@@ -68,7 +68,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const status = tokenLocksDialogUtils.getLockStatus(lock);
+    const status = tokenLockUtils.getLockStatus(lock);
     const { needsApproval } = useCheckNftAllowance({
         spender: escrowAddress,
         nft: nftLockAddress,
@@ -153,7 +153,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
         format: NumberFormat.TOKEN_AMOUNT_SHORT,
     });
 
-    const multiplier = tokenLocksDialogUtils.getMultiplier(lock, plugin.settings);
+    const multiplier = tokenLockUtils.getMultiplier(lock, plugin.settings);
     const formattedMultiplier = formatterUtils.formatNumber(multiplier.toString(), {
         format: NumberFormat.GENERIC_SHORT,
     });
@@ -199,7 +199,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                         <Rerender>
                             {() => (
                                 <NumberFlow
-                                    value={parseFloat(tokenLocksDialogUtils.getLockVotingPower(lock, plugin.settings))}
+                                    value={parseFloat(tokenLockUtils.getLockVotingPower(lock, plugin.settings))}
                                     format={{ notation: 'compact', minimumFractionDigits: 4 }}
                                     trend={-1}
                                 />
