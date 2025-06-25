@@ -1,8 +1,8 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { addressesListUtils } from '@/shared/utils/addressesListUtils';
 import {
     AddressInput,
-    addressUtils,
     Button,
     Dropdown,
     type IAddressInputResolvedValue,
@@ -11,7 +11,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useCallback, useState } from 'react';
-import type { ITokenSetupMembershipMember } from '../../tokenSetupMembership.api';
+import type { ITokenSetupMembershipForm, ITokenSetupMembershipMember } from '../../tokenSetupMembership.api';
 
 export interface ITokenSetupMembershipCreateTokenMemberProps {
     /**
@@ -26,9 +26,17 @@ export interface ITokenSetupMembershipCreateTokenMemberProps {
      * Callback triggered on remove button click.
      */
     onRemove?: () => void;
+    /**
+     * Current index of this member in the array.
+     */
+    index: number;
+    /**
+     * All members in the list for duplicate checking.
+     */
+    members: ITokenSetupMembershipForm['members'];
 }
 export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembershipCreateTokenMemberProps> = (props) => {
-    const { formPrefix, onRemove, initialValue } = props;
+    const { formPrefix, onRemove, initialValue, index, members } = props;
 
     const { t } = useTranslations();
 
@@ -40,7 +48,10 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
         ...memberField
     } = useFormField<ITokenSetupMembershipMember, 'address'>('address', {
         label: t('app.plugins.token.tokenSetupMembership.createToken.member.address.label'),
-        rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
+        rules: {
+            required: true,
+            validate: (address) => addressesListUtils.validateAddress(address, members, index),
+        },
         fieldPrefix: formPrefix,
     });
 

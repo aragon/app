@@ -1562,8 +1562,7 @@
             },
             "symbol": {
               "helpText": "This is the abbreviated ticker of the token. For example: UNI",
-              "label": "Token symbol",
-              "onlyLetters": "Only letters are allowed."
+              "label": "Token symbol"
             }
           },
           "importToken": {
