@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { erc20Abi, type Hex } from 'viem';
 import { useBalance, useReadContract } from 'wagmi';
 
-export interface IUseCheckAllowanceProps {
+export interface IUseCheckAllowanceParams {
     /**
      * The address of the holder of the tokens.
      */
@@ -25,7 +25,7 @@ export interface IUseCheckAllowanceProps {
     enabled?: boolean;
 }
 
-export const useCheckAllowance = (props: IUseCheckAllowanceProps) => {
+export const useCheckAllowance = (props: IUseCheckAllowanceParams) => {
     const { owner, spender, tokenAddress, chainId, enabled } = props;
 
     const queryClient = useQueryClient();

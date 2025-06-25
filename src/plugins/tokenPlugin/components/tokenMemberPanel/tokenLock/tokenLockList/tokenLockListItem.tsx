@@ -23,8 +23,8 @@ import type { ITokenApproveNftDialogParams } from '../../../../dialogs/tokenAppr
 import type { ITokenLockUnlockDialogParams } from '../../../../dialogs/tokenLockUnlockDialog';
 import type { LockStatus } from '../../../../dialogs/tokenLocksDialog/tokenLocksDialog';
 import { tokenLocksDialogUtils } from '../../../../dialogs/tokenLocksDialog/tokenLocksDialogUtils';
-import { useNftNeedsApproval } from '../../../../hooks/useNftNeedsApproval';
 import type { ITokenPlugin } from '../../../../types';
+import { useNftNeedsApproval } from '../../hooks/useNftNeedsApproval';
 
 export interface ITokenLockListItemProps {
     /**

@@ -1,7 +1,7 @@
 import { erc721Abi, type Hex } from 'viem';
 import { useReadContract } from 'wagmi';
 
-export interface IUseCheckAllowanceProps {
+export interface IUseNftNeedsApprovalParams {
     /**
      * The address being approved to get the NFT.
      */
@@ -24,7 +24,7 @@ export interface IUseCheckAllowanceProps {
     enabled?: boolean;
 }
 
-export const useNftNeedsApproval = (props: IUseCheckAllowanceProps) => {
+export const useNftNeedsApproval = (props: IUseNftNeedsApprovalParams) => {
     const { spender, tokenAddress, tokenId, chainId, enabled } = props;
 
     const { data: approvedAddress } = useReadContract({

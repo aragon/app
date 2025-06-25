@@ -3,7 +3,6 @@ import { AssetInput, type IAssetInputFormData } from '@/modules/finance/componen
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import type { ITokenLockUnlockDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenLockUnlockDialog';
-import { useCheckAllowance } from '@/plugins/tokenPlugin/hooks/useCheckAllowance';
 import type { ITokenPlugin } from '@/plugins/tokenPlugin/types';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -15,6 +14,7 @@ import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits, type Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ITokenLocksDialogParams } from '../../../../dialogs/tokenLocksDialog';
+import { useCheckAllowance } from '../../hooks/useCheckAllowance';
 import { useTokenLockListData } from '../useTokenLockListData';
 import { TokenLockFormChart } from './tokenLockFormChart';
 
