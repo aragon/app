@@ -87,12 +87,12 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
             const params: ITokenApproveTokensDialogParams = {
                 ...dialogProps,
                 translationNamespace: 'LOCK',
-                onApproveSuccess: () => handleApproveSuccess(dialogProps),
+                onSuccess: () => handleApproveSuccess(dialogProps),
                 transactionInfo: { title: transactionInfoTitle, current: 1, total: 2 },
             };
             open(TokenPluginDialogId.APPROVE_TOKENS, { params });
         } else {
-            const params: ITokenLockUnlockDialogParams = { ...dialogProps, action: 'lock', daoId };
+            const params: ITokenLockUnlockDialogParams = { ...dialogProps, action: 'lock' };
             open(TokenPluginDialogId.LOCK_UNLOCK, { params });
         }
     };
@@ -127,12 +127,13 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     };
 
     const handleApproveSuccess = (dialogProps: ReturnType<typeof getDialogProps>) => {
-        const params: ITokenLockUnlockDialogParams = { ...dialogProps, action: 'lock', daoId };
+        const params: ITokenLockUnlockDialogParams = { ...dialogProps, action: 'lock' };
         open(TokenPluginDialogId.LOCK_UNLOCK, { params });
     };
 
     const getDialogProps = (confirmAmount: bigint) => ({
         token,
+        dao: dao!,
         underlyingToken: token,
         amount: confirmAmount,
         network: dao!.network,

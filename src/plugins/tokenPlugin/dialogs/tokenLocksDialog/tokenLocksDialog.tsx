@@ -6,7 +6,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import { TokenLockList } from '../../components/tokenMemberPanel/tokenLock';
-import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
 import type { ITokenPluginSettings } from '../../types';
 
 export interface ITokenLocksDialogParams {
@@ -30,12 +29,10 @@ export const TokenLocksDialog: React.FC<ITokenLocksDialogProps> = (props) => {
     const { address } = useAccount();
     invariant(address != null, 'TokenLocksDialog: user must be connected.');
 
-    const { token } = plugin.settings;
-
     const { t } = useTranslations();
-    const { open, close } = useDialogContext();
+    const { close } = useDialogContext();
 
-    const handleLockDialogClose = () => open(TokenPluginDialogId.VIEW_LOCKS, { params: location.params });
+    const { token } = plugin.settings;
 
     return (
         <>
@@ -44,7 +41,7 @@ export const TokenLocksDialog: React.FC<ITokenLocksDialogProps> = (props) => {
                 description={t('app.plugins.token.tokenLocksDialog.description', { symbol: token.symbol })}
                 className="pb-4 md:pb-6"
             >
-                <TokenLockList dao={dao} plugin={plugin} onLockDialogClose={handleLockDialogClose} />
+                <TokenLockList dao={dao} plugin={plugin} />
             </Dialog.Content>
         </>
     );

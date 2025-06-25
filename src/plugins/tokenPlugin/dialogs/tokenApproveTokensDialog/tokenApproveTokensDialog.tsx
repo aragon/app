@@ -35,13 +35,9 @@ export interface ITokenApproveTokensDialogParams {
      */
     network: Network;
     /**
-     * Callback called when on approve success button click.
-     */
-    onApproveSuccess: () => void;
-    /**
      * Callback called on approve transaction success.
      */
-    onSuccess?: () => void;
+    onSuccess: () => void;
     /**
      * First argument of the approve function, which is the address of the spender.
      */
@@ -65,17 +61,8 @@ export const TokenApproveTokensDialog: React.FC<ITokenApproveTokensDialogProps> 
     const { address } = useAccount();
     invariant(address != null, 'TokenApproveTokensDialog: user must be connected.');
 
-    const {
-        token,
-        underlyingToken,
-        amount,
-        network,
-        onApproveSuccess,
-        onSuccess,
-        spender,
-        translationNamespace,
-        transactionInfo,
-    } = location.params;
+    const { token, underlyingToken, amount, network, onSuccess, spender, translationNamespace, transactionInfo } =
+        location.params;
 
     const { t } = useTranslations();
 
@@ -84,10 +71,6 @@ export const TokenApproveTokensDialog: React.FC<ITokenApproveTokensDialogProps> 
 
     const handlePrepareTransaction = () =>
         tokenApproveTokensDialogUtils.buildApproveTransaction({ token, amount, spender });
-
-    const onSuccessClick = () => {
-        onApproveSuccess();
-    };
 
     const parsedAmount = formatUnits(amount, token.decimals);
 
@@ -100,10 +83,6 @@ export const TokenApproveTokensDialog: React.FC<ITokenApproveTokensDialogProps> 
             prepareTransaction={handlePrepareTransaction}
             network={network}
             onSuccess={onSuccess}
-            successLink={{
-                label: t(`app.plugins.token.tokenApproveTokensDialog.${translationNamespace}.success`),
-                onClick: onSuccessClick,
-            }}
             transactionInfo={transactionInfo}
         >
             <AssetDataListItem.Structure

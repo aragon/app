@@ -38,10 +38,6 @@ export interface ITokenLockListItemProps {
      */
     dao: IDao;
     /**
-     * Callback called on lock dialog close.
-     */
-    onLockDialogClose?: () => void;
-    /**
      * Callback called when a refresh is needed, e.g., after an unlock or withdraw action.
      */
     onRefreshNeeded?: () => void;
@@ -54,7 +50,7 @@ const statusToVariant: Record<TokenLockStatus, TagVariant> = {
 };
 
 export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
-    const { lock, plugin, dao, onLockDialogClose, onRefreshNeeded } = props;
+    const { lock, plugin, dao, onRefreshNeeded } = props;
 
     const { escrowAddress, nftLockAddress } = plugin.votingEscrow!;
     const { token, votingEscrow } = plugin.settings;
@@ -72,21 +68,23 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
         enabled: status === 'active',
     });
 
-    const handleUnlockSuccess = () => {
-        onLockDialogClose?.();
+    const openViewLocksDialog = () => open(TokenPluginDialogId.VIEW_LOCKS, { params: { dao, plugin } });
+
+    const handleActionSuccess = () => {
+        openViewLocksDialog();
         onRefreshNeeded?.();
     };
 
     const handleUnlock = () => {
         const dialogProps = {
             action: 'unlock' as const,
-            daoId: dao.id,
+            dao: dao,
             escrowContract: escrowAddress,
             network: dao.network,
             token,
             tokenId: BigInt(lock.tokenId),
-            onClose: onLockDialogClose,
-            onSuccessClick: handleUnlockSuccess,
+            onClose: openViewLocksDialog,
+            onSuccessClick: handleActionSuccess,
         };
 
         if (needsApproval) {
@@ -97,8 +95,8 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                 spender: escrowAddress as Hex,
                 network: dao.network,
                 translationNamespace: 'UNLOCK',
-                onClose: onLockDialogClose,
-                onApproveSuccess: () => {
+                onClose: openViewLocksDialog,
+                onSuccess: () => {
                     const unlockParams: ITokenLockUnlockDialogParams = { ...dialogProps, showTransactionInfo: true };
                     open(TokenPluginDialogId.LOCK_UNLOCK, { params: unlockParams });
                 },
@@ -112,28 +110,23 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
             };
             open(TokenPluginDialogId.APPROVE_NFT, { params: approveParams });
         } else {
-            // Show unlock dialog directly
             const unlockParams: ITokenLockUnlockDialogParams = { ...dialogProps, showTransactionInfo: false };
             open(TokenPluginDialogId.LOCK_UNLOCK, { params: unlockParams });
         }
     };
 
     const handleWithdraw = () => {
-        const withdrawParams: ITokenLockUnlockDialogParams = {
+        const dialogParams: ITokenLockUnlockDialogParams = {
             action: 'withdraw',
-            daoId: dao.id,
+            dao: dao,
             escrowContract: escrowAddress,
-            network: dao.network,
             token,
             tokenId: BigInt(lock.tokenId),
-            onClose: onLockDialogClose,
-            onSuccessClick: () => {
-                onLockDialogClose?.();
-                onRefreshNeeded?.();
-            },
+            onClose: openViewLocksDialog,
+            onSuccessClick: handleActionSuccess,
             showTransactionInfo: false,
         };
-        open(TokenPluginDialogId.LOCK_UNLOCK, { params: withdrawParams });
+        open(TokenPluginDialogId.LOCK_UNLOCK, { params: dialogParams });
     };
 
     const minLockTime = epochStartAt + (votingEscrow?.minLockTime ?? 0);

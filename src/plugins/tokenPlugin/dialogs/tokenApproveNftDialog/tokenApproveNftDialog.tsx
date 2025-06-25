@@ -33,13 +33,9 @@ export interface ITokenApproveNftDialogParams {
      */
     network: Network;
     /**
-     * Callback called when on approve success button click.
-     */
-    onApproveSuccess: () => void;
-    /**
      * Callback called on approve transaction success.
      */
-    onSuccess?: () => void;
+    onSuccess: () => void;
     /**
      * Callback called on cancel button click.
      */
@@ -72,7 +68,6 @@ export const TokenApproveNftDialog: React.FC<ITokenApproveNftDialogProps> = (pro
         tokenId,
         tokenName,
         network,
-        onApproveSuccess,
         onSuccess,
         onClose,
         spender,
@@ -88,10 +83,6 @@ export const TokenApproveNftDialog: React.FC<ITokenApproveNftDialogProps> = (pro
     const handlePrepareTransaction = () =>
         tokenApproveNftDialogUtils.buildApproveTransaction({ tokenAddress, tokenId, spender });
 
-    const onSuccessClick = () => {
-        onApproveSuccess();
-    };
-
     return (
         <TransactionDialog
             title={t(`app.plugins.token.tokenApproveNftDialog.${translationNamespace}.title`)}
@@ -102,10 +93,6 @@ export const TokenApproveNftDialog: React.FC<ITokenApproveNftDialogProps> = (pro
             network={network}
             onSuccess={onSuccess}
             onCancelClick={onClose}
-            successLink={{
-                label: t(`app.plugins.token.tokenApproveNftDialog.${translationNamespace}.success`),
-                onClick: onSuccessClick,
-            }}
             transactionInfo={transactionInfo}
         >
             <AssetDataListItem.Structure

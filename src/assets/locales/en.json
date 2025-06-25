@@ -1266,7 +1266,6 @@
             "description": "To unlock your tokens, confirm the two onchain transactions in your wallet.",
             "nftName": "Lock NFT",
             "submit": "Approve NFT",
-            "success": "Unlock tokens",
             "title": "Approve unlocking"
           }
         },
@@ -1274,13 +1273,11 @@
           "LOCK": {
             "description": "To lock your tokens, confirm the two onchain transactions in your wallet.",
             "submit": "Approve tokens",
-            "success": "Lock tokens",
             "title": "Approve locking"
           },
           "WRAP": {
             "description": "To wrap your tokens, confirm the two onchain transactions in your wallet.",
             "submit": "Approve tokens",
-            "success": "Wrap tokens",
             "title": "Approve wrapping"
           }
         },

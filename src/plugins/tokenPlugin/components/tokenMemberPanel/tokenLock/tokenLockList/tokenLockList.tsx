@@ -16,14 +16,10 @@ export interface ITokenLockListProps {
      * Token plugin containing voting escrow settings.
      */
     plugin: IDaoPlugin<ITokenPluginSettings>;
-    /**
-     * Callback called on lock dialog close.
-     */
-    onLockDialogClose?: () => void;
 }
 
 export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
-    const { dao, plugin, onLockDialogClose } = props;
+    const { dao, plugin } = props;
 
     const { t } = useTranslations();
     const { address } = useAccount();
@@ -64,14 +60,7 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
                 emptyState={emptyState}
             >
                 {locksList?.map((lock) => (
-                    <TokenLockListItem
-                        key={lock.id}
-                        lock={lock}
-                        plugin={plugin}
-                        dao={dao}
-                        onLockDialogClose={onLockDialogClose}
-                        onRefreshNeeded={refetch}
-                    />
+                    <TokenLockListItem key={lock.id} lock={lock} plugin={plugin} dao={dao} onRefreshNeeded={refetch} />
                 ))}
             </DataListContainer>
             <DataListPagination />

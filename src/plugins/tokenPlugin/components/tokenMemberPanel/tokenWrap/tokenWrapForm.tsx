@@ -96,7 +96,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
             const params: ITokenApproveTokensDialogParams = {
                 ...dialogProps,
                 translationNamespace: 'WRAP',
-                onApproveSuccess: () => handleApproveSuccess(dialogProps), // open wrap dialog with the same params!
+                onSuccess: () => handleApproveSuccess(dialogProps),
                 transactionInfo,
             };
             open(TokenPluginDialogId.APPROVE_TOKENS, { params });
