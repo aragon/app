@@ -8,7 +8,7 @@
   "license": "GPL-3.0",
   "scripts": {
     "dev": "cross-env yarn setup local && next dev",
-    "build": "next build --no-lint",
+    "build": "NODE_OPTIONS=--max-old-space-size=6144 next build --no-lint",
     "build:analyze": "cross-env ANALYZE=true next build --no-lint",
     "start": "next start",
     "test": "jest --watch",

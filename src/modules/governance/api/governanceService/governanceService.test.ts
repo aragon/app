@@ -56,17 +56,6 @@ describe('governance service', () => {
         expect(result).toEqual(proposal);
     });
 
-    it('getCanVote fetches if the member can vote on the specified proposal', async () => {
-        const canVote = true;
-        const params = { urlParams: { id: 'proposal-id' }, queryParams: { userAddress: '0x123' } };
-
-        requestSpy.mockResolvedValue(canVote);
-        const result = await governanceService.getCanVote(params);
-
-        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].canVote, params);
-        expect(result).toEqual(canVote);
-    });
-
     it('getCanCreateProposal fetches if the member can create a proposal on the specified plugin', async () => {
         const canCreateProposal = true;
         const params = {
