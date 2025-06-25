@@ -1650,13 +1650,15 @@
             "description": "To unwrap your tokens, confirm the two onchain transactions in your wallet.",
             "submit": "Unwrap tokens",
             "success": "View members",
-            "title": "Unwrap tokens"
+            "title": "Unwrap tokens",
+            "transactionInfoTitle": "Unwrap {{symbol}}"
           },
           "wrap": {
             "description": "To wrap your tokens, confirm the two onchain transactions in your wallet.",
             "submit": "Wrap tokens",
             "success": "View members",
-            "title": "Wrap tokens"
+            "title": "Wrap tokens",
+            "transactionInfoTitle": "Wrap {{symbol}}"
           }
         }
       }

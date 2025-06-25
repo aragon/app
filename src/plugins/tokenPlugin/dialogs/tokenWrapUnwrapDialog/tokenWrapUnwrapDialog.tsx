@@ -74,7 +74,9 @@ export const TokenWrapUnwrapDialog: React.FC<ITokenWrapUnwrapDialogProps> = (pro
     const assetToken = action === 'wrap' ? underlyingToken : token;
 
     const transactionInfo = {
-        title: t('app.plugins.token.tokenWrapUnwrapDialog.transactionInfoTitle', { symbol: assetToken.symbol }),
+        title: t(`app.plugins.token.tokenWrapUnwrapDialog.${action}.transactionInfoTitle`, {
+            symbol: assetToken.symbol,
+        }),
         current: 2,
         total: 2,
     };

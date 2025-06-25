@@ -19,4 +19,5 @@ Sentry.init({
     replaysOnErrorSampleRate: 1.0,
 });
 
-export const onRouterTransitionStart = monitoringUtils.logTransitionStart;
+// eslint-disable-next-line import/namespace
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

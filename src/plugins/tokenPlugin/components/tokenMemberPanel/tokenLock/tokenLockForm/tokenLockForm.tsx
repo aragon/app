@@ -11,7 +11,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, invariant, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { formatUnits, parseUnits, type Hex } from 'viem';
+import { formatUnits, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ITokenLocksDialogParams } from '../../../../dialogs/tokenLocksDialog';
 import { useCheckTokenAllowance } from '../../hooks/useCheckTokenAllowance';
@@ -49,7 +49,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const memberLocksQueryParams = { network: dao!.network, pluginAddress: plugin.address, onlyActive: true };
-    const { data: memberLocks } = useMemberLocks(
+    const { data: memberLocks, refetch: refetchLocks } = useMemberLocks(
         { urlParams: { address: address! }, queryParams: memberLocksQueryParams },
         { enabled: address != null },
     );
@@ -78,27 +78,59 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const needsApproval = isConnected && (allowance == null || allowance < lockAmountWei);
 
     const handleFormSubmit = () => {
-        const dialogProps = getDialogProps(lockAmountWei);
-
         if (needsApproval) {
-            const { symbol } = token;
-            const transactionInfoTitle = t('app.plugins.token.tokenLockForm.approveTransactionInfoTitle', { symbol });
-
-            const params: ITokenApproveTokensDialogParams = {
-                ...dialogProps,
-                translationNamespace: 'LOCK',
-                onSuccess: () => handleApproveSuccess(dialogProps),
-                transactionInfo: { title: transactionInfoTitle, current: 1, total: 2 },
-            };
-            open(TokenPluginDialogId.APPROVE_TOKENS, { params });
+            handleApproveTokens();
         } else {
-            const params: ITokenLockUnlockDialogParams = { ...dialogProps, action: 'lock' };
-            open(TokenPluginDialogId.LOCK_UNLOCK, { params });
+            handleLockTokens(lockAmountWei);
         }
     };
 
-    const minDepositWei = BigInt(votingEscrow.minDeposit);
-    const formattedMinDeposit = formatUnits(minDepositWei, decimals);
+    const handleApproveTokens = () => {
+        const { symbol } = token;
+        const transactionInfoTitle = t('app.plugins.token.tokenLockForm.approveTransactionInfoTitle', { symbol });
+        const transactionInfo = { title: transactionInfoTitle, current: 1, total: 2 };
+
+        const params: ITokenApproveTokensDialogParams = {
+            token: { ...token, address: token.underlying! },
+            amount: lockAmountWei,
+            network: dao!.network,
+            translationNamespace: 'LOCK',
+            onSuccess: () => onApproveTokensSuccess(lockAmountWei),
+            spender: escrowAddress,
+            transactionInfo,
+        };
+
+        open(TokenPluginDialogId.APPROVE_TOKENS, { params });
+    };
+
+    const handleLockTokens = (amount: bigint) => {
+        const params: ITokenLockUnlockDialogParams = {
+            action: 'lock',
+            dao: dao!,
+            amount,
+            escrowContract: escrowAddress,
+            token,
+            onSuccess: invalidateQueries,
+            onSuccessClick: onLockTokensSuccessClick,
+            showTransactionInfo: needsApproval,
+        };
+        open(TokenPluginDialogId.LOCK_UNLOCK, { params });
+    };
+
+    const onApproveTokensSuccess = (amount: bigint) => {
+        invalidateQueries();
+        handleLockTokens(amount);
+    };
+
+    const onLockTokensSuccessClick = () => {
+        void refetchLocks();
+        handleViewLocks();
+    };
+
+    const handleViewLocks = () => {
+        const params: ITokenLocksDialogParams = { dao: dao!, plugin };
+        open(TokenPluginDialogId.VIEW_LOCKS, { params });
+    };
 
     const updateAmountField = useCallback(
         (value?: string) => {
@@ -121,29 +153,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         [updateAmountField],
     );
 
-    const handleViewLocks = () => {
-        const params: ITokenLocksDialogParams = { dao: dao!, plugin };
-        open(TokenPluginDialogId.VIEW_LOCKS, { params });
-    };
-
-    const handleApproveSuccess = (dialogProps: ReturnType<typeof getDialogProps>) => {
-        const params: ITokenLockUnlockDialogParams = { ...dialogProps, action: 'lock' };
-        open(TokenPluginDialogId.LOCK_UNLOCK, { params });
-    };
-
-    const getDialogProps = (confirmAmount: bigint) => ({
-        token,
-        dao: dao!,
-        underlyingToken: token,
-        amount: confirmAmount,
-        network: dao!.network,
-        onSuccess: invalidateQueries,
-        onSuccessClick: handleViewLocks,
-        spender: escrowAddress as Hex,
-        escrowContract: escrowAddress as Hex,
-        showTransactionInfo: needsApproval,
-    });
-
     // Update amount field and percentage value to 100% of user unlocked balance on user balance change
     useEffect(() => handlePercentageChange('100'), [handlePercentageChange]);
 
@@ -153,6 +162,9 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
             setValue('asset', userAsset);
         }
     }, [setValue, unlockedBalanceStatus, userAsset]);
+
+    const minDepositWei = BigInt(votingEscrow.minDeposit);
+    const formattedMinDeposit = formatUnits(minDepositWei, decimals);
 
     const submitLabel = needsApproval ? 'approve' : 'lock';
     const disableSubmit = unlockedBalance?.value === BigInt(0);
