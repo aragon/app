@@ -21,17 +21,5 @@ export const useMemberLocks = (
     params: IGetMemberLocksParams,
     options?: InfiniteQueryOptions<IPaginatedResponse<IMemberLock>, IGetMemberLocksParams>,
 ) => {
-    return useInfiniteQuery(
-        memberLocksOptions(
-            {
-                ...params,
-                queryParams: {
-                    ...params.queryParams,
-                    // Ensure `onlyActive` is set to true by default if not provided
-                    onlyActive: params.queryParams.onlyActive ?? true,
-                },
-            },
-            options,
-        ),
-    );
+    return useInfiniteQuery(memberLocksOptions(params, options));
 };

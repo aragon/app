@@ -51,7 +51,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     const lockParams = {
         urlParams: { address: address! },
-        queryParams: { network: dao!.network, pluginAddress: plugin.address },
+        queryParams: { network: dao!.network, pluginAddress: plugin.address, onlyActive: true },
     };
     const { itemsCount: locksCount = 0, refetch: refetchLocks } = useTokenLockListData(lockParams);
 
