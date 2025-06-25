@@ -94,22 +94,6 @@ export interface IGetProposalBySlugQueryParams {
 export interface IGetProposalBySlugParams
     extends IRequestUrlQueryParams<IGetProposalBySlugUrlParams, IGetProposalBySlugQueryParams> {}
 
-export interface IGetCanVoteUrlParams {
-    /**
-     * ID of the proposal to check voting permissions for.
-     */
-    id: string;
-}
-
-export interface IGetCanVoteQueryParams {
-    /**
-     * Address of the connected user to check voting permissions for.
-     */
-    userAddress: string;
-}
-
-export interface IGetCanVoteParams extends IRequestUrlQueryParams<IGetCanVoteUrlParams, IGetCanVoteQueryParams> {}
-
 export interface IGetCanCreateProposalQueryParams {
     /**
      * Address of the member to check the permission for.
