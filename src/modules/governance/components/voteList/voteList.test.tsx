@@ -4,6 +4,7 @@ import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtil
 import { render, screen } from '@testing-library/react';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { VoteList, type IVoteListProps } from './voteList';
+import { Network } from '@/shared/api/daoService';
 
 jest.mock('@/shared/components/pluginTabComponent', () => ({
     PluginTabComponent: (props: { slotId: string; plugins: ITabComponentPlugin[] }) => (
@@ -20,7 +21,7 @@ describe('<VoteList /> component', () => {
 
     const createTestComponent = (props?: Partial<IVoteListProps>) => {
         const completeProps: IVoteListProps = {
-            initialParams: { queryParams: {} },
+            initialParams: { queryParams: { network: Network.ETHEREUM_SEPOLIA } },
             daoId: 'dao-id',
             ...props,
         };

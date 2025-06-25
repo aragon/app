@@ -9,6 +9,7 @@ import { useAccount, useEnsName } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { VoteList } from '../voteList';
+import { daoUtils } from '@/shared/utils/daoUtils';
 
 export interface IProposalVotingTerminalProps {
     /**
@@ -33,12 +34,14 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
     const { address } = useAccount();
     const { data: pluginEnsName } = useEnsName({ address: proposal.pluginAddress as Hex });
 
+    const network = daoUtils.parseDaoId(daoId).network;
     const voteListParams = {
         queryParams: {
             proposalId: proposal.id,
             pluginAddress: proposal.pluginAddress,
             pageSize: votesPerPage,
             highlightUser: address,
+            network,
         },
     };
 

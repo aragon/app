@@ -12,6 +12,7 @@ import { type IDefinitionSetting, ProposalStatus, ProposalVoting } from '@aragon
 import type { ReactNode } from 'react';
 import { SppVotingTerminalBodyBreakdownDefault } from './sppVotingTerminalBodyBreakdownDefault';
 import { SppVotingTerminalBodyVoteDefault } from './sppVotingTerminalBodyVoteDefault';
+import { daoUtils } from '@/shared/utils/daoUtils';
 
 export interface ISppVotingTerminalBodyContentProps {
     /**
@@ -62,7 +63,12 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
     const proposalSettings = useDaoPluginInfo({ daoId, address: plugin.address, settings });
 
     const voteListParams = {
-        queryParams: { proposalId: subProposal?.id, pluginAddress: subProposal?.pluginAddress, pageSize: votesPerPage },
+        queryParams: {
+            proposalId: subProposal?.id,
+            pluginAddress: subProposal?.pluginAddress,
+            pageSize: votesPerPage,
+            network: daoUtils.parseDaoId(daoId).network,
+        },
     };
 
     // Set parent name and description on sub-proposal to correctly display the proposal info on the vote dialog.

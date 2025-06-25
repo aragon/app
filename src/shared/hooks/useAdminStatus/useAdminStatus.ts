@@ -1,4 +1,5 @@
 import { useMemberExists } from '@/modules/governance/api/governanceService';
+import type { Network } from '@/shared/api/daoService';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useAccount } from 'wagmi';
 
@@ -7,17 +8,21 @@ export interface IUseAdminStatusParams {
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Network of the DAO.
+     */
+    network: Network;
 }
 
 export const useAdminStatus = (params: IUseAdminStatusParams) => {
-    const { daoId } = params;
+    const { daoId, network } = params;
 
     const { address: memberAddress } = useAccount();
 
     const adminPlugins = useDaoPlugins({ daoId, subdomain: 'admin' });
     const adminPluginAddress = adminPlugins?.[0]?.meta?.address;
 
-    const memberExistsParams = { memberAddress: memberAddress as string, pluginAddress: adminPluginAddress! };
+    const memberExistsParams = { memberAddress: memberAddress as string, pluginAddress: adminPluginAddress!, network };
 
     const { data: isAdminMember } = useMemberExists(
         { urlParams: memberExistsParams },

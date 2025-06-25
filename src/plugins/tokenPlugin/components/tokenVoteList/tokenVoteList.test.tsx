@@ -50,7 +50,7 @@ describe('<TokenVoteList /> component', () => {
 
     const createTestComponent = (props?: Partial<ITokenVoteListProps>) => {
         const completeProps: ITokenVoteListProps = {
-            initialParams: { queryParams: { pluginAddress: '0x123' } },
+            initialParams: { queryParams: { pluginAddress: '0x123', network: daoService.Network.ETHEREUM_SEPOLIA } },
             daoId: 'test-id',
             ...props,
         };
@@ -146,7 +146,13 @@ describe('<TokenVoteList /> component', () => {
         render(
             createTestComponent({
                 daoId,
-                initialParams: { queryParams: { includeInfo: true, pluginAddress: '0x123' } },
+                initialParams: {
+                    queryParams: {
+                        includeInfo: true,
+                        pluginAddress: '0x123',
+                        network: daoService.Network.ETHEREUM_SEPOLIA,
+                    },
+                },
             }),
         );
 
@@ -170,6 +176,7 @@ describe('<TokenVoteList /> component', () => {
                 pluginAddress: '0x123',
                 includeInfo: true,
                 pageSize: 5,
+                network: daoService.Network.ETHEREUM_SEPOLIA,
             },
         };
 

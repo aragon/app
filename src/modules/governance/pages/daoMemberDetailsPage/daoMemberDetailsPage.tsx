@@ -20,7 +20,7 @@ export const DaoMemberDetailsPage: React.FC<IDaoMemberDetailsPageProps> = async 
     const queryClient = new QueryClient();
 
     const memberUrlParams = { address };
-    const memberQueryParams = { daoId };
+    const memberQueryParams = { daoId, pluginAddress: '' }; // Plugin address will be fetched on the client
     const memberParams = { urlParams: memberUrlParams, queryParams: memberQueryParams };
 
     try {

@@ -53,7 +53,7 @@ describe('<DaoMemberDetailsPage /> component', () => {
         const expectedDaoId = 'test-dao-id';
         const memberParams = {
             urlParams: { address: params.address },
-            queryParams: { daoId: expectedDaoId },
+            queryParams: { daoId: expectedDaoId, pluginAddress: '' },
         };
         resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
         render(await createTestComponent({ params: Promise.resolve(params) }));

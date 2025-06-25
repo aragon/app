@@ -9,12 +9,14 @@ export interface IUseAdminPermissionCheckProposalCreationParams extends IPermiss
 export const useAdminPermissionCheckProposalCreation = (
     params: IUseAdminPermissionCheckProposalCreationParams,
 ): IPermissionCheckGuardResult => {
-    const { plugin } = params;
+    const { plugin, daoId } = params;
 
     const { address } = useAccount();
     const { t } = useTranslations();
 
-    const memberExistsParams = { memberAddress: address as string, pluginAddress: plugin.address };
+    const network = daoUtils.parseDaoId(daoId).network;
+
+    const memberExistsParams = { memberAddress: address as string, pluginAddress: plugin.address, network };
     const { data, isLoading } = useMemberExists({ urlParams: memberExistsParams }, { enabled: address != null });
     const hasPermission = data?.status === true;
 

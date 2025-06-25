@@ -7,7 +7,7 @@ import { MultisigSetupMembershipItem } from './components/multisigSetupMembershi
 import type { IMultisigSetupMembershipForm, IMultisigSetupMembershipProps } from './multisigSetupMembership.api';
 
 export const MultisigSetupMembership: React.FC<IMultisigSetupMembershipProps> = (props) => {
-    const { formPrefix, disabled, onAddClick, pluginAddress, hideLabel } = props;
+    const { formPrefix, disabled, onAddClick, pluginAddress, hideLabel, network } = props;
 
     const { t } = useTranslations();
 
@@ -29,6 +29,7 @@ export const MultisigSetupMembership: React.FC<IMultisigSetupMembershipProps> = 
                     disabled={disabled}
                     member={watchMembersField[index]}
                     pluginAddress={pluginAddress}
+                    network={network}
                 />
             ))}
         </AddressesInput.Container>

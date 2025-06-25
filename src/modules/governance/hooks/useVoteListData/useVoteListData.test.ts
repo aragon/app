@@ -9,6 +9,7 @@ import { renderHook } from '@testing-library/react';
 import * as governanceService from '../../api/governanceService';
 import { generateVote } from '../../testUtils';
 import { useVoteListData } from './useVoteListData';
+import { Network } from '@/shared/api/daoService';
 
 describe('useVoteListData hook', () => {
     const useVoteListSpy = jest.spyOn(governanceService, 'useVoteList');
@@ -21,7 +22,9 @@ describe('useVoteListData hook', () => {
         const votes = [generateVote({ transactionHash: '0x123' })];
         const votesMetadata = generatePaginatedResponseMetadata({ pageSize: 20, totalRecords: votes.length });
         const votesResponse = generatePaginatedResponse({ data: votes, metadata: votesMetadata });
-        const params = { queryParams: { proposalId: 'my-proposal', pluginAddress: '0x123' } };
+        const params = {
+            queryParams: { proposalId: 'my-proposal', pluginAddress: '0x123', network: Network.ETHEREUM_SEPOLIA },
+        };
 
         useVoteListSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({ data: { pages: [votesResponse], pageParams: [] } }),
@@ -42,7 +45,9 @@ describe('useVoteListData hook', () => {
     it('returns error state when fetching votes fails', () => {
         useVoteListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error('error') }));
 
-        const { result } = renderHook(() => useVoteListData({ queryParams: { pluginAddress: '0x123' } }));
+        const { result } = renderHook(() =>
+            useVoteListData({ queryParams: { pluginAddress: '0x123', network: Network.ETHEREUM_SEPOLIA } }),
+        );
 
         expect(result.current.state).toEqual('error');
     });
@@ -51,7 +56,9 @@ describe('useVoteListData hook', () => {
         useVoteListSpy.mockReturnValue(generateReactQueryInfiniteResultLoading());
 
         const pageSize = 6;
-        const { result } = renderHook(() => useVoteListData({ queryParams: { pageSize, pluginAddress: '0x123' } }));
+        const { result } = renderHook(() =>
+            useVoteListData({ queryParams: { pageSize, pluginAddress: '0x123', network: Network.ETHEREUM_SEPOLIA } }),
+        );
 
         expect(result.current.pageSize).toEqual(pageSize);
     });
