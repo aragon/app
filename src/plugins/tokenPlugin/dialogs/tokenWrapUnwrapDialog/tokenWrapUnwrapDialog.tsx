@@ -70,22 +70,14 @@ export const TokenWrapUnwrapDialog: React.FC<ITokenWrapUnwrapDialogProps> = (pro
             ? tokenWrapUnwrapDialogUtils.buildWrapTransaction({ token, address, amount })
             : tokenWrapUnwrapDialogUtils.buildUnwrapTransaction({ token, address, amount });
 
-    const onSuccessClick = () => {
-        router.refresh();
-    };
-
     const parsedAmount = formatUnits(amount, token.decimals);
     const assetToken = action === 'wrap' ? underlyingToken : token;
 
-    const transactionInfo = showTransactionInfo
-        ? {
-              title: t('app.plugins.token.tokenWrapUnwrapDialog.transactionInfoTitle', {
-                  symbol: assetToken.symbol,
-              }),
-              current: 2,
-              total: 2,
-          }
-        : undefined;
+    const transactionInfo = {
+        title: t('app.plugins.token.tokenWrapUnwrapDialog.transactionInfoTitle', { symbol: assetToken.symbol }),
+        current: 2,
+        total: 2,
+    };
 
     return (
         <TransactionDialog
@@ -98,9 +90,9 @@ export const TokenWrapUnwrapDialog: React.FC<ITokenWrapUnwrapDialogProps> = (pro
             onSuccess={onSuccess}
             successLink={{
                 label: t(`app.plugins.token.tokenWrapUnwrapDialog.${action}.success`),
-                onClick: onSuccessClick,
+                onClick: () => router.refresh(),
             }}
-            transactionInfo={transactionInfo}
+            transactionInfo={showTransactionInfo ? transactionInfo : undefined}
         >
             <AssetDataListItem.Structure
                 logoSrc={assetToken.logo}
