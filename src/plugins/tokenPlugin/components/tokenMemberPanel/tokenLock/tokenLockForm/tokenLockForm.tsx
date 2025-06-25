@@ -77,19 +77,17 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const needsApproval = isConnected && (allowance == null || allowance < lockAmountWei);
 
     const handleFormSubmit = () => {
-        const dialogType = needsApproval ? 'approve' : 'lock';
         const dialogProps = getDialogProps(lockAmountWei);
 
-        if (dialogType === 'approve') {
+        if (needsApproval) {
+            const { symbol } = token;
+            const transactionInfoTitle = t('app.plugins.token.tokenLockForm.approveTransactionInfoTitle', { symbol });
+
             const params: ITokenApproveTokensDialogParams = {
                 ...dialogProps,
                 translationNamespace: 'LOCK',
-                onApproveSuccess: () => handleApproveSuccess(dialogProps), // open lock dialog with the same params!
-                transactionInfo: {
-                    title: t('app.plugins.token.tokenLockForm.approveTransactionInfoTitle', { symbol: token.symbol }),
-                    current: 1,
-                    total: 2,
-                },
+                onApproveSuccess: () => handleApproveSuccess(dialogProps),
+                transactionInfo: { title: transactionInfoTitle, current: 1, total: 2 },
             };
             open(TokenPluginDialogId.APPROVE_TOKENS, { params });
         } else {
