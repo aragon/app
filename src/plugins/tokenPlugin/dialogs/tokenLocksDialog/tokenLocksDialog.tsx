@@ -4,7 +4,7 @@ import { type IDialogComponentProps, useDialogContext } from '@/shared/component
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
-import { type ITokenLockListProps, TokenLockList } from '../../components/tokenLockList';
+import { type ITokenLockListProps, TokenLockList } from '../../components/tokenMemberPanel/tokenLock/tokenLockList';
 import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
 
 export interface ITokenLocksDialogParams extends ITokenLockListProps {}

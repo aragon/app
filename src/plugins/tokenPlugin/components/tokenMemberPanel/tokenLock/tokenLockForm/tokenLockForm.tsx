@@ -4,7 +4,6 @@ import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPlugin
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import type { ITokenLockUnlockDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenLockUnlockDialog';
 import { useCheckAllowance } from '@/plugins/tokenPlugin/hooks/useCheckAllowance';
-import { useTokenLockListData } from '@/plugins/tokenPlugin/hooks/useTokenLockListData';
 import type { ITokenPlugin } from '@/plugins/tokenPlugin/types';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -15,7 +14,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits, type Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import type { ITokenLocksDialogParams } from '../../../dialogs/tokenLocksDialog';
+import type { ITokenLocksDialogParams } from '../../../../dialogs/tokenLocksDialog';
+import { useTokenLockListData } from '../useTokenLockListData';
 import { TokenLockFormChart } from './tokenLockFormChart';
 
 export interface ITokenLockFormProps {
@@ -88,13 +88,12 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const handleFormSubmit = () => {
         const dialogType = needsApproval ? 'approve' : 'lock';
         const dialogProps = getDialogProps(lockAmountWei);
-        const viewLocksParams = { ...dialogProps, action: 'lock', daoId };
 
         if (dialogType === 'approve') {
             const params: ITokenApproveTokensDialogParams = {
                 ...dialogProps,
                 translationNamespace: 'LOCK',
-                onApproveSuccess: () => open(TokenPluginDialogId.VIEW_LOCKS, { params: viewLocksParams }),
+                onApproveSuccess: () => handleApproveSuccess(dialogProps), // open lock dialog with the same params!
                 transactionInfo: {
                     title: t('app.plugins.token.tokenLockForm.approveTransactionInfoTitle', { symbol: token.symbol }),
                     current: 1,
@@ -136,6 +135,11 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         void refetchLocks();
         const params: ITokenLocksDialogParams = { daoId, plugin, initialParams: lockParams };
         open(TokenPluginDialogId.VIEW_LOCKS, { params });
+    };
+
+    const handleApproveSuccess = (dialogProps: ReturnType<typeof getDialogProps>) => {
+        const params: ITokenLockUnlockDialogParams = { ...dialogProps, action: 'lock', daoId };
+        open(TokenPluginDialogId.LOCK_UNLOCK, { params });
     };
 
     const getDialogProps = (confirmAmount: bigint) => ({

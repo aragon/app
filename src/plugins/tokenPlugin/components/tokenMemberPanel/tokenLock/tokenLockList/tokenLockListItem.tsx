@@ -17,14 +17,14 @@ import {
 import NumberFlow from '@number-flow/react';
 import { DateTime } from 'luxon';
 import { formatUnits, type Hex } from 'viem';
-import type { IMemberLock } from '../../../api/tokenService';
-import { TokenPluginDialogId } from '../../../constants/tokenPluginDialogId';
-import type { ITokenApproveNftDialogParams } from '../../../dialogs/tokenApproveNftDialog';
-import type { ITokenLockUnlockDialogParams } from '../../../dialogs/tokenLockUnlockDialog';
-import type { LockStatus } from '../../../dialogs/tokenLocksDialog/tokenLocksDialog';
-import { tokenLocksDialogUtils } from '../../../dialogs/tokenLocksDialog/tokenLocksDialogUtils';
-import { useNftNeedsApproval } from '../../../hooks/useNftNeedsApproval';
-import type { ITokenPlugin } from '../../../types';
+import type { IMemberLock } from '../../../../api/tokenService';
+import { TokenPluginDialogId } from '../../../../constants/tokenPluginDialogId';
+import type { ITokenApproveNftDialogParams } from '../../../../dialogs/tokenApproveNftDialog';
+import type { ITokenLockUnlockDialogParams } from '../../../../dialogs/tokenLockUnlockDialog';
+import type { LockStatus } from '../../../../dialogs/tokenLocksDialog/tokenLocksDialog';
+import { tokenLocksDialogUtils } from '../../../../dialogs/tokenLocksDialog/tokenLocksDialogUtils';
+import { useNftNeedsApproval } from '../../../../hooks/useNftNeedsApproval';
+import type { ITokenPlugin } from '../../../../types';
 
 export interface ITokenLockListItemProps {
     /**

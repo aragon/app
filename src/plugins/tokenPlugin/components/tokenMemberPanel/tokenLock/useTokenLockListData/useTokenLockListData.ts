@@ -1,6 +1,6 @@
+import { useMemberLocks, type IGetMemberLocksParams } from '@/plugins/tokenPlugin/api/tokenService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
-import { type IGetMemberLocksParams, useMemberLocks } from '../../api/tokenService';
 
 export const useTokenLockListData = (params: IGetMemberLocksParams) => {
     const { t } = useTranslations();

@@ -5,9 +5,9 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Tabs } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import type { ITokenPlugin, ITokenPluginSettings } from '../../types';
-import { TokenDelegationForm } from './components/tokenDelegationForm';
-import { TokenLockForm } from './components/tokenLockForm';
-import { TokenWrapForm } from './components/tokenWrapForm';
+import { TokenDelegationForm } from './tokenDelegation';
+import { TokenLockForm } from './tokenLock';
+import { TokenWrapForm } from './tokenWrap';
 
 export interface ITokenMemberPanelProps {
     /**
