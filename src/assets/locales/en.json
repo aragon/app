@@ -14,7 +14,7 @@
       },
       "connectWalletDialog": {
         "a11y": {
-          "description": "Connect your wallet to Aragon App",
+          "description": "Connect your wallet to Aragon",
           "title": "Connect wallet"
         },
         "action": {
@@ -30,7 +30,7 @@
         }
       },
       "debugPanel": {
-        "title": "App debug"
+        "title": "Debug"
       },
       "footer": {
         "copyright": "© {{year}} Aragon",
@@ -158,7 +158,7 @@
             "title": "Debug"
           },
           "METADATA": {
-            "description": "Describe your DAO so visitors know they've come to the right place. Any of these fields can be changed later via governance.",
+            "description": "Describe your DAO so visitors know they've come to the right place. Don't worry if they're not final—any of these fields can be changed later.", 
             "name": "Describe your DAO",
             "title": "Describe your DAO"
           },
@@ -217,7 +217,7 @@
           "stageBodiesField": {
             "action": {
               "add": "Add body",
-              "edit": "Edit",
+              "edit": "Edit body",
               "more": "More",
               "remove": "Remove body"
             },
@@ -1378,7 +1378,7 @@
               "warmup": "In warmup"
             },
             "timeLeftSuffix": "left",
-            "withdrawTimeLeftSuffix": "left until withdrawable"
+            "withdrawTimeLeftSuffix": "left until you can withdraw"
           }
         },
         "tokenLockUnlockDialog": {
@@ -1686,7 +1686,7 @@
       },
       "daoSettingsPage": {
         "aside": {
-          "versionInfoTitle": "Version info"
+          "versionInfoTitle": "Contracts"
         },
         "main": {
           "governanceAction": "Add governance",
@@ -1705,16 +1705,16 @@
         "button": {
           "submit": "Prepare installation"
         },
-        "description": "To publish the OSx upgrades, confirm the two onchain transactions in your wallet.",
-        "title": "Publish OSx upgrades",
+        "description": "To publish the contract upgrades, confirm the two onchain transactions in your wallet.",
+        "title": "Publish contract upgrades",
         "transactionInfoTitle": "Prepare installation"
       },
       "publishDaoContractsUpdateDialog": {
         "button": {
           "submit": "Propose contract upgrades"
         },
-        "description": "To publish the OSx upgrades, confirm the two onchain transactions in your wallet.",
-        "title": "Publish OSx upgrades",
+        "description": "To publish the contract upgrades, confirm the two onchain transactions in your wallet.",
+        "title": "Publish contract upgrades",
         "transactionInfoTitle": "Propose contract upgrades"
       },
       "updateDaoContracts": {
@@ -1782,7 +1782,7 @@
         "message": "If you leave this process, you'll lose all the information you've entered so far."
       },
       "daoPluginInfo": {
-        "launchedAt": "Launched",
+        "launchedAt": "Plugin launched",
         "plugin": "Plugin address",
         "pluginVersionInfo": "{{name}} v{{release}}.{{build}}"
       },
