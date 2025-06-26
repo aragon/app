@@ -1,5 +1,6 @@
 import type { IPluginSettings } from '@/shared/api/daoService';
 import type { DaoTokenVotingMode } from './enum';
+import type { ITokenPluginSettingsEscrowSettings } from './tokenPluginSettingsEscrowSettings';
 import type { ITokenPluginSettingsToken } from './tokenPluginSettingsToken';
 
 export interface ITokenPluginSettings extends IPluginSettings {
@@ -31,4 +32,8 @@ export interface ITokenPluginSettings extends IPluginSettings {
      * Total supply of the token only set when settings are fetched for a specific block number (e.g. settings when a proposal was created)
      */
     historicalTotalSupply?: string;
+    /**
+     * The settings of the voting escrow.
+     */
+    votingEscrow?: ITokenPluginSettingsEscrowSettings;
 }

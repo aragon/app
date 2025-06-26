@@ -1,9 +1,9 @@
 'use client';
 
-import { Navigation } from '@/modules/application/components/navigations/navigation';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { AragonLogo } from '@/shared/components/aragonLogo';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { Navigation } from '@/shared/components/navigation';
 import { Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Link from 'next/link';
@@ -58,7 +58,6 @@ export const ExploreNav: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-end gap-4 lg:gap-6">
-                <Navigation.AppLinks />
                 <Wallet onClick={handleWalletClick} user={walletUser} />
             </div>
         </Navigation.Container>

@@ -45,10 +45,15 @@ export interface IAssetInputProps {
      * Hides the amount label when set to true.
      */
     hideAmountLabel?: boolean;
+    /**
+     * Minimum value for the amount field.
+     */
+    minAmount?: number;
 }
 
 export const AssetInput: React.FC<IAssetInputProps> = (props) => {
-    const { fetchAssetsParams, fieldPrefix, onAmountChange, disableAssetField, hideMax, hideAmountLabel } = props;
+    const { fetchAssetsParams, fieldPrefix, onAmountChange, disableAssetField, hideMax, hideAmountLabel, minAmount } =
+        props;
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
@@ -62,11 +67,16 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         ...amountField
     } = useFormField<IAssetInputFormData, 'amount'>('amount', {
         label: t('app.finance.transferAssetForm.amount.label'),
-        rules: { required: true, max: assetField.value?.amount, validate: (value) => parseFloat(value ?? '') > 0 },
+        rules: {
+            required: true,
+            max: assetField.value?.amount,
+            min: minAmount,
+            validate: (value) => parseFloat(value ?? '') > 0,
+        },
         fieldPrefix,
     });
 
-    const handleAmountFieldChange = (amount?: string | ChangeEvent) => {
+    const handleAmountFieldChange = (amount?: string | ChangeEvent<HTMLInputElement>) => {
         onAmountFieldChange(amount);
         onAmountChange?.();
     };

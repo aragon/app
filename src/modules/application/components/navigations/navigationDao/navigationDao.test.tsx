@@ -1,4 +1,5 @@
 import * as useDialogContext from '@/shared/components/dialogProvider';
+import type * as Navigation from '@/shared/components/navigation';
 import { generateDao, generateDialogContext } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
@@ -19,10 +20,13 @@ jest.mock('@aragon/gov-ui-kit', () => ({
     ),
 }));
 
-jest.mock('../navigation/navigationTrigger', () => ({
-    NavigationTrigger: (props: { onClick: () => void; className: string }) => (
-        <button data-testid="nav-trigger-mock" onClick={props.onClick} className={props.className} />
-    ),
+jest.mock('@/shared/components/navigation', () => ({
+    Navigation: {
+        ...jest.requireActual<typeof Navigation>('@/shared/components/navigation').Navigation,
+        Trigger: (props: { onClick: () => void; className: string }) => (
+            <button data-testid="nav-trigger-mock" onClick={props.onClick} className={props.className} />
+        ),
+    },
 }));
 
 describe('<NavigationDao /> component', () => {

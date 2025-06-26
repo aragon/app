@@ -25,7 +25,7 @@ export const tokenPlugin: IPluginInfo = {
         [Network.CHILIZ_MAINNET]: '0x62c82a443692A1bE4D0421b1E4678F0dff8F3c1B',
     },
     setup: {
-        nameKey: 'app.plugins.token.setup.name',
-        descriptionKey: 'app.plugins.token.setup.description',
+        nameKey: 'app.plugins.token.meta.setup.name',
+        descriptionKey: 'app.plugins.token.meta.setup.description',
     },
 };

@@ -25,7 +25,7 @@ export const multisigPlugin: IPluginInfo = {
         [Network.CHILIZ_MAINNET]: '0x60C2b0B6CB2EB83349eB770f76a1C6dF611E5f03',
     },
     setup: {
-        nameKey: 'app.plugins.multisig.setup.name',
-        descriptionKey: 'app.plugins.multisig.setup.description',
+        nameKey: 'app.plugins.multisig.meta.setup.name',
+        descriptionKey: 'app.plugins.multisig.meta.setup.description',
     },
 };

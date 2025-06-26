@@ -1,3 +1,5 @@
+'use client';
+
 import type { ISetupBodyFormNew } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DefinitionList, type ICompositeAddress } from '@aragon/gov-ui-kit';

@@ -1,3 +1,5 @@
+'use client';
+
 import type { IToken } from '@/modules/finance/api/financeService';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
@@ -40,6 +42,10 @@ export interface ITokenWrapUnwrapDialogParams {
      * Callback called on wrap / unwrap transaction success.
      */
     onSuccess?: () => void;
+    /**
+     * Flag indicating whether to show the transaction info step in the dialog. Only shown when part of a two step transaction.
+     */
+    showTransactionInfo: boolean;
 }
 
 export interface ITokenWrapUnwrapDialogProps extends IDialogComponentProps<ITokenWrapUnwrapDialogParams> {}
@@ -51,7 +57,7 @@ export const TokenWrapUnwrapDialog: React.FC<ITokenWrapUnwrapDialogProps> = (pro
     const { address } = useAccount();
     invariant(address != null, 'TokenWrapUnwrapDialog: user must be connected to perform the action');
 
-    const { action, token, underlyingToken, amount, network, onSuccess } = location.params;
+    const { action, token, underlyingToken, amount, network, onSuccess, showTransactionInfo } = location.params;
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -64,12 +70,16 @@ export const TokenWrapUnwrapDialog: React.FC<ITokenWrapUnwrapDialogProps> = (pro
             ? tokenWrapUnwrapDialogUtils.buildWrapTransaction({ token, address, amount })
             : tokenWrapUnwrapDialogUtils.buildUnwrapTransaction({ token, address, amount });
 
-    const onSuccessClick = () => {
-        router.refresh();
-    };
-
     const parsedAmount = formatUnits(amount, token.decimals);
     const assetToken = action === 'wrap' ? underlyingToken : token;
+
+    const transactionInfo = {
+        title: t(`app.plugins.token.tokenWrapUnwrapDialog.${action}.transactionInfoTitle`, {
+            symbol: assetToken.symbol,
+        }),
+        current: 2,
+        total: 2,
+    };
 
     return (
         <TransactionDialog
@@ -82,8 +92,9 @@ export const TokenWrapUnwrapDialog: React.FC<ITokenWrapUnwrapDialogProps> = (pro
             onSuccess={onSuccess}
             successLink={{
                 label: t(`app.plugins.token.tokenWrapUnwrapDialog.${action}.success`),
-                onClick: onSuccessClick,
+                onClick: () => router.refresh(),
             }}
+            transactionInfo={showTransactionInfo ? transactionInfo : undefined}
         >
             <AssetDataListItem.Structure
                 logoSrc={assetToken.logo}

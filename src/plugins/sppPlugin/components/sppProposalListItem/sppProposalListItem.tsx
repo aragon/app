@@ -1,3 +1,5 @@
+'use client';
+
 import type { IDaoProposalListDefaultItemProps } from '@/modules/governance/components/daoProposalList';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';

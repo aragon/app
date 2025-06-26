@@ -1,3 +1,5 @@
+'use client';
+
 import type { IMember } from '@/modules/governance/api/governanceService';
 import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';

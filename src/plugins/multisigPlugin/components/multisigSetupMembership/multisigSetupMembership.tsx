@@ -1,3 +1,5 @@
+'use client';
+
 import { AddressesInput } from '@/shared/components/forms/addressesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useWatch } from 'react-hook-form';
