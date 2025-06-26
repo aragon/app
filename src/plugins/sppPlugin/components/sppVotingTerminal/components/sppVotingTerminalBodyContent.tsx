@@ -61,13 +61,14 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
     });
 
     const proposalSettings = useDaoPluginInfo({ daoId, address: plugin.address, settings });
+    const { network } = daoUtils.parseDaoId(daoId);
 
     const voteListParams = {
         queryParams: {
             proposalId: subProposal?.id,
             pluginAddress: subProposal?.pluginAddress,
             pageSize: votesPerPage,
-            network: daoUtils.parseDaoId(daoId).network,
+            network,
         },
     };
 

@@ -34,7 +34,7 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
     const { address } = useAccount();
     const { data: pluginEnsName } = useEnsName({ address: proposal.pluginAddress as Hex });
 
-    const network = daoUtils.parseDaoId(daoId).network;
+    const { network } = daoUtils.parseDaoId(daoId);
     const voteListParams = {
         queryParams: {
             proposalId: proposal.id,

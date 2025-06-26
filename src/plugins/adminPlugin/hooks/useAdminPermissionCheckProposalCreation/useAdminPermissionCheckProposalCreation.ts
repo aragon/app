@@ -14,7 +14,7 @@ export const useAdminPermissionCheckProposalCreation = (
     const { address } = useAccount();
     const { t } = useTranslations();
 
-    const network = daoUtils.parseDaoId(daoId).network;
+    const { network } = daoUtils.parseDaoId(daoId);
 
     const memberExistsParams = { memberAddress: address as string, pluginAddress: plugin.address, network };
     const { data, isLoading } = useMemberExists({ urlParams: memberExistsParams }, { enabled: address != null });

@@ -9,6 +9,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
 import type { IMultisigSetupMembershipForm } from '../../multisigSetupMembership';
 import { MultisigSetupMembership } from '../../multisigSetupMembership';
+import { daoUtils } from '@/shared/utils/daoUtils';
 
 export interface IMultisigAddMembersActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<IMultisigPluginSettings>>> {}
@@ -50,5 +51,14 @@ export const MultisigAddMembersAction: React.FC<IMultisigAddMembersActionProps> 
         setValue(`${actionFieldName}.inputData.parameters[0].value`, addresses);
     }, [actionFieldName, controlledMembersField, setValue]);
 
-    return <MultisigSetupMembership formPrefix={actionFieldName} pluginAddress={action.to} hideLabel={true} />;
+    const { network } = daoUtils.parseDaoId(action.daoId);
+
+    return (
+        <MultisigSetupMembership
+            formPrefix={actionFieldName}
+            pluginAddress={action.to}
+            network={network}
+            hideLabel={true}
+        />
+    );
 };
