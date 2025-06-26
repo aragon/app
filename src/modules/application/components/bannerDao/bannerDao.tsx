@@ -24,7 +24,7 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { isAdminMember, adminPluginAddress } = useAdminStatus({ daoId: dao.id });
+    const { isAdminMember, adminPluginAddress } = useAdminStatus({ daoId: dao.id, network: dao.network });
 
     const daoUrl = daoUtils.getDaoUrl(dao)!;
 

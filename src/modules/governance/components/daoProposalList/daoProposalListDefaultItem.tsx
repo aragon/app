@@ -26,7 +26,7 @@ export const DaoProposalListDefaultItem: React.FC<IDaoProposalListDefaultItemPro
 
     const { id, title, summary, executed, endDate, creator, pluginSubdomain: pluginId } = proposal;
 
-    const userVote = useUserVote({ proposal });
+    const userVote = useUserVote({ proposal, network: dao.network });
 
     const slotId = GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS;
     const proposalStatus = useSlotSingleFunction<IProposal, ProposalStatus>({ params: proposal, slotId, pluginId })!;

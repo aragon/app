@@ -22,7 +22,10 @@ describe('governance service', () => {
 
     it('getMember fetches the member of the specified DAO by address', async () => {
         const member = generateMember({ address: '0x123' });
-        const params = { urlParams: { address: member.address }, queryParams: { daoId: 'dao-id-test' } };
+        const params = {
+            urlParams: { address: member.address },
+            queryParams: { daoId: 'dao-id-test', pluginAddress: 'test-plugin-address' },
+        };
 
         requestSpy.mockResolvedValue(member);
         const result = await governanceService.getMember(params);
@@ -71,7 +74,9 @@ describe('governance service', () => {
 
     it('getVoteList fetches the votes of a specific proposal', async () => {
         const votes = [generateVote({ transactionHash: '0' }), generateVote({ transactionHash: '1' })];
-        const params = { queryParams: { proposalId: 'proposal-id', pluginAddress: '0x123' } };
+        const params = {
+            queryParams: { proposalId: 'proposal-id', pluginAddress: '0x123', network: Network.BASE_MAINNET },
+        };
 
         requestSpy.mockResolvedValue(votes);
         const result = await governanceService.getVoteList(params);

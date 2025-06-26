@@ -1,3 +1,4 @@
+import { Network } from '@/shared/api/daoService';
 import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
@@ -20,7 +21,7 @@ describe('<VoteList /> component', () => {
 
     const createTestComponent = (props?: Partial<IVoteListProps>) => {
         const completeProps: IVoteListProps = {
-            initialParams: { queryParams: {} },
+            initialParams: { queryParams: { network: Network.ETHEREUM_SEPOLIA } },
             daoId: 'dao-id',
             ...props,
         };

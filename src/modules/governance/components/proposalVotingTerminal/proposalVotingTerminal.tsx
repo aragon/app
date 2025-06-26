@@ -3,6 +3,7 @@ import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, type IDefinitionSetting, ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import { useAccount, useEnsName } from 'wagmi';
@@ -33,12 +34,14 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
     const { address } = useAccount();
     const { data: pluginEnsName } = useEnsName({ address: proposal.pluginAddress as Hex });
 
+    const { network } = daoUtils.parseDaoId(daoId);
     const voteListParams = {
         queryParams: {
             proposalId: proposal.id,
             pluginAddress: proposal.pluginAddress,
             pageSize: votesPerPage,
             highlightUser: address,
+            network,
         },
     };
 

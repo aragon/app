@@ -16,7 +16,7 @@ describe('useMember query', () => {
         getMemberSpy.mockResolvedValue(member);
 
         const urlParams = { address: member.address };
-        const queryParams = { daoId: 'dao-id' };
+        const queryParams = { daoId: 'dao-id', pluginAddress: '0xPluginAddress' };
         const { result } = renderHook(() => useMember({ urlParams, queryParams }), { wrapper: ReactQueryWrapper });
 
         await waitFor(() => expect(result.current.data).toEqual(member));

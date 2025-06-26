@@ -8,6 +8,7 @@ import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { type IDefinitionSetting, ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import { SppVotingTerminalBodyBreakdownDefault } from './sppVotingTerminalBodyBreakdownDefault';
@@ -60,9 +61,15 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
     });
 
     const proposalSettings = useDaoPluginInfo({ daoId, address: plugin.address, settings });
+    const { network } = daoUtils.parseDaoId(daoId);
 
     const voteListParams = {
-        queryParams: { proposalId: subProposal?.id, pluginAddress: subProposal?.pluginAddress, pageSize: votesPerPage },
+        queryParams: {
+            proposalId: subProposal?.id,
+            pluginAddress: subProposal?.pluginAddress,
+            pageSize: votesPerPage,
+            network,
+        },
     };
 
     // Set parent name and description on sub-proposal to correctly display the proposal info on the vote dialog.

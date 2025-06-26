@@ -3,6 +3,7 @@ import type { IProposalActionData } from '@/modules/governance/components/create
 import { type IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 import { type IDaoPlugin } from '@/shared/api/daoService';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
@@ -50,5 +51,14 @@ export const MultisigAddMembersAction: React.FC<IMultisigAddMembersActionProps> 
         setValue(`${actionFieldName}.inputData.parameters[0].value`, addresses);
     }, [actionFieldName, controlledMembersField, setValue]);
 
-    return <MultisigSetupMembership formPrefix={actionFieldName} pluginAddress={action.to} hideLabel={true} />;
+    const { network } = daoUtils.parseDaoId(action.daoId);
+
+    return (
+        <MultisigSetupMembership
+            formPrefix={actionFieldName}
+            pluginAddress={action.to}
+            network={network}
+            hideLabel={true}
+        />
+    );
 };

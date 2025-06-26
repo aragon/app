@@ -1,5 +1,6 @@
 import type { ISetupBodyFormMembership } from '@/modules/createDao/dialogs/setupBodyDialog';
 import type { IPluginSetupMembershipParams } from '@/modules/createDao/types';
+import type { Network } from '@/shared/api/daoService';
 
 export interface IMultisigSetupMembershipProps extends IPluginSetupMembershipParams {
     /**
@@ -14,6 +15,10 @@ export interface IMultisigSetupMembershipProps extends IPluginSetupMembershipPar
      * Address of the plugin, used to validate if the entered user address is already a member of the plugin.
      */
     pluginAddress?: string;
+    /**
+     * Network of the plugin.
+     */
+    network?: Network;
     /**
      * Hides the field label and help-text when set to true.
      */

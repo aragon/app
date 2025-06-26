@@ -34,7 +34,7 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const userVote = useUserVote<IMultisigVote>({ proposal });
+    const userVote = useUserVote<IMultisigVote>({ proposal, network });
     const voted = userVote != null;
 
     const { id: chainId } = networkDefinitions[network];
