@@ -3,6 +3,7 @@ import type { Chain, Hex } from 'viem';
 import {
     arbitrum,
     base,
+    chiliz,
     corn,
     mainnet,
     optimism,
@@ -175,6 +176,20 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0x72f635574C797Bab5eB82489Aa906cE23d9aAD6f',
             pluginSetupProcessor: '0x63054EbE143cFaa5e463256462a6FC56C6fc56d4',
             globalExecutor: '0xCFE83d0079c9455eF1e11864D701d6e1bDf8Ff2a',
+        },
+    },
+    [Network.CHILIZ_MAINNET]: {
+        ...chiliz,
+        name: 'Chiliz',
+        logo: 'https://assets.coingecko.com/coins/images/8834/large/CHZ_Token_updated.png',
+        order: 8,
+        protocolVersion: latestProtocolVersion,
+        beta: true,
+        addresses: {
+            dao: '0x221B2d4fF2dEf7Bb1Da68460760B299e4c2D8AdD',
+            daoFactory: '0xdD68D6b46b887AcB795eCC3Fc7bb3fEf2Dfebf8f',
+            pluginSetupProcessor: '0xD39Fd78987000C1aa96209d76bec576F31DbC9bE',
+            globalExecutor: '0xcF34b77813f5d5daBa0A6F085bf0911e00E7b99A',
         },
     },
     [Network.PEAQ_MAINNET]: {

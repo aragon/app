@@ -2,8 +2,8 @@ import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnecte
 import { useMember } from '@/modules/governance/api/governanceService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenDelegationDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenDelegationDialog';
-import type { ITokenMember, ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
+import type { ITokenMember } from '@/plugins/tokenPlugin/types';
+import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -18,33 +18,11 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAccount } from 'wagmi';
-
-export enum TokenDelegationSelection {
-    YOURSELF = 'YOURSELF',
-    OTHER = 'OTHER',
-}
-
-export interface ITokenDelegationFormData {
-    /**
-     * Current selection for the delegate.
-     */
-    selection: TokenDelegationSelection;
-    /**
-     * Address to delegate the voting power to.
-     */
-    delegate?: string;
-}
-
-export interface ITokenDelegationFormProps {
-    /**
-     * DAO plugin for the token delegation.
-     */
-    plugin: IDaoPlugin<ITokenPluginSettings>;
-    /**
-     * ID of the DAO.
-     */
-    daoId: string;
-}
+import {
+    TokenDelegationSelection,
+    type ITokenDelegationFormData,
+    type ITokenDelegationFormProps,
+} from './tokenDelegationForm.api';
 
 export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) => {
     const { plugin, daoId } = props;
