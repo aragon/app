@@ -15,6 +15,7 @@ export interface ICapitalDistributorRewardsAsideProps {
 
 export const CapitalDistributorRewardsAside: React.FC<ICapitalDistributorRewardsAsideProps> = (props) => {
     const { daoId } = props;
+
     const { address } = useAccount();
 
     const capitalDistributorPlugin = useDaoPlugins({ daoId, subdomain: 'capital-distributor' })![0];

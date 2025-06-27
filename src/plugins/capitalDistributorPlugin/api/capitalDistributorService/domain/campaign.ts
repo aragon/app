@@ -20,6 +20,10 @@ export interface ICampaign {
      */
     type: string;
     /**
+     * Logo associated with the campaign.
+     */
+    logo?: string;
+    /**
      * Resources associated with the campaign.
      */
     resources?: IResource[];
@@ -36,11 +40,11 @@ export interface ICampaign {
      */
     amount: string;
     /**
-     * The start time of the campaign.
+     * The start time of the campaign (can be 0 meaning no time restriction).
      */
     startTime: number;
     /**
-     * The end time of the campaign.
+     * The end time of the campaign (can be 0 meaning no time restriction).
      */
     endTime: number;
     /**

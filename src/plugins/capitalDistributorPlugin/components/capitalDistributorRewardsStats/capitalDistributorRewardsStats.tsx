@@ -20,10 +20,9 @@ export const CapitalDistributorRewardsStats: React.FC<ICapitalDistributorRewards
     const claimedCampaigns = campaigns?.filter((campaign) => campaign.status === CampaignStatus.CLAIMED);
 
     const campaignStatsParams = { urlParams: { memberAddress: address! } };
-    const { data: campaignStats } = useCampaignStats(campaignStatsParams, {
-        enabled: address != null,
-    });
+    const { data: campaignStats } = useCampaignStats(campaignStatsParams, { enabled: address != null });
 
+    // Assuming backend returns sorted by default
     const latestClaimedCampaign = claimedCampaigns?.[0];
     const latestClaimDate = latestClaimedCampaign?.claimTimestamp
         ? latestClaimedCampaign.claimTimestamp * 1000

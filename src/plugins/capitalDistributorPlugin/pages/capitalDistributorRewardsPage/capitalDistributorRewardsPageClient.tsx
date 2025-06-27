@@ -19,6 +19,7 @@ export interface ICapitalDistributorRewardsPageClientProps {
 
 export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRewardsPageClientProps> = (props) => {
     const { dao } = props;
+
     const { address } = useAccount();
     const { t } = useTranslations();
 
