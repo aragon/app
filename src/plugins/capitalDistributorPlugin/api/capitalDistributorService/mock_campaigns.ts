@@ -1,0 +1,371 @@
+import { generateToken } from '@/modules/finance/testUtils';
+import type { ICampaign, ICapitalDistributorStats } from './domain';
+
+export const mockCampaigns: ICampaign[] = [
+  {
+    "id": '1',
+    "title": "Community Rewards",
+    "description": "Bounty for finding a critical bug",
+    "type": "retro",
+    "resources": [{
+      "name": "Learn More",
+      "url": "https://aragon.org"
+    }],
+    "status": "claimed",
+    token: generateToken({
+      symbol: "DAI",
+      address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+    }),
+    "amount": "198.48",
+    "startTime": 1750602680,
+    "endTime": 1751034680,
+    "txHash": "0x6ebcf52c7b2e40de87332b2dc891719e",
+    "active": false
+  },
+  {
+    "id": '2',
+    "title": "Content Grant",
+    "description": "Reward for community engagement",
+    "type": "bounty",
+    "status": "claimed",
+    "token": generateToken({
+      symbol: "USDC",
+      address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    }),
+    "amount": "907.72",
+    "startTime": 1750170680,
+    "endTime": 1751034680,
+    "txHash": "0xe103baca0e04439ebbf121b840e42c4b",
+    "active": false
+  },
+  {
+    "id": '3',
+    "title": "Bug Bounty",
+    "description": "Grant for writing educational content",
+    "type": "retro",
+    "resources": [{
+      "name": "Learn More",
+      "url": "https://aragon.org"
+    }],
+    "status": "claimable",
+    "token": generateToken({
+      symbol: "USDC",
+      address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    }),
+    "amount": "309.84",
+    "startTime": 1750861880,
+    "endTime": 1751380280,
+    "active": true
+  },
+  {
+    "id": '4',
+    "title": "Community Rewards",
+    "description": "Reward for community engagement",
+    "type": "grant",
+    "resources": [{
+      "name": "Learn More",
+      "url": "https://aragon.org"
+    }],
+    "status": "claimed",
+   token: generateToken({
+      symbol: "DAI",
+      address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+    }),
+    "amount": "319.82",
+    "startTime": 0,
+    "endTime": 0,
+    "txHash": "0xcf9c9cdc27494e259a516c223a6aa77a",
+    "active": false
+  },
+  {
+    "id": '5',
+    "title": "Community Rewards",
+    "description": "Bonus for core contributor work",
+    "type": "retro",
+    "status": "claimable",
+    "token": generateToken({
+      symbol: "USDC",
+      address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    }),
+    "amount": "782.3",
+    "startTime": 0,
+    "endTime": 0,
+    "active": true
+  },
+  {
+    "id": '6',
+    "title": "Contributor Bonus",
+    "description": "Reward for ambassador program",
+    "type": "reward",
+    "status": "claimable",
+    "token": generateToken({
+      symbol: "ARB",
+      address: "0x912CE59144191C1204E64559FE8253a0e49E6548",
+    }),
+    "amount": "305.97",
+    "startTime": 0,
+    "endTime": 0,
+    "active": true
+  },
+  {
+    "id": '7',
+    "title": "Contributor Bonus",
+    "description": "Reward for ambassador program",
+    "type": "bounty",
+    "status": "claimed",
+    "token": generateToken({
+      symbol: "ETH",
+      address: "0x0000000000000000000000000000000000000000",
+    }),
+    "amount": "802.46",
+    "startTime": 0,
+    "endTime": 0,
+    "txHash": "0xfe01828662884348bafcfdc18dcb6394",
+    "active": false
+  },
+  {
+    "id": '8',
+    "title": "Bug Bounty",
+    "description": "Grant for writing educational content",
+    "type": "bonus",
+    "status": "claimed",
+   "token": generateToken({
+      symbol: "ETH",
+      address: "0x0000000000000000000000000000000000000000",
+    }),
+    "amount": "205.35",
+    "startTime": 0,
+    "endTime": 0,
+    "txHash": "0xa15bccb1b421424f9a1d57288adfd884",
+    "active": false
+  },
+  {
+    "id": '9',
+    "title": "Contributor Bonus",
+    "description": "Reward for community engagement",
+    "type": "bonus",
+    "resources": [{
+      "name": "Learn More",
+      "url": "https://aragon.org"
+    }],
+    "status": "claimed",
+    "token": generateToken({
+      symbol: "USDC",
+      address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    }),
+    "amount": "972.06",
+    "startTime": 0,
+    "endTime": 0,
+    "txHash": "0xa822be79e44d4001b22b51631a2518b1",
+    "active": false
+  },
+  {
+    "id": '10',
+    "title": "Community Rewards",
+    "description": "Bonus for core contributor work",
+    "type": "bonus",
+    "status": "claimable",
+    "token": generateToken({
+      symbol: "ARB",
+      address: "0x912CE59144191C1204E64559FE8253a0e49E6548",
+    }),
+    "amount": "637.75",
+    "startTime": 1750170680,
+    "endTime": 1751812280,
+    "active": true
+  },
+  {
+    "id": '11',
+    "title": "Ambassador Rewards",
+    "description": "Grant for writing educational content",
+    "type": "retro",
+    "resources": [{
+      "name": "Learn More",
+      "url": "https://aragon.org"
+    }],
+    "status": "claimable",
+    "token": generateToken({
+      symbol: "USDC",
+      address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    }),
+    "amount": "547.98",
+    "startTime": 1750429880,
+    "endTime": 1751121080,
+    "active": true
+  },
+  {
+    "id": '12',
+    "title": "Contributor Bonus",
+    "description": "Bounty for finding a critical bug",
+    "type": "retro",
+    "status": "claimed",
+    "token": generateToken({
+      symbol: "USDC",
+      address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    }),
+    "amount": "100.04",
+    "startTime": 1750170680,
+    "endTime": 1751725880,
+    "txHash": "0x217f2e37c5a4465784304a705d052050",
+    "active": false
+  },
+  {
+    "id": '13',
+    "title": "Community Rewards",
+    "description": "Reward for community engagement",
+    "type": "bounty",
+    "resources": [{
+      "name": "Learn More",
+      "url": "https://aragon.org"
+    }],
+    "status": "claimable",
+    token: generateToken({
+      symbol: "DAI",
+      address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+    }),
+    "amount": "837.87",
+    "startTime": 1750170680,
+    "endTime": 1751034680,
+    "active": true
+  },
+  {
+    "id": '14',
+    "title": "Ambassador Rewards",
+    "description": "Bounty for finding a critical bug",
+    "type": "reward",
+    "status": "claimed",
+   token: generateToken({
+      symbol: "DAI",
+      address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+    }),
+    "amount": "180.89",
+    "startTime": 0,
+    "endTime": 0,
+    "txHash": "0x144c13a3d27c44549313adf58e379ed7",
+    "active": false
+  },
+  {
+    "id": '15',
+    "title": "Bug Bounty",
+    "description": "Reward for ambassador program",
+    "type": "bonus",
+    "resources": [{
+      "name": "Learn More",
+      "url": "https://aragon.org"
+    }],
+    "status": "claimable",
+    "token": generateToken({
+      symbol: "USDC",
+      address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    }),
+    "amount": "624.45",
+    "startTime": 1750170680,
+    "endTime": 1751293880,
+    "active": true
+  },
+  {
+    "id": '16',
+    "title": "Content Grant",
+    "description": "Grant for writing educational content",
+    "type": "grant",
+    "resources": [{
+      "name": "Learn More",
+      "url": "https://aragon.org"
+    }],
+    "status": "claimed",
+    token: generateToken({
+      symbol: "DAI",
+      address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+    }),
+    "amount": "869.67",
+    "startTime": 0,
+    "endTime": 0,
+    "txHash": "0x67c345944e034b15ae4236953f9ddded",
+    "active": false
+  },
+  {
+    "id": '17',
+    "title": "Bug Bounty",
+    "description": "Reward for community engagement",
+    "type": "retro",
+    "resources": [{
+      "name": "Learn More",
+      "url": "https://aragon.org"
+    }],
+    "status": "claimed",
+    "token": generateToken({
+      symbol: "ETH",
+      address: "0x0000000000000000000000000000000000000000",
+    }),
+    "amount": "647.73",
+    "startTime": 1750861880,
+    "endTime": 1751293880,
+    "txHash": "0x29021f3dc45142538087ddc86675c69e",
+    "active": false
+  },
+  {
+    "id": '18',
+    "title": "Content Grant",
+    "description": "Bounty for finding a critical bug",
+    "type": "retro",
+    "resources": [{
+      "name": "Learn More",
+      "url": "https://aragon.org"
+    }],
+    "status": "claimable",
+    "token": generateToken({
+      symbol: "USDC",
+      address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    }),
+    "amount": "275.26",
+    "startTime": 0,
+    "endTime": 0,
+    "active": true
+  },
+  {
+    "id": '19',
+    "title": "Ambassador Rewards",
+    "description": "Bounty for finding a critical bug",
+    "type": "retro",
+    "resources": [{
+      "name": "Learn More",
+      "url": "https://aragon.org"
+    }],
+    "status": "claimed",
+    token: generateToken({
+      symbol: "DAI",
+      address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+    }),
+    "amount": "832.79",
+    "startTime": 1750861880,
+    "endTime": 1751121080,
+    "txHash": "0xccbf4d9ef9c64215864a56b52a16d72f",
+    "active": false
+  },
+  {
+    "id": '20',
+    "title": "Ambassador Rewards",
+    "description": "Reward for ambassador program",
+    "type": "grant",
+    "resources": [{
+      "name": "Learn More",
+      "url": "https://aragon.org"
+    }],
+    "status": "claimed",
+    "token": generateToken({
+      symbol: "ARB",
+      address: "0x912CE59144191C1204E64559FE8253a0e49E6548",
+    }),
+    "amount": "193.49",
+    "startTime": 0,
+    "endTime": 0,
+    "txHash": "0xa78d5ea6a62e46c8a32dcf882ab15579",
+    "active": false
+  }
+]
+
+
+export const mockCampaignsStats: ICapitalDistributorStats = {
+  totalClaimed: "5000.00",
+  totalClaimable: "3000.00"
+};
