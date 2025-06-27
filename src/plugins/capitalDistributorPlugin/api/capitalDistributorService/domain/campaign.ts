@@ -50,4 +50,8 @@ export interface ICampaign {
      * The tx hash of the claim transaction. Only present if the campaign has been claimed.
      */
     txHash?: string;
+    /**
+     * The block timestamp of when the campaign was claimed.
+     */
+    claimTimestamp?: number;
 }

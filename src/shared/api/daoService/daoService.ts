@@ -15,6 +15,9 @@ const capitalDistributorPluginMock: IDaoPlugin = {
     blockTimestamp: 0,
     transactionHash: '0x',
     slug: 'CAP',
+    links: [{ name: 'Capital Distributor', url: 'https://example.com' }],
+    name: 'Capital Distributor',
+    description: 'A plugin for distributing capital',
 };
 
 class DaoService extends AragonBackendService {

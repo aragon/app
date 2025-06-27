@@ -1045,6 +1045,29 @@
         }
       },
       "capitalDistributor": {
+        "capitalDistributorRewardsAside": {
+          "stats": {
+            "claimableCount": "Claimable campaigns",
+            "claimableNow": "Claimable now",
+            "latestClaim": "Latest claim",
+            "recentUnit": " {{unit}} ago",
+            "totalEarned": "Total earned"
+          }
+        },
+        "capitalDistributorRewardsNotConnected": {
+          "action": "Connect",
+          "description": "Connect your wallet to view your rewards.",
+          "heading": "Connect your wallet"
+        },
+        "capitalDistributorRewardsPage": {
+          "main": {
+            "tabs": {
+              "claimable": "Claimable",
+              "claimed": "Claimed"
+            },
+            "title": "Rewards"
+          }
+        },
         "meta": {
           "link": {
             "rewards": "Rewards"

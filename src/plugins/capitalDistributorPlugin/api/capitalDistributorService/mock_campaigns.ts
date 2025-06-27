@@ -22,6 +22,7 @@ export const mockCampaigns: ICampaign[] = [
         startTime: 1750602680,
         endTime: 1751034680,
         txHash: '0x6ebcf52c7b2e40de87332b2dc891719e',
+        claimTimestamp: 1751034680,
         active: false,
     },
     {
@@ -39,6 +40,7 @@ export const mockCampaigns: ICampaign[] = [
         endTime: 1751034680,
         txHash: '0xe103baca0e04439ebbf121b840e42c4b',
         active: false,
+        claimTimestamp: 1651034680,
     },
     {
         id: '3',
@@ -82,6 +84,7 @@ export const mockCampaigns: ICampaign[] = [
         endTime: 0,
         txHash: '0xcf9c9cdc27494e259a516c223a6aa77a',
         active: false,
+        claimTimestamp: 1751034650,
     },
     {
         id: '5',
@@ -128,6 +131,7 @@ export const mockCampaigns: ICampaign[] = [
         endTime: 0,
         txHash: '0xfe01828662884348bafcfdc18dcb6394',
         active: false,
+        claimTimestamp: 1754034680,
     },
     {
         id: '8',
@@ -144,6 +148,7 @@ export const mockCampaigns: ICampaign[] = [
         endTime: 0,
         txHash: '0xa15bccb1b421424f9a1d57288adfd884',
         active: false,
+        claimTimestamp: 1951034683,
     },
     {
         id: '9',
@@ -166,6 +171,7 @@ export const mockCampaigns: ICampaign[] = [
         endTime: 0,
         txHash: '0xa822be79e44d4001b22b51631a2518b1',
         active: false,
+        claimTimestamp: 1251034680,
     },
     {
         id: '10',
@@ -218,6 +224,7 @@ export const mockCampaigns: ICampaign[] = [
         endTime: 1751725880,
         txHash: '0x217f2e37c5a4465784304a705d052050',
         active: false,
+        claimTimestamp: 1751034681,
     },
     {
         id: '13',
@@ -255,6 +262,7 @@ export const mockCampaigns: ICampaign[] = [
         endTime: 0,
         txHash: '0x144c13a3d27c44549313adf58e379ed7',
         active: false,
+        claimTimestamp: 1751034689,
     },
     {
         id: '15',
@@ -298,6 +306,7 @@ export const mockCampaigns: ICampaign[] = [
         endTime: 0,
         txHash: '0x67c345944e034b15ae4236953f9ddded',
         active: false,
+        claimTimestamp: 1751034980,
     },
     {
         id: '17',
@@ -320,6 +329,7 @@ export const mockCampaigns: ICampaign[] = [
         endTime: 1751293880,
         txHash: '0x29021f3dc45142538087ddc86675c69e',
         active: false,
+        claimTimestamp: 1751014690,
     },
     {
         id: '18',
@@ -363,6 +373,7 @@ export const mockCampaigns: ICampaign[] = [
         endTime: 1751121080,
         txHash: '0xccbf4d9ef9c64215864a56b52a16d72f',
         active: false,
+        claimTimestamp: 1751034682,
     },
     {
         id: '20',
@@ -385,11 +396,12 @@ export const mockCampaigns: ICampaign[] = [
         endTime: 0,
         txHash: '0xa78d5ea6a62e46c8a32dcf882ab15579',
         active: false,
+        claimTimestamp: 1751034683,
     },
 ];
 
 
 export const mockCampaignsStats: ICapitalDistributorStats = {
-  totalClaimed: "5000.00",
-  totalClaimable: "3000.00"
+    totalClaimed: '50000',
+    totalClaimable: '30000',
 };
