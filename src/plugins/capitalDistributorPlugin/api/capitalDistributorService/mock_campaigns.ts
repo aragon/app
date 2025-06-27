@@ -3,7 +3,7 @@ import type { CampaignStatus, ICampaign, ICapitalDistributorStats } from './doma
 
 export const mockCampaigns: ICampaign[] = [
     {
-        id: '1',
+        id: 1,
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'retro',
@@ -26,7 +26,7 @@ export const mockCampaigns: ICampaign[] = [
         active: false,
     },
     {
-        id: '2',
+        id: 2,
         title: 'Staking Rewards',
         description: 'Reward for staking tokens',
         type: 'bounty',
@@ -43,7 +43,7 @@ export const mockCampaigns: ICampaign[] = [
         claimTimestamp: 1651034680,
     },
     {
-        id: '3',
+        id: 3,
         title: 'Staking Rewards',
         description: 'Reward for staking tokens',
         type: 'retro',
@@ -64,7 +64,7 @@ export const mockCampaigns: ICampaign[] = [
         active: true,
     },
     {
-        id: '4',
+        id: 4,
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'grant',
@@ -87,7 +87,7 @@ export const mockCampaigns: ICampaign[] = [
         claimTimestamp: 1751034650,
     },
     {
-        id: '5',
+        id: 5,
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'retro',
@@ -102,7 +102,7 @@ export const mockCampaigns: ICampaign[] = [
         active: true,
     },
     {
-        id: '6',
+        id: 6,
         title: 'Staking Rewards',
         description: 'Reward for staking tokens',
         type: 'reward',
@@ -117,7 +117,7 @@ export const mockCampaigns: ICampaign[] = [
         active: true,
     },
     {
-        id: '7',
+        id: 7,
         title: 'Staking Rewards',
         description: 'Reward for staking tokens',
         type: 'bounty',
@@ -134,7 +134,7 @@ export const mockCampaigns: ICampaign[] = [
         claimTimestamp: 1754034680,
     },
     {
-        id: '8',
+        id: 8,
         title: 'Staking Rewards',
         description: 'Reward for staking tokens',
         type: 'bonus',
@@ -151,7 +151,7 @@ export const mockCampaigns: ICampaign[] = [
         claimTimestamp: 1951034683,
     },
     {
-        id: '9',
+        id: 9,
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'bonus',
@@ -174,7 +174,7 @@ export const mockCampaigns: ICampaign[] = [
         claimTimestamp: 1251034680,
     },
     {
-        id: '10',
+        id: 10,
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'bonus',
@@ -189,7 +189,7 @@ export const mockCampaigns: ICampaign[] = [
         active: true,
     },
     {
-        id: '11',
+        id: 11,
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'retro',
@@ -210,7 +210,7 @@ export const mockCampaigns: ICampaign[] = [
         active: true,
     },
     {
-        id: '12',
+        id: 12,
         title: 'Bug Bounty',
         description: 'Bounty for finding a critical bug',
         type: 'retro',
@@ -227,7 +227,7 @@ export const mockCampaigns: ICampaign[] = [
         claimTimestamp: 1751034681,
     },
     {
-        id: '13',
+        id: 13,
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'bounty',
@@ -248,7 +248,7 @@ export const mockCampaigns: ICampaign[] = [
         active: true,
     },
     {
-        id: '14',
+        id: 14,
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'reward',
@@ -265,7 +265,7 @@ export const mockCampaigns: ICampaign[] = [
         claimTimestamp: 1751034689,
     },
     {
-        id: '15',
+        id: 15,
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'bonus',
@@ -286,7 +286,7 @@ export const mockCampaigns: ICampaign[] = [
         active: true,
     },
     {
-        id: '16',
+        id: 16,
         title: 'Content Grant',
         description: 'Grant for writing educational content',
         type: 'grant',
@@ -309,7 +309,7 @@ export const mockCampaigns: ICampaign[] = [
         claimTimestamp: 1751034980,
     },
     {
-        id: '17',
+        id: 17,
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'retro',
@@ -332,7 +332,7 @@ export const mockCampaigns: ICampaign[] = [
         claimTimestamp: 1751014690,
     },
     {
-        id: '18',
+        id: 18,
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'retro',
@@ -353,7 +353,7 @@ export const mockCampaigns: ICampaign[] = [
         active: true,
     },
     {
-        id: '19',
+        id: 19,
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'retro',
@@ -376,7 +376,7 @@ export const mockCampaigns: ICampaign[] = [
         claimTimestamp: 1751034682,
     },
     {
-        id: '20',
+        id: 20,
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'grant',

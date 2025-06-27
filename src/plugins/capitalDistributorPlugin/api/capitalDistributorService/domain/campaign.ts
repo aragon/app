@@ -6,7 +6,7 @@ export interface ICampaign {
     /**
      * Unique identifier for the campaign.
      */
-    id: string;
+    id: number;
     /**
      * Title of the campaign.
      */
