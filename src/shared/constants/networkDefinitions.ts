@@ -139,7 +139,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.OPTIMISM_MAINNET]: {
         ...optimism,
         name: 'Optimism',
-        logo: 'https://www.optimism.io/brand/optimism-logo.svg',
+        logo: 'https://cryptologos.cc/logos/optimism-ethereum-op-logo.svg',
         privateRpc: 'https://opt-mainnet.g.alchemy.com/v2/',
         order: 5,
         protocolVersion: latestProtocolVersion,
