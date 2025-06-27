@@ -312,6 +312,14 @@ describe('dao utils', () => {
         });
     });
 
+    describe('parseDaoId', () => {
+        it('correctly parses a daoId with network and address', () => {
+            const daoId = 'ethereum-mainnet-0x12345';
+            const expectedResult = { network: Network.ETHEREUM_MAINNET, address: '0x12345' };
+            expect(daoUtils.parseDaoId(daoId)).toEqual(expectedResult);
+        });
+    });
+
     describe('getDaoUrl', () => {
         it('returns the correct base URL for a DAO with ENS', () => {
             const daoEnsSubdomain = 'test-subdomain';

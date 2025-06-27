@@ -11,15 +11,16 @@ export interface IUseMultisigPermissionCheckProposalCreationParams
 export const useMultisigPermissionCheckProposalCreation = (
     params: IUseMultisigPermissionCheckProposalCreationParams,
 ): IPermissionCheckGuardResult => {
-    const { plugin } = params;
+    const { plugin, daoId } = params;
 
     const { address } = useAccount();
     const { t } = useTranslations();
 
     const { onlyListed } = plugin.settings;
     const pluginName = daoUtils.getPluginName(plugin);
+    const { network } = daoUtils.parseDaoId(daoId);
 
-    const memberExistsParams = { memberAddress: address as string, pluginAddress: plugin.address };
+    const memberExistsParams = { memberAddress: address as string, pluginAddress: plugin.address, network };
     const { data: memberExists, isLoading } = useMemberExists(
         { urlParams: memberExistsParams },
         { enabled: address != null },

@@ -14,7 +14,7 @@
       },
       "connectWalletDialog": {
         "a11y": {
-          "description": "Connect your wallet to Aragon App",
+          "description": "Connect your wallet to Aragon",
           "title": "Connect wallet"
         },
         "action": {
@@ -30,7 +30,7 @@
         }
       },
       "debugPanel": {
-        "title": "App debug"
+        "title": "Debug"
       },
       "footer": {
         "copyright": "© {{year}} Aragon",
@@ -158,7 +158,7 @@
             "title": "Debug"
           },
           "METADATA": {
-            "description": "Describe your DAO so visitors know they've come to the right place. Any of these fields can be changed later via governance.",
+            "description": "Describe your DAO so visitors know they've come to the right place. Don't worry if they're not final—any of these fields can be changed later.",
             "name": "Describe your DAO",
             "title": "Describe your DAO"
           },
@@ -217,7 +217,7 @@
           "stageBodiesField": {
             "action": {
               "add": "Add body",
-              "edit": "Edit",
+              "edit": "Edit body",
               "more": "More",
               "remove": "Remove body"
             },
@@ -1261,11 +1261,25 @@
           "Mint": "Mint",
           "UpdateVoteSettings": "Update settings"
         },
+        "tokenApproveNftDialog": {
+          "UNLOCK": {
+            "description": "To unlock your tokens, confirm the two onchain transactions in your wallet.",
+            "nftName": "Lock NFT",
+            "submit": "Approve NFT",
+            "title": "Approve unlocking"
+          }
+        },
         "tokenApproveTokensDialog": {
-          "description": "To approve wrapping your tokens, confirm the onchain transaction in your wallet.",
-          "submit": "Approve tokens",
-          "success": "Wrap tokens",
-          "title": "Approve wrapping"
+          "LOCK": {
+            "description": "To lock your tokens, confirm the two onchain transactions in your wallet.",
+            "submit": "Approve tokens",
+            "title": "Approve locking"
+          },
+          "WRAP": {
+            "description": "To wrap your tokens, confirm the two onchain transactions in your wallet.",
+            "submit": "Approve tokens",
+            "title": "Approve wrapping"
+          }
         },
         "tokenCreateProposalSettingsForm": {
           "endTime": {
@@ -1315,6 +1329,85 @@
           "voteChange": "Vote change",
           "yes": "Enabled"
         },
+        "tokenLockForm": {
+          "approveTransactionInfoTitle": "Approve {{symbol}}",
+          "chart": {
+            "now": "Now",
+            "votingPower": "Voting power"
+          },
+          "footerInfo": "Locking tokens will transfer them out of your wallet to the locking contract, where they can be withdrawn back to your wallet after the minimum locktime.",
+          "locks": "View {{count}} locks",
+          "percentage": {
+            "0": "None",
+            "100": "100%",
+            "25": "25%",
+            "50": "50%",
+            "75": "75%"
+          },
+          "submit": {
+            "approve": "Approve {{symbol}}",
+            "lock": "Lock {{symbol}}"
+          }
+        },
+        "tokenLockList": {
+          "empty": {
+            "description": "This will show relevant locks when available.",
+            "title": "No locks found"
+          },
+          "entity": "veLocks",
+          "error": {
+            "description": "There was an error loading the locks. Try again later.",
+            "title": "Error loading locks"
+          },
+          "item": {
+            "actions": {
+              "unlock": "Unlock {{symbol}}",
+              "withdraw": "Withdraw {{symbol}}"
+            },
+            "approveTransactionInfoTitle": "Approve NFT #{{tokenId}}",
+            "metrics": {
+              "locked": "Locked",
+              "multiplier": "Multiplier",
+              "votingPower": "Voting power"
+            },
+            "minLockTimeLeftSuffix": "left until unlockable",
+            "statusLabel": {
+              "active": "Active",
+              "available": "Available",
+              "cooldown": "In cooldown",
+              "warmup": "In warmup"
+            },
+            "timeLeftSuffix": "left",
+            "withdrawTimeLeftSuffix": "left until you can withdraw"
+          }
+        },
+        "tokenLockUnlockDialog": {
+          "lock": {
+            "description": "To lock your {{symbol}}, confirm the onchain transaction in your wallet.",
+            "submit": "Lock",
+            "success": "View your veLock",
+            "title": "Lock {{symbol}}",
+            "transactionInfoTitle": "Lock {{symbol}}"
+          },
+          "unlock": {
+            "description": "To unlock your {{symbol}}, confirm the onchain transaction in your wallet.",
+            "submit": "Unlock",
+            "success": "View locks",
+            "title": "Unlock {{symbol}}",
+            "transactionInfoTitle": "Unlock {{symbol}}"
+          },
+          "withdraw": {
+            "description": "To withdraw your {{symbol}}, confirm the onchain transactions in your wallet.",
+            "submit": "Withdraw",
+            "success": "View locks",
+            "title": "Withdraw {{symbol}}",
+            "transactionInfoTitle": "Withdraw {{symbol}}"
+          }
+        },
+        "tokenLocksDialog": {
+          "description": "Unlock or withdraw your {{symbol}} tokens",
+          "title": "Your locks"
+        },
         "tokenMemberInfo": {
           "distribution": "Distribution",
           "eligibleVoters": "Eligible voters",
@@ -1332,6 +1425,7 @@
         "tokenMemberPanel": {
           "tabs": {
             "DELEGATE": "Delegate",
+            "LOCK": "Lock",
             "WRAP": "Wrap"
           }
         },
@@ -1535,6 +1629,7 @@
           "entity": "Votes"
         },
         "tokenWrapForm": {
+          "approveTransactionInfoTitle": "Approve {{symbol}}",
           "footerInfo": "Wrapping tokens will transfer them out of your wallet to the wrapping contract, where they can be withdrawn back to your wallet at any time.",
           "info": "Wrap {{underlyingSymbol}} to increase your voting power.",
           "percentage": {
@@ -1552,16 +1647,18 @@
         },
         "tokenWrapUnwrapDialog": {
           "unwrap": {
-            "description": "To unwrap your tokens, confirm the onchain transaction in your wallet.",
+            "description": "To unwrap your tokens, confirm the two onchain transactions in your wallet.",
             "submit": "Unwrap tokens",
             "success": "View members",
-            "title": "Unwrap tokens"
+            "title": "Unwrap tokens",
+            "transactionInfoTitle": "Unwrap {{symbol}}"
           },
           "wrap": {
-            "description": "To wrap your tokens, confirm the onchain transaction in your wallet.",
+            "description": "To wrap your tokens, confirm the two onchain transactions in your wallet.",
             "submit": "Wrap tokens",
             "success": "View members",
-            "title": "Wrap tokens"
+            "title": "Wrap tokens",
+            "transactionInfoTitle": "Wrap {{symbol}}"
           }
         }
       }
@@ -1589,7 +1686,7 @@
       },
       "daoSettingsPage": {
         "aside": {
-          "versionInfoTitle": "Version info"
+          "versionInfoTitle": "Contracts"
         },
         "main": {
           "governanceAction": "Add governance",
@@ -1608,16 +1705,16 @@
         "button": {
           "submit": "Prepare installation"
         },
-        "description": "To publish the OSx upgrades, confirm the two onchain transactions in your wallet.",
-        "title": "Publish OSx upgrades",
+        "description": "To publish the contract upgrades, confirm the two onchain transactions in your wallet.",
+        "title": "Publish contract upgrades",
         "transactionInfoTitle": "Prepare installation"
       },
       "publishDaoContractsUpdateDialog": {
         "button": {
           "submit": "Propose contract upgrades"
         },
-        "description": "To publish the OSx upgrades, confirm the two onchain transactions in your wallet.",
-        "title": "Publish OSx upgrades",
+        "description": "To publish the contract upgrades, confirm the two onchain transactions in your wallet.",
+        "title": "Publish contract upgrades",
         "transactionInfoTitle": "Propose contract upgrades"
       },
       "updateDaoContracts": {
@@ -1685,7 +1782,7 @@
         "message": "If you leave this process, you'll lose all the information you've entered so far."
       },
       "daoPluginInfo": {
-        "launchedAt": "Launched",
+        "launchedAt": "Plugin launched",
         "plugin": "Plugin address",
         "pluginVersionInfo": "{{name}} v{{release}}.{{build}}"
       },

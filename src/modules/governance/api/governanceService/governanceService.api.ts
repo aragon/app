@@ -59,7 +59,7 @@ export interface IGetMemberQueryParams {
     /**
      * Address of the plugin used to include the member stats.
      */
-    pluginAddress?: string;
+    pluginAddress: string;
 }
 
 export interface IGetMemberParams extends IRequestUrlQueryParams<IGetMemberUrlParams, IGetMemberQueryParams> {}
@@ -73,6 +73,10 @@ export interface IGetMemberExistsUrlParams {
      * Address of the plugin to check the member for.
      */
     pluginAddress: string;
+    /**
+     * Network of the plugin.
+     */
+    network: Network;
 }
 
 export interface IGetMemberExistsParams extends IRequestUrlParams<IGetMemberExistsUrlParams> {}
@@ -132,6 +136,10 @@ export interface IGetVoteListQueryParams extends IPaginatedRequest {
      * Plugin address to fetch the votes from.
      */
     pluginAddress: string;
+    /**
+     * Network of the plugin.
+     */
+    network: Network;
     /**
      * If voted, show a specific address result first in the list.
      */

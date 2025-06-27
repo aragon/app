@@ -42,7 +42,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const latestVote = useUserVote<ITokenVote>({ proposal });
+    const latestVote = useUserVote<ITokenVote>({ proposal, network });
     const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress, includeSubPlugins: true })![0];
 
     const { id: chainId } = networkDefinitions[network];

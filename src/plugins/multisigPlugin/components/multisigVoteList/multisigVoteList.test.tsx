@@ -48,7 +48,7 @@ describe('<MultisigVoteList /> component', () => {
 
     const createTestComponent = (props?: Partial<IMultisigVoteListProps>) => {
         const completeProps: IMultisigVoteListProps = {
-            initialParams: { queryParams: { pluginAddress: '0x123' } },
+            initialParams: { queryParams: { pluginAddress: '0x123', network: daoService.Network.ETHEREUM_SEPOLIA } },
             daoId: 'test-id',
             ...props,
         };
@@ -128,7 +128,13 @@ describe('<MultisigVoteList /> component', () => {
         render(
             createTestComponent({
                 daoId,
-                initialParams: { queryParams: { includeInfo: true, pluginAddress: '0x123' } },
+                initialParams: {
+                    queryParams: {
+                        includeInfo: true,
+                        pluginAddress: '0x123',
+                        network: daoService.Network.ETHEREUM_SEPOLIA,
+                    },
+                },
             }),
         );
 
@@ -152,6 +158,7 @@ describe('<MultisigVoteList /> component', () => {
                 pluginAddress: '0x123',
                 includeInfo: true,
                 pageSize: 5,
+                network: daoService.Network.ETHEREUM_SEPOLIA,
             },
         };
 

@@ -9,13 +9,12 @@ import type { ITokenMember, ITokenPluginSettings } from '@/plugins/tokenPlugin/t
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { Button, formatterUtils, NumberFormat, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
-import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { erc20Abi, formatUnits, parseUnits, type Hex } from 'viem';
-import { useAccount, useBalance, useReadContract } from 'wagmi';
+import { formatUnits, parseUnits } from 'viem';
+import { useAccount } from 'wagmi';
+import { useCheckTokenAllowance } from '../hooks/useCheckTokenAllowance';
 
 export interface ITokenWrapFormProps {
     /**
@@ -41,13 +40,12 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
 
     const { token } = plugin.settings;
     const { symbol, decimals } = token;
-    const underlyingAddress = underlyingToken.address as Hex;
 
     const { open } = useDialogContext();
     const { t } = useTranslations();
+
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const queryClient = useQueryClient();
 
     const [percentageValue, setPercentageValue] = useState<string>('100');
 
@@ -58,24 +56,14 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         { enabled: address != null },
     );
 
-    const { id: chainId } = networkDefinitions[dao!.network];
-    const { data: tokenAllowance, queryKey: allowanceQueryKey } = useReadContract({
-        abi: erc20Abi,
-        functionName: 'allowance',
-        address: underlyingAddress,
-        args: [address!, token.address as Hex],
-        query: { enabled: address != null },
-        chainId,
-    });
-
     const {
-        data: unwrappedBalance,
-        queryKey: unwrappedBalanceKey,
+        allowance,
+        balance: unwrappedBalance,
         status: unwrappedBalanceStatus,
-    } = useBalance({ address, token: underlyingAddress, chainId });
+        invalidateQueries,
+    } = useCheckTokenAllowance({ spender: token.address, token: underlyingToken });
 
     const parsedUnwrappedAmount = formatUnits(unwrappedBalance?.value ?? BigInt(0), decimals);
-
     const userAsset = useMemo(
         () => ({ token: underlyingToken, amount: parsedUnwrappedAmount }),
         [underlyingToken, parsedUnwrappedAmount],
@@ -87,28 +75,56 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     const wrapAmount = useWatch<ITokenWrapFormData, 'amount'>({ control, name: 'amount' });
     const wrapAmountWei = parseUnits(wrapAmount ?? '0', token.decimals);
 
-    const needsApproval = isConnected && (tokenAllowance == null || tokenAllowance < wrapAmountWei);
-
-    const handleTransactionSuccess = () => {
-        void queryClient.invalidateQueries({ queryKey: allowanceQueryKey });
-        void queryClient.invalidateQueries({ queryKey: unwrappedBalanceKey });
-        void refetchMember();
-    };
+    const needsApproval = isConnected && (allowance == null || allowance < wrapAmountWei);
 
     const handleFormSubmit = () => {
-        const dialogType = needsApproval ? 'approve' : 'wrap';
-        const dialogProps = getDialogProps(wrapAmountWei);
-
-        if (dialogType === 'approve') {
-            const params: ITokenApproveTokensDialogParams = {
-                ...dialogProps,
-                onApproveSuccess: () => handleApproveSuccess(dialogProps), // open wrap dialog with the same params!
-            };
-            open(TokenPluginDialogId.APPROVE_TOKENS, { params });
+        if (needsApproval) {
+            handleApproveTokens();
         } else {
-            const params: ITokenWrapUnwrapDialogParams = { ...dialogProps, action: 'wrap' };
-            open(TokenPluginDialogId.WRAP_UNWRAP, { params });
+            handleWrapUnwrapTokens('wrap', wrapAmountWei);
         }
+    };
+
+    const handleApproveTokens = () => {
+        const { symbol } = underlyingToken;
+        const txInfoTitle = t('app.plugins.token.tokenWrapForm.approveTransactionInfoTitle', { symbol });
+        const transactionInfo = { title: txInfoTitle, current: 1, total: 2 };
+
+        const params: ITokenApproveTokensDialogParams = {
+            token: underlyingToken,
+            amount: wrapAmountWei,
+            network: dao!.network,
+            translationNamespace: 'WRAP',
+            onSuccess: () => onApproveTokensSuccess(wrapAmountWei),
+            spender: token.address,
+            transactionInfo,
+        };
+
+        open(TokenPluginDialogId.APPROVE_TOKENS, { params });
+    };
+
+    const handleWrapUnwrapTokens = (action: 'wrap' | 'unwrap', amount: bigint) => {
+        const params: ITokenWrapUnwrapDialogParams = {
+            action,
+            token,
+            underlyingToken,
+            amount,
+            network: dao!.network,
+            onSuccess: onWrapUnwrapTokensSuccess,
+            showTransactionInfo: action === 'wrap' && needsApproval,
+        };
+
+        open(TokenPluginDialogId.WRAP_UNWRAP, { params });
+    };
+
+    const onApproveTokensSuccess = (tokenAmount: bigint) => {
+        invalidateQueries();
+        handleWrapUnwrapTokens('wrap', tokenAmount);
+    };
+
+    const onWrapUnwrapTokensSuccess = () => {
+        invalidateQueries();
+        void refetchMember();
     };
 
     const updateAmountField = useCallback(
@@ -131,24 +147,6 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         },
         [updateAmountField],
     );
-
-    const handleUnwrapToken = () => {
-        const params: ITokenWrapUnwrapDialogParams = { ...getDialogProps(wrappedAmount), action: 'unwrap' };
-        open(TokenPluginDialogId.WRAP_UNWRAP, { params });
-    };
-
-    const handleApproveSuccess = (dialogProps: ReturnType<typeof getDialogProps>) => {
-        const params: ITokenWrapUnwrapDialogParams = { ...dialogProps, action: 'wrap' };
-        open(TokenPluginDialogId.WRAP_UNWRAP, { params });
-    };
-
-    const getDialogProps = (confirmAmount: bigint) => ({
-        token,
-        underlyingToken,
-        amount: confirmAmount,
-        network: dao!.network,
-        onSuccess: handleTransactionSuccess,
-    });
 
     // Update amount field and percentage value to 100% of user unwrapped balance on user balance change
     useEffect(() => handlePercentageChange('100'), [handlePercentageChange]);
@@ -211,7 +209,11 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                         })}
                     </Button>
                     {wrappedAmount > 0 && (
-                        <Button variant="secondary" size="lg" onClick={handleUnwrapToken}>
+                        <Button
+                            variant="secondary"
+                            size="lg"
+                            onClick={() => handleWrapUnwrapTokens('unwrap', wrappedAmount)}
+                        >
                             {t('app.plugins.token.tokenWrapForm.submit.unwrap', {
                                 amount: formattedWrappedAmount,
                                 symbol,
