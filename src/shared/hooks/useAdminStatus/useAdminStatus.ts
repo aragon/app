@@ -22,12 +22,14 @@ export const useAdminStatus = (params: IUseAdminStatusParams) => {
     const adminPlugins = useDaoPlugins({ daoId, subdomain: 'admin' });
     const adminPluginAddress = adminPlugins?.[0]?.meta?.address;
 
-    const memberExistsParams = { memberAddress: memberAddress as string, pluginAddress: adminPluginAddress!, network };
+    const memberExistsParams = {
+        urlParams: { memberAddress: memberAddress as string, pluginAddress: adminPluginAddress!, network },
+        queryParams: { network },
+    };
 
-    const { data: isAdminMember } = useMemberExists(
-        { urlParams: memberExistsParams },
-        { enabled: memberAddress != null && adminPluginAddress != null },
-    );
+    const { data: isAdminMember } = useMemberExists(memberExistsParams, {
+        enabled: memberAddress != null && adminPluginAddress != null,
+    });
 
     const adminFeatureEnabled = process.env.NEXT_PUBLIC_FEATURE_GOVERNANCE_DESIGNER === 'true';
 

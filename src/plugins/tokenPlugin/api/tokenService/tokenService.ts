@@ -4,7 +4,7 @@ import type { IGetMemberLocksParams } from './tokenService.api';
 
 class TokenService extends AragonBackendService {
     private urls = {
-        memberLocks: '/v1/members/:address/locks',
+        memberLocks: '/v2/members/:address/locks',
     };
 
     getMemberLocks = async (params: IGetMemberLocksParams): Promise<IPaginatedResponse<IMemberLock>> => {
