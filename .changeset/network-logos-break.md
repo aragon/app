@@ -1,5 +1,5 @@
 ---
-'@aragon/app-next': minor
+'@aragon/app-next': patch
 ---
 
-Updating the logo of OP chain to an updated svg.
+Update the logo for the Optimism chain.
