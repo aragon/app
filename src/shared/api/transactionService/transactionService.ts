@@ -4,7 +4,7 @@ import type { IGetTransactionStatusParams } from './transactionService.api';
 
 class TransactionService extends AragonBackendService {
     private urls = {
-        status: '/v1/transactions/:network/:transactionHash/status',
+        status: '/v2/transactions/:network/:transactionHash/status',
     };
 
     getTransactionStatus = async (params: IGetTransactionStatusParams): Promise<ITransactionStatus> => {

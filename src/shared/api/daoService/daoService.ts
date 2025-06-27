@@ -4,8 +4,8 @@ import type { IDao } from './domain';
 
 class DaoService extends AragonBackendService {
     private urls = {
-        dao: '/v1/daos/:id',
-        daoByEns: '/v1/daos/:network/ens/:ens',
+        dao: '/v2/daos/:id',
+        daoByEns: '/v2/daos/:network/ens/:ens',
     };
 
     getDao = async (params: IGetDaoParams): Promise<IDao> => {

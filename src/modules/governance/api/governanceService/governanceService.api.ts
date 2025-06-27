@@ -73,13 +73,17 @@ export interface IGetMemberExistsUrlParams {
      * Address of the plugin to check the member for.
      */
     pluginAddress: string;
+}
+
+export interface IGetMemberExistsQueryParams {
     /**
      * Network of the plugin.
      */
     network: Network;
 }
 
-export interface IGetMemberExistsParams extends IRequestUrlParams<IGetMemberExistsUrlParams> {}
+export interface IGetMemberExistsParams
+    extends IRequestUrlQueryParams<IGetMemberExistsUrlParams, IGetMemberExistsQueryParams> {}
 
 export interface IGetProposalBySlugUrlParams {
     /**
