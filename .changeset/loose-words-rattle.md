@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-String cleanup throughout the application
+Update strings across app to adhere to style guide
