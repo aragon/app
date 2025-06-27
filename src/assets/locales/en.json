@@ -1650,7 +1650,7 @@
           "input": {
             "error": {
               "alreadyInList": "Address has already been added",
-              "invalid": "Address is not valid"
+              "invalid": "Valid address is mandatory"
             },
             "label": "Member",
             "placeholder": "ENS or 0x…"

@@ -13,14 +13,15 @@ class AddressesListUtils {
     ): true | string => {
         const errorNamespace = 'app.shared.addressesInput.item.input.error';
 
-        if (customValidator) {
-            return customValidator(members[index]);
-        }
-
+        console.log('address', address);
         if (!addressUtils.isAddress(address)) {
             return `${errorNamespace}.invalid`;
         } else if (this.checkIsAlreadyInList(members, index, address)) {
             return `${errorNamespace}.alreadyInList`;
+        }
+
+        if (customValidator) {
+            return customValidator(members[index]);
         }
 
         return true;
