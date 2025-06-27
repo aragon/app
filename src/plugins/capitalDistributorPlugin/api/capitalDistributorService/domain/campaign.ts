@@ -1,11 +1,12 @@
-import type { IToken } from "@/modules/finance/api/financeService";
-import type { IResource } from "@/shared/api/daoService";
+import type { IToken } from '@/modules/finance/api/financeService';
+import type { IResource } from '@/shared/api/daoService';
+import type { CampaignStatus } from './enum';
 
 export interface ICampaign {
     /**
      * Unique identifier for the campaign.
      */
-    id: string;
+    id: number;
     /**
      * Title of the campaign.
      */
@@ -19,13 +20,17 @@ export interface ICampaign {
      */
     type: string;
     /**
+     * Logo associated with the campaign.
+     */
+    logo?: string;
+    /**
      * Resources associated with the campaign.
      */
     resources?: IResource[];
     /**
      * Status of the campaign (claimed/claimable).
      */
-    status: 'claimed' | 'claimable';
+    status: CampaignStatus;
     /**
      * The token associated with the campaign.
      */
@@ -35,11 +40,11 @@ export interface ICampaign {
      */
     amount: string;
     /**
-     * The start time of the campaign.
+     * The start time of the campaign (can be 0 meaning no time restriction).
      */
     startTime: number;
     /**
-     * The end time of the campaign.
+     * The end time of the campaign (can be 0 meaning no time restriction).
      */
     endTime: number;
     /**
@@ -50,4 +55,8 @@ export interface ICampaign {
      * The tx hash of the claim transaction. Only present if the campaign has been claimed.
      */
     txHash?: string;
+    /**
+     * The block timestamp of when the campaign was claimed.
+     */
+    claimTimestamp?: number;
 }

@@ -1,1 +1,1 @@
-export { campaignStatsOptions, useCampaignStats }  from './useCampaignStats';
+export { campaignStatsOptions, useCampaignStats } from './useCampaignStats';
