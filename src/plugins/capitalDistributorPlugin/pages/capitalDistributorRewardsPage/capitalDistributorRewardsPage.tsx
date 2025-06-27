@@ -5,6 +5,7 @@ import type { IDaoPluginPageProps } from '@/modules/application/types';
 import {
     campaignListOptions,
     campaignStatsOptions,
+    CampaignStatus,
 } from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
 import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
@@ -36,7 +37,7 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
 
     if (userAddress) {
         await queryClient.fetchQuery(
-            campaignListOptions({ queryParams: { memberAddress: userAddress, status: 'claimable' } }),
+            campaignListOptions({ queryParams: { memberAddress: userAddress, status: CampaignStatus.CLAIMABLE } }),
         );
         await queryClient.fetchQuery(campaignStatsOptions({ urlParams: { memberAddress: userAddress } }));
     }

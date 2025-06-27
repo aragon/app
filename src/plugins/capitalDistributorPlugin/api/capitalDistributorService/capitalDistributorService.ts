@@ -1,7 +1,7 @@
-import type { ICampaign, ICapitalDistributorStats } from "./domain";
+import { AragonBackendService } from '@/shared/api/aragonBackendService';
 import type { IGetCampaignsListParams, IGetCampaignStatsParams } from './capitalDistributorService.api';
-import { AragonBackendService } from "@/shared/api/aragonBackendService";
-import { mockCampaigns, mockCampaignsStats } from "./mock_campaigns";
+import type { ICampaign, ICapitalDistributorStats } from './domain';
+import { mockCampaigns, mockCampaignsStats } from './mock_campaigns';
 
 class CapitalDistributorService extends AragonBackendService {
     private urls = {
@@ -15,14 +15,15 @@ class CapitalDistributorService extends AragonBackendService {
         // return result;
 
         // TODO: Remove this mock data and use the actual API endpoint when available
-       const filtered = params.queryParams.status ? mockCampaigns.filter(campaign => campaign.status === params.queryParams.status) : mockCampaigns;
+        const filtered = params.queryParams.status
+            ? mockCampaigns.filter((campaign) => campaign.status === params.queryParams.status)
+            : mockCampaigns;
 
-       return Promise.resolve(filtered);
-
+        return Promise.resolve(filtered);
     };
 
     getCampaignStats = async (params: IGetCampaignStatsParams): Promise<ICapitalDistributorStats> => {
-        console.log(params)
+        console.log(params);
         // const result = await this.request<ICapitalDistributorStats>(this.urls.stats, params);
 
         // return result;

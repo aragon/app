@@ -18,7 +18,7 @@ export const CapitalDistributorRewardsNotConnected: React.FC<ICapitalDistributor
                 primaryButton={{
                     label: t('app.plugins.capitalDistributor.capitalDistributorRewardsNotConnected.action'),
                     onClick: () => open(ApplicationDialogId.CONNECT_WALLET),
-                    iconLeft: IconType.BLOCKCHAIN_WALLET
+                    iconLeft: IconType.BLOCKCHAIN_WALLET,
                 }}
             />
         </Card>

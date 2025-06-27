@@ -1,12 +1,12 @@
 'use client';
 
-import { useCampaignList } from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
+import { CampaignStatus, useCampaignList } from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
 import { CapitalDistributorRewardsAside } from '@/plugins/capitalDistributorPlugin/components/capitalDistributorRewardsAside/capitalDistributorRewardsAside';
 import { CapitalDistributorRewardsNotConnected } from '@/plugins/capitalDistributorPlugin/components/capitalDistributorRewardsNotConnected/capitalDistributorRewardsNotConnected';
 import { type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
+import { DataListItem, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
 
@@ -22,11 +22,11 @@ export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRe
     const { address } = useAccount();
     const { t } = useTranslations();
 
-    const [campaignFilter, setCampaignFilter] = useState<'claimed' | 'claimable'>('claimable');
+    const [campaignFilter, setCampaignFilter] = useState<CampaignStatus>(CampaignStatus.CLAIMABLE);
 
     const handleToggleChange = (value?: string) => {
         if (value) {
-            setCampaignFilter(value as 'claimed' | 'claimable');
+            setCampaignFilter(value as CampaignStatus);
         }
     };
 
@@ -34,44 +34,42 @@ export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRe
     const { data: campaigns } = useCampaignList(campaignParams, { enabled: address != null });
 
     return (
-        <>
-            <Page.Content>
-                <Page.Main title={t('app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.title')}>
-                    {!address && <CapitalDistributorRewardsNotConnected />}
-                    {address && (
-                        <div className="flex flex-col gap-3">
-                            <ToggleGroup
-                                className="flex gap-3"
-                                isMultiSelect={false}
-                                onChange={handleToggleChange}
-                                value={campaignFilter}
-                            >
-                                <Toggle
-                                    value="claimable"
-                                    label={t(
-                                        'app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.tabs.claimable',
-                                    )}
-                                />
-                                <Toggle
-                                    value="claimed"
-                                    label={t(
-                                        'app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.tabs.claimed',
-                                    )}
-                                />
-                            </ToggleGroup>
-                            {/* TODO: Replace with data list item component when done */}
-                            {campaigns?.map((campaign) => (
-                                <div key={campaign.id} className="rounded-lg border p-4">
-                                    <h3 className="text-lg font-semibold">{campaign.title}</h3>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </Page.Main>
-                <Page.Aside>
-                    <CapitalDistributorRewardsAside daoId={dao.id} />
-                </Page.Aside>
-            </Page.Content>
-        </>
+        <Page.Content>
+            <Page.Main title={t('app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.title')}>
+                {!address && <CapitalDistributorRewardsNotConnected />}
+                {address && (
+                    <div className="flex flex-col gap-3">
+                        <ToggleGroup
+                            className="flex gap-3"
+                            isMultiSelect={false}
+                            onChange={handleToggleChange}
+                            value={campaignFilter}
+                        >
+                            <Toggle
+                                value={CampaignStatus.CLAIMABLE}
+                                label={t(
+                                    'app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.tabs.claimable',
+                                )}
+                            />
+                            <Toggle
+                                value={CampaignStatus.CLAIMED}
+                                label={t(
+                                    'app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.tabs.claimed',
+                                )}
+                            />
+                        </ToggleGroup>
+                        {/* TODO: Replace with data list item component when done */}
+                        {campaigns?.map((campaign) => (
+                            <DataListItem key={campaign.id} className="p-6">
+                                <p className="text-neutral-800">{campaign.title}</p>
+                            </DataListItem>
+                        ))}
+                    </div>
+                )}
+            </Page.Main>
+            <Page.Aside>
+                <CapitalDistributorRewardsAside daoId={dao.id} />
+            </Page.Aside>
+        </Page.Content>
     );
 };

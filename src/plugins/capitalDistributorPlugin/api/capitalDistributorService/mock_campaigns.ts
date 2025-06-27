@@ -1,5 +1,5 @@
 import { generateToken } from '@/modules/finance/testUtils';
-import type { ICampaign, ICapitalDistributorStats } from './domain';
+import type { CampaignStatus, ICampaign, ICapitalDistributorStats } from './domain';
 
 export const mockCampaigns: ICampaign[] = [
     {
@@ -13,7 +13,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimed',
+        status: 'claimed' as CampaignStatus,
         token: generateToken({
             symbol: 'DAI',
             address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
@@ -30,7 +30,7 @@ export const mockCampaigns: ICampaign[] = [
         title: 'Staking Rewards',
         description: 'Reward for staking tokens',
         type: 'bounty',
-        status: 'claimed',
+        status: 'claimed' as CampaignStatus,
         token: generateToken({
             symbol: 'USDC',
             address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
@@ -53,7 +53,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimable',
+        status: 'claimable' as CampaignStatus,
         token: generateToken({
             symbol: 'USDC',
             address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
@@ -74,7 +74,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimed',
+        status: 'claimed' as CampaignStatus,
         token: generateToken({
             symbol: 'DAI',
             address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
@@ -91,7 +91,7 @@ export const mockCampaigns: ICampaign[] = [
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'retro',
-        status: 'claimable',
+        status: 'claimable' as CampaignStatus,
         token: generateToken({
             symbol: 'USDC',
             address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
@@ -106,7 +106,7 @@ export const mockCampaigns: ICampaign[] = [
         title: 'Staking Rewards',
         description: 'Reward for staking tokens',
         type: 'reward',
-        status: 'claimable',
+        status: 'claimable' as CampaignStatus,
         token: generateToken({
             symbol: 'ARB',
             address: '0x912CE59144191C1204E64559FE8253a0e49E6548',
@@ -121,7 +121,7 @@ export const mockCampaigns: ICampaign[] = [
         title: 'Staking Rewards',
         description: 'Reward for staking tokens',
         type: 'bounty',
-        status: 'claimed',
+        status: 'claimed' as CampaignStatus,
         token: generateToken({
             symbol: 'ETH',
             address: '0x0000000000000000000000000000000000000000',
@@ -138,7 +138,7 @@ export const mockCampaigns: ICampaign[] = [
         title: 'Staking Rewards',
         description: 'Reward for staking tokens',
         type: 'bonus',
-        status: 'claimed',
+        status: 'claimed' as CampaignStatus,
         token: generateToken({
             symbol: 'ETH',
             address: '0x0000000000000000000000000000000000000000',
@@ -161,7 +161,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimed',
+        status: 'claimed' as CampaignStatus,
         token: generateToken({
             symbol: 'USDC',
             address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
@@ -178,7 +178,7 @@ export const mockCampaigns: ICampaign[] = [
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'bonus',
-        status: 'claimable',
+        status: 'claimable' as CampaignStatus,
         token: generateToken({
             symbol: 'ARB',
             address: '0x912CE59144191C1204E64559FE8253a0e49E6548',
@@ -199,7 +199,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimable',
+        status: 'claimable' as CampaignStatus,
         token: generateToken({
             symbol: 'USDC',
             address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
@@ -214,7 +214,7 @@ export const mockCampaigns: ICampaign[] = [
         title: 'Bug Bounty',
         description: 'Bounty for finding a critical bug',
         type: 'retro',
-        status: 'claimed',
+        status: 'claimed' as CampaignStatus,
         token: generateToken({
             symbol: 'USDC',
             address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
@@ -237,7 +237,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimable',
+        status: 'claimable' as CampaignStatus,
         token: generateToken({
             symbol: 'DAI',
             address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
@@ -252,7 +252,7 @@ export const mockCampaigns: ICampaign[] = [
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'reward',
-        status: 'claimed',
+        status: 'claimed' as CampaignStatus,
         token: generateToken({
             symbol: 'DAI',
             address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
@@ -275,7 +275,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimable',
+        status: 'claimable' as CampaignStatus,
         token: generateToken({
             symbol: 'USDC',
             address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
@@ -296,7 +296,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimed',
+        status: 'claimed' as CampaignStatus,
         token: generateToken({
             symbol: 'DAI',
             address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
@@ -319,7 +319,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimed',
+        status: 'claimed' as CampaignStatus,
         token: generateToken({
             symbol: 'ETH',
             address: '0x0000000000000000000000000000000000000000',
@@ -342,7 +342,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimable',
+        status: 'claimable' as CampaignStatus,
         token: generateToken({
             symbol: 'USDC',
             address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
@@ -363,7 +363,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimed',
+        status: 'claimed' as CampaignStatus,
         token: generateToken({
             symbol: 'DAI',
             address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
@@ -386,7 +386,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimed',
+        status: 'claimed' as CampaignStatus,
         token: generateToken({
             symbol: 'ARB',
             address: '0x912CE59144191C1204E64559FE8253a0e49E6548',
@@ -399,7 +399,6 @@ export const mockCampaigns: ICampaign[] = [
         claimTimestamp: 1751034683,
     },
 ];
-
 
 export const mockCampaignsStats: ICapitalDistributorStats = {
     totalClaimed: '50000',

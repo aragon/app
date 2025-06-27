@@ -1,5 +1,6 @@
-import type { IToken } from "@/modules/finance/api/financeService";
-import type { IResource } from "@/shared/api/daoService";
+import type { IToken } from '@/modules/finance/api/financeService';
+import type { IResource } from '@/shared/api/daoService';
+import type { CampaignStatus } from './enum';
 
 export interface ICampaign {
     /**
@@ -25,7 +26,7 @@ export interface ICampaign {
     /**
      * Status of the campaign (claimed/claimable).
      */
-    status: 'claimed' | 'claimable';
+    status: CampaignStatus;
     /**
      * The token associated with the campaign.
      */

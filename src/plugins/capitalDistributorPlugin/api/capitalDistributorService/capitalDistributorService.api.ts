@@ -1,4 +1,5 @@
 import type { IRequestQueryParams, IRequestUrlParams } from '@/shared/api/httpService';
+import type { CampaignStatus } from './domain';
 
 export interface IGetCampaignsListQueryParams {
     /**
@@ -8,7 +9,7 @@ export interface IGetCampaignsListQueryParams {
     /**
      * Status of the campaign (claimed/claimable).
      */
-    status?: 'claimed' | 'claimable';
+    status?: CampaignStatus;
 }
 
 export interface IGetCampaignsListParams extends IRequestQueryParams<IGetCampaignsListQueryParams> {}
