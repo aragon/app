@@ -1,7 +1,7 @@
 import { type ICampaign } from "../../domain";
 import { type IGetCampaignsListParams } from "../../capitalDistributorService.api";
 import { capitalDistributorServiceKeys } from "../../capitalDistributorServiceKeys";
-import { type QueryOptions, type SharedQueryOptions } from "@/shared/types/queryOptions";
+import type { QueryOptions, SharedQueryOptions } from '@/shared/types/queryOptions';
 import { useQuery } from "@tanstack/react-query";
 import { capitalDistributorService } from "../../capitalDistributorService";
 
