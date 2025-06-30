@@ -24,7 +24,9 @@ export interface ICapitalDistributorCampaignListItemStructureProps {
     dao: IDao;
 }
 
-export const CapitalDistributorCampaignListItemStructure: React.FC<ICapitalDistributorCampaignListItemStructureProps> = (props) => {
+export const CapitalDistributorCampaignListItemStructure: React.FC<
+    ICapitalDistributorCampaignListItemStructureProps
+> = (props) => {
     const { campaign, dao } = props;
 
     const { t } = useTranslations();
