@@ -4,13 +4,18 @@ import { Page } from '@/shared/components/page';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { Link } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
+import type { IGetCampaignsListParams } from '../../api/capitalDistributorService';
 import { CapitalDistributorRewardsStats } from '../capitalDistributorRewardsStats';
 
 export interface ICapitalDistributorRewardsAsideProps {
     /**
-     * The ID of the DAO for which to display the rewards.
+     * The ID of the DAO with the capital-distributor plugin installed.
      */
     daoId: string;
+    /**
+     * Initial parameters for the campaign list query.
+     */
+    initialParams?: IGetCampaignsListParams;
 }
 
 export const CapitalDistributorRewardsAside: React.FC<ICapitalDistributorRewardsAsideProps> = (props) => {
@@ -27,7 +32,7 @@ export const CapitalDistributorRewardsAside: React.FC<ICapitalDistributorRewards
     return (
         <Page.AsideCard title={pluginName}>
             {pluginDescription && <p className="text-base text-gray-500">{pluginDescription}</p>}
-            {address && <CapitalDistributorRewardsStats />}
+            {address && <CapitalDistributorRewardsStats initialParams={props.initialParams} />}
             {resources?.map(({ url, name }) => (
                 <Link key={url} href={url} isExternal={true} showUrl={true}>
                     {name}

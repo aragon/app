@@ -4,7 +4,7 @@ import type { CampaignStatus } from './domain';
 
 export interface IGetCampaignsListQueryParams extends IPaginatedRequest {
     /**
-     * Address of the member to fetch the campaigns from.
+     * Address of the member to fetch the campaigns for.
      */
     memberAddress: string;
     /**
@@ -17,7 +17,7 @@ export interface IGetCampaignsListParams extends IRequestQueryParams<IGetCampaig
 
 export interface IGetCampaignStatsUrlParams {
     /**
-     * Address of the member to fetch the stats for.
+     * Address of the member to fetch the campaign stats for.
      */
     memberAddress: string;
 }

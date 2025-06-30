@@ -17,6 +17,7 @@ export interface IStat {
 
 export const StatCard: React.FC<IStat> = (props) => {
     const { value, suffix, label } = props;
+
     return (
         <div className="flex flex-col gap-y-1 rounded-xl bg-neutral-50 p-4">
             <Heading size="h3">

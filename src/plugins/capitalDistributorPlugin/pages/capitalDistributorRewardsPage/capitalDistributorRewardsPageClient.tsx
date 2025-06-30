@@ -1,25 +1,29 @@
 'use client';
 
-import { CampaignStatus } from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
-import { CapitalDistributorCampaignList } from '@/plugins/capitalDistributorPlugin/components/capitalDistributorCampaignList';
-import { CapitalDistributorRewardsAside } from '@/plugins/capitalDistributorPlugin/components/capitalDistributorRewardsAside/capitalDistributorRewardsAside';
-import { CapitalDistributorRewardsNotConnected } from '@/plugins/capitalDistributorPlugin/components/capitalDistributorRewardsNotConnected/capitalDistributorRewardsNotConnected';
 import { type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
+import { CampaignStatus, type IGetCampaignsListParams } from '../../api/capitalDistributorService';
+import { CapitalDistributorCampaignList } from '../../components/capitalDistributorCampaignList';
+import { CapitalDistributorRewardsAside } from '../../components/capitalDistributorRewardsAside/capitalDistributorRewardsAside';
+import { CapitalDistributorRewardsNotConnected } from '../../components/capitalDistributorRewardsNotConnected/capitalDistributorRewardsNotConnected';
 
 export interface ICapitalDistributorRewardsPageClientProps {
     /**
-     * DAO to display the rewards page for.
+     * The DAO with the capital-distributor plugin installed.
      */
     dao: IDao;
+    /**
+     * Initial parameters for the campaign list query.
+     */
+    initialParams?: IGetCampaignsListParams;
 }
 
 export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRewardsPageClientProps> = (props) => {
-    const { dao } = props;
+    const { dao, initialParams } = props;
 
     const { address } = useAccount();
     const { t } = useTranslations();
@@ -57,12 +61,16 @@ export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRe
                                 )}
                             />
                         </ToggleGroup>
-                        <CapitalDistributorCampaignList dao={dao} campaignFilter={campaignFilter} />
+                        <CapitalDistributorCampaignList
+                            initialParams={initialParams}
+                            network={dao.network}
+                            campaignFilter={campaignFilter}
+                        />
                     </div>
                 )}
             </Page.Main>
             <Page.Aside>
-                <CapitalDistributorRewardsAside daoId={dao.id} />
+                <CapitalDistributorRewardsAside daoId={dao.id} initialParams={initialParams} />
             </Page.Aside>
         </Page.Content>
     );
