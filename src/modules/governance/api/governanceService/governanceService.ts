@@ -14,14 +14,14 @@ import type {
 
 class GovernanceService extends AragonBackendService {
     private urls = {
-        members: '/v1/members',
-        member: '/v1/members/:address',
+        members: '/v2/members',
+        member: '/v2/members/:address',
         memberExists: '/v2/members/:memberAddress/:pluginAddress/exists',
-        proposals: '/v1/proposals',
-        proposalBySlug: '/v1/proposals/slug/:slug',
-        proposalActions: '/v1/proposals/:id/actions',
+        proposals: '/v2/proposals',
+        proposalBySlug: '/v2/proposals/slug/:slug',
+        proposalActions: '/v2/proposals/:id/actions',
         canCreateProposal: '/v2/proposals/can-create-proposal',
-        votes: '/v1/votes',
+        votes: '/v2/votes',
     };
 
     getMemberList = async <TMember extends IMember = IMember>(

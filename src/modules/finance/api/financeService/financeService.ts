@@ -5,8 +5,8 @@ import type { IGetAssetListParams, IGetTransactionListParams } from './financeSe
 
 class FinanceService extends AragonBackendService {
     private urls = {
-        assets: '/v1/assets',
-        transactions: '/v1/transactions',
+        assets: '/v2/assets',
+        transactions: '/v2/transactions',
     };
 
     getAssetList = async (params: IGetAssetListParams): Promise<IPaginatedResponse<IAsset>> => {

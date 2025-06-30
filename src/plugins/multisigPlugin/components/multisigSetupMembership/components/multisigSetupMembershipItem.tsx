@@ -33,11 +33,13 @@ export interface IMultisigSetupMembershipItemProps {
 export const MultisigSetupMembershipItem: React.FC<IMultisigSetupMembershipItemProps> = (props) => {
     const { disabled, index, pluginAddress, member, network } = props;
 
-    const memberExistsParams = { memberAddress: member.address, pluginAddress: pluginAddress!, network: network! };
-    const { data } = useMemberExists(
-        { urlParams: memberExistsParams },
-        { enabled: network != null && pluginAddress != null && addressUtils.isAddress(member.address) },
-    );
+    const memberExistsParams = {
+        urlParams: { memberAddress: member.address, pluginAddress: pluginAddress! },
+        queryParams: { network: network! },
+    };
+    const { data } = useMemberExists(memberExistsParams, {
+        enabled: network != null && pluginAddress != null && addressUtils.isAddress(member.address),
+    });
 
     const isMember = data?.status === true;
 

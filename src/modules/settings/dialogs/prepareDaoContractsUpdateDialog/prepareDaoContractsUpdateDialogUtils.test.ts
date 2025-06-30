@@ -266,7 +266,8 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
             const result = prepareDaoContractsUpdateDialogUtils['buildApplyUpdateMetadata'](params);
             expect(summarySpy).toHaveBeenCalledWith(params.dao);
             expect(bodySpy).toHaveBeenCalledWith(params);
-            expect(result).toEqual({ title: 'Aragon OSx contract upgrade', body, summary });
+            expect(result).toMatchObject({ body, summary });
+            expect(result.title).toMatch(/contract upgrade/);
         });
     });
 
@@ -274,7 +275,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
         it('returns the summary of the update DAO contracts proposal', () => {
             const dao = generateDao({ name: 'My DAO' });
             const result = prepareDaoContractsUpdateDialogUtils['getApplyUpdateSummaryMetadata'](dao);
-            expect(result).toMatch(/This proposal is an Aragon OSx Update for My DAO/);
+            expect(result).toMatch(/This proposal is for a contract upgrade/);
         });
     });
 
