@@ -6,7 +6,7 @@ class AddressesListUtils {
     };
 
     validateAddress = (
-        address: string,
+        address = '',
         members: ICompositeAddress[],
         index: number,
         customValidator?: (member: ICompositeAddress) => true | string,
