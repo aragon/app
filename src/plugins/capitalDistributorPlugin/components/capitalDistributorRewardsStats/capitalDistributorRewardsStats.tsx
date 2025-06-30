@@ -15,7 +15,8 @@ export const CapitalDistributorRewardsStats: React.FC<ICapitalDistributorRewards
     const { address } = useAccount();
 
     const campaignParams = { queryParams: { memberAddress: address! } };
-    const { data: campaigns } = useCampaignList(campaignParams, { enabled: address != null });
+    const { data: campaignData } = useCampaignList(campaignParams, { enabled: address != null });
+    const campaigns = campaignData?.pages.flatMap((page) => page.data);
     const claimableCampaigns = campaigns?.filter((campaign) => campaign.status === CampaignStatus.CLAIMABLE);
     const claimedCampaigns = campaigns?.filter((campaign) => campaign.status === CampaignStatus.CLAIMED);
 

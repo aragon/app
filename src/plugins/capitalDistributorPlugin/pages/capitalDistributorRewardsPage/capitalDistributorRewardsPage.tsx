@@ -18,6 +18,8 @@ export interface ICapitalDistributorRewardsPageProps extends IDaoPluginPageProps
 
 // TODO: const getCOnnectedAccount...
 
+const campaignsPerPage = 5;
+
 export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsPageProps> = async (props) => {
     const { dao } = props;
 
@@ -38,8 +40,15 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
     queryClient.setQueryData(daoOptions({ urlParams: { id: dao.id } }).queryKey, dao);
 
     if (userAddress) {
-        await queryClient.fetchQuery(
-            campaignListOptions({ queryParams: { memberAddress: userAddress, status: CampaignStatus.CLAIMABLE } }),
+        await queryClient.prefetchInfiniteQuery(
+            campaignListOptions({
+                queryParams: {
+                    pageSize: campaignsPerPage,
+                    page: 1,
+                    memberAddress: userAddress,
+                    status: CampaignStatus.CLAIMABLE,
+                },
+            }),
         );
         await queryClient.fetchQuery(campaignStatsOptions({ urlParams: { memberAddress: userAddress } }));
     }
