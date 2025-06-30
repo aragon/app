@@ -5,7 +5,8 @@ export const mockCampaigns: ICampaign[] = [
     {
         id: 1,
         title: 'Community Rewards',
-        description: 'Reward for community engagement',
+        description:
+            'Reward for community engagement Reward for community engagement Reward for community engagement Reward for community engagement Reward for community engagement Reward for community engagement Reward for community engagementReward for community engagement',
         type: 'retro',
         resources: [
             {
@@ -15,6 +16,7 @@ export const mockCampaigns: ICampaign[] = [
         ],
         status: 'claimed' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'DAI',
             address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
         }),
@@ -32,6 +34,7 @@ export const mockCampaigns: ICampaign[] = [
         type: 'bounty',
         status: 'claimed' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'USDC',
             address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
         }),
@@ -55,6 +58,7 @@ export const mockCampaigns: ICampaign[] = [
         ],
         status: 'claimable' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'USDC',
             address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
         }),
@@ -76,6 +80,7 @@ export const mockCampaigns: ICampaign[] = [
         ],
         status: 'claimed' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'DAI',
             address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
         }),
@@ -93,6 +98,7 @@ export const mockCampaigns: ICampaign[] = [
         type: 'retro',
         status: 'claimable' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'USDC',
             address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
         }),
@@ -108,6 +114,7 @@ export const mockCampaigns: ICampaign[] = [
         type: 'reward',
         status: 'claimable' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'ARB',
             address: '0x912CE59144191C1204E64559FE8253a0e49E6548',
         }),
@@ -123,6 +130,7 @@ export const mockCampaigns: ICampaign[] = [
         type: 'bounty',
         status: 'claimed' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'ETH',
             address: '0x0000000000000000000000000000000000000000',
         }),
@@ -140,6 +148,7 @@ export const mockCampaigns: ICampaign[] = [
         type: 'bonus',
         status: 'claimed' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'ETH',
             address: '0x0000000000000000000000000000000000000000',
         }),
@@ -163,6 +172,7 @@ export const mockCampaigns: ICampaign[] = [
         ],
         status: 'claimed' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'USDC',
             address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
         }),
@@ -180,6 +190,7 @@ export const mockCampaigns: ICampaign[] = [
         type: 'bonus',
         status: 'claimable' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'ARB',
             address: '0x912CE59144191C1204E64559FE8253a0e49E6548',
         }),
@@ -201,6 +212,7 @@ export const mockCampaigns: ICampaign[] = [
         ],
         status: 'claimable' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'USDC',
             address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
         }),
@@ -216,6 +228,7 @@ export const mockCampaigns: ICampaign[] = [
         type: 'retro',
         status: 'claimed' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'USDC',
             address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
         }),
@@ -239,6 +252,7 @@ export const mockCampaigns: ICampaign[] = [
         ],
         status: 'claimable' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'DAI',
             address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
         }),
@@ -254,6 +268,7 @@ export const mockCampaigns: ICampaign[] = [
         type: 'reward',
         status: 'claimed' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'DAI',
             address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
         }),
@@ -277,6 +292,7 @@ export const mockCampaigns: ICampaign[] = [
         ],
         status: 'claimable' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'USDC',
             address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
         }),
@@ -298,6 +314,7 @@ export const mockCampaigns: ICampaign[] = [
         ],
         status: 'claimed' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'DAI',
             address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
         }),
@@ -321,6 +338,7 @@ export const mockCampaigns: ICampaign[] = [
         ],
         status: 'claimed' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'ETH',
             address: '0x0000000000000000000000000000000000000000',
         }),
@@ -344,6 +362,7 @@ export const mockCampaigns: ICampaign[] = [
         ],
         status: 'claimable' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'USDC',
             address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
         }),
@@ -365,6 +384,7 @@ export const mockCampaigns: ICampaign[] = [
         ],
         status: 'claimed' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'DAI',
             address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
         }),
@@ -388,6 +408,7 @@ export const mockCampaigns: ICampaign[] = [
         ],
         status: 'claimed' as CampaignStatus,
         token: generateToken({
+            priceUsd: '35.00',
             symbol: 'ARB',
             address: '0x912CE59144191C1204E64559FE8253a0e49E6548',
         }),

@@ -1045,6 +1045,21 @@
         }
       },
       "capitalDistributor": {
+        "capitalDistributorCampaignList": {
+          "emptyState": {
+            "description": "This will show relevant campaigns when available.",
+            "heading": "No Campaigns found"
+          },
+          "entity": "Campaigns",
+          "errorState": {
+            "description": "There was an error loading the campaigns. Try again later.",
+            "heading": "Error loading Campaigns"
+          }
+        },
+        "capitalDistributorCampaignListItem": {
+          "amount": "Amount",
+          "value": "Value"
+        },
         "capitalDistributorRewardsAside": {
           "stats": {
             "claimableCount": "Claimable campaigns",
