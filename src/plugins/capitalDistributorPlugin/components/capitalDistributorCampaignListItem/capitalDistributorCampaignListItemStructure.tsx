@@ -1,4 +1,4 @@
-import type { IDao } from '@/shared/api/daoService/domain/dao';
+import type { Network } from '@/shared/api/daoService/domain';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
@@ -19,15 +19,15 @@ export interface ICapitalDistributorCampaignListItemStructureProps {
      */
     campaign: ICampaign;
     /**
-     * The DAO the campaign belongs to.
+     * The network of the DAO with the capital-distributor plugin installed.
      */
-    dao: IDao;
+    network: Network;
 }
 
 export const CapitalDistributorCampaignListItemStructure: React.FC<
     ICapitalDistributorCampaignListItemStructureProps
 > = (props) => {
-    const { campaign, dao } = props;
+    const { campaign, network } = props;
 
     const { t } = useTranslations();
 
@@ -38,7 +38,7 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
     const value = Number(campaign.amount) * Number(campaign.token.priceUsd);
     const formattedValue = formatterUtils.formatNumber(value, { format: NumberFormat.FIAT_TOTAL_SHORT });
 
-    const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[dao.network].id });
+    const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[network].id });
     const addressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: campaign.txHash });
 
     const handleOpenDialog = () => console.log('open dialog for campaign', campaign.id);

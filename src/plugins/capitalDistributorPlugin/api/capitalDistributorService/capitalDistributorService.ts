@@ -15,7 +15,6 @@ class CapitalDistributorService extends AragonBackendService {
         // return result;
 
         // TODO: Remove this mock data and use the actual API endpoint when available
-
         const { status, page = 1, pageSize = 10 } = queryParams;
 
         const filtered = status ? mockCampaigns.filter((campaign) => campaign.status === status) : mockCampaigns;

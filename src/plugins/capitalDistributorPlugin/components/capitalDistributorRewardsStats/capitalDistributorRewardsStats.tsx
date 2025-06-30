@@ -2,18 +2,34 @@ import { StatCard } from '@/shared/components/statCard';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { DateFormat, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
-import { CampaignStatus, useCampaignList, useCampaignStats } from '../../api/capitalDistributorService';
+import {
+    CampaignStatus,
+    type IGetCampaignsListParams,
+    useCampaignList,
+    useCampaignStats,
+} from '../../api/capitalDistributorService';
 
-export interface ICapitalDistributorRewardsStatsProps {}
+export interface ICapitalDistributorRewardsStatsProps {
+    /**
+     * Initial parameters for the campaign list query.
+     */
+    initialParams?: IGetCampaignsListParams;
+}
 
-export const CapitalDistributorRewardsStats: React.FC<ICapitalDistributorRewardsStatsProps> = () => {
+export const CapitalDistributorRewardsStats: React.FC<ICapitalDistributorRewardsStatsProps> = (props) => {
+    const { initialParams } = props;
+
     const { t } = useTranslations();
     const { address } = useAccount();
 
-    const claimableCampaignParams = { queryParams: { memberAddress: address!, status: CampaignStatus.CLAIMABLE } };
+    const claimableCampaignParams = {
+        queryParams: { ...initialParams?.queryParams, memberAddress: address!, status: CampaignStatus.CLAIMABLE },
+    };
     const { data: claimableCampaignData } = useCampaignList(claimableCampaignParams, { enabled: address != null });
 
-    const claimedCampaignParams = { queryParams: { memberAddress: address!, status: CampaignStatus.CLAIMED } };
+    const claimedCampaignParams = {
+        queryParams: { ...initialParams?.queryParams, memberAddress: address!, status: CampaignStatus.CLAIMED },
+    };
     const { data: claimedCampaigns } = useCampaignList(claimedCampaignParams, { enabled: address != null });
 
     const campaignStatsParams = { urlParams: { memberAddress: address! } };
@@ -33,6 +49,7 @@ export const CapitalDistributorRewardsStats: React.FC<ICapitalDistributorRewards
     const formattedTotalClaimed = formatterUtils.formatNumber(campaignStats?.totalClaimed, {
         format: NumberFormat.FIAT_TOTAL_SHORT,
     });
+
     const formattedTotalClaimable = formatterUtils.formatNumber(campaignStats?.totalClaimable, {
         format: NumberFormat.FIAT_TOTAL_SHORT,
     });
@@ -56,6 +73,7 @@ export const CapitalDistributorRewardsStats: React.FC<ICapitalDistributorRewards
             label: t('app.plugins.capitalDistributor.capitalDistributorRewardsAside.stats.latestClaim'),
         },
     ];
+
     return (
         <div className="grid w-full grid-cols-2 gap-3">
             {stats.map((stat) => (

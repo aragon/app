@@ -1,4 +1,3 @@
-import { CapitalDistributorCampaignListItemSkeleton } from '@/plugins/capitalDistributorPlugin/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItemSkeleton';
 import dynamic from 'next/dynamic';
 
 export const CapitalDistributorCampaignListItem = {
@@ -7,7 +6,11 @@ export const CapitalDistributorCampaignListItem = {
             (mod) => mod.CapitalDistributorCampaignListItemStructure,
         ),
     ),
-    Skeleton: CapitalDistributorCampaignListItemSkeleton,
+    Skeleton: dynamic(() =>
+        import('./capitalDistributorCampaignListItemSkeleton').then(
+            (mod) => mod.CapitalDistributorCampaignListItemSkeleton,
+        ),
+    ),
 };
 
 export { type ICapitalDistributorCampaignListItemStructureProps } from './capitalDistributorCampaignListItemStructure';

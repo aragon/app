@@ -1047,7 +1047,7 @@
       "capitalDistributor": {
         "capitalDistributorCampaignList": {
           "emptyState": {
-            "description": "This will show relevant campaigns when available.",
+            "description": "This will show your campaigns when available.",
             "heading": "No Campaigns found"
           },
           "entity": "Campaigns",
