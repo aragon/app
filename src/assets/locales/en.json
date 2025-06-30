@@ -1746,8 +1746,9 @@
         "item": {
           "input": {
             "error": {
-              "alreadyInList": "Address has already been added",
-              "invalid": "Valid address is mandatory"
+              "alreadyInList": "Address has already been added.",
+              "invalid": "Address is not valid.",
+              "required": "Address is mandatory."
             },
             "label": "Member",
             "placeholder": "ENS or 0x…"

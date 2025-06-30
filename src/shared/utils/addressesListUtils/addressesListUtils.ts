@@ -13,7 +13,9 @@ class AddressesListUtils {
     ): true | string => {
         const errorNamespace = 'app.shared.addressesInput.item.input.error';
 
-        if (!addressUtils.isAddress(address)) {
+        if (!address.length) {
+            return `${errorNamespace}.required`;
+        } else if (!addressUtils.isAddress(address)) {
             return `${errorNamespace}.invalid`;
         } else if (this.checkIsAlreadyInList(members, index, address)) {
             return `${errorNamespace}.alreadyInList`;
