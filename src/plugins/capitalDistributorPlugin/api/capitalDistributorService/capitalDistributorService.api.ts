@@ -1,7 +1,8 @@
 import type { IRequestQueryParams, IRequestUrlParams } from '@/shared/api/httpService';
 import type { CampaignStatus } from './domain';
+import type { IPaginatedRequest } from '@/shared/api/aragonBackendService';
 
-export interface IGetCampaignsListQueryParams {
+export interface IGetCampaignsListQueryParams extends IPaginatedRequest {
     /**
      * Address of the member to fetch the campaigns from.
      */
