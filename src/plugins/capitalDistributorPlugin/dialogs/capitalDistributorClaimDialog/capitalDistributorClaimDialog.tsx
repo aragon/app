@@ -5,6 +5,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import { invariant } from '@aragon/gov-ui-kit';
 import type { ICampaign } from '../../api/capitalDistributorService';
+import { CapitalDistributorClaimDialogDetails } from './capitalDistributorClaimDialogDetails';
 
 export interface ICapitalDistributorClaimDialogParams {
     /**
@@ -32,9 +33,7 @@ export const CapitalDistributorClaimDialog: React.FC<ICapitalDistributorClaimDia
             onSubmit={handleSubmit}
             submitLabel={t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.submit')}
         >
-            <WizardDialog.Step id="overview" order={1} meta={{ name: '' }}>
-                <p>Overview Step</p>
-            </WizardDialog.Step>
+            <CapitalDistributorClaimDialogDetails campaign={campaign} />
             <WizardDialog.Step id="claim" order={2} meta={{ name: '' }}>
                 <p>Claim Step</p>
             </WizardDialog.Step>
