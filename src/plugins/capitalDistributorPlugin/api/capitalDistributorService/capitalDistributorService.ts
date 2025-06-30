@@ -10,7 +10,7 @@ class CapitalDistributorService extends AragonBackendService {
     };
 
     getCampaignsList = async ({ queryParams }: IGetCampaignsListParams): Promise<IPaginatedResponse<ICampaign>> => {
-        // const result = await this.request<ICampaign[]>(this.urls.campaigns, {queryParams});
+        // const result = await this.request<IPaginatedResponse<ICampaign>>(this.urls.campaigns, {queryParams});
 
         // return result;
 

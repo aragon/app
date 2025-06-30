@@ -32,7 +32,9 @@ export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRe
     };
 
     const campaignParams = { queryParams: { memberAddress: address!, status: campaignFilter } };
-    const { data: campaigns } = useCampaignList(campaignParams, { enabled: address != null });
+    const { data: campaignData } = useCampaignList(campaignParams, { enabled: address != null });
+
+    const campaigns = campaignData?.pages.flatMap((page) => page.data);
 
     return (
         <Page.Content>
