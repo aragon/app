@@ -57,7 +57,7 @@ export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRe
                                 )}
                             />
                         </ToggleGroup>
-                        <CapitalDistributorCampaignList campaignFilter={campaignFilter} />
+                        <CapitalDistributorCampaignList dao={dao} campaignFilter={campaignFilter} />
                     </div>
                 )}
             </Page.Main>

@@ -1,16 +1,31 @@
-import { CampaignStatus, type ICampaign } from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
+import type { IDao } from '@/shared/api/daoService/domain/dao';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
-import { Avatar, AvatarIcon, DataList, formatterUtils, IconType, NumberFormat } from '@aragon/gov-ui-kit';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import {
+    Avatar,
+    AvatarIcon,
+    ChainEntityType,
+    DataList,
+    formatterUtils,
+    IconType,
+    NumberFormat,
+    useBlockExplorer,
+} from '@aragon/gov-ui-kit';
+import { CampaignStatus, type ICampaign } from '../../api/capitalDistributorService';
 
-export interface ICapitalDistributorCampaignListItemProps {
+export interface ICapitalDistributorCampaignListItemStructureProps {
     /**
      * The campaign data to display in the list item.
      */
     campaign: ICampaign;
+    /**
+     * The DAO the campaign belongs to.
+     */
+    dao: IDao;
 }
 
-export const CapitalDistributorCampaignListItem: React.FC<ICapitalDistributorCampaignListItemProps> = (props) => {
-    const { campaign } = props;
+export const CapitalDistributorCampaignListItemStructure: React.FC<ICapitalDistributorCampaignListItemStructureProps> = (props) => {
+    const { campaign, dao } = props;
 
     const { t } = useTranslations();
 
@@ -21,8 +36,15 @@ export const CapitalDistributorCampaignListItem: React.FC<ICapitalDistributorCam
     const value = Number(campaign.amount) * Number(campaign.token.priceUsd);
     const formattedValue = formatterUtils.formatNumber(value, { format: NumberFormat.FIAT_TOTAL_SHORT });
 
+    const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[dao.network].id });
+    const addressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: campaign.txHash });
+
     return (
-        <DataList.Item className="flex items-center gap-12 p-6">
+        <DataList.Item
+            target="_blank"
+            href={isClaimed ? addressLink : undefined}
+            className="flex items-center gap-12 p-6"
+        >
             <div className="flex grow items-center gap-4">
                 <Avatar src={campaign.logo} size="lg" />
                 <div className="flex flex-col gap-1">

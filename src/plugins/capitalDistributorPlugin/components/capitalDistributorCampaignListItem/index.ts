@@ -1,6 +1,13 @@
+import { CapitalDistributorCampaignListItemSkeleton } from '@/plugins/capitalDistributorPlugin/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItemSkeleton';
 import dynamic from 'next/dynamic';
 
-export const CapitalDistributorCampaignListItem = dynamic(() =>
-    import('./capitalDistributorCampaignListItem').then((mod) => mod.CapitalDistributorCampaignListItem),
-);
-export { type ICapitalDistributorCampaignListItemProps } from './capitalDistributorCampaignListItem';
+export const CapitalDistributorCampaignListItem = {
+    Structure: dynamic(() =>
+        import('./capitalDistributorCampaignListItemStructure').then(
+            (mod) => mod.CapitalDistributorCampaignListItemStructure,
+        ),
+    ),
+    Skeleton: CapitalDistributorCampaignListItemSkeleton,
+};
+
+export { type ICapitalDistributorCampaignListItemStructureProps } from './capitalDistributorCampaignListItemStructure';

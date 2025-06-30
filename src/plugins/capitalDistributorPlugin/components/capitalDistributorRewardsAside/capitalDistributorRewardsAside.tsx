@@ -1,6 +1,6 @@
 'use client';
 
-import { CapitalDistributorRewardsStats } from '@/plugins/capitalDistributorPlugin/components/capitalDistributorRewardsStats';
+import { CapitalDistributorRewardsStats } from '../capitalDistributorRewardsStats';
 import { Page } from '@/shared/components/page';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { Link } from '@aragon/gov-ui-kit';

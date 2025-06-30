@@ -1,8 +1,4 @@
-import {
-    CampaignStatus,
-    useCampaignList,
-    useCampaignStats,
-} from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
+import { CampaignStatus, useCampaignList, useCampaignStats } from '../../api/capitalDistributorService';
 import { StatCard } from '@/shared/components/statCard';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { DateFormat, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
