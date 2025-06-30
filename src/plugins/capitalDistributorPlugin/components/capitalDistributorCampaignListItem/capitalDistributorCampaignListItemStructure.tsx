@@ -39,11 +39,14 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<ICapitalDistr
     const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[dao.network].id });
     const addressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: campaign.txHash });
 
+    const handleOpenDialog = () => console.log('open dialog for campaign', campaign.id);
+
     return (
         <DataList.Item
             target="_blank"
             href={isClaimed ? addressLink : undefined}
             className="flex items-center gap-12 p-6"
+            onClick={isClaimed ? undefined : handleOpenDialog}
         >
             <div className="flex grow items-center gap-4">
                 <Avatar src={campaign.logo} size="lg" />
