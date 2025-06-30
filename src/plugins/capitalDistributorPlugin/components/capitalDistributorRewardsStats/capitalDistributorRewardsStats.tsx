@@ -14,18 +14,17 @@ export const CapitalDistributorRewardsStats: React.FC<ICapitalDistributorRewards
     const { t } = useTranslations();
     const { address } = useAccount();
 
-    const campaignParams = { queryParams: { memberAddress: address! } };
-    const { data: campaignData } = useCampaignList(campaignParams, { enabled: address != null });
-    const campaigns = campaignData?.pages.flatMap((page) => page.data);
-    console.log(campaignData);
-    const claimableCampaigns = campaigns?.filter((campaign) => campaign.status === CampaignStatus.CLAIMABLE);
-    const claimedCampaigns = campaigns?.filter((campaign) => campaign.status === CampaignStatus.CLAIMED);
+    const claimableCampaignParams = { queryParams: { memberAddress: address!, status: CampaignStatus.CLAIMABLE } };
+    const { data: claimableCampaignData } = useCampaignList(claimableCampaignParams, { enabled: address != null });
+
+    const claimedCampaignParams = { queryParams: { memberAddress: address!, status: CampaignStatus.CLAIMED } };
+    const { data: claimedCampaigns } = useCampaignList(claimedCampaignParams, { enabled: address != null });
 
     const campaignStatsParams = { urlParams: { memberAddress: address! } };
     const { data: campaignStats } = useCampaignStats(campaignStatsParams, { enabled: address != null });
 
     // Assuming backend returns sorted by default
-    const latestClaimedCampaign = claimedCampaigns?.[0];
+    const latestClaimedCampaign = claimedCampaigns?.pages[0].data[0];
     const latestClaimDate = latestClaimedCampaign?.claimTimestamp
         ? latestClaimedCampaign.claimTimestamp * 1000
         : undefined;
@@ -52,7 +51,7 @@ export const CapitalDistributorRewardsStats: React.FC<ICapitalDistributorRewards
             label: t('app.plugins.capitalDistributor.capitalDistributorRewardsAside.stats.claimableNow'),
         },
         {
-            value: claimableCampaigns?.length ?? '-',
+            value: claimableCampaignData?.pages[0].metadata.totalRecords ?? '-',
             label: t('app.plugins.capitalDistributor.capitalDistributorRewardsAside.stats.claimableCount'),
         },
         {
