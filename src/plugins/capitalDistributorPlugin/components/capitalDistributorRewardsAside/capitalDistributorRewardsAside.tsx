@@ -1,10 +1,10 @@
 'use client';
 
-import { CapitalDistributorRewardsStats } from '@/plugins/capitalDistributorPlugin/components/capitalDistributorRewardsStats';
 import { Page } from '@/shared/components/page';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { Link } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
+import { CapitalDistributorRewardsStats } from '../capitalDistributorRewardsStats';
 
 export interface ICapitalDistributorRewardsAsideProps {
     /**

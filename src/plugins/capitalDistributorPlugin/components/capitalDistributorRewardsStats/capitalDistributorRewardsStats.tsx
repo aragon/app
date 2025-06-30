@@ -1,12 +1,8 @@
-import {
-    CampaignStatus,
-    useCampaignList,
-    useCampaignStats,
-} from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
 import { StatCard } from '@/shared/components/statCard';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { DateFormat, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
+import { CampaignStatus, useCampaignList, useCampaignStats } from '../../api/capitalDistributorService';
 
 export interface ICapitalDistributorRewardsStatsProps {}
 

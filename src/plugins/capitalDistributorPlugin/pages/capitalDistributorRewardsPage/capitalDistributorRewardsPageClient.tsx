@@ -1,12 +1,13 @@
 'use client';
 
-import { CampaignStatus, useCampaignList } from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
+import { CampaignStatus } from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
+import { CapitalDistributorCampaignList } from '@/plugins/capitalDistributorPlugin/components/capitalDistributorCampaignList';
 import { CapitalDistributorRewardsAside } from '@/plugins/capitalDistributorPlugin/components/capitalDistributorRewardsAside/capitalDistributorRewardsAside';
 import { CapitalDistributorRewardsNotConnected } from '@/plugins/capitalDistributorPlugin/components/capitalDistributorRewardsNotConnected/capitalDistributorRewardsNotConnected';
 import { type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { DataListItem, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
+import { Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
 
@@ -30,11 +31,6 @@ export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRe
             setCampaignFilter(value as CampaignStatus);
         }
     };
-
-    const campaignParams = { queryParams: { memberAddress: address!, status: campaignFilter } };
-    const { data: campaignData } = useCampaignList(campaignParams, { enabled: address != null });
-
-    const campaigns = campaignData?.pages.flatMap((page) => page.data);
 
     return (
         <Page.Content>
@@ -61,12 +57,7 @@ export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRe
                                 )}
                             />
                         </ToggleGroup>
-                        {/* TODO: Replace with data list item component when done */}
-                        {campaigns?.map((campaign) => (
-                            <DataListItem key={campaign.id} className="p-6">
-                                <p className="text-neutral-800">{campaign.title}</p>
-                            </DataListItem>
-                        ))}
+                        <CapitalDistributorCampaignList dao={dao} campaignFilter={campaignFilter} />
                     </div>
                 )}
             </Page.Main>
