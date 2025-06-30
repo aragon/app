@@ -5,6 +5,7 @@ import { CapitalDistributorCampaignList } from '@/plugins/capitalDistributorPlug
 import { CapitalDistributorRewardsAside } from '@/plugins/capitalDistributorPlugin/components/capitalDistributorRewardsAside/capitalDistributorRewardsAside';
 import { CapitalDistributorRewardsNotConnected } from '@/plugins/capitalDistributorPlugin/components/capitalDistributorRewardsNotConnected/capitalDistributorRewardsNotConnected';
 import { type IDao } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
@@ -23,6 +24,7 @@ export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRe
 
     const { address } = useAccount();
     const { t } = useTranslations();
+    const { open } = useDialogContext();
 
     const [campaignFilter, setCampaignFilter] = useState<CampaignStatus>(CampaignStatus.CLAIMABLE);
 

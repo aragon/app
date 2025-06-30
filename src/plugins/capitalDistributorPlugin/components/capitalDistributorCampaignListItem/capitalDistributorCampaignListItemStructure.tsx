@@ -1,4 +1,5 @@
 import type { IDao } from '@/shared/api/daoService/domain/dao';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
@@ -12,6 +13,7 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { CampaignStatus, type ICampaign } from '../../api/capitalDistributorService';
+import { CapitalDistributorPluginDialogId } from '../../constants/capitalDistributorPluginDialogId';
 
 export interface ICapitalDistributorCampaignListItemStructureProps {
     /**
@@ -30,6 +32,7 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
     const { campaign, dao } = props;
 
     const { t } = useTranslations();
+    const { open } = useDialogContext();
 
     const isClaimed = campaign.status === CampaignStatus.CLAIMED;
 
@@ -41,7 +44,7 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
     const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[dao.network].id });
     const addressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: campaign.txHash });
 
-    const handleOpenDialog = () => console.log('open dialog for campaign', campaign.id);
+    const handleOpenDialog = () => open(CapitalDistributorPluginDialogId.CLAIM, { params: { campaign } });
 
     return (
         <DataList.Item

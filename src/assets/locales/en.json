@@ -1060,6 +1060,9 @@
           "amount": "Amount",
           "value": "Value"
         },
+        "capitalDistributorClaimDialog": {
+          "submit": "Claim"
+        },
         "capitalDistributorRewardsAside": {
           "stats": {
             "claimableCount": "Claimable campaigns",
