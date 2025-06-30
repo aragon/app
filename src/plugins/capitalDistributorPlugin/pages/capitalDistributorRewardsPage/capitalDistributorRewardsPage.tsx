@@ -16,6 +16,8 @@ import { CapitalDistributorRewardsPageClient } from './capitalDistributorRewards
 
 export interface ICapitalDistributorRewardsPageProps extends IDaoPluginPageProps {}
 
+// TODO: const getCOnnectedAccount...
+
 export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsPageProps> = async (props) => {
     const { dao } = props;
 
