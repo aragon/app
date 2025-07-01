@@ -70,8 +70,7 @@ export const CapitalDistributorCampaignList: React.FC<ICapitalDistributorCampaig
             <DataListContainer
                 errorState={errorState}
                 emptyState={emptyState}
-                // casting here as dynamic import can be undefined but in reality if we are rendering this component, the skeleton will be available
-                SkeletonElement={CapitalDistributorCampaignListItem.Skeleton as React.FC}
+                SkeletonElement={CapitalDistributorCampaignListItem.Skeleton}
             >
                 {campaignList?.map((campaign) => (
                     <CapitalDistributorCampaignListItem.Structure key={campaign.id} campaign={campaign} dao={dao} />
