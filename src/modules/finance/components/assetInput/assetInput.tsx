@@ -2,6 +2,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, IconType, formatterUtils, InputContainer, NumberFormat } from '@aragon/gov-ui-kit';
+import { useFormContext } from 'react-hook-form';
 import classNames from 'classnames';
 import { type ChangeEvent, useId } from 'react';
 import type { IAsset } from '../../api/financeService';
@@ -91,15 +92,19 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         open(FinanceDialogId.ASSET_SELECTION, { params });
     };
 
-    const handleMaxAmount = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        handleAmountFieldChange(assetField.value?.amount);
+    const { setValue } = useFormContext<IAssetInputFormData>();
+
+    const handleMaxAmount: React.MouseEventHandler<HTMLButtonElement> = (event) => {
+        event.preventDefault();
+        const maxAmount = assetField.value?.amount ?? '';
+        setValue(amountField.name as any, maxAmount, { shouldValidate: true });
+        onAmountChange?.();
     };
 
-    const handleTokenButtonMouseDown = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
+    const handleTokenSelectorMouseDown: React.MouseEventHandler<HTMLButtonElement> = (event) => {
+        event.preventDefault();
     };
-
+    
     const inputClassName = classNames(
         'size-full rounded-xl bg-transparent px-4 py-3 caret-neutral-500 outline-none [appearance:textfield]', // base styles
         ' placeholder:text-base placeholder:font-normal placeholder:leading-tight placeholder:text-neutral-300', // placeholder styles
@@ -123,7 +128,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                     <Button
                         variant="tertiary"
                         size="sm"
-                        onMouseDown={handleTokenButtonMouseDown}
+                        onMouseDown={handleTokenSelectorMouseDown}
                         onClick={handleOpenDialog}
                         iconRight={IconType.CHEVRON_DOWN}
                         className="shrink-0"
@@ -146,7 +151,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
             </InputContainer>
             {assetField.value?.amount && !hideMax && (
                 <div className="flex items-center gap-x-1 self-end pr-4">
-                    <button className="text-primary-400 hover:text-primary-600" onClick={(e) => handleMaxAmount(e)}>
+                    <button type="button" className="text-primary-400 hover:text-primary-600" onClick={handleMaxAmount}>
                         {t('app.finance.assetInput.maxButtonLabel')}
                     </button>
                     <span className="text-neutral-500">
