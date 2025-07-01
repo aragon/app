@@ -1066,6 +1066,12 @@
           },
           "submit": "Claim"
         },
+        "capitalDistributorClaimTransactionDialog": {
+          "description": "Confirm the onchain transaction to claim your rewards",
+          "submit": "Claim rewards",
+          "successLinkLabel": "View rewards",
+          "title": "Claim Transaction"
+        },
         "capitalDistributorRewardsAside": {
           "stats": {
             "claimableCount": "Claimable campaigns",

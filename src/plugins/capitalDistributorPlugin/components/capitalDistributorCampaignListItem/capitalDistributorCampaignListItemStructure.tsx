@@ -1,7 +1,8 @@
-import type { Network } from '@/shared/api/daoService/domain';
+import type { IDao } from '@/shared/api/daoService/domain';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins/useDaoPlugins';
 import {
     Avatar,
     AvatarIcon,
@@ -21,15 +22,16 @@ export interface ICapitalDistributorCampaignListItemStructureProps {
      */
     campaign: ICampaign;
     /**
-     * The network of the DAO with the capital-distributor plugin installed.
+     * The DAO with the capital-distributor plugin installed.
      */
-    network: Network;
+    dao: IDao;
 }
 
 export const CapitalDistributorCampaignListItemStructure: React.FC<
     ICapitalDistributorCampaignListItemStructureProps
 > = (props) => {
-    const { campaign, network } = props;
+    const { campaign, dao } = props;
+    const { id, network } = dao;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -44,7 +46,12 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
     const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[network].id });
     const addressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: campaign.txHash });
 
-    const handleOpenDialog = () => open(CapitalDistributorPluginDialogId.CLAIM, { params: { campaign } });
+    const capitalDistributorPlugin = useDaoPlugins({ daoId: id, subdomain: 'capital-distributor' })![0];
+
+    const handleOpenDialog = () =>
+        open(CapitalDistributorPluginDialogId.CLAIM, {
+            params: { campaign, pluginAddress: capitalDistributorPlugin.meta.address },
+        });
 
     return (
         <DataList.Item

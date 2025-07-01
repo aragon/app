@@ -1,17 +1,23 @@
 'use client';
 
-import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import { invariant } from '@aragon/gov-ui-kit';
 import type { ICampaign } from '../../api/capitalDistributorService';
 import { CapitalDistributorClaimDialogDetails } from './capitalDistributorClaimDialogDetails';
+import { CapitalDistributorPluginDialogId } from '@/plugins/capitalDistributorPlugin/constants/capitalDistributorPluginDialogId';
+import { useAccount } from 'wagmi';
 
 export interface ICapitalDistributorClaimDialogParams {
     /**
      * Campaign to be claimed.
      */
     campaign: ICampaign;
+    /**
+     * Address of the plugin to use for the claim.
+     */
+    pluginAddress: string;
 }
 
 export interface ICapitalDistributorClaimDialogProps
@@ -20,11 +26,17 @@ export interface ICapitalDistributorClaimDialogProps
 export const CapitalDistributorClaimDialog: React.FC<ICapitalDistributorClaimDialogProps> = (props) => {
     const { location } = props;
     invariant(location.params != null, 'CapitalDistributorClaimDialog: params must be defined');
-    const { campaign } = location.params;
+    const { campaign, pluginAddress } = location.params;
+    const { address } = useAccount();
 
     const { t } = useTranslations();
+    const { open } = useDialogContext();
 
-    const handleSubmit = () => null;
+    //TODO: Update address to recipient when claim step is implemented
+    const handleSubmit = () =>
+        open(CapitalDistributorPluginDialogId.CLAIM_TRANSACTION, {
+            params: { campaignId: campaign.id, recipient: address!, pluginAddress },
+        });
 
     return (
         <WizardDialog.Container

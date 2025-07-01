@@ -1,4 +1,4 @@
-import type { Network } from '@/shared/api/daoService';
+import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { DataListContainer, DataListPagination, DataListRoot } from '@aragon/gov-ui-kit';
@@ -16,9 +16,9 @@ export interface ICapitalDistributorCampaignListProps {
      */
     campaignFilter: CampaignStatus;
     /**
-     * The network of the DAO with the capital-distributor plugin installed.
+     * The DAO with the capital-distributor plugin installed.
      */
-    network: Network;
+    dao: IDao;
     /**
      * Initial parameters for the campaign list query.
      */
@@ -26,7 +26,7 @@ export interface ICapitalDistributorCampaignListProps {
 }
 
 export const CapitalDistributorCampaignList: React.FC<ICapitalDistributorCampaignListProps> = (props) => {
-    const { campaignFilter, network, initialParams } = props;
+    const { campaignFilter, dao, initialParams } = props;
 
     const { address } = useAccount();
     const { t } = useTranslations();
@@ -74,11 +74,7 @@ export const CapitalDistributorCampaignList: React.FC<ICapitalDistributorCampaig
                 SkeletonElement={CapitalDistributorCampaignListItem.Skeleton as React.FC}
             >
                 {campaignList?.map((campaign) => (
-                    <CapitalDistributorCampaignListItem.Structure
-                        key={campaign.id}
-                        campaign={campaign}
-                        network={network}
-                    />
+                    <CapitalDistributorCampaignListItem.Structure key={campaign.id} campaign={campaign} dao={dao} />
                 ))}
             </DataListContainer>
             <DataListPagination />
