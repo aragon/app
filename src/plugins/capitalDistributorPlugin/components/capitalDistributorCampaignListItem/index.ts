@@ -1,16 +1,10 @@
-import dynamic from 'next/dynamic';
+import { CapitalDistributorCampaignListItemSkeleton } from '@/plugins/capitalDistributorPlugin/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItemSkeleton';
+import { CapitalDistributorCampaignListItemStructure } from '@/plugins/capitalDistributorPlugin/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItemStructure';
 
 export const CapitalDistributorCampaignListItem = {
-    Structure: dynamic(() =>
-        import('./capitalDistributorCampaignListItemStructure').then(
-            (mod) => mod.CapitalDistributorCampaignListItemStructure,
-        ),
-    ),
-    Skeleton: dynamic(() =>
-        import('./capitalDistributorCampaignListItemSkeleton').then(
-            (mod) => mod.CapitalDistributorCampaignListItemSkeleton,
-        ),
-    ),
+    Structure: CapitalDistributorCampaignListItemStructure,
+    Skeleton: CapitalDistributorCampaignListItemSkeleton,
 };
 
-export { type ICapitalDistributorCampaignListItemStructureProps } from './capitalDistributorCampaignListItemStructure';
+export * from './capitalDistributorCampaignListItemSkeleton';
+export * from './capitalDistributorCampaignListItemStructure';

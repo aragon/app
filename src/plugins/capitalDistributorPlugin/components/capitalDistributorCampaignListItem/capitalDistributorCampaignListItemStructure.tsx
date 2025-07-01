@@ -61,28 +61,31 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
         <DataList.Item
             target="_blank"
             href={isClaimed ? addressLink : undefined}
-            className="flex items-center gap-12 p-6"
+            className="flex flex-col items-center gap-4 p-6 sm:flex-row sm:gap-12"
             onClick={isClaimed ? undefined : handleOpenDialog}
         >
-            <div className="flex grow items-center gap-4">
+            <div className="flex w-full items-center gap-4">
                 <Avatar src={logo} size="lg" />
                 <div className="flex flex-col gap-1">
                     <h3 className="text-lg text-neutral-800">{title}</h3>
                     <p className="line-clamp-1 text-neutral-500">{description}</p>
                 </div>
             </div>
-            <div className="flex items-center gap-4">
-                <div className="flex flex-col gap-1">
-                    <h3 className="text-neutral-500">
-                        {t('app.plugins.capitalDistributor.capitalDistributorCampaignListItem.amount')}
-                    </h3>
-                    <p className="text-lg text-neutral-800">{formattedAmount}</p>
-                </div>
-                <div className="flex flex-col gap-1">
-                    <h3 className="text-neutral-500">
-                        {t('app.plugins.capitalDistributor.capitalDistributorCampaignListItem.value')}
-                    </h3>
-                    <p className="text-lg text-neutral-800">{formattedValue}</p>
+            <div className="flex w-full border border-b border-neutral-100 sm:hidden" />
+            <div className="flex w-full items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                    <div className="flex min-w-[120px] flex-col gap-1">
+                        <h3 className="text-sm text-neutral-500 sm:text-base">
+                            {t('app.plugins.capitalDistributor.capitalDistributorCampaignListItem.amount')}
+                        </h3>
+                        <p className="text-base text-neutral-800 sm:text-lg">{formattedAmount}</p>
+                    </div>
+                    <div className="flex min-w-[120px] flex-col gap-1">
+                        <h3 className="text-sm text-neutral-500 sm:text-base">
+                            {t('app.plugins.capitalDistributor.capitalDistributorCampaignListItem.value')}
+                        </h3>
+                        <p className="text-base text-neutral-800 sm:text-lg">{formattedValue}</p>
+                    </div>
                 </div>
                 {isClaimed && <AvatarIcon size="sm" variant="primary" icon={IconType.LINK_EXTERNAL} />}
             </div>
