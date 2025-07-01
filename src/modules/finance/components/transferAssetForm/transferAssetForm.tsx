@@ -42,6 +42,7 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
 
     return (
         <div className="flex w-full flex-col gap-6">
+            <AssetInput fetchAssetsParams={fetchAssetsParams} fieldPrefix={fieldPrefix} />
             <AddressInput
                 helpText={t('app.finance.transferAssetForm.receiver.helpText')}
                 placeholder={t('app.finance.transferAssetForm.receiver.placeholder')}
@@ -50,7 +51,6 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
                 onAccept={onReceiverChange}
                 {...receiverField}
             />
-            <AssetInput fetchAssetsParams={fetchAssetsParams} fieldPrefix={fieldPrefix} />
         </div>
     );
 };
