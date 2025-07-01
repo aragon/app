@@ -4,7 +4,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, IconType, formatterUtils, InputContainer, NumberFormat } from '@aragon/gov-ui-kit';
 import { useFormContext } from 'react-hook-form';
 import classNames from 'classnames';
-import { type ChangeEvent, useId, useRef } from 'react';
+import { type ChangeEvent, type MouseEvent, useId, useRef } from 'react';
 import type { IAsset } from '../../api/financeService';
 import { FinanceDialogId } from '../../constants/financeDialogId';
 import type { IAssetSelectionDialogParams } from '../../dialogs/assetSelectionDialog';
@@ -102,14 +102,14 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
 
     const { setValue } = useFormContext<IAssetInputFormData>();
 
-    const handleMaxAmount: React.MouseEventHandler<HTMLButtonElement> = (event) => {
+    const handleMaxAmount = (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         const maxAmount = assetField.value?.amount ?? '';
         setValue(amountField.name, maxAmount, { shouldValidate: true });
         onAmountChange?.();
     };
 
-    const handleTokenSelectorMouseDown: React.MouseEventHandler<HTMLButtonElement> = (event) => {
+    const handleTokenSelectorMouseDown = (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
     };
 
