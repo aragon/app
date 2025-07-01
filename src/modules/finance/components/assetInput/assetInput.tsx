@@ -119,6 +119,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                     <Button
                         variant="tertiary"
                         size="sm"
+                        onMouseDown={(e) => e.preventDefault()}
                         onClick={handleOpenDialog}
                         iconRight={IconType.CHEVRON_DOWN}
                         className="shrink-0"
