@@ -1,5 +1,3 @@
-import type { Hex } from 'viem';
-
 export interface IBuildClaimTransactionParams {
     /**
      * The ID of the campaign to claim.
@@ -8,13 +6,13 @@ export interface IBuildClaimTransactionParams {
     /**
      * The address of the recipient.
      */
-    recipient: Hex;
+    recipient: string;
     /**
      * The address of the plugin to use for the claim.
      */
-    pluginAddress: Hex;
+    pluginAddress: string;
     /**
      * Additional data for the transaction.
      */
-    auxData?: Hex;
+    auxData?: string;
 }

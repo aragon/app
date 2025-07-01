@@ -1,6 +1,8 @@
 import type { ICampaign } from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
-import { Card, Heading, Link } from '@aragon/gov-ui-kit';
+import { Card, formatterUtils, Heading, Link, NumberFormat } from '@aragon/gov-ui-kit';
+import { formatUnits } from 'viem';
 import { CapitalDistributorClaimDialogDetailsInfo } from './capitalDistributorClaimDialogDetailsInfo';
 
 export interface ICapitalDistributorClaimDialogDetailsProps {
@@ -12,29 +14,77 @@ export interface ICapitalDistributorClaimDialogDetailsProps {
 
 export const CapitalDistributorClaimDialogDetails: React.FC<ICapitalDistributorClaimDialogDetailsProps> = (props) => {
     const { campaign } = props;
-    const { resources } = campaign;
+    const { resources, type, token, amount, endTime } = campaign;
+
+    const parsedAmount = formatUnits(BigInt(amount), token.decimals);
+    const formattedAmount = formatterUtils.formatNumber(parsedAmount, { format: NumberFormat.TOKEN_AMOUNT_SHORT })!;
+
+    const claimValue = Number(parsedAmount) * Number(token.priceUsd);
+    const formattedClaimValue = formatterUtils.formatNumber(claimValue, { format: NumberFormat.FIAT_TOTAL_SHORT });
+
+    const { t } = useTranslations();
 
     return (
         <WizardDialog.Step id="overview" order={1} meta={{ name: '' }} className="flex flex-col gap-4">
             <Card className="flex grow flex-col gap-3 border border-neutral-100 p-6">
                 <div className="flex flex-row">
-                    <CapitalDistributorClaimDialogDetailsInfo info={{ label: 'Total amount', value: '42.32K ENA' }} />
-                    <CapitalDistributorClaimDialogDetailsInfo info={{ label: 'Value', value: '$12.18K' }} />
+                    <CapitalDistributorClaimDialogDetailsInfo
+                        info={{
+                            label: t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.amount'),
+                            value: `${formattedAmount} ${token.symbol}`,
+                        }}
+                    />
+                    <CapitalDistributorClaimDialogDetailsInfo
+                        info={{
+                            label: t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.value'),
+                            value: formattedClaimValue,
+                        }}
+                    />
                 </div>
                 <div className="h-[1px] w-full bg-neutral-100" />
                 <div className="flex flex-row">
-                    <CapitalDistributorClaimDialogDetailsInfo info={{ label: 'Type', value: 'Airdrop' }} />
-                    <CapitalDistributorClaimDialogDetailsInfo info={{ label: 'Status', value: 'Claimable' }} />
+                    <CapitalDistributorClaimDialogDetailsInfo
+                        info={{
+                            label: t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.type'),
+                            value: type,
+                        }}
+                    />
+                    <CapitalDistributorClaimDialogDetailsInfo
+                        info={{
+                            label: t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.status'),
+                            value: t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.claimable'),
+                        }}
+                    />
                 </div>
-                <div className="h-[1px] w-full bg-neutral-100" />
-                <div className="flex flex-row">
-                    <CapitalDistributorClaimDialogDetailsInfo info={{ label: 'Claimable', value: '207 days left' }} />
-                    <CapitalDistributorClaimDialogDetailsInfo info={{ label: 'Deadline', value: '30.12.2025' }} />
-                </div>
+                {endTime !== 0 && (
+                    <>
+                        <div className="h-[1px] w-full bg-neutral-100" />
+                        <div className="flex flex-row">
+                            <CapitalDistributorClaimDialogDetailsInfo
+                                info={{
+                                    label: t(
+                                        'app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.claimable',
+                                    ),
+                                    value: '207 days left',
+                                }}
+                            />
+                            <CapitalDistributorClaimDialogDetailsInfo
+                                info={{
+                                    label: t(
+                                        'app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.deadline',
+                                    ),
+                                    value: '30.12.2025',
+                                }}
+                            />
+                        </div>
+                    </>
+                )}
             </Card>
             {resources != null && resources.length > 0 && (
                 <Card className="flex flex-col gap-3 border border-neutral-100 p-6">
-                    <Heading size="h4">Resources</Heading>
+                    <Heading size="h4">
+                        {t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.resources')}
+                    </Heading>
                     <div className="flex flex-col gap-4">
                         {resources.map((resource) => (
                             <Link key={resource.url} href={resource.url} isExternal={true} showUrl={true}>

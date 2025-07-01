@@ -21,11 +21,11 @@ export interface ICapitalDistributorClaimTransactionDialogParams {
     /**
      * The address of the recipient.
      */
-    recipient: Hex;
+    recipient: string;
     /**
      * The address of the plugin.
      */
-    pluginAddress: Hex;
+    pluginAddress: string;
     /**
      * Additional data for the transaction.
      */

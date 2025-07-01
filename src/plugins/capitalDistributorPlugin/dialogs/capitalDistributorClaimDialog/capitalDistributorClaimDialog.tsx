@@ -7,7 +7,10 @@ import { invariant } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import type { ICampaign } from '../../api/capitalDistributorService';
 import { CapitalDistributorPluginDialogId } from '../../constants/capitalDistributorPluginDialogId';
+import { ICapitalDistributorClaimTransactionDialogParams } from '../capitalDistributorClaimTransactionDialog';
+import type { ICapitalDistributorClaimDialogForm } from './capitalDistributorClaimDialogDefinitions';
 import { CapitalDistributorClaimDialogDetails } from './capitalDistributorClaimDialogDetails';
+import { CapitalDistributorClaimDialogInputs } from './capitalDistributorClaimDialogInputs';
 
 export interface ICapitalDistributorClaimDialogParams {
     /**
@@ -32,23 +35,25 @@ export const CapitalDistributorClaimDialog: React.FC<ICapitalDistributorClaimDia
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    //TODO: Update address to recipient when claim step is implemented
-    const handleSubmit = () =>
-        open(CapitalDistributorPluginDialogId.CLAIM_TRANSACTION, {
-            params: { campaignId: campaign.id, recipient: address!, pluginAddress },
-        });
+    const handleSubmit = (values: ICapitalDistributorClaimDialogForm) => {
+        const params: ICapitalDistributorClaimTransactionDialogParams = {
+            campaignId: campaign.id,
+            pluginAddress,
+            ...values,
+        };
+        open(CapitalDistributorPluginDialogId.CLAIM_TRANSACTION, { params });
+    };
 
     return (
-        <WizardDialog.Container
+        <WizardDialog.Container<ICapitalDistributorClaimDialogForm>
             title={campaign.title}
             formId="capitalDistributorClaim"
             onSubmit={handleSubmit}
             submitLabel={t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.submit')}
+            defaultValues={{ recipient: address }}
         >
             <CapitalDistributorClaimDialogDetails campaign={campaign} />
-            <WizardDialog.Step id="claim" order={2} meta={{ name: '' }}>
-                <p>Claim Step</p>
-            </WizardDialog.Step>
+            <CapitalDistributorClaimDialogInputs />
         </WizardDialog.Container>
     );
 };

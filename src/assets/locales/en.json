@@ -1064,6 +1064,15 @@
           "a11y": {
             "description": "Claim the rewards of the selected campaign"
           },
+          "details": {
+            "amount": "Total amount",
+            "claimable": "Claimable",
+            "deadline": "Deadline",
+            "resources": "Resources",
+            "status": "Status",
+            "type": "Type",
+            "value": "Value"
+          },
           "submit": "Claim"
         },
         "capitalDistributorClaimTransactionDialog": {

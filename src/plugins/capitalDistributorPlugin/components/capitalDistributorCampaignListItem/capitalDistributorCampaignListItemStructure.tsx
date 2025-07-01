@@ -13,6 +13,7 @@ import {
     NumberFormat,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
+import { formatUnits } from 'viem';
 import { CampaignStatus, type ICampaign } from '../../api/capitalDistributorService';
 import { CapitalDistributorPluginDialogId } from '../../constants/capitalDistributorPluginDialogId';
 
@@ -36,15 +37,18 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
+    const { amount, token, txHash, logo, title, description } = campaign;
+
     const isClaimed = campaign.status === CampaignStatus.CLAIMED;
 
-    const formattedAmount = formatterUtils.formatNumber(campaign.amount, { format: NumberFormat.TOKEN_AMOUNT_SHORT });
+    const parsedAmount = formatUnits(BigInt(amount), token.decimals);
+    const formattedAmount = formatterUtils.formatNumber(parsedAmount, { format: NumberFormat.TOKEN_AMOUNT_SHORT });
 
-    const value = Number(campaign.amount) * Number(campaign.token.priceUsd);
+    const value = Number(parsedAmount) * Number(token.priceUsd);
     const formattedValue = formatterUtils.formatNumber(value, { format: NumberFormat.FIAT_TOTAL_SHORT });
 
     const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[network].id });
-    const addressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: campaign.txHash });
+    const addressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: txHash });
 
     const capitalDistributorPlugin = useDaoPlugins({ daoId: id, subdomain: 'capital-distributor' })![0];
 
@@ -61,10 +65,10 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
             onClick={isClaimed ? undefined : handleOpenDialog}
         >
             <div className="flex grow items-center gap-4">
-                <Avatar src={campaign.logo} size="lg" />
+                <Avatar src={logo} size="lg" />
                 <div className="flex flex-col gap-1">
-                    <h3 className="text-lg text-neutral-800">{campaign.title}</h3>
-                    <p className="line-clamp-1 text-neutral-500">{campaign.description}</p>
+                    <h3 className="text-lg text-neutral-800">{title}</h3>
+                    <p className="line-clamp-1 text-neutral-500">{description}</p>
                 </div>
             </div>
             <div className="flex items-center gap-4">

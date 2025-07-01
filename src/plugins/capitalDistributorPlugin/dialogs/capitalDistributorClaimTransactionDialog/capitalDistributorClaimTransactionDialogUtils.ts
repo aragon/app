@@ -1,5 +1,5 @@
 import { type ITransactionRequest } from '@/shared/utils/transactionUtils';
-import { encodeFunctionData } from 'viem';
+import { encodeFunctionData, type Hex } from 'viem';
 import type { IBuildClaimTransactionParams } from './capitalDistributorClaimTransactionDialogUtils.api';
 
 const capitalDistributorAbi = [
@@ -28,7 +28,7 @@ class CapitalDistributorClaimTransactionDialogUtils {
             args: [campaignId, recipient, encodedAuxData],
         });
 
-        const transaction = { to: pluginAddress, data, value: BigInt(0) };
+        const transaction = { to: pluginAddress as Hex, data, value: BigInt(0) };
 
         return Promise.resolve(transaction);
     };
