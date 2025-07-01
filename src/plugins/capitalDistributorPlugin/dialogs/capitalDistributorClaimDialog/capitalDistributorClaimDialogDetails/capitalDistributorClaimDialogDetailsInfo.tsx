@@ -1,0 +1,26 @@
+import type { IToken } from '@/modules/finance/api/financeService';
+import { useTranslations } from '@/shared/components/translationsProvider';
+
+export interface ICapitalDistributorClaimDialogDetailsInfoProps {
+    /**
+     * Campaign info to be displayed.
+     */
+    info: { label: string; value: string; token?: IToken };
+}
+
+export const CapitalDistributorClaimDialogDetailsInfo: React.FC<ICapitalDistributorClaimDialogDetailsInfoProps> = (
+    props,
+) => {
+    const { info } = props;
+
+    const { label, value } = info;
+
+    const { t } = useTranslations();
+
+    return (
+        <div className="flex grow basis-0 flex-col gap-1">
+            <p className="text-sm leading-tight font-normal text-neutral-500">{t(label)}</p>
+            <p className="text-base leading-normal font-normal text-neutral-800">{value}</p>
+        </div>
+    );
+};

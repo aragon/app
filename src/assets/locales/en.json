@@ -1060,6 +1060,12 @@
           "amount": "Amount",
           "value": "Value"
         },
+        "capitalDistributorClaimDialog": {
+          "a11y": {
+            "description": "Claim the rewards of the selected campaign"
+          },
+          "submit": "Claim"
+        },
         "capitalDistributorRewardsAside": {
           "stats": {
             "claimableCount": "Claimable campaigns",
