@@ -116,7 +116,13 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                 {...amountField}
             >
                 {!disableAssetField && (
-                    <Button variant="tertiary" size="sm" onClick={handleOpenDialog} className="shrink-0">
+                    <Button
+                        variant="tertiary"
+                        size="sm"
+                        onClick={handleOpenDialog}
+                        iconRight={IconType.CHEVRON_DOWN}
+                        className="shrink-0"
+                    >
                         <AssetInputToken token={assetField.value?.token} />
                     </Button>
                 )}
