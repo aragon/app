@@ -1,7 +1,7 @@
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Button, formatterUtils, InputContainer, NumberFormat } from '@aragon/gov-ui-kit';
+import { Button, IconType, formatterUtils, InputContainer, NumberFormat } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { type ChangeEvent, useId } from 'react';
 import type { IAsset } from '../../api/financeService';
