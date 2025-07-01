@@ -1,5 +1,49 @@
 # @aragon/app-next
 
+## 1.7.0
+
+### Minor Changes
+
+- [#648](https://github.com/aragon/app-next/pull/648) [`7ceabfe`](https://github.com/aragon/app-next/commit/7ceabfe78d598daefed746c9fc9378e1bcf83bbc) Thanks [@dependabot](https://github.com/apps/dependabot)! - Bump `vercel` to v44
+
+- [#617](https://github.com/aragon/app-next/pull/617) [`69cba92`](https://github.com/aragon/app-next/commit/69cba920466cd8a5a39fb804e7f17fc4edac8897) Thanks [@shan8851](https://github.com/shan8851)! - Add VE-locks support to token-member panel
+
+- [#647](https://github.com/aragon/app-next/pull/647) [`628f124`](https://github.com/aragon/app-next/commit/628f1241cc3b97cfa8946a044f57ec93d0eae5cc) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#652](https://github.com/aragon/app-next/pull/652) [`0c39864`](https://github.com/aragon/app-next/commit/0c39864816aae4473fe11ea813d29939922ee2f6) Thanks [@shan8851](https://github.com/shan8851)! - Update all backend endpoints to v2 and enforce daoId or network and pluginAddress params
+
+- [#644](https://github.com/aragon/app-next/pull/644) [`fbc361e`](https://github.com/aragon/app-next/commit/fbc361e9cce00917332c3d2f610c8e0e9391499a) Thanks [@shan8851](https://github.com/shan8851)! - Implement versioning for Aragon backend endpoints
+
+- [#653](https://github.com/aragon/app-next/pull/653) [`9c8f1f1`](https://github.com/aragon/app-next/commit/9c8f1f18c9edfcb54b153ff6adf790d579d4e28a) Thanks [@evanaronson](https://github.com/evanaronson)! - Update strings across app to adhere to style guide
+
+- [#646](https://github.com/aragon/app-next/pull/646) [`fc99fa1`](https://github.com/aragon/app-next/commit/fc99fa1cea5c6c61c4a5ef82d5e2e368735ddacf) Thanks [@shan8851](https://github.com/shan8851)! - Add direct RPC calls for checking voting permissions and remove redundant backend endpoint
+
+- [#651](https://github.com/aragon/app-next/pull/651) [`8158a61`](https://github.com/aragon/app-next/commit/8158a6157d145509458a427402b81d91807b9dad) Thanks [@jjavieralv](https://github.com/jjavieralv)! - Update release workflow to sign arabot commit
+
+- [#641](https://github.com/aragon/app-next/pull/641) [`c1584b7`](https://github.com/aragon/app-next/commit/c1584b768c27ca63f65de13d9fcba40b1c85dc8e) Thanks [@milosh86](https://github.com/milosh86)! - Implement form validation improvements on TokenVoting setup wizard
+
+- [#649](https://github.com/aragon/app-next/pull/649) [`23dd5de`](https://github.com/aragon/app-next/commit/23dd5dea154aa1bf24192ac5e964e33d476a2be4) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Add support for Chiliz network
+
+- [#636](https://github.com/aragon/app-next/pull/636) [`8036f00`](https://github.com/aragon/app-next/commit/8036f005f183d559e67ac3bad1eb937359df4791) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#645](https://github.com/aragon/app-next/pull/645) [`72d9435`](https://github.com/aragon/app-next/commit/72d94355a5ec76aadd28ef40d10d916c53b38aa3) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Add support for custom plugin and DAO pages
+
+- [#650](https://github.com/aragon/app-next/pull/650) [`19f8103`](https://github.com/aragon/app-next/commit/19f81034bafa320b8b2fd8d51bf63dcb7d475674) Thanks [@shan8851](https://github.com/shan8851)! - Remove legacy app button
+
+### Patch Changes
+
+- [#638](https://github.com/aragon/app-next/pull/638) [`b641def`](https://github.com/aragon/app-next/commit/b641def7fe40d0db998b8256218f5868301a4103) Thanks [@milosh86](https://github.com/milosh86)! - Add `networks` query param to `daoListByMemberParams` to prevent unknown DAO issues
+
+- [#637](https://github.com/aragon/app-next/pull/637) [`44190a4`](https://github.com/aragon/app-next/commit/44190a4576948525278cfb07fbdc8a5358b13afb) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Correctly display native transfer actions on proposal page
+
+- [#635](https://github.com/aragon/app-next/pull/635) [`ad6c063`](https://github.com/aragon/app-next/commit/ad6c06315dd9a17ed33c57decbb0559c6be8627d) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Fix crash on Explore page on wallet-connect user disconnect
+
+- [#639](https://github.com/aragon/app-next/pull/639) [`b3cdb19`](https://github.com/aragon/app-next/commit/b3cdb19488aa22caddffb23877ee4a00c6d46c84) Thanks [@shan8851](https://github.com/shan8851)! - Implement UX and form validation improvements on governance designer flow
+
+- [#656](https://github.com/aragon/app-next/pull/656) [`3dcec7e`](https://github.com/aragon/app-next/commit/3dcec7eae8b0ca149474a490d832c8700655d898) Thanks [@evanaronson](https://github.com/evanaronson)! - Update the logo for the Optimism chain.
+
+- [#642](https://github.com/aragon/app-next/pull/642) [`dee94d5`](https://github.com/aragon/app-next/commit/dee94d5af1194f53555831a4d56580f59adfb482) Thanks [@evanaronson](https://github.com/evanaronson)! - Fix style and formatting inconsistencies in the body overview of the voting terminal
+
 ## 1.6.0
 
 ### Minor Changes
