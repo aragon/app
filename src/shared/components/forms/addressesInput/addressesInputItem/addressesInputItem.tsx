@@ -53,6 +53,7 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
     } = useFormField<Record<string, ICompositeAddress>, string>(memberFieldName, {
         label: t('app.shared.addressesInput.item.input.label'),
         rules: {
+            required: true,
             validate: (member) =>
                 addressesListUtils.validateAddress(member.address, membersField, index, customValidator),
         },

@@ -6,16 +6,14 @@ class AddressesListUtils {
     };
 
     validateAddress = (
-        address = '',
+        address: string,
         members: ICompositeAddress[],
         index: number,
         customValidator?: (member: ICompositeAddress) => true | string,
     ): true | string => {
         const errorNamespace = 'app.shared.addressesInput.item.input.error';
 
-        if (!address.length) {
-            return `${errorNamespace}.required`;
-        } else if (!addressUtils.isAddress(address)) {
+        if (!addressUtils.isAddress(address)) {
             return `${errorNamespace}.invalid`;
         } else if (this.checkIsAlreadyInList(members, index, address)) {
             return `${errorNamespace}.alreadyInList`;
