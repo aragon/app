@@ -30,7 +30,10 @@ export interface IAssetInputProps {
      * Prefix to be prepended to all form fields.
      */
     fieldPrefix?: string;
-@@ -36,115 +37,142 @@ export interface IAssetInputProps {
+    /**
+     * Callback called on asset amount change.
+     */
+    onAmountChange?: () => void;
     /**
      * Disables the token selection when set to true.
      */
