@@ -50,7 +50,8 @@ export const CapitalDistributorClaimTransactionDialog: React.FC<ICapitalDistribu
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
-    const prepareTransaction = () => capitalDistributorClaimTransactionDialog.buildTransaction({ campaignId, recipient, pluginAddress });
+    const prepareTransaction = () =>
+        capitalDistributorClaimTransactionDialog.buildTransaction({ campaignId, recipient, pluginAddress });
 
     return (
         <TransactionDialog

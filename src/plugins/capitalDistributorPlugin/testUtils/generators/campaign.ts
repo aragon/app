@@ -1,6 +1,6 @@
 import { generateToken } from '@/modules/finance/testUtils';
-import { CampaignStatus } from './../../api/capitalDistributorService/domain/enum/campaignStatus';
-import type { ICampaign } from "@/plugins/capitalDistributorPlugin/api/capitalDistributorService";
+import type { ICampaign } from '../../api/capitalDistributorService';
+import { CampaignStatus } from '../../api/capitalDistributorService/domain/enum/campaignStatus';
 
 export const generateCampaign = (campaign?: Partial<ICampaign>): ICampaign => ({
     id: 1,
