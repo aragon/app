@@ -3,7 +3,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, IconType, formatterUtils, InputContainer, NumberFormat } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { type ChangeEvent, useId } from 'react';
+import { type ChangeEvent, type MouseEvent, useId } from 'react';
 import type { IAsset } from '../../api/financeService';
 import { FinanceDialogId } from '../../constants/financeDialogId';
 import type { IAssetSelectionDialogParams } from '../../dialogs/assetSelectionDialog';
@@ -96,6 +96,10 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         handleAmountFieldChange(assetField.value?.amount);
     };
 
+    const handleTokenButtonMouseDown = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+    };
+
     const inputClassName = classNames(
         'size-full rounded-xl bg-transparent px-4 py-3 caret-neutral-500 outline-none [appearance:textfield]', // base styles
         ' placeholder:text-base placeholder:font-normal placeholder:leading-tight placeholder:text-neutral-300', // placeholder styles
@@ -119,7 +123,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                     <Button
                         variant="tertiary"
                         size="sm"
-                        onMouseDown={(e) => e.preventDefault()}
+                        onMouseDown={handleTokenButtonMouseDown}
                         onClick={handleOpenDialog}
                         iconRight={IconType.CHEVRON_DOWN}
                         className="shrink-0"
