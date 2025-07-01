@@ -71,7 +71,7 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
                     <p className="line-clamp-1 text-neutral-500">{description}</p>
                 </div>
             </div>
-            <div className="flex w-full border border-b border-neutral-100 sm:hidden" />
+            <div className="w-full border-t border-neutral-100 sm:hidden" />
             <div className="flex w-full items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                     <div className="flex min-w-[120px] flex-col gap-1">
