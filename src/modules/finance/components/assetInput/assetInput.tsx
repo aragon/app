@@ -4,7 +4,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, IconType, formatterUtils, InputContainer, NumberFormat } from '@aragon/gov-ui-kit';
 import { useFormContext } from 'react-hook-form';
 import classNames from 'classnames';
-import { type ChangeEvent, useId } from 'react';
+import { type ChangeEvent, useId, useRef } from 'react';
 import type { IAsset } from '../../api/financeService';
 import { FinanceDialogId } from '../../constants/financeDialogId';
 import type { IAssetSelectionDialogParams } from '../../dialogs/assetSelectionDialog';
@@ -30,10 +30,7 @@ export interface IAssetInputProps {
      * Prefix to be prepended to all form fields.
      */
     fieldPrefix?: string;
-    /**
-     * Callback called on asset amount change.
-     */
-    onAmountChange?: () => void;
+@@ -36,115 +37,142 @@ export interface IAssetInputProps {
     /**
      * Disables the token selection when set to true.
      */
@@ -59,6 +56,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
     const inputId = useId();
+    const inputRef = useRef<HTMLInputElement | null>(null);
 
     const assetField = useFormField<IAssetInputFormData, 'asset'>('asset', { rules: { required: true }, fieldPrefix });
 
@@ -68,6 +66,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         ...amountField
     } = useFormField<IAssetInputFormData, 'amount'>('amount', {
         label: t('app.finance.transferAssetForm.amount.label'),
+        defaultValue: '',
         rules: {
             required: true,
             max: assetField.value?.amount,
@@ -82,14 +81,23 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         onAmountChange?.();
     };
 
+    const handleCloseDialog = () => {
+        close();
+        inputRef.current?.focus();
+    };
+
     const handleOpenDialog = () => {
         if (!fetchAssetsParams || disableAssetField) {
             return;
         }
 
         const { onChange: onAssetClick } = assetField;
-        const params: IAssetSelectionDialogParams = { initialParams: fetchAssetsParams, onAssetClick, close };
-        open(FinanceDialogId.ASSET_SELECTION, { params });
+        const params: IAssetSelectionDialogParams = {
+            initialParams: fetchAssetsParams,
+            onAssetClick,
+            close: handleCloseDialog,
+        };
+        open(FinanceDialogId.ASSET_SELECTION, { params, onClose: handleCloseDialog });
     };
 
     const { setValue } = useFormContext<IAssetInputFormData>();
@@ -97,14 +105,14 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     const handleMaxAmount: React.MouseEventHandler<HTMLButtonElement> = (event) => {
         event.preventDefault();
         const maxAmount = assetField.value?.amount ?? '';
-        setValue(amountField.name as any, maxAmount, { shouldValidate: true });
+        setValue(amountField.name, maxAmount, { shouldValidate: true });
         onAmountChange?.();
     };
 
     const handleTokenSelectorMouseDown: React.MouseEventHandler<HTMLButtonElement> = (event) => {
         event.preventDefault();
     };
-    
+
     const inputClassName = classNames(
         'size-full rounded-xl bg-transparent px-4 py-3 caret-neutral-500 outline-none [appearance:textfield]', // base styles
         ' placeholder:text-base placeholder:font-normal placeholder:leading-tight placeholder:text-neutral-300', // placeholder styles
@@ -140,6 +148,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                     <AssetInputToken token={assetField.value?.token} className="cursor-default px-2" />
                 )}
                 <input
+                    ref={inputRef}
                     type="number"
                     placeholder="0"
                     className={inputClassName}
