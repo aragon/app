@@ -4,10 +4,8 @@ import { Button, Card, Dropdown, IconType, InputText } from '@aragon/gov-ui-kit'
 import type React from 'react';
 import { useWatch } from 'react-hook-form';
 import { type ICreateProcessFormStage, ProcessStageType } from '../../../createProcessFormDefinitions';
-import { GovernanceStageApprovalsField } from '../governanceStageApprovalsField';
 import { GovernanceStageBodiesField } from '../governanceStageBodiesField';
-import { GovernanceStageTimingField } from '../governanceStageTimingField';
-import { GovernanceStageTypeField } from '../governanceStageTypeField';
+import { GovernanceStageSettingsField } from '../governanceStageSettingsField';
 
 export interface IGovernanceStagesFieldItemProps {
     /**
@@ -40,7 +38,6 @@ export const GovernanceStagesFieldItem: React.FC<IGovernanceStagesFieldItemProps
     const stageType = useWatch<Record<string, ICreateProcessFormStage['type']>>({ name: `${formPrefix}.type` });
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
-    const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
 
     const stageNameField = useFormField<ICreateProcessFormStage, 'name'>('name', {
         label: t('app.createDao.createProcessForm.governance.stageField.name.label'),
@@ -59,12 +56,8 @@ export const GovernanceStagesFieldItem: React.FC<IGovernanceStagesFieldItemProps
                 maxLength={nameMaxLength}
                 {...stageNameField}
             />
-            <GovernanceStageTypeField fieldPrefix={formPrefix} />
-            <GovernanceStageTimingField fieldPrefix={`${formPrefix}.timing`} stageType={stageType} />
-            {!isTimelockStage && (
-                <GovernanceStageBodiesField formPrefix={formPrefix} daoId={daoId} labelContext={bodiesLabelContext} />
-            )}
-            <GovernanceStageApprovalsField fieldPrefix={formPrefix} isOptimisticStage={isOptimisticStage} />
+            <GovernanceStageBodiesField formPrefix={formPrefix} daoId={daoId} labelContext={bodiesLabelContext} />
+            <GovernanceStageSettingsField fieldPrefix={formPrefix} />
             {stagesCount > 1 && (
                 <Dropdown.Container
                     constrainContentWidth={false}

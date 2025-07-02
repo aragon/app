@@ -228,6 +228,10 @@
             "label": {
               "normal": "Voting bodies",
               "veto": "Vetoing bodies"
+            },
+            "noBodies": {
+              "description": "Without bodies, the stage will be a timelock so proposals pass automatically when it ends.",
+              "heading": "No voting bodies"
             }
           },
           "stageField": {
@@ -240,6 +244,16 @@
               "helpText": "This is used to identify the stage the proposal is in. For example: Community Review, Guardian Veto, or Founder Signoff",
               "label": "Stage name"
             }
+          },
+          "stageSettingsField": {
+            "earlyAdvance": "Early stage advance",
+            "edit": "Edit settings",
+            "expiration": "Stage expiration",
+            "expirationPeriod": "Expiration period",
+            "label": "Settings",
+            "no": "Disabled",
+            "votingPeriod": "Voting period",
+            "yes": "Enabled"
           },
           "stageTimingField": {
             "earlyAdvance": "Early stage advance",
@@ -425,6 +439,17 @@
         },
         "submit": "Save",
         "title": "Add voting body"
+      },
+      "setupStageSettingsDialog": {
+        "a11y": {
+          "description": "Configure the settings for the stage"
+        },
+        "action": {
+          "cancel": "Cancel",
+          "save": "Save"
+        },
+        "submit": "Save",
+        "title": "Settings"
       },
       "setupStageTimingDialog": {
         "a11y": {
