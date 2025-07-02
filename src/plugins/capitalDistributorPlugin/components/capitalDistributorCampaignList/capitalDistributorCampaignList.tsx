@@ -5,7 +5,8 @@ import { DataListContainer, DataListPagination, DataListRoot, Toggle, ToggleGrou
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { CampaignStatus, type IGetCampaignsListParams, useCampaignList } from '../../api/capitalDistributorService';
-import { CapitalDistributorCampaignListItem } from '../capitalDistributorCampaignListItem';
+import { CapitalDistributorCampaignListItemSkeleton } from './capitalDistributorCampaignListItemSkeleton';
+import { CapitalDistributorCampaignListItemStructure } from './capitalDistributorCampaignListItemStructure';
 
 export interface ICapitalDistributorCampaignListProps {
     /**
@@ -81,10 +82,10 @@ export const CapitalDistributorCampaignList: React.FC<ICapitalDistributorCampaig
                 <DataListContainer
                     errorState={errorState}
                     emptyState={emptyState}
-                    SkeletonElement={CapitalDistributorCampaignListItem.Skeleton}
+                    SkeletonElement={CapitalDistributorCampaignListItemSkeleton}
                 >
                     {campaignList?.map((campaign) => (
-                        <CapitalDistributorCampaignListItem.Structure key={campaign.id} campaign={campaign} dao={dao} />
+                        <CapitalDistributorCampaignListItemStructure key={campaign.id} campaign={campaign} dao={dao} />
                     ))}
                 </DataListContainer>
                 <DataListPagination />

@@ -76,13 +76,13 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
                 <div className="flex items-center gap-4">
                     <div className="flex min-w-[120px] flex-col gap-1">
                         <h3 className="text-sm text-neutral-500 sm:text-base">
-                            {t('app.plugins.capitalDistributor.capitalDistributorCampaignListItem.amount')}
+                            {t('app.plugins.capitalDistributor.capitalDistributorCampaignList.item.amount')}
                         </h3>
                         <p className="text-base text-neutral-800 sm:text-lg">{formattedAmount}</p>
                     </div>
                     <div className="flex min-w-[120px] flex-col gap-1">
                         <h3 className="text-sm text-neutral-500 sm:text-base">
-                            {t('app.plugins.capitalDistributor.capitalDistributorCampaignListItem.value')}
+                            {t('app.plugins.capitalDistributor.capitalDistributorCampaignList.item.value')}
                         </h3>
                         <p className="text-base text-neutral-800 sm:text-lg">{formattedValue}</p>
                     </div>

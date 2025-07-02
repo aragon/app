@@ -1,15 +1,16 @@
 'use client';
 
+import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { type IDao } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { Link } from '@aragon/gov-ui-kit';
+import { CardEmptyState, IconType, Link } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import { type IGetCampaignsListParams } from '../../api/capitalDistributorService';
 import { CapitalDistributorCampaignList } from '../../components/capitalDistributorCampaignList';
-import { CapitalDistributorRewardsNotConnected } from '../../components/capitalDistributorRewardsNotConnected';
 import { CapitalDistributorRewardsStats } from '../../components/capitalDistributorRewardsStats';
 import { capitalDistributorPlugin } from '../../constants/capitalDistributorPlugin';
 
@@ -29,16 +30,32 @@ export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRe
 
     const { address } = useAccount();
     const { t } = useTranslations();
+    const { open } = useDialogContext();
 
     const plugin = useDaoPlugins({ daoId: dao.id, subdomain: capitalDistributorPlugin.id })![0];
 
     const pluginName = daoUtils.getPluginName(plugin.meta);
     const { description, links } = plugin.meta;
 
+    const connectAction = {
+        label: t('app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.connect.action'),
+        onClick: () => open(ApplicationDialogId.CONNECT_WALLET),
+        iconLeft: IconType.BLOCKCHAIN_WALLET,
+    };
+
     return (
         <Page.Content>
             <Page.Main title={t('app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.title')}>
-                {!address && <CapitalDistributorRewardsNotConnected />}
+                {!address && (
+                    <CardEmptyState
+                        heading={t('app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.connect.heading')}
+                        description={t(
+                            'app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.connect.description',
+                        )}
+                        objectIllustration={{ object: 'WALLET' }}
+                        primaryButton={connectAction}
+                    />
+                )}
                 {address && <CapitalDistributorCampaignList initialParams={initialParams} dao={dao} />}
             </Page.Main>
             <Page.Aside>

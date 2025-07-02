@@ -1058,11 +1058,11 @@
           "filter": {
             "claimable": "Claimable",
             "claimed": "Claimed"
+          },
+          "item": {
+            "amount": "Amount",
+            "value": "Value"
           }
-        },
-        "capitalDistributorCampaignListItem": {
-          "amount": "Amount",
-          "value": "Value"
         },
         "capitalDistributorClaimDialog": {
           "a11y": {
@@ -1094,13 +1094,13 @@
             "totalEarned": "Total earned"
           }
         },
-        "capitalDistributorRewardsNotConnected": {
-          "action": "Connect",
-          "description": "Connect your wallet to view your rewards.",
-          "heading": "Connect your wallet"
-        },
         "capitalDistributorRewardsPage": {
           "main": {
+            "connect": {
+              "action": "Connect",
+              "description": "Connect your wallet to view your rewards.",
+              "heading": "Connect your wallet"
+            },
             "title": "Rewards"
           }
         },
