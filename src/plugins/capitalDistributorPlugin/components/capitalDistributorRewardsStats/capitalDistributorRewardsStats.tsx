@@ -36,10 +36,8 @@ export const CapitalDistributorRewardsStats: React.FC<ICapitalDistributorRewards
     const { data: campaignStats } = useCampaignStats(campaignStatsParams, { enabled: address != null });
 
     // Assuming backend returns sorted by default
-    const latestClaimedCampaign = claimedCampaigns?.pages[0].data[0];
-    const latestClaimDate = latestClaimedCampaign?.claimTimestamp
-        ? latestClaimedCampaign.claimTimestamp * 1000
-        : undefined;
+    const { claimTimestamp: latestClaimTimestamp } = claimedCampaigns?.pages[0].data[0] ?? {};
+    const latestClaimDate = latestClaimTimestamp ? latestClaimTimestamp * 1000 : undefined;
 
     const formattedClaimDate = formatterUtils.formatDate(latestClaimDate, { format: DateFormat.RELATIVE });
 

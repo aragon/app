@@ -1,6 +1,6 @@
 import { Heading } from '@aragon/gov-ui-kit';
 
-export interface IStat {
+export interface IStatCardProps {
     /**
      * The value to display in the stat card.
      */
@@ -15,7 +15,7 @@ export interface IStat {
     suffix?: string;
 }
 
-export const StatCard: React.FC<IStat> = (props) => {
+export const StatCard: React.FC<IStatCardProps> = (props) => {
     const { value, suffix, label } = props;
 
     return (

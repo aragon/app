@@ -15,7 +15,9 @@ import {
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { CampaignStatus, type ICampaign } from '../../api/capitalDistributorService';
+import { capitalDistributorPlugin } from '../../constants/capitalDistributorPlugin';
 import { CapitalDistributorPluginDialogId } from '../../constants/capitalDistributorPluginDialogId';
+import { ICapitalDistributorClaimDialogParams } from '../../dialogs/capitalDistributorClaimDialog';
 
 export interface ICapitalDistributorCampaignListItemStructureProps {
     /**
@@ -36,6 +38,7 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
+    const plugin = useDaoPlugins({ daoId: id, subdomain: capitalDistributorPlugin.id })![0];
 
     const { amount, token, txHash, logo, title, description } = campaign;
 
@@ -50,12 +53,10 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
     const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[network].id });
     const addressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: txHash });
 
-    const capitalDistributorPlugin = useDaoPlugins({ daoId: id, subdomain: 'capital-distributor' })![0];
-
-    const handleOpenDialog = () =>
-        open(CapitalDistributorPluginDialogId.CLAIM, {
-            params: { campaign, pluginAddress: capitalDistributorPlugin.meta.address },
-        });
+    const handleOpenDialog = () => {
+        const dialogParams: ICapitalDistributorClaimDialogParams = { campaign, pluginAddress: plugin.meta.address };
+        open(CapitalDistributorPluginDialogId.CLAIM, { params: dialogParams });
+    };
 
     return (
         <DataList.Item
@@ -74,13 +75,13 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
             <div className="w-full border-t border-neutral-100 sm:hidden" />
             <div className="flex w-full items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                    <div className="flex min-w-[120px] flex-col gap-1">
+                    <div className="flex min-w-30 flex-col gap-1">
                         <h3 className="text-sm text-neutral-500 sm:text-base">
                             {t('app.plugins.capitalDistributor.capitalDistributorCampaignList.item.amount')}
                         </h3>
                         <p className="text-base text-neutral-800 sm:text-lg">{formattedAmount}</p>
                     </div>
-                    <div className="flex min-w-[120px] flex-col gap-1">
+                    <div className="flex min-w-30 flex-col gap-1">
                         <h3 className="text-sm text-neutral-500 sm:text-base">
                             {t('app.plugins.capitalDistributor.capitalDistributorCampaignList.item.value')}
                         </h3>

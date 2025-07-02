@@ -61,7 +61,7 @@ export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRe
             <Page.Aside>
                 <Page.AsideCard title={pluginName}>
                     {description && <p className="text-base text-gray-500">{description}</p>}
-                    {address && <CapitalDistributorRewardsStats initialParams={props.initialParams} />}
+                    {address && <CapitalDistributorRewardsStats initialParams={initialParams} />}
                     {links?.map(({ url, name }) => (
                         <Link key={url} href={url} isExternal={true} showUrl={true}>
                             {name}
