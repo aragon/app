@@ -9,7 +9,6 @@ describe('capitalDistributor service', () => {
         requestSpy.mockReset();
     });
 
-    //TODO: Check tests pass when using correct endpoints
     it('getCampaignsList fetches a paginated list campaign list of campaigns given a member address', async () => {
         const campaignsList = [generateCampaign({ id: 1 }), generateCampaign({ id: 2 })];
         const campaignsListResponse = generatePaginatedResponse({ data: campaignsList });

@@ -20,10 +20,6 @@ export interface ICampaign {
      */
     type: string;
     /**
-     * Logo associated with the campaign.
-     */
-    logo?: string;
-    /**
      * Resources associated with the campaign.
      */
     resources?: IResource[];

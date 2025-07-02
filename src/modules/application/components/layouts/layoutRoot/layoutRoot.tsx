@@ -1,5 +1,6 @@
 import { initPluginRegistry } from '@/initPluginRegistry';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
+import { fetchInterceptorUtils } from '@/modules/application/utils/fetchInterceptorUtils';
 import { translations } from '@/shared/constants/translations';
 import { headers } from 'next/headers';
 import NextTopLoader from 'nextjs-toploader';
@@ -17,6 +18,9 @@ export interface ILayoutRootProps {
      */
     children?: ReactNode;
 }
+
+// Intercept fetch requests if enabled on current environment
+fetchInterceptorUtils.intecept();
 
 export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const { children } = props;

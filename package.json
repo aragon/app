@@ -33,6 +33,7 @@
     "@walletconnect/core": "^2.21.3",
     "@walletconnect/utils": "^2.21.3",
     "classnames": "^2.5.1",
+    "deepmerge-ts": "^7.1.5",
     "framer-motion": "^12.19.1",
     "luxon": "^3.6.1",
     "next": "^15.3.4",

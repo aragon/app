@@ -40,7 +40,7 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
     const { open } = useDialogContext();
     const plugin = useDaoPlugins({ daoId: id, subdomain: capitalDistributorPlugin.id })![0];
 
-    const { amount, token, txHash, logo, title, description } = campaign;
+    const { amount, token, txHash, title, description } = campaign;
 
     const isClaimed = campaign.status === CampaignStatus.CLAIMED;
 
@@ -66,7 +66,7 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
             onClick={isClaimed ? undefined : handleOpenDialog}
         >
             <div className="flex w-full items-center gap-4">
-                <Avatar src={logo} size="lg" />
+                <Avatar src={token.logo} size="lg" />
                 <div className="flex flex-col gap-1">
                     <h3 className="text-lg text-neutral-800">{title}</h3>
                     <p className="line-clamp-1 text-neutral-500">{description}</p>
