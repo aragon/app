@@ -69,7 +69,6 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         ...amountField
     } = useFormField<IAssetInputFormData, 'amount'>('amount', {
         label: t('app.finance.transferAssetForm.amount.label'),
-        defaultValue: '',
         rules: {
             required: true,
             max: assetField.value?.amount,
@@ -86,7 +85,9 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
 
     const handleCloseDialog = () => {
         close();
-        // focus is handled when the asset value updates
+        setTimeout(() => {
+            inputRef.current?.focus();
+        }, 0);
     };
 
     const handleOpenDialog = () => {
@@ -103,20 +104,18 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         open(FinanceDialogId.ASSET_SELECTION, { params, onClose: handleCloseDialog });
     };
 
-    const { setValue } = useFormContext<IAssetInputFormData>();
-        const previousAssetRef = useRef<IAsset | undefined>(assetField.value);
+    const { setValue, clearErrors } = useFormContext<IAssetInputFormData>();
+    const previousAssetRef = useRef<IAsset | undefined>(assetField.value);
 
     useEffect(() => {
-        if (assetField.value && previousAssetRef.current?.token.address !== assetField.value.token.address) {
-            setValue(amountField.name, '');
-            inputRef.current?.focus();
-        } else if (assetField.value && !previousAssetRef.current) {
-            // first asset selection
-            inputRef.current?.focus();
+        if (previousAssetRef.current && previousAssetRef.current !== assetField.value) {
+            setValue(amountField.name, '', { shouldValidate: false });
+            clearErrors(amountField.name);
+            onAmountChange?.();
         }
 
         previousAssetRef.current = assetField.value;
-    }, [assetField.value, amountField.name, setValue]);
+    }, [assetField.value, amountField.name, setValue, clearErrors, onAmountChange]);
 
     const handleMaxAmount = (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
