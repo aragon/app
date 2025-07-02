@@ -1,19 +1,22 @@
-import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { InputText } from '@aragon/gov-ui-kit';
+import { addressUtils, InputText } from '@aragon/gov-ui-kit';
 import type { ICapitalDistributorClaimDialogForm } from '../capitalDistributorClaimDialogDefinitions';
 
 export interface ICapitalDistributorClaimDialogInputsProps {}
 
 export const CapitalDistributorClaimDialogInputs: React.FC<ICapitalDistributorClaimDialogInputsProps> = () => {
+    const { t } = useTranslations();
+
     const recipientField = useFormField<ICapitalDistributorClaimDialogForm, 'recipient'>('recipient', {
-        label: 'Recipient',
-        rules: { required: true },
+        label: t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.inputs.recipient'),
+        rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
     });
 
     return (
-        <WizardDialog.Step id="claim" order={2} meta={{ name: '' }}>
-            <InputText helpText="The address to get the payout" {...recipientField} />
-        </WizardDialog.Step>
+        <InputText
+            helpText={t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.inputs.helpText')}
+            {...recipientField}
+        />
     );
 };

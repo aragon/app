@@ -1078,6 +1078,10 @@
             "type": "Type",
             "value": "Value"
           },
+          "inputs": {
+            "helpText": "The address to get the payout",
+            "recipient": "Recipient"
+          },
           "submit": "Claim"
         },
         "capitalDistributorClaimTransactionDialog": {

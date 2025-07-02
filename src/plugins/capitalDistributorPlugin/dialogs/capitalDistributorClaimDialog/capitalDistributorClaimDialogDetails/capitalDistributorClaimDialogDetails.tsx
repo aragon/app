@@ -1,6 +1,5 @@
 import type { ICampaign } from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import { Card, DateFormat, formatterUtils, Heading, Link, NumberFormat } from '@aragon/gov-ui-kit';
 import React from 'react';
 import { formatUnits } from 'viem';
@@ -33,26 +32,24 @@ export const CapitalDistributorClaimDialogDetails: React.FC<ICapitalDistributorC
         time: formattedTimeLeft,
     });
 
-    const claimTimeDetails = [
+    const amountDetails = [
+        { label: 'amount', value: `${formattedAmount} ${token.symbol}` },
+        { label: 'value', value: formattedClaimValue },
+    ];
+    const metaDetails = [
+        { label: 'type', value: type },
+        { label: 'status', value: claimableLabel },
+    ];
+    const timeDetails = [
         { label: 'claimable', value: timeLeftValue },
         { label: 'deadline', value: formattedDeadline },
     ];
 
-    const claimDetails = [
-        [
-            { label: 'amount', value: `${formattedAmount} ${token.symbol}` },
-            { label: 'value', value: formattedClaimValue },
-        ],
-        [
-            { label: 'type', value: type },
-            { label: 'status', value: claimableLabel },
-        ],
-    ];
-
-    const completeTimeDetails = endTime !== 0 ? [...claimDetails, claimTimeDetails] : claimDetails;
+    const completeTimeDetails =
+        endTime !== 0 ? [amountDetails, metaDetails, timeDetails] : [amountDetails, metaDetails];
 
     return (
-        <WizardDialog.Step id="overview" order={1} meta={{ name: '' }} className="flex flex-col gap-4">
+        <div className="flex grow flex-col gap-4">
             <Card className="flex grow flex-col gap-3 border border-neutral-100 p-6">
                 {completeTimeDetails.map((detailsGroup, index) => (
                     <React.Fragment key={index}>
@@ -79,6 +76,6 @@ export const CapitalDistributorClaimDialogDetails: React.FC<ICapitalDistributorC
                     </div>
                 </Card>
             )}
-        </WizardDialog.Step>
+        </div>
     );
 };
