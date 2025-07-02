@@ -17,7 +17,7 @@ import { formatUnits } from 'viem';
 import { CampaignStatus, type ICampaign } from '../../api/capitalDistributorService';
 import { capitalDistributorPlugin } from '../../constants/capitalDistributorPlugin';
 import { CapitalDistributorPluginDialogId } from '../../constants/capitalDistributorPluginDialogId';
-import { ICapitalDistributorClaimDialogParams } from '../../dialogs/capitalDistributorClaimDialog';
+import type { ICapitalDistributorClaimDialogParams } from '../../dialogs/capitalDistributorClaimDialog';
 
 export interface ICapitalDistributorCampaignListItemStructureProps {
     /**
