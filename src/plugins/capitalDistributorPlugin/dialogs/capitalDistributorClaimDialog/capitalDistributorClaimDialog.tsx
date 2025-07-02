@@ -7,7 +7,7 @@ import { invariant } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import type { ICampaign } from '../../api/capitalDistributorService';
 import { CapitalDistributorPluginDialogId } from '../../constants/capitalDistributorPluginDialogId';
-import { ICapitalDistributorClaimTransactionDialogParams } from '../capitalDistributorClaimTransactionDialog';
+import type { ICapitalDistributorClaimTransactionDialogParams } from '../capitalDistributorClaimTransactionDialog';
 import type { ICapitalDistributorClaimDialogForm } from './capitalDistributorClaimDialogDefinitions';
 import { CapitalDistributorClaimDialogDetails } from './capitalDistributorClaimDialogDetails';
 import { CapitalDistributorClaimDialogInputs } from './capitalDistributorClaimDialogInputs';
@@ -30,8 +30,8 @@ export const CapitalDistributorClaimDialog: React.FC<ICapitalDistributorClaimDia
     const { location } = props;
     invariant(location.params != null, 'CapitalDistributorClaimDialog: params must be defined');
     const { campaign, pluginAddress } = location.params;
-    const { address } = useAccount();
 
+    const { address } = useAccount();
     const { t } = useTranslations();
     const { open } = useDialogContext();
 

@@ -74,8 +74,8 @@ export const CapitalDistributorRewardsStats: React.FC<ICapitalDistributorRewards
 
     return (
         <div className="grid w-full grid-cols-2 gap-3">
-            {stats.map((stat) => (
-                <StatCard key={stat.label} value={stat.value} suffix={stat.suffix} label={stat.label} />
+            {stats.map(({ label, value, suffix }) => (
+                <StatCard key={label} value={value} suffix={suffix} label={label} />
             ))}
         </div>
     );
