@@ -84,7 +84,9 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     };
 
     const handleCloseDialog = () => {
-        close();
+        requestAnimationFrame(() => {
+            inputRef.current?.focus();
+        });
     };
 
     const handleOpenDialog = () => {
@@ -96,23 +98,24 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         const params: IAssetSelectionDialogParams = {
             initialParams: fetchAssetsParams,
             onAssetClick,
-            close: handleCloseDialog,
+            close,
         };
         open(FinanceDialogId.ASSET_SELECTION, { params, onClose: handleCloseDialog });
     };
 
     const { setValue, clearErrors } = useFormContext<IAssetInputFormData>();
-    const previousAssetRef = useRef<IAsset | undefined>(assetField.value);
+    const previousAssetIdRef = useRef<string | undefined>(assetField.value?.token.address);
 
     useEffect(() => {
-        if (previousAssetRef.current && previousAssetRef.current !== assetField.value) {
+        const currentAssetId = assetField.value?.token.address;
+        if (previousAssetIdRef.current && previousAssetIdRef.current !== currentAssetId) {
             setValue(amountField.name, '', { shouldValidate: false });
             clearErrors(amountField.name);
             onAmountChange?.();
         }
 
-        previousAssetRef.current = assetField.value;
-    }, [assetField.value, amountField.name, setValue, clearErrors, onAmountChange]);
+        previousAssetIdRef.current = currentAssetId;
+    }, [assetField.value?.token.address, amountField.name, setValue, clearErrors, onAmountChange]);
 
     useLayoutEffect(() => {
         if (assetField.value) {
