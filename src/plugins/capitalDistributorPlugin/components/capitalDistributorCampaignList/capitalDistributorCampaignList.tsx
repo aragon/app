@@ -1,20 +1,13 @@
 import type { IDao } from '@/shared/api/daoService';
-import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
-import { DataListContainer, DataListPagination, DataListRoot } from '@aragon/gov-ui-kit';
+import { DataListContainer, DataListPagination, DataListRoot, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
+import { useState } from 'react';
 import { useAccount } from 'wagmi';
-import {
-    type CampaignStatus,
-    type IGetCampaignsListParams,
-    useCampaignList,
-} from '../../api/capitalDistributorService';
+import { CampaignStatus, type IGetCampaignsListParams, useCampaignList } from '../../api/capitalDistributorService';
 import { CapitalDistributorCampaignListItem } from '../capitalDistributorCampaignListItem';
 
 export interface ICapitalDistributorCampaignListProps {
-    /**
-     * The status of the campaigns to filter by.
-     */
-    campaignFilter: CampaignStatus;
     /**
      * The DAO with the capital-distributor plugin installed.
      */
@@ -26,21 +19,23 @@ export interface ICapitalDistributorCampaignListProps {
 }
 
 export const CapitalDistributorCampaignList: React.FC<ICapitalDistributorCampaignListProps> = (props) => {
-    const { campaignFilter, dao, initialParams } = props;
+    const { dao, initialParams } = props;
 
     const { address } = useAccount();
     const { t } = useTranslations();
 
-    const campaignParams = {
-        queryParams: { ...initialParams?.queryParams, memberAddress: address!, status: campaignFilter },
-    };
+    const [campaignFilter, setCampaignFilter] = useState(CampaignStatus.CLAIMABLE);
+
+    const handleToggleChange = (value?: string) => (value ? setCampaignFilter(value as CampaignStatus) : undefined);
+
+    const campaignQueryParams = { ...initialParams?.queryParams, memberAddress: address!, status: campaignFilter };
     const {
         data: campaignData,
         fetchNextPage,
         status,
         fetchStatus,
         isFetchingNextPage,
-    } = useCampaignList(campaignParams, { enabled: address != null });
+    } = useCampaignList({ queryParams: campaignQueryParams }, { enabled: address != null });
 
     const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
 
@@ -60,23 +55,40 @@ export const CapitalDistributorCampaignList: React.FC<ICapitalDistributorCampaig
     const campaignList = campaignData?.pages.flatMap((page) => page.data);
 
     return (
-        <DataListRoot
-            entityLabel={t('app.plugins.capitalDistributor.capitalDistributorCampaignList.entity')}
-            onLoadMore={fetchNextPage}
-            state={state}
-            pageSize={pageSize}
-            itemsCount={itemsCount}
-        >
-            <DataListContainer
-                errorState={errorState}
-                emptyState={emptyState}
-                SkeletonElement={CapitalDistributorCampaignListItem.Skeleton}
+        <div className="flex flex-col gap-3">
+            <ToggleGroup
+                className="flex gap-3"
+                isMultiSelect={false}
+                onChange={handleToggleChange}
+                value={campaignFilter}
             >
-                {campaignList?.map((campaign) => (
-                    <CapitalDistributorCampaignListItem.Structure key={campaign.id} campaign={campaign} dao={dao} />
-                ))}
-            </DataListContainer>
-            <DataListPagination />
-        </DataListRoot>
+                <Toggle
+                    value={CampaignStatus.CLAIMABLE}
+                    label={t('app.plugins.capitalDistributor.capitalDistributorCampaignList.filter.claimable')}
+                />
+                <Toggle
+                    value={CampaignStatus.CLAIMED}
+                    label={t('app.plugins.capitalDistributor.capitalDistributorCampaignList.filter.claimed')}
+                />
+            </ToggleGroup>
+            <DataListRoot
+                entityLabel={t('app.plugins.capitalDistributor.capitalDistributorCampaignList.entity')}
+                onLoadMore={fetchNextPage}
+                state={state}
+                pageSize={pageSize}
+                itemsCount={itemsCount}
+            >
+                <DataListContainer
+                    errorState={errorState}
+                    emptyState={emptyState}
+                    SkeletonElement={CapitalDistributorCampaignListItem.Skeleton}
+                >
+                    {campaignList?.map((campaign) => (
+                        <CapitalDistributorCampaignListItem.Structure key={campaign.id} campaign={campaign} dao={dao} />
+                    ))}
+                </DataListContainer>
+                <DataListPagination />
+            </DataListRoot>
+        </div>
     );
 };

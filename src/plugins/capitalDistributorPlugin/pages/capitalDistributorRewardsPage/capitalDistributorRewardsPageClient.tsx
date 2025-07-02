@@ -3,13 +3,15 @@
 import { type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { Link } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
-import { CampaignStatus, type IGetCampaignsListParams } from '../../api/capitalDistributorService';
+import { type IGetCampaignsListParams } from '../../api/capitalDistributorService';
 import { CapitalDistributorCampaignList } from '../../components/capitalDistributorCampaignList';
-import { CapitalDistributorRewardsAside } from '../../components/capitalDistributorRewardsAside/capitalDistributorRewardsAside';
-import { CapitalDistributorRewardsNotConnected } from '../../components/capitalDistributorRewardsNotConnected/capitalDistributorRewardsNotConnected';
+import { CapitalDistributorRewardsNotConnected } from '../../components/capitalDistributorRewardsNotConnected';
+import { CapitalDistributorRewardsStats } from '../../components/capitalDistributorRewardsStats';
+import { capitalDistributorPlugin } from '../../constants/capitalDistributorPlugin';
 
 export interface ICapitalDistributorRewardsPageClientProps {
     /**
@@ -28,49 +30,27 @@ export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRe
     const { address } = useAccount();
     const { t } = useTranslations();
 
-    const [campaignFilter, setCampaignFilter] = useState<CampaignStatus>(CampaignStatus.CLAIMABLE);
+    const plugin = useDaoPlugins({ daoId: dao.id, subdomain: capitalDistributorPlugin.id })![0];
 
-    const handleToggleChange = (value?: string) => {
-        if (value) {
-            setCampaignFilter(value as CampaignStatus);
-        }
-    };
+    const pluginName = daoUtils.getPluginName(plugin.meta);
+    const { description, links } = plugin.meta;
 
     return (
         <Page.Content>
             <Page.Main title={t('app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.title')}>
                 {!address && <CapitalDistributorRewardsNotConnected />}
-                {address && (
-                    <div className="flex flex-col gap-3">
-                        <ToggleGroup
-                            className="flex gap-3"
-                            isMultiSelect={false}
-                            onChange={handleToggleChange}
-                            value={campaignFilter}
-                        >
-                            <Toggle
-                                value={CampaignStatus.CLAIMABLE}
-                                label={t(
-                                    'app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.tabs.claimable',
-                                )}
-                            />
-                            <Toggle
-                                value={CampaignStatus.CLAIMED}
-                                label={t(
-                                    'app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.tabs.claimed',
-                                )}
-                            />
-                        </ToggleGroup>
-                        <CapitalDistributorCampaignList
-                            initialParams={initialParams}
-                            campaignFilter={campaignFilter}
-                            dao={dao}
-                        />
-                    </div>
-                )}
+                {address && <CapitalDistributorCampaignList initialParams={initialParams} dao={dao} />}
             </Page.Main>
             <Page.Aside>
-                <CapitalDistributorRewardsAside daoId={dao.id} initialParams={initialParams} />
+                <Page.AsideCard title={pluginName}>
+                    {description && <p className="text-base text-gray-500">{description}</p>}
+                    {address && <CapitalDistributorRewardsStats initialParams={props.initialParams} />}
+                    {links?.map(({ url, name }) => (
+                        <Link key={url} href={url} isExternal={true} showUrl={true}>
+                            {name}
+                        </Link>
+                    ))}
+                </Page.AsideCard>
             </Page.Aside>
         </Page.Content>
     );

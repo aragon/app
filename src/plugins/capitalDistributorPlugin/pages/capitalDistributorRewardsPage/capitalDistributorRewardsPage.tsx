@@ -12,11 +12,14 @@ import { CapitalDistributorRewardsPageClient } from './capitalDistributorRewards
 
 export interface ICapitalDistributorRewardsPageProps extends IDaoPluginPageProps {}
 
-const getConnectedAccount = (wagmiState: ReturnType<typeof cookieToInitialState>): string | undefined => {
+const getConnectedAccount = (cookieHeader: string | null): string | undefined => {
+    const wagmiState = cookieToInitialState(wagmiConfig, cookieHeader);
     const { connections, current } = wagmiState ?? {};
+
     if (connections instanceof Map && current) {
         return connections.get(current)?.accounts[0];
     }
+
     return undefined;
 };
 
@@ -25,23 +28,15 @@ const campaignsPerPage = 5;
 export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsPageProps> = async (props) => {
     const { dao } = props;
 
-    const cookieHeader = (await headers()).get('cookie');
-    const wagmiInitialState = cookieToInitialState(wagmiConfig, cookieHeader);
-
-    const userAddress = getConnectedAccount(wagmiInitialState);
-
-    const initialParams = userAddress
-        ? {
-              queryParams: {
-                  pageSize: campaignsPerPage,
-                  page: 1,
-                  memberAddress: userAddress,
-                  status: CampaignStatus.CLAIMABLE,
-              },
-          }
-        : undefined;
-
     const queryClient = new QueryClient();
+
+    const cookieHeader = (await headers()).get('cookie');
+    const userAddress = getConnectedAccount(cookieHeader);
+
+    const defaultQueryParams = { pageSize: campaignsPerPage, page: 1, status: CampaignStatus.CLAIMABLE };
+    const initialParams = userAddress
+        ? { queryParams: { ...defaultQueryParams, memberAddress: userAddress } }
+        : undefined;
 
     queryClient.setQueryData(daoOptions({ urlParams: { id: dao.id } }).queryKey, dao);
 
