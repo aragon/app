@@ -4,7 +4,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, IconType, formatterUtils, InputContainer, NumberFormat } from '@aragon/gov-ui-kit';
 import { useFormContext } from 'react-hook-form';
 import classNames from 'classnames';
-import { type ChangeEvent, type MouseEvent, useId, useRef } from 'react';
+import { type ChangeEvent, type MouseEvent, useEffect, useId, useRef } from 'react';
 import type { IAsset } from '../../api/financeService';
 import { FinanceDialogId } from '../../constants/financeDialogId';
 import type { IAssetSelectionDialogParams } from '../../dialogs/assetSelectionDialog';
@@ -94,20 +94,25 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
             return;
         }
 
-        const handleSelectAsset = (asset: IAsset) => {
-            assetField.onChange(asset);
-            setValue(amountField.name, '');
-        };
-
+        const { onChange: onAssetClick } = assetField;
         const params: IAssetSelectionDialogParams = {
             initialParams: fetchAssetsParams,
-            onAssetClick: handleSelectAsset,
+            onAssetClick,
             close: handleCloseDialog,
         };
         open(FinanceDialogId.ASSET_SELECTION, { params, onClose: handleCloseDialog });
     };
 
     const { setValue } = useFormContext<IAssetInputFormData>();
+    const previousAssetRef = useRef<IAsset | undefined>(assetField.value);
+
+    useEffect(() => {
+        if (previousAssetRef.current && previousAssetRef.current !== assetField.value) {
+            setValue(amountField.name, '');
+        }
+
+        previousAssetRef.current = assetField.value;
+    }, [assetField.value, amountField.name, setValue]);
 
     const handleMaxAmount = (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
