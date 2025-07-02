@@ -1,7 +1,7 @@
 import type { ICampaign } from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
-import { Card, formatterUtils, Heading, Link, NumberFormat } from '@aragon/gov-ui-kit';
+import { Card, DateFormat, formatterUtils, Heading, Link, NumberFormat } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { CapitalDistributorClaimDialogDetailsInfo } from './capitalDistributorClaimDialogDetailsInfo';
 
@@ -16,13 +16,16 @@ export const CapitalDistributorClaimDialogDetails: React.FC<ICapitalDistributorC
     const { campaign } = props;
     const { resources, type, token, amount, endTime } = campaign;
 
+    const { t } = useTranslations();
+
     const parsedAmount = formatUnits(BigInt(amount), token.decimals);
     const formattedAmount = formatterUtils.formatNumber(parsedAmount, { format: NumberFormat.TOKEN_AMOUNT_SHORT })!;
 
     const claimValue = Number(parsedAmount) * Number(token.priceUsd);
     const formattedClaimValue = formatterUtils.formatNumber(claimValue, { format: NumberFormat.FIAT_TOTAL_SHORT });
 
-    const { t } = useTranslations();
+    const formattedTimeLeft = formatterUtils.formatDate(endTime * 1000, { format: DateFormat.DURATION });
+    const formattedDeadline = formatterUtils.formatDate(endTime * 1000, { format: DateFormat.YEAR_MONTH_DAY });
 
     return (
         <WizardDialog.Step id="overview" order={1} meta={{ name: '' }} className="flex flex-col gap-4">
@@ -65,7 +68,10 @@ export const CapitalDistributorClaimDialogDetails: React.FC<ICapitalDistributorC
                                     label: t(
                                         'app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.claimable',
                                     ),
-                                    value: '207 days left',
+                                    value: t(
+                                        'app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.timeLeft',
+                                        { time: formattedTimeLeft },
+                                    ),
                                 }}
                             />
                             <CapitalDistributorClaimDialogDetailsInfo
@@ -73,7 +79,7 @@ export const CapitalDistributorClaimDialogDetails: React.FC<ICapitalDistributorC
                                     label: t(
                                         'app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.deadline',
                                     ),
-                                    value: '30.12.2025',
+                                    value: formattedDeadline,
                                 }}
                             />
                         </div>

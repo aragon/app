@@ -1074,6 +1074,7 @@
             "deadline": "Deadline",
             "resources": "Resources",
             "status": "Status",
+            "timeLeft": "{{time}} left",
             "type": "Type",
             "value": "Value"
           },

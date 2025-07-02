@@ -1,5 +1,6 @@
 import { generateToken } from '@/modules/finance/testUtils';
-import type { CampaignStatus, ICampaign, ICapitalDistributorStats } from './domain';
+import { DateTime } from 'luxon';
+import { CampaignStatus, type ICampaign, type ICapitalDistributorStats } from './domain';
 
 export const mockCampaigns: ICampaign[] = [
     {
@@ -14,7 +15,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimed' as CampaignStatus,
+        status: CampaignStatus.CLAIMED,
         token: generateToken({
             priceUsd: '1.00',
             symbol: 'DAI',
@@ -33,7 +34,7 @@ export const mockCampaigns: ICampaign[] = [
         title: 'Staking Rewards',
         description: 'Reward for staking tokens',
         type: 'bounty',
-        status: 'claimed' as CampaignStatus,
+        status: CampaignStatus.CLAIMED,
         token: generateToken({
             priceUsd: '1.00',
             symbol: 'USDC',
@@ -58,7 +59,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimable' as CampaignStatus,
+        status: CampaignStatus.CLAIMABLE,
         token: generateToken({
             priceUsd: '1.00',
             symbol: 'USDC',
@@ -67,7 +68,7 @@ export const mockCampaigns: ICampaign[] = [
         }),
         amount: '309840000000000000000',
         startTime: 1750861880,
-        endTime: 1751380280,
+        endTime: DateTime.now().plus({ hours: 17 }).toSeconds(),
         active: true,
     },
     {
@@ -81,7 +82,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimed' as CampaignStatus,
+        status: CampaignStatus.CLAIMED,
         token: generateToken({
             priceUsd: '1.00',
             symbol: 'DAI',
@@ -100,7 +101,7 @@ export const mockCampaigns: ICampaign[] = [
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'retro',
-        status: 'claimable' as CampaignStatus,
+        status: CampaignStatus.CLAIMABLE,
         token: generateToken({
             priceUsd: '1.00',
             symbol: 'USDC',
@@ -117,7 +118,7 @@ export const mockCampaigns: ICampaign[] = [
         title: 'Staking Rewards',
         description: 'Reward for staking tokens',
         type: 'reward',
-        status: 'claimable' as CampaignStatus,
+        status: CampaignStatus.CLAIMABLE,
         token: generateToken({
             priceUsd: '0.33',
             symbol: 'ARB',
@@ -134,7 +135,7 @@ export const mockCampaigns: ICampaign[] = [
         title: 'Staking Rewards',
         description: 'Reward for staking tokens',
         type: 'bounty',
-        status: 'claimed' as CampaignStatus,
+        status: CampaignStatus.CLAIMED,
         token: generateToken({
             priceUsd: '1929',
             symbol: 'ETH',
@@ -153,7 +154,7 @@ export const mockCampaigns: ICampaign[] = [
         title: 'Staking Rewards',
         description: 'Reward for staking tokens',
         type: 'bonus',
-        status: 'claimed' as CampaignStatus,
+        status: CampaignStatus.CLAIMED,
         token: generateToken({
             priceUsd: '1929',
             symbol: 'ETH',
@@ -178,7 +179,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimed' as CampaignStatus,
+        status: CampaignStatus.CLAIMED,
         token: generateToken({
             priceUsd: '1.00',
             symbol: 'USDC',
@@ -197,7 +198,7 @@ export const mockCampaigns: ICampaign[] = [
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'bonus',
-        status: 'claimable' as CampaignStatus,
+        status: CampaignStatus.CLAIMABLE,
         token: generateToken({
             priceUsd: '0.33',
             symbol: 'ARB',
@@ -206,7 +207,7 @@ export const mockCampaigns: ICampaign[] = [
         }),
         amount: '637750000000000000000',
         startTime: 1750170680,
-        endTime: 1751812280,
+        endTime: DateTime.now().plus({ days: 55 }).toSeconds(),
         active: true,
     },
     {
@@ -220,7 +221,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimable' as CampaignStatus,
+        status: CampaignStatus.CLAIMABLE,
         token: generateToken({
             priceUsd: '1.00',
             symbol: 'USDC',
@@ -229,7 +230,7 @@ export const mockCampaigns: ICampaign[] = [
         }),
         amount: '547980000000000000000',
         startTime: 1750429880,
-        endTime: 1751121080,
+        endTime: DateTime.now().plus({ months: 3 }).toSeconds(),
         active: true,
     },
     {
@@ -237,7 +238,7 @@ export const mockCampaigns: ICampaign[] = [
         title: 'Bug Bounty',
         description: 'Bounty for finding a critical bug',
         type: 'retro',
-        status: 'claimed' as CampaignStatus,
+        status: CampaignStatus.CLAIMED,
         token: generateToken({
             priceUsd: '1.00',
             symbol: 'USDC',
@@ -262,7 +263,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimable' as CampaignStatus,
+        status: CampaignStatus.CLAIMABLE,
         token: generateToken({
             priceUsd: '1.00',
             symbol: 'DAI',
@@ -271,7 +272,7 @@ export const mockCampaigns: ICampaign[] = [
         }),
         amount: '837870000000000000000',
         startTime: 1750170680,
-        endTime: 1751034680,
+        endTime: DateTime.now().plus({ minutes: 24 }).toSeconds(),
         active: true,
     },
     {
@@ -279,7 +280,7 @@ export const mockCampaigns: ICampaign[] = [
         title: 'Community Rewards',
         description: 'Reward for community engagement',
         type: 'reward',
-        status: 'claimed' as CampaignStatus,
+        status: CampaignStatus.CLAIMED,
         token: generateToken({
             priceUsd: '1.00',
             symbol: 'DAI',
@@ -304,7 +305,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimable' as CampaignStatus,
+        status: CampaignStatus.CLAIMABLE,
         token: generateToken({
             priceUsd: '1.00',
             symbol: 'USDC',
@@ -313,7 +314,7 @@ export const mockCampaigns: ICampaign[] = [
         }),
         amount: '624450000000000000000',
         startTime: 1750170680,
-        endTime: 1751293880,
+        endTime: DateTime.now().plus({ hours: 2 }).toSeconds(),
         active: true,
     },
     {
@@ -327,7 +328,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimed' as CampaignStatus,
+        status: CampaignStatus.CLAIMED,
         token: generateToken({
             priceUsd: '1.00',
             symbol: 'DAI',
@@ -352,7 +353,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimed' as CampaignStatus,
+        status: CampaignStatus.CLAIMED,
         token: generateToken({
             priceUsd: '1939',
             symbol: 'ETH',
@@ -377,7 +378,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimable' as CampaignStatus,
+        status: CampaignStatus.CLAIMABLE,
         token: generateToken({
             priceUsd: '1.00',
             symbol: 'USDC',
@@ -400,7 +401,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimed' as CampaignStatus,
+        status: CampaignStatus.CLAIMED,
         token: generateToken({
             priceUsd: '1.00',
             symbol: 'DAI',
@@ -425,7 +426,7 @@ export const mockCampaigns: ICampaign[] = [
                 url: 'https://aragon.org',
             },
         ],
-        status: 'claimed' as CampaignStatus,
+        status: CampaignStatus.CLAIMED,
         token: generateToken({
             priceUsd: '0.33',
             symbol: 'ARB',
