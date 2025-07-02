@@ -1,4 +1,5 @@
 import type { IToken } from '@/modules/finance/api/financeService';
+import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface ICapitalDistributorClaimDialogDetailsInfoProps {
     /**
@@ -12,11 +13,15 @@ export const CapitalDistributorClaimDialogDetailsInfo: React.FC<ICapitalDistribu
 ) => {
     const { info } = props;
 
+    const { t } = useTranslations();
+
     const { label, value } = info;
 
     return (
         <div className="flex grow basis-0 flex-col gap-1">
-            <p className="text-sm leading-tight font-normal text-neutral-500">{label}</p>
+            <p className="text-sm leading-tight font-normal text-neutral-500">
+                {t(`app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.${label}`)}
+            </p>
             <p className="text-base leading-normal font-normal text-neutral-800 first-letter:uppercase">{value}</p>
         </div>
     );

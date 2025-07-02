@@ -2,6 +2,7 @@ import type { ICampaign } from '@/plugins/capitalDistributorPlugin/api/capitalDi
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import { Card, DateFormat, formatterUtils, Heading, Link, NumberFormat } from '@aragon/gov-ui-kit';
+import React from 'react';
 import { formatUnits } from 'viem';
 import { CapitalDistributorClaimDialogDetailsInfo } from './capitalDistributorClaimDialogDetailsInfo';
 
@@ -27,64 +28,42 @@ export const CapitalDistributorClaimDialogDetails: React.FC<ICapitalDistributorC
     const formattedTimeLeft = formatterUtils.formatDate(endTime * 1000, { format: DateFormat.DURATION });
     const formattedDeadline = formatterUtils.formatDate(endTime * 1000, { format: DateFormat.YEAR_MONTH_DAY });
 
+    const claimableLabel = t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.claimable');
+    const timeLeftValue = t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.timeLeft', {
+        time: formattedTimeLeft,
+    });
+
+    const claimTimeDetails = [
+        { label: 'claimable', value: timeLeftValue },
+        { label: 'deadline', value: formattedDeadline },
+    ];
+
+    const claimDetails = [
+        [
+            { label: 'amount', value: `${formattedAmount} ${token.symbol}` },
+            { label: 'value', value: formattedClaimValue },
+        ],
+        [
+            { label: 'type', value: type },
+            { label: 'status', value: claimableLabel },
+        ],
+    ];
+
+    const completeTimeDetails = endTime !== 0 ? [...claimDetails, claimTimeDetails] : claimDetails;
+
     return (
         <WizardDialog.Step id="overview" order={1} meta={{ name: '' }} className="flex flex-col gap-4">
             <Card className="flex grow flex-col gap-3 border border-neutral-100 p-6">
-                <div className="flex flex-row">
-                    <CapitalDistributorClaimDialogDetailsInfo
-                        info={{
-                            label: t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.amount'),
-                            value: `${formattedAmount} ${token.symbol}`,
-                        }}
-                    />
-                    <CapitalDistributorClaimDialogDetailsInfo
-                        info={{
-                            label: t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.value'),
-                            value: formattedClaimValue,
-                        }}
-                    />
-                </div>
-                <div className="h-[1px] w-full bg-neutral-100" />
-                <div className="flex flex-row">
-                    <CapitalDistributorClaimDialogDetailsInfo
-                        info={{
-                            label: t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.type'),
-                            value: type,
-                        }}
-                    />
-                    <CapitalDistributorClaimDialogDetailsInfo
-                        info={{
-                            label: t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.status'),
-                            value: t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.claimable'),
-                        }}
-                    />
-                </div>
-                {endTime !== 0 && (
-                    <>
-                        <div className="h-[1px] w-full bg-neutral-100" />
+                {completeTimeDetails.map((detailsGroup, index) => (
+                    <React.Fragment key={index}>
                         <div className="flex flex-row">
-                            <CapitalDistributorClaimDialogDetailsInfo
-                                info={{
-                                    label: t(
-                                        'app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.claimable',
-                                    ),
-                                    value: t(
-                                        'app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.timeLeft',
-                                        { time: formattedTimeLeft },
-                                    ),
-                                }}
-                            />
-                            <CapitalDistributorClaimDialogDetailsInfo
-                                info={{
-                                    label: t(
-                                        'app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.deadline',
-                                    ),
-                                    value: formattedDeadline,
-                                }}
-                            />
+                            {detailsGroup.map((details) => (
+                                <CapitalDistributorClaimDialogDetailsInfo key={details.label} info={details} />
+                            ))}
                         </div>
-                    </>
-                )}
+                        {index !== completeTimeDetails.length - 1 && <div className="h-[1px] w-full bg-neutral-100" />}
+                    </React.Fragment>
+                ))}
             </Card>
             {resources != null && resources.length > 0 && (
                 <Card className="flex flex-col gap-3 border border-neutral-100 p-6">
