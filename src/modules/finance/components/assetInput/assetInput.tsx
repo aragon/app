@@ -86,7 +86,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
 
     const handleCloseDialog = () => {
         close();
-        inputRef.current?.focus();
+        // focus is handled when the asset value updates
     };
 
     const handleOpenDialog = () => {
@@ -104,11 +104,15 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     };
 
     const { setValue } = useFormContext<IAssetInputFormData>();
-    const previousAssetRef = useRef<IAsset | undefined>(assetField.value);
+        const previousAssetRef = useRef<IAsset | undefined>(assetField.value);
 
     useEffect(() => {
-        if (previousAssetRef.current && previousAssetRef.current !== assetField.value) {
+        if (assetField.value && previousAssetRef.current?.token.address !== assetField.value.token.address) {
             setValue(amountField.name, '');
+            inputRef.current?.focus();
+        } else if (assetField.value && !previousAssetRef.current) {
+            // first asset selection
+            inputRef.current?.focus();
         }
 
         previousAssetRef.current = assetField.value;
