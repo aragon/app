@@ -4,11 +4,12 @@ import { AdvancedDateInputDuration } from '@/shared/components/forms/advancedDat
 import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Card, Dialog, InputContainer, invariant, RadioCard, RadioGroup, Switch } from '@aragon/gov-ui-kit';
+import { Card, Dialog, InputContainer, invariant, Switch } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { ProcessStageType } from '../../components/createProcessForm';
 import type { ISetupStageSettingsForm } from './setupStageSettingsDialogDefinitions';
+import { StageTypeField } from '@/modules/createDao/dialogs/setupStageSettingsDialog/fields/stageTypeField/stageTypeField';
 
 export interface ISetupStageSettingsDialogParams {
     /**
@@ -47,24 +48,10 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (pro
     const formMethods = useForm<ISetupStageSettingsForm>({ mode: 'onTouched', defaultValues });
     const { handleSubmit, setValue, control } = formMethods;
 
-    const {
-        value: stageType,
-        onChange: onTypeChange,
-        ...stageTypeField
-    } = useFormField<ISetupStageSettingsForm, 'type'>('type', {
-        label: t('app.createDao.setupStageSettingsDialog.governanceType.label'),
-        defaultValue: ProcessStageType.NORMAL,
+    const stageType = useWatch<ISetupStageSettingsForm, 'type'>({
+        name: 'type',
         control,
     });
-
-    const handleTypeChange = (value: string) => {
-        onTypeChange(value);
-
-        // Make sure earlyStageAdvance is false when stage type is optimistic or timelock
-        if (value === ProcessStageType.OPTIMISTIC) {
-            setValue(`earlyStageAdvance`, false);
-        }
-    };
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
@@ -103,33 +90,12 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (pro
 
     const labelContext = isOptimisticStage ? 'veto' : 'approve';
 
-    // Filter out timelocks as we are not showing them in this part of the UI
-    const availableProcessesTypes = Object.values(ProcessStageType).filter(
-        (type) => type !== ProcessStageType.TIMELOCK,
-    );
-
     return (
         <FormProvider {...formMethods}>
             <Dialog.Header title={t('app.createDao.setupStageSettingsDialog.title')} />
             <Dialog.Content>
                 <form className="flex flex-col gap-6 py-4" onSubmit={handleSubmit(onFormSubmit)} id={formId}>
-                    <RadioGroup
-                        value={stageType}
-                        onValueChange={handleTypeChange}
-                        helpText={t('app.createDao.setupStageSettingsDialog.governanceType.helpText')}
-                        {...stageTypeField}
-                    >
-                        {availableProcessesTypes.map((type) => (
-                            <RadioCard
-                                key={type}
-                                label={t(`app.createDao.setupStageSettingsDialog.governanceType.${type}.label`)}
-                                description={t(
-                                    `app.createDao.setupStageSettingsDialog.governanceType.${type}.description`,
-                                )}
-                                value={type}
-                            />
-                        ))}
-                    </RadioGroup>
+                    <StageTypeField />
                     {bodyCount > 0 && (
                         <NumberProgressInput
                             label={t(

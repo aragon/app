@@ -460,19 +460,8 @@
           "infoText": "Recommended minimum expiration time is 7 days.",
           "label": "Stage expiration"
         },
+        "fields": {},
 
-        "governanceType": {
-          "NORMAL": {
-            "description": "Proposals pass the stage only if approved.",
-            "label": "Approval"
-          },
-          "OPTIMISTIC": {
-            "description": "Proposals pass the stage unless vetoed.",
-            "label": "Veto"
-          },
-          "helpText": "This will determine the role that governance plays in the stage.",
-          "label": "Governance type"
-        },
         "submit": "Save",
         "title": "Settings",
         "votingPeriod": {
@@ -508,6 +497,18 @@
           "infoText": "Recommended minimum voting period is 7 days.",
           "label": "Voting period"
         }
+      },
+      "stageTypeField": {
+        "NORMAL": {
+          "description": "Proposals pass the stage only if approved.",
+          "label": "Approval"
+        },
+        "OPTIMISTIC": {
+          "description": "Proposals pass the stage unless vetoed.",
+          "label": "Veto"
+        },
+        "helpText": "This will determine the role that governance plays in the stage.",
+        "label": "Governance type"
       }
     },
     "daos": {
