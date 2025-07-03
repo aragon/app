@@ -7,7 +7,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData, formatUnits, parseUnits, zeroAddress } from 'viem';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 
-export interface ITransferAssetActionProps extends IProposalActionComponentProps<IProposalActionData> { }
+export interface ITransferAssetActionProps extends IProposalActionComponentProps<IProposalActionData> {}
 
 const erc20TransferAbi = {
     type: 'function',
