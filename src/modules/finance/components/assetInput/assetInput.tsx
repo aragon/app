@@ -106,11 +106,9 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         previousAssetIdRef.current = currentAssetId;
     }, [assetField.value?.token.address, amountField.name, setValue, clearErrors, onAmountChange]);
 
-    const handleMaxAmount = (event: MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-        const maxAmount = assetField.value?.amount ?? '';
-        setValue(amountField.name, maxAmount, { shouldValidate: true });
-        onAmountChange?.();
+    const handleMaxAmount = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        handleAmountFieldChange(assetField.value?.amount);
     };
 
     const handleTokenSelectorMouseDown = (event: MouseEvent<HTMLButtonElement>) => {
