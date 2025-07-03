@@ -1,85 +1,70 @@
+import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
+import type { ISetupStageSettingsDialogParams } from '@/modules/createDao/dialogs/setupStageSettingsDialog/setupStageSettingsDialog';
+import { type ISetupStageTimingForm } from '@/modules/createDao/dialogs/setupStageTimingDialog/setupStageTimingDialogDefinitions';
 import { useDialogContext } from '@/shared/components/dialogProvider/dialogProvider';
-import { ProcessStageType, type ICreateProcessFormStage } from '../../../createProcessFormDefinitions';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
 import { Button, DefinitionList, InputContainer, Tag } from '@aragon/gov-ui-kit';
 import { Duration } from 'luxon';
-import { useWatch, useFormContext } from 'react-hook-form';
-import type { ISetupStageSettingsDialogParams } from '@/modules/createDao/dialogs/setupStageSettingsDialog/setupStageSettingsDialog';
-import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
-
+import { useFormContext } from 'react-hook-form';
+import { ProcessStageType } from '../../../createProcessFormDefinitions';
 
 export interface IGovernanceStageSettingsFieldProps {
     /**
      * Prefix to be prepended to the form field.
      */
     fieldPrefix: string;
+    /**
+     * Number of bodies of the stage.
+     */
+    bodyCount: number;
 }
 
 const requiredApprovalsDefaultValue = 1;
 
+const formatDuration = (duration: IDateDuration): string => {
+    const parsedDuration = Object.fromEntries(Object.entries(duration).filter(([, value]) => value !== 0));
+
+    if (Object.keys(parsedDuration).length === 0) {
+        parsedDuration.minutes = 0;
+    }
+
+    return Duration.fromObject(parsedDuration).toHuman();
+};
+
 export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFieldProps> = (props) => {
-    const { fieldPrefix } = props;
+    const { fieldPrefix, bodyCount } = props;
 
     const { t } = useTranslations();
-        const { setValue } = useFormContext();
-        const { open } = useDialogContext();
+    const { setValue } = useFormContext();
+    const { open } = useDialogContext();
 
-    const typeFieldName = `${fieldPrefix}.type`;
-    const stageType = useWatch<Record<string, ICreateProcessFormStage['type']>>({
-        name: typeFieldName,
+    const { value: stageType } = useFormField<ISetupStageTimingForm, 'type'>('type', {
+        label: t('app.createDao.createProcessForm.governance.stageTypeField.label'),
+        defaultValue: ProcessStageType.TIMELOCK,
+        fieldPrefix,
     });
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
 
-    const approvalsFieldName = `${fieldPrefix}.requiredApprovals`;
-    const approvals = useWatch<Record<string, ICreateProcessFormStage['requiredApprovals']>>({
-        name: approvalsFieldName,
+    const { value: votingPeriod } = useFormField<ISetupStageTimingForm, 'votingPeriod'>('votingPeriod', {
+        fieldPrefix,
+    });
+
+    const { value: earlyStageAdvance } = useFormField<ISetupStageTimingForm, 'earlyStageAdvance'>('earlyStageAdvance', {
+        fieldPrefix,
+    });
+
+    const { value: stageExpiration } = useFormField<ISetupStageTimingForm, 'stageExpiration'>('stageExpiration', {
+        fieldPrefix,
+    });
+
+    const { value: requiredApprovals } = useFormField<ISetupStageTimingForm, 'requiredApprovals'>('requiredApprovals', {
+        fieldPrefix,
         defaultValue: requiredApprovalsDefaultValue,
     });
-
-    const votingPeriodName = `${fieldPrefix}.timing.votingPeriod`;
-    const votingPeriod = useWatch<Record<string, ICreateProcessFormStage['timing']['votingPeriod']>>({
-        name: votingPeriodName,
-        defaultValue: { days: 7, hours: 0, minutes: 0 },
-    });
-
-    const earlyStageAdvanceName = `${fieldPrefix}.timing.earlyStageAdvance`;
-    const earlyStageAdvance = useWatch<Record<string, ICreateProcessFormStage['timing']['earlyStageAdvance']>>({
-        name: earlyStageAdvanceName,
-    });
-
-    const stageExpirationName = `${fieldPrefix}.timing.stageExpiration`;
-    const stageExpiration = useWatch<Record<string, ICreateProcessFormStage['timing']['stageExpiration']>>({
-        name: stageExpirationName,
-    });
-
-        const handleDialogSubmit = (values: ICreateProcessFormStage) => {
-            const { timing, requiredApprovals, type} = values;
-            const { votingPeriod, earlyStageAdvance, stageExpiration } = timing;
-            setValue(votingPeriodName, votingPeriod);
-            setValue(earlyStageAdvanceName, earlyStageAdvance);
-            setValue(stageExpirationName, stageExpiration);
-            setValue(approvalsFieldName, requiredApprovals);
-            setValue(typeFieldName, type);
-        };
-
-    const formatDuration = (duration?: IDateDuration): string => {
-        const parsedDuration = Object.fromEntries(
-            Object.entries(duration ?? { days: 7, hours: 0, minutes: 0 }).filter(([, value]) => value !== 0),
-        );
-
-        if (Object.keys(parsedDuration).length === 0) {
-            parsedDuration.minutes = 0;
-        }
-
-        return Duration.fromObject(parsedDuration).toHuman();
-    };
-
-    const votingPeriodLabel = isTimelockStage
-        ? t('app.createDao.createProcessForm.governance.stageSettingsField.timelockPeriod')
-        : t('app.createDao.createProcessForm.governance.stageSettingsField.votingPeriod');
 
     const earlyStageTagValue = earlyStageAdvance ? 'yes' : 'no';
     const earlyStageTagLabel = t(`app.createDao.createProcessForm.governance.stageSettingsField.${earlyStageTagValue}`);
@@ -87,15 +72,23 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
     const expirationTagValue = stageExpiration != null ? 'yes' : 'no';
     const expirationTagLabel = t(`app.createDao.createProcessForm.governance.stageSettingsField.${expirationTagValue}`);
 
-        const handleSettingsDialogOpen = () => {
-            const params: ISetupStageSettingsDialogParams = {
-                fieldPrefix,
-                onSubmit: handleDialogSubmit,
-                stageType,
-                defaultValues: { type: stageType, timing: { votingPeriod, earlyStageAdvance, stageExpiration }, requiredApprovals: approvals },
-            };
-            open(CreateDaoDialogId.SETUP_STAGE_SETTINGS, { params });
+    const handleDialogSubmit = (values: ISetupStageTimingForm) => {
+        const { votingPeriod, earlyStageAdvance, stageExpiration, requiredApprovals, type } = values;
+        setValue(`${fieldPrefix}.votingPeriod`, votingPeriod);
+        setValue(`${fieldPrefix}.earlyStageAdvance`, earlyStageAdvance);
+        setValue(`${fieldPrefix}.stageExpiration`, stageExpiration);
+        setValue(`${fieldPrefix}.requiredApprovals`, requiredApprovals);
+        setValue(`${fieldPrefix}.type`, type);
+    };
+
+    const handleSettingsDialogOpen = () => {
+        const params: ISetupStageSettingsDialogParams = {
+            onSubmit: handleDialogSubmit,
+            defaultValues: { type: stageType, votingPeriod, earlyStageAdvance, stageExpiration, requiredApprovals },
+            bodyCount,
         };
+        open(CreateDaoDialogId.SETUP_STAGE_SETTINGS, { params });
+    };
 
     return (
         <InputContainer
@@ -105,13 +98,25 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
             className="flex flex-col items-start gap-3"
         >
             <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
-                <DefinitionList.Item term="Governance type">
-                    <p>{stageType}</p>
+                {!isTimelockStage && (
+                    <DefinitionList.Item
+                        term={t('app.createDao.createProcessForm.governance.stageSettingsField.governanceType')}
+                    >
+                        <p>{stageType}</p>
+                    </DefinitionList.Item>
+                )}
+                {!isTimelockStage && (
+                    <DefinitionList.Item
+                        term={t('app.createDao.createProcessForm.governance.stageSettingsField.approvalThreshold')}
+                    >
+                        <p>{requiredApprovals}</p>
+                    </DefinitionList.Item>
+                )}
+                <DefinitionList.Item
+                    term={t('app.createDao.createProcessForm.governance.stageSettingsField.votingPeriod')}
+                >
+                    {formatDuration(votingPeriod)}
                 </DefinitionList.Item>
-                <DefinitionList.Item term="Approval threshold">
-                    <p>{approvals}</p>
-                </DefinitionList.Item>
-                <DefinitionList.Item term={votingPeriodLabel}>{formatDuration(votingPeriod)}</DefinitionList.Item>
                 {!isOptimisticStage && !isTimelockStage && (
                     <DefinitionList.Item
                         term={t('app.createDao.createProcessForm.governance.stageSettingsField.earlyAdvance')}
@@ -123,15 +128,17 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
                         />
                     </DefinitionList.Item>
                 )}
-                <DefinitionList.Item
-                    term={t('app.createDao.createProcessForm.governance.stageSettingsField.expiration')}
-                >
-                    <Tag
-                        className="w-fit"
-                        label={expirationTagLabel}
-                        variant={stageExpiration != null ? 'primary' : 'neutral'}
-                    />
-                </DefinitionList.Item>
+                {!isTimelockStage && (
+                    <DefinitionList.Item
+                        term={t('app.createDao.createProcessForm.governance.stageSettingsField.expiration')}
+                    >
+                        <Tag
+                            className="w-fit"
+                            label={expirationTagLabel}
+                            variant={stageExpiration != null ? 'primary' : 'neutral'}
+                        />
+                    </DefinitionList.Item>
+                )}
                 {stageExpiration != null && (
                     <DefinitionList.Item
                         term={t('app.createDao.createProcessForm.governance.stageSettingsField.expirationPeriod')}

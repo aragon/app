@@ -5,6 +5,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, CardEmptyState, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { GovernanceBodyField } from '../governanceBodyField';
+import { ProcessStageType } from '@/modules/createDao/components/createProcessForm/createProcessFormDefinitions';
 
 export interface IGovernanceStageBodiesFieldProps {
     /**
@@ -26,7 +27,7 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
     const { daoId, formPrefix, labelContext = 'normal' } = props;
 
     const { t } = useTranslations();
-    const { getFieldState } = useFormContext();
+    const { getFieldState, setValue } = useFormContext();
     const { open, close } = useDialogContext();
 
     const fieldName = `${formPrefix}.bodies`;
@@ -43,6 +44,7 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
         if (index == null) {
             const bodyId = crypto.randomUUID();
             append({ ...values, internalId: bodyId });
+            setValue(`${formPrefix}.settings.type`, ProcessStageType.NORMAL);
         } else {
             update(index, values);
         }

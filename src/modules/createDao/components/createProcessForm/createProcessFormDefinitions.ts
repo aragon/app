@@ -79,19 +79,11 @@ export interface ICreateProcessFormStage {
      */
     name: string;
     /**
-     * Type of the stage.
-     */
-    type: ProcessStageType;
-    /**
-     * Values related to the timing of the stage.
-     */
-    timing: ISetupStageTimingForm;
-    /**
      * List of bodies of the stage.
      */
     bodies: ISetupBodyForm[];
     /**
-     * Number of bodies required to veto (for optimistic type) or approve.
+     * Settings of the stage.
      */
-    requiredApprovals: number;
+    settings: ISetupStageTimingForm;
 }

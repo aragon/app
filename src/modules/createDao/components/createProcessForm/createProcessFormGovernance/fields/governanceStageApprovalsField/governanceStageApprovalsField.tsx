@@ -32,6 +32,7 @@ export const GovernanceStageApprovalsField: React.FC<IGovernanceStageApprovalsFi
 
     const labelContext = isOptimisticStage ? 'veto' : 'approve';
 
+
     if (bodies.length === 0) {
         return null;
     }

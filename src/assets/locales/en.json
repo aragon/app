@@ -242,17 +242,20 @@
             },
             "name": {
               "helpText": "This is used to identify the stage the proposal is in. For example: Community Review, Guardian Veto, or Founder Signoff",
-              "label": "Stage name"
+              "label": "Name",
+              "title": "Stage name"
             }
           },
           "stageSettingsField": {
+            "approvalThreshold": "Approval threshold",
             "earlyAdvance": "Early stage advance",
             "edit": "Edit settings",
             "expiration": "Stage expiration",
             "expirationPeriod": "Expiration period",
+            "governanceType": "Governance type",
             "label": "Settings",
             "no": "Disabled",
-            "votingPeriod": "Voting period",
+            "votingPeriod": "Stage duration",
             "yes": "Enabled"
           },
           "stageTimingField": {
@@ -448,8 +451,35 @@
           "cancel": "Cancel",
           "save": "Save"
         },
+        "earlyAdvance": {
+          "helpText": "This allows a proposal to be advanced early to subsequent stages if it's approved before the voting period ends.",
+          "label": "Early stage advance"
+        },
+        "expiration": {
+          "helpText": "This limits the amount of time after the voting period ends for advancing the proposal to the next stage.",
+          "infoText": "Recommended minimum expiration time is 7 days.",
+          "label": "Stage expiration"
+        },
+
+        "governanceType": {
+          "NORMAL": {
+            "description": "Proposals pass the stage only if approved.",
+            "label": "Approval"
+          },
+          "OPTIMISTIC": {
+            "description": "Proposals pass the stage unless vetoed.",
+            "label": "Veto"
+          },
+          "helpText": "This will determine the role that governance plays in the stage.",
+          "label": "Governance type"
+        },
         "submit": "Save",
-        "title": "Settings"
+        "title": "Settings",
+        "votingPeriod": {
+          "helpText": "The period of time a proposal is active. Proposals can be created with a longer duration, but not shorter.",
+          "infoText": "Recommended minimum voting period is 7 days.",
+          "label": "Stage Duration"
+        }
       },
       "setupStageTimingDialog": {
         "a11y": {

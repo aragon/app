@@ -3,9 +3,7 @@ import { type ICreateProcessFormDataAdvanced, ProcessStageType } from './createP
 class CreateProcessFormUtils {
     private defaultVotingPeriod = { days: 7, minutes: 0, hours: 0 };
 
-    private defaultTimingSettings = { votingPeriod: this.defaultVotingPeriod, earlyStageAdvance: true };
-
-    private defaultType = ProcessStageType.NORMAL;
+    private defaultType = ProcessStageType.TIMELOCK;
 
     buildDefaultStage = (): ICreateProcessFormDataAdvanced['stages'][number] => {
         const internalId = crypto.randomUUID();
@@ -13,10 +11,13 @@ class CreateProcessFormUtils {
         return {
             internalId,
             name: '',
-            type: this.defaultType,
-            timing: this.defaultTimingSettings,
+            settings: {
+                type: this.defaultType,
+                votingPeriod: this.defaultVotingPeriod,
+                earlyStageAdvance: true,
+                requiredApprovals: 1,
+            },
             bodies: [],
-            requiredApprovals: 1,
         };
     };
 }
