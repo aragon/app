@@ -34,14 +34,12 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
     const userAddress = getConnectedAccount(cookieHeader);
 
     const defaultQueryParams = { pageSize: campaignsPerPage, page: 1, status: CampaignStatus.CLAIMABLE };
-    const initialParams = userAddress
-        ? { queryParams: { ...defaultQueryParams, memberAddress: userAddress } }
-        : undefined;
+    const initialParams = { queryParams: { ...defaultQueryParams, memberAddress: userAddress as string } };
 
     queryClient.setQueryData(daoOptions({ urlParams: { id: dao.id } }).queryKey, dao);
 
     if (userAddress) {
-        await queryClient.prefetchInfiniteQuery(campaignListOptions(initialParams!));
+        await queryClient.prefetchInfiniteQuery(campaignListOptions(initialParams));
         await queryClient.fetchQuery(campaignStatsOptions({ urlParams: { memberAddress: userAddress } }));
     }
 
