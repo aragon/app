@@ -1810,8 +1810,8 @@
         "item": {
           "input": {
             "error": {
-              "alreadyInList": "Address has already been added",
-              "invalid": "Address is not valid"
+              "alreadyInList": "Address has already been added.",
+              "invalid": "Address is not valid."
             },
             "label": "Member",
             "placeholder": "ENS or 0x…"
