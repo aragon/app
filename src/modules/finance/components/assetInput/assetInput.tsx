@@ -4,7 +4,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, IconType, formatterUtils, InputContainer, NumberFormat } from '@aragon/gov-ui-kit';
 import { useFormContext } from 'react-hook-form';
 import classNames from 'classnames';
-import { type ChangeEvent, type MouseEvent, useEffect, useId, useRef, useLayoutEffect } from 'react';
+import { type ChangeEvent, type MouseEvent, useEffect, useId, useRef } from 'react';
 import type { IAsset } from '../../api/financeService';
 import { FinanceDialogId } from '../../constants/financeDialogId';
 import type { IAssetSelectionDialogParams } from '../../dialogs/assetSelectionDialog';
@@ -84,6 +84,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     };
 
     const handleCloseDialog = () => {
+        close();
         requestAnimationFrame(() => {
             inputRef.current?.focus();
         });
@@ -98,7 +99,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         const params: IAssetSelectionDialogParams = {
             initialParams: fetchAssetsParams,
             onAssetClick,
-            close,
+            close: handleCloseDialog,
         };
         open(FinanceDialogId.ASSET_SELECTION, { params, onClose: handleCloseDialog });
     };
@@ -116,14 +117,6 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
 
         previousAssetIdRef.current = currentAssetId;
     }, [assetField.value?.token.address, amountField.name, setValue, clearErrors, onAmountChange]);
-
-    useLayoutEffect(() => {
-        if (assetField.value) {
-            requestAnimationFrame(() => {
-                inputRef.current?.focus();
-            });
-        }
-    }, [assetField.value]);
     
     const handleMaxAmount = (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
