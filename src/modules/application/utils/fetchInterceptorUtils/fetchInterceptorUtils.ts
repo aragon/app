@@ -2,7 +2,7 @@ import { backendApiMocks } from '@/backendApiMocks';
 import { deepmerge } from 'deepmerge-ts';
 
 class FetchInterceptorUtils {
-    private originalFetch = global.fetch;
+    private originalFetch = global.fetch.bind(global);
 
     intecept = () => {
         if (process.env.NEXT_PUBLIC_USE_MOCKS === 'true') {
