@@ -6,6 +6,7 @@ import {
 import {
     generateCreateProcessFormDataAdvanced,
     generateCreateProcessFormStage,
+    generateCreateProcessFormStageSettings,
     generateSetupBodyFormData,
     generateSetupBodyFormExternal,
     generateSetupBodyFormNew,
@@ -313,40 +314,49 @@ describe('sppTransaction utils', () => {
 
     describe('processStageTiming', () => {
         it('correctly processes the voting period to seconds', () => {
-            const timing = { votingPeriod: { days: 1, hours: 0, minutes: 0 }, earlyStageAdvance: false };
-            const result = sppTransactionUtils['processStageTiming'](timing);
+            const settings = generateCreateProcessFormStageSettings({
+                votingPeriod: { days: 1, hours: 0, minutes: 0 },
+                earlyStageAdvance: false,
+            });
+            const result = sppTransactionUtils['processStageTiming'](settings);
             expect(result.voteDuration).toBe(BigInt(86400)); // One day in seconds
         });
 
         it('returns minAdvance as 0 when earlyStageAdvance is true', () => {
-            const timing = { votingPeriod: { days: 1, hours: 0, minutes: 0 }, earlyStageAdvance: true };
-            const result = sppTransactionUtils['processStageTiming'](timing);
+            const settings = generateCreateProcessFormStageSettings({
+                votingPeriod: { days: 1, hours: 0, minutes: 0 },
+                earlyStageAdvance: true,
+            });
+            const result = sppTransactionUtils['processStageTiming'](settings);
             expect(result.minAdvance).toBe(BigInt(0));
         });
 
         it('returns minAdvance as the voting period when earlyStageAdvance is false', () => {
-            const timing = { votingPeriod: { days: 0, hours: 12, minutes: 0 }, earlyStageAdvance: false };
-            const result = sppTransactionUtils['processStageTiming'](timing);
+            const settings = generateCreateProcessFormStageSettings({
+                votingPeriod: { days: 0, hours: 12, minutes: 0 },
+                earlyStageAdvance: false,
+            });
+            const result = sppTransactionUtils['processStageTiming'](settings);
             expect(result.minAdvance).toBe(BigInt(43200));
         });
 
         it('returns a big default max advance when stage expiration is not set', () => {
-            const timing = {
+            const settings = generateCreateProcessFormStageSettings({
                 votingPeriod: { days: 0, hours: 12, minutes: 0 },
                 earlyStageAdvance: false,
                 stageExpiration: undefined,
-            };
-            const result = sppTransactionUtils['processStageTiming'](timing);
+            });
+            const result = sppTransactionUtils['processStageTiming'](settings);
             expect(result.maxAdvance).toEqual(sppTransactionUtils['defaultMaxAdvance']);
         });
 
         it('returns the max advance set to the vote duration plus the stage expiration when set', () => {
-            const timing = {
+            const settings = generateCreateProcessFormStageSettings({
                 votingPeriod: { days: 0, hours: 12, minutes: 0 },
                 earlyStageAdvance: false,
                 stageExpiration: { days: 0, hours: 0, minutes: 30 },
-            };
-            const result = sppTransactionUtils['processStageTiming'](timing);
+            });
+            const result = sppTransactionUtils['processStageTiming'](settings);
             expect(result.maxAdvance).toEqual(BigInt(45000));
         });
     });

@@ -45,15 +45,20 @@ export const generateCreateProcessFormData = (values?: Partial<ICreateProcessFor
         ? generateCreateProcessFormDataBasic(values)
         : generateCreateProcessFormDataAdvanced(values as ICreateProcessFormDataAdvanced);
 
+export const generateCreateProcessFormStageSettings = (
+    values?: Partial<ICreateProcessFormStage['settings']>,
+): ICreateProcessFormStage['settings'] => ({
+    type: ProcessStageType.NORMAL,
+    votingPeriod: { days: 1, hours: 0, minutes: 0 },
+    earlyStageAdvance: false,
+    requiredApprovals: 1,
+    ...values,
+});
+
 export const generateCreateProcessFormStage = (values?: Partial<ICreateProcessFormStage>): ICreateProcessFormStage => ({
     internalId: '0',
     name: 'stage',
-    type: ProcessStageType.NORMAL,
-    timing: {
-        votingPeriod: { days: 1, hours: 0, minutes: 0 },
-        earlyStageAdvance: false,
-    },
-    requiredApprovals: 1,
+    settings: generateCreateProcessFormStageSettings(values?.settings),
     bodies: [],
     ...values,
 });

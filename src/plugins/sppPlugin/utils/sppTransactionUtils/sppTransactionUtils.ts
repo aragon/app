@@ -6,7 +6,6 @@ import {
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
 import { SetupBodyType } from '@/modules/createDao/dialogs/setupBodyDialog';
-import type { ISetupStageTimingForm } from '@/modules/createDao/dialogs/setupStageTimingDialog';
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
@@ -19,6 +18,7 @@ import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import { sppPlugin } from '../../constants/sppPlugin';
 import { SppProposalType } from '../../types';
 import { sppPluginAbi, sppPluginSetupAbi } from './sppPluginAbi';
+import { ISetupStageSettingsForm } from '@/modules/createDao/dialogs/setupStageSettingsDialog/setupStageSettingsDialogDefinitions';
 
 export interface ICreateSppProposalFormData extends IProposalCreate, ICreateProposalEndDateForm {}
 
@@ -153,9 +153,10 @@ class SppTransactionUtils {
     ): ITransactionRequest => {
         const processedBodyAddresses = [...bodyAddresses];
         const processedStages = stages.map((stage) => {
-            const { type, timing, requiredApprovals, bodies } = stage;
+            const { settings, bodies } = stage;
+            const { type, requiredApprovals } = settings;
 
-            const stageTiming = this.processStageTiming(timing);
+            const stageTiming = this.processStageTiming(settings);
             const stageApprovals = this.processStageApprovals(requiredApprovals, type);
 
             const resultType = type === ProcessStageType.NORMAL ? SppProposalType.APPROVAL : SppProposalType.VETO;
@@ -186,8 +187,8 @@ class SppTransactionUtils {
         return { approvalThreshold, vetoThreshold };
     };
 
-    private processStageTiming = (timing: ISetupStageTimingForm) => {
-        const { votingPeriod, stageExpiration, earlyStageAdvance } = timing;
+    private processStageTiming = (settings: ISetupStageSettingsForm) => {
+        const { votingPeriod, stageExpiration, earlyStageAdvance } = settings;
 
         const voteDuration = BigInt(dateUtils.durationToSeconds(votingPeriod));
         const processedStageExpiration =

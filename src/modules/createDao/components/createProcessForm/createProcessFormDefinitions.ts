@@ -1,6 +1,6 @@
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { ISetupBodyForm, ISetupBodyFormNew } from '../../dialogs/setupBodyDialog';
-import type { ISetupStageTimingForm } from '../../dialogs/setupStageTimingDialog';
+import type { ISetupStageSettingsForm } from '../../dialogs/setupStageSettingsDialog/setupStageSettingsDialogDefinitions';
 
 export enum ProposalCreationMode {
     LISTED_BODIES = 'LISTED_BODIES',
@@ -85,5 +85,5 @@ export interface ICreateProcessFormStage {
     /**
      * Settings of the stage.
      */
-    settings: ISetupStageTimingForm;
+    settings: ISetupStageSettingsForm;
 }

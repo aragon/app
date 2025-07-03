@@ -1,4 +1,3 @@
-import type { ISetupStageTimingForm } from '@/modules/createDao/dialogs/setupStageTimingDialog/setupStageTimingDialogDefinitions';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider/dialogProvider.api';
 import { AdvancedDateInputDuration } from '@/shared/components/forms/advancedDateInput/advancedDateInputDuration';
@@ -9,16 +8,17 @@ import { Card, Dialog, InputContainer, invariant, RadioCard, RadioGroup, Switch 
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { ProcessStageType } from '../../components/createProcessForm';
+import type { ISetupStageSettingsForm } from './setupStageSettingsDialogDefinitions';
 
 export interface ISetupStageSettingsDialogParams {
     /**
      * Callback called on form submit.
      */
-    onSubmit: (values: ISetupStageTimingForm) => void;
+    onSubmit: (values: ISetupStageSettingsForm) => void;
     /**
      * Default values for the dialog form.
      */
-    defaultValues: ISetupStageTimingForm;
+    defaultValues: ISetupStageSettingsForm;
     /**
      * Number of bodies of the stage.
      */
@@ -44,14 +44,14 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (pro
 
     const [displayExpiration, setDisplayExpiration] = useState(defaultValues.stageExpiration != null);
 
-    const formMethods = useForm<ISetupStageTimingForm>({ mode: 'onTouched', defaultValues });
+    const formMethods = useForm<ISetupStageSettingsForm>({ mode: 'onTouched', defaultValues });
     const { handleSubmit, setValue, control } = formMethods;
 
     const {
         value: stageType,
         onChange: onTypeChange,
         ...stageTypeField
-    } = useFormField<ISetupStageTimingForm, 'type'>('type', {
+    } = useFormField<ISetupStageSettingsForm, 'type'>('type', {
         label: t('app.createDao.setupStageSettingsDialog.governanceType.label'),
         defaultValue: ProcessStageType.NORMAL,
         control,
@@ -73,14 +73,17 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (pro
         value: earlyStageAdvance,
         onChange: onEarlyStageAdvanceChange,
         ...earlyStageField
-    } = useFormField<ISetupStageTimingForm, 'earlyStageAdvance'>('earlyStageAdvance', {
+    } = useFormField<ISetupStageSettingsForm, 'earlyStageAdvance'>('earlyStageAdvance', {
         label: t('app.createDao.setupStageSettingsDialog.earlyAdvance.label'),
         control,
     });
 
-    const { value: requiredApprovals } = useFormField<ISetupStageTimingForm, 'requiredApprovals'>('requiredApprovals', {
-        control,
-    });
+    const { value: requiredApprovals } = useFormField<ISetupStageSettingsForm, 'requiredApprovals'>(
+        'requiredApprovals',
+        {
+            control,
+        },
+    );
 
     const handleToggleExpiration = (checked: boolean) => {
         setDisplayExpiration(checked);
@@ -89,7 +92,7 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (pro
         setTimeout(() => setValue('stageExpiration', checked ? defaultExpiration : undefined), 0);
     };
 
-    const onFormSubmit = (values: ISetupStageTimingForm) => {
+    const onFormSubmit = (values: ISetupStageSettingsForm) => {
         onSubmit(values);
         close();
     };

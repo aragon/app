@@ -4,8 +4,7 @@ import { CreateProcessDetailsDialog } from '../dialogs/createProcessDetailsDialo
 import { PrepareProcessDialog } from '../dialogs/prepareProcessDialog';
 import { PublishDaoDialog } from '../dialogs/publishDaoDialog';
 import { SetupBodyDialog } from '../dialogs/setupBodyDialog';
-import { SetupStageTimingDialog } from '../dialogs/setupStageTimingDialog';
-import { SetupStageSettingsDialog } from './../dialogs/setupStageSettingsDialog/setupStageSettingsDialog';
+import { SetupStageSettingsDialog } from './../dialogs/setupStageSettingsDialog';
 import { CreateDaoDialogId } from './createDaoDialogId';
 
 export const createDaoDialogsDefinitions: Record<CreateDaoDialogId, IDialogComponentDefinitions> = {
@@ -17,11 +16,6 @@ export const createDaoDialogsDefinitions: Record<CreateDaoDialogId, IDialogCompo
         Component: SetupBodyDialog,
         size: 'lg',
         hiddenDescription: 'app.createDao.setupBodyDialog.a11y.description',
-    },
-    [CreateDaoDialogId.SETUP_STAGE_TIMING]: {
-        Component: SetupStageTimingDialog,
-        size: 'lg',
-        hiddenDescription: 'app.createDao.setupStageTimingDialog.a11y.description',
     },
     [CreateDaoDialogId.SETUP_STAGE_SETTINGS]: {
         Component: SetupStageSettingsDialog,
