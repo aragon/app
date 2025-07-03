@@ -4,7 +4,7 @@ import { DateFormat, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import {
     CampaignStatus,
-    type IGetCampaignsListParams,
+    type IGetCampaignListParams,
     useCampaignList,
     useCampaignStats,
 } from '../../api/capitalDistributorService';
@@ -13,7 +13,7 @@ export interface ICapitalDistributorRewardsStatsProps {
     /**
      * Initial parameters for the campaign list query.
      */
-    initialParams?: IGetCampaignsListParams;
+    initialParams?: IGetCampaignListParams;
 }
 
 export const CapitalDistributorRewardsStats: React.FC<ICapitalDistributorRewardsStatsProps> = (props) => {

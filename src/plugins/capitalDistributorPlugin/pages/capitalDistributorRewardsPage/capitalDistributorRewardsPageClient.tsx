@@ -9,7 +9,7 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { CardEmptyState, IconType, Link } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
-import { type IGetCampaignsListParams } from '../../api/capitalDistributorService';
+import { type IGetCampaignListParams } from '../../api/capitalDistributorService';
 import { CapitalDistributorCampaignList } from '../../components/capitalDistributorCampaignList';
 import { CapitalDistributorRewardsStats } from '../../components/capitalDistributorRewardsStats';
 import { capitalDistributorPlugin } from '../../constants/capitalDistributorPlugin';
@@ -22,7 +22,7 @@ export interface ICapitalDistributorRewardsPageClientProps {
     /**
      * Initial parameters for the campaign list query.
      */
-    initialParams?: IGetCampaignsListParams;
+    initialParams?: IGetCampaignListParams;
 }
 
 export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRewardsPageClientProps> = (props) => {

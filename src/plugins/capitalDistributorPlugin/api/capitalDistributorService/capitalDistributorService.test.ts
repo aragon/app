@@ -9,13 +9,13 @@ describe('capitalDistributor service', () => {
         requestSpy.mockReset();
     });
 
-    it('getCampaignsList fetches a paginated list campaign list of campaigns given a member address', async () => {
+    it('getCampaignList fetches a paginated list campaign list of campaigns given a member address', async () => {
         const campaignsList = [generateCampaign({ id: 1 }), generateCampaign({ id: 2 })];
         const campaignsListResponse = generatePaginatedResponse({ data: campaignsList });
         const params = { queryParams: { memberAddress: '0x123', pageSize: 2 } };
 
         requestSpy.mockResolvedValue(campaignsListResponse);
-        const result = await capitalDistributorService.getCampaignsList(params);
+        const result = await capitalDistributorService.getCampaignList(params);
 
         expect(requestSpy).toHaveBeenCalledWith(capitalDistributorService['urls'].campaigns, params);
         expect(result).toEqual(campaignsListResponse);

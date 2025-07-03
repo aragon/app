@@ -5,7 +5,7 @@ import { capitalDistributorService } from '../../capitalDistributorService';
 import { useCampaignList } from './useCampaignList';
 
 describe('useCampaignList query', () => {
-    const capitalDistributorServiceSpy = jest.spyOn(capitalDistributorService, 'getCampaignsList');
+    const capitalDistributorServiceSpy = jest.spyOn(capitalDistributorService, 'getCampaignList');
 
     afterEach(() => {
         capitalDistributorServiceSpy.mockReset();

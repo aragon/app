@@ -2,7 +2,7 @@ import type { IPaginatedRequest } from '@/shared/api/aragonBackendService';
 import type { IRequestQueryParams, IRequestUrlParams } from '@/shared/api/httpService';
 import type { CampaignStatus } from './domain';
 
-export interface IGetCampaignsListQueryParams extends IPaginatedRequest {
+export interface IGetCampaignListQueryParams extends IPaginatedRequest {
     /**
      * Address of the member to fetch the campaigns for.
      */
@@ -13,7 +13,7 @@ export interface IGetCampaignsListQueryParams extends IPaginatedRequest {
     status?: CampaignStatus;
 }
 
-export interface IGetCampaignsListParams extends IRequestQueryParams<IGetCampaignsListQueryParams> {}
+export interface IGetCampaignListParams extends IRequestQueryParams<IGetCampaignListQueryParams> {}
 
 export interface IGetCampaignStatsUrlParams {
     /**

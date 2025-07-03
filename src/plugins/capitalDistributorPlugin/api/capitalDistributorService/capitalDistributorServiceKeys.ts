@@ -1,4 +1,4 @@
-import type { IGetCampaignsListParams, IGetCampaignStatsParams } from './capitalDistributorService.api';
+import type { IGetCampaignListParams, IGetCampaignStatsParams } from './capitalDistributorService.api';
 
 export enum CapitalDistributorServiceKey {
     CAMPAIGN_LIST = 'CAMPAIGN_LIST',
@@ -6,6 +6,6 @@ export enum CapitalDistributorServiceKey {
 }
 
 export const capitalDistributorServiceKeys = {
-    campaigns: (params: IGetCampaignsListParams) => [CapitalDistributorServiceKey.CAMPAIGN_LIST, params],
+    campaigns: (params: IGetCampaignListParams) => [CapitalDistributorServiceKey.CAMPAIGN_LIST, params],
     campaignStats: (params: IGetCampaignStatsParams) => [CapitalDistributorServiceKey.CAMPAIGN_STATS, params],
 };

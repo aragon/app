@@ -4,7 +4,7 @@ import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { DataListContainer, DataListPagination, DataListRoot, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
-import { CampaignStatus, type IGetCampaignsListParams, useCampaignList } from '../../api/capitalDistributorService';
+import { CampaignStatus, type IGetCampaignListParams, useCampaignList } from '../../api/capitalDistributorService';
 import { CapitalDistributorCampaignListItemSkeleton } from './capitalDistributorCampaignListItemSkeleton';
 import { CapitalDistributorCampaignListItemStructure } from './capitalDistributorCampaignListItemStructure';
 
@@ -16,7 +16,7 @@ export interface ICapitalDistributorCampaignListProps {
     /**
      * Initial parameters for the campaign list query.
      */
-    initialParams?: IGetCampaignsListParams;
+    initialParams?: IGetCampaignListParams;
 }
 
 export const CapitalDistributorCampaignList: React.FC<ICapitalDistributorCampaignListProps> = (props) => {
