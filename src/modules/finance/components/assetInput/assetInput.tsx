@@ -59,7 +59,6 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
     const inputId = useId();
-    const inputRef = useRef<HTMLInputElement | null>(null);
 
     const assetField = useFormField<IAssetInputFormData, 'asset'>('asset', { rules: { required: true }, fieldPrefix });
 
@@ -83,25 +82,14 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         onAmountChange?.();
     };
 
-    const handleCloseDialog = () => {
-        close();
-        requestAnimationFrame(() => {
-            inputRef.current?.focus();
-        });
-    };
-
     const handleOpenDialog = () => {
         if (!fetchAssetsParams || disableAssetField) {
             return;
         }
 
         const { onChange: onAssetClick } = assetField;
-        const params: IAssetSelectionDialogParams = {
-            initialParams: fetchAssetsParams,
-            onAssetClick,
-            close: handleCloseDialog,
-        };
-        open(FinanceDialogId.ASSET_SELECTION, { params, onClose: handleCloseDialog });
+        const params: IAssetSelectionDialogParams = { initialParams: fetchAssetsParams, onAssetClick, close };
+        open(FinanceDialogId.ASSET_SELECTION, { params });
     };
 
     const { setValue, clearErrors } = useFormContext<IAssetInputFormData>();
@@ -117,7 +105,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
 
         previousAssetIdRef.current = currentAssetId;
     }, [assetField.value?.token.address, amountField.name, setValue, clearErrors, onAmountChange]);
-    
+
     const handleMaxAmount = (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         const maxAmount = assetField.value?.amount ?? '';
@@ -164,7 +152,6 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                     <AssetInputToken token={assetField.value?.token} className="cursor-default px-2" />
                 )}
                 <input
-                    ref={inputRef}
                     type="number"
                     placeholder="0"
                     className={inputClassName}
