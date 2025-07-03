@@ -1065,9 +1065,6 @@
           }
         },
         "capitalDistributorClaimDialog": {
-          "a11y": {
-            "description": "Claim the rewards of the selected campaign"
-          },
           "details": {
             "amount": "Total amount",
             "claimable": "Claimable",

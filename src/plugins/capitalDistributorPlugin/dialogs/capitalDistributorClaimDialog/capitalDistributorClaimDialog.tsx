@@ -47,15 +47,17 @@ export const CapitalDistributorClaimDialog: React.FC<ICapitalDistributorClaimDia
     return (
         <WizardDialog.Container<ICapitalDistributorClaimDialogForm>
             title={campaign.title}
+            description={campaign.description}
             formId="capitalDistributorClaim"
             onSubmit={handleSubmit}
             submitLabel={t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.submit')}
             defaultValues={{ recipient: address }}
+            className="pt-2 pb-1.5"
         >
             <WizardDialog.Step id="overview" order={1} meta={{ name: '' }}>
                 <CapitalDistributorClaimDialogDetails campaign={campaign} />
             </WizardDialog.Step>
-            <WizardDialog.Step id="claim" order={2} meta={{ name: '' }}>
+            <WizardDialog.Step id="claim" order={2} meta={{ name: '' }} className="flex grow flex-col gap-6">
                 <CapitalDistributorClaimDialogInputs />
             </WizardDialog.Step>
         </WizardDialog.Container>

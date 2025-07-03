@@ -7,10 +7,7 @@ export const capitalDistributorPluginDialogsDefinitions: Record<
     CapitalDistributorPluginDialogId,
     IDialogComponentDefinitions
 > = {
-    [CapitalDistributorPluginDialogId.CLAIM]: {
-        Component: CapitalDistributorClaimDialog,
-        hiddenDescription: 'app.plugins.capitalDistributor.capitalDistributorClaimDialog.a11y.description',
-    },
+    [CapitalDistributorPluginDialogId.CLAIM]: { Component: CapitalDistributorClaimDialog },
     [CapitalDistributorPluginDialogId.CLAIM_TRANSACTION]: {
         Component: CapitalDistributorClaimTransactionDialog,
     },
