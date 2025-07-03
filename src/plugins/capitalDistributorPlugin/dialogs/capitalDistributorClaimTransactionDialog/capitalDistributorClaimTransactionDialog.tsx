@@ -1,6 +1,5 @@
 'use client';
 
-import { capitalDistributorClaimTransactionDialog } from '@/plugins/capitalDistributorPlugin/dialogs/capitalDistributorClaimTransactionDialog/capitalDistributorClaimTransactionDialogUtils';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider/dialogProvider.api';
 import {
     type ITransactionDialogStepMeta,
@@ -12,6 +11,7 @@ import { useStepper } from '@/shared/hooks/useStepper/useStepper';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import type { Hex } from 'viem';
+import { capitalDistributorClaimTransactionDialogUtils } from './capitalDistributorClaimTransactionDialogUtils';
 
 export interface ICapitalDistributorClaimTransactionDialogParams {
     /**
@@ -51,7 +51,7 @@ export const CapitalDistributorClaimTransactionDialog: React.FC<ICapitalDistribu
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
     const prepareTransaction = () =>
-        capitalDistributorClaimTransactionDialog.buildTransaction({ campaignId, recipient, pluginAddress });
+        capitalDistributorClaimTransactionDialogUtils.buildTransaction({ campaignId, recipient, pluginAddress });
 
     return (
         <TransactionDialog

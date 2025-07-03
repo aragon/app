@@ -34,4 +34,4 @@ class CapitalDistributorClaimTransactionDialogUtils {
     };
 }
 
-export const capitalDistributorClaimTransactionDialog = new CapitalDistributorClaimTransactionDialogUtils();
+export const capitalDistributorClaimTransactionDialogUtils = new CapitalDistributorClaimTransactionDialogUtils();
