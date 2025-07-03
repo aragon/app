@@ -1,6 +1,6 @@
-import { capitalDistributorService } from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
-import { generateCampaign } from '@/plugins/capitalDistributorPlugin/testUtils/generators';
 import { generatePaginatedResponse } from '@/shared/testUtils';
+import { generateCampaign } from '../../testUtils/generators';
+import { capitalDistributorService } from './capitalDistributorService';
 
 describe('capitalDistributor service', () => {
     const requestSpy = jest.spyOn(capitalDistributorService, 'request');
