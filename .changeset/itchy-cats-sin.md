@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-Bump `vercel` to v44
+Update addresses validation

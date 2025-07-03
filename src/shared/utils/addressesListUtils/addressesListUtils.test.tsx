@@ -34,6 +34,7 @@ describe('addressesList Utils', () => {
 
     describe('validateAddress', () => {
         it('returns true if customValidator returns true', () => {
+            isAddressSpy.mockReturnValue(true);
             const customValidator = jest.fn().mockReturnValue(true);
             const address = '0x123';
 
