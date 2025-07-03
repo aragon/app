@@ -25,7 +25,7 @@ export const CapitalDistributorClaimDialogDetails: React.FC<ICapitalDistributorC
     const formattedClaimValue = formatterUtils.formatNumber(claimValue, { format: NumberFormat.FIAT_TOTAL_SHORT });
 
     const formattedTimeLeft = formatterUtils.formatDate(endTime * 1000, { format: DateFormat.DURATION });
-    const formattedDeadline = formatterUtils.formatDate(endTime * 1000, { format: DateFormat.YEAR_MONTH_DAY });
+    const formattedDeadline = formatterUtils.formatDate(endTime * 1000, { format: DateFormat.YEAR_MONTH_DAY_TIME });
 
     const claimableLabel = t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.claimable');
     const timeLeftValue = t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.timeLeft', {
@@ -33,7 +33,7 @@ export const CapitalDistributorClaimDialogDetails: React.FC<ICapitalDistributorC
     });
 
     const amountDetails = [
-        { label: 'amount', value: `${formattedAmount} ${token.symbol}` },
+        { label: 'amount', value: `${formattedAmount} ${token.symbol}`, token },
         { label: 'value', value: formattedClaimValue },
     ];
     const metaDetails = [
