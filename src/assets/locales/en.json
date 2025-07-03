@@ -1048,12 +1048,12 @@
         "capitalDistributorCampaignList": {
           "emptyState": {
             "description": "This will show your campaigns when available.",
-            "heading": "No Campaigns found"
+            "heading": "No campaigns found"
           },
           "entity": "Campaigns",
           "errorState": {
             "description": "There was an error loading the campaigns. Try again later.",
-            "heading": "Error loading Campaigns"
+            "heading": "Error loading campaigns"
           },
           "filter": {
             "claimable": "Claimable",
