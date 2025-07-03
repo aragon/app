@@ -18,6 +18,12 @@ export const injectPluginMock: IBackendApiMock = {
                 blockTimestamp: 1751447066,
                 transactionHash: '0x1b914b2687a155ed8e9a06dc52b7cc61fbb19b3199a8d51631c19810e4cf2da9',
                 slug: 'CAP',
+                links: [
+                    { name: 'Boundless DAO rewards', url: 'https://boundless.com/rewards' },
+                    { name: 'How to delegate', url: 'https://boundless.com/how-to/delegate' },
+                ],
+                name: 'Capital Distributor',
+                description: 'A plugin for distributing capital',
             },
         ],
     },
