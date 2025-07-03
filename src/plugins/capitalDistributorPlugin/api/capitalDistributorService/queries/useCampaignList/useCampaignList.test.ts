@@ -11,7 +11,7 @@ describe('useCampaignList query', () => {
         capitalDistributorServiceSpy.mockReset();
     });
 
-    it('fetches the campaign list for a user', async () => {
+    it('fetches the list of campaigns for the specified user', async () => {
         const campaignsResult = generatePaginatedResponse({ data: [generateCampaign()] });
         capitalDistributorServiceSpy.mockResolvedValue(campaignsResult);
 

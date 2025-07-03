@@ -9,7 +9,7 @@ describe('capitalDistributor service', () => {
         requestSpy.mockReset();
     });
 
-    it('getCampaignList fetches a paginated list campaign list of campaigns given a member address', async () => {
+    it('getCampaignList fetches a paginated list of campaigns for the given member address', async () => {
         const campaignsList = [generateCampaign({ id: 1 }), generateCampaign({ id: 2 })];
         const campaignsListResponse = generatePaginatedResponse({ data: campaignsList });
         const params = { queryParams: { memberAddress: '0x123', pageSize: 2 } };
@@ -21,7 +21,7 @@ describe('capitalDistributor service', () => {
         expect(result).toEqual(campaignsListResponse);
     });
 
-    it('getCampaignStats fetches the stats of a campaign for a user', async () => {
+    it('getCampaignStats fetches the campaign stats for a user', async () => {
         const campaignStats = { totalContributions: '1000', totalClaimed: '500' };
         const params = { urlParams: { memberAddress: '0x123' } };
 
