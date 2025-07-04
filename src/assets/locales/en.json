@@ -210,9 +210,6 @@
               "more": "More",
               "remove": "Remove body"
             },
-            "error": {
-              "required": "At least one body must be added to the stage."
-            },
             "helpText": "These bodies will decide whether this stage passes.",
             "label": {
               "normal": "Voting bodies",
