@@ -2,7 +2,7 @@ import { AdvancedDateInputDuration } from '@/shared/components/forms/advancedDat
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Card, InputContainer } from '@aragon/gov-ui-kit';
 
-export interface ISetupStageDurationProps {
+export interface ISetupStageDurationFieldProps {
     /**
      * Number of bodies of the stage.
      */
@@ -11,26 +11,26 @@ export interface ISetupStageDurationProps {
 
 const minVotingPeriod = { days: 0, hours: 1, minutes: 0 };
 
-export const SetupStageDuration: React.FC<ISetupStageDurationProps> = (props) => {
+export const SetupStageDurationField: React.FC<ISetupStageDurationFieldProps> = (props) => {
     const { bodyCount } = props;
 
     const { t } = useTranslations();
 
     const votingPeriodInfoText =
-        bodyCount > 0 ? t('app.createDao.setupStageSettingsDialog.fields.stageDuration.infoText') : undefined;
+        bodyCount > 0 ? t('app.createDao.setupStageSettingsDialog.fields.stageDurationField.infoText') : undefined;
 
     return (
         <InputContainer
             className="flex flex-col"
             id="minDuration"
             useCustomWrapper={true}
-            helpText={t(`app.createDao.setupStageSettingsDialog.fields.stageDuration.helpText`)}
-            label={t(`app.createDao.setupStageSettingsDialog.fields.stageDuration.label`)}
+            helpText={t(`app.createDao.setupStageSettingsDialog.fields.stageDurationField.helpText`)}
+            label={t(`app.createDao.setupStageSettingsDialog.fields.stageDurationField.label`)}
         >
             <Card className="border border-neutral-100">
                 <AdvancedDateInputDuration
                     field="votingPeriod"
-                    label={t(`app.createDao.setupStageSettingsDialog.fields.stageDuration.label`)}
+                    label={t(`app.createDao.setupStageSettingsDialog.fields.stageDurationField.label`)}
                     infoDisplay="inline"
                     infoText={votingPeriodInfoText}
                     validateMinDuration={true}

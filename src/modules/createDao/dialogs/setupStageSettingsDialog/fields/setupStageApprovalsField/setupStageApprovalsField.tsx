@@ -5,7 +5,7 @@ import { useFormContext } from 'react-hook-form';
 import { ProcessStageType } from '../../../../components/createProcessForm';
 import type { ISetupStageSettingsForm } from '../../setupStageSettingsDialogDefinitions';
 
-export interface ISetupStageApprovalsProps {
+export interface ISetupStageApprovalsFieldProps {
     /**
      * Type of the stage.
      */
@@ -18,7 +18,7 @@ export interface ISetupStageApprovalsProps {
 
 const requiredApprovalsDefaultValue = 1;
 
-export const SetupStageApprovals: React.FC<ISetupStageApprovalsProps> = (props) => {
+export const SetupStageApprovalsField: React.FC<ISetupStageApprovalsFieldProps> = (props) => {
     const { stageType, bodyCount } = props;
 
     const { t } = useTranslations();
@@ -33,14 +33,14 @@ export const SetupStageApprovals: React.FC<ISetupStageApprovalsProps> = (props) 
 
     return (
         <NumberProgressInput
-            label={t(`app.createDao.setupStageSettingsDialog.fields.stageApprovals.${labelContext}.label`)}
-            helpText={t(`app.createDao.setupStageSettingsDialog.fields.stageApprovals.${labelContext}.helpText`)}
+            label={t(`app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.${labelContext}.label`)}
+            helpText={t(`app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.${labelContext}.helpText`)}
             min={0}
             fieldName="requiredApprovals"
             valueLabel={requiredApprovals.toString()}
             defaultValue={requiredApprovalsDefaultValue}
             total={bodyCount}
-            totalLabel={t('app.createDao.setupStageSettingsDialog.fields.stageApprovals.summary', {
+            totalLabel={t('app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.summary', {
                 count: bodyCount,
             })}
         />

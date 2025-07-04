@@ -4,9 +4,9 @@ import { Switch } from '@aragon/gov-ui-kit';
 import { useFormContext } from 'react-hook-form';
 import type { ISetupStageSettingsForm } from '../../setupStageSettingsDialogDefinitions';
 
-export interface ISetupStageEarlyAdvanceProps {}
+export interface ISetupStageEarlyAdvanceFieldProps {}
 
-export const SetupStageEarlyAdvance: React.FC<ISetupStageEarlyAdvanceProps> = () => {
+export const SetupStageEarlyAdvanceField: React.FC<ISetupStageEarlyAdvanceFieldProps> = () => {
     const { t } = useTranslations();
     const { control } = useFormContext<ISetupStageSettingsForm>();
 
@@ -15,14 +15,14 @@ export const SetupStageEarlyAdvance: React.FC<ISetupStageEarlyAdvanceProps> = ()
         onChange: onEarlyStageAdvanceChange,
         ...earlyStageField
     } = useFormField<ISetupStageSettingsForm, 'earlyStageAdvance'>('earlyStageAdvance', {
-        label: t('app.createDao.setupStageSettingsDialog.fields.stageEarlyAdvance.label'),
+        label: t('app.createDao.setupStageSettingsDialog.fields.stageEarlyAdvanceField.label'),
         control,
     });
     return (
         <Switch
-            helpText={t('app.createDao.setupStageSettingsDialog.fields.stageEarlyAdvance.helpText')}
+            helpText={t('app.createDao.setupStageSettingsDialog.fields.stageEarlyAdvanceField.helpText')}
             inlineLabel={t(
-                `app.createDao.setupStageSettingsDialog.fields.stageEarlyAdvance.${earlyStageAdvance ? 'yes' : 'no'}`,
+                `app.createDao.setupStageSettingsDialog.fields.stageEarlyAdvanceField.${earlyStageAdvance ? 'yes' : 'no'}`,
             )}
             onCheckedChanged={(checked) => onEarlyStageAdvanceChange(checked)}
             checked={earlyStageAdvance}

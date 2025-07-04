@@ -5,7 +5,7 @@ import { Card, Switch } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-export interface ISetupStageExpirationProps {
+export interface ISetupStageExpirationFieldProps {
     /**
      * Default value for the stage expiration.
      */
@@ -14,7 +14,7 @@ export interface ISetupStageExpirationProps {
 
 const defaultExpiration = { days: 7, hours: 0, minutes: 0 };
 
-export const SetupStageExpiration: React.FC<ISetupStageExpirationProps> = (props) => {
+export const SetupStageExpirationField: React.FC<ISetupStageExpirationFieldProps> = (props) => {
     const { defaultExpirationValue } = props;
     const { t } = useTranslations();
     const { setValue } = useFormContext();
@@ -30,10 +30,10 @@ export const SetupStageExpiration: React.FC<ISetupStageExpirationProps> = (props
     return (
         <>
             <Switch
-                label={t('app.createDao.setupStageSettingsDialog.fields.stageExpiration.label')}
-                helpText={t('app.createDao.setupStageSettingsDialog.fields.stageExpiration.helpText')}
+                label={t('app.createDao.setupStageSettingsDialog.fields.stageExpirationField.label')}
+                helpText={t('app.createDao.setupStageSettingsDialog.fields.stageExpirationField.helpText')}
                 inlineLabel={t(
-                    `app.createDao.setupStageSettingsDialog.fields.stageExpiration.${displayExpiration ? 'yes' : 'no'}`,
+                    `app.createDao.setupStageSettingsDialog.fields.stageExpirationField.${displayExpiration ? 'yes' : 'no'}`,
                 )}
                 onCheckedChanged={handleToggleExpiration}
                 checked={displayExpiration}
@@ -42,8 +42,8 @@ export const SetupStageExpiration: React.FC<ISetupStageExpirationProps> = (props
                 <Card className="border border-neutral-100">
                     <AdvancedDateInputDuration
                         field="stageExpiration"
-                        label={t('app.createDao.setupStageSettingsDialog.fields.stageExpiration.label')}
-                        infoText={t('app.createDao.setupStageSettingsDialog.fields.stageExpiration.infoText')}
+                        label={t('app.createDao.setupStageSettingsDialog.fields.stageExpirationField.label')}
+                        infoText={t('app.createDao.setupStageSettingsDialog.fields.stageExpirationField.infoText')}
                         infoDisplay="inline"
                     />
                 </Card>

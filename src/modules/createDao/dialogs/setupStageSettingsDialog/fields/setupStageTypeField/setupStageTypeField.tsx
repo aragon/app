@@ -7,7 +7,7 @@ import type { ISetupStageSettingsForm } from '../../setupStageSettingsDialogDefi
 
 export interface IStageTypeFieldProps {}
 
-export const SetupStageType: React.FC = () => {
+export const SetupStageTypeField: React.FC = () => {
     const { t } = useTranslations();
     const { control, setValue } = useFormContext<ISetupStageSettingsForm>();
 
@@ -16,7 +16,7 @@ export const SetupStageType: React.FC = () => {
         onChange: onTypeChange,
         ...stageTypeField
     } = useFormField<ISetupStageSettingsForm, 'type'>('type', {
-        label: t('app.createDao.setupStageSettingsDialog.fields.stageType.label'),
+        label: t('app.createDao.setupStageSettingsDialog.fields.stageTypeField.label'),
         defaultValue: ProcessStageType.NORMAL,
         control,
     });
@@ -34,14 +34,14 @@ export const SetupStageType: React.FC = () => {
         <RadioGroup
             value={stageType}
             onValueChange={handleTypeChange}
-            helpText={t('app.createDao.setupStageSettingsDialog.fields.stageType.helpText')}
+            helpText={t('app.createDao.setupStageSettingsDialog.fields.stageTypeField.helpText')}
             {...stageTypeField}
         >
             {Object.values(ProcessStageType).map((type) => (
                 <RadioCard
                     key={type}
-                    label={t(`app.createDao.setupStageSettingsDialog.fields.stageType.${type}.label`)}
-                    description={t(`app.createDao.setupStageSettingsDialog.fields.stageType.${type}.description`)}
+                    label={t(`app.createDao.setupStageSettingsDialog.fields.stageTypeField.${type}.label`)}
+                    description={t(`app.createDao.setupStageSettingsDialog.fields.stageTypeField.${type}.description`)}
                     value={type}
                 />
             ))}

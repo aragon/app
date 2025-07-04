@@ -413,7 +413,7 @@
         },
 
         "fields": {
-          "stageApprovals": {
+          "stageApprovalsField": {
             "approve": {
               "helpText": "The number of bodies that must approve this proposal to advance it.",
               "label": "Approval threshold"
@@ -424,25 +424,25 @@
               "label": "Veto threshold"
             }
           },
-          "stageDuration": {
+          "stageDurationField": {
             "helpText": "The period of time a proposal is active. Proposals can be created with a longer duration, but not shorter.",
             "infoText": "Recommended minimum voting period is 7 days.",
             "label": "Stage Duration"
           },
-          "stageEarlyAdvance": {
+          "stageEarlyAdvanceField": {
             "helpText": "This allows a proposal to be advanced early to subsequent stages if it's approved before the voting period ends.",
             "label": "Early stage advance",
             "no": "Disabled",
             "yes": "Enabled"
           },
-          "stageExpiration": {
+          "stageExpirationField": {
             "helpText": "This limits the amount of time after the voting period ends for advancing the proposal to the next stage.",
             "infoText": "Recommended minimum expiration time is 7 days.",
             "label": "Stage expiration",
             "no": "Disabled",
             "yes": "Enabled"
           },
-          "stageType": {
+          "stageTypeField": {
             "NORMAL": {
               "description": "Proposals pass the stage only if approved.",
               "label": "Approval"

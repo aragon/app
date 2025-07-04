@@ -1,14 +1,14 @@
-import { SetupStageEarlyAdvance } from '@/modules/createDao/dialogs/setupStageSettingsDialog/fields/setupStageEarlyAdvance';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider/dialogProvider.api';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { ProcessStageType } from '../../components/createProcessForm';
-import { SetupStageApprovals } from './fields/setupStageApprovals';
-import { SetupStageDuration } from './fields/setupStageDuration';
-import { SetupStageExpiration } from './fields/setupStageExpiration';
-import { SetupStageType } from './fields/setupStageType';
+import { SetupStageApprovalsField } from './fields/setupStageApprovalsField';
+import { SetupStageDurationField } from './fields/setupStageDurationField';
+import { SetupStageEarlyAdvanceField } from './fields/setupStageEarlyAdvanceField';
+import { SetupStageExpirationField } from './fields/setupStageExpirationField';
+import { SetupStageTypeField } from './fields/setupStageTypeField';
 import type { ISetupStageSettingsForm } from './setupStageSettingsDialogDefinitions';
 
 export interface ISetupStageSettingsDialogParams {
@@ -57,11 +57,11 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (pro
             <Dialog.Header title={t('app.createDao.setupStageSettingsDialog.title')} />
             <Dialog.Content>
                 <form className="flex flex-col gap-6 py-4" onSubmit={handleSubmit(onFormSubmit)} id={formId}>
-                    {!isTimelockStage && <SetupStageType />}
-                    {bodyCount > 0 && <SetupStageApprovals stageType={stageType} bodyCount={bodyCount} />}
-                    <SetupStageDuration bodyCount={bodyCount} />
-                    {!isOptimisticStage && !isTimelockStage && <SetupStageEarlyAdvance />}
-                    <SetupStageExpiration defaultExpirationValue={defaultValues.stageExpiration} />
+                    {!isTimelockStage && <SetupStageTypeField />}
+                    {bodyCount > 0 && <SetupStageApprovalsField stageType={stageType} bodyCount={bodyCount} />}
+                    <SetupStageDurationField bodyCount={bodyCount} />
+                    {!isOptimisticStage && !isTimelockStage && <SetupStageEarlyAdvanceField />}
+                    <SetupStageExpirationField defaultExpirationValue={defaultValues.stageExpiration} />
                 </form>
             </Dialog.Content>
             <Dialog.Footer
