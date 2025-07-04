@@ -134,17 +134,16 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
                         />
                     </DefinitionList.Item>
                 )}
-                {!isTimelockStage && (
-                    <DefinitionList.Item
-                        term={t('app.createDao.createProcessForm.governance.stageSettingsField.expiration')}
-                    >
-                        <Tag
-                            className="w-fit"
-                            label={expirationTagLabel}
-                            variant={stageExpiration != null ? 'primary' : 'neutral'}
-                        />
-                    </DefinitionList.Item>
-                )}
+
+                <DefinitionList.Item
+                    term={t('app.createDao.createProcessForm.governance.stageSettingsField.expiration')}
+                >
+                    <Tag
+                        className="w-fit"
+                        label={expirationTagLabel}
+                        variant={stageExpiration != null ? 'primary' : 'neutral'}
+                    />
+                </DefinitionList.Item>
                 {stageExpiration != null && (
                     <DefinitionList.Item
                         term={t('app.createDao.createProcessForm.governance.stageSettingsField.expirationPeriod')}
