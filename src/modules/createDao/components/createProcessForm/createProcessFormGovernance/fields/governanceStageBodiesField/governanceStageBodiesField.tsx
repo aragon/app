@@ -62,14 +62,6 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
     const { message: fieldErrorMessage } = getFieldState(fieldName).error?.root ?? {};
     const fieldAlert = fieldErrorMessage ? { message: t(fieldErrorMessage), variant: 'critical' as const } : undefined;
 
-    const handleDelete = (index: number) => {
-        remove(index);
-        // Make sure stage type is back to timelock when last body is removed
-        if (bodies.length === 1) {
-            setValue(`${formPrefix}.settings.type`, ProcessStageType.TIMELOCK);
-        }
-    };
-
     return (
         <>
             <InputContainer
@@ -104,7 +96,7 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
                                 fieldName={`${formPrefix}.bodies.${index.toString()}`}
                                 body={body}
                                 onEdit={() => openSetupBodyDialog(index)}
-                                onDelete={() => handleDelete(index)}
+                                onDelete={() => remove(index)}
                             />
                         ))}
                         <Button

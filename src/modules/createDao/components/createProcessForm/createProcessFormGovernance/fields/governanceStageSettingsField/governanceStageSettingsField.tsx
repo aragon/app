@@ -42,12 +42,12 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
 
     const { value: stageType } = useFormField<ISetupStageSettingsForm, 'type'>('type', {
         label: t('app.createDao.createProcessForm.governance.stageSettingsField.governanceType'),
-        defaultValue: ProcessStageType.TIMELOCK,
+        defaultValue: ProcessStageType.NORMAL,
         fieldPrefix,
     });
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
-    const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
+    const isTimelockStage = bodyCount === 0;
 
     const { value: votingPeriod } = useFormField<ISetupStageSettingsForm, 'votingPeriod'>('votingPeriod', {
         fieldPrefix,

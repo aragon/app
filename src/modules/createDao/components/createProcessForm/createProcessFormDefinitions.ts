@@ -10,7 +10,6 @@ export enum ProposalCreationMode {
 export enum ProcessStageType {
     NORMAL = 'NORMAL',
     OPTIMISTIC = 'OPTIMISTIC',
-    TIMELOCK = 'TIMELOCK',
 }
 
 export enum GovernanceType {

@@ -295,19 +295,27 @@ describe('sppTransaction utils', () => {
 
     describe('processStageApprovals', () => {
         it('returns the correct approvals for a timelock stage', () => {
-            const result = sppTransactionUtils['processStageApprovals'](1, ProcessStageType.TIMELOCK);
+            const result = sppTransactionUtils['processStageApprovals'](1, ProcessStageType.NORMAL, []);
             expect(result).toEqual({ approvalThreshold: 0, vetoThreshold: 0 });
         });
 
         it('returns the correct approvals for a normal stage', () => {
             const requiredApprovals = 3;
-            const result = sppTransactionUtils['processStageApprovals'](requiredApprovals, ProcessStageType.NORMAL);
+            const body = generateSetupBodyFormData();
+            const result = sppTransactionUtils['processStageApprovals'](requiredApprovals, ProcessStageType.NORMAL, [
+                body,
+            ]);
             expect(result).toEqual({ approvalThreshold: requiredApprovals, vetoThreshold: 0 });
         });
 
         it('returns the correct approvals for a optimistic stage', () => {
             const requiredApprovals = 2;
-            const result = sppTransactionUtils['processStageApprovals'](requiredApprovals, ProcessStageType.OPTIMISTIC);
+            const body = generateSetupBodyFormData();
+            const result = sppTransactionUtils['processStageApprovals'](
+                requiredApprovals,
+                ProcessStageType.OPTIMISTIC,
+                [body],
+            );
             expect(result).toEqual({ approvalThreshold: 0, vetoThreshold: requiredApprovals });
         });
     });
@@ -318,7 +326,7 @@ describe('sppTransaction utils', () => {
                 votingPeriod: { days: 1, hours: 0, minutes: 0 },
                 earlyStageAdvance: false,
             });
-            const result = sppTransactionUtils['processStageTiming'](settings);
+            const result = sppTransactionUtils['processStageTiming'](settings, []);
             expect(result.voteDuration).toBe(BigInt(86400)); // One day in seconds
         });
 
@@ -327,7 +335,8 @@ describe('sppTransaction utils', () => {
                 votingPeriod: { days: 1, hours: 0, minutes: 0 },
                 earlyStageAdvance: true,
             });
-            const result = sppTransactionUtils['processStageTiming'](settings);
+            const body = generateSetupBodyFormData();
+            const result = sppTransactionUtils['processStageTiming'](settings, [body]);
             expect(result.minAdvance).toBe(BigInt(0));
         });
 
@@ -336,7 +345,7 @@ describe('sppTransaction utils', () => {
                 votingPeriod: { days: 0, hours: 12, minutes: 0 },
                 earlyStageAdvance: false,
             });
-            const result = sppTransactionUtils['processStageTiming'](settings);
+            const result = sppTransactionUtils['processStageTiming'](settings, []);
             expect(result.minAdvance).toBe(BigInt(43200));
         });
 
@@ -346,7 +355,7 @@ describe('sppTransaction utils', () => {
                 earlyStageAdvance: false,
                 stageExpiration: undefined,
             });
-            const result = sppTransactionUtils['processStageTiming'](settings);
+            const result = sppTransactionUtils['processStageTiming'](settings, []);
             expect(result.maxAdvance).toEqual(sppTransactionUtils['defaultMaxAdvance']);
         });
 
@@ -356,7 +365,7 @@ describe('sppTransaction utils', () => {
                 earlyStageAdvance: false,
                 stageExpiration: { days: 0, hours: 0, minutes: 30 },
             });
-            const result = sppTransactionUtils['processStageTiming'](settings);
+            const result = sppTransactionUtils['processStageTiming'](settings, []);
             expect(result.maxAdvance).toEqual(BigInt(45000));
         });
     });

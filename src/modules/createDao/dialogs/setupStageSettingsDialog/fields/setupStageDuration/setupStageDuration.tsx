@@ -1,26 +1,23 @@
-import { ProcessStageType } from '../../../../components/createProcessForm';
 import { AdvancedDateInputDuration } from '@/shared/components/forms/advancedDateInput/advancedDateInputDuration';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Card, InputContainer } from '@aragon/gov-ui-kit';
 
 export interface ISetupStageDurationProps {
     /**
-     * Type of the stage.
+     * Number of bodies of the stage.
      */
-    stageType: ProcessStageType;
+    bodyCount: number;
 }
 
 const minVotingPeriod = { days: 0, hours: 1, minutes: 0 };
 
 export const SetupStageDuration: React.FC<ISetupStageDurationProps> = (props) => {
-    const { stageType } = props;
+    const { bodyCount } = props;
 
     const { t } = useTranslations();
 
     const votingPeriodInfoText =
-        stageType !== ProcessStageType.TIMELOCK
-            ? t('app.createDao.setupStageSettingsDialog.fields.stageDuration.infoText')
-            : undefined;
+        bodyCount > 0 ? t('app.createDao.setupStageSettingsDialog.fields.stageDuration.infoText') : undefined;
 
     return (
         <InputContainer

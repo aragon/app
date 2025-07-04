@@ -30,11 +30,6 @@ export const SetupStageType: React.FC = () => {
         }
     };
 
-    // Filter out timelocks as we are not showing them in this part of the UI
-    const availableProcessesTypes = Object.values(ProcessStageType).filter(
-        (type) => type !== ProcessStageType.TIMELOCK,
-    );
-
     return (
         <RadioGroup
             value={stageType}
@@ -42,7 +37,7 @@ export const SetupStageType: React.FC = () => {
             helpText={t('app.createDao.setupStageSettingsDialog.fields.stageType.helpText')}
             {...stageTypeField}
         >
-            {availableProcessesTypes.map((type) => (
+            {Object.values(ProcessStageType).map((type) => (
                 <RadioCard
                     key={type}
                     label={t(`app.createDao.setupStageSettingsDialog.fields.stageType.${type}.label`)}

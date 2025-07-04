@@ -48,7 +48,7 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (pro
     });
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
-    const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
+    const isTimelockStage = bodyCount === 0;
 
     const onFormSubmit = (values: ISetupStageSettingsForm) => {
         onSubmit(values);
@@ -62,7 +62,7 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (pro
                 <form className="flex flex-col gap-6 py-4" onSubmit={handleSubmit(onFormSubmit)} id={formId}>
                     {!isTimelockStage && <SetupStageType />}
                     {bodyCount > 0 && <SetupStageApprovals stageType={stageType} bodyCount={bodyCount} />}
-                    <SetupStageDuration stageType={stageType} />
+                    <SetupStageDuration bodyCount={bodyCount} />
                     {!isOptimisticStage && !isTimelockStage && <SetupStageEarlyAdvance />}
                     <SetupStageExpiration defaultExpirationValue={defaultValues.stageExpiration} />
                 </form>

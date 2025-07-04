@@ -3,7 +3,7 @@ import { type ICreateProcessFormDataAdvanced, ProcessStageType } from './createP
 class CreateProcessFormUtils {
     private defaultVotingPeriod = { days: 7, minutes: 0, hours: 0 };
 
-    private defaultType = ProcessStageType.TIMELOCK;
+    private defaultType = ProcessStageType.NORMAL;
 
     buildDefaultStage = (): ICreateProcessFormDataAdvanced['stages'][number] => {
         const internalId = crypto.randomUUID();
