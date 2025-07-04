@@ -2,4 +2,4 @@
 '@aragon/app-next': patch
 ---
 
-Add correct pageSize params throughout the app
+Fix manage admins flow by adding new max page size param
