@@ -203,17 +203,6 @@
               "ens": "ENS name"
             }
           },
-          "stageApprovalsField": {
-            "approve": {
-              "helpText": "The number of bodies that must approve this proposal to advance it.",
-              "label": "Approval threshold"
-            },
-            "summary": "of {{count}} bodies",
-            "veto": {
-              "helpText": "The number of bodies that must veto this proposal to stop it from advancing.",
-              "label": "Veto threshold"
-            }
-          },
           "stageBodiesField": {
             "action": {
               "add": "Add body",
@@ -257,35 +246,6 @@
             "no": "Disabled",
             "votingPeriod": "Stage duration",
             "yes": "Enabled"
-          },
-          "stageTimingField": {
-            "earlyAdvance": "Early stage advance",
-            "edit": "Edit timing",
-            "expiration": "Stage expiration",
-            "expirationPeriod": "Expiration period",
-            "label": "Timing",
-            "no": "Disabled",
-            "timelockPeriod": "Timelock period",
-            "votingPeriod": "Voting period",
-            "yes": "Enabled"
-          },
-          "stageTypeField": {
-            "helpText": "This will determine the role that governance plays in the stage.",
-            "label": "Stage type",
-            "list": {
-              "NORMAL": {
-                "description": "Proposals pass this stage only if approved.",
-                "label": "Normal"
-              },
-              "OPTIMISTIC": {
-                "description": "Proposals pass this stage unless vetoed.",
-                "label": "Optimistic"
-              },
-              "TIMELOCK": {
-                "description": "Proposals pass this stage after the timelock period.",
-                "label": "Timelock"
-              }
-            }
           },
           "type": {
             "ADVANCED": {
@@ -451,64 +411,52 @@
           "cancel": "Cancel",
           "save": "Save"
         },
-        "earlyAdvance": {
-          "helpText": "This allows a proposal to be advanced early to subsequent stages if it's approved before the voting period ends.",
-          "label": "Early stage advance"
-        },
-        "expiration": {
-          "helpText": "This limits the amount of time after the voting period ends for advancing the proposal to the next stage.",
-          "infoText": "Recommended minimum expiration time is 7 days.",
-          "label": "Stage expiration"
-        },
-        "fields": {},
 
+        "fields": {
+          "stageApprovals": {
+            "approve": {
+              "helpText": "The number of bodies that must approve this proposal to advance it.",
+              "label": "Approval threshold"
+            },
+            "summary": "of {{count}} bodies",
+            "veto": {
+              "helpText": "The number of bodies that must veto this proposal to stop it from advancing.",
+              "label": "Veto threshold"
+            }
+          },
+          "stageDuration": {
+            "helpText": "The period of time a proposal is active. Proposals can be created with a longer duration, but not shorter.",
+            "infoText": "Recommended minimum voting period is 7 days.",
+            "label": "Stage Duration"
+          },
+          "stageEarlyAdvance": {
+            "helpText": "This allows a proposal to be advanced early to subsequent stages if it's approved before the voting period ends.",
+            "label": "Early stage advance",
+            "no": "Disabled",
+            "yes": "Enabled"
+          },
+          "stageExpiration": {
+            "helpText": "This limits the amount of time after the voting period ends for advancing the proposal to the next stage.",
+            "infoText": "Recommended minimum expiration time is 7 days.",
+            "label": "Stage expiration",
+            "no": "Disabled",
+            "yes": "Enabled"
+          },
+          "stageType": {
+            "NORMAL": {
+              "description": "Proposals pass the stage only if approved.",
+              "label": "Approval"
+            },
+            "OPTIMISTIC": {
+              "description": "Proposals pass the stage unless vetoed.",
+              "label": "Veto"
+            },
+            "helpText": "This will determine the role that governance plays in the stage.",
+            "label": "Governance type"
+          }
+        },
         "submit": "Save",
-        "title": "Settings",
-        "votingPeriod": {
-          "helpText": "The period of time a proposal is active. Proposals can be created with a longer duration, but not shorter.",
-          "infoText": "Recommended minimum voting period is 7 days.",
-          "label": "Stage Duration"
-        }
-      },
-      "setupStageTimingDialog": {
-        "a11y": {
-          "description": "Configure the duration and expiration for the stage"
-        },
-        "action": {
-          "cancel": "Cancel",
-          "save": "Save"
-        },
-        "earlyAdvance": {
-          "helpText": "This allows a proposal to be advanced early to subsequent stages if it's approved before the voting period ends.",
-          "label": "Early stage advance"
-        },
-        "expiration": {
-          "helpText": "This limits the amount of time after the voting period ends for advancing the proposal to the next stage.",
-          "infoText": "Recommended minimum expiration time is 7 days.",
-          "label": "Stage expiration"
-        },
-        "timelockPeriod": {
-          "helpText": "The time that must pass before the proposal can advance.",
-          "label": "Timelock period"
-        },
-        "title": "Edit timing",
-        "votingPeriod": {
-          "helpText": "This is the amount of time bodies in this stage have to vote on proposals.",
-          "infoText": "Recommended minimum voting period is 7 days.",
-          "label": "Voting period"
-        }
-      },
-      "stageTypeField": {
-        "NORMAL": {
-          "description": "Proposals pass the stage only if approved.",
-          "label": "Approval"
-        },
-        "OPTIMISTIC": {
-          "description": "Proposals pass the stage unless vetoed.",
-          "label": "Veto"
-        },
-        "helpText": "This will determine the role that governance plays in the stage.",
-        "label": "Governance type"
+        "title": "Settings"
       }
     },
     "daos": {

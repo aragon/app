@@ -31,13 +31,14 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
     const { open, close } = useDialogContext();
 
     const fieldName = `${formPrefix}.bodies`;
+    const bodiesWatch = useWatch<Record<string, ISetupBodyForm[]>>({ name: fieldName });
+
     const requiredErrorMessage = 'app.createDao.createProcessForm.governance.stageBodiesField.error.required';
     const { fields, remove, update, append } = useFieldArray<Record<string, ISetupBodyForm[]>>({
         name: fieldName,
-        rules: { required: { value: true, message: requiredErrorMessage } },
+        rules: { required: { value: bodiesWatch.length > 0, message: requiredErrorMessage } },
     });
 
-    const bodiesWatch = useWatch<Record<string, ISetupBodyForm[]>>({ name: fieldName });
     const bodies = fields.map((field, index) => ({ ...field, ...bodiesWatch[index] }));
 
     const handleBodySubmit = (index?: number) => (values: ISetupBodyForm) => {
@@ -60,6 +61,14 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
 
     const { message: fieldErrorMessage } = getFieldState(fieldName).error?.root ?? {};
     const fieldAlert = fieldErrorMessage ? { message: t(fieldErrorMessage), variant: 'critical' as const } : undefined;
+
+    const handleDelete = (index: number) => {
+        remove(index);
+        // Make sure stage type is back to timelock when last body is removed
+        if (bodies.length === 1) {
+            setValue(`${formPrefix}.settings.type`, ProcessStageType.TIMELOCK);
+        }
+    };
 
     return (
         <>
@@ -95,7 +104,7 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
                                 fieldName={`${formPrefix}.bodies.${index.toString()}`}
                                 body={body}
                                 onEdit={() => openSetupBodyDialog(index)}
-                                onDelete={() => remove(index)}
+                                onDelete={() => handleDelete(index)}
                             />
                         ))}
                         <Button

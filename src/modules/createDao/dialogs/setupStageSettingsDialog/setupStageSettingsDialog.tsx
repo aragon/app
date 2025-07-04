@@ -1,15 +1,15 @@
+import { SetupStageEarlyAdvance } from '@/modules/createDao/dialogs/setupStageSettingsDialog/fields/setupStageEarlyAdvance';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider/dialogProvider.api';
-import { AdvancedDateInputDuration } from '@/shared/components/forms/advancedDateInput/advancedDateInputDuration';
-import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
-import { useFormField } from '@/shared/hooks/useFormField';
-import { Card, Dialog, InputContainer, invariant, Switch } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { ProcessStageType } from '../../components/createProcessForm';
+import { SetupStageApprovals } from './fields/setupStageApprovals';
+import { SetupStageDuration } from './fields/setupStageDuration';
+import { SetupStageExpiration } from './fields/setupStageExpiration';
+import { SetupStageType } from './fields/setupStageType';
 import type { ISetupStageSettingsForm } from './setupStageSettingsDialogDefinitions';
-import { StageTypeField } from '@/modules/createDao/dialogs/setupStageSettingsDialog/fields/stageTypeField/stageTypeField';
 
 export interface ISetupStageSettingsDialogParams {
     /**
@@ -28,10 +28,6 @@ export interface ISetupStageSettingsDialogParams {
 
 export interface ISetupStageSettingsProps extends IDialogComponentProps<ISetupStageSettingsDialogParams> {}
 
-const defaultExpiration = { days: 7, hours: 0, minutes: 0 };
-const minVotingPeriod = { days: 0, hours: 1, minutes: 0 };
-const requiredApprovalsDefaultValue = 1;
-
 const formId = 'stageSettingsForm';
 
 export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (props) => {
@@ -43,10 +39,8 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (pro
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
-    const [displayExpiration, setDisplayExpiration] = useState(defaultValues.stageExpiration != null);
-
     const formMethods = useForm<ISetupStageSettingsForm>({ mode: 'onTouched', defaultValues });
-    const { handleSubmit, setValue, control } = formMethods;
+    const { handleSubmit, control } = formMethods;
 
     const stageType = useWatch<ISetupStageSettingsForm, 'type'>({
         name: 'type',
@@ -56,112 +50,21 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (pro
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
 
-    const {
-        value: earlyStageAdvance,
-        onChange: onEarlyStageAdvanceChange,
-        ...earlyStageField
-    } = useFormField<ISetupStageSettingsForm, 'earlyStageAdvance'>('earlyStageAdvance', {
-        label: t('app.createDao.setupStageSettingsDialog.earlyAdvance.label'),
-        control,
-    });
-
-    const { value: requiredApprovals } = useFormField<ISetupStageSettingsForm, 'requiredApprovals'>(
-        'requiredApprovals',
-        {
-            control,
-        },
-    );
-
-    const handleToggleExpiration = (checked: boolean) => {
-        setDisplayExpiration(checked);
-        // The timeout here is needed because the advanced-date component needs to be rendered and the form field to be
-        // registered before we can set its value on the form.
-        setTimeout(() => setValue('stageExpiration', checked ? defaultExpiration : undefined), 0);
-    };
-
     const onFormSubmit = (values: ISetupStageSettingsForm) => {
         onSubmit(values);
         close();
     };
-
-    const votingPeriodInfoText = !isTimelockStage
-        ? t('app.createDao.setupStageSettingsDialog.votingPeriod.infoText')
-        : undefined;
-
-    const labelContext = isOptimisticStage ? 'veto' : 'approve';
 
     return (
         <FormProvider {...formMethods}>
             <Dialog.Header title={t('app.createDao.setupStageSettingsDialog.title')} />
             <Dialog.Content>
                 <form className="flex flex-col gap-6 py-4" onSubmit={handleSubmit(onFormSubmit)} id={formId}>
-                    <StageTypeField />
-                    {bodyCount > 0 && (
-                        <NumberProgressInput
-                            label={t(
-                                `app.createDao.createProcessForm.governance.stageApprovalsField.${labelContext}.label`,
-                            )}
-                            helpText={t(
-                                `app.createDao.createProcessForm.governance.stageApprovalsField.${labelContext}.helpText`,
-                            )}
-                            min={0}
-                            fieldName="requiredApprovals"
-                            valueLabel={requiredApprovals.toString()}
-                            defaultValue={requiredApprovalsDefaultValue}
-                            total={bodyCount}
-                            totalLabel={t('app.createDao.createProcessForm.governance.stageApprovalsField.summary', {
-                                count: bodyCount,
-                            })}
-                        />
-                    )}
-                    <InputContainer
-                        className="flex flex-col"
-                        id="minDuration"
-                        useCustomWrapper={true}
-                        helpText={t(`app.createDao.setupStageSettingsDialog.votingPeriod.helpText`)}
-                        label={t(`app.createDao.setupStageSettingsDialog.votingPeriod.label`)}
-                    >
-                        <Card className="border border-neutral-100">
-                            <AdvancedDateInputDuration
-                                field="votingPeriod"
-                                label={t(`app.createDao.setupStageSettingsDialog.votingPeriod.label`)}
-                                infoDisplay="inline"
-                                infoText={votingPeriodInfoText}
-                                validateMinDuration={true}
-                                minDuration={minVotingPeriod}
-                            />
-                        </Card>
-                    </InputContainer>
-                    {!isOptimisticStage && !isTimelockStage && (
-                        <Switch
-                            helpText={t('app.createDao.setupStageSettingsDialog.earlyAdvance.helpText')}
-                            inlineLabel={t(
-                                `app.createDao.createProcessForm.governance.stageSettingsField.${earlyStageAdvance ? 'yes' : 'no'}`,
-                            )}
-                            onCheckedChanged={(checked) => onEarlyStageAdvanceChange(checked)}
-                            checked={earlyStageAdvance}
-                            {...earlyStageField}
-                        />
-                    )}
-                    <Switch
-                        label={t('app.createDao.setupStageSettingsDialog.expiration.label')}
-                        helpText={t('app.createDao.setupStageSettingsDialog.expiration.helpText')}
-                        inlineLabel={t(
-                            `app.createDao.createProcessForm.governance.stageSettingsField.${displayExpiration ? 'yes' : 'no'}`,
-                        )}
-                        onCheckedChanged={handleToggleExpiration}
-                        checked={displayExpiration}
-                    />
-                    {displayExpiration && (
-                        <Card className="border border-neutral-100">
-                            <AdvancedDateInputDuration
-                                field="stageExpiration"
-                                label={t('app.createDao.setupStageSettingsDialog.expiration.label')}
-                                infoText={t('app.createDao.setupStageSettingsDialog.expiration.infoText')}
-                                infoDisplay="inline"
-                            />
-                        </Card>
-                    )}
+                    {!isTimelockStage && <SetupStageType />}
+                    {bodyCount > 0 && <SetupStageApprovals stageType={stageType} bodyCount={bodyCount} />}
+                    <SetupStageDuration stageType={stageType} />
+                    {!isOptimisticStage && !isTimelockStage && <SetupStageEarlyAdvance />}
+                    <SetupStageExpiration defaultExpirationValue={defaultValues.stageExpiration} />
                 </form>
             </Dialog.Content>
             <Dialog.Footer

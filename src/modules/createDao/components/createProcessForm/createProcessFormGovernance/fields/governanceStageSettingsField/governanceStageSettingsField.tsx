@@ -41,7 +41,7 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
     const { open } = useDialogContext();
 
     const { value: stageType } = useFormField<ISetupStageSettingsForm, 'type'>('type', {
-        label: t('app.createDao.createProcessForm.governance.stageTypeField.label'),
+        label: t('app.createDao.createProcessForm.governance.stageSettingsField.governanceType'),
         defaultValue: ProcessStageType.TIMELOCK,
         fieldPrefix,
     });
