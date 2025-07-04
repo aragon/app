@@ -4,7 +4,7 @@ import { CreateProcessDetailsDialog } from '../dialogs/createProcessDetailsDialo
 import { PrepareProcessDialog } from '../dialogs/prepareProcessDialog';
 import { PublishDaoDialog } from '../dialogs/publishDaoDialog';
 import { SetupBodyDialog } from '../dialogs/setupBodyDialog';
-import { SetupStageSettingsDialog } from './../dialogs/setupStageSettingsDialog';
+import { SetupStageSettingsDialog } from '../dialogs/setupStageSettingsDialog';
 import { CreateDaoDialogId } from './createDaoDialogId';
 
 export const createDaoDialogsDefinitions: Record<CreateDaoDialogId, IDialogComponentDefinitions> = {

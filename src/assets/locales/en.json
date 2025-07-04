@@ -231,9 +231,10 @@
             },
             "name": {
               "helpText": "This is used to identify the stage the proposal is in. For example: Community Review, Guardian Veto, or Founder Signoff",
-              "label": "Name",
-              "title": "Stage name"
-            }
+              "label": "Name"
+            },
+            "number": "Stage {{stageNumber}}",
+            "title": "Stage name"
           },
           "stageSettingsField": {
             "approvalThreshold": "Approval threshold",
@@ -411,7 +412,6 @@
           "cancel": "Cancel",
           "save": "Save"
         },
-
         "fields": {
           "stageApprovalsField": {
             "approve": {

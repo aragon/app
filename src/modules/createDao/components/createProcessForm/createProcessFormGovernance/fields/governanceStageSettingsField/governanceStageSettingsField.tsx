@@ -7,18 +7,14 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
 import { Button, DefinitionList, InputContainer, Tag } from '@aragon/gov-ui-kit';
 import { Duration } from 'luxon';
-import { useFormContext } from 'react-hook-form';
-import { ProcessStageType } from '../../../createProcessFormDefinitions';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { type ICreateProcessFormStage, ProcessStageType } from '../../../createProcessFormDefinitions';
 
 export interface IGovernanceStageSettingsFieldProps {
     /**
      * Prefix to be prepended to the form field.
      */
     fieldPrefix: string;
-    /**
-     * Number of bodies of the stage.
-     */
-    bodyCount: number;
 }
 
 const requiredApprovalsDefaultValue = 1;
@@ -34,7 +30,7 @@ const formatDuration = (duration: IDateDuration): string => {
 };
 
 export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFieldProps> = (props) => {
-    const { fieldPrefix, bodyCount } = props;
+    const { fieldPrefix } = props;
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
@@ -46,6 +42,13 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
         fieldPrefix,
     });
 
+    const bodies = useWatch<Record<string, ICreateProcessFormStage['bodies']>>({
+        name: `${fieldPrefix}.bodies`,
+        defaultValue: [],
+    });
+
+    const bodyCount = bodies.length;
+
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
     const isTimelockStage = bodyCount === 0;
 
@@ -55,9 +58,7 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
 
     const { value: earlyStageAdvance } = useFormField<ISetupStageSettingsForm, 'earlyStageAdvance'>(
         'earlyStageAdvance',
-        {
-            fieldPrefix,
-        },
+        { fieldPrefix },
     );
 
     const { value: stageExpiration } = useFormField<ISetupStageSettingsForm, 'stageExpiration'>('stageExpiration', {
@@ -66,10 +67,7 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
 
     const { value: requiredApprovals } = useFormField<ISetupStageSettingsForm, 'requiredApprovals'>(
         'requiredApprovals',
-        {
-            fieldPrefix,
-            defaultValue: requiredApprovalsDefaultValue,
-        },
+        { fieldPrefix, defaultValue: requiredApprovalsDefaultValue },
     );
 
     const earlyStageTagValue = earlyStageAdvance ? 'yes' : 'no';
@@ -108,14 +106,14 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
                     <DefinitionList.Item
                         term={t('app.createDao.createProcessForm.governance.stageSettingsField.governanceType')}
                     >
-                        <p>{stageType}</p>
+                        {stageType}
                     </DefinitionList.Item>
                 )}
                 {!isTimelockStage && (
                     <DefinitionList.Item
                         term={t('app.createDao.createProcessForm.governance.stageSettingsField.approvalThreshold')}
                     >
-                        <p>{requiredApprovals}</p>
+                        {requiredApprovals}
                     </DefinitionList.Item>
                 )}
                 <DefinitionList.Item

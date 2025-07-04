@@ -5,18 +5,20 @@ class CreateProcessFormUtils {
 
     private defaultType = ProcessStageType.NORMAL;
 
+    private defaultStageSettings = {
+        type: this.defaultType,
+        votingPeriod: this.defaultVotingPeriod,
+        earlyStageAdvance: true,
+        requiredApprovals: 1,
+    };
+
     buildDefaultStage = (): ICreateProcessFormDataAdvanced['stages'][number] => {
         const internalId = crypto.randomUUID();
 
         return {
             internalId,
             name: '',
-            settings: {
-                type: this.defaultType,
-                votingPeriod: this.defaultVotingPeriod,
-                earlyStageAdvance: true,
-                requiredApprovals: 1,
-            },
+            settings: this.defaultStageSettings,
             bodies: [],
         };
     };

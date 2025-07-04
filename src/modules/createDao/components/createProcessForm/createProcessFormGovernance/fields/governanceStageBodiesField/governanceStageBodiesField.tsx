@@ -30,14 +30,14 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
     const { open, close } = useDialogContext();
 
     const fieldName = `${formPrefix}.bodies`;
-    const bodiesWatch = useWatch<Record<string, ISetupBodyForm[]>>({ name: fieldName });
 
     const requiredErrorMessage = 'app.createDao.createProcessForm.governance.stageBodiesField.error.required';
     const { fields, remove, update, append } = useFieldArray<Record<string, ISetupBodyForm[]>>({
         name: fieldName,
-        rules: { required: { value: bodiesWatch.length > 0, message: requiredErrorMessage } },
+        rules: { required: { value: true, message: requiredErrorMessage } },
     });
 
+    const bodiesWatch = useWatch<Record<string, ISetupBodyForm[]>>({ name: fieldName });
     const bodies = fields.map((field, index) => ({ ...field, ...bodiesWatch[index] }));
 
     const handleBodySubmit = (index?: number) => (values: ISetupBodyForm) => {

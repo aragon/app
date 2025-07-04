@@ -55,16 +55,13 @@ export const GovernanceStagesFieldItem: React.FC<IGovernanceStagesFieldItemProps
 
     const bodiesLabelContext = isOptimisticStage ? 'veto' : 'normal';
 
-    const bodies = useWatch<Record<string, ICreateProcessFormStage['bodies']>>({
-        name: `${formPrefix}.bodies`,
-        defaultValue: [],
-    });
-
     const stageNameText =
         stageNameField.value !== ''
             ? stageNameField.value
-            : t('app.createDao.createProcessForm.governance.stageField.name.title');
-    const stageNumberText = `Stage ${String(index + 1)}`;
+            : t('app.createDao.createProcessForm.governance.stageField.title');
+    const stageNumberText = t('app.createDao.createProcessForm.governance.stageField.number', {
+        stageNumber: index + 1,
+    });
 
     return (
         <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
@@ -80,7 +77,7 @@ export const GovernanceStagesFieldItem: React.FC<IGovernanceStagesFieldItemProps
                 />
             </div>
             <GovernanceStageBodiesField formPrefix={formPrefix} daoId={daoId} labelContext={bodiesLabelContext} />
-            <GovernanceStageSettingsField fieldPrefix={`${formPrefix}.settings`} bodyCount={bodies.length} />
+            <GovernanceStageSettingsField fieldPrefix={`${formPrefix}.settings`} />
             {stagesCount > 1 && (
                 <Dropdown.Container
                     constrainContentWidth={false}

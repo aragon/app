@@ -45,7 +45,6 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (pro
     const stageType = useWatch<ISetupStageSettingsForm, 'type'>({ name: 'type', control });
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
-    const isTimelockStage = bodyCount === 0;
 
     const onFormSubmit = (values: ISetupStageSettingsForm) => {
         onSubmit(values);
@@ -57,10 +56,10 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (pro
             <Dialog.Header title={t('app.createDao.setupStageSettingsDialog.title')} />
             <Dialog.Content>
                 <form className="flex flex-col gap-6 py-4" onSubmit={handleSubmit(onFormSubmit)} id={formId}>
-                    {!isTimelockStage && <SetupStageTypeField />}
+                    {bodyCount > 0 && <SetupStageTypeField />}
                     {bodyCount > 0 && <SetupStageApprovalsField stageType={stageType} bodyCount={bodyCount} />}
                     <SetupStageDurationField bodyCount={bodyCount} />
-                    {!isOptimisticStage && !isTimelockStage && <SetupStageEarlyAdvanceField />}
+                    {!isOptimisticStage && bodyCount > 0 && <SetupStageEarlyAdvanceField />}
                     <SetupStageExpirationField defaultExpirationValue={defaultValues.stageExpiration} />
                 </form>
             </Dialog.Content>
