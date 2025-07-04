@@ -6,6 +6,7 @@ import {
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
 import { type ISetupBodyForm, SetupBodyType } from '@/modules/createDao/dialogs/setupBodyDialog';
+import type { ISetupStageSettingsForm } from '@/modules/createDao/dialogs/setupStageSettingsDialog/setupStageSettingsDialogDefinitions';
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
@@ -18,7 +19,6 @@ import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import { sppPlugin } from '../../constants/sppPlugin';
 import { SppProposalType } from '../../types';
 import { sppPluginAbi, sppPluginSetupAbi } from './sppPluginAbi';
-import type { ISetupStageSettingsForm } from '@/modules/createDao/dialogs/setupStageSettingsDialog/setupStageSettingsDialogDefinitions';
 
 export interface ICreateSppProposalFormData extends IProposalCreate, ICreateProposalEndDateForm {}
 

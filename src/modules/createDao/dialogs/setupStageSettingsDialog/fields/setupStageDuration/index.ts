@@ -1,1 +1,1 @@
-export { SetupStageDuration, type ISetupStageDurationProps } from './setupStageDuration'
+export { SetupStageDuration, type ISetupStageDurationProps } from './setupStageDuration';

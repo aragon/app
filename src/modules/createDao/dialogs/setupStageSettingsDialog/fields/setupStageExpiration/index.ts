@@ -1,1 +1,1 @@
-export { SetupStageExpiration, type ISetupStageExpirationProps } from './setupStageExpiration'
+export { SetupStageExpiration, type ISetupStageExpirationProps } from './setupStageExpiration';

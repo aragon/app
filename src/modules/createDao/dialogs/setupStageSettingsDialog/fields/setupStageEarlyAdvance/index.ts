@@ -1,1 +1,1 @@
-export { SetupStageEarlyAdvance} from './setupStageEarlyAdvance'
+export { SetupStageEarlyAdvance } from './setupStageEarlyAdvance';

@@ -1,1 +1,1 @@
-export { SetupStageType } from './setupStageType'
+export { SetupStageType } from './setupStageType';

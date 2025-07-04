@@ -1,4 +1,5 @@
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
+import type { ISetupStageSettingsForm } from '@/modules/createDao/dialogs/setupStageSettingsDialog';
 import type { ISetupStageSettingsDialogParams } from '@/modules/createDao/dialogs/setupStageSettingsDialog/setupStageSettingsDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -8,7 +9,6 @@ import { Button, DefinitionList, InputContainer, Tag } from '@aragon/gov-ui-kit'
 import { Duration } from 'luxon';
 import { useFormContext } from 'react-hook-form';
 import { ProcessStageType } from '../../../createProcessFormDefinitions';
-import type { ISetupStageSettingsForm } from '@/modules/createDao/dialogs/setupStageSettingsDialog';
 
 export interface IGovernanceStageSettingsFieldProps {
     /**

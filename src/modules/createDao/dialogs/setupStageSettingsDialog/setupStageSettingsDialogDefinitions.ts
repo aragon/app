@@ -1,5 +1,5 @@
-import type { ProcessStageType } from "@/modules/createDao/components/createProcessForm";
-import type { IDateDuration } from "@/shared/utils/dateUtils";
+import type { IDateDuration } from '@/shared/utils/dateUtils';
+import type { ProcessStageType } from '../../components/createProcessForm';
 
 export interface ISetupStageSettingsForm {
     /**

@@ -1,9 +1,9 @@
-import { ProcessStageType } from '../../../../components/createProcessForm';
-import type { ISetupStageSettingsForm } from '../../setupStageSettingsDialogDefinitions';
 import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { useFormContext } from 'react-hook-form';
+import { ProcessStageType } from '../../../../components/createProcessForm';
+import type { ISetupStageSettingsForm } from '../../setupStageSettingsDialogDefinitions';
 
 export interface ISetupStageApprovalsProps {
     /**
