@@ -1,6 +1,6 @@
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { ISetupBodyForm, ISetupBodyFormNew } from '../../dialogs/setupBodyDialog';
-import type { ISetupStageSettingsForm } from '../../dialogs/setupStageSettingsDialog/setupStageSettingsDialogDefinitions';
+import type { ISetupStageSettingsForm } from '../../dialogs/setupStageSettingsDialog';
 
 export enum ProposalCreationMode {
     LISTED_BODIES = 'LISTED_BODIES',

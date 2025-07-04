@@ -26,9 +26,7 @@ export const SetupStageApprovals: React.FC<ISetupStageApprovalsProps> = (props) 
 
     const { value: requiredApprovals } = useFormField<ISetupStageSettingsForm, 'requiredApprovals'>(
         'requiredApprovals',
-        {
-            control,
-        },
+        { control },
     );
 
     const labelContext = stageType === ProcessStageType.OPTIMISTIC ? 'veto' : 'approve';

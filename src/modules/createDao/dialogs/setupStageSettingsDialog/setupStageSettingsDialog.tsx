@@ -42,10 +42,7 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (pro
     const formMethods = useForm<ISetupStageSettingsForm>({ mode: 'onTouched', defaultValues });
     const { handleSubmit, control } = formMethods;
 
-    const stageType = useWatch<ISetupStageSettingsForm, 'type'>({
-        name: 'type',
-        control,
-    });
+    const stageType = useWatch<ISetupStageSettingsForm, 'type'>({ name: 'type', control });
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
     const isTimelockStage = bodyCount === 0;

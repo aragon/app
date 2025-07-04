@@ -50,7 +50,7 @@ export const generateCreateProcessFormStageSettings = (
 ): ICreateProcessFormStage['settings'] => ({
     type: ProcessStageType.NORMAL,
     votingPeriod: { days: 1, hours: 0, minutes: 0 },
-    earlyStageAdvance: false,
+    earlyStageAdvance: true,
     requiredApprovals: 1,
     ...values,
 });

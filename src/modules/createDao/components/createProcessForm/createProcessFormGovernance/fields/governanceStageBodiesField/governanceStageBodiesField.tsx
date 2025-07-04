@@ -1,4 +1,3 @@
-import { ProcessStageType } from '@/modules/createDao/components/createProcessForm/createProcessFormDefinitions';
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import type { ISetupBodyDialogParams, ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -27,7 +26,7 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
     const { daoId, formPrefix, labelContext = 'normal' } = props;
 
     const { t } = useTranslations();
-    const { getFieldState, setValue } = useFormContext();
+    const { getFieldState } = useFormContext();
     const { open, close } = useDialogContext();
 
     const fieldName = `${formPrefix}.bodies`;
@@ -45,7 +44,6 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
         if (index == null) {
             const bodyId = crypto.randomUUID();
             append({ ...values, internalId: bodyId });
-            setValue(`${formPrefix}.settings.type`, ProcessStageType.NORMAL);
         } else {
             update(index, values);
         }
@@ -72,7 +70,7 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
                 useCustomWrapper={true}
                 alert={fieldAlert}
             >
-                {bodies.length === 0 ? (
+                {bodies.length === 0 && (
                     <CardEmptyState
                         heading={t('app.createDao.createProcessForm.governance.stageBodiesField.noBodies.heading')}
                         description={t(
@@ -87,7 +85,8 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
                         isStacked={false}
                         className="border border-neutral-100"
                     />
-                ) : (
+                )}
+                {bodies.length > 0 && (
                     <div className="flex flex-col gap-3 md:gap-2">
                         {bodies.map((body, index) => (
                             <GovernanceBodyField

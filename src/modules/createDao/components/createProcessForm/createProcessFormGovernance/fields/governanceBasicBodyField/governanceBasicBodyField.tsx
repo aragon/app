@@ -47,9 +47,7 @@ export const GovernanceBasicBodyField: React.FC<IGovernanceBasicBodyFieldProps> 
     };
 
     // Set body to null instead of undefined to make sure react-hook-form library triggers a rerender
-    const handleDelete = () => {
-        onBodyChange(null);
-    };
+    const handleDelete = () => onBodyChange(null);
 
     // Keep body-name & process-name in sync when setting up a simple governance process. Other metadata (description,
     // process-key, resources) is processed right before pinning the metadata for the simple governance process.

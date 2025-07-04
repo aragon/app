@@ -24,7 +24,7 @@ export const SetupStageType: React.FC = () => {
     const handleTypeChange = (value: string) => {
         onTypeChange(value);
 
-        // Make sure earlyStageAdvance is false when stage type is optimistic or timelock
+        // Make sure earlyStageAdvance is false when stage type is optimistic
         if (value === ProcessStageType.OPTIMISTIC) {
             setValue(`earlyStageAdvance`, false);
         }
