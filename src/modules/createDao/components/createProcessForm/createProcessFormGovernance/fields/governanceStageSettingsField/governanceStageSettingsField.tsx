@@ -47,10 +47,7 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
         defaultValue: [],
     });
 
-    const bodyCount = bodies.length;
-
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
-    const isTimelockStage = bodyCount === 0;
 
     const { value: votingPeriod } = useFormField<ISetupStageSettingsForm, 'votingPeriod'>('votingPeriod', {
         fieldPrefix,
@@ -89,7 +86,7 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
         const params: ISetupStageSettingsDialogParams = {
             onSubmit: handleDialogSubmit,
             defaultValues: { type: stageType, votingPeriod, earlyStageAdvance, stageExpiration, requiredApprovals },
-            bodyCount,
+            bodyCount: bodies.length,
         };
         open(CreateDaoDialogId.SETUP_STAGE_SETTINGS, { params });
     };
@@ -102,14 +99,14 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
             className="flex flex-col items-start gap-3"
         >
             <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
-                {!isTimelockStage && (
+                {bodies.length > 0 && (
                     <DefinitionList.Item
                         term={t('app.createDao.createProcessForm.governance.stageSettingsField.governanceType')}
                     >
                         {stageType}
                     </DefinitionList.Item>
                 )}
-                {!isTimelockStage && (
+                {bodies.length > 0 && (
                     <DefinitionList.Item
                         term={t('app.createDao.createProcessForm.governance.stageSettingsField.approvalThreshold')}
                     >
@@ -121,7 +118,7 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
                 >
                     {formatDuration(votingPeriod)}
                 </DefinitionList.Item>
-                {!isOptimisticStage && !isTimelockStage && (
+                {!isOptimisticStage && bodies.length > 0 && (
                     <DefinitionList.Item
                         term={t('app.createDao.createProcessForm.governance.stageSettingsField.earlyAdvance')}
                     >
