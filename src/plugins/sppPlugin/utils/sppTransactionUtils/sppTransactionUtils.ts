@@ -185,6 +185,7 @@ class SppTransactionUtils {
         stageType: ProcessStageType,
         bodies: ISetupBodyForm[],
     ) => {
+        // Stages with no bodies (timelock stages) do not require approvals
         const approvalThreshold = bodies.length > 0 && stageType === ProcessStageType.NORMAL ? requiredApprovals : 0;
         const vetoThreshold = bodies.length > 0 && stageType === ProcessStageType.OPTIMISTIC ? requiredApprovals : 0;
 
@@ -198,6 +199,7 @@ class SppTransactionUtils {
         const processedStageExpiration =
             stageExpiration != null ? voteDuration + BigInt(dateUtils.durationToSeconds(stageExpiration)) : undefined;
 
+        // Stages with no bodies (timelock stages) should not have early stage advance
         const minAdvance = bodies.length > 0 && earlyStageAdvance ? BigInt(0) : voteDuration;
         const maxAdvance = processedStageExpiration ?? this.defaultMaxAdvance;
 

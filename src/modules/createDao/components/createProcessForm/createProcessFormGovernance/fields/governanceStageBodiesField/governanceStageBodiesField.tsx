@@ -72,9 +72,9 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
             >
                 {bodies.length === 0 && (
                     <CardEmptyState
-                        heading={t('app.createDao.createProcessForm.governance.stageBodiesField.noBodies.heading')}
+                        heading={t('app.createDao.createProcessForm.governance.stageBodiesField.timelockStage.heading')}
                         description={t(
-                            'app.createDao.createProcessForm.governance.stageBodiesField.noBodies.description',
+                            'app.createDao.createProcessForm.governance.stageBodiesField.timelockStage.description',
                         )}
                         objectIllustration={{ object: 'SETTINGS' }}
                         secondaryButton={{

@@ -134,7 +134,6 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
                         />
                     </DefinitionList.Item>
                 )}
-
                 <DefinitionList.Item
                     term={t('app.createDao.createProcessForm.governance.stageSettingsField.expiration')}
                 >

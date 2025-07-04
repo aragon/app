@@ -218,7 +218,7 @@
               "normal": "Voting bodies",
               "veto": "Vetoing bodies"
             },
-            "noBodies": {
+            "timelockStage": {
               "description": "Without bodies, the stage will be a timelock so proposals pass automatically when it ends.",
               "heading": "No voting bodies"
             }
