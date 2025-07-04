@@ -31,9 +31,7 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
 
     const fieldName = `${formPrefix}.bodies`;
 
-    const { fields, remove, update, append } = useFieldArray<Record<string, ISetupBodyForm[]>>({
-        name: fieldName,
-    });
+    const { fields, remove, update, append } = useFieldArray<Record<string, ISetupBodyForm[]>>({ name: fieldName });
 
     const bodiesWatch = useWatch<Record<string, ISetupBodyForm[]>>({ name: fieldName });
     const bodies = fields.map((field, index) => ({ ...field, ...bodiesWatch[index] }));
