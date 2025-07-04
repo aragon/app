@@ -13,7 +13,7 @@ class SitemapUtils {
     ];
 
     public generateSitemap = async (): Promise<MetadataRoute.Sitemap> => {
-        const daos = await daoExplorerService.getDaoList({ queryParams: { pageSize: 100 } });
+        const daos = await daoExplorerService.getDaoList({ queryParams: { pageSize: 50 } });
 
         const daoPages = daos.data.flatMap((dao) => this.buildDaoPages(dao));
 
