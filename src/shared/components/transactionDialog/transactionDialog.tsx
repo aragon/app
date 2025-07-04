@@ -16,7 +16,7 @@ import { TransactionDialogStep, type ITransactionDialogProps } from './transacti
 import { TransactionDialogFooter } from './transactionDialogFooter';
 import { transactionDialogUtils } from './transactionDialogUtils';
 
-const indexingStepInterval = 1000;
+const indexingStepInterval = 1_000;
 
 export const TransactionDialog = <TCustomStepId extends string>(props: ITransactionDialogProps<TCustomStepId>) => {
     const {
@@ -78,16 +78,13 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     });
 
     const isIndexing = activeStep === TransactionDialogStep.INDEXING;
+
     // Using the `!` operator here as this hook is only enabled when the transactionHash and transactionType are defined
     const indexingUrlParams = { network, transactionHash: transactionHash! };
-    const indexingQueryParams = { type: transactionType! };
-    const indexingParams = { urlParams: indexingUrlParams, queryParams: indexingQueryParams };
+    const indexingParams = { urlParams: indexingUrlParams, queryParams: { type: transactionType! } };
     const { data: transactionStatus } = useTransactionStatus(indexingParams, {
         enabled: waitTxStatus === 'success' && isIndexing,
-        refetchInterval: (data) => {
-            const status = data.state.data ?? null;
-            return !status?.isProcessed ? indexingStepInterval : false;
-        },
+        refetchInterval: ({ state }) => (!state.data?.isProcessed ? indexingStepInterval : false),
     });
 
     const handleSendTransaction = useCallback(() => {
@@ -175,9 +172,8 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         }));
     }, [transactionType, customSteps, t, transactionStepStates, transactionStepActions, transactionStepAddon]);
 
-    useEffect(() => {
-        updateOptions({ disableOutsideClick: true });
-    }, [updateOptions]);
+    // Disable outside click for all transaction dialogs
+    useEffect(() => updateOptions({ disableOutsideClick: true }), [updateOptions]);
 
     useEffect(() => {
         const { state, action, auto } = activeStepInfo?.meta ?? {};
