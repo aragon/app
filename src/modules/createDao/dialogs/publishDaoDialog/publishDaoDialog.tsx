@@ -144,7 +144,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
             customSteps={customSteps}
             prepareTransaction={handlePrepareTransaction}
             network={network}
-            transactionType={TransactionType.DAO_CREATE}
+            transactionType={TransactionType.PLUGIN_CREATE}
         >
             <DaoDataListItem.Structure
                 name={name}
