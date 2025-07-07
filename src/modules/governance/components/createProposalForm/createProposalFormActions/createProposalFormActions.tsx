@@ -20,8 +20,9 @@ import {
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
-import { ActionComposer, type ActionComposerMode, type IActionComposerItem } from '../../actionComposer';
+import { type ActionComposerMode, type IActionComposerItem } from '../../actionComposer';
 import { ActionItemId } from '../../actionComposer/actionComposerUtils';
+import { ActionComposerNew } from '../../actionComposerNew';
 import type { ICreateProposalFormData, IProposalActionData } from '../createProposalFormDefinitions';
 import { useCreateProposalFormContext } from '../createProposalFormProvider';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
@@ -78,6 +79,10 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             ? { ...inputData, parameters: inputData.parameters.filter(({ type }) => (type as unknown) != null) }
             : null,
     }));
+
+    const handleAddActionNew = () => {
+        autocompleteInputRef.current?.focus();
+    };
 
     const handleAddAction = (mode: ActionComposerMode) => {
         setActionComposerMode(mode);
@@ -207,6 +212,9 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 </ProposalActions.Container>
             </ProposalActions.Root>
             <div className={classNames('flex flex-row gap-3', { hidden: displayActionComposer })}>
+                <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={() => handleAddActionNew()}>
+                    {t('app.governance.createProposalForm.actions.addAction.default')}
+                </Button>
                 <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={() => handleAddAction('native')}>
                     {t('app.governance.createProposalForm.actions.addAction.default')}
                 </Button>
@@ -227,7 +235,17 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                     {t('app.governance.createProposalForm.actions.addAction.walletConnect')}
                 </Button>
             </div>
-            <ActionComposer
+            {/*<ActionComposer*/}
+            {/*    wrapperClassName={classNames('transition-none', { '!sr-only': !displayActionComposer })}*/}
+            {/*    onActionSelected={handleItemSelected}*/}
+            {/*    onOpenChange={setDisplayActionComposer}*/}
+            {/*    ref={autocompleteInputRef}*/}
+            {/*    nativeItems={pluginItems}*/}
+            {/*    nativeGroups={pluginGroups}*/}
+            {/*    daoId={daoId}*/}
+            {/*    mode={actionComposerMode}*/}
+            {/*/>*/}
+            <ActionComposerNew
                 wrapperClassName={classNames('transition-none', { '!sr-only': !displayActionComposer })}
                 onActionSelected={handleItemSelected}
                 onOpenChange={setDisplayActionComposer}
