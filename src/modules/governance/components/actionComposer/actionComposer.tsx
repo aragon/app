@@ -22,7 +22,17 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
     const completeNativeItems = actionComposerUtils.getNativeActionItems({ t, dao, nativeItems });
 
     // TODO: Update utils to handle both native and custom items/groups
-    const items = [...customItems, ...completeNativeItems];
+    const items = [...customItems, ...completeNativeItems].map((item) => {
+        if (item.defaultValue?.inputData) {
+            const fnSelector = actionComposerUtils.createFunctionSelector(item.defaultValue.inputData);
+            return {
+                ...item,
+                info: fnSelector,
+            };
+        }
+
+        return item;
+    });
     const groups = [...customGroups, ...completeNativeGroups];
 
     const handleActionSelected = (itemId: string, inputValue: string) => {
