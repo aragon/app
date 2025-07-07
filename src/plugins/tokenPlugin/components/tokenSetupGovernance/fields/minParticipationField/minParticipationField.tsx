@@ -30,8 +30,8 @@ export const MinParticipationField: React.FC<IMinParticipationFieldProps> = (pro
         defaultValue: defaultMinParticipation,
     });
 
-    const amount = (Number(totalSupply) * Number(value)) / 100;
-    const parsedAmount = formatUnits(BigInt(amount), decimals);
+    const amount = (BigInt(totalSupply) * BigInt(value)) / BigInt(100);
+    const parsedAmount = formatUnits(amount, decimals);
     const formattedAmount = formatterUtils.formatNumber(parsedAmount, { format: NumberFormat.TOKEN_AMOUNT_SHORT })!;
 
     return (
