@@ -10,7 +10,7 @@ import {
     ProposalActionType,
 } from '../../api/governanceService';
 import type { ISmartContractAbi, ISmartContractAbiFunction } from '../../api/smartContractService';
-import type { IActionComposerItem } from './actionComposerNew.api';
+import type { IActionComposerItem } from './actionComposer.api';
 
 export enum ActionItemId {
     CUSTOM_ACTION = 'CUSTOM_ACTION',

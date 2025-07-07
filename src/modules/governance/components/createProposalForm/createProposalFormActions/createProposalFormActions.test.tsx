@@ -7,7 +7,7 @@ import { forwardRef } from 'react';
 import * as CreateProposalProvider from '../createProposalFormProvider';
 import { CreateProposalFormActions, type ICreateProposalFormActionsProps } from './createProposalFormActions';
 
-jest.mock('../../actionComposerNew', () => ({
+jest.mock('../../actionComposer', () => ({
     // eslint-disable-next-line react/display-name
     ActionComposer: forwardRef(() => <div data-testid="action-composer-mock" />),
 }));

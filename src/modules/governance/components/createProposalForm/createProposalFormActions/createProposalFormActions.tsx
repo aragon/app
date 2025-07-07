@@ -20,9 +20,9 @@ import {
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
-import { type ActionComposerMode, type IActionComposerItem } from '../../actionComposer';
-import { ActionItemId } from '../../actionComposer/actionComposerUtils';
-import { ActionComposerNew } from '../../actionComposerNew';
+import { ActionComposer } from '../../actionComposer';
+import { type ActionComposerMode, type IActionComposerItem } from '../../actionComposerOld';
+import { ActionItemId } from '../../actionComposerOld/actionComposerUtils';
 import type { ICreateProposalFormData, IProposalActionData } from '../createProposalFormDefinitions';
 import { useCreateProposalFormContext } from '../createProposalFormProvider';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
@@ -237,17 +237,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                     {t('app.governance.createProposalForm.actions.addAction.walletConnect')}
                 </Button>
             </div>
-            {/*<ActionComposer*/}
-            {/*    wrapperClassName={classNames('transition-none', { '!sr-only': !displayActionComposer })}*/}
-            {/*    onActionSelected={handleItemSelected}*/}
-            {/*    onOpenChange={setDisplayActionComposer}*/}
-            {/*    ref={autocompleteInputRef}*/}
-            {/*    nativeItems={pluginItems}*/}
-            {/*    nativeGroups={pluginGroups}*/}
-            {/*    daoId={daoId}*/}
-            {/*    mode={actionComposerMode}*/}
-            {/*/>*/}
-            <ActionComposerNew
+            <ActionComposer
                 wrapperClassName={classNames('transition-none', { '!sr-only': !displayActionComposer })}
                 onActionSelected={handleItemSelected}
                 onOpenChange={setDisplayActionComposer}
@@ -255,7 +245,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 nativeItems={pluginItems}
                 nativeGroups={pluginGroups}
                 daoId={daoId}
-                mode={actionComposerMode}
             />
         </div>
     );
