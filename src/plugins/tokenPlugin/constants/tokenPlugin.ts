@@ -2,7 +2,7 @@ import { Network } from '@/shared/api/daoService';
 import type { IPluginInfo } from '@/shared/types';
 
 export const tokenPlugin: IPluginInfo = {
-    id: 'my-token-voting-plugin-1751647020.plugin.dao.eth',
+    id: 'token-voting',
     name: 'Token',
     installVersion: {
         release: 1,
