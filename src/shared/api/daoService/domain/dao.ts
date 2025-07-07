@@ -25,11 +25,7 @@ export interface IDao {
      */
     description: string;
     /**
-     * ENS name of the DAO (e.g. `my-dao.dao.eth`).
-     */
-    ens: string | null;
-    /**
-     * ENS subdomain of the DAO.
+     * ENS of the DAO under the dao.eth subdomain.
      */
     subdomain: string | null;
     /**

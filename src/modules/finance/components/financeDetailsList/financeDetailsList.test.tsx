@@ -27,7 +27,7 @@ describe('<FinanceDetailsList /> component', () => {
         const dao = generateDao({
             network: Network.POLYGON_MAINNET,
             address: '0x1b765393c3E2f3d25c44eb9Cf6B864B3fD250cDB',
-            ens: 'poly-dao.dao.eth',
+            subdomain: 'poly-dao',
         });
 
         render(createTestComponent({ dao }));
@@ -43,7 +43,7 @@ describe('<FinanceDetailsList /> component', () => {
     });
 
     it('does not render the DAO ens when missing', () => {
-        const dao = generateDao({ ens: null });
+        const dao = generateDao({ subdomain: null });
         render(createTestComponent({ dao }));
         expect(screen.queryByText(/financeDetailsList.vaultEns/)).not.toBeInTheDocument();
     });
