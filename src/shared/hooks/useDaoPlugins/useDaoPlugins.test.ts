@@ -16,8 +16,8 @@ describe('useDaoPlugins hook', () => {
 
     it('retrieves the DAO plugins and returns them as tab-plugins', () => {
         const plugins = [
-            generateDaoPlugin({ subdomain: 'multisig', address: '0x123' }),
-            generateDaoPlugin({ subdomain: 'token-voting', address: '0x456' }),
+            generateDaoPlugin({ subdomain: 'multisig', interfaceType: 'multisig', address: '0x123' }),
+            generateDaoPlugin({ subdomain: 'token-voting', interfaceType: 'token-voting', address: '0x456' }),
         ];
         const dao = generateDao({ id: 'test', plugins });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));

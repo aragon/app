@@ -50,12 +50,12 @@ describe('publishProposalDialog utils', () => {
                 actions: [{ ...proposalAction, daoId: 'test', meta: undefined }],
             });
             const metadataCid = 'test-cid';
-            const plugin = generateDaoPlugin({ address: '0x123', subdomain: 'multisig' });
+            const plugin = generateDaoPlugin({ address: '0x123', subdomain: 'multisig', interfaceType: 'multisig' });
 
             const transaction = await publishProposalDialogUtils.buildTransaction({ proposal, metadataCid, plugin });
 
             expect(getSlotFunctionSpy).toHaveBeenCalledWith({
-                pluginId: plugin.subdomain,
+                pluginId: plugin.interfaceType,
                 slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
             });
             expect(slotFunction).toHaveBeenCalledWith({

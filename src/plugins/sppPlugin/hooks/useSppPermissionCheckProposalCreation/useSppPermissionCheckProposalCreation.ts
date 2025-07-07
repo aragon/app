@@ -26,7 +26,7 @@ export const useSppPermissionCheckProposalCreation = (
     const pluginProposalCreationGuardResults = subPlugins.map(({ meta: plugin }) =>
         pluginRegistryUtils.getSlotFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
-            pluginId: plugin.subdomain,
+            pluginId: plugin.interfaceType,
         })?.({ plugin, daoId }),
     );
 

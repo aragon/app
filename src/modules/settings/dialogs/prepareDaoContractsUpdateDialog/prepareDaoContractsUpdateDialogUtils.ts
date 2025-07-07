@@ -44,7 +44,7 @@ class PrepareDaoContractsUpdateDialogUtils {
     };
 
     private buildPrepareUpdateTransaction = async (dao: IDao, plugin: IDaoPlugin) => {
-        const pluginInfo = pluginRegistryUtils.getPlugin(plugin.subdomain) as IPluginInfo;
+        const pluginInfo = pluginRegistryUtils.getPlugin(plugin.interfaceType) as IPluginInfo;
 
         const currentVersionTag = versionComparatorUtils.normaliseComparatorInput(plugin)!;
         const { installVersion: newVersionTag } = pluginInfo;
@@ -67,7 +67,7 @@ class PrepareDaoContractsUpdateDialogUtils {
         const { preparedSetupData } = await settingsService.getPluginInstallationData({ queryParams: setupDataParams });
         const updateDataBuilder = pluginRegistryUtils.getSlotFunction<IBuildPreparePluginUpdateDataParams, Hex>({
             slotId: SettingsSlotId.SETTINGS_BUILD_PREPARE_PLUGIN_UPDATE_DATA,
-            pluginId: subdomain,
+            pluginId: plugin.interfaceType,
         });
 
         invariant(updateDataBuilder != null, 'PrepareDaoContractsUpdateDialogUtils: builder function does not exist.');
@@ -165,7 +165,7 @@ class PrepareDaoContractsUpdateDialogUtils {
 
     private getPluginUpdateDetails = (plugin: IDaoPlugin) => {
         const { subdomain, release: currentRelease, build: currentBuild } = plugin;
-        const { release, build, description, releaseNotes } = (pluginRegistryUtils.getPlugin(subdomain) as IPluginInfo)
+        const { release, build, description, releaseNotes } = (pluginRegistryUtils.getPlugin(plugin.interfaceType) as IPluginInfo)
             .installVersion;
 
         const pluginName = daoUtils.parsePluginSubdomain(subdomain);

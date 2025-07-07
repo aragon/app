@@ -26,8 +26,8 @@ export interface IDaoPluginPageProps {
 // the module system to properly reload the component.
 const getPagePluginComponent = async (dao: IDao, segments: string[], retry?: boolean) => {
     const slotId = pluginRegistryUtils.getPageSlotId(ApplicationSlotId.APPLICATION_PLUGIN_PAGE, segments);
-    const [Component] = dao.plugins.reduce<Array<PluginComponent | undefined>>((current, { subdomain }) => {
-        const pluginComponent = pluginRegistryUtils.getSlotComponent({ slotId, pluginId: subdomain });
+    const [Component] = dao.plugins.reduce<Array<PluginComponent | undefined>>((current, { interfaceType }) => {
+        const pluginComponent = pluginRegistryUtils.getSlotComponent({ slotId, pluginId: interfaceType });
 
         return current.concat(pluginComponent ?? []);
     }, []);

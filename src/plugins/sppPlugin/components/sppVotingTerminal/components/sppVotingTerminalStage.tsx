@@ -78,7 +78,7 @@ export const SppVotingTerminalStage: React.FC<ISppVotingTerminalStageProps> = (p
                             {plugin.subdomain != null && (
                                 <PluginSingleComponent
                                     slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY}
-                                    pluginId={plugin.subdomain}
+                                    pluginId={plugin.interfaceType}
                                     proposal={sppStageUtils.getBodySubProposal(proposal, address, stage.stageIndex)}
                                     name={plugin.name}
                                     isVeto={isVeto}

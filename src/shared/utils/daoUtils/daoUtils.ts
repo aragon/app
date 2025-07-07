@@ -38,7 +38,7 @@ export interface IDaoAvailableUpdates {
 
 class DaoUtils {
     hasSupportedPlugins = (dao?: IDao): boolean => {
-        const pluginIds = dao?.plugins.map(({ subdomain }) => subdomain);
+        const pluginIds = dao?.plugins.map(({ interfaceType }) => interfaceType);
 
         return pluginRegistryUtils.listContainsRegisteredPlugins(pluginIds);
     };
@@ -87,7 +87,7 @@ class DaoUtils {
 
     getAvailablePluginUpdates = (dao?: IDao): IDaoPlugin[] => {
         const availablePluginUpdates = dao?.plugins.filter((plugin) => {
-            const target = pluginRegistryUtils.getPlugin(plugin.subdomain) as IPluginInfo | undefined;
+            const target = pluginRegistryUtils.getPlugin(plugin.interfaceType) as IPluginInfo | undefined;
 
             return versionComparatorUtils.isLessThan(plugin, target?.installVersion);
         });

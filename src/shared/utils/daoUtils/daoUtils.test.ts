@@ -27,7 +27,10 @@ describe('dao utils', () => {
     describe('hasSupportedPlugins', () => {
         it('returns true when dao has supported plugins', () => {
             listContainsRegisteredPluginsSpy.mockReturnValue(true);
-            const daoPlugins = [generateDaoPlugin({ subdomain: '000' }), generateDaoPlugin({ subdomain: '001' })];
+            const daoPlugins = [
+                generateDaoPlugin({ subdomain: '000', interfaceType: '000' }),
+                generateDaoPlugin({ subdomain: '001', interfaceType: '001' }),
+            ];
             const dao = generateDao({ plugins: daoPlugins });
             expect(daoUtils.hasSupportedPlugins(dao)).toBeTruthy();
             expect(listContainsRegisteredPluginsSpy).toHaveBeenCalledWith(['000', '001']);

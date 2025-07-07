@@ -108,7 +108,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
 
         it('encodes the prepareUpdate transaction for the given plugin', async () => {
             const dao = generateDao({ network: Network.ZKSYNC_MAINNET });
-            const plugin = generateDaoPlugin({ subdomain: 'multi', release: '1', build: '4' });
+            const plugin = generateDaoPlugin({ subdomain: 'multi', interfaceType: 'multi', release: '1', build: '4' });
             const pluginSetupRepo = '0xrepo';
             const newVersionTag = { release: 1, build: 5 };
             const pluginInfo = {
@@ -124,7 +124,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
             encodeFunctionDataSpy.mockReturnValue(transactionData);
 
             const result = await prepareDaoContractsUpdateDialogUtils['buildPrepareUpdateTransaction'](dao, plugin);
-            expect(getPluginSpy).toHaveBeenCalledWith(plugin.subdomain);
+            expect(getPluginSpy).toHaveBeenCalledWith(plugin.interfaceType);
             expect(buildPayloadSpy).toHaveBeenCalledWith(dao, plugin);
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: pluginSetupProcessorAbi,
