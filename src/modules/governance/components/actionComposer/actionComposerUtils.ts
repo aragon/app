@@ -240,7 +240,7 @@ class ActionComposerUtils {
         const types = inputData.parameters.map((p) => p.type).join(',');
         const signature = `${inputData.function}(${types})`;
         const hash = keccak256(toBytes(signature));
-        return `0x${hash.slice(2, 10)}`;
+        return hash.substring(0, 10) as `0x${string}`;
     };
 }
 
