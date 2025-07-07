@@ -16,7 +16,7 @@ export interface IAutocompleteInputItemProps extends ComponentProps<'div'> {
 
 export const AutocompleteInputItem = forwardRef<HTMLDivElement, IAutocompleteInputItemProps>((props, ref) => {
     const { isActive, item, className, ...otherProps } = props;
-    const { id, icon, name, description } = item;
+    const { id, icon, name, info } = item;
 
     const itemClassName = classNames(
         'flex flex-row items-center justify-between rounded-lg gap-4 p-3 hover:cursor-pointer',
@@ -31,7 +31,7 @@ export const AutocompleteInputItem = forwardRef<HTMLDivElement, IAutocompleteInp
                 <Icon icon={icon} className={classNames({ 'text-neutral-300': !isActive })} />
                 <p className="text-base leading-tight font-normal">{name}</p>
             </span>
-            {description && <span className="text-sm leading-tight font-normal">{description}</span>}
+            {info && <span className="text-sm leading-tight font-normal">{info}</span>}
         </div>
     );
 });
