@@ -15,14 +15,14 @@ import { tokenSettingsUtils } from '../tokenSettingsUtils';
 import { tokenPluginAbi, tokenPluginPrepareUpdateAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
 
 // The end-date form values are set to "partial" because users can also create proposals without the proposal wizard
-export interface ICreateTokenProposalFormData extends IProposalCreate, Partial<ICreateProposalEndDateForm> {}
+export interface ICreateTokenProposalFormData extends IProposalCreate, Partial<ICreateProposalEndDateForm> { }
 
 export interface IPrepareTokenInstallDataParams
     extends IBuildPreparePluginInstallDataParams<
         ITokenSetupGovernanceForm,
         ITokenSetupMembershipMember,
         ITokenSetupMembershipForm
-    > {}
+    > { }
 
 class TokenTransactionUtils {
     buildCreateProposalData = (
@@ -74,6 +74,7 @@ class TokenTransactionUtils {
             tokenTarget,
             BigInt(0),
             metadata,
+            [],
         ]);
 
         const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
