@@ -2,8 +2,9 @@ import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import type { IProposalActionInputData } from '@aragon/gov-ui-kit';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { zeroAddress } from 'viem';
+import { keccak256, toBytes, zeroAddress } from 'viem';
 import {
     type IProposalAction,
     type IProposalActionUpdatePluginMetadata,
@@ -233,6 +234,13 @@ class ActionComposerUtils {
                 ],
             },
         };
+    };
+
+    createFunctionSelector = (inputData: IProposalActionInputData): `0x${string}` => {
+        const types = inputData.parameters.map((p) => p.type).join(',');
+        const signature = `${inputData.function}(${types})`;
+        const hash = keccak256(toBytes(signature));
+        return `0x${hash.slice(2, 10)}`;
     };
 }
 
