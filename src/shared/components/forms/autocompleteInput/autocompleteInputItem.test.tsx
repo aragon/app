@@ -27,7 +27,6 @@ describe('<AutocompleteInputItem /> component', () => {
         expect(screen.getByText(description)).toBeInTheDocument();
     });
 
-
     it('sets the item option as selected when the isActive property is set to true', () => {
         const isActive = true;
         render(createTestComponent({ isActive }));

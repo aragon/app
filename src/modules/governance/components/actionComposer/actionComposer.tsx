@@ -2,7 +2,7 @@ import { useDao } from '@/shared/api/daoService';
 import { AutocompleteInput } from '@/shared/components/forms/autocompleteInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { forwardRef } from 'react';
-import { useCreateProposalFormContext } from '../createProposalForm';
+import { useCreateProposalFormContext } from '../createProposalForm/createProposalFormProvider';
 import type { IActionComposerProps } from './actionComposer.api';
 import { actionComposerUtils } from './actionComposerUtils';
 

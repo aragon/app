@@ -2,7 +2,7 @@ import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocomp
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import type { ComponentType } from 'react';
 import type { IProposalAction } from '../api/governanceService';
-import type { IActionComposerItem } from '../components/actionComposerOld';
+import type { IActionComposerItem } from '../components/actionComposer';
 import type { IProposalActionData } from '../components/createProposalForm';
 
 export type ActionComposerPluginComponent<TMeta = undefined> = ComponentType<
