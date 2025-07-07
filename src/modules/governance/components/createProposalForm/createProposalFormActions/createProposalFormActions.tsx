@@ -49,7 +49,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const { smartContractAbis, addSmartContractAbi } = useCreateProposalFormContext();
+    const { addSmartContractAbi } = useCreateProposalFormContext();
 
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -94,14 +94,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             initialValue,
         };
         open(GovernanceDialogId.VERIFY_SMART_CONTRACT, { params });
-    };
-
-    const handleAddCustomAction = () => {
-        if (smartContractAbis.length === 0) {
-            handleVerifySmartContract();
-        } else {
-            handleAddAction();
-        }
     };
 
     const handleAddWalletConnectActions = (actions: IProposalAction[]) => {
@@ -177,12 +169,10 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             })?.(plugin),
         ) ?? [];
 
-    console.log('pluginActionspluginActions', pluginActions);
-
     const pluginItems = pluginActions.flatMap((data) => data?.items ?? []);
     const pluginGroups = pluginActions.flatMap((data) => data?.groups ?? []);
     const pluginComponents = pluginActions.reduce((acc, data) => ({ ...acc, ...data?.components }), {});
-
+    console.log('pluginItems', pluginItems);
     const customActionComponents: Record<string, ProposalActionComponent<IProposalActionData>> = {
         ...coreCustomActionComponents,
         ...pluginComponents,

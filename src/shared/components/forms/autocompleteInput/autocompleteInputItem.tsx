@@ -19,8 +19,9 @@ export const AutocompleteInputItem = forwardRef<HTMLDivElement, IAutocompleteInp
     const { id, icon, name, description } = item;
 
     const itemClassName = classNames(
-        'flex flex-row items-center justify-between rounded-lg p-3 hover:cursor-pointer',
+        'flex flex-row items-center justify-between rounded-lg gap-4 p-3 hover:cursor-pointer',
         { 'bg-neutral-50 text-neutral-800': isActive },
+        { 'text-neutral-500': !isActive },
         className,
     );
 
@@ -28,11 +29,9 @@ export const AutocompleteInputItem = forwardRef<HTMLDivElement, IAutocompleteInp
         <div ref={ref} className={itemClassName} role="option" id={id} aria-selected={isActive} {...otherProps}>
             <span className="flex min-w-0 flex-row items-center gap-4">
                 <Icon icon={icon} className={classNames({ 'text-neutral-300': !isActive })} />
-                <p className={classNames('text-base leading-tight font-normal', { 'text-neutral-500': !isActive })}>
-                    {name}
-                </p>
+                <p className="text-base leading-tight font-normal">{name}</p>
             </span>
-            {description && <span className="ml-4 text-sm text-neutral-400">{description}</span>}
+            {description && <span className="text-sm leading-tight font-normal">{description}</span>}
         </div>
     );
 });
