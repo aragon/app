@@ -48,9 +48,9 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     invariant(dao != null, 'ManageAdminsDialogPublish: DAO data must be set.');
 
-    // TODO: (APP-4045). Setting this to the max pageSize of 300 for now to ensure we get all of the data
+    // TODO: (APP-4045). Setting this to the max pageSize of 50 for now to ensure we get all of the data
     // in the future we should find a better way to handle this.
-    const memberParams = { daoId, pluginAddress, pageSize: 300 };
+    const memberParams = { daoId, pluginAddress, pageSize: 50 };
     const { data: memberList } = useMemberList({ queryParams: memberParams });
     const [adminPlugin] = useDaoPlugins({ daoId, subdomain: 'admin' }) ?? [];
 

@@ -8,4 +8,5 @@ export enum TransactionType {
     LOCK_CREATE = 'lockCreate',
     EXIT_CREATE = 'exitCreate',
     WITHDRAW_CREATE = 'withdrawCreate',
+    PLUGIN_CREATE = 'pluginCreate',
 }
