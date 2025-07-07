@@ -44,7 +44,7 @@ class DaoUtils {
     };
 
     getDaoEns = (dao?: IDao): string | undefined =>
-        dao?.subdomain != null && dao.subdomain !== '' ? `${dao.subdomain}.dao.eth` : undefined;
+        dao?.ens != null && dao.ens !== '' ? dao.ens : undefined;
 
     getPluginName = (plugin: IDaoPlugin): string => {
         if (plugin.name) {
