@@ -25,6 +25,10 @@ export interface ISppStagePluginExternal {
      */
     subdomain: undefined;
     /**
+     * Type of interface implemented by the plugin.
+     */
+    interfaceType: string;
+    /**
      * Branded identity of the plugin.
      */
     brandId: VotingBodyBrandIdentity;
