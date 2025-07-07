@@ -20,6 +20,14 @@ describe('<AutocompleteInputItem /> component', () => {
         expect(screen.getByTestId(item.icon)).toBeInTheDocument();
     });
 
+    it('renders the description on the right side when provided', () => {
+        const description = 'Test description';
+        const item = { id: '1', name: 'option-with-desc', icon: IconType.SETTINGS, description };
+        render(createTestComponent({ item }));
+        expect(screen.getByText(description)).toBeInTheDocument();
+    });
+
+
     it('sets the item option as selected when the isActive property is set to true', () => {
         const isActive = true;
         render(createTestComponent({ isActive }));

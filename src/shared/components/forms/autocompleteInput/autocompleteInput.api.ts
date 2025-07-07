@@ -34,6 +34,10 @@ export interface IAutocompleteInputItem<TMeta = undefined> {
      */
     icon: IconType;
     /**
+     * Optional description to render on the right side of the item.
+     */
+    description?: string;
+    /**
      * ID of the group the item belongs to.
      */
     groupId?: string;
