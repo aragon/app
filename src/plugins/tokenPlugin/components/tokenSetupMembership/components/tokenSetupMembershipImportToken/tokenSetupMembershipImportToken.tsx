@@ -77,15 +77,18 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
             return;
         }
 
+        const name = token.name.length > 0 ? token.name : 'Unknown';
+        const symbol = token.symbol.length > 0 ? token.symbol : 'UNKNOWN';
+
         setValue(`${tokenFormPrefix}.decimals`, token.decimals);
 
         if (isGovernanceCompatible) {
-            setValue(`${tokenFormPrefix}.name`, token.name);
-            setValue(`${tokenFormPrefix}.symbol`, token.symbol);
+            setValue(`${tokenFormPrefix}.name`, name);
+            setValue(`${tokenFormPrefix}.symbol`, symbol);
             setValue(`${tokenFormPrefix}.totalSupply`, token.totalSupply);
         } else {
-            setValue(`${tokenFormPrefix}.name`, `Governance ${token.name}`);
-            setValue(`${tokenFormPrefix}.symbol`, `g${token.symbol}`);
+            setValue(`${tokenFormPrefix}.name`, `Governance ${name}`);
+            setValue(`${tokenFormPrefix}.symbol`, `g${symbol}`);
             setValue(`${tokenFormPrefix}.totalSupply`, '0');
         }
     }, [isGovernanceCompatible, setValue, token, tokenFormPrefix]);
