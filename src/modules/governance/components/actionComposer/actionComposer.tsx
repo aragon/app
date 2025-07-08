@@ -15,25 +15,8 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
     const { t } = useTranslations();
     const { smartContractAbis: abis } = useCreateProposalFormContext();
 
-    const customGroups = actionComposerUtils.getCustomActionGroups({ t, abis });
-    const customItems = actionComposerUtils.getCustomActionItems({ t, abis });
-
-    const completeNativeGroups = actionComposerUtils.getNativeActionGroups({ t, dao, nativeGroups });
-    const completeNativeItems = actionComposerUtils.getNativeActionItems({ t, dao, nativeItems });
-
-    // TODO: Update utils to handle both native and custom items/groups
-    const items = [...customItems, ...completeNativeItems].map((item) => {
-        if (item.defaultValue?.inputData) {
-            const fnSelector = actionComposerUtils.createFunctionSelector(item.defaultValue.inputData);
-            return {
-                ...item,
-                info: fnSelector,
-            };
-        }
-
-        return item;
-    });
-    const groups = [...customGroups, ...completeNativeGroups];
+    const groups = actionComposerUtils.getActionGroups({ t, dao, abis, nativeGroups });
+    const items = actionComposerUtils.getActionItems({ t, dao, abis, nativeItems });
 
     const handleActionSelected = (itemId: string, inputValue: string) => {
         const action = items.find((item) => item.id === itemId)!;

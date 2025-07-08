@@ -172,7 +172,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const pluginItems = pluginActions.flatMap((data) => data?.items ?? []);
     const pluginGroups = pluginActions.flatMap((data) => data?.groups ?? []);
     const pluginComponents = pluginActions.reduce((acc, data) => ({ ...acc, ...data?.components }), {});
-    console.log('pluginItems', pluginItems);
+
     const customActionComponents: Record<string, ProposalActionComponent<IProposalActionData>> = {
         ...coreCustomActionComponents,
         ...pluginComponents,
