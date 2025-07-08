@@ -54,7 +54,6 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                                     collapsedLines={2}
                                     buttonLabelClosed={t('app.shared.page.header.readMore')}
                                     buttonLabelOpened={t('app.shared.page.header.readLess')}
-                                    customCollapsedHeight={48}
                                     className="text-base text-neutral-500 md:text-lg"
                                 >
                                     {description}
