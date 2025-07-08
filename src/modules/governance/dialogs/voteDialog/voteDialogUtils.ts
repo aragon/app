@@ -21,7 +21,7 @@ class VoteDialogUtils {
         const { proposal, voteValue } = params;
 
         const buildDataFunction = pluginRegistryUtils.getSlotFunction<IBuildVoteDataParams, Hex>({
-            pluginId: proposal.pluginSubdomain,
+            pluginId: proposal.interfaceType,
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_VOTE_DATA,
         })!;
 

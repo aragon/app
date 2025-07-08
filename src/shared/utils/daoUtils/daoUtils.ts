@@ -20,9 +20,9 @@ export interface IGetDaoPluginsParams {
      */
     includeSubPlugins?: boolean;
     /**
-     * Only returns the plugin with the specified subdomain when set.
+     * Only returns the plugin with the specified interface type when set.
      */
-    subdomain?: string;
+    interfaceType?: string;
 }
 
 export interface IDaoAvailableUpdates {
@@ -55,14 +55,14 @@ class DaoUtils {
     };
 
     getDaoPlugins = (dao?: IDao, params?: IGetDaoPluginsParams) => {
-        const { type, pluginAddress, includeSubPlugins = false, subdomain } = params ?? {};
+        const { type, pluginAddress, includeSubPlugins = false, interfaceType } = params ?? {};
 
         return dao?.plugins.filter(
             (plugin) =>
                 this.filterPluginByAddress(plugin, pluginAddress) &&
                 this.filterPluginByType(plugin, type) &&
                 this.filterBySubPlugin(plugin, includeSubPlugins) &&
-                this.filterBySubdomain(plugin, subdomain),
+                this.filterByInterfaceType(plugin, interfaceType),
         );
     };
 
@@ -140,8 +140,8 @@ class DaoUtils {
     private filterBySubPlugin = (plugin: IDaoPlugin, includeSubPlugins: boolean) =>
         includeSubPlugins || !plugin.isSubPlugin;
 
-    private filterBySubdomain = (plugin: IDaoPlugin, subdomain?: string) =>
-        subdomain == null || plugin.subdomain === subdomain;
+    private filterByInterfaceType = (plugin: IDaoPlugin, interfaceType?: string) =>
+        interfaceType == null || plugin.interfaceType === interfaceType;
 }
 
 export const daoUtils = new DaoUtils();

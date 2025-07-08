@@ -48,7 +48,7 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
     const pluginSettings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDefinitionSetting[]>({
         params: { daoId, settings: proposal.settings, pluginAddress: proposal.pluginAddress },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
-        pluginId: proposal.pluginSubdomain,
+        pluginId: proposal.interfaceType,
     });
 
     const proposalSettings = useDaoPluginInfo({ daoId, address: proposal.pluginAddress, settings: pluginSettings });
@@ -59,14 +59,14 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
             <ProposalVoting.BodyContent name={pluginName} status={status}>
                 <PluginSingleComponent
                     slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
-                    pluginId={proposal.pluginSubdomain}
+                    pluginId={proposal.interfaceType}
                     proposal={proposal}
                 >
                     {status === ProposalStatus.ACTIVE && (
                         <div className="pt-6 md:pt-8">
                             <PluginSingleComponent
                                 slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
-                                pluginId={proposal.pluginSubdomain}
+                                pluginId={proposal.interfaceType}
                                 proposal={proposal}
                                 daoId={daoId}
                             />

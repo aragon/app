@@ -24,7 +24,7 @@ export interface IDaoProposalListDefaultItemProps<TProposal extends IProposal = 
 export const DaoProposalListDefaultItem: React.FC<IDaoProposalListDefaultItemProps> = (props) => {
     const { proposal, dao, proposalSlug } = props;
 
-    const { id, title, summary, executed, endDate, creator, pluginSubdomain: pluginId } = proposal;
+    const { id, title, summary, executed, endDate, creator, interfaceType: pluginId } = proposal;
 
     const userVote = useUserVote({ proposal, network: dao.network });
 

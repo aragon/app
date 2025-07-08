@@ -55,7 +55,7 @@ export const DaoProposalListDefault: React.FC<IDaoProposalListDefaultProps> = (p
                 {proposalList?.map((proposal) => (
                     <PluginSingleComponent
                         key={proposal.id}
-                        pluginId={proposal.pluginSubdomain}
+                        pluginId={proposal.interfaceType}
                         slotId={GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST_ITEM}
                         dao={dao}
                         proposal={proposal}

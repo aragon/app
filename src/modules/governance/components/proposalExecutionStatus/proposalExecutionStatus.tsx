@@ -34,13 +34,13 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
     const { buildEntityUrl } = useBlockExplorer();
     const { open } = useDialogContext();
 
-    const { network, pluginSubdomain, executed } = proposal;
+    const { network, interfaceType: pluginId, executed } = proposal;
     const { id: chainId } = networkDefinitions[network];
 
     const proposalStatus = useSlotSingleFunction<IProposal, ProposalStatus>({
         params: proposal,
         slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
-        pluginId: pluginSubdomain,
+        pluginId,
     })!;
 
     const executedBlockLink = buildEntityUrl({

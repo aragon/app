@@ -156,33 +156,33 @@ describe('dao utils', () => {
             ]);
         });
 
-        it('only returns the plugin with the specified subdomain', () => {
+        it('only returns the plugin with the specified interface type', () => {
             const plugins = [
                 generateDaoPlugin({ subdomain: 'pluginA' }),
                 generateDaoPlugin({ subdomain: 'pluginB' }),
                 generateDaoPlugin({ subdomain: 'pluginC' }),
             ];
             const dao = generateDao({ plugins });
-            const subdomain = 'pluginB';
-            expect(daoUtils.getDaoPlugins(dao, { subdomain })).toEqual([plugins[1]]);
+            const interfaceType = 'pluginB';
+            expect(daoUtils.getDaoPlugins(dao, { interfaceType })).toEqual([plugins[1]]);
         });
 
-        it('returns an empty array when no plugin matches the specified subdomain', () => {
+        it('returns an empty array when no plugin matches the specified interface type', () => {
             const plugins = [generateDaoPlugin({ subdomain: 'pluginA' }), generateDaoPlugin({ subdomain: 'pluginB' })];
             const dao = generateDao({ plugins });
-            const subdomain = 'pluginC';
-            expect(daoUtils.getDaoPlugins(dao, { subdomain })).toEqual([]);
+            const interfaceType = 'pluginC';
+            expect(daoUtils.getDaoPlugins(dao, { interfaceType })).toEqual([]);
         });
 
-        it('returns all plugins with the specified subdomain when multiple plugins share the same subdomain', () => {
+        it('returns all plugins with the specified interface type when multiple plugins share the same interface type', () => {
             const plugins = [
                 generateDaoPlugin({ subdomain: 'sharedSubdomain', address: '0x1' }),
                 generateDaoPlugin({ subdomain: 'sharedSubdomain', address: '0x2' }),
                 generateDaoPlugin({ subdomain: 'uniqueSubdomain', address: '0x3' }),
             ];
             const dao = generateDao({ plugins });
-            const subdomain = 'sharedSubdomain';
-            expect(daoUtils.getDaoPlugins(dao, { subdomain })).toEqual([plugins[0], plugins[1]]);
+            const interfaceType = 'sharedSubdomain';
+            expect(daoUtils.getDaoPlugins(dao, { interfaceType })).toEqual([plugins[0], plugins[1]]);
         });
 
         it('returns undefined when dao parameter is not defined', () => {

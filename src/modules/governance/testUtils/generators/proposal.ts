@@ -20,6 +20,7 @@ export const generateProposal = (proposal?: Partial<IProposal>): IProposal => ({
     executed: { status: false },
     pluginAddress: '0x123',
     pluginSubdomain: 'test',
+    interfaceType: 'test',
     incrementalId: 1,
     hasActions: false,
     ...proposal,

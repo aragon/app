@@ -33,7 +33,7 @@ describe('useDaoPlugins hook', () => {
     it('filters the plugins by the type or address when specified', () => {
         const type = PluginType.BODY;
         const pluginAddress = '0x572983';
-        const dao = generateDao({ plugins: [generateDaoPlugin({ subdomain: 'spp', address: '0x123' })] });
+        const dao = generateDao({ plugins: [generateDaoPlugin({ subdomain: 'spp', interfaceType: 'spp', address: '0x123' })] });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
 
         renderHook(() => useDaoPlugins({ daoId: dao.id, type, pluginAddress }));
