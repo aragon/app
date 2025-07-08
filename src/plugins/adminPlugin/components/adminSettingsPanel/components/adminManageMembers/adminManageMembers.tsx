@@ -2,6 +2,7 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { AdminPluginDialogId } from '@/plugins/adminPlugin/constants/adminPluginDialogId';
 import type { IAdminManageMembersDialogParams } from '@/plugins/adminPlugin/dialogs/adminManageMembersDialog';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
@@ -20,7 +21,7 @@ export const AdminManageMembers: React.FC<IAdminMangeMembersProps> = (props) => 
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const [adminPlugin] = useDaoPlugins({ daoId, subdomain: 'admin' })!;
+    const [adminPlugin] = useDaoPlugins({ daoId, interfaceType: PluginInterfaceType.admin })!;
 
     const openManageMembersDialog = () => {
         const params: IAdminManageMembersDialogParams = {

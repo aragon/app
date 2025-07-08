@@ -2,6 +2,7 @@ import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
 import type { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import type { PluginInterfaceType } from '../../api/daoService/domain/enum/pluginInterfaceType';
 
 export interface IUseDaoPluginsParams {
     /**
@@ -25,9 +26,9 @@ export interface IUseDaoPluginsParams {
      */
     includeGroupTab?: boolean;
     /**
-     * Only returns the plugin with the specified subdomain when set.
+     * Only returns the plugin with the specified interfaceType when set.
      */
-    subdomain?: string;
+    interfaceType?: PluginInterfaceType;
 }
 
 export const pluginGroupTab: ITabComponentPlugin<IDaoPlugin> = {
@@ -39,14 +40,14 @@ export const pluginGroupTab: ITabComponentPlugin<IDaoPlugin> = {
 };
 
 export const useDaoPlugins = (params: IUseDaoPluginsParams): Array<ITabComponentPlugin<IDaoPlugin>> | undefined => {
-    const { daoId, type, pluginAddress, includeSubPlugins, includeGroupTab, subdomain } = params;
+    const { daoId, type, pluginAddress, includeSubPlugins, includeGroupTab, interfaceType } = params;
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const plugins = daoUtils.getDaoPlugins(dao, { type, pluginAddress, includeSubPlugins, subdomain });
+    const plugins = daoUtils.getDaoPlugins(dao, { type, pluginAddress, includeSubPlugins, interfaceType });
 
     const processedPlugins = plugins?.map((plugin) => ({
-        id: plugin.subdomain,
-        uniqueId: `${plugin.subdomain}-${plugin.address}`,
+        id: plugin.interfaceType,
+        uniqueId: `${plugin.interfaceType}-${plugin.address}`,
         label: daoUtils.getPluginName(plugin),
         meta: plugin,
         props: {},

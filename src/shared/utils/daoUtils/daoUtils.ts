@@ -2,6 +2,7 @@ import { daoService, type IDao, type IDaoPlugin, type Network } from '@/shared/a
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { PluginType, type IDaoPageParams, type IPluginInfo } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
+import type { PluginInterfaceType } from '../../api/daoService/domain/enum/pluginInterfaceType';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 import { versionComparatorUtils } from '../versionComparatorUtils';
 
@@ -20,9 +21,9 @@ export interface IGetDaoPluginsParams {
      */
     includeSubPlugins?: boolean;
     /**
-     * Only returns the plugin with the specified subdomain when set.
+     * Only returns the plugin with the specified interfaceType when set.
      */
-    subdomain?: string;
+    interfaceType?: PluginInterfaceType;
 }
 
 export interface IDaoAvailableUpdates {
@@ -38,7 +39,7 @@ export interface IDaoAvailableUpdates {
 
 class DaoUtils {
     hasSupportedPlugins = (dao?: IDao): boolean => {
-        const pluginIds = dao?.plugins.map(({ subdomain }) => subdomain);
+        const pluginIds = dao?.plugins.map(({ interfaceType }) => interfaceType);
 
         return pluginRegistryUtils.listContainsRegisteredPlugins(pluginIds);
     };
@@ -54,14 +55,14 @@ class DaoUtils {
     };
 
     getDaoPlugins = (dao?: IDao, params?: IGetDaoPluginsParams) => {
-        const { type, pluginAddress, includeSubPlugins = false, subdomain } = params ?? {};
+        const { type, pluginAddress, includeSubPlugins = false, interfaceType } = params ?? {};
 
         return dao?.plugins.filter(
             (plugin) =>
                 this.filterPluginByAddress(plugin, pluginAddress) &&
                 this.filterPluginByType(plugin, type) &&
                 this.filterBySubPlugin(plugin, includeSubPlugins) &&
-                this.filterBySubdomain(plugin, subdomain),
+                this.filterByInterfaceType(plugin, interfaceType),
         );
     };
 
@@ -86,7 +87,7 @@ class DaoUtils {
 
     getAvailablePluginUpdates = (dao?: IDao): IDaoPlugin[] => {
         const availablePluginUpdates = dao?.plugins.filter((plugin) => {
-            const target = pluginRegistryUtils.getPlugin(plugin.subdomain) as IPluginInfo | undefined;
+            const target = pluginRegistryUtils.getPlugin(plugin.interfaceType) as IPluginInfo | undefined;
 
             return versionComparatorUtils.isLessThan(plugin, target?.installVersion);
         });
@@ -139,8 +140,8 @@ class DaoUtils {
     private filterBySubPlugin = (plugin: IDaoPlugin, includeSubPlugins: boolean) =>
         includeSubPlugins || !plugin.isSubPlugin;
 
-    private filterBySubdomain = (plugin: IDaoPlugin, subdomain?: string) =>
-        subdomain == null || plugin.subdomain === subdomain;
+    private filterByInterfaceType = (plugin: IDaoPlugin, interfaceType?: PluginInterfaceType) =>
+        interfaceType == null || plugin.interfaceType === interfaceType;
 }
 
 export const daoUtils = new DaoUtils();

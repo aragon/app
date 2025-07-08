@@ -1,6 +1,6 @@
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
-import { useDao } from '@/shared/api/daoService';
+import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import {
@@ -66,7 +66,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     const [plugin] = useDaoPlugins({ daoId, pluginAddress }) ?? [];
     invariant(!!plugin, `PrepareProcessDialog: plugin with address "${pluginAddress}" not found.`);
 
-    const isAdmin = plugin.meta.subdomain === 'admin';
+    const isAdmin = plugin.meta.interfaceType === PluginInterfaceType.admin;
 
     const stepper = useStepper<ITransactionDialogStepMeta, PrepareProcessStep | TransactionDialogStep>({
         initialActiveStep: PrepareProcessStep.PIN_METADATA,
