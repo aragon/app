@@ -1,6 +1,7 @@
 import { Icon } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { type ComponentProps, forwardRef } from 'react';
+import { KeyboardShortcut } from '../../keyboardShortcut';
 import type { IAutocompleteInputItem } from './autocompleteInput.api';
 
 export interface IAutocompleteInputItemProps extends ComponentProps<'div'> {
@@ -19,7 +20,7 @@ export const AutocompleteInputItem = forwardRef<HTMLDivElement, IAutocompleteInp
     const { id, icon, name, info } = item;
 
     const itemClassName = classNames(
-        'flex flex-row items-center justify-between rounded-lg gap-4 px-3 py-2 hover:cursor-pointer',
+        'relative flex flex-row items-center justify-between rounded-lg gap-4 px-3 py-2 hover:cursor-pointer',
         { 'bg-neutral-50 text-neutral-800': isActive },
         { 'text-neutral-500': !isActive },
         className,
@@ -37,6 +38,7 @@ export const AutocompleteInputItem = forwardRef<HTMLDivElement, IAutocompleteInp
                     <span className="w-4" />
                 </span>
             )}
+            <KeyboardShortcut className={classNames('absolute right-3', { hidden: !isActive })}>↵</KeyboardShortcut>
         </div>
     );
 });
