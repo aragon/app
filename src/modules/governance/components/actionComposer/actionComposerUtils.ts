@@ -73,8 +73,8 @@ class ActionComposerUtils {
         abis,
         nativeItems,
     }: IGetCustomActionParams & IGetNativeActionItemsParams): IActionComposerItem[] => {
-        const customItems = actionComposerUtils.getCustomActionItems({ t, abis });
-        const completeNativeItems = actionComposerUtils.getNativeActionItems({ t, dao, nativeItems });
+        const customItems = this.getCustomActionItems({ t, abis });
+        const completeNativeItems = this.getNativeActionItems({ t, dao, nativeItems });
 
         return [...customItems, ...completeNativeItems].map((item) => {
             if (item.defaultValue?.inputData) {

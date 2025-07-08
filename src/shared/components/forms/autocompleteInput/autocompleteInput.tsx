@@ -133,7 +133,6 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
                     <AutocompleteInputGroup key={groupId} group={getGroupById(groupId)}>
                         {groupedItems[groupId]?.map((item) => (
                             <AutocompleteInputItem
-                                // className="justify-end" todo: should we add this for custom contract functions?
                                 key={item.id}
                                 isActive={activeIndex === item.index}
                                 item={item}
