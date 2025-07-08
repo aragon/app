@@ -19,6 +19,7 @@ export const AutocompleteInputGroup: React.FC<IAutocompleteInputGroupProps> = (p
                     <p className="shrink-0 text-neutral-800">{group.name}</p>
                     <hr className="h-[1px] w-full text-neutral-100" />
                     <p className="shrink-0 text-sm text-neutral-500">{group.info}</p>
+                    <hr className="h-[1px] w-5 text-neutral-100" />
                 </div>
             )}
             {children}

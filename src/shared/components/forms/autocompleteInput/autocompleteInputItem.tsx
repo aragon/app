@@ -31,7 +31,12 @@ export const AutocompleteInputItem = forwardRef<HTMLDivElement, IAutocompleteInp
                 <Icon icon={icon} className={classNames({ 'text-neutral-300': !isActive })} />
                 <p className="text-base leading-tight font-normal">{name}</p>
             </span>
-            {info && <span className="text-sm leading-tight font-normal">{info}</span>}
+            {info && (
+                <span className="flex gap-3 text-sm leading-tight font-normal">
+                    {info}
+                    <span className="w-4" />
+                </span>
+            )}
         </div>
     );
 });
