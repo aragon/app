@@ -47,8 +47,8 @@ describe('dao utils', () => {
     });
 
     describe('getDaoEns', () => {
-        it('returns the full DAO ens from the given subdomain', () => {
-            const dao = generateDao({ subdomain: 'my-dao' });
+        it('returns the DAO ens when defined', () => {
+            const dao = generateDao({ ens: 'my-dao.dao.eth' });
             expect(daoUtils.getDaoEns(dao)).toEqual('my-dao.dao.eth');
         });
 
@@ -56,11 +56,11 @@ describe('dao utils', () => {
             expect(daoUtils.getDaoEns(undefined)).toBeUndefined();
         });
 
-        it('returns undefined when dao subdomain is null or empty string', () => {
-            const nullSubdomain = generateDao({ subdomain: null });
-            const emptySubdomain = generateDao({ subdomain: '' });
-            expect(daoUtils.getDaoEns(nullSubdomain)).toBeUndefined();
-            expect(daoUtils.getDaoEns(emptySubdomain)).toBeUndefined();
+        it('returns undefined when dao ens is null or empty string', () => {
+            const nullEns = generateDao({ ens: null });
+            const emptyEns = generateDao({ ens: '' });
+            expect(daoUtils.getDaoEns(nullEns)).toBeUndefined();
+            expect(daoUtils.getDaoEns(emptyEns)).toBeUndefined();
         });
     });
 
@@ -322,10 +322,10 @@ describe('dao utils', () => {
 
     describe('getDaoUrl', () => {
         it('returns the correct base URL for a DAO with ENS', () => {
-            const daoEnsSubdomain = 'test-subdomain';
+            const daoEns = 'test-dao.dao.eth';
             const daoNetwork = Network.ETHEREUM_MAINNET;
-            const dao = generateDao({ subdomain: daoEnsSubdomain, network: daoNetwork });
-            const expectedUrl = `/dao/${daoNetwork}/${daoEnsSubdomain}.dao.eth`;
+            const dao = generateDao({ ens: daoEns, network: daoNetwork });
+            const expectedUrl = `/dao/${daoNetwork}/${daoEns}`;
             expect(daoUtils.getDaoUrl(dao)).toEqual(expectedUrl);
         });
 

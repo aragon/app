@@ -8,6 +8,7 @@ export const generateDao = (dao?: Partial<IDao>): IDao => ({
     name: 'name',
     description: 'description',
     version: '1.3.0',
+    ens: null,
     subdomain: null,
     avatar: null,
     plugins: [],

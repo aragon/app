@@ -45,7 +45,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                         <Tag label={t('app.settings.daoSettingsInfo.notChangeable')} className="shrink-0" />
                     </div>
                 </DefinitionList.Item>
-                {dao.subdomain && (
+                {dao.ens && (
                     <DefinitionList.Item term={t('app.settings.daoSettingsInfo.ens')}>
                         <div className="flex items-center justify-between gap-2">
                             <Link

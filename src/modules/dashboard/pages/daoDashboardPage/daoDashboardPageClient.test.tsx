@@ -174,7 +174,7 @@ describe('<DaoDashboardPageClient /> component', () => {
         const dao = generateDao({
             network: Network.POLYGON_MAINNET,
             address: '0xeed34C7B9B9A7B16B26125650C0f7202D4018620',
-            subdomain: 'aa-dao',
+            ens: 'aa-dao.dao.eth',
             blockTimestamp: 1702526946,
             transactionHash: '0x978465132',
         });
@@ -202,7 +202,7 @@ describe('<DaoDashboardPageClient /> component', () => {
     });
 
     it('supports dao address and ens copy', async () => {
-        const dao = generateDao({ address: '0xeed34C7B9B9A7B16B26125650C0f7202D4018620', subdomain: 'test-dao' });
+        const dao = generateDao({ address: '0xeed34C7B9B9A7B16B26125650C0f7202D4018620', ens: 'test-dao.dao.eth' });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent());
         const clipboards = screen.getAllByTestId(IconType.COPY);
