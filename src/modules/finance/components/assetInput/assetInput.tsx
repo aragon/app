@@ -103,8 +103,11 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
             return;
         }
 
-        const onAssetClick = handleAssetChange;
-        const params: IAssetSelectionDialogParams = { initialParams: fetchAssetsParams, onAssetClick, close };
+        const params: IAssetSelectionDialogParams = {
+            initialParams: fetchAssetsParams,
+            onAssetClick: handleAssetChange,
+            close,
+        };
         open(FinanceDialogId.ASSET_SELECTION, { params });
     };
 
