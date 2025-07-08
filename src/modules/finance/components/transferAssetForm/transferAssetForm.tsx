@@ -1,9 +1,11 @@
-import { AssetInput } from '@/modules/finance/components/assetInput';
+import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
 import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AddressInput, addressUtils } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import { useState } from 'react';
+import { useWatch } from 'react-hook-form';
 import type { ITransferAssetFormData } from './transferAssetFormDefinitions';
 
 export interface ITransferAssetFormProps {
@@ -26,6 +28,8 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
 
     const { t } = useTranslations();
 
+    const assetValue = useWatch<Record<string, IAssetInputFormData['asset']>>({ name: `${fieldPrefix!}.asset` });
+
     const {
         onChange: onReceiverChange,
         value,
@@ -41,7 +45,8 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
     const fetchAssetsParams = { queryParams: { address: sender, network } };
 
     return (
-        <div className="flex w-full flex-col gap-6">
+        <div className={classNames('flex w-full flex-col', { 'gap-6': !assetValue })}>
+            <AssetInput fetchAssetsParams={fetchAssetsParams} fieldPrefix={fieldPrefix} />
             <AddressInput
                 helpText={t('app.finance.transferAssetForm.receiver.helpText')}
                 placeholder={t('app.finance.transferAssetForm.receiver.placeholder')}
@@ -50,7 +55,6 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
                 onAccept={onReceiverChange}
                 {...receiverField}
             />
-            <AssetInput fetchAssetsParams={fetchAssetsParams} fieldPrefix={fieldPrefix} />
         </div>
     );
 };
