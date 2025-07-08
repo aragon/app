@@ -24,7 +24,7 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
     const { t } = useTranslations();
     const { address } = useAccount();
 
-    const memberLocksQueryParams = { network: dao.network, pluginAddress: plugin.address, onlyActive: true };
+    const memberLocksQueryParams = { network: dao.network, escrowAddress: plugin.address, onlyActive: true };
     const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage, refetch } = useMemberLocks(
         { urlParams: { address: address! }, queryParams: memberLocksQueryParams },
         { enabled: address != null },

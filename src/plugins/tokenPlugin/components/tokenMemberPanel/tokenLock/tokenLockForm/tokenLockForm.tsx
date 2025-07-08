@@ -48,7 +48,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const memberLocksQueryParams = { network: dao!.network, pluginAddress: plugin.address, onlyActive: true };
+    const memberLocksQueryParams = { network: dao!.network, escrowAddress: plugin.address, onlyActive: true };
     const { data: memberLocks, refetch: refetchLocks } = useMemberLocks(
         { urlParams: { address: address! }, queryParams: memberLocksQueryParams },
         { enabled: address != null },

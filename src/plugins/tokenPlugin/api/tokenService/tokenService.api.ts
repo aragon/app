@@ -11,9 +11,9 @@ export interface IGetMemberLocksUrlParams {
 
 export interface IGetMemberLocksQueryParams extends IPaginatedRequest {
     /**
-     * Address of the plugin.
+     * Address of the token escrow contract.
      */
-    pluginAddress: string;
+    escrowAddress: string;
     /**
      * Network of the lock.
      */
