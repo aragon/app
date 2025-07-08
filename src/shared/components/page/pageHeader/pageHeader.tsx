@@ -51,6 +51,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                             <Heading size="h1">{title}</Heading>
                             {description && (
                                 <Collapsible
+                                    collapsedLines={2}
                                     buttonLabelClosed={t('app.shared.page.header.readMore')}
                                     buttonLabelOpened={t('app.shared.page.header.readLess')}
                                     customCollapsedHeight={48}
