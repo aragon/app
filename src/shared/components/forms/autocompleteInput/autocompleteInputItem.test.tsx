@@ -16,7 +16,10 @@ describe('<AutocompleteInputItem /> component', () => {
     it('renders an item option with the specified name and icon', () => {
         const item = { id: '0', name: 'option-name', icon: IconType.SETTINGS };
         render(createTestComponent({ item }));
-        expect(screen.getByRole('option', { name: item.name })).toBeInTheDocument();
+
+        const optionElement = screen.getByRole('option');
+        expect(optionElement).toBeInTheDocument();
+        expect(optionElement).toHaveTextContent(item.name);
         expect(screen.getByTestId(item.icon)).toBeInTheDocument();
     });
 
