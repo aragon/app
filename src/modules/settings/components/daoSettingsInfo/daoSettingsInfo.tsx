@@ -60,8 +60,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                 )}
                 <DefinitionList.Item term={t('app.settings.daoSettingsInfo.summary')}>
                     <Collapsible
-                        collapsedSize="sm"
-                        customCollapsedHeight={60}
+                        collapsedLines={4}
                         buttonLabelClosed={t('app.settings.daoSettingsInfo.readMore')}
                         buttonLabelOpened={t('app.settings.daoSettingsInfo.readLess')}
                     >
