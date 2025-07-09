@@ -43,7 +43,7 @@ describe('<DaoSettingsInfo /> component', () => {
     });
 
     it('renders the ens term and value if present', () => {
-        const dao = generateDao({ subdomain: 'mydaoname' });
+        const dao = generateDao({ ens: 'mydaoname.dao.eth' });
         render(createTestComponent({ dao: dao }));
 
         expect(screen.getByText(/daoSettingsInfo.ens/)).toBeInTheDocument();
@@ -61,7 +61,7 @@ describe('<DaoSettingsInfo /> component', () => {
             name: 'Some DAO',
             network: Network.ETHEREUM_MAINNET,
             address: '0x123',
-            subdomain: 'somedao',
+            ens: 'somedao.dao.eth',
             description: 'This is a test DAO.',
             links: [{ name: 'Test Link', url: 'https://testlink.com' }],
         });

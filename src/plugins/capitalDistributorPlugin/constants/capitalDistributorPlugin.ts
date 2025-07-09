@@ -27,7 +27,7 @@ export const capitalDistributorPlugin: IPluginInfo = {
         {
             label: 'app.plugins.capitalDistributor.meta.link.rewards',
             link: `${baseUrl}/${CapitalDistributorPluginPages.REWARDS}`,
-            icon: IconType.APP_ASSETS,
+            icon: IconType.REWARDS,
             lgHidden: context === 'dialog',
         },
     ],
