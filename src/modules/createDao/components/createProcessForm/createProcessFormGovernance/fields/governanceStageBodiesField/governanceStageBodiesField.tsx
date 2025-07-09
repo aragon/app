@@ -2,7 +2,7 @@ import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialog
 import type { ISetupBodyDialogParams, ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
+import { Button, CardEmptyState, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { GovernanceBodyField } from '../governanceBodyField';
 
@@ -30,11 +30,8 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
     const { open, close } = useDialogContext();
 
     const fieldName = `${formPrefix}.bodies`;
-    const requiredErrorMessage = 'app.createDao.createProcessForm.governance.stageBodiesField.error.required';
-    const { fields, remove, update, append } = useFieldArray<Record<string, ISetupBodyForm[]>>({
-        name: fieldName,
-        rules: { required: { value: true, message: requiredErrorMessage } },
-    });
+
+    const { fields, remove, update, append } = useFieldArray<Record<string, ISetupBodyForm[]>>({ name: fieldName });
 
     const bodiesWatch = useWatch<Record<string, ISetupBodyForm[]>>({ name: fieldName });
     const bodies = fields.map((field, index) => ({ ...field, ...bodiesWatch[index] }));
@@ -69,27 +66,45 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
                 useCustomWrapper={true}
                 alert={fieldAlert}
             >
-                <div className="flex flex-col gap-3 md:gap-2">
-                    {bodies.map((body, index) => (
-                        <GovernanceBodyField
-                            daoId={daoId}
-                            key={body.id}
-                            fieldName={`${formPrefix}.bodies.${index.toString()}`}
-                            body={body}
-                            onEdit={() => openSetupBodyDialog(index)}
-                            onDelete={() => remove(index)}
-                        />
-                    ))}
-                    <Button
-                        size="md"
-                        variant="tertiary"
-                        className="w-fit"
-                        iconLeft={IconType.PLUS}
-                        onClick={() => openSetupBodyDialog()}
-                    >
-                        {t('app.createDao.createProcessForm.governance.stageBodiesField.action.add')}
-                    </Button>
-                </div>
+                {bodies.length === 0 && (
+                    <CardEmptyState
+                        heading={t('app.createDao.createProcessForm.governance.stageBodiesField.timelockStage.heading')}
+                        description={t(
+                            'app.createDao.createProcessForm.governance.stageBodiesField.timelockStage.description',
+                        )}
+                        objectIllustration={{ object: 'SETTINGS' }}
+                        secondaryButton={{
+                            label: t('app.createDao.createProcessForm.governance.stageBodiesField.action.add'),
+                            onClick: () => openSetupBodyDialog(),
+                            iconLeft: IconType.PLUS,
+                        }}
+                        isStacked={false}
+                        className="border border-neutral-100"
+                    />
+                )}
+                {bodies.length > 0 && (
+                    <div className="flex flex-col gap-3 md:gap-2">
+                        {bodies.map((body, index) => (
+                            <GovernanceBodyField
+                                daoId={daoId}
+                                key={body.id}
+                                fieldName={`${formPrefix}.bodies.${index.toString()}`}
+                                body={body}
+                                onEdit={() => openSetupBodyDialog(index)}
+                                onDelete={() => remove(index)}
+                            />
+                        ))}
+                        <Button
+                            size="md"
+                            variant="tertiary"
+                            className="w-fit"
+                            iconLeft={IconType.PLUS}
+                            onClick={() => openSetupBodyDialog()}
+                        >
+                            {t('app.createDao.createProcessForm.governance.stageBodiesField.action.add')}
+                        </Button>
+                    </div>
+                )}
             </InputContainer>
         </>
     );

@@ -35,6 +35,7 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (pro
                         stagesCount={stages.length}
                         onDelete={() => removeStage(index)}
                         daoId={daoId}
+                        index={index}
                     />
                 ))}
             </div>
