@@ -1046,6 +1046,67 @@
         }
       },
       "capitalDistributor": {
+        "capitalDistributorCampaignList": {
+          "emptyState": {
+            "description": "This will show your campaigns when available.",
+            "heading": "No campaigns found"
+          },
+          "entity": "Campaigns",
+          "errorState": {
+            "description": "There was an error loading the campaigns. Try again later.",
+            "heading": "Error loading campaigns"
+          },
+          "filter": {
+            "claimable": "Claimable",
+            "claimed": "Claimed"
+          },
+          "item": {
+            "amount": "Amount",
+            "value": "Value"
+          }
+        },
+        "capitalDistributorClaimDialog": {
+          "details": {
+            "amount": "Total amount",
+            "claimable": "Claimable",
+            "deadline": "Deadline",
+            "resources": "Resources",
+            "status": "Status",
+            "timeLeft": "{{time}} left",
+            "type": "Type",
+            "value": "Value"
+          },
+          "inputs": {
+            "helpText": "The address to get the payout",
+            "recipient": "Recipient"
+          },
+          "submit": "Claim"
+        },
+        "capitalDistributorClaimTransactionDialog": {
+          "description": "Confirm the onchain transaction to claim your rewards",
+          "submit": "Claim rewards",
+          "successLinkLabel": "View rewards",
+          "title": "Claim Transaction"
+        },
+        "capitalDistributorRewardsAside": {
+          "stats": {
+            "claimableCount": "Claimable campaigns",
+            "claimableNow": "Claimable now",
+            "latestClaim": "Latest claim",
+            "recentUnit": " {{unit}} ago",
+            "totalEarned": "Total earned"
+          }
+        },
+        "capitalDistributorRewardsPage": {
+          "main": {
+            "connect": {
+              "action": "Connect",
+              "description": "Connect your wallet to view your rewards.",
+              "heading": "Connect your wallet"
+            },
+            "title": "Rewards"
+          }
+        },
         "meta": {
           "link": {
             "rewards": "Rewards"
