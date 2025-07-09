@@ -1,6 +1,15 @@
 import type { IDateDuration } from '@/shared/utils/dateUtils';
+import type { ProcessStageType } from '../../components/createProcessForm';
 
-export interface ISetupStageTimingForm {
+export interface ISetupStageSettingsForm {
+    /**
+     * Type of the stage.
+     */
+    type: ProcessStageType;
+    /**
+     * Number of bodies required to veto (for optimistic type) or approve.
+     */
+    requiredApprovals: number;
     /**
      * The period of time the stage is open for voting.
      */
