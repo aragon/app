@@ -61,10 +61,19 @@ class ActionComposerUtils {
         abis,
         nativeGroups,
     }: IGetCustomActionParams & IGetNativeActionGroupsParams): IAutocompleteInputGroup[] => {
-        return [
-            this.getCustomActionGroups({ dao, t, abis }),
-            this.getNativeActionGroups({ dao, t, nativeGroups }),
-        ].flat();
+        // Show groups in the following order:
+        // 1. custom action groups (without ones matching native groups!)
+        //   - check if imported address matches any native group id or DAO address, and filter those out
+        // 2. native action groups
+        const completeNativeGroups = this.getNativeActionGroups({ dao, t, nativeGroups });
+        const completeCustomGroups = this.getCustomActionGroups({ dao, t, abis });
+
+        const nativeGroupIds = new Set(
+            [...completeNativeGroups.map((group) => group.id), dao?.address].filter(Boolean),
+        );
+        const filteredCustomGroups = completeCustomGroups.filter((customGroup) => !nativeGroupIds.has(customGroup.id));
+
+        return [...filteredCustomGroups, ...completeNativeGroups];
     };
 
     getActionItems = ({
