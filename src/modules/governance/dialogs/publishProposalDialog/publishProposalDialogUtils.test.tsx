@@ -55,7 +55,7 @@ describe('publishProposalDialog utils', () => {
             const transaction = await publishProposalDialogUtils.buildTransaction({ proposal, metadataCid, plugin });
 
             expect(getSlotFunctionSpy).toHaveBeenCalledWith({
-                pluginId: plugin.subdomain,
+                pluginId: plugin.interfaceType,
                 slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
             });
             expect(slotFunction).toHaveBeenCalledWith({
