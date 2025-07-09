@@ -55,7 +55,8 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
     const defaultAddressValue = addressUtils.isAddress(initialValue) ? initialValue : undefined;
     const { handleSubmit, control } = useForm<IVerifySmartContractFormData>({
         mode: 'onTouched',
-        defaultValues: { smartContract: { address: defaultAddressValue } },
+        // set default values for the form only if the initial value is provided, to avoid validation errors on load!
+        defaultValues: defaultAddressValue ? { smartContract: { address: defaultAddressValue } } : undefined,
     });
 
     const [addressInput, setAddressInput] = useState<string | undefined>(initialValue);
