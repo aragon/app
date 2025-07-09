@@ -77,15 +77,15 @@ class ActionComposerUtils {
         const completeNativeItems = this.getNativeActionItems({ t, dao, nativeItems });
 
         return [...customItems, ...completeNativeItems].map((item) => {
-            if (item.defaultValue?.inputData) {
-                const fnSelector = this.createFunctionSelector(item.defaultValue.inputData);
-                return {
-                    ...item,
-                    info: fnSelector,
-                };
+            if (item.defaultValue?.inputData == null || item.id === ProposalActionType.TRANSFER) {
+                return item;
             }
 
-            return item;
+            const fnSelector = this.createFunctionSelector(item.defaultValue.inputData);
+            return {
+                ...item,
+                info: fnSelector,
+            };
         });
     };
 
