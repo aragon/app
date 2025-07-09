@@ -62,26 +62,26 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
         <DataList.Item
             target="_blank"
             href={isClaimed ? addressLink : undefined}
-            className="flex flex-col items-center gap-4 p-6 sm:flex-row sm:gap-12"
+            className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:gap-8"
             onClick={isClaimed ? undefined : handleOpenDialog}
         >
-            <div className="flex w-full items-center gap-4">
+            <div className="flex w-full min-w-0 items-center gap-4">
                 <Avatar src={token.logo} size="lg" />
-                <div className="flex flex-col gap-1">
-                    <h3 className="text-lg text-neutral-800">{title}</h3>
+                <div className="flex min-w-0 flex-col gap-1">
+                    <h3 className="truncate text-lg text-neutral-800">{title}</h3>
                     <p className="line-clamp-1 text-neutral-500">{description}</p>
                 </div>
             </div>
             <div className="w-full border-t border-neutral-100 sm:hidden" />
-            <div className="flex w-full items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                    <div className="flex min-w-30 flex-col gap-1">
+            <div className="flex w-full items-center justify-between gap-4 sm:w-auto sm:gap-8">
+                <div className="flex grow items-center gap-8 sm:gap-12">
+                    <div className="flex min-w-[80px] flex-col gap-1">
                         <h3 className="text-sm text-neutral-500 sm:text-base">
                             {t('app.plugins.capitalDistributor.capitalDistributorCampaignList.item.amount')}
                         </h3>
                         <p className="text-base text-neutral-800 sm:text-lg">{formattedAmount}</p>
                     </div>
-                    <div className="flex min-w-30 flex-col gap-1">
+                    <div className="flex min-w-[80px] flex-col gap-1">
                         <h3 className="text-sm text-neutral-500 sm:text-base">
                             {t('app.plugins.capitalDistributor.capitalDistributorCampaignList.item.value')}
                         </h3>
