@@ -6,6 +6,7 @@ import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as wagmi from 'wagmi';
+import { PluginInterfaceType } from '../../../../shared/api/daoService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { generateProposal } from '../../testUtils';
 import { type IProposalVotingTerminalProps, ProposalVotingTerminal } from './proposalVotingTerminal';
@@ -48,12 +49,12 @@ describe('<ProposalVotingTerminal /> component', () => {
     };
 
     it('renders the plugin-specific proposal breakdown component', () => {
-        const proposal = generateProposal({ pluginSubdomain: 'multisig' });
+        const proposal = generateProposal({ pluginInterfaceType: PluginInterfaceType.multisig });
         render(createTestComponent({ proposal }));
         const pluginComponent = screen.getAllByTestId('plugin-component-mock');
         expect(pluginComponent[0]).toBeInTheDocument();
         expect(pluginComponent[0].dataset.slotid).toEqual(GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN);
-        expect(pluginComponent[0].dataset.pluginid).toEqual(proposal.pluginSubdomain);
+        expect(pluginComponent[0].dataset.pluginid).toEqual(proposal.pluginInterfaceType);
     });
 
     it('renders the list of votes when proposal status is not pending or unreached', async () => {
@@ -66,7 +67,7 @@ describe('<ProposalVotingTerminal /> component', () => {
         const daoId = 'test-id';
         const settings = generatePluginSettings();
         const parsedSettings = { term: 'plugin-term', definition: 'plugin-value' };
-        const proposal = generateProposal({ settings, pluginSubdomain: 'plugin-id' });
+        const proposal = generateProposal({ settings, pluginInterfaceType: PluginInterfaceType.unknown });
 
         useSlotSingleFunctionSpy.mockReturnValue([parsedSettings]);
         useDaoPluginInfoSpy.mockImplementation((params) => params.settings!);
@@ -76,7 +77,7 @@ describe('<ProposalVotingTerminal /> component', () => {
         const expectedParams = { daoId, settings: proposal.settings, pluginAddress: proposal.pluginAddress };
         expect(useSlotSingleFunctionSpy).toHaveBeenCalledWith({
             params: expectedParams,
-            pluginId: proposal.pluginSubdomain,
+            pluginId: proposal.pluginInterfaceType,
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         });
         expect(screen.getByText(parsedSettings.term)).toBeInTheDocument();

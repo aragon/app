@@ -1,4 +1,4 @@
-import { Network } from '@/shared/api/daoService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { generateAddressInfo, generatePluginSettings } from '@/shared/testUtils';
 import type { IProposal } from '../../api/governanceService';
 
@@ -20,6 +20,7 @@ export const generateProposal = (proposal?: Partial<IProposal>): IProposal => ({
     executed: { status: false },
     pluginAddress: '0x123',
     pluginSubdomain: 'test',
+    pluginInterfaceType: PluginInterfaceType.unknown,
     incrementalId: 1,
     hasActions: false,
     ...proposal,

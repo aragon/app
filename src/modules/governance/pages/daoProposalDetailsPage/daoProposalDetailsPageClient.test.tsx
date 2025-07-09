@@ -4,7 +4,7 @@ import {
 } from '@/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient';
 import { generateProposal } from '@/modules/governance/testUtils';
 import * as DaoService from '@/shared/api/daoService';
-import { Network } from '@/shared/api/daoService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
 import {
     generateAddressInfo,
@@ -95,7 +95,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
     it('uses the plugin-specific function to process and render the proposal status', () => {
         const status = ProposalStatus.REJECTED;
-        const proposal = generateProposal({ pluginSubdomain: 'multisig' });
+        const proposal = generateProposal({ pluginInterfaceType: PluginInterfaceType.multisig });
         useSlotSingleFunctionSpy.mockReturnValue(status);
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
         render(createTestComponent());
@@ -103,7 +103,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         expect(useSlotSingleFunctionSpy).toHaveBeenCalledWith({
             params: proposal,
             slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
-            pluginId: proposal.pluginSubdomain,
+            pluginId: proposal.pluginInterfaceType,
         });
         expect(screen.getAllByText('Rejected')).toHaveLength(2);
         expect(screen.getByText(/daoProposalDetailsPage.aside.details.status/)).toBeInTheDocument();

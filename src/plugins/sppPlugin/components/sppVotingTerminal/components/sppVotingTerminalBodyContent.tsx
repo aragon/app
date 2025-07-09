@@ -95,7 +95,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                             {canVote && (
                                 <PluginSingleComponent
                                     slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
-                                    pluginId={isExternalBody ? 'external' : processedSubProposal!.pluginSubdomain}
+                                    pluginId={isExternalBody ? 'external' : processedSubProposal!.pluginInterfaceType}
                                     proposal={isExternalBody ? proposal : processedSubProposal}
                                     externalAddress={isExternalBody ? plugin.address : undefined}
                                     daoId={daoId}
