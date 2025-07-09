@@ -17,7 +17,7 @@ describe('useMemberLocks query', () => {
         tokenServiceSpy.mockResolvedValue(locksResult);
 
         const urlParams = { address: '0x123' };
-        const queryParams = { network: Network.ETHEREUM_SEPOLIA, pluginAddress: '0x456' };
+        const queryParams = { network: Network.ETHEREUM_SEPOLIA, escrowAddress: '0x456' };
         const { result } = renderHook(() => useMemberLocks({ urlParams, queryParams }), { wrapper: ReactQueryWrapper });
 
         await waitFor(() => expect(result.current.data?.pages[0]).toEqual(locksResult));
