@@ -145,7 +145,7 @@ class ActionComposerUtils {
             proposedMetadata: existingMetadata,
             inputData: {
                 function: 'setMetadata',
-                contract: plugin.subdomain,
+                contract: plugin.interfaceType,
                 parameters: [
                     {
                         name: '_metadata',
