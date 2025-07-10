@@ -27,7 +27,7 @@ export interface IGovernanceBodyInfoProps {
 export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (props) => {
     const { name, pluginName, address, release, build } = props;
 
-    invariant(address != null, 'GovernanceBodyInfo: address must be set.');
+    invariant(address != null || pluginName != null, 'GovernanceBodyInfo: address or pluginName must be set.');
 
     const { t } = useTranslations();
 
