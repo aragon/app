@@ -4,5 +4,6 @@ export enum PluginInterfaceType {
     admin = 'admin',
     spp = 'spp',
     gauge = 'gauge',
+    capitalDistributor = 'capitalDistributor',
     unknown = 'unknown',
 }

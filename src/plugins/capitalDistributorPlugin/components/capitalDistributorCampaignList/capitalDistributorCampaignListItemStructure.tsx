@@ -1,4 +1,4 @@
-import type { IDao } from '@/shared/api/daoService/domain';
+import { type IDao, PluginInterfaceType } from '@/shared/api/daoService/domain';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -15,7 +15,6 @@ import {
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { CampaignStatus, type ICampaign } from '../../api/capitalDistributorService';
-import { capitalDistributorPlugin } from '../../constants/capitalDistributorPlugin';
 import { CapitalDistributorPluginDialogId } from '../../constants/capitalDistributorPluginDialogId';
 import type { ICapitalDistributorClaimDialogParams } from '../../dialogs/capitalDistributorClaimDialog';
 
@@ -38,7 +37,7 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const plugin = useDaoPlugins({ daoId: id, subdomain: capitalDistributorPlugin.id })![0];
+    const plugin = useDaoPlugins({ daoId: id, interfaceType: PluginInterfaceType.capitalDistributor })![0];
 
     const { amount, token, txHash, title, description } = campaign;
 

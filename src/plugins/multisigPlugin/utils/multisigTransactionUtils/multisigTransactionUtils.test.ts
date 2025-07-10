@@ -2,7 +2,7 @@ import { generateSetupBodyFormData, generateSetupBodyFormNew } from '@/modules/c
 import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { multisigPlugin } from '@/plugins/multisigPlugin/constants/multisigPlugin';
-import { Network } from '@/shared/api/daoService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
@@ -39,7 +39,7 @@ describe('multisigTransaction utils', () => {
             const proposal = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
             const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x0', value: BigInt(0) }];
             const plugin = generateDaoPlugin({
-                subdomain: 'multisig',
+                interfaceType: PluginInterfaceType.multisig,
                 settings: generateMultisigPluginSettings(),
             });
             const params = { metadata: '0x' as const, actions: actions, proposal, plugin };
@@ -65,7 +65,7 @@ describe('multisigTransaction utils', () => {
             const proposal = generateProposalCreate();
             const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x0', value: BigInt(0) }];
             const plugin = generateDaoPlugin({
-                subdomain: 'multisig',
+                interfaceType: PluginInterfaceType.multisig,
                 settings: generateMultisigPluginSettings(),
             });
             const params = { metadata: '0x' as const, actions: actions, proposal, plugin };

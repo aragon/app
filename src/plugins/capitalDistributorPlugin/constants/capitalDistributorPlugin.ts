@@ -1,4 +1,4 @@
-import { Network } from '@/shared/api/daoService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import type { IPluginInfo } from '@/shared/types';
 import { IconType } from '@aragon/gov-ui-kit';
 
@@ -7,7 +7,7 @@ export enum CapitalDistributorPluginPages {
 }
 
 export const capitalDistributorPlugin: IPluginInfo = {
-    id: 'capital-distributor',
+    id: PluginInterfaceType.capitalDistributor,
     name: 'Capital Distributor',
     installVersion: { release: 1, build: 1, releaseNotes: '', description: '' },
     repositoryAddresses: {

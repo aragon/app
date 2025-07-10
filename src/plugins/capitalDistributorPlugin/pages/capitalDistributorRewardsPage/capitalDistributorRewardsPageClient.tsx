@@ -1,7 +1,7 @@
 'use client';
 
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
-import { type IDao } from '@/shared/api/daoService';
+import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -12,7 +12,6 @@ import { useAccount } from 'wagmi';
 import { type IGetCampaignListParams } from '../../api/capitalDistributorService';
 import { CapitalDistributorCampaignList } from '../../components/capitalDistributorCampaignList';
 import { CapitalDistributorRewardsStats } from '../../components/capitalDistributorRewardsStats';
-import { capitalDistributorPlugin } from '../../constants/capitalDistributorPlugin';
 
 export interface ICapitalDistributorRewardsPageClientProps {
     /**
@@ -32,7 +31,7 @@ export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRe
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const plugin = useDaoPlugins({ daoId: dao.id, subdomain: capitalDistributorPlugin.id })![0];
+    const plugin = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.capitalDistributor })![0];
 
     const pluginName = daoUtils.getPluginName(plugin.meta);
     const { description, links } = plugin.meta;

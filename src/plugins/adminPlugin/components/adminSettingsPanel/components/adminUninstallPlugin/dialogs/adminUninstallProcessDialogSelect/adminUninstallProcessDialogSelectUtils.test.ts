@@ -1,6 +1,7 @@
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import type { Hex } from 'viem';
+import { PluginInterfaceType } from '../../../../../../../../shared/api/daoService';
 import { adminUninstallProcessDialogSelectUtils } from './adminUninstallProcessDialogSelectUtils';
 
 describe('adminUninstallSelectProcessDialogUtils', () => {
@@ -24,7 +25,7 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
             const adminAddress: Hex = '0xPluginSetupProcessor';
             const permissionId = 'EXECUTE_PERMISSION';
 
-            const plugin = generateDaoPlugin({ address: '0x123', subdomain: 'admin' });
+            const plugin = generateDaoPlugin({ address: '0x123', interfaceType: PluginInterfaceType.admin });
 
             const to = '0xTo';
             const data = '0xData';

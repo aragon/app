@@ -1,4 +1,5 @@
 import * as DaoService from '@/shared/api/daoService';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { DialogProvider } from '@/shared/components/dialogProvider';
 import * as UseDaoPluginsModule from '@/shared/hooks/useDaoPlugins';
 import {
@@ -38,7 +39,10 @@ describe('<DaoSettingsPageClient /> component', () => {
                 id: 'one',
                 uniqueId: '1',
                 label: 'one',
-                meta: generateDaoPlugin({ subdomain: 'multisig', address: '0x123' }),
+                meta: generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.multisig,
+                    address: '0x123',
+                }),
             }),
         ]);
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));

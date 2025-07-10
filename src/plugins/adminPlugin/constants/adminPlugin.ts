@@ -1,8 +1,8 @@
-import { Network } from '@/shared/api/daoService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import type { IPluginInfo } from '@/shared/types';
 
 export const adminPlugin: IPluginInfo = {
-    id: 'admin',
+    id: PluginInterfaceType.admin,
     name: 'Admin',
     installVersion: {
         release: 1,

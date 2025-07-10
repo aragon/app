@@ -1,5 +1,5 @@
 import { type ILayoutWizardProps } from '@/modules/application/components/layouts/layoutWizard';
-import { Network } from '@/shared/api/daoService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { mockTranslations } from '@/test/utils';
@@ -51,8 +51,18 @@ describe('<LayoutWizardCreateProposal /> component', () => {
     it('renders the plugin name on the wizard name when DAO has multiple process plugins', async () => {
         const dao = generateDao({ address: '0x987' });
         const plugins = [
-            generateDaoPlugin({ subdomain: 'token', address: '0x123', isProcess: true }),
-            generateDaoPlugin({ subdomain: 'multisig', address: '0x456', isProcess: true }),
+            generateDaoPlugin({
+                subdomain: 'token',
+                interfaceType: PluginInterfaceType.tokenVoting,
+                address: '0x123',
+                isProcess: true,
+            }),
+            generateDaoPlugin({
+                subdomain: 'multisig',
+                interfaceType: PluginInterfaceType.multisig,
+                address: '0x456',
+                isProcess: true,
+            }),
         ];
         fetchQuerySpy.mockResolvedValue(generateDao());
         getDaoPluginsSpy.mockReturnValue(plugins);

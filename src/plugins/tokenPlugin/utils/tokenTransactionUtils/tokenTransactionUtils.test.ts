@@ -4,7 +4,7 @@ import { generateToken } from '@/modules/finance/testUtils';
 import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { tokenPlugin } from '@/plugins/tokenPlugin/constants/tokenPlugin';
-import { Network } from '@/shared/api/daoService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
@@ -43,7 +43,7 @@ describe('tokenTransaction utils', () => {
                 { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
             ];
             const plugin = generateDaoPlugin({
-                subdomain: 'token',
+                interfaceType: PluginInterfaceType.tokenVoting,
                 settings: generateTokenPluginSettings(),
             });
 
@@ -76,7 +76,7 @@ describe('tokenTransaction utils', () => {
                 { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
             ];
             const plugin = generateDaoPlugin({
-                subdomain: 'token',
+                interfaceType: PluginInterfaceType.tokenVoting,
                 settings: generateTokenPluginSettings({
                     minDuration,
                 }),

@@ -1,4 +1,4 @@
-import { Network } from '@/shared/api/daoService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
@@ -108,11 +108,11 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
 
         it('encodes the prepareUpdate transaction for the given plugin', async () => {
             const dao = generateDao({ network: Network.ZKSYNC_MAINNET });
-            const plugin = generateDaoPlugin({ subdomain: 'multi', release: '1', build: '4' });
+            const plugin = generateDaoPlugin({ interfaceType: PluginInterfaceType.multisig, release: '1', build: '4' });
             const pluginSetupRepo = '0xrepo';
             const newVersionTag = { release: 1, build: 5 };
             const pluginInfo = {
-                id: 'multi',
+                id: PluginInterfaceType.multisig,
                 name: 'Multisig',
                 installVersion: newVersionTag,
                 repositoryAddresses: { [dao.network]: pluginSetupRepo },
@@ -124,7 +124,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
             encodeFunctionDataSpy.mockReturnValue(transactionData);
 
             const result = await prepareDaoContractsUpdateDialogUtils['buildPrepareUpdateTransaction'](dao, plugin);
-            expect(getPluginSpy).toHaveBeenCalledWith(plugin.subdomain);
+            expect(getPluginSpy).toHaveBeenCalledWith(plugin.interfaceType);
             expect(buildPayloadSpy).toHaveBeenCalledWith(dao, plugin);
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: pluginSetupProcessorAbi,
