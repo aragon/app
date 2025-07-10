@@ -1,14 +1,8 @@
-import type { ITokenPlugin } from '@/plugins/tokenPlugin/types';
-import type { IDao } from '@/shared/api/daoService';
+import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
+import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
-import {
-    DataListContainer,
-    DataListPagination,
-    DataListRoot,
-    invariant,
-    ProposalDataListItem,
-} from '@aragon/gov-ui-kit';
+import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import { useMemberLocks } from '../../../../api/tokenService';
 import { TokenLockListItem } from './tokenLockListItem';
@@ -21,7 +15,7 @@ export interface ITokenLockListProps {
     /**
      * Token plugin containing voting escrow settings.
      */
-    plugin: ITokenPlugin;
+    plugin: IDaoPlugin<ITokenPluginSettings>;
 }
 
 export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
@@ -30,14 +24,7 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
     const { t } = useTranslations();
     const { address } = useAccount();
 
-    const { votingEscrow } = plugin.settings;
-    const { votingEscrow: votingEscrowAddresses } = plugin;
-
-    invariant(votingEscrow != null && votingEscrowAddresses != null, 'TokenLockForm: escrow settings are required');
-
-    const { escrowAddress } = votingEscrowAddresses;
-
-    const memberLocksQueryParams = { network: dao.network, escrowAddress, onlyActive: true };
+    const memberLocksQueryParams = { network: dao.network, pluginAddress: plugin.address, onlyActive: true };
     const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage, refetch } = useMemberLocks(
         { urlParams: { address: address! }, queryParams: memberLocksQueryParams },
         { enabled: address != null },
