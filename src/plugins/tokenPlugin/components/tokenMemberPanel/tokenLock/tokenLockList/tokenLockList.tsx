@@ -33,7 +33,7 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
     const { votingEscrow } = plugin.settings;
     const { votingEscrow: votingEscrowAddresses } = plugin;
 
-    invariant(votingEscrow != null && votingEscrowAddresses != null, 'TokenLockForm: escrow settings are required');
+    invariant(votingEscrow != null && votingEscrowAddresses != null, 'TokenLockList: escrow settings are required');
 
     const { escrowAddress } = votingEscrowAddresses;
 
