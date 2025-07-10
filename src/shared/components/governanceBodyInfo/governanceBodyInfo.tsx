@@ -1,5 +1,4 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, invariant } from '@aragon/gov-ui-kit';
 
 export interface IGovernanceBodyInfoProps {
@@ -12,9 +11,9 @@ export interface IGovernanceBodyInfoProps {
      */
     address?: string;
     /**
-     * The subdomain of the plugin.
+     * The name of the plugin.
      */
-    subdomain?: string;
+    pluginName?: string;
     /**
      * The release number of the plugin.
      */
@@ -26,9 +25,9 @@ export interface IGovernanceBodyInfoProps {
 }
 
 export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (props) => {
-    const { name, subdomain, address, release, build } = props;
+    const { name, pluginName, address, release, build } = props;
 
-    invariant(address != null || subdomain != null, 'GovernanceBodyInfo: address or subdomain must be set.');
+    invariant(address != null, 'GovernanceBodyInfo: address must be set.');
 
     const { t } = useTranslations();
 
@@ -36,11 +35,9 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (props) =>
 
     const bodyName = name ?? truncatedAddress;
 
-    const isPlugin = subdomain != null && release != null && build != null;
+    const isPlugin = pluginName != null && release != null && build != null;
 
-    const subtitle = isPlugin
-        ? `${daoUtils.parsePluginSubdomain(subdomain)} v${release}.${build}`
-        : t('app.shared.governanceBodyInfo.external');
+    const subtitle = isPlugin ? `${pluginName} v${release}.${build}` : t('app.shared.governanceBodyInfo.external');
 
     return (
         <div className="flex w-full flex-col items-start gap-1">
