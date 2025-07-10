@@ -1,10 +1,10 @@
-import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import { useMemberLocks } from '../../../../api/tokenService';
+import type { ITokenPluginSettings } from '../../../../types';
 import { TokenLockListItem } from './tokenLockListItem';
 
 export interface ITokenLockListProps {
