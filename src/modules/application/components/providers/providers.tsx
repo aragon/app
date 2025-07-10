@@ -10,9 +10,10 @@ import { Link } from '@/shared/components/link';
 import { TranslationsProvider } from '@/shared/components/translationsProvider';
 import type { Translations } from '@/shared/utils/translationsUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import type { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { type State } from 'wagmi';
 import { wagmiConfig } from '../../constants/wagmi';
+import { fetchInterceptorUtils } from '../../utils/fetchInterceptorUtils';
 import { queryClientUtils } from '../../utils/queryClientUtils';
 import { providersDialogs } from './providersDialogs';
 
@@ -37,7 +38,10 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
     const { translations, wagmiInitialState, children } = props;
 
     const queryClient = queryClientUtils.getQueryClient();
+
+    // Initialise plugin registry and intercept fetch requests (if enabled) for client-side components
     initPluginRegistry();
+    fetchInterceptorUtils.intecept();
 
     return (
         <DebugContextProvider>

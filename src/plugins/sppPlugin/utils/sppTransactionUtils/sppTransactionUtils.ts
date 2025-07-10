@@ -5,8 +5,8 @@ import {
     ProcessStageType,
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
-import { SetupBodyType } from '@/modules/createDao/dialogs/setupBodyDialog';
-import type { ISetupStageTimingForm } from '@/modules/createDao/dialogs/setupStageTimingDialog';
+import { type ISetupBodyForm, SetupBodyType } from '@/modules/createDao/dialogs/setupBodyDialog';
+import type { ISetupStageSettingsForm } from '@/modules/createDao/dialogs/setupStageSettingsDialog';
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
@@ -153,10 +153,11 @@ class SppTransactionUtils {
     ): ITransactionRequest => {
         const processedBodyAddresses = [...bodyAddresses];
         const processedStages = stages.map((stage) => {
-            const { type, timing, requiredApprovals, bodies } = stage;
+            const { settings, bodies } = stage;
+            const { type, requiredApprovals } = settings;
 
-            const stageTiming = this.processStageTiming(timing);
-            const stageApprovals = this.processStageApprovals(requiredApprovals, type);
+            const stageTiming = this.processStageTiming(settings, bodies);
+            const stageApprovals = this.processStageApprovals(requiredApprovals, type, bodies);
 
             const resultType = type === ProcessStageType.NORMAL ? SppProposalType.APPROVAL : SppProposalType.VETO;
 
@@ -179,21 +180,27 @@ class SppTransactionUtils {
         return { to: sppAddress, data: transactionData, value: BigInt(0) };
     };
 
-    private processStageApprovals = (requiredApprovals: number, stageType: ProcessStageType) => {
-        const approvalThreshold = stageType === ProcessStageType.NORMAL ? requiredApprovals : 0;
-        const vetoThreshold = stageType === ProcessStageType.OPTIMISTIC ? requiredApprovals : 0;
+    private processStageApprovals = (
+        requiredApprovals: number,
+        stageType: ProcessStageType,
+        bodies: ISetupBodyForm[],
+    ) => {
+        // Stages with no bodies (timelock stages) do not require approvals
+        const approvalThreshold = bodies.length > 0 && stageType === ProcessStageType.NORMAL ? requiredApprovals : 0;
+        const vetoThreshold = bodies.length > 0 && stageType === ProcessStageType.OPTIMISTIC ? requiredApprovals : 0;
 
         return { approvalThreshold, vetoThreshold };
     };
 
-    private processStageTiming = (timing: ISetupStageTimingForm) => {
-        const { votingPeriod, stageExpiration, earlyStageAdvance } = timing;
+    private processStageTiming = (settings: ISetupStageSettingsForm, bodies: ISetupBodyForm[]) => {
+        const { votingPeriod, stageExpiration, earlyStageAdvance } = settings;
 
         const voteDuration = BigInt(dateUtils.durationToSeconds(votingPeriod));
         const processedStageExpiration =
             stageExpiration != null ? voteDuration + BigInt(dateUtils.durationToSeconds(stageExpiration)) : undefined;
 
-        const minAdvance = earlyStageAdvance ? BigInt(0) : voteDuration;
+        // Stages with no bodies (timelock stages) should not have early stage advance
+        const minAdvance = bodies.length > 0 && earlyStageAdvance ? BigInt(0) : voteDuration;
         const maxAdvance = processedStageExpiration ?? this.defaultMaxAdvance;
 
         return { minAdvance, maxAdvance, voteDuration };
