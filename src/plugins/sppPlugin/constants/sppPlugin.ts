@@ -3,6 +3,7 @@ import type { IPluginInfo } from '@/shared/types';
 
 export const sppPlugin: IPluginInfo = {
     id: PluginInterfaceType.spp,
+    subdomain: 'spp',
     name: 'Staged Proposal Processor',
     installVersion: {
         release: 1,

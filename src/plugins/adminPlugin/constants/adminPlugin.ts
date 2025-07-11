@@ -3,6 +3,7 @@ import type { IPluginInfo } from '@/shared/types';
 
 export const adminPlugin: IPluginInfo = {
     id: PluginInterfaceType.admin,
+    subdomain: 'admin',
     name: 'Admin',
     installVersion: {
         release: 1,

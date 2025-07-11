@@ -3,6 +3,7 @@ import type { IPluginInfo } from '@/shared/types';
 
 export const multisigPlugin: IPluginInfo = {
     id: PluginInterfaceType.multisig,
+    subdomain: 'multisig',
     name: 'Multisig',
     installVersion: {
         release: 1,

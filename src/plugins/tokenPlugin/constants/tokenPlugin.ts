@@ -3,6 +3,7 @@ import type { IPluginInfo } from '@/shared/types';
 
 export const tokenPlugin: IPluginInfo = {
     id: PluginInterfaceType.tokenVoting,
+    subdomain: 'token-voting',
     name: 'Token',
     installVersion: {
         release: 1,
