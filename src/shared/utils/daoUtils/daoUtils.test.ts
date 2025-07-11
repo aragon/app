@@ -265,7 +265,7 @@ describe('dao utils', () => {
                 }),
                 generateDaoPlugin({
                     interfaceType: PluginInterfaceType.tokenVoting,
-                    subdomain: 'token-voting-test-deployment',
+                    subdomain: 'token-voting-test-deployment', // Example of a DAO plugin with an unknown subdomain ... it should not be returned!
                     release: '1',
                     build: '1',
                 }),
