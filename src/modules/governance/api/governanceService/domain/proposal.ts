@@ -76,7 +76,7 @@ export interface IProposal<TSettings extends IPluginSettings = IPluginSettings> 
      */
     pluginSubdomain: string;
     /**
-     * Interface type of the plugin where the proposal has been created.
+     * Interface type of the plugin.
      */
     pluginInterfaceType: string;
     /**
