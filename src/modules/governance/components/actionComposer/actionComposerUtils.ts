@@ -82,20 +82,68 @@ class ActionComposerUtils {
         abis,
         nativeItems,
     }: IGetCustomActionParams & IGetNativeActionItemsParams): IActionComposerItem[] => {
-        const customItems = this.getCustomActionItems({ t, abis });
-        const completeNativeItems = this.getNativeActionItems({ t, dao, nativeItems });
+        const completeCustomItems = this.getCustomActionItems({ t, abis }).map(this.functionSelectorMapper);
+        const completeNativeItems = this.getNativeActionItems({ t, dao, nativeItems }).map(this.functionSelectorMapper);
 
-        return [...customItems, ...completeNativeItems].map((item) => {
-            if (item.defaultValue?.inputData == null || item.id === ProposalActionType.TRANSFER) {
-                return item;
+        const nonGroupItems: IActionComposerItem[] = [];
+        const finalCustomItems: IActionComposerItem[] = [];
+        const finalNativeItems: IActionComposerItem[] = [];
+        const collisionGroupIds: string[] = [ActionGroupId.OSX];
+        const customItemsByGroup: Record<string, IActionComposerItem[]> = {};
+        const nativeItemsByGroup: Record<string, IActionComposerItem[]> = {};
+
+        for (const item of completeCustomItems) {
+            if (item.groupId) {
+                const normalizedGroupId = item.groupId === dao?.address ? ActionGroupId.OSX : item.groupId;
+
+                customItemsByGroup[normalizedGroupId] ??= [];
+                customItemsByGroup[normalizedGroupId].push(item);
+            } else {
+                nonGroupItems.push(item);
             }
+        }
 
-            const fnSelector = this.createFunctionSelector(item.defaultValue.inputData);
-            return {
-                ...item,
-                info: fnSelector,
-            };
+        for (const item of completeNativeItems) {
+            if (item.groupId) {
+                const groupId = item.groupId;
+                nativeItemsByGroup[groupId] ??= [];
+                nativeItemsByGroup[groupId].push(item);
+            } else {
+                nonGroupItems.push(item);
+            }
+        }
+
+        Object.entries(customItemsByGroup).forEach(([groupId, items]) => {
+            // ESLint gets type intent wrong here
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            if (nativeItemsByGroup[groupId] != null || groupId === dao?.address) {
+                // If groupId collides with native items, we need to handle it separately
+                collisionGroupIds.push(groupId);
+            } else {
+                finalCustomItems.push(...items);
+            }
         });
+
+        Object.entries(nativeItemsByGroup).forEach(([groupId, items]) => {
+            finalNativeItems.push(...items);
+
+            // ESLint gets type intent wrong here
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            if (collisionGroupIds.includes(groupId) && customItemsByGroup[groupId] != null) {
+                // first add native items, then append custom items that are not duplicates (determine duplication by fn_selector/info)
+                const nonDuplicateCustomItems = customItemsByGroup[groupId]
+                    .filter((item) => !items.some((nativeItem) => nativeItem.info && nativeItem.info === item.info))
+                    .map((item) => {
+                        return {
+                            ...item,
+                            groupId: groupId === dao?.address ? ActionGroupId.OSX : groupId, // Normalize dao.address to ActionGroupId.OSX
+                        };
+                    });
+                finalNativeItems.push(...nonDuplicateCustomItems);
+            }
+        });
+
+        return [...nonGroupItems, ...finalCustomItems, ...finalNativeItems];
     };
 
     getDefaultActionPluginMetadataItem = (
@@ -119,6 +167,17 @@ class ActionComposerUtils {
         const signature = `${inputData.function}(${types})`;
         const hash = keccak256(toBytes(signature));
         return hash.substring(0, 10) as `0x${string}`;
+    };
+
+    private functionSelectorMapper = (item: IActionComposerItem) => {
+        if (item.defaultValue?.inputData == null || item.id === ProposalActionType.TRANSFER) {
+            return item;
+        }
+        const fnSelector = this.createFunctionSelector(item.defaultValue.inputData);
+        return {
+            ...item,
+            info: fnSelector,
+        };
     };
 
     private getCustomActionGroups = ({ abis }: IGetCustomActionParams): IAutocompleteInputGroup[] =>
