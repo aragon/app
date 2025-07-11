@@ -13,7 +13,7 @@ describe('dao utils', () => {
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const listContainsRegisteredPluginsSpy = jest.spyOn(pluginRegistryUtils, 'listContainsRegisteredPlugins');
     const isAddressEqualSpy = jest.spyOn(addressUtils, 'isAddressEqual');
-    const getPluginSpy = jest.spyOn(pluginRegistryUtils, 'getPlugin');
+    const getPluginsSpy = jest.spyOn(pluginRegistryUtils, 'getPlugins');
 
     afterEach(() => {
         getDaoSpy.mockReset();
@@ -21,7 +21,7 @@ describe('dao utils', () => {
         cidToSrcSpy.mockReset();
         listContainsRegisteredPluginsSpy.mockReset();
         isAddressEqualSpy.mockReset();
-        getPluginSpy.mockReset();
+        getPluginsSpy.mockReset();
     });
 
     describe('hasSupportedPlugins', () => {
@@ -257,19 +257,48 @@ describe('dao utils', () => {
     describe('getAvailablePluginUpdates', () => {
         it('returns the list of plugins that can be updated', () => {
             const plugins = [
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.tokenVoting, release: '1', build: '1' }),
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.multisig, release: '1', build: '1' }),
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.admin, release: '2', build: '1' }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.tokenVoting,
+                    subdomain: 'token-voting',
+                    release: '1',
+                    build: '1',
+                }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.tokenVoting,
+                    subdomain: 'token-voting-test-deployment',
+                    release: '1',
+                    build: '1',
+                }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.multisig,
+                    subdomain: 'multisig',
+                    release: '1',
+                    build: '1',
+                }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.admin,
+                    subdomain: 'admin',
+                    release: '2',
+                    build: '1',
+                }),
             ];
             const dao = generateDao({ plugins });
-            const multiPluginInfo = { installVersion: { release: 1, build: 2 } } as IPluginInfo;
-            const adminPluginInfo = { installVersion: { release: 1, build: 1 } } as IPluginInfo;
-            const tokenPluginInfo = { installVersion: { release: 3, build: 0 } } as IPluginInfo;
-            getPluginSpy
-                .mockReturnValueOnce(multiPluginInfo)
-                .mockReturnValueOnce(adminPluginInfo)
-                .mockReturnValueOnce(tokenPluginInfo);
+            const multisigPluginInfo = {
+                subdomain: 'multisig',
+                installVersion: { release: 1, build: 2 },
+            } as IPluginInfo;
+            const adminPluginInfo = {
+                subdomain: 'admin',
+                installVersion: { release: 1, build: 1 },
+            } as IPluginInfo;
+            const tokenPluginInfo = {
+                subdomain: 'token-voting',
+                installVersion: { release: 3, build: 0 },
+            } as IPluginInfo;
+
+            getPluginsSpy.mockReturnValue([multisigPluginInfo, adminPluginInfo, tokenPluginInfo]);
             const result = daoUtils.getAvailablePluginUpdates(dao);
+
             expect(result).toEqual([plugins[0], plugins[2]]);
         });
 

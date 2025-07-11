@@ -32,18 +32,9 @@ DAO is supported by the Application.
 
 Example of Plugin definition:
 
-TODO: describe the distinction between `IPlugin` and `IPluginInfo` interfaces (basic/general UI vs dao plugin?).
-TODO: interfaceType vs subdomain
-
 ```typescript
-export const basicPlugin: IPlugin = {
-    id: 'test',
-    name: 'Test Plugin',
-};
-
-export const multisigPlugin: IPluginInfo = {
-    id: PluginInterfaceType.multisig,
-    subdomain: 'multisig',
+export const plugin: IPlugin = {
+    id: 'multisig',
     name: 'Multisig',
 };
 ```
