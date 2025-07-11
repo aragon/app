@@ -87,7 +87,12 @@ class DaoUtils {
 
     getAvailablePluginUpdates = (dao?: IDao): IDaoPlugin[] => {
         const availablePluginUpdates = dao?.plugins.filter((plugin) => {
-            const target = pluginRegistryUtils.getPlugin(plugin.interfaceType) as IPluginInfo | undefined;
+            const registeredPlugins = pluginRegistryUtils.getPlugins() as IPluginInfo[];
+            // We need to get the registered plugin by subdomain, not by interfaceType!
+            // There might be a plugin with the same interfaceType but from different repository, and we don't want to allow updating such plugins.
+            const target = registeredPlugins.find(
+                (registeredPlugin) => registeredPlugin.subdomain === plugin.subdomain,
+            );
 
             return versionComparatorUtils.isLessThan(plugin, target?.installVersion);
         });
