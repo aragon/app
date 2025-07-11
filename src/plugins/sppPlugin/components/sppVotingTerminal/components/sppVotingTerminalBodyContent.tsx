@@ -75,7 +75,9 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
     // Set parent name and description on sub-proposal to correctly display the proposal info on the vote dialog.
     const { title, description, incrementalId } = proposal;
     const processedSubProposal =
-        subProposal != null ? { ...subProposal, title, description, incrementalId } : undefined;
+        subProposal != null
+            ? { ...subProposal, title, description, incrementalId, pluginInterfaceType: plugin.interfaceType }
+            : undefined;
 
     return (
         <>
@@ -95,7 +97,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                             {canVote && (
                                 <PluginSingleComponent
                                     slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
-                                    pluginId={isExternalBody ? 'external' : processedSubProposal!.pluginInterfaceType}
+                                    pluginId={isExternalBody ? 'external' : plugin.interfaceType}
                                     proposal={isExternalBody ? proposal : processedSubProposal}
                                     externalAddress={isExternalBody ? plugin.address : undefined}
                                     daoId={daoId}
