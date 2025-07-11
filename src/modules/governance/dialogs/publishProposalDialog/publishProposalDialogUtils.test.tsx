@@ -1,7 +1,7 @@
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import * as Viem from 'viem';
-import { PluginInterfaceType } from '../../../../shared/api/daoService';
 import { ProposalActionType } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import {

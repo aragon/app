@@ -1,4 +1,5 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import * as useDaoPluginInfo from '@/shared/hooks/useDaoPluginInfo';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
 import { generatePluginSettings } from '@/shared/testUtils';
@@ -6,7 +7,6 @@ import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as wagmi from 'wagmi';
-import { PluginInterfaceType } from '../../../../shared/api/daoService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { generateProposal } from '../../testUtils';
 import { type IProposalVotingTerminalProps, ProposalVotingTerminal } from './proposalVotingTerminal';

@@ -1,5 +1,5 @@
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import type { IBackendApiMock } from '@/shared/types';
-import { PluginInterfaceType } from '../../../../shared/api/daoService';
 
 // Add capital-distributor plugin to Boundless demo DAO
 export const injectPluginMock: IBackendApiMock = {

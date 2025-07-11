@@ -1,8 +1,8 @@
 import { generateProposalCreate } from '@/modules/governance/testUtils';
+import { PluginInterfaceType } from '@/shared/api/daoService';
+import { generateDaoPlugin, generatePluginSettings } from '@/shared/testUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import * as Viem from 'viem';
-import { PluginInterfaceType } from '../../../../shared/api/daoService';
-import { generateDaoPlugin, generatePluginSettings } from '../../../../shared/testUtils';
 import { adminPluginAbi } from './adminPluginAbi';
 import { adminTransactionUtils } from './adminTransactionUtils';
 

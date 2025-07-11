@@ -1,7 +1,7 @@
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import type { Hex } from 'viem';
-import { PluginInterfaceType } from '../../../../../../../../shared/api/daoService';
 import { adminUninstallProcessDialogSelectUtils } from './adminUninstallProcessDialogSelectUtils';
 
 describe('adminUninstallSelectProcessDialogUtils', () => {
