@@ -30,4 +30,12 @@ export interface IActionComposerProps<TMeta = undefined>
      * Additional native groups to be displayed.
      */
     nativeGroups: IAutocompleteInputGroup[];
+    /**
+     * If true, the action composer will not include transfer action.
+     */
+    isWithoutTransfer?: boolean;
+    /**
+     * If true, the action composer will not include raw calldata action in custom/import groups.
+     */
+    isWithoutRawCalldata?: boolean;
 }

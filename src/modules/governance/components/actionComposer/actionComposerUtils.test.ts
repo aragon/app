@@ -255,5 +255,36 @@ describe('actionComposerUtils', () => {
             expect(nativeN2F2.icon).toBe(IconType.EXPAND);
             expect(nativeN2F3).toBeUndefined(); // no RAW_CALLDATA action for "pure" native items
         });
+
+        it("doesn't include transfer action if isWithoutTransfer is true", () => {
+            const dao = generateDao({ address: '0xDAO' });
+            const isWithoutTransfer = true;
+
+            const result = actionComposerUtils.getActionItems({
+                t,
+                dao,
+                abis: [],
+                nativeItems: [],
+                isWithoutTransfer,
+            });
+
+            expect(result.map((item) => item.id)).not.toContain(ProposalActionType.TRANSFER);
+        });
+
+        it("doesn't include raw calldata action if isWithoutRawCalldata is true", () => {
+            const dao = generateDao({ address: '0xDAO' });
+            const abis = [generateSmartContractAbi({ address: '0xC1', name: 'Custom1' })];
+            const isWithoutRawCalldata = true;
+
+            const result = actionComposerUtils.getActionItems({
+                t,
+                dao,
+                abis,
+                nativeItems: [],
+                isWithoutRawCalldata,
+            });
+
+            expect(result.find((item) => item.defaultValue?.type === ActionItemId.RAW_CALLDATA)).toBeUndefined();
+        });
     });
 });
