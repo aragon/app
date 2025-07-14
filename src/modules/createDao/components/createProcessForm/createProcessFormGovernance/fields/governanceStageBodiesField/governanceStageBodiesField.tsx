@@ -72,7 +72,7 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
                         description={t(
                             'app.createDao.createProcessForm.governance.stageBodiesField.timelockStage.description',
                         )}
-                        objectIllustration={{ object: 'SETTINGS' }}
+                        objectIllustration={{ object: 'TIMELOCK' }}
                         secondaryButton={{
                             label: t('app.createDao.createProcessForm.governance.stageBodiesField.action.add'),
                             onClick: () => openSetupBodyDialog(),
