@@ -81,8 +81,8 @@ export const GovernanceStagesFieldItem: React.FC<IGovernanceStagesFieldItemProps
                 />
             </div>
             <GovernanceStageBodiesField formPrefix={formPrefix} daoId={daoId} labelContext={bodiesLabelContext} />
-            <GovernanceStageSettingsField fieldPrefix={`${formPrefix}.settings`} />
-            {stagesCount > 1 && !readOnly && (
+            <GovernanceStageSettingsField formPrefix={formPrefix} />
+            {stagesCount > 1 && (
                 <Dropdown.Container
                     constrainContentWidth={false}
                     size="md"

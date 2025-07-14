@@ -14,7 +14,7 @@ export interface IGovernanceStageSettingsFieldProps {
     /**
      * Prefix to be prepended to the form field.
      */
-    fieldPrefix: string;
+    formPrefix: string;
 }
 
 const requiredApprovalsDefaultValue = 1;
@@ -30,13 +30,16 @@ const formatDuration = (duration: IDateDuration): string => {
 };
 
 export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFieldProps> = (props) => {
-    const { fieldPrefix } = props;
+    const { formPrefix } = props;
+
+    const fieldPrefix = `${formPrefix}.settings`;
 
     const { t } = useTranslations();
     const { setValue, getValues } = useFormContext();
     const { open } = useDialogContext();
 
     console.log({ getValues: getValues() });
+
     const { value: stageType } = useFormField<ISetupStageSettingsForm, 'type'>('type', {
         label: t('app.createDao.createProcessForm.governance.stageSettingsField.governanceType'),
         defaultValue: ProcessStageType.NORMAL,
@@ -44,7 +47,7 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
     });
 
     const bodies = useWatch<Record<string, ICreateProcessFormStage['bodies']>>({
-        name: `${fieldPrefix}.bodies`,
+        name: `${formPrefix}.bodies`,
         defaultValue: [],
     });
 
@@ -104,7 +107,12 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
                     <DefinitionList.Item
                         term={t('app.createDao.createProcessForm.governance.stageSettingsField.governanceType')}
                     >
-                        {stageType}
+                        {t(`app.createDao.createProcessForm.governance.stageSettingsField.${stageType}.label`)}
+                        <p className="text-sm text-neutral-400">
+                            {t(
+                                `app.createDao.createProcessForm.governance.stageSettingsField.${stageType}.description`,
+                            )}
+                        </p>
                     </DefinitionList.Item>
                 )}
                 {bodies.length > 0 && (
