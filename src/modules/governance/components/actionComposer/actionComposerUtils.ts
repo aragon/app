@@ -92,13 +92,14 @@ class ActionComposerUtils {
         const nonGroupItems: IActionComposerItem[] = [];
         const finalCustomItems: IActionComposerItem[] = [];
         const finalNativeItems: IActionComposerItem[] = [];
-        const collisionGroupIds: string[] = [ActionGroupId.OSX];
         const customItemsByGroup: Record<string, IActionComposerItem[]> = {};
         const nativeItemsByGroup: Record<string, IActionComposerItem[]> = {};
 
+        const normalizeGroupId = (groupId: string) => (groupId === dao?.address ? ActionGroupId.OSX : groupId);
+
         for (const item of completeCustomItems) {
             if (item.groupId) {
-                const normalizedGroupId = item.groupId === dao?.address ? ActionGroupId.OSX : item.groupId;
+                const normalizedGroupId = normalizeGroupId(item.groupId);
 
                 customItemsByGroup[normalizedGroupId] ??= [];
                 customItemsByGroup[normalizedGroupId].push(item);
@@ -121,32 +122,30 @@ class ActionComposerUtils {
         Object.entries(customItemsByGroup).forEach(([groupId, items]) => {
             // ESLint gets type intent wrong here
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (nativeItemsByGroup[groupId] != null) {
+            if (nativeItemsByGroup[groupId] == null) {
                 // If groupId collides with a native group, we need to handle those actions separately
-                collisionGroupIds.push(groupId);
-            } else {
                 finalCustomItems.push(...items);
             }
         });
 
         // Now we can safely add native items, and merge custom items where applicable.
         Object.entries(nativeItemsByGroup).forEach(([groupId, items]) => {
-            finalNativeItems.push(...items);
-
-            // ESLint gets type intent wrong here
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (collisionGroupIds.includes(groupId) && customItemsByGroup[groupId] != null) {
-                // first add native items, then append custom items that are not duplicates (determine duplication by fn_selector/info)
-                const nonDuplicateCustomItems = customItemsByGroup[groupId]
-                    .filter((item) => !items.some((nativeItem) => nativeItem.info && nativeItem.info === item.info))
-                    .map((item) => {
-                        return {
-                            ...item,
-                            groupId: groupId === dao?.address ? ActionGroupId.OSX : groupId, // Normalize dao.address to ActionGroupId.OSX
-                        };
-                    });
-                finalNativeItems.push(...nonDuplicateCustomItems);
+            if (customItemsByGroup[groupId] == null) {
+                // no custom items for this group, just add native items
+                finalNativeItems.push(...items);
+                return;
             }
+
+            const customItems = customItemsByGroup[groupId].map((item) => {
+                // Go through custom items and if there is a native item with the same function selector, use that instead!
+                // info === fn_selector
+                const nativeItem = items.find((nativeItem) => nativeItem.info && nativeItem.info === item.info);
+
+                return nativeItem ?? { ...item, groupId: normalizeGroupId(groupId) };
+            });
+
+            finalNativeItems.push(...customItems);
         });
 
         return [...nonGroupItems, ...finalCustomItems, ...finalNativeItems];
