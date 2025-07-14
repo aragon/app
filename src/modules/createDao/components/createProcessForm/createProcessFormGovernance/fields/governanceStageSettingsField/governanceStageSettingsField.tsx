@@ -33,9 +33,10 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
     const { fieldPrefix } = props;
 
     const { t } = useTranslations();
-    const { setValue } = useFormContext();
+    const { setValue, getValues } = useFormContext();
     const { open } = useDialogContext();
 
+    console.log({ getValues: getValues() });
     const { value: stageType } = useFormField<ISetupStageSettingsForm, 'type'>('type', {
         label: t('app.createDao.createProcessForm.governance.stageSettingsField.governanceType'),
         defaultValue: ProcessStageType.NORMAL,
