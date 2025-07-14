@@ -28,12 +28,16 @@ export interface IGovernanceStagesFieldItemProps {
      * Index of the stage in the stages array.
      */
     index: number;
+    /**
+     * Whether the stage details are read-only.
+     */
+    readOnly?: boolean;
 }
 
 const nameMaxLength = 40;
 
 export const GovernanceStagesFieldItem: React.FC<IGovernanceStagesFieldItemProps> = (props) => {
-    const { formPrefix, daoId, stagesCount, onDelete, index } = props;
+    const { formPrefix, daoId, stagesCount, onDelete, index, readOnly } = props;
 
     const { t } = useTranslations();
 
@@ -78,7 +82,7 @@ export const GovernanceStagesFieldItem: React.FC<IGovernanceStagesFieldItemProps
             </div>
             <GovernanceStageBodiesField formPrefix={formPrefix} daoId={daoId} labelContext={bodiesLabelContext} />
             <GovernanceStageSettingsField fieldPrefix={`${formPrefix}.settings`} />
-            {stagesCount > 1 && (
+            {stagesCount > 1 && !readOnly && (
                 <Dropdown.Container
                     constrainContentWidth={false}
                     size="md"
