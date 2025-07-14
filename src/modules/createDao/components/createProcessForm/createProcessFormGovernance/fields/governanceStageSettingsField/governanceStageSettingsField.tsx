@@ -33,7 +33,6 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
     const { formPrefix } = props;
 
     const fieldPrefix = `${formPrefix}.settings`;
-    const bodiesPrefix = `${formPrefix}.bodies`;
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
@@ -46,7 +45,7 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
     });
 
     const bodies = useWatch<Record<string, ICreateProcessFormStage['bodies']>>({
-        name: bodiesPrefix,
+        name: `${formPrefix}.bodies`,
         defaultValue: [],
     });
 
