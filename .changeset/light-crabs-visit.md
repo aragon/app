@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-Update useMemberLocks params for escrowAddress
+Update useMemberLocks params to use escrowAddress instead of pluginAddress
