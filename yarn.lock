@@ -47,8 +47,8 @@ __metadata:
     "@hookform/devtools": "npm:^4.4.0"
     "@next/bundle-analyzer": "npm:^15.3.5"
     "@number-flow/react": "npm:^0.5.10"
-    "@reown/appkit": "npm:^1.7.13"
-    "@reown/appkit-adapter-wagmi": "npm:^1.7.13"
+    "@reown/appkit": "npm:^1.7.15"
+    "@reown/appkit-adapter-wagmi": "npm:^1.7.15"
     "@reown/walletkit": "npm:^1.2.8"
     "@sentry/nextjs": "npm:^9.38.0"
     "@tailwindcss/postcss": "npm:^4.1.11"
@@ -99,7 +99,7 @@ __metadata:
     tailwindcss-fluid-type: "npm:^2.0.7"
     ts-jest: "npm:^29.4.0"
     typescript: "npm:^5.8.3"
-    typescript-eslint: "npm:^8.36.0"
+    typescript-eslint: "npm:^8.37.0"
     vercel: "npm:^44.4.1"
     viem: "npm:^2.31.7"
     wagmi: "npm:^2.15.6"
@@ -3751,17 +3751,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reown/appkit-adapter-wagmi@npm:^1.7.13":
-  version: 1.7.13
-  resolution: "@reown/appkit-adapter-wagmi@npm:1.7.13"
+"@reown/appkit-adapter-wagmi@npm:^1.7.15":
+  version: 1.7.15
+  resolution: "@reown/appkit-adapter-wagmi@npm:1.7.15"
   dependencies:
-    "@reown/appkit": "npm:1.7.13"
-    "@reown/appkit-common": "npm:1.7.13"
-    "@reown/appkit-controllers": "npm:1.7.13"
-    "@reown/appkit-polyfills": "npm:1.7.13"
-    "@reown/appkit-scaffold-ui": "npm:1.7.13"
-    "@reown/appkit-utils": "npm:1.7.13"
-    "@reown/appkit-wallet": "npm:1.7.13"
+    "@reown/appkit": "npm:1.7.15"
+    "@reown/appkit-common": "npm:1.7.15"
+    "@reown/appkit-controllers": "npm:1.7.15"
+    "@reown/appkit-polyfills": "npm:1.7.15"
+    "@reown/appkit-scaffold-ui": "npm:1.7.15"
+    "@reown/appkit-utils": "npm:1.7.15"
+    "@reown/appkit-wallet": "npm:1.7.15"
     "@wagmi/connectors": "npm:>=5.7.11"
     "@walletconnect/universal-provider": "npm:2.21.3"
     valtio: "npm:2.1.5"
@@ -3772,18 +3772,18 @@ __metadata:
   dependenciesMeta:
     "@wagmi/connectors":
       optional: true
-  checksum: 10c0/d92c28d7543fe16450c7339af667c7ecf2521f185716670f4a91af732b573d2e82dc0c6caa5e5127a674124a65f9689d1e38cd7bac5c6f746b054d714b24c0a2
+  checksum: 10c0/2d68b10622b8febaf967e9d8a565c92381cbb3c33ad6b3a1b93a4982f86c8ce66b026805ca1a77762c9a4d52f04b3c9cd5bf25717aa3cfea66eecfa1f2e56e49
   languageName: node
   linkType: hard
 
-"@reown/appkit-common@npm:1.7.13":
-  version: 1.7.13
-  resolution: "@reown/appkit-common@npm:1.7.13"
+"@reown/appkit-common@npm:1.7.15":
+  version: 1.7.15
+  resolution: "@reown/appkit-common@npm:1.7.15"
   dependencies:
     big.js: "npm:6.2.2"
     dayjs: "npm:1.11.13"
     viem: "npm:>=2.31.3"
-  checksum: 10c0/9e81a93806cf323831e9a78b8a95b7dc8765d7c68fe9b407e6e247ada51764e5211f53abcc87d91baeed572928d3512612c6ed833748356a8795f9268544f3ff
+  checksum: 10c0/90baf975f66d42198c6fea9f55e1a0af7a0e14a18836e76e01155f78d07c667040701d08e60749cad77138012ffe6f83a3b1cf0b69cb0fbe21d7c72b3fba5327
   languageName: node
   linkType: hard
 
@@ -3798,16 +3798,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reown/appkit-controllers@npm:1.7.13":
-  version: 1.7.13
-  resolution: "@reown/appkit-controllers@npm:1.7.13"
+"@reown/appkit-controllers@npm:1.7.15":
+  version: 1.7.15
+  resolution: "@reown/appkit-controllers@npm:1.7.15"
   dependencies:
-    "@reown/appkit-common": "npm:1.7.13"
-    "@reown/appkit-wallet": "npm:1.7.13"
+    "@reown/appkit-common": "npm:1.7.15"
+    "@reown/appkit-wallet": "npm:1.7.15"
     "@walletconnect/universal-provider": "npm:2.21.3"
     valtio: "npm:2.1.5"
     viem: "npm:>=2.31.3"
-  checksum: 10c0/7519bafe32196da9b9aea3eb284be6e2c2d1b145903c39be4de2e38eb16a97f8647e1cccb616eda24ad29630ec56bbb3fb9dd87e39e7ea0abd7d5494f0d677ab
+  checksum: 10c0/5ecaecb476f78856f2ac7a1599c8d80749df592921ab3bd99f27f0711aac05d99a53c105ff1dc702dfdacfbcded870db60bce31f59a104ec32d74e6e11c558cd
   languageName: node
   linkType: hard
 
@@ -3824,17 +3824,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reown/appkit-pay@npm:1.7.13":
-  version: 1.7.13
-  resolution: "@reown/appkit-pay@npm:1.7.13"
+"@reown/appkit-pay@npm:1.7.15":
+  version: 1.7.15
+  resolution: "@reown/appkit-pay@npm:1.7.15"
   dependencies:
-    "@reown/appkit-common": "npm:1.7.13"
-    "@reown/appkit-controllers": "npm:1.7.13"
-    "@reown/appkit-ui": "npm:1.7.13"
-    "@reown/appkit-utils": "npm:1.7.13"
+    "@reown/appkit-common": "npm:1.7.15"
+    "@reown/appkit-controllers": "npm:1.7.15"
+    "@reown/appkit-ui": "npm:1.7.15"
+    "@reown/appkit-utils": "npm:1.7.15"
     lit: "npm:3.3.0"
     valtio: "npm:2.1.5"
-  checksum: 10c0/74fddab672cfe1493bd22c7ca1a7c7ca938b80b8a00992d6d848fda724d20de763651864b6237a519d97801f154692e9b6fa92e1837301569a61c9fbb148e0e0
+  checksum: 10c0/7df258b21c11c103acc17baa29707e40f8fbcd0539c3438fc142e6274a22532cbf7cc419e3e2f3ed681e7526b4b08f8545343c61b741996ba55f36be1d96f14e
   languageName: node
   linkType: hard
 
@@ -3852,12 +3852,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reown/appkit-polyfills@npm:1.7.13":
-  version: 1.7.13
-  resolution: "@reown/appkit-polyfills@npm:1.7.13"
+"@reown/appkit-polyfills@npm:1.7.15":
+  version: 1.7.15
+  resolution: "@reown/appkit-polyfills@npm:1.7.15"
   dependencies:
     buffer: "npm:6.0.3"
-  checksum: 10c0/08f6a87b03def9822988bd4b33885c42bf6017a75d8bf2ae405a5dbf6ac0963c6685a6be43472ccc8902ec90cb4e6a69dbe78b55f82c780a8d001276e0710557
+  checksum: 10c0/6fa7301ed0b17a4dc8a2773f9d5e62e814b86397493f96679a20d69bd2371712663ac48b3ae015a1d10facf2b73308b264edd6414be44416f8dfc88fc0a86d18
   languageName: node
   linkType: hard
 
@@ -3870,17 +3870,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reown/appkit-scaffold-ui@npm:1.7.13":
-  version: 1.7.13
-  resolution: "@reown/appkit-scaffold-ui@npm:1.7.13"
+"@reown/appkit-scaffold-ui@npm:1.7.15":
+  version: 1.7.15
+  resolution: "@reown/appkit-scaffold-ui@npm:1.7.15"
   dependencies:
-    "@reown/appkit-common": "npm:1.7.13"
-    "@reown/appkit-controllers": "npm:1.7.13"
-    "@reown/appkit-ui": "npm:1.7.13"
-    "@reown/appkit-utils": "npm:1.7.13"
-    "@reown/appkit-wallet": "npm:1.7.13"
+    "@reown/appkit-common": "npm:1.7.15"
+    "@reown/appkit-controllers": "npm:1.7.15"
+    "@reown/appkit-ui": "npm:1.7.15"
+    "@reown/appkit-utils": "npm:1.7.15"
+    "@reown/appkit-wallet": "npm:1.7.15"
     lit: "npm:3.3.0"
-  checksum: 10c0/7b1a38e61cd991d7ad1929cdaaa663686d46bdc695504fea73611fa4912fa8ace6b84bea4b40a4d7b35eec76ad6a4925edf6e3fadc36cb49e47b8a5b7196305a
+  checksum: 10c0/d6dd8ff27e9d49b92e2e294b818bcdb1afefac6df4766bf7d500fceb5149101392d6a8bd59382a482f1fa238150e50fa34318f801a596e68053885d6b614a6b6
   languageName: node
   linkType: hard
 
@@ -3898,16 +3898,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reown/appkit-ui@npm:1.7.13":
-  version: 1.7.13
-  resolution: "@reown/appkit-ui@npm:1.7.13"
+"@reown/appkit-ui@npm:1.7.15":
+  version: 1.7.15
+  resolution: "@reown/appkit-ui@npm:1.7.15"
   dependencies:
-    "@reown/appkit-common": "npm:1.7.13"
-    "@reown/appkit-controllers": "npm:1.7.13"
-    "@reown/appkit-wallet": "npm:1.7.13"
+    "@reown/appkit-common": "npm:1.7.15"
+    "@reown/appkit-controllers": "npm:1.7.15"
+    "@reown/appkit-wallet": "npm:1.7.15"
     lit: "npm:3.3.0"
     qrcode: "npm:1.5.3"
-  checksum: 10c0/ea5b4daed9638e2ab678cc270ee97a4cbb70d28a8904748acf878879d003180965b692d7a13ea1a57a5adba5fc2a3f08aefe1cf9ee15b8dcec2717134bc5d275
+  checksum: 10c0/a066fa676591336151f8d8a55f171a788d91fd518d6f410877f91eb1e37d376f6e59d9151cc23f94b9d02a4c82466797a8bc2ff2d698b489680e345321fc0dda
   languageName: node
   linkType: hard
 
@@ -3924,14 +3924,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reown/appkit-utils@npm:1.7.13":
-  version: 1.7.13
-  resolution: "@reown/appkit-utils@npm:1.7.13"
+"@reown/appkit-utils@npm:1.7.15":
+  version: 1.7.15
+  resolution: "@reown/appkit-utils@npm:1.7.15"
   dependencies:
-    "@reown/appkit-common": "npm:1.7.13"
-    "@reown/appkit-controllers": "npm:1.7.13"
-    "@reown/appkit-polyfills": "npm:1.7.13"
-    "@reown/appkit-wallet": "npm:1.7.13"
+    "@reown/appkit-common": "npm:1.7.15"
+    "@reown/appkit-controllers": "npm:1.7.15"
+    "@reown/appkit-polyfills": "npm:1.7.15"
+    "@reown/appkit-wallet": "npm:1.7.15"
     "@wallet-standard/wallet": "npm:1.1.0"
     "@walletconnect/logger": "npm:2.1.2"
     "@walletconnect/universal-provider": "npm:2.21.3"
@@ -3939,7 +3939,7 @@ __metadata:
     viem: "npm:>=2.31.3"
   peerDependencies:
     valtio: 2.1.5
-  checksum: 10c0/395a09d503b83845ea7a1496e01eca6357f47e6694e574c22bd310879395235839999b18a4271e5fd7e87d0f3b562537506d8670598508d1fbf603cc81aebcea
+  checksum: 10c0/367d0dc95825c7f69ab5bf823ed20e2c37f9e7ec0165ec47367bae606f3016dd6d9f8df8c8b746c534ca8c6854e70c7d2e99356e4071b793280cb924819c5614
   languageName: node
   linkType: hard
 
@@ -3961,15 +3961,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reown/appkit-wallet@npm:1.7.13":
-  version: 1.7.13
-  resolution: "@reown/appkit-wallet@npm:1.7.13"
+"@reown/appkit-wallet@npm:1.7.15":
+  version: 1.7.15
+  resolution: "@reown/appkit-wallet@npm:1.7.15"
   dependencies:
-    "@reown/appkit-common": "npm:1.7.13"
-    "@reown/appkit-polyfills": "npm:1.7.13"
+    "@reown/appkit-common": "npm:1.7.15"
+    "@reown/appkit-polyfills": "npm:1.7.15"
     "@walletconnect/logger": "npm:2.1.2"
     zod: "npm:3.22.4"
-  checksum: 10c0/ba71114eac2185dc3b9dffada494fdc76d0a7e894623e43220509344d7f23ee86fedfae4f0b8485da047894aa1a403500daaa6d35368c0c66a8cc176587fa6ca
+  checksum: 10c0/beb0a8c62d62ab40cb993513c1db516998483c6b72329f57a9b0cef8768d740b17aef3837e7155029055fbd49ff3fba77ca32b9aa607208f28e0e9be3ee2343a
   languageName: node
   linkType: hard
 
@@ -3985,25 +3985,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reown/appkit@npm:1.7.13, @reown/appkit@npm:^1.7.13":
-  version: 1.7.13
-  resolution: "@reown/appkit@npm:1.7.13"
+"@reown/appkit@npm:1.7.15, @reown/appkit@npm:^1.7.15":
+  version: 1.7.15
+  resolution: "@reown/appkit@npm:1.7.15"
   dependencies:
-    "@reown/appkit-common": "npm:1.7.13"
-    "@reown/appkit-controllers": "npm:1.7.13"
-    "@reown/appkit-pay": "npm:1.7.13"
-    "@reown/appkit-polyfills": "npm:1.7.13"
-    "@reown/appkit-scaffold-ui": "npm:1.7.13"
-    "@reown/appkit-ui": "npm:1.7.13"
-    "@reown/appkit-utils": "npm:1.7.13"
-    "@reown/appkit-wallet": "npm:1.7.13"
+    "@reown/appkit-common": "npm:1.7.15"
+    "@reown/appkit-controllers": "npm:1.7.15"
+    "@reown/appkit-pay": "npm:1.7.15"
+    "@reown/appkit-polyfills": "npm:1.7.15"
+    "@reown/appkit-scaffold-ui": "npm:1.7.15"
+    "@reown/appkit-ui": "npm:1.7.15"
+    "@reown/appkit-utils": "npm:1.7.15"
+    "@reown/appkit-wallet": "npm:1.7.15"
     "@walletconnect/types": "npm:2.21.3"
     "@walletconnect/universal-provider": "npm:2.21.3"
     bs58: "npm:6.0.0"
     semver: "npm:7.7.2"
     valtio: "npm:2.1.5"
     viem: "npm:>=2.31.3"
-  checksum: 10c0/b5c3353283ed5f617330c2f1018e455e788a701ecc752d6f3f23b2e65b0440cf0a2d73dc166e20fe3f980df618bdc092888df3e093380d8c74a719c2c98850d8
+  checksum: 10c0/9bbf36a26705cd036672f37a59204f27551810f6161e115654977bc8a329a726c31cd3bde4c38ca339fe980cff5cc68171a7f96f96134cdccb16bdb1a5a27458
   languageName: node
   linkType: hard
 
@@ -5746,7 +5746,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:8.36.0, @typescript-eslint/eslint-plugin@npm:^5.4.2 || ^6.0.0 || ^7.0.0 || ^8.0.0":
+"@typescript-eslint/eslint-plugin@npm:8.37.0":
+  version: 8.37.0
+  resolution: "@typescript-eslint/eslint-plugin@npm:8.37.0"
+  dependencies:
+    "@eslint-community/regexpp": "npm:^4.10.0"
+    "@typescript-eslint/scope-manager": "npm:8.37.0"
+    "@typescript-eslint/type-utils": "npm:8.37.0"
+    "@typescript-eslint/utils": "npm:8.37.0"
+    "@typescript-eslint/visitor-keys": "npm:8.37.0"
+    graphemer: "npm:^1.4.0"
+    ignore: "npm:^7.0.0"
+    natural-compare: "npm:^1.4.0"
+    ts-api-utils: "npm:^2.1.0"
+  peerDependencies:
+    "@typescript-eslint/parser": ^8.37.0
+    eslint: ^8.57.0 || ^9.0.0
+    typescript: ">=4.8.4 <5.9.0"
+  checksum: 10c0/71b5be797911d4057b083e767cbed3d9a43d8d6d81097e0b13b3b724c3dd8ff5cd6072e81125922fd646db9f19275952d4fc6c83966a125a013ecd7a079714d5
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/eslint-plugin@npm:^5.4.2 || ^6.0.0 || ^7.0.0 || ^8.0.0":
   version: 8.36.0
   resolution: "@typescript-eslint/eslint-plugin@npm:8.36.0"
   dependencies:
@@ -5767,7 +5788,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:8.36.0, @typescript-eslint/parser@npm:^5.4.2 || ^6.0.0 || ^7.0.0 || ^8.0.0":
+"@typescript-eslint/parser@npm:8.37.0":
+  version: 8.37.0
+  resolution: "@typescript-eslint/parser@npm:8.37.0"
+  dependencies:
+    "@typescript-eslint/scope-manager": "npm:8.37.0"
+    "@typescript-eslint/types": "npm:8.37.0"
+    "@typescript-eslint/typescript-estree": "npm:8.37.0"
+    "@typescript-eslint/visitor-keys": "npm:8.37.0"
+    debug: "npm:^4.3.4"
+  peerDependencies:
+    eslint: ^8.57.0 || ^9.0.0
+    typescript: ">=4.8.4 <5.9.0"
+  checksum: 10c0/1f72625fca4799c94c62955308545ca9291f1cccfbb714a783dea605640e57cfe480a3cc31798fa08444e81fe536ddd658e2fed08f5bf791c1da8b465c970319
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/parser@npm:^5.4.2 || ^6.0.0 || ^7.0.0 || ^8.0.0":
   version: 8.36.0
   resolution: "@typescript-eslint/parser@npm:8.36.0"
   dependencies:
@@ -5796,6 +5833,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/project-service@npm:8.37.0":
+  version: 8.37.0
+  resolution: "@typescript-eslint/project-service@npm:8.37.0"
+  dependencies:
+    "@typescript-eslint/tsconfig-utils": "npm:^8.37.0"
+    "@typescript-eslint/types": "npm:^8.37.0"
+    debug: "npm:^4.3.4"
+  peerDependencies:
+    typescript: ">=4.8.4 <5.9.0"
+  checksum: 10c0/bbb42d4720500bcaf125c98b128dc12c4b63e0c8d640451cadc2f10c0862cd36306b48007ace2a2f3e2b60548a335e462500945a3a42c5ce251ffee08ccc721a
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/scope-manager@npm:8.36.0, @typescript-eslint/scope-manager@npm:^8.15.0":
   version: 8.36.0
   resolution: "@typescript-eslint/scope-manager@npm:8.36.0"
@@ -5806,12 +5856,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/scope-manager@npm:8.37.0":
+  version: 8.37.0
+  resolution: "@typescript-eslint/scope-manager@npm:8.37.0"
+  dependencies:
+    "@typescript-eslint/types": "npm:8.37.0"
+    "@typescript-eslint/visitor-keys": "npm:8.37.0"
+  checksum: 10c0/f6b36276abadb39a5b0951edb429286cfe40d656c17f8f6604827d89b1f7dea7ac0210d9c7ae08823d3de4ddd5f2e81e44178d1802164765ce55d0e714df25e6
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/tsconfig-utils@npm:8.36.0, @typescript-eslint/tsconfig-utils@npm:^8.36.0":
   version: 8.36.0
   resolution: "@typescript-eslint/tsconfig-utils@npm:8.36.0"
   peerDependencies:
     typescript: ">=4.8.4 <5.9.0"
   checksum: 10c0/e0e1bacd3f5bfddb90a90362dbedf793d98ee1ada203fc2d83531a61617d246b9e0d0bfac493680f635afb3cfd749da2008e06e4404660334a5f804392064006
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/tsconfig-utils@npm:8.37.0, @typescript-eslint/tsconfig-utils@npm:^8.37.0":
+  version: 8.37.0
+  resolution: "@typescript-eslint/tsconfig-utils@npm:8.37.0"
+  peerDependencies:
+    typescript: ">=4.8.4 <5.9.0"
+  checksum: 10c0/ab9f78031bff9b180c59e8dc4c7748d7d3c5c787ac7379ed86a642a425093974cdb0fc2252730ecb298ef9165761caa4bd35bcec3f0bc8444f615a0b9ffbba3f
   languageName: node
   linkType: hard
 
@@ -5830,10 +5899,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/type-utils@npm:8.37.0":
+  version: 8.37.0
+  resolution: "@typescript-eslint/type-utils@npm:8.37.0"
+  dependencies:
+    "@typescript-eslint/types": "npm:8.37.0"
+    "@typescript-eslint/typescript-estree": "npm:8.37.0"
+    "@typescript-eslint/utils": "npm:8.37.0"
+    debug: "npm:^4.3.4"
+    ts-api-utils: "npm:^2.1.0"
+  peerDependencies:
+    eslint: ^8.57.0 || ^9.0.0
+    typescript: ">=4.8.4 <5.9.0"
+  checksum: 10c0/20679b86c22eb5da4858bdd7b729e74852fe972c1e16e1819a24242246dd429e49a8f457c8a30d87f4d07b3c440edfeabcbb990272fb9c2cfbcb0c4e13f787a8
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/types@npm:8.36.0, @typescript-eslint/types@npm:^8.36.0":
   version: 8.36.0
   resolution: "@typescript-eslint/types@npm:8.36.0"
   checksum: 10c0/cacb941a0caad6ab556c416051b97ec33b364b7c8e0703e2729ae43f12daf02b42eef12011705329107752e3f1685ca82cfffe181d637f85907293cb634bee31
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/types@npm:8.37.0, @typescript-eslint/types@npm:^8.37.0":
+  version: 8.37.0
+  resolution: "@typescript-eslint/types@npm:8.37.0"
+  checksum: 10c0/0caa649ba242d384e935eef9badbb352a3e640c3842104a6a562af69e0f680ec8e6c0c55c069d4d714f05208f6d07811417ca6179745128a60c45fa92794e6dd
   languageName: node
   linkType: hard
 
@@ -5857,6 +5949,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/typescript-estree@npm:8.37.0":
+  version: 8.37.0
+  resolution: "@typescript-eslint/typescript-estree@npm:8.37.0"
+  dependencies:
+    "@typescript-eslint/project-service": "npm:8.37.0"
+    "@typescript-eslint/tsconfig-utils": "npm:8.37.0"
+    "@typescript-eslint/types": "npm:8.37.0"
+    "@typescript-eslint/visitor-keys": "npm:8.37.0"
+    debug: "npm:^4.3.4"
+    fast-glob: "npm:^3.3.2"
+    is-glob: "npm:^4.0.3"
+    minimatch: "npm:^9.0.4"
+    semver: "npm:^7.6.0"
+    ts-api-utils: "npm:^2.1.0"
+  peerDependencies:
+    typescript: ">=4.8.4 <5.9.0"
+  checksum: 10c0/a51a00053ddcfb44f30598d033f061699c89eb2017be6f3a70e0e9b4151322d1dbda6980fe5630461669bb4bc3aca9617ab1348539ba0de8d8ceea41755d9f05
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/utils@npm:8.36.0, @typescript-eslint/utils@npm:^8.15.0":
   version: 8.36.0
   resolution: "@typescript-eslint/utils@npm:8.36.0"
@@ -5872,6 +5984,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/utils@npm:8.37.0":
+  version: 8.37.0
+  resolution: "@typescript-eslint/utils@npm:8.37.0"
+  dependencies:
+    "@eslint-community/eslint-utils": "npm:^4.7.0"
+    "@typescript-eslint/scope-manager": "npm:8.37.0"
+    "@typescript-eslint/types": "npm:8.37.0"
+    "@typescript-eslint/typescript-estree": "npm:8.37.0"
+  peerDependencies:
+    eslint: ^8.57.0 || ^9.0.0
+    typescript: ">=4.8.4 <5.9.0"
+  checksum: 10c0/9d6c2d9907ea67018c6d97ece15f9ba091be08dc11d719fbc260cc8afb916f4ce98f9630f46ca1e97451ee63d3f1d6244fa67833707dfeee798725b92d016c46
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/visitor-keys@npm:8.36.0":
   version: 8.36.0
   resolution: "@typescript-eslint/visitor-keys@npm:8.36.0"
@@ -5879,6 +6006,16 @@ __metadata:
     "@typescript-eslint/types": "npm:8.36.0"
     eslint-visitor-keys: "npm:^4.2.1"
   checksum: 10c0/cc5cc3ab8cf0a84c73c6aa025556e8c6ed04c1a114f6d03c4c4a05c0b197f2de4f02764d053760f2ba81b256234bb14be391a8601f294e3ac31baaa1dce44a63
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/visitor-keys@npm:8.37.0":
+  version: 8.37.0
+  resolution: "@typescript-eslint/visitor-keys@npm:8.37.0"
+  dependencies:
+    "@typescript-eslint/types": "npm:8.37.0"
+    eslint-visitor-keys: "npm:^4.2.1"
+  checksum: 10c0/ee6eb963bdf83e42d64b5fc4d9ba23abdca0e172ebb3a56a823a20cf44b8dad7cea0e3be61f1d83a1c4b94fc0693b75e89bf3e1ffc52553a347be2af8a927db7
   languageName: node
   linkType: hard
 
@@ -16271,17 +16408,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript-eslint@npm:^8.36.0":
-  version: 8.36.0
-  resolution: "typescript-eslint@npm:8.36.0"
+"typescript-eslint@npm:^8.37.0":
+  version: 8.37.0
+  resolution: "typescript-eslint@npm:8.37.0"
   dependencies:
-    "@typescript-eslint/eslint-plugin": "npm:8.36.0"
-    "@typescript-eslint/parser": "npm:8.36.0"
-    "@typescript-eslint/utils": "npm:8.36.0"
+    "@typescript-eslint/eslint-plugin": "npm:8.37.0"
+    "@typescript-eslint/parser": "npm:8.37.0"
+    "@typescript-eslint/typescript-estree": "npm:8.37.0"
+    "@typescript-eslint/utils": "npm:8.37.0"
   peerDependencies:
     eslint: ^8.57.0 || ^9.0.0
     typescript: ">=4.8.4 <5.9.0"
-  checksum: 10c0/ba6155b7a950e198400b656bca2ec9df5ed6e18283da276722aaeb4f7d2caf80b2a37d38003532ff1bfbd306201b3a69e56256cc76eb75db1128235a1be2c031
+  checksum: 10c0/c73adb207d800dcf72ec33bf59b30095d3b441853f9bd795500e32530bf539cba51891b96616ff68193fae1f95eca5d404b3d974f323cf1a671a2b75513a4076
   languageName: node
   linkType: hard
 
