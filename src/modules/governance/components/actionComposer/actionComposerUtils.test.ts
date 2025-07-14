@@ -44,7 +44,7 @@ describe('actionComposerUtils', () => {
             expect(result.map((g) => g.id)).toEqual(['OSX', '0xN1', '0xN2']);
         });
 
-        it('returns only custom groups if no nativeGroups', () => {
+        it('returns only custom groups if no nativeGroups including DAO native group', () => {
             const dao = generateDao({ address: '0xDAO' });
             const abis = [
                 generateSmartContractAbi({ address: '0xC1', name: 'Custom1' }),
