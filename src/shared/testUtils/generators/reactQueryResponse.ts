@@ -29,6 +29,7 @@ const generateReactQueryResultBase = <TData, TError>(
     failureCount: 0,
     failureReason: null,
     errorUpdateCount: 0,
+    isEnabled: true,
     isFetched: false,
     isFetchedAfterMount: false,
     isFetching: false,
