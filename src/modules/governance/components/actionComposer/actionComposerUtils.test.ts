@@ -2,6 +2,7 @@ import { generateDao } from '@/shared/testUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { ProposalActionType } from '../../api/governanceService';
 import { generateSmartContractAbi } from '../../testUtils/generators';
+import type { IActionComposerItem } from './actionComposer.api';
 import { actionComposerUtils, ActionItemId } from './actionComposerUtils';
 
 describe('actionComposerUtils', () => {
@@ -117,7 +118,7 @@ describe('actionComposerUtils', () => {
             const abisWithOverlap = [
                 generateSmartContractAbi({
                     address: '0xN1',
-                    name: 'overlap1',
+                    name: 'Overlap',
                     functions: [
                         { name: 'custom-1', parameters: [] },
                         { name: 'native-1', parameters: [] },
@@ -140,11 +141,44 @@ describe('actionComposerUtils', () => {
                 }),
             ];
             const nativeItemsWithOverlap = [
-                { id: 'native-1', name: 'Native Item 1', icon: IconType.SLASH, groupId: '0xN1' },
-                { id: 'native-2', name: 'Native Item 2', icon: IconType.SLASH, groupId: '0xN1' },
-                { id: 'native-3', name: 'Native Item 3', icon: IconType.SLASH, groupId: '0xN2' },
-                { id: 'native-4', name: 'Native Item 5', icon: IconType.SLASH, groupId: '0xN2' },
-            ];
+                {
+                    id: 'native-1',
+                    name: 'Native Item 1',
+                    icon: IconType.EXPAND,
+                    groupId: '0xN1',
+                    defaultValue: {
+                        inputData: { function: 'native-1', contract: 'Test', parameters: [] },
+                    },
+                },
+                {
+                    id: 'native-2',
+                    name: 'Native Item 2',
+                    icon: IconType.EXPAND,
+                    groupId: '0xN1',
+                    defaultValue: {
+                        inputData: { function: 'native-2', contract: 'Test', parameters: [] },
+                    },
+                },
+                {
+                    id: 'native-3',
+                    name: 'Native Item 3',
+                    icon: IconType.EXPAND,
+                    groupId: '0xN2',
+                    defaultValue: {
+                        inputData: { function: 'native-3', contract: 'Test', parameters: [] },
+                    },
+                },
+                {
+                    id: 'native-4',
+                    name: 'Native Item 5',
+                    icon: IconType.EXPAND,
+                    groupId: '0xN2',
+                    defaultValue: {
+                        inputData: { function: 'native-4', contract: 'Test', parameters: [] },
+                    },
+                },
+            ] as unknown as IActionComposerItem[];
+
             const [
                 addContract,
                 transfer,
@@ -157,6 +191,10 @@ describe('actionComposerUtils', () => {
                 nativeN1F1,
                 nativeN1F2,
                 nativeN1F3,
+                nativeN1F4,
+                nativeN2F1,
+                nativeN2F2,
+                nativeN2F3,
             ] = actionComposerUtils.getActionItems({
                 t,
                 dao,
@@ -180,7 +218,7 @@ describe('actionComposerUtils', () => {
 
             // Native items with merged custom actions where groupId overlaps
 
-            // 0xOSX
+            // 0xOSX - with overlap with imported items
             expect(nativeOSXF1.id).toBe('0xDAO-custom-1-0');
             expect(nativeOSXF1.groupId).toBe('OSX');
             expect(nativeOSXF1.icon).toBe(IconType.SLASH);
@@ -194,20 +232,28 @@ describe('actionComposerUtils', () => {
             expect(nativeOSXF4.groupId).toBe('OSX');
             expect(nativeOSXF4.icon).toBe(IconType.BLOCKCHAIN_SMARTCONTRACT);
 
-            // 0xN1
+            // 0xN1 - with overlap with imported items
             expect(nativeN1F1.id).toBe(`0xN1-${abisWithOverlap[0].functions[0].name}-0`);
             expect(nativeN1F1.groupId).toBe('0xN1');
             expect(nativeN1F1.icon).toBe(IconType.SLASH);
-            // expect(result.map((item) => item.id)).toEqual([
-            //     // non-grouped, default items first
-            //     ActionItemId.ADD_CONTRACT,
-            //     ProposalActionType.TRANSFER,
-            //     // imported, non-overlap contract functions with default RAW_CALLDATA action
-            //     `0xC1-${abisWithOverlap[1].functions[0].name}-0`,
-            //     '0xC1-RAW_CALLDATA',
-            //     // Native items with merged custom actions where groupId overlaps
-            //     ProposalActionType.METADATA_UPDATE,
-            // ]);
+            expect(nativeN1F2.id).toBe('native-1');
+            expect(nativeN1F2.groupId).toBe('0xN1');
+            expect(nativeN1F2.icon).toBe(IconType.EXPAND);
+            expect(nativeN1F3.id).toBe('native-2');
+            expect(nativeN1F3.groupId).toBe('0xN1');
+            expect(nativeN1F3.icon).toBe(IconType.EXPAND);
+            expect(nativeN1F4.id).toBe('0xN1-RAW_CALLDATA');
+            expect(nativeN1F4.groupId).toBe('0xN1');
+            expect(nativeN1F4.icon).toBe(IconType.BLOCKCHAIN_SMARTCONTRACT);
+
+            // 0xN2 - no overlap with imported items
+            expect(nativeN2F1.id).toBe('native-3');
+            expect(nativeN2F1.groupId).toBe('0xN2');
+            expect(nativeN2F1.icon).toBe(IconType.EXPAND);
+            expect(nativeN2F2.id).toBe('native-4');
+            expect(nativeN2F2.groupId).toBe('0xN2');
+            expect(nativeN2F2.icon).toBe(IconType.EXPAND);
+            expect(nativeN2F3).toBeUndefined(); // no RAW_CALLDATA action for "pure" native items
         });
     });
 });
