@@ -82,6 +82,10 @@ class ActionComposerUtils {
         abis,
         nativeItems,
     }: IGetCustomActionParams & IGetNativeActionItemsParams): IActionComposerItem[] => {
+        // Show items in the following order:
+        // 1. NO CONTRACT: first show actions not belonging to any group (i.e. add contract, transfer)
+        // 2. CUSTOM ACTIONS: second, show imported custom contracts with its actions, but only contracts which are unique, i.e. there is no collision with some of the native contracts.
+        // 3. NATIVE ACTIONS: finally, show native contracts with its actions, but merge them with custom actions if they have the same groupId (i.e. DAO address).
         const completeCustomItems = this.getCustomActionItems({ t, abis }).map(this.functionSelectorMapper);
         const completeNativeItems = this.getNativeActionItems({ t, dao, nativeItems }).map(this.functionSelectorMapper);
 
@@ -113,17 +117,19 @@ class ActionComposerUtils {
             }
         }
 
+        // Filter out custom items that fall into some of the native groups
         Object.entries(customItemsByGroup).forEach(([groupId, items]) => {
             // ESLint gets type intent wrong here
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (nativeItemsByGroup[groupId] != null || groupId === dao?.address) {
-                // If groupId collides with native items, we need to handle it separately
+            if (nativeItemsByGroup[groupId] != null) {
+                // If groupId collides with a native group, we need to handle those actions separately
                 collisionGroupIds.push(groupId);
             } else {
                 finalCustomItems.push(...items);
             }
         });
 
+        // Now we can safely add native items, and merge custom items where applicable.
         Object.entries(nativeItemsByGroup).forEach(([groupId, items]) => {
             finalNativeItems.push(...items);
 
