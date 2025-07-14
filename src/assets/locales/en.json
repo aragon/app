@@ -667,7 +667,6 @@
       "createProposalForm": {
         "actions": {
           "addAction": {
-            "custom": "Custom",
             "default": "Action",
             "walletConnect": "Connect"
           },

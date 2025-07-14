@@ -21,6 +21,7 @@ export const AutocompleteInputItem = forwardRef<HTMLDivElement, IAutocompleteInp
 
     const itemClassName = classNames(
         'relative flex flex-row items-center justify-between rounded-lg gap-4 px-3 py-2 hover:cursor-pointer',
+        'leading-tight font-normal',
         { 'bg-neutral-50 text-neutral-800': isActive },
         { 'text-neutral-500': !isActive },
         className,
@@ -30,15 +31,12 @@ export const AutocompleteInputItem = forwardRef<HTMLDivElement, IAutocompleteInp
         <div ref={ref} className={itemClassName} role="option" id={id} aria-selected={isActive} {...otherProps}>
             <span className="flex min-w-0 flex-row items-center gap-4">
                 <Icon icon={icon} className={classNames({ 'text-neutral-300': !isActive })} />
-                <p className="text-base leading-tight font-normal">{name}</p>
+                <p className="text-base">{name}</p>
             </span>
-            {info && (
-                <span className="flex gap-3 text-sm leading-tight font-normal">
-                    {info}
-                    <span className="w-4" />
-                </span>
-            )}
-            <KeyboardShortcut className={classNames('absolute right-3', { hidden: !isActive })}>↵</KeyboardShortcut>
+            <span className="flex items-center gap-2">
+                {info && <span className={classNames('text-sm', { 'mr-7': !isActive })}>{info}</span>}
+                {isActive && <KeyboardShortcut>↵</KeyboardShortcut>}
+            </span>
         </div>
     );
 });
