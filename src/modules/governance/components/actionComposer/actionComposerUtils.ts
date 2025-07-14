@@ -2,8 +2,8 @@ import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { addressUtils, IconType, type IProposalActionInputData } from '@aragon/gov-ui-kit';
-import { keccak256, toBytes, zeroAddress } from 'viem';
+import { addressUtils, IconType } from '@aragon/gov-ui-kit';
+import { type AbiStateMutability, toFunctionSelector, zeroAddress } from 'viem';
 import {
     type IProposalAction,
     type IProposalActionUpdatePluginMetadata,
@@ -167,18 +167,20 @@ class ActionComposerUtils {
         };
     };
 
-    createFunctionSelector = (inputData: IProposalActionInputData): `0x${string}` => {
-        const types = inputData.parameters.map((p) => p.type).join(',');
-        const signature = `${inputData.function}(${types})`;
-        const hash = keccak256(toBytes(signature));
-        return hash.substring(0, 10) as `0x${string}`;
-    };
-
     private functionSelectorMapper = (item: IActionComposerItem) => {
         if (item.defaultValue?.inputData == null || item.id === ProposalActionType.TRANSFER) {
             return item;
         }
-        const fnSelector = this.createFunctionSelector(item.defaultValue.inputData);
+
+        const { inputData } = item.defaultValue;
+        const fnSelector = toFunctionSelector({
+            type: 'function',
+            name: inputData.function,
+            inputs: inputData.parameters,
+            outputs: [],
+            stateMutability: inputData.stateMutability as AbiStateMutability,
+        });
+
         return {
             ...item,
             info: fnSelector,
