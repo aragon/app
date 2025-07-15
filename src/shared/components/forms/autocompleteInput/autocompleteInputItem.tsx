@@ -20,7 +20,7 @@ export const AutocompleteInputItem = forwardRef<HTMLDivElement, IAutocompleteInp
     const { id, icon, name, info } = item;
 
     const itemClassName = classNames(
-        'relative flex flex-row items-center justify-between rounded-lg gap-4 px-3 py-2 hover:cursor-pointer',
+        'flex flex-row items-center justify-between rounded-lg gap-4 px-3 py-2 hover:cursor-pointer',
         'leading-tight font-normal',
         { 'bg-neutral-50 text-neutral-800': isActive },
         { 'text-neutral-500': !isActive },
