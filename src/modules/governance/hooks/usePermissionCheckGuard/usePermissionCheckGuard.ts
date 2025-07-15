@@ -19,7 +19,7 @@ export const usePermissionCheckGuard = (params: IUsePermissionCheckGuardParams) 
 
     const { hasPermission } = useSlotSingleFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
         slotId: slotId,
-        pluginId: plugin.subdomain,
+        pluginId: plugin.interfaceType,
         params: { plugin, daoId, proposal },
     }) ?? { hasPermission: true };
 

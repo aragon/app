@@ -150,10 +150,10 @@ class SppStageUtils {
         const { plugins, stageIndex } = stage;
 
         const successCount = plugins.reduce((count, plugin) => {
-            const { address, subdomain } = plugin;
+            const { address, interfaceType } = plugin;
             const getSucceededStatus = pluginRegistryUtils.getSlotFunction<ISppSubProposal, boolean>({
                 slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_SUCCEEDED,
-                pluginId: subdomain ?? 'external',
+                pluginId: interfaceType ?? 'external',
             });
 
             const subProposal = this.getBodySubProposal(proposal, address, stageIndex);

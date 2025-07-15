@@ -37,7 +37,7 @@ export const SppVotingTerminalStageBodyContent: React.FC<ISppVotingTerminalStage
 
     const status = sppStageUtils.getStageStatus(proposal, stage);
 
-    const isExternalPlugin = plugin.subdomain == null;
+    const isExternalPlugin = plugin.interfaceType == null;
     const defaultName = pluginEns ?? addressUtils.truncateAddress(plugin.address);
     const pluginName = !isExternalPlugin && plugin.name != null ? plugin.name : defaultName;
 
