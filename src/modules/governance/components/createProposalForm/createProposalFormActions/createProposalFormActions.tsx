@@ -20,7 +20,7 @@ import {
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
-import { ActionComposer, type ActionComposerMode, type IActionComposerItem } from '../../actionComposer';
+import { ActionComposer, type IActionComposerItem } from '../../actionComposer';
 import { ActionItemId } from '../../actionComposer/actionComposerUtils';
 import type { ICreateProposalFormData, IProposalActionData } from '../createProposalFormDefinitions';
 import { useCreateProposalFormContext } from '../createProposalFormProvider';
@@ -49,12 +49,11 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const { smartContractAbis, addSmartContractAbi } = useCreateProposalFormContext();
+    const { addSmartContractAbi } = useCreateProposalFormContext();
 
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
 
     const [displayActionComposer, setDisplayActionComposer] = useState(false);
-    const [actionComposerMode, setActionComposerMode] = useState<ActionComposerMode>('native');
     const [expandedActions, setExpandedActions] = useState<string[]>([]);
 
     const {
@@ -79,14 +78,13 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             : null,
     }));
 
-    const handleAddAction = (mode: ActionComposerMode) => {
-        setActionComposerMode(mode);
+    const handleAddAction = () => {
         autocompleteInputRef.current?.focus();
     };
 
     const handleAbiSubmit = (abi: ISmartContractAbi) => {
         addSmartContractAbi(abi);
-        handleAddAction('custom');
+        handleAddAction();
     };
 
     const handleVerifySmartContract = (initialValue?: string) => {
@@ -96,14 +94,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             initialValue,
         };
         open(GovernanceDialogId.VERIFY_SMART_CONTRACT, { params });
-    };
-
-    const handleAddCustomAction = () => {
-        if (smartContractAbis.length === 0) {
-            handleVerifySmartContract();
-        } else {
-            handleAddAction('custom');
-        }
     };
 
     const handleAddWalletConnectActions = (actions: IProposalAction[]) => {
@@ -207,16 +197,8 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 </ProposalActions.Container>
             </ProposalActions.Root>
             <div className={classNames('flex flex-row gap-3', { hidden: displayActionComposer })}>
-                <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={() => handleAddAction('native')}>
+                <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={() => handleAddAction()}>
                     {t('app.governance.createProposalForm.actions.addAction.default')}
-                </Button>
-                <Button
-                    variant="secondary"
-                    size="md"
-                    iconRight={IconType.BLOCKCHAIN_SMARTCONTRACT}
-                    onClick={handleAddCustomAction}
-                >
-                    {t('app.governance.createProposalForm.actions.addAction.custom')}
                 </Button>
                 <Button
                     variant="secondary"
@@ -235,7 +217,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 nativeItems={pluginItems}
                 nativeGroups={pluginGroups}
                 daoId={daoId}
-                mode={actionComposerMode}
             />
         </div>
     );

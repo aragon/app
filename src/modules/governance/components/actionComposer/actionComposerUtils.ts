@@ -2,8 +2,8 @@ import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { zeroAddress } from 'viem';
+import { addressUtils, IconType, type IProposalActionInputData } from '@aragon/gov-ui-kit';
+import { keccak256, toBytes, zeroAddress } from 'viem';
 import {
     type IProposalAction,
     type IProposalActionUpdatePluginMetadata,
@@ -55,7 +55,64 @@ export interface IGetCustomActionParams extends IGetActionBaseParams {
 }
 
 class ActionComposerUtils {
-    getCustomActionGroups = ({ abis }: IGetCustomActionParams): IAutocompleteInputGroup[] =>
+    getActionGroups = ({
+        t,
+        dao,
+        abis,
+        nativeGroups,
+    }: IGetCustomActionParams & IGetNativeActionGroupsParams): IAutocompleteInputGroup[] => {
+        return [
+            this.getCustomActionGroups({ dao, t, abis }),
+            this.getNativeActionGroups({ dao, t, nativeGroups }),
+        ].flat();
+    };
+
+    getActionItems = ({
+        t,
+        dao,
+        abis,
+        nativeItems,
+    }: IGetCustomActionParams & IGetNativeActionItemsParams): IActionComposerItem[] => {
+        const customItems = this.getCustomActionItems({ t, abis });
+        const completeNativeItems = this.getNativeActionItems({ t, dao, nativeItems });
+
+        return [...customItems, ...completeNativeItems].map((item) => {
+            if (item.defaultValue?.inputData == null || item.id === ProposalActionType.TRANSFER) {
+                return item;
+            }
+
+            const fnSelector = this.createFunctionSelector(item.defaultValue.inputData);
+            return {
+                ...item,
+                info: fnSelector,
+            };
+        });
+    };
+
+    getDefaultActionPluginMetadataItem = (
+        plugin: IDaoPlugin,
+        t: TranslationFunction,
+        additionalMetadata?: Record<string, unknown>,
+    ): IActionComposerItem => {
+        const { address } = plugin;
+
+        return {
+            id: `${address}-${ProposalActionType.METADATA_PLUGIN_UPDATE}`,
+            name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.METADATA_PLUGIN_UPDATE}`),
+            icon: IconType.SETTINGS,
+            groupId: address,
+            defaultValue: this.buildDefaultActionPluginMetadata(plugin, additionalMetadata),
+        };
+    };
+
+    createFunctionSelector = (inputData: IProposalActionInputData): `0x${string}` => {
+        const types = inputData.parameters.map((p) => p.type).join(',');
+        const signature = `${inputData.function}(${types})`;
+        const hash = keccak256(toBytes(signature));
+        return hash.substring(0, 10) as `0x${string}`;
+    };
+
+    private getCustomActionGroups = ({ abis }: IGetCustomActionParams): IAutocompleteInputGroup[] =>
         abis.map((abi) => ({
             id: abi.address,
             name: abi.name,
@@ -63,7 +120,7 @@ class ActionComposerUtils {
             indexData: [abi.address],
         }));
 
-    getCustomActionItems = ({ abis, t }: IGetCustomActionParams): IActionComposerItem[] => {
+    private getCustomActionItems = ({ abis, t }: IGetCustomActionParams): IActionComposerItem[] => {
         const customActionItems = abis.map((abi) => {
             const functionActions = abi.functions.map((abiFunction, index) =>
                 this.buildDefaultCustomAction(abi, abiFunction, index),
@@ -85,7 +142,11 @@ class ActionComposerUtils {
         ];
     };
 
-    getNativeActionGroups = ({ t, dao, nativeGroups }: IGetNativeActionGroupsParams): IAutocompleteInputGroup[] => [
+    private getNativeActionGroups = ({
+        t,
+        dao,
+        nativeGroups,
+    }: IGetNativeActionGroupsParams): IAutocompleteInputGroup[] => [
         {
             id: ActionGroupId.OSX,
             name: t(`app.governance.actionComposer.nativeGroup.${ActionGroupId.OSX}`),
@@ -95,7 +156,7 @@ class ActionComposerUtils {
         ...nativeGroups,
     ];
 
-    getNativeActionItems = ({ t, dao, nativeItems }: IGetNativeActionItemsParams): IActionComposerItem[] => [
+    private getNativeActionItems = ({ t, dao, nativeItems }: IGetNativeActionItemsParams): IActionComposerItem[] => [
         {
             id: ProposalActionType.TRANSFER,
             name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.TRANSFER}`),
@@ -111,22 +172,6 @@ class ActionComposerUtils {
         },
         ...nativeItems,
     ];
-
-    getDefaultActionPluginMetadataItem = (
-        plugin: IDaoPlugin,
-        t: TranslationFunction,
-        additionalMetadata?: Record<string, unknown>,
-    ): IActionComposerItem => {
-        const { address } = plugin;
-
-        return {
-            id: `${address}-${ProposalActionType.METADATA_PLUGIN_UPDATE}`,
-            name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.METADATA_PLUGIN_UPDATE}`),
-            icon: IconType.SETTINGS,
-            groupId: address,
-            defaultValue: this.buildDefaultActionPluginMetadata(plugin, additionalMetadata),
-        };
-    };
 
     private buildDefaultActionPluginMetadata = (
         plugin: IDaoPlugin,

@@ -12,8 +12,6 @@ export interface IActionComposerItem<TMeta = undefined> extends IAutocompleteInp
     defaultValue?: IProposalAction;
 }
 
-export type ActionComposerMode = 'native' | 'custom';
-
 export interface IActionComposerProps<TMeta = undefined>
     extends Omit<IAutocompleteInputProps, 'items' | 'groups' | 'selectItemLabel' | 'onChange'> {
     /**
@@ -32,9 +30,4 @@ export interface IActionComposerProps<TMeta = undefined>
      * Additional native groups to be displayed.
      */
     nativeGroups: IAutocompleteInputGroup[];
-    /**
-     * Defines if the components displays the native or custom proposal actions.
-     * @default default
-     */
-    mode?: ActionComposerMode;
 }
