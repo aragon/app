@@ -5,16 +5,38 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils, type ITransactionRequest } from '@/shared/utils/transactionUtils';
-import { type Hex } from 'viem';
+import { encodeFunctionData, type Hex } from 'viem';
 import { GovernanceType, type ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
 import { SetupBodyType, type ISetupBodyFormNew } from '../setupBodyDialog';
 import type {
+    IBuildPrepareInstallExecuteSelectorConditionParams,
     IBuildPrepareInstallPluginActionParams,
     IBuildPrepareInstallPluginsActionParams,
     IBuildProcessProposalActionsParams,
     IBuildTransactionParams,
 } from './prepareProcessDialogUtils.api';
+
+const conditionFactoryAbi = [
+    {
+        type: 'function',
+        name: 'deployExecuteSelectorCondition',
+        stateMutability: 'nonpayable',
+        inputs: [
+            { name: '_dao', type: 'address', internalType: 'address' },
+            {
+                name: '_initialEntries',
+                type: 'tuple[]',
+                internalType: 'struct ExecuteSelectorCondition.SelectorTarget[]',
+                components: [
+                    { name: 'where', type: 'address', internalType: 'address' },
+                    { name: 'selectors', type: 'bytes4[]', internalType: 'bytes4[]' },
+                ],
+            },
+        ],
+        outputs: [{ name: '', type: 'address', internalType: 'contract ExecuteSelectorCondition' }],
+    },
+] as const;
 
 class PrepareProcessDialogUtils {
     private publishProcessProposalMetadata = {
@@ -43,7 +65,10 @@ class PrepareProcessDialogUtils {
         const { values, processMetadata, dao } = params;
 
         const { processor: processorMetadata, plugins: pluginsMetadata } = processMetadata;
-        const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
+        const { pluginSetupProcessor, conditionFactory } = networkDefinitions[dao.network].addresses;
+
+        const conditionDeployData = this.buildPrepareInstallExecuteSelectorCondition({ dao, values });
+        const conditionDeployTx = { to: conditionFactory, value: BigInt(0), data: conditionDeployData };
 
         const processorInstallAction =
             processorMetadata != null ? this.buildPrepareInstallProcessorActionData(processorMetadata, dao) : undefined;
@@ -54,7 +79,10 @@ class PrepareProcessDialogUtils {
 
         const actionValues = { to: pluginSetupProcessor, value: BigInt(0) };
         const installActionTransactions = installActionsData.map((data) => ({ ...actionValues, data }));
-        const encodedTransaction = transactionUtils.encodeTransactionRequests(installActionTransactions, dao.network);
+        const encodedTransaction = transactionUtils.encodeTransactionRequests(
+            [conditionDeployTx, ...installActionTransactions],
+            dao.network,
+        );
 
         return Promise.resolve(encodedTransaction);
     };
@@ -134,6 +162,21 @@ class PrepareProcessDialogUtils {
         })!;
 
         return prepareFunction(prepareFunctionParams);
+    };
+
+    private buildPrepareInstallExecuteSelectorCondition = (
+        params: IBuildPrepareInstallExecuteSelectorConditionParams,
+    ) => {
+        const { dao, values } = params;
+        const { permissionSelectors } = values;
+
+        const prepareTransaction = encodeFunctionData({
+            abi: conditionFactoryAbi,
+            functionName: 'deployExecuteSelectorCondition',
+            args: [dao.address as Hex, permissionSelectors],
+        });
+
+        return prepareTransaction;
     };
 }
 

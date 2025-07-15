@@ -1,99 +1,69 @@
-import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
-import { SetupBodyType } from '@/modules/createDao/dialogs/setupBodyDialog';
-import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import {
+    type ICreateProcessFormData,
+    ProcessPermission,
+} from '@/modules/createDao/components/createProcessForm/createProcessFormDefinitions';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { InputContainer, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
-import { useEffect, useMemo } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { GovernanceType, ProposalCreationMode, type ICreateProcessFormData } from '../createProcessFormDefinitions';
+import { CardEmptyState, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
+import { useFieldArray } from 'react-hook-form';
 
-export interface ICreateProcessFormPermissionProps {}
+export interface ICreateProcessFormPermissionsProps {}
 
-export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionProps> = () => {
+export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionsProps> = () => {
     const { t } = useTranslations();
-    const { trigger } = useFormContext();
 
-    const governanceType = useWatch<ICreateProcessFormData, 'governanceType'>({ name: 'governanceType' });
-    const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
-
-    const basicProcessBody = useWatch<ICreateProcessFormData, 'body'>({ name: 'body' });
-    const stages = useWatch<ICreateProcessFormData, 'stages'>({ name: 'stages' });
-
-    const getBodyFormPrefix = (bodyIndex: number, stageIndex?: number) =>
-        stageIndex != null ? `stages.${stageIndex.toString()}.bodies.${bodyIndex.toString()}` : 'body';
-
-    const processBodies = useMemo(() => {
-        // we need to keep the original bodyIndex since EXTERNAL bodies are filtered out!
-        const processedBodies = isAdvancedGovernance
-            ? stages.flatMap((stage, stageIndex) =>
-                  stage.bodies.map((body, bodyIndex) => ({ ...body, stageIndex, bodyIndex })),
-              )
-            : [{ ...basicProcessBody, stageIndex: undefined, bodyIndex: 0 }];
-
-        return processedBodies.filter((body) => body.type === SetupBodyType.NEW);
-    }, [isAdvancedGovernance, stages, basicProcessBody]);
-
-    const canBodiesCreateProposals = processBodies.some((body) => body.canCreateProposal);
-    const createProposalsError = 'app.createDao.createProcessForm.permissions.proposalCreation.bodies.error';
-
-    const { ANY_WALLET, LISTED_BODIES } = ProposalCreationMode;
+    const { ANY, SELECTED } = ProcessPermission;
 
     const {
-        onChange: onModeChange,
-        value: mode,
-        alert: permissionsAlert,
-        ...modeField
-    } = useFormField<ICreateProcessFormData, 'proposalCreationMode'>('proposalCreationMode', {
-        label: t('app.createDao.createProcessForm.permissions.proposalCreation.mode.label'),
-        rules: {
-            validate: (value) => (value !== ANY_WALLET && !canBodiesCreateProposals ? createProposalsError : undefined),
-        },
-        defaultValue: LISTED_BODIES,
+        onChange: onProcessPermissionChange,
+        value: processPermission,
+        ...processPermissionField
+    } = useFormField<ICreateProcessFormData, 'permissions'>('permissions', {
+        label: t('app.createDao.createProcessForm.permissions.permissionField.label'),
+        defaultValue: ANY,
     });
 
-    // Trigger proposalCreationMode validation on allowed bodies selection change
-    useEffect(() => {
-        void trigger('proposalCreationMode');
-    }, [trigger, canBodiesCreateProposals]);
+    const { fields: permissionSelectors } = useFieldArray<ICreateProcessFormData, 'permissionSelectors'>({
+        name: 'permissionSelectors',
+    });
 
     return (
         <>
-            <RadioGroup className="flex gap-4 md:!flex-row" onValueChange={onModeChange} value={mode} {...modeField}>
+            <RadioGroup
+                className="flex gap-4 md:!flex-row"
+                onValueChange={onProcessPermissionChange}
+                value={processPermission}
+                helpText={t('app.createDao.createProcessForm.permissions.permissionField.helpText')}
+                {...processPermissionField}
+            >
                 <RadioCard
                     className="min-w-0"
-                    label={t('app.createDao.createProcessForm.permissions.proposalCreation.mode.bodiesLabel')}
-                    description={t(
-                        'app.createDao.createProcessForm.permissions.proposalCreation.mode.bodiesDescription',
-                    )}
-                    value={LISTED_BODIES}
+                    label={t('app.createDao.createProcessForm.permissions.permissionField.anyLabel')}
+                    description={t('app.createDao.createProcessForm.permissions.permissionField.anyDescription')}
+                    value={ANY}
                 />
                 <RadioCard
                     className="min-w-0"
-                    label={t('app.createDao.createProcessForm.permissions.proposalCreation.mode.anyLabel')}
-                    description={t('app.createDao.createProcessForm.permissions.proposalCreation.mode.anyDescription')}
-                    value={ANY_WALLET}
+                    label={t('app.createDao.createProcessForm.permissions.permissionField.specificLabel')}
+                    description={t('app.createDao.createProcessForm.permissions.permissionField.specificDescription')}
+                    value={SELECTED}
                 />
             </RadioGroup>
-            <InputContainer
-                id="proposalCreationBodies"
-                label={t('app.createDao.createProcessForm.permissions.proposalCreation.bodies.label')}
-                useCustomWrapper={true}
-                className={mode === ANY_WALLET ? 'hidden' : ''}
-                alert={permissionsAlert}
-            >
-                {processBodies.map((body) => (
-                    <PluginSingleComponent
-                        key={body.internalId}
-                        pluginId={body.plugin}
-                        slotId={CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_SETTINGS}
-                        body={body}
-                        mode={mode}
-                        disableCheckbox={processBodies.length === 1}
-                        formPrefix={getBodyFormPrefix(body.bodyIndex, body.stageIndex)}
-                    />
-                ))}
-            </InputContainer>
+            {processPermission === ANY && (
+                <CardEmptyState
+                    heading={t('app.createDao.createProcessForm.permissions.anyEmptyState.heading')}
+                    description={t('app.createDao.createProcessForm.permissions.anyEmptyState.description')}
+                    objectIllustration={{ object: 'SETTINGS' }}
+                    isStacked={false}
+                />
+            )}
+            {processPermission === SELECTED && permissionSelectors.length === 0 && (
+                <CardEmptyState
+                    heading={t('app.createDao.createProcessForm.permissions.specificEmptyState.heading')}
+                    objectIllustration={{ object: 'SETTINGS' }}
+                    isStacked={false}
+                />
+            )}
         </>
     );
 };

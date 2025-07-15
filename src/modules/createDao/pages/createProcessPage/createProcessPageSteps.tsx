@@ -21,7 +21,7 @@ export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStep
     const { steps, daoId } = props;
 
     const { t } = useTranslations();
-    const [metadataStep, processesStep, permissionsStep] = steps;
+    const [metadataStep, processesStep, creationStep, permissionsStep] = steps;
 
     return (
         <>
@@ -40,13 +40,20 @@ export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStep
                 <CreateProcessForm.Governance daoId={daoId} />
             </WizardPage.Step>
             <WizardPage.Step
+                title={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.CREATION}.title`)}
+                description={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.CREATION}.description`)}
+                {...creationStep}
+            >
+                <CreateProcessForm.ProposalCreation />
+            </WizardPage.Step>
+            <WizardPage.Step
                 title={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PERMISSIONS}.title`)}
                 description={t(
                     `app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PERMISSIONS}.description`,
                 )}
                 {...permissionsStep}
             >
-                <CreateProcessForm.Permissions />
+                <CreateProcessForm.Permission />
             </WizardPage.Step>
         </>
     );

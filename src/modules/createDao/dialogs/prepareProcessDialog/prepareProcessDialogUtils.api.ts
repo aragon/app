@@ -65,3 +65,14 @@ export interface IBuildProcessProposalActionsParams {
      */
     setupData: IPluginInstallationSetupData[];
 }
+
+export interface IBuildPrepareInstallExecuteSelectorConditionParams {
+    /**
+     * Values of the create-process form.
+     */
+    values: ICreateProcessFormData;
+    /**
+     * DAO to install the plugins to.
+     */
+    dao: IDao;
+}
