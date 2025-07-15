@@ -136,7 +136,8 @@ describe('<AutocompleteInput /> component', () => {
         ];
         render(createTestComponent({ items, onOpenChange, onChange }));
         await userEvent.type(screen.getByRole('combobox'), searchValue);
-        await userEvent.click(screen.getByRole('option', { name: items[1].name }));
+        const options = screen.getAllByRole('option');
+        await userEvent.click(options[1]);
         expect(onOpenChange).toHaveBeenCalledWith(false);
         expect(onChange).toHaveBeenCalledWith(items[1].id, searchValue);
     });
@@ -177,11 +178,12 @@ describe('<AutocompleteInput /> component', () => {
         await userEvent.click(screen.getByRole('combobox'));
 
         await userEvent.keyboard('{ArrowDown}');
-        expect(screen.getByRole('option', { name: items[0].name }).getAttribute('aria-selected')).toEqual('true');
+        const options = screen.getAllByRole('option');
+        expect(options[0].getAttribute('aria-selected')).toEqual('true');
 
         await userEvent.keyboard('{ArrowDown}');
-        expect(screen.getByRole('option', { name: items[0].name }).getAttribute('aria-selected')).toEqual('false');
-        expect(screen.getByRole('option', { name: items[1].name }).getAttribute('aria-selected')).toEqual('true');
+        expect(options[0].getAttribute('aria-selected')).toEqual('false');
+        expect(options[1].getAttribute('aria-selected')).toEqual('true');
 
         await userEvent.keyboard('{Enter}');
         expect(onChange).toHaveBeenCalledWith(items[1].id, '');
@@ -208,6 +210,7 @@ describe('<AutocompleteInput /> component', () => {
         const items = [{ id: '1', name: 'one', icon: IconType.APP_ASSETS, alwaysVisible: true }];
         render(createTestComponent({ items }));
         await userEvent.type(screen.getByRole('combobox'), 'two');
-        expect(screen.getByRole('option', { name: 'one' })).toBeInTheDocument();
+        const optionElement = screen.getByRole('option');
+        expect(optionElement).toHaveTextContent('one');
     });
 });

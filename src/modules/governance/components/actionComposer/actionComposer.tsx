@@ -7,7 +7,7 @@ import type { IActionComposerProps } from './actionComposer.api';
 import { actionComposerUtils } from './actionComposerUtils';
 
 export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>((props, ref) => {
-    const { daoId, onActionSelected, nativeItems, nativeGroups, mode = 'native', ...otherProps } = props;
+    const { daoId, onActionSelected, nativeItems, nativeGroups, ...otherProps } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -15,14 +15,8 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
     const { t } = useTranslations();
     const { smartContractAbis: abis } = useCreateProposalFormContext();
 
-    const customGroups = actionComposerUtils.getCustomActionGroups({ t, abis });
-    const customItems = actionComposerUtils.getCustomActionItems({ t, abis });
-
-    const completeNativeGroups = actionComposerUtils.getNativeActionGroups({ t, dao, nativeGroups });
-    const completeNativeItems = actionComposerUtils.getNativeActionItems({ t, dao, nativeItems });
-
-    const [items, groups] =
-        mode === 'native' ? [completeNativeItems, completeNativeGroups] : [customItems, customGroups];
+    const groups = actionComposerUtils.getActionGroups({ t, dao, abis, nativeGroups });
+    const items = actionComposerUtils.getActionItems({ t, dao, abis, nativeItems });
 
     const handleActionSelected = (itemId: string, inputValue: string) => {
         const action = items.find((item) => item.id === itemId)!;
