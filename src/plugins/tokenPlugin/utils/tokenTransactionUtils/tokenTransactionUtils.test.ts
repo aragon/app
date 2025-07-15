@@ -43,7 +43,7 @@ describe('tokenTransaction utils', () => {
                 { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
             ];
             const plugin = generateDaoPlugin({
-                interfaceType: PluginInterfaceType.tokenVoting,
+                interfaceType: PluginInterfaceType.TOKEN_VOTING,
                 settings: generateTokenPluginSettings(),
             });
 
@@ -76,7 +76,7 @@ describe('tokenTransaction utils', () => {
                 { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
             ];
             const plugin = generateDaoPlugin({
-                interfaceType: PluginInterfaceType.tokenVoting,
+                interfaceType: PluginInterfaceType.TOKEN_VOTING,
                 settings: generateTokenPluginSettings({
                     minDuration,
                 }),

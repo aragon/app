@@ -17,9 +17,9 @@ describe('useDaoPlugins hook', () => {
 
     it('retrieves the DAO plugins and returns them as tab-plugins', () => {
         const plugins = [
-            generateDaoPlugin({ interfaceType: PluginInterfaceType.multisig, subdomain: 'multisig', address: '0x123' }),
+            generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG, subdomain: 'multisig', address: '0x123' }),
             generateDaoPlugin({
-                interfaceType: PluginInterfaceType.tokenVoting,
+                interfaceType: PluginInterfaceType.TOKEN_VOTING,
                 subdomain: 'token-voting',
                 address: '0x456',
             }),
@@ -39,7 +39,7 @@ describe('useDaoPlugins hook', () => {
         const type = PluginType.BODY;
         const pluginAddress = '0x572983';
         const dao = generateDao({
-            plugins: [generateDaoPlugin({ interfaceType: PluginInterfaceType.spp, address: '0x123' })],
+            plugins: [generateDaoPlugin({ interfaceType: PluginInterfaceType.SPP, address: '0x123' })],
         });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
 

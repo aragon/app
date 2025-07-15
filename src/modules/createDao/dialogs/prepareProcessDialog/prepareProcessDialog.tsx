@@ -66,7 +66,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     const [plugin] = useDaoPlugins({ daoId, pluginAddress }) ?? [];
     invariant(!!plugin, `PrepareProcessDialog: plugin with address "${pluginAddress}" not found.`);
 
-    const isAdmin = plugin.meta.interfaceType === PluginInterfaceType.admin;
+    const isAdmin = plugin.meta.interfaceType === PluginInterfaceType.ADMIN;
 
     const stepper = useStepper<ITransactionDialogStepMeta, PrepareProcessStep | TransactionDialogStep>({
         initialActiveStep: PrepareProcessStep.PIN_METADATA,

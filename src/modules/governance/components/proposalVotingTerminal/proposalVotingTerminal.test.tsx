@@ -49,7 +49,7 @@ describe('<ProposalVotingTerminal /> component', () => {
     };
 
     it('renders the plugin-specific proposal breakdown component', () => {
-        const proposal = generateProposal({ pluginInterfaceType: PluginInterfaceType.multisig });
+        const proposal = generateProposal({ pluginInterfaceType: PluginInterfaceType.MULTISIG });
         render(createTestComponent({ proposal }));
         const pluginComponent = screen.getAllByTestId('plugin-component-mock');
         expect(pluginComponent[0]).toBeInTheDocument();
@@ -67,7 +67,7 @@ describe('<ProposalVotingTerminal /> component', () => {
         const daoId = 'test-id';
         const settings = generatePluginSettings();
         const parsedSettings = { term: 'plugin-term', definition: 'plugin-value' };
-        const proposal = generateProposal({ settings, pluginInterfaceType: PluginInterfaceType.unknown });
+        const proposal = generateProposal({ settings, pluginInterfaceType: PluginInterfaceType.UNKNOWN });
 
         useSlotSingleFunctionSpy.mockReturnValue([parsedSettings]);
         useDaoPluginInfoSpy.mockImplementation((params) => params.settings!);

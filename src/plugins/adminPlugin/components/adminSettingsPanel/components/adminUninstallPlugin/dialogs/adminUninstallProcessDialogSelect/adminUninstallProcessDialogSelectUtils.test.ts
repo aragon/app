@@ -25,7 +25,7 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
             const adminAddress: Hex = '0xPluginSetupProcessor';
             const permissionId = 'EXECUTE_PERMISSION';
 
-            const plugin = generateDaoPlugin({ address: '0x123', interfaceType: PluginInterfaceType.admin });
+            const plugin = generateDaoPlugin({ address: '0x123', interfaceType: PluginInterfaceType.ADMIN });
 
             const to = '0xTo';
             const data = '0xData';

@@ -51,7 +51,7 @@ describe('publishProposalDialog utils', () => {
                 actions: [{ ...proposalAction, daoId: 'test', meta: undefined }],
             });
             const metadataCid = 'test-cid';
-            const plugin = generateDaoPlugin({ address: '0x123', interfaceType: PluginInterfaceType.multisig });
+            const plugin = generateDaoPlugin({ address: '0x123', interfaceType: PluginInterfaceType.MULTISIG });
 
             const transaction = await publishProposalDialogUtils.buildTransaction({ proposal, metadataCid, plugin });
 

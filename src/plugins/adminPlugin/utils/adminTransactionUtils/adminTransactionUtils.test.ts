@@ -21,7 +21,7 @@ describe('adminTransaction utils', () => {
             const transactionData = '0xdata';
             const plugin = generateDaoPlugin({
                 address: '0x123',
-                interfaceType: PluginInterfaceType.admin,
+                interfaceType: PluginInterfaceType.ADMIN,
                 settings: generatePluginSettings(),
             });
             encodeFunctionDataSpy.mockReturnValueOnce(transactionData);

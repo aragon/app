@@ -2,7 +2,7 @@ import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import type { IPluginInfo } from '@/shared/types';
 
 export const multisigPlugin: IPluginInfo = {
-    id: PluginInterfaceType.multisig,
+    id: PluginInterfaceType.MULTISIG,
     subdomain: 'multisig',
     name: 'Multisig',
     installVersion: {

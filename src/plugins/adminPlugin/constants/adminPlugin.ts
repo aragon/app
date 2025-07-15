@@ -2,7 +2,7 @@ import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import type { IPluginInfo } from '@/shared/types';
 
 export const adminPlugin: IPluginInfo = {
-    id: PluginInterfaceType.admin,
+    id: PluginInterfaceType.ADMIN,
     subdomain: 'admin',
     name: 'Admin',
     installVersion: {

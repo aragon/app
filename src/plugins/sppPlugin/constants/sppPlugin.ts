@@ -2,7 +2,7 @@ import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import type { IPluginInfo } from '@/shared/types';
 
 export const sppPlugin: IPluginInfo = {
-    id: PluginInterfaceType.spp,
+    id: PluginInterfaceType.SPP,
     subdomain: 'spp',
     name: 'Staged Proposal Processor',
     installVersion: {

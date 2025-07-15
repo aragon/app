@@ -51,7 +51,7 @@ describe('sppTransaction utils', () => {
             const actions: ITransactionRequest[] = [{ to: '0xAddress', data: '0xdata', value: BigInt(0) }];
             const plugin = generateDaoPlugin({
                 address: '0x123',
-                interfaceType: PluginInterfaceType.spp,
+                interfaceType: PluginInterfaceType.SPP,
                 settings: generateSppPluginSettings(),
             });
             parseStartDateSpy.mockReturnValue(startDate);

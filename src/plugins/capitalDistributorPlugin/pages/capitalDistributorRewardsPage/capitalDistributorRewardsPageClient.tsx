@@ -31,7 +31,7 @@ export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRe
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const plugin = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.capitalDistributor })![0];
+    const plugin = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR })![0];
 
     const pluginName = daoUtils.getPluginName(plugin.meta);
     const { description, links } = plugin.meta;

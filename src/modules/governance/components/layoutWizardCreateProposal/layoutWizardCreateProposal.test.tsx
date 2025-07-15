@@ -53,13 +53,13 @@ describe('<LayoutWizardCreateProposal /> component', () => {
         const plugins = [
             generateDaoPlugin({
                 subdomain: 'token',
-                interfaceType: PluginInterfaceType.tokenVoting,
+                interfaceType: PluginInterfaceType.TOKEN_VOTING,
                 address: '0x123',
                 isProcess: true,
             }),
             generateDaoPlugin({
                 subdomain: 'multisig',
-                interfaceType: PluginInterfaceType.multisig,
+                interfaceType: PluginInterfaceType.MULTISIG,
                 address: '0x456',
                 isProcess: true,
             }),

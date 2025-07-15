@@ -7,7 +7,7 @@ export enum CapitalDistributorPluginPages {
 }
 
 export const capitalDistributorPlugin: IPluginInfo = {
-    id: PluginInterfaceType.capitalDistributor,
+    id: PluginInterfaceType.CAPITAL_DISTRIBUTOR,
     subdomain: 'capital-distributor',
     name: 'Capital Distributor',
     installVersion: { release: 1, build: 1, releaseNotes: '', description: '' },

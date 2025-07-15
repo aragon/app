@@ -19,7 +19,7 @@ export const useAdminStatus = (params: IUseAdminStatusParams) => {
 
     const { address: memberAddress } = useAccount();
 
-    const adminPlugins = useDaoPlugins({ daoId, interfaceType: PluginInterfaceType.admin });
+    const adminPlugins = useDaoPlugins({ daoId, interfaceType: PluginInterfaceType.ADMIN });
     const adminPluginAddress = adminPlugins?.[0]?.meta?.address;
 
     const memberExistsParams = {

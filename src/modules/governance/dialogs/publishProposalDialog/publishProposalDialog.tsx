@@ -113,7 +113,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
             indexingFallbackUrl={daoUtils.getDaoUrl(dao, 'proposals')}
             transactionInfo={transactionInfo}
         >
-            {plugin.interfaceType !== PluginInterfaceType.admin && (
+            {plugin.interfaceType !== PluginInterfaceType.ADMIN && (
                 <ProposalDataListItem.Structure
                     title={title}
                     summary={summary}

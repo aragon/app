@@ -7,7 +7,7 @@ export const generateDaoPlugin = <TSettings extends IPluginSettings = IPluginSet
 ): IDaoPlugin<TSettings> => ({
     address: '0x123',
     subdomain: 'unknown',
-    interfaceType: PluginInterfaceType.unknown,
+    interfaceType: PluginInterfaceType.UNKNOWN,
     release: '0',
     build: '0',
     isProcess: false,

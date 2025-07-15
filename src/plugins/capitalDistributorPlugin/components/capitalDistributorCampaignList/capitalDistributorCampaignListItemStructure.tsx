@@ -37,7 +37,7 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const plugin = useDaoPlugins({ daoId: id, interfaceType: PluginInterfaceType.capitalDistributor })![0];
+    const plugin = useDaoPlugins({ daoId: id, interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR })![0];
 
     const { amount, token, txHash, title, description } = campaign;
 

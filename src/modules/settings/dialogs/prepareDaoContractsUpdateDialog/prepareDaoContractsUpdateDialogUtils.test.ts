@@ -108,11 +108,11 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
 
         it('encodes the prepareUpdate transaction for the given plugin', async () => {
             const dao = generateDao({ network: Network.ZKSYNC_MAINNET });
-            const plugin = generateDaoPlugin({ interfaceType: PluginInterfaceType.multisig, release: '1', build: '4' });
+            const plugin = generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG, release: '1', build: '4' });
             const pluginSetupRepo = '0xrepo';
             const newVersionTag = { release: 1, build: 5 };
             const pluginInfo = {
-                id: PluginInterfaceType.multisig,
+                id: PluginInterfaceType.MULTISIG,
                 name: 'Multisig',
                 installVersion: newVersionTag,
                 repositoryAddresses: { [dao.network]: pluginSetupRepo },

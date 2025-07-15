@@ -95,7 +95,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
     it('uses the plugin-specific function to process and render the proposal status', () => {
         const status = ProposalStatus.REJECTED;
-        const proposal = generateProposal({ pluginInterfaceType: PluginInterfaceType.multisig });
+        const proposal = generateProposal({ pluginInterfaceType: PluginInterfaceType.MULTISIG });
         useSlotSingleFunctionSpy.mockReturnValue(status);
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
         render(createTestComponent());

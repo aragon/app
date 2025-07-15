@@ -40,7 +40,7 @@ describe('<DaoSettingsPageClient /> component', () => {
                 uniqueId: '1',
                 label: 'one',
                 meta: generateDaoPlugin({
-                    interfaceType: PluginInterfaceType.multisig,
+                    interfaceType: PluginInterfaceType.MULTISIG,
                     address: '0x123',
                 }),
             }),
