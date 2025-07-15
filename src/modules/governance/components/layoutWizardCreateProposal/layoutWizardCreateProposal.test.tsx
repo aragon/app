@@ -1,5 +1,5 @@
 import { type ILayoutWizardProps } from '@/modules/application/components/layouts/layoutWizard';
-import { Network, PluginInterfaceType } from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { mockTranslations } from '@/test/utils';
@@ -53,13 +53,11 @@ describe('<LayoutWizardCreateProposal /> component', () => {
         const plugins = [
             generateDaoPlugin({
                 subdomain: 'token',
-                interfaceType: PluginInterfaceType.TOKEN_VOTING,
                 address: '0x123',
                 isProcess: true,
             }),
             generateDaoPlugin({
                 subdomain: 'multisig',
-                interfaceType: PluginInterfaceType.MULTISIG,
                 address: '0x456',
                 isProcess: true,
             }),
