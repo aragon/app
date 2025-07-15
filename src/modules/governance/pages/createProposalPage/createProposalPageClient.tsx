@@ -5,16 +5,11 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { addressUtils } from '@aragon/gov-ui-kit';
-import { useCallback, useMemo, useState } from 'react';
-import type { ISmartContractAbi } from '../../api/smartContractService';
-import { CreateProposalForm, type ICreateProposalFormData } from '../../components/createProposalForm';
+import { useMemo } from 'react';
+import { type ICreateProposalFormData } from '../../components/createProposalForm';
+import { useActionsContext } from '../../components/createProposalForm/actionsProvider';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
-import type {
-    IPublishProposalDialogParams,
-    PrepareProposalActionFunction,
-    PrepareProposalActionMap,
-} from '../../dialogs/publishProposalDialog';
+import type { IPublishProposalDialogParams } from '../../dialogs/publishProposalDialog';
 import { useProposalPermissionCheckGuard } from '../../hooks/useProposalPermissionCheckGuard';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
 import { createProposalWizardSteps } from './createProposalPageDefinitions';
@@ -37,29 +32,9 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     const { open } = useDialogContext();
 
     const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress })![0];
+    const { prepareActions } = useActionsContext();
 
     useProposalPermissionCheckGuard({ daoId, pluginAddress, redirectTab: 'proposals' });
-
-    const [prepareActions, setPrepareActions] = useState<PrepareProposalActionMap>({});
-    const [smartContractAbis, setSmartContractAbis] = useState<ISmartContractAbi[]>([]);
-
-    const addPrepareAction = useCallback(
-        (type: string, prepareAction: PrepareProposalActionFunction) =>
-            setPrepareActions((current) => ({ ...current, [type]: prepareAction })),
-        [],
-    );
-
-    const addSmartContractAbi = useCallback(
-        (abi: ISmartContractAbi) =>
-            setSmartContractAbis((current) => {
-                const alreadyExists = current.some((currentAbi) =>
-                    addressUtils.isAddressEqual(currentAbi.address, abi.address),
-                );
-
-                return alreadyExists ? current : [abi, ...current];
-            }),
-        [],
-    );
 
     const handleFormSubmit = (values: ICreateProposalFormData) => {
         // We are always saving actions on the form so that user doesn't lose them if they navigate around the form.
@@ -68,11 +43,6 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
         const params: IPublishProposalDialogParams = { proposal, daoId, plugin, prepareActions };
         open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
     };
-
-    const contextValues = useMemo(
-        () => ({ prepareActions, addPrepareAction, smartContractAbis, addSmartContractAbi }),
-        [prepareActions, addPrepareAction, smartContractAbis, addSmartContractAbi],
-    );
 
     const processedSteps = useMemo(
         () =>
@@ -92,9 +62,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
                 onSubmit={handleFormSubmit}
                 defaultValues={{ actions: [] }}
             >
-                <CreateProposalForm.Provider value={contextValues}>
-                    <CreateProposalPageClientSteps steps={processedSteps} daoId={daoId} pluginAddress={pluginAddress} />
-                </CreateProposalForm.Provider>
+                <CreateProposalPageClientSteps steps={processedSteps} daoId={daoId} pluginAddress={pluginAddress} />
             </WizardPage.Container>
         </Page.Main>
     );
