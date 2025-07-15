@@ -3,7 +3,8 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { type IPluginTabComponentProps, PluginTabComponent } from '@/shared/components/pluginTabComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { pluginGroupTab, useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { pluginGroupTab } from '@/shared/hooks/useDaoPlugins';
+import { useDaoPluginTabParam } from '@/shared/hooks/useDaoPluginTabParam';
 import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type { ReactNode } from 'react';
@@ -27,13 +28,17 @@ export interface IDaoProposalListProps extends Pick<IPluginTabComponentProps<IDa
 }
 
 export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
-    const { initialParams, ...otherProps } = props;
+    const { initialParams, value, onValueChange, ...otherProps } = props;
     const { daoId } = initialParams.queryParams;
 
     const { t } = useTranslations();
-    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeGroupTab: true });
+    const {
+        selectedPlugin,
+        setSelectedPlugin,
+        plugins: processPlugins,
+    } = useDaoPluginTabParam({ name: 'proposals', daoId, type: PluginType.PROCESS, includeGroupTab: true });
 
-    const processedPlugins = processPlugins?.map((plugin) => {
+    const processedPlugins = processPlugins.map((plugin) => {
         const { id, label, meta } = plugin;
 
         const isGroupTab = id === pluginGroupTab.id;
@@ -53,6 +58,8 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
             slotId={GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST}
             plugins={processedPlugins}
             Fallback={DaoProposalListDefault}
+            value={value ?? selectedPlugin}
+            onValueChange={onValueChange ?? setSelectedPlugin}
             {...otherProps}
         />
     );

@@ -7,11 +7,11 @@ import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { pluginGroupTab, useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { pluginGroupTab } from '@/shared/hooks/useDaoPlugins';
+import { useDaoPluginTabParam } from '@/shared/hooks/useDaoPluginTabParam';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import type { IGetProposalListParams } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
 import { ProposalListStats } from '../../components/proposalListStats';
@@ -34,8 +34,11 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     const router = useRouter();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeGroupTab: true })!;
-    const [selectedPlugin, setSelectedPlugin] = useState(processPlugins[0]);
+    const { selectedPlugin, setSelectedPlugin, plugins } = useDaoPluginTabParam({
+        daoId,
+        type: PluginType.PROCESS,
+        includeGroupTab: true,
+    });
 
     const buildProposalUrl = (plugin: IDaoPlugin) => daoUtils.getDaoUrl(dao, `create/${plugin.address}/proposal`)!;
 
@@ -64,7 +67,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
         href: canCreateProposal ? buildProposalUrl(selectedPlugin.meta) : undefined,
     };
 
-    const actionProps = processPlugins.length > 1 ? { onClick: openSelectPluginDialog } : defaultActionProps;
+    const actionProps = plugins.length > 1 ? { onClick: openSelectPluginDialog } : defaultActionProps;
 
     const allProposalsSelected = selectedPlugin.id === pluginGroupTab.id;
     const asideCardTitle = allProposalsSelected

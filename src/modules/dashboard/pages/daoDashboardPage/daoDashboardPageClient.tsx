@@ -20,6 +20,7 @@ import {
     formatterUtils,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
+import { useSearchParams } from 'next/navigation';
 import { DashboardDefaultHeader } from '../../components/dashboardDefaultHeader';
 import { DashboardDaoSlotId } from '../../constants/moduleDaoSlots';
 
@@ -38,6 +39,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const { daoId } = props;
 
     const { t } = useTranslations();
+    const searchParams = useSearchParams();
 
     const useDaoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: useDaoParams });
@@ -50,6 +52,13 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     if (dao == null) {
         return null;
     }
+
+    const getDaoPageUrl = (path: string) => {
+        const selectedTab = searchParams.get(path);
+        const daoSearchParams = selectedTab != null ? `?tab=${selectedTab}` : '';
+
+        return daoUtils.getDaoUrl(dao, `${path}${daoSearchParams}`);
+    };
 
     const daoUrl = daoUtils.getDaoUrl(dao)!;
 
@@ -89,7 +98,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                     variant="tertiary"
                                     size="md"
                                     iconRight={IconType.CHEVRON_RIGHT}
-                                    href={`${daoUrl}/proposals`}
+                                    href={getDaoPageUrl('proposals')}
                                 >
                                     {t('app.dashboard.daoDashboardPage.main.viewAll')}
                                 </Button>
@@ -104,7 +113,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                     variant="tertiary"
                                     size="md"
                                     iconRight={IconType.CHEVRON_RIGHT}
-                                    href={`${daoUrl}/members`}
+                                    href={getDaoPageUrl('members')}
                                 >
                                     {t('app.dashboard.daoDashboardPage.main.viewAll')}
                                 </Button>

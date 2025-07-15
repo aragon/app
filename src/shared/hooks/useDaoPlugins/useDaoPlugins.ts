@@ -34,7 +34,7 @@ export const pluginGroupTab: ITabComponentPlugin<IDaoPlugin> = {
     id: 'all',
     uniqueId: 'all',
     label: '',
-    meta: {} as IDaoPlugin,
+    meta: { slug: 'all' } as IDaoPlugin,
     props: {},
 };
 
