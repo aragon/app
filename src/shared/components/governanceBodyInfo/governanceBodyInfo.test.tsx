@@ -16,10 +16,10 @@ describe('<GovernanceBodyInfo /> component', () => {
     });
 
     it('renders the subdomain (parsed) and version when provided', () => {
-        const pluginName = 'Token Voting';
+        const subdomain = 'token-voting';
         const release = '2';
         const build = '4';
-        render(createTestComponent({ pluginName, release, build }));
+        render(createTestComponent({ subdomain, release, build }));
 
         expect(screen.getByText('Token Voting v2.4')).toBeInTheDocument();
     });

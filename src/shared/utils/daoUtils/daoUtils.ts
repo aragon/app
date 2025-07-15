@@ -1,8 +1,13 @@
-import { daoService, type IDao, type IDaoPlugin, type Network } from '@/shared/api/daoService';
+import {
+    daoService,
+    type IDao,
+    type IDaoPlugin,
+    type Network,
+    type PluginInterfaceType,
+} from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { PluginType, type IDaoPageParams, type IPluginInfo } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
-import type { PluginInterfaceType } from '../../api/daoService/domain/enum/pluginInterfaceType';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 import { versionComparatorUtils } from '../versionComparatorUtils';
 
@@ -86,8 +91,8 @@ class DaoUtils {
     };
 
     getAvailablePluginUpdates = (dao?: IDao): IDaoPlugin[] => {
+        const registeredPlugins = pluginRegistryUtils.getPlugins() as IPluginInfo[];
         const availablePluginUpdates = dao?.plugins.filter((plugin) => {
-            const registeredPlugins = pluginRegistryUtils.getPlugins() as IPluginInfo[];
             // We need to get the registered plugin by subdomain, not by interfaceType!
             // There might be a plugin with the same interfaceType but from different repository, and we don't want to allow updating such plugins.
             const target = registeredPlugins.find(

@@ -1,8 +1,7 @@
-import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import { type IDaoPlugin, type PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
 import type { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import type { PluginInterfaceType } from '../../api/daoService/domain/enum/pluginInterfaceType';
 
 export interface IUseDaoPluginsParams {
     /**
