@@ -49,7 +49,7 @@ export const AutocompleteInputMenu = forwardRef<HTMLDivElement, IAutocompleteInp
                     returnFocus={false}
                 >
                     <div className={menuClassName} ref={ref} {...otherProps}>
-                        <div className="flex max-h-[268px] flex-col overflow-auto px-3">{children}</div>
+                        <div className="flex max-h-[268px] flex-col gap-3 overflow-auto px-3">{children}</div>
                         <div className={footerClassName}>
                             <div className="flex flex-row items-center gap-1">
                                 <KeyboardShortcut>↑</KeyboardShortcut>
