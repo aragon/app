@@ -2,7 +2,7 @@ import { useDao } from '@/shared/api/daoService';
 import { AutocompleteInput } from '@/shared/components/forms/autocompleteInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { forwardRef } from 'react';
-import { useCreateProposalFormContext } from '../createProposalForm/createProposalFormProvider';
+import { useActionsContext } from '../createProposalForm/actionsProvider';
 import type { IActionComposerProps } from './actionComposer.api';
 import { actionComposerUtils } from './actionComposerUtils';
 
@@ -21,7 +21,7 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
     const { t } = useTranslations();
-    const { smartContractAbis: abis } = useCreateProposalFormContext();
+    const { smartContractAbis: abis } = useActionsContext();
 
     const groups = actionComposerUtils.getActionGroups({ t, dao, abis, nativeGroups });
     const items = actionComposerUtils.getActionItems({

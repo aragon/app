@@ -1,18 +1,15 @@
 import { type IProposalAction } from '@/modules/governance/api/governanceService';
 import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { IVerifySmartContractDialogParams } from '@/modules/governance/dialogs/verifySmartContractDialog';
 import type { IWalletConnectActionDialogParams } from '@/modules/governance/dialogs/walletConnectActionDialog';
-import type { IActionComposerPluginData } from '@/modules/governance/types';
-import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { Button, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
-import { ActionComposer, type IActionComposerItem } from '../../actionComposer';
+import { ActionComposer, type IActionComposerItem, type IActionComposerProps } from '../../actionComposer';
 import { ActionItemId } from '../../actionComposer/actionComposerUtils';
 import { useActionsContext } from '../actionsProvider';
 import type { IProposalActionData } from '../createProposalFormDefinitions';
@@ -23,6 +20,8 @@ export interface IActionComposerWrapperProps {
      */
     daoId: string;
     onAddAction: (value: IProposalActionData | IProposalActionData[]) => void;
+    nativeGroups: IActionComposerProps['nativeGroups'];
+    nativeItems: IActionComposerProps['nativeItems'];
     // actionOperations: {
     //     addAction: (value: FieldArray<IProposalActionData> | IProposalActionData | IProposalActionData[]) => void;
     //     removeAction: (index: number) => void;
@@ -38,7 +37,7 @@ export interface IActionComposerWrapperProps {
 // } as unknown as Record<string, ProposalActionComponent<IProposalActionData>>;
 
 export const ActionComposerWrapper: React.FC<IActionComposerWrapperProps> = (props) => {
-    const { daoId, onAddAction } = props;
+    const { daoId, onAddAction, nativeGroups, nativeItems } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -150,16 +149,16 @@ export const ActionComposerWrapper: React.FC<IActionComposerWrapperProps> = (pro
     //     return dropdownItems.filter((item) => !item.hidden);
     // };
 
-    const pluginActions =
-        dao?.plugins.map((plugin) =>
-            pluginRegistryUtils.getSlotFunction<IDaoPlugin, IActionComposerPluginData>({
-                pluginId: plugin.subdomain,
-                slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
-            })?.(plugin),
-        ) ?? [];
-
-    const pluginItems = pluginActions.flatMap((data) => data?.items ?? []);
-    const pluginGroups = pluginActions.flatMap((data) => data?.groups ?? []);
+    // const pluginActions =
+    //     dao?.plugins.map((plugin) =>
+    //         pluginRegistryUtils.getSlotFunction<IDaoPlugin, IActionComposerPluginData>({
+    //             pluginId: plugin.subdomain,
+    //             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
+    //         })?.(plugin),
+    //     ) ?? [];
+    //
+    // const pluginItems = pluginActions.flatMap((data) => data?.items ?? []);
+    // const pluginGroups = pluginActions.flatMap((data) => data?.groups ?? []);
     // const pluginComponents = pluginActions.reduce((acc, data) => ({ ...acc, ...data?.components }), {});
 
     // const customActionComponents: Record<string, ProposalActionComponent<IProposalActionData>> = {
@@ -204,8 +203,8 @@ export const ActionComposerWrapper: React.FC<IActionComposerWrapperProps> = (pro
                 onActionSelected={handleItemSelected}
                 onOpenChange={setDisplayActionComposer}
                 ref={autocompleteInputRef}
-                nativeItems={pluginItems}
-                nativeGroups={pluginGroups}
+                nativeItems={nativeItems}
+                nativeGroups={nativeGroups}
                 daoId={daoId}
             />
         </>

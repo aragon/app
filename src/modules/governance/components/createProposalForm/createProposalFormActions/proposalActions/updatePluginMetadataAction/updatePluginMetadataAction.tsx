@@ -5,8 +5,8 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { useCallback, useEffect } from 'react';
 import { encodeFunctionData } from 'viem';
+import { useActionsContext } from '../../../actionsProvider';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
-import { useCreateProposalFormContext } from '../../../createProposalFormProvider';
 import type { IUpdatePluginMetadataAction, IUpdatePluginMetadataActionProps } from './updatePluginMetadataAction.api';
 
 const setMetadataAbi = {
@@ -24,7 +24,7 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
     const { isProcess, isSubPlugin } = meta;
 
     const { mutateAsync: pinJsonAsync } = usePinJson();
-    const { addPrepareAction } = useCreateProposalFormContext<IUpdatePluginMetadataAction>();
+    const { addPrepareAction } = useActionsContext<IUpdatePluginMetadataAction>();
 
     const actionFieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
