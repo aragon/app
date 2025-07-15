@@ -1,3 +1,4 @@
+import type { PluginInterfaceType } from './enum';
 import type { IPluginSettings } from './pluginSettings';
 import type { IResource } from './resource';
 
@@ -26,6 +27,10 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
      * Subdomain of the plugin.
      */
     subdomain: string;
+    /**
+     * Plugin interface type. Used as a plugin type identifier.
+     */
+    interfaceType: PluginInterfaceType;
     /**
      * Release number of the plugin.
      */

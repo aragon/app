@@ -73,19 +73,21 @@ export const SppVotingTerminalStage: React.FC<ISppVotingTerminalStageProps> = (p
                         <ProposalVoting.BodySummaryListItem
                             key={address}
                             id={address}
-                            bodyBrand={plugin.subdomain === undefined ? brandedExternals[plugin.brandId] : undefined}
+                            bodyBrand={
+                                plugin.interfaceType === undefined ? brandedExternals[plugin.brandId] : undefined
+                            }
                         >
-                            {plugin.subdomain != null && (
+                            {plugin.interfaceType != null && (
                                 <PluginSingleComponent
                                     slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY}
-                                    pluginId={plugin.subdomain}
+                                    pluginId={plugin.interfaceType}
                                     proposal={sppStageUtils.getBodySubProposal(proposal, address, stage.stageIndex)}
                                     name={plugin.name}
                                     isVeto={isVeto}
                                     isExecuted={proposal.executed.status}
                                 />
                             )}
-                            {plugin.subdomain == null && (
+                            {plugin.interfaceType == null && (
                                 <SppVotingTerminalMultiBodySummaryDefault
                                     proposal={proposal}
                                     body={address}
