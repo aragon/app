@@ -21,9 +21,9 @@ export interface ISppStagePluginExternal {
      */
     address: string;
     /**
-     * External plugins are identified by empty subdomain.
+     * External plugins are identified by empty interfaceType.
      */
-    subdomain: undefined;
+    interfaceType: undefined;
     /**
      * Branded identity of the plugin.
      */
