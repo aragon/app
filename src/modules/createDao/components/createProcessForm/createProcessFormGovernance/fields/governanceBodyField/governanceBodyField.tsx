@@ -56,7 +56,7 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
                     <GovernanceBodyInfo
                         name={body.name}
                         address={body.type === SetupBodyType.EXTERNAL ? body.address : undefined}
-                        pluginName={plugin?.name}
+                        subdomain={plugin?.subdomain}
                         release={plugin?.installVersion.release.toString()}
                         build={plugin?.installVersion.build.toString()}
                     />

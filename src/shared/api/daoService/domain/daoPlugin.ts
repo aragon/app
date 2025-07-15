@@ -1,4 +1,4 @@
-import type { PluginInterfaceType } from './enum/pluginInterfaceType';
+import type { PluginInterfaceType } from './enum';
 import type { IPluginSettings } from './pluginSettings';
 import type { IResource } from './resource';
 
