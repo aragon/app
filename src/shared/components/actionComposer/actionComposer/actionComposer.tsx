@@ -37,10 +37,14 @@ export interface IActionComposerProps {
      * Native items to be displayed in the action composer input.
      */
     nativeItems: IActionComposerInputProps['nativeItems'];
+    /**
+     * If true, hides the WalletConnect button.
+     */
+    hideWalletConnect?: boolean;
 }
 
 export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
-    const { daoId, onAddAction, nativeGroups, nativeItems } = props;
+    const { daoId, onAddAction, nativeGroups, nativeItems, hideWalletConnect = false } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -112,17 +116,19 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     return (
         <>
             <div className={classNames('flex flex-row gap-3', { hidden: displayActionComposer })}>
-                <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={() => handleAddAction()}>
+                <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={handleAddAction}>
                     {t('app.shared.actionComposer.addAction.default')}
                 </Button>
-                <Button
-                    variant="secondary"
-                    size="md"
-                    iconRight={IconType.BLOCKCHAIN_WALLETCONNECT}
-                    onClick={displayWalletConnectDialog}
-                >
-                    {t('app.shared.actionComposer.addAction.walletConnect')}
-                </Button>
+                {!hideWalletConnect && (
+                    <Button
+                        variant="secondary"
+                        size="md"
+                        iconRight={IconType.BLOCKCHAIN_WALLETCONNECT}
+                        onClick={displayWalletConnectDialog}
+                    >
+                        {t('app.shared.actionComposer.addAction.walletConnect')}
+                    </Button>
+                )}
             </div>
             <ActionComposerInput
                 wrapperClassName={classNames('transition-none', { '!sr-only': !displayActionComposer })}
