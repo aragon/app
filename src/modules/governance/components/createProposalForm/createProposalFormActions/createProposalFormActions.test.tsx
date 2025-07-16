@@ -3,14 +3,8 @@ import * as DialogProvider from '@/shared/components/dialogProvider';
 import { FormWrapper, generateDao, generateDialogContext, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { forwardRef } from 'react';
 import * as CreateProposalProvider from '../createProposalFormProvider';
 import { CreateProposalFormActions, type ICreateProposalFormActionsProps } from './createProposalFormActions';
-
-jest.mock('../../../../../shared/components/actionComposer/actionComposerInput', () => ({
-    // eslint-disable-next-line react/display-name
-    ActionComposer: forwardRef(() => <div data-testid="action-composer-mock" />),
-}));
 
 describe('<CreateProposalFormActions /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
@@ -23,8 +17,6 @@ describe('<CreateProposalFormActions /> component', () => {
         useCreateProposalFormContextSpy.mockReturnValue({
             prepareActions: {},
             addPrepareAction: jest.fn(),
-            smartContractAbis: [],
-            addSmartContractAbi: jest.fn(),
         });
     });
 
