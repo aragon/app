@@ -1,4 +1,5 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import type { ISmartContractAbi } from '../../../../modules/governance/api/smartContractService';
 import type {
     IAutocompleteInputGroup,
     IAutocompleteInputItem,
@@ -30,6 +31,10 @@ export interface IActionComposerInputProps<TMeta = undefined>
      * Additional native groups to be displayed.
      */
     nativeGroups: IAutocompleteInputGroup[];
+    /**
+     * ABIs of imported smart contracts to be used for adding custom actions.
+     */
+    importedContractAbis: ISmartContractAbi[];
     /**
      * If true, the action composer will not include transfer action.
      */

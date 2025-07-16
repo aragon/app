@@ -11,7 +11,7 @@ import {
     type IProposalActionChangeMembers as IGukProposalActionChangeMembers,
     type IProposalActionChangeSettings as IGukProposalActionChangeSettings,
 } from '@aragon/gov-ui-kit';
-import { actionComposerUtils } from '../../../../shared/components/actionComposer/actionComposerInput/actionComposerInputUtils';
+import { actionComposerInputUtils } from '../../../../shared/components/actionComposer/actionComposerInput/actionComposerInputUtils';
 import { MultisigAddMembersAction } from '../../components/multisigActions/multisigAddMembersAction';
 import { MultisigRemoveMembersAction } from '../../components/multisigActions/multisigRemoveMembersAction';
 import { MultisigUpdateSettingsAction } from '../../components/multisigActions/multisigUpdateSettingsAction';
@@ -90,7 +90,7 @@ class MultisigActionUtils {
                     meta: plugin,
                 },
                 {
-                    ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),
+                    ...actionComposerInputUtils.getDefaultActionPluginMetadataItem(plugin, t),
                     meta: plugin,
                     hidden: !includePluginMetadataAction,
                 },

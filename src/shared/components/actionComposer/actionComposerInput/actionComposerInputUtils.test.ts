@@ -3,7 +3,7 @@ import { generateSmartContractAbi } from '@/modules/governance/testUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { generateDao } from '../../../testUtils';
 import type { IActionComposerInputItem } from './actionComposerInput.api';
-import { actionComposerUtils, ActionItemId } from './actionComposerInputUtils';
+import { actionComposerInputUtils, ActionItemId } from './actionComposerInputUtils';
 
 describe('actionComposerUtils', () => {
     describe('getActionGroups', () => {
@@ -24,7 +24,7 @@ describe('actionComposerUtils', () => {
                 { id: '0xN1', name: 'Native1', info: 'info1' },
                 { id: '0xN2', name: 'Native2', info: 'info2' },
             ];
-            const result = actionComposerUtils.getActionGroups({ t, dao, abis: [], nativeGroups });
+            const result = actionComposerInputUtils.getActionGroups({ t, dao, abis: [], nativeGroups });
             // Should include OSX group and all nativeGroups
             expect(result.map((g) => g.id)).toEqual(['OSX', '0xN1', '0xN2']);
         });
@@ -35,7 +35,7 @@ describe('actionComposerUtils', () => {
                 generateSmartContractAbi({ address: '0xC1', name: 'Custom1' }),
                 generateSmartContractAbi({ address: '0xC2', name: 'Custom2' }),
             ];
-            const result = actionComposerUtils.getActionGroups({ t, dao, abis, nativeGroups: [] });
+            const result = actionComposerInputUtils.getActionGroups({ t, dao, abis, nativeGroups: [] });
             // Should include custom abis as groups, plus DAO/OSX group
             expect(result.map((g) => g.id)).toEqual(['0xC1', '0xC2', 'OSX']);
         });
@@ -51,7 +51,7 @@ describe('actionComposerUtils', () => {
                 generateSmartContractAbi({ address: '0xC3', name: 'Custom3' }),
                 generateSmartContractAbi({ address: '0xDAO', name: 'CustomDao' }),
             ];
-            const result = actionComposerUtils.getActionGroups({ t, dao, abis: abisWithOverlap, nativeGroups });
+            const result = actionComposerInputUtils.getActionGroups({ t, dao, abis: abisWithOverlap, nativeGroups });
             // Should filter out 0xN1 and 0xDAO from custom, keep 0xC3
             expect(result.map((g) => g.id)).toEqual(['0xC3', 'OSX', '0xN1', '0xN2']);
         });
@@ -76,7 +76,7 @@ describe('actionComposerUtils', () => {
                     groupId: '0xN2',
                 },
             ];
-            const result = actionComposerUtils.getActionItems({ t, dao, abis: [], nativeItems });
+            const result = actionComposerInputUtils.getActionItems({ t, dao, abis: [], nativeItems });
             expect(result.map((item) => item.id)).toEqual([
                 // non-grouped, default items first
                 ActionItemId.ADD_CONTRACT,
@@ -99,7 +99,7 @@ describe('actionComposerUtils', () => {
                     functions: [{ name: 'customAction1', parameters: [] }],
                 }),
             ];
-            const result = actionComposerUtils.getActionItems({ t, dao, abis, nativeItems: [] });
+            const result = actionComposerInputUtils.getActionItems({ t, dao, abis, nativeItems: [] });
             expect(result.map((item) => item.id)).toEqual([
                 // non-grouped, default items first
                 ActionItemId.ADD_CONTRACT,
@@ -195,7 +195,7 @@ describe('actionComposerUtils', () => {
                 nativeN2F1,
                 nativeN2F2,
                 nativeN2F3,
-            ] = actionComposerUtils.getActionItems({
+            ] = actionComposerInputUtils.getActionItems({
                 t,
                 dao,
                 abis: abisWithOverlap,
@@ -260,7 +260,7 @@ describe('actionComposerUtils', () => {
             const dao = generateDao({ address: '0xDAO' });
             const isWithoutTransfer = true;
 
-            const result = actionComposerUtils.getActionItems({
+            const result = actionComposerInputUtils.getActionItems({
                 t,
                 dao,
                 abis: [],
@@ -276,7 +276,7 @@ describe('actionComposerUtils', () => {
             const abis = [generateSmartContractAbi({ address: '0xC1', name: 'Custom1' })];
             const isWithoutRawCalldata = true;
 
-            const result = actionComposerUtils.getActionItems({
+            const result = actionComposerInputUtils.getActionItems({
                 t,
                 dao,
                 abis,

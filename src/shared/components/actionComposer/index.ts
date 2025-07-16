@@ -1,7 +1,2 @@
-export { ActionComposer, type IActionComposerProps } from './actionComposer';
+export * from './actionComposer';
 export * from './actionComposerInput';
-export {
-    ActionComposerProvider,
-    useActionComposerContext,
-    type IActionComposerContext,
-} from './actionComposerProvider';

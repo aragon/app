@@ -1,10 +1,10 @@
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import type { IActionComposerPluginData } from '@/modules/governance/types';
-import type { IDao, IDaoPlugin } from '../../api/daoService';
-import { pluginRegistryUtils } from '../../utils/pluginRegistryUtils';
+import { GovernanceSlotId } from '../../../../modules/governance/constants/moduleSlots';
+import type { IActionComposerPluginData } from '../../../../modules/governance/types';
+import type { IDao, IDaoPlugin } from '../../../api/daoService';
+import { pluginRegistryUtils } from '../../../utils/pluginRegistryUtils';
 
 class ActionComposerUtils {
-    getPluginActionsFromDao(dao?: IDao) {
+    getPluginActionsFromDao = (dao?: IDao) => {
         const pluginActions =
             dao?.plugins.map((plugin) =>
                 pluginRegistryUtils.getSlotFunction<IDaoPlugin, IActionComposerPluginData>({
@@ -21,7 +21,7 @@ class ActionComposerUtils {
             pluginGroups,
             pluginComponents,
         };
-    }
+    };
 }
 
 export const actionComposerUtils = new ActionComposerUtils();

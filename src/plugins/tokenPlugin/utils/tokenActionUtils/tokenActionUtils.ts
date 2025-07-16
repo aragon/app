@@ -12,7 +12,7 @@ import {
     type IProposalActionTokenMint as IGukProposalActionTokenMint,
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
-import { actionComposerUtils } from '../../../../shared/components/actionComposer/actionComposerInput/actionComposerInputUtils';
+import { actionComposerInputUtils } from '../../../../shared/components/actionComposer/actionComposerInput/actionComposerInputUtils';
 import { TokenMintTokensAction } from '../../components/tokenActions/tokenMintTokensAction';
 import { TokenUpdateSettingsAction } from '../../components/tokenActions/tokenUpdateSettingsAction';
 import {
@@ -95,7 +95,7 @@ class TokenActionUtils {
                     meta: plugin,
                 },
                 {
-                    ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),
+                    ...actionComposerInputUtils.getDefaultActionPluginMetadataItem(plugin, t),
                     meta: plugin,
                     hidden: !includePluginMetadataAction,
                 },

@@ -1,10 +1,8 @@
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import type { IActionComposerPluginData } from '@/modules/governance/types';
-import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import { useDao } from '@/shared/api/daoService';
+import { ActionComposer, actionComposerUtils } from '@/shared/components/actionComposer';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
     IconType,
     type IProposalActionsItemDropdownItem,
@@ -13,7 +11,6 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
-import { ActionComposerWrapper } from '../actionComposerWrapper';
 import type { ICreateProposalFormData, IProposalActionData } from '../createProposalFormDefinitions';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
 import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';
@@ -102,16 +99,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         return dropdownItems.filter((item) => !item.hidden);
     };
 
-    const pluginActions =
-        dao?.plugins.map((plugin) =>
-            pluginRegistryUtils.getSlotFunction<IDaoPlugin, IActionComposerPluginData>({
-                pluginId: plugin.interfaceType,
-                slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
-            })?.(plugin),
-        ) ?? [];
-    const pluginItems = pluginActions.flatMap((data) => data?.items ?? []);
-    const pluginGroups = pluginActions.flatMap((data) => data?.groups ?? []);
-    const pluginComponents = pluginActions.reduce((acc, data) => ({ ...acc, ...data?.components }), {});
+    const { pluginItems, pluginGroups, pluginComponents } = actionComposerUtils.getPluginActionsFromDao(dao);
 
     const customActionComponents: Record<string, ProposalActionComponent<IProposalActionData>> = {
         ...coreCustomActionComponents,
@@ -136,7 +124,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                     ))}
                 </ProposalActions.Container>
             </ProposalActions.Root>
-            <ActionComposerWrapper
+            <ActionComposer
                 daoId={daoId}
                 onAddAction={(actions) => {
                     if (!Array.isArray(actions) && actions.id) {

@@ -3,7 +3,7 @@ import { type IDaoPlugin } from '@/shared/api/daoService';
 import { type TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils } from '@aragon/gov-ui-kit';
-import { actionComposerUtils } from '../../../../shared/components/actionComposer/actionComposerInput/actionComposerInputUtils';
+import { actionComposerInputUtils } from '../../../../shared/components/actionComposer/actionComposerInput/actionComposerInputUtils';
 import { type ISppPluginSettings } from '../../types';
 
 export interface IGetSppActionsProps {
@@ -34,7 +34,7 @@ class SppActionUtils {
             ],
             items: [
                 {
-                    ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t, {
+                    ...actionComposerInputUtils.getDefaultActionPluginMetadataItem(plugin, t, {
                         stageNames: plugin.settings.stages.map((stage) => stage.name),
                     }),
                     meta: plugin,

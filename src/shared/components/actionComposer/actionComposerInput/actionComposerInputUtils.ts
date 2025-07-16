@@ -393,4 +393,4 @@ class ActionComposerInputUtils {
     };
 }
 
-export const actionComposerUtils = new ActionComposerInputUtils();
+export const actionComposerInputUtils = new ActionComposerInputUtils();

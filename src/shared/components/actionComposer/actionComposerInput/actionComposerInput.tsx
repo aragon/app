@@ -1,10 +1,9 @@
 import { forwardRef } from 'react';
-import { useActionsContext } from '../../../../modules/governance/components/createProposalForm/actionsProvider';
 import { useDao } from '../../../api/daoService';
 import { AutocompleteInput } from '../../forms/autocompleteInput';
 import { useTranslations } from '../../translationsProvider';
 import type { IActionComposerInputProps } from './actionComposerInput.api';
-import { actionComposerUtils } from './actionComposerInputUtils';
+import { actionComposerInputUtils } from './actionComposerInputUtils';
 
 export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerInputProps>((props, ref) => {
     const {
@@ -12,6 +11,7 @@ export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerI
         onActionSelected,
         nativeItems,
         nativeGroups,
+        importedContractAbis,
         isWithoutTransfer,
         isWithoutRawCalldata,
         ...otherProps
@@ -21,13 +21,12 @@ export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerI
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
     const { t } = useTranslations();
-    const { smartContractAbis: abis } = useActionsContext();
 
-    const groups = actionComposerUtils.getActionGroups({ t, dao, abis, nativeGroups });
-    const items = actionComposerUtils.getActionItems({
+    const groups = actionComposerInputUtils.getActionGroups({ t, dao, abis: importedContractAbis, nativeGroups });
+    const items = actionComposerInputUtils.getActionItems({
         t,
         dao,
-        abis,
+        abis: importedContractAbis,
         nativeItems,
         isWithoutTransfer,
         isWithoutRawCalldata,

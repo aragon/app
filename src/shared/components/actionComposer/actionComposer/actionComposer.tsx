@@ -1,22 +1,21 @@
-import { type IProposalAction } from '@/modules/governance/api/governanceService';
-import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
-import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
-import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
-import type { IVerifySmartContractDialogParams } from '@/modules/governance/dialogs/verifySmartContractDialog';
-import type { IWalletConnectActionDialogParams } from '@/modules/governance/dialogs/walletConnectActionDialog';
-import { useDao } from '@/shared/api/daoService';
-import { useDialogContext } from '@/shared/components/dialogProvider';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, IconType } from '@aragon/gov-ui-kit';
+import { addressUtils, Button, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import { type IProposalAction } from '../../../../modules/governance/api/governanceService';
+import type { ISmartContractAbi } from '../../../../modules/governance/api/smartContractService';
+import type { IProposalActionData } from '../../../../modules/governance/components/createProposalForm';
+import { GovernanceDialogId } from '../../../../modules/governance/constants/governanceDialogId';
+import type { IVerifySmartContractDialogParams } from '../../../../modules/governance/dialogs/verifySmartContractDialog';
+import type { IWalletConnectActionDialogParams } from '../../../../modules/governance/dialogs/walletConnectActionDialog';
+import { useDao } from '../../../api/daoService';
+import { useDialogContext } from '../../dialogProvider';
+import { useTranslations } from '../../translationsProvider';
 import {
     ActionComposerInput,
     type IActionComposerInputItem,
     type IActionComposerInputProps,
-} from './actionComposerInput';
-import { ActionItemId } from './actionComposerInput/actionComposerInputUtils';
-import { useActionComposerContext } from './actionComposerProvider';
+} from '../actionComposerInput';
+import { ActionItemId } from '../actionComposerInput/actionComposerInputUtils';
 
 export interface IActionComposerProps {
     /**
@@ -48,11 +47,24 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const { addSmartContractAbi } = useActionComposerContext();
 
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
 
     const [displayActionComposer, setDisplayActionComposer] = useState(false);
+
+    const [importedContractAbis, setImportedContractAbis] = useState<ISmartContractAbi[]>([]);
+
+    const addImportedContractAbi = useCallback(
+        (abi: ISmartContractAbi) =>
+            setImportedContractAbis((current) => {
+                const alreadyExists = current.some((currentAbi) =>
+                    addressUtils.isAddressEqual(currentAbi.address, abi.address),
+                );
+
+                return alreadyExists ? current : [abi, ...current];
+            }),
+        [],
+    );
     // const [expandedActions, setExpandedActions] = useState<string[]>([]);
 
     // const { addAction, removeAction, moveAction, actions } = actionOperations;
@@ -76,7 +88,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     };
 
     const handleAbiSubmit = (abi: ISmartContractAbi) => {
-        addSmartContractAbi(abi);
+        addImportedContractAbi(abi);
         handleAddAction();
     };
 
@@ -210,6 +222,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 nativeItems={nativeItems}
                 nativeGroups={nativeGroups}
                 daoId={daoId}
+                importedContractAbis={importedContractAbis}
             />
         </>
         // </div>
