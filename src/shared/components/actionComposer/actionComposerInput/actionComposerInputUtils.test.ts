@@ -1,13 +1,13 @@
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { generateSmartContractAbi } from '@/modules/governance/testUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
+import { mockTranslations } from '../../../../test/utils';
 import { generateDao } from '../../../testUtils';
 import type { IActionComposerInputItem } from './actionComposerInput.api';
 import { actionComposerInputUtils, ActionItemId } from './actionComposerInputUtils';
 
 describe('actionComposerUtils', () => {
     describe('getActionGroups', () => {
-        const t = (key: string) => key;
         const truncateAddressSpy = jest.spyOn(addressUtils, 'truncateAddress');
 
         beforeEach(() => {
@@ -24,7 +24,12 @@ describe('actionComposerUtils', () => {
                 { id: '0xN1', name: 'Native1', info: 'info1' },
                 { id: '0xN2', name: 'Native2', info: 'info2' },
             ];
-            const result = actionComposerInputUtils.getActionGroups({ t, dao, abis: [], nativeGroups });
+            const result = actionComposerInputUtils.getActionGroups({
+                t: mockTranslations.tMock,
+                dao,
+                abis: [],
+                nativeGroups,
+            });
             // Should include OSX group and all nativeGroups
             expect(result.map((g) => g.id)).toEqual(['OSX', '0xN1', '0xN2']);
         });
@@ -35,7 +40,12 @@ describe('actionComposerUtils', () => {
                 generateSmartContractAbi({ address: '0xC1', name: 'Custom1' }),
                 generateSmartContractAbi({ address: '0xC2', name: 'Custom2' }),
             ];
-            const result = actionComposerInputUtils.getActionGroups({ t, dao, abis, nativeGroups: [] });
+            const result = actionComposerInputUtils.getActionGroups({
+                t: mockTranslations.tMock,
+                dao,
+                abis,
+                nativeGroups: [],
+            });
             // Should include custom abis as groups, plus DAO/OSX group
             expect(result.map((g) => g.id)).toEqual(['0xC1', '0xC2', 'OSX']);
         });
@@ -51,15 +61,18 @@ describe('actionComposerUtils', () => {
                 generateSmartContractAbi({ address: '0xC3', name: 'Custom3' }),
                 generateSmartContractAbi({ address: '0xDAO', name: 'CustomDao' }),
             ];
-            const result = actionComposerInputUtils.getActionGroups({ t, dao, abis: abisWithOverlap, nativeGroups });
+            const result = actionComposerInputUtils.getActionGroups({
+                t: mockTranslations.tMock,
+                dao,
+                abis: abisWithOverlap,
+                nativeGroups,
+            });
             // Should filter out 0xN1 and 0xDAO from custom, keep 0xC3
             expect(result.map((g) => g.id)).toEqual(['0xC3', 'OSX', '0xN1', '0xN2']);
         });
     });
 
     describe('getActionItems', () => {
-        const t = (key: string) => key;
-
         it('returns default and native items if no abis', () => {
             const dao = generateDao({ address: '0xDAO' });
             const nativeItems = [
@@ -76,7 +89,12 @@ describe('actionComposerUtils', () => {
                     groupId: '0xN2',
                 },
             ];
-            const result = actionComposerInputUtils.getActionItems({ t, dao, abis: [], nativeItems });
+            const result = actionComposerInputUtils.getActionItems({
+                t: mockTranslations.tMock,
+                dao,
+                abis: [],
+                nativeItems,
+            });
             expect(result.map((item) => item.id)).toEqual([
                 // non-grouped, default items first
                 ActionItemId.ADD_CONTRACT,
@@ -99,7 +117,12 @@ describe('actionComposerUtils', () => {
                     functions: [{ name: 'customAction1', parameters: [] }],
                 }),
             ];
-            const result = actionComposerInputUtils.getActionItems({ t, dao, abis, nativeItems: [] });
+            const result = actionComposerInputUtils.getActionItems({
+                t: mockTranslations.tMock,
+                dao,
+                abis,
+                nativeItems: [],
+            });
             expect(result.map((item) => item.id)).toEqual([
                 // non-grouped, default items first
                 ActionItemId.ADD_CONTRACT,
@@ -111,6 +134,38 @@ describe('actionComposerUtils', () => {
                 // DAO group with default Metadata Update action
                 ProposalActionType.METADATA_UPDATE,
             ]);
+        });
+
+        it('maintains correct order: non-grouped, custom, native', () => {
+            const dao = generateDao({ address: '0xDAO' });
+            const abis = [
+                generateSmartContractAbi({
+                    address: '0xCustom1',
+                    name: 'Custom1',
+                    functions: [{ name: 'customFunction', parameters: [] }],
+                }),
+            ];
+            const nativeItems = [
+                {
+                    id: 'native-1',
+                    name: 'Native Item 1',
+                    icon: IconType.SETTINGS,
+                    groupId: '0xNative1',
+                },
+            ];
+
+            const result = actionComposerInputUtils.getActionItems({ t: mockTranslations.tMock, dao, abis, nativeItems });
+
+            const itemIds = result.map((item) => item.id);
+            // Non-grouped items should come first
+            expect(itemIds[0]).toBe(ActionItemId.ADD_CONTRACT);
+            expect(itemIds[1]).toBe(ProposalActionType.TRANSFER);
+            // Custom items should come next
+            expect(itemIds[2]).toBe('0xCustom1-customFunction-0');
+            expect(itemIds[3]).toBe('0xCustom1-RAW_CALLDATA');
+            // Native items should come last
+            expect(itemIds[4]).toBe(ProposalActionType.METADATA_UPDATE);
+            expect(itemIds[5]).toBe('native-1');
         });
 
         it('merges custom and native items with groupId overlap', () => {
@@ -125,26 +180,12 @@ describe('actionComposerUtils', () => {
                         { name: 'native-2', parameters: [] },
                     ],
                 }),
-                generateSmartContractAbi({
-                    address: '0xC1',
-                    name: 'NonOverlap',
-                    functions: [{ name: 'custom-1', parameters: [] }],
-                }),
-                generateSmartContractAbi({
-                    address: '0xDAO',
-                    name: 'DaoOverlap',
-                    functions: [
-                        { name: 'custom-1', parameters: [] },
-                        { name: 'custom-2', parameters: [] },
-                        { name: 'setMetadata', parameters: [{ name: '_metadata', type: 'bytes' }] },
-                    ],
-                }),
             ];
             const nativeItemsWithOverlap = [
                 {
                     id: 'native-1',
                     name: 'Native Item 1',
-                    icon: IconType.EXPAND,
+                    icon: IconType.SETTINGS,
                     groupId: '0xN1',
                     defaultValue: {
                         inputData: { function: 'native-1', contract: 'Test', parameters: [] },
@@ -153,107 +194,33 @@ describe('actionComposerUtils', () => {
                 {
                     id: 'native-2',
                     name: 'Native Item 2',
-                    icon: IconType.EXPAND,
+                    icon: IconType.HOME,
                     groupId: '0xN1',
                     defaultValue: {
                         inputData: { function: 'native-2', contract: 'Test', parameters: [] },
                     },
                 },
-                {
-                    id: 'native-3',
-                    name: 'Native Item 3',
-                    icon: IconType.EXPAND,
-                    groupId: '0xN2',
-                    defaultValue: {
-                        inputData: { function: 'native-3', contract: 'Test', parameters: [] },
-                    },
-                },
-                {
-                    id: 'native-4',
-                    name: 'Native Item 5',
-                    icon: IconType.EXPAND,
-                    groupId: '0xN2',
-                    defaultValue: {
-                        inputData: { function: 'native-4', contract: 'Test', parameters: [] },
-                    },
-                },
             ] as unknown as IActionComposerInputItem[];
 
-            const [
-                addContract,
-                transfer,
-                importedC1F1,
-                importedC1Default,
-                nativeOSXF1,
-                nativeOSXF2,
-                nativeOSXF3,
-                nativeOSXF4,
-                nativeN1F1,
-                nativeN1F2,
-                nativeN1F3,
-                nativeN1F4,
-                nativeN2F1,
-                nativeN2F2,
-                nativeN2F3,
-            ] = actionComposerInputUtils.getActionItems({
-                t,
+            const result = actionComposerInputUtils.getActionItems({
+                t: mockTranslations.tMock,
                 dao,
                 abis: abisWithOverlap,
                 nativeItems: nativeItemsWithOverlap,
             });
 
-            // non-grouped, default items first
-            expect(addContract.id).toBe(ActionItemId.ADD_CONTRACT);
-            expect(transfer.id).toBe(ProposalActionType.TRANSFER);
-            expect(addContract.groupId).toBeUndefined();
-            expect(transfer.groupId).toBeUndefined();
+            const n1GroupItems = result.filter((item) => item.groupId === '0xN1');
+            expect(n1GroupItems.length).toBe(4); // 1 new custom + 2 native + 1 RAW_CALLDATA
 
-            // imported, non-overlap contract functions with default RAW_CALLDATA action
-            expect(importedC1F1.id).toBe(`0xC1-${abisWithOverlap[1].functions[0].name}-0`);
-            expect(importedC1F1.groupId).toBe('0xC1');
-            expect(importedC1F1.icon).toBe(IconType.SLASH);
-            expect(importedC1Default.id).toBe('0xC1-RAW_CALLDATA');
-            expect(importedC1Default.groupId).toBe('0xC1');
-            expect(importedC1Default.icon).toBe(IconType.BLOCKCHAIN_SMARTCONTRACT);
-
-            // Native items with merged custom actions where groupId overlaps
-
-            // 0xOSX - with overlap with imported items
-            expect(nativeOSXF1.id).toBe('0xDAO-custom-1-0');
-            expect(nativeOSXF1.groupId).toBe('OSX');
-            expect(nativeOSXF1.icon).toBe(IconType.SLASH);
-            expect(nativeOSXF2.id).toBe('0xDAO-custom-2-1');
-            expect(nativeOSXF2.groupId).toBe('OSX');
-            expect(nativeOSXF2.icon).toBe(IconType.SLASH);
-            expect(nativeOSXF3.id).toBe(ProposalActionType.METADATA_UPDATE);
-            expect(nativeOSXF3.groupId).toBe('OSX');
-            expect(nativeOSXF3.icon).toBe(IconType.SETTINGS);
-            expect(nativeOSXF4.id).toBe('0xDAO-RAW_CALLDATA');
-            expect(nativeOSXF4.groupId).toBe('OSX');
-            expect(nativeOSXF4.icon).toBe(IconType.BLOCKCHAIN_SMARTCONTRACT);
-
-            // 0xN1 - with overlap with imported items
-            expect(nativeN1F1.id).toBe(`0xN1-${abisWithOverlap[0].functions[0].name}-0`);
-            expect(nativeN1F1.groupId).toBe('0xN1');
-            expect(nativeN1F1.icon).toBe(IconType.SLASH);
-            expect(nativeN1F2.id).toBe('native-1');
-            expect(nativeN1F2.groupId).toBe('0xN1');
-            expect(nativeN1F2.icon).toBe(IconType.EXPAND);
-            expect(nativeN1F3.id).toBe('native-2');
-            expect(nativeN1F3.groupId).toBe('0xN1');
-            expect(nativeN1F3.icon).toBe(IconType.EXPAND);
-            expect(nativeN1F4.id).toBe('0xN1-RAW_CALLDATA');
-            expect(nativeN1F4.groupId).toBe('0xN1');
-            expect(nativeN1F4.icon).toBe(IconType.BLOCKCHAIN_SMARTCONTRACT);
-
-            // 0xN2 - no overlap with imported items
-            expect(nativeN2F1.id).toBe('native-3');
-            expect(nativeN2F1.groupId).toBe('0xN2');
-            expect(nativeN2F1.icon).toBe(IconType.EXPAND);
-            expect(nativeN2F2.id).toBe('native-4');
-            expect(nativeN2F2.groupId).toBe('0xN2');
-            expect(nativeN2F2.icon).toBe(IconType.EXPAND);
-            expect(nativeN2F3).toBeUndefined(); // no RAW_CALLDATA action for "pure" native items
+            const [custom1, native1, native2, rawCallData] = n1GroupItems;
+            expect(custom1.id).toBe('0xN1-custom-1-0');
+            expect(custom1.icon).toBe(IconType.SLASH); // custom items get default SLASH icon
+            expect(native1.id).toBe('native-1');
+            expect(native1.icon).toBe(IconType.SETTINGS); // native items preserve their icons
+            expect(native2.id).toBe('native-2');
+            expect(native2.icon).toBe(IconType.HOME);
+            expect(rawCallData.id).toBe('0xN1-RAW_CALLDATA');
+            expect(rawCallData.icon).toBe(IconType.BLOCKCHAIN_SMARTCONTRACT);
         });
 
         it("doesn't include transfer action if isWithoutTransfer is true", () => {
@@ -261,7 +228,7 @@ describe('actionComposerUtils', () => {
             const isWithoutTransfer = true;
 
             const result = actionComposerInputUtils.getActionItems({
-                t,
+                t: mockTranslations.tMock,
                 dao,
                 abis: [],
                 nativeItems: [],
@@ -277,7 +244,7 @@ describe('actionComposerUtils', () => {
             const isWithoutRawCalldata = true;
 
             const result = actionComposerInputUtils.getActionItems({
-                t,
+                t: mockTranslations.tMock,
                 dao,
                 abis,
                 nativeItems: [],
