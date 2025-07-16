@@ -1,5 +1,5 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import type { ISmartContractAbi } from '../../../../modules/governance/api/smartContractService';
+import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
 import type {
     IAutocompleteInputGroup,
     IAutocompleteInputItem,

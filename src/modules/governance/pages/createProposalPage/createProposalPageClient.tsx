@@ -46,6 +46,8 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
         [],
     );
 
+    const contextValues = useMemo(() => ({ prepareActions, addPrepareAction }), [prepareActions, addPrepareAction]);
+
     const handleFormSubmit = (values: ICreateProposalFormData) => {
         // We are always saving actions on the form so that user doesn't lose them if they navigate around the form.
         const { actions, addActions } = values;
@@ -72,7 +74,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
                 onSubmit={handleFormSubmit}
                 defaultValues={{ actions: [] }}
             >
-                <CreateProposalForm.Provider value={{ prepareActions, addPrepareAction }}>
+                <CreateProposalForm.Provider value={contextValues}>
                     <CreateProposalPageClientSteps steps={processedSteps} daoId={daoId} pluginAddress={pluginAddress} />
                 </CreateProposalForm.Provider>
             </WizardPage.Container>

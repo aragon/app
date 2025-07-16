@@ -1,5 +1,5 @@
-import { GovernanceSlotId } from '../../../../modules/governance/constants/moduleSlots';
-import type { IActionComposerPluginData } from '../../../../modules/governance/types';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import type { IActionComposerPluginData } from '@/modules/governance/types';
 import type { IDao, IDaoPlugin } from '../../../api/daoService';
 import { pluginRegistryUtils } from '../../../utils/pluginRegistryUtils';
 
