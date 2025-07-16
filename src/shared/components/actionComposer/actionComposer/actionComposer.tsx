@@ -1,43 +1,41 @@
+import { type IProposalAction } from '@/modules/governance/api/governanceService';
+import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
+import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
+import type { IVerifySmartContractDialogParams } from '@/modules/governance/dialogs/verifySmartContractDialog';
+import type { IWalletConnectActionDialogParams } from '@/modules/governance/dialogs/walletConnectActionDialog';
 import { addressUtils, Button, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useCallback, useRef, useState } from 'react';
-import { type IProposalAction } from '../../../../modules/governance/api/governanceService';
-import type { ISmartContractAbi } from '../../../../modules/governance/api/smartContractService';
-import type { IProposalActionData } from '../../../../modules/governance/components/createProposalForm';
-import { GovernanceDialogId } from '../../../../modules/governance/constants/governanceDialogId';
-import type { IVerifySmartContractDialogParams } from '../../../../modules/governance/dialogs/verifySmartContractDialog';
-import type { IWalletConnectActionDialogParams } from '../../../../modules/governance/dialogs/walletConnectActionDialog';
 import { useDao } from '../../../api/daoService';
 import { useDialogContext } from '../../dialogProvider';
 import { useTranslations } from '../../translationsProvider';
 import {
     ActionComposerInput,
+    ActionItemId,
     type IActionComposerInputItem,
     type IActionComposerInputProps,
 } from '../actionComposerInput';
-import { ActionItemId } from '../actionComposerInput/actionComposerInputUtils';
 
 export interface IActionComposerProps {
     /**
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Callback called when an action is added.
+     * @param value - single action or array of actions to be added.
+     */
     onAddAction: (value: IProposalActionData | IProposalActionData[]) => void;
+    /**
+     * Native groups to be displayed in the action composer input.
+     */
     nativeGroups: IActionComposerInputProps['nativeGroups'];
+    /**
+     * Native items to be displayed in the action composer input.
+     */
     nativeItems: IActionComposerInputProps['nativeItems'];
-    // actionOperations: {
-    //     addAction: (value: FieldArray<IProposalActionData> | IProposalActionData | IProposalActionData[]) => void;
-    //     removeAction: (index: number) => void;
-    //     moveAction: (index: number, newIndex: number) => void;
-    //     actions: IProposalActionData[];
-    // };
 }
-
-// const coreCustomActionComponents = {
-//     [ProposalActionType.TRANSFER]: TransferAssetAction,
-//     [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction,
-//     [ProposalActionType.METADATA_PLUGIN_UPDATE]: UpdatePluginMetadataAction,
-// } as unknown as Record<string, ProposalActionComponent<IProposalActionData>>;
 
 export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const { daoId, onAddAction, nativeGroups, nativeItems } = props;
@@ -65,23 +63,6 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
             }),
         [],
     );
-    // const [expandedActions, setExpandedActions] = useState<string[]>([]);
-
-    // const { addAction, removeAction, moveAction, actions } = actionOperations;
-
-    // Needed to control the entire field array (see Controlled Field Array on useFieldArray)
-    // TODO: move to parent
-    // const watchFieldArray = useWatch<Record<string, ICreateProposalFormData['actions']>>({ name: 'actions' });
-    // const controlledActions = actions.map((field, index) => ({ ...field, ...watchFieldArray[index] }));
-
-    // When moving actions up or down, the value field of the decoded parameters does not get unregistered, causing
-    // actions to have redundant parameters (coming from the action before/after) with a value but no type or name.
-    // const processedActions = controlledActions.map(({ inputData, ...field }) => ({
-    //     ...field,
-    //     inputData: inputData
-    //         ? { ...inputData, parameters: inputData.parameters.filter(({ type }) => (type as unknown) != null) }
-    //         : null,
-    // }));
 
     const handleAddAction = () => {
         autocompleteInputRef.current?.focus();
@@ -121,86 +102,13 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         if (defaultValue != null) {
             const actionId = crypto.randomUUID();
             onAddAction({ ...defaultValue, id: actionId, daoId, meta });
-            // setExpandedActions([actionId]);
         } else if (id === ActionItemId.ADD_CONTRACT) {
             handleVerifySmartContract(inputValue);
         }
     };
 
-    // const handleMoveAction = (index: number, newIndex: number) => moveAction(index, newIndex);
-    //
-    // const handleRemoveAction = (action: IProposalActionData, index: number) => {
-    //     removeAction(index);
-    //     setExpandedActions((actionIds) => {
-    //         // Expand the last remaining actions when only two actions are left, otherwise exclude the removed action ID
-    //         const defaultNewIds = actionIds.filter((id) => id !== action.id);
-    //         const newExpandedActions = actions.length === 2 ? [actions[Math.abs(index - 1)].id] : defaultNewIds;
-    //
-    //         return newExpandedActions;
-    //     });
-    // };
-
-    // const getActionDropdownItems = (index: number) => {
-    //     const dropdownItems: Array<IProposalActionsItemDropdownItem<IProposalActionData> & { hidden: boolean }> = [
-    //         {
-    //             label: t('app.governance.createProposalForm.actions.editAction.up'),
-    //             icon: IconType.CHEVRON_UP,
-    //             onClick: (_, index) => handleMoveAction(index, index - 1),
-    //             hidden: actions.length < 2 || index === 0,
-    //         },
-    //         {
-    //             label: t('app.governance.createProposalForm.actions.editAction.down'),
-    //             icon: IconType.CHEVRON_DOWN,
-    //             onClick: (_, index) => handleMoveAction(index, index + 1),
-    //             hidden: actions.length < 2 || index === actions.length - 1,
-    //         },
-    //         {
-    //             label: t('app.governance.createProposalForm.actions.editAction.remove'),
-    //             icon: IconType.CLOSE,
-    //             onClick: handleRemoveAction,
-    //             hidden: false,
-    //         },
-    //     ];
-    //
-    //     return dropdownItems.filter((item) => !item.hidden);
-    // };
-
-    // const pluginActions =
-    //     dao?.plugins.map((plugin) =>
-    //         pluginRegistryUtils.getSlotFunction<IDaoPlugin, IActionComposerPluginData>({
-    //             pluginId: plugin.subdomain,
-    //             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
-    //         })?.(plugin),
-    //     ) ?? [];
-    //
-    // const pluginItems = pluginActions.flatMap((data) => data?.items ?? []);
-    // const pluginGroups = pluginActions.flatMap((data) => data?.groups ?? []);
-    // const pluginComponents = pluginActions.reduce((acc, data) => ({ ...acc, ...data?.components }), {});
-
-    // const customActionComponents: Record<string, ProposalActionComponent<IProposalActionData>> = {
-    //     ...coreCustomActionComponents,
-    //     ...pluginComponents,
-    // };
-
     return (
-        // <div className="flex flex-col gap-y-10">
         <>
-            {/*<ProposalActions.Root expandedActions={expandedActions} onExpandedActionsChange={setExpandedActions}>*/}
-            {/*    <ProposalActions.Container emptyStateDescription="">*/}
-            {/*        {actions.map((action, index) => (*/}
-            {/*            <ProposalActions.Item<IProposalActionData>*/}
-            {/*                key={action.id}*/}
-            {/*                action={action}*/}
-            {/*                value={action.id}*/}
-            {/*                CustomComponent={customActionComponents[action.type]}*/}
-            {/*                dropdownItems={getActionDropdownItems(index)}*/}
-            {/*                editMode={true}*/}
-            {/*                formPrefix={`actions.${index.toString()}`}*/}
-            {/*                chainId={networkDefinitions[dao!.network].id}*/}
-            {/*            />*/}
-            {/*        ))}*/}
-            {/*    </ProposalActions.Container>*/}
-            {/*</ProposalActions.Root>*/}
             <div className={classNames('flex flex-row gap-3', { hidden: displayActionComposer })}>
                 <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={() => handleAddAction()}>
                     {t('app.governance.createProposalForm.actions.addAction.default')}
@@ -225,6 +133,5 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 importedContractAbis={importedContractAbis}
             />
         </>
-        // </div>
     );
 };
