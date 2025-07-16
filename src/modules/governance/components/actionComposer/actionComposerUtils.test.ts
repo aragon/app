@@ -1,13 +1,13 @@
 import { generateDao } from '@/shared/testUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
+import { mockTranslations } from '../../../../test/utils';
 import { ProposalActionType } from '../../api/governanceService';
-import { generateSmartContractAbi } from '../../testUtils/generators';
+import { generateSmartContractAbi } from '../../testUtils';
 import type { IActionComposerItem } from './actionComposer.api';
 import { actionComposerUtils, ActionItemId } from './actionComposerUtils';
 
 describe('actionComposerUtils', () => {
     describe('getActionGroups', () => {
-        const t = (key: string) => key;
         const truncateAddressSpy = jest.spyOn(addressUtils, 'truncateAddress');
 
         beforeEach(() => {
@@ -24,7 +24,12 @@ describe('actionComposerUtils', () => {
                 { id: '0xN1', name: 'Native1', info: 'info1' },
                 { id: '0xN2', name: 'Native2', info: 'info2' },
             ];
-            const result = actionComposerUtils.getActionGroups({ t, dao, abis: [], nativeGroups });
+            const result = actionComposerUtils.getActionGroups({
+                t: mockTranslations.tMock,
+                dao,
+                abis: [],
+                nativeGroups,
+            });
             // Should include OSX group and all nativeGroups
             expect(result.map((g) => g.id)).toEqual(['OSX', '0xN1', '0xN2']);
         });
@@ -35,7 +40,12 @@ describe('actionComposerUtils', () => {
                 generateSmartContractAbi({ address: '0xC1', name: 'Custom1' }),
                 generateSmartContractAbi({ address: '0xC2', name: 'Custom2' }),
             ];
-            const result = actionComposerUtils.getActionGroups({ t, dao, abis, nativeGroups: [] });
+            const result = actionComposerUtils.getActionGroups({
+                t: mockTranslations.tMock,
+                dao,
+                abis,
+                nativeGroups: [],
+            });
             // Should include custom abis as groups, plus DAO/OSX group
             expect(result.map((g) => g.id)).toEqual(['0xC1', '0xC2', 'OSX']);
         });
@@ -51,15 +61,18 @@ describe('actionComposerUtils', () => {
                 generateSmartContractAbi({ address: '0xC3', name: 'Custom3' }),
                 generateSmartContractAbi({ address: '0xDAO', name: 'CustomDao' }),
             ];
-            const result = actionComposerUtils.getActionGroups({ t, dao, abis: abisWithOverlap, nativeGroups });
+            const result = actionComposerUtils.getActionGroups({
+                t: mockTranslations.tMock,
+                dao,
+                abis: abisWithOverlap,
+                nativeGroups,
+            });
             // Should filter out 0xN1 and 0xDAO from custom, keep 0xC3
             expect(result.map((g) => g.id)).toEqual(['0xC3', 'OSX', '0xN1', '0xN2']);
         });
     });
 
     describe('getActionItems', () => {
-        const t = (key: string) => key;
-
         it('returns default and native items if no abis', () => {
             const dao = generateDao({ address: '0xDAO' });
             const nativeItems = [
@@ -76,7 +89,12 @@ describe('actionComposerUtils', () => {
                     groupId: '0xN2',
                 },
             ];
-            const result = actionComposerUtils.getActionItems({ t, dao, abis: [], nativeItems });
+            const result = actionComposerUtils.getActionItems({
+                t: mockTranslations.tMock,
+                dao,
+                abis: [],
+                nativeItems,
+            });
             expect(result.map((item) => item.id)).toEqual([
                 // non-grouped, default items first
                 ActionItemId.ADD_CONTRACT,
@@ -99,7 +117,12 @@ describe('actionComposerUtils', () => {
                     functions: [{ name: 'customAction1', parameters: [] }],
                 }),
             ];
-            const result = actionComposerUtils.getActionItems({ t, dao, abis, nativeItems: [] });
+            const result = actionComposerUtils.getActionItems({
+                t: mockTranslations.tMock,
+                dao,
+                abis,
+                nativeItems: [],
+            });
             expect(result.map((item) => item.id)).toEqual([
                 // non-grouped, default items first
                 ActionItemId.ADD_CONTRACT,
@@ -131,7 +154,7 @@ describe('actionComposerUtils', () => {
                 },
             ];
 
-            const result = actionComposerUtils.getActionItems({ t, dao, abis, nativeItems });
+            const result = actionComposerUtils.getActionItems({ t: mockTranslations.tMock, dao, abis, nativeItems });
 
             const itemIds = result.map((item) => item.id);
             // Non-grouped items should come first
@@ -180,7 +203,7 @@ describe('actionComposerUtils', () => {
             ] as unknown as IActionComposerItem[];
 
             const result = actionComposerUtils.getActionItems({
-                t,
+                t: mockTranslations.tMock,
                 dao,
                 abis: abisWithOverlap,
                 nativeItems: nativeItemsWithOverlap,
@@ -205,7 +228,7 @@ describe('actionComposerUtils', () => {
             const isWithoutTransfer = true;
 
             const result = actionComposerUtils.getActionItems({
-                t,
+                t: mockTranslations.tMock,
                 dao,
                 abis: [],
                 nativeItems: [],
@@ -221,7 +244,7 @@ describe('actionComposerUtils', () => {
             const isWithoutRawCalldata = true;
 
             const result = actionComposerUtils.getActionItems({
-                t,
+                t: mockTranslations.tMock,
                 dao,
                 abis,
                 nativeItems: [],
