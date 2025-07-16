@@ -1,3 +1,5 @@
+'use client';
+
 import { type IProposalAction } from '@/modules/governance/api/governanceService';
 import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';

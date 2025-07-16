@@ -154,7 +154,12 @@ describe('actionComposerUtils', () => {
                 },
             ];
 
-            const result = actionComposerInputUtils.getActionItems({ t: mockTranslations.tMock, dao, abis, nativeItems });
+            const result = actionComposerInputUtils.getActionItems({
+                t: mockTranslations.tMock,
+                dao,
+                abis,
+                nativeItems,
+            });
 
             const itemIds = result.map((item) => item.id);
             // Non-grouped items should come first
