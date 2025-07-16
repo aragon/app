@@ -3,11 +3,13 @@ import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { useTabParam } from '@/shared/hooks/useTabParam';
 import { PluginType } from '@/shared/types';
 import { DefinitionList, Tabs } from '@aragon/gov-ui-kit';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { DaoGovernanceInfo } from '../daoGovernanceInfo';
 import { DaoMembersInfo } from '../daoMembersInfo';
 import { DaoPluginInfoTabId, type IDaoPlugInfoProps } from './daoPluginInfo.api';
 import { DaoPluginInfoMetadata } from './daoPluginInfoMetadata';
+
+export const daoPluginInfoSearchParam = 'pluginTab';
 
 export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     const { plugin, daoId, type } = props;
@@ -27,12 +29,11 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     );
 
     const visibleTabs = useMemo(() => tabs.filter((tab) => !tab.hidden), [tabs]);
-    const [activeTab, setActiveTab] = useTabParam({ name: 'pluginInfo', fallbackValue: visibleTabs[0].id });
-
-    // Update active tab when visible tabs array changes
-    useEffect(() => {
-        setActiveTab(visibleTabs[0].id);
-    }, [visibleTabs, setActiveTab]);
+    const [activeTab, setActiveTab] = useTabParam({
+        name: daoPluginInfoSearchParam,
+        fallbackValue: visibleTabs[0].id,
+        tabs: visibleTabs.map((tab) => tab.id),
+    });
 
     return (
         <Tabs.Root value={activeTab} onValueChange={(value) => setActiveTab(value as DaoPluginInfoTabId)}>

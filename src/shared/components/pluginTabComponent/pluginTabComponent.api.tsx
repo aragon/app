@@ -42,6 +42,10 @@ export interface IPluginTabComponentProps<TMeta extends object = object, TProps 
      */
     onValueChange?: (value: ITabComponentPlugin<TMeta, TProps>) => void;
     /**
+     *
+     */
+    searchParamName?: string;
+    /**
      * Fallback component rendered if no components is registered with the specified slot and plugin IDs
      */
     Fallback?: IPluginSingleComponentProps['Fallback'];

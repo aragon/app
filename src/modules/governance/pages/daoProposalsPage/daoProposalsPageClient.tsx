@@ -25,6 +25,8 @@ export interface IDaoProposalsPageClientProps {
     initialParams: IGetProposalListParams;
 }
 
+export const proposalsTabParam = 'proposalsPage';
+
 export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (props) => {
     const { initialParams } = props;
     const { daoId } = initialParams.queryParams;
@@ -38,6 +40,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
         daoId,
         type: PluginType.PROCESS,
         includeGroupTab: true,
+        name: proposalsTabParam,
     });
 
     const buildProposalUrl = (plugin: IDaoPlugin) => daoUtils.getDaoUrl(dao, `create/${plugin.address}/proposal`)!;
@@ -69,7 +72,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
 
     const actionProps = plugins.length > 1 ? { onClick: openSelectPluginDialog } : defaultActionProps;
 
-    const allProposalsSelected = selectedPlugin.id === pluginGroupTab.id;
+    const allProposalsSelected = selectedPlugin.uniqueId === pluginGroupTab.uniqueId;
     const asideCardTitle = allProposalsSelected
         ? t('app.governance.daoProposalsPage.aside.stats')
         : `${selectedPlugin.label} (${selectedPlugin.meta.slug.toUpperCase()})`;

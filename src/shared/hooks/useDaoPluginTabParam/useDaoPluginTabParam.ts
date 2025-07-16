@@ -4,15 +4,20 @@ import { useCallback, useMemo } from 'react';
 import { useDaoPlugins, type IUseDaoPluginsParams } from '../useDaoPlugins';
 import { useTabParam, type IUseTabParamParams } from '../useTabParam';
 
-export interface IUseDaoPluginTabParamParams extends IUseTabParamParams, IUseDaoPluginsParams {}
+export interface IUseDaoPluginTabParamParams extends Omit<IUseTabParamParams, 'tabs'>, IUseDaoPluginsParams {}
 
 export const useDaoPluginTabParam = (params: IUseDaoPluginTabParamParams) => {
-    const { name, fallbackValue, ...otherParams } = params;
+    const { name, fallbackValue, enabled = true } = params;
 
-    const plugins = useDaoPlugins(otherParams)!;
+    const plugins = useDaoPlugins(params)!;
 
     const processedFallbackValue = fallbackValue ?? plugins[0].meta.slug;
-    const [activeTab, setActiveTab] = useTabParam({ name, fallbackValue: processedFallbackValue });
+    const [activeTab, setActiveTab] = useTabParam({
+        name,
+        fallbackValue: processedFallbackValue,
+        enabled,
+        tabs: plugins.map((plugin) => plugin.uniqueId),
+    });
 
     const selectedPlugin = useMemo(
         () => plugins.find((plugin) => plugin.meta.slug === activeTab) ?? plugins[0],

@@ -26,14 +26,17 @@ export interface IDaoMemberListContainerProps
     children?: ReactNode;
 }
 
+export const daoMemberListSearchParam = 'membersTab';
+
 export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (props) => {
     const { initialParams, value, onValueChange, ...otherProps } = props;
 
     const { selectedPlugin, setSelectedPlugin, plugins } = useDaoPluginTabParam({
-        name: 'members',
+        name: daoMemberListSearchParam,
         daoId: initialParams.queryParams.daoId,
         type: PluginType.BODY,
         includeSubPlugins: true,
+        enabled: onValueChange == null,
     });
 
     const processedPlugins = plugins.map((plugin) => {
@@ -52,6 +55,7 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (p
             Fallback={DaoMemberListDefault}
             value={value ?? selectedPlugin}
             onValueChange={onValueChange ?? setSelectedPlugin}
+            searchParamName={daoMemberListSearchParam}
             {...otherProps}
         />
     );

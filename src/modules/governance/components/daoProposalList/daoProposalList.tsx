@@ -27,6 +27,8 @@ export interface IDaoProposalListProps extends Pick<IPluginTabComponentProps<IDa
     children?: ReactNode;
 }
 
+export const daoProposalListSearchParam = 'proposalsTab';
+
 export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
     const { initialParams, value, onValueChange, ...otherProps } = props;
     const { daoId } = initialParams.queryParams;
@@ -36,7 +38,13 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
         selectedPlugin,
         setSelectedPlugin,
         plugins: processPlugins,
-    } = useDaoPluginTabParam({ name: 'proposals', daoId, type: PluginType.PROCESS, includeGroupTab: true });
+    } = useDaoPluginTabParam({
+        name: daoProposalListSearchParam,
+        daoId,
+        type: PluginType.PROCESS,
+        includeGroupTab: true,
+        enabled: onValueChange == null,
+    });
 
     const processedPlugins = processPlugins.map((plugin) => {
         const { id, label, meta } = plugin;
@@ -60,6 +68,7 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
             Fallback={DaoProposalListDefault}
             value={value ?? selectedPlugin}
             onValueChange={onValueChange ?? setSelectedPlugin}
+            searchParamName={daoProposalListSearchParam}
             {...otherProps}
         />
     );

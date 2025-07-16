@@ -17,6 +17,8 @@ export interface IDaoMembersPageClientProps {
     initialParams: IGetMemberListParams;
 }
 
+export const membersTabParam = 'membersTab';
+
 export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props) => {
     const { initialParams } = props;
     const { daoId } = initialParams.queryParams;
@@ -27,6 +29,7 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
         daoId,
         type: PluginType.BODY,
         includeSubPlugins: true,
+        name: membersTabParam,
     });
 
     return (

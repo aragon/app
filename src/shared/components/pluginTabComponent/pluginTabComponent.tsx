@@ -1,34 +1,25 @@
 import { useTabParam } from '@/shared/hooks/useTabParam';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { Tabs } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
 import { PluginSingleComponent } from '../pluginSingleComponent';
 import type { IPluginTabComponentProps } from './pluginTabComponent.api';
 
 export const PluginTabComponent = <TMeta extends object, TProps extends object>(
     props: IPluginTabComponentProps<TMeta, TProps>,
 ) => {
-    const { slotId, plugins = [], value, onValueChange, Fallback, ...otherProps } = props;
+    const {
+        slotId,
+        plugins = [],
+        value,
+        onValueChange,
+        searchParamName = 'pluginTab',
+        Fallback,
+        ...otherProps
+    } = props;
 
     const supportedPlugins = plugins.filter(
         (plugin) => pluginRegistryUtils.getSlotComponent({ slotId, pluginId: plugin.id }) != null,
     );
-
-    const fallbackValue = value?.uniqueId ?? plugins[0].uniqueId;
-    const [activePlugin, setActivePlugin] = useTabParam({ fallbackValue });
-
-    const updateActivePlugin = (tabId: string) => {
-        const plugin = plugins.find((plugin) => plugin.uniqueId === tabId)!;
-        setActivePlugin(plugin.uniqueId);
-        onValueChange?.(plugin);
-    };
-
-    // Update internal state on value property change
-    useEffect(() => {
-        if (value) {
-            setActivePlugin(value.uniqueId);
-        }
-    }, [value, setActivePlugin]);
 
     // The components renders null if there is no fallback specified for the slot-id AND the slot has no supported plugins.
     const hasNoContent = Fallback == null && !supportedPlugins.length;
@@ -38,6 +29,20 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
     // 2 - The slot has one plugin and the fallback is specified
     const isSingleComponent =
         (supportedPlugins.length === 1 && Fallback == null) || (plugins.length === 1 && Fallback != null);
+
+    const fallbackValue = value?.uniqueId ?? plugins[0].uniqueId;
+    const [activePlugin, setActivePlugin] = useTabParam({
+        name: searchParamName,
+        fallbackValue,
+        enabled: onValueChange == null && !hasNoContent && !isSingleComponent,
+        tabs: plugins.map((plugin) => plugin.uniqueId),
+    });
+
+    const updateActivePlugin = (tabId: string) => {
+        const plugin = plugins.find((plugin) => plugin.uniqueId === tabId)!;
+        setActivePlugin(plugin.uniqueId);
+        onValueChange?.(plugin);
+    };
 
     if (hasNoContent) {
         return null;

@@ -15,6 +15,8 @@ export interface IDaoMembersInfoProps {
     plugin?: IDaoPlugin;
 }
 
+export const daoMembersInfoSearchParam = 'membersInfoTab';
+
 export const DaoMembersInfo: React.FC<IDaoMembersInfoProps> = (props) => {
     const { daoId, plugin } = props;
 
@@ -27,6 +29,11 @@ export const DaoMembersInfo: React.FC<IDaoMembersInfoProps> = (props) => {
     const processedPlugins = daoPlugins.map((plugin) => ({ ...plugin, props: { plugin: plugin.meta } }));
 
     return (
-        <PluginTabComponent slotId={SettingsSlotId.SETTINGS_MEMBERS_INFO} plugins={processedPlugins} daoId={daoId} />
+        <PluginTabComponent
+            slotId={SettingsSlotId.SETTINGS_MEMBERS_INFO}
+            plugins={processedPlugins}
+            daoId={daoId}
+            searchParamName={daoMembersInfoSearchParam}
+        />
     );
 };
