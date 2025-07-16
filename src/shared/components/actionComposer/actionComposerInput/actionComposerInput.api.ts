@@ -3,21 +3,21 @@ import type {
     IAutocompleteInputGroup,
     IAutocompleteInputItem,
     IAutocompleteInputProps,
-} from '@/shared/components/forms/autocompleteInput';
+} from '../../forms/autocompleteInput';
 
-export interface IActionComposerItem<TMeta = undefined> extends IAutocompleteInputItem<TMeta> {
+export interface IActionComposerInputItem<TMeta = undefined> extends IAutocompleteInputItem<TMeta> {
     /**
      * Default value for the action.
      */
     defaultValue?: IProposalAction;
 }
 
-export interface IActionComposerProps<TMeta = undefined>
+export interface IActionComposerInputProps<TMeta = undefined>
     extends Omit<IAutocompleteInputProps, 'items' | 'groups' | 'selectItemLabel' | 'onChange'> {
     /**
      * Callback called on action selected.
      */
-    onActionSelected: (item: IActionComposerItem<TMeta>, inputValue: string) => void;
+    onActionSelected: (item: IActionComposerInputItem<TMeta>, inputValue: string) => void;
     /**
      * ID of the DAO.
      */
@@ -25,7 +25,7 @@ export interface IActionComposerProps<TMeta = undefined>
     /**
      * Additional native items to be displayed.
      */
-    nativeItems: Array<IActionComposerItem<TMeta>>;
+    nativeItems: Array<IActionComposerInputItem<TMeta>>;
     /**
      * Additional native groups to be displayed.
      */

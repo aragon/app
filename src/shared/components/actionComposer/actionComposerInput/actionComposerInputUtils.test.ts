@@ -1,9 +1,9 @@
-import { generateDao } from '@/shared/testUtils';
+import { ProposalActionType } from '@/modules/governance/api/governanceService';
+import { generateSmartContractAbi } from '@/modules/governance/testUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { ProposalActionType } from '../../api/governanceService';
-import { generateSmartContractAbi } from '../../testUtils/generators';
-import type { IActionComposerItem } from './actionComposer.api';
-import { actionComposerUtils, ActionItemId } from './actionComposerUtils';
+import { generateDao } from '../../../testUtils';
+import type { IActionComposerInputItem } from './actionComposerInput.api';
+import { actionComposerUtils, ActionItemId } from './actionComposerInputUtils';
 
 describe('actionComposerUtils', () => {
     describe('getActionGroups', () => {
@@ -177,7 +177,7 @@ describe('actionComposerUtils', () => {
                         inputData: { function: 'native-4', contract: 'Test', parameters: [] },
                     },
                 },
-            ] as unknown as IActionComposerItem[];
+            ] as unknown as IActionComposerInputItem[];
 
             const [
                 addContract,

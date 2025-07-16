@@ -1,16 +1,16 @@
-import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
-import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
-import type { TranslationFunction } from '@/shared/components/translationsProvider';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { type AbiStateMutability, toFunctionSelector, zeroAddress } from 'viem';
 import {
     type IProposalAction,
     type IProposalActionUpdatePluginMetadata,
     ProposalActionType,
-} from '../../api/governanceService';
-import type { ISmartContractAbi, ISmartContractAbiFunction } from '../../api/smartContractService';
-import type { IActionComposerItem } from './actionComposer.api';
+} from '@/modules/governance/api/governanceService';
+import type { ISmartContractAbi, ISmartContractAbiFunction } from '@/modules/governance/api/smartContractService';
+import { addressUtils, IconType } from '@aragon/gov-ui-kit';
+import { type AbiStateMutability, toFunctionSelector, zeroAddress } from 'viem';
+import type { IDao, IDaoPlugin } from '../../../api/daoService';
+import { ipfsUtils } from '../../../utils/ipfsUtils';
+import type { IAutocompleteInputGroup } from '../../forms/autocompleteInput';
+import type { TranslationFunction } from '../../translationsProvider';
+import type { IActionComposerInputItem } from './actionComposerInput.api';
 
 export enum ActionItemId {
     CUSTOM_ACTION = 'CUSTOM_ACTION',
@@ -44,7 +44,7 @@ export interface IGetNativeActionItemsParams extends IGetActionBaseParams {
     /**
      * Additional action items.
      */
-    nativeItems: IActionComposerItem[];
+    nativeItems: IActionComposerInputItem[];
     /**
      * If true, transfer action will not be included.
      */
@@ -62,7 +62,7 @@ export interface IGetCustomActionParams extends IGetActionBaseParams {
     isWithoutRawCalldata?: boolean;
 }
 
-class ActionComposerUtils {
+class ActionComposerInputUtils {
     getActionGroups = ({
         t,
         dao,
@@ -91,7 +91,7 @@ class ActionComposerUtils {
         nativeItems,
         isWithoutTransfer,
         isWithoutRawCalldata,
-    }: IGetCustomActionParams & IGetNativeActionItemsParams): IActionComposerItem[] => {
+    }: IGetCustomActionParams & IGetNativeActionItemsParams): IActionComposerInputItem[] => {
         // Show items in the following order:
         // 1. NO CONTRACT: first show actions not belonging to any group (i.e. add contract, transfer)
         // 2. CUSTOM ACTIONS: second, show imported custom contracts with its actions, but only contracts which are unique, i.e. there is no collision with some of the native contracts.
@@ -103,11 +103,11 @@ class ActionComposerUtils {
             this.functionSelectorMapper,
         );
 
-        const nonGroupItems: IActionComposerItem[] = [];
-        const finalCustomItems: IActionComposerItem[] = [];
-        const finalNativeItems: IActionComposerItem[] = [];
-        const customItemsByGroup: Record<string, IActionComposerItem[]> = {};
-        const nativeItemsByGroup: Record<string, IActionComposerItem[]> = {};
+        const nonGroupItems: IActionComposerInputItem[] = [];
+        const finalCustomItems: IActionComposerInputItem[] = [];
+        const finalNativeItems: IActionComposerInputItem[] = [];
+        const customItemsByGroup: Record<string, IActionComposerInputItem[]> = {};
+        const nativeItemsByGroup: Record<string, IActionComposerInputItem[]> = {};
 
         const normalizeGroupId = (groupId: string) => (groupId === dao?.address ? ActionGroupId.OSX : groupId);
 
@@ -169,7 +169,7 @@ class ActionComposerUtils {
         plugin: IDaoPlugin,
         t: TranslationFunction,
         additionalMetadata?: Record<string, unknown>,
-    ): IActionComposerItem => {
+    ): IActionComposerInputItem => {
         const { address } = plugin;
 
         return {
@@ -181,7 +181,7 @@ class ActionComposerUtils {
         };
     };
 
-    private functionSelectorMapper = (item: IActionComposerItem) => {
+    private functionSelectorMapper = (item: IActionComposerInputItem) => {
         if (item.defaultValue?.inputData == null || item.id === ProposalActionType.TRANSFER) {
             return item;
         }
@@ -213,7 +213,7 @@ class ActionComposerUtils {
         abis,
         isWithoutRawCalldata,
         t,
-    }: IGetCustomActionParams): IActionComposerItem[] => {
+    }: IGetCustomActionParams): IActionComposerInputItem[] => {
         const customActionItems = abis.map((abi) => {
             const functionActions = abi.functions.map((abiFunction, index) =>
                 this.buildDefaultCustomAction(abi, abiFunction, index),
@@ -258,7 +258,7 @@ class ActionComposerUtils {
         dao,
         nativeItems,
         isWithoutTransfer,
-    }: IGetNativeActionItemsParams): IActionComposerItem[] => {
+    }: IGetNativeActionItemsParams): IActionComposerInputItem[] => {
         const extendedNativeItems = [
             {
                 id: ProposalActionType.METADATA_UPDATE,
@@ -319,7 +319,7 @@ class ActionComposerUtils {
         { address: contractAddress, name: contractName }: ISmartContractAbi,
         { name: functionName, stateMutability, parameters }: ISmartContractAbiFunction,
         index: number,
-    ): IActionComposerItem => ({
+    ): IActionComposerInputItem => ({
         id: `${contractAddress}-${functionName}-${index.toString()}`,
         name: functionName,
         icon: IconType.SLASH,
@@ -342,7 +342,7 @@ class ActionComposerUtils {
     private buildDefaultRawCalldataAction = (
         { address, name }: ISmartContractAbi,
         t: TranslationFunction,
-    ): IActionComposerItem => ({
+    ): IActionComposerInputItem => ({
         id: `${address}-${ActionItemId.RAW_CALLDATA}`,
         name: t(`app.governance.actionComposer.customItem.${ActionItemId.RAW_CALLDATA}`),
         icon: IconType.BLOCKCHAIN_SMARTCONTRACT,
@@ -393,4 +393,4 @@ class ActionComposerUtils {
     };
 }
 
-export const actionComposerUtils = new ActionComposerUtils();
+export const actionComposerUtils = new ActionComposerInputUtils();

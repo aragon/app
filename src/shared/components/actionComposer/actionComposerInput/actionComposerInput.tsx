@@ -1,12 +1,12 @@
-import { useDao } from '@/shared/api/daoService';
-import { AutocompleteInput } from '@/shared/components/forms/autocompleteInput';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { forwardRef } from 'react';
-import { useActionsContext } from '../createProposalForm/actionsProvider';
-import type { IActionComposerProps } from './actionComposer.api';
-import { actionComposerUtils } from './actionComposerUtils';
+import { useActionsContext } from '../../../../modules/governance/components/createProposalForm/actionsProvider';
+import { useDao } from '../../../api/daoService';
+import { AutocompleteInput } from '../../forms/autocompleteInput';
+import { useTranslations } from '../../translationsProvider';
+import type { IActionComposerInputProps } from './actionComposerInput.api';
+import { actionComposerUtils } from './actionComposerInputUtils';
 
-export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>((props, ref) => {
+export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerInputProps>((props, ref) => {
     const {
         daoId,
         onActionSelected,
@@ -51,4 +51,4 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
     );
 });
 
-ActionComposer.displayName = 'ActionComposer';
+ActionComposerInput.displayName = 'ActionComposer';

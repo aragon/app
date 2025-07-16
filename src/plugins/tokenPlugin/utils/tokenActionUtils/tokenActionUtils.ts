@@ -1,5 +1,4 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import { actionComposerUtils } from '@/modules/governance/components/actionComposer/actionComposerUtils';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
@@ -13,6 +12,7 @@ import {
     type IProposalActionTokenMint as IGukProposalActionTokenMint,
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
+import { actionComposerUtils } from '../../../../shared/components/actionComposer/actionComposerInput/actionComposerInputUtils';
 import { TokenMintTokensAction } from '../../components/tokenActions/tokenMintTokensAction';
 import { TokenUpdateSettingsAction } from '../../components/tokenActions/tokenUpdateSettingsAction';
 import {

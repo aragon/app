@@ -1,5 +1,6 @@
 import { type IProposalAction } from '@/modules/governance/api/governanceService';
 import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
+import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import type { IVerifySmartContractDialogParams } from '@/modules/governance/dialogs/verifySmartContractDialog';
 import type { IWalletConnectActionDialogParams } from '@/modules/governance/dialogs/walletConnectActionDialog';
@@ -13,12 +14,11 @@ import {
     ActionComposerInput,
     type IActionComposerInputItem,
     type IActionComposerInputProps,
-} from '../../../../../shared/components/actionComposer/actionComposerInput';
-import { ActionItemId } from '../../../../../shared/components/actionComposer/actionComposerInput/actionComposerInputUtils';
-import { useActionsContext } from '../actionsProvider';
-import type { IProposalActionData } from '../createProposalFormDefinitions';
+} from './actionComposerInput';
+import { ActionItemId } from './actionComposerInput/actionComposerInputUtils';
+import { useActionComposerContext } from './actionComposerProvider';
 
-export interface IActionComposerWrapperProps {
+export interface IActionComposerProps {
     /**
      * ID of the DAO.
      */
@@ -40,7 +40,7 @@ export interface IActionComposerWrapperProps {
 //     [ProposalActionType.METADATA_PLUGIN_UPDATE]: UpdatePluginMetadataAction,
 // } as unknown as Record<string, ProposalActionComponent<IProposalActionData>>;
 
-export const ActionComposerWrapper: React.FC<IActionComposerWrapperProps> = (props) => {
+export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const { daoId, onAddAction, nativeGroups, nativeItems } = props;
 
     const daoUrlParams = { id: daoId };
@@ -48,7 +48,7 @@ export const ActionComposerWrapper: React.FC<IActionComposerWrapperProps> = (pro
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const { addSmartContractAbi } = useActionsContext();
+    const { addSmartContractAbi } = useActionComposerContext();
 
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
 
