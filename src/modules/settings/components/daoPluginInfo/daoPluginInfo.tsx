@@ -1,8 +1,9 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
+import { useTabParam } from '@/shared/hooks/useTabParam';
 import { PluginType } from '@/shared/types';
 import { DefinitionList, Tabs } from '@aragon/gov-ui-kit';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { DaoGovernanceInfo } from '../daoGovernanceInfo';
 import { DaoMembersInfo } from '../daoMembersInfo';
 import { DaoPluginInfoTabId, type IDaoPlugInfoProps } from './daoPluginInfo.api';
@@ -11,14 +12,14 @@ import { DaoPluginInfoMetadata } from './daoPluginInfoMetadata';
 export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     const { plugin, daoId, type } = props;
 
-    const { description, links = [] } = plugin;
+    const { description, links } = plugin;
 
     const { t } = useTranslations();
     const pluginInfo = useDaoPluginInfo({ daoId, address: plugin.address });
 
     const tabs = useMemo(
         () => [
-            { id: DaoPluginInfoTabId.DESCRIPTION, hidden: !description && links.length === 0 },
+            { id: DaoPluginInfoTabId.DESCRIPTION, hidden: !description && links?.length === 0 },
             { id: DaoPluginInfoTabId.CONTRACT },
             { id: DaoPluginInfoTabId.SETTINGS },
         ],
@@ -26,10 +27,12 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     );
 
     const visibleTabs = useMemo(() => tabs.filter((tab) => !tab.hidden), [tabs]);
-    const [activeTab, setActiveTab] = useState(visibleTabs[0].id);
+    const [activeTab, setActiveTab] = useTabParam({ name: 'pluginInfo', fallbackValue: visibleTabs[0].id });
 
-    // Update active tab if tabs prop changes
-    useEffect(() => setActiveTab(visibleTabs[0].id), [visibleTabs]);
+    // Update active tab when visible tabs array changes
+    useEffect(() => {
+        setActiveTab(visibleTabs[0].id);
+    }, [visibleTabs, setActiveTab]);
 
     return (
         <Tabs.Root value={activeTab} onValueChange={(value) => setActiveTab(value as DaoPluginInfoTabId)}>

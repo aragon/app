@@ -1,15 +1,16 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation-original';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 export interface IUseTabParamParams {
     /**
+     * Name of the parameter to be used on the URL.
      * @default tab
      */
     name?: string;
     /**
-     *
+     * Fallback value of the parameter used when URL has no initial parameter set.
      */
-    initialValue?: string;
+    fallbackValue?: string;
 }
 
 export type IUseTabParamResult = [string | undefined, (tab: string) => void];
@@ -17,22 +18,28 @@ export type IUseTabParamResult = [string | undefined, (tab: string) => void];
 export const defaultParamName = 'tab';
 
 export const useTabParam = (params: IUseTabParamParams): IUseTabParamResult => {
-    const { name = defaultParamName, initialValue } = params;
+    const { name = defaultParamName, fallbackValue } = params;
 
     const searchParams = useSearchParams();
-    const pathname = usePathname();
-    const router = useRouter();
+    const searchParamsRef = useRef(searchParams);
 
-    const [activeTab, setActiveTab] = useState(searchParams.get(name) ?? initialValue);
+    const pathname = usePathname();
+    const pathnameRef = useRef(pathname);
+
+    const router = useRouter();
+    const routerRef = useRef(router);
+
+    const initialValue = searchParams.get(name) ?? fallbackValue;
+    const [activeTab, setActiveTab] = useState(initialValue);
 
     const updateActiveTab = useCallback(
         (tabId: string) => {
-            const newParams = new URLSearchParams(searchParams);
+            const newParams = new URLSearchParams(searchParamsRef.current);
             newParams.set(name, tabId);
-            router.replace(`${pathname}?${newParams.toString()}`);
+            routerRef.current.replace(`${pathnameRef.current}?${newParams.toString()}`);
             setActiveTab(tabId);
         },
-        [searchParams, name, router, pathname],
+        [name],
     );
 
     return [activeTab, updateActiveTab];

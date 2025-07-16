@@ -1,8 +1,9 @@
+import { useTabParam } from '@/shared/hooks/useTabParam';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { Tabs } from '@aragon/gov-ui-kit';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { PluginSingleComponent } from '../pluginSingleComponent';
-import type { IPluginTabComponentProps, ITabComponentPlugin } from './pluginTabComponent.api';
+import type { IPluginTabComponentProps } from './pluginTabComponent.api';
 
 export const PluginTabComponent = <TMeta extends object, TProps extends object>(
     props: IPluginTabComponentProps<TMeta, TProps>,
@@ -13,23 +14,21 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
         (plugin) => pluginRegistryUtils.getSlotComponent({ slotId, pluginId: plugin.id }) != null,
     );
 
-    const defaultActivePlugin = value ?? plugins[0];
-    const [activePlugin, setActivePlugin] = useState<ITabComponentPlugin<TMeta, TProps> | undefined>(
-        defaultActivePlugin,
-    );
+    const fallbackValue = value?.uniqueId ?? plugins[0].uniqueId;
+    const [activePlugin, setActivePlugin] = useTabParam({ fallbackValue });
 
     const updateActivePlugin = (tabId: string) => {
         const plugin = plugins.find((plugin) => plugin.uniqueId === tabId)!;
-        setActivePlugin(plugin);
+        setActivePlugin(plugin.uniqueId);
         onValueChange?.(plugin);
     };
 
     // Update internal state on value property change
     useEffect(() => {
         if (value) {
-            setActivePlugin(value);
+            setActivePlugin(value.uniqueId);
         }
-    }, [value]);
+    }, [value, setActivePlugin]);
 
     // The components renders null if there is no fallback specified for the slot-id AND the slot has no supported plugins.
     const hasNoContent = Fallback == null && !supportedPlugins.length;
@@ -51,7 +50,7 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
     }
 
     return (
-        <Tabs.Root value={activePlugin?.uniqueId} onValueChange={updateActivePlugin}>
+        <Tabs.Root value={activePlugin} onValueChange={updateActivePlugin}>
             <Tabs.List>
                 {plugins.map(({ uniqueId, label }) => (
                     <Tabs.Trigger key={uniqueId} label={label} value={uniqueId} />

@@ -2,8 +2,9 @@
 
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useTabParam } from '@/shared/hooks/useTabParam';
 import { Tabs } from '@aragon/gov-ui-kit';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import type { ITokenPlugin, ITokenPluginSettings } from '../../types';
 import { TokenDelegationForm } from './tokenDelegation';
 import { TokenLockForm } from './tokenLock';
@@ -39,7 +40,7 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const { underlying, symbol, name } = token;
 
     const { t } = useTranslations();
-    const [selectedTab, setSelectedTab] = useState<string>();
+    const [selectedTab, setSelectedTab] = useTabParam({ name: 'memberPanel' });
 
     const visibleTabs = getTabsDefinitions(plugin.settings).filter((tab) => !tab.hidden);
 
@@ -54,7 +55,7 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
         const { LOCK, WRAP, DELEGATE } = TokenMemberPanelTab;
         const initialSelectedTab = votingEscrow ? LOCK : underlying != null ? WRAP : DELEGATE;
         setSelectedTab(initialSelectedTab);
-    }, [votingEscrow, underlying]);
+    }, [votingEscrow, underlying, setSelectedTab]);
 
     if (!visibleTabs.length) {
         return null;

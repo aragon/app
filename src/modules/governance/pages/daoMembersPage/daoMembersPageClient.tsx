@@ -4,9 +4,8 @@ import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { useDaoPluginTabParam } from '@/shared/hooks/useDaoPluginTabParam';
 import { PluginType } from '@/shared/types';
-import { useState } from 'react';
 import type { IGetMemberListParams } from '../../api/governanceService';
 import { DaoMemberList } from '../../components/daoMemberList';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -24,8 +23,11 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
 
     const { t } = useTranslations();
 
-    const bodyPlugins = useDaoPlugins({ daoId, type: PluginType.BODY, includeSubPlugins: true })!;
-    const [selectedPlugin, setSelectedPlugin] = useState(bodyPlugins[0]);
+    const { selectedPlugin, setSelectedPlugin } = useDaoPluginTabParam({
+        daoId,
+        type: PluginType.BODY,
+        includeSubPlugins: true,
+    });
 
     return (
         <>

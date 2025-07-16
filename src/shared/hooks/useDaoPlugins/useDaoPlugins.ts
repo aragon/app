@@ -46,7 +46,7 @@ export const useDaoPlugins = (params: IUseDaoPluginsParams): Array<ITabComponent
 
     const processedPlugins = plugins?.map((plugin) => ({
         id: plugin.interfaceType,
-        uniqueId: `${plugin.interfaceType}-${plugin.address}`,
+        uniqueId: plugin.slug,
         label: daoUtils.getPluginName(plugin),
         meta: plugin,
         props: {},

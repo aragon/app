@@ -2,7 +2,7 @@
 
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { type IPluginTabComponentProps, PluginTabComponent } from '@/shared/components/pluginTabComponent';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { useDaoPluginTabParam } from '@/shared/hooks/useDaoPluginTabParam';
 import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type { ReactNode } from 'react';
@@ -27,15 +27,16 @@ export interface IDaoMemberListContainerProps
 }
 
 export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (props) => {
-    const { initialParams, ...otherProps } = props;
+    const { initialParams, value, onValueChange, ...otherProps } = props;
 
-    const bodyPlugins = useDaoPlugins({
+    const { selectedPlugin, setSelectedPlugin, plugins } = useDaoPluginTabParam({
+        name: 'members',
         daoId: initialParams.queryParams.daoId,
         type: PluginType.BODY,
         includeSubPlugins: true,
     });
 
-    const processedPlugins = bodyPlugins?.map((plugin) => {
+    const processedPlugins = plugins.map((plugin) => {
         const pluginInitialParams = {
             ...initialParams,
             queryParams: { ...initialParams.queryParams, pluginAddress: plugin.meta.address },
@@ -49,6 +50,8 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (p
             slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST}
             plugins={processedPlugins}
             Fallback={DaoMemberListDefault}
+            value={value ?? selectedPlugin}
+            onValueChange={onValueChange ?? setSelectedPlugin}
             {...otherProps}
         />
     );

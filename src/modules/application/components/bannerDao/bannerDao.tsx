@@ -24,22 +24,22 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { isAdminMember, adminPluginAddress } = useAdminStatus({ daoId: dao.id, network: dao.network });
+    const { isAdminMember, adminPlugin } = useAdminStatus({ daoId: dao.id, network: dao.network });
 
     const daoUrl = daoUtils.getDaoUrl(dao)!;
 
     const handleBannerActionClick = () => {
-        invariant(adminPluginAddress != null, 'BannerDao: admin pluginAddress is expected.');
+        invariant(adminPlugin != null, 'BannerDao: admin plugin is expected.');
         const params: ICreateProcessDetailsDialogParams = {
             daoUrl,
-            pluginAddress: adminPluginAddress as Hex,
+            pluginAddress: adminPlugin.address as Hex,
         };
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
 
     const displayAdminMemberBanner = isAdminMember && process.env.NEXT_PUBLIC_FEATURE_GOVERNANCE_DESIGNER === 'true';
 
-    const bannerType = displayAdminMemberBanner ? 'adminMember' : adminPluginAddress ? 'adminPlugin' : null;
+    const bannerType = displayAdminMemberBanner ? 'adminMember' : adminPlugin ? 'adminPlugin' : null;
 
     if (bannerType == null) {
         return null;
@@ -54,7 +54,12 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
                     </Button>
                 )}
                 {bannerType === 'adminPlugin' && (
-                    <Button size="sm" variant="tertiary" href={`${daoUrl}/members`} iconRight={IconType.CHEVRON_RIGHT}>
+                    <Button
+                        size="sm"
+                        variant="tertiary"
+                        href={`${daoUrl}/members?tab=${adminPlugin!.slug}`}
+                        iconRight={IconType.CHEVRON_RIGHT}
+                    >
                         {t(`app.application.bannerDao.adminPlugin.action`)}
                     </Button>
                 )}
