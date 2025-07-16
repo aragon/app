@@ -41,8 +41,8 @@ export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerI
         <AutocompleteInput
             items={items}
             groups={groups}
-            selectItemLabel={t('app.governance.actionComposer.selectItem')}
-            placeholder={t('app.governance.actionComposer.placeholder')}
+            selectItemLabel={t('app.shared.actionComposer.selectItem')}
+            placeholder={t('app.shared.actionComposer.placeholder')}
             ref={ref}
             onChange={handleActionSelected}
             {...otherProps}
@@ -50,4 +50,4 @@ export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerI
     );
 });
 
-ActionComposerInput.displayName = 'ActionComposer';
+ActionComposerInput.displayName = 'ActionComposerInput';

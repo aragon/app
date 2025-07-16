@@ -171,7 +171,7 @@ class ActionComposerInputUtils {
 
         return {
             id: `${address}-${ProposalActionType.METADATA_PLUGIN_UPDATE}`,
-            name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.METADATA_PLUGIN_UPDATE}`),
+            name: t(`app.shared.actionComposer.nativeItem.${ProposalActionType.METADATA_PLUGIN_UPDATE}`),
             icon: IconType.SETTINGS,
             groupId: address,
             defaultValue: this.buildDefaultActionPluginMetadata(plugin, additionalMetadata),
@@ -228,7 +228,7 @@ class ActionComposerInputUtils {
         return [
             {
                 id: ActionItemId.ADD_CONTRACT,
-                name: t(`app.governance.actionComposer.customItem.${ActionItemId.ADD_CONTRACT}`),
+                name: t(`app.shared.actionComposer.customItem.${ActionItemId.ADD_CONTRACT}`),
                 icon: IconType.PLUS,
                 alwaysVisible: true,
             },
@@ -243,7 +243,7 @@ class ActionComposerInputUtils {
     }: IGetNativeActionGroupsParams): IAutocompleteInputGroup[] => [
         {
             id: ActionGroupId.OSX,
-            name: t(`app.governance.actionComposer.nativeGroup.${ActionGroupId.OSX}`),
+            name: t(`app.shared.actionComposer.nativeGroup.${ActionGroupId.OSX}`),
             info: addressUtils.truncateAddress(dao?.address),
             indexData: [dao!.address],
         },
@@ -259,7 +259,7 @@ class ActionComposerInputUtils {
         const extendedNativeItems = [
             {
                 id: ProposalActionType.METADATA_UPDATE,
-                name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.METADATA_UPDATE}`),
+                name: t(`app.shared.actionComposer.nativeItem.${ProposalActionType.METADATA_UPDATE}`),
                 icon: IconType.SETTINGS,
                 groupId: ActionGroupId.OSX,
                 defaultValue: this.buildDefaultActionMetadata(dao!),
@@ -274,7 +274,7 @@ class ActionComposerInputUtils {
         return [
             {
                 id: ProposalActionType.TRANSFER,
-                name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.TRANSFER}`),
+                name: t(`app.shared.actionComposer.nativeItem.${ProposalActionType.TRANSFER}`),
                 icon: IconType.APP_TRANSACTIONS,
                 defaultValue: this.buildDefaultActionTransfer(),
             },
@@ -341,7 +341,7 @@ class ActionComposerInputUtils {
         t: TranslationFunction,
     ): IActionComposerInputItem => ({
         id: `${address}-${ActionItemId.RAW_CALLDATA}`,
-        name: t(`app.governance.actionComposer.customItem.${ActionItemId.RAW_CALLDATA}`),
+        name: t(`app.shared.actionComposer.customItem.${ActionItemId.RAW_CALLDATA}`),
         icon: IconType.BLOCKCHAIN_SMARTCONTRACT,
         groupId: address,
         defaultValue: {
@@ -351,7 +351,7 @@ class ActionComposerInputUtils {
             data: '0x',
             value: '0',
             inputData: {
-                function: t(`app.governance.actionComposer.rawCalldataFunction`),
+                function: t(`app.shared.actionComposer.rawCalldataFunction`),
                 contract: name,
                 parameters: [],
             },
