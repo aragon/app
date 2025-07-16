@@ -16,7 +16,7 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
-import type { TransactionReceipt } from 'viem';
+import { type TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
 import { type ICreateProcessFormData } from '../../components/createProcessForm';
 import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
@@ -104,9 +104,11 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     );
 
     const handlePrepareInstallationSuccess = (txReceipt: TransactionReceipt) => {
-        // TODO getExecuteSelectorConditionAddress - pass receipt
-        console.log('PrepareProcessDialog: handlePrepareInstallationSuccess', txReceipt);
         invariant(dao != null, 'PrepareProcessDialog: DAO cannot be fetched');
+
+        const executeConditionAddress =
+            prepareProcessDialogUtils.preparePublishProcessRetrieveConditionAddress(txReceipt);
+        console.log('executeAddress', executeConditionAddress);
 
         const setupData = pluginTransactionUtils.getPluginInstallationSetupData(txReceipt);
 

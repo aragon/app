@@ -5,8 +5,8 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils, type ITransactionRequest } from '@/shared/utils/transactionUtils';
-import { encodeFunctionData, type Hex } from 'viem';
-import { GovernanceType, type ICreateProcessFormData } from '../../components/createProcessForm';
+import { encodeFunctionData, parseEventLogs, type TransactionReceipt, type Hex } from 'viem';
+import { GovernanceType, ProcessPermission, type ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
 import { SetupBodyType, type ISetupBodyFormNew } from '../setupBodyDialog';
 import type {
@@ -16,27 +16,8 @@ import type {
     IBuildProcessProposalActionsParams,
     IBuildTransactionParams,
 } from './prepareProcessDialogUtils.api';
-
-const conditionFactoryAbi = [
-    {
-        type: 'function',
-        name: 'deployExecuteSelectorCondition',
-        stateMutability: 'nonpayable',
-        inputs: [
-            { name: '_dao', type: 'address', internalType: 'address' },
-            {
-                name: '_initialEntries',
-                type: 'tuple[]',
-                internalType: 'struct ExecuteSelectorCondition.SelectorTarget[]',
-                components: [
-                    { name: 'where', type: 'address', internalType: 'address' },
-                    { name: 'selectors', type: 'bytes4[]', internalType: 'bytes4[]' },
-                ],
-            },
-        ],
-        outputs: [{ name: '', type: 'address', internalType: 'contract ExecuteSelectorCondition' }],
-    },
-] as const;
+import { executeSelectorConditionAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/executeSelectorConditionAbi';
+import { conditionFactoryAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/conditionFactoryAbi';
 
 class PrepareProcessDialogUtils {
     private publishProcessProposalMetadata = {
@@ -67,8 +48,16 @@ class PrepareProcessDialogUtils {
         const { processor: processorMetadata, plugins: pluginsMetadata } = processMetadata;
         const { pluginSetupProcessor, conditionFactory } = networkDefinitions[dao.network].addresses;
 
-        const conditionDeployData = this.buildDeployExecuteSelectorConditionData({ dao, values });
-        const conditionDeployTx = { to: conditionFactory, value: BigInt(0), data: conditionDeployData };
+        const needsExecuteCondition = values.permissions === ProcessPermission.SELECTED;
+        const conditionDeployTx = needsExecuteCondition
+            ? [
+                  {
+                      to: conditionFactory,
+                      value: BigInt(0),
+                      data: this.buildDeployExecuteSelectorConditionData({ dao, values }),
+                  },
+              ]
+            : [];
 
         const processorInstallAction =
             processorMetadata != null ? this.buildPrepareInstallProcessorActionData(processorMetadata, dao) : undefined;
@@ -80,7 +69,7 @@ class PrepareProcessDialogUtils {
         const actionValues = { to: pluginSetupProcessor, value: BigInt(0) };
         const installActionTransactions = installActionsData.map((data) => ({ ...actionValues, data }));
         const encodedTransaction = transactionUtils.encodeTransactionRequests(
-            [conditionDeployTx, ...installActionTransactions],
+            [...conditionDeployTx, ...installActionTransactions],
             dao.network,
         );
 
@@ -103,6 +92,17 @@ class PrepareProcessDialogUtils {
     };
 
     preparePublishProcessProposalMetadata = () => this.publishProcessProposalMetadata;
+
+    preparePublishProcessRetrieveConditionAddress = (txReceipt: TransactionReceipt): Hex | undefined => {
+        const selectorLogs = parseEventLogs({
+            abi: executeSelectorConditionAbi,
+            eventName: 'SelectorAllowed',
+            logs: txReceipt.logs,
+            strict: false,
+        });
+
+        return selectorLogs[0]?.address ?? undefined;
+    };
 
     private preparePluginMetadata = (plugin: ISetupBodyFormNew) => {
         const { name, description, resources: links } = plugin;
@@ -173,6 +173,7 @@ class PrepareProcessDialogUtils {
             functionName: 'deployExecuteSelectorCondition',
             args: [
                 dao.address as Hex,
+                //permissionSelectors,
                 [
                     {
                         where: '0xabcdef0123456789abcdef0123456789abcdef01',

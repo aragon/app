@@ -55,7 +55,7 @@ export interface ICreateProcessFormDataBase {
     /**
      * List of permission selectors if permissions is set to SELECTED.
      */
-    permissionSelectors: Array<{ where: Hex; selector: Hex[] }>;
+    permissionSelectors: Array<{ where: Hex; selectors: Hex[] }>;
 }
 
 export interface ICreateProcessFormDataBasic extends ICreateProcessFormDataBase {
