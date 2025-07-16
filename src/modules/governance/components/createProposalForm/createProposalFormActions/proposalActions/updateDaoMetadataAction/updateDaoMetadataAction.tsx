@@ -8,8 +8,8 @@ import { transactionUtils } from '@/shared/utils/transactionUtils';
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { encodeFunctionData } from 'viem';
-import { useActionsContext } from '../../../actionsProvider';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
+import { useCreateProposalFormContext } from '../../../createProposalFormProvider';
 
 export interface IUpdateDaoMetadataAction extends Omit<IProposalActionUpdateMetadata, 'proposedMetadata'> {
     /**
@@ -33,7 +33,7 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (p
 
     const { mutateAsync: pinJsonAsync } = usePinJson();
     const { mutateAsync: pinFileAsync } = usePinFile();
-    const { addPrepareAction } = useActionsContext<IUpdateDaoMetadataAction>();
+    const { addPrepareAction } = useCreateProposalFormContext<IUpdateDaoMetadataAction>();
 
     const fieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
