@@ -66,7 +66,7 @@ export interface IBuildProcessProposalActionsParams {
     setupData: IPluginInstallationSetupData[];
 }
 
-export interface IBuildPrepareInstallExecuteSelectorConditionParams {
+export interface IBuildDeployExecuteSelectorConditionDataParams {
     /**
      * Values of the create-process form.
      */

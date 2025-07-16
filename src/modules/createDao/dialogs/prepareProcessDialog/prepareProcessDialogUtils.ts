@@ -10,7 +10,7 @@ import { GovernanceType, type ICreateProcessFormData } from '../../components/cr
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
 import { SetupBodyType, type ISetupBodyFormNew } from '../setupBodyDialog';
 import type {
-    IBuildPrepareInstallExecuteSelectorConditionParams,
+    IBuildDeployExecuteSelectorConditionDataParams,
     IBuildPrepareInstallPluginActionParams,
     IBuildPrepareInstallPluginsActionParams,
     IBuildProcessProposalActionsParams,
@@ -67,7 +67,7 @@ class PrepareProcessDialogUtils {
         const { processor: processorMetadata, plugins: pluginsMetadata } = processMetadata;
         const { pluginSetupProcessor, conditionFactory } = networkDefinitions[dao.network].addresses;
 
-        const conditionDeployData = this.buildPrepareInstallExecuteSelectorCondition({ dao, values });
+        const conditionDeployData = this.buildDeployExecuteSelectorConditionData({ dao, values });
         const conditionDeployTx = { to: conditionFactory, value: BigInt(0), data: conditionDeployData };
 
         const processorInstallAction =
@@ -164,16 +164,22 @@ class PrepareProcessDialogUtils {
         return prepareFunction(prepareFunctionParams);
     };
 
-    private buildPrepareInstallExecuteSelectorCondition = (
-        params: IBuildPrepareInstallExecuteSelectorConditionParams,
-    ) => {
+    private buildDeployExecuteSelectorConditionData = (params: IBuildDeployExecuteSelectorConditionDataParams) => {
         const { dao, values } = params;
         const { permissionSelectors } = values;
 
         const prepareTransaction = encodeFunctionData({
             abi: conditionFactoryAbi,
             functionName: 'deployExecuteSelectorCondition',
-            args: [dao.address as Hex, permissionSelectors],
+            args: [
+                dao.address as Hex,
+                [
+                    {
+                        where: '0xabcdef0123456789abcdef0123456789abcdef01',
+                        selectors: ['0xa9059cbb', '0x095ea7b3'],
+                    },
+                ],
+            ],
         });
 
         return prepareTransaction;
