@@ -5,4 +5,3 @@ export {
     useActionComposerContext,
     type IActionComposerContext,
 } from './actionComposerProvider';
-export { useActionComposerContextValues } from './useActionComposerContextValues';

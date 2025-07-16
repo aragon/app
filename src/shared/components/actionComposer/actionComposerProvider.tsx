@@ -1,26 +1,8 @@
 import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
-import type {
-    IProposalCreateAction,
-    PrepareProposalActionFunction,
-    PrepareProposalActionMap,
-} from '@/modules/governance/dialogs/publishProposalDialog';
-import { createContext, useContext } from 'react';
+import { addressUtils } from '@aragon/gov-ui-kit';
+import { createContext, useCallback, useContext, useState } from 'react';
 
-type AddPrepareActionFunction<TAction extends IProposalCreateAction = IProposalCreateAction> = (
-    actionType: string,
-    prepareAction: PrepareProposalActionFunction<TAction>,
-) => void;
-
-export interface IActionComposerContext<TAction extends IProposalCreateAction = IProposalCreateAction> {
-    /**
-     * Map of proposal-type and prepare action functions to be used for async action preparations.
-     * (e.g. actions requiring IPFS pinning or requests to third party APIs)
-     */
-    prepareActions: PrepareProposalActionMap<TAction>;
-    /**
-     * Callback to update the prepare-action maps for the given proposal action type.
-     */
-    addPrepareAction: AddPrepareActionFunction<TAction>;
+export interface IActionComposerContext {
     /**
      * ABIs of smart contract to be used for adding custom actions to proposals.
      */
@@ -33,20 +15,41 @@ export interface IActionComposerContext<TAction extends IProposalCreateAction = 
 
 const actionComposerContext = createContext<IActionComposerContext | null>(null);
 
-export const ActionComposerProvider = actionComposerContext.Provider;
+export interface IActionComposerProviderProps {
+    children: React.ReactNode;
+}
 
-export const useActionComposerContext = <
-    TAction extends IProposalCreateAction = IProposalCreateAction,
->(): IActionComposerContext<TAction> => {
+export const ActionComposerProvider: React.FC<IActionComposerProviderProps> = (props) => {
+    const { children } = props;
+
+    const [smartContractAbis, setSmartContractAbis] = useState<ISmartContractAbi[]>([]);
+
+    const addSmartContractAbi = useCallback(
+        (abi: ISmartContractAbi) =>
+            setSmartContractAbis((current) => {
+                const alreadyExists = current.some((currentAbi) =>
+                    addressUtils.isAddressEqual(currentAbi.address, abi.address),
+                );
+
+                return alreadyExists ? current : [abi, ...current];
+            }),
+        [],
+    );
+
+    const contextValues = {
+        smartContractAbis,
+        addSmartContractAbi,
+    };
+
+    return <actionComposerContext.Provider value={contextValues}>{children}</actionComposerContext.Provider>;
+};
+
+export const useActionComposerContext = (): IActionComposerContext => {
     const values = useContext(actionComposerContext);
 
     if (values == null) {
-        throw new Error('useActionsContext: hook must be used inside a ActionsProvider to work properly.');
+        throw new Error('useActionComposerContext: hook must be used inside a ActionComposerProvider to work properly.');
     }
 
-    return {
-        ...values,
-        prepareActions: values.prepareActions as PrepareProposalActionMap<TAction>,
-        addPrepareAction: values.addPrepareAction as AddPrepareActionFunction<TAction>,
-    };
+    return values;
 };

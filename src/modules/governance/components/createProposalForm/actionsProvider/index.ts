@@ -1,1 +1,1 @@
-export { ActionsProvider, useActionsContext, type ICreateProposalFormContext } from './actionsProvider';
+export { ActionsProvider, useActionsContext, type IActionsContext } from './actionsProvider';

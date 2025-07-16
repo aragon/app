@@ -1,6 +1,5 @@
 import { Page } from '@/shared/components/page';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { ActionsProvider } from '../../components/createProposalForm/actionsProvider';
 import type { ICreateProposalPageParams } from '../../types';
 import { CreateProposalPageClient } from './createProposalPageClient';
 
@@ -18,9 +17,7 @@ export const CreateProposalPage: React.FC<ICreateProposalPageProps> = async (pro
 
     return (
         <Page.Container>
-            <ActionsProvider>
-                <CreateProposalPageClient daoId={daoId} pluginAddress={pluginAddress} />
-            </ActionsProvider>
+            <CreateProposalPageClient daoId={daoId} pluginAddress={pluginAddress} />
         </Page.Container>
     );
 };

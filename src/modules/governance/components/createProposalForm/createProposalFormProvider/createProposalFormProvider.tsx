@@ -1,4 +1,3 @@
-import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
 import type {
     IProposalCreateAction,
     PrepareProposalActionFunction,
@@ -21,14 +20,6 @@ export interface ICreateProposalFormContext<TAction extends IProposalCreateActio
      * Callback to update the prepare-action maps for the given proposal action type.
      */
     addPrepareAction: AddPrepareActionFunction<TAction>;
-    /**
-     * ABIs of smart contract to be used for adding custom actions to proposals.
-     */
-    smartContractAbis: ISmartContractAbi[];
-    /**
-     * Callback called to add a smart contract ABI for proposal creation.
-     */
-    addSmartContractAbi: (abi: ISmartContractAbi) => void;
 }
 
 const createProposalFormContext = createContext<ICreateProposalFormContext | null>(null);
@@ -47,7 +38,6 @@ export const useCreateProposalFormContext = <
     }
 
     return {
-        ...values,
         prepareActions: values.prepareActions as PrepareProposalActionMap<TAction>,
         addPrepareAction: values.addPrepareAction as AddPrepareActionFunction<TAction>,
     };

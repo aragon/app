@@ -5,11 +5,14 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { useMemo } from 'react';
-import { type ICreateProposalFormData } from '../../components/createProposalForm';
-import { useActionsContext } from '../../components/createProposalForm/actionsProvider';
+import { useCallback, useMemo, useState } from 'react';
+import { CreateProposalForm, type ICreateProposalFormData } from '../../components/createProposalForm';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
-import type { IPublishProposalDialogParams } from '../../dialogs/publishProposalDialog';
+import type {
+    IPublishProposalDialogParams,
+    PrepareProposalActionFunction,
+    PrepareProposalActionMap,
+} from '../../dialogs/publishProposalDialog';
 import { useProposalPermissionCheckGuard } from '../../hooks/useProposalPermissionCheckGuard';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
 import { createProposalWizardSteps } from './createProposalPageDefinitions';
@@ -32,9 +35,16 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     const { open } = useDialogContext();
 
     const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress })![0];
-    const { prepareActions } = useActionsContext();
 
     useProposalPermissionCheckGuard({ daoId, pluginAddress, redirectTab: 'proposals' });
+
+    const [prepareActions, setPrepareActions] = useState<PrepareProposalActionMap>({});
+
+    const addPrepareAction = useCallback(
+        (type: string, prepareAction: PrepareProposalActionFunction) =>
+            setPrepareActions((current) => ({ ...current, [type]: prepareAction })),
+        [],
+    );
 
     const handleFormSubmit = (values: ICreateProposalFormData) => {
         // We are always saving actions on the form so that user doesn't lose them if they navigate around the form.
@@ -62,7 +72,9 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
                 onSubmit={handleFormSubmit}
                 defaultValues={{ actions: [] }}
             >
-                <CreateProposalPageClientSteps steps={processedSteps} daoId={daoId} pluginAddress={pluginAddress} />
+                <CreateProposalForm.Provider value={{ prepareActions, addPrepareAction }}>
+                    <CreateProposalPageClientSteps steps={processedSteps} daoId={daoId} pluginAddress={pluginAddress} />
+                </CreateProposalForm.Provider>
             </WizardPage.Container>
         </Page.Main>
     );
