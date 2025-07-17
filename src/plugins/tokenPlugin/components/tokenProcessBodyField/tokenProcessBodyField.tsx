@@ -2,18 +2,13 @@
 
 import type { ISetupBodyFormNew } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
-import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { PluginType } from '@/shared/types';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { DefinitionList, formatterUtils, NumberFormat, Tag } from '@aragon/gov-ui-kit';
-import { formatUnits, type Hash } from 'viem';
-import { DaoTokenVotingMode, type ITokenPluginSettings } from '../../types';
+import { formatUnits } from 'viem';
+import { DaoTokenVotingMode } from '../../types';
 import type { ITokenSetupGovernanceForm } from '../tokenSetupGovernance';
 import type { ITokenSetupMembershipForm, ITokenSetupMembershipMember } from '../tokenSetupMembership';
-import { useToken } from '../tokenSetupMembership/hooks/useToken';
 
 export interface ITokenProcessBodyFieldProps {
     /**
@@ -45,62 +40,11 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
 
     const { membership, governance } = body;
 
-    const daoUrlParams = { id: daoId };
-    const { data: dao } = useDao({ urlParams: daoUrlParams });
-
-    const chainId = networkDefinitions[dao!.network].id;
-
-    const plugin = useDaoPlugins({ daoId, pluginAddress, type: PluginType.BODY, includeSubPlugins: true })![0];
-
-    console.log('plugin', plugin);
-
-    const tokenAddress = (plugin.meta.settings as ITokenPluginSettings).token.address;
-
-    const { data: tokenReadOnly, isLoading } = useToken({
-        address: tokenAddress as Hash,
-        chainId,
-        enabled: true,
-    });
-
     const initialParams = { queryParams: { daoId, pluginAddress } };
     const { itemsCount } = useMemberListData(initialParams);
 
-    const resolveToken = () => {
-        if (readOnly) {
-            return {
-                name: tokenReadOnly?.name ?? '-',
-                symbol: tokenReadOnly?.symbol ?? '-',
-                decimals: tokenReadOnly?.decimals ?? 0,
-                totalSupply: tokenReadOnly?.totalSupply ?? '0',
-            };
-        }
-        return {
-            name: membership.token.name,
-            symbol: membership.token.symbol,
-            decimals: membership.token.decimals,
-            totalSupply: membership.token.totalSupply,
-        };
-    };
-
-    const resolveGovernance = () => {
-        if (readOnly) {
-            return {
-                votingMode: (plugin.meta.settings as ITokenPluginSettings).votingMode,
-                supportThreshold: (plugin.meta.settings as ITokenPluginSettings).supportThreshold * 0.0001,
-                minParticipation: (plugin.meta.settings as ITokenPluginSettings).minParticipation * 0.0001,
-                minDuration: (plugin.meta.settings as ITokenPluginSettings).minDuration,
-            };
-        }
-        return {
-            votingMode: governance.votingMode,
-            supportThreshold: governance.supportThreshold,
-            minParticipation: governance.minParticipation,
-            minDuration: governance.minDuration,
-        };
-    };
-
-    const { name: tokenName, symbol: tokenSymbol, decimals: tokenDecimals, totalSupply } = resolveToken();
-    const { votingMode, supportThreshold, minParticipation, minDuration } = resolveGovernance();
+    const { name: tokenName, symbol: tokenSymbol, decimals: tokenDecimals, totalSupply } = membership.token;
+    const { votingMode, supportThreshold, minParticipation, minDuration } = governance;
 
     const parsedTotalSupply = formatUnits(BigInt(totalSupply), tokenDecimals);
     const formattedSupply = formatterUtils.formatNumber(parsedTotalSupply, {
@@ -119,7 +63,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     return (
         <DefinitionList.Container className="w-full">
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.tokenTerm')}>
-                {isLoading ? 'Fetching...' : `${tokenName} ${tokenSymbol}`}
+                {tokenName} ${tokenSymbol}
             </DefinitionList.Item>
             {numberOfMembers! > 0 && (
                 <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.distributionTerm')}>
@@ -129,7 +73,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.supplyTerm')}>
-                {isLoading ? 'Fetching...' : `${formattedSupply!} ${tokenSymbol}`}
+                {formattedSupply!} ${tokenSymbol}
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.supportTerm')}>
                 {t('app.plugins.token.tokenProcessBodyField.supportDefinition', { threshold: supportThreshold })}

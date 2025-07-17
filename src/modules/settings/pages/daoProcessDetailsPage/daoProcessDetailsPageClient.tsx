@@ -39,7 +39,9 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
         includeSubPlugins: true,
     })![0];
 
-    const pluginFormData = processDetailsClientUtils.pluginToProcessFormData(plugin);
+    const hydratedPlugin = dao?.plugins.find((p) => p.address === plugin.address) ?? plugin;
+
+    const pluginFormData = processDetailsClientUtils.pluginToProcessFormData(hydratedPlugin, dao?.plugins ?? []);
 
     const formMethods = useForm<ICreateDaoFormData>({ defaultValues: pluginFormData });
 
