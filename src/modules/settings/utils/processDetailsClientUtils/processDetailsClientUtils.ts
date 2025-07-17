@@ -18,6 +18,7 @@ import type {
 } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 
@@ -81,7 +82,9 @@ class ProcessDetailsClientUtils {
             type: SetupBodyType.EXISTING,
             plugin: body.subdomain,
             address: body.address,
-            name: body.name,
+            name: body.name && body.name.trim() !== '' ? body.name : daoUtils.getPluginName(body),
+            build: body.build,
+            release: body.release,
             description: body.description ?? '',
             resources: body.links ?? [],
             governance: body.settings,
@@ -141,8 +144,8 @@ class ProcessDetailsClientUtils {
             isBody: true,
             isProcess: false,
             isSubPlugin: true,
-            release: 'release' in plugin ? plugin.release : (hydrated?.release ?? '1'),
-            build: 'build' in plugin ? plugin.build : (hydrated?.build ?? '0'),
+            release: 'release' in plugin ? plugin.release : (hydrated?.release ?? ''),
+            build: 'build' in plugin ? plugin.build : (hydrated?.build ?? ''),
             slug: 'slug' in plugin ? plugin.slug : (hydrated?.slug ?? ''),
             settings:
                 'settings' in plugin
@@ -150,7 +153,7 @@ class ProcessDetailsClientUtils {
                     : hydrated?.settings !== undefined
                       ? (hydrated.settings as T)
                       : ({} as T),
-            name: 'name' in plugin ? (plugin.name ?? '') : (hydrated?.name ?? ''),
+            name: 'name' in plugin ? (plugin.name ?? undefined) : (hydrated?.name ?? undefined),
             description: 'description' in plugin ? (plugin.description ?? '') : (hydrated?.description ?? ''),
             links: 'links' in plugin ? (plugin.links ?? []) : (hydrated?.links ?? []),
             subdomain: plugin.subdomain ?? hydrated?.subdomain ?? '',

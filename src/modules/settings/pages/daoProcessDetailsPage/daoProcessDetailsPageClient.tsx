@@ -8,6 +8,7 @@ import { useProposalListData } from '@/modules/governance/hooks/useProposalListD
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { generateDaoPlugin } from '@/shared/testUtils';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
@@ -38,6 +39,8 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
         type: PluginType.PROCESS,
         includeSubPlugins: true,
     })![0];
+
+    generateDaoPlugin();
 
     const hydratedPlugin = dao?.plugins.find((p) => p.address === plugin.address) ?? plugin;
 
