@@ -662,7 +662,7 @@
           "RAW_CALLDATA": "Enter raw calldata"
         },
         "nativeGroup": {
-          "OSX": "DAO"
+          "DAO": "DAO"
         },
         "nativeItem": {
           "MetadataPluginUpdate": "Set metadata",

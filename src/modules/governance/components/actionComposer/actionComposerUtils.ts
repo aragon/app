@@ -18,10 +18,6 @@ export enum ActionItemId {
     RAW_CALLDATA = 'RAW_CALLDATA',
 }
 
-export enum ActionGroupId {
-    OSX = 'OSX',
-}
-
 export interface IGetActionBaseParams {
     /**
      * DAO to build the native action groups for.
@@ -94,72 +90,22 @@ class ActionComposerUtils {
         // 2. CUSTOM ACTIONS: second, show imported custom contracts with its actions, but only contracts which are unique, i.e. there is no collision with some of the native contracts.
         // 3. NATIVE ACTIONS: finally, show native contracts with its actions, but merge them with custom actions if they have the same groupId (i.e. DAO address).
         const completeCustomItems = this.getCustomActionItems({ t, abis, isWithoutRawCalldata }).map(
-            this.functionSelectorMapper,
+            this.infoToSelectorMapper,
         );
         const completeNativeItems = this.getNativeActionItems({ t, dao, nativeItems, isWithoutTransfer }).map(
-            this.functionSelectorMapper,
+            this.infoToSelectorMapper,
         );
 
-        const nonGroupItems: IActionComposerItem[] = [];
-        const finalCustomItems: IActionComposerItem[] = [];
-        const finalNativeItems: IActionComposerItem[] = [];
-        const customItemsByGroup: Record<string, IActionComposerItem[]> = {};
-        const nativeItemsByGroup: Record<string, IActionComposerItem[]> = {};
+        const { nonGroupItems: nonGroupCustomItems, itemsByGroup: customItemsByGroup } =
+            this.groupActionItems(completeCustomItems);
+        const { nonGroupItems: nativeNonGroupItems, itemsByGroup: nativeItemsByGroup } =
+            this.groupActionItems(completeNativeItems);
 
-        const normalizeGroupId = (groupId: string) => (groupId === dao?.address ? ActionGroupId.OSX : groupId);
+        const allNonGroupItems = [...nonGroupCustomItems, ...nativeNonGroupItems];
+        const finalCustomItems = this.getFinalCustomItems(customItemsByGroup, nativeItemsByGroup);
+        const finalNativeItems = this.getFinalNativeItems(nativeItemsByGroup, customItemsByGroup);
 
-        for (const item of completeCustomItems) {
-            if (item.groupId) {
-                const normalizedGroupId = normalizeGroupId(item.groupId);
-
-                customItemsByGroup[normalizedGroupId] ??= [];
-                customItemsByGroup[normalizedGroupId].push(item);
-            } else {
-                nonGroupItems.push(item);
-            }
-        }
-
-        for (const item of completeNativeItems) {
-            if (item.groupId) {
-                const groupId = item.groupId;
-                nativeItemsByGroup[groupId] ??= [];
-                nativeItemsByGroup[groupId].push(item);
-            } else {
-                nonGroupItems.push(item);
-            }
-        }
-
-        // Filter out custom items that fall into some of the native groups
-        Object.entries(customItemsByGroup).forEach(([groupId, items]) => {
-            // ESLint gets type intent wrong here
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (nativeItemsByGroup[groupId] == null) {
-                // If groupId collides with a native group, we need to handle those actions separately
-                finalCustomItems.push(...items);
-            }
-        });
-
-        // Now we can safely add native items, and merge custom items where applicable.
-        Object.entries(nativeItemsByGroup).forEach(([groupId, items]) => {
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (customItemsByGroup[groupId] == null) {
-                // no custom items for this group, just add native items
-                finalNativeItems.push(...items);
-                return;
-            }
-
-            const customItems = customItemsByGroup[groupId].map((item) => {
-                // Go through custom items and if there is a native item with the same function selector, use that instead!
-                // info === fn_selector
-                const nativeItem = items.find((nativeItem) => nativeItem.info && nativeItem.info === item.info);
-
-                return nativeItem ?? { ...item, groupId: normalizeGroupId(groupId) };
-            });
-
-            finalNativeItems.push(...customItems);
-        });
-
-        return [...nonGroupItems, ...finalCustomItems, ...finalNativeItems];
+        return [...allNonGroupItems, ...finalCustomItems, ...finalNativeItems];
     };
 
     getDefaultActionPluginMetadataItem = (
@@ -178,25 +124,89 @@ class ActionComposerUtils {
         };
     };
 
-    private functionSelectorMapper = (item: IActionComposerItem) => {
+    private groupActionItems = (items: IActionComposerItem[]) =>
+        items.reduce<{
+            nonGroupItems: IActionComposerItem[];
+            itemsByGroup: Partial<Record<string, IActionComposerItem[]>>;
+        }>(
+            (acc, item) => {
+                const { groupId } = item;
+
+                if (groupId) {
+                    (acc.itemsByGroup[groupId] ??= []).push(item);
+                } else {
+                    acc.nonGroupItems.push(item);
+                }
+
+                return acc;
+            },
+            { nonGroupItems: [], itemsByGroup: {} },
+        );
+
+    /**
+     * Returns custom items with groupId that are not present in the native groups.
+     * This is used to ensure that custom items are not duplicated in the final list of items.
+     * @param customItemsByGroup
+     * @param nativeItemsByGroup
+     */
+    private getFinalCustomItems = (
+        customItemsByGroup: Partial<Record<string, IActionComposerItem[]>>,
+        nativeItemsByGroup: Partial<Record<string, IActionComposerItem[]>>,
+    ) =>
+        Object.entries(customItemsByGroup).reduce<IActionComposerItem[]>((acc, [groupId, items]) => {
+            if (nativeItemsByGroup[groupId] == null) {
+                acc.push(...items!);
+            }
+            return acc;
+        }, []);
+
+    /**
+     * Returns all native items, but merges custom items with the same groupId by:
+     *   - keeping the native item if it exists, and
+     *   - keeping the order of custom items.
+     * @param nativeItemsByGroup
+     * @param customItemsByGroup
+     */
+    private getFinalNativeItems = (
+        nativeItemsByGroup: Partial<Record<string, IActionComposerItem[]>>,
+        customItemsByGroup: Partial<Record<string, IActionComposerItem[]>>,
+    ) =>
+        Object.entries(nativeItemsByGroup).reduce<IActionComposerItem[]>((acc, [groupId, items]) => {
+            const customItemsForGroup = customItemsByGroup[groupId];
+
+            if (customItemsForGroup) {
+                const customItems = customItemsForGroup.map((item) => {
+                    // Go through custom items and if there is a native item with the same function selector, use that instead!
+                    // info === fn_selector
+                    const nativeItem = items?.find((nativeItem) => nativeItem.info && nativeItem.info === item.info);
+                    return nativeItem ?? item;
+                });
+                acc.push(...customItems);
+            } else {
+                // no custom items for this group, just add native items
+                acc.push(...items!);
+            }
+            return acc;
+        }, []);
+
+    private infoToSelectorMapper = (item: IActionComposerItem) =>  ({ ...item, info: this.getFunctionSelector(item) });
+
+    private getFunctionSelector = (item: IActionComposerItem) => {
         if (item.defaultValue?.inputData == null || item.id === ProposalActionType.TRANSFER) {
-            return item;
+            return undefined;
         }
 
         const { inputData } = item.defaultValue;
-        const fnSelector = toFunctionSelector({
+
+        return toFunctionSelector({
             type: 'function',
             name: inputData.function,
             inputs: inputData.parameters,
             outputs: [],
             stateMutability: inputData.stateMutability as AbiStateMutability,
         });
-
-        return {
-            ...item,
-            info: fnSelector,
-        };
     };
+
 
     private getCustomActionGroups = ({ abis }: IGetCustomActionParams): IAutocompleteInputGroup[] =>
         abis.map((abi) => ({
@@ -242,8 +252,8 @@ class ActionComposerUtils {
         nativeGroups,
     }: IGetNativeActionGroupsParams): IAutocompleteInputGroup[] => [
         {
-            id: ActionGroupId.OSX,
-            name: t(`app.governance.actionComposer.nativeGroup.${ActionGroupId.OSX}`),
+            id: dao!.address,
+            name: t(`app.governance.actionComposer.nativeGroup.DAO`),
             info: addressUtils.truncateAddress(dao?.address),
             indexData: [dao!.address],
         },
@@ -261,7 +271,7 @@ class ActionComposerUtils {
                 id: ProposalActionType.METADATA_UPDATE,
                 name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.METADATA_UPDATE}`),
                 icon: IconType.SETTINGS,
-                groupId: ActionGroupId.OSX,
+                groupId: dao!.address,
                 defaultValue: this.buildDefaultActionMetadata(dao!),
             },
             ...nativeItems,
