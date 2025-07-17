@@ -14,14 +14,14 @@ export const daoPluginInfoFilterParam = 'plugin';
 export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     const { plugin, daoId, type } = props;
 
-    const { description, links } = plugin;
+    const { description, links = [] } = plugin;
 
     const { t } = useTranslations();
     const pluginInfo = useDaoPluginInfo({ daoId, address: plugin.address });
 
     const tabs = useMemo(
         () => [
-            { id: DaoPluginInfoTabId.DESCRIPTION, hidden: !description && links?.length === 0 },
+            { id: DaoPluginInfoTabId.DESCRIPTION, hidden: !description && links.length === 0 },
             { id: DaoPluginInfoTabId.CONTRACT },
             { id: DaoPluginInfoTabId.SETTINGS },
         ],
