@@ -41,10 +41,6 @@ export interface IGetNativeActionItemsParams extends IGetActionBaseParams {
      * Additional action items.
      */
     nativeItems: IActionComposerItem[];
-    /**
-     * If true, transfer action will not be included.
-     */
-    isWithoutTransfer?: boolean;
 }
 
 export interface IGetCustomActionParams extends IGetActionBaseParams {
@@ -52,10 +48,14 @@ export interface IGetCustomActionParams extends IGetActionBaseParams {
      * Smart contract ABIs to be processed.
      */
     abis: ISmartContractAbi[];
+}
+
+interface IGetActionItemsParams extends IGetCustomActionParams, IGetNativeActionItemsParams {
     /**
-     * If true, RAW_CALLDATA action will not be included in custom groups.
+     * Action types to exclude from the list of available actions.
+     * The filtering is based on the `defaultValue.type` of the action item.
      */
-    isWithoutRawCalldata?: boolean;
+    excludeActionTypes?: string[];
 }
 
 class ActionComposerUtils {
@@ -82,19 +82,14 @@ class ActionComposerUtils {
         dao,
         abis,
         nativeItems,
-        isWithoutTransfer,
-        isWithoutRawCalldata,
-    }: IGetCustomActionParams & IGetNativeActionItemsParams): IActionComposerItem[] => {
+        excludeActionTypes,
+    }: IGetActionItemsParams): IActionComposerItem[] => {
         // Show items in the following order:
         // 1. NO CONTRACT: first show actions not belonging to any group (i.e. add contract, transfer)
         // 2. CUSTOM ACTIONS: second, show imported custom contracts with its actions, but only contracts which are unique, i.e. there is no collision with some of the native contracts.
         // 3. NATIVE ACTIONS: finally, show native contracts with its actions, but merge them with custom actions if they have the same groupId (i.e. DAO address).
-        const completeCustomItems = this.getCustomActionItems({ t, abis, isWithoutRawCalldata }).map(
-            this.infoToSelectorMapper,
-        );
-        const completeNativeItems = this.getNativeActionItems({ t, dao, nativeItems, isWithoutTransfer }).map(
-            this.infoToSelectorMapper,
-        );
+        const completeCustomItems = this.getCustomActionItems({ t, abis }).map(this.infoToSelectorMapper);
+        const completeNativeItems = this.getNativeActionItems({ t, dao, nativeItems }).map(this.infoToSelectorMapper);
 
         const { nonGroupItems: nonGroupCustomItems, itemsByGroup: customItemsByGroup } =
             this.groupActionItems(completeCustomItems);
@@ -105,7 +100,19 @@ class ActionComposerUtils {
         const finalCustomItems = this.getFinalCustomItems(customItemsByGroup, nativeItemsByGroup);
         const finalNativeItems = this.getFinalNativeItems(nativeItemsByGroup, customItemsByGroup);
 
-        return [...allNonGroupItems, ...finalCustomItems, ...finalNativeItems];
+        const allItems = [...allNonGroupItems, ...finalCustomItems, ...finalNativeItems];
+
+        if (excludeActionTypes?.length) {
+            return allItems.filter((item) => {
+                if (item.defaultValue == null) {
+                    return true; // Keep items without defaultValue
+                }
+
+                return !excludeActionTypes.includes(item.defaultValue.type);
+            });
+        }
+
+        return allItems;
     };
 
     getDefaultActionPluginMetadataItem = (
@@ -189,7 +196,7 @@ class ActionComposerUtils {
             return acc;
         }, []);
 
-    private infoToSelectorMapper = (item: IActionComposerItem) =>  ({ ...item, info: this.getFunctionSelector(item) });
+    private infoToSelectorMapper = (item: IActionComposerItem) => ({ ...item, info: this.getFunctionSelector(item) });
 
     private getFunctionSelector = (item: IActionComposerItem) => {
         if (item.defaultValue?.inputData == null || item.id === ProposalActionType.TRANSFER) {
@@ -207,7 +214,6 @@ class ActionComposerUtils {
         });
     };
 
-
     private getCustomActionGroups = ({ abis }: IGetCustomActionParams): IAutocompleteInputGroup[] =>
         abis.map((abi) => ({
             id: abi.address,
@@ -216,19 +222,11 @@ class ActionComposerUtils {
             indexData: [abi.address],
         }));
 
-    private getCustomActionItems = ({
-        abis,
-        isWithoutRawCalldata,
-        t,
-    }: IGetCustomActionParams): IActionComposerItem[] => {
+    private getCustomActionItems = ({ abis, t }: IGetCustomActionParams): IActionComposerItem[] => {
         const customActionItems = abis.map((abi) => {
             const functionActions = abi.functions.map((abiFunction, index) =>
                 this.buildDefaultCustomAction(abi, abiFunction, index),
             );
-
-            if (isWithoutRawCalldata) {
-                return functionActions;
-            }
 
             const rawCalldataAction = this.buildDefaultRawCalldataAction(abi, t);
 
@@ -260,37 +258,22 @@ class ActionComposerUtils {
         ...nativeGroups,
     ];
 
-    private getNativeActionItems = ({
-        t,
-        dao,
-        nativeItems,
-        isWithoutTransfer,
-    }: IGetNativeActionItemsParams): IActionComposerItem[] => {
-        const extendedNativeItems = [
-            {
-                id: ProposalActionType.METADATA_UPDATE,
-                name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.METADATA_UPDATE}`),
-                icon: IconType.SETTINGS,
-                groupId: dao!.address,
-                defaultValue: this.buildDefaultActionMetadata(dao!),
-            },
-            ...nativeItems,
-        ];
-
-        if (isWithoutTransfer) {
-            return extendedNativeItems;
-        }
-
-        return [
-            {
-                id: ProposalActionType.TRANSFER,
-                name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.TRANSFER}`),
-                icon: IconType.APP_TRANSACTIONS,
-                defaultValue: this.buildDefaultActionTransfer(),
-            },
-            ...extendedNativeItems,
-        ];
-    };
+    private getNativeActionItems = ({ t, dao, nativeItems }: IGetNativeActionItemsParams): IActionComposerItem[] => [
+        {
+            id: ProposalActionType.TRANSFER,
+            name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.TRANSFER}`),
+            icon: IconType.APP_TRANSACTIONS,
+            defaultValue: this.buildDefaultActionTransfer(),
+        },
+        {
+            id: ProposalActionType.METADATA_UPDATE,
+            name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.METADATA_UPDATE}`),
+            icon: IconType.SETTINGS,
+            groupId: dao!.address,
+            defaultValue: this.buildDefaultActionMetadata(dao!),
+        },
+        ...nativeItems,
+    ];
 
     private buildDefaultActionPluginMetadata = (
         plugin: IDaoPlugin,

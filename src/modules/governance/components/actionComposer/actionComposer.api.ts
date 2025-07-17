@@ -31,11 +31,8 @@ export interface IActionComposerProps<TMeta = undefined>
      */
     nativeGroups: IAutocompleteInputGroup[];
     /**
-     * If true, the action composer will not include transfer action.
+     * Action types to exclude from the list of available actions.
+     * The filtering is based on the `defaultValue.type` of the action item.
      */
-    isWithoutTransfer?: boolean;
-    /**
-     * If true, the action composer will not include raw calldata action in custom/import groups.
-     */
-    isWithoutRawCalldata?: boolean;
+    excludeActionTypes?: string[];
 }

@@ -12,8 +12,7 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
         onActionSelected,
         nativeItems,
         nativeGroups,
-        isWithoutTransfer,
-        isWithoutRawCalldata,
+        excludeActionTypes,
         ...otherProps
     } = props;
 
@@ -29,8 +28,7 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
         dao,
         abis,
         nativeItems,
-        isWithoutTransfer,
-        isWithoutRawCalldata,
+        excludeActionTypes,
     });
 
     const handleActionSelected = (itemId: string, inputValue: string) => {
