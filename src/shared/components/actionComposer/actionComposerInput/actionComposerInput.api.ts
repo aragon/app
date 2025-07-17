@@ -32,15 +32,12 @@ export interface IActionComposerInputProps<TMeta = undefined>
      */
     nativeGroups: IAutocompleteInputGroup[];
     /**
+     * Action types to exclude from the list of available actions.
+     * The filtering is based on the `defaultValue.type` of the action item.
+     */
+    excludeActionTypes?: string[];
+    /**
      * ABIs of imported smart contracts to be used for adding custom actions.
      */
     importedContractAbis: ISmartContractAbi[];
-    /**
-     * If true, the action composer will not include transfer action.
-     */
-    isWithoutTransfer?: boolean;
-    /**
-     * If true, the action composer will not include raw calldata action in custom/import groups.
-     */
-    isWithoutRawCalldata?: boolean;
 }

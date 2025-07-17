@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-Add `isWithoutTransfer` and `isWithoutRawCalldata` flags to `ActionComposer`
+Add `excludeActionTypes` prop to `ActionComposer` to filter out specific action types

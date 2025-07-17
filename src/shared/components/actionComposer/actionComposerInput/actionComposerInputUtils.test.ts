@@ -30,8 +30,8 @@ describe('actionComposerUtils', () => {
                 abis: [],
                 nativeGroups,
             });
-            // Should include OSX group and all nativeGroups
-            expect(result.map((g) => g.id)).toEqual(['OSX', '0xN1', '0xN2']);
+            // Should include 0xDAO group and all nativeGroups
+            expect(result.map((g) => g.id)).toEqual(['0xDAO', '0xN1', '0xN2']);
         });
 
         it('returns only custom groups if no nativeGroups including DAO native group', () => {
@@ -46,8 +46,8 @@ describe('actionComposerUtils', () => {
                 abis,
                 nativeGroups: [],
             });
-            // Should include custom abis as groups, plus DAO/OSX group
-            expect(result.map((g) => g.id)).toEqual(['0xC1', '0xC2', 'OSX']);
+            // Should include custom abis as groups, plus DAO group
+            expect(result.map((g) => g.id)).toEqual(['0xC1', '0xC2', '0xDAO']);
         });
 
         it('filters out custom groups that match native group ids or dao address', () => {
@@ -68,7 +68,7 @@ describe('actionComposerUtils', () => {
                 nativeGroups,
             });
             // Should filter out 0xN1 and 0xDAO from custom, keep 0xC3
-            expect(result.map((g) => g.id)).toEqual(['0xC3', 'OSX', '0xN1', '0xN2']);
+            expect(result.map((g) => g.id)).toEqual(['0xC3', '0xDAO', '0xN1', '0xN2']);
         });
     });
 
@@ -228,34 +228,20 @@ describe('actionComposerUtils', () => {
             expect(rawCallData.icon).toBe(IconType.BLOCKCHAIN_SMARTCONTRACT);
         });
 
-        it("doesn't include transfer action if isWithoutTransfer is true", () => {
-            const dao = generateDao({ address: '0xDAO' });
-            const isWithoutTransfer = true;
-
-            const result = actionComposerInputUtils.getActionItems({
-                t: mockTranslations.tMock,
-                dao,
-                abis: [],
-                nativeItems: [],
-                isWithoutTransfer,
-            });
-
-            expect(result.map((item) => item.id)).not.toContain(ProposalActionType.TRANSFER);
-        });
-
-        it("doesn't include raw calldata action if isWithoutRawCalldata is true", () => {
+        it('can filter action items by type', () => {
             const dao = generateDao({ address: '0xDAO' });
             const abis = [generateSmartContractAbi({ address: '0xC1', name: 'Custom1' })];
-            const isWithoutRawCalldata = true;
+            const excludeActionTypes = [ActionItemId.RAW_CALLDATA, ProposalActionType.TRANSFER];
 
             const result = actionComposerInputUtils.getActionItems({
                 t: mockTranslations.tMock,
                 dao,
                 abis,
                 nativeItems: [],
-                isWithoutRawCalldata,
+                excludeActionTypes,
             });
 
+            expect(result.find((item) => item.defaultValue?.type === ProposalActionType.TRANSFER)).toBeUndefined();
             expect(result.find((item) => item.defaultValue?.type === ActionItemId.RAW_CALLDATA)).toBeUndefined();
         });
     });
