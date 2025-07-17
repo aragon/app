@@ -46,8 +46,6 @@ export const useTabParam = (params: IUseTabParamParams): IUseTabParamResult => {
                 return;
             }
 
-            console.log('update', { tabId, enabled, name, remove });
-
             if (enabled) {
                 updateSearchParams({ [name]: tabId }, remove);
             }
