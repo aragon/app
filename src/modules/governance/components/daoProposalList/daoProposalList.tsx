@@ -34,11 +34,7 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
     const { daoId } = initialParams.queryParams;
 
     const { t } = useTranslations();
-    const {
-        activePlugin,
-        setActivePlugin,
-        plugins: processPlugins,
-    } = useDaoPluginFilterUrlParam({
+    const { activePlugin, setActivePlugin, plugins } = useDaoPluginFilterUrlParam({
         daoId,
         type: PluginType.PROCESS,
         includeGroupTab: true,
@@ -46,7 +42,7 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
         enableUrlUpdate: onValueChange == null,
     });
 
-    const processedPlugins = processPlugins?.map((plugin) => {
+    const processedPlugins = plugins?.map((plugin) => {
         const { id, label, meta } = plugin;
 
         const isGroupTab = id === pluginGroupTab.id;
