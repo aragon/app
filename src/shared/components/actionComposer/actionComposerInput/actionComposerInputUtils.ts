@@ -196,7 +196,10 @@ class ActionComposerInputUtils {
             return acc;
         }, []);
 
-    private infoToSelectorMapper = (item: IActionComposerInputItem) => ({ ...item, info: this.getFunctionSelector(item) });
+    private infoToSelectorMapper = (item: IActionComposerInputItem) => ({
+        ...item,
+        info: this.getFunctionSelector(item),
+    });
 
     private getFunctionSelector = (item: IActionComposerInputItem) => {
         if (item.defaultValue?.inputData == null || item.id === ProposalActionType.TRANSFER) {
@@ -258,7 +261,11 @@ class ActionComposerInputUtils {
         ...nativeGroups,
     ];
 
-    private getNativeActionItems = ({ t, dao, nativeItems }: IGetNativeActionItemsParams): IActionComposerItem[] => [
+    private getNativeActionItems = ({
+        t,
+        dao,
+        nativeItems,
+    }: IGetNativeActionItemsParams): IActionComposerInputItem[] => [
         {
             id: ProposalActionType.TRANSFER,
             name: t(`app.shared.actionComposer.nativeItem.${ProposalActionType.TRANSFER}`),

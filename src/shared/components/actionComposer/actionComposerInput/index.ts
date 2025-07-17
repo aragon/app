@@ -3,7 +3,6 @@ export type { IActionComposerInputItem, IActionComposerInputProps } from './acti
 export {
     ActionItemId,
     actionComposerInputUtils,
-    type ActionGroupId,
     type IGetCustomActionParams,
     type IGetNativeActionGroupsParams,
     type IGetNativeActionItemsParams,
