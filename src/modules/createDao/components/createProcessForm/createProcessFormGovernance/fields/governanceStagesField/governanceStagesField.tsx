@@ -1,8 +1,7 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
 import { useFieldArray } from 'react-hook-form';
-import type { ICreateProcessFormData, ICreateProcessFormDataAdvanced } from '../../../createProcessFormDefinitions';
+import type { ICreateProcessFormData } from '../../../createProcessFormDefinitions';
 import { createProcessFormUtils } from '../../../createProcessFormUtils';
 import { GovernanceStagesFieldItem } from './governanceStagesFieldItem';
 
@@ -15,14 +14,10 @@ export interface IGovernanceStagesFieldProps {
      * If the form is read-only.
      */
     readOnly?: boolean;
-    /**
-     * Existing stages to be displayed.
-     */
-    stages?: ICreateProcessFormDataAdvanced['stages'];
 }
 
 export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (props) => {
-    const { daoId, readOnly = true, stages: existingStages } = props;
+    const { daoId, readOnly = false } = props;
 
     const { t } = useTranslations();
 
@@ -30,14 +25,7 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (pro
         fields: stages,
         append: appendStage,
         remove: removeStage,
-        replace: replaceStages,
     } = useFieldArray<ICreateProcessFormData, 'stages'>({ name: 'stages' });
-
-    useEffect(() => {
-        if (readOnly && existingStages) {
-            replaceStages(existingStages);
-        }
-    }, [readOnly, existingStages, replaceStages]);
 
     const handleAddStage = () => appendStage(createProcessFormUtils.buildDefaultStage());
 

@@ -37,7 +37,7 @@ export interface IGovernanceStagesFieldItemProps {
 const nameMaxLength = 40;
 
 export const GovernanceStagesFieldItem: React.FC<IGovernanceStagesFieldItemProps> = (props) => {
-    const { formPrefix, daoId, stagesCount, onDelete, index, readOnly } = props;
+    const { formPrefix, daoId, stagesCount, onDelete, index, readOnly = false } = props;
 
     const { t } = useTranslations();
 
@@ -74,15 +74,22 @@ export const GovernanceStagesFieldItem: React.FC<IGovernanceStagesFieldItemProps
                     <p className="text-xl text-neutral-800">{stageNameText}</p>
                     <p className="text-neutral-400">{stageNumberText}</p>
                 </div>
-                <InputText
-                    helpText={t('app.createDao.createProcessForm.governance.stageField.name.helpText')}
-                    maxLength={nameMaxLength}
-                    {...stageNameField}
-                />
+                {!readOnly && (
+                    <InputText
+                        helpText={t('app.createDao.createProcessForm.governance.stageField.name.helpText')}
+                        maxLength={nameMaxLength}
+                        {...stageNameField}
+                    />
+                )}
             </div>
-            <GovernanceStageBodiesField formPrefix={formPrefix} daoId={daoId} labelContext={bodiesLabelContext} />
-            <GovernanceStageSettingsField formPrefix={formPrefix} />
-            {stagesCount > 1 && (
+            <GovernanceStageBodiesField
+                formPrefix={formPrefix}
+                daoId={daoId}
+                labelContext={bodiesLabelContext}
+                readOnly={readOnly}
+            />
+            <GovernanceStageSettingsField formPrefix={formPrefix} readOnly={readOnly} />
+            {stagesCount > 1 && !readOnly && (
                 <Dropdown.Container
                     constrainContentWidth={false}
                     size="md"

@@ -1,0 +1,1 @@
+export { processDetailsClientUtils } from './processDetailsClientUtils';

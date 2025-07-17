@@ -28,6 +28,10 @@ export interface IUseDaoPluginsParams {
      * Only returns the plugin with the specified subdomain when set.
      */
     subdomain?: string;
+    /**
+     * Only returns the plugin with the specified slug when set.
+     */
+    slug?: string;
 }
 
 export const pluginGroupTab: ITabComponentPlugin<IDaoPlugin> = {

@@ -14,10 +14,14 @@ export interface IGovernanceBasicBodyFieldProps {
      * ID of the DAO to setup the body for.
      */
     daoId: string;
+    /**
+     * Whethere or not the body field is read-only.
+     */
+    readOnly?: boolean;
 }
 
 export const GovernanceBasicBodyField: React.FC<IGovernanceBasicBodyFieldProps> = (props) => {
-    const { daoId } = props;
+    const { daoId, readOnly = false } = props;
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
@@ -32,6 +36,7 @@ export const GovernanceBasicBodyField: React.FC<IGovernanceBasicBodyFieldProps> 
         label: t('app.createDao.createProcessForm.governance.basicBodyField.label'),
         rules: { required: { value: true, message: requiredErrorMessage } },
     });
+
     const processName = useWatch<ICreateProcessFormData, 'name'>({ name: 'name' });
 
     const handleBodySubmit = (values: ISetupBodyForm) => {
@@ -52,12 +57,12 @@ export const GovernanceBasicBodyField: React.FC<IGovernanceBasicBodyFieldProps> 
     // Keep body-name & process-name in sync when setting up a simple governance process. Other metadata (description,
     // process-key, resources) is processed right before pinning the metadata for the simple governance process.
     useEffect(() => {
-        if (body == null || body.name === processName) {
+        if (readOnly || body == null || body.name === processName) {
             return;
         }
 
         onBodyChange({ ...body, name: processName });
-    }, [body, onBodyChange, processName]);
+    }, [body, onBodyChange, processName, readOnly]);
 
     return (
         <InputContainer
@@ -67,9 +72,16 @@ export const GovernanceBasicBodyField: React.FC<IGovernanceBasicBodyFieldProps> 
             {...bodyField}
         >
             {body != null && (
-                <GovernanceBodyField fieldName="body" body={body} onEdit={openSetupDialog} onDelete={handleDelete} />
+                <GovernanceBodyField
+                    daoId={daoId}
+                    fieldName="body"
+                    body={body}
+                    onEdit={openSetupDialog}
+                    onDelete={handleDelete}
+                    readOnly={readOnly}
+                />
             )}
-            {body == null && (
+            {body == null && !readOnly && (
                 <Button
                     size="md"
                     variant="tertiary"

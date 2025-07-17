@@ -15,11 +15,21 @@ export interface IGovernanceStageSettingsFieldProps {
      * Prefix to be prepended to the form field.
      */
     formPrefix: string;
+    /**
+     * If the stage is read-only.
+     */
+    readOnly?: boolean;
 }
 
 const requiredApprovalsDefaultValue = 1;
 
-const formatDuration = (duration: IDateDuration): string => {
+const formatDuration = (duration?: IDateDuration | number): string => {
+    if (!duration) {
+        return '';
+    }
+    if (typeof duration === 'number') {
+        return Duration.fromObject({ seconds: duration }).shiftTo('days').toHuman();
+    }
     const parsedDuration = Object.fromEntries(Object.entries(duration).filter(([, value]) => value !== 0));
 
     if (Object.keys(parsedDuration).length === 0) {
@@ -30,15 +40,13 @@ const formatDuration = (duration: IDateDuration): string => {
 };
 
 export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFieldProps> = (props) => {
-    const { formPrefix } = props;
+    const { formPrefix, readOnly = false } = props;
 
     const fieldPrefix = `${formPrefix}.settings`;
 
     const { t } = useTranslations();
-    const { setValue, getValues } = useFormContext();
+    const { setValue } = useFormContext();
     const { open } = useDialogContext();
-
-    console.log({ getValues: getValues() });
 
     const { value: stageType } = useFormField<ISetupStageSettingsForm, 'type'>('type', {
         label: t('app.createDao.createProcessForm.governance.stageSettingsField.governanceType'),
@@ -155,9 +163,11 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
                     </DefinitionList.Item>
                 )}
             </DefinitionList.Container>
-            <Button onClick={handleSettingsDialogOpen} variant="tertiary" size="md">
-                {t('app.createDao.createProcessForm.governance.stageSettingsField.edit')}
-            </Button>
+            {!readOnly && (
+                <Button onClick={handleSettingsDialogOpen} variant="tertiary" size="md">
+                    {t('app.createDao.createProcessForm.governance.stageSettingsField.edit')}
+                </Button>
+            )}
         </InputContainer>
     );
 };
