@@ -46,7 +46,7 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
         enableUrlUpdate: onValueChange == null,
     });
 
-    const processedPlugins = processPlugins.map((plugin) => {
+    const processedPlugins = processPlugins?.map((plugin) => {
         const { id, label, meta } = plugin;
 
         const isGroupTab = id === pluginGroupTab.id;

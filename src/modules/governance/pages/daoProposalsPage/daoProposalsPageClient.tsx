@@ -11,6 +11,7 @@ import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrl
 import { pluginGroupTab } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import type { IGetProposalListParams } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
@@ -43,6 +44,8 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
         name: daoProposalsPageFilterParam,
     });
 
+    invariant(activePlugin != null, 'DaoProposalsPageClient: no valid plugin found.');
+
     const buildProposalUrl = (plugin: IDaoPlugin) => daoUtils.getDaoUrl(dao, `create/${plugin.address}/proposal`)!;
 
     const handlePermissionGuardSuccess = (plugin?: IDaoPlugin) =>
@@ -70,7 +73,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
         href: canCreateProposal ? buildProposalUrl(activePlugin.meta) : undefined,
     };
 
-    const actionProps = plugins.length > 1 ? { onClick: openSelectPluginDialog } : defaultActionProps;
+    const actionProps = plugins && plugins.length > 1 ? { onClick: openSelectPluginDialog } : defaultActionProps;
 
     const allProposalsSelected = activePlugin.uniqueId === pluginGroupTab.uniqueId;
     const asideCardTitle = allProposalsSelected

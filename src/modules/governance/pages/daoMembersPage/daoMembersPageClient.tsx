@@ -6,6 +6,7 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
 import { PluginType } from '@/shared/types';
+import { invariant } from '@aragon/gov-ui-kit';
 import type { IGetMemberListParams } from '../../api/governanceService';
 import { DaoMemberList } from '../../components/daoMemberList';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -31,6 +32,8 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
         includeSubPlugins: true,
         name: daoMembersPageFilterParam,
     });
+
+    invariant(activePlugin != null, 'DaoMembersPageClient: no valid plugin found.');
 
     return (
         <>

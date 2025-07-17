@@ -93,8 +93,8 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const daoAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address, chainId });
     const daoCreationLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: dao.transactionHash, chainId });
 
-    const membersPageUrl = `${daoUrl}/members?${daoMembersPageFilterParam}=${membersPlugin.meta.slug}`;
-    const proposalsPageUrl = `${daoUrl}/proposals?${daoProposalsPageFilterParam}=${proposalsPlugin.meta.slug}`;
+    const membersPageUrl = `${daoUrl}/members?${daoMembersPageFilterParam}=${membersPlugin?.meta.slug ?? ''}`;
+    const proposalsPageUrl = `${daoUrl}/proposals?${daoProposalsPageFilterParam}=${proposalsPlugin?.meta.slug ?? ''}`;
 
     return (
         <>

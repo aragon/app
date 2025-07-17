@@ -20,7 +20,7 @@ export interface IUseFilterUrlParamParams {
      * List of valid values for the active filter. When the value set on the URL is not included on this list, the
      * active filter is set to the first value of this array.
      */
-    validValues: string[];
+    validValues?: string[];
 }
 
 export type IUseFilterUrlParamResult = [string | undefined, (tab: string) => void];
@@ -43,7 +43,7 @@ export const useFilterUrlParam = (params: IUseFilterUrlParamParams): IUseFilterU
     const initialValue = searchParams.get(name) ?? fallbackValue;
     const [activeFilter, setActiveFilter] = useState(initialValue);
 
-    const isValid = activeFilter != null && validValues.includes(activeFilter);
+    const isValid = activeFilter != null && validValues?.includes(activeFilter);
 
     const updateActiveFilter = useCallback(
         (tabId?: string, remove?: boolean) => {
@@ -66,7 +66,7 @@ export const useFilterUrlParam = (params: IUseFilterUrlParamParams): IUseFilterU
     // Remove tab parameter on URL when hook is unmounted
     useEffect(() => () => updateActiveFilter('', true), [updateActiveFilter]);
 
-    const processedActiveFilter = isValid ? activeFilter : validValues[0];
+    const processedActiveFilter = isValid ? activeFilter : validValues?.[0];
 
     return [processedActiveFilter, updateActiveFilter];
 };

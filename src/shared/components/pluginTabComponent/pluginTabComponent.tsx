@@ -32,7 +32,7 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
     const isSingleComponent =
         (supportedPlugins.length === 1 && Fallback == null) || (plugins.length === 1 && Fallback != null);
 
-    const fallbackValue = value?.uniqueId ?? plugins[0].uniqueId;
+    const fallbackValue = value?.uniqueId ?? plugins[0]?.uniqueId;
     const [activePlugin, setActivePlugin] = useFilterUrlParam({
         fallbackValue,
         enableUrlUpdate: onValueChange == null && !hasNoContent && !isSingleComponent,

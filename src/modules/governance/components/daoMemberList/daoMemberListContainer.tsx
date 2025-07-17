@@ -39,7 +39,7 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (p
         enableUrlUpdate: onValueChange == null,
     });
 
-    const processedPlugins = plugins.map((plugin) => {
+    const processedPlugins = plugins?.map((plugin) => {
         const pluginInitialParams = {
             ...initialParams,
             queryParams: { ...initialParams.queryParams, pluginAddress: plugin.meta.address },
