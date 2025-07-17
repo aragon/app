@@ -7,14 +7,7 @@ import type { IActionComposerProps } from './actionComposer.api';
 import { actionComposerUtils } from './actionComposerUtils';
 
 export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>((props, ref) => {
-    const {
-        daoId,
-        onActionSelected,
-        nativeItems,
-        nativeGroups,
-        excludeActionTypes,
-        ...otherProps
-    } = props;
+    const { daoId, onActionSelected, nativeItems, nativeGroups, excludeActionTypes, ...otherProps } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
