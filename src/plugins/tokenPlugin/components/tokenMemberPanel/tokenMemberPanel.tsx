@@ -2,7 +2,7 @@
 
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useTabParam } from '@/shared/hooks/useTabParam';
+import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { Tabs } from '@aragon/gov-ui-kit';
 import type { ITokenPlugin, ITokenPluginSettings } from '../../types';
 import { TokenDelegationForm } from './tokenDelegation';
@@ -32,7 +32,7 @@ const getTabsDefinitions = ({ votingEscrow, token }: ITokenPluginSettings) => [
     { value: TokenMemberPanelTab.DELEGATE, hidden: !token.hasDelegate },
 ];
 
-export const tokenMemberPanelSearchParam = 'memberPanelTab';
+export const tokenMemberPanelFilterParam = 'memberPanel';
 
 export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const { plugin, daoId } = props;
@@ -46,10 +46,10 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
 
     const { LOCK, WRAP, DELEGATE } = TokenMemberPanelTab;
     const initialSelectedTab = votingEscrow ? LOCK : underlying != null ? WRAP : DELEGATE;
-    const [selectedTab, setSelectedTab] = useTabParam({
-        name: tokenMemberPanelSearchParam,
+    const [selectedTab, setSelectedTab] = useFilterUrlParam({
+        name: tokenMemberPanelFilterParam,
         fallbackValue: initialSelectedTab,
-        validTabs: visibleTabs.map((tab) => tab.value),
+        validValues: visibleTabs.map((tab) => tab.value),
     });
 
     // Remove the "g" and "Governance" prefixes from the token symbol / name

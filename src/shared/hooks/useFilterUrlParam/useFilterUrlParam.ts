@@ -1,10 +1,10 @@
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
-export interface IUseTabParamParams {
+export interface IUseFilterUrlParamParams {
     /**
-     * Name of the parameter to be used on the URL.
-     * @default tab
+     * Name of the filter parameter to be used on the URL.
+     * @default filter
      */
     name?: string;
     /**
@@ -17,15 +17,15 @@ export interface IUseTabParamParams {
      */
     enableUrlUpdate?: boolean;
     /**
-     * List of valid values for the active tab. When the value set on the URL is not included on this list, the active
-     * tab is set to the first value of this array.
+     * List of valid values for the active filter. When the value set on the URL is not included on this list, the
+     * active filter is set to the first value of this array.
      */
-    validTabs: string[];
+    validValues: string[];
 }
 
-export type IUseTabParamResult = [string | undefined, (tab: string) => void];
+export type IUseFilterUrlParamResult = [string | undefined, (tab: string) => void];
 
-export const defaultParamName = 'tab';
+export const defaultFilterParam = 'filter';
 
 // Using Next.js native history API to update the browser history without reloading the page
 // (See https://nextjs.org/docs/app/getting-started/linking-and-navigating#native-history-api)
@@ -35,17 +35,17 @@ const updateSearchParams = (params: Record<string, string>, remove?: boolean) =>
     window.history.replaceState(null, '', `${window.location.pathname}?${newParams}`);
 };
 
-export const useTabParam = (params: IUseTabParamParams): IUseTabParamResult => {
-    const { name = defaultParamName, fallbackValue, validTabs, enableUrlUpdate = true } = params;
+export const useFilterUrlParam = (params: IUseFilterUrlParamParams): IUseFilterUrlParamResult => {
+    const { name = defaultFilterParam, fallbackValue, validValues, enableUrlUpdate = true } = params;
 
     const searchParams = useSearchParams();
 
     const initialValue = searchParams.get(name) ?? fallbackValue;
-    const [activeTab, setActiveTab] = useState(initialValue);
+    const [activeFilter, setActiveFilter] = useState(initialValue);
 
-    const isValid = activeTab != null && validTabs.includes(activeTab);
+    const isValid = activeFilter != null && validValues.includes(activeFilter);
 
-    const updateActiveTab = useCallback(
+    const updateActiveFilter = useCallback(
         (tabId?: string, remove?: boolean) => {
             if (tabId == null) {
                 return;
@@ -55,18 +55,18 @@ export const useTabParam = (params: IUseTabParamParams): IUseTabParamResult => {
                 updateSearchParams({ [name]: tabId }, remove);
             }
 
-            setActiveTab(tabId);
+            setActiveFilter(tabId);
         },
         [name, enableUrlUpdate],
     );
 
     // Update active tab on URL on fallbackValue change
-    useEffect(() => updateActiveTab(initialValue), [initialValue, updateActiveTab]);
+    useEffect(() => updateActiveFilter(initialValue), [initialValue, updateActiveFilter]);
 
     // Remove tab parameter on URL when hook is unmounted
-    useEffect(() => () => updateActiveTab('', true), [updateActiveTab]);
+    useEffect(() => () => updateActiveFilter('', true), [updateActiveFilter]);
 
-    const processedActiveTab = isValid ? activeTab : validTabs[0];
+    const processedActiveFilter = isValid ? activeFilter : validValues[0];
 
-    return [processedActiveTab, updateActiveTab];
+    return [processedActiveFilter, updateActiveFilter];
 };

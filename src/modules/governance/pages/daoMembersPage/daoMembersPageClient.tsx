@@ -4,7 +4,7 @@ import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPluginTabParam } from '@/shared/hooks/useDaoPluginTabParam';
+import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
 import { PluginType } from '@/shared/types';
 import type { IGetMemberListParams } from '../../api/governanceService';
 import { DaoMemberList } from '../../components/daoMemberList';
@@ -17,7 +17,7 @@ export interface IDaoMembersPageClientProps {
     initialParams: IGetMemberListParams;
 }
 
-export const membersTabParam = 'membersTab';
+export const daoMembersPageFilterParam = 'members';
 
 export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props) => {
     const { initialParams } = props;
@@ -25,11 +25,11 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
 
     const { t } = useTranslations();
 
-    const { selectedPlugin, setSelectedPlugin } = useDaoPluginTabParam({
+    const { activePlugin, setActivePlugin } = useDaoPluginFilterUrlParam({
         daoId,
         type: PluginType.BODY,
         includeSubPlugins: true,
-        name: membersTabParam,
+        name: daoMembersPageFilterParam,
     });
 
     return (
@@ -37,18 +37,18 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
             <Page.Main title={t('app.governance.daoMembersPage.main.title')}>
                 <DaoMemberList.Container
                     initialParams={initialParams}
-                    onValueChange={setSelectedPlugin}
-                    value={selectedPlugin}
+                    onValueChange={setActivePlugin}
+                    value={activePlugin}
                 />
             </Page.Main>
             <Page.Aside>
-                <Page.AsideCard title={selectedPlugin.label}>
-                    <DaoPluginInfo plugin={selectedPlugin.meta} daoId={daoId} type={PluginType.BODY} />
+                <Page.AsideCard title={activePlugin.label}>
+                    <DaoPluginInfo plugin={activePlugin.meta} daoId={daoId} type={PluginType.BODY} />
                 </Page.AsideCard>
                 <PluginSingleComponent
-                    pluginId={selectedPlugin.id}
+                    pluginId={activePlugin.id}
                     slotId={GovernanceSlotId.GOVERNANCE_MEMBER_PANEL}
-                    plugin={selectedPlugin.meta}
+                    plugin={activePlugin.meta}
                     daoId={daoId}
                 />
             </Page.Aside>

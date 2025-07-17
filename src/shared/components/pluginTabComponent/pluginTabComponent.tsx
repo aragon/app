@@ -1,8 +1,10 @@
-import { useTabParam } from '@/shared/hooks/useTabParam';
+import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { Tabs } from '@aragon/gov-ui-kit';
 import { PluginSingleComponent } from '../pluginSingleComponent';
 import type { IPluginTabComponentProps } from './pluginTabComponent.api';
+
+export const pluginTabComponentFilterParam = 'plugin';
 
 export const PluginTabComponent = <TMeta extends object, TProps extends object>(
     props: IPluginTabComponentProps<TMeta, TProps>,
@@ -12,7 +14,7 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
         plugins = [],
         value,
         onValueChange,
-        searchParamName = 'pluginTab',
+        searchParamName = pluginTabComponentFilterParam,
         Fallback,
         ...otherProps
     } = props;
@@ -31,11 +33,11 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
         (supportedPlugins.length === 1 && Fallback == null) || (plugins.length === 1 && Fallback != null);
 
     const fallbackValue = value?.uniqueId ?? plugins[0].uniqueId;
-    const [activePlugin, setActivePlugin] = useTabParam({
+    const [activePlugin, setActivePlugin] = useFilterUrlParam({
         fallbackValue,
         enableUrlUpdate: onValueChange == null && !hasNoContent && !isSingleComponent,
         name: searchParamName,
-        validTabs: plugins.map((plugin) => plugin.uniqueId),
+        validValues: plugins.map((plugin) => plugin.uniqueId),
     });
 
     const updateActivePlugin = (tabId: string) => {

@@ -2,7 +2,7 @@
 
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import type { ICreateProcessDetailsDialogParams } from '@/modules/createDao/dialogs/createProcessDetailsDialog';
-import { membersTabParam } from '@/modules/governance/pages/daoMembersPage';
+import { daoMembersPageFilterParam } from '@/modules/governance/pages/daoMembersPage';
 import type { IDao } from '@/shared/api/daoService';
 import { Banner } from '@/shared/components/banner';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -58,7 +58,7 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
                     <Button
                         size="sm"
                         variant="tertiary"
-                        href={`${daoUrl}/members?${membersTabParam}=${adminPlugin!.slug}`}
+                        href={`${daoUrl}/members?${daoMembersPageFilterParam}=${adminPlugin!.slug}`}
                         iconRight={IconType.CHEVRON_RIGHT}
                     >
                         {t(`app.application.bannerDao.adminPlugin.action`)}

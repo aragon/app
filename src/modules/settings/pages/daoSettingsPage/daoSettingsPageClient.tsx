@@ -93,7 +93,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                     plugins={processPlugins}
                     slotId={SettingsSlotId.SETTINGS_PANEL}
                     daoId={daoId}
-                    searchParamName="settingsTab"
+                    searchParamName="settingsPanel"
                 />
                 <Page.MainSection title={t('app.settings.daoSettingsPage.main.settingsInfoTitle')}>
                     <DaoSettingsInfo dao={dao} />

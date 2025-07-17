@@ -15,7 +15,7 @@ export interface IDaoGovernanceInfoProps {
     plugin?: IDaoPlugin;
 }
 
-export const daoGovernanceInfoSearchParam = 'governanceInfoTab';
+export const daoGovernanceInfoFilterParam = 'governanceInfo';
 
 export const DaoGovernanceInfo: React.FC<IDaoGovernanceInfoProps> = (props) => {
     const { daoId, plugin } = props;
@@ -28,7 +28,7 @@ export const DaoGovernanceInfo: React.FC<IDaoGovernanceInfoProps> = (props) => {
             slotId={SettingsSlotId.SETTINGS_GOVERNANCE_INFO}
             plugins={processedPlugins}
             daoId={daoId}
-            searchParamName={daoGovernanceInfoSearchParam}
+            searchParamName={daoGovernanceInfoFilterParam}
         />
     );
 };

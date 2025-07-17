@@ -3,8 +3,8 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { type IPluginTabComponentProps, PluginTabComponent } from '@/shared/components/pluginTabComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
 import { pluginGroupTab } from '@/shared/hooks/useDaoPlugins';
-import { useDaoPluginTabParam } from '@/shared/hooks/useDaoPluginTabParam';
 import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type { ReactNode } from 'react';
@@ -27,7 +27,7 @@ export interface IDaoProposalListProps extends Pick<IPluginTabComponentProps<IDa
     children?: ReactNode;
 }
 
-export const daoProposalListSearchParam = 'proposalsTab';
+export const daoProposalListFilterParam = 'proposals';
 
 export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
     const { initialParams, value, onValueChange, ...otherProps } = props;
@@ -35,14 +35,14 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
 
     const { t } = useTranslations();
     const {
-        selectedPlugin,
-        setSelectedPlugin,
+        activePlugin,
+        setActivePlugin,
         plugins: processPlugins,
-    } = useDaoPluginTabParam({
+    } = useDaoPluginFilterUrlParam({
         daoId,
         type: PluginType.PROCESS,
         includeGroupTab: true,
-        name: daoProposalListSearchParam,
+        name: daoProposalListFilterParam,
         enableUrlUpdate: onValueChange == null,
     });
 
@@ -66,9 +66,9 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
             slotId={GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST}
             plugins={processedPlugins}
             Fallback={DaoProposalListDefault}
-            value={value ?? selectedPlugin}
-            onValueChange={onValueChange ?? setSelectedPlugin}
-            searchParamName={daoProposalListSearchParam}
+            value={value ?? activePlugin}
+            onValueChange={onValueChange ?? setActivePlugin}
+            searchParamName={daoProposalListFilterParam}
             {...otherProps}
         />
     );
