@@ -32,11 +32,11 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (p
     const { initialParams, value, onValueChange, ...otherProps } = props;
 
     const { selectedPlugin, setSelectedPlugin, plugins } = useDaoPluginTabParam({
-        name: daoMemberListSearchParam,
         daoId: initialParams.queryParams.daoId,
         type: PluginType.BODY,
         includeSubPlugins: true,
-        enabled: onValueChange == null,
+        name: daoMemberListSearchParam,
+        enableUrlUpdate: onValueChange == null,
     });
 
     const processedPlugins = plugins.map((plugin) => {

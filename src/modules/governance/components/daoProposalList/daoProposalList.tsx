@@ -39,11 +39,11 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
         setSelectedPlugin,
         plugins: processPlugins,
     } = useDaoPluginTabParam({
-        name: daoProposalListSearchParam,
         daoId,
         type: PluginType.PROCESS,
         includeGroupTab: true,
-        enabled: onValueChange == null,
+        name: daoProposalListSearchParam,
+        enableUrlUpdate: onValueChange == null,
     });
 
     const processedPlugins = processPlugins.map((plugin) => {

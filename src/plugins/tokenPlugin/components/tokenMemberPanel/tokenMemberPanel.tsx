@@ -49,7 +49,7 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const [selectedTab, setSelectedTab] = useTabParam({
         name: tokenMemberPanelSearchParam,
         fallbackValue: initialSelectedTab,
-        tabs: visibleTabs.map((tab) => tab.value),
+        validTabs: visibleTabs.map((tab) => tab.value),
     });
 
     // Remove the "g" and "Governance" prefixes from the token symbol / name

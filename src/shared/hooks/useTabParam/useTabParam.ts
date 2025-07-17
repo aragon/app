@@ -12,13 +12,15 @@ export interface IUseTabParamParams {
      */
     fallbackValue?: string;
     /**
-     *
+     * Updates the search parameters on the URL when set to true.
+     * @default true
      */
-    enabled?: boolean;
+    enableUrlUpdate?: boolean;
     /**
-     *
+     * List of valid values for the active tab. When the value set on the URL is not included on this list, the active
+     * tab is set to the first value of this array.
      */
-    tabs: string[];
+    validTabs: string[];
 }
 
 export type IUseTabParamResult = [string | undefined, (tab: string) => void];
@@ -34,11 +36,14 @@ const updateSearchParams = (params: Record<string, string>, remove?: boolean) =>
 };
 
 export const useTabParam = (params: IUseTabParamParams): IUseTabParamResult => {
-    const { name = defaultParamName, fallbackValue, tabs, enabled = true } = params;
+    const { name = defaultParamName, fallbackValue, validTabs, enableUrlUpdate = true } = params;
 
     const searchParams = useSearchParams();
+
     const initialValue = searchParams.get(name) ?? fallbackValue;
     const [activeTab, setActiveTab] = useState(initialValue);
+
+    const isValid = activeTab != null && validTabs.includes(activeTab);
 
     const updateActiveTab = useCallback(
         (tabId?: string, remove?: boolean) => {
@@ -46,22 +51,22 @@ export const useTabParam = (params: IUseTabParamParams): IUseTabParamResult => {
                 return;
             }
 
-            if (enabled) {
+            if (enableUrlUpdate) {
                 updateSearchParams({ [name]: tabId }, remove);
             }
 
             setActiveTab(tabId);
         },
-        [name, enabled],
+        [name, enableUrlUpdate],
     );
 
-    // Initialize active tab on URL
+    // Update active tab on URL on fallbackValue change
     useEffect(() => updateActiveTab(initialValue), [initialValue, updateActiveTab]);
 
     // Remove tab parameter on URL when hook is unmounted
     useEffect(() => () => updateActiveTab('', true), [updateActiveTab]);
 
-    const selectedTab = activeTab != null && tabs.includes(activeTab) ? activeTab : tabs[0];
+    const processedActiveTab = isValid ? activeTab : validTabs[0];
 
-    return [selectedTab, updateActiveTab];
+    return [processedActiveTab, updateActiveTab];
 };

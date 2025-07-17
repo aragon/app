@@ -32,10 +32,10 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
 
     const fallbackValue = value?.uniqueId ?? plugins[0].uniqueId;
     const [activePlugin, setActivePlugin] = useTabParam({
-        name: searchParamName,
         fallbackValue,
-        enabled: onValueChange == null && !hasNoContent && !isSingleComponent,
-        tabs: plugins.map((plugin) => plugin.uniqueId),
+        enableUrlUpdate: onValueChange == null && !hasNoContent && !isSingleComponent,
+        name: searchParamName,
+        validTabs: plugins.map((plugin) => plugin.uniqueId),
     });
 
     const updateActivePlugin = (tabId: string) => {

@@ -32,7 +32,7 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     const [activeTab, setActiveTab] = useTabParam({
         name: daoPluginInfoSearchParam,
         fallbackValue: visibleTabs[0].id,
-        tabs: visibleTabs.map((tab) => tab.id),
+        validTabs: visibleTabs.map((tab) => tab.id),
     });
 
     return (

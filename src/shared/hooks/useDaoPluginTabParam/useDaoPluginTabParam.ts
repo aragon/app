@@ -1,23 +1,21 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
+import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo } from 'react';
 import { useDaoPlugins, type IUseDaoPluginsParams } from '../useDaoPlugins';
 import { useTabParam, type IUseTabParamParams } from '../useTabParam';
 
-export interface IUseDaoPluginTabParamParams extends Omit<IUseTabParamParams, 'tabs'>, IUseDaoPluginsParams {}
+export interface IUseDaoPluginTabParamParams extends Omit<IUseTabParamParams, 'validTabs'>, IUseDaoPluginsParams {}
 
 export const useDaoPluginTabParam = (params: IUseDaoPluginTabParamParams) => {
-    const { name, fallbackValue, enabled = true } = params;
+    const { name, fallbackValue: fallbackValueProp, enableUrlUpdate = true } = params;
 
-    const plugins = useDaoPlugins(params)!;
+    const plugins = useDaoPlugins(params);
+    invariant(plugins != null, 'useDaoPluginTabParam: plugin list is empty.');
 
-    const processedFallbackValue = fallbackValue ?? plugins[0].meta.slug;
-    const [activeTab, setActiveTab] = useTabParam({
-        name,
-        fallbackValue: processedFallbackValue,
-        enabled,
-        tabs: plugins.map((plugin) => plugin.uniqueId),
-    });
+    const fallbackValue = fallbackValueProp ?? plugins[0].meta.slug;
+    const validTabs = plugins.map((plugin) => plugin.uniqueId);
+    const [activeTab, setActiveTab] = useTabParam({ name, fallbackValue, enableUrlUpdate, validTabs });
 
     const selectedPlugin = useMemo(
         () => plugins.find((plugin) => plugin.meta.slug === activeTab) ?? plugins[0],
