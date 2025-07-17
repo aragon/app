@@ -108,11 +108,15 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
 
         const executeConditionAddress =
             prepareProcessDialogUtils.preparePublishProcessRetrieveConditionAddress(txReceipt);
-        console.log('executeAddress', executeConditionAddress);
 
         const setupData = pluginTransactionUtils.getPluginInstallationSetupData(txReceipt);
 
-        const proposalActionParams: IBuildProcessProposalActionsParams = { values, dao, setupData };
+        const proposalActionParams: IBuildProcessProposalActionsParams = {
+            values,
+            dao,
+            setupData,
+            executeConditionAddress,
+        };
         const proposalActions = prepareProcessDialogUtils.buildPublishProcessProposalActions(proposalActionParams);
 
         const proposalMetadata = prepareProcessDialogUtils.preparePublishProcessProposalMetadata();

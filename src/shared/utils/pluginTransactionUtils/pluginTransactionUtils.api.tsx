@@ -89,6 +89,10 @@ export interface IBuildApplyPluginsInstallationActionsParams {
      * Other actions to be added to the installaction action array before the revoke root permission transaction.
      */
     actions?: ITransactionRequest[];
+    /**
+     * Address of the execute condition contract if specific permissions are set.
+     */
+    executeConditionAddress?: Hex;
 }
 
 export interface IBuildApplyPluginsUpdateActionsParams {

@@ -1,7 +1,12 @@
 import { encodeFunctionData, keccak256, toBytes, zeroHash } from 'viem';
 import type { ITransactionRequest } from '../transactionUtils';
 import { permissionManagerAbi } from './abi/permissionManagerAbi';
-import type { IRuledCondition, IUpdatePermissionParams } from './permissionTransactionUtils.api';
+import type {
+    IBuildExecuteConditionTransactionParams,
+    IBuildGrantWithConditionTransactionParams,
+    IRuledCondition,
+    IUpdatePermissionParams,
+} from './permissionTransactionUtils.api';
 
 class PermissionTransactionUtils {
     // Identifiers of rule conditions
@@ -46,6 +51,38 @@ class PermissionTransactionUtils {
         });
 
         return { to, data: transactionData, value: BigInt(0) };
+    };
+
+    buildGrantWithConditionTransaction = (params: IBuildGrantWithConditionTransactionParams): ITransactionRequest => {
+        const { where, who, what, to, condition } = params;
+        const transactionData = encodeFunctionData({
+            abi: permissionManagerAbi,
+            functionName: 'grantWithCondition',
+            args: [where, who, keccak256(toBytes(what)), condition],
+        });
+        return { to, data: transactionData, value: BigInt(0) };
+    };
+
+    buildExecuteConditionTransaction = (
+        params: IBuildExecuteConditionTransactionParams,
+    ): [ITransactionRequest, ITransactionRequest] => {
+        const { daoAddress, pluginAddress, executeConditionAddress } = params;
+        const revokeExecuteTransaction = this.buildRevokePermissionTransaction({
+            where: daoAddress,
+            who: pluginAddress,
+            what: permissionTransactionUtils.permissionIds.executePermission,
+            to: daoAddress,
+        });
+
+        const grantExecuteTransaction = this.buildGrantWithConditionTransaction({
+            where: daoAddress,
+            who: pluginAddress,
+            what: permissionTransactionUtils.permissionIds.executePermission,
+            to: daoAddress,
+            condition: executeConditionAddress,
+        });
+
+        return [revokeExecuteTransaction, grantExecuteTransaction];
     };
 
     buildGrantRevokePermissionTransactions = (

@@ -76,7 +76,7 @@ class PluginTransactionUtils {
     buildApplyPluginsInstallationActions = (
         params: IBuildApplyPluginsInstallationActionsParams,
     ): ITransactionRequest[] => {
-        const { dao, setupData, actions = [] } = params;
+        const { dao, setupData, actions = [], executeConditionAddress } = params;
         const daoAddress = dao.address as Hex;
 
         const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
@@ -89,9 +89,19 @@ class PluginTransactionUtils {
             to: daoAddress,
         });
 
+        /* If executeConditionAddress is provided, we need to revoke the execute permission and grant it with the condition. The first plugin in the setupData is either the SPP or the plugin for basic governance processes. */
+        const needsExecuteCondition = executeConditionAddress != null;
+        const executeTransaction = needsExecuteCondition
+            ? permissionTransactionUtils.buildExecuteConditionTransaction({
+                  daoAddress,
+                  pluginAddress: setupData[0].pluginAddress,
+                  executeConditionAddress,
+              })
+            : [];
+
         const applyInstallationActions = setupData.map((data) => this.setupInstallationDataToAction(data, dao));
 
-        return [grantRootTx, ...applyInstallationActions, ...actions, revokeRootTx];
+        return [grantRootTx, ...applyInstallationActions, ...actions, ...executeTransaction, revokeRootTx];
     };
 
     buildApplyPluginsUpdateActions = (params: IBuildApplyPluginsUpdateActionsParams): ITransactionRequest[] => {

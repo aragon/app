@@ -2,6 +2,7 @@ import type { IDao } from '@/shared/api/daoService';
 import type { IPluginInstallationSetupData } from '@/shared/utils/pluginTransactionUtils';
 import type { ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
+import type { Hex } from 'viem';
 
 export interface IPrepareProcessMetadata {
     /**
@@ -64,6 +65,10 @@ export interface IBuildProcessProposalActionsParams {
      * Address list of the plugins to be installed.
      */
     setupData: IPluginInstallationSetupData[];
+    /**
+     * Address of the execute condition contract if specific permissions are set.
+     */
+    executeConditionAddress?: Hex;
 }
 
 export interface IBuildDeployExecuteSelectorConditionDataParams {

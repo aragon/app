@@ -3,7 +3,10 @@ import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUti
 import type { IDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import {
+    type IBuildApplyPluginsInstallationActionsParams,
+    pluginTransactionUtils,
+} from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils, type ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { encodeFunctionData, parseEventLogs, type TransactionReceipt, type Hex } from 'viem';
 import { GovernanceType, ProcessPermission, type ICreateProcessFormData } from '../../components/createProcessForm';
@@ -77,7 +80,7 @@ class PrepareProcessDialogUtils {
     };
 
     buildPublishProcessProposalActions = (params: IBuildProcessProposalActionsParams): ITransactionRequest[] => {
-        const { values, dao, setupData } = params;
+        const { values, dao, setupData, executeConditionAddress } = params;
 
         const isAdvancedGovernance = values.governanceType === 'ADVANCED';
 
@@ -85,7 +88,12 @@ class PrepareProcessDialogUtils {
             ? sppTransactionUtils.buildPluginsSetupActions(values, setupData, dao)
             : [];
 
-        const buildActionsParams = { dao, setupData, actions: processorSetupActions };
+        const buildActionsParams: IBuildApplyPluginsInstallationActionsParams = {
+            dao,
+            setupData,
+            actions: processorSetupActions,
+            executeConditionAddress,
+        };
         const proposalActions = pluginTransactionUtils.buildApplyPluginsInstallationActions(buildActionsParams);
 
         return proposalActions;
