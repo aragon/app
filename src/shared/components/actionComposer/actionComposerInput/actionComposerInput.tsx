@@ -39,8 +39,8 @@ export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerI
         <AutocompleteInput
             items={items}
             groups={groups}
-            selectItemLabel={t('app.shared.actionComposer.selectItem')}
-            placeholder={t('app.shared.actionComposer.placeholder')}
+            selectItemLabel={t('app.shared.actionComposer.input.selectItem')}
+            placeholder={t('app.shared.actionComposer.input.placeholder')}
             ref={ref}
             onChange={handleActionSelected}
             {...otherProps}

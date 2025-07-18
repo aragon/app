@@ -1797,6 +1797,10 @@
           "ADD_CONTRACT": "Add contract address",
           "RAW_CALLDATA": "Enter raw calldata"
         },
+        "input": {
+          "placeholder": "Search by action, contract name, or address",
+          "selectItem": "Add action"
+        },
         "nativeGroup": {
           "DAO": "DAO"
         },
@@ -1805,9 +1809,7 @@
           "MetadataUpdate": "Set metadata",
           "Transfer": "Transfer"
         },
-        "placeholder": "Search by action, contract name, or address",
-        "rawCalldataFunction": "Unknown",
-        "selectItem": "Add action"
+        "rawCalldataFunction": "Unknown"
       },
       "addressesInput": {
         "container": {
