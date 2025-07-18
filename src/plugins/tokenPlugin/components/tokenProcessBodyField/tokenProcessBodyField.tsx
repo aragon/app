@@ -28,7 +28,8 @@ export interface ITokenProcessBodyFieldProps {
      */
     pluginAddress: string;
     /**
-     * Indicates whether the field is read-only.
+     * If the component field is read-only.
+     * @default false
      */
     readOnly?: boolean;
 }
@@ -39,6 +40,8 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     const { t } = useTranslations();
 
     const { membership, governance } = body;
+
+    console.log('body', body);
 
     const initialParams = { queryParams: { daoId, pluginAddress } };
     const { itemsCount } = useMemberListData(initialParams);

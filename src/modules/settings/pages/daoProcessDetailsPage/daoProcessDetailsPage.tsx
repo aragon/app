@@ -1,4 +1,7 @@
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
+import { daoService } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
+import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type { IDaoProcessPageParams } from '../../types/daoProcessPageParams';
 import { DaoProcessDetailsPageClient } from './daoProcessDetailsPageClient';
@@ -14,6 +17,26 @@ export const DaoProcessDetailsPage: React.FC<IDaoProcessDetailsPageProps> = asyn
     const { params } = props;
     const { slug, addressOrEns, network } = await params;
     const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
+
+    const dao = await daoService.getDao({ urlParams: { id: daoId } });
+
+    const plugins = daoUtils.getDaoPlugins(dao, {
+        slug: slug.toLowerCase(),
+        type: PluginType.PROCESS,
+        includeSubPlugins: true,
+    });
+
+    if (!plugins || plugins.length === 0) {
+        const error = new AragonBackendServiceError(AragonBackendServiceError.notFoundCode, 'Process not found', 404);
+
+        return (
+            <Page.Error
+                error={JSON.parse(JSON.stringify(error)) as unknown}
+                actionLink={`/dao/${network}/${addressOrEns}/settings`}
+                notFoundNamespace="app.settings.daoProcessDetailsPage"
+            />
+        );
+    }
 
     return (
         <Page.Container>

@@ -11,7 +11,8 @@ export interface IGovernanceStagesFieldProps {
      */
     daoId: string;
     /**
-     * If the form is read-only.
+     * If the component field is read-only.
+     * @default false
      */
     readOnly?: boolean;
 }

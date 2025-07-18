@@ -29,7 +29,8 @@ export interface IGovernanceStagesFieldItemProps {
      */
     index: number;
     /**
-     * Whether the stage details are read-only.
+     * If the component field is read-only.
+     * @default false
      */
     readOnly?: boolean;
 }

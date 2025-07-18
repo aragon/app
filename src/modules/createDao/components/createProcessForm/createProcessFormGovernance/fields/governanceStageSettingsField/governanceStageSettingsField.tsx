@@ -16,7 +16,8 @@ export interface IGovernanceStageSettingsFieldProps {
      */
     formPrefix: string;
     /**
-     * If the stage is read-only.
+     * If the component field is read-only.
+     * @default false
      */
     readOnly?: boolean;
 }

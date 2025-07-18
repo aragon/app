@@ -8,13 +8,13 @@ import { useProposalListData } from '@/modules/governance/hooks/useProposalListD
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { generateDaoPlugin } from '@/shared/testUtils';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
 import { FormProvider, useForm } from 'react-hook-form';
 import { DaoProcessDetailsInfo } from '../../components/daoProcessDetailsInfo';
 import { processDetailsClientUtils } from '../../utils/processDetailsClientUtils';
+
 export interface IDaoProcessDetailsPageClientProps {
     /**
      * Slug of the process.
@@ -39,8 +39,6 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
         type: PluginType.PROCESS,
         includeSubPlugins: true,
     })![0];
-
-    generateDaoPlugin();
 
     const hydratedPlugin = dao?.plugins.find((p) => p.address === plugin.address) ?? plugin;
 

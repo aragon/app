@@ -1739,10 +1739,13 @@
         "bodyName": "Body name",
         "processKey": "Process key",
         "processName": "Process name",
-        "tabs": {
-          "CONTRACT": "Contract",
-          "DESCRIPTION": "Description",
-          "SETTINGS": "Settings"
+        "viewProcess": "View process"
+      },
+      "daoProcessDetailsPage": {
+        "notFound": {
+          "action": "Explore settings",
+          "description": "We couldn't find the process you're looking for.",
+          "title": "Process not found"
         }
       },
       "daoSettingsInfo": {

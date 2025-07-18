@@ -21,7 +21,8 @@ export interface IGovernanceStageBodiesFieldProps {
      */
     labelContext?: 'veto' | 'normal';
     /**
-     * Whether the field is read-only.
+     * If the component field is read-only.
+     * @default false
      */
     readOnly?: boolean;
 }

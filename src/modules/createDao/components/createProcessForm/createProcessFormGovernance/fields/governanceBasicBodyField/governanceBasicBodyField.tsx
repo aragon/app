@@ -1,3 +1,5 @@
+'use client';
+
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import type { ISetupBodyDialogParams, ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -15,7 +17,8 @@ export interface IGovernanceBasicBodyFieldProps {
      */
     daoId: string;
     /**
-     * Whethere or not the body field is read-only.
+     * If the component field is read-only.
+     * @default false
      */
     readOnly?: boolean;
 }

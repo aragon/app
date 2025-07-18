@@ -24,7 +24,8 @@ export interface IMultisigProcessBodyFieldProps {
      */
     pluginAddress: string;
     /**
-     * Indicates whether the field is read-only.
+     * If the component field is read-only.
+     * @default false
      */
     readOnly?: boolean;
 }

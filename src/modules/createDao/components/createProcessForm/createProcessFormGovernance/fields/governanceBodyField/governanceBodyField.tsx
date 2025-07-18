@@ -37,7 +37,8 @@ export interface IGovernanceBodyFieldProps {
      */
     onDelete?: () => void;
     /**
-     * Whether the field is read-only.
+     * If the component field is read-only.
+     * @default false
      */
     readOnly?: boolean;
 }
