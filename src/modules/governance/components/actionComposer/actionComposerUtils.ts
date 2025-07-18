@@ -2,6 +2,7 @@ import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { type AbiStateMutability, toFunctionSelector, zeroAddress } from 'viem';
 import {
@@ -10,7 +11,9 @@ import {
     ProposalActionType,
 } from '../../api/governanceService';
 import type { ISmartContractAbi, ISmartContractAbiFunction } from '../../api/smartContractService';
-import type { IActionComposerItem } from './actionComposer.api';
+import { GovernanceSlotId } from '../../constants/moduleSlots';
+import type { IActionComposerPluginData } from '../../types';
+import type { IActionComposerInputItem } from './actionComposerInput';
 
 export enum ActionItemId {
     CUSTOM_ACTION = 'CUSTOM_ACTION',
@@ -40,7 +43,7 @@ export interface IGetNativeActionItemsParams extends IGetActionBaseParams {
     /**
      * Additional action items.
      */
-    nativeItems: IActionComposerItem[];
+    nativeItems: IActionComposerInputItem[];
 }
 
 export interface IGetCustomActionParams extends IGetActionBaseParams {
@@ -59,6 +62,25 @@ interface IGetActionItemsParams extends IGetCustomActionParams, IGetNativeAction
 }
 
 class ActionComposerUtils {
+    getPluginActionsFromDao = (dao?: IDao) => {
+        const pluginActions =
+            dao?.plugins.map((plugin) =>
+                pluginRegistryUtils.getSlotFunction<IDaoPlugin, IActionComposerPluginData>({
+                    pluginId: plugin.interfaceType,
+                    slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
+                })?.(plugin),
+            ) ?? [];
+        const pluginItems = pluginActions.flatMap((data) => data?.items ?? []);
+        const pluginGroups = pluginActions.flatMap((data) => data?.groups ?? []);
+        const pluginComponents = pluginActions.reduce((acc, data) => ({ ...acc, ...data?.components }), {});
+
+        return {
+            pluginItems,
+            pluginGroups,
+            pluginComponents,
+        };
+    };
+
     getActionGroups = ({
         t,
         dao,
@@ -83,7 +105,7 @@ class ActionComposerUtils {
         abis,
         nativeItems,
         excludeActionTypes,
-    }: IGetActionItemsParams): IActionComposerItem[] => {
+    }: IGetActionItemsParams): IActionComposerInputItem[] => {
         // Show items in the following order:
         // 1. NO CONTRACT: first show actions not belonging to any group (i.e. add contract, transfer)
         // 2. CUSTOM ACTIONS: second, show imported custom contracts with its actions, but only contracts which are unique, i.e. there is no collision with some of the native contracts.
@@ -119,7 +141,7 @@ class ActionComposerUtils {
         plugin: IDaoPlugin,
         t: TranslationFunction,
         additionalMetadata?: Record<string, unknown>,
-    ): IActionComposerItem => {
+    ): IActionComposerInputItem => {
         const { address } = plugin;
 
         return {
@@ -131,10 +153,10 @@ class ActionComposerUtils {
         };
     };
 
-    private groupActionItems = (items: IActionComposerItem[]) =>
+    private groupActionItems = (items: IActionComposerInputItem[]) =>
         items.reduce<{
-            nonGroupItems: IActionComposerItem[];
-            itemsByGroup: Partial<Record<string, IActionComposerItem[]>>;
+            nonGroupItems: IActionComposerInputItem[];
+            itemsByGroup: Partial<Record<string, IActionComposerInputItem[]>>;
         }>(
             (acc, item) => {
                 const { groupId } = item;
@@ -157,10 +179,10 @@ class ActionComposerUtils {
      * @param nativeItemsByGroup
      */
     private getFinalCustomItems = (
-        customItemsByGroup: Partial<Record<string, IActionComposerItem[]>>,
-        nativeItemsByGroup: Partial<Record<string, IActionComposerItem[]>>,
+        customItemsByGroup: Partial<Record<string, IActionComposerInputItem[]>>,
+        nativeItemsByGroup: Partial<Record<string, IActionComposerInputItem[]>>,
     ) =>
-        Object.entries(customItemsByGroup).reduce<IActionComposerItem[]>((acc, [groupId, items]) => {
+        Object.entries(customItemsByGroup).reduce<IActionComposerInputItem[]>((acc, [groupId, items]) => {
             if (nativeItemsByGroup[groupId] == null) {
                 acc.push(...items!);
             }
@@ -175,10 +197,10 @@ class ActionComposerUtils {
      * @param customItemsByGroup
      */
     private getFinalNativeItems = (
-        nativeItemsByGroup: Partial<Record<string, IActionComposerItem[]>>,
-        customItemsByGroup: Partial<Record<string, IActionComposerItem[]>>,
+        nativeItemsByGroup: Partial<Record<string, IActionComposerInputItem[]>>,
+        customItemsByGroup: Partial<Record<string, IActionComposerInputItem[]>>,
     ) =>
-        Object.entries(nativeItemsByGroup).reduce<IActionComposerItem[]>((acc, [groupId, items]) => {
+        Object.entries(nativeItemsByGroup).reduce<IActionComposerInputItem[]>((acc, [groupId, items]) => {
             const customItemsForGroup = customItemsByGroup[groupId];
 
             if (customItemsForGroup) {
@@ -196,9 +218,12 @@ class ActionComposerUtils {
             return acc;
         }, []);
 
-    private infoToSelectorMapper = (item: IActionComposerItem) => ({ ...item, info: this.getFunctionSelector(item) });
+    private infoToSelectorMapper = (item: IActionComposerInputItem) => ({
+        ...item,
+        info: this.getFunctionSelector(item),
+    });
 
-    private getFunctionSelector = (item: IActionComposerItem) => {
+    private getFunctionSelector = (item: IActionComposerInputItem) => {
         if (item.defaultValue?.inputData == null || item.id === ProposalActionType.TRANSFER) {
             return undefined;
         }
@@ -222,7 +247,7 @@ class ActionComposerUtils {
             indexData: [abi.address],
         }));
 
-    private getCustomActionItems = ({ abis, t }: IGetCustomActionParams): IActionComposerItem[] => {
+    private getCustomActionItems = ({ abis, t }: IGetCustomActionParams): IActionComposerInputItem[] => {
         const customActionItems = abis.map((abi) => {
             const functionActions = abi.functions.map((abiFunction, index) =>
                 this.buildDefaultCustomAction(abi, abiFunction, index),
@@ -258,7 +283,11 @@ class ActionComposerUtils {
         ...nativeGroups,
     ];
 
-    private getNativeActionItems = ({ t, dao, nativeItems }: IGetNativeActionItemsParams): IActionComposerItem[] => [
+    private getNativeActionItems = ({
+        t,
+        dao,
+        nativeItems,
+    }: IGetNativeActionItemsParams): IActionComposerInputItem[] => [
         {
             id: ProposalActionType.TRANSFER,
             name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.TRANSFER}`),
@@ -309,7 +338,7 @@ class ActionComposerUtils {
         { address: contractAddress, name: contractName }: ISmartContractAbi,
         { name: functionName, stateMutability, parameters }: ISmartContractAbiFunction,
         index: number,
-    ): IActionComposerItem => ({
+    ): IActionComposerInputItem => ({
         id: `${contractAddress}-${functionName}-${index.toString()}`,
         name: functionName,
         icon: IconType.SLASH,
@@ -332,7 +361,7 @@ class ActionComposerUtils {
     private buildDefaultRawCalldataAction = (
         { address, name }: ISmartContractAbi,
         t: TranslationFunction,
-    ): IActionComposerItem => ({
+    ): IActionComposerInputItem => ({
         id: `${address}-${ActionItemId.RAW_CALLDATA}`,
         name: t(`app.governance.actionComposer.customItem.${ActionItemId.RAW_CALLDATA}`),
         icon: IconType.BLOCKCHAIN_SMARTCONTRACT,
