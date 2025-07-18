@@ -2,6 +2,7 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { DataList, type IDataListItemProps } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
+import { useTranslations } from '../translationsProvider';
 
 export type IProcessDataListItemProps = IDataListItemProps & {
     /**
@@ -9,7 +10,7 @@ export type IProcessDataListItemProps = IDataListItemProps & {
      */
     process: IDaoPlugin;
     /**
-     * Renders the
+     * Renders the process as active when set to true.
      */
     isActive?: boolean;
 };
@@ -17,7 +18,13 @@ export type IProcessDataListItemProps = IDataListItemProps & {
 export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (props) => {
     const { process, isActive, className, ...otherProps } = props;
 
-    const { address, processKey, description } = process;
+    const { t } = useTranslations();
+
+    const { address, description, slug } = process;
+    const processedDescription =
+        description != null && description.length > 0
+            ? description
+            : t('app.shared.processDataListItem.defaultDescription');
 
     return (
         <DataList.Item
@@ -28,11 +35,13 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (props) 
             {...otherProps}
         >
             <div className="flex flex-col gap-y-1">
-                <div className="flex gap-x-4">
-                    <p className="line-clamp-1">{daoUtils.getPluginName(process)}</p>
-                    {processKey && <p className="text-right text-neutral-500 uppercase">{processKey}</p>}
+                <div className="flex gap-2 text-lg leading-tight font-normal">
+                    <p className="text-neutral-800">{daoUtils.getPluginName(process)}</p>
+                    <p className="text-right text-neutral-500 uppercase">{slug}</p>
                 </div>
-                {description && <p className="line-clamp-2 text-neutral-500">{description}</p>}
+                <p className="line-clamp-2 text-base leading-normal font-normal text-neutral-500">
+                    {processedDescription}
+                </p>
             </div>
         </DataList.Item>
     );

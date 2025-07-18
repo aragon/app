@@ -82,6 +82,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
 
+    // Adding processes to a DAO is only supported on OSx versions equal or greater to 1.4
     const supportsAddProcess = versionComparatorUtils.isGreaterOrEqualTo(dao?.version, '1.4');
     const addProcessAction = {
         onClick: handleAddProcess,

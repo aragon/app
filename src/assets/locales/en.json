@@ -1881,6 +1881,9 @@
           "readMore": "Read more"
         }
       },
+      "processDataListItem": {
+        "defaultDescription": "No description"
+      },
       "resourcesInput": {
         "add": "Add",
         "item": {
