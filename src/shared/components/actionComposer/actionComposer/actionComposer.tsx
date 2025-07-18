@@ -19,7 +19,7 @@ import {
 } from '../actionComposerInput';
 import { ActionItemId } from '../actionComposerUtils';
 
-export interface IActionComposerProps {
+export interface IActionComposerProps extends Pick<IActionComposerInputProps, 'nativeGroups' | 'nativeItems'> {
     /**
      * ID of the DAO.
      */
@@ -29,14 +29,6 @@ export interface IActionComposerProps {
      * @param value - single action or array of actions to be added.
      */
     onAddAction: (value: IProposalActionData[]) => void;
-    /**
-     * Native groups to be displayed in the action composer input.
-     */
-    nativeGroups: IActionComposerInputProps['nativeGroups'];
-    /**
-     * Native items to be displayed in the action composer input.
-     */
-    nativeItems: IActionComposerInputProps['nativeItems'];
     /**
      * If true, hides the WalletConnect button.
      */
