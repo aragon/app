@@ -1,4 +1,5 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import { actionComposerUtils } from '@/modules/governance/components/actionComposer';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
@@ -11,7 +12,6 @@ import {
     type IProposalActionChangeMembers as IGukProposalActionChangeMembers,
     type IProposalActionChangeSettings as IGukProposalActionChangeSettings,
 } from '@aragon/gov-ui-kit';
-import { actionComposerUtils } from '../../../../modules/governance/components/actionComposer';
 import { MultisigAddMembersAction } from '../../components/multisigActions/multisigAddMembersAction';
 import { MultisigRemoveMembersAction } from '../../components/multisigActions/multisigRemoveMembersAction';
 import { MultisigUpdateSettingsAction } from '../../components/multisigActions/multisigUpdateSettingsAction';
