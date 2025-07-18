@@ -52,7 +52,7 @@ describe('<CreateProposalFormActions /> component', () => {
 
     it('renders a button to add an action', () => {
         render(createTestComponent());
-        const actionButton = screen.getByRole('button', { name: /shared.actionComposer.addAction.default/ });
+        const actionButton = screen.getByRole('button', { name: /governance.actionComposer.addAction.default/ });
         expect(actionButton).toBeInTheDocument();
     });
 });
