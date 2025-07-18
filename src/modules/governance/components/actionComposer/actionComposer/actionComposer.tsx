@@ -109,7 +109,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         <>
             <div className={classNames('flex flex-row gap-3', { hidden: displayActionComposer })}>
                 <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={handleAddAction}>
-                    {t('app.shared.actionComposer.addAction.default')}
+                    {t('app.governance.actionComposer.addAction.default')}
                 </Button>
                 {!hideWalletConnect && (
                     <Button
@@ -118,7 +118,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                         iconRight={IconType.BLOCKCHAIN_WALLETCONNECT}
                         onClick={displayWalletConnectDialog}
                     >
-                        {t('app.shared.actionComposer.addAction.walletConnect')}
+                        {t('app.governance.actionComposer.addAction.walletConnect')}
                     </Button>
                 )}
             </div>

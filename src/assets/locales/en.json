@@ -656,6 +656,29 @@
       }
     },
     "governance": {
+      "actionComposer": {
+        "addAction": {
+          "default": "Action",
+          "walletConnect": "Connect"
+        },
+        "customItem": {
+          "ADD_CONTRACT": "Add contract address",
+          "RAW_CALLDATA": "Enter raw calldata"
+        },
+        "input": {
+          "placeholder": "Search by action, contract name, or address",
+          "selectItem": "Add action"
+        },
+        "nativeGroup": {
+          "DAO": "DAO"
+        },
+        "nativeItem": {
+          "MetadataPluginUpdate": "Set metadata",
+          "MetadataUpdate": "Set metadata",
+          "Transfer": "Transfer"
+        },
+        "rawCalldataFunction": "Unknown"
+      },
       "createProposalForm": {
         "actions": {
           "editAction": {
@@ -1788,29 +1811,6 @@
       }
     },
     "shared": {
-      "actionComposer": {
-        "addAction": {
-          "default": "Action",
-          "walletConnect": "Connect"
-        },
-        "customItem": {
-          "ADD_CONTRACT": "Add contract address",
-          "RAW_CALLDATA": "Enter raw calldata"
-        },
-        "input": {
-          "placeholder": "Search by action, contract name, or address",
-          "selectItem": "Add action"
-        },
-        "nativeGroup": {
-          "DAO": "DAO"
-        },
-        "nativeItem": {
-          "MetadataPluginUpdate": "Set metadata",
-          "MetadataUpdate": "Set metadata",
-          "Transfer": "Transfer"
-        },
-        "rawCalldataFunction": "Unknown"
-      },
       "addressesInput": {
         "container": {
           "add": "Add"
