@@ -1,6 +1,6 @@
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { ISetupBodyForm, ISetupBodyFormNew } from '../../dialogs/setupBodyDialog';
-import { ISetupBodyFormExisting } from '../../dialogs/setupBodyDialog/setupBodyDialogDefinitions';
+import type { ISetupBodyFormExisting } from '../../dialogs/setupBodyDialog/setupBodyDialogDefinitions';
 import type { ISetupStageSettingsForm } from '../../dialogs/setupStageSettingsDialog';
 
 export enum ProposalCreationMode {

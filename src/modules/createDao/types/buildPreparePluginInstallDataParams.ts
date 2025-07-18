@@ -3,7 +3,7 @@ import type { IDateDuration } from '@/shared/utils/dateUtils';
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import type { ISetupBodyFormMembership, ISetupBodyFormNew } from '../dialogs/setupBodyDialog';
-import { ISetupBodyFormExisting } from '../dialogs/setupBodyDialog/setupBodyDialogDefinitions';
+import type { ISetupBodyFormExisting } from '../dialogs/setupBodyDialog/setupBodyDialogDefinitions';
 
 export interface IBuildPreparePluginInstallDataParams<
     TGovernance = unknown,

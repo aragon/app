@@ -156,7 +156,7 @@ class ProcessDetailsClientUtils {
             name: 'name' in plugin ? (plugin.name ?? undefined) : (hydrated?.name ?? undefined),
             description: 'description' in plugin ? (plugin.description ?? '') : (hydrated?.description ?? ''),
             links: 'links' in plugin ? (plugin.links ?? []) : (hydrated?.links ?? []),
-            subdomain: 'subdomain' in plugin ? plugin.subdomain : (hydrated?.subdomain ?? ''),
+            subdomain: plugin.subdomain ?? hydrated?.subdomain ?? '',
             interfaceType: plugin.interfaceType ?? hydrated?.interfaceType ?? PluginInterfaceType.UNKNOWN,
             address: plugin.address,
             blockTimestamp: 'blockTimestamp' in plugin ? plugin.blockTimestamp : (hydrated?.blockTimestamp ?? 0),
