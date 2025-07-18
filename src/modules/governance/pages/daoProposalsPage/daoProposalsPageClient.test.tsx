@@ -24,6 +24,7 @@ jest.mock('@/modules/settings/components/daoPluginInfo', () => ({
 
 jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),
+    useSearchParams: jest.fn(() => new URLSearchParams()),
 }));
 
 describe('<DaoProposalsPageClient /> component', () => {

@@ -30,4 +30,9 @@ export interface IActionComposerProps<TMeta = undefined>
      * Additional native groups to be displayed.
      */
     nativeGroups: IAutocompleteInputGroup[];
+    /**
+     * Action types to exclude from the list of available actions.
+     * The filtering is based on the `defaultValue.type` of the action item.
+     */
+    excludeActionTypes?: string[];
 }

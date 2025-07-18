@@ -1,4 +1,5 @@
 import * as daoService from '@/shared/api/daoService';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -16,8 +17,18 @@ describe('useDaoPlugins hook', () => {
 
     it('retrieves the DAO plugins and returns them as tab-plugins', () => {
         const plugins = [
-            generateDaoPlugin({ subdomain: 'multisig', address: '0x123' }),
-            generateDaoPlugin({ subdomain: 'token-voting', address: '0x456' }),
+            generateDaoPlugin({
+                interfaceType: PluginInterfaceType.MULTISIG,
+                subdomain: 'multisig',
+                address: '0x123',
+                slug: 'multi',
+            }),
+            generateDaoPlugin({
+                interfaceType: PluginInterfaceType.TOKEN_VOTING,
+                subdomain: 'token-voting',
+                address: '0x456',
+                slug: 'token',
+            }),
         ];
         const dao = generateDao({ id: 'test', plugins });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
@@ -25,15 +36,17 @@ describe('useDaoPlugins hook', () => {
         const { result } = renderHook(() => useDaoPlugins({ daoId: dao.id }));
 
         expect(result.current).toEqual([
-            { id: 'multisig', uniqueId: 'multisig-0x123', label: 'Multisig', meta: plugins[0], props: {} },
-            { id: 'token-voting', uniqueId: 'token-voting-0x456', label: 'Token Voting', meta: plugins[1], props: {} },
+            { id: 'multisig', uniqueId: plugins[0].slug, label: 'Multisig', meta: plugins[0], props: {} },
+            { id: 'tokenVoting', uniqueId: plugins[1].slug, label: 'Token Voting', meta: plugins[1], props: {} },
         ]);
     });
 
     it('filters the plugins by the type or address when specified', () => {
         const type = PluginType.BODY;
         const pluginAddress = '0x572983';
-        const dao = generateDao({ plugins: [generateDaoPlugin({ subdomain: 'spp', address: '0x123' })] });
+        const dao = generateDao({
+            plugins: [generateDaoPlugin({ interfaceType: PluginInterfaceType.SPP, address: '0x123' })],
+        });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
 
         renderHook(() => useDaoPlugins({ daoId: dao.id, type, pluginAddress }));
