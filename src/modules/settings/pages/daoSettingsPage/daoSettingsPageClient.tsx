@@ -40,6 +40,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     const daoParams = { urlParams: { id: daoId } };
     const { data: dao } = useDao(daoParams);
 
+    const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
     const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
 
     const { check: createProposalGuard } = usePermissionCheckGuard({
@@ -99,16 +100,19 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                 <Page.MainSection title={t('app.settings.daoSettingsPage.main.settingsInfoTitle')}>
                     <DaoSettingsInfo dao={dao} />
                 </Page.MainSection>
-                <Page.MainSection
-                    className="gap-3"
-                    inset={false}
-                    title={t('app.settings.daoSettingsPage.main.governanceInfoTitle')}
-                    action={supportsAddProcess ? addProcessAction : undefined}
-                >
-                    {processPlugins.map((process) => (
-                        <ProcessDataListItem key={process.meta.slug} process={process.meta} />
-                    ))}
-                </Page.MainSection>
+                {hasSupportedPlugins && (
+                    <Page.MainSection
+                        id="governance"
+                        className="gap-3"
+                        inset={false}
+                        title={t('app.settings.daoSettingsPage.main.governanceInfoTitle')}
+                        action={supportsAddProcess ? addProcessAction : undefined}
+                    >
+                        {processPlugins.map((process) => (
+                            <ProcessDataListItem key={process.uniqueId} process={process.meta} />
+                        ))}
+                    </Page.MainSection>
+                )}
             </Page.Main>
             <Page.Aside>
                 <Page.AsideCard title={t('app.settings.daoSettingsPage.aside.versionInfoTitle')}>

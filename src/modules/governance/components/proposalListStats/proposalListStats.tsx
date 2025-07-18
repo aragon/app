@@ -32,7 +32,7 @@ export const ProposalListStats: React.FC<IProposalListStatsProps> = (props) => {
     const { itemsCount: executedCount } = useProposalListData(executedParams);
 
     const plugins = useDaoPlugins({ daoId, type: PluginType.PROCESS });
-    const buttonUrl = daoUtils.getDaoUrl(dao, 'settings');
+    const buttonUrl = daoUtils.getDaoUrl(dao, 'settings#governance');
 
     const latestProposalDate =
         proposalList != null && proposalList.length > 0 ? proposalList[0].blockTimestamp * 1000 : undefined;
