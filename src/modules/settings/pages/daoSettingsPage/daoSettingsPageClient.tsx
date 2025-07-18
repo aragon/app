@@ -8,16 +8,15 @@ import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { PluginTabComponent } from '@/shared/components/pluginTabComponent';
+import { ProcessDataListItem } from '@/shared/components/processDataListItem';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { Button, Card, IconType } from '@aragon/gov-ui-kit';
+import { IconType } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { CreateDaoDialogId } from '../../../createDao/constants/createDaoDialogId';
 import type { ICreateProcessDetailsDialogParams } from '../../../createDao/dialogs/createProcessDetailsDialog';
-import { DaoGovernanceInfo } from '../../components/daoGovernanceInfo';
-import { DaoMembersInfo } from '../../components/daoMembersInfo';
 import { DaoSettingsInfo } from '../../components/daoSettingsInfo';
 import { DaoVersionInfo } from '../../components/daoVersionInfo';
 import { UpdateDaoContracts } from '../../components/updateDaoContracts';
@@ -40,7 +39,6 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     const daoParams = { urlParams: { id: daoId } };
     const { data: dao } = useDao(daoParams);
 
-    const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
     const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
 
     const { check: createProposalGuard } = usePermissionCheckGuard({
@@ -93,29 +91,18 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                 <Page.MainSection title={t('app.settings.daoSettingsPage.main.settingsInfoTitle')}>
                     <DaoSettingsInfo dao={dao} />
                 </Page.MainSection>
-                {hasSupportedPlugins && (
-                    <Page.MainSection title={t('app.settings.daoSettingsPage.main.governanceInfoTitle')}>
-                        <Card className="flex flex-col gap-4 p-6" id="governance">
-                            <DaoGovernanceInfo daoId={daoId} />
-                            <Button
-                                size="md"
-                                variant="secondary"
-                                className="self-start"
-                                onClick={handleAddGovernanceProcessClick}
-                                iconLeft={IconType.PLUS}
-                            >
-                                {t('app.settings.daoSettingsPage.main.governanceAction')}
-                            </Button>
-                        </Card>
-                    </Page.MainSection>
-                )}
-                {hasSupportedPlugins && (
-                    <Page.MainSection title={t('app.settings.daoSettingsPage.main.membersInfoTitle')}>
-                        <Card className="p-6">
-                            <DaoMembersInfo daoId={daoId} />
-                        </Card>
-                    </Page.MainSection>
-                )}
+                <Page.MainSection
+                    title={t('app.settings.daoSettingsPage.main.settingsInfoTitle')}
+                    action={{
+                        onClick: handleAddGovernanceProcessClick,
+                        label: t('app.settings.daoSettingsPage.main.governanceAction'),
+                        iconLeft: IconType.PLUS,
+                    }}
+                >
+                    {processPlugins.map((process) => (
+                        <ProcessDataListItem key={process.meta.slug} process={process.meta} />
+                    ))}
+                </Page.MainSection>
             </Page.Main>
             <Page.Aside>
                 <Page.AsideCard title={t('app.settings.daoSettingsPage.aside.versionInfoTitle')}>
