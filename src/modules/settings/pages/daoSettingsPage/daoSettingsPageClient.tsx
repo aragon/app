@@ -13,6 +13,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 import { IconType } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { CreateDaoDialogId } from '../../../createDao/constants/createDaoDialogId';
@@ -75,9 +76,16 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
         open(GovernanceDialogId.SELECT_PLUGIN, { params });
     };
 
-    const handleAddGovernanceProcessClick = () => {
+    const handleAddProcess = () => {
         const params: ICreateProcessDetailsDialogParams = { onActionClick: handleConfirmProcessCreation };
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
+    };
+
+    const supportsAddProcess = versionComparatorUtils.isGreaterOrEqualTo(dao?.version, '1.4');
+    const addProcessAction = {
+        onClick: handleAddProcess,
+        label: t('app.settings.daoSettingsPage.main.governanceAction'),
+        iconLeft: IconType.PLUS,
     };
 
     if (!dao) {
@@ -92,12 +100,10 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                     <DaoSettingsInfo dao={dao} />
                 </Page.MainSection>
                 <Page.MainSection
-                    title={t('app.settings.daoSettingsPage.main.settingsInfoTitle')}
-                    action={{
-                        onClick: handleAddGovernanceProcessClick,
-                        label: t('app.settings.daoSettingsPage.main.governanceAction'),
-                        iconLeft: IconType.PLUS,
-                    }}
+                    className="gap-3"
+                    inset={false}
+                    title={t('app.settings.daoSettingsPage.main.governanceInfoTitle')}
+                    action={supportsAddProcess ? addProcessAction : undefined}
                 >
                     {processPlugins.map((process) => (
                         <ProcessDataListItem key={process.meta.slug} process={process.meta} />
