@@ -40,6 +40,8 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
         chainId,
     });
 
+    const versionInfo = `${daoUtils.parsePluginSubdomain(plugin.subdomain)} v${plugin.release}.${plugin.build}`;
+
     return (
         <DefinitionList.Container>
             <DefinitionList.Item term="Plugin name">
@@ -58,12 +60,7 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
                         chainId,
                     }),
                 }}
-                // TODO update to correct en.json module
-                description={t('app.settings.daoVersionInfo.governanceValue', {
-                    name: daoUtils.parsePluginSubdomain(plugin.subdomain),
-                    release: plugin.release,
-                    build: plugin.build,
-                })}
+                description={versionInfo}
             >
                 {addressUtils.truncateAddress(plugin.address)}
             </DefinitionList.Item>

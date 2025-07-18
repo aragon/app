@@ -51,7 +51,7 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
     const pageBreadcrumbs = [
         {
             href: daoUtils.getDaoUrl(dao, 'settings'),
-            label: 'Settings',
+            label: t('app.settings.daoProcessDetailsPage.header.breadcrumb.settings'),
         },
         { label: slug },
     ];
@@ -63,15 +63,15 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
     const formattedLatestActivity = formatterUtils.formatDate(parsedLatestActivity, { format: DateFormat.RELATIVE });
 
     const [value, unit] = formattedLatestActivity?.split(' ') ?? [undefined, undefined];
-    const suffixLabel = t('app.governance.daoMemberDetailsPage.header.stat.latestActivityUnit', { unit: unit });
+    const suffixLabel = t('app.settings.daoProcessDetailsPage.header.stats.latestActivityUnit', { unit });
 
     const stats = [
         {
-            label: 'Proposals',
+            label: t('app.settings.daoProcessDetailsPage.header.stats.proposals'),
             value: proposals.itemsCount ?? '-',
         },
         {
-            label: 'Last proposal',
+            label: t('app.settings.daoProcessDetailsPage.header.stats.lastProposal'),
             value: value ?? '-',
             suffix: unit ? suffixLabel : undefined,
         },
@@ -87,7 +87,7 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
             />
             <Page.Content>
                 <Page.Main>
-                    <Page.MainSection title="Governance process">
+                    <Page.MainSection title={t('app.settings.daoProcessDetailsPage.section.governanceProcess')}>
                         <FormProvider {...formMethods}>
                             {pluginFormData.governanceType === GovernanceType.BASIC ? (
                                 <GovernanceBodyField daoId={daoId} fieldName="body" readOnly={true} />
@@ -98,7 +98,7 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
                     </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>
-                    <Page.AsideCard title="Details">
+                    <Page.AsideCard title={t('app.settings.daoProcessDetailsPage.section.details')}>
                         <DaoProcessDetailsInfo dao={dao!} plugin={plugin} />
                     </Page.AsideCard>
                 </Page.Aside>

@@ -84,7 +84,7 @@ export interface ISetupBodyFormExisting<
 > extends Omit<ISetupBodyFormNew<TGovernance, TMember, TMembership>, 'type' | 'name'>,
         Omit<ISetupBodyFormExternal, 'type' | 'name' | 'membership'> {
     /**
-     * Merged body can be either NEW or EXTERNAL.
+     * In read-only cases body can be either NEW or EXTERNAL.
      */
     type: SetupBodyType.EXISTING;
     /**

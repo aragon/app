@@ -1742,10 +1742,24 @@
         "viewProcess": "View process"
       },
       "daoProcessDetailsPage": {
+        "header": {
+          "breadcrumb": {
+            "settings": "Settings"
+          },
+          "stats": {
+            "lastProposal": "Last proposal",
+            "latestActivityUnit": "{{unit}} ago",
+            "proposals": "Proposals"
+          }
+        },
         "notFound": {
           "action": "Explore settings",
           "description": "We couldn't find the process you're looking for.",
           "title": "Process not found"
+        },
+        "section": {
+          "details": "Details",
+          "governanceProcess": "Governance process"
         }
       },
       "daoSettingsInfo": {
