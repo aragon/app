@@ -7,7 +7,7 @@ import { ipfsService } from '../../ipfsService';
 import type { IPinJsonParams } from '../../ipfsService.api';
 
 export const pinJsonAction = async ({ body: bodyParam }: IPinJsonParams): Promise<IPinResult> =>
-    monitoringUtils.serverActionWrapper('pinFileAction', async () => {
+    monitoringUtils.serverActionWrapper('pinJsonAction', async () => {
         const headers = { Authorization: `Bearer ${ipfsService.jwt}` };
         const body = { pinataContent: bodyParam };
         const options = { headers, method: 'POST' };
