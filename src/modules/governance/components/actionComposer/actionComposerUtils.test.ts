@@ -1,9 +1,9 @@
 import { generateDao } from '@/shared/testUtils';
+import { mockTranslations } from '@/test/utils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { mockTranslations } from '../../../../test/utils';
 import { ProposalActionType } from '../../api/governanceService';
 import { generateSmartContractAbi } from '../../testUtils';
-import type { IActionComposerItem } from './actionComposer.api';
+import type { IActionComposerInputItem } from './actionComposerInput';
 import { actionComposerUtils, ActionItemId } from './actionComposerUtils';
 
 describe('actionComposerUtils', () => {
@@ -154,7 +154,12 @@ describe('actionComposerUtils', () => {
                 },
             ];
 
-            const result = actionComposerUtils.getActionItems({ t: mockTranslations.tMock, dao, abis, nativeItems });
+            const result = actionComposerUtils.getActionItems({
+                t: mockTranslations.tMock,
+                dao,
+                abis,
+                nativeItems,
+            });
 
             const itemIds = result.map((item) => item.id);
             // Non-grouped items should come first
@@ -200,7 +205,7 @@ describe('actionComposerUtils', () => {
                         inputData: { function: 'native-2', contract: 'Test', parameters: [] },
                     },
                 },
-            ] as unknown as IActionComposerItem[];
+            ] as unknown as IActionComposerInputItem[];
 
             const result = actionComposerUtils.getActionItems({
                 t: mockTranslations.tMock,
