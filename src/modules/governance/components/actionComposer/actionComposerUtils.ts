@@ -1,18 +1,18 @@
+import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
+import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
+import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { addressUtils, IconType } from '@aragon/gov-ui-kit';
+import { type AbiStateMutability, toFunctionSelector, zeroAddress } from 'viem';
 import {
     type IProposalAction,
     type IProposalActionUpdatePluginMetadata,
     ProposalActionType,
-} from '@/modules/governance/api/governanceService';
-import type { ISmartContractAbi, ISmartContractAbiFunction } from '@/modules/governance/api/smartContractService';
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import type { IActionComposerPluginData } from '@/modules/governance/types';
-import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { type AbiStateMutability, toFunctionSelector, zeroAddress } from 'viem';
-import type { IDao, IDaoPlugin } from '../../api/daoService';
-import { ipfsUtils } from '../../utils/ipfsUtils';
-import { pluginRegistryUtils } from '../../utils/pluginRegistryUtils';
-import type { IAutocompleteInputGroup } from '../forms/autocompleteInput';
-import type { TranslationFunction } from '../translationsProvider';
+} from '../../api/governanceService';
+import type { ISmartContractAbi, ISmartContractAbiFunction } from '../../api/smartContractService';
+import { GovernanceSlotId } from '../../constants/moduleSlots';
+import type { IActionComposerPluginData } from '../../types';
 import type { IActionComposerInputItem } from './actionComposerInput';
 
 export enum ActionItemId {

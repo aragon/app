@@ -1,6 +1,5 @@
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
-import { ActionComposer, actionComposerUtils } from '@/shared/components/actionComposer';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
@@ -11,6 +10,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
+import { ActionComposer, actionComposerUtils } from '../../actionComposer';
 import type { ICreateProposalFormData, IProposalActionData } from '../createProposalFormDefinitions';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
 import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';

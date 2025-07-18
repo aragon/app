@@ -1,8 +1,8 @@
-import type { IActionComposerInputItem } from '@/shared/components/actionComposer';
 import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import type { ComponentType } from 'react';
 import type { IProposalAction } from '../api/governanceService';
+import type { IActionComposerInputItem } from '../components/actionComposer';
 import type { IProposalActionData } from '../components/createProposalForm';
 
 export type ActionComposerPluginComponent<TMeta = undefined> = ComponentType<

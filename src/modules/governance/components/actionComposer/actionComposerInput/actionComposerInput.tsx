@@ -1,7 +1,7 @@
+import { useDao } from '@/shared/api/daoService';
+import { AutocompleteInput } from '@/shared/components/forms/autocompleteInput';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { forwardRef } from 'react';
-import { useDao } from '../../../api/daoService';
-import { AutocompleteInput } from '../../forms/autocompleteInput';
-import { useTranslations } from '../../translationsProvider';
 import { actionComposerUtils } from '../actionComposerUtils';
 import type { IActionComposerInputProps } from './actionComposerInput.api';
 

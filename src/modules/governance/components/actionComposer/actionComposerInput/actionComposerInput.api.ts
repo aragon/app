@@ -1,10 +1,10 @@
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
 import type {
     IAutocompleteInputGroup,
     IAutocompleteInputItem,
     IAutocompleteInputProps,
-} from '../../forms/autocompleteInput';
+} from '@/shared/components/forms/autocompleteInput';
+import type { IProposalAction } from '../../../api/governanceService';
+import type { ISmartContractAbi } from '../../../api/smartContractService';
 
 export interface IActionComposerInputItem<TMeta = undefined> extends IAutocompleteInputItem<TMeta> {
     /**

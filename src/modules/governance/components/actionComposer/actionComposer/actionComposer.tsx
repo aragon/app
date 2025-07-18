@@ -1,17 +1,17 @@
 'use client';
 
-import { type IProposalAction } from '@/modules/governance/api/governanceService';
-import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
-import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
-import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
-import type { IVerifySmartContractDialogParams } from '@/modules/governance/dialogs/verifySmartContractDialog';
-import type { IWalletConnectActionDialogParams } from '@/modules/governance/dialogs/walletConnectActionDialog';
+import { useDao } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, Button, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useCallback, useRef, useState } from 'react';
-import { useDao } from '../../../api/daoService';
-import { useDialogContext } from '../../dialogProvider';
-import { useTranslations } from '../../translationsProvider';
+import { type IProposalAction } from '../../../api/governanceService';
+import type { ISmartContractAbi } from '../../../api/smartContractService';
+import { GovernanceDialogId } from '../../../constants/governanceDialogId';
+import type { IVerifySmartContractDialogParams } from '../../../dialogs/verifySmartContractDialog';
+import type { IWalletConnectActionDialogParams } from '../../../dialogs/walletConnectActionDialog';
+import type { IProposalActionData } from '../../createProposalForm';
 import {
     ActionComposerInput,
     type IActionComposerInputItem,

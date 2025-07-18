@@ -1,9 +1,9 @@
 import type { IActionComposerPluginData } from '@/modules/governance/types';
 import { type IDaoPlugin } from '@/shared/api/daoService';
-import { actionComposerUtils } from '@/shared/components/actionComposer';
 import { type TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils } from '@aragon/gov-ui-kit';
+import { actionComposerUtils } from '../../../../modules/governance/components/actionComposer';
 import { type ISppPluginSettings } from '../../types';
 
 export interface IGetSppActionsProps {
