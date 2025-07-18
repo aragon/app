@@ -1,29 +1,17 @@
-import { type IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
-import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
-import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import type { IVerifySmartContractDialogParams } from '@/modules/governance/dialogs/verifySmartContractDialog';
-import type { IWalletConnectActionDialogParams } from '@/modules/governance/dialogs/walletConnectActionDialog';
-import type { IActionComposerPluginData } from '@/modules/governance/types';
-import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
-import { useDialogContext } from '@/shared/components/dialogProvider';
+import { ProposalActionType } from '@/modules/governance/api/governanceService';
+import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
-    Button,
     IconType,
     type IProposalActionsItemDropdownItem,
     type ProposalActionComponent,
     ProposalActions,
 } from '@aragon/gov-ui-kit';
-import classNames from 'classnames';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
-import { ActionComposer, type ActionComposerMode, type IActionComposerItem } from '../../actionComposer';
-import { ActionItemId } from '../../actionComposer/actionComposerUtils';
+import { ActionComposer, actionComposerUtils } from '../../actionComposer';
 import type { ICreateProposalFormData, IProposalActionData } from '../createProposalFormDefinitions';
-import { useCreateProposalFormContext } from '../createProposalFormProvider';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
 import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';
 import { UpdatePluginMetadataAction } from './proposalActions/updatePluginMetadataAction';
@@ -48,13 +36,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
     const { t } = useTranslations();
-    const { open } = useDialogContext();
-    const { smartContractAbis, addSmartContractAbi } = useCreateProposalFormContext();
-
-    const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
-
-    const [displayActionComposer, setDisplayActionComposer] = useState(false);
-    const [actionComposerMode, setActionComposerMode] = useState<ActionComposerMode>('native');
     const [expandedActions, setExpandedActions] = useState<string[]>([]);
 
     const {
@@ -79,59 +60,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             : null,
     }));
 
-    const handleAddAction = (mode: ActionComposerMode) => {
-        setActionComposerMode(mode);
-        autocompleteInputRef.current?.focus();
-    };
-
-    const handleAbiSubmit = (abi: ISmartContractAbi) => {
-        addSmartContractAbi(abi);
-        handleAddAction('custom');
-    };
-
-    const handleVerifySmartContract = (initialValue?: string) => {
-        const params: IVerifySmartContractDialogParams = {
-            network: dao!.network,
-            onSubmit: handleAbiSubmit,
-            initialValue,
-        };
-        open(GovernanceDialogId.VERIFY_SMART_CONTRACT, { params });
-    };
-
-    const handleAddCustomAction = () => {
-        if (smartContractAbis.length === 0) {
-            handleVerifySmartContract();
-        } else {
-            handleAddAction('custom');
-        }
-    };
-
-    const handleAddWalletConnectActions = (actions: IProposalAction[]) => {
-        const parsedActions = actions.map((action) => ({ ...action, daoId, meta: undefined }));
-        addAction(parsedActions);
-    };
-
-    const displayWalletConnectDialog = () => {
-        const params: IWalletConnectActionDialogParams = {
-            onAddActionsClick: handleAddWalletConnectActions,
-            daoAddress: dao!.address,
-            daoNetwork: dao!.network,
-        };
-        open(GovernanceDialogId.WALLET_CONNECT_ACTION, { params });
-    };
-
-    const handleItemSelected = (action: IActionComposerItem, inputValue: string) => {
-        const { id, defaultValue, meta } = action;
-
-        if (defaultValue != null) {
-            const actionId = crypto.randomUUID();
-            addAction({ ...defaultValue, id: actionId, daoId, meta });
-            setExpandedActions([actionId]);
-        } else if (id === ActionItemId.ADD_CONTRACT) {
-            handleVerifySmartContract(inputValue);
-        }
-    };
-
     const handleMoveAction = (index: number, newIndex: number) => moveAction(index, newIndex);
 
     const handleRemoveAction = (action: IProposalActionData, index: number) => {
@@ -144,6 +72,12 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
             return newExpandedActions;
         });
+    };
+
+    const handleAddAction = (actions: IProposalActionData[]) => {
+        // Expand all added actions containing an id
+        setExpandedActions(actions.map((action) => action.id).filter((id) => id != null));
+        addAction(actions);
     };
 
     const getActionDropdownItems = (index: number) => {
@@ -171,17 +105,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         return dropdownItems.filter((item) => !item.hidden);
     };
 
-    const pluginActions =
-        dao?.plugins.map((plugin) =>
-            pluginRegistryUtils.getSlotFunction<IDaoPlugin, IActionComposerPluginData>({
-                pluginId: plugin.subdomain,
-                slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
-            })?.(plugin),
-        ) ?? [];
-
-    const pluginItems = pluginActions.flatMap((data) => data?.items ?? []);
-    const pluginGroups = pluginActions.flatMap((data) => data?.groups ?? []);
-    const pluginComponents = pluginActions.reduce((acc, data) => ({ ...acc, ...data?.components }), {});
+    const { pluginItems, pluginGroups, pluginComponents } = actionComposerUtils.getPluginActionsFromDao(dao);
 
     const customActionComponents: Record<string, ProposalActionComponent<IProposalActionData>> = {
         ...coreCustomActionComponents,
@@ -206,36 +130,11 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                     ))}
                 </ProposalActions.Container>
             </ProposalActions.Root>
-            <div className={classNames('flex flex-row gap-3', { hidden: displayActionComposer })}>
-                <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={() => handleAddAction('native')}>
-                    {t('app.governance.createProposalForm.actions.addAction.default')}
-                </Button>
-                <Button
-                    variant="secondary"
-                    size="md"
-                    iconRight={IconType.BLOCKCHAIN_SMARTCONTRACT}
-                    onClick={handleAddCustomAction}
-                >
-                    {t('app.governance.createProposalForm.actions.addAction.custom')}
-                </Button>
-                <Button
-                    variant="secondary"
-                    size="md"
-                    iconRight={IconType.BLOCKCHAIN_WALLETCONNECT}
-                    onClick={displayWalletConnectDialog}
-                >
-                    {t('app.governance.createProposalForm.actions.addAction.walletConnect')}
-                </Button>
-            </div>
             <ActionComposer
-                wrapperClassName={classNames('transition-none', { '!sr-only': !displayActionComposer })}
-                onActionSelected={handleItemSelected}
-                onOpenChange={setDisplayActionComposer}
-                ref={autocompleteInputRef}
-                nativeItems={pluginItems}
-                nativeGroups={pluginGroups}
                 daoId={daoId}
-                mode={actionComposerMode}
+                onAddAction={handleAddAction}
+                nativeGroups={pluginGroups}
+                nativeItems={pluginItems}
             />
         </div>
     );

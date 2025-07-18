@@ -4,6 +4,8 @@ import { Button, DefinitionList } from '@aragon/gov-ui-kit';
 import { type IDaoPlugInfoProps } from './daoPluginInfo.api';
 import { DaoPluginInfoMetadata } from './daoPluginInfoMetadata';
 
+export const daoPluginInfoFilterParam = 'plugin';
+
 export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     const { plugin, daoId } = props;
 

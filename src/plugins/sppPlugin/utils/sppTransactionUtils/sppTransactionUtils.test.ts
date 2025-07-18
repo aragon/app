@@ -14,7 +14,7 @@ import {
 import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { sppPlugin } from '@/plugins/sppPlugin/constants/sppPlugin';
-import { Network } from '@/shared/api/daoService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { generatePluginInstallationSetupData } from '@/shared/testUtils/generators/pluginSetupData';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
@@ -51,7 +51,7 @@ describe('sppTransaction utils', () => {
             const actions: ITransactionRequest[] = [{ to: '0xAddress', data: '0xdata', value: BigInt(0) }];
             const plugin = generateDaoPlugin({
                 address: '0x123',
-                subdomain: 'spp',
+                interfaceType: PluginInterfaceType.SPP,
                 settings: generateSppPluginSettings(),
             });
             parseStartDateSpy.mockReturnValue(startDate);

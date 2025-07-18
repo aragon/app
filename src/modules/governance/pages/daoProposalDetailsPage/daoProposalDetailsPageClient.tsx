@@ -57,7 +57,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const proposalStatus = useSlotSingleFunction<IProposal, ProposalStatus>({
         params: proposal!,
         slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
-        pluginId: proposal?.pluginSubdomain ?? '',
+        pluginId: proposal?.pluginInterfaceType ?? '',
     })!;
 
     const { data: actionData } = useProposalActions(
@@ -113,7 +113,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                     <Page.MainSection title={t('app.governance.daoProposalDetailsPage.main.voting')}>
                         <PluginSingleComponent
                             slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_TERMINAL}
-                            pluginId={proposal.pluginSubdomain}
+                            pluginId={proposal.pluginInterfaceType}
                             proposal={proposal}
                             status={proposalStatus}
                             daoId={daoId}

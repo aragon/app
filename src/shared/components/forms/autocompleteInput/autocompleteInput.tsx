@@ -1,3 +1,5 @@
+'use client';
+
 import { InputText } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { type ChangeEvent, type FocusEvent, forwardRef, type KeyboardEvent, useState } from 'react';
@@ -84,9 +86,9 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
     const getGroupById = (id?: string): IAutocompleteInputGroup | undefined => groups?.find((group) => group.id === id);
 
     const filterItem = (item: IAutocompleteInputItem) => {
-        const { groupId, name } = item;
+        const { groupId, name, info } = item;
         const { name: groupName, info: groupInfo, indexData } = getGroupById(groupId) ?? {};
-        const searchStrings = [name, groupName, groupInfo, ...(indexData ?? [])];
+        const searchStrings = [name, info, groupName, groupInfo, ...(indexData ?? [])];
 
         return (
             searchStrings.some((stringValue) => stringValue?.toLowerCase().includes(inputValue.toLowerCase())) ||
