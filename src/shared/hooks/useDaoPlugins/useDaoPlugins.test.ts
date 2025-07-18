@@ -17,11 +17,17 @@ describe('useDaoPlugins hook', () => {
 
     it('retrieves the DAO plugins and returns them as tab-plugins', () => {
         const plugins = [
-            generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG, subdomain: 'multisig', address: '0x123' }),
+            generateDaoPlugin({
+                interfaceType: PluginInterfaceType.MULTISIG,
+                subdomain: 'multisig',
+                address: '0x123',
+                slug: 'multi',
+            }),
             generateDaoPlugin({
                 interfaceType: PluginInterfaceType.TOKEN_VOTING,
                 subdomain: 'token-voting',
                 address: '0x456',
+                slug: 'token',
             }),
         ];
         const dao = generateDao({ id: 'test', plugins });
@@ -30,8 +36,8 @@ describe('useDaoPlugins hook', () => {
         const { result } = renderHook(() => useDaoPlugins({ daoId: dao.id }));
 
         expect(result.current).toEqual([
-            { id: 'multisig', uniqueId: 'multisig-0x123', label: 'Multisig', meta: plugins[0], props: {} },
-            { id: 'tokenVoting', uniqueId: 'tokenVoting-0x456', label: 'Token Voting', meta: plugins[1], props: {} },
+            { id: 'multisig', uniqueId: plugins[0].slug, label: 'Multisig', meta: plugins[0], props: {} },
+            { id: 'tokenVoting', uniqueId: plugins[1].slug, label: 'Token Voting', meta: plugins[1], props: {} },
         ]);
     });
 

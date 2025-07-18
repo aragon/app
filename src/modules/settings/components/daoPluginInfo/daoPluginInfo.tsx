@@ -1,12 +1,15 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
+import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { PluginType } from '@/shared/types';
 import { DefinitionList, Tabs } from '@aragon/gov-ui-kit';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { DaoGovernanceInfo } from '../daoGovernanceInfo';
 import { DaoMembersInfo } from '../daoMembersInfo';
 import { DaoPluginInfoTabId, type IDaoPlugInfoProps } from './daoPluginInfo.api';
 import { DaoPluginInfoMetadata } from './daoPluginInfoMetadata';
+
+export const daoPluginInfoFilterParam = 'plugin';
 
 export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     const { plugin, daoId, type } = props;
@@ -26,10 +29,11 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     );
 
     const visibleTabs = useMemo(() => tabs.filter((tab) => !tab.hidden), [tabs]);
-    const [activeTab, setActiveTab] = useState(visibleTabs[0].id);
-
-    // Update active tab if tabs prop changes
-    useEffect(() => setActiveTab(visibleTabs[0].id), [visibleTabs]);
+    const [activeTab, setActiveTab] = useFilterUrlParam({
+        name: daoPluginInfoFilterParam,
+        fallbackValue: visibleTabs[0].id,
+        validValues: visibleTabs.map((tab) => tab.id),
+    });
 
     return (
         <Tabs.Root value={activeTab} onValueChange={(value) => setActiveTab(value as DaoPluginInfoTabId)}>
