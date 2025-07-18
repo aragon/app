@@ -44,10 +44,11 @@ class GovernanceMetadataUtils {
         } catch (error: unknown) {
             monitoringUtils.logError(error);
 
-            return {
+            return metadataUtils.buildMetadata({
                 title: 'Proposal not found',
                 description: 'The requested proposal could not be found.',
-            };
+                type: 'article',
+            });
         }
     };
 }

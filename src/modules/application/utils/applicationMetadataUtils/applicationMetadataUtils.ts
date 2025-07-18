@@ -29,10 +29,10 @@ class ApplicationMetadataUtils {
         } catch (error: unknown) {
             monitoringUtils.logError(error);
 
-            return {
+            return metadataUtils.buildMetadata({
                 title: 'DAO not found',
                 description: 'The requested DAO could not be found.',
-            };
+            });
         }
     };
 }
