@@ -4,13 +4,16 @@ import {
     ProposalActionType,
 } from '@/modules/governance/api/governanceService';
 import type { ISmartContractAbi, ISmartContractAbiFunction } from '@/modules/governance/api/smartContractService';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import type { IActionComposerPluginData } from '@/modules/governance/types';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { type AbiStateMutability, toFunctionSelector, zeroAddress } from 'viem';
-import type { IDao, IDaoPlugin } from '../../../api/daoService';
-import { ipfsUtils } from '../../../utils/ipfsUtils';
-import type { IAutocompleteInputGroup } from '../../forms/autocompleteInput';
-import type { TranslationFunction } from '../../translationsProvider';
-import type { IActionComposerInputItem } from './actionComposerInput.api';
+import type { IDao, IDaoPlugin } from '../../api/daoService';
+import { ipfsUtils } from '../../utils/ipfsUtils';
+import { pluginRegistryUtils } from '../../utils/pluginRegistryUtils';
+import type { IAutocompleteInputGroup } from '../forms/autocompleteInput';
+import type { TranslationFunction } from '../translationsProvider';
+import type { IActionComposerInputItem } from './actionComposerInput';
 
 export enum ActionItemId {
     CUSTOM_ACTION = 'CUSTOM_ACTION',
@@ -58,7 +61,26 @@ interface IGetActionItemsParams extends IGetCustomActionParams, IGetNativeAction
     excludeActionTypes?: string[];
 }
 
-class ActionComposerInputUtils {
+class ActionComposerUtils {
+    getPluginActionsFromDao = (dao?: IDao) => {
+        const pluginActions =
+            dao?.plugins.map((plugin) =>
+                pluginRegistryUtils.getSlotFunction<IDaoPlugin, IActionComposerPluginData>({
+                    pluginId: plugin.interfaceType,
+                    slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
+                })?.(plugin),
+            ) ?? [];
+        const pluginItems = pluginActions.flatMap((data) => data?.items ?? []);
+        const pluginGroups = pluginActions.flatMap((data) => data?.groups ?? []);
+        const pluginComponents = pluginActions.reduce((acc, data) => ({ ...acc, ...data?.components }), {});
+
+        return {
+            pluginItems,
+            pluginGroups,
+            pluginComponents,
+        };
+    };
+
     getActionGroups = ({
         t,
         dao,
@@ -390,4 +412,4 @@ class ActionComposerInputUtils {
     };
 }
 
-export const actionComposerInputUtils = new ActionComposerInputUtils();
+export const actionComposerUtils = new ActionComposerUtils();

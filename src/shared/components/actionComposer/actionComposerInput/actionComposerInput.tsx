@@ -2,8 +2,8 @@ import { forwardRef } from 'react';
 import { useDao } from '../../../api/daoService';
 import { AutocompleteInput } from '../../forms/autocompleteInput';
 import { useTranslations } from '../../translationsProvider';
+import { actionComposerUtils } from '../actionComposerUtils';
 import type { IActionComposerInputProps } from './actionComposerInput.api';
-import { actionComposerInputUtils } from './actionComposerInputUtils';
 
 export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerInputProps>((props, ref) => {
     const {
@@ -21,8 +21,8 @@ export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerI
 
     const { t } = useTranslations();
 
-    const groups = actionComposerInputUtils.getActionGroups({ t, dao, abis: importedContractAbis, nativeGroups });
-    const items = actionComposerInputUtils.getActionItems({
+    const groups = actionComposerUtils.getActionGroups({ t, dao, abis: importedContractAbis, nativeGroups });
+    const items = actionComposerUtils.getActionItems({
         t,
         dao,
         abis: importedContractAbis,

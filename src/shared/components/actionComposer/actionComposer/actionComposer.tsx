@@ -14,10 +14,10 @@ import { useDialogContext } from '../../dialogProvider';
 import { useTranslations } from '../../translationsProvider';
 import {
     ActionComposerInput,
-    ActionItemId,
     type IActionComposerInputItem,
     type IActionComposerInputProps,
 } from '../actionComposerInput';
+import { ActionItemId } from '../actionComposerUtils';
 
 export interface IActionComposerProps {
     /**

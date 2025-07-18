@@ -1,10 +1,10 @@
-import { ProposalActionType } from '@/modules/governance/api/governanceService';
-import { generateSmartContractAbi } from '@/modules/governance/testUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { mockTranslations } from '../../../../test/utils';
-import { generateDao } from '../../../testUtils';
-import type { IActionComposerInputItem } from './actionComposerInput.api';
-import { actionComposerInputUtils, ActionItemId } from './actionComposerInputUtils';
+import { ProposalActionType } from '../../../modules/governance/api/governanceService';
+import { generateSmartContractAbi } from '../../../modules/governance/testUtils';
+import { mockTranslations } from '../../../test/utils';
+import { generateDao } from '../../testUtils';
+import type { IActionComposerInputItem } from './actionComposerInput/actionComposerInput.api';
+import { actionComposerUtils, ActionItemId } from './actionComposerUtils';
 
 describe('actionComposerUtils', () => {
     describe('getActionGroups', () => {
@@ -24,7 +24,7 @@ describe('actionComposerUtils', () => {
                 { id: '0xN1', name: 'Native1', info: 'info1' },
                 { id: '0xN2', name: 'Native2', info: 'info2' },
             ];
-            const result = actionComposerInputUtils.getActionGroups({
+            const result = actionComposerUtils.getActionGroups({
                 t: mockTranslations.tMock,
                 dao,
                 abis: [],
@@ -40,7 +40,7 @@ describe('actionComposerUtils', () => {
                 generateSmartContractAbi({ address: '0xC1', name: 'Custom1' }),
                 generateSmartContractAbi({ address: '0xC2', name: 'Custom2' }),
             ];
-            const result = actionComposerInputUtils.getActionGroups({
+            const result = actionComposerUtils.getActionGroups({
                 t: mockTranslations.tMock,
                 dao,
                 abis,
@@ -61,7 +61,7 @@ describe('actionComposerUtils', () => {
                 generateSmartContractAbi({ address: '0xC3', name: 'Custom3' }),
                 generateSmartContractAbi({ address: '0xDAO', name: 'CustomDao' }),
             ];
-            const result = actionComposerInputUtils.getActionGroups({
+            const result = actionComposerUtils.getActionGroups({
                 t: mockTranslations.tMock,
                 dao,
                 abis: abisWithOverlap,
@@ -89,7 +89,7 @@ describe('actionComposerUtils', () => {
                     groupId: '0xN2',
                 },
             ];
-            const result = actionComposerInputUtils.getActionItems({
+            const result = actionComposerUtils.getActionItems({
                 t: mockTranslations.tMock,
                 dao,
                 abis: [],
@@ -117,7 +117,7 @@ describe('actionComposerUtils', () => {
                     functions: [{ name: 'customAction1', parameters: [] }],
                 }),
             ];
-            const result = actionComposerInputUtils.getActionItems({
+            const result = actionComposerUtils.getActionItems({
                 t: mockTranslations.tMock,
                 dao,
                 abis,
@@ -154,7 +154,7 @@ describe('actionComposerUtils', () => {
                 },
             ];
 
-            const result = actionComposerInputUtils.getActionItems({
+            const result = actionComposerUtils.getActionItems({
                 t: mockTranslations.tMock,
                 dao,
                 abis,
@@ -207,7 +207,7 @@ describe('actionComposerUtils', () => {
                 },
             ] as unknown as IActionComposerInputItem[];
 
-            const result = actionComposerInputUtils.getActionItems({
+            const result = actionComposerUtils.getActionItems({
                 t: mockTranslations.tMock,
                 dao,
                 abis: abisWithOverlap,
@@ -233,7 +233,7 @@ describe('actionComposerUtils', () => {
             const abis = [generateSmartContractAbi({ address: '0xC1', name: 'Custom1' })];
             const excludeActionTypes = [ActionItemId.RAW_CALLDATA, ProposalActionType.TRANSFER];
 
-            const result = actionComposerInputUtils.getActionItems({
+            const result = actionComposerUtils.getActionItems({
                 t: mockTranslations.tMock,
                 dao,
                 abis,
