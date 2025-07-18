@@ -32,8 +32,8 @@ export const useGovernanceToken = (params: IUseGovernanceTokenParams): IUseGover
 
     // Set fallback name and symbol in the case it's null or ""
     if (token) {
-        token.name = token.name || 'Unknown';
-        token.symbol = token.symbol || 'UNKNOWN';
+        token.name = token.name || tokenFallback.name;
+        token.symbol = token.symbol || tokenFallback.symbol;
     }
 
     const isLoading = isErc20CheckLoading || isDelegationCheckLoading || isVotesCheckLoading || isTokenLoading;
