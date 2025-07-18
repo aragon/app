@@ -17,7 +17,7 @@ import type {
     ITokenSetupMembershipMember,
 } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
+import { PluginInterfaceType, type IDaoPlugin, type IPluginSettings } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
@@ -156,7 +156,8 @@ class ProcessDetailsClientUtils {
             name: 'name' in plugin ? (plugin.name ?? undefined) : (hydrated?.name ?? undefined),
             description: 'description' in plugin ? (plugin.description ?? '') : (hydrated?.description ?? ''),
             links: 'links' in plugin ? (plugin.links ?? []) : (hydrated?.links ?? []),
-            subdomain: plugin.subdomain ?? hydrated?.subdomain ?? '',
+            subdomain: 'subdomain' in plugin ? plugin.subdomain : (hydrated?.subdomain ?? ''),
+            interfaceType: plugin.interfaceType ?? hydrated?.interfaceType ?? PluginInterfaceType.UNKNOWN,
             address: plugin.address,
             blockTimestamp: 'blockTimestamp' in plugin ? plugin.blockTimestamp : (hydrated?.blockTimestamp ?? 0),
             transactionHash: 'transactionHash' in plugin ? plugin.transactionHash : (hydrated?.transactionHash ?? ''),

@@ -44,14 +44,14 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
 
     return (
         <DefinitionList.Container>
-            <DefinitionList.Item term="Plugin name">
+            <DefinitionList.Item term={t('app.settings.daoProcessDetailsPage.aside.pluginName')}>
                 <p className="text-neutral-500">{daoUtils.getPluginName(plugin)}</p>
             </DefinitionList.Item>
-            <DefinitionList.Item term="Process key">
+            <DefinitionList.Item term={t('app.settings.daoProcessDetailsPage.aside.processKey')}>
                 <p className="text-neutral-500">{plugin.slug.toUpperCase()}</p>
             </DefinitionList.Item>
             <DefinitionList.Item
-                term="Plugin address"
+                term={t('app.settings.daoProcessDetailsPage.aside.pluginAddress')}
                 copyValue={plugin.address}
                 link={{
                     href: buildEntityUrl({
@@ -64,7 +64,10 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
             >
                 {addressUtils.truncateAddress(plugin.address)}
             </DefinitionList.Item>
-            <DefinitionList.Item term="Launched at" link={{ href: pluginCreationLink }}>
+            <DefinitionList.Item
+                term={t('app.settings.daoProcessDetailsPage.aside.launchedAt')}
+                link={{ href: pluginCreationLink }}
+            >
                 {pluginLaunchedAt}
             </DefinitionList.Item>
         </DefinitionList.Container>

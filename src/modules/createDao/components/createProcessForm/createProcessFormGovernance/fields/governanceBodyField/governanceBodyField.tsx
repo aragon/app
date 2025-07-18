@@ -58,7 +58,7 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
 
     const plugin = pluginRegistryUtils.getPlugin(body.plugin) as IPluginInfo | undefined;
 
-    const isExternal = body.type === SetupBodyType.EXISTING || body.type === SetupBodyType.EXTERNAL;
+    const isNew = body.type === SetupBodyType.NEW;
 
     return (
         <Accordion.Container isMulti={true}>
@@ -66,10 +66,10 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
                 <Accordion.ItemHeader>
                     <GovernanceBodyInfo
                         name={body.name}
-                        address={isExternal ? body.address : undefined}
-                        subdomain={isExternal ? body.subdomain : plugin?.id}
-                        release={isExternal ? body.release : plugin?.installVersion.release.toString()}
-                        build={isExternal ? body.build : plugin?.installVersion.build.toString()}
+                        address={isNew ? undefined : body.address}
+                        subdomain={isNew ? plugin?.id : body.subdomain}
+                        release={isNew ? plugin?.installVersion.release.toString() : body.release}
+                        build={isNew ? plugin?.installVersion.build.toString() : body.build}
                     />
                 </Accordion.ItemHeader>
                 <Accordion.ItemContent
@@ -77,7 +77,7 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
                     className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6"
                 >
                     <PluginSingleComponent
-                        pluginId={isExternal ? body.subdomain! : plugin!.id}
+                        pluginId={isNew ? plugin!.id : body.subdomain!}
                         slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}
                         daoId={daoId}
                         pluginAddress={(body as ISetupBodyFormExternal).address}

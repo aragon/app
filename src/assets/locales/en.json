@@ -1743,6 +1743,12 @@
         "viewProcess": "View process"
       },
       "daoProcessDetailsPage": {
+        "aside": {
+          "launchedAt": "Launched at",
+          "pluginAddress": "Plugin address",
+          "pluginName": "Plugin name",
+          "processKey": "Process key"
+        },
         "header": {
           "breadcrumb": {
             "settings": "Settings"

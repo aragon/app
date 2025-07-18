@@ -1,5 +1,3 @@
-'use client';
-
 import type { ISetupBodyFormNew } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -40,8 +38,6 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     const { t } = useTranslations();
 
     const { membership, governance } = body;
-
-    console.log('body', body);
 
     const initialParams = { queryParams: { daoId, pluginAddress } };
     const { itemsCount } = useMemberListData(initialParams);
