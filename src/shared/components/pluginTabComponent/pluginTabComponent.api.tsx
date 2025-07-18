@@ -42,6 +42,11 @@ export interface IPluginTabComponentProps<TMeta extends object = object, TProps 
      */
     onValueChange?: (value: ITabComponentPlugin<TMeta, TProps>) => void;
     /**
+     * Name of the search parameter to be used on the URL when selecting a tab.
+     * @default plugin
+     */
+    searchParamName?: string;
+    /**
      * Fallback component rendered if no components is registered with the specified slot and plugin IDs
      */
     Fallback?: IPluginSingleComponentProps['Fallback'];
