@@ -36,7 +36,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (props) 
         >
             <div className="flex flex-col gap-y-1">
                 <div className="flex gap-2 text-lg leading-tight font-normal">
-                    <p className="text-neutral-800">{daoUtils.getPluginName(process)}</p>
+                    <p className="truncate text-neutral-800">{daoUtils.getPluginName(process)}</p>
                     <p className="text-right text-neutral-500 uppercase">{slug}</p>
                 </div>
                 <p className="line-clamp-2 text-base leading-normal font-normal text-neutral-500">
