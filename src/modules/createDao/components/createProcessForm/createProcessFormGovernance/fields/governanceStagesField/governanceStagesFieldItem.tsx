@@ -4,10 +4,8 @@ import { Button, Card, Dropdown, IconType, InputText } from '@aragon/gov-ui-kit'
 import type React from 'react';
 import { useWatch } from 'react-hook-form';
 import { type ICreateProcessFormStage, ProcessStageType } from '../../../createProcessFormDefinitions';
-import { GovernanceStageApprovalsField } from '../governanceStageApprovalsField';
 import { GovernanceStageBodiesField } from '../governanceStageBodiesField';
-import { GovernanceStageTimingField } from '../governanceStageTimingField';
-import { GovernanceStageTypeField } from '../governanceStageTypeField';
+import { GovernanceStageSettingsField } from '../governanceStageSettingsField';
 
 export interface IGovernanceStagesFieldItemProps {
     /**
@@ -26,21 +24,26 @@ export interface IGovernanceStagesFieldItemProps {
      * Callback called on delete button click.
      */
     onDelete: () => void;
+    /**
+     * Index of the stage in the stages array.
+     */
+    index: number;
 }
 
 const nameMaxLength = 40;
 
 export const GovernanceStagesFieldItem: React.FC<IGovernanceStagesFieldItemProps> = (props) => {
-    const { formPrefix, daoId, stagesCount, onDelete } = props;
+    const { formPrefix, daoId, stagesCount, onDelete, index } = props;
 
     const { t } = useTranslations();
 
     useFormField<Record<string, ICreateProcessFormStage>, typeof formPrefix>(formPrefix);
 
-    const stageType = useWatch<Record<string, ICreateProcessFormStage['type']>>({ name: `${formPrefix}.type` });
+    const stageType = useWatch<Record<string, ICreateProcessFormStage['settings']['type']>>({
+        name: `${formPrefix}.type`,
+    });
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
-    const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
 
     const stageNameField = useFormField<ICreateProcessFormStage, 'name'>('name', {
         label: t('app.createDao.createProcessForm.governance.stageField.name.label'),
@@ -52,19 +55,29 @@ export const GovernanceStagesFieldItem: React.FC<IGovernanceStagesFieldItemProps
 
     const bodiesLabelContext = isOptimisticStage ? 'veto' : 'normal';
 
+    const stageNameText =
+        stageNameField.value !== ''
+            ? stageNameField.value
+            : t('app.createDao.createProcessForm.governance.stageField.title');
+    const stageNumberText = t('app.createDao.createProcessForm.governance.stageField.number', {
+        stageNumber: index + 1,
+    });
+
     return (
         <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
-            <InputText
-                helpText={t('app.createDao.createProcessForm.governance.stageField.name.helpText')}
-                maxLength={nameMaxLength}
-                {...stageNameField}
-            />
-            <GovernanceStageTypeField fieldPrefix={formPrefix} />
-            <GovernanceStageTimingField fieldPrefix={`${formPrefix}.timing`} stageType={stageType} />
-            {!isTimelockStage && (
-                <GovernanceStageBodiesField formPrefix={formPrefix} daoId={daoId} labelContext={bodiesLabelContext} />
-            )}
-            <GovernanceStageApprovalsField fieldPrefix={formPrefix} isOptimisticStage={isOptimisticStage} />
+            <div className="flex flex-col gap-6">
+                <div className="flex items-center justify-between">
+                    <p className="text-xl text-neutral-800">{stageNameText}</p>
+                    <p className="text-neutral-400">{stageNumberText}</p>
+                </div>
+                <InputText
+                    helpText={t('app.createDao.createProcessForm.governance.stageField.name.helpText')}
+                    maxLength={nameMaxLength}
+                    {...stageNameField}
+                />
+            </div>
+            <GovernanceStageBodiesField formPrefix={formPrefix} daoId={daoId} labelContext={bodiesLabelContext} />
+            <GovernanceStageSettingsField formPrefix={formPrefix} />
             {stagesCount > 1 && (
                 <Dropdown.Container
                     constrainContentWidth={false}

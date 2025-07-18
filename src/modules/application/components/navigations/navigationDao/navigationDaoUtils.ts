@@ -67,7 +67,7 @@ class NavigationDaoUtils {
 
     private getPluginLinks = (dao: IDao, baseUrl: string, context: NavigationDaoContext): INavigationLink[] => {
         const pluginLinks = dao.plugins.reduce<INavigationLink[]>((current, plugin) => {
-            const pluginInfo = pluginRegistryUtils.getPlugin(plugin.subdomain) as IPluginInfo;
+            const pluginInfo = pluginRegistryUtils.getPlugin(plugin.interfaceType) as IPluginInfo;
             const pluginPages = pluginInfo.pages?.(baseUrl, context) ?? [];
 
             return current.concat(pluginPages);

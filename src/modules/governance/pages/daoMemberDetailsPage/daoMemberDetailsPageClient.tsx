@@ -63,7 +63,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const pluginStats = useSlotSingleFunction<IUsePluginMemberStatsParams, IPageHeaderStat[]>({
         params: memberStatsParams,
         slotId: GovernanceSlotId.GOVERNANCE_MEMBER_STATS,
-        pluginId: dao?.plugins[0]?.subdomain ?? '',
+        pluginId: dao?.plugins[0]?.interfaceType ?? '',
     });
 
     const { lastActivity, firstActivity } = member?.metrics ?? {};

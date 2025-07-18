@@ -1,6 +1,6 @@
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { ISetupBodyForm, ISetupBodyFormNew } from '../../dialogs/setupBodyDialog';
-import type { ISetupStageTimingForm } from '../../dialogs/setupStageTimingDialog';
+import type { ISetupStageSettingsForm } from '../../dialogs/setupStageSettingsDialog';
 
 export enum ProposalCreationMode {
     LISTED_BODIES = 'LISTED_BODIES',
@@ -10,7 +10,6 @@ export enum ProposalCreationMode {
 export enum ProcessStageType {
     NORMAL = 'NORMAL',
     OPTIMISTIC = 'OPTIMISTIC',
-    TIMELOCK = 'TIMELOCK',
 }
 
 export enum GovernanceType {
@@ -79,19 +78,11 @@ export interface ICreateProcessFormStage {
      */
     name: string;
     /**
-     * Type of the stage.
-     */
-    type: ProcessStageType;
-    /**
-     * Values related to the timing of the stage.
-     */
-    timing: ISetupStageTimingForm;
-    /**
      * List of bodies of the stage.
      */
     bodies: ISetupBodyForm[];
     /**
-     * Number of bodies required to veto (for optimistic type) or approve.
+     * Settings of the stage.
      */
-    requiredApprovals: number;
+    settings: ISetupStageSettingsForm;
 }

@@ -203,17 +203,6 @@
               "ens": "ENS name"
             }
           },
-          "stageApprovalsField": {
-            "approve": {
-              "helpText": "The number of bodies that must approve this proposal to advance it.",
-              "label": "Approval threshold"
-            },
-            "summary": "of {{count}} bodies",
-            "veto": {
-              "helpText": "The number of bodies that must veto this proposal to stop it from advancing.",
-              "label": "Veto threshold"
-            }
-          },
           "stageBodiesField": {
             "action": {
               "add": "Add body",
@@ -221,13 +210,14 @@
               "more": "More",
               "remove": "Remove body"
             },
-            "error": {
-              "required": "At least one body must be added to the stage."
-            },
             "helpText": "These bodies will decide whether this stage passes.",
             "label": {
               "normal": "Voting bodies",
               "veto": "Vetoing bodies"
+            },
+            "timelockStage": {
+              "description": "Without bodies, the stage will be a timelock so proposals pass automatically when it ends.",
+              "heading": "No voting bodies"
             }
           },
           "stageField": {
@@ -238,37 +228,31 @@
             },
             "name": {
               "helpText": "This is used to identify the stage the proposal is in. For example: Community Review, Guardian Veto, or Founder Signoff",
-              "label": "Stage name"
-            }
+              "label": "Name"
+            },
+            "number": "Stage {{stageNumber}}",
+            "title": "Stage name"
           },
-          "stageTimingField": {
+          "stageSettingsField": {
+            "NORMAL": {
+              "description": "Proposals pass the stage only if approved.",
+              "label": "Approval"
+            },
+            "OPTIMISTIC": {
+              "description": "Proposals pass the stage unless vetoed.",
+              "label": "Veto"
+            },
+            "approvalHelpText": "Proposals pass the stage only if approved.",
+            "approvalThreshold": "Approval threshold",
             "earlyAdvance": "Early stage advance",
-            "edit": "Edit timing",
+            "edit": "Edit settings",
             "expiration": "Stage expiration",
             "expirationPeriod": "Expiration period",
-            "label": "Timing",
+            "governanceType": "Governance type",
+            "label": "Settings",
             "no": "Disabled",
-            "timelockPeriod": "Timelock period",
-            "votingPeriod": "Voting period",
+            "votingPeriod": "Stage duration",
             "yes": "Enabled"
-          },
-          "stageTypeField": {
-            "helpText": "This will determine the role that governance plays in the stage.",
-            "label": "Stage type",
-            "list": {
-              "NORMAL": {
-                "description": "Proposals pass this stage only if approved.",
-                "label": "Normal"
-              },
-              "OPTIMISTIC": {
-                "description": "Proposals pass this stage unless vetoed.",
-                "label": "Optimistic"
-              },
-              "TIMELOCK": {
-                "description": "Proposals pass this stage after the timelock period.",
-                "label": "Timelock"
-              }
-            }
           },
           "type": {
             "ADVANCED": {
@@ -426,33 +410,59 @@
         "submit": "Save",
         "title": "Add voting body"
       },
-      "setupStageTimingDialog": {
+      "setupStageSettingsDialog": {
         "a11y": {
-          "description": "Configure the duration and expiration for the stage"
+          "description": "Configure the settings for the stage"
         },
         "action": {
           "cancel": "Cancel",
           "save": "Save"
         },
-        "earlyAdvance": {
-          "helpText": "This allows a proposal to be advanced early to subsequent stages if it's approved before the voting period ends.",
-          "label": "Early stage advance"
+        "fields": {
+          "stageApprovalsField": {
+            "approve": {
+              "helpText": "The number of bodies that must approve this proposal to advance it.",
+              "label": "Approval threshold"
+            },
+            "summary": "of {{count}} bodies",
+            "veto": {
+              "helpText": "The number of bodies that must veto this proposal to stop it from advancing.",
+              "label": "Veto threshold"
+            }
+          },
+          "stageDurationField": {
+            "helpText": "The period of time a proposal is active. Proposals can be created with a longer duration, but not shorter.",
+            "infoText": "Recommended minimum voting period is 7 days.",
+            "label": "Stage Duration"
+          },
+          "stageEarlyAdvanceField": {
+            "helpText": "This allows a proposal to be advanced early to subsequent stages if it's approved before the voting period ends.",
+            "label": "Early stage advance",
+            "no": "Disabled",
+            "yes": "Enabled"
+          },
+          "stageExpirationField": {
+            "helpText": "This limits the amount of time after the voting period ends for advancing the proposal to the next stage.",
+            "infoText": "Recommended minimum expiration time is 7 days.",
+            "label": "Stage expiration",
+            "no": "Disabled",
+            "yes": "Enabled"
+          },
+          "stageTypeField": {
+            "NORMAL": {
+              "description": "Proposals pass the stage only if approved.",
+              "label": "Approval"
+            },
+            "OPTIMISTIC": {
+              "description": "Proposals pass the stage unless vetoed.",
+              "label": "Veto"
+            },
+            "helpText": "This will determine the role that governance plays in the stage.",
+            "label": "Governance type"
+          }
         },
-        "expiration": {
-          "helpText": "This limits the amount of time after the voting period ends for advancing the proposal to the next stage.",
-          "infoText": "Recommended minimum expiration time is 7 days.",
-          "label": "Stage expiration"
-        },
-        "timelockPeriod": {
-          "helpText": "The time that must pass before the proposal can advance.",
-          "label": "Timelock period"
-        },
-        "title": "Edit timing",
-        "votingPeriod": {
-          "helpText": "This is the amount of time bodies in this stage have to vote on proposals.",
-          "infoText": "Recommended minimum voting period is 7 days.",
-          "label": "Voting period"
-        }
+        "submit": "Save",
+        "title": "Settings"
       }
     },
     "daos": {
@@ -635,7 +645,7 @@
       },
       "transferAssetForm": {
         "amount": {
-          "label": "Amount",
+          "label": "Token",
           "placeholder": "0"
         },
         "receiver": {
@@ -652,7 +662,7 @@
           "RAW_CALLDATA": "Enter raw calldata"
         },
         "nativeGroup": {
-          "OSX": "DAO"
+          "DAO": "DAO"
         },
         "nativeItem": {
           "MetadataPluginUpdate": "Set metadata",
@@ -666,7 +676,6 @@
       "createProposalForm": {
         "actions": {
           "addAction": {
-            "custom": "Custom",
             "default": "Action",
             "walletConnect": "Connect"
           },
@@ -1045,6 +1054,67 @@
         }
       },
       "capitalDistributor": {
+        "capitalDistributorCampaignList": {
+          "emptyState": {
+            "description": "This will show your campaigns when available.",
+            "heading": "No campaigns found"
+          },
+          "entity": "Campaigns",
+          "errorState": {
+            "description": "There was an error loading the campaigns. Try again later.",
+            "heading": "Error loading campaigns"
+          },
+          "filter": {
+            "claimable": "Claimable",
+            "claimed": "Claimed"
+          },
+          "item": {
+            "amount": "Amount",
+            "value": "Value"
+          }
+        },
+        "capitalDistributorClaimDialog": {
+          "details": {
+            "amount": "Total amount",
+            "claimable": "Claimable",
+            "deadline": "Deadline",
+            "resources": "Resources",
+            "status": "Status",
+            "timeLeft": "{{time}} left",
+            "type": "Type",
+            "value": "Value"
+          },
+          "inputs": {
+            "helpText": "The address to get the payout",
+            "recipient": "Recipient"
+          },
+          "submit": "Claim"
+        },
+        "capitalDistributorClaimTransactionDialog": {
+          "description": "Confirm the onchain transaction to claim your rewards",
+          "submit": "Claim rewards",
+          "successLinkLabel": "View rewards",
+          "title": "Claim Transaction"
+        },
+        "capitalDistributorRewardsAside": {
+          "stats": {
+            "claimableCount": "Claimable campaigns",
+            "claimableNow": "Claimable now",
+            "latestClaim": "Latest claim",
+            "recentUnit": " {{unit}} ago",
+            "totalEarned": "Total earned"
+          }
+        },
+        "capitalDistributorRewardsPage": {
+          "main": {
+            "connect": {
+              "action": "Connect",
+              "description": "Connect your wallet to view your rewards.",
+              "heading": "Connect your wallet"
+            },
+            "title": "Rewards"
+          }
+        },
         "meta": {
           "link": {
             "rewards": "Rewards"

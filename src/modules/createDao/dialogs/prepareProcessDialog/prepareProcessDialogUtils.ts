@@ -114,7 +114,7 @@ class PrepareProcessDialogUtils {
             .filter((body) => body.type === SetupBodyType.NEW);
 
         const installData = newStageBodies.map((body, index) => {
-            const { votingPeriod: stageVotingPeriod } = values.stages[body.stageIndex].timing;
+            const { votingPeriod: stageVotingPeriod } = values.stages[body.stageIndex].settings;
             const metadataCid = pluginsMetadata[index];
 
             return this.buildPrepareInstallPluginActionData({ body, dao, metadataCid, stageVotingPeriod });

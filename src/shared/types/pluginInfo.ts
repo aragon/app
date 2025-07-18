@@ -7,13 +7,17 @@ import type { IPluginInfoSetup } from './pluginInfoSetup';
 
 export interface IPluginInfo extends IPlugin {
     /**
-     * Plugin version to be install on governance designer process.
+     * Plugin version to be installed on governance designer process.
      */
     installVersion: IContractVersionInfo;
     /**
      * Repository address of the plugin for each supported network.
      */
     repositoryAddresses: Record<Network, Hex>;
+    /**
+     * Subdomain of deployed plugin instance. Used when we need to distinguish between plugins with the same `interfaceType`.
+     */
+    subdomain: string;
     /**
      * Setup data for plugins that can be included in the governance designer process.
      */
