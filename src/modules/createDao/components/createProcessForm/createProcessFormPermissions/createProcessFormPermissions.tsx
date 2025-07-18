@@ -7,11 +7,40 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, CardEmptyState, RadioCard, RadioGroup, SmartContractFunctionDataListItem } from '@aragon/gov-ui-kit';
 import { useFieldArray } from 'react-hook-form';
+import { useDao } from '@/shared/api/daoService/queries/useDao/useDao';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import type { IDaoPlugin } from '@/shared/api/daoService';
+import type { IActionComposerPluginData } from '@/modules/governance/types';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 
-export interface ICreateProcessFormPermissionsProps {}
+export interface ICreateProcessFormPermissionsProps {
+    /**
+     * ID of the DAO
+     */
+    daoId: string;
+}
 
-export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionsProps> = () => {
+export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionsProps> = (props) => {
+    const { daoId } = props;
+
+    const daoUrlParams = { id: daoId };
+    const { data: dao } = useDao({ urlParams: daoUrlParams });
+
     const { t } = useTranslations();
+
+    const pluginActions =
+        dao?.plugins.map((plugin) =>
+            pluginRegistryUtils.getSlotFunction<IDaoPlugin, IActionComposerPluginData>({
+                pluginId: plugin.interfaceType,
+                slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
+            })?.(plugin),
+        ) ?? [];
+
+    const pluginItems = pluginActions.flatMap((data) => data?.items ?? []);
+    const pluginGroups = pluginActions.flatMap((data) => data?.groups ?? []);
+
+    console.log('ITEMS', pluginItems);
+    console.log('GROUPS', pluginGroups);
 
     const { ANY, SELECTED } = ProcessPermission;
 
