@@ -52,18 +52,18 @@ export const MultisigProcessBodyField = (props: IMultisigProcessBodyFieldProps) 
         };
     };
 
-    const membersCount = readOnly ? itemsCount : membership.members.length;
+    const membersCount = readOnly ? (itemsCount ?? '-') : membership.members.length;
     const { minApprovals } = resolveGovernance();
 
     return (
         <DefinitionList.Container className="w-full">
             <DefinitionList.Item term={t(`${baseTranslationKey}.membersTerm`)}>
-                {t(`${baseTranslationKey}.membersDefinition`, { count: membersCount ?? '-' })}
+                {t(`${baseTranslationKey}.membersDefinition`, { count: membersCount })}
             </DefinitionList.Item>
             <DefinitionList.Item term={t(`${baseTranslationKey}.thresholdTerm`)}>
                 {t(`${baseTranslationKey}.thresholdDefinition`, {
                     threshold: minApprovals,
-                    count: membersCount ?? '-',
+                    count: membersCount,
                 })}
             </DefinitionList.Item>
         </DefinitionList.Container>

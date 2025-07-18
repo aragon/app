@@ -24,13 +24,7 @@ export interface IGovernanceStageSettingsFieldProps {
 
 const requiredApprovalsDefaultValue = 1;
 
-const formatDuration = (duration?: IDateDuration | number): string => {
-    if (!duration) {
-        return '';
-    }
-    if (typeof duration === 'number') {
-        return Duration.fromObject({ seconds: duration }).shiftTo('days').toHuman();
-    }
+const formatDuration = (duration: IDateDuration): string => {
     const parsedDuration = Object.fromEntries(Object.entries(duration).filter(([, value]) => value !== 0));
 
     if (Object.keys(parsedDuration).length === 0) {
