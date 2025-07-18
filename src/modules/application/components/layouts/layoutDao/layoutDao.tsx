@@ -25,12 +25,16 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
     let dao: IDao;
 
     const queryClient = new QueryClient();
-
+    console.log('LAYOUT DAO', daoPageParams);
     try {
         const daoId = await daoUtils.resolveDaoId(daoPageParams);
+        console.log('resolveDaoId', daoId);
         const daoUrlParams = { id: daoId };
         dao = await queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }));
+        console.log('DAOAOASD LAY', dao);
     } catch (error: unknown) {
+        console.log('DAOAOASD ERROR', error);
+
         return (
             <Page.Error
                 error={JSON.parse(JSON.stringify(error)) as unknown}
