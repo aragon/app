@@ -21,6 +21,10 @@ export interface ICreateProposalFormActionsProps {
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Address of the plugin to create the proposal for.
+     */
+    pluginAddress: string;
 }
 
 const coreCustomActionComponents = {
