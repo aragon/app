@@ -29,6 +29,13 @@ export const useGovernanceToken = (params: IUseGovernanceTokenParams): IUseGover
     } = useGovernanceTokenVotesCheck({ ...params, enabled: isErc20Token });
 
     const token = isErc20Token ? (tokenResult ?? tokenFallback) : null;
+
+    // Set fallback name and symbol in the case it's null or ""
+    if (token) {
+        token.name = token.name || 'Unknown';
+        token.symbol = token.symbol || 'UNKNOWN';
+    }
+
     const isLoading = isErc20CheckLoading || isDelegationCheckLoading || isVotesCheckLoading || isTokenLoading;
     const isError = isErc20CheckError || isDelegationCheckError || isVotesCheckError;
 
