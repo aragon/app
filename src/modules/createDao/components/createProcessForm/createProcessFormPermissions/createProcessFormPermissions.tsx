@@ -2,9 +2,10 @@ import {
     type ICreateProcessFormData,
     ProcessPermission,
 } from '@/modules/createDao/components/createProcessForm/createProcessFormDefinitions';
+import type { Hex } from 'viem';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { CardEmptyState, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
+import { Button, CardEmptyState, RadioCard, RadioGroup, SmartContractFunctionDataListItem } from '@aragon/gov-ui-kit';
 import { useFieldArray } from 'react-hook-form';
 
 export interface ICreateProcessFormPermissionsProps {}
@@ -23,9 +24,21 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         defaultValue: ANY,
     });
 
-    const { fields: permissionSelectors } = useFieldArray<ICreateProcessFormData, 'permissionSelectors'>({
+    const {
+        fields: permissionSelectors,
+        append: appendPermissionSelector,
+        remove: removePermissionSelector,
+    } = useFieldArray<ICreateProcessFormData, 'permissionSelectors'>({
         name: 'permissionSelectors',
     });
+
+    const addPermissionSelector = () => {
+        appendPermissionSelector({ where: '0x' as Hex, selectors: [] });
+    };
+
+    const removePermissionSelectorByIndex = (index: number) => {
+        removePermissionSelector(index);
+    };
 
     return (
         <>
@@ -63,6 +76,22 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                     objectIllustration={{ object: 'SETTINGS' }}
                     isStacked={false}
                 />
+            )}
+            <div className="flex flex-col gap-2">
+                {permissionSelectors.map((selector, index) => (
+                    <SmartContractFunctionDataListItem.Structure
+                        key={selector.id}
+                        contractAddress={selector.where}
+                        onRemove={() => removePermissionSelectorByIndex(index)}
+                    />
+                ))}
+            </div>
+            {processPermission === SELECTED && (
+                <div className="flex flex-col gap-4">
+                    <Button variant="tertiary" size="md" onClick={addPermissionSelector} className="self-start">
+                        Add Permission Selector
+                    </Button>
+                </div>
             )}
         </>
     );

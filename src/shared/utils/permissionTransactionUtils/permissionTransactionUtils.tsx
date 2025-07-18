@@ -67,6 +67,7 @@ class PermissionTransactionUtils {
         params: IBuildExecuteConditionTransactionParams,
     ): [ITransactionRequest, ITransactionRequest] => {
         const { daoAddress, pluginAddress, executeConditionAddress } = params;
+
         const revokeExecuteTransaction = this.buildRevokePermissionTransaction({
             where: daoAddress,
             who: pluginAddress,
