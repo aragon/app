@@ -27,6 +27,8 @@ export interface IVoteListProps {
     isVeto?: boolean;
 }
 
+export const voteListFilterParam = 'vote';
+
 export const VoteList: React.FC<IVoteListProps> = (props) => {
     const { initialParams, daoId, pluginAddress, isVeto } = props;
 
@@ -46,6 +48,7 @@ export const VoteList: React.FC<IVoteListProps> = (props) => {
             daoId={daoId}
             isVeto={isVeto}
             Fallback={VoteListFallback}
+            searchParamName={voteListFilterParam}
         />
     );
 };

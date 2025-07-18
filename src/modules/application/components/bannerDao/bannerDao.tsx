@@ -2,6 +2,7 @@
 
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import type { ICreateProcessDetailsDialogParams } from '@/modules/createDao/dialogs/createProcessDetailsDialog';
+import { daoMembersPageFilterParam } from '@/modules/governance/pages/daoMembersPage';
 import type { IDao } from '@/shared/api/daoService';
 import { Banner } from '@/shared/components/banner';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -24,22 +25,22 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { isAdminMember, adminPluginAddress } = useAdminStatus({ daoId: dao.id, network: dao.network });
+    const { isAdminMember, adminPlugin } = useAdminStatus({ daoId: dao.id, network: dao.network });
 
     const daoUrl = daoUtils.getDaoUrl(dao)!;
 
     const handleBannerActionClick = () => {
-        invariant(adminPluginAddress != null, 'BannerDao: admin pluginAddress is expected.');
+        invariant(adminPlugin != null, 'BannerDao: admin plugin is expected.');
         const params: ICreateProcessDetailsDialogParams = {
             daoUrl,
-            pluginAddress: adminPluginAddress as Hex,
+            pluginAddress: adminPlugin.address as Hex,
         };
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
 
     const displayAdminMemberBanner = isAdminMember && process.env.NEXT_PUBLIC_FEATURE_GOVERNANCE_DESIGNER === 'true';
 
-    const bannerType = displayAdminMemberBanner ? 'adminMember' : adminPluginAddress ? 'adminPlugin' : null;
+    const bannerType = displayAdminMemberBanner ? 'adminMember' : adminPlugin ? 'adminPlugin' : null;
 
     if (bannerType == null) {
         return null;
@@ -54,7 +55,12 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
                     </Button>
                 )}
                 {bannerType === 'adminPlugin' && (
-                    <Button size="sm" variant="tertiary" href={`${daoUrl}/members`} iconRight={IconType.CHEVRON_RIGHT}>
+                    <Button
+                        size="sm"
+                        variant="tertiary"
+                        href={`${daoUrl}/members?${daoMembersPageFilterParam}=${adminPlugin!.slug}`}
+                        iconRight={IconType.CHEVRON_RIGHT}
+                    >
                         {t(`app.application.bannerDao.adminPlugin.action`)}
                     </Button>
                 )}
