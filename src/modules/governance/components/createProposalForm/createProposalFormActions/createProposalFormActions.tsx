@@ -74,6 +74,15 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         });
     };
 
+    const handleAddAction = (actions: IProposalActionData[]) => {
+        // Expand the action if there is only one action added
+        if (actions.length === 1 && actions[0].id) {
+            setExpandedActions([actions[0].id]);
+        }
+
+        addAction(actions);
+    };
+
     const getActionDropdownItems = (index: number) => {
         const dropdownItems: Array<IProposalActionsItemDropdownItem<IProposalActionData> & { hidden: boolean }> = [
             {
@@ -126,13 +135,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             </ProposalActions.Root>
             <ActionComposer
                 daoId={daoId}
-                onAddAction={(actions) => {
-                    if (!Array.isArray(actions) && actions.id) {
-                        setExpandedActions([actions.id]);
-                    }
-
-                    addAction(actions);
-                }}
+                onAddAction={handleAddAction}
                 nativeGroups={pluginGroups}
                 nativeItems={pluginItems}
             />

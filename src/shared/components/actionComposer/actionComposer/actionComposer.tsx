@@ -28,7 +28,7 @@ export interface IActionComposerProps {
      * Callback called when an action is added.
      * @param value - single action or array of actions to be added.
      */
-    onAddAction: (value: IProposalActionData | IProposalActionData[]) => void;
+    onAddAction: (value: IProposalActionData[]) => void;
     /**
      * Native groups to be displayed in the action composer input.
      */
@@ -107,7 +107,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
 
         if (defaultValue != null) {
             const actionId = crypto.randomUUID();
-            onAddAction({ ...defaultValue, id: actionId, daoId, meta });
+            onAddAction([{ ...defaultValue, id: actionId, daoId, meta }]);
         } else if (id === ActionItemId.ADD_CONTRACT) {
             handleVerifySmartContract(inputValue);
         }
