@@ -75,11 +75,8 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     };
 
     const handleAddAction = (actions: IProposalActionData[]) => {
-        // Expand the action if there is only one action added
-        if (actions.length === 1 && actions[0].id) {
-            setExpandedActions([actions[0].id]);
-        }
-
+        // Expand all added actions containing an id
+        setExpandedActions(actions.map((action) => action.id).filter((id) => id != null));
         addAction(actions);
     };
 
