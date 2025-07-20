@@ -29,6 +29,7 @@ describe('<CreateProposalFormActions /> component', () => {
     const createTestComponent = (props?: Partial<ICreateProposalFormActionsProps>) => {
         const completeProps: ICreateProposalFormActionsProps = {
             daoId: 'test',
+            pluginAddress: '0x123',
             ...props,
         };
 

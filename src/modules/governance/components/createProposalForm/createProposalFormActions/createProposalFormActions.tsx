@@ -2,6 +2,7 @@ import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     IconType,
     type IProposalActionsItemDropdownItem,
@@ -34,10 +35,13 @@ const coreCustomActionComponents = {
 } as unknown as Record<string, ProposalActionComponent<IProposalActionData>>;
 
 export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = (props) => {
-    const { daoId } = props;
+    const { daoId, pluginAddress } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
+
+    const [processPlugin] = daoUtils.getDaoPlugins(dao, { pluginAddress })!;
+    const hasConditionalPermissions = processPlugin.conditionAddress != null;
 
     const { t } = useTranslations();
     const [expandedActions, setExpandedActions] = useState<string[]>([]);
@@ -139,6 +143,8 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 onAddAction={handleAddAction}
                 nativeGroups={pluginGroups}
                 nativeItems={pluginItems}
+                // TODO: Add processAddress prop when ActionComposer is updated in step 3
+                // conditionedProcessAddress={hasConditionalPermissions ? pluginAddress : undefined}
             />
         </div>
     );
