@@ -10,6 +10,7 @@ import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -37,7 +38,8 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
-    const plugin = daoUtils.getDaoPlugins(dao, {
+    const { meta: plugin } = useDaoPlugins({
+        daoId,
         slug: slug.toLowerCase(),
         type: PluginType.PROCESS,
         includeSubPlugins: true,
