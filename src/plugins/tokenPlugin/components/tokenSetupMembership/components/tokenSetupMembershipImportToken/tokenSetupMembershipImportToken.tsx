@@ -41,10 +41,10 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
     const { data: dao } = useDao({ urlParams: useDaoParams });
     const chainId = dao ? networkDefinitions[dao.network].id : undefined;
 
-    // Initialize token name; optional as some tokens may not define one.
     useFormField<ITokenSetupMembershipForm['token'], 'name'>('name', {
         defaultValue: '',
         fieldPrefix: tokenFormPrefix,
+        rules: { required: true },
     });
 
     const {
