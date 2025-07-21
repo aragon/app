@@ -41,7 +41,6 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
     const { data: dao } = useDao({ urlParams: useDaoParams });
     const chainId = dao ? networkDefinitions[dao.network].id : undefined;
 
-    // Used to prevent moving forward if the token is not set.
     useFormField<ITokenSetupMembershipForm['token'], 'name'>('name', {
         defaultValue: '',
         fieldPrefix: tokenFormPrefix,
@@ -78,15 +77,17 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
             return;
         }
 
-        setValue(`${tokenFormPrefix}.decimals`, token.decimals);
+        const { name, symbol, totalSupply, decimals } = token;
+
+        setValue(`${tokenFormPrefix}.decimals`, decimals);
 
         if (isGovernanceCompatible) {
-            setValue(`${tokenFormPrefix}.name`, token.name);
-            setValue(`${tokenFormPrefix}.symbol`, token.symbol);
-            setValue(`${tokenFormPrefix}.totalSupply`, token.totalSupply);
+            setValue(`${tokenFormPrefix}.name`, name);
+            setValue(`${tokenFormPrefix}.symbol`, symbol);
+            setValue(`${tokenFormPrefix}.totalSupply`, totalSupply);
         } else {
-            setValue(`${tokenFormPrefix}.name`, `Governance ${token.name}`);
-            setValue(`${tokenFormPrefix}.symbol`, `g${token.symbol}`);
+            setValue(`${tokenFormPrefix}.name`, `Governance ${name}`);
+            setValue(`${tokenFormPrefix}.symbol`, `g${symbol}`);
             setValue(`${tokenFormPrefix}.totalSupply`, '0');
         }
     }, [isGovernanceCompatible, setValue, token, tokenFormPrefix]);
