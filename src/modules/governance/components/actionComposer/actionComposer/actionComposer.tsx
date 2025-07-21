@@ -1,11 +1,12 @@
 'use client';
 
+import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { addressUtils, Button, IconType } from '@aragon/gov-ui-kit';
+import { addressUtils, Button, IconType, Switch } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { type IProposalAction } from '../../../api/governanceService';
 import type { ISmartContractAbi } from '../../../api/smartContractService';
 import { GovernanceDialogId } from '../../../constants/governanceDialogId';
@@ -33,13 +34,38 @@ export interface IActionComposerProps extends Pick<IActionComposerInputProps, 'n
      * If true, hides the WalletConnect button.
      */
     hideWalletConnect?: boolean;
+    /**
+     * Address of the process plugin when it has conditional execution permissions.
+     * When provided, enables filtering of allowed actions.
+     */
+    conditionedProcessAddress?: string;
 }
 
 export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
-    const { daoId, onAddAction, nativeGroups, nativeItems, hideWalletConnect = false } = props;
+    const {
+        daoId,
+        onAddAction,
+        nativeGroups,
+        nativeItems,
+        hideWalletConnect = false,
+        conditionedProcessAddress,
+    } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
+
+    const { data: allowedActions } = useAllowedActions(
+        {
+            urlParams: {
+                network: dao!.network,
+                pluginAddress: conditionedProcessAddress ?? '',
+            },
+            queryParams: {},
+        },
+        {
+            enabled: !!conditionedProcessAddress,
+        },
+    );
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -47,6 +73,21 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
 
     const [displayActionComposer, setDisplayActionComposer] = useState(false);
+    const [onlyShowAuthorizedActions, setOnlyShowAuthorizedActions] = useState(true);
+
+    // Determine if we should apply filtering based on conditional permissions and switch state
+    const shouldFilterActions = !!conditionedProcessAddress && onlyShowAuthorizedActions;
+
+    // Calculate excluded action types when filtering is enabled
+    const excludeActionTypes = useMemo(() => {
+        if (!shouldFilterActions || !allowedActions) {
+            return undefined;
+        }
+
+        // For now, when filtering is active, we exclude the "ADD_CONTRACT" action to prevent adding new contracts
+        // TODO: Implement proper filtering based on allowed actions data structure
+        return [ActionItemId.ADD_CONTRACT];
+    }, [shouldFilterActions, allowedActions]);
 
     const [importedContractAbis, setImportedContractAbis] = useState<ISmartContractAbi[]>([]);
 
@@ -105,13 +146,25 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         }
     };
 
+    // Determine if WalletConnect should be hidden
+    const shouldHideWalletConnect = hideWalletConnect || shouldFilterActions;
+
     return (
         <>
+            {conditionedProcessAddress && (
+                <div className="mb-4">
+                    <Switch
+                        checked={onlyShowAuthorizedActions}
+                        onCheckedChanged={setOnlyShowAuthorizedActions}
+                        label={t('app.governance.actionComposer.onlyShowAuthorizedActions')}
+                    />
+                </div>
+            )}
             <div className={classNames('flex flex-row gap-3', { hidden: displayActionComposer })}>
                 <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={handleAddAction}>
                     {t('app.governance.actionComposer.addAction.default')}
                 </Button>
-                {!hideWalletConnect && (
+                {!shouldHideWalletConnect && (
                     <Button
                         variant="secondary"
                         size="md"
@@ -131,6 +184,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 nativeGroups={nativeGroups}
                 daoId={daoId}
                 importedContractAbis={importedContractAbis}
+                excludeActionTypes={excludeActionTypes}
             />
         </>
     );

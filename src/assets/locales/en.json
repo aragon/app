@@ -661,6 +661,7 @@
           "default": "Action",
           "walletConnect": "Connect"
         },
+        "onlyShowAuthorizedActions": "Only show authorized actions",
         "customItem": {
           "ADD_CONTRACT": "Add contract address",
           "RAW_CALLDATA": "Enter raw calldata"

@@ -143,8 +143,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 onAddAction={handleAddAction}
                 nativeGroups={pluginGroups}
                 nativeItems={pluginItems}
-                // TODO: Add processAddress prop when ActionComposer is updated in step 3
-                // conditionedProcessAddress={hasConditionalPermissions ? pluginAddress : undefined}
+                conditionedProcessAddress={hasConditionalPermissions ? pluginAddress : undefined}
             />
         </div>
     );
