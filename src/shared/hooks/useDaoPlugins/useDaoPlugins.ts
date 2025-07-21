@@ -43,10 +43,10 @@ export const pluginGroupTab: ITabComponentPlugin<IDaoPlugin> = {
 };
 
 export const useDaoPlugins = (params: IUseDaoPluginsParams): Array<ITabComponentPlugin<IDaoPlugin>> | undefined => {
-    const { daoId, type, pluginAddress, includeSubPlugins, includeGroupTab, interfaceType } = params;
+    const { daoId, type, pluginAddress, includeSubPlugins, includeGroupTab, interfaceType, slug } = params;
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const plugins = daoUtils.getDaoPlugins(dao, { type, pluginAddress, includeSubPlugins, interfaceType });
+    const plugins = daoUtils.getDaoPlugins(dao, { type, pluginAddress, includeSubPlugins, interfaceType, slug });
 
     const processedPlugins = plugins?.map((plugin) => ({
         id: plugin.interfaceType,

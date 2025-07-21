@@ -1,15 +1,8 @@
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import {
-    addressUtils,
-    ChainEntityType,
-    DateFormat,
-    DefinitionList,
-    formatterUtils,
-    useBlockExplorer,
-} from '@aragon/gov-ui-kit';
+import { DefinitionList } from '@aragon/gov-ui-kit';
 
 export interface IDaoProcessDetailsInfoProps {
     /**
@@ -27,20 +20,12 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
 
     const { t } = useTranslations();
 
-    const { id: chainId } = networkDefinitions[dao.network];
-    const { buildEntityUrl } = useBlockExplorer();
-
-    const pluginLaunchedAt = formatterUtils.formatDate(plugin.blockTimestamp * 1000, {
-        format: DateFormat.YEAR_MONTH,
+    const pluginInfo = useDaoPluginInfo({
+        daoId: dao.id,
+        address: plugin.address,
     });
 
-    const pluginCreationLink = buildEntityUrl({
-        type: ChainEntityType.TRANSACTION,
-        id: plugin.transactionHash,
-        chainId,
-    });
-
-    const versionInfo = `${daoUtils.parsePluginSubdomain(plugin.subdomain)} v${plugin.release}.${plugin.build}`;
+    const [pluginDefinition, launchedAtDefinition] = pluginInfo;
 
     return (
         <DefinitionList.Container>
@@ -52,23 +37,17 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t('app.settings.daoProcessDetailsPage.aside.pluginAddress')}
-                copyValue={plugin.address}
-                link={{
-                    href: buildEntityUrl({
-                        type: ChainEntityType.ADDRESS,
-                        id: plugin.address,
-                        chainId,
-                    }),
-                }}
-                description={versionInfo}
+                copyValue={pluginDefinition.copyValue}
+                link={pluginDefinition.link}
+                description={pluginDefinition.description}
             >
-                {addressUtils.truncateAddress(plugin.address)}
+                {pluginDefinition.definition}
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t('app.settings.daoProcessDetailsPage.aside.launchedAt')}
-                link={{ href: pluginCreationLink }}
+                link={launchedAtDefinition.link}
             >
-                {pluginLaunchedAt}
+                {launchedAtDefinition.definition}
             </DefinitionList.Item>
         </DefinitionList.Container>
     );
