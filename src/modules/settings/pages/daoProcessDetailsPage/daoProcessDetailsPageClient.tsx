@@ -45,13 +45,11 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
         includeSubPlugins: true,
     })![0];
 
-    const hydratedPlugin = dao?.plugins.find((p) => p.address === plugin.address) ?? plugin;
-
-    const pluginFormData = daoProcessDetailsClientUtils.pluginToProcessFormData(hydratedPlugin, dao?.plugins ?? []);
+    const pluginFormData = daoProcessDetailsClientUtils.pluginToProcessFormData(plugin, dao?.plugins ?? []);
 
     const formMethods = useForm<ICreateDaoFormData>({ defaultValues: pluginFormData });
 
-    const proposals = useProposalListData({ queryParams: { daoId, pluginAddress: plugin.address } });
+    const { proposalList, itemsCount } = useProposalListData({ queryParams: { daoId, pluginAddress: plugin.address } });
 
     const pageBreadcrumbs = [
         {
@@ -62,9 +60,7 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
     ];
 
     const parsedLatestActivity =
-        proposals.proposalList?.[0].blockTimestamp != null
-            ? proposals.proposalList[0].blockTimestamp * 1000
-            : undefined;
+        proposalList?.[0].blockTimestamp != null ? proposalList[0].blockTimestamp * 1000 : undefined;
     const formattedLatestActivity = formatterUtils.formatDate(parsedLatestActivity, { format: DateFormat.RELATIVE });
 
     const [value, unit] = formattedLatestActivity?.split(' ') ?? [undefined, undefined];
@@ -73,7 +69,7 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
     const stats = [
         {
             label: t('app.settings.daoProcessDetailsPage.header.stats.proposals'),
-            value: proposals.itemsCount ?? '-',
+            value: itemsCount ?? '-',
         },
         {
             label: t('app.settings.daoProcessDetailsPage.header.stats.lastProposal'),
