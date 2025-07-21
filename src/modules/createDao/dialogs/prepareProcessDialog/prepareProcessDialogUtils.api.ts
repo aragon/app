@@ -77,7 +77,7 @@ export interface IBuildDeployExecuteSelectorConditionDataParams {
      */
     values: ICreateProcessFormData;
     /**
-     * DAO to install the plugins to.
+     * DAO to install the ExecuteSelectorCondition to.
      */
     dao: IDao;
 }

@@ -16,9 +16,9 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
-import { type TransactionReceipt } from 'viem';
+import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
-import { type ICreateProcessFormData } from '../../components/createProcessForm';
+import type { ICreateProcessFormData } from '../../components/createProcessForm';
 import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
 import type {
     IBuildProcessProposalActionsParams,

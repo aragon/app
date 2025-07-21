@@ -51,11 +51,11 @@ export interface IBuildGrantWithConditionTransactionParams extends IUpdatePermis
 
 export interface IBuildExecuteConditionTransactionParams {
     /**
-     * The address of the DAO.
+     * The address of the DAO where the execute condition will be applied.
      */
     daoAddress: Hex;
     /**
-     * The address of the plugin.
+     * The address of the plugin to apply the execute condition.
      */
     pluginAddress: Hex;
     /**

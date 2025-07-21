@@ -52,7 +52,7 @@ class PrepareProcessDialogUtils {
         const { pluginSetupProcessor, conditionFactory } = networkDefinitions[dao.network].addresses;
 
         const needsExecuteCondition = values.permissions === ProcessPermission.SELECTED;
-        const conditionDeployTx = needsExecuteCondition
+        const conditionDeployTransaction = needsExecuteCondition
             ? [
                   {
                       to: conditionFactory,
@@ -72,7 +72,7 @@ class PrepareProcessDialogUtils {
         const actionValues = { to: pluginSetupProcessor, value: BigInt(0) };
         const installActionTransactions = installActionsData.map((data) => ({ ...actionValues, data }));
         const encodedTransaction = transactionUtils.encodeTransactionRequests(
-            [...conditionDeployTx, ...installActionTransactions],
+            [...conditionDeployTransaction, ...installActionTransactions],
             dao.network,
         );
 
@@ -185,15 +185,7 @@ class PrepareProcessDialogUtils {
         const prepareTransaction = encodeFunctionData({
             abi: conditionFactoryAbi,
             functionName: 'deployExecuteSelectorCondition',
-            args: [
-                dao.address as Hex,
-                [
-                    {
-                        where: dao.address as Hex,
-                        selectors,
-                    },
-                ],
-            ],
+            args: [dao.address as Hex, [{ where: dao.address as Hex, selectors }]],
         });
 
         return prepareTransaction;
