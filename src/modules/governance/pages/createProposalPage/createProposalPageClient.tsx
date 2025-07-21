@@ -5,9 +5,7 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { addressUtils } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
-import type { ISmartContractAbi } from '../../api/smartContractService';
 import { CreateProposalForm, type ICreateProposalFormData } from '../../components/createProposalForm';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type {
@@ -41,7 +39,6 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     useProposalPermissionCheckGuard({ daoId, pluginAddress, redirectTab: 'proposals' });
 
     const [prepareActions, setPrepareActions] = useState<PrepareProposalActionMap>({});
-    const [smartContractAbis, setSmartContractAbis] = useState<ISmartContractAbi[]>([]);
 
     const addPrepareAction = useCallback(
         (type: string, prepareAction: PrepareProposalActionFunction) =>
@@ -49,17 +46,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
         [],
     );
 
-    const addSmartContractAbi = useCallback(
-        (abi: ISmartContractAbi) =>
-            setSmartContractAbis((current) => {
-                const alreadyExists = current.some((currentAbi) =>
-                    addressUtils.isAddressEqual(currentAbi.address, abi.address),
-                );
-
-                return alreadyExists ? current : [abi, ...current];
-            }),
-        [],
-    );
+    const contextValues = useMemo(() => ({ prepareActions, addPrepareAction }), [prepareActions, addPrepareAction]);
 
     const handleFormSubmit = (values: ICreateProposalFormData) => {
         // We are always saving actions on the form so that user doesn't lose them if they navigate around the form.
@@ -68,11 +55,6 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
         const params: IPublishProposalDialogParams = { proposal, daoId, plugin, prepareActions };
         open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
     };
-
-    const contextValues = useMemo(
-        () => ({ prepareActions, addPrepareAction, smartContractAbis, addSmartContractAbi }),
-        [prepareActions, addPrepareAction, smartContractAbis, addSmartContractAbi],
-    );
 
     const processedSteps = useMemo(
         () =>

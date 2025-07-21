@@ -1,35 +1,27 @@
+import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { Tabs } from '@aragon/gov-ui-kit';
-import { useEffect, useState } from 'react';
 import { PluginSingleComponent } from '../pluginSingleComponent';
-import type { IPluginTabComponentProps, ITabComponentPlugin } from './pluginTabComponent.api';
+import type { IPluginTabComponentProps } from './pluginTabComponent.api';
+
+export const pluginTabComponentFilterParam = 'plugin';
 
 export const PluginTabComponent = <TMeta extends object, TProps extends object>(
     props: IPluginTabComponentProps<TMeta, TProps>,
 ) => {
-    const { slotId, plugins = [], value, onValueChange, Fallback, ...otherProps } = props;
+    const {
+        slotId,
+        plugins = [],
+        value,
+        onValueChange,
+        searchParamName = pluginTabComponentFilterParam,
+        Fallback,
+        ...otherProps
+    } = props;
 
     const supportedPlugins = plugins.filter(
         (plugin) => pluginRegistryUtils.getSlotComponent({ slotId, pluginId: plugin.id }) != null,
     );
-
-    const defaultActivePlugin = value ?? plugins[0];
-    const [activePlugin, setActivePlugin] = useState<ITabComponentPlugin<TMeta, TProps> | undefined>(
-        defaultActivePlugin,
-    );
-
-    const updateActivePlugin = (tabId: string) => {
-        const plugin = plugins.find((plugin) => plugin.uniqueId === tabId)!;
-        setActivePlugin(plugin);
-        onValueChange?.(plugin);
-    };
-
-    // Update internal state on value property change
-    useEffect(() => {
-        if (value) {
-            setActivePlugin(value);
-        }
-    }, [value]);
 
     // The components renders null if there is no fallback specified for the slot-id AND the slot has no supported plugins.
     const hasNoContent = Fallback == null && !supportedPlugins.length;
@@ -39,6 +31,20 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
     // 2 - The slot has one plugin and the fallback is specified
     const isSingleComponent =
         (supportedPlugins.length === 1 && Fallback == null) || (plugins.length === 1 && Fallback != null);
+
+    const fallbackValue = value?.uniqueId ?? plugins[0]?.uniqueId;
+    const [activePlugin, setActivePlugin] = useFilterUrlParam({
+        fallbackValue,
+        enableUrlUpdate: onValueChange == null && !hasNoContent && !isSingleComponent,
+        name: searchParamName,
+        validValues: plugins.map((plugin) => plugin.uniqueId),
+    });
+
+    const updateActivePlugin = (tabId: string) => {
+        const plugin = plugins.find((plugin) => plugin.uniqueId === tabId)!;
+        setActivePlugin(plugin.uniqueId);
+        onValueChange?.(plugin);
+    };
 
     if (hasNoContent) {
         return null;
@@ -51,7 +57,7 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
     }
 
     return (
-        <Tabs.Root value={activePlugin?.uniqueId} onValueChange={updateActivePlugin}>
+        <Tabs.Root value={activePlugin} onValueChange={updateActivePlugin}>
             <Tabs.List>
                 {plugins.map(({ uniqueId, label }) => (
                     <Tabs.Trigger key={uniqueId} label={label} value={uniqueId} />
