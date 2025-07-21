@@ -4,7 +4,7 @@ import { generateSppPluginSettings, generateSppStage, generateSppStagePlugin } f
 import { generateTokenPluginSettings } from '@/plugins/tokenPlugin/testUtils';
 import { generateTokenPluginSettingsToken } from '@/plugins/tokenPlugin/testUtils/generators/tokenPluginSettingsToken';
 import { generateDaoPlugin, generatePluginSettings } from '@/shared/testUtils';
-import { processDetailsClientUtils } from '../processDetailsClientUtils';
+import { daoProcessDetailsClientUtils } from './daoProcessDetailsClientUtils';
 
 describe('processDetailsClientUtils', () => {
     describe('pluginToProcessFormData', () => {
@@ -19,7 +19,7 @@ describe('processDetailsClientUtils', () => {
                     }),
                 });
 
-                const result = processDetailsClientUtils.pluginToProcessFormData(plugin, []);
+                const result = daoProcessDetailsClientUtils.pluginToProcessFormData(plugin, []);
 
                 expect(result.governanceType).toBe(GovernanceType.BASIC);
                 expect('body' in result).toBe(true);
@@ -40,7 +40,7 @@ describe('processDetailsClientUtils', () => {
                     settings: generatePluginSettings(), // no token
                 });
 
-                const result = processDetailsClientUtils.pluginToProcessFormData(plugin, []);
+                const result = daoProcessDetailsClientUtils.pluginToProcessFormData(plugin, []);
 
                 expect(result.governanceType).toBe(GovernanceType.BASIC);
                 expect('body' in result).toBe(true);
@@ -58,7 +58,7 @@ describe('processDetailsClientUtils', () => {
                     isProcess: true,
                 });
 
-                const result = processDetailsClientUtils.pluginToProcessFormData(plugin, []);
+                const result = daoProcessDetailsClientUtils.pluginToProcessFormData(plugin, []);
                 if ('body' in result) {
                     expect(result.body.name).toBe('Token Voting');
                 }
@@ -77,7 +77,7 @@ describe('processDetailsClientUtils', () => {
                     settings,
                 });
 
-                const result = processDetailsClientUtils.pluginToProcessFormData(plugin, []);
+                const result = daoProcessDetailsClientUtils.pluginToProcessFormData(plugin, []);
                 expect(result.governanceType).toBe(GovernanceType.ADVANCED);
                 expect('stages' in result).toBe(true);
 
@@ -119,7 +119,7 @@ describe('processDetailsClientUtils', () => {
                     settings,
                 });
 
-                const result = processDetailsClientUtils.pluginToProcessFormData(mainPlugin, [hydratedPlugin]);
+                const result = daoProcessDetailsClientUtils.pluginToProcessFormData(mainPlugin, [hydratedPlugin]);
 
                 if ('stages' in result) {
                     const body = result.stages[0].bodies[0];

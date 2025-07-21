@@ -6,7 +6,7 @@ import { GovernanceBodyField } from '@/modules/createDao/components/createProces
 import { GovernanceStagesField } from '@/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceStagesField';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
-import { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -16,7 +16,7 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { Card, DateFormat, DefinitionList, formatterUtils } from '@aragon/gov-ui-kit';
 import { FormProvider, useForm } from 'react-hook-form';
 import { DaoProcessDetailsInfo } from '../../components/daoProcessDetailsInfo';
-import { processDetailsClientUtils } from '../../utils/processDetailsClientUtils';
+import { daoProcessDetailsClientUtils } from './daoProcessDetailsClientUtils';
 
 export interface IDaoProcessDetailsPageClientProps {
     /**
@@ -45,7 +45,7 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
 
     const hydratedPlugin = dao?.plugins.find((p) => p.address === plugin.address) ?? plugin;
 
-    const pluginFormData = processDetailsClientUtils.pluginToProcessFormData(hydratedPlugin, dao?.plugins ?? []);
+    const pluginFormData = daoProcessDetailsClientUtils.pluginToProcessFormData(hydratedPlugin, dao?.plugins ?? []);
 
     const formMethods = useForm<ICreateDaoFormData>({ defaultValues: pluginFormData });
 

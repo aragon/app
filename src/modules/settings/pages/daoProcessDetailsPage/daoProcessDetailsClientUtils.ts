@@ -22,7 +22,7 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 
-class ProcessDetailsClientUtils {
+class DaoProcessDetailsClientUtils {
     pluginToProcessFormData = (
         plugin: IDaoPlugin<ISppPluginSettings | IPluginSettings>,
         allPlugins: IDaoPlugin[],
@@ -170,4 +170,4 @@ class ProcessDetailsClientUtils {
     }
 }
 
-export const processDetailsClientUtils = new ProcessDetailsClientUtils();
+export const daoProcessDetailsClientUtils = new DaoProcessDetailsClientUtils();
