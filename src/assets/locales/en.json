@@ -661,7 +661,6 @@
           "default": "Action",
           "walletConnect": "Connect"
         },
-        "onlyShowAuthorizedActions": "Only show authorized actions",
         "customItem": {
           "ADD_CONTRACT": "Add contract address",
           "RAW_CALLDATA": "Enter raw calldata"
@@ -678,6 +677,7 @@
           "MetadataUpdate": "Set metadata",
           "Transfer": "Transfer"
         },
+        "onlyShowAuthorizedActions": "Only show authorized actions",
         "rawCalldataFunction": "Unknown"
       },
       "createProposalForm": {

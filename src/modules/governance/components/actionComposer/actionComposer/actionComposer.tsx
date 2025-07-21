@@ -35,7 +35,7 @@ export interface IActionComposerProps extends Pick<IActionComposerInputProps, 'n
      */
     hideWalletConnect?: boolean;
     /**
-     * Address of the process plugin when it has conditional execution permissions.
+     * Address of the process plugin with condition contract set. Undefined if process is not conditioned.
      * When provided, enables filtering of allowed actions.
      */
     conditionedProcessAddress?: string;
