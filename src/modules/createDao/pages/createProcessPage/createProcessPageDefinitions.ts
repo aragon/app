@@ -3,7 +3,7 @@ import type { IWizardStepperStep } from '@/shared/components/wizards/wizard';
 export enum CreateProcessWizardStep {
     METADATA = 'METADATA',
     STAGES = 'STAGES',
-    CREATION = 'CREATION',
+    PROPOSAL_CREATION = 'PROPOSAL_CREATION',
     PERMISSIONS = 'PERMISSIONS',
 }
 
@@ -19,9 +19,9 @@ export const createProcessWizardSteps: IWizardStepperStep[] = [
         meta: { name: `app.createDao.createProcessPage.steps.${CreateProcessWizardStep.STAGES}.name` },
     },
     {
-        id: CreateProcessWizardStep.CREATION,
+        id: CreateProcessWizardStep.PROPOSAL_CREATION,
         order: 2,
-        meta: { name: `app.createDao.createProcessPage.steps.${CreateProcessWizardStep.CREATION}.name` },
+        meta: { name: `app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PROPOSAL_CREATION}.name` },
     },
     {
         id: CreateProcessWizardStep.PERMISSIONS,

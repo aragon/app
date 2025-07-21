@@ -1,8 +1,8 @@
 import type { IDao } from '@/shared/api/daoService';
 import type { IPluginInstallationSetupData } from '@/shared/utils/pluginTransactionUtils';
+import type { Hex } from 'viem';
 import type { ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
-import type { Hex } from 'viem';
 
 export interface IPrepareProcessMetadata {
     /**

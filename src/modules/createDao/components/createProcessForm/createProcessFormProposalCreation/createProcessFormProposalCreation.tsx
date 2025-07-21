@@ -63,9 +63,7 @@ export const CreateProcessFormProposalCreation: React.FC<ICreateProcessFormPropo
                 <RadioCard
                     className="min-w-0"
                     label={t('app.createDao.createProcessForm.proposalCreation.mode.bodiesLabel')}
-                    description={t(
-                        'app.createDao.createProcessForm.proposalCreation.mode.bodiesDescription',
-                    )}
+                    description={t('app.createDao.createProcessForm.proposalCreation.mode.bodiesDescription')}
                     value={LISTED_BODIES}
                 />
                 <RadioCard

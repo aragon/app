@@ -1,1 +1,4 @@
-export { CreateProcessFormProposalCreation, type ICreateProcessFormProposalCreationProps } from './createProcessFormProposalCreation';
+export {
+    CreateProcessFormProposalCreation,
+    type ICreateProcessFormProposalCreationProps,
+} from './createProcessFormProposalCreation';

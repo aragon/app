@@ -1,14 +1,16 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
+import { conditionFactoryAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/conditionFactoryAbi';
+import { executeSelectorConditionAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/executeSelectorConditionAbi';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import type { IDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
-    type IBuildApplyPluginsInstallationActionsParams,
     pluginTransactionUtils,
+    type IBuildApplyPluginsInstallationActionsParams,
 } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils, type ITransactionRequest } from '@/shared/utils/transactionUtils';
-import { encodeFunctionData, parseEventLogs, type TransactionReceipt, type Hex, toFunctionSelector } from 'viem';
+import { encodeFunctionData, parseEventLogs, toFunctionSelector, type Hex, type TransactionReceipt } from 'viem';
 import { GovernanceType, ProcessPermission, type ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
 import { SetupBodyType, type ISetupBodyFormNew } from '../setupBodyDialog';
@@ -19,8 +21,6 @@ import type {
     IBuildProcessProposalActionsParams,
     IBuildTransactionParams,
 } from './prepareProcessDialogUtils.api';
-import { executeSelectorConditionAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/executeSelectorConditionAbi';
-import { conditionFactoryAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/conditionFactoryAbi';
 
 class PrepareProcessDialogUtils {
     private publishProcessProposalMetadata = {

@@ -40,8 +40,10 @@ export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStep
                 <CreateProcessForm.Governance daoId={daoId} />
             </WizardPage.Step>
             <WizardPage.Step
-                title={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.CREATION}.title`)}
-                description={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.CREATION}.description`)}
+                title={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PROPOSAL_CREATION}.title`)}
+                description={t(
+                    `app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PROPOSAL_CREATION}.description`,
+                )}
                 {...creationStep}
             >
                 <CreateProcessForm.ProposalCreation />

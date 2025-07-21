@@ -1,7 +1,7 @@
+import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { ISetupBodyForm, ISetupBodyFormNew } from '../../dialogs/setupBodyDialog';
 import type { ISetupStageSettingsForm } from '../../dialogs/setupStageSettingsDialog';
-import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 
 export enum ProposalCreationMode {
     LISTED_BODIES = 'LISTED_BODIES',
