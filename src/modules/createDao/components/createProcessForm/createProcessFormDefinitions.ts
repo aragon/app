@@ -1,7 +1,7 @@
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { ISetupBodyForm, ISetupBodyFormNew } from '../../dialogs/setupBodyDialog';
 import type { ISetupStageSettingsForm } from '../../dialogs/setupStageSettingsDialog';
-import { Hex } from 'viem';
+import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 
 export enum ProposalCreationMode {
     LISTED_BODIES = 'LISTED_BODIES',
@@ -53,9 +53,9 @@ export interface ICreateProcessFormDataBase {
      */
     permissions: ProcessPermission.ANY | ProcessPermission.SELECTED;
     /**
-     * List of permission selectors if permissions is set to SELECTED.
+     * List of actions that the DAO will be able to execute. Later these will be parsed to the correct format the smart contract expects.
      */
-    permissionSelectors: Array<{ where: Hex; selectors: Hex[] }>;
+    permissionSelectors: IProposalActionData[];
 }
 
 export interface ICreateProcessFormDataBasic extends ICreateProcessFormDataBase {

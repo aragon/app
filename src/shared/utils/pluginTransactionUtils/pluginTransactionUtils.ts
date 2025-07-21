@@ -64,11 +64,11 @@ class PluginTransactionUtils {
         return transactionData;
     };
 
-    getPluginTargetConfig = (dao: IDao, isAdvancedGovernace?: boolean) => {
+    getPluginTargetConfig = (dao: IDao, isAdvancedGovernance?: boolean) => {
         const { globalExecutor } = networkDefinitions[dao.network].addresses;
 
-        const target = isAdvancedGovernace ? globalExecutor : (dao.address as Hex);
-        const operation = isAdvancedGovernace ? this.targetOperation.delegateCall : this.targetOperation.call;
+        const target = isAdvancedGovernance ? globalExecutor : (dao.address as Hex);
+        const operation = isAdvancedGovernance ? this.targetOperation.delegateCall : this.targetOperation.call;
 
         return { target, operation };
     };
@@ -91,7 +91,7 @@ class PluginTransactionUtils {
 
         /* If executeConditionAddress is provided, we need to revoke the execute permission and grant it with the condition. The first plugin in the setupData is either the SPP or the plugin for basic governance processes. */
         const needsExecuteCondition = executeConditionAddress != null;
-        const executeTransaction = needsExecuteCondition
+        const executeWithConditionTransactions = needsExecuteCondition
             ? permissionTransactionUtils.buildExecuteConditionTransaction({
                   daoAddress,
                   pluginAddress: setupData[0].pluginAddress,
@@ -101,7 +101,13 @@ class PluginTransactionUtils {
 
         const applyInstallationActions = setupData.map((data) => this.setupInstallationDataToAction(data, dao));
 
-        return [grantRootTx, ...applyInstallationActions, ...actions, ...executeTransaction, revokeRootTx];
+        return [
+            grantRootTx,
+            ...applyInstallationActions,
+            ...actions,
+            revokeRootTx,
+            ...executeWithConditionTransactions,
+        ];
     };
 
     buildApplyPluginsUpdateActions = (params: IBuildApplyPluginsUpdateActionsParams): ITransactionRequest[] => {

@@ -8,7 +8,7 @@ import {
     pluginTransactionUtils,
 } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils, type ITransactionRequest } from '@/shared/utils/transactionUtils';
-import { encodeFunctionData, parseEventLogs, type TransactionReceipt, type Hex } from 'viem';
+import { encodeFunctionData, parseEventLogs, type TransactionReceipt, type Hex, toFunctionSelector } from 'viem';
 import { GovernanceType, ProcessPermission, type ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
 import { SetupBodyType, type ISetupBodyFormNew } from '../setupBodyDialog';
@@ -176,16 +176,21 @@ class PrepareProcessDialogUtils {
         const { dao, values } = params;
         const { permissionSelectors } = values;
 
+        const selectors = permissionSelectors.map((selector) => {
+            return toFunctionSelector(
+                `${selector.inputData!.function}(${selector.inputData!.parameters.map((param) => param.type).join(',')})`,
+            );
+        });
+
         const prepareTransaction = encodeFunctionData({
             abi: conditionFactoryAbi,
             functionName: 'deployExecuteSelectorCondition',
             args: [
                 dao.address as Hex,
-                //permissionSelectors,
                 [
                     {
-                        where: '0xabcdef0123456789abcdef0123456789abcdef01',
-                        selectors: ['0xa9059cbb', '0x095ea7b3'],
+                        where: dao.address as Hex,
+                        selectors,
                     },
                 ],
             ],

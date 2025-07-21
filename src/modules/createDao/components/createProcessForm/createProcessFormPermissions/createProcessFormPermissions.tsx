@@ -2,16 +2,13 @@ import {
     type ICreateProcessFormData,
     ProcessPermission,
 } from '@/modules/createDao/components/createProcessForm/createProcessFormDefinitions';
-import type { Hex } from 'viem';
+import { ActionComposer, actionComposerUtils } from '@/modules/governance/components/actionComposer';
+import type { IProposalActionData } from '@/modules/governance/components/createProposalForm/createProposalFormDefinitions';
+import { useDao } from '@/shared/api/daoService/queries/useDao/useDao';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Button, CardEmptyState, RadioCard, RadioGroup, SmartContractFunctionDataListItem } from '@aragon/gov-ui-kit';
+import { CardEmptyState, RadioCard, RadioGroup, SmartContractFunctionDataListItem } from '@aragon/gov-ui-kit';
 import { useFieldArray } from 'react-hook-form';
-import { useDao } from '@/shared/api/daoService/queries/useDao/useDao';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import type { IDaoPlugin } from '@/shared/api/daoService';
-import type { IActionComposerPluginData } from '@/modules/governance/types';
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 
 export interface ICreateProcessFormPermissionsProps {
     /**
@@ -28,19 +25,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
 
     const { t } = useTranslations();
 
-    const pluginActions =
-        dao?.plugins.map((plugin) =>
-            pluginRegistryUtils.getSlotFunction<IDaoPlugin, IActionComposerPluginData>({
-                pluginId: plugin.interfaceType,
-                slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
-            })?.(plugin),
-        ) ?? [];
-
-    const pluginItems = pluginActions.flatMap((data) => data?.items ?? []);
-    const pluginGroups = pluginActions.flatMap((data) => data?.groups ?? []);
-
-    console.log('ITEMS', pluginItems);
-    console.log('GROUPS', pluginGroups);
+    const { pluginItems, pluginGroups } = actionComposerUtils.getPluginActionsFromDao(dao);
 
     const { ANY, SELECTED } = ProcessPermission;
 
@@ -61,13 +46,9 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         name: 'permissionSelectors',
     });
 
-    const addPermissionSelector = () => {
-        appendPermissionSelector({ where: '0x' as Hex, selectors: [] });
-    };
+    const addPermissionSelector = (actions: IProposalActionData[]) => appendPermissionSelector(actions[0]);
 
-    const removePermissionSelectorByIndex = (index: number) => {
-        removePermissionSelector(index);
-    };
+    const removePermissionSelectorByIndex = (index: number) => removePermissionSelector(index);
 
     return (
         <>
@@ -107,21 +88,25 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                 />
             )}
             <div className="flex flex-col gap-2">
+                {processPermission === SELECTED && (
+                    <ActionComposer
+                        daoId={daoId}
+                        onAddAction={addPermissionSelector}
+                        nativeGroups={pluginGroups}
+                        nativeItems={pluginItems}
+                        hideWalletConnect={true}
+                    />
+                )}
                 {permissionSelectors.map((selector, index) => (
                     <SmartContractFunctionDataListItem.Structure
                         key={selector.id}
-                        contractAddress={selector.where}
+                        contractAddress={selector.to}
                         onRemove={() => removePermissionSelectorByIndex(index)}
+                        functionName={selector.inputData?.function}
+                        functionParameters={selector.inputData?.parameters}
                     />
                 ))}
             </div>
-            {processPermission === SELECTED && (
-                <div className="flex flex-col gap-4">
-                    <Button variant="tertiary" size="md" onClick={addPermissionSelector} className="self-start">
-                        Add Permission Selector
-                    </Button>
-                </div>
-            )}
         </>
     );
 };

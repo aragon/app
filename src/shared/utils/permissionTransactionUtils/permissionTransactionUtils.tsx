@@ -29,6 +29,7 @@ class PermissionTransactionUtils {
         createProposalPermission: 'CREATE_PROPOSAL_PERMISSION',
         executePermission: 'EXECUTE_PERMISSION',
         upgradePluginPermission: 'UPGRADE_PLUGIN_PERMISSION',
+        manageSelectorsPermission: 'MANAGE_SELECTORS_PERMISSION',
     };
 
     buildGrantPermissionTransaction = (params: IUpdatePermissionParams): ITransactionRequest => {
@@ -65,7 +66,7 @@ class PermissionTransactionUtils {
 
     buildExecuteConditionTransaction = (
         params: IBuildExecuteConditionTransactionParams,
-    ): [ITransactionRequest, ITransactionRequest] => {
+    ): [ITransactionRequest, ITransactionRequest, ITransactionRequest] => {
         const { daoAddress, pluginAddress, executeConditionAddress } = params;
 
         const revokeExecuteTransaction = this.buildRevokePermissionTransaction({
@@ -83,7 +84,14 @@ class PermissionTransactionUtils {
             condition: executeConditionAddress,
         });
 
-        return [revokeExecuteTransaction, grantExecuteTransaction];
+        const grantTransaction = this.buildGrantPermissionTransaction({
+            where: executeConditionAddress,
+            who: daoAddress,
+            what: permissionTransactionUtils.permissionIds.manageSelectorsPermission,
+            to: daoAddress,
+        });
+
+        return [revokeExecuteTransaction, grantExecuteTransaction, grantTransaction];
     };
 
     buildGrantRevokePermissionTransactions = (
