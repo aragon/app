@@ -99,7 +99,12 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
                     <Page.MainSection title={t('app.settings.daoProcessDetailsPage.section.governanceProcess')}>
                         <FormProvider {...formMethods}>
                             {pluginFormData.governanceType === GovernanceType.BASIC ? (
-                                <GovernanceBodyField daoId={daoId} fieldName="body" readOnly={true} />
+                                <GovernanceBodyField
+                                    daoId={daoId}
+                                    body={pluginFormData.body}
+                                    fieldName="body"
+                                    readOnly={true}
+                                />
                             ) : (
                                 <GovernanceStagesField daoId={daoId} readOnly={true} />
                             )}

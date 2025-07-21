@@ -3,6 +3,7 @@ export {
     SetupBodyType,
     type ISetupBodyForm,
     type ISetupBodyFormBase,
+    type ISetupBodyFormExisting,
     type ISetupBodyFormExternal,
     type ISetupBodyFormMembership,
     type ISetupBodyFormNew,

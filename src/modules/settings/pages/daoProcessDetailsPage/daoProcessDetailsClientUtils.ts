@@ -28,9 +28,9 @@ class DaoProcessDetailsClientUtils {
         allPlugins: IDaoPlugin[],
     ): ICreateProcessFormData => {
         const basePlugin = {
-            name: plugin.name!,
-            resources: plugin.links!,
-            description: plugin.description!,
+            name: daoUtils.getPluginName(plugin),
+            resources: plugin.links ?? [],
+            description: plugin.description ?? '',
             proposalCreationMode: ProposalCreationMode.ANY_WALLET,
             processKey: plugin.slug,
             pluginAddress: plugin.address,

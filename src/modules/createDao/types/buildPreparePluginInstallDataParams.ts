@@ -2,8 +2,7 @@ import type { IDao } from '@/shared/api/daoService';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
-import type { ISetupBodyFormMembership, ISetupBodyFormNew } from '../dialogs/setupBodyDialog';
-import type { ISetupBodyFormExisting } from '../dialogs/setupBodyDialog/setupBodyDialogDefinitions';
+import type { ISetupBodyFormExisting, ISetupBodyFormMembership, ISetupBodyFormNew } from '../dialogs/setupBodyDialog';
 
 export interface IBuildPreparePluginInstallDataParams<
     TGovernance = unknown,

@@ -27,7 +27,7 @@ export interface IGovernanceBodyFieldProps {
     /**
      * Body to display the details for.
      */
-    body?: ISetupBodyForm;
+    body: ISetupBodyForm;
     /**
      * Callback called on edit button click.
      */
@@ -44,13 +44,11 @@ export interface IGovernanceBodyFieldProps {
 }
 
 export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) => {
-    const { fieldName, daoId, onEdit, onDelete, readOnly = false } = props;
+    const { fieldName, daoId, body, onEdit, onDelete, readOnly = false } = props;
 
     const { t } = useTranslations();
 
     useFormField<Record<string, ISetupBodyForm>, typeof fieldName>(fieldName);
-
-    const body = useWatch<Record<string, ISetupBodyForm>, typeof fieldName>({ name: fieldName });
 
     const governanceType = useWatch<ICreateProcessFormData, 'governanceType'>({ name: 'governanceType' });
 
