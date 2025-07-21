@@ -13,7 +13,7 @@ import {
 import type { ISmartContractAbi, ISmartContractAbiFunction } from '../../api/smartContractService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IActionComposerPluginData } from '../../types';
-import type { IActionComposerInputItem } from './actionComposerInput';
+import type { IActionComposerInputItem, IActionComposerInputProps } from './actionComposerInput';
 
 export enum ActionItemId {
     CUSTOM_ACTION = 'CUSTOM_ACTION',
@@ -53,13 +53,10 @@ export interface IGetCustomActionParams extends IGetActionBaseParams {
     abis: ISmartContractAbi[];
 }
 
-interface IGetActionItemsParams extends IGetCustomActionParams, IGetNativeActionItemsParams {
-    /**
-     * Action types to exclude from the list of available actions.
-     * The filtering is based on the `defaultValue.type` of the action item.
-     */
-    excludeActionTypes?: string[];
-}
+interface IGetActionItemsParams
+    extends IGetCustomActionParams,
+        IGetNativeActionItemsParams,
+        Pick<IActionComposerInputProps, 'excludeActionTypes' | 'excludeSelectors'> {}
 
 class ActionComposerUtils {
     getPluginActionsFromDao = (dao?: IDao) => {
@@ -105,6 +102,7 @@ class ActionComposerUtils {
         abis,
         nativeItems,
         excludeActionTypes,
+        excludeSelectors,
     }: IGetActionItemsParams): IActionComposerInputItem[] => {
         // Show items in the following order:
         // 1. NO CONTRACT: first show actions not belonging to any group (i.e. add contract, transfer)
@@ -123,14 +121,22 @@ class ActionComposerUtils {
         const finalNativeItems = this.getFinalNativeItems(nativeItemsByGroup, customItemsByGroup);
 
         const allItems = [...allNonGroupItems, ...finalCustomItems, ...finalNativeItems];
-
-        if (excludeActionTypes?.length) {
+        console.log('allItemsallItems', finalCustomItems, finalNativeItems);
+        if (excludeActionTypes?.length || excludeSelectors?.length) {
             return allItems.filter((item) => {
-                if (item.defaultValue == null) {
-                    return true; // Keep items without defaultValue
+                if (excludeSelectors?.length && item.info && excludeSelectors.includes(item.info)) {
+                    return false;
                 }
 
-                return !excludeActionTypes.includes(item.defaultValue.type);
+                if (
+                    excludeActionTypes?.length &&
+                    item.defaultValue?.type &&
+                    excludeActionTypes.includes(item.defaultValue.type)
+                ) {
+                    return false;
+                }
+
+                return true;
             });
         }
 

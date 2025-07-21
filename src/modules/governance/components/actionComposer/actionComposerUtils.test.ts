@@ -244,5 +244,39 @@ describe('actionComposerUtils', () => {
             expect(result.find((item) => item.defaultValue?.type === ProposalActionType.TRANSFER)).toBeUndefined();
             expect(result.find((item) => item.defaultValue?.type === ActionItemId.RAW_CALLDATA)).toBeUndefined();
         });
+
+        it('can filter action items by selector', () => {
+            const dao = generateDao({ address: '0xDAO' });
+            const abis = [
+                generateSmartContractAbi({
+                    address: '0xC1',
+                    name: 'Custom1',
+                    functions: [{ name: 'custom-1', parameters: [] }],
+                }),
+            ];
+            const nativeItems = [
+                {
+                    id: 'native-1',
+                    name: 'Native Item 1',
+                    icon: IconType.SETTINGS,
+                    groupId: '0xN1',
+                    defaultValue: {
+                        inputData: { function: 'native-1', contract: 'Test', parameters: [] },
+                    },
+                },
+            ] as unknown as IActionComposerInputItem[];
+            const excludeSelectors = ['0xfbd22412' /*custom-1*/, '0xa290881f' /*native-1*/];
+
+            const result = actionComposerUtils.getActionItems({
+                t: mockTranslations.tMock,
+                dao,
+                abis,
+                nativeItems,
+                excludeSelectors,
+            });
+
+            expect(result.find((item) => item.defaultValue?.inputData?.function === 'custom-1')).toBeUndefined();
+            expect(result.find((item) => item.defaultValue?.inputData?.function === 'native-1')).toBeUndefined();
+        });
     });
 });

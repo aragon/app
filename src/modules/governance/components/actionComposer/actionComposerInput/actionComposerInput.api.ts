@@ -37,6 +37,11 @@ export interface IActionComposerInputProps<TMeta = undefined>
      */
     excludeActionTypes?: string[];
     /**
+     * Exclude actions based on their selectors.
+     * The filtering is based on the `info` field of the action item, which contains the selector.
+     */
+    excludeSelectors?: string[];
+    /**
      * ABIs of imported smart contracts to be used for adding custom actions.
      */
     importedContractAbis: ISmartContractAbi[];
