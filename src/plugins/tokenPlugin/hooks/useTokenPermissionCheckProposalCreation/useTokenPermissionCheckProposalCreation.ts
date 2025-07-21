@@ -9,13 +9,17 @@ import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 
-export interface ITokenPermissionCheckProposalCreationParams
-    extends IPermissionCheckGuardParams<ITokenPluginSettings> {}
+export interface ITokenPermissionCheckProposalCreationParams extends IPermissionCheckGuardParams<ITokenPluginSettings> {
+    /**
+     * Whether the proposal creation settings are read-only.
+     */
+    readOnly?: boolean;
+}
 
 export const useTokenPermissionCheckProposalCreation = (
     params: ITokenPermissionCheckProposalCreationParams,
 ): IPermissionCheckGuardResult => {
-    const { plugin, daoId } = params;
+    const { plugin, daoId, readOnly = false } = params;
 
     const { address } = useAccount();
     const { t } = useTranslations();
@@ -75,14 +79,18 @@ export const useTokenPermissionCheckProposalCreation = (
             term: t('app.plugins.token.tokenPermissionCheckProposalCreation.function'),
             definition: `≥${minTokenRequired}`,
         },
-        {
-            term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userVotingPower'),
-            definition: `${formattedMemberVotingPower ?? '0'} ${tokenSymbol}`,
-        },
-        {
-            term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userTokenBalance'),
-            definition: `${formattedMemberBalance ?? '0'} ${tokenSymbol}`,
-        },
+        ...(!readOnly
+            ? [
+                  {
+                      term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userVotingPower'),
+                      definition: `${formattedMemberVotingPower ?? '0'} ${tokenSymbol}`,
+                  },
+                  {
+                      term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userTokenBalance'),
+                      definition: `${formattedMemberBalance ?? '0'} ${tokenSymbol}`,
+                  },
+              ]
+            : []),
     ];
 
     const isRestricted = BigInt(minProposerVotingPower) > 0;

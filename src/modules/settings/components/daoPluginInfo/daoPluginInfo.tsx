@@ -1,5 +1,7 @@
+import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { Button, DefinitionList } from '@aragon/gov-ui-kit';
 import { type IDaoPlugInfoProps } from './daoPluginInfo.api';
 import { DaoPluginInfoMetadata } from './daoPluginInfoMetadata';
@@ -9,11 +11,15 @@ export const daoPluginInfoFilterParam = 'plugin';
 export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     const { plugin, daoId } = props;
 
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+
     const { t } = useTranslations();
 
     const { description, links } = plugin;
 
     const pluginInfo = useDaoPluginInfo({ daoId, address: plugin.address });
+
+    const processLink = daoUtils.getDaoUrl(dao, `settings/${plugin.slug}`);
 
     return (
         <div className="flex flex-col gap-y-4">
@@ -25,7 +31,9 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
                     </DefinitionList.Item>
                 ))}
             </DefinitionList.Container>
-            <Button variant="tertiary">{t('app.settings.daoPluginInfo.viewProcess')}</Button>
+            <Button variant="tertiary" href={processLink}>
+                {t('app.settings.daoPluginInfo.viewProcess')}
+            </Button>
         </div>
     );
 };

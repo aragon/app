@@ -4,13 +4,16 @@ import type { ICreateDaoFormData } from '@/modules/createDao/components/createDa
 import { GovernanceType } from '@/modules/createDao/components/createProcessForm';
 import { GovernanceBodyField } from '@/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodyField';
 import { GovernanceStagesField } from '@/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceStagesField';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
+import { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
+import { Card, DateFormat, DefinitionList, formatterUtils } from '@aragon/gov-ui-kit';
 import { FormProvider, useForm } from 'react-hook-form';
 import { DaoProcessDetailsInfo } from '../../components/daoProcessDetailsInfo';
 import { processDetailsClientUtils } from '../../utils/processDetailsClientUtils';
@@ -53,7 +56,7 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
             href: daoUtils.getDaoUrl(dao, 'settings'),
             label: t('app.settings.daoProcessDetailsPage.header.breadcrumb.settings'),
         },
-        { label: slug },
+        { label: slug.toUpperCase() },
     ];
 
     const parsedLatestActivity =
@@ -77,6 +80,14 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
         },
     ];
 
+    const checkPermissions = useSlotSingleFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
+        slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
+        pluginId: plugin.interfaceType,
+        params: { plugin, daoId, readOnly: true },
+    }) ?? { hasPermission: true, isLoading: false, settings: [] };
+
+    const { isLoading, settings } = checkPermissions;
+
     return (
         <>
             <Page.Header
@@ -95,6 +106,39 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
                                 <GovernanceStagesField daoId={daoId} readOnly={true} />
                             )}
                         </FormProvider>
+                    </Page.MainSection>
+                    <Page.MainSection title="Proposal creation eligibility ">
+                        <Card className="p-6">
+                            {!isLoading &&
+                                settings.map((settingsGroup, groupIndex) => (
+                                    <div key={groupIndex} className="flex flex-col gap-y-1">
+                                        <DefinitionList.Container>
+                                            {settingsGroup.map(
+                                                ({ term, definition, link, description, copyValue }, settingIndex) => (
+                                                    <DefinitionList.Item
+                                                        key={settingIndex}
+                                                        term={term}
+                                                        link={link}
+                                                        description={description}
+                                                        copyValue={copyValue}
+                                                    >
+                                                        {definition}
+                                                    </DefinitionList.Item>
+                                                ),
+                                            )}
+                                        </DefinitionList.Container>
+                                        {settings.length > 1 && groupIndex < settings.length - 1 && (
+                                            <div className="my-2 flex items-center">
+                                                <div className="grow border-t border-neutral-100" />
+                                                <span className="mx-2 text-neutral-500">
+                                                    {t('app.governance.permissionCheckDialog.or')}
+                                                </span>
+                                                <div className="grow border-t border-neutral-100" />
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                        </Card>
                     </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>

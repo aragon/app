@@ -5,12 +5,17 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, invariant } from '@aragon/gov-ui-kit';
 import type { ISppPluginSettings } from '../../types';
 
-export interface IUseSppPermissionCheckProposalCreationParams extends IPermissionCheckGuardParams<ISppPluginSettings> {}
+export interface IUseSppPermissionCheckProposalCreationParams extends IPermissionCheckGuardParams<ISppPluginSettings> {
+    /**
+     * Whether the proposal creation is read-only.
+     */
+    readOnly?: boolean;
+}
 
 export const useSppPermissionCheckProposalCreation = (
     params: IUseSppPermissionCheckProposalCreationParams,
 ): IPermissionCheckGuardResult => {
-    const { daoId, plugin } = params;
+    const { daoId, plugin, readOnly = false } = params;
 
     const daoPlugins = useDaoPlugins({ daoId, includeSubPlugins: true });
 
@@ -27,7 +32,7 @@ export const useSppPermissionCheckProposalCreation = (
         pluginRegistryUtils.getSlotFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
             pluginId: plugin.interfaceType,
-        })?.({ plugin, daoId }),
+        })?.({ plugin, daoId, readOnly }),
     );
 
     // Allow proposal creation if either:
