@@ -1,6 +1,6 @@
 import { type IDaoPageParams } from '@/shared/types';
 
-export interface IDaoProcessPageParams extends IDaoPageParams {
+export interface IDaoProcessDetailsPageParams extends IDaoPageParams {
     /**
      * Slug of the process.
      */

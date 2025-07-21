@@ -3,14 +3,14 @@ import { daoService } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import type { IDaoProcessPageParams } from '../../types/daoProcessPageParams';
+import type { IDaoProcessDetailsPageParams } from '../../types/';
 import { DaoProcessDetailsPageClient } from './daoProcessDetailsPageClient';
 
 export interface IDaoProcessDetailsPageProps {
     /**
      * DAO member page parameters.
      */
-    params: Promise<IDaoProcessPageParams>;
+    params: Promise<IDaoProcessDetailsPageParams>;
 }
 
 export const DaoProcessDetailsPage: React.FC<IDaoProcessDetailsPageProps> = async (props) => {
