@@ -34,7 +34,7 @@ export const pluginGroupTab: ITabComponentPlugin<IDaoPlugin> = {
     id: 'all',
     uniqueId: 'all',
     label: '',
-    meta: {} as IDaoPlugin,
+    meta: { slug: 'all' } as IDaoPlugin,
     props: {},
 };
 
@@ -46,7 +46,7 @@ export const useDaoPlugins = (params: IUseDaoPluginsParams): Array<ITabComponent
 
     const processedPlugins = plugins?.map((plugin) => ({
         id: plugin.interfaceType,
-        uniqueId: `${plugin.interfaceType}-${plugin.address}`,
+        uniqueId: plugin.slug,
         label: daoUtils.getPluginName(plugin),
         meta: plugin,
         props: {},

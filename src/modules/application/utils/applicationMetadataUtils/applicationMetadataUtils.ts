@@ -3,6 +3,7 @@ import type { IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { metadataUtils } from '@/shared/utils/metadataUtils';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import type { Metadata } from 'next';
 
 export interface IGenerateDaoMetadataParams {
@@ -14,16 +15,25 @@ export interface IGenerateDaoMetadataParams {
 
 class ApplicationMetadataUtils {
     generateDaoMetadata = async ({ params }: IGenerateDaoMetadataParams): Promise<Metadata> => {
-        const daoPageParams = await params;
-        const daoId = await daoUtils.resolveDaoId(daoPageParams);
-        const dao = await daoService.getDao({ urlParams: { id: daoId } });
+        try {
+            const daoPageParams = await params;
+            const daoId = await daoUtils.resolveDaoId(daoPageParams);
+            const dao = await daoService.getDao({ urlParams: { id: daoId } });
 
-        const image = ipfsUtils.cidToSrc(dao.avatar);
-        const title = dao.name;
-        const description = dao.description;
-        const siteName = `${dao.name} | Governed on Aragon`;
+            const image = ipfsUtils.cidToSrc(dao.avatar);
+            const title = dao.name;
+            const description = dao.description;
+            const siteName = `${dao.name} | Governed on Aragon`;
 
-        return metadataUtils.buildMetadata({ title, description, siteName, image });
+            return metadataUtils.buildMetadata({ title, description, siteName, image });
+        } catch (error: unknown) {
+            monitoringUtils.logError(error);
+
+            return metadataUtils.buildMetadata({
+                title: 'DAO not found',
+                description: 'The requested DAO could not be found.',
+            });
+        }
     };
 }
 

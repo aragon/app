@@ -5,6 +5,7 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { metadataUtils } from '@/shared/utils/metadataUtils';
 
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import type { Metadata } from 'next';
 
 export interface IGenerateProposalMetadataParams {
@@ -16,20 +17,39 @@ export interface IGenerateProposalMetadataParams {
 
 class GovernanceMetadataUtils {
     generateProposalMetadata = async ({ params }: IGenerateProposalMetadataParams): Promise<Metadata> => {
-        const { proposalSlug, addressOrEns, network } = await params;
-        const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
-        const proposal = await governanceService.getProposalBySlug({
-            urlParams: { slug: proposalSlug },
-            queryParams: { daoId },
-        });
+        try {
+            const { proposalSlug, addressOrEns, network } = await params;
+            const daoId = await daoUtils.resolveDaoId({
+                addressOrEns,
+                network,
+            });
+            const proposal = await governanceService.getProposalBySlug({
+                urlParams: { slug: proposalSlug },
+                queryParams: { daoId },
+            });
 
-        const title = `${proposalSlug}: ${proposal.title}`;
-        const description = proposal.summary;
-        const dao = await daoService.getDao({ urlParams: { id: daoId } });
-        const siteName = `${dao.name} | Governed on Aragon`;
-        const image = ipfsUtils.cidToSrc(dao.avatar);
+            const title = `${proposalSlug}: ${proposal.title}`;
+            const description = proposal.summary;
+            const dao = await daoService.getDao({ urlParams: { id: daoId } });
+            const siteName = `${dao.name} | Governed on Aragon`;
+            const image = ipfsUtils.cidToSrc(dao.avatar);
 
-        return metadataUtils.buildMetadata({ title, description, siteName, image, type: 'article' });
+            return metadataUtils.buildMetadata({
+                title,
+                description,
+                siteName,
+                image,
+                type: 'article',
+            });
+        } catch (error: unknown) {
+            monitoringUtils.logError(error);
+
+            return metadataUtils.buildMetadata({
+                title: 'Proposal not found',
+                description: 'The requested proposal could not be found.',
+                type: 'article',
+            });
+        }
     };
 }
 
