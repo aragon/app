@@ -1496,9 +1496,9 @@
         },
         "tokenMemberPanel": {
           "tabs": {
-            "DELEGATE": "Delegate",
-            "LOCK": "Lock",
-            "WRAP": "Wrap"
+            "delegate": "Delegate",
+            "lock": "Lock",
+            "wrap": "Wrap"
           }
         },
         "tokenMemberStats": {

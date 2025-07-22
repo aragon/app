@@ -17,7 +17,7 @@ export interface IDaoPlugInfoProps {
 }
 
 export enum DaoPluginInfoTabId {
-    DESCRIPTION = 'DESCRIPTION',
-    CONTRACT = 'CONTRACT',
-    SETTINGS = 'SETTINGS',
+    DESCRIPTION = 'description',
+    CONTRACT = 'contract',
+    SETTINGS = 'settings',
 }
