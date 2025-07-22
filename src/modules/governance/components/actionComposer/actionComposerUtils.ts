@@ -1,5 +1,5 @@
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
-import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
+import type { IAutocompleteInputGroup, IAutocompleteInputItem } from '@/shared/components/forms/autocompleteInput';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
@@ -56,7 +56,11 @@ export interface IGetCustomActionParams extends IGetActionBaseParams {
 interface IGetActionItemsParams
     extends IGetCustomActionParams,
         IGetNativeActionItemsParams,
-        Pick<IActionComposerInputProps, 'excludeActionTypes' | 'excludeSelectors'> {}
+        Pick<IActionComposerInputProps, 'excludeActionTypes'> {}
+
+export interface IGetAllowedActionGroupsAndItemsParams
+    extends IGetActionBaseParams,
+        Pick<IActionComposerInputProps, 'allowedActions'> {}
 
 class ActionComposerUtils {
     getPluginActionsFromDao = (dao?: IDao) => {
@@ -76,6 +80,64 @@ class ActionComposerUtils {
             pluginGroups,
             pluginComponents,
         };
+    };
+
+    getAllowedActionGroupsAndItem = ({
+        t,
+        dao,
+        allowedActions = [],
+    }: IGetAllowedActionGroupsAndItemsParams): [IAutocompleteInputGroup[], IAutocompleteInputItem[]] => {
+        const daoAddress = dao!.address;
+        const [transferItem, metadataUpdateItem] = this.getNativeActionItems({ t, dao, nativeItems: [] }).map(
+            this.infoToSelectorMapper,
+        );
+        const [daoGroup] = this.getNativeActionGroups({
+            t,
+            dao,
+            nativeGroups: [],
+        });
+
+        const allowedSelectors = allowedActions.map((action) => action.selector);
+        const abis = allowedActions.map((action) => action.targetAbi);
+
+        const actionItems = abis.map((abi, abiIndex) => {
+            if (!abi) {
+                const item = this.buildDefaultCustomAction(
+                    {
+                        address: allowedActions[abiIndex].target,
+                        name: t('app.governance.verifySmartContractDialog.unverified'),
+                    },
+                    { name: t('app.governance.verifySmartContractDialog.unverified'), parameters: [] },
+                    0,
+                );
+                item.info = allowedActions[abiIndex].selector ?? undefined;
+                return [item];
+            }
+
+            return abi.functions.map((abiFunction, index) => this.buildDefaultCustomAction(abi, abiFunction, index));
+        });
+        const actionItemsWithSelectors = actionItems.flat().map(this.infoToSelectorMapper);
+
+        const completeAllowedItems = actionItemsWithSelectors
+            .filter((item) => (item.info ? allowedSelectors.includes(item.info) : false))
+            // use native item if matches (to enable proper basic view and icon)
+            .map((item) => (item.info === metadataUpdateItem.info ? metadataUpdateItem : item));
+
+        // `null` selector means native transfer
+        if (allowedSelectors.includes(null)) {
+            completeAllowedItems.unshift(transferItem);
+        }
+
+        // create groups contract address, DAO if matches dao address
+        const filteredAbis = abis.filter((abi) => abi != null);
+        const allowedGroups: IAutocompleteInputGroup[] = this.getCustomActionGroups({
+            abis: filteredAbis,
+            dao,
+            t,
+        });
+        const completeAllowedGroups = allowedGroups.map((group) => (group.id === daoAddress ? daoGroup : group));
+
+        return [completeAllowedGroups, completeAllowedItems];
     };
 
     getActionGroups = ({
@@ -102,7 +164,6 @@ class ActionComposerUtils {
         abis,
         nativeItems,
         excludeActionTypes,
-        excludeSelectors,
     }: IGetActionItemsParams): IActionComposerInputItem[] => {
         // Show items in the following order:
         // 1. NO CONTRACT: first show actions not belonging to any group (i.e. add contract, transfer)
@@ -121,18 +182,10 @@ class ActionComposerUtils {
         const finalNativeItems = this.getFinalNativeItems(nativeItemsByGroup, customItemsByGroup);
 
         const allItems = [...allNonGroupItems, ...finalCustomItems, ...finalNativeItems];
-        console.log('allItemsallItems', finalCustomItems, finalNativeItems);
-        if (excludeActionTypes?.length || excludeSelectors?.length) {
-            return allItems.filter((item) => {
-                if (excludeSelectors?.length && item.info && excludeSelectors.includes(item.info)) {
-                    return false;
-                }
 
-                if (
-                    excludeActionTypes?.length &&
-                    item.defaultValue?.type &&
-                    excludeActionTypes.includes(item.defaultValue.type)
-                ) {
+        if (excludeActionTypes?.length) {
+            return allItems.filter((item) => {
+                if (item.defaultValue?.type && excludeActionTypes.includes(item.defaultValue.type)) {
                     return false;
                 }
 
@@ -232,6 +285,10 @@ class ActionComposerUtils {
     private getFunctionSelector = (item: IActionComposerInputItem) => {
         if (item.defaultValue?.inputData == null || item.id === ProposalActionType.TRANSFER) {
             return undefined;
+        }
+
+        if (item.info) {
+            return item.info;
         }
 
         const { inputData } = item.defaultValue;
@@ -341,7 +398,7 @@ class ActionComposerUtils {
     };
 
     private buildDefaultCustomAction = (
-        { address: contractAddress, name: contractName }: ISmartContractAbi,
+        { address: contractAddress, name: contractName }: Pick<ISmartContractAbi, 'address' | 'name'>,
         { name: functionName, stateMutability, parameters }: ISmartContractAbiFunction,
         index: number,
     ): IActionComposerInputItem => ({

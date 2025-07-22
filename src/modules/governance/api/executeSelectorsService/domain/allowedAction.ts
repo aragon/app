@@ -1,3 +1,6 @@
+import { Network } from '@/shared/api/daoService';
+import type { ISmartContractAbi } from '../../smartContractService';
+
 export interface IAllowedAction {
     /**
      * ID of the allowed action.
@@ -6,7 +9,7 @@ export interface IAllowedAction {
     /**
      * Network of the DAO.
      */
-    network: string;
+    network: Network;
     /**
      * Address of the DAO to which the process belongs.
      */
@@ -27,6 +30,11 @@ export interface IAllowedAction {
      * Address of the contract being called (`where`).
      */
     target: string;
+    /**
+     * ABI of the target contract. If not provided, the contract is assumed to be unverified.
+     * Fetched as an additional data from the backend for each allowed action!
+     */
+    targetAbi?: ISmartContractAbi;
     /**
      * Whether the action is allowed or not. Should always be `true` for allowed actions.
      */

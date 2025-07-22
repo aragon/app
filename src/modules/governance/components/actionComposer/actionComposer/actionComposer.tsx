@@ -6,7 +6,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, Button, IconType, Switch } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { type IProposalAction } from '../../../api/governanceService';
 import type { ISmartContractAbi } from '../../../api/smartContractService';
 import { GovernanceDialogId } from '../../../constants/governanceDialogId';
@@ -73,21 +73,9 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
 
     const [displayActionComposer, setDisplayActionComposer] = useState(false);
-    const [onlyShowAuthorizedActions, setOnlyShowAuthorizedActions] = useState(true);
+    const [onlyShowAuthorizedActions, setOnlyShowAuthorizedActions] = useState(conditionedProcessAddress != null);
 
-    // Determine if we should apply filtering based on conditional permissions and switch state
-    const shouldFilterActions = !!conditionedProcessAddress && onlyShowAuthorizedActions;
-
-    // Calculate excluded action types when filtering is enabled
-    const excludeActionTypes = useMemo(() => {
-        if (!shouldFilterActions || !allowedActions) {
-            return undefined;
-        }
-
-        // For now, when filtering is active, we exclude the "ADD_CONTRACT" action to prevent adding new contracts
-        // TODO: Implement proper filtering based on allowed actions data structure
-        return [ActionItemId.ADD_CONTRACT];
-    }, [shouldFilterActions, allowedActions]);
+    const processedAllowedActions = allowedActions?.pages.flatMap((page) => page.data);
 
     const [importedContractAbis, setImportedContractAbis] = useState<ISmartContractAbi[]>([]);
 
@@ -147,7 +135,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     };
 
     // Determine if WalletConnect should be hidden
-    const shouldHideWalletConnect = hideWalletConnect || shouldFilterActions;
+    const shouldHideWalletConnect = hideWalletConnect || onlyShowAuthorizedActions;
 
     return (
         <>
@@ -182,9 +170,9 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 ref={autocompleteInputRef}
                 nativeItems={nativeItems}
                 nativeGroups={nativeGroups}
+                allowedActions={onlyShowAuthorizedActions ? processedAllowedActions : undefined}
                 daoId={daoId}
                 importedContractAbis={importedContractAbis}
-                excludeActionTypes={excludeActionTypes}
             />
         </>
     );

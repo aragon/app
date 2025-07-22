@@ -1,7 +1,7 @@
 import { useDao } from '@/shared/api/daoService';
 import { AutocompleteInput } from '@/shared/components/forms/autocompleteInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { forwardRef } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { actionComposerUtils } from '../actionComposerUtils';
 import type { IActionComposerInputProps } from './actionComposerInput.api';
 
@@ -13,6 +13,7 @@ export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerI
         nativeGroups,
         importedContractAbis,
         excludeActionTypes,
+        allowedActions,
         ...otherProps
     } = props;
 
@@ -21,14 +22,22 @@ export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerI
 
     const { t } = useTranslations();
 
-    const groups = actionComposerUtils.getActionGroups({ t, dao, abis: importedContractAbis, nativeGroups });
-    const items = actionComposerUtils.getActionItems({
-        t,
-        dao,
-        abis: importedContractAbis,
-        nativeItems,
-        excludeActionTypes,
-    });
+    const [groups, items] = useMemo(() => {
+        if (allowedActions) {
+            return actionComposerUtils.getAllowedActionGroupsAndItem({ t, dao, allowedActions });
+        }
+
+        return [
+            actionComposerUtils.getActionGroups({ t, dao, abis: importedContractAbis, nativeGroups }),
+            actionComposerUtils.getActionItems({
+                t,
+                dao,
+                abis: importedContractAbis,
+                nativeItems,
+                excludeActionTypes,
+            }),
+        ];
+    }, [allowedActions, dao, excludeActionTypes, importedContractAbis, nativeGroups, nativeItems, t]);
 
     const handleActionSelected = (itemId: string, inputValue: string) => {
         const action = items.find((item) => item.id === itemId)!;
