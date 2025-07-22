@@ -1,3 +1,5 @@
+'use client';
+
 import type { ISetupBodyFormExisting } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
 import { daoProcessDetailsClientUtils } from '@/modules/settings/pages/daoProcessDetailsPage/daoProcessDetailsClientUtils';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
