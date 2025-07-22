@@ -95,6 +95,10 @@ export interface ISetupBodyFormExisting<
      * Optional name from NEW bodies.
      */
     name?: string;
+    /**
+     * Address of the plugin contract for read-only lookup.
+     */
+    pluginAddress?: string;
 }
 
 export type ISetupBodyForm<

@@ -71,7 +71,7 @@ export class DaoProcessDetailsClientUtils {
             type: SetupBodyType.EXISTING,
             plugin: plugin.interfaceType,
             address: plugin.address,
-            name: plugin.name?.trim() ?? daoUtils.getPluginName(plugin),
+            name: daoUtils.getPluginName(plugin),
             build: plugin.build,
             release: plugin.release,
             description: plugin.description ?? '',

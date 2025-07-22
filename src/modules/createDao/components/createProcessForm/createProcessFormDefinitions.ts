@@ -43,10 +43,6 @@ export interface ICreateProcessFormDataBase {
      * Defines the type of governance process basic/advanced.
      */
     governanceType: GovernanceType;
-    /**
-     * Address of the plugin contract for read-only lookup.
-     */
-    pluginAddress?: string;
 }
 
 export interface ICreateProcessFormDataBasic extends ICreateProcessFormDataBase {

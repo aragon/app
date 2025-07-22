@@ -6,7 +6,7 @@ import { generateTokenPluginSettingsToken } from '@/plugins/tokenPlugin/testUtil
 import { generateDaoPlugin, generatePluginSettings } from '@/shared/testUtils';
 import { daoProcessDetailsClientUtils } from './daoProcessDetailsClientUtils';
 
-describe('processDetailsClientUtils', () => {
+describe('daoProcessDetailsClient Utils', () => {
     describe('pluginToProcessFormData', () => {
         describe('BASIC governance', () => {
             it('creates form data for a token plugin', () => {
