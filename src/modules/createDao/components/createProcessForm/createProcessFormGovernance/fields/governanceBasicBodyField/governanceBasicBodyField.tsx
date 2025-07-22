@@ -1,5 +1,3 @@
-'use client';
-
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import type { ISetupBodyDialogParams, ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
