@@ -1,5 +1,3 @@
-'use client';
-
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Dialog } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
