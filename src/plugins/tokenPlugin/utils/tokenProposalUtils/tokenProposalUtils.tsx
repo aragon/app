@@ -58,14 +58,14 @@ class TokenProposalUtils {
         const { minParticipation, historicalTotalSupply } = proposal.settings;
 
         const parsedTotalSupply = BigInt(historicalTotalSupply!);
-        const parsedMinParticipation = BigInt(tokenSettingsUtils.ratioToPercentage(minParticipation));
+        const parsedMinParticipation = BigInt(minParticipation);
 
         if (parsedTotalSupply === BigInt(0)) {
             return false;
         }
 
         const totalVotes = this.getTotalVotes(proposal);
-        const minVotingPower = (parsedTotalSupply * parsedMinParticipation) / BigInt(100);
+        const minVotingPower = (parsedTotalSupply * parsedMinParticipation) / BigInt(1000000);
 
         return totalVotes >= minVotingPower;
     };
