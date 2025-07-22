@@ -322,11 +322,6 @@
       "createProcessPage": {
         "finalStep": "Publish process",
         "steps": {
-          "CREATION": {
-            "description": "Define who can create proposals of this type.",
-            "name": "Proposal creation rules",
-            "title": "Set proposal creation rules"
-          },
           "METADATA": {
             "description": "Describe the governance process so visitors understand its purpose and how decisions are made. Any of these fields can be changed later via governance.",
             "name": "Process description",
@@ -336,6 +331,11 @@
             "description": "Define what this governance process is authorized to do. Proposals of this type will only be able to execute the actions specified here.",
             "name": "Proposal permissions",
             "title": "Set permissions"
+          },
+          "PROPOSAL_CREATION": {
+            "description": "Define who can create proposals of this type.",
+            "name": "Proposal creation rules",
+            "title": "Set proposal creation rules"
           },
           "STAGES": {
             "description": "Design how decisions are made in this type of proposal. A proposal can go through multiple sequential stages and have any number of governing bodies.",
