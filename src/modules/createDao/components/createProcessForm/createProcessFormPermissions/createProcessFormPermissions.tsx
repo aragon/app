@@ -46,12 +46,15 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         name: 'permissionSelectors',
     });
 
-    const addPermissionSelector = (actions: IProposalActionData[]) => appendPermissionSelector(actions);
+    const addPermissionSelector = (actions: IProposalActionData[]) => {
+        appendPermissionSelector(actions);
+        console.log('Permission selector added:', actions);
+    };
 
     const removePermissionSelectorByIndex = (index: number) => removePermissionSelector(index);
 
     return (
-        <>
+        <div className="flex flex-col gap-6">
             <RadioGroup
                 className="flex gap-4 md:!flex-row"
                 onValueChange={onProcessPermissionChange}
@@ -95,6 +98,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                         nativeGroups={pluginGroups}
                         nativeItems={pluginItems}
                         hideWalletConnect={true}
+                        excludeActionTypes={['Transfer']}
                     />
                     {permissionSelectors.map((selector, index) => (
                         <SmartContractFunctionDataListItem.Structure
@@ -108,6 +112,6 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                     ))}
                 </div>
             )}
-        </>
+        </div>
     );
 };
