@@ -1496,9 +1496,9 @@
         },
         "tokenMemberPanel": {
           "tabs": {
-            "DELEGATE": "Delegate",
-            "LOCK": "Lock",
-            "WRAP": "Wrap"
+            "delegate": "Delegate",
+            "lock": "Lock",
+            "wrap": "Wrap"
           }
         },
         "tokenMemberStats": {
@@ -1741,9 +1741,9 @@
         "processKey": "Process key",
         "processName": "Process name",
         "tabs": {
-          "CONTRACT": "Contract",
-          "DESCRIPTION": "Description",
-          "SETTINGS": "Settings"
+          "contract": "Contract",
+          "description": "Description",
+          "settings": "Settings"
         }
       },
       "daoSettingsInfo": {
