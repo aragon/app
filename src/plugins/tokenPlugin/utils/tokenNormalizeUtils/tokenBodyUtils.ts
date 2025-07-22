@@ -17,7 +17,6 @@ export class TokenBodyUtils {
         return daoProcessDetailsClientUtils.normalizeBody<ITokenPluginSettings, ITokenSetupMembershipForm>({
             plugin,
             membership: { members: [], token: plugin.settings.token },
-            governance: plugin.settings.governance,
         });
     };
 }
