@@ -2,9 +2,9 @@ import {
     type ICreateProcessFormData,
     ProcessPermission,
 } from '@/modules/createDao/components/createProcessForm/createProcessFormDefinitions';
-import { ActionComposer, actionComposerUtils } from '@/modules/governance/components/actionComposer';
+import { ProposalActionType } from '@/modules/governance/api/governanceService';
+import { ActionComposer } from '@/modules/governance/components/actionComposer';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm/createProposalFormDefinitions';
-import { useDao } from '@/shared/api/daoService/queries/useDao/useDao';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { CardEmptyState, RadioCard, RadioGroup, SmartContractFunctionDataListItem } from '@aragon/gov-ui-kit';
@@ -20,12 +20,7 @@ export interface ICreateProcessFormPermissionsProps {
 export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionsProps> = (props) => {
     const { daoId } = props;
 
-    const daoUrlParams = { id: daoId };
-    const { data: dao } = useDao({ urlParams: daoUrlParams });
-
     const { t } = useTranslations();
-
-    const { pluginItems, pluginGroups } = actionComposerUtils.getPluginActionsFromDao(dao);
 
     const { ANY, SELECTED } = ProcessPermission;
 
@@ -46,10 +41,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         name: 'permissionSelectors',
     });
 
-    const addPermissionSelector = (actions: IProposalActionData[]) => {
-        appendPermissionSelector(actions);
-        console.log('Permission selector added:', actions);
-    };
+    const addPermissionSelector = (actions: IProposalActionData[]) => appendPermissionSelector(actions);
 
     const removePermissionSelectorByIndex = (index: number) => removePermissionSelector(index);
 
@@ -91,14 +83,12 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                 />
             )}
             {processPermission === SELECTED && (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-3">
                     <ActionComposer
                         daoId={daoId}
                         onAddAction={addPermissionSelector}
-                        nativeGroups={pluginGroups}
-                        nativeItems={pluginItems}
                         hideWalletConnect={true}
-                        excludeActionTypes={['Transfer']}
+                        excludeActionTypes={[ProposalActionType.TRANSFER]}
                     />
                     {permissionSelectors.map((selector, index) => (
                         <SmartContractFunctionDataListItem.Structure
