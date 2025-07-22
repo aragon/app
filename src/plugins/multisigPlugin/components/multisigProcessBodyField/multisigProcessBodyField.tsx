@@ -1,8 +1,8 @@
 'use client';
 
 import {
-    ISetupBodyFormExisting,
     SetupBodyType,
+    type ISetupBodyFormExisting,
     type ISetupBodyFormNew,
 } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useMemberList } from '@/modules/governance/api/governanceService';

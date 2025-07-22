@@ -2,7 +2,6 @@ import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import {
     SetupBodyType,
     type ISetupBodyForm,
-    type ISetupBodyFormExternal,
 } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
 import { GovernanceBodyInfo } from '@/shared/components/governanceBodyInfo';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
@@ -78,7 +77,6 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
                         pluginId={body.plugin}
                         slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}
                         daoId={daoId}
-                        pluginAddress={(body as ISetupBodyFormExternal).address}
                         readOnly={readOnly}
                         body={body}
                         isAdvancedGovernance={isAdvancedGovernance}
