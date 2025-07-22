@@ -1,3 +1,5 @@
+'use client';
+
 import type { ComponentProps, FormEvent } from 'react';
 import { useFormContext, type FieldValues } from 'react-hook-form';
 import { useWizardContext } from '../wizardProvider';

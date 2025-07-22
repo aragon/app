@@ -1,3 +1,5 @@
+'use client';
+
 import { useConfirmWizardExit } from '@/shared/hooks/useConfirmWizardExit';
 import { useStepper } from '@/shared/hooks/useStepper';
 import dynamic from 'next/dynamic';

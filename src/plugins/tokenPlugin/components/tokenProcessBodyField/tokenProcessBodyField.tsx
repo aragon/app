@@ -1,5 +1,9 @@
-import type { ISetupBodyFormNew } from '@/modules/createDao/dialogs/setupBodyDialog';
-import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
+import {
+    SetupBodyType,
+    type ISetupBodyFormExisting,
+    type ISetupBodyFormNew,
+} from '@/modules/createDao/dialogs/setupBodyDialog';
+import { useMemberList } from '@/modules/governance/api/governanceService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { DefinitionList, formatterUtils, NumberFormat, Tag } from '@aragon/gov-ui-kit';
@@ -12,7 +16,9 @@ export interface ITokenProcessBodyFieldProps {
     /**
      * The field from the create process form.
      */
-    body: ISetupBodyFormNew<ITokenSetupGovernanceForm, ITokenSetupMembershipMember, ITokenSetupMembershipForm>;
+    body:
+        | ISetupBodyFormNew<ITokenSetupGovernanceForm, ITokenSetupMembershipMember, ITokenSetupMembershipForm>
+        | ISetupBodyFormExisting<ITokenSetupGovernanceForm, ITokenSetupMembershipMember, ITokenSetupMembershipForm>;
     /**
      * Displays / hides some of the token-voting governance settings depending on the process governance type.
      */
@@ -22,10 +28,6 @@ export interface ITokenProcessBodyFieldProps {
      */
     daoId: string;
     /**
-     * Address of the plugin.
-     */
-    pluginAddress: string;
-    /**
      * If the component field is read-only.
      * @default false
      */
@@ -33,14 +35,16 @@ export interface ITokenProcessBodyFieldProps {
 }
 
 export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
-    const { body, isAdvancedGovernance, daoId, pluginAddress, readOnly } = props;
+    const { body, isAdvancedGovernance, daoId, readOnly } = props;
 
     const { t } = useTranslations();
 
     const { membership, governance } = body;
 
-    const initialParams = { queryParams: { daoId, pluginAddress } };
-    const { itemsCount } = useMemberListData(initialParams);
+    const initialParams = {
+        queryParams: { daoId, pluginAddress: body.type === SetupBodyType.EXISTING ? body.address : '' },
+    };
+    const { data: memberList } = useMemberList(initialParams, { enabled: body.type === SetupBodyType.EXISTING });
 
     const { name: tokenName, symbol: tokenSymbol, decimals: tokenDecimals, totalSupply } = membership.token;
     const { votingMode, supportThreshold, minParticipation, minDuration } = governance;
@@ -57,7 +61,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     const minDurationObject = dateUtils.secondsToDuration(minDuration);
     const formattedMinDuration = t('app.plugins.token.tokenProcessBodyField.minDurationDefinition', minDurationObject);
 
-    const numberOfMembers = readOnly ? itemsCount : membership.members.length;
+    const numberOfMembers = readOnly ? memberList?.pages[0].metadata.totalRecords : membership.members.length;
 
     return (
         <DefinitionList.Container className="w-full">
@@ -75,10 +79,14 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                 {formattedSupply!} ${tokenSymbol}
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.supportTerm')}>
-                {t('app.plugins.token.tokenProcessBodyField.supportDefinition', { threshold: supportThreshold })}
+                {t('app.plugins.token.tokenProcessBodyField.supportDefinition', {
+                    threshold: supportThreshold / 10000,
+                })}
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.minParticipationTerm')}>
-                {t('app.plugins.token.tokenProcessBodyField.minParticipationDefinition', { minParticipation })}
+                {t('app.plugins.token.tokenProcessBodyField.minParticipationDefinition', {
+                    minParticipation: minParticipation / 10000,
+                })}
             </DefinitionList.Item>
             {!isAdvancedGovernance && (
                 <>

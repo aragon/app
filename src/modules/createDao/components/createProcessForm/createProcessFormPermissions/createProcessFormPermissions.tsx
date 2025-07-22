@@ -1,3 +1,5 @@
+'use client';
+
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { SetupBodyType } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';

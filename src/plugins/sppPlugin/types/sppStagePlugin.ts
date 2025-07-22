@@ -28,8 +28,4 @@ export interface ISppStagePluginExternal {
      * Branded identity of the plugin.
      */
     brandId: VotingBodyBrandIdentity;
-    /**
-     * Subdomain of the plugin, when known.
-     */
-    subdomain?: string;
 }

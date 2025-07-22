@@ -1,3 +1,5 @@
+'use client';
+
 import classNames from 'classnames';
 import { useEffect, type ComponentProps } from 'react';
 import { useWizardContext, type IWizardStepperStep } from '../wizardProvider';

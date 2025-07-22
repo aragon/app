@@ -1,12 +1,13 @@
 'use client';
 
-import type { ISetupBodyFormNew } from '@/modules/createDao/dialogs/setupBodyDialog';
-import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
+import {
+    ISetupBodyFormExisting,
+    SetupBodyType,
+    type ISetupBodyFormNew,
+} from '@/modules/createDao/dialogs/setupBodyDialog';
+import { useMemberList } from '@/modules/governance/api/governanceService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { PluginType } from '@/shared/types';
 import { DefinitionList, type ICompositeAddress } from '@aragon/gov-ui-kit';
-import type { IMultisigPluginSettings } from '../../types';
 import type { IMultisigSetupGovernanceForm } from '../multisigSetupGovernance';
 import type { IMultisigSetupMembershipForm } from '../multisigSetupMembership';
 
@@ -14,15 +15,13 @@ export interface IMultisigProcessBodyFieldProps {
     /**
      * The body to display the details for.
      */
-    body: ISetupBodyFormNew<IMultisigSetupGovernanceForm, ICompositeAddress, IMultisigSetupMembershipForm>;
+    body:
+        | ISetupBodyFormNew<IMultisigSetupGovernanceForm, ICompositeAddress, IMultisigSetupMembershipForm>
+        | ISetupBodyFormExisting<IMultisigSetupGovernanceForm, ICompositeAddress, IMultisigSetupMembershipForm>;
     /**
      * ID of the DAO.
      */
     daoId: string;
-    /**
-     * Address of the plugin.
-     */
-    pluginAddress: string;
     /**
      * If the component field is read-only.
      * @default false
@@ -31,29 +30,20 @@ export interface IMultisigProcessBodyFieldProps {
 }
 
 export const MultisigProcessBodyField = (props: IMultisigProcessBodyFieldProps) => {
-    const { body, daoId, pluginAddress, readOnly } = props;
+    const { body, daoId, readOnly } = props;
 
     const { t } = useTranslations();
     const { membership, governance } = body;
+
+    const { minApprovals } = governance;
     const baseTranslationKey = 'app.plugins.multisig.multisigProcessBodyField';
 
-    const plugin = useDaoPlugins({ daoId, pluginAddress, type: PluginType.BODY, includeSubPlugins: true })![0];
-
-    const { itemsCount } = useMemberListData({ queryParams: { daoId, pluginAddress } });
-
-    const resolveGovernance = () => {
-        if (readOnly) {
-            return {
-                minApprovals: (plugin.meta.settings as IMultisigPluginSettings).minApprovals,
-            };
-        }
-        return {
-            minApprovals: governance.minApprovals,
-        };
+    const initialParams = {
+        queryParams: { daoId, pluginAddress: body.type === SetupBodyType.EXISTING ? body.address : '' },
     };
+    const { data: memberList } = useMemberList(initialParams, { enabled: body.type === SetupBodyType.EXISTING });
 
-    const membersCount = readOnly ? (itemsCount ?? '-') : membership.members.length;
-    const { minApprovals } = resolveGovernance();
+    const membersCount = readOnly ? (memberList?.pages[0].metadata.totalRecords ?? '-') : membership.members.length;
 
     return (
         <DefinitionList.Container className="w-full">
