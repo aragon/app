@@ -65,9 +65,10 @@ class TokenProposalUtils {
         }
 
         const totalVotes = this.getTotalVotes(proposal);
-        const minVotingPower = (parsedTotalSupply * parsedMinParticipation) / BigInt(1000000);
+        // Allow sub‑1 thresholds: integer division will floor to zero
+        const thresholdVotes = (parsedTotalSupply * parsedMinParticipation) / BigInt(1_000_000);
 
-        return totalVotes >= minVotingPower;
+        return totalVotes >= thresholdVotes;
     };
 
     isSupportReached = (proposal: ITokenProposal, early?: boolean): boolean => {
