@@ -103,6 +103,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                         contractAddress={selector.to}
                         onRemove={() => removePermissionSelectorByIndex(index)}
                         functionName={selector.inputData?.function}
+                        contractName={selector.inputData?.contract}
                         functionParameters={selector.inputData?.parameters}
                     />
                 ))}
