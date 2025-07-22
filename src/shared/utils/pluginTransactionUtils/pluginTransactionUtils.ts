@@ -92,10 +92,10 @@ class PluginTransactionUtils {
         /* If executeConditionAddress is provided, we need to revoke the execute permission and grant it with the condition. The first plugin in the setupData is either the SPP or the plugin for basic governance processes. */
         const needsExecuteCondition = executeConditionAddress != null;
         const executeWithConditionTransactions = needsExecuteCondition
-            ? permissionTransactionUtils.buildExecuteConditionTransaction({
-                  daoAddress,
-                  pluginAddress: setupData[0].pluginAddress,
-                  executeConditionAddress,
+            ? permissionTransactionUtils.buildExecuteConditionTransactions({
+                  dao: daoAddress,
+                  plugin: setupData[0].pluginAddress,
+                  executeCondition: executeConditionAddress,
               })
             : [];
 

@@ -7,7 +7,7 @@ export const CreateProcessForm = {
     Metadata: CreateProcessFormMetadata,
     Governance: CreateProcessFormGovernance,
     ProposalCreation: CreateProcessFormProposalCreation,
-    Permission: CreateProcessFormPermissions,
+    Permissions: CreateProcessFormPermissions,
 };
 
 export * from './createProcessFormDefinitions';

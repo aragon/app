@@ -55,7 +55,7 @@ export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStep
                 )}
                 {...permissionsStep}
             >
-                <CreateProcessForm.Permission daoId={daoId} />
+                <CreateProcessForm.Permissions daoId={daoId} />
             </WizardPage.Step>
         </>
     );

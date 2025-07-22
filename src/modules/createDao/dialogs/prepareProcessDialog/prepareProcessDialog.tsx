@@ -106,8 +106,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     const handlePrepareInstallationSuccess = (txReceipt: TransactionReceipt) => {
         invariant(dao != null, 'PrepareProcessDialog: DAO cannot be fetched');
 
-        const executeConditionAddress =
-            prepareProcessDialogUtils.preparePublishProcessRetrieveConditionAddress(txReceipt);
+        const executeConditionAddress = prepareProcessDialogUtils.getExecuteSelectorConditionAddress(txReceipt);
 
         const setupData = pluginTransactionUtils.getPluginInstallationSetupData(txReceipt);
 

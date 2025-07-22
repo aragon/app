@@ -46,7 +46,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         name: 'permissionSelectors',
     });
 
-    const addPermissionSelector = (actions: IProposalActionData[]) => appendPermissionSelector(actions[0]);
+    const addPermissionSelector = (actions: IProposalActionData[]) => appendPermissionSelector(actions);
 
     const removePermissionSelectorByIndex = (index: number) => removePermissionSelector(index);
 
@@ -87,8 +87,8 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                     isStacked={false}
                 />
             )}
-            <div className="flex flex-col gap-2">
-                {processPermission === SELECTED && (
+            {processPermission === SELECTED && (
+                <div className="flex flex-col gap-2">
                     <ActionComposer
                         daoId={daoId}
                         onAddAction={addPermissionSelector}
@@ -96,18 +96,18 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                         nativeItems={pluginItems}
                         hideWalletConnect={true}
                     />
-                )}
-                {permissionSelectors.map((selector, index) => (
-                    <SmartContractFunctionDataListItem.Structure
-                        key={selector.id}
-                        contractAddress={selector.to}
-                        onRemove={() => removePermissionSelectorByIndex(index)}
-                        functionName={selector.inputData?.function}
-                        contractName={selector.inputData?.contract}
-                        functionParameters={selector.inputData?.parameters}
-                    />
-                ))}
-            </div>
+                    {permissionSelectors.map((selector, index) => (
+                        <SmartContractFunctionDataListItem.Structure
+                            key={selector.id}
+                            contractAddress={selector.to}
+                            onRemove={() => removePermissionSelectorByIndex(index)}
+                            functionName={selector.inputData?.function}
+                            contractName={selector.inputData?.contract}
+                            functionParameters={selector.inputData?.parameters}
+                        />
+                    ))}
+                </div>
+            )}
         </>
     );
 };

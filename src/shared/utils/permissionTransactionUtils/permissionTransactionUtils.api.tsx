@@ -49,17 +49,17 @@ export interface IBuildGrantWithConditionTransactionParams extends IUpdatePermis
     condition: Hex;
 }
 
-export interface IBuildExecuteConditionTransactionParams {
+export interface IBuildExecuteConditionTransactionsParams {
     /**
      * The address of the DAO where the execute condition will be applied.
      */
-    daoAddress: Hex;
+    dao: Hex;
     /**
      * The address of the plugin to apply the execute condition.
      */
-    pluginAddress: Hex;
+    plugin: Hex;
     /**
      * The address of the condition contract that must be satisfied for the execution to proceed.
      */
-    executeConditionAddress: Hex;
+    executeCondition: Hex;
 }

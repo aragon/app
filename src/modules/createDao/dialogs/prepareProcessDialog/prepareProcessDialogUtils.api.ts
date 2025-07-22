@@ -1,3 +1,4 @@
+import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { IDao } from '@/shared/api/daoService';
 import type { IPluginInstallationSetupData } from '@/shared/utils/pluginTransactionUtils';
 import type { Hex } from 'viem';
@@ -73,9 +74,9 @@ export interface IBuildProcessProposalActionsParams {
 
 export interface IBuildDeployExecuteSelectorConditionDataParams {
     /**
-     * Values of the create-process form.
+     * Specified actions from the create-process form.
      */
-    values: ICreateProcessFormData;
+    permissionSelectors: IProposalActionData[];
     /**
      * DAO to install the ExecuteSelectorCondition to.
      */

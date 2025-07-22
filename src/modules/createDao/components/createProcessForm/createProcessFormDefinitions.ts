@@ -49,7 +49,7 @@ export interface ICreateProcessFormDataBase {
      */
     governanceType: GovernanceType;
     /**
-     *  The permissions of the process. Either any action or specific actions.
+     * The permissions of the process. Either any action or specific actions.
      */
     permissions: ProcessPermission.ANY | ProcessPermission.SELECTED;
     /**

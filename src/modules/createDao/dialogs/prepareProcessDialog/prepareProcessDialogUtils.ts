@@ -1,6 +1,7 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { conditionFactoryAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/conditionFactoryAbi';
 import { executeSelectorConditionAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/executeSelectorConditionAbi';
+import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import type { IDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -47,6 +48,7 @@ class PrepareProcessDialogUtils {
 
     buildPrepareProcessTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
         const { values, processMetadata, dao } = params;
+        const { permissionSelectors } = values;
 
         const { processor: processorMetadata, plugins: pluginsMetadata } = processMetadata;
         const { pluginSetupProcessor, conditionFactory } = networkDefinitions[dao.network].addresses;
@@ -57,7 +59,7 @@ class PrepareProcessDialogUtils {
                   {
                       to: conditionFactory,
                       value: BigInt(0),
-                      data: this.buildDeployExecuteSelectorConditionData({ dao, values }),
+                      data: this.buildDeployExecuteSelectorConditionData({ dao, permissionSelectors }),
                   },
               ]
             : [];
@@ -101,7 +103,7 @@ class PrepareProcessDialogUtils {
 
     preparePublishProcessProposalMetadata = () => this.publishProcessProposalMetadata;
 
-    preparePublishProcessRetrieveConditionAddress = (txReceipt: TransactionReceipt): Hex | undefined => {
+    getExecuteSelectorConditionAddress = (txReceipt: TransactionReceipt): Hex | undefined => {
         const selectorLogs = parseEventLogs({
             abi: executeSelectorConditionAbi,
             eventName: 'SelectorAllowed',
@@ -172,23 +174,24 @@ class PrepareProcessDialogUtils {
         return prepareFunction(prepareFunctionParams);
     };
 
+    private actionToFunctionSelector = (action: IProposalActionData): Hex => {
+        return toFunctionSelector(
+            `${action.inputData!.function}(${action.inputData!.parameters.map((param) => param.type).join(',')})`,
+        );
+    };
+
     private buildDeployExecuteSelectorConditionData = (params: IBuildDeployExecuteSelectorConditionDataParams) => {
-        const { dao, values } = params;
-        const { permissionSelectors } = values;
+        const { dao, permissionSelectors } = params;
 
-        const selectors = permissionSelectors.map((selector) => {
-            return toFunctionSelector(
-                `${selector.inputData!.function}(${selector.inputData!.parameters.map((param) => param.type).join(',')})`,
-            );
-        });
+        const selectors = permissionSelectors.map((selector) => this.actionToFunctionSelector(selector));
 
-        const prepareTransaction = encodeFunctionData({
+        const transactionData = encodeFunctionData({
             abi: conditionFactoryAbi,
             functionName: 'deployExecuteSelectorCondition',
             args: [dao.address as Hex, [{ where: dao.address as Hex, selectors }]],
         });
 
-        return prepareTransaction;
+        return transactionData;
     };
 }
 

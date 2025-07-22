@@ -2,7 +2,7 @@ import { encodeFunctionData, keccak256, toBytes, zeroHash } from 'viem';
 import type { ITransactionRequest } from '../transactionUtils';
 import { permissionManagerAbi } from './abi/permissionManagerAbi';
 import type {
-    IBuildExecuteConditionTransactionParams,
+    IBuildExecuteConditionTransactionsParams,
     IBuildGrantWithConditionTransactionParams,
     IRuledCondition,
     IUpdatePermissionParams,
@@ -64,31 +64,31 @@ class PermissionTransactionUtils {
         return { to, data: transactionData, value: BigInt(0) };
     };
 
-    buildExecuteConditionTransaction = (
-        params: IBuildExecuteConditionTransactionParams,
+    buildExecuteConditionTransactions = (
+        params: IBuildExecuteConditionTransactionsParams,
     ): [ITransactionRequest, ITransactionRequest, ITransactionRequest] => {
-        const { daoAddress, pluginAddress, executeConditionAddress } = params;
+        const { dao, plugin, executeCondition } = params;
 
         const revokeExecuteTransaction = this.buildRevokePermissionTransaction({
-            where: daoAddress,
-            who: pluginAddress,
+            where: dao,
+            who: plugin,
             what: permissionTransactionUtils.permissionIds.executePermission,
-            to: daoAddress,
+            to: dao,
         });
 
         const grantExecuteTransaction = this.buildGrantWithConditionTransaction({
-            where: daoAddress,
-            who: pluginAddress,
+            where: dao,
+            who: plugin,
             what: permissionTransactionUtils.permissionIds.executePermission,
-            to: daoAddress,
-            condition: executeConditionAddress,
+            to: dao,
+            condition: executeCondition,
         });
 
         const grantTransaction = this.buildGrantPermissionTransaction({
-            where: executeConditionAddress,
-            who: daoAddress,
+            where: executeCondition,
+            who: dao,
             what: permissionTransactionUtils.permissionIds.manageSelectorsPermission,
-            to: daoAddress,
+            to: dao,
         });
 
         return [revokeExecuteTransaction, grantExecuteTransaction, grantTransaction];
