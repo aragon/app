@@ -1,5 +1,3 @@
-'use client';
-
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { createContext, useContext } from 'react';
