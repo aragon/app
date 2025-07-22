@@ -12,7 +12,7 @@ import { useFieldArray } from 'react-hook-form';
 
 export interface ICreateProcessFormPermissionsProps {
     /**
-     * ID of the DAO
+     * ID of the DAO.
      */
     daoId: string;
 }
