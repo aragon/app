@@ -3,7 +3,7 @@ import {
     ProcessPermission,
 } from '@/modules/createDao/components/createProcessForm/createProcessFormDefinitions';
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
-import { ActionComposer } from '@/modules/governance/components/actionComposer';
+import { ActionComposer, ActionItemId } from '@/modules/governance/components/actionComposer';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm/createProposalFormDefinitions';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -88,7 +88,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                         daoId={daoId}
                         onAddAction={addPermissionSelector}
                         hideWalletConnect={true}
-                        excludeActionTypes={[ProposalActionType.TRANSFER]}
+                        excludeActionTypes={[ProposalActionType.TRANSFER, ActionItemId.RAW_CALLDATA]}
                     />
                     {permissionSelectors.map((selector, index) => (
                         <SmartContractFunctionDataListItem.Structure
