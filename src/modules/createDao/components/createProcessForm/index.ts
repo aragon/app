@@ -12,4 +12,3 @@ export * from './createProcessFormDefinitions';
 export * from './createProcessFormGovernance';
 export * from './createProcessFormMetadata';
 export * from './createProcessFormPermissions';
-export { createProcessFormUtils } from './createProcessFormUtils';

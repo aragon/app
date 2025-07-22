@@ -68,7 +68,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     return (
         <DefinitionList.Container className="w-full">
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.tokenTerm')}>
-                {tokenName} ${tokenSymbol}
+                {tokenName} (${tokenSymbol})
             </DefinitionList.Item>
             {numberOfMembers! > 0 && (
                 <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.distributionTerm')}>
@@ -78,7 +78,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.supplyTerm')}>
-                {formattedSupply!} ${tokenSymbol}
+                {formattedSupply!} (${tokenSymbol})
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.supportTerm')}>
                 {t('app.plugins.token.tokenProcessBodyField.supportDefinition', {

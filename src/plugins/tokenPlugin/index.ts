@@ -22,7 +22,7 @@ import { useTokenMemberStats } from './hooks/useTokenMemberStats';
 import { useTokenNormalizeActions } from './hooks/useTokenNormalizeActions';
 import { useTokenPermissionCheckProposalCreation } from './hooks/useTokenPermissionCheckProposalCreation';
 import { useTokenPermissionCheckVoteSubmission } from './hooks/useTokenPermissionCheckVoteSubmission';
-import { tokenBodyUtils } from './utils/tokenNormalizeUtils';
+import { tokenBodyUtils } from './utils/tokenBodyUtils';
 import { tokenProposalUtils } from './utils/tokenProposalUtils';
 import { tokenTransactionUtils } from './utils/tokenTransactionUtils';
 
@@ -135,9 +135,9 @@ export const initialiseTokenPlugin = () => {
             function: tokenTransactionUtils.buildPrepareUpdateData,
         })
         .registerSlotFunction({
-            slotId: SettingsSlotId.SETTINGS_PLUGIN_INFO,
+            slotId: SettingsSlotId.SETTINGS_PLUGIN_TO_FORM_DATA,
             pluginId: tokenPlugin.id,
-            function: tokenBodyUtils.normalizeTokenBody,
+            function: tokenBodyUtils.pluginToFormData,
         })
 
         // Create DAO module slots

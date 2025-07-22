@@ -9,17 +9,13 @@ import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 
-export interface ITokenPermissionCheckProposalCreationParams extends IPermissionCheckGuardParams<ITokenPluginSettings> {
-    /**
-     * Whether the proposal creation settings are read-only.
-     */
-    readOnly?: boolean;
-}
+export interface ITokenPermissionCheckProposalCreationParams
+    extends IPermissionCheckGuardParams<ITokenPluginSettings> {}
 
 export const useTokenPermissionCheckProposalCreation = (
     params: ITokenPermissionCheckProposalCreationParams,
 ): IPermissionCheckGuardResult => {
-    const { plugin, daoId, readOnly = false } = params;
+    const { plugin, daoId, useConnectedUserInfo = true } = params;
 
     const { address } = useAccount();
     const { t } = useTranslations();
@@ -70,7 +66,7 @@ export const useTokenPermissionCheckProposalCreation = (
         format: NumberFormat.TOKEN_AMOUNT_SHORT,
     });
 
-    const settings = [
+    const defaultSettings = [
         {
             term: t('app.plugins.token.tokenPermissionCheckProposalCreation.pluginNameLabel'),
             definition: pluginName,
@@ -79,25 +75,26 @@ export const useTokenPermissionCheckProposalCreation = (
             term: t('app.plugins.token.tokenPermissionCheckProposalCreation.function'),
             definition: `≥${minTokenRequired}`,
         },
-        ...(!readOnly
-            ? [
-                  {
-                      term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userVotingPower'),
-                      definition: `${formattedMemberVotingPower ?? '0'} ${tokenSymbol}`,
-                  },
-                  {
-                      term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userTokenBalance'),
-                      definition: `${formattedMemberBalance ?? '0'} ${tokenSymbol}`,
-                  },
-              ]
-            : []),
     ];
+
+    const connectedUserSettings = [
+        {
+            term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userVotingPower'),
+            definition: `${formattedMemberVotingPower ?? '0'} ${tokenSymbol}`,
+        },
+        {
+            term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userTokenBalance'),
+            definition: `${formattedMemberBalance ?? '0'} ${tokenSymbol}`,
+        },
+    ];
+
+    const processedSettings = useConnectedUserInfo ? defaultSettings.concat(connectedUserSettings) : defaultSettings;
 
     const isRestricted = BigInt(minProposerVotingPower) > 0;
 
     return {
         hasPermission: canCreateProposal?.status === true,
-        settings: [settings],
+        settings: [processedSettings],
         isLoading,
         isRestricted,
     };

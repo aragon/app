@@ -1,3 +1,4 @@
+import { ISppPluginSettings } from '@/plugins/sppPlugin/types';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
@@ -20,35 +21,42 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
 
     const { t } = useTranslations();
 
-    const pluginInfo = useDaoPluginInfo({
+    const stageCount = (plugin as IDaoPlugin<ISppPluginSettings>).settings.stages.length;
+    const hasStages = stageCount > 0;
+
+    const settings = useDaoPluginInfo({
         daoId: dao.id,
         address: plugin.address,
+        settings: [
+            {
+                term: t('app.settings.daoProcessDetailsPage.aside.pluginName'),
+                definition: daoUtils.getPluginName(plugin),
+            },
+            {
+                term: t('app.settings.daoProcessDetailsPage.aside.processKey'),
+                definition: plugin.slug.toUpperCase(),
+            },
+            ...(hasStages
+                ? [
+                      {
+                          term: t('app.settings.daoProcessDetailsPage.aside.stages'),
+                          definition: stageCount.toString(),
+                      },
+                  ]
+                : []),
+        ],
     });
 
-    const [pluginDefinition, launchedAtDefinition] = pluginInfo;
+    const [pluginDefinition, launchedAtDefinition, ...customSettings] = settings;
+    const orderedSettings = [...customSettings, pluginDefinition, launchedAtDefinition];
 
     return (
         <DefinitionList.Container>
-            <DefinitionList.Item term={t('app.settings.daoProcessDetailsPage.aside.pluginName')}>
-                <p className="text-neutral-500">{daoUtils.getPluginName(plugin)}</p>
-            </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.settings.daoProcessDetailsPage.aside.processKey')}>
-                <p className="text-neutral-500">{plugin.slug.toUpperCase()}</p>
-            </DefinitionList.Item>
-            <DefinitionList.Item
-                term={t('app.settings.daoProcessDetailsPage.aside.pluginAddress')}
-                copyValue={pluginDefinition.copyValue}
-                link={pluginDefinition.link}
-                description={pluginDefinition.description}
-            >
-                {pluginDefinition.definition}
-            </DefinitionList.Item>
-            <DefinitionList.Item
-                term={t('app.settings.daoProcessDetailsPage.aside.launchedAt')}
-                link={launchedAtDefinition.link}
-            >
-                {launchedAtDefinition.definition}
-            </DefinitionList.Item>
+            {orderedSettings.map(({ term, definition, description, link, copyValue }) => (
+                <DefinitionList.Item key={term} term={term} description={description} link={link} copyValue={copyValue}>
+                    {definition}
+                </DefinitionList.Item>
+            ))}
         </DefinitionList.Container>
     );
 };

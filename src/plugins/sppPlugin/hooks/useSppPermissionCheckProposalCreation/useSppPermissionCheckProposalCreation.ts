@@ -15,7 +15,7 @@ export interface IUseSppPermissionCheckProposalCreationParams extends IPermissio
 export const useSppPermissionCheckProposalCreation = (
     params: IUseSppPermissionCheckProposalCreationParams,
 ): IPermissionCheckGuardResult => {
-    const { daoId, plugin, readOnly = false } = params;
+    const { daoId, plugin, useConnectedUserInfo = true } = params;
 
     const daoPlugins = useDaoPlugins({ daoId, includeSubPlugins: true });
 
@@ -32,7 +32,7 @@ export const useSppPermissionCheckProposalCreation = (
         pluginRegistryUtils.getSlotFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
             pluginId: plugin.interfaceType,
-        })?.({ plugin, daoId, readOnly }),
+        })?.({ plugin, daoId, useConnectedUserInfo }),
     );
 
     // Allow proposal creation if either:

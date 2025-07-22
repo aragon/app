@@ -1,3 +1,5 @@
+'use client';
+
 import {
     GovernanceType,
     ProcessStageType,
@@ -5,11 +7,8 @@ import {
     type ICreateProcessFormData,
     type ICreateProcessFormDataAdvanced,
 } from '@/modules/createDao/components/createProcessForm';
+import type { ISetupBodyFormExisting, ISetupBodyFormMembership } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { SetupBodyType } from '@/modules/createDao/dialogs/setupBodyDialog';
-import type {
-    ISetupBodyFormExisting,
-    ISetupBodyFormMembership,
-} from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
 import type { ISppPluginSettings, ISppStagePlugin } from '@/plugins/sppPlugin/types';
 import { PluginInterfaceType, type IDaoPlugin, type IPluginSettings } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -17,6 +16,7 @@ import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 import { SettingsSlotId } from '../../constants/moduleSlots';
+import type { IPluginToFormDataParams } from '../../types';
 
 export class DaoProcessDetailsClientUtils {
     pluginToProcessFormData = (plugin: IDaoPlugin, allPlugins: IDaoPlugin[]): ICreateProcessFormData => {
@@ -30,21 +30,7 @@ export class DaoProcessDetailsClientUtils {
         };
 
         if (plugin.isBody && plugin.isProcess) {
-            const slotFn = pluginRegistryUtils.getSlotFunction<
-                { plugin: IDaoPlugin; membership: ISetupBodyFormMembership },
-                ISetupBodyFormExisting<IPluginSettings, ICompositeAddress, ISetupBodyFormMembership>
-            >({
-                slotId: SettingsSlotId.SETTINGS_PLUGIN_INFO,
-                pluginId: plugin.interfaceType,
-            });
-
-            const normalizeBody = slotFn ?? this.normalizeBody;
-
-            const body = normalizeBody({
-                plugin: plugin,
-                membership: { members: [] },
-            });
-
+            const body = this.bodyToFormData({ plugin, membership: { members: [] } });
             return {
                 governanceType: GovernanceType.BASIC,
                 body,
@@ -54,26 +40,25 @@ export class DaoProcessDetailsClientUtils {
 
         return {
             governanceType: GovernanceType.ADVANCED,
-            stages: this.normalizeSettings(plugin.settings as ISppPluginSettings, allPlugins),
+            stages: this.sppSettingsToFormData(plugin.settings as ISppPluginSettings, allPlugins),
             ...base,
         };
     };
 
-    normalizeBody = <TSettings extends IPluginSettings, TMembership extends ISetupBodyFormMembership>(params: {
+    public bodyToFormDataDefault = <
+        TSettings extends IPluginSettings,
+        TMembership extends ISetupBodyFormMembership,
+    >(params: {
         plugin: IDaoPlugin<TSettings>;
         membership: TMembership;
     }): ISetupBodyFormExisting<TSettings, ICompositeAddress, TMembership> => {
         const { plugin, membership } = params;
-
         return {
-            subdomain: plugin.subdomain,
             internalId: crypto.randomUUID(),
             type: SetupBodyType.EXISTING,
             plugin: plugin.interfaceType,
             address: plugin.address,
             name: daoUtils.getPluginName(plugin),
-            build: plugin.build,
-            release: plugin.release,
             description: plugin.description ?? '',
             resources: plugin.links ?? [],
             governance: plugin.settings,
@@ -82,34 +67,30 @@ export class DaoProcessDetailsClientUtils {
         };
     };
 
-    private normalizeSettings = (
+    public bodyToFormData = <TSettings extends IPluginSettings, TMembership extends ISetupBodyFormMembership>(
+        params: IPluginToFormDataParams<TSettings, TMembership>,
+    ): ISetupBodyFormExisting<TSettings, ICompositeAddress, TMembership> => {
+        const slotFn = pluginRegistryUtils.getSlotFunction<
+            IPluginToFormDataParams<TSettings, TMembership>,
+            ISetupBodyFormExisting<TSettings, ICompositeAddress, TMembership>
+        >({
+            slotId: SettingsSlotId.SETTINGS_PLUGIN_TO_FORM_DATA,
+            pluginId: params.plugin.interfaceType,
+        });
+        return slotFn ? slotFn(params) : this.bodyToFormDataDefault(params);
+    };
+
+    private sppSettingsToFormData = (
         settings: ISppPluginSettings,
         allPlugins: IDaoPlugin[],
     ): ICreateProcessFormDataAdvanced['stages'] =>
         settings.stages.map((stage) => {
-            const bodies = stage.plugins.map((plugin) => {
-                const normalized = this.normalizePlugin(plugin, allPlugins);
-
-                const normalizeFn = pluginRegistryUtils.getSlotFunction<
-                    { plugin: IDaoPlugin; membership: ISetupBodyFormMembership },
-                    ISetupBodyFormExisting<IPluginSettings, ICompositeAddress, ISetupBodyFormMembership>
-                >({
-                    slotId: SettingsSlotId.SETTINGS_PLUGIN_INFO,
-                    pluginId: normalized.interfaceType,
-                });
-
-                if (!normalizeFn) {
-                    return this.normalizeBody({
-                        plugin: normalized,
-                        membership: { members: [] },
-                    });
-                }
-
-                return normalizeFn({
-                    plugin: normalized,
+            const bodies = stage.plugins.map((plugin) =>
+                this.bodyToFormData({
+                    plugin: this.sppBodyToFormData(plugin, allPlugins),
                     membership: { members: [] },
-                });
-            });
+                }),
+            );
 
             return {
                 internalId: crypto.randomUUID(),
@@ -127,12 +108,11 @@ export class DaoProcessDetailsClientUtils {
             };
         });
 
-    private normalizePlugin<T extends IPluginSettings>(
+    private sppBodyToFormData<T extends IPluginSettings>(
         plugin: ISppStagePlugin,
         allPlugins: IDaoPlugin[],
     ): IDaoPlugin<T> {
         const hydrated = allPlugins.find((p) => p.address === plugin.address) as IDaoPlugin<T> | undefined;
-
         return {
             ...plugin,
             isBody: true,

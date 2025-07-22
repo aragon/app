@@ -63,28 +63,19 @@ export interface ISetupBodyFormExternal extends ISetupBodyFormBase, ICompositeAd
      * EXTERNAL body type.
      */
     type: SetupBodyType.EXTERNAL;
-    /**
-     * The subdomain of the body plugin.
-     */
-    subdomain?: string;
-    /**
-     * Plugin-specific release version of the body.
-     */
-    release?: string;
-    /**
-     * Plugin-specific build version of the body.
-     */
-    build?: string;
 }
 
 export interface ISetupBodyFormExisting<
     TGovernance = unknown,
     TMember extends ICompositeAddress = ICompositeAddress,
     TMembership extends ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
-> extends Omit<ISetupBodyFormNew<TGovernance, TMember, TMembership>, 'type' | 'name'>,
-        Omit<ISetupBodyFormExternal, 'type' | 'name' | 'membership'> {
+> extends Pick<
+            ISetupBodyFormNew<TGovernance, TMember, TMembership>,
+            'internalId' | 'plugin' | 'description' | 'resources' | 'governance' | 'membership' | 'canCreateProposal'
+        >,
+        Pick<ICompositeAddress, 'address' | 'name'> {
     /**
-     * In read-only cases body can be either NEW or EXTERNAL.
+     * EXISTING body type.
      */
     type: SetupBodyType.EXISTING;
     /**
@@ -96,7 +87,7 @@ export interface ISetupBodyFormExisting<
      */
     name?: string;
     /**
-     * Address of the plugin contract for read-only lookup.
+     * Address of the plugin contract for read‑only lookup.
      */
     pluginAddress?: string;
 }

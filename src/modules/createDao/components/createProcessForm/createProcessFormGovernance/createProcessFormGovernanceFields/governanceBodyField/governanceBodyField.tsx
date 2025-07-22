@@ -1,8 +1,5 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
-import {
-    SetupBodyType,
-    type ISetupBodyForm,
-} from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
+import { SetupBodyType, type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { GovernanceBodyInfo } from '@/shared/components/governanceBodyInfo';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -58,21 +55,18 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
     const isNew = body.type === SetupBodyType.NEW;
 
     return (
-        <Accordion.Container isMulti={true}>
+        <Accordion.Container isMulti={true} value={[body.internalId]}>
             <Accordion.Item value={body.internalId}>
                 <Accordion.ItemHeader>
                     <GovernanceBodyInfo
                         name={body.name}
                         address={isNew ? undefined : body.address}
                         subdomain={isNew ? plugin?.id : body.subdomain}
-                        release={isNew ? plugin?.installVersion.release.toString() : body.release}
-                        build={isNew ? plugin?.installVersion.build.toString() : body.build}
+                        release={isNew ? plugin?.installVersion.release.toString() : (body.release ?? '')}
+                        build={isNew ? plugin?.installVersion.build.toString() : (body.build ?? '')}
                     />
                 </Accordion.ItemHeader>
-                <Accordion.ItemContent
-                    forceMount={readOnly ? true : undefined}
-                    className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6"
-                >
+                <Accordion.ItemContent className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6">
                     <PluginSingleComponent
                         pluginId={body.plugin}
                         slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}

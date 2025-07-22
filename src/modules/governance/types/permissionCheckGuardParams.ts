@@ -15,7 +15,8 @@ export interface IPermissionCheckGuardParams<TPluginSettings extends IPluginSett
      */
     proposal?: IProposal<TPluginSettings>;
     /**
-     * Whether the permissions should be checked in read-only mode.
+     * Whether to show the connected user's permissions info.
+     * @default true
      */
-    readOnly?: boolean;
+    useConnectedUserInfo?: boolean;
 }

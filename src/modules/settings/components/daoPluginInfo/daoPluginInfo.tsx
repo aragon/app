@@ -31,9 +31,11 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
                     </DefinitionList.Item>
                 ))}
             </DefinitionList.Container>
-            <Button variant="tertiary" href={processLink}>
-                {t('app.settings.daoPluginInfo.viewProcess')}
-            </Button>
+            {!plugin.isSubPlugin && plugin.isProcess && (
+                <Button variant="tertiary" href={processLink}>
+                    {t('app.settings.daoPluginInfo.viewProcess')}
+                </Button>
+            )}
         </div>
     );
 };

@@ -3,7 +3,7 @@ import { daoService } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import type { IDaoProcessDetailsPageParams } from '../../types/';
+import type { IDaoProcessDetailsPageParams } from '../../types';
 import { DaoProcessDetailsPageClient } from './daoProcessDetailsPageClient';
 
 export interface IDaoProcessDetailsPageProps {
