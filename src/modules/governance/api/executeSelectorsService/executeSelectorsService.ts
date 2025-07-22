@@ -21,7 +21,7 @@ class ExecuteSelectorsService extends AragonBackendService {
 
                 return {
                     ...allowedAction,
-                    abi,
+                    targetAbi: abi,
                 };
             }),
         );
