@@ -75,7 +75,7 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
                     className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6"
                 >
                     <PluginSingleComponent
-                        pluginId={isNew ? plugin!.id : body.subdomain!}
+                        pluginId={body.plugin}
                         slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}
                         daoId={daoId}
                         pluginAddress={(body as ISetupBodyFormExternal).address}
