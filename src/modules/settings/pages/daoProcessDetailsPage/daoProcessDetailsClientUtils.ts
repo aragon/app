@@ -75,14 +75,17 @@ export class DaoProcessDetailsClientUtils {
     public bodyToFormData = <TSettings extends IPluginSettings, TMembership extends ISetupBodyFormMembership>(
         params: IPluginToFormDataParams<TSettings, TMembership>,
     ): ISetupBodyFormExisting<TSettings, ICompositeAddress, TMembership> => {
-        const slotFn = pluginRegistryUtils.getSlotFunction<
+        const { plugin } = params;
+
+        const pluginFunction = pluginRegistryUtils.getSlotFunction<
             IPluginToFormDataParams<TSettings, TMembership>,
             ISetupBodyFormExisting<TSettings, ICompositeAddress, TMembership>
         >({
             slotId: SettingsSlotId.SETTINGS_PLUGIN_TO_FORM_DATA,
-            pluginId: params.plugin.interfaceType,
+            pluginId: plugin.interfaceType,
         });
-        return slotFn ? slotFn(params) : this.bodyToFormDataDefault(params);
+
+        return pluginFunction != null ? pluginFunction(params) : this.bodyToFormDataDefault(params);
     };
 
     private sppSettingsToFormData = (

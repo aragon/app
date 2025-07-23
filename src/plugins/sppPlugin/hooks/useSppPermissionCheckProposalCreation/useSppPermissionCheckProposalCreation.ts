@@ -5,12 +5,7 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, invariant } from '@aragon/gov-ui-kit';
 import type { ISppPluginSettings } from '../../types';
 
-export interface IUseSppPermissionCheckProposalCreationParams extends IPermissionCheckGuardParams<ISppPluginSettings> {
-    /**
-     * Whether the proposal creation is read-only.
-     */
-    readOnly?: boolean;
-}
+export interface IUseSppPermissionCheckProposalCreationParams extends IPermissionCheckGuardParams<ISppPluginSettings> {}
 
 export const useSppPermissionCheckProposalCreation = (
     params: IUseSppPermissionCheckProposalCreationParams,
