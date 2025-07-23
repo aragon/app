@@ -40,6 +40,12 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const { token, votingEscrow } = plugin.settings;
     const { underlying, symbol, name } = token;
 
+    const sanitizedSymbol = symbol || 'UNKNOWN';
+    const sanitizedName = name || 'Unknown';
+
+    const sanitizedToken = { ...token, symbol: sanitizedSymbol, name: sanitizedName };
+    const sanitizedPlugin = { ...plugin, settings: { ...plugin.settings, token: sanitizedToken } };
+
     const { t } = useTranslations();
 
     const visibleTabs = getTabsDefinitions(plugin.settings).filter((tab) => !tab.hidden);
@@ -52,10 +58,14 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
         validValues: visibleTabs.map((tab) => tab.value),
     });
 
-    // Remove the "g" and "Governance" prefixes from the token symbol / name
-    const underlyingToken = { ...token, address: underlying!, symbol: symbol.substring(1), name: name.substring(11) };
-
-    const titleToken = !votingEscrow && underlying != null ? underlyingToken : token;
+    // Remove the "g" and "Governance" prefixes from the token symbol / name if present
+    const underlyingToken = {
+        ...sanitizedToken,
+        address: underlying!,
+        symbol: sanitizedSymbol.startsWith('g') ? sanitizedSymbol.substring(1) : sanitizedSymbol,
+        name: sanitizedName.startsWith('Governance') ? sanitizedName.substring(11) : sanitizedName,
+    };
+    const titleToken = !votingEscrow && underlying != null ? underlyingToken : sanitizedToken;
     const cardTitle = `${titleToken.name} (${titleToken.symbol})`;
 
     if (!visibleTabs.length) {
@@ -76,14 +86,14 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
                 </Tabs.List>
                 {votingEscrow != null && (
                     <Tabs.Content value={TokenMemberPanelTab.LOCK}>
-                        <TokenLockForm daoId={daoId} plugin={plugin} />
+                        <TokenLockForm daoId={daoId} plugin={sanitizedPlugin} />
                     </Tabs.Content>
                 )}
                 <Tabs.Content value={TokenMemberPanelTab.WRAP}>
-                    <TokenWrapForm daoId={daoId} plugin={plugin} underlyingToken={underlyingToken} />
+                    <TokenWrapForm daoId={daoId} plugin={sanitizedPlugin} underlyingToken={underlyingToken} />
                 </Tabs.Content>
                 <Tabs.Content value={TokenMemberPanelTab.DELEGATE}>
-                    <TokenDelegationForm daoId={daoId} plugin={plugin} />
+                    <TokenDelegationForm daoId={daoId} plugin={sanitizedPlugin} />
                 </Tabs.Content>
             </Tabs.Root>
         </Page.AsideCard>
