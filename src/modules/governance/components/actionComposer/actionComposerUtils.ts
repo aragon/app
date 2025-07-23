@@ -97,47 +97,36 @@ class ActionComposerUtils {
             nativeGroups: [],
         });
 
-        const allowedSelectors = allowedActions.map((action) => action.selector);
-        const abis = allowedActions.map((action) => action.targetAbi);
-
-        const actionItems = abis.map((abi, abiIndex) => {
-            if (!abi) {
-                const item = this.buildDefaultCustomAction(
-                    {
-                        address: allowedActions[abiIndex].target,
-                        name: t('app.governance.verifySmartContractDialog.unverified'),
-                    },
-                    { name: t('app.governance.verifySmartContractDialog.unverified'), parameters: [] },
-                    0,
-                );
-                item.info = allowedActions[abiIndex].selector ?? undefined;
-                return [item];
+        const actionItems: IActionComposerInputItem[] = allowedActions.map((action, actionIndex) => {
+            if (action.selector === null) {
+                // native transfer
+                return transferItem;
             }
 
-            return abi.functions.map((abiFunction, index) => this.buildDefaultCustomAction(abi, abiFunction, index));
-        });
-        const actionItemsWithSelectors = actionItems.flat().map(this.infoToSelectorMapper);
-
-        const completeAllowedItems = actionItemsWithSelectors
-            .filter((item) => (item.info ? allowedSelectors.includes(item.info) : false))
             // use native item if matches (to enable proper basic view and icon)
-            .map((item) => (item.info === metadataUpdateItem.info ? metadataUpdateItem : item));
+            if (action.selector === metadataUpdateItem.info) {
+                return metadataUpdateItem;
+            }
 
-        // `null` selector means native transfer
-        if (allowedSelectors.includes(null)) {
-            completeAllowedItems.unshift(transferItem);
-        }
+            // TODO: how to detect unverified actions?
+            const decodedAction = action.decoded;
+            const item = this.buildDefaultCustomAction(
+                { address: action.target, name: decodedAction.contractName },
+                { name: decodedAction.functionName, parameters: decodedAction.inputs },
+                actionIndex,
+            );
+            item.info = action.selector;
+
+            return item;
+        });
 
         // create groups contract address, DAO if matches dao address
-        const filteredAbis = abis.filter((abi) => abi != null);
-        const allowedGroups: IAutocompleteInputGroup[] = this.getCustomActionGroups({
-            abis: filteredAbis,
-            dao,
-            t,
-        });
-        const completeAllowedGroups = allowedGroups.map((group) => (group.id === daoAddress ? daoGroup : group));
+        const actionGroups: IAutocompleteInputGroup[] = allowedActions.map((action) =>
+            this.buildCustomActionGroup({ name: action.decoded.contractName, address: action.target }),
+        );
+        const completeActionGroups = actionGroups.map((group) => (group.id === daoAddress ? daoGroup : group));
 
-        return [completeAllowedGroups, completeAllowedItems];
+        return [completeActionGroups, actionItems];
     };
 
     getActionGroups = ({
@@ -303,12 +292,14 @@ class ActionComposerUtils {
     };
 
     private getCustomActionGroups = ({ abis }: IGetCustomActionParams): IAutocompleteInputGroup[] =>
-        abis.map((abi) => ({
-            id: abi.address,
-            name: abi.name,
-            info: addressUtils.truncateAddress(abi.address),
-            indexData: [abi.address],
-        }));
+        abis.map(this.buildCustomActionGroup);
+
+    private buildCustomActionGroup = ({ address, name }: Pick<ISmartContractAbi, 'address' | 'name'>) => ({
+        id: address,
+        name: name,
+        info: addressUtils.truncateAddress(address),
+        indexData: [address],
+    });
 
     private getCustomActionItems = ({ abis, t }: IGetCustomActionParams): IActionComposerInputItem[] => {
         const customActionItems = abis.map((abi) => {

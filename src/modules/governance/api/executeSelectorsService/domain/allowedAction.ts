@@ -1,5 +1,32 @@
 import { Network } from '@/shared/api/daoService';
-import type { ISmartContractAbi } from '../../smartContractService';
+import type { ISmartContractAbiFunctionParameter } from '../../smartContractService';
+
+export interface IDecodedAction {
+    /**
+     * Name of the contract where the action is executed.
+     */
+    contractName: string;
+    /**
+     * Name of the proxy contract if the action is executed through a proxy.
+     */
+    proxyName: string;
+    /**
+     * Address of the implementation contract if the action is executed through a proxy.
+     */
+    implementationAddress: string;
+    /**
+     * Name of the contract function being called in the action.
+     */
+    functionName: string;
+    /**
+     * Parameters of the function.
+     */
+    inputs: ISmartContractAbiFunctionParameter[];
+    /**
+     * Notice or description of the action.
+     */
+    notice: string;
+}
 
 export interface IAllowedAction {
     /**
@@ -31,10 +58,10 @@ export interface IAllowedAction {
      */
     target: string;
     /**
-     * ABI of the target contract. If not provided, the contract is assumed to be unverified.
-     * Fetched as an additional data from the backend for each allowed action!
+     * Decoded action data.
+     * Contains information about the action, such as function name, parameters, etc.
      */
-    targetAbi?: ISmartContractAbi;
+    decoded: IDecodedAction;
     /**
      * Whether the action is allowed or not. Should always be `true` for allowed actions.
      */
