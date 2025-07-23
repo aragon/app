@@ -94,11 +94,12 @@ class ActionComposerUtils {
             nativeGroups: [],
         });
         const actionGroups: IAutocompleteInputGroup[] = allowedActions.map((action) =>
-            this.buildCustomActionGroup({ name: action.decoded.contractName, address: action.target }),
+            action.target === daoAddress
+                ? daoGroup
+                : this.buildCustomActionGroup({ name: action.decoded.contractName, address: action.target }),
         );
-        const actionGroupsWithDao = actionGroups.map((group) => (group.id === daoAddress ? daoGroup : group));
 
-        return actionGroupsWithDao;
+        return actionGroups;
     };
 
     getAllowedActionItem = ({ t, dao, allowedActions }: IGetAllowedActionParams): IActionComposerInputItem[] => {
