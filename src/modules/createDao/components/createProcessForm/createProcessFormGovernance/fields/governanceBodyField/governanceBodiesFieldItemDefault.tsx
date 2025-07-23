@@ -13,10 +13,14 @@ export interface IGovernanceBodiesFieldItemDefaultProps {
      * ID of the DAO to setup the body for.
      */
     daoId: string;
+    /**
+     * Whether the component is in read-only mode.
+     */
+    readOnly?: boolean;
 }
 
 export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldItemDefaultProps> = (props) => {
-    const { body, daoId } = props;
+    const { body, daoId, readOnly } = props;
 
     const { t } = useTranslations();
     const { buildEntityUrl } = useBlockExplorer();
@@ -31,7 +35,7 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
 
     return (
         <DefinitionList.Container>
-            {body.name && (
+            {body.name && !readOnly && (
                 <DefinitionList.Item
                     term={t('app.createDao.createProcessForm.governance.bodyField.default.ens')}
                     link={{ href: bodyAddressLink }}

@@ -6,9 +6,19 @@ import {
     type ISetupBodyFormNew,
 } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useMemberList } from '@/modules/governance/api/governanceService';
+import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { dateUtils } from '@/shared/utils/dateUtils';
-import { DefinitionList, formatterUtils, NumberFormat, Tag } from '@aragon/gov-ui-kit';
+import {
+    ChainEntityType,
+    DefinitionList,
+    formatterUtils,
+    NumberFormat,
+    Tag,
+    useBlockExplorer,
+} from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { DaoTokenVotingMode } from '../../types';
 import type { ITokenSetupGovernanceForm } from '../tokenSetupGovernance';
@@ -39,6 +49,11 @@ export interface ITokenProcessBodyFieldProps {
 export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     const { body, isAdvancedGovernance, daoId, readOnly } = props;
 
+    console.log('body', body);
+
+    const daoUrlParams = { id: daoId };
+    const { data: dao } = useDao({ urlParams: daoUrlParams });
+
     const { t } = useTranslations();
 
     const { membership, governance } = body;
@@ -48,7 +63,13 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     };
     const { data: memberList } = useMemberList(initialParams, { enabled: body.type === SetupBodyType.EXISTING });
 
-    const { name: tokenName, symbol: tokenSymbol, decimals: tokenDecimals, totalSupply } = membership.token;
+    const {
+        address: tokenAddress,
+        name: tokenName,
+        symbol: tokenSymbol,
+        decimals: tokenDecimals,
+        totalSupply,
+    } = membership.token;
     const { votingMode, supportThreshold, minParticipation, minDuration } = governance;
 
     const parsedTotalSupply = formatUnits(BigInt(totalSupply), tokenDecimals);
@@ -65,9 +86,39 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
 
     const numberOfMembers = readOnly ? memberList?.pages[0].metadata.totalRecords : membership.members.length;
 
+    const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[dao!.network].id });
+
+    const readOnlyTokenProps = {
+        link: {
+            href: buildEntityUrl({ type: ChainEntityType.TOKEN, id: tokenAddress }),
+        },
+        copyValue: tokenAddress,
+        description: t('app.plugins.token.tokenMemberInfo.tokenNameAndSymbol', {
+            tokenName: tokenName,
+            tokenSymbol: tokenSymbol,
+        }),
+    };
+
+    const contractInfo = useDaoPluginInfo({ daoId, address: body.type === SetupBodyType.EXISTING ? body.address : '' });
+
     return (
         <DefinitionList.Container className="w-full">
-            <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.tokenTerm')}>
+            {readOnly &&
+                contractInfo.map(({ term, definition, description, link, copyValue }) => (
+                    <DefinitionList.Item
+                        key={term}
+                        term={term}
+                        description={description}
+                        link={link}
+                        copyValue={copyValue}
+                    >
+                        {definition}
+                    </DefinitionList.Item>
+                ))}
+            <DefinitionList.Item
+                term={t('app.plugins.token.tokenProcessBodyField.tokenTerm')}
+                {...(readOnly ? readOnlyTokenProps : {})}
+            >
                 {tokenName} (${tokenSymbol})
             </DefinitionList.Item>
             {numberOfMembers! > 0 && (
