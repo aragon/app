@@ -133,28 +133,31 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
 
     return (
         <>
-            {conditionedProcessAddress && (
-                <div className="mb-4">
-                    <Switch
-                        checked={onlyShowAuthorizedActions}
-                        onCheckedChanged={setOnlyShowAuthorizedActions}
-                        label={t('app.governance.actionComposer.authorizedSwitchLabel')}
-                    />
-                </div>
-            )}
-            <div className={classNames('flex flex-row gap-3', { hidden: displayActionComposer })}>
-                <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={handleAddAction}>
-                    {t('app.governance.actionComposer.addAction.default')}
-                </Button>
-                {shouldRenderWalletConnect && (
-                    <Button
-                        variant="secondary"
-                        size="md"
-                        iconRight={IconType.BLOCKCHAIN_WALLETCONNECT}
-                        onClick={displayWalletConnectDialog}
-                    >
-                        {t('app.governance.actionComposer.addAction.walletConnect')}
+            <div className="flex items-center justify-between">
+                <div className={classNames('flex flex-row gap-3', { hidden: displayActionComposer })}>
+                    <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={handleAddAction}>
+                        {t('app.governance.actionComposer.addAction.default')}
                     </Button>
+                    {shouldRenderWalletConnect && (
+                        <Button
+                            variant="secondary"
+                            size="md"
+                            iconRight={IconType.BLOCKCHAIN_WALLETCONNECT}
+                            onClick={displayWalletConnectDialog}
+                        >
+                            {t('app.governance.actionComposer.addAction.walletConnect')}
+                        </Button>
+                    )}
+                </div>
+                {conditionedProcessAddress && (
+                    // wrapper div needed here to tackle grow css prop in InputContainer inside Switch, which we cannot override
+                    <div>
+                        <Switch
+                            checked={onlyShowAuthorizedActions}
+                            onCheckedChanged={setOnlyShowAuthorizedActions}
+                            inlineLabel={t('app.governance.actionComposer.authorizedSwitchLabel')}
+                        />
+                    </div>
                 )}
             </div>
             <ActionComposerInput
