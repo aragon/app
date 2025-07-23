@@ -10,6 +10,7 @@ import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import {
     ChainEntityType,
@@ -122,7 +123,17 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                 {tokenName} (${tokenSymbol})
             </DefinitionList.Item>
             {numberOfMembers! > 0 && (
-                <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.distributionTerm')}>
+                <DefinitionList.Item
+                    term={t('app.plugins.token.tokenProcessBodyField.distributionTerm')}
+                    link={
+                        readOnly
+                            ? {
+                                  href: daoUtils.getDaoUrl(dao, 'members'),
+                                  isExternal: false,
+                              }
+                            : undefined
+                    }
+                >
                     {t('app.plugins.token.tokenProcessBodyField.holders', {
                         count: numberOfMembers,
                     })}
