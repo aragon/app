@@ -1,10 +1,12 @@
+'use client';
+
 import { SetupBodyType, type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { addressUtils, ChainEntityType, DefinitionList, useBlockExplorer } from '@aragon/gov-ui-kit';
 
-export interface IGovernanceBodiesFieldItemDefaultProps {
+export interface IAdminProcessBodyFieldProps {
     /**
      * Body to display the details for.
      */
@@ -15,7 +17,7 @@ export interface IGovernanceBodiesFieldItemDefaultProps {
     daoId: string;
 }
 
-export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldItemDefaultProps> = (props) => {
+export const AdminProcessBodyField: React.FC<IAdminProcessBodyFieldProps> = (props) => {
     const { body, daoId } = props;
 
     const { t } = useTranslations();
@@ -31,7 +33,7 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
 
     return (
         <DefinitionList.Container>
-            {body.name && (
+            {body.name && body.type === SetupBodyType.EXTERNAL && (
                 <DefinitionList.Item
                     term={t('app.createDao.createProcessForm.governance.bodyField.default.ens')}
                     link={{ href: bodyAddressLink }}

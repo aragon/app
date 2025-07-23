@@ -50,8 +50,6 @@ export interface ITokenProcessBodyFieldProps {
 export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     const { body, isAdvancedGovernance, daoId, readOnly } = props;
 
-    console.log('body', body);
-
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
