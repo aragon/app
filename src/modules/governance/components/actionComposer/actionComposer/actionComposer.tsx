@@ -117,8 +117,8 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
 
     return (
         <>
-            <div className="flex items-center justify-between">
-                <div className={classNames('flex flex-row gap-3', { hidden: displayActionComposer })}>
+            <div className={classNames('flex items-center justify-between', { hidden: displayActionComposer })}>
+                <div className="flex flex-row gap-3">
                     <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={handleAddAction}>
                         {t('app.governance.actionComposer.addAction.default')}
                     </Button>
