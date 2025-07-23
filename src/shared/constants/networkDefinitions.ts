@@ -32,6 +32,10 @@ export interface INetworkDefinitionAddresses {
      * Executor address for SPP sub-plugins.
      */
     globalExecutor: Hex;
+    /**
+     * Address of the condition factory.
+     */
+    conditionFactory: Hex;
 }
 
 export interface INetworkDefinition extends Chain {
@@ -92,6 +96,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0x246503df057A9a85E0144b6867a828c99676128B',
             pluginSetupProcessor: '0xE978942c691e43f65c1B7c7F8f1dc8cDF061B13f',
             globalExecutor: '0x56ce4D8006292Abf418291FaE813C1E3769240A4',
+            conditionFactory: '0x0000000000000000000000000000000000000000',
         },
     },
     [Network.POLYGON_MAINNET]: {
@@ -106,6 +111,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0x9BC7f1dc3cFAD56a0EcD924D1f9e70f5C7aF0039',
             pluginSetupProcessor: '0x879D9dfe3F36d7684BeC1a2bB4Aa8E8871A7245B',
             globalExecutor: '0xD24Bdf1573605C3Df87430F240cB580015f197B5',
+            conditionFactory: '0x0000000000000000000000000000000000000000',
         },
     },
     [Network.BASE_MAINNET]: {
@@ -120,6 +126,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0xcc602EA573a42eBeC290f33F49D4A87177ebB8d2',
             pluginSetupProcessor: '0x91a851E9Ed7F2c6d41b15F76e4a88f5A37067cC9',
             globalExecutor: '0x304eBcA6a98F3a2d4424388814ddbFf8904Bd1cE',
+            conditionFactory: '0x0000000000000000000000000000000000000000',
         },
     },
     [Network.ARBITRUM_MAINNET]: {
@@ -134,6 +141,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0x49e04AB7af7A263b8ac802c1cAe22f5b4E4577Cd',
             pluginSetupProcessor: '0x308a1DC5020c4B5d992F5543a7236c465997fecB',
             globalExecutor: '0x198b64a53b39f454e56626d9262cBf67E7C13138',
+            conditionFactory: '0x0000000000000000000000000000000000000000',
         },
     },
     [Network.OPTIMISM_MAINNET]: {
@@ -148,6 +156,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0xB001Bd6A21056c2a7FB5A5b9005cf896b181e74d',
             pluginSetupProcessor: '0x2379Dc18B4A939a2B76F5c79f58aa49193DA56C2',
             globalExecutor: '0x3A8bd3C4Dd02340868c75b5B671673EA094a75bB',
+            conditionFactory: '0x0000000000000000000000000000000000000000',
         },
     },
     [Network.ZKSYNC_MAINNET]: {
@@ -162,6 +171,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0x01019505E3B87340d7Fa69EF3E2510A7642f067A',
             pluginSetupProcessor: '0x8E3e98ECF5CdBF2bEcCD91d3BA580D472df5A0cB',
             globalExecutor: '0x581F87d3d3aE015c912Cb6E7B521A130493Cc497',
+            conditionFactory: '0x0000000000000000000000000000000000000000',
         },
     },
     [Network.CORN_MAINNET]: {
@@ -176,6 +186,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0x72f635574C797Bab5eB82489Aa906cE23d9aAD6f',
             pluginSetupProcessor: '0x63054EbE143cFaa5e463256462a6FC56C6fc56d4',
             globalExecutor: '0xCFE83d0079c9455eF1e11864D701d6e1bDf8Ff2a',
+            conditionFactory: '0x0000000000000000000000000000000000000000',
         },
     },
     [Network.CHILIZ_MAINNET]: {
@@ -190,6 +201,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0xdD68D6b46b887AcB795eCC3Fc7bb3fEf2Dfebf8f',
             pluginSetupProcessor: '0xD39Fd78987000C1aa96209d76bec576F31DbC9bE',
             globalExecutor: '0xcF34b77813f5d5daBa0A6F085bf0911e00E7b99A',
+            conditionFactory: '0x0000000000000000000000000000000000000000',
         },
     },
     [Network.PEAQ_MAINNET]: {
@@ -204,6 +216,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0x35B62715459cB60bf6dC17fF8cfe138EA305E7Ee',
             pluginSetupProcessor: '0x08633901DdF9cD8e2DC3a073594d0A7DaD6f3f57',
             globalExecutor: '0x07f49c49Ce2A99CF7C28F66673d406386BDD8Ff4',
+            conditionFactory: '0x0000000000000000000000000000000000000000',
         },
     },
 
@@ -220,6 +233,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0xB815791c233807D39b7430127975244B36C19C8e',
             pluginSetupProcessor: '0xC24188a73dc09aA7C721f96Ad8857B469C01dC9f',
             globalExecutor: '0x7a20760b89EF507759DD2c5A0d1f1657614341A9',
+            conditionFactory: '0x7C39A2462aaBcD7012b3be39406d0304Fdac2d87',
         },
     },
     [Network.ZKSYNC_SEPOLIA]: {
@@ -234,6 +248,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0xee321f16f7F0a0F0d8b850E70c4eAde4A288ECd7',
             pluginSetupProcessor: '0xe2Ef39f1be2269644cBfa9b70003A143bF1fdf4d',
             globalExecutor: '0x0ED69b3b690e10Fb509FA1b081C1b74EF3FeB36D',
+            conditionFactory: '0x0000000000000000000000000000000000000000',
         },
     },
 };

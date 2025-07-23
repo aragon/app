@@ -1,15 +1,22 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
+import { conditionFactoryAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/conditionFactoryAbi';
+import { executeSelectorConditionAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/executeSelectorConditionAbi';
+import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import type { IDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import {
+    pluginTransactionUtils,
+    type IBuildApplyPluginsInstallationActionsParams,
+} from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils, type ITransactionRequest } from '@/shared/utils/transactionUtils';
-import { type Hex } from 'viem';
-import { GovernanceType, type ICreateProcessFormData } from '../../components/createProcessForm';
+import { encodeFunctionData, parseEventLogs, toFunctionSelector, type Hex, type TransactionReceipt } from 'viem';
+import { GovernanceType, ProcessPermission, type ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
 import { SetupBodyType, type ISetupBodyFormNew } from '../setupBodyDialog';
 import type {
+    IBuildDeployExecuteSelectorConditionDataParams,
     IBuildPrepareInstallPluginActionParams,
     IBuildPrepareInstallPluginsActionParams,
     IBuildProcessProposalActionsParams,
@@ -41,9 +48,21 @@ class PrepareProcessDialogUtils {
 
     buildPrepareProcessTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
         const { values, processMetadata, dao } = params;
+        const { permissionSelectors } = values;
 
         const { processor: processorMetadata, plugins: pluginsMetadata } = processMetadata;
-        const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
+        const { pluginSetupProcessor, conditionFactory } = networkDefinitions[dao.network].addresses;
+
+        const needsExecuteCondition = values.permissions === ProcessPermission.SELECTED;
+        const conditionDeployTransaction = needsExecuteCondition
+            ? [
+                  {
+                      to: conditionFactory,
+                      value: BigInt(0),
+                      data: this.buildDeployExecuteSelectorConditionData({ dao, permissionSelectors }),
+                  },
+              ]
+            : [];
 
         const processorInstallAction =
             processorMetadata != null ? this.buildPrepareInstallProcessorActionData(processorMetadata, dao) : undefined;
@@ -54,13 +73,16 @@ class PrepareProcessDialogUtils {
 
         const actionValues = { to: pluginSetupProcessor, value: BigInt(0) };
         const installActionTransactions = installActionsData.map((data) => ({ ...actionValues, data }));
-        const encodedTransaction = transactionUtils.encodeTransactionRequests(installActionTransactions, dao.network);
+        const encodedTransaction = transactionUtils.encodeTransactionRequests(
+            [...conditionDeployTransaction, ...installActionTransactions],
+            dao.network,
+        );
 
         return Promise.resolve(encodedTransaction);
     };
 
     buildPublishProcessProposalActions = (params: IBuildProcessProposalActionsParams): ITransactionRequest[] => {
-        const { values, dao, setupData } = params;
+        const { values, dao, setupData, executeConditionAddress } = params;
 
         const isAdvancedGovernance = values.governanceType === 'ADVANCED';
 
@@ -68,13 +90,29 @@ class PrepareProcessDialogUtils {
             ? sppTransactionUtils.buildPluginsSetupActions(values, setupData, dao)
             : [];
 
-        const buildActionsParams = { dao, setupData, actions: processorSetupActions };
+        const buildActionsParams: IBuildApplyPluginsInstallationActionsParams = {
+            dao,
+            setupData,
+            actions: processorSetupActions,
+            executeConditionAddress,
+        };
         const proposalActions = pluginTransactionUtils.buildApplyPluginsInstallationActions(buildActionsParams);
 
         return proposalActions;
     };
 
     preparePublishProcessProposalMetadata = () => this.publishProcessProposalMetadata;
+
+    getExecuteSelectorConditionAddress = (txReceipt: TransactionReceipt): Hex | undefined => {
+        const selectorLogs = parseEventLogs({
+            abi: executeSelectorConditionAbi,
+            eventName: 'SelectorAllowed',
+            logs: txReceipt.logs,
+            strict: false,
+        });
+
+        return selectorLogs[0]?.address ?? undefined;
+    };
 
     private preparePluginMetadata = (plugin: ISetupBodyFormNew) => {
         const { name, description, resources: links } = plugin;
@@ -134,6 +172,26 @@ class PrepareProcessDialogUtils {
         })!;
 
         return prepareFunction(prepareFunctionParams);
+    };
+
+    private actionToFunctionSelector = (action: IProposalActionData): Hex => {
+        return toFunctionSelector(
+            `${action.inputData!.function}(${action.inputData!.parameters.map((param) => param.type).join(',')})`,
+        );
+    };
+
+    private buildDeployExecuteSelectorConditionData = (params: IBuildDeployExecuteSelectorConditionDataParams) => {
+        const { dao, permissionSelectors } = params;
+
+        const selectors = permissionSelectors.map((selector) => this.actionToFunctionSelector(selector));
+
+        const transactionData = encodeFunctionData({
+            abi: conditionFactoryAbi,
+            functionName: 'deployExecuteSelectorCondition',
+            args: [dao.address as Hex, [{ where: dao.address as Hex, selectors }]],
+        });
+
+        return transactionData;
     };
 }
 

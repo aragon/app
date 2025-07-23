@@ -40,7 +40,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@aragon/app-next@workspace:."
   dependencies:
-    "@aragon/gov-ui-kit": "npm:^1.12.0"
+    "@aragon/gov-ui-kit": "npm:^1.13.1"
     "@changesets/changelog-github": "npm:^0.5.1"
     "@changesets/cli": "npm:^2.29.5"
     "@floating-ui/react": "npm:^0.27.13"
@@ -106,9 +106,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@aragon/gov-ui-kit@npm:^1.12.0":
-  version: 1.12.0
-  resolution: "@aragon/gov-ui-kit@npm:1.12.0"
+"@aragon/gov-ui-kit@npm:^1.13.1":
+  version: 1.13.1
+  resolution: "@aragon/gov-ui-kit@npm:1.13.1"
   dependencies:
     "@radix-ui/react-accordion": "npm:^1.2.0"
     "@radix-ui/react-alert-dialog": "npm:^1.1.0"
@@ -148,9 +148,9 @@ __metadata:
     react-dom: ^18.2.0 || ^19.0.0
     react-hook-form: ^7.60.0
     tailwindcss: ^4.1.0
-    viem: ^2.31.0
-    wagmi: ^2.15.0
-  checksum: 10c0/b1c09a5c849cafda69f987a3184196c910fd6bc6b03d1dfa08c4570bf54a4925fe66c4888de9fb79db69aab0204c11e5dd87e7e9b7c22029b10291ccd1d1ea1e
+    viem: ^2.33.0
+    wagmi: ^2.16.0
+  checksum: 10c0/ed0c650b43a0bc3354d762673d853a009a1f6cb23c4501e1e0cfde6845d108e1b1cad022d945bc6408ea9ff405920b0420c2a12a3589ef2120ad32732914221f
   languageName: node
   linkType: hard
 
@@ -1162,7 +1162,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/core@npm:^0.15.0, @eslint/core@npm:^0.15.1":
+"@eslint/core@npm:^0.14.0":
+  version: 0.14.0
+  resolution: "@eslint/core@npm:0.14.0"
+  dependencies:
+    "@types/json-schema": "npm:^7.0.15"
+  checksum: 10c0/259f279445834ba2d2cbcc18e9d43202a4011fde22f29d5fb802181d66e0f6f0bd1f6b4b4b46663451f545d35134498231bd5e656e18d9034a457824b92b7741
+  languageName: node
+  linkType: hard
+
+"@eslint/core@npm:^0.15.0":
   version: 0.15.1
   resolution: "@eslint/core@npm:0.15.1"
   dependencies:
@@ -1203,12 +1212,12 @@ __metadata:
   linkType: hard
 
 "@eslint/plugin-kit@npm:^0.3.1":
-  version: 0.3.3
-  resolution: "@eslint/plugin-kit@npm:0.3.3"
+  version: 0.3.1
+  resolution: "@eslint/plugin-kit@npm:0.3.1"
   dependencies:
-    "@eslint/core": "npm:^0.15.1"
+    "@eslint/core": "npm:^0.14.0"
     levn: "npm:^0.4.1"
-  checksum: 10c0/c61888eb8757abc0d25a53c1832f85521c2f347126c475eb32d3596be3505e8619e0ceddee7346d195089a2eb1633b61e6127a5772b8965a85eb9f55b8b1cebe
+  checksum: 10c0/a75f0b5d38430318a551b83e27bee570747eb50beeb76b03f64b0e78c2c27ef3d284cfda3443134df028db3251719bc0850c105f778122f6ad762d5270ec8063
   languageName: node
   linkType: hard
 
