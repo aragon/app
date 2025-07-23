@@ -1,5 +1,6 @@
 import { AdminPluginDialogId } from '@/plugins/adminPlugin/constants/adminPluginDialogId';
 import type { IAdminUninstallProcessDialogCreateParams } from '@/plugins/adminPlugin/dialogs/adminUninstallProcessDialogCreate';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
@@ -23,11 +24,15 @@ export const AdminUninstallPlugin: React.FC<IAdminUninstallPluginProps> = (props
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const daoPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
-    const adminPlugin = daoPlugins.find((plugin) => plugin.id === 'admin')!.meta;
+    const daoPluginsWithExecute = useDaoPlugins({
+        daoId,
+        type: PluginType.PROCESS,
+        hasExecute: true,
+    })!;
+    const adminPlugin = useDaoPlugins({ daoId, interfaceType: PluginInterfaceType.ADMIN })![0]?.meta;
 
     const handleOpenDialog = () => {
-        if (daoPlugins.length > 1) {
+        if (daoPluginsWithExecute.length > 1) {
             setIsSelectDialogOpen(true);
             return;
         }
