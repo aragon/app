@@ -175,13 +175,9 @@ class ActionComposerUtils {
         const allItems = [...allNonGroupItems, ...finalCustomItems, ...finalNativeItems];
 
         if (excludeActionTypes?.length) {
-            return allItems.filter((item) => {
-                if (item.defaultValue?.type && excludeActionTypes.includes(item.defaultValue.type)) {
-                    return false;
-                }
-
-                return true;
-            });
+            return allItems.filter(
+                ({ defaultValue }) => defaultValue?.type == null || !excludeActionTypes.includes(defaultValue.type),
+            );
         }
 
         return allItems;
