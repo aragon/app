@@ -45,5 +45,5 @@ export interface IActionComposerInputProps<TMeta = undefined>
      * List of allowed actions to show.
      * If provided, only actions that are allowed will be displayed.
      */
-    allowedActions: IAllowedAction[] | undefined;
+    allowedActions?: IAllowedAction[];
 }

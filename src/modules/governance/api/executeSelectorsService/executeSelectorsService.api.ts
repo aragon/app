@@ -6,11 +6,11 @@ export interface IGetAllowedActionsQueryParams extends IPaginatedRequest {}
 
 export interface IGetAllowedActionsUrlParams {
     /**
-     * Network of the DAO.
+     * Network of the plugin.
      */
     network: Network;
     /**
-     * Plugin address of the process on which the actions are allowed.
+     * Address of the plugin for which the actions are allowed.
      */
     pluginAddress: string;
 }

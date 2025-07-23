@@ -1,4 +1,3 @@
-import type { Network } from '@/shared/api/daoService';
 import type { ISmartContractAbiFunctionParameter } from '../../smartContractService';
 
 export interface IDecodedAction {
@@ -29,26 +28,6 @@ export interface IDecodedAction {
 }
 
 export interface IAllowedAction {
-    /**
-     * ID of the allowed action.
-     */
-    id: string;
-    /**
-     * Network of the DAO.
-     */
-    network: Network;
-    /**
-     * Address of the DAO to which the process belongs.
-     */
-    daoAddress: string;
-    /**
-     * Address of the process plugin that defines the action.
-     */
-    pluginAddress: string;
-    /**
-     * Address of the condition contract that allows the action.
-     */
-    conditionAddress: string;
     /**
      * Selector of the allowed action. `null` means native transfer.
      */
