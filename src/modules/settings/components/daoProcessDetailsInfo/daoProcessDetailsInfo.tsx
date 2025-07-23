@@ -20,20 +20,12 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
 
     const { t } = useTranslations();
 
-    const settings = useDaoPluginInfo({
-        daoId: dao.id,
-        address: plugin.address,
-        settings: [
-            {
-                term: t('app.settings.daoProcessDetailsPage.aside.pluginName'),
-                definition: daoUtils.getPluginName(plugin),
-            },
-            {
-                term: t('app.settings.daoProcessDetailsPage.aside.processKey'),
-                definition: plugin.slug.toUpperCase(),
-            },
-        ],
-    });
+    const pluginInfoSettings = [
+        { term: t('app.settings.daoProcessDetailsInfo.pluginName'), definition: daoUtils.getPluginName(plugin) },
+        { term: t('app.settings.daoProcessDetailsInfo.processKey'), definition: plugin.slug.toUpperCase() },
+    ];
+
+    const settings = useDaoPluginInfo({ daoId: dao.id, address: plugin.address, settings: pluginInfoSettings });
 
     const [pluginDefinition, launchedAtDefinition, ...customSettings] = settings;
     const orderedSettings = [...customSettings, pluginDefinition, launchedAtDefinition];

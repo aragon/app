@@ -48,7 +48,7 @@ export class DaoProcessDetailsClientUtils {
         const { plugin, membership } = params;
 
         return {
-            internalId: crypto.randomUUID(),
+            internalId: plugin.address,
             type: SetupBodyType.EXISTING,
             plugin: plugin.interfaceType,
             address: plugin.address,
@@ -90,8 +90,8 @@ export class DaoProcessDetailsClientUtils {
             );
 
             return {
-                internalId: crypto.randomUUID(),
-                id: crypto.randomUUID(),
+                internalId: stage.stageIndex.toString(),
+                id: stage.stageIndex.toString(),
                 name: stage.name ?? '',
                 settings: {
                     type: stage.vetoThreshold > 0 ? ProcessStageType.OPTIMISTIC : ProcessStageType.NORMAL,

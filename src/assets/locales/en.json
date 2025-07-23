@@ -1763,11 +1763,11 @@
         "processName": "Process name",
         "viewProcess": "View process"
       },
+      "daoProcessDetailsInfo": {
+        "pluginName": "Plugin name",
+        "processKey": "Process key"
+      },
       "daoProcessDetailsPage": {
-        "aside": {
-          "pluginName": "Plugin name",
-          "processKey": "Process key"
-        },
         "header": {
           "breadcrumb": {
             "settings": "Settings"
@@ -1804,9 +1804,8 @@
           "versionInfoTitle": "Contracts"
         },
         "main": {
-          "governanceAction": "Add governance",
+          "governanceAction": "Process",
           "governanceInfoTitle": "Governance",
-          "membersInfoTitle": "Members",
           "settingsInfoTitle": "DAO",
           "title": "Settings"
         }
@@ -1926,6 +1925,9 @@
           "readLess": "Read less",
           "readMore": "Read more"
         }
+      },
+      "processDataListItem": {
+        "defaultDescription": "No description"
       },
       "resourcesInput": {
         "add": "Add",
