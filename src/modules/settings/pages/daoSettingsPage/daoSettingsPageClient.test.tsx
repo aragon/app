@@ -15,12 +15,6 @@ import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { DaoSettingsPageClient, type IDaoSettingsPageClientProps } from './daoSettingsPageClient';
 
-jest.mock('@/modules/settings/components/daoGovernanceInfo', () => ({
-    DaoGovernanceInfo: () => <div data-testid="governance-info-mock" />,
-}));
-jest.mock('@/modules/settings/components/daoMembersInfo', () => ({
-    DaoMembersInfo: () => <div data-testid="members-info-mock" />,
-}));
 jest.mock('@/modules/settings/components/updateDaoContracts', () => ({
     UpdateDaoContracts: () => <div data-testid="update-dao-contracts" />,
 }));
@@ -85,30 +79,23 @@ describe('<DaoSettingsPageClient /> component', () => {
         expect(screen.getByTestId('update-dao-contracts')).toBeInTheDocument();
     });
 
-    it('renders the dao governance info when DAO has supported plugins', () => {
+    it('renders the governance processes of the DAO', () => {
+        const plugins = [
+            generateTabComponentPlugin({ uniqueId: '1', meta: generateDaoPlugin({ description: 'one' }) }),
+            generateTabComponentPlugin({ uniqueId: '2', meta: generateDaoPlugin({ description: 'two' }) }),
+        ];
         hasSupportedPluginsSpy.mockReturnValue(true);
+        useDaoPluginsSpy.mockReturnValue(plugins);
         render(createTestComponent());
         expect(screen.getByText(/daoSettingsPage.main.governanceInfoTitle/)).toBeInTheDocument();
-        expect(screen.getByTestId('governance-info-mock')).toBeInTheDocument();
+        expect(screen.getByText(plugins[0].meta.description!)).toBeInTheDocument();
+        expect(screen.getByText(plugins[1].meta.description!)).toBeInTheDocument();
     });
 
-    it('does not render dao governance info when dao has no supported plugins', () => {
+    it('does not render governance processes section when dao has no supported plugins', () => {
         hasSupportedPluginsSpy.mockReturnValue(false);
         render(createTestComponent());
-        expect(screen.queryByTestId('governance-info-mock')).not.toBeInTheDocument();
-    });
-
-    it('renders the dao members info component when DAO has supported plugins', () => {
-        hasSupportedPluginsSpy.mockReturnValue(true);
-        render(createTestComponent());
-        expect(screen.getByText(/daoSettingsPage.main.membersInfoTitle/)).toBeInTheDocument();
-        expect(screen.getByTestId('members-info-mock')).toBeInTheDocument();
-    });
-
-    it('does not render dao members info when dao has no supported plugins', () => {
-        hasSupportedPluginsSpy.mockReturnValue(false);
-        render(createTestComponent());
-        expect(screen.queryByTestId('members-info-mock')).not.toBeInTheDocument();
+        expect(screen.queryByText(/daoSettingsPage.main.governanceInfoTitle/)).not.toBeInTheDocument();
     });
 
     it('returns null when DAO cannot be fetched', () => {
