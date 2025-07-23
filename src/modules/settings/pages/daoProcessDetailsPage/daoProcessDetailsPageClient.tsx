@@ -87,6 +87,8 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
         params: { plugin, daoId, useConnectedUserInfo: false },
     }) ?? { hasPermission: true, isLoading: false, settings: [] };
 
+    // const authorizedActions = useAllowedActions(queryParams: { conditionAddress: plugin.conditionAddress }, enabled: plugin.conditionAddress != null)
+
     return (
         <>
             <Page.Header
@@ -114,6 +116,33 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
                     <Page.MainSection title={t('app.settings.daoProcessDetailsPage.section.creationEligibility')}>
                         <Card className="px-6 py-3">
                             <PermissionsDefinitionList isLoading={isLoading} settings={settings} />
+                        </Card>
+                    </Page.MainSection>
+                    <Page.MainSection title={t('app.settings.daoProcessDetailsPage.section.actions')}>
+                        <Card className="p-6">
+                            {/* {authorizedActions == null && (
+                                <EmptyState
+                                    isStacked={false}
+                                    heading={t('app.settings.daoProcessDetailsPage.emptyState.heading')}
+                                    description={t('app.settings.daoProcessDetailsPage.emptyState.description')}
+                                    objectIllustration={{ object: 'SETTINGS' }}
+                                />
+                            )}
+                            {authorizedActions != null && (
+                                <DataList.Root entityLabel="">
+                                    <DataList.Container SkeletonElement={SmartContractFunctionDataListItem.Skeleton}>
+                                        {authorizedActions.map((action, index) => (
+                                            <SmartContractFunctionDataListItem.Structure
+                                                key={index}
+                                                contractAddress={action.to}
+                                                contractName={action.id}
+                                                functionName={action.from}
+                                                onRemove={() => alert('Function removed')}
+                                            />
+                                        ))}
+                                    </DataList.Container>
+                                </DataList.Root>
+                            )} */}
                         </Card>
                     </Page.MainSection>
                 </Page.Main>
