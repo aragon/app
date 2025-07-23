@@ -56,7 +56,7 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
     const isExternal = body.type === SetupBodyType.EXTERNAL;
 
     return (
-        <Accordion.Container isMulti={true} value={[body.internalId]}>
+        <Accordion.Container isMulti={true} defaultValue={[body.internalId]}>
             <Accordion.Item value={body.internalId}>
                 <Accordion.ItemHeader>
                     <GovernanceBodyInfo
