@@ -20,7 +20,14 @@ export class TokenBodyUtils {
     ): ISetupBodyFormExisting<ITokenPluginSettings, ICompositeAddress, ITokenSetupMembershipForm> => {
         const { plugin } = params;
         return daoProcessDetailsClientUtils.bodyToFormDataDefault<ITokenPluginSettings, ITokenSetupMembershipForm>({
-            plugin,
+            plugin: {
+                ...plugin,
+                settings: {
+                    ...plugin.settings,
+                    minParticipation: plugin.settings.minParticipation / 10000,
+                    supportThreshold: plugin.settings.supportThreshold / 10000,
+                },
+            },
             membership: { members: [], token: plugin.settings.token },
         });
     };

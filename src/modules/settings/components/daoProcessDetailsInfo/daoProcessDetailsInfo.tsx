@@ -1,4 +1,4 @@
-import { ISppPluginSettings } from '@/plugins/sppPlugin/types';
+import type { ISppPluginSettings } from '@/plugins/sppPlugin/types';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';

@@ -1,6 +1,6 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { SetupBodyType, type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
-import { GovernanceBodyInfo } from '@/shared/components/governanceBodyInfo';
+import { GovernanceBodyInfo, type IGovernanceBodyInfoProps } from '@/shared/components/governanceBodyInfo';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -53,18 +53,30 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
     const plugin = pluginRegistryUtils.getPlugin(body.plugin) as IPluginInfo | undefined;
 
     const isNew = body.type === SetupBodyType.NEW;
+    const isExisting = body.type === SetupBodyType.EXISTING;
+    const isExternal = body.type === SetupBodyType.EXTERNAL;
+
+    const infoProps: IGovernanceBodyInfoProps = {
+        name: (isNew || isExisting ? body.name : undefined) ?? undefined,
+        address: (isExisting ? body.address : isExternal ? body.address : undefined) ?? undefined,
+        subdomain: isNew ? plugin?.id : body.plugin,
+        release: isNew
+            ? plugin?.installVersion.release.toString()
+            : isExisting
+              ? plugin?.installVersion.release.toString()
+              : undefined,
+        build: isNew
+            ? plugin?.installVersion.build.toString()
+            : isExisting
+              ? plugin?.installVersion.build.toString()
+              : undefined,
+    };
 
     return (
         <Accordion.Container isMulti={true} value={[body.internalId]}>
             <Accordion.Item value={body.internalId}>
                 <Accordion.ItemHeader>
-                    <GovernanceBodyInfo
-                        name={body.name}
-                        address={isNew ? undefined : body.address}
-                        subdomain={isNew ? plugin?.id : body.subdomain}
-                        release={isNew ? plugin?.installVersion.release.toString() : (body.release ?? '')}
-                        build={isNew ? plugin?.installVersion.build.toString() : (body.build ?? '')}
-                    />
+                    <GovernanceBodyInfo {...infoProps} />
                 </Accordion.ItemHeader>
                 <Accordion.ItemContent className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6">
                     <PluginSingleComponent

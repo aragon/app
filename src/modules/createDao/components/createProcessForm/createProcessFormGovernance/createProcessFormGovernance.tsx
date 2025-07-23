@@ -4,8 +4,8 @@ import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useFormContext } from 'react-hook-form';
 import { GovernanceType, type ICreateProcessFormData } from '../createProcessFormDefinitions';
 import { createProcessFormUtils } from '../createProcessFormUtils';
-import { GovernanceBasicBodyField } from './createProcessFormGovernanceFields/governanceBasicBodyField';
-import { GovernanceStagesField } from './createProcessFormGovernanceFields/governanceStagesField';
+import { GovernanceBasicBodyField } from './fields/governanceBasicBodyField';
+import { GovernanceStagesField } from './fields/governanceStagesField';
 
 export interface ICreateProcessFormGovernanceProps {
     /**

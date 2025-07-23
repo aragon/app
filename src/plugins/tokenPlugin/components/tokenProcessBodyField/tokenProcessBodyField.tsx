@@ -82,12 +82,12 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.supportTerm')}>
                 {t('app.plugins.token.tokenProcessBodyField.supportDefinition', {
-                    threshold: supportThreshold / 10000,
+                    threshold: supportThreshold,
                 })}
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.minParticipationTerm')}>
                 {t('app.plugins.token.tokenProcessBodyField.minParticipationDefinition', {
-                    minParticipation: minParticipation / 10000,
+                    minParticipation: minParticipation,
                 })}
             </DefinitionList.Item>
             {!isAdvancedGovernance && (
