@@ -31,7 +31,7 @@ export interface ISelectPluginDialogParams {
      */
     variant?: 'proposal' | 'process';
     /**
-     * Only allow plugins with execute condition.
+     * Only allow plugins with full execute permissions.
      */
     fullExecuteOnly?: boolean;
 }
