@@ -1,3 +1,4 @@
+import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { ISetupBodyForm, ISetupBodyFormNew } from '../../dialogs/setupBodyDialog';
 import type { ISetupStageSettingsForm } from '../../dialogs/setupStageSettingsDialog';
@@ -15,6 +16,11 @@ export enum ProcessStageType {
 export enum GovernanceType {
     BASIC = 'BASIC',
     ADVANCED = 'ADVANCED',
+}
+
+export enum ProcessPermission {
+    ANY = 'ANY',
+    SELECTED = 'SELECTED',
 }
 
 export interface ICreateProcessFormDataBase {
@@ -42,6 +48,14 @@ export interface ICreateProcessFormDataBase {
      * Defines the type of governance process basic/advanced.
      */
     governanceType: GovernanceType;
+    /**
+     * The permissions of the process. Either any action or specific actions.
+     */
+    permissions: ProcessPermission.ANY | ProcessPermission.SELECTED;
+    /**
+     * List of actions that the DAO will be able to execute. Later these will be parsed to the correct format the smart contract expects.
+     */
+    permissionSelectors: IProposalActionData[];
 }
 
 export interface ICreateProcessFormDataBasic extends ICreateProcessFormDataBase {

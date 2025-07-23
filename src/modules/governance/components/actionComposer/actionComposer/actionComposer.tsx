@@ -18,9 +18,9 @@ import {
     type IActionComposerInputItem,
     type IActionComposerInputProps,
 } from '../actionComposerInput';
-import { ActionItemId } from '../actionComposerUtils';
+import { actionComposerUtils, ActionItemId } from '../actionComposerUtils';
 
-export interface IActionComposerProps extends Pick<IActionComposerInputProps, 'nativeGroups' | 'nativeItems'> {
+export interface IActionComposerProps extends Pick<IActionComposerInputProps, 'excludeActionTypes'> {
     /**
      * ID of the DAO.
      */
@@ -45,14 +45,15 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const {
         daoId,
         onAddAction,
-        nativeGroups,
-        nativeItems,
+        excludeActionTypes,
         hideWalletConnect = false,
         conditionedProcessAddress,
     } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
+
+    const { pluginItems, pluginGroups } = actionComposerUtils.getPluginActionsFromDao(dao);
 
     const { data: allowedActions } = useAllowedActions(
         {
@@ -168,11 +169,12 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 onActionSelected={handleItemSelected}
                 onOpenChange={setDisplayActionComposer}
                 ref={autocompleteInputRef}
-                nativeItems={nativeItems}
-                nativeGroups={nativeGroups}
+                nativeItems={pluginItems}
+                nativeGroups={pluginGroups}
                 allowedActions={onlyShowAuthorizedActions ? processedAllowedActions : undefined}
                 daoId={daoId}
                 importedContractAbis={importedContractAbis}
+                excludeActionTypes={excludeActionTypes}
             />
         </>
     );

@@ -113,7 +113,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         return dropdownItems.filter((item) => !item.hidden);
     };
 
-    const { pluginItems, pluginGroups, pluginComponents } = actionComposerUtils.getPluginActionsFromDao(dao);
+    const { pluginComponents } = actionComposerUtils.getPluginActionsFromDao(dao);
 
     const customActionComponents: Record<string, ProposalActionComponent<IProposalActionData>> = {
         ...coreCustomActionComponents,
@@ -141,8 +141,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             <ActionComposer
                 daoId={daoId}
                 onAddAction={handleAddAction}
-                nativeGroups={pluginGroups}
-                nativeItems={pluginItems}
                 conditionedProcessAddress={hasConditionalPermissions ? pluginAddress : undefined}
             />
         </div>
