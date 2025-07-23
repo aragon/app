@@ -1,5 +1,5 @@
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
-import type { IAutocompleteInputGroup, IAutocompleteInputItem } from '@/shared/components/forms/autocompleteInput';
+import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
@@ -82,21 +82,34 @@ class ActionComposerUtils {
         };
     };
 
-    getAllowedActionGroupsAndItem = ({
+    getAllowedActionGroups = ({
         t,
         dao,
         allowedActions = [],
-    }: IGetAllowedActionGroupsAndItemsParams): [IAutocompleteInputGroup[], IAutocompleteInputItem[]] => {
+    }: IGetAllowedActionGroupsAndItemsParams): IAutocompleteInputGroup[] => {
         const daoAddress = dao!.address;
-        const [transferItem, metadataUpdateItem] = this.getNativeActionItems({ t, dao, nativeItems: [] }).map(
-            this.infoToSelectorMapper,
-        );
         const [daoGroup] = this.getNativeActionGroups({
             t,
             dao,
             nativeGroups: [],
         });
 
+        const actionGroups: IAutocompleteInputGroup[] = allowedActions.map((action) =>
+            this.buildCustomActionGroup({ name: action.decoded.contractName, address: action.target }),
+        );
+        const completeActionGroups = actionGroups.map((group) => (group.id === daoAddress ? daoGroup : group));
+
+        return completeActionGroups;
+    };
+
+    getAllowedActionItem = ({
+        t,
+        dao,
+        allowedActions = [],
+    }: IGetAllowedActionGroupsAndItemsParams): IActionComposerInputItem[] => {
+        const [transferItem, metadataUpdateItem] = this.getNativeActionItems({ t, dao, nativeItems: [] }).map(
+            this.infoToSelectorMapper,
+        );
         const actionItems: IActionComposerInputItem[] = allowedActions.map((action, actionIndex) => {
             if (action.selector === null) {
                 // native transfer
@@ -120,13 +133,7 @@ class ActionComposerUtils {
             return item;
         });
 
-        // create groups contract address, DAO if matches dao address
-        const actionGroups: IAutocompleteInputGroup[] = allowedActions.map((action) =>
-            this.buildCustomActionGroup({ name: action.decoded.contractName, address: action.target }),
-        );
-        const completeActionGroups = actionGroups.map((group) => (group.id === daoAddress ? daoGroup : group));
-
-        return [completeActionGroups, actionItems];
+        return actionItems;
     };
 
     getActionGroups = ({

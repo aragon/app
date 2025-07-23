@@ -24,7 +24,10 @@ export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerI
 
     const [groups, items] = useMemo(() => {
         if (allowedActions) {
-            return actionComposerUtils.getAllowedActionGroupsAndItem({ t, dao, allowedActions });
+            return [
+                actionComposerUtils.getAllowedActionGroups({ t, dao, allowedActions }),
+                actionComposerUtils.getAllowedActionItem({ t, dao, allowedActions }),
+            ];
         }
 
         return [
