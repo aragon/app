@@ -201,12 +201,11 @@ describe('dao utils', () => {
 
         it('returns all plugins with full execute permissions when hasExecute is true', () => {
             const plugins = [
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.ADMIN }),
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG, conditionAddress: '0x123' }),
+                generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG }),
                 generateDaoPlugin({ interfaceType: PluginInterfaceType.TOKEN_VOTING, conditionAddress: '0x456' }),
             ];
             const dao = generateDao({ plugins });
-            expect(daoUtils.getDaoPlugins(dao, { hasExecute: true })).toEqual([plugins[1], plugins[2]]);
+            expect(daoUtils.getDaoPlugins(dao, { hasExecute: true })).toEqual([plugins[0]]);
         });
 
         it('returns all plugins when hasExecute is false', () => {
