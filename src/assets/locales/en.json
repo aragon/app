@@ -1763,11 +1763,11 @@
         "processName": "Process name",
         "viewProcess": "View process"
       },
+      "daoProcessDetailsInfo": {
+        "pluginName": "Plugin name",
+        "processKey": "Process key"
+      },
       "daoProcessDetailsPage": {
-        "aside": {
-          "pluginName": "Plugin name",
-          "processKey": "Process key"
-        },
         "header": {
           "breadcrumb": {
             "settings": "Settings"

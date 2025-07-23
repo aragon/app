@@ -63,7 +63,7 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
     ];
 
     const parsedLatestActivity =
-        proposalList?.[0].blockTimestamp != null ? proposalList[0].blockTimestamp * 1000 : undefined;
+        proposalList?.[0]?.blockTimestamp != null ? proposalList[0].blockTimestamp * 1000 : undefined;
     const formattedLatestActivity = formatterUtils.formatDate(parsedLatestActivity, { format: DateFormat.RELATIVE });
 
     const [value, unit] = formattedLatestActivity?.split(' ') ?? [undefined, undefined];

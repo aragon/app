@@ -115,7 +115,11 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                         action={supportsAddProcess ? addProcessAction : undefined}
                     >
                         {processPlugins.map((process) => (
-                            <ProcessDataListItem key={process.uniqueId} process={process.meta} />
+                            <ProcessDataListItem
+                                key={process.uniqueId}
+                                process={process.meta}
+                                href={daoUtils.getDaoUrl(dao, `/settings/${process.meta.slug}`)}
+                            />
                         ))}
                     </Page.MainSection>
                 )}
