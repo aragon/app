@@ -42,9 +42,24 @@ export interface IUpdatePermissionParams {
     to: Hex;
 }
 
-export interface IUpdatePermissionWithConditionParams extends IUpdatePermissionParams {
+export interface IBuildGrantWithConditionTransactionParams extends IUpdatePermissionParams {
     /**
      * The address of the condition contract that must be satisfied for the permission to be granted or revoked.
      */
     condition: Hex;
+}
+
+export interface IBuildExecuteConditionTransactionsParams {
+    /**
+     * The address of the DAO where the execute condition will be applied.
+     */
+    dao: Hex;
+    /**
+     * The address of the plugin to apply the execute condition.
+     */
+    plugin: Hex;
+    /**
+     * The address of the condition contract that must be satisfied for the execution to proceed.
+     */
+    executeCondition: Hex;
 }
