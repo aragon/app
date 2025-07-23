@@ -6,12 +6,15 @@ import {
     GovernanceStagesField,
     GovernanceType,
 } from '@/modules/createDao/components/createProcessForm';
-import { ProposalPermissionsDefinitionList } from '@/modules/governance/components/proposalPermissionsDefinitionList';
+import { PermissionsDefinitionList } from '@/modules/governance/components/permissionsDefinitionList';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
+import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { Card, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
@@ -78,6 +81,12 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
         },
     ];
 
+    const { isLoading, settings } = useSlotSingleFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
+        slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
+        pluginId: plugin.interfaceType,
+        params: { plugin, daoId, useConnectedUserInfo: false },
+    }) ?? { hasPermission: true, isLoading: false, settings: [] };
+
     return (
         <>
             <Page.Header
@@ -103,12 +112,8 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
                         </FormProvider>
                     </Page.MainSection>
                     <Page.MainSection title={t('app.settings.daoProcessDetailsPage.section.creationEligibility')}>
-                        <Card className="p-6">
-                            <ProposalPermissionsDefinitionList
-                                daoId={daoId}
-                                plugin={plugin}
-                                useConnectedUserInfo={false}
-                            />
+                        <Card className="px-6 py-3">
+                            <PermissionsDefinitionList isLoading={isLoading} settings={settings} />
                         </Card>
                     </Page.MainSection>
                 </Page.Main>

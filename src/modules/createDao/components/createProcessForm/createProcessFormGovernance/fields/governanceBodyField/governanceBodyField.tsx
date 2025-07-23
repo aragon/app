@@ -61,8 +61,8 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
                 <Accordion.ItemHeader>
                     <GovernanceBodyInfo
                         subdomain={isNew ? plugin?.id : body.plugin}
-                        name={!isExternal ? body.name : undefined}
-                        address={!isNew ? body.address : undefined}
+                        name={isExternal ? undefined : body.name}
+                        address={isNew ? undefined : body.address}
                         release={plugin?.installVersion.release.toString()}
                         build={plugin?.installVersion.build.toString()}
                     />

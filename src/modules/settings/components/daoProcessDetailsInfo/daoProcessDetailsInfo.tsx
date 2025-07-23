@@ -1,4 +1,3 @@
-import type { ISppPluginSettings } from '@/plugins/sppPlugin/types';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
@@ -21,9 +20,6 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
 
     const { t } = useTranslations();
 
-    const stageCount = (plugin as IDaoPlugin<ISppPluginSettings>).settings.stages.length;
-    const hasStages = stageCount > 0;
-
     const settings = useDaoPluginInfo({
         daoId: dao.id,
         address: plugin.address,
@@ -36,14 +32,6 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
                 term: t('app.settings.daoProcessDetailsPage.aside.processKey'),
                 definition: plugin.slug.toUpperCase(),
             },
-            ...(hasStages
-                ? [
-                      {
-                          term: t('app.settings.daoProcessDetailsPage.aside.stages'),
-                          definition: stageCount.toString(),
-                      },
-                  ]
-                : []),
         ],
     });
 

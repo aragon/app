@@ -1766,8 +1766,7 @@
       "daoProcessDetailsPage": {
         "aside": {
           "pluginName": "Plugin name",
-          "processKey": "Process key",
-          "stages": "Number of stages"
+          "processKey": "Process key"
         },
         "header": {
           "breadcrumb": {
