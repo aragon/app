@@ -27,7 +27,6 @@ export const AdminUninstallPlugin: React.FC<IAdminUninstallPluginProps> = (props
     const daoPluginsWithExecute = useDaoPlugins({
         daoId,
         type: PluginType.PROCESS,
-        includeSubPlugins: true,
         hasExecute: true,
     })!;
     const adminPlugin = useDaoPlugins({ daoId, interfaceType: PluginInterfaceType.ADMIN })![0]?.meta;
