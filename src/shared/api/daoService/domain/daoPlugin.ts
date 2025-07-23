@@ -75,4 +75,9 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
      * CID of the IPFS file containing the plugin metadata.
      */
     metadataIpfs?: string;
+    /**
+     * Address of the condition contract.
+     * When set, the process has restricted execution permissions (allowed actions are set).
+     */
+    conditionAddress?: string;
 }

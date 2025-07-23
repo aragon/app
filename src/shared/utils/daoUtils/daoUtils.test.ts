@@ -199,6 +199,35 @@ describe('dao utils', () => {
             expect(daoUtils.getDaoPlugins(dao, { interfaceType })).toEqual([plugins[0], plugins[1]]);
         });
 
+        it('only returns plugins with execute permissions when hasExecute is true', () => {
+            const plugins = [
+                generateDaoPlugin({ interfaceType: PluginInterfaceType.ADMIN }),
+                generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG, conditionAddress: '0x123' }),
+                generateDaoPlugin({ interfaceType: PluginInterfaceType.TOKEN_VOTING, conditionAddress: '0x456' }),
+            ];
+            const dao = generateDao({ plugins });
+            expect(daoUtils.getDaoPlugins(dao, { hasExecute: true })).toEqual([plugins[1], plugins[2]]);
+        });
+
+        it('returns all plugins when hasExecute is false', () => {
+            const plugins = [
+                generateDaoPlugin({ interfaceType: PluginInterfaceType.ADMIN }),
+                generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG, conditionAddress: '0x123' }),
+                generateDaoPlugin({ interfaceType: PluginInterfaceType.TOKEN_VOTING, conditionAddress: '0x456' }),
+            ];
+            const dao = generateDao({ plugins });
+            expect(daoUtils.getDaoPlugins(dao, { hasExecute: false })).toEqual(plugins);
+        });
+
+        it('returns all plugins when hasExecute is not specified', () => {
+            const plugins = [
+                generateDaoPlugin({ interfaceType: PluginInterfaceType.ADMIN }),
+                generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG, conditionAddress: '0x123' }),
+            ];
+            const dao = generateDao({ plugins });
+            expect(daoUtils.getDaoPlugins(dao)).toEqual(plugins);
+        });
+
         it('returns undefined when dao parameter is not defined', () => {
             expect(daoUtils.getDaoPlugins(undefined)).toBeUndefined();
         });

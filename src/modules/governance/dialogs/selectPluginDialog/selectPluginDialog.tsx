@@ -30,6 +30,10 @@ export interface ISelectPluginDialogParams {
      * Variant of the dialog. Used to customize labels.
      */
     variant?: 'proposal' | 'process';
+    /**
+     * Only allow plugins with execute condition.
+     */
+    fullExecuteOnly?: boolean;
 }
 
 export interface ISelectPluginDialogProps extends IDialogComponentProps<ISelectPluginDialogParams> {}
@@ -38,12 +42,24 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
     const { location } = props;
 
     invariant(location.params != null, 'SelectPluginDialog: params must be set for the dialog to work correctly');
-    const { daoId, excludePluginIds, onPluginSelected, initialPlugin, variant = 'proposal' } = location.params;
+    const {
+        daoId,
+        excludePluginIds,
+        onPluginSelected,
+        initialPlugin,
+        variant = 'proposal',
+        fullExecuteOnly,
+    } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
-    const daoPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeSubPlugins: false })!;
+    const daoPlugins = useDaoPlugins({
+        daoId,
+        type: PluginType.PROCESS,
+        includeSubPlugins: false,
+        hasExecute: fullExecuteOnly,
+    })!;
 
     const processedDaoPlugins = daoPlugins.filter((plugin) => !excludePluginIds?.includes(plugin.id));
 
