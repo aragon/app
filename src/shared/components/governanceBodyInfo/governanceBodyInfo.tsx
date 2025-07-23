@@ -34,9 +34,9 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (props) =>
 
     const truncatedAddress = addressUtils.truncateAddress(address);
 
-    const bodyName = name ?? truncatedAddress;
+    const bodyName = name != null && name != '' ? name : truncatedAddress;
 
-    const isPlugin = subdomain != null && release != null && build != null;
+    const isPlugin = !!subdomain && !!release && !!build;
 
     const subtitle = isPlugin
         ? `${daoUtils.parsePluginSubdomain(subdomain)} v${release}.${build}`
@@ -46,7 +46,7 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (props) =>
         <div className="flex w-full flex-col items-start gap-1">
             <div className="flex w-full items-center justify-between">
                 <p className="text-base leading-tight text-neutral-800 md:text-lg">{bodyName}</p>
-                {address && name != null && (
+                {address && name != null && name != '' && (
                     <p className="text-base leading-tight text-neutral-500 md:text-lg">{truncatedAddress}</p>
                 )}
             </div>

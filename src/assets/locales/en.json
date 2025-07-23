@@ -1761,10 +1761,32 @@
         "bodyName": "Body name",
         "processKey": "Process key",
         "processName": "Process name",
-        "tabs": {
-          "contract": "Contract",
-          "description": "Description",
-          "settings": "Settings"
+        "viewProcess": "View process"
+      },
+      "daoProcessDetailsPage": {
+        "aside": {
+          "pluginName": "Plugin name",
+          "processKey": "Process key"
+        },
+        "header": {
+          "breadcrumb": {
+            "settings": "Settings"
+          },
+          "stats": {
+            "lastProposal": "Last proposal",
+            "latestActivityUnit": "{{unit}} ago",
+            "proposals": "Proposals"
+          }
+        },
+        "notFound": {
+          "action": "Explore settings",
+          "description": "We couldn't find the process you're looking for.",
+          "title": "Process not found"
+        },
+        "section": {
+          "creationEligibility": "Proposal creation eligibility",
+          "details": "Details",
+          "governanceProcess": "Governance process"
         }
       },
       "daoSettingsInfo": {

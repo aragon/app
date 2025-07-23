@@ -4,6 +4,7 @@ import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 export enum SetupBodyType {
     NEW = 'NEW',
     EXTERNAL = 'EXTERNAL',
+    EXISTING = 'EXISTING',
 }
 
 export interface ISetupBodyFormBase {
@@ -64,11 +65,36 @@ export interface ISetupBodyFormExternal extends ISetupBodyFormBase, ICompositeAd
     type: SetupBodyType.EXTERNAL;
 }
 
+export interface ISetupBodyFormExisting<
+    TGovernance = unknown,
+    TMember extends ICompositeAddress = ICompositeAddress,
+    TMembership extends ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
+> extends Pick<
+        ISetupBodyFormNew<TGovernance, TMember, TMembership>,
+        'internalId' | 'plugin' | 'description' | 'resources' | 'governance' | 'membership' | 'canCreateProposal'
+    > {
+    /**
+     * EXISTING body type.
+     */
+    type: SetupBodyType.EXISTING;
+    /**
+     * Name of existing body, optional as not set for existing but external bodies.
+     */
+    name?: string;
+    /**
+     * Address of the existing body.
+     */
+    address: string;
+}
+
 export type ISetupBodyForm<
     TGovernance = unknown,
     TMember extends ICompositeAddress = ICompositeAddress,
     TMembership extends ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
-> = ISetupBodyFormNew<TGovernance, TMember, TMembership> | ISetupBodyFormExternal;
+> =
+    | ISetupBodyFormNew<TGovernance, TMember, TMembership>
+    | ISetupBodyFormExisting<TGovernance, TMember, TMembership>
+    | ISetupBodyFormExternal;
 
 export interface ISetupBodyFormMembership<TMember extends ICompositeAddress = ICompositeAddress> {
     /**

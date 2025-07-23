@@ -1,6 +1,6 @@
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
-import type { ISetupBodyForm, ISetupBodyFormNew } from '../../dialogs/setupBodyDialog';
+import type { ISetupBodyForm, ISetupBodyFormExisting, ISetupBodyFormNew } from '../../dialogs/setupBodyDialog';
 import type { ISetupStageSettingsForm } from '../../dialogs/setupStageSettingsDialog';
 
 export enum ProposalCreationMode {
@@ -66,7 +66,7 @@ export interface ICreateProcessFormDataBasic extends ICreateProcessFormDataBase 
     /**
      * Body to be setup on the basic governance process.
      */
-    body: ISetupBodyFormNew;
+    body: ISetupBodyFormNew | ISetupBodyFormExisting;
 }
 
 export interface ICreateProcessFormDataAdvanced extends ICreateProcessFormDataBase {

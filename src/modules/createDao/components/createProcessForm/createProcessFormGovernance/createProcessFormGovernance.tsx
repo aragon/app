@@ -5,7 +5,7 @@ import { useFormContext } from 'react-hook-form';
 import { GovernanceType, type ICreateProcessFormData } from '../createProcessFormDefinitions';
 import { createProcessFormUtils } from '../createProcessFormUtils';
 import { GovernanceBasicBodyField } from './fields/governanceBasicBodyField';
-import { GovernanceStagesField } from './fields/governanceStagesField/governanceStagesField';
+import { GovernanceStagesField } from './fields/governanceStagesField';
 
 export interface ICreateProcessFormGovernanceProps {
     /**
