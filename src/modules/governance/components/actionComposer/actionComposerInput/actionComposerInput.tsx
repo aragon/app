@@ -13,6 +13,7 @@ export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerI
         nativeGroups,
         importedContractAbis,
         excludeActionTypes,
+        allowedActions,
         ...otherProps
     } = props;
 
@@ -21,14 +22,19 @@ export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerI
 
     const { t } = useTranslations();
 
-    const groups = actionComposerUtils.getActionGroups({ t, dao, abis: importedContractAbis, nativeGroups });
-    const items = actionComposerUtils.getActionItems({
-        t,
-        dao,
-        abis: importedContractAbis,
-        nativeItems,
-        excludeActionTypes,
-    });
+    const groups = allowedActions
+        ? actionComposerUtils.getAllowedActionGroups({ t, dao, allowedActions })
+        : actionComposerUtils.getActionGroups({ t, dao, abis: importedContractAbis, nativeGroups });
+
+    const items = allowedActions
+        ? actionComposerUtils.getAllowedActionItem({ t, dao, allowedActions })
+        : actionComposerUtils.getActionItems({
+              t,
+              dao,
+              abis: importedContractAbis,
+              nativeItems,
+              excludeActionTypes,
+          });
 
     const handleActionSelected = (itemId: string, inputValue: string) => {
         const action = items.find((item) => item.id === itemId)!;

@@ -57,7 +57,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
                 hidden={addActions === false}
                 {...actionsStep}
             >
-                <CreateProposalForm.Actions daoId={daoId} />
+                <CreateProposalForm.Actions daoId={daoId} pluginAddress={pluginAddress} />
             </WizardPage.Step>
             <WizardPage.Step
                 title={t(`app.governance.createProposalPage.steps.${CreateProposalWizardStep.SETTINGS}.title`)}
