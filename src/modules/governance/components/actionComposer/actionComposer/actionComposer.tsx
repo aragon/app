@@ -42,13 +42,7 @@ export interface IActionComposerProps extends Pick<IActionComposerInputProps, 'e
 }
 
 export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
-    const {
-        daoId,
-        onAddAction,
-        excludeActionTypes,
-        hideWalletConnect = false,
-        conditionedProcessAddress,
-    } = props;
+    const { daoId, onAddAction, excludeActionTypes, hideWalletConnect = false, conditionedProcessAddress } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -135,8 +129,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         }
     };
 
-    // Determine if WalletConnect should be hidden
-    const shouldHideWalletConnect = hideWalletConnect || onlyShowAuthorizedActions;
+    const shouldRenderWalletConnect = !(hideWalletConnect || onlyShowAuthorizedActions);
 
     return (
         <>
@@ -145,7 +138,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                     <Switch
                         checked={onlyShowAuthorizedActions}
                         onCheckedChanged={setOnlyShowAuthorizedActions}
-                        label={t('app.governance.actionComposer.onlyShowAuthorizedActions')}
+                        label={t('app.governance.actionComposer.authorizedSwitchLabel')}
                     />
                 </div>
             )}
@@ -153,7 +146,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={handleAddAction}>
                     {t('app.governance.actionComposer.addAction.default')}
                 </Button>
-                {!shouldHideWalletConnect && (
+                {shouldRenderWalletConnect && (
                     <Button
                         variant="secondary"
                         size="md"
