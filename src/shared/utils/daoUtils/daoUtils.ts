@@ -159,7 +159,7 @@ class DaoUtils {
         interfaceType == null || plugin.interfaceType === interfaceType;
 
     private filterByHasExecute = (plugin: IDaoPlugin, fullExecuteOnly?: boolean) =>
-        !fullExecuteOnly || plugin.conditionAddress != null;
+        !fullExecuteOnly || plugin.conditionAddress == null;
 }
 
 export const daoUtils = new DaoUtils();
