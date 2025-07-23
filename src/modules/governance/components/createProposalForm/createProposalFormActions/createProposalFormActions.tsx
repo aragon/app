@@ -48,16 +48,8 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const [expandedActions, setExpandedActions] = useState<string[]>([]);
 
     const { data: allowedActionsData } = useAllowedActions(
-        {
-            urlParams: {
-                network: dao!.network,
-                pluginAddress,
-            },
-            queryParams: {},
-        },
-        {
-            enabled: hasConditionalPermissions,
-        },
+        { urlParams: { network: dao!.network, pluginAddress }, queryParams: {} },
+        { enabled: hasConditionalPermissions },
     );
 
     const allowedActions = allowedActionsData?.pages.flatMap((page) => page.data);
@@ -154,11 +146,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                     ))}
                 </ProposalActions.Container>
             </ProposalActions.Root>
-            <ActionComposer
-                daoId={daoId}
-                onAddAction={handleAddAction}
-                allowedActions={allowedActions}
-            />
+            <ActionComposer daoId={daoId} onAddAction={handleAddAction} allowedActions={allowedActions} />
         </div>
     );
 };
