@@ -27,36 +27,26 @@ export class DaoProcessDetailsClientUtils {
             description: plugin.description ?? '',
             proposalCreationMode: ProposalCreationMode.ANY_WALLET,
             processKey: plugin.slug,
+            permissions: ProcessPermission.ANY,
+            permissionSelectors: [],
         };
 
         if (plugin.isBody && plugin.isProcess) {
             const body = this.bodyToFormData({ plugin, membership: { members: [] } });
-            return {
-                governanceType: GovernanceType.BASIC,
-                body,
-                permissions: ProcessPermission.ANY,
-                permissionSelectors: [],
-                ...base,
-            };
+
+            return { governanceType: GovernanceType.BASIC, body, ...base };
         }
 
-        return {
-            governanceType: GovernanceType.ADVANCED,
-            stages: this.sppSettingsToFormData(plugin.settings as ISppPluginSettings, allPlugins),
-            permissions: ProcessPermission.ANY,
-            permissionSelectors: [],
-            ...base,
-        };
+        const stages = this.sppSettingsToFormData(plugin.settings as ISppPluginSettings, allPlugins);
+
+        return { governanceType: GovernanceType.ADVANCED, stages, ...base };
     };
 
-    public bodyToFormDataDefault = <
-        TSettings extends IPluginSettings,
-        TMembership extends ISetupBodyFormMembership,
-    >(params: {
-        plugin: IDaoPlugin<TSettings>;
-        membership: TMembership;
-    }): ISetupBodyFormExisting<TSettings, ICompositeAddress, TMembership> => {
+    bodyToFormDataDefault = <TSettings extends IPluginSettings, TMembership extends ISetupBodyFormMembership>(
+        params: IPluginToFormDataParams<TSettings, TMembership>,
+    ): ISetupBodyFormExisting<TSettings, ICompositeAddress, TMembership> => {
         const { plugin, membership } = params;
+
         return {
             internalId: crypto.randomUUID(),
             type: SetupBodyType.EXISTING,
@@ -71,7 +61,7 @@ export class DaoProcessDetailsClientUtils {
         };
     };
 
-    public bodyToFormData = <TSettings extends IPluginSettings, TMembership extends ISetupBodyFormMembership>(
+    bodyToFormData = <TSettings extends IPluginSettings, TMembership extends ISetupBodyFormMembership>(
         params: IPluginToFormDataParams<TSettings, TMembership>,
     ): ISetupBodyFormExisting<TSettings, ICompositeAddress, TMembership> => {
         const { plugin } = params;
@@ -116,27 +106,28 @@ export class DaoProcessDetailsClientUtils {
         });
 
     private sppBodyToFormData<T extends IPluginSettings>(
-        plugin: ISppStagePlugin,
+        stagePlugin: ISppStagePlugin,
         allPlugins: IDaoPlugin[],
     ): IDaoPlugin<T> {
-        const hydrated = allPlugins.find((p) => p.address === plugin.address) as IDaoPlugin<T> | undefined;
+        const plugin = allPlugins.find(({ address }) => address === stagePlugin.address) as IDaoPlugin<T> | undefined;
+
         return {
-            ...plugin,
+            ...stagePlugin,
             isBody: true,
             isProcess: false,
             isSubPlugin: true,
-            release: hydrated?.release ?? '',
-            build: hydrated?.build ?? '',
-            slug: hydrated?.slug ?? '',
-            settings: hydrated?.settings as T,
-            name: hydrated?.name,
-            description: hydrated?.description,
-            links: hydrated?.links ?? [],
-            subdomain: hydrated?.subdomain ?? '',
-            interfaceType: hydrated?.interfaceType ?? PluginInterfaceType.UNKNOWN,
-            address: hydrated?.address ?? plugin.address,
-            blockTimestamp: hydrated?.blockTimestamp ?? 0,
-            transactionHash: hydrated?.transactionHash ?? '',
+            release: plugin?.release ?? '',
+            build: plugin?.build ?? '',
+            slug: plugin?.slug ?? '',
+            settings: plugin?.settings as T,
+            name: plugin?.name,
+            description: plugin?.description,
+            links: plugin?.links ?? [],
+            subdomain: plugin?.subdomain ?? '',
+            interfaceType: plugin?.interfaceType ?? PluginInterfaceType.UNKNOWN,
+            address: plugin?.address ?? stagePlugin.address,
+            blockTimestamp: plugin?.blockTimestamp ?? 0,
+            transactionHash: plugin?.transactionHash ?? '',
         };
     }
 }
