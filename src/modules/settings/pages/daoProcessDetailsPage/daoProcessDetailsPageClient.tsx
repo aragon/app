@@ -6,6 +6,7 @@ import {
     GovernanceStagesField,
     GovernanceType,
 } from '@/modules/createDao/components/createProcessForm';
+import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
 import { PermissionsDefinitionList } from '@/modules/governance/components/permissionsDefinitionList';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
@@ -17,7 +18,14 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { Card, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
+import {
+    Card,
+    DataList,
+    DateFormat,
+    EmptyState,
+    formatterUtils,
+    SmartContractFunctionDataListItem,
+} from '@aragon/gov-ui-kit';
 import { FormProvider, useForm } from 'react-hook-form';
 import { DaoProcessDetailsInfo } from '../../components/daoProcessDetailsInfo';
 import { daoProcessDetailsClientUtils } from './daoProcessDetailsClientUtils';
@@ -87,7 +95,10 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
         params: { plugin, daoId, useConnectedUserInfo: false },
     }) ?? { hasPermission: true, isLoading: false, settings: [] };
 
-    // const authorizedActions = useAllowedActions(queryParams: { conditionAddress: plugin.conditionAddress }, enabled: plugin.conditionAddress != null)
+    const { data: allowedActionsData } = useAllowedActions(
+        { urlParams: { network: dao!.network, pluginAddress: plugin.address }, queryParams: {} },
+        { enabled: plugin.conditionAddress != null },
+    );
 
     return (
         <>
@@ -120,7 +131,7 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
                     </Page.MainSection>
                     <Page.MainSection title={t('app.settings.daoProcessDetailsPage.section.actions')}>
                         <Card className="p-6">
-                            {/* {authorizedActions == null && (
+                            {allowedActionsData == null && (
                                 <EmptyState
                                     isStacked={false}
                                     heading={t('app.settings.daoProcessDetailsPage.emptyState.heading')}
@@ -128,21 +139,21 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
                                     objectIllustration={{ object: 'SETTINGS' }}
                                 />
                             )}
-                            {authorizedActions != null && (
+                            {allowedActionsData != null && (
                                 <DataList.Root entityLabel="">
                                     <DataList.Container SkeletonElement={SmartContractFunctionDataListItem.Skeleton}>
-                                        {authorizedActions.map((action, index) => (
+                                        {allowedActionsData.pages[0].data.map((action, index) => (
                                             <SmartContractFunctionDataListItem.Structure
                                                 key={index}
-                                                contractAddress={action.to}
-                                                contractName={action.id}
-                                                functionName={action.from}
+                                                contractAddress={action.target}
+                                                contractName={action.decoded.contractName}
+                                                functionName={action.decoded.functionName}
                                                 onRemove={() => alert('Function removed')}
                                             />
                                         ))}
                                     </DataList.Container>
                                 </DataList.Root>
-                            )} */}
+                            )}
                         </Card>
                     </Page.MainSection>
                 </Page.Main>
