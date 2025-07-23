@@ -27,7 +27,6 @@ export class DaoProcessDetailsClientUtils {
             description: plugin.description ?? '',
             proposalCreationMode: ProposalCreationMode.ANY_WALLET,
             processKey: plugin.slug,
-            pluginAddress: plugin.address,
         };
 
         if (plugin.isBody && plugin.isProcess) {

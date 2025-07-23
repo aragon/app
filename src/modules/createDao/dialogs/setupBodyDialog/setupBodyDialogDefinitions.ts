@@ -70,26 +70,21 @@ export interface ISetupBodyFormExisting<
     TMember extends ICompositeAddress = ICompositeAddress,
     TMembership extends ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
 > extends Pick<
-            ISetupBodyFormNew<TGovernance, TMember, TMembership>,
-            'internalId' | 'plugin' | 'description' | 'resources' | 'governance' | 'membership' | 'canCreateProposal'
-        >,
-        Pick<ICompositeAddress, 'address' | 'name'> {
+        ISetupBodyFormNew<TGovernance, TMember, TMembership>,
+        'internalId' | 'plugin' | 'description' | 'resources' | 'governance' | 'membership' | 'canCreateProposal'
+    > {
     /**
      * EXISTING body type.
      */
     type: SetupBodyType.EXISTING;
     /**
-     * Membership configuration and details.
-     */
-    membership: TMembership;
-    /**
-     * Optional name from NEW bodies.
+     * Name of existing body, optional as not set for existing but external bodies.
      */
     name?: string;
     /**
-     * Address of the plugin contract for read‑only lookup.
+     * Address of the existing body.
      */
-    pluginAddress?: string;
+    address: string;
 }
 
 export type ISetupBodyForm<
