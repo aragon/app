@@ -199,7 +199,7 @@ describe('dao utils', () => {
             expect(daoUtils.getDaoPlugins(dao, { interfaceType })).toEqual([plugins[0], plugins[1]]);
         });
 
-        it('only returns plugins with execute permissions when hasExecute is true', () => {
+        it('returns all plugins with full execute permissions when hasExecute is true', () => {
             const plugins = [
                 generateDaoPlugin({ interfaceType: PluginInterfaceType.ADMIN }),
                 generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG, conditionAddress: '0x123' }),

@@ -53,7 +53,7 @@ describe('useDaoPlugins hook', () => {
         expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, { type, pluginAddress });
     });
 
-    it('filters the plugins by hasExecute when specified', () => {
+    it('filters the plugins by those with full execute when hasExecute is true', () => {
         const hasExecute = true;
         const dao = generateDao({
             plugins: [generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG, conditionAddress: '0x123' })],
