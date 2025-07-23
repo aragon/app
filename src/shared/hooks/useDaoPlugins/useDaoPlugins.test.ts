@@ -52,4 +52,15 @@ describe('useDaoPlugins hook', () => {
         renderHook(() => useDaoPlugins({ daoId: dao.id, type, pluginAddress }));
         expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, { type, pluginAddress });
     });
+
+    it('filters the plugins by those with full execute when hasExecute is true', () => {
+        const hasExecute = true;
+        const dao = generateDao({
+            plugins: [generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG, conditionAddress: '0x123' })],
+        });
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
+
+        renderHook(() => useDaoPlugins({ daoId: dao.id, hasExecute }));
+        expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, { hasExecute });
+    });
 });
