@@ -22,7 +22,7 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
     const { buildEntityUrl } = useBlockExplorer();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    if (body.type !== SetupBodyType.EXTERNAL) {
+    if (body.type !== SetupBodyType.EXTERNAL && body.type !== SetupBodyType.EXISTING) {
         return null;
     }
 

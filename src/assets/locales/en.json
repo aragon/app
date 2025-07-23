@@ -176,7 +176,8 @@
         "steps": {
           "describe": "Describe new proposal type",
           "design": "Design the governance process",
-          "designate": "Set proposal creation rules"
+          "designate": "Set proposal creation rules",
+          "permissions": "Set permissions"
         },
         "title": "Create governance process"
       },
@@ -288,18 +289,33 @@
           }
         },
         "permissions": {
-          "proposalCreation": {
-            "bodies": {
-              "error": "You must select at least one body.",
-              "label": "Bodies"
-            },
-            "mode": {
-              "anyDescription": "Any address can create proposals",
-              "anyLabel": "Anyone",
-              "bodiesDescription": "Members of the selected bodies",
-              "bodiesLabel": "Members",
-              "label": "Proposal creation eligibility"
-            }
+          "anyEmptyState": {
+            "description": "This process will be granted permission to execute on behalf of the DAO. It could withdraw funds, modify governance contracts, and call any function on any smart contract.",
+            "heading": "Unrestricted execution"
+          },
+          "permissionField": {
+            "anyDescription": "Any action can be added to proposals",
+            "anyLabel": "Any action",
+            "helpText": "Each action is defined by a function selector on a specific smart contract address.",
+            "label": "Authorized actions",
+            "specificDescription": "Selected actions can be added to proposals",
+            "specificLabel": "Specific actions"
+          },
+          "specificEmptyState": {
+            "heading": "No actions added"
+          }
+        },
+        "proposalCreation": {
+          "bodies": {
+            "error": "You must select at least one body.",
+            "label": "Bodies"
+          },
+          "mode": {
+            "anyDescription": "Any address can create proposals",
+            "anyLabel": "Anyone",
+            "bodiesDescription": "Members of the selected bodies",
+            "bodiesLabel": "Members",
+            "label": "Proposal creation eligibility"
           }
         }
       },
@@ -312,6 +328,11 @@
             "title": "Describe new proposal type"
           },
           "PERMISSIONS": {
+            "description": "Define what this governance process is authorized to do. Proposals of this type will only be able to execute the actions specified here.",
+            "name": "Proposal permissions",
+            "title": "Set permissions"
+          },
+          "PROPOSAL_CREATION": {
             "description": "Define who can create proposals of this type.",
             "name": "Proposal creation rules",
             "title": "Set proposal creation rules"
@@ -1740,10 +1761,32 @@
         "bodyName": "Body name",
         "processKey": "Process key",
         "processName": "Process name",
-        "tabs": {
-          "contract": "Contract",
-          "description": "Description",
-          "settings": "Settings"
+        "viewProcess": "View process"
+      },
+      "daoProcessDetailsPage": {
+        "aside": {
+          "pluginName": "Plugin name",
+          "processKey": "Process key"
+        },
+        "header": {
+          "breadcrumb": {
+            "settings": "Settings"
+          },
+          "stats": {
+            "lastProposal": "Last proposal",
+            "latestActivityUnit": "{{unit}} ago",
+            "proposals": "Proposals"
+          }
+        },
+        "notFound": {
+          "action": "Explore settings",
+          "description": "We couldn't find the process you're looking for.",
+          "title": "Process not found"
+        },
+        "section": {
+          "creationEligibility": "Proposal creation eligibility",
+          "details": "Details",
+          "governanceProcess": "Governance process"
         }
       },
       "daoSettingsInfo": {
