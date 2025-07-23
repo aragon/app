@@ -5,6 +5,7 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { type AbiStateMutability, toFunctionSelector, zeroAddress } from 'viem';
+import type { IAllowedAction } from '../../api/executeSelectorsService';
 import {
     type IProposalAction,
     type IProposalActionUpdatePluginMetadata,
@@ -58,9 +59,12 @@ interface IGetActionItemsParams
         IGetNativeActionItemsParams,
         Pick<IActionComposerInputProps, 'excludeActionTypes'> {}
 
-export interface IGetAllowedActionGroupsAndItemsParams
-    extends IGetActionBaseParams,
-        Pick<IActionComposerInputProps, 'allowedActions'> {}
+export interface IGetAllowedActionParams extends IGetActionBaseParams {
+    /**
+     * List of allowed actions to transform into action items.
+     */
+    allowedActions: IAllowedAction[];
+}
 
 class ActionComposerUtils {
     getPluginActionsFromDao = (dao?: IDao) => {
@@ -82,31 +86,22 @@ class ActionComposerUtils {
         };
     };
 
-    getAllowedActionGroups = ({
-        t,
-        dao,
-        allowedActions = [],
-    }: IGetAllowedActionGroupsAndItemsParams): IAutocompleteInputGroup[] => {
+    getAllowedActionGroups = ({ t, dao, allowedActions }: IGetAllowedActionParams): IAutocompleteInputGroup[] => {
         const daoAddress = dao!.address;
         const [daoGroup] = this.getNativeActionGroups({
             t,
             dao,
             nativeGroups: [],
         });
-
         const actionGroups: IAutocompleteInputGroup[] = allowedActions.map((action) =>
             this.buildCustomActionGroup({ name: action.decoded.contractName, address: action.target }),
         );
-        const completeActionGroups = actionGroups.map((group) => (group.id === daoAddress ? daoGroup : group));
+        const actionGroupsWithDao = actionGroups.map((group) => (group.id === daoAddress ? daoGroup : group));
 
-        return completeActionGroups;
+        return actionGroupsWithDao;
     };
 
-    getAllowedActionItem = ({
-        t,
-        dao,
-        allowedActions = [],
-    }: IGetAllowedActionGroupsAndItemsParams): IActionComposerInputItem[] => {
+    getAllowedActionItem = ({ t, dao, allowedActions }: IGetAllowedActionParams): IActionComposerInputItem[] => {
         const [transferItem, metadataUpdateItem] = this.getNativeActionItems({ t, dao, nativeItems: [] }).map(
             this.infoToSelectorMapper,
         );
@@ -121,7 +116,6 @@ class ActionComposerUtils {
                 return metadataUpdateItem;
             }
 
-            // TODO: how to detect unverified actions?
             const decodedAction = action.decoded;
             const item = this.buildDefaultCustomAction(
                 { address: action.target, name: decodedAction.contractName },
