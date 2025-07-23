@@ -33,7 +33,7 @@ export interface IGetDaoPluginsParams {
      * Only returns the plugin with the specified slug when set.
      */
     slug?: string;
-        /**
+    /**
      * Only returns plugins with full execute permissions when set to true.
      */
     hasExecute?: boolean;

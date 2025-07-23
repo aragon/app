@@ -32,7 +32,7 @@ export interface IUseDaoPluginsParams {
      * Only returns the plugin with the specified slug when set.
      */
     slug?: string;
-        /**
+    /**
      * Only returns plugins with full execute permissions when set to true.
      */
     hasExecute?: boolean;
@@ -50,7 +50,14 @@ export const useDaoPlugins = (params: IUseDaoPluginsParams): Array<ITabComponent
     const { daoId, type, pluginAddress, includeSubPlugins, includeGroupTab, interfaceType, slug, hasExecute } = params;
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const plugins = daoUtils.getDaoPlugins(dao, { type, pluginAddress, includeSubPlugins, interfaceType, slug, hasExecute });
+    const plugins = daoUtils.getDaoPlugins(dao, {
+        type,
+        pluginAddress,
+        includeSubPlugins,
+        interfaceType,
+        slug,
+        hasExecute,
+    });
 
     const processedPlugins = plugins?.map((plugin) => ({
         id: plugin.interfaceType,
