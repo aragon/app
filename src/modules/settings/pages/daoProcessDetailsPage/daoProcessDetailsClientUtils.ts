@@ -2,6 +2,7 @@
 
 import {
     GovernanceType,
+    ProcessPermission,
     ProcessStageType,
     ProposalCreationMode,
     type ICreateProcessFormData,
@@ -34,6 +35,8 @@ export class DaoProcessDetailsClientUtils {
             return {
                 governanceType: GovernanceType.BASIC,
                 body,
+                permissions: ProcessPermission.ANY,
+                permissionSelectors: [],
                 ...base,
             };
         }
@@ -41,6 +44,8 @@ export class DaoProcessDetailsClientUtils {
         return {
             governanceType: GovernanceType.ADVANCED,
             stages: this.sppSettingsToFormData(plugin.settings as ISppPluginSettings, allPlugins),
+            permissions: ProcessPermission.ANY,
+            permissionSelectors: [],
             ...base,
         };
     };
