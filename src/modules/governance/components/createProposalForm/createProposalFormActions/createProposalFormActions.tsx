@@ -1,3 +1,4 @@
+import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -45,6 +46,21 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const { t } = useTranslations();
     const [expandedActions, setExpandedActions] = useState<string[]>([]);
+
+    const { data: allowedActionsData } = useAllowedActions(
+        {
+            urlParams: {
+                network: dao!.network,
+                pluginAddress,
+            },
+            queryParams: {},
+        },
+        {
+            enabled: hasConditionalPermissions,
+        },
+    );
+
+    const allowedActions = allowedActionsData?.pages.flatMap((page) => page.data);
 
     const {
         append: addAction,
@@ -141,7 +157,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             <ActionComposer
                 daoId={daoId}
                 onAddAction={handleAddAction}
-                conditionedProcessAddress={hasConditionalPermissions ? pluginAddress : undefined}
+                allowedActions={allowedActions}
             />
         </div>
     );

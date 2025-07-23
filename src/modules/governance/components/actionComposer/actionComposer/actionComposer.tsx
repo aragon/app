@@ -1,12 +1,12 @@
 'use client';
 
-import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, Button, IconType, Switch } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useCallback, useRef, useState } from 'react';
+import type { IAllowedAction } from '../../../api/executeSelectorsService';
 import { type IProposalAction } from '../../../api/governanceService';
 import type { ISmartContractAbi } from '../../../api/smartContractService';
 import { GovernanceDialogId } from '../../../constants/governanceDialogId';
@@ -35,32 +35,18 @@ export interface IActionComposerProps extends Pick<IActionComposerInputProps, 'e
      */
     hideWalletConnect?: boolean;
     /**
-     * Address of the process plugin with condition contract set. Undefined if process is not conditioned.
-     * When provided, enables filtering of allowed actions.
+     * Allowed actions to show instead of default actions.
      */
-    conditionedProcessAddress?: string;
+    allowedActions?: IAllowedAction[];
 }
 
 export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
-    const { daoId, onAddAction, excludeActionTypes, hideWalletConnect = false, conditionedProcessAddress } = props;
+    const { daoId, onAddAction, excludeActionTypes, hideWalletConnect = false, allowedActions } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
     const { pluginItems, pluginGroups } = actionComposerUtils.getPluginActionsFromDao(dao);
-
-    const { data: allowedActions } = useAllowedActions(
-        {
-            urlParams: {
-                network: dao!.network,
-                pluginAddress: conditionedProcessAddress ?? '',
-            },
-            queryParams: {},
-        },
-        {
-            enabled: !!conditionedProcessAddress,
-        },
-    );
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -68,9 +54,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
 
     const [displayActionComposer, setDisplayActionComposer] = useState(false);
-    const [onlyShowAuthorizedActions, setOnlyShowAuthorizedActions] = useState(conditionedProcessAddress != null);
-
-    const processedAllowedActions = allowedActions?.pages.flatMap((page) => page.data);
+    const [onlyShowAuthorizedActions, setOnlyShowAuthorizedActions] = useState(allowedActions != null);
 
     const [importedContractAbis, setImportedContractAbis] = useState<ISmartContractAbi[]>([]);
 
@@ -149,7 +133,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                         </Button>
                     )}
                 </div>
-                {conditionedProcessAddress && (
+                {allowedActions && (
                     // wrapper div needed here to tackle grow css prop in InputContainer inside Switch, which we cannot override
                     <div>
                         <Switch
@@ -167,7 +151,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 ref={autocompleteInputRef}
                 nativeItems={pluginItems}
                 nativeGroups={pluginGroups}
-                allowedActions={onlyShowAuthorizedActions ? processedAllowedActions : undefined}
+                allowedActions={onlyShowAuthorizedActions ? allowedActions : undefined}
                 daoId={daoId}
                 importedContractAbis={importedContractAbis}
                 excludeActionTypes={excludeActionTypes}
