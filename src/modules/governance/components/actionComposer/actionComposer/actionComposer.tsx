@@ -5,7 +5,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, Button, IconType, Switch } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { IAllowedAction } from '../../../api/executeSelectorsService';
 import { type IProposalAction } from '../../../api/governanceService';
 import type { ISmartContractAbi } from '../../../api/smartContractService';
@@ -55,6 +55,12 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
 
     const [displayActionComposer, setDisplayActionComposer] = useState(false);
     const [onlyShowAuthorizedActions, setOnlyShowAuthorizedActions] = useState(allowedActions != null);
+
+    useEffect(() => {
+        if (allowedActions != null) {
+            setOnlyShowAuthorizedActions(true);
+        }
+    }, [allowedActions]);
 
     const [importedContractAbis, setImportedContractAbis] = useState<ISmartContractAbi[]>([]);
 
