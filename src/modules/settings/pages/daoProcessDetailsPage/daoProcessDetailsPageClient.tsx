@@ -6,7 +6,6 @@ import {
     GovernanceStagesField,
     GovernanceType,
 } from '@/modules/createDao/components/createProcessForm';
-import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
 import { PermissionsDefinitionList } from '@/modules/governance/components/permissionsDefinitionList';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
@@ -89,13 +88,6 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
         params: { plugin, daoId, useConnectedUserInfo: false },
     }) ?? { hasPermission: true, isLoading: false, settings: [] };
 
-    const { data: allowedActionsData } = useAllowedActions(
-        { urlParams: { network: dao!.network, pluginAddress: plugin.address }, queryParams: {} },
-        { enabled: plugin.conditionAddress != null },
-    );
-
-    const allAllowedActions = allowedActionsData?.pages.flatMap((page) => page.data) ?? [];
-
     return (
         <>
             <Page.Header
@@ -126,7 +118,11 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
                         </Card>
                     </Page.MainSection>
                     <Page.MainSection title={t('app.settings.daoProcessDetailsPage.section.actions')}>
-                        <DaoProcessAllowedActions allAllowedActions={allAllowedActions} />
+                        <DaoProcessAllowedActions
+                            pluginAddress={plugin.address}
+                            network={dao!.network}
+                            conditionAddress={plugin.conditionAddress}
+                        />
                     </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>

@@ -1767,15 +1767,17 @@
         "processName": "Process name",
         "viewProcess": "View process"
       },
+      "daoProcessAllowedActions": {
+        "emptyState": {
+          "description": "This process will be granted permission to execute on behalf of the DAO. It could withdraw funds, modify governance contracts, and call any function on any smart contract.",
+          "heading": "Unrestricted execution"
+        }
+      },
       "daoProcessDetailsInfo": {
         "pluginName": "Plugin name",
         "processKey": "Process key"
       },
       "daoProcessDetailsPage": {
-        "emptyState": {
-          "description": "This process will be granted permission to execute on behalf of the DAO. It could withdraw funds, modify governance contracts, and call any function on any smart contract.",
-          "heading": "Unrestricted execution"
-        },
         "header": {
           "breadcrumb": {
             "settings": "Settings"

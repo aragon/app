@@ -1,30 +1,49 @@
-import type { IAllowedAction } from '@/modules/governance/api/executeSelectorsService';
+import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
+import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Card, DataList, EmptyState, SmartContractFunctionDataListItem } from '@aragon/gov-ui-kit';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { CardEmptyState, DataList, SmartContractFunctionDataListItem } from '@aragon/gov-ui-kit';
 
 export interface IDaoProcessAllowedActionsProps {
     /**
-     * All allowed actions for the DAO process.
+     * Network of the DAO process.
      */
-    allAllowedActions: IAllowedAction[];
+    network: Network;
+    /**
+     * Address of the process.
+     */
+    pluginAddress: string;
+    /**
+     * Condition address which indicates whether the process has selected actions allowed.
+     */
+    conditionAddress?: string;
 }
 
 export const DaoProcessAllowedActions: React.FC<IDaoProcessAllowedActionsProps> = (props) => {
-    const { allAllowedActions } = props;
+    const { network, pluginAddress, conditionAddress } = props;
 
     const { t } = useTranslations();
 
+    const { data: allowedActionsData } = useAllowedActions(
+        { urlParams: { network, pluginAddress }, queryParams: {} },
+        { enabled: conditionAddress != null },
+    );
+
+    const allAllowedActions = allowedActionsData?.pages.flatMap((page) => page.data);
+
+    const chainId = networkDefinitions[network].id;
+
     return (
-        <Card className="p-6">
-            {allAllowedActions.length === 0 && (
-                <EmptyState
+        <>
+            {allAllowedActions == null && (
+                <CardEmptyState
                     isStacked={false}
-                    heading={t('app.settings.daoProcessDetailsPage.emptyState.heading')}
-                    description={t('app.settings.daoProcessDetailsPage.emptyState.description')}
+                    heading={t('app.settings.daoProcessAllowedActions.emptyState.heading')}
+                    description={t('app.settings.daoProcessAllowedActions.emptyState.description')}
                     objectIllustration={{ object: 'SETTINGS' }}
                 />
             )}
-            {allAllowedActions.length > 0 && (
+            {allAllowedActions != null && (
                 <DataList.Root entityLabel="" pageSize={10} itemsCount={allAllowedActions.length}>
                     <DataList.Container SkeletonElement={SmartContractFunctionDataListItem.Skeleton}>
                         {allAllowedActions.map((action, index) => (
@@ -33,11 +52,12 @@ export const DaoProcessAllowedActions: React.FC<IDaoProcessAllowedActionsProps> 
                                 functionName={action.decoded.functionName}
                                 contractAddress={action.target}
                                 contractName={action.decoded.contractName}
+                                chainId={chainId}
                             />
                         ))}
                     </DataList.Container>
                 </DataList.Root>
             )}
-        </Card>
+        </>
     );
 };
