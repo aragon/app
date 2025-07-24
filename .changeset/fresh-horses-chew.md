@@ -2,4 +2,4 @@
 '@aragon/app-next': patch
 ---
 
-Fix transaction for building execute conditions
+Fix where address when building execute conditions and add required validation
