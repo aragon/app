@@ -100,6 +100,8 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
         { enabled: plugin.conditionAddress != null },
     );
 
+    const allAllowedActions = allowedActionsData?.pages.flatMap((page) => page.data) ?? [];
+
     return (
         <>
             <Page.Header
@@ -131,7 +133,7 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
                     </Page.MainSection>
                     <Page.MainSection title={t('app.settings.daoProcessDetailsPage.section.actions')}>
                         <Card className="p-6">
-                            {allowedActionsData == null && (
+                            {allAllowedActions.length === 0 && (
                                 <EmptyState
                                     isStacked={false}
                                     heading={t('app.settings.daoProcessDetailsPage.emptyState.heading')}
@@ -139,16 +141,20 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
                                     objectIllustration={{ object: 'SETTINGS' }}
                                 />
                             )}
-                            {allowedActionsData != null && (
-                                <DataList.Root entityLabel="">
+                            {allAllowedActions.length > 0 && (
+                                <DataList.Root
+                                    entityLabel=""
+                                    pageSize={10}
+                                    itemsCount={allAllowedActions.length}
+                                    state={listState}
+                                >
                                     <DataList.Container SkeletonElement={SmartContractFunctionDataListItem.Skeleton}>
-                                        {allowedActionsData.pages[0].data.map((action, index) => (
+                                        {allAllowedActions.map((action, index) => (
                                             <SmartContractFunctionDataListItem.Structure
                                                 key={index}
+                                                functionName={action.decoded.functionName}
                                                 contractAddress={action.target}
                                                 contractName={action.decoded.contractName}
-                                                functionName={action.decoded.functionName}
-                                                onRemove={() => alert('Function removed')}
                                             />
                                         ))}
                                     </DataList.Container>
