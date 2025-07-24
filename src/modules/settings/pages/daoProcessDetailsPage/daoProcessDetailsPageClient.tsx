@@ -18,15 +18,9 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import {
-    Card,
-    DataList,
-    DateFormat,
-    EmptyState,
-    formatterUtils,
-    SmartContractFunctionDataListItem,
-} from '@aragon/gov-ui-kit';
+import { Card, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
 import { FormProvider, useForm } from 'react-hook-form';
+import { DaoProcessAllowedActions } from '../../components/daoProccessAllowedActions';
 import { DaoProcessDetailsInfo } from '../../components/daoProcessDetailsInfo';
 import { daoProcessDetailsClientUtils } from './daoProcessDetailsClientUtils';
 
@@ -132,35 +126,7 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
                         </Card>
                     </Page.MainSection>
                     <Page.MainSection title={t('app.settings.daoProcessDetailsPage.section.actions')}>
-                        <Card className="p-6">
-                            {allAllowedActions.length === 0 && (
-                                <EmptyState
-                                    isStacked={false}
-                                    heading={t('app.settings.daoProcessDetailsPage.emptyState.heading')}
-                                    description={t('app.settings.daoProcessDetailsPage.emptyState.description')}
-                                    objectIllustration={{ object: 'SETTINGS' }}
-                                />
-                            )}
-                            {allAllowedActions.length > 0 && (
-                                <DataList.Root
-                                    entityLabel=""
-                                    pageSize={10}
-                                    itemsCount={allAllowedActions.length}
-                                    state={listState}
-                                >
-                                    <DataList.Container SkeletonElement={SmartContractFunctionDataListItem.Skeleton}>
-                                        {allAllowedActions.map((action, index) => (
-                                            <SmartContractFunctionDataListItem.Structure
-                                                key={index}
-                                                functionName={action.decoded.functionName}
-                                                contractAddress={action.target}
-                                                contractName={action.decoded.contractName}
-                                            />
-                                        ))}
-                                    </DataList.Container>
-                                </DataList.Root>
-                            )}
-                        </Card>
+                        <DaoProcessAllowedActions allAllowedActions={allAllowedActions} />
                     </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>
