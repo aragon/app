@@ -1,7 +1,9 @@
+import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     IconType,
     type IProposalActionsItemDropdownItem,
@@ -21,6 +23,10 @@ export interface ICreateProposalFormActionsProps {
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Address of the plugin to create the proposal for.
+     */
+    pluginAddress: string;
 }
 
 const coreCustomActionComponents = {
@@ -30,13 +36,23 @@ const coreCustomActionComponents = {
 } as unknown as Record<string, ProposalActionComponent<IProposalActionData>>;
 
 export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = (props) => {
-    const { daoId } = props;
+    const { daoId, pluginAddress } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
+    const [processPlugin] = daoUtils.getDaoPlugins(dao, { pluginAddress })!;
+    const hasConditionalPermissions = processPlugin.conditionAddress != null;
+
     const { t } = useTranslations();
     const [expandedActions, setExpandedActions] = useState<string[]>([]);
+
+    const { data: allowedActionsData } = useAllowedActions(
+        { urlParams: { network: dao!.network, pluginAddress }, queryParams: {} },
+        { enabled: hasConditionalPermissions },
+    );
+
+    const allowedActions = allowedActionsData?.pages.flatMap((page) => page.data);
 
     const {
         append: addAction,
@@ -130,7 +146,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                     ))}
                 </ProposalActions.Container>
             </ProposalActions.Root>
-            <ActionComposer daoId={daoId} onAddAction={handleAddAction} />
+            <ActionComposer daoId={daoId} onAddAction={handleAddAction} allowedActions={allowedActions} />
         </div>
     );
 };

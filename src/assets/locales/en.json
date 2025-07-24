@@ -682,6 +682,7 @@
           "default": "Action",
           "walletConnect": "Connect"
         },
+        "authorizedSwitchLabel": "Only show authorized actions",
         "customItem": {
           "ADD_CONTRACT": "Add contract address",
           "RAW_CALLDATA": "Enter raw calldata"
@@ -1052,8 +1053,8 @@
         },
         "adminUninstallPlugin": {
           "adminUninstallProcessDialogCreate": {
-            "description": "To remove all admins, you need to first create at least one other governance process for your DAO.",
-            "heading": "No governance process found",
+            "description": "To remove all admins, you need to first create at least one governance process that can execute any actions on behalf of the DAO.",
+            "heading": "No valid governance process found",
             "label": "Create governance process",
             "title": "Remove all admins"
           },
