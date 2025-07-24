@@ -7,8 +7,14 @@ import { ActionComposer, ActionItemId } from '@/modules/governance/components/ac
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm/createProposalFormDefinitions';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { CardEmptyState, RadioCard, RadioGroup, SmartContractFunctionDataListItem } from '@aragon/gov-ui-kit';
-import { useFieldArray } from 'react-hook-form';
+import {
+    CardEmptyState,
+    InputContainer,
+    RadioCard,
+    RadioGroup,
+    SmartContractFunctionDataListItem,
+} from '@aragon/gov-ui-kit';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 
 export interface ICreateProcessFormPermissionsProps {
     /**
@@ -22,6 +28,8 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
 
     const { t } = useTranslations();
 
+    const { getFieldState } = useFormContext();
+
     const { ANY, SELECTED } = ProcessPermission;
 
     const {
@@ -33,6 +41,15 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         defaultValue: ANY,
     });
 
+    const validateSelectors = (selectors: IProposalActionData[]) => {
+        const isAlreadyInList = selectors.some(
+            (selector, index) =>
+                selectors.findIndex((sel) => sel.to === selector.to && sel.type === selector.type) !== index,
+        );
+
+        return !isAlreadyInList || 'app.createDao.createProcessForm.permissions.permissionField.error.invalid';
+    };
+
     const {
         fields: permissionSelectors,
         append: appendPermissionSelector,
@@ -40,13 +57,16 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     } = useFieldArray<ICreateProcessFormData, 'permissionSelectors'>({
         name: 'permissionSelectors',
         rules: {
-            required: processPermission === SELECTED,
+            validate: (selectors) => validateSelectors(selectors),
         },
     });
 
     const addPermissionSelector = (actions: IProposalActionData[]) => appendPermissionSelector(actions);
 
     const removePermissionSelectorByIndex = (index: number) => removePermissionSelector(index);
+
+    const { message: fieldErrorMessage } = getFieldState('permissionSelectors').error?.root ?? {};
+    const fieldAlert = fieldErrorMessage ? { message: t(fieldErrorMessage), variant: 'critical' as const } : undefined;
 
     return (
         <div className="flex flex-col gap-6">
@@ -93,16 +113,18 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                         hideWalletConnect={true}
                         excludeActionTypes={[ProposalActionType.TRANSFER, ActionItemId.RAW_CALLDATA]}
                     />
-                    {permissionSelectors.map((selector, index) => (
-                        <SmartContractFunctionDataListItem.Structure
-                            key={selector.id}
-                            contractAddress={selector.to}
-                            onRemove={() => removePermissionSelectorByIndex(index)}
-                            functionName={selector.inputData?.function}
-                            contractName={selector.inputData?.contract}
-                            functionParameters={selector.inputData?.parameters}
-                        />
-                    ))}
+                    <InputContainer alert={fieldAlert} useCustomWrapper={true} className="w-full" id="selectors">
+                        {permissionSelectors.map((selector, index) => (
+                            <SmartContractFunctionDataListItem.Structure
+                                key={selector.id}
+                                contractAddress={selector.to}
+                                onRemove={() => removePermissionSelectorByIndex(index)}
+                                functionName={selector.inputData?.function}
+                                contractName={selector.inputData?.contract}
+                                functionParameters={selector.inputData?.parameters}
+                            />
+                        ))}
+                    </InputContainer>
                 </div>
             )}
         </div>
