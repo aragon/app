@@ -21,9 +21,9 @@ export interface ITokenMemberPanelProps {
 }
 
 enum TokenMemberPanelTab {
-    DELEGATE = 'DELEGATE',
-    WRAP = 'WRAP',
-    LOCK = 'LOCK',
+    DELEGATE = 'delegate',
+    WRAP = 'wrap',
+    LOCK = 'lock',
 }
 
 const getTabsDefinitions = ({ votingEscrow, token }: ITokenPluginSettings) => [

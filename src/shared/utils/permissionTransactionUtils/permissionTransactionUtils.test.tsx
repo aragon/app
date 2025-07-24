@@ -62,6 +62,34 @@ describe('permissionTransaction utils', () => {
         });
     });
 
+    describe('buildGrantWithConditionTransaction', () => {
+        it('returns a transaction for granting with the specified condition', () => {
+            const params = { where: '0x123', who: '0x456', what: 'what', to: '0x789', condition: '0xCOND' } as const;
+            const permissionHash = '0xHash';
+            const transactionData = '0xEncoded';
+
+            toBytesSpy.mockReturnValueOnce(Viem.hexToBytes('0xDEADBEEF'));
+            keccak256Spy.mockReturnValueOnce(permissionHash);
+            encodeFunctionDataSpy.mockReturnValueOnce(transactionData);
+
+            const transaction = permissionTransactionUtils.buildGrantWithConditionTransaction(params);
+
+            expect(toBytesSpy).toHaveBeenCalledWith(params.what);
+
+            expect(encodeFunctionData).toHaveBeenCalledWith({
+                abi: permissionManagerAbi,
+                functionName: 'grantWithCondition',
+                args: [params.where, params.who, permissionHash, params.condition],
+            });
+
+            expect(transaction).toEqual({
+                to: params.to,
+                data: transactionData,
+                value: BigInt(0),
+            });
+        });
+    });
+
     describe('buildGrantRevokePermissionTransactions', () => {
         const buildGrantTransactionSpy = jest.spyOn(permissionTransactionUtils, 'buildGrantPermissionTransaction');
         const buildRevokeTransactionSpy = jest.spyOn(permissionTransactionUtils, 'buildRevokePermissionTransaction');

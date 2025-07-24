@@ -57,6 +57,7 @@ export const AdminUninstallProcessDialogSelect: React.FC<IAdminUninstallProcessD
             daoId,
             excludePluginIds: ['admin'],
             onPluginSelected: handlePluginSelected,
+            fullExecuteOnly: true,
         };
         open(GovernanceDialogId.SELECT_PLUGIN, { params });
         onClose();

@@ -18,7 +18,7 @@ import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
-import { type ICreateProcessFormData } from '../../components/createProcessForm';
+import type { ICreateProcessFormData } from '../../components/createProcessForm';
 import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
 import type {
     IBuildProcessProposalActionsParams,
@@ -106,9 +106,16 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     const handlePrepareInstallationSuccess = (txReceipt: TransactionReceipt) => {
         invariant(dao != null, 'PrepareProcessDialog: DAO cannot be fetched');
 
+        const executeConditionAddress = prepareProcessDialogUtils.getExecuteSelectorConditionAddress(txReceipt);
+
         const setupData = pluginTransactionUtils.getPluginInstallationSetupData(txReceipt);
 
-        const proposalActionParams: IBuildProcessProposalActionsParams = { values, dao, setupData };
+        const proposalActionParams: IBuildProcessProposalActionsParams = {
+            values,
+            dao,
+            setupData,
+            executeConditionAddress,
+        };
         const proposalActions = prepareProcessDialogUtils.buildPublishProcessProposalActions(proposalActionParams);
 
         const proposalMetadata = prepareProcessDialogUtils.preparePublishProcessProposalMetadata();
