@@ -1,99 +1,133 @@
-import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
-import { SetupBodyType } from '@/modules/createDao/dialogs/setupBodyDialog';
-import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import {
+    type ICreateProcessFormData,
+    ProcessPermission,
+} from '@/modules/createDao/components/createProcessForm/createProcessFormDefinitions';
+import { ProposalActionType } from '@/modules/governance/api/governanceService';
+import { ActionComposer, ActionItemId } from '@/modules/governance/components/actionComposer';
+import type { IProposalActionData } from '@/modules/governance/components/createProposalForm/createProposalFormDefinitions';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { InputContainer, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
-import { useEffect, useMemo } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { GovernanceType, ProposalCreationMode, type ICreateProcessFormData } from '../createProcessFormDefinitions';
+import {
+    CardEmptyState,
+    InputContainer,
+    RadioCard,
+    RadioGroup,
+    SmartContractFunctionDataListItem,
+} from '@aragon/gov-ui-kit';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 
-export interface ICreateProcessFormPermissionProps {}
+export interface ICreateProcessFormPermissionsProps {
+    /**
+     * ID of the DAO.
+     */
+    daoId: string;
+}
 
-export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionProps> = () => {
+export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionsProps> = (props) => {
+    const { daoId } = props;
+
     const { t } = useTranslations();
-    const { trigger } = useFormContext();
 
-    const governanceType = useWatch<ICreateProcessFormData, 'governanceType'>({ name: 'governanceType' });
-    const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
+    const { getFieldState } = useFormContext();
 
-    const basicProcessBody = useWatch<ICreateProcessFormData, 'body'>({ name: 'body' });
-    const stages = useWatch<ICreateProcessFormData, 'stages'>({ name: 'stages' });
-
-    const getBodyFormPrefix = (bodyIndex: number, stageIndex?: number) =>
-        stageIndex != null ? `stages.${stageIndex.toString()}.bodies.${bodyIndex.toString()}` : 'body';
-
-    const processBodies = useMemo(() => {
-        // we need to keep the original bodyIndex since EXTERNAL bodies are filtered out!
-        const processedBodies = isAdvancedGovernance
-            ? stages.flatMap((stage, stageIndex) =>
-                  stage.bodies.map((body, bodyIndex) => ({ ...body, stageIndex, bodyIndex })),
-              )
-            : [{ ...basicProcessBody, stageIndex: undefined, bodyIndex: 0 }];
-
-        return processedBodies.filter((body) => body.type === SetupBodyType.NEW);
-    }, [isAdvancedGovernance, stages, basicProcessBody]);
-
-    const canBodiesCreateProposals = processBodies.some((body) => body.canCreateProposal);
-    const createProposalsError = 'app.createDao.createProcessForm.permissions.proposalCreation.bodies.error';
-
-    const { ANY_WALLET, LISTED_BODIES } = ProposalCreationMode;
+    const { ANY, SELECTED } = ProcessPermission;
 
     const {
-        onChange: onModeChange,
-        value: mode,
-        alert: permissionsAlert,
-        ...modeField
-    } = useFormField<ICreateProcessFormData, 'proposalCreationMode'>('proposalCreationMode', {
-        label: t('app.createDao.createProcessForm.permissions.proposalCreation.mode.label'),
-        rules: {
-            validate: (value) => (value !== ANY_WALLET && !canBodiesCreateProposals ? createProposalsError : undefined),
-        },
-        defaultValue: LISTED_BODIES,
+        onChange: onProcessPermissionChange,
+        value: processPermission,
+        ...processPermissionField
+    } = useFormField<ICreateProcessFormData, 'permissions'>('permissions', {
+        label: t('app.createDao.createProcessForm.permissions.permissionField.label'),
+        defaultValue: ANY,
     });
 
-    // Trigger proposalCreationMode validation on allowed bodies selection change
-    useEffect(() => {
-        void trigger('proposalCreationMode');
-    }, [trigger, canBodiesCreateProposals]);
+    const validateSelectors = (selectors: IProposalActionData[]) => {
+        const isAlreadyInList = selectors.some(
+            (selector, index) =>
+                selectors.findIndex((sel) => sel.to === selector.to && sel.type === selector.type) !== index,
+        );
+
+        return !isAlreadyInList || 'app.createDao.createProcessForm.permissions.permissionField.error.invalid';
+    };
+
+    const {
+        fields: permissionSelectors,
+        append: appendPermissionSelector,
+        remove: removePermissionSelector,
+    } = useFieldArray<ICreateProcessFormData, 'permissionSelectors'>({
+        name: 'permissionSelectors',
+        rules: {
+            required: processPermission === SELECTED,
+            validate: (selectors) => validateSelectors(selectors),
+        },
+    });
+
+    const addPermissionSelector = (actions: IProposalActionData[]) => appendPermissionSelector(actions);
+
+    const removePermissionSelectorByIndex = (index: number) => removePermissionSelector(index);
+
+    const { message: fieldErrorMessage } = getFieldState('permissionSelectors').error?.root ?? {};
+    const fieldAlert = fieldErrorMessage ? { message: t(fieldErrorMessage), variant: 'critical' as const } : undefined;
 
     return (
-        <>
-            <RadioGroup className="flex gap-4 md:!flex-row" onValueChange={onModeChange} value={mode} {...modeField}>
+        <div className="flex flex-col gap-6">
+            <RadioGroup
+                className="flex gap-4 md:!flex-row"
+                onValueChange={onProcessPermissionChange}
+                value={processPermission}
+                helpText={t('app.createDao.createProcessForm.permissions.permissionField.helpText')}
+                {...processPermissionField}
+            >
                 <RadioCard
                     className="min-w-0"
-                    label={t('app.createDao.createProcessForm.permissions.proposalCreation.mode.bodiesLabel')}
-                    description={t(
-                        'app.createDao.createProcessForm.permissions.proposalCreation.mode.bodiesDescription',
-                    )}
-                    value={LISTED_BODIES}
+                    label={t('app.createDao.createProcessForm.permissions.permissionField.anyLabel')}
+                    description={t('app.createDao.createProcessForm.permissions.permissionField.anyDescription')}
+                    value={ANY}
                 />
                 <RadioCard
                     className="min-w-0"
-                    label={t('app.createDao.createProcessForm.permissions.proposalCreation.mode.anyLabel')}
-                    description={t('app.createDao.createProcessForm.permissions.proposalCreation.mode.anyDescription')}
-                    value={ANY_WALLET}
+                    label={t('app.createDao.createProcessForm.permissions.permissionField.specificLabel')}
+                    description={t('app.createDao.createProcessForm.permissions.permissionField.specificDescription')}
+                    value={SELECTED}
                 />
             </RadioGroup>
-            <InputContainer
-                id="proposalCreationBodies"
-                label={t('app.createDao.createProcessForm.permissions.proposalCreation.bodies.label')}
-                useCustomWrapper={true}
-                className={mode === ANY_WALLET ? 'hidden' : ''}
-                alert={permissionsAlert}
-            >
-                {processBodies.map((body) => (
-                    <PluginSingleComponent
-                        key={body.internalId}
-                        pluginId={body.plugin}
-                        slotId={CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_SETTINGS}
-                        body={body}
-                        mode={mode}
-                        disableCheckbox={processBodies.length === 1}
-                        formPrefix={getBodyFormPrefix(body.bodyIndex, body.stageIndex)}
+            {processPermission === ANY && (
+                <CardEmptyState
+                    heading={t('app.createDao.createProcessForm.permissions.anyEmptyState.heading')}
+                    description={t('app.createDao.createProcessForm.permissions.anyEmptyState.description')}
+                    objectIllustration={{ object: 'SETTINGS' }}
+                    isStacked={false}
+                />
+            )}
+            {processPermission === SELECTED && permissionSelectors.length === 0 && (
+                <CardEmptyState
+                    heading={t('app.createDao.createProcessForm.permissions.specificEmptyState.heading')}
+                    objectIllustration={{ object: 'SETTINGS' }}
+                    isStacked={false}
+                />
+            )}
+            {processPermission === SELECTED && (
+                <div className="flex flex-col gap-3">
+                    <ActionComposer
+                        daoId={daoId}
+                        onAddAction={addPermissionSelector}
+                        hideWalletConnect={true}
+                        excludeActionTypes={[ProposalActionType.TRANSFER, ActionItemId.RAW_CALLDATA]}
                     />
-                ))}
-            </InputContainer>
-        </>
+                    <InputContainer alert={fieldAlert} useCustomWrapper={true} className="w-full" id="selectors">
+                        {permissionSelectors.map((selector, index) => (
+                            <SmartContractFunctionDataListItem.Structure
+                                key={selector.id}
+                                contractAddress={selector.to}
+                                onRemove={() => removePermissionSelectorByIndex(index)}
+                                functionName={selector.inputData?.function}
+                                contractName={selector.inputData?.contract}
+                                functionParameters={selector.inputData?.parameters}
+                            />
+                        ))}
+                    </InputContainer>
+                </div>
+            )}
+        </div>
     );
 };

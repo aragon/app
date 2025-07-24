@@ -29,6 +29,14 @@ export interface IGetDaoPluginsParams {
      * Only returns the plugin with the specified interfaceType when set.
      */
     interfaceType?: PluginInterfaceType;
+    /**
+     * Only returns the plugin with the specified slug when set.
+     */
+    slug?: string;
+    /**
+     * Only returns plugins with full execute permissions when set to true.
+     */
+    hasExecute?: boolean;
 }
 
 export interface IDaoAvailableUpdates {
@@ -60,14 +68,16 @@ class DaoUtils {
     };
 
     getDaoPlugins = (dao?: IDao, params?: IGetDaoPluginsParams) => {
-        const { type, pluginAddress, includeSubPlugins = false, interfaceType } = params ?? {};
+        const { type, pluginAddress, includeSubPlugins = false, interfaceType, hasExecute, slug } = params ?? {};
 
         return dao?.plugins.filter(
             (plugin) =>
                 this.filterPluginByAddress(plugin, pluginAddress) &&
                 this.filterPluginByType(plugin, type) &&
                 this.filterBySubPlugin(plugin, includeSubPlugins) &&
-                this.filterByInterfaceType(plugin, interfaceType),
+                this.filterByInterfaceType(plugin, interfaceType) &&
+                this.filterByHasExecute(plugin, hasExecute) &&
+                this.filterBySlug(plugin, slug),
         );
     };
 
@@ -152,6 +162,11 @@ class DaoUtils {
 
     private filterByInterfaceType = (plugin: IDaoPlugin, interfaceType?: PluginInterfaceType) =>
         interfaceType == null || plugin.interfaceType === interfaceType;
+
+    private filterBySlug = (plugin: IDaoPlugin, slug?: string) => slug == null || plugin.slug === slug;
+
+    private filterByHasExecute = (plugin: IDaoPlugin, hasExecute?: boolean) =>
+        !hasExecute || plugin.conditionAddress == null;
 }
 
 export const daoUtils = new DaoUtils();

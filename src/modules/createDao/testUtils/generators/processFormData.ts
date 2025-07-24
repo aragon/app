@@ -5,6 +5,7 @@ import {
     type ICreateProcessFormDataBase,
     type ICreateProcessFormDataBasic,
     type ICreateProcessFormStage,
+    ProcessPermission,
     ProcessStageType,
     ProposalCreationMode,
 } from '../../components/createProcessForm';
@@ -19,6 +20,8 @@ export const generateCreateProcessFormDataBase = (
     resources: [],
     proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
     governanceType: GovernanceType.BASIC,
+    permissions: ProcessPermission.ANY,
+    permissionSelectors: [],
     ...values,
 });
 

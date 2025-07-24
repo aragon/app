@@ -5,6 +5,7 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { type AbiStateMutability, toFunctionSelector, zeroAddress } from 'viem';
+import type { IAllowedAction } from '../../api/executeSelectorsService';
 import {
     type IProposalAction,
     type IProposalActionUpdatePluginMetadata,
@@ -13,7 +14,7 @@ import {
 import type { ISmartContractAbi, ISmartContractAbiFunction } from '../../api/smartContractService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IActionComposerPluginData } from '../../types';
-import type { IActionComposerInputItem } from './actionComposerInput';
+import type { IActionComposerInputItem, IActionComposerInputProps } from './actionComposerInput';
 
 export enum ActionItemId {
     CUSTOM_ACTION = 'CUSTOM_ACTION',
@@ -53,12 +54,16 @@ export interface IGetCustomActionParams extends IGetActionBaseParams {
     abis: ISmartContractAbi[];
 }
 
-interface IGetActionItemsParams extends IGetCustomActionParams, IGetNativeActionItemsParams {
+interface IGetActionItemsParams
+    extends IGetCustomActionParams,
+        IGetNativeActionItemsParams,
+        Pick<IActionComposerInputProps, 'excludeActionTypes'> {}
+
+export interface IGetAllowedActionParams extends IGetActionBaseParams {
     /**
-     * Action types to exclude from the list of available actions.
-     * The filtering is based on the `defaultValue.type` of the action item.
+     * List of allowed actions to transform into action items.
      */
-    excludeActionTypes?: string[];
+    allowedActions: IAllowedAction[];
 }
 
 class ActionComposerUtils {
@@ -79,6 +84,51 @@ class ActionComposerUtils {
             pluginGroups,
             pluginComponents,
         };
+    };
+
+    getAllowedActionGroups = ({ t, dao, allowedActions }: IGetAllowedActionParams): IAutocompleteInputGroup[] => {
+        const daoAddress = dao!.address;
+        const [daoGroup] = this.getNativeActionGroups({
+            t,
+            dao,
+            nativeGroups: [],
+        });
+        const actionGroups: IAutocompleteInputGroup[] = allowedActions.map((action) =>
+            action.target === daoAddress
+                ? daoGroup
+                : this.buildCustomActionGroup({ name: action.decoded.contractName, address: action.target }),
+        );
+
+        return actionGroups;
+    };
+
+    getAllowedActionItem = ({ t, dao, allowedActions }: IGetAllowedActionParams): IActionComposerInputItem[] => {
+        const [transferItem, metadataUpdateItem] = this.getNativeActionItems({ t, dao, nativeItems: [] }).map(
+            this.infoToSelectorMapper,
+        );
+        const actionItems: IActionComposerInputItem[] = allowedActions.map((action, actionIndex) => {
+            if (action.selector === null) {
+                // native transfer
+                return transferItem;
+            }
+
+            // use native item if matches (to enable proper basic view and icon)
+            if (action.selector === metadataUpdateItem.info) {
+                return metadataUpdateItem;
+            }
+
+            const decodedAction = action.decoded;
+            const item = this.buildDefaultCustomAction(
+                { address: action.target, name: decodedAction.contractName },
+                { name: decodedAction.functionName, parameters: decodedAction.inputs },
+                actionIndex,
+            );
+            item.info = action.selector;
+
+            return item;
+        });
+
+        return actionItems;
     };
 
     getActionGroups = ({
@@ -125,13 +175,9 @@ class ActionComposerUtils {
         const allItems = [...allNonGroupItems, ...finalCustomItems, ...finalNativeItems];
 
         if (excludeActionTypes?.length) {
-            return allItems.filter((item) => {
-                if (item.defaultValue == null) {
-                    return true; // Keep items without defaultValue
-                }
-
-                return !excludeActionTypes.includes(item.defaultValue.type);
-            });
+            return allItems.filter(
+                ({ defaultValue }) => defaultValue?.type == null || !excludeActionTypes.includes(defaultValue.type),
+            );
         }
 
         return allItems;
@@ -228,6 +274,10 @@ class ActionComposerUtils {
             return undefined;
         }
 
+        if (item.info) {
+            return item.info;
+        }
+
         const { inputData } = item.defaultValue;
 
         return toFunctionSelector({
@@ -240,12 +290,14 @@ class ActionComposerUtils {
     };
 
     private getCustomActionGroups = ({ abis }: IGetCustomActionParams): IAutocompleteInputGroup[] =>
-        abis.map((abi) => ({
-            id: abi.address,
-            name: abi.name,
-            info: addressUtils.truncateAddress(abi.address),
-            indexData: [abi.address],
-        }));
+        abis.map(this.buildCustomActionGroup);
+
+    private buildCustomActionGroup = ({ address, name }: Pick<ISmartContractAbi, 'address' | 'name'>) => ({
+        id: address,
+        name: name,
+        info: addressUtils.truncateAddress(address),
+        indexData: [address],
+    });
 
     private getCustomActionItems = ({ abis, t }: IGetCustomActionParams): IActionComposerInputItem[] => {
         const customActionItems = abis.map((abi) => {
@@ -335,7 +387,7 @@ class ActionComposerUtils {
     };
 
     private buildDefaultCustomAction = (
-        { address: contractAddress, name: contractName }: ISmartContractAbi,
+        { address: contractAddress, name: contractName }: Pick<ISmartContractAbi, 'address' | 'name'>,
         { name: functionName, stateMutability, parameters }: ISmartContractAbiFunction,
         index: number,
     ): IActionComposerInputItem => ({

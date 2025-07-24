@@ -2,8 +2,9 @@ import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { DefinitionList, Dialog, invariant, StateSkeletonBar } from '@aragon/gov-ui-kit';
+import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
+import { PermissionsDefinitionList } from '../../components/permissionsDefinitionList';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 
 export interface IPermissionCheckDialogParams extends IPermissionCheckGuardParams {
@@ -70,39 +71,11 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
         ? undefined
         : { label: t('app.governance.permissionCheckDialog.action'), onClick: handleDialogClose };
 
-    const hasSettingsGroups = settings.length > 1;
-
     return (
         <>
             <Dialog.Header title={title} />
-            <Dialog.Content description={description} className="pb-4 md:pb-6">
-                {isLoading && (
-                    <div className="flex w-full flex-col gap-y-2">
-                        <StateSkeletonBar width="40%" size="lg" />
-                        <StateSkeletonBar width="65%" size="lg" />
-                    </div>
-                )}
-                {!isLoading &&
-                    settings.map((settingsGroup, groupIndex) => (
-                        <div key={groupIndex} className="flex flex-col gap-y-1">
-                            <DefinitionList.Container>
-                                {settingsGroup.map(({ term, definition, link }, settingIndex) => (
-                                    <DefinitionList.Item key={settingIndex} term={term} link={link}>
-                                        {definition}
-                                    </DefinitionList.Item>
-                                ))}
-                            </DefinitionList.Container>
-                            {hasSettingsGroups && groupIndex < settings.length - 1 && (
-                                <div className="my-2 flex items-center">
-                                    <div className="grow border-t border-neutral-100" />
-                                    <span className="mx-2 text-neutral-500">
-                                        {t('app.governance.permissionCheckDialog.or')}
-                                    </span>
-                                    <div className="grow border-t border-neutral-100" />
-                                </div>
-                            )}
-                        </div>
-                    ))}
+            <Dialog.Content description={description} className="pb-3">
+                <PermissionsDefinitionList isLoading={isLoading} settings={settings} />
             </Dialog.Content>
             <Dialog.Footer primaryAction={footerAction} />
         </>

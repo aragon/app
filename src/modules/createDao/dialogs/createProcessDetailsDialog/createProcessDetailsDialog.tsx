@@ -43,6 +43,10 @@ export const CreateProcessDetailsDialog: React.FC<ICreateProcessDetailsDialogPro
             label: t('app.createDao.createProcessDetailsDialog.steps.designate'),
             icon: 'SETTINGS',
         },
+        {
+            label: t('app.createDao.createProcessDetailsDialog.steps.permissions'),
+            icon: 'SMART_CONTRACT',
+        },
     ];
 
     return (
