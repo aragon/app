@@ -57,6 +57,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     } = useFieldArray<ICreateProcessFormData, 'permissionSelectors'>({
         name: 'permissionSelectors',
         rules: {
+            required: processPermission === SELECTED,
             validate: (selectors) => validateSelectors(selectors),
         },
     });
