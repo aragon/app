@@ -39,6 +39,16 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         remove: removePermissionSelector,
     } = useFieldArray<ICreateProcessFormData, 'permissionSelectors'>({
         name: 'permissionSelectors',
+        rules: {
+            required: processPermission === SELECTED,
+            validate: (selectors) => {
+                const isAlreadyInList = selectors.some(
+                    (selector, index) =>
+                        selectors.findIndex((sel) => sel.to === selector.to && sel.type === selector.type) !== index,
+                );
+                return !isAlreadyInList || 'app.createDao.createProcessForm.permissions.permissionField.error.invalid';
+            },
+        },
     });
 
     const addPermissionSelector = (actions: IProposalActionData[]) => appendPermissionSelector(actions);
