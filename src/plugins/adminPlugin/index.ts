@@ -5,9 +5,9 @@ import { useAdminPermissionCheckProposalCreation } from '@/plugins/adminPlugin/h
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { AdminGovernanceInfo } from './components/adminGovernanceInfo';
 import { AdminMemberInfo } from './components/adminMemberInfo';
+import { AdminProcessBodyField } from './components/adminProcessBodyField';
 import { AdminSettingsPanel } from './components/adminSettingsPanel';
 import { AdminVotingTerminal } from './components/adminVotingTerminal';
-import { AdminProcessBodyField } from './components/tokenProcessBodyField/adminProcessBodyField';
 import { adminPlugin } from './constants/adminPlugin';
 import { useAdminGovernanceSettings } from './hooks/useAdminGovernanceSettings';
 import { adminProposalUtils } from './utils/adminProposalUtils';
