@@ -14,4 +14,9 @@ export interface IPermissionCheckGuardParams<TPluginSettings extends IPluginSett
      * Proposal to check permissions for.
      */
     proposal?: IProposal<TPluginSettings>;
+    /**
+     * Whether to show the connected user's permissions info.
+     * @default true
+     */
+    useConnectedUserInfo?: boolean;
 }

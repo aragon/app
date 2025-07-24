@@ -3,9 +3,10 @@
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { addressUtils, Button, IconType } from '@aragon/gov-ui-kit';
+import { addressUtils, Button, IconType, Switch } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { IAllowedAction } from '../../../api/executeSelectorsService';
 import { type IProposalAction } from '../../../api/governanceService';
 import type { ISmartContractAbi } from '../../../api/smartContractService';
 import { GovernanceDialogId } from '../../../constants/governanceDialogId';
@@ -17,9 +18,9 @@ import {
     type IActionComposerInputItem,
     type IActionComposerInputProps,
 } from '../actionComposerInput';
-import { ActionItemId } from '../actionComposerUtils';
+import { actionComposerUtils, ActionItemId } from '../actionComposerUtils';
 
-export interface IActionComposerProps extends Pick<IActionComposerInputProps, 'nativeGroups' | 'nativeItems'> {
+export interface IActionComposerProps extends Pick<IActionComposerInputProps, 'excludeActionTypes'> {
     /**
      * ID of the DAO.
      */
@@ -33,13 +34,19 @@ export interface IActionComposerProps extends Pick<IActionComposerInputProps, 'n
      * If true, hides the WalletConnect button.
      */
     hideWalletConnect?: boolean;
+    /**
+     * Allowed actions to show instead of default actions.
+     */
+    allowedActions?: IAllowedAction[];
 }
 
 export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
-    const { daoId, onAddAction, nativeGroups, nativeItems, hideWalletConnect = false } = props;
+    const { daoId, onAddAction, excludeActionTypes, hideWalletConnect = false, allowedActions } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
+
+    const { pluginItems, pluginGroups } = actionComposerUtils.getPluginActionsFromDao(dao);
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -47,6 +54,13 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
 
     const [displayActionComposer, setDisplayActionComposer] = useState(false);
+    const [onlyShowAuthorizedActions, setOnlyShowAuthorizedActions] = useState(allowedActions != null);
+
+    useEffect(() => {
+        if (allowedActions != null) {
+            setOnlyShowAuthorizedActions(true);
+        }
+    }, [allowedActions]);
 
     const [importedContractAbis, setImportedContractAbis] = useState<ISmartContractAbi[]>([]);
 
@@ -105,21 +119,35 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         }
     };
 
+    const shouldRenderWalletConnect = !(hideWalletConnect || onlyShowAuthorizedActions);
+
     return (
         <>
-            <div className={classNames('flex flex-row gap-3', { hidden: displayActionComposer })}>
-                <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={handleAddAction}>
-                    {t('app.governance.actionComposer.addAction.default')}
-                </Button>
-                {!hideWalletConnect && (
-                    <Button
-                        variant="secondary"
-                        size="md"
-                        iconRight={IconType.BLOCKCHAIN_WALLETCONNECT}
-                        onClick={displayWalletConnectDialog}
-                    >
-                        {t('app.governance.actionComposer.addAction.walletConnect')}
+            <div className={classNames('flex items-center justify-between', { hidden: displayActionComposer })}>
+                <div className="flex flex-row gap-3">
+                    <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={handleAddAction}>
+                        {t('app.governance.actionComposer.addAction.default')}
                     </Button>
+                    {shouldRenderWalletConnect && (
+                        <Button
+                            variant="secondary"
+                            size="md"
+                            iconRight={IconType.BLOCKCHAIN_WALLETCONNECT}
+                            onClick={displayWalletConnectDialog}
+                        >
+                            {t('app.governance.actionComposer.addAction.walletConnect')}
+                        </Button>
+                    )}
+                </div>
+                {allowedActions && (
+                    // wrapper div needed here to tackle grow css prop in InputContainer inside Switch, which we cannot override
+                    <div>
+                        <Switch
+                            checked={onlyShowAuthorizedActions}
+                            onCheckedChanged={setOnlyShowAuthorizedActions}
+                            inlineLabel={t('app.governance.actionComposer.authorizedSwitchLabel')}
+                        />
+                    </div>
                 )}
             </div>
             <ActionComposerInput
@@ -127,10 +155,12 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 onActionSelected={handleItemSelected}
                 onOpenChange={setDisplayActionComposer}
                 ref={autocompleteInputRef}
-                nativeItems={nativeItems}
-                nativeGroups={nativeGroups}
+                nativeItems={pluginItems}
+                nativeGroups={pluginGroups}
+                allowedActions={onlyShowAuthorizedActions ? allowedActions : undefined}
                 daoId={daoId}
                 importedContractAbis={importedContractAbis}
+                excludeActionTypes={excludeActionTypes}
             />
         </>
     );

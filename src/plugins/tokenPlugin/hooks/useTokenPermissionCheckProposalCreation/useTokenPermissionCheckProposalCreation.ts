@@ -15,7 +15,7 @@ export interface ITokenPermissionCheckProposalCreationParams
 export const useTokenPermissionCheckProposalCreation = (
     params: ITokenPermissionCheckProposalCreationParams,
 ): IPermissionCheckGuardResult => {
-    const { plugin, daoId } = params;
+    const { plugin, daoId, useConnectedUserInfo = true } = params;
 
     const { address } = useAccount();
     const { t } = useTranslations();
@@ -66,7 +66,7 @@ export const useTokenPermissionCheckProposalCreation = (
         format: NumberFormat.TOKEN_AMOUNT_SHORT,
     });
 
-    const settings = [
+    const defaultSettings = [
         {
             term: t('app.plugins.token.tokenPermissionCheckProposalCreation.pluginNameLabel'),
             definition: pluginName,
@@ -75,6 +75,9 @@ export const useTokenPermissionCheckProposalCreation = (
             term: t('app.plugins.token.tokenPermissionCheckProposalCreation.function'),
             definition: `≥${minTokenRequired}`,
         },
+    ];
+
+    const connectedUserSettings = [
         {
             term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userVotingPower'),
             definition: `${formattedMemberVotingPower ?? '0'} ${tokenSymbol}`,
@@ -85,11 +88,13 @@ export const useTokenPermissionCheckProposalCreation = (
         },
     ];
 
+    const processedSettings = useConnectedUserInfo ? defaultSettings.concat(connectedUserSettings) : defaultSettings;
+
     const isRestricted = BigInt(minProposerVotingPower) > 0;
 
     return {
         hasPermission: canCreateProposal?.status === true,
-        settings: [settings],
+        settings: [processedSettings],
         isLoading,
         isRestricted,
     };

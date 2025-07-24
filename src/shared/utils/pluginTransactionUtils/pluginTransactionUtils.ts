@@ -64,11 +64,11 @@ class PluginTransactionUtils {
         return transactionData;
     };
 
-    getPluginTargetConfig = (dao: IDao, isAdvancedGovernace?: boolean) => {
+    getPluginTargetConfig = (dao: IDao, isAdvancedGovernance?: boolean) => {
         const { globalExecutor } = networkDefinitions[dao.network].addresses;
 
-        const target = isAdvancedGovernace ? globalExecutor : (dao.address as Hex);
-        const operation = isAdvancedGovernace ? this.targetOperation.delegateCall : this.targetOperation.call;
+        const target = isAdvancedGovernance ? globalExecutor : (dao.address as Hex);
+        const operation = isAdvancedGovernance ? this.targetOperation.delegateCall : this.targetOperation.call;
 
         return { target, operation };
     };
@@ -76,7 +76,7 @@ class PluginTransactionUtils {
     buildApplyPluginsInstallationActions = (
         params: IBuildApplyPluginsInstallationActionsParams,
     ): ITransactionRequest[] => {
-        const { dao, setupData, actions = [] } = params;
+        const { dao, setupData, actions = [], executeConditionAddress } = params;
         const daoAddress = dao.address as Hex;
 
         const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
@@ -89,9 +89,25 @@ class PluginTransactionUtils {
             to: daoAddress,
         });
 
+        /* If executeConditionAddress is provided, we need to revoke the execute permission and grant it with the condition. The first plugin in the setupData is either the SPP or the plugin for basic governance processes. */
+        const needsExecuteCondition = executeConditionAddress != null;
+        const executeWithConditionTransactions = needsExecuteCondition
+            ? permissionTransactionUtils.buildExecuteConditionTransactions({
+                  dao: daoAddress,
+                  plugin: setupData[0].pluginAddress,
+                  executeCondition: executeConditionAddress,
+              })
+            : [];
+
         const applyInstallationActions = setupData.map((data) => this.setupInstallationDataToAction(data, dao));
 
-        return [grantRootTx, ...applyInstallationActions, ...actions, revokeRootTx];
+        return [
+            grantRootTx,
+            ...applyInstallationActions,
+            ...actions,
+            revokeRootTx,
+            ...executeWithConditionTransactions,
+        ];
     };
 
     buildApplyPluginsUpdateActions = (params: IBuildApplyPluginsUpdateActionsParams): ITransactionRequest[] => {

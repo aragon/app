@@ -21,8 +21,6 @@ describe('ActionComposer', () => {
         const completeProps: IActionComposerProps = {
             daoId: 'dao-1',
             onAddAction: jest.fn(),
-            nativeGroups: [],
-            nativeItems: [],
             ...props,
         };
 

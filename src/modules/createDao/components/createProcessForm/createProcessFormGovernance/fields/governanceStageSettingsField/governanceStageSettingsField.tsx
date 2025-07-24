@@ -15,6 +15,11 @@ export interface IGovernanceStageSettingsFieldProps {
      * Prefix to be prepended to the form field.
      */
     formPrefix: string;
+    /**
+     * If the component field is read-only.
+     * @default false
+     */
+    readOnly?: boolean;
 }
 
 const requiredApprovalsDefaultValue = 1;
@@ -30,7 +35,7 @@ const formatDuration = (duration: IDateDuration): string => {
 };
 
 export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFieldProps> = (props) => {
-    const { formPrefix } = props;
+    const { formPrefix, readOnly = false } = props;
 
     const fieldPrefix = `${formPrefix}.settings`;
 
@@ -153,9 +158,11 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
                     </DefinitionList.Item>
                 )}
             </DefinitionList.Container>
-            <Button onClick={handleSettingsDialogOpen} variant="tertiary" size="md">
-                {t('app.createDao.createProcessForm.governance.stageSettingsField.edit')}
-            </Button>
+            {!readOnly && (
+                <Button onClick={handleSettingsDialogOpen} variant="tertiary" size="md">
+                    {t('app.createDao.createProcessForm.governance.stageSettingsField.edit')}
+                </Button>
+            )}
         </InputContainer>
     );
 };
