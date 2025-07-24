@@ -1,5 +1,5 @@
 ---
-'@aragon/app-next': minor
+'@aragon/app-next': patch
 ---
 
-Improve isMinParticationReach utils handling of floats
+Correctly handle decimal values for `minParticipation` setting on token-voting plugin

@@ -208,24 +208,24 @@ describe('tokenProposal utils', () => {
         });
 
         it('returns true when total votes is greater than min participation required', () => {
-            const settings = generateTokenPluginSettings({ minParticipation: 150000, historicalTotalSupply: '1000' });
-            const totalVotes = BigInt('200');
+            const settings = generateTokenPluginSettings({ minParticipation: 150000, historicalTotalSupply: '1000' }); // 15%
+            const totalVotes = BigInt('200'); // 20% of total-supply
             const proposal = generateTokenProposal({ settings });
             getTotalVotesSpy.mockReturnValue(totalVotes);
             expect(tokenProposalUtils.isMinParticipationReached(proposal)).toBeTruthy();
         });
 
         it('returns true when total votes is equal to min participation required', () => {
-            const settings = generateTokenPluginSettings({ minParticipation: 500000, historicalTotalSupply: '1000' });
-            const totalVotes = BigInt('500');
+            const settings = generateTokenPluginSettings({ minParticipation: 500000, historicalTotalSupply: '1000' }); // 50%
+            const totalVotes = BigInt('500'); // 50% of total-supply
             const proposal = generateTokenProposal({ settings });
             getTotalVotesSpy.mockReturnValue(totalVotes);
             expect(tokenProposalUtils.isMinParticipationReached(proposal)).toBeTruthy();
         });
 
         it('returns false when total votes is less than min participation required', () => {
-            const settings = generateTokenPluginSettings({ minParticipation: 300000, historicalTotalSupply: '1000' });
-            const totalVotes = BigInt('290');
+            const settings = generateTokenPluginSettings({ minParticipation: 300000, historicalTotalSupply: '1000' }); // 30%
+            const totalVotes = BigInt('290'); // 29% of total-supply
             const proposal = generateTokenProposal({ settings });
             getTotalVotesSpy.mockReturnValue(totalVotes);
             expect(tokenProposalUtils.isMinParticipationReached(proposal)).toBeFalsy();
@@ -237,15 +237,13 @@ describe('tokenProposal utils', () => {
             expect(tokenProposalUtils.isMinParticipationReached(proposal)).toBeFalsy();
         });
 
-        it('returns true when computed threshold < 1 (sub‑1 threshold)', () => {
-            const settings = generateTokenPluginSettings({
-                historicalTotalSupply: '500',
-                minParticipation: 1390, // raw threshold = 500*1390/1e6 = 0.695 → floored to 0
-            });
+        it('supports decimal values for the min-participation setting', () => {
+            const settings = generateTokenPluginSettings({ minParticipation: 5000, historicalTotalSupply: '1000' }); // 0.5%
             const proposal = generateTokenProposal({ settings });
-
-            getTotalVotesSpy.mockReturnValue(BigInt(0));
+            getTotalVotesSpy.mockReturnValueOnce(BigInt('5')); // 0.5% of total-supply
             expect(tokenProposalUtils.isMinParticipationReached(proposal)).toBeTruthy();
+            getTotalVotesSpy.mockReturnValueOnce(BigInt('4')); // 0.4% of total-supply
+            expect(tokenProposalUtils.isMinParticipationReached(proposal)).toBeFalsy();
         });
     });
 
