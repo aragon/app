@@ -59,6 +59,12 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
         <Accordion.Container isMulti={true} defaultValue={readOnly ? [body.internalId] : undefined}>
             <Accordion.Item value={body.internalId}>
                 <Accordion.ItemHeader>
+                    {/*
+                    Based on body.type, we handle three scenarios:
+                    1. NEW:         use fetched plugin info (plugin?.id, plugin?.installVersion) and hide name & address.
+                    2. EXTERNAL:    use the passed-in plugin ID, hide name, address, release & build.
+                    3. EXISTING:    use all values directly from body (plugin, name, address, release, build).
+                    */}
                     <GovernanceBodyInfo
                         subdomain={isNew ? plugin?.id : body.plugin}
                         name={isExternal ? undefined : body.name}

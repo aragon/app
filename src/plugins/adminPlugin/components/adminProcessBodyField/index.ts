@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-export const TokenProcessBodyField = dynamic(() =>
+export const AdminProcessBodyField = dynamic(() =>
     import('./adminProcessBodyField').then((mod) => mod.AdminProcessBodyField),
 );
 
