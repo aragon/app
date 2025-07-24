@@ -27,7 +27,7 @@ export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerI
         : actionComposerUtils.getActionGroups({ t, dao, abis: importedContractAbis, nativeGroups });
 
     const items = allowedActions
-        ? actionComposerUtils.getAllowedActionItem({ t, dao, allowedActions })
+        ? actionComposerUtils.getAllowedActionItems({ t, dao, allowedActions })
         : actionComposerUtils.getActionItems({
               t,
               dao,
