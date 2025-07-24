@@ -183,12 +183,15 @@ class PrepareProcessDialogUtils {
     private buildDeployExecuteSelectorConditionData = (params: IBuildDeployExecuteSelectorConditionDataParams) => {
         const { dao, permissionSelectors } = params;
 
-        const selectors = permissionSelectors.map((selector) => this.actionToFunctionSelector(selector));
+        const selectorTargets = permissionSelectors.map((selector) => ({
+            where: selector.to as Hex,
+            selectors: [this.actionToFunctionSelector(selector)],
+        }));
 
         const transactionData = encodeFunctionData({
             abi: conditionFactoryAbi,
             functionName: 'deployExecuteSelectorCondition',
-            args: [dao.address as Hex, [{ where: dao.address as Hex, selectors }]],
+            args: [dao.address as Hex, selectorTargets],
         });
 
         return transactionData;

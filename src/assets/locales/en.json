@@ -296,6 +296,9 @@
           "permissionField": {
             "anyDescription": "Any action can be added to proposals",
             "anyLabel": "Any action",
+            "error": {
+              "invalid": "Duplicate actions found in list"
+            },
             "helpText": "Each action is defined by a function selector on a specific smart contract address.",
             "label": "Authorized actions",
             "specificDescription": "Selected actions can be added to proposals",
