@@ -112,7 +112,7 @@ class ActionComposerUtils {
         allowedActions,
         nativeItems,
     }: IGetAllowedActionItemsParams): IActionComposerInputItem[] => {
-        const [transferItem, ...nativeActioItemsWithoutTransfer] = this.getNativeActionItems({
+        const [transferItem, ...nativeActionItemsWithoutTransfer] = this.getNativeActionItems({
             t,
             dao,
             nativeItems,
@@ -124,7 +124,7 @@ class ActionComposerUtils {
             }
 
             // use native item if available (to enable proper basic view and icon)
-            const nativeItem = nativeActioItemsWithoutTransfer.find((item) => item.info === action.selector);
+            const nativeItem = nativeActionItemsWithoutTransfer.find((item) => item.info === action.selector);
 
             if (nativeItem) {
                 return nativeItem;
