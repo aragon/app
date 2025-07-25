@@ -119,7 +119,7 @@ class ActionComposerUtils {
         }).map(this.infoToSelectorMapper);
         const actionItems: IActionComposerInputItem[] = allowedActions.map((action, actionIndex) => {
             if (action.selector === null) {
-                // in the native transfer case we return the transfer item, which would allow ERC20 transfer too, but only native transfer would actually work!
+                // Return transfer item for native transfers (ERC20 transfers shown but only native will work)
                 return transferItem;
             }
 

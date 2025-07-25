@@ -128,7 +128,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         ...pluginComponents,
     };
 
-    // Don't render action composer if it waits for allowed actions to be fetched!
+    // Don't render action composer while it waits for allowed actions to be fetched
     const showActionComposer = !hasConditionalPermissions || allowedActions != null;
 
     return (
