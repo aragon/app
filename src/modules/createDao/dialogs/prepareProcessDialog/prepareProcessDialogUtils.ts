@@ -183,7 +183,6 @@ class PrepareProcessDialogUtils {
     private buildDeployExecuteSelectorConditionData = (params: IBuildDeployExecuteSelectorConditionDataParams) => {
         const { dao, permissionSelectors } = params;
 
-        // Group selectors by target address (action.to) to avoid duplicates
         const groupedByAddress = Object.groupBy(permissionSelectors, (selector) => selector.to);
 
         const selectorTargets = Object.entries(groupedByAddress).map(([address, selectors]) => ({
