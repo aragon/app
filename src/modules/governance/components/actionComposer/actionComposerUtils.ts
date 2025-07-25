@@ -98,7 +98,7 @@ class ActionComposerUtils {
             nativeGroups: [],
         });
         const actionGroups: IAutocompleteInputGroup[] = allowedActions.map((action) =>
-            action.target === daoAddress
+            addressUtils.isAddressEqual(action.target, daoAddress)
                 ? daoGroup
                 : this.buildCustomActionGroup({ name: action.decoded.contractName, address: action.target }),
         );
@@ -124,7 +124,9 @@ class ActionComposerUtils {
             }
 
             // use native item if available (to enable proper basic view and icon)
-            const nativeItem = nativeActionItemsWithoutTransfer.find((item) => item.info === action.selector);
+            const nativeItem = nativeActionItemsWithoutTransfer.find(
+                (item) => addressUtils.isAddressEqual(item.groupId, action.target) && item.info === action.selector,
+            );
 
             if (nativeItem) {
                 return nativeItem;
