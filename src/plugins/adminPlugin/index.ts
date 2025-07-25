@@ -1,11 +1,9 @@
-import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { useAdminPermissionCheckProposalCreation } from '@/plugins/adminPlugin/hooks/useAdminPermissionCheckProposalCreation';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { AdminGovernanceInfo } from './components/adminGovernanceInfo';
 import { AdminMemberInfo } from './components/adminMemberInfo';
-import { AdminProcessBodyField } from './components/adminProcessBodyField';
 import { AdminSettingsPanel } from './components/adminSettingsPanel';
 import { AdminVotingTerminal } from './components/adminVotingTerminal';
 import { adminPlugin } from './constants/adminPlugin';
@@ -38,13 +36,6 @@ export const initialiseAdminPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
             pluginId: adminPlugin.id,
             function: useAdminPermissionCheckProposalCreation,
-        })
-
-        // Create DAO module slots
-        .registerSlotComponent({
-            slotId: CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD,
-            pluginId: adminPlugin.id,
-            component: AdminProcessBodyField,
         })
 
         // Settings module slots
