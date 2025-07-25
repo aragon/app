@@ -48,7 +48,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const [expandedActions, setExpandedActions] = useState<string[]>([]);
 
     const { data: allowedActionsData } = useAllowedActions(
-        { urlParams: { network: dao!.network, pluginAddress }, queryParams: {} },
+        { urlParams: { network: dao!.network, pluginAddress }, queryParams: { pageSize: 50 } },
         { enabled: hasConditionalPermissions },
     );
 
@@ -128,6 +128,9 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         ...pluginComponents,
     };
 
+    // Don't render action composer while it waits for allowed actions to be fetched
+    const showActionComposer = !hasConditionalPermissions || allowedActions != null;
+
     return (
         <div className="flex flex-col gap-y-10">
             <ProposalActions.Root expandedActions={expandedActions} onExpandedActionsChange={setExpandedActions}>
@@ -146,7 +149,9 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                     ))}
                 </ProposalActions.Container>
             </ProposalActions.Root>
-            <ActionComposer daoId={daoId} onAddAction={handleAddAction} allowedActions={allowedActions} />
+            {showActionComposer && (
+                <ActionComposer daoId={daoId} onAddAction={handleAddAction} allowedActions={allowedActions} />
+            )}
         </div>
     );
 };

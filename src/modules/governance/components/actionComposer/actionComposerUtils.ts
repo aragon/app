@@ -59,12 +59,16 @@ interface IGetActionItemsParams
         IGetNativeActionItemsParams,
         Pick<IActionComposerInputProps, 'excludeActionTypes'> {}
 
-export interface IGetAllowedActionParams extends IGetActionBaseParams {
+export interface IGetAllowedActionBaseParams extends IGetActionBaseParams {
     /**
      * List of allowed actions to transform into action items.
      */
     allowedActions: IAllowedAction[];
 }
+
+export interface IGetAllowedActionItemsParams
+    extends IGetAllowedActionBaseParams,
+        Pick<IGetNativeActionItemsParams, 'nativeItems'> {}
 
 class ActionComposerUtils {
     getPluginActionsFromDao = (dao?: IDao) => {
@@ -86,7 +90,7 @@ class ActionComposerUtils {
         };
     };
 
-    getAllowedActionGroups = ({ t, dao, allowedActions }: IGetAllowedActionParams): IAutocompleteInputGroup[] => {
+    getAllowedActionGroups = ({ t, dao, allowedActions }: IGetAllowedActionBaseParams): IAutocompleteInputGroup[] => {
         const daoAddress = dao!.address;
         const [daoGroup] = this.getNativeActionGroups({
             t,
@@ -94,7 +98,7 @@ class ActionComposerUtils {
             nativeGroups: [],
         });
         const actionGroups: IAutocompleteInputGroup[] = allowedActions.map((action) =>
-            action.target === daoAddress
+            addressUtils.isAddressEqual(action.target, daoAddress)
                 ? daoGroup
                 : this.buildCustomActionGroup({ name: action.decoded.contractName, address: action.target }),
         );
@@ -102,19 +106,30 @@ class ActionComposerUtils {
         return actionGroups;
     };
 
-    getAllowedActionItem = ({ t, dao, allowedActions }: IGetAllowedActionParams): IActionComposerInputItem[] => {
-        const [transferItem, metadataUpdateItem] = this.getNativeActionItems({ t, dao, nativeItems: [] }).map(
-            this.infoToSelectorMapper,
-        );
+    getAllowedActionItems = ({
+        t,
+        dao,
+        allowedActions,
+        nativeItems,
+    }: IGetAllowedActionItemsParams): IActionComposerInputItem[] => {
+        const [transferItem, ...otherNativeActionItems] = this.getNativeActionItems({
+            t,
+            dao,
+            nativeItems,
+        }).map(this.infoToSelectorMapper);
         const actionItems: IActionComposerInputItem[] = allowedActions.map((action, actionIndex) => {
             if (action.selector === null) {
-                // native transfer
+                // Return transfer item for native transfers (ERC20 transfers shown but only native will work)
                 return transferItem;
             }
 
-            // use native item if matches (to enable proper basic view and icon)
-            if (action.selector === metadataUpdateItem.info) {
-                return metadataUpdateItem;
+            // use native item if available (to enable proper basic view and icon)
+            const nativeItem = otherNativeActionItems.find(
+                (item) => addressUtils.isAddressEqual(item.groupId, action.target) && item.info === action.selector,
+            );
+
+            if (nativeItem) {
+                return nativeItem;
             }
 
             const decodedAction = action.decoded;
