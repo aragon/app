@@ -118,7 +118,7 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
                         </Card>
                     </Page.MainSection>
                     <Page.MainSection title={t('app.settings.daoProcessDetailsPage.section.actions')}>
-                        <DaoProcessAllowedActions pluginAddress={plugin.address} network={dao!.network} />
+                        <DaoProcessAllowedActions plugin={plugin} network={dao!.network} />
                     </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>

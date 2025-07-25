@@ -1,7 +1,13 @@
-import type { Network } from '@/shared/api/daoService';
+import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
+import { type IDaoPlugin, type Network } from '@/shared/api/daoService';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { DataList, SmartContractFunctionDataListItem } from '@aragon/gov-ui-kit';
-import { useAllowedActionsListData } from '../../hooks/useAllowedActionsListData';
+import { dataListUtils } from '@/shared/utils/dataListUtils';
+import {
+    DataList,
+    SmartContractFunctionDataListItem,
+    type IEmptyStateObjectIllustrationProps,
+} from '@aragon/gov-ui-kit';
 
 export interface IDaoProcessAllowedActionsProps {
     /**
@@ -11,21 +17,57 @@ export interface IDaoProcessAllowedActionsProps {
     /**
      * Address of the process.
      */
-    pluginAddress: string;
+    plugin: IDaoPlugin;
 }
 
 export const DaoProcessAllowedActions: React.FC<IDaoProcessAllowedActionsProps> = (props) => {
-    const { network, pluginAddress } = props;
+    const { network, plugin } = props;
 
-    const { allowedActionsList, itemsCount, onLoadMore, state, emptyState } = useAllowedActionsListData({
-        urlParams: { network, pluginAddress },
+    const { t } = useTranslations();
+
+    const initialParams = {
+        urlParams: {
+            network,
+            pluginAddress: plugin.address,
+        },
         queryParams: {},
+    };
+    const { data, status, fetchStatus, isLoading, isFetchingNextPage, fetchNextPage } = useAllowedActions(
+        initialParams,
+        {
+            enabled: plugin.conditionAddress != null,
+        },
+    );
+
+    const allowedActionsList = data?.pages.flatMap((page) => page.data);
+
+    const state = dataListUtils.queryToDataListState({
+        status,
+        fetchStatus,
+        isFetchingNextPage,
     });
+
+    console.log('stateee', state);
+
+    const itemsCount = data?.pages[0].metadata.totalRecords;
+
+    const emptyState: IEmptyStateObjectIllustrationProps = {
+        isStacked: false,
+        heading: t('app.settings.daoProcessAllowedActions.emptyState.heading'),
+        description: t('app.settings.daoProcessAllowedActions.emptyState.description'),
+        objectIllustration: { object: 'SETTINGS' },
+    };
 
     const chainId = networkDefinitions[network].id;
 
     return (
-        <DataList.Root entityLabel="" pageSize={12} onLoadMore={onLoadMore} itemsCount={itemsCount} state={state}>
+        <DataList.Root
+            entityLabel=""
+            pageSize={isLoading ? 3 : 12}
+            onLoadMore={fetchNextPage}
+            itemsCount={itemsCount}
+            state={plugin.conditionAddress == null ? 'idle' : state}
+        >
             <DataList.Container emptyState={emptyState} SkeletonElement={SmartContractFunctionDataListItem.Skeleton}>
                 {allowedActionsList?.map((action, index) => (
                     <SmartContractFunctionDataListItem.Structure
