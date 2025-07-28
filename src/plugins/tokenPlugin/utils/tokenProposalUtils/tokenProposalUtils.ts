@@ -57,15 +57,18 @@ class TokenProposalUtils {
     isMinParticipationReached = (proposal: ITokenProposal): boolean => {
         const { minParticipation, historicalTotalSupply } = proposal.settings;
 
+        // Don't do the ratio-to-percentage conversion here as the minParticipation can be a value with decimals and
+        // the BigInt contructor does not support such values.
+        const parsedMinParticipation = BigInt(minParticipation);
         const parsedTotalSupply = BigInt(historicalTotalSupply!);
-        const parsedMinParticipation = BigInt(tokenSettingsUtils.ratioToPercentage(minParticipation));
 
         if (parsedTotalSupply === BigInt(0)) {
             return false;
         }
 
         const totalVotes = this.getTotalVotes(proposal);
-        const minVotingPower = (parsedTotalSupply * parsedMinParticipation) / BigInt(100);
+        const minVotingPower =
+            (parsedTotalSupply * parsedMinParticipation) / BigInt(tokenSettingsUtils.percentageToRatio(100));
 
         return totalVotes >= minVotingPower;
     };

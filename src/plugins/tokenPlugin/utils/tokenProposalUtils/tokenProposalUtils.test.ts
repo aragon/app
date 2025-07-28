@@ -236,6 +236,15 @@ describe('tokenProposal utils', () => {
             const proposal = generateTokenProposal({ settings });
             expect(tokenProposalUtils.isMinParticipationReached(proposal)).toBeFalsy();
         });
+
+        it('supports decimal values for the min-participation setting', () => {
+            const settings = generateTokenPluginSettings({ minParticipation: 5000, historicalTotalSupply: '1000' }); // 0.5%
+            const proposal = generateTokenProposal({ settings });
+            getTotalVotesSpy.mockReturnValueOnce(BigInt('5')); // 0.5% of total-supply
+            expect(tokenProposalUtils.isMinParticipationReached(proposal)).toBeTruthy();
+            getTotalVotesSpy.mockReturnValueOnce(BigInt('4')); // 0.4% of total-supply
+            expect(tokenProposalUtils.isMinParticipationReached(proposal)).toBeFalsy();
+        });
     });
 
     describe('isSupportReached', () => {
