@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-# Colors for output\ nRED='\033[0;31m'
+# Colors for output
+RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 echo -e "${BLUE}🔧 Aragon Plugin Scaffolder${NC}\n"
 
@@ -13,7 +14,6 @@ echo -e "${BLUE}🔧 Aragon Plugin Scaffolder${NC}\n"
 ##########################################
 
 # (Prompts for plugin name in camelCase, validates, and confirms)
-    #
 while true; do
   read -p "Plugin name (camelCase, e.g., lockToVote): " PLUGIN_NAME
 
@@ -115,7 +115,7 @@ export const initialise${PASCAL_NAME}Plugin = () => {
 };
 EOF
 
-# constants/pluginDialogId.ts
+# {PLUGIN_NAME}/constants/pluginDialogId.ts
 # (Creates file with TODO enum block for dialog IDs)
 dialog_id_file="$PLUGIN_DIR/constants/${PLUGIN_NAME}PluginDialogId.ts"
 cat > "$dialog_id_file" <<EOF
@@ -125,7 +125,7 @@ cat > "$dialog_id_file" <<EOF
 // }
 EOF
 
-# constants/pluginDialogsDefinitions.ts
+# {PLUGIN_NAME}/constants/pluginDialogsDefinitions.ts
 # (Creates file with TODO record for dialog components)
 dialogs_def_file="$PLUGIN_DIR/constants/${PLUGIN_NAME}PluginDialogsDefinitions.ts"
 cat > "$dialogs_def_file" <<EOF
@@ -145,7 +145,7 @@ cat > "$dialogs_def_file" <<EOF
 // };
 EOF
 
-# constants/${PLUGIN_NAME}Plugin.ts
+# {PLUGIN_NAME}/constants/${PLUGIN_NAME}Plugin.ts
 # (Creates plugin constant file with networks populated dynamically)
 enum_file="src/shared/api/daoService/domain/enum/network.ts"
 const_file="$PLUGIN_DIR/constants/${PLUGIN_NAME}Plugin.ts"
