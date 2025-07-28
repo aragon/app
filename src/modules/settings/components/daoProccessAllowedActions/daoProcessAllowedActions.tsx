@@ -26,17 +26,12 @@ export const DaoProcessAllowedActions: React.FC<IDaoProcessAllowedActionsProps> 
     const { t } = useTranslations();
 
     const initialParams = {
-        urlParams: {
-            network,
-            pluginAddress: plugin.address,
-        },
+        urlParams: { network, pluginAddress: plugin.address },
         queryParams: {},
     };
     const { data, status, fetchStatus, isLoading, isFetchingNextPage, fetchNextPage } = useAllowedActions(
         initialParams,
-        {
-            enabled: plugin.conditionAddress != null,
-        },
+        { enabled: plugin.conditionAddress != null },
     );
 
     const allowedActionsList = data?.pages.flatMap((page) => page.data);
@@ -46,8 +41,6 @@ export const DaoProcessAllowedActions: React.FC<IDaoProcessAllowedActionsProps> 
         fetchStatus,
         isFetchingNextPage,
     });
-
-    console.log('stateee', state);
 
     const itemsCount = data?.pages[0].metadata.totalRecords;
 
