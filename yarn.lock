@@ -93,7 +93,7 @@ __metadata:
     react-dom: "npm:^19.1.0"
     react-hook-form: "npm:^7.60.0"
     react-use-measure: "npm:^2.1.7"
-    recharts: "npm:^3.0.2"
+    recharts: "npm:^3.1.0"
     server-only: "npm:^0.0.1"
     tailwindcss: "npm:^4.1.11"
     tailwindcss-fluid-type: "npm:^2.0.7"
@@ -14640,9 +14640,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recharts@npm:^3.0.2":
-  version: 3.0.2
-  resolution: "recharts@npm:3.0.2"
+"recharts@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "recharts@npm:3.1.0"
   dependencies:
     "@reduxjs/toolkit": "npm:1.x.x || 2.x.x"
     clsx: "npm:^2.1.1"
@@ -14659,7 +14659,7 @@ __metadata:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-is: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/b0018c7ee6706acff81fef7a85b61c05806607cedd57f17ae9a39fc213fbc128b7e9cef49ba14ce992877c51df4b5c1e01f6e76c0868b9b37e23f92b88bc580b
+  checksum: 10c0/87caca9dec962ff85073590fb39a004dfc827648e51ec0039e1b0c21569a3c7b52896d904508309e7cdb87d5806e974629fc7c35f06720a664dfda27b62d7bde
   languageName: node
   linkType: hard
 
