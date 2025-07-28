@@ -77,6 +77,10 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
         fallback: '0',
     });
 
+    const formattedMinParticipation = formatterUtils.formatNumber(minParticipation / 100, {
+        format: NumberFormat.PERCENTAGE_LONG,
+    });
+
     const voteChangeLabel = votingMode === DaoTokenVotingMode.VOTE_REPLACEMENT ? 'enabled' : 'disabled';
     const earlyExecutionLabel = votingMode === DaoTokenVotingMode.EARLY_EXECUTION ? 'enabled' : 'disabled';
 
@@ -88,14 +92,9 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[dao!.network].id });
 
     const readOnlyTokenProps = {
-        link: {
-            href: buildEntityUrl({ type: ChainEntityType.TOKEN, id: tokenAddress }),
-        },
+        link: { href: buildEntityUrl({ type: ChainEntityType.TOKEN, id: tokenAddress }) },
         copyValue: tokenAddress,
-        description: t('app.plugins.token.tokenMemberInfo.tokenNameAndSymbol', {
-            tokenName: tokenName,
-            tokenSymbol: tokenSymbol,
-        }),
+        description: t('app.plugins.token.tokenMemberInfo.tokenNameAndSymbol', { tokenName, tokenSymbol }),
     };
 
     const contractInfo = useDaoPluginInfo({ daoId, address: body.type === SetupBodyType.EXISTING ? body.address : '' });
@@ -123,14 +122,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
             {numberOfMembers! > 0 && (
                 <DefinitionList.Item
                     term={t('app.plugins.token.tokenProcessBodyField.distributionTerm')}
-                    link={
-                        readOnly
-                            ? {
-                                  href: daoUtils.getDaoUrl(dao, 'members'),
-                                  isExternal: false,
-                              }
-                            : undefined
-                    }
+                    link={readOnly ? { href: daoUtils.getDaoUrl(dao, 'members'), isExternal: false } : undefined}
                 >
                     {t('app.plugins.token.tokenProcessBodyField.holders', {
                         count: numberOfMembers,
@@ -147,7 +139,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.minParticipationTerm')}>
                 {t('app.plugins.token.tokenProcessBodyField.minParticipationDefinition', {
-                    minParticipation: minParticipation,
+                    minParticipation: formattedMinParticipation,
                 })}
             </DefinitionList.Item>
             {!isAdvancedGovernance && (

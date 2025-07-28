@@ -55,7 +55,7 @@ class TokenSettingsUtils {
 
         const parsedMinParticipation = this.ratioToPercentage(minParticipation);
         const formattedMinParticipation = formatterUtils.formatNumber(parsedMinParticipation / 100, {
-            format: NumberFormat.PERCENTAGE_SHORT,
+            format: NumberFormat.PERCENTAGE_LONG,
         });
 
         const minParticipationToken = Math.round((Number(processedTotalSupply) * parsedMinParticipation) / 100);
