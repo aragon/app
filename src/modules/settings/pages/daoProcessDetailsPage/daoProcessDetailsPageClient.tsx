@@ -19,6 +19,7 @@ import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { Card, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
 import { FormProvider, useForm } from 'react-hook-form';
+import { DaoProcessAllowedActions } from '../../components/daoProccessAllowedActions';
 import { DaoProcessDetailsInfo } from '../../components/daoProcessDetailsInfo';
 import { daoProcessDetailsClientUtils } from './daoProcessDetailsClientUtils';
 
@@ -115,6 +116,9 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
                         <Card className="px-6 py-3">
                             <PermissionsDefinitionList isLoading={isLoading} settings={settings} />
                         </Card>
+                    </Page.MainSection>
+                    <Page.MainSection title={t('app.settings.daoProcessDetailsPage.section.actions')}>
+                        <DaoProcessAllowedActions plugin={plugin} network={dao!.network} />
                     </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>
