@@ -1559,7 +1559,7 @@
           "holders": "{{count}} token holders",
           "minDurationDefinition": "{{days}} days {{hours}} hours {{minutes}} minutes",
           "minDurationTerm": "Minimum duration",
-          "minParticipationDefinition": "≥ {{minParticipation}}%",
+          "minParticipationDefinition": "≥ {{minParticipation}}",
           "minParticipationTerm": "Minimum participation",
           "supplyTerm": "Supply",
           "supportDefinition": "> {{threshold}}%",
