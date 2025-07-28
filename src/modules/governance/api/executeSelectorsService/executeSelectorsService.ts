@@ -4,7 +4,7 @@ import type { IGetAllowedActionsParams } from './executeSelectorsService.api';
 
 class ExecuteSelectorsService extends AragonBackendService {
     private urls = {
-        allowedActions: '/execute-selectors/:network/:pluginAddress',
+        allowedActions: '/v2/execute-selectors/:network/:pluginAddress',
     };
 
     getAllowedActions = async (params: IGetAllowedActionsParams): Promise<IPaginatedResponse<IAllowedAction>> => {
