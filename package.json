@@ -15,6 +15,7 @@
     "test:coverage": "jest --coverage",
     "lint": "next lint --max-warnings=0",
     "lint:fix": "next lint --fix",
+    "scaffold": "./scripts/scaffold-plugin.sh",
     "prettify": "prettier . --check",
     "prettify:fix": "prettier . --write",
     "type-check": "tsc --noEmit",

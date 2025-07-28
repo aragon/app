@@ -2,6 +2,7 @@ import { initialiseAdminPlugin } from './adminPlugin';
 import { adminPluginDialogsDefinitions } from './adminPlugin/constants/adminPluginDialogsDefinitions';
 import { initialiseCapitalDistributorPlugin } from './capitalDistributorPlugin';
 import { capitalDistributorPluginDialogsDefinitions } from './capitalDistributorPlugin/constants/capitalDistributorPluginDialogsDefinitions';
+import { initialiseLockToVotePlugin } from './lockToVotePlugin';
 import { initialiseMultisigPlugin } from './multisigPlugin';
 import { multisigPluginDialogsDefinitions } from './multisigPlugin/constants/multisigPluginDialogsDefinitions';
 import { initialiseSppPlugin } from './sppPlugin';
@@ -10,17 +11,19 @@ import { initialiseTokenPlugin } from './tokenPlugin';
 import { tokenPluginDialogsDefinitions } from './tokenPlugin/constants/tokenPluginDialogsDefinitions';
 
 export const initialisePlugins = () => {
-    initialiseMultisigPlugin();
-    initialiseTokenPlugin();
-    initialiseSppPlugin();
     initialiseAdminPlugin();
     initialiseCapitalDistributorPlugin();
+    initialiseLockToVotePlugin();
+    initialiseMultisigPlugin();
+    initialiseSppPlugin();
+    initialiseTokenPlugin();
 };
 
 export const pluginDialogsDefinitions = {
-    ...tokenPluginDialogsDefinitions,
     ...adminPluginDialogsDefinitions,
+    ...capitalDistributorPluginDialogsDefinitions,
+    // ...lockToVotePluginDialogsDefinitions,
     ...multisigPluginDialogsDefinitions,
     ...sppPluginDialogsDefinitions,
-    ...capitalDistributorPluginDialogsDefinitions,
+    ...tokenPluginDialogsDefinitions,
 };
