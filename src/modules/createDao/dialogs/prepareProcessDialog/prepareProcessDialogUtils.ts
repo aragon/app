@@ -183,9 +183,11 @@ class PrepareProcessDialogUtils {
     private buildDeployExecuteSelectorConditionData = (params: IBuildDeployExecuteSelectorConditionDataParams) => {
         const { dao, permissionSelectors } = params;
 
-        const selectorTargets = permissionSelectors.map((selector) => ({
-            where: selector.to as Hex,
-            selectors: [this.actionToFunctionSelector(selector)],
+        const groupedByAddress = Object.groupBy(permissionSelectors, (selector) => selector.to);
+
+        const selectorTargets = Object.entries(groupedByAddress).map(([address, actions]) => ({
+            where: address as Hex,
+            selectors: actions?.map((action) => this.actionToFunctionSelector(action)) ?? [],
         }));
 
         const transactionData = encodeFunctionData({
