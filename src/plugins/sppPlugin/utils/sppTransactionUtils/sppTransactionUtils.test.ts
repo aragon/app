@@ -6,6 +6,7 @@ import {
 import {
     generateCreateProcessFormDataAdvanced,
     generateCreateProcessFormStage,
+    generateCreateProcessFormStageSettings,
     generateSetupBodyFormData,
     generateSetupBodyFormExternal,
     generateSetupBodyFormNew,
@@ -13,7 +14,7 @@ import {
 import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { sppPlugin } from '@/plugins/sppPlugin/constants/sppPlugin';
-import { Network } from '@/shared/api/daoService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { generatePluginInstallationSetupData } from '@/shared/testUtils/generators/pluginSetupData';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
@@ -50,7 +51,7 @@ describe('sppTransaction utils', () => {
             const actions: ITransactionRequest[] = [{ to: '0xAddress', data: '0xdata', value: BigInt(0) }];
             const plugin = generateDaoPlugin({
                 address: '0x123',
-                subdomain: 'spp',
+                interfaceType: PluginInterfaceType.SPP,
                 settings: generateSppPluginSettings(),
             });
             parseStartDateSpy.mockReturnValue(startDate);
@@ -294,59 +295,77 @@ describe('sppTransaction utils', () => {
 
     describe('processStageApprovals', () => {
         it('returns the correct approvals for a timelock stage', () => {
-            const result = sppTransactionUtils['processStageApprovals'](1, ProcessStageType.TIMELOCK);
+            const result = sppTransactionUtils['processStageApprovals'](1, ProcessStageType.NORMAL, []);
             expect(result).toEqual({ approvalThreshold: 0, vetoThreshold: 0 });
         });
 
         it('returns the correct approvals for a normal stage', () => {
             const requiredApprovals = 3;
-            const result = sppTransactionUtils['processStageApprovals'](requiredApprovals, ProcessStageType.NORMAL);
+            const body = generateSetupBodyFormData();
+            const result = sppTransactionUtils['processStageApprovals'](requiredApprovals, ProcessStageType.NORMAL, [
+                body,
+            ]);
             expect(result).toEqual({ approvalThreshold: requiredApprovals, vetoThreshold: 0 });
         });
 
         it('returns the correct approvals for a optimistic stage', () => {
             const requiredApprovals = 2;
-            const result = sppTransactionUtils['processStageApprovals'](requiredApprovals, ProcessStageType.OPTIMISTIC);
+            const body = generateSetupBodyFormData();
+            const result = sppTransactionUtils['processStageApprovals'](
+                requiredApprovals,
+                ProcessStageType.OPTIMISTIC,
+                [body],
+            );
             expect(result).toEqual({ approvalThreshold: 0, vetoThreshold: requiredApprovals });
         });
     });
 
     describe('processStageTiming', () => {
         it('correctly processes the voting period to seconds', () => {
-            const timing = { votingPeriod: { days: 1, hours: 0, minutes: 0 }, earlyStageAdvance: false };
-            const result = sppTransactionUtils['processStageTiming'](timing);
+            const settings = generateCreateProcessFormStageSettings({
+                votingPeriod: { days: 1, hours: 0, minutes: 0 },
+                earlyStageAdvance: false,
+            });
+            const result = sppTransactionUtils['processStageTiming'](settings, []);
             expect(result.voteDuration).toBe(BigInt(86400)); // One day in seconds
         });
 
         it('returns minAdvance as 0 when earlyStageAdvance is true', () => {
-            const timing = { votingPeriod: { days: 1, hours: 0, minutes: 0 }, earlyStageAdvance: true };
-            const result = sppTransactionUtils['processStageTiming'](timing);
+            const settings = generateCreateProcessFormStageSettings({
+                votingPeriod: { days: 1, hours: 0, minutes: 0 },
+                earlyStageAdvance: true,
+            });
+            const body = generateSetupBodyFormData();
+            const result = sppTransactionUtils['processStageTiming'](settings, [body]);
             expect(result.minAdvance).toBe(BigInt(0));
         });
 
         it('returns minAdvance as the voting period when earlyStageAdvance is false', () => {
-            const timing = { votingPeriod: { days: 0, hours: 12, minutes: 0 }, earlyStageAdvance: false };
-            const result = sppTransactionUtils['processStageTiming'](timing);
+            const settings = generateCreateProcessFormStageSettings({
+                votingPeriod: { days: 0, hours: 12, minutes: 0 },
+                earlyStageAdvance: false,
+            });
+            const result = sppTransactionUtils['processStageTiming'](settings, []);
             expect(result.minAdvance).toBe(BigInt(43200));
         });
 
         it('returns a big default max advance when stage expiration is not set', () => {
-            const timing = {
+            const settings = generateCreateProcessFormStageSettings({
                 votingPeriod: { days: 0, hours: 12, minutes: 0 },
                 earlyStageAdvance: false,
                 stageExpiration: undefined,
-            };
-            const result = sppTransactionUtils['processStageTiming'](timing);
+            });
+            const result = sppTransactionUtils['processStageTiming'](settings, []);
             expect(result.maxAdvance).toEqual(sppTransactionUtils['defaultMaxAdvance']);
         });
 
         it('returns the max advance set to the vote duration plus the stage expiration when set', () => {
-            const timing = {
+            const settings = generateCreateProcessFormStageSettings({
                 votingPeriod: { days: 0, hours: 12, minutes: 0 },
                 earlyStageAdvance: false,
                 stageExpiration: { days: 0, hours: 0, minutes: 30 },
-            };
-            const result = sppTransactionUtils['processStageTiming'](timing);
+            });
+            const result = sppTransactionUtils['processStageTiming'](settings, []);
             expect(result.maxAdvance).toEqual(BigInt(45000));
         });
     });

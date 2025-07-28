@@ -1,6 +1,7 @@
+import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
-import type { ISetupBodyForm, ISetupBodyFormNew } from '../../dialogs/setupBodyDialog';
-import type { ISetupStageTimingForm } from '../../dialogs/setupStageTimingDialog';
+import type { ISetupBodyForm, ISetupBodyFormExisting, ISetupBodyFormNew } from '../../dialogs/setupBodyDialog';
+import type { ISetupStageSettingsForm } from '../../dialogs/setupStageSettingsDialog';
 
 export enum ProposalCreationMode {
     LISTED_BODIES = 'LISTED_BODIES',
@@ -10,12 +11,16 @@ export enum ProposalCreationMode {
 export enum ProcessStageType {
     NORMAL = 'NORMAL',
     OPTIMISTIC = 'OPTIMISTIC',
-    TIMELOCK = 'TIMELOCK',
 }
 
 export enum GovernanceType {
     BASIC = 'BASIC',
     ADVANCED = 'ADVANCED',
+}
+
+export enum ProcessPermission {
+    ANY = 'ANY',
+    SELECTED = 'SELECTED',
 }
 
 export interface ICreateProcessFormDataBase {
@@ -43,6 +48,14 @@ export interface ICreateProcessFormDataBase {
      * Defines the type of governance process basic/advanced.
      */
     governanceType: GovernanceType;
+    /**
+     * The permissions of the process. Either any action or specific actions.
+     */
+    permissions: ProcessPermission.ANY | ProcessPermission.SELECTED;
+    /**
+     * List of actions that the DAO will be able to execute. Later these will be parsed to the correct format the smart contract expects.
+     */
+    permissionSelectors: IProposalActionData[];
 }
 
 export interface ICreateProcessFormDataBasic extends ICreateProcessFormDataBase {
@@ -53,7 +66,7 @@ export interface ICreateProcessFormDataBasic extends ICreateProcessFormDataBase 
     /**
      * Body to be setup on the basic governance process.
      */
-    body: ISetupBodyFormNew;
+    body: ISetupBodyFormNew | ISetupBodyFormExisting;
 }
 
 export interface ICreateProcessFormDataAdvanced extends ICreateProcessFormDataBase {
@@ -79,19 +92,11 @@ export interface ICreateProcessFormStage {
      */
     name: string;
     /**
-     * Type of the stage.
-     */
-    type: ProcessStageType;
-    /**
-     * Values related to the timing of the stage.
-     */
-    timing: ISetupStageTimingForm;
-    /**
      * List of bodies of the stage.
      */
     bodies: ISetupBodyForm[];
     /**
-     * Number of bodies required to veto (for optimistic type) or approve.
+     * Settings of the stage.
      */
-    requiredApprovals: number;
+    settings: ISetupStageSettingsForm;
 }

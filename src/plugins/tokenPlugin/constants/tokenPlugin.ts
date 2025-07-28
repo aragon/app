@@ -1,8 +1,9 @@
-import { Network } from '@/shared/api/daoService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import type { IPluginInfo } from '@/shared/types';
 
 export const tokenPlugin: IPluginInfo = {
-    id: 'token-voting',
+    id: PluginInterfaceType.TOKEN_VOTING,
+    subdomain: 'token-voting',
     name: 'Token',
     installVersion: {
         release: 1,

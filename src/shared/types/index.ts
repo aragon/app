@@ -1,3 +1,4 @@
+export type { IBackendApiMock } from './backendApiMock';
 export type { IContractVersionInfo } from './contractVersionInfo';
 export type { IDaoPageParams } from './daoPageParams';
 export * from './enum';

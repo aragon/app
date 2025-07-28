@@ -49,14 +49,14 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
     const canVote = stageStatus === ProposalStatus.ACTIVE;
 
-    const isExternalBody = plugin.subdomain == null;
+    const isExternalBody = plugin.interfaceType == null;
     const isVeto = sppStageUtils.isVeto(stage);
 
     const pluginSettings = isExternalBody ? {} : plugin.settings;
     const settings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDefinitionSetting[]>({
         params: { daoId, settings: pluginSettings, isVeto, pluginAddress: plugin.address },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
-        pluginId: plugin.subdomain ?? 'external',
+        pluginId: plugin.interfaceType ?? 'external',
         fallback: useSppGovernanceSettingsDefault,
     });
 
@@ -75,7 +75,9 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
     // Set parent name and description on sub-proposal to correctly display the proposal info on the vote dialog.
     const { title, description, incrementalId } = proposal;
     const processedSubProposal =
-        subProposal != null ? { ...subProposal, title, description, incrementalId } : undefined;
+        subProposal != null
+            ? { ...subProposal, title, description, incrementalId, pluginInterfaceType: plugin.interfaceType }
+            : undefined;
 
     return (
         <>
@@ -83,7 +85,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                 <>
                     <PluginSingleComponent
                         slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
-                        pluginId={isExternalBody ? 'external' : plugin.subdomain}
+                        pluginId={isExternalBody ? 'external' : plugin.interfaceType}
                         proposal={isExternalBody ? proposal : subProposal}
                         body={isExternalBody ? plugin.address : undefined}
                         stage={stage}
@@ -95,7 +97,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                             {canVote && (
                                 <PluginSingleComponent
                                     slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
-                                    pluginId={isExternalBody ? 'external' : processedSubProposal!.pluginSubdomain}
+                                    pluginId={isExternalBody ? 'external' : plugin.interfaceType}
                                     proposal={isExternalBody ? proposal : processedSubProposal}
                                     externalAddress={isExternalBody ? plugin.address : undefined}
                                     daoId={daoId}

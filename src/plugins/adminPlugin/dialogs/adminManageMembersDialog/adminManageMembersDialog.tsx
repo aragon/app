@@ -3,7 +3,7 @@
 import { useMemberList } from '@/modules/governance/api/governanceService';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
-import { useDao } from '@/shared/api/daoService';
+import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { AddressesInput } from '@/shared/components/forms/addressesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -48,11 +48,11 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     invariant(dao != null, 'ManageAdminsDialogPublish: DAO data must be set.');
 
-    // TODO: (APP-4045). Setting this to the max pageSize of 300 for now to ensure we get all of the data
+    // TODO: (APP-4045). Setting this to the max pageSize of 50 for now to ensure we get all of the data
     // in the future we should find a better way to handle this.
-    const memberParams = { daoId, pluginAddress, pageSize: 300 };
+    const memberParams = { daoId, pluginAddress, pageSize: 50 };
     const { data: memberList } = useMemberList({ queryParams: memberParams });
-    const [adminPlugin] = useDaoPlugins({ daoId, subdomain: 'admin' }) ?? [];
+    const [adminPlugin] = useDaoPlugins({ daoId, interfaceType: PluginInterfaceType.ADMIN }) ?? [];
 
     const currentAdmins = useMemo(() => memberList?.pages.flatMap((page) => page.data) ?? [], [memberList]);
     const initialMembers = useMemo(() => currentAdmins.map((member) => ({ address: member.address })), [currentAdmins]);

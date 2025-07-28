@@ -1,7 +1,12 @@
 import { encodeFunctionData, keccak256, toBytes, zeroHash } from 'viem';
 import type { ITransactionRequest } from '../transactionUtils';
 import { permissionManagerAbi } from './abi/permissionManagerAbi';
-import type { IRuledCondition, IUpdatePermissionParams } from './permissionTransactionUtils.api';
+import type {
+    IBuildExecuteConditionTransactionsParams,
+    IBuildGrantWithConditionTransactionParams,
+    IRuledCondition,
+    IUpdatePermissionParams,
+} from './permissionTransactionUtils.api';
 
 class PermissionTransactionUtils {
     // Identifiers of rule conditions
@@ -24,6 +29,7 @@ class PermissionTransactionUtils {
         createProposalPermission: 'CREATE_PROPOSAL_PERMISSION',
         executePermission: 'EXECUTE_PERMISSION',
         upgradePluginPermission: 'UPGRADE_PLUGIN_PERMISSION',
+        manageSelectorsPermission: 'MANAGE_SELECTORS_PERMISSION',
     };
 
     buildGrantPermissionTransaction = (params: IUpdatePermissionParams): ITransactionRequest => {
@@ -46,6 +52,46 @@ class PermissionTransactionUtils {
         });
 
         return { to, data: transactionData, value: BigInt(0) };
+    };
+
+    buildGrantWithConditionTransaction = (params: IBuildGrantWithConditionTransactionParams): ITransactionRequest => {
+        const { where, who, what, to, condition } = params;
+        const transactionData = encodeFunctionData({
+            abi: permissionManagerAbi,
+            functionName: 'grantWithCondition',
+            args: [where, who, keccak256(toBytes(what)), condition],
+        });
+        return { to, data: transactionData, value: BigInt(0) };
+    };
+
+    buildExecuteConditionTransactions = (
+        params: IBuildExecuteConditionTransactionsParams,
+    ): [ITransactionRequest, ITransactionRequest, ITransactionRequest] => {
+        const { dao, plugin, executeCondition } = params;
+
+        const revokeExecuteTransaction = this.buildRevokePermissionTransaction({
+            where: dao,
+            who: plugin,
+            what: permissionTransactionUtils.permissionIds.executePermission,
+            to: dao,
+        });
+
+        const grantExecuteTransaction = this.buildGrantWithConditionTransaction({
+            where: dao,
+            who: plugin,
+            what: permissionTransactionUtils.permissionIds.executePermission,
+            to: dao,
+            condition: executeCondition,
+        });
+
+        const grantTransaction = this.buildGrantPermissionTransaction({
+            where: executeCondition,
+            who: dao,
+            what: permissionTransactionUtils.permissionIds.manageSelectorsPermission,
+            to: dao,
+        });
+
+        return [revokeExecuteTransaction, grantExecuteTransaction, grantTransaction];
     };
 
     buildGrantRevokePermissionTransactions = (

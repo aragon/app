@@ -3,6 +3,8 @@ import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { addressUtils, ChainEntityType, DefinitionList, useBlockExplorer } from '@aragon/gov-ui-kit';
+import type { Hash } from 'viem';
+import { useEnsName } from 'wagmi';
 
 export interface IGovernanceBodiesFieldItemDefaultProps {
     /**
@@ -22,7 +24,11 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
     const { buildEntityUrl } = useBlockExplorer();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    if (body.type !== SetupBodyType.EXTERNAL) {
+    const { data: ensName } = useEnsName({
+        address: body.type !== SetupBodyType.NEW ? (body.address as Hash) : undefined,
+    });
+
+    if (body.type !== SetupBodyType.EXTERNAL && body.type !== SetupBodyType.EXISTING) {
         return null;
     }
 
@@ -31,12 +37,12 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
 
     return (
         <DefinitionList.Container>
-            {body.name && (
+            {ensName != null && (
                 <DefinitionList.Item
                     term={t('app.createDao.createProcessForm.governance.bodyField.default.ens')}
                     link={{ href: bodyAddressLink }}
                 >
-                    {body.name}
+                    {ensName}
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item

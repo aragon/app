@@ -10,10 +10,15 @@ export interface IGovernanceStagesFieldProps {
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * If the component field is read-only.
+     * @default false
+     */
+    readOnly?: boolean;
 }
 
 export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (props) => {
-    const { daoId } = props;
+    const { daoId, readOnly = false } = props;
 
     const { t } = useTranslations();
 
@@ -35,18 +40,22 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (pro
                         stagesCount={stages.length}
                         onDelete={() => removeStage(index)}
                         daoId={daoId}
+                        index={index}
+                        readOnly={readOnly}
                     />
                 ))}
             </div>
-            <Button
-                size="md"
-                variant="tertiary"
-                className="self-start"
-                iconLeft={IconType.PLUS}
-                onClick={handleAddStage}
-            >
-                {t('app.createDao.createProcessForm.governance.stageField.action.add')}
-            </Button>
+            {!readOnly && (
+                <Button
+                    size="md"
+                    variant="tertiary"
+                    className="self-start"
+                    iconLeft={IconType.PLUS}
+                    onClick={handleAddStage}
+                >
+                    {t('app.createDao.createProcessForm.governance.stageField.action.add')}
+                </Button>
+            )}
         </div>
     );
 };

@@ -10,6 +10,7 @@ import {
     generateCreateProcessFormDataAdvanced,
     generateCreateProcessFormDataBasic,
     generateCreateProcessFormStage,
+    generateCreateProcessFormStageSettings,
     generateSetupBodyFormData,
     generateSetupBodyFormExternal,
     generateSetupBodyFormNew,
@@ -239,7 +240,7 @@ describe('prepareProcessDialog utils', () => {
             ];
             const stage = generateCreateProcessFormStage({
                 bodies: [...newBodies, generateSetupBodyFormNew()],
-                timing: { votingPeriod, earlyStageAdvance: false },
+                settings: generateCreateProcessFormStageSettings({ votingPeriod, earlyStageAdvance: false }),
             });
             const values = generateCreateProcessFormDataAdvanced({ stages: [stage] });
             const dao = generateDao();

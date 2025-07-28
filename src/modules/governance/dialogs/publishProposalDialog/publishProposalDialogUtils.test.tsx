@@ -1,3 +1,4 @@
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import * as Viem from 'viem';
@@ -50,12 +51,12 @@ describe('publishProposalDialog utils', () => {
                 actions: [{ ...proposalAction, daoId: 'test', meta: undefined }],
             });
             const metadataCid = 'test-cid';
-            const plugin = generateDaoPlugin({ address: '0x123', subdomain: 'multisig' });
+            const plugin = generateDaoPlugin({ address: '0x123', interfaceType: PluginInterfaceType.MULTISIG });
 
             const transaction = await publishProposalDialogUtils.buildTransaction({ proposal, metadataCid, plugin });
 
             expect(getSlotFunctionSpy).toHaveBeenCalledWith({
-                pluginId: plugin.subdomain,
+                pluginId: plugin.interfaceType,
                 slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
             });
             expect(slotFunction).toHaveBeenCalledWith({

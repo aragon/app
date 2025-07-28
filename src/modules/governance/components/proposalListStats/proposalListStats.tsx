@@ -1,9 +1,10 @@
 import type { IDao } from '@/shared/api/daoService';
+import { StatCard } from '@/shared/components/statCard';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { Button, DateFormat, formatterUtils, Heading, IconType } from '@aragon/gov-ui-kit';
+import { Button, DateFormat, formatterUtils, IconType } from '@aragon/gov-ui-kit';
 import type { IGetProposalListParams } from '../../api/governanceService';
 import { useProposalListData } from '../../hooks/useProposalListData';
 
@@ -55,15 +56,7 @@ export const ProposalListStats: React.FC<IProposalListStatsProps> = (props) => {
         <div className="flex w-full flex-col gap-y-4 md:gap-y-6">
             <div className="grid w-full grid-cols-2 gap-3">
                 {stats.map((stat) => (
-                    <div key={stat.label} className="flex flex-col gap-y-1 rounded-xl bg-neutral-50 p-4">
-                        <Heading size="h3">
-                            {stat.value}
-                            {stat.suffix != null && (
-                                <span className="text-xs text-neutral-500 md:text-sm">{stat.suffix}</span>
-                            )}
-                        </Heading>
-                        <p className="text-sm text-neutral-500">{stat.label}</p>
-                    </div>
+                    <StatCard key={stat.label} value={stat.value} suffix={stat.suffix} label={stat.label} />
                 ))}
             </div>
             <Button variant="tertiary" size="md" iconRight={IconType.CHEVRON_RIGHT} href={buttonUrl}>

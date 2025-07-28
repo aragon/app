@@ -15,6 +15,18 @@ these conventions enhances code readability, maintainability, and consistency ac
 - Use Camel Case for property names;
 - Prefix callbacks and event handlers with `on` (e.g. `onDaoSelected`) for consistency;
 
+## Enums
+
+- Enum keys must always be written in **UPPERCASE_SNAKE_CASE**.
+- By default, enum values should also be **UPPERCASE_SNAKE_CASE**.
+
+There are two exceptions to the default rule for enum values:
+
+1. **Enums representing backend values** If an enum is meant to reflect values coming from the backend, match the values
+   exactly as provided by the backend (including case and formatting).
+2. **Enums used for tabs or routing** When enums are used for tabs, navigation, or anything affecting the URL, set the
+   values in lowercase. This ensures cleaner and more consistent URLs.
+
 ## Translations
 
 When adding new translations to the project, adhere to the following pattern:

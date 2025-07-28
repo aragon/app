@@ -1,9 +1,10 @@
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Button, formatterUtils, InputContainer, NumberFormat } from '@aragon/gov-ui-kit';
+import { addressUtils, Button, formatterUtils, IconType, InputContainer, NumberFormat } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { type ChangeEvent, useId } from 'react';
+import { type ChangeEvent, type MouseEvent, useId } from 'react';
+import { useFormContext } from 'react-hook-form';
 import type { IAsset } from '../../api/financeService';
 import { FinanceDialogId } from '../../constants/financeDialogId';
 import type { IAssetSelectionDialogParams } from '../../dialogs/assetSelectionDialog';
@@ -58,6 +59,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
     const inputId = useId();
+    const { clearErrors } = useFormContext();
 
     const assetField = useFormField<IAssetInputFormData, 'asset'>('asset', { rules: { required: true }, fieldPrefix });
 
@@ -81,17 +83,35 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         onAmountChange?.();
     };
 
+    // Prevent default behaviour of the select button mouse-down event to avoid displaying a validation error on the
+    // amount field on select button click.
+    const handleSelectMouseDown = (event: MouseEvent) => event.preventDefault();
+
+    // Only update asset field when selecting a new token and clear amount value and errors when selecting a new token
+    const handleAssetChange = (asset: IAsset) => {
+        if (addressUtils.isAddressEqual(asset.token.address, assetField.value?.token.address)) {
+            return;
+        }
+
+        assetField.onChange(asset);
+        handleAmountFieldChange('');
+        clearErrors(amountField.name);
+    };
+
     const handleOpenDialog = () => {
         if (!fetchAssetsParams || disableAssetField) {
             return;
         }
 
-        const { onChange: onAssetClick } = assetField;
-        const params: IAssetSelectionDialogParams = { initialParams: fetchAssetsParams, onAssetClick, close };
+        const params: IAssetSelectionDialogParams = {
+            initialParams: fetchAssetsParams,
+            onAssetClick: handleAssetChange,
+            close,
+        };
         open(FinanceDialogId.ASSET_SELECTION, { params });
     };
 
-    const handleMaxAmount = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleMaxAmount = (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         handleAmountFieldChange(assetField.value?.amount);
     };
@@ -116,7 +136,14 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                 {...amountField}
             >
                 {!disableAssetField && (
-                    <Button variant="tertiary" size="sm" onClick={handleOpenDialog} className="shrink-0">
+                    <Button
+                        variant="tertiary"
+                        size="sm"
+                        onClick={handleOpenDialog}
+                        onMouseDown={handleSelectMouseDown}
+                        iconRight={IconType.CHEVRON_DOWN}
+                        className="shrink-0"
+                    >
                         <AssetInputToken token={assetField.value?.token} />
                     </Button>
                 )}
@@ -135,7 +162,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
             </InputContainer>
             {assetField.value?.amount && !hideMax && (
                 <div className="flex items-center gap-x-1 self-end pr-4">
-                    <button className="text-primary-400 hover:text-primary-600" onClick={(e) => handleMaxAmount(e)}>
+                    <button type="button" className="text-primary-400 hover:text-primary-600" onClick={handleMaxAmount}>
                         {t('app.finance.assetInput.maxButtonLabel')}
                     </button>
                     <span className="text-neutral-500">

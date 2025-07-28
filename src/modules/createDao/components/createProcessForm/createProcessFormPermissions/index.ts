@@ -1,1 +1,1 @@
-export { CreateProcessFormPermissions, type ICreateProcessFormPermissionProps } from './createProcessFormPermissions';
+export { CreateProcessFormPermissions, type ICreateProcessFormPermissionsProps } from './createProcessFormPermissions';

@@ -37,6 +37,7 @@ export const initialiseAdminPlugin = () => {
             pluginId: adminPlugin.id,
             function: useAdminPermissionCheckProposalCreation,
         })
+
         // Settings module slots
         .registerSlotFunction({
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,

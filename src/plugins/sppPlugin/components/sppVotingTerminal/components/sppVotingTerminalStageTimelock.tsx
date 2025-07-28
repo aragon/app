@@ -46,7 +46,7 @@ export const SppVotingTerminalStageTimelock: React.FC<ISppVotingTerminalStageTim
         <CardEmptyState
             heading={t(`app.plugins.spp.sppVotingTerminalStageTimelock.${timelockState}.heading`)}
             description={t(`app.plugins.spp.sppVotingTerminalStageTimelock.${timelockState}.description`, { date })}
-            objectIllustration={{ object: 'SETTINGS' }}
+            objectIllustration={{ object: 'TIMELOCK' }}
             isStacked={false}
             className="border border-neutral-100"
         />

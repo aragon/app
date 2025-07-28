@@ -5,6 +5,7 @@ import {
     type ICreateProcessFormDataBase,
     type ICreateProcessFormDataBasic,
     type ICreateProcessFormStage,
+    ProcessPermission,
     ProcessStageType,
     ProposalCreationMode,
 } from '../../components/createProcessForm';
@@ -19,6 +20,8 @@ export const generateCreateProcessFormDataBase = (
     resources: [],
     proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
     governanceType: GovernanceType.BASIC,
+    permissions: ProcessPermission.ANY,
+    permissionSelectors: [],
     ...values,
 });
 
@@ -45,15 +48,20 @@ export const generateCreateProcessFormData = (values?: Partial<ICreateProcessFor
         ? generateCreateProcessFormDataBasic(values)
         : generateCreateProcessFormDataAdvanced(values as ICreateProcessFormDataAdvanced);
 
+export const generateCreateProcessFormStageSettings = (
+    values?: Partial<ICreateProcessFormStage['settings']>,
+): ICreateProcessFormStage['settings'] => ({
+    type: ProcessStageType.NORMAL,
+    votingPeriod: { days: 1, hours: 0, minutes: 0 },
+    earlyStageAdvance: true,
+    requiredApprovals: 1,
+    ...values,
+});
+
 export const generateCreateProcessFormStage = (values?: Partial<ICreateProcessFormStage>): ICreateProcessFormStage => ({
     internalId: '0',
     name: 'stage',
-    type: ProcessStageType.NORMAL,
-    timing: {
-        votingPeriod: { days: 1, hours: 0, minutes: 0 },
-        earlyStageAdvance: false,
-    },
-    requiredApprovals: 1,
+    settings: generateCreateProcessFormStageSettings(values?.settings),
     bodies: [],
     ...values,
 });

@@ -2,8 +2,8 @@
 
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { Tabs } from '@aragon/gov-ui-kit';
-import { useEffect, useState } from 'react';
 import type { ITokenPlugin, ITokenPluginSettings } from '../../types';
 import { TokenDelegationForm } from './tokenDelegation';
 import { TokenLockForm } from './tokenLock';
@@ -21,9 +21,9 @@ export interface ITokenMemberPanelProps {
 }
 
 enum TokenMemberPanelTab {
-    DELEGATE = 'DELEGATE',
-    WRAP = 'WRAP',
-    LOCK = 'LOCK',
+    DELEGATE = 'delegate',
+    WRAP = 'wrap',
+    LOCK = 'lock',
 }
 
 const getTabsDefinitions = ({ votingEscrow, token }: ITokenPluginSettings) => [
@@ -32,6 +32,8 @@ const getTabsDefinitions = ({ votingEscrow, token }: ITokenPluginSettings) => [
     { value: TokenMemberPanelTab.DELEGATE, hidden: !token.hasDelegate },
 ];
 
+export const tokenMemberPanelFilterParam = 'memberPanel';
+
 export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const { plugin, daoId } = props;
 
@@ -39,22 +41,22 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const { underlying, symbol, name } = token;
 
     const { t } = useTranslations();
-    const [selectedTab, setSelectedTab] = useState<string>();
 
     const visibleTabs = getTabsDefinitions(plugin.settings).filter((tab) => !tab.hidden);
+
+    const { LOCK, WRAP, DELEGATE } = TokenMemberPanelTab;
+    const initialSelectedTab = votingEscrow ? LOCK : underlying != null ? WRAP : DELEGATE;
+    const [selectedTab, setSelectedTab] = useFilterUrlParam({
+        name: tokenMemberPanelFilterParam,
+        fallbackValue: initialSelectedTab,
+        validValues: visibleTabs.map((tab) => tab.value),
+    });
 
     // Remove the "g" and "Governance" prefixes from the token symbol / name
     const underlyingToken = { ...token, address: underlying!, symbol: symbol.substring(1), name: name.substring(11) };
 
     const titleToken = !votingEscrow && underlying != null ? underlyingToken : token;
     const cardTitle = `${titleToken.name} (${titleToken.symbol})`;
-
-    // Update the initial selected tab on plugin property change
-    useEffect(() => {
-        const { LOCK, WRAP, DELEGATE } = TokenMemberPanelTab;
-        const initialSelectedTab = votingEscrow ? LOCK : underlying != null ? WRAP : DELEGATE;
-        setSelectedTab(initialSelectedTab);
-    }, [votingEscrow, underlying]);
 
     if (!visibleTabs.length) {
         return null;

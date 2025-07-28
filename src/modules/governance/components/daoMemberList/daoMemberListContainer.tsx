@@ -2,7 +2,7 @@
 
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { type IPluginTabComponentProps, PluginTabComponent } from '@/shared/components/pluginTabComponent';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
 import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type { ReactNode } from 'react';
@@ -26,16 +26,20 @@ export interface IDaoMemberListContainerProps
     children?: ReactNode;
 }
 
-export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (props) => {
-    const { initialParams, ...otherProps } = props;
+export const daoMemberListFilterParam = 'members';
 
-    const bodyPlugins = useDaoPlugins({
+export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (props) => {
+    const { initialParams, value, onValueChange, ...otherProps } = props;
+
+    const { activePlugin, setActivePlugin, plugins } = useDaoPluginFilterUrlParam({
         daoId: initialParams.queryParams.daoId,
         type: PluginType.BODY,
         includeSubPlugins: true,
+        name: daoMemberListFilterParam,
+        enableUrlUpdate: onValueChange == null,
     });
 
-    const processedPlugins = bodyPlugins?.map((plugin) => {
+    const processedPlugins = plugins?.map((plugin) => {
         const pluginInitialParams = {
             ...initialParams,
             queryParams: { ...initialParams.queryParams, pluginAddress: plugin.meta.address },
@@ -49,6 +53,9 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (p
             slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST}
             plugins={processedPlugins}
             Fallback={DaoMemberListDefault}
+            value={value ?? activePlugin}
+            onValueChange={onValueChange ?? setActivePlugin}
+            searchParamName={daoMemberListFilterParam}
             {...otherProps}
         />
     );
