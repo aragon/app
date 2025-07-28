@@ -67,7 +67,7 @@ SNAKE_NAME="$(to_snake_case "$PLUGIN_NAME")"
 KEBAB_NAME="$(to_kebab_case "$PLUGIN_NAME")"
 DISPLAY_NAME="$(to_title_case "$PLUGIN_NAME")"
 
-echo -e "${BLUE}📁 Creating plugin: ${DISPLAY_NAME} (${PLUGIN_NAME}Plugin)${NC}"
+echo -e "${BLUE}🏗️ Creating plugin: ${PLUGIN_NAME}Plugin${NC}"
 
 ##########################################
 ## 3. Scaffold Plugin Directory & Stub Files
@@ -238,7 +238,7 @@ fi
 ## 6. Run Prettier Formatting
 ##########################################
 
-echo -e "\n${BLUE}✨ Running Prettier on all plugin files…${NC}"
+echo -e "\n${BLUE}✨ Running Prettier on all new plugin files…${NC}"
 npx prettier --write "src/plugins/${PLUGIN_NAME}Plugin/**/*.{ts,tsx,js,jsx,json,css,md}" src/plugins/index.ts
 
-echo -e "\n${GREEN}🎉 Done! ${PLUGIN_NAME} has been scaffolded${NC}"
+echo -e "\n${GREEN}🎉 Done! ${PLUGIN_NAME}Plugin has been scaffolded.${NC}"
