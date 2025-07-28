@@ -85,6 +85,14 @@ export interface ISetupBodyFormExisting<
      * Address of the existing body.
      */
     address: string;
+    /**
+     * Build of the existing body.
+     */
+    build?: string;
+    /**
+     * Release of the existing body.
+     */
+    release?: string;
 }
 
 export type ISetupBodyForm<
