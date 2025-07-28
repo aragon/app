@@ -8,10 +8,12 @@ NC='\033[0m' # No Color
 
 echo -e "${BLUE}🔧 Aragon Plugin Scaffolder${NC}\n"
 
-#######################
-## 1. Read & validate
-#######################
+##########################################
+## 1. Read Plugin Name & Confirm Validity
+##########################################
 
+# (Prompts for plugin name in camelCase, validates, and confirms)
+    #
 while true; do
   read -p "Plugin name (camelCase, e.g., lockToVote): " PLUGIN_NAME
 
@@ -43,9 +45,9 @@ if [ -d "$PLUGIN_DIR" ]; then
     exit 1
 fi
 
-##################################
-## 2. Helpers & name transformations
-##################################
+##########################################
+## 2. Define Name Transformations Helpers
+##########################################
 
 to_pascal_case() {
   echo "$1" | awk '{print toupper(substr($0,1,1)) substr($0,2)}'
@@ -67,9 +69,9 @@ DISPLAY_NAME="$(to_title_case "$PLUGIN_NAME")"
 
 echo -e "${BLUE}📁 Creating plugin: ${DISPLAY_NAME} (${PLUGIN_NAME}Plugin)${NC}"
 
-#####################################
-## 3. Create folder structure + files
-#####################################
+##########################################
+## 3. Scaffold Plugin Directory & Stub Files
+##########################################
 
 mkdir -p "$PLUGIN_DIR"/{components,constants,hooks,utils,types,dialogs}
 
@@ -114,6 +116,7 @@ export const initialise${PASCAL_NAME}Plugin = () => {
 EOF
 
 # constants/pluginDialogId.ts
+# (Creates file with TODO enum block for dialog IDs)
 dialog_id_file="$PLUGIN_DIR/constants/${PLUGIN_NAME}PluginDialogId.ts"
 cat > "$dialog_id_file" <<EOF
 // TODO: Define dialog IDs
@@ -123,6 +126,7 @@ cat > "$dialog_id_file" <<EOF
 EOF
 
 # constants/pluginDialogsDefinitions.ts
+# (Creates file with TODO record for dialog components)
 dialogs_def_file="$PLUGIN_DIR/constants/${PLUGIN_NAME}PluginDialogsDefinitions.ts"
 cat > "$dialogs_def_file" <<EOF
 // TODO: Define dialog components
@@ -141,7 +145,8 @@ cat > "$dialogs_def_file" <<EOF
 // };
 EOF
 
-# constants file with dynamic network enum
+# constants/${PLUGIN_NAME}Plugin.ts
+# (Creates plugin constant file with networks populated dynamically)
 enum_file="src/shared/api/daoService/domain/enum/network.ts"
 const_file="$PLUGIN_DIR/constants/${PLUGIN_NAME}Plugin.ts"
 
@@ -171,9 +176,9 @@ EOF
 
 echo -e "\n${GREEN}✅ Plugin scaffolding complete!${NC}"
 
-################################################
-## 4. Dynamic registry + Prettier
-################################################
+##########################################
+## 4. Generate Plugin Registry File
+##########################################
 
 echo -e "\n${BLUE}🔧 Generating src/plugins/index.ts…${NC}"
 {
@@ -208,6 +213,10 @@ echo -e "\n${BLUE}🔧 Generating src/plugins/index.ts…${NC}"
   echo "};"
 } > src/plugins/index.ts
 
+##########################################
+## 5. Inject PluginInterfaceType Enum Entry
+##########################################
+
 PLUGIN_ENUM_PATH="src/shared/api/daoService/domain/enum/pluginInterfaceType.ts"
 
 # Check if enum already contains the value
@@ -225,7 +234,11 @@ else
   echo -e "${GREEN}✅ Added ${SNAKE_NAME} to PluginInterfaceType enum.${NC}"
 fi
 
+##########################################
+## 6. Run Prettier Formatting
+##########################################
+
 echo -e "\n${BLUE}✨ Running Prettier on all plugin files…${NC}"
 npx prettier --write "src/plugins/${PLUGIN_NAME}Plugin/**/*.{ts,tsx,js,jsx,json,css,md}" src/plugins/index.ts
 
-echo -e "\n${GREEN}🎉 Done!${NC}"
+echo -e "\n${GREEN}🎉 Done! ${PLUGIN_NAME} has been scaffolded${NC}"
