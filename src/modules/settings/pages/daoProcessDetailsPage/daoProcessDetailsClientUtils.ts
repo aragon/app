@@ -57,6 +57,8 @@ export class DaoProcessDetailsClientUtils {
             resources: plugin.links ?? [],
             governance: plugin.settings,
             membership,
+            release: plugin.release,
+            build: plugin.build,
             canCreateProposal: false,
         };
     };
