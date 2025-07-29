@@ -5,6 +5,7 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
+import type { ISubmitVoteProps } from '@/modules/governance/types';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -12,20 +13,7 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { Button, ChainEntityType, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
 import type { IMultisigProposal, IMultisigVote } from '../../types';
 
-export interface IMultisigSubmitVoteProps {
-    /**
-     * ID of the DAO to create the proposal for.
-     */
-    daoId: string;
-    /**
-     * Proposal to submit the vote for.
-     */
-    proposal: IMultisigProposal;
-    /**
-     * Defines if the vote is to approve or veto the proposal.
-     */
-    isVeto?: boolean;
-}
+export interface IMultisigSubmitVoteProps extends ISubmitVoteProps<IMultisigProposal> {}
 
 export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) => {
     const { daoId, proposal, isVeto } = props;

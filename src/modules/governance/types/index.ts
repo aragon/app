@@ -9,4 +9,5 @@ export type { IMemberExistsResult } from './memberExistsResult';
 export type { INormalizeActionsParams } from './normalizeActionsParams';
 export type { IPermissionCheckGuardParams } from './permissionCheckGuardParams';
 export type { IPermissionCheckGuardResult } from './permissionCheckGuardResult';
+export type { ISubmitVoteProps } from './submitVoteProps';
 export type { IUsePluginMemberStatsParams } from './usePluginMemberStatsParams';

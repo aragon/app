@@ -28,11 +28,9 @@ export const useTokenPermissionCheckVoteSubmission = (
     const { plugin, proposal } = params;
 
     const { address } = useAccount();
-
     const { t } = useTranslations();
 
-    const tokenSymbol = plugin.settings.token.symbol;
-
+    const { symbol: tokenSymbol } = plugin.settings.token;
     const { blockTimestamp, network, transactionHash, proposalIndex, pluginAddress } = proposal!;
 
     const { data: hasPermission, isLoading } = useReadContract({
@@ -40,13 +38,13 @@ export const useTokenPermissionCheckVoteSubmission = (
         chainId: networkDefinitions[network].id,
         abi: tokenVotingAbi,
         functionName: 'canVote',
-        args: [BigInt(proposalIndex), address as Hex, VoteOption.YES], // Just passing YES as we are only checking permission to vote so option itself doesn't matter
+        // Passing YES as vote option because we are only checking permission to vote and the option does not matter
+        args: [BigInt(proposalIndex), address as Hex, VoteOption.YES],
         query: { enabled: address != null },
     });
 
-    const formattedCreationDate = formatterUtils.formatDate(blockTimestamp * 1000, {
-        format: DateFormat.YEAR_MONTH_DAY,
-    });
+    const creationDate = blockTimestamp * 1000;
+    const formattedCreationDate = formatterUtils.formatDate(creationDate, { format: DateFormat.YEAR_MONTH_DAY });
 
     const { id: chainId } = networkDefinitions[network];
 

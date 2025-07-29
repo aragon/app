@@ -1148,6 +1148,38 @@
           }
         }
       },
+      "lockToVote": {
+        "lockToVotePermissionCheckVoteSubmission": {
+          "createdAt": "Created",
+          "votingPower": "Your voting power"
+        },
+        "lockToVoteSubmitVote": {
+          "cancel": "Cancel",
+          "submit": "Submit vote",
+          "submitUpdate": "Submit update",
+          "submitted": "Vote submitted",
+          "update": "Update your vote",
+          "vote": "Vote on proposal"
+        },
+        "lockToVoteSubmitVoteFeedbackDialog": {
+          "default": {
+            "cta": {
+              "primary": "Lock now",
+              "secondary": "Cancel"
+            },
+            "description": "Lock {{symbol}} in order to be able to vote.",
+            "title": "You have no voting power"
+          },
+          "lockMore": {
+            "cta": {
+              "primary": "Lock now",
+              "secondary": "Proceed to vote"
+            },
+            "description": "Lock more {{symbol}} to increase your voting power.",
+            "title": "You have unlocked tokens"
+          }
+        }
+      },
       "multisig": {
         "meta": {
           "setup": {
