@@ -4,7 +4,7 @@ import type { IPluginInfo } from '@/shared/types';
 export const lockToVotePlugin: IPluginInfo = {
     id: PluginInterfaceType.LOCK_TO_VOTE,
     subdomain: 'lock-to-vote',
-    name: 'lock To Vote',
+    name: 'Lock To Vote',
     installVersion: { release: 1, build: 1, releaseNotes: '', description: '' },
     repositoryAddresses: {
         [Network.ETHEREUM_MAINNET]: '0x0000000000000000000000000000000000000000',

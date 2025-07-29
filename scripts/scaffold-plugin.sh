@@ -23,15 +23,16 @@ while true; do
   fi
 
   echo -e "${YELLOW}⚠️  You entered: ${PLUGIN_NAME}${NC}"
-  read -p "Is this correct? [y/N]: " confirm
-  case "$confirm" in
-    [yY][eE][sS]|[yY])
-      break
-      ;;
-    *)
-      echo "Let's try again..."
-      ;;
-  esac
+  read -p "Is this correct? [Y/n]: " confirm
+    confirm=${confirm:-y} # default to 'y' if empty
+    case "$confirm" in
+      [yY][eE][sS]|[yY])
+        break
+        ;;
+      *)
+        echo "Let's try again..."
+        ;;
+    esac
 done
 
 if [[ ! $PLUGIN_NAME =~ ^[a-z][a-zA-Z0-9]*$ ]]; then
@@ -59,7 +60,9 @@ to_kebab_case() {
   echo "$1" | sed 's/\([a-z]\)\([A-Z]\)/\1-\2/g' | tr '[:upper:]' '[:lower:]'
 }
 to_title_case() {
-  echo "$1" | sed 's/\([a-z]\)\([A-Z]\)/\1 \2/g' | sed 's/\b\w/\U&/g'
+  echo "$1" |
+    sed -E 's/([a-z0-9])([A-Z])/\1 \2/g' |
+    awk '{for (i=1; i<=NF; ++i) $i=toupper(substr($i,1,1)) tolower(substr($i,2))} 1'
 }
 
 PASCAL_NAME="$(to_pascal_case "$PLUGIN_NAME")"
