@@ -1148,6 +1148,14 @@
           }
         }
       },
+      "lockToVote": {
+        "meta": {
+          "setup": {
+            "description": "Majority voting with locked ERC20 tokens",
+            "name": "Lock to vote"
+          }
+        }
+      },
       "multisig": {
         "meta": {
           "setup": {

@@ -19,4 +19,8 @@ export const lockToVotePlugin: IPluginInfo = {
         [Network.CORN_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.CHILIZ_MAINNET]: '0x0000000000000000000000000000000000000000',
     },
+    setup: {
+        nameKey: 'app.plugins.lockToVote.meta.setup.name',
+        descriptionKey: 'app.plugins.lockToVote.meta.setup.description',
+    },
 };
