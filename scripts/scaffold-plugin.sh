@@ -97,9 +97,15 @@ cat > "$PLUGIN_DIR/utils/index.ts" <<EOF
 EOF
 
 # types/index.ts
+cat > "$PLUGIN_DIR/types/index.ts" <<EOF
+// TODO: Export your types here
+export type { I${PASCAL_NAME}Plugin } from './${PLUGIN_NAME}Plugin';
+EOF
+
+# types/{PLUGIN_NAME}Plugin.ts
 cat > "$PLUGIN_DIR/types/${PLUGIN_NAME}Plugin.ts" <<EOF
 // TODO: Define the shape of ${PLUGIN_NAME}Plugin and export your types here
-// export interface I${PASCAL_NAME}Plugin {}
+export interface I${PASCAL_NAME}Plugin {}
 EOF
 
 # dialogs/index.ts
