@@ -15,7 +15,7 @@ import { formatUnits, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { LockToVotePluginDialogId } from '../../../constants/lockToVotePluginDialogId';
 import type { ITokenLockUnlockDialogParams } from '../../../dialogs/tokenLockUnlockDialog';
-import type { ILockToVotePlugin } from '../../../types/lockToVotePlugin';
+import type { ILockToVotePlugin } from '../../../types';
 
 export interface ITokenLockFormProps {
     /**
@@ -58,10 +58,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     } = useCheckTokenAllowance({ spender: lockManagerAddress, token });
 
     const parsedBalance = formatUnits(balance?.value ?? BigInt(0), decimals);
-    const userAsset = useMemo(
-        () => ({ token, amount: parsedBalance }),
-        [token, parsedBalance],
-    );
+    const userAsset = useMemo(() => ({ token, amount: parsedBalance }), [token, parsedBalance]);
 
     const formValues = useForm<ITokenLockFormData>({ mode: 'onSubmit', defaultValues: { asset: userAsset } });
     const { control, setValue, handleSubmit } = formValues;
