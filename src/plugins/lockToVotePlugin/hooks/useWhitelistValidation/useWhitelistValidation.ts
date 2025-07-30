@@ -1,9 +1,8 @@
 import { useWhitelistedAddresses } from '@/modules/explore/api/cmsService/queries/useWhitelistedAddresses';
 import { PluginInterfaceType } from '@/shared/api/daoService';
+import { useDebugContext } from '@/shared/components/debugProvider';
 import type { IPluginInfo } from '@/shared/types';
 import { useMemo } from 'react';
-
-const isDevEnv = ['development', 'local'].includes(process.env.NEXT_PUBLIC_ENV ?? '');
 
 export const useWhitelistValidation = (
     plugins: IPluginInfo[],
@@ -11,10 +10,13 @@ export const useWhitelistValidation = (
 ): { approvals: Record<string, boolean> } => {
     const { data } = useWhitelistedAddresses();
 
+    const { values } = useDebugContext<{ enableAllPlugins: boolean }>();
+    const { enableAllPlugins } = values;
+
     const approvals = useMemo(() => {
         const result: Record<string, boolean> = {};
 
-        if (isDevEnv) {
+        if (enableAllPlugins) {
             for (const plugin of plugins) {
                 result[plugin.id] = true;
             }
@@ -40,7 +42,7 @@ export const useWhitelistValidation = (
         }
 
         return result;
-    }, [plugins, address, data]);
+    }, [plugins, enableAllPlugins, address, data]);
 
     return { approvals };
 };
