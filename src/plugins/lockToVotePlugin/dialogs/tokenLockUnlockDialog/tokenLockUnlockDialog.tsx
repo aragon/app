@@ -31,6 +31,7 @@ export interface ITokenLockUnlockDialogParams {
     lockManagerAddress: string;
     /**
      * Amount of tokens to be locked / unlocked in WEI format.
+     * Used only for the UI, not for the transaction.
      */
     amount: bigint;
     /**
