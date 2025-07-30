@@ -103,7 +103,7 @@ describe('tokenTransaction utils', () => {
     describe('buildVoteData', () => {
         it('correctly encodes vote data with given proposal index and vote', () => {
             const proposalIndex = '3';
-            const vote = 1;
+            const vote = { value: 1 };
             tokenTransactionUtils.buildVoteData({ proposalIndex, vote });
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: tokenPluginAbi,

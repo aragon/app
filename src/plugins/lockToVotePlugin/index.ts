@@ -24,6 +24,7 @@ import { tokenTransactionUtils } from '../tokenPlugin/utils/tokenTransactionUtil
 import { LockToVoteSubmitVote } from './components/lockToVoteSubmitVote';
 import { lockToVotePlugin } from './constants/lockToVotePlugin';
 import { useLockToVotePermissionCheckVoteSubmission } from './hooks/useLockToVotePermissionCheckVoteSubmission';
+import { lockToVoteTransactionUtils } from './utils/lockToVoteTransactionUtils';
 
 export const initialiseLockToVotePlugin = () => {
     pluginRegistryUtils
@@ -83,7 +84,7 @@ export const initialiseLockToVotePlugin = () => {
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_VOTE_DATA,
             pluginId: lockToVotePlugin.id,
-            function: () => null, // TODO
+            function: lockToVoteTransactionUtils.buildVoteData,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
