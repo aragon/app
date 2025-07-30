@@ -2,7 +2,7 @@ import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnecte
 import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
-import { useEffect, useMemo } from 'react';
+import { useCallback } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 import { useTokenLock } from '../../../hooks/useTokenLock';
@@ -31,14 +31,26 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     const { result: isConnected, check: walletGuard } = useConnectedWalletGuard();
 
-    const { balance, balanceStatus, lockedAmount, needsApproval, handleApproveAndLock, handleUnlockTokens } =
-        useTokenLock({ plugin, daoId });
-
-    const parsedBalance = formatUnits(balance?.value ?? BigInt(0), decimals);
-    const userAsset = useMemo(() => ({ token, amount: parsedBalance }), [token, parsedBalance]);
-
-    const formValues = useForm<ITokenLockFormData>({ mode: 'onSubmit', defaultValues: { asset: userAsset } });
+    const formValues = useForm<ITokenLockFormData>({
+        mode: 'onSubmit',
+        defaultValues: { asset: { token, amount: '0' } },
+    });
     const { control, setValue, handleSubmit } = formValues;
+
+    const handleBalanceUpdated = useCallback(
+        (balance: bigint) => {
+            const parsedBalance = formatUnits(balance, token.decimals);
+            const asset = { token, amount: parsedBalance };
+            setValue('asset', asset);
+        },
+        [setValue, token],
+    );
+
+    const { balance, lockedAmount, needsApproval, handleApproveAndLock, handleUnlockTokens } = useTokenLock({
+        plugin,
+        daoId,
+        onBalanceUpdated: handleBalanceUpdated,
+    });
 
     const lockAmount = useWatch<ITokenLockFormData, 'amount'>({ control, name: 'amount' });
     const lockAmountWei = parseUnits(lockAmount ?? '0', token.decimals);
@@ -48,12 +60,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const handleFormSubmit = () => {
         handleApproveAndLock(lockAmountWei);
     };
-
-    useEffect(() => {
-        if (balanceStatus === 'success') {
-            setValue('asset', userAsset);
-        }
-    }, [setValue, balanceStatus, userAsset]);
 
     const parsedLockedAmount = formatUnits(lockedAmount, decimals);
     const formattedLockedAmount = formatterUtils.formatNumber(parsedLockedAmount, {
@@ -93,7 +99,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                         })}
                     </Button>
                     {lockedAmount > 0 && (
-                        <Button variant="secondary" size="lg" onClick={() => handleUnlockTokens(lockedAmount)}>
+                        <Button variant="secondary" size="lg" onClick={handleUnlockTokens}>
                             {t('app.plugins.lockToVote.tokenLockForm.submit.unlock', {
                                 amount: formattedLockedAmount,
                                 symbol,
