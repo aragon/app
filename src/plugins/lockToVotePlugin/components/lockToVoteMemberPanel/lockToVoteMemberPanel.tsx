@@ -1,3 +1,5 @@
+'use client';
+
 import { Page } from '@/shared/components/page';
 import type { ILockToVotePlugin } from '../../types';
 import { TokenLockForm } from './tokenLockForm';

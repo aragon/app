@@ -1,3 +1,5 @@
+'use client';
+
 import type { IToken } from '@/modules/finance/api/financeService';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
@@ -64,8 +66,8 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
 
     const handlePrepareTransaction = () =>
         action === 'lock'
-            ? tokenLockUnlockDialogUtils.buildLockTransaction({ lockManagerAddress, address })
-            : tokenLockUnlockDialogUtils.buildUnlockTransaction({ lockManagerAddress, address });
+            ? tokenLockUnlockDialogUtils.buildLockTransaction(lockManagerAddress)
+            : tokenLockUnlockDialogUtils.buildUnlockTransaction(lockManagerAddress);
 
     const parsedAmount = formatUnits(amount, token.decimals);
 
