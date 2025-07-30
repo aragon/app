@@ -8,6 +8,7 @@ class CmsService extends HttpService {
 
     private urls = {
         featuredDaos: '/main/featured-daos.json',
+        // TODO Update to `main` pattern above when https://github.com/aragon/app-cms/pull/4 is merged
         whitelistedAddresses: '/feat/APP-4366/whitelisted-addresses.json',
     };
 

@@ -41,7 +41,7 @@ export const SetupBodyDialogSteps: React.FC<ISetupBodyDialogStepsProps> = (props
     return (
         <>
             <WizardDialog.Step {...selectStep} hidden={initialValues != null}>
-                <SetupBodyDialogSelect isSubPlugin={isSubPlugin} />
+                <SetupBodyDialogSelect isSubPlugin={isSubPlugin} daoId={daoId} />
             </WizardDialog.Step>
             <WizardDialog.Step {...metadataStep} hidden={!isSubPlugin || isExternalPlugin}>
                 <SetupBodyDialogMetadata />

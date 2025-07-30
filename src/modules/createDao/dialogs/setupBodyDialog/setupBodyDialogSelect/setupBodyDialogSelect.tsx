@@ -1,8 +1,10 @@
+import { useWhitelistValidation } from '@/plugins/lockToVotePlugin/hooks/useWhitelistValidation/useWhitelistValidation';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IPluginInfo } from '@/shared/types';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
+import { useAccount } from 'wagmi';
 import { SetupBodyType, type ISetupBodyForm } from '../setupBodyDialogDefinitions';
 
 export interface ISetupBodyDialogSelectProps {
@@ -19,6 +21,8 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (pro
 
     const { t } = useTranslations();
 
+    const { address } = useAccount();
+
     const plugins = pluginRegistryUtils.getPlugins() as IPluginInfo[];
     const availablePlugins = plugins.filter((plugin) => plugin.setup != null);
 
@@ -31,11 +35,16 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (pro
         defaultValue: SetupBodyType.NEW,
     });
 
+    const { approvals } = useWhitelistValidation(availablePlugins, '0x1D03D98c0aac1f83860cec5156116FE68725642E');
+
     const handlePluginChange = (value: string) => {
         const bodyType = value === externalPluginId ? SetupBodyType.EXTERNAL : SetupBodyType.NEW;
         onTypeChange(bodyType);
         onPluginChange(value);
     };
+
+    const enabledPlugins = availablePlugins.filter((plugin) => approvals[plugin.id]);
+    const disabledPlugins = availablePlugins.filter((plugin) => !approvals[plugin.id]);
 
     return (
         <RadioGroup
@@ -43,7 +52,7 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (pro
             onValueChange={handlePluginChange}
             {...governanceTypeField}
         >
-            {availablePlugins.map((plugin) => (
+            {enabledPlugins.map((plugin) => (
                 <RadioCard
                     key={plugin.id}
                     label={t(plugin.setup!.nameKey)}
@@ -58,6 +67,16 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (pro
                     value={externalPluginId}
                 />
             )}
+            {disabledPlugins.map((plugin) => (
+                <RadioCard
+                    key={plugin.id}
+                    label={t(plugin.setup!.nameKey)}
+                    description={t(plugin.setup!.descriptionKey)}
+                    value={plugin.id}
+                    disabled={true}
+                    tag={{ variant: 'info', label: 'By request' }}
+                />
+            ))}
         </RadioGroup>
     );
 };

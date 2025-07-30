@@ -1,6 +1,3 @@
-export interface IWhitelistedAddresses {
-    /**
-     * List of whitelisted addresses for access to the plugin.
-     */
-    lockToVote: string[];
-}
+import type { PluginInterfaceType } from '@/shared/api/daoService';
+
+export type IWhitelistedAddresses = Partial<Record<PluginInterfaceType, string[]>>;
