@@ -1,6 +1,5 @@
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { encodeFunctionData, type Hex } from 'viem';
-import type { IBuildTokenLockTransactionParams } from './tokenLockUnlockDialogUtils.api';
 
 const lockManagerAbi = [
     {
@@ -18,9 +17,7 @@ const lockManagerAbi = [
 ];
 
 class TokenLockUnlockDialogUtils {
-    buildLockTransaction = (params: IBuildTokenLockTransactionParams): Promise<ITransactionRequest> => {
-        const { lockManagerAddress } = params;
-
+    buildLockTransaction = (lockManagerAddress: string): Promise<ITransactionRequest> => {
         const transactionData = encodeFunctionData({
             abi: lockManagerAbi,
             functionName: 'lock',
@@ -32,9 +29,7 @@ class TokenLockUnlockDialogUtils {
         return Promise.resolve(transaction);
     };
 
-    buildUnlockTransaction = (params: IBuildTokenLockTransactionParams): Promise<ITransactionRequest> => {
-        const { lockManagerAddress } = params;
-
+    buildUnlockTransaction = (lockManagerAddress: string): Promise<ITransactionRequest> => {
         const transactionData = encodeFunctionData({
             abi: lockManagerAbi,
             functionName: 'unlock',

@@ -6,24 +6,14 @@ import { useCallback } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 import { useTokenLock } from '../../../hooks/useTokenLock';
-import type { ILockToVotePlugin } from '../../../types';
+import type { ILockToVoteMemberPanelProps } from '../lockToVoteMemberPanel';
 
-export interface ITokenLockFormProps {
-    /**
-     * DAO plugin for the token locking.
-     */
-    plugin: ILockToVotePlugin;
-    /**
-     * ID of the DAO.
-     */
-    daoId: string;
-}
+export interface ITokenLockFormProps extends ILockToVoteMemberPanelProps {}
 
 export interface ITokenLockFormData extends IAssetInputFormData {}
 
 export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { plugin, daoId } = props;
-
     const { token } = plugin.settings;
     const { symbol, decimals } = token;
 
@@ -40,8 +30,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const handleBalanceUpdated = useCallback(
         (balance: bigint) => {
             const parsedBalance = formatUnits(balance, token.decimals);
-            const asset = { token, amount: parsedBalance };
-            setValue('asset', asset);
+            setValue('asset', { token, amount: parsedBalance });
         },
         [setValue, token],
     );

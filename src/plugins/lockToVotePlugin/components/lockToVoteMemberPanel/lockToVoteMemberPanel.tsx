@@ -1,12 +1,10 @@
-'use client';
-
 import { Page } from '@/shared/components/page';
 import type { ILockToVotePlugin } from '../../types';
-import { TokenLockForm } from './tokenLockForm/tokenLockForm';
+import { TokenLockForm } from './tokenLockForm';
 
 export interface ILockToVoteMemberPanelProps {
     /**
-     * DAO plugin to display the member panel for.
+     * lock-to-vote DAO plugin.
      */
     plugin: ILockToVotePlugin;
     /**

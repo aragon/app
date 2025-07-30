@@ -1,20 +1,19 @@
+import { useMember } from '@/modules/governance/api/governanceService';
+import { useCheckTokenAllowance } from '@/plugins/tokenPlugin/components/tokenMemberPanel/hooks/useCheckTokenAllowance';
+import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
+import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
+import { useDao } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useEffect } from 'react';
 import { useAccount } from 'wagmi';
-import { useMember } from '../../../../modules/governance/api/governanceService';
-import { useDao } from '../../../../shared/api/daoService';
-import { useDialogContext } from '../../../../shared/components/dialogProvider';
-import { useTranslations } from '../../../../shared/components/translationsProvider';
-import { useCheckTokenAllowance } from '../../../tokenPlugin/components/tokenMemberPanel/hooks/useCheckTokenAllowance';
-import { TokenPluginDialogId } from '../../../tokenPlugin/constants/tokenPluginDialogId';
-import type { ITokenApproveTokensDialogParams } from '../../../tokenPlugin/dialogs/tokenApproveTokensDialog';
-import type { ITokenMember } from '../../../tokenPlugin/types';
 import { LockToVotePluginDialogId } from '../../constants/lockToVotePluginDialogId';
 import type { ITokenLockUnlockDialogParams } from '../../dialogs/tokenLockUnlockDialog';
-import type { ILockToVotePlugin } from '../../types';
+import type { ILockToVoteMember, ILockToVotePlugin } from '../../types';
 
 export interface IUseTokenLockParams {
     /**
-     * DAO plugin for the token locking.
+     * lock-to-vote DAO plugin.
      */
     plugin: ILockToVotePlugin;
     /**
@@ -61,7 +60,6 @@ export interface IUseTokenLockResult {
 
 export const useTokenLock = (params: IUseTokenLockParams): IUseTokenLockResult => {
     const { plugin, daoId, onBalanceUpdated } = params;
-
     const { token } = plugin.settings;
     const { lockManagerAddress } = plugin;
 
@@ -71,7 +69,7 @@ export const useTokenLock = (params: IUseTokenLockParams): IUseTokenLockResult =
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const { data: tokenMember, refetch: refetchMember } = useMember<ITokenMember>(
+    const { data: tokenMember, refetch: refetchMember } = useMember<ILockToVoteMember>(
         { urlParams: { address: address as string }, queryParams: { daoId, pluginAddress: plugin.address } },
         { enabled: address != null },
     );
@@ -84,9 +82,9 @@ export const useTokenLock = (params: IUseTokenLockParams): IUseTokenLockResult =
         invalidateQueries,
     } = useCheckTokenAllowance({ spender: lockManagerAddress, token });
 
-    // Call onBalanceUpdated when balance changes
+    // Call onBalanceUpdated when balance changes.
     useEffect(() => {
-        if (balanceStatus === 'success' && balance?.value != null && onBalanceUpdated) {
+        if (onBalanceUpdated && balanceStatus === 'success' && balance?.value != null) {
             onBalanceUpdated(balance.value);
         }
     }, [balanceStatus, balance?.value, token, onBalanceUpdated]);
@@ -134,19 +132,14 @@ export const useTokenLock = (params: IUseTokenLockParams): IUseTokenLockResult =
 
     const handleApproveAndLock = (amount: bigint) => {
         if (needsApproval(amount)) {
-            const onApproveSuccess = () => {
-                invalidateQueries();
-                handleLockUnlockTokens('lock', amount, true);
-            };
+            const onApproveSuccess = () => handleLockUnlockTokens('lock', amount, true);
             handleApproveTokens(amount, onApproveSuccess);
         } else {
             handleLockUnlockTokens('lock', amount);
         }
     };
 
-    const handleUnlockTokens = () => {
-        handleLockUnlockTokens('unlock', lockedAmount);
-    };
+    const handleUnlockTokens = () => handleLockUnlockTokens('unlock', lockedAmount);
 
     const refetchData = () => {
         invalidateQueries();
