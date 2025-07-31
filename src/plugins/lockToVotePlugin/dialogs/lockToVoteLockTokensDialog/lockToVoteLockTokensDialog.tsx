@@ -1,3 +1,5 @@
+'use client';
+
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 
 export interface ILockToVoteLockTokensDialogParams {}

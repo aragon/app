@@ -1153,14 +1153,6 @@
           "createdAt": "Created",
           "votingPower": "Your voting power"
         },
-        "lockToVoteSubmitVote": {
-          "cancel": "Cancel",
-          "submit": "Submit vote",
-          "submitUpdate": "Submit update",
-          "submitted": "Vote submitted",
-          "update": "Update your vote",
-          "vote": "Vote on proposal"
-        },
         "lockToVoteSubmitVoteFeedbackDialog": {
           "default": {
             "cta": {
@@ -1727,11 +1719,17 @@
         "tokenSubmitVote": {
           "buttons": {
             "cancel": "Cancel",
-            "change": "Change vote",
-            "default": "Vote on proposal",
+            "change": {
+              "submit": "Submit change",
+              "vote": "Change vote"
+            },
             "submit": "Submit vote",
-            "submitChange": "Submit change",
-            "submitted": "Vote submitted"
+            "submitted": "Vote submitted",
+            "update": {
+              "submit": "Submit update",
+              "vote": "Update vote"
+            },
+            "vote": "Vote on proposal"
           },
           "options": {
             "abstain": "Abstain",
