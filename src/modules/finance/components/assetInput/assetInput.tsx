@@ -20,7 +20,7 @@ import { FinanceDialogId } from '../../constants/financeDialogId';
 import type { IAssetSelectionDialogParams } from '../../dialogs/assetSelectionDialog';
 import { AssetInputToken } from './assetInputToken';
 
-export interface IPercentageSelectionConfig {
+export interface IAssetInputPercentageSelectionConfig {
     /**
      * Total available balance for percentage calculations.
      */
@@ -74,7 +74,7 @@ export interface IAssetInputProps {
     /**
      * Configuration for percentage selection feature.
      */
-    percentageSelection?: IPercentageSelectionConfig;
+    percentageSelection?: IAssetInputPercentageSelectionConfig;
 }
 
 const valuePercentages = ['0', '25', '50', '75', '100'] as const;
@@ -96,7 +96,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     const inputId = useId();
     const { clearErrors } = useFormContext();
 
-    const [percentageValue, setPercentageValue] = useState<string>('100');
+    const [percentageValue, setPercentageValue] = useState('100');
 
     const isPercentageSelectionEnabled = percentageSelection != null;
     const totalBalance = percentageSelection?.totalBalance;

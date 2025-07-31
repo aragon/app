@@ -14,7 +14,7 @@ const lockManagerAbi = [
         inputs: [],
         outputs: [],
     },
-];
+] as const;
 
 class TokenLockUnlockDialogUtils {
     buildLockTransaction = (lockManagerAddress: string): Promise<ITransactionRequest> => {

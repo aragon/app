@@ -5,7 +5,7 @@ import { Button, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { useCallback } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
-import { useTokenLock } from '../../../hooks/useTokenLock';
+import { useLockToVoteData } from '../../../hooks/useLockToVoteData';
 import type { ILockToVoteMemberPanelProps } from '../lockToVoteMemberPanel';
 
 export interface ITokenLockFormProps extends ILockToVoteMemberPanelProps {}
@@ -35,7 +35,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         [setValue, token],
     );
 
-    const { balance, lockedAmount, needsApproval, handleApproveAndLock, handleUnlockTokens } = useTokenLock({
+    const { balance, allowance, lockedAmount, lockTokens, unlockTokens } = useLockToVoteData({
         plugin,
         daoId,
         onBalanceUpdated: handleBalanceUpdated,
@@ -44,10 +44,10 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const lockAmount = useWatch<ITokenLockFormData, 'amount'>({ control, name: 'amount' });
     const lockAmountWei = parseUnits(lockAmount ?? '0', token.decimals);
 
-    const needsApprovalForAmount = isConnected && needsApproval(lockAmountWei);
+    const needsApprovalForAmount = isConnected && lockAmountWei > allowance;
 
     const handleFormSubmit = () => {
-        handleApproveAndLock(lockAmountWei);
+        lockTokens(lockAmountWei);
     };
 
     const parsedLockedAmount = formatUnits(lockedAmount, decimals);
@@ -88,7 +88,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                         })}
                     </Button>
                     {lockedAmount > 0 && (
-                        <Button variant="secondary" size="lg" onClick={handleUnlockTokens}>
+                        <Button variant="secondary" size="lg" onClick={unlockTokens}>
                             {t('app.plugins.lockToVote.tokenLockForm.submit.unlock', {
                                 amount: formattedLockedAmount,
                                 symbol,

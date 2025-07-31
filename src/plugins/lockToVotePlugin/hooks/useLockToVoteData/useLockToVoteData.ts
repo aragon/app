@@ -11,7 +11,7 @@ import { LockToVotePluginDialogId } from '../../constants/lockToVotePluginDialog
 import type { ITokenLockUnlockDialogParams } from '../../dialogs/tokenLockUnlockDialog';
 import type { ILockToVoteMember, ILockToVotePlugin } from '../../types';
 
-export interface IUseTokenLockParams {
+export interface IUseLockToVoteDataParams {
     /**
      * lock-to-vote DAO plugin.
      */
@@ -26,39 +26,35 @@ export interface IUseTokenLockParams {
     onBalanceUpdated?: (balance: bigint) => void;
 }
 
-export interface IUseTokenLockResult {
+export interface IUseLockToVoteDataResult {
     /**
      * Approved token allowance for the lock manager address.
      */
-    allowance: bigint | undefined;
+    allowance: bigint;
     /**
      * Current (available) token balance of the member.
      */
-    balance: { value: bigint } | undefined;
+    balance?: { value: bigint };
     /**
      * Locked amount of tokens for the member.
      */
     lockedAmount: bigint;
     /**
-     * Whether approval is needed for the given amount.
-     */
-    needsApproval: (amount: bigint) => boolean;
-    /**
      * Handles the lock flow for a given amount. Triggers approval if needed.
      * @param amount - Amount of tokens to lock, in wei.
      */
-    handleApproveAndLock: (amount: bigint) => void;
+    lockTokens: (amount: bigint) => void;
     /**
      * Handles unlocking tokens, all at once.
      */
-    handleUnlockTokens: () => void;
+    unlockTokens: () => void;
     /**
      * Refetches member data and invalidates token queries.
      */
     refetchData: () => void;
 }
 
-export const useTokenLock = (params: IUseTokenLockParams): IUseTokenLockResult => {
+export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToVoteDataResult => {
     const { plugin, daoId, onBalanceUpdated } = params;
     const { token } = plugin.settings;
     const { lockManagerAddress } = plugin;
@@ -76,7 +72,7 @@ export const useTokenLock = (params: IUseTokenLockParams): IUseTokenLockResult =
     const lockedAmount = BigInt(tokenMember?.tokenBalance ?? '0');
 
     const {
-        allowance,
+        allowance = BigInt(0),
         balance,
         status: balanceStatus,
         invalidateQueries,
@@ -88,10 +84,6 @@ export const useTokenLock = (params: IUseTokenLockParams): IUseTokenLockResult =
             onBalanceUpdated(balance.value);
         }
     }, [balanceStatus, balance?.value, token, onBalanceUpdated]);
-
-    const needsApproval = (amount: bigint) => {
-        return allowance == null || allowance < amount;
-    };
 
     const handleApproveTokens = (amount: bigint, onSuccess: () => void) => {
         const { symbol } = token;
@@ -130,8 +122,8 @@ export const useTokenLock = (params: IUseTokenLockParams): IUseTokenLockResult =
         void refetchMember();
     };
 
-    const handleApproveAndLock = (amount: bigint) => {
-        if (needsApproval(amount)) {
+    const lockTokens = (amount: bigint) => {
+        if (amount > allowance) {
             const onApproveSuccess = () => handleLockUnlockTokens('lock', amount, true);
             handleApproveTokens(amount, onApproveSuccess);
         } else {
@@ -139,7 +131,7 @@ export const useTokenLock = (params: IUseTokenLockParams): IUseTokenLockResult =
         }
     };
 
-    const handleUnlockTokens = () => handleLockUnlockTokens('unlock', lockedAmount);
+    const unlockTokens = () => handleLockUnlockTokens('unlock', lockedAmount);
 
     const refetchData = () => {
         invalidateQueries();
@@ -150,9 +142,8 @@ export const useTokenLock = (params: IUseTokenLockParams): IUseTokenLockResult =
         allowance,
         balance,
         lockedAmount,
-        needsApproval,
-        handleApproveAndLock,
-        handleUnlockTokens,
+        lockTokens,
+        unlockTokens,
         refetchData,
     };
 };
