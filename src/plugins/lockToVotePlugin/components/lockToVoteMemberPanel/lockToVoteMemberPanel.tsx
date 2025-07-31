@@ -2,7 +2,7 @@
 
 import { Page } from '@/shared/components/page';
 import type { ILockToVotePlugin } from '../../types';
-import { TokenLockForm } from './tokenLockForm';
+import { LockToVoteLockForm } from './lockToVoteLockForm';
 
 export interface ILockToVoteMemberPanelProps {
     /**
@@ -25,7 +25,7 @@ export const LockToVoteMemberPanel: React.FC<ILockToVoteMemberPanelProps> = (pro
 
     return (
         <Page.AsideCard title={cardTitle}>
-            <TokenLockForm plugin={plugin} daoId={daoId} />
+            <LockToVoteLockForm plugin={plugin} daoId={daoId} />
         </Page.AsideCard>
     );
 };

@@ -8,11 +8,11 @@ import { formatUnits, parseUnits } from 'viem';
 import { useLockToVoteData } from '../../../hooks/useLockToVoteData';
 import type { ILockToVoteMemberPanelProps } from '../lockToVoteMemberPanel';
 
-export interface ITokenLockFormProps extends ILockToVoteMemberPanelProps {}
+export interface ILockToVoteLockFormProps extends ILockToVoteMemberPanelProps {}
 
-export interface ITokenLockFormData extends IAssetInputFormData {}
+export interface ILockToVoteLockFormData extends IAssetInputFormData {}
 
-export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
+export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (props) => {
     const { plugin, daoId } = props;
     const { token } = plugin.settings;
     const { symbol, decimals } = token;
@@ -21,7 +21,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     const { result: isConnected, check: walletGuard } = useConnectedWalletGuard();
 
-    const formValues = useForm<ITokenLockFormData>({
+    const formValues = useForm<ILockToVoteLockFormData>({
         mode: 'onSubmit',
         defaultValues: { asset: { token, amount: '0' } },
     });
@@ -41,7 +41,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         onBalanceUpdated: handleBalanceUpdated,
     });
 
-    const lockAmount = useWatch<ITokenLockFormData, 'amount'>({ control, name: 'amount' });
+    const lockAmount = useWatch<ILockToVoteLockFormData, 'amount'>({ control, name: 'amount' });
     const lockAmountWei = parseUnits(lockAmount ?? '0', token.decimals);
 
     const needsApprovalForAmount = isConnected && lockAmountWei > allowance;
@@ -62,7 +62,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         <FormProvider {...formValues}>
             <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
                 <p className="text-base leading-normal font-normal text-neutral-500">
-                    {t('app.plugins.lockToVote.tokenLockForm.info', { symbol: token.symbol })}
+                    {t('app.plugins.lockToVote.lockToVoteLockForm.info', { symbol: token.symbol })}
                 </p>
                 <div className="flex flex-col gap-3">
                     <AssetInput
@@ -83,20 +83,20 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                         variant="primary"
                         size="lg"
                     >
-                        {t(`app.plugins.lockToVote.tokenLockForm.submit.${submitLabel}`, {
+                        {t(`app.plugins.lockToVote.lockToVoteLockForm.submit.${submitLabel}`, {
                             symbol: token.symbol,
                         })}
                     </Button>
                     {lockedAmount > 0 && (
                         <Button variant="secondary" size="lg" onClick={unlockTokens}>
-                            {t('app.plugins.lockToVote.tokenLockForm.submit.unlock', {
+                            {t('app.plugins.lockToVote.lockToVoteLockForm.submit.unlock', {
                                 amount: formattedLockedAmount,
                                 symbol,
                             })}
                         </Button>
                     )}
                     <p className="text-center text-sm leading-normal font-normal text-neutral-500">
-                        {t('app.plugins.lockToVote.tokenLockForm.footerInfo')}
+                        {t('app.plugins.lockToVote.lockToVoteLockForm.footerInfo')}
                     </p>
                 </div>
             </form>

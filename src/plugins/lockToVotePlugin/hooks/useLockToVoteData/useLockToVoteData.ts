@@ -87,7 +87,7 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
 
     const handleApproveTokens = (amount: bigint, onSuccess: () => void) => {
         const { symbol } = token;
-        const txInfoTitle = t('app.plugins.lockToVote.tokenLockForm.approveTransactionInfoTitle', { symbol });
+        const txInfoTitle = t('app.plugins.lockToVote.lockToVoteLockForm.approveTransactionInfoTitle', { symbol });
         const transactionInfo = { title: txInfoTitle, current: 1, total: 2 };
 
         const params: ITokenApproveTokensDialogParams = {

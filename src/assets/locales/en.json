@@ -1156,6 +1156,16 @@
         }
       },
       "lockToVote": {
+        "lockToVoteLockForm": {
+          "approveTransactionInfoTitle": "Approve {{symbol}}",
+          "footerInfo": "Locking tokens will transfer them out of your wallet to the lock manager contract, where they can be unlocked at any time to regain control.",
+          "info": "Lock {{symbol}} to participate in governance.",
+          "submit": {
+            "approve": "Approve {{symbol}}",
+            "lock": "Lock {{symbol}}",
+            "unlock": "Unlock {{amount}} {{symbol}}"
+          }
+        },
         "lockToVoteLockUnlockDialog": {
           "lock": {
             "description": "To lock your tokens, confirm the onchain transaction in your wallet.",
@@ -1170,16 +1180,6 @@
             "success": "View members",
             "title": "Unlock tokens",
             "transactionInfoTitle": "Unlock {{symbol}}"
-          }
-        },
-        "tokenLockForm": {
-          "approveTransactionInfoTitle": "Approve {{symbol}}",
-          "footerInfo": "Locking tokens will transfer them out of your wallet to the lock manager contract, where they can be unlocked at any time to regain control.",
-          "info": "Lock {{symbol}} to participate in governance.",
-          "submit": {
-            "approve": "Approve {{symbol}}",
-            "lock": "Lock {{symbol}}",
-            "unlock": "Unlock {{amount}} {{symbol}}"
           }
         }
       },
