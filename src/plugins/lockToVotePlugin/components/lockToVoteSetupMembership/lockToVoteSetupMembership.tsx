@@ -1,6 +1,5 @@
 'use client';
 
-import type { ILockToVoteSetupMembershipForm } from '@/plugins/lockToVotePlugin/components/lockToVoteSetupMembership';
 import { useDao } from '@/shared/api/daoService';
 import {
     type ITransactionInfo,
@@ -17,7 +16,7 @@ import { useFormContext } from 'react-hook-form';
 import type { Hex } from 'viem';
 import { mainnet } from 'viem/chains';
 import { useLockToVoteErc20Token } from './hooks/useLockToVoteErc20Token';
-import type { ILockToVoteSetupMembershipProps } from './lockToVoteSetupMembership.api';
+import type { ILockToVoteSetupMembershipForm, ILockToVoteSetupMembershipProps } from './lockToVoteSetupMembership.api';
 
 type StepState = ITransactionStatusStepMeta['state'];
 
@@ -44,7 +43,7 @@ export const LockToVoteSetupMembership: React.FC<ILockToVoteSetupMembershipProps
         alert,
         ...importTokenAddressField
     } = useFormField<ILockToVoteSetupMembershipForm['token'], 'address'>('address', {
-        label: t('app.plugins.token.tokenSetupMembership.importToken.label'),
+        label: t('app.plugins.lockToVote.lockToVoteSetupMembership.importToken.label'),
         defaultValue: '',
         fieldPrefix: tokenFormPrefix,
         rules: {
@@ -81,7 +80,8 @@ export const LockToVoteSetupMembership: React.FC<ILockToVoteSetupMembershipProps
 
     const [erc20StepState]: [StepState] = isLoading ? ['pending'] : isError ? ['error'] : ['success'];
 
-    const getStepLabel = (step: string) => t(`app.plugins.token.tokenSetupMembership.importToken.step.${step}`);
+    const getStepLabel = (step: string) =>
+        t(`app.plugins.lockToVote.lockToVoteSetupMembership.importToken.step.${step}`);
 
     const steps: Array<IStepperStep<ITransactionStatusStepMeta>> = [
         { id: 'erc20', order: 0, meta: { label: getStepLabel('erc20'), state: erc20StepState } },
@@ -97,7 +97,7 @@ export const LockToVoteSetupMembership: React.FC<ILockToVoteSetupMembershipProps
         <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2 md:gap-3">
                 <AddressInput
-                    helpText={t('app.plugins.token.tokenSetupMembership.importToken.helpText')}
+                    helpText={t('app.plugins.lockToVote.lockToVoteSetupMembership.importToken.helpText')}
                     // Setting address to undefined could trigger some bug from the library in certain cases, so we use an empty string instead!
                     onAccept={(value) => onImportTokenAddressChange(value?.address ?? '')}
                     value={tokenAddressInput}

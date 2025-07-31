@@ -1182,6 +1182,15 @@
             "transactionInfoTitle": "Unlock {{symbol}}"
           }
         },
+        "lockToVoteSetupMembership": {
+          "importToken": {
+            "helpText": "The address must be an ERC-20 token contract deployed on the same chain as your DAO.",
+            "label": "Token address",
+            "step": {
+              "erc20": "ERC-20 token standard"
+            }
+          }
+        },
         "meta": {
           "setup": {
             "description": "Majority voting with locked ERC20 tokens",
