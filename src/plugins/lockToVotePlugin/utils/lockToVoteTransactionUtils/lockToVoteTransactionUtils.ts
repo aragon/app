@@ -43,6 +43,15 @@ class LockToVoteTransactionUtils {
         const votingSettings = this.buildInstallDataVotingSettings(params);
         const tokenTarget = pluginTransactionUtils.getPluginTargetConfig(dao, stageVotingPeriod != null);
 
+        console.log({
+            token: token.address,
+            votingSettings,
+            metadata,
+            propCaller: this.anyAddress,
+            execute: this.anyAddress,
+            tokenTarget,
+        });
+
         const pluginSettingsData = encodeAbiParameters(lockToVotePluginSetupAbi, [
             token.address as Hex,
             votingSettings,
