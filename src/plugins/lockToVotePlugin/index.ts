@@ -151,7 +151,6 @@ export const initialiseLockToVotePlugin = () => {
             pluginId: lockToVotePlugin.id,
             component: TokenSetupGovernance,
         })
-
         .registerSlotComponent({
             slotId: CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD,
             pluginId: lockToVotePlugin.id,

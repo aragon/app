@@ -41,25 +41,21 @@ class LockToVoteTransactionUtils {
         const repositoryAddress = lockToVotePlugin.repositoryAddresses[dao.network];
 
         const votingSettings = this.buildInstallDataVotingSettings(params);
-        const tokenTarget = pluginTransactionUtils.getPluginTargetConfig(dao, stageVotingPeriod != null);
+        const targetConfig = pluginTransactionUtils.getPluginTargetConfig(dao, stageVotingPeriod != null);
 
-        console.log({
-            token: token.address,
-            votingSettings,
-            metadata,
-            propCaller: this.anyAddress,
-            execute: this.anyAddress,
-            tokenTarget,
-        });
-
-        const pluginSettingsData = encodeAbiParameters(lockToVotePluginSetupAbi, [
-            token.address as Hex,
-            votingSettings,
-            metadata,
-            this.anyAddress,
-            this.anyAddress,
-            tokenTarget,
-        ]);
+        const pluginSettingsData = encodeAbiParameters(
+            [{ name: 'params', type: 'tuple', components: lockToVotePluginSetupAbi }],
+            [
+                {
+                    token: token.address as Hex,
+                    votingSettings,
+                    pluginMetadata: metadata,
+                    createProposalCaller: this.anyAddress,
+                    executeCaller: this.anyAddress,
+                    targetConfig,
+                },
+            ],
+        );
 
         const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
             repositoryAddress,

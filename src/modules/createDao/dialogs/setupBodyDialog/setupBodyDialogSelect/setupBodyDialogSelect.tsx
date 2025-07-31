@@ -1,4 +1,4 @@
-import { useWhitelistValidation } from '@/plugins/lockToVotePlugin/hooks/useWhitelistValidation/useWhitelistValidation';
+import { useWhitelistValidation } from '@/plugins/lockToVotePlugin/hooks/useWhitelistValidation';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IPluginInfo } from '@/shared/types';
