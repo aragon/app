@@ -1,4 +1,3 @@
-import { useMember } from '@/modules/governance/api/governanceService';
 import { useCheckTokenAllowance } from '@/plugins/tokenPlugin/components/tokenMemberPanel/hooks/useCheckTokenAllowance';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
@@ -6,10 +5,12 @@ import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useEffect } from 'react';
-import { useAccount } from 'wagmi';
+import { type Hex } from 'viem';
+import { useAccount, useReadContract } from 'wagmi';
+import { networkDefinitions } from '../../../../shared/constants/networkDefinitions';
 import { LockToVotePluginDialogId } from '../../constants/lockToVotePluginDialogId';
 import type { ILockToVoteLockUnlockDialogParams } from '../../dialogs/lockToVoteLockUnlockDialog';
-import type { ILockToVoteMember, ILockToVotePlugin } from '../../types';
+import type { ILockToVotePlugin } from '../../types';
 
 export interface IUseLockToVoteDataParams {
     /**
@@ -54,6 +55,16 @@ export interface IUseLockToVoteDataResult {
     refetchData: () => void;
 }
 
+const lockManagerAbi = [
+    {
+        type: 'function',
+        name: 'getLockedBalance',
+        inputs: [{ name: 'account', type: 'address' }],
+        outputs: [{ type: 'uint256' }],
+        stateMutability: 'view',
+    },
+] as const;
+
 export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToVoteDataResult => {
     const { plugin, daoId, onBalanceUpdated } = params;
     const { token } = plugin.settings;
@@ -65,11 +76,17 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const { data: tokenMember, refetch: refetchMember } = useMember<ILockToVoteMember>(
-        { urlParams: { address: address as string }, queryParams: { daoId, pluginAddress: plugin.address } },
-        { enabled: address != null },
-    );
-    const lockedAmount = BigInt(tokenMember?.tokenBalance ?? '0');
+    const { id: chainId } = networkDefinitions[token.network];
+    const { data: lockedBalance, refetch: refetchLockedAmount } = useReadContract({
+        abi: lockManagerAbi,
+        functionName: 'getLockedBalance',
+        address: lockManagerAddress as Hex,
+        args: [address as Hex],
+        query: { enabled: address != null },
+        chainId,
+    });
+
+    const lockedAmount = lockedBalance ?? BigInt(0);
 
     const {
         allowance = BigInt(0),
@@ -119,7 +136,7 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
 
     const onLockUnlockTokensSuccess = () => {
         invalidateQueries();
-        void refetchMember();
+        void refetchLockedAmount();
     };
 
     const lockTokens = (amount: bigint) => {
@@ -135,7 +152,7 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
 
     const refetchData = () => {
         invalidateQueries();
-        void refetchMember();
+        void refetchLockedAmount();
     };
 
     return {
