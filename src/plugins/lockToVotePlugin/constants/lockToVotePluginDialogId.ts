@@ -1,4 +1,5 @@
 export enum LockToVotePluginDialogId {
     SUBMIT_VOTE_FEEDBACK = 'SUBMIT_VOTE_FEEDBACK',
     LOCK_TOKENS = 'LOCK_TOKENS',
+    LOCK_UNLOCK = 'LOCK_UNLOCK',
 }
