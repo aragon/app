@@ -31,7 +31,7 @@ export interface ITokenLockUnlockDialogParams {
     lockManagerAddress: string;
     /**
      * Amount of tokens to be locked / unlocked in WEI format.
-     * Used only for the UI, not for the transaction.
+     * Used for the UI for both lock/unlock, but only used for the lock transaction.
      */
     amount: bigint;
     /**
@@ -67,7 +67,7 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
 
     const handlePrepareTransaction = () =>
         action === 'lock'
-            ? tokenLockUnlockDialogUtils.buildLockTransaction(lockManagerAddress)
+            ? tokenLockUnlockDialogUtils.buildLockTransaction(amount, lockManagerAddress)
             : tokenLockUnlockDialogUtils.buildUnlockTransaction(lockManagerAddress);
 
     const parsedAmount = formatUnits(amount, token.decimals);
