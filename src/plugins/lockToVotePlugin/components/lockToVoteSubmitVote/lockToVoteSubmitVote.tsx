@@ -37,7 +37,7 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (props
 
     const openVoteDialog = (option?: string, lockAmount?: bigint) => {
         const voteLabel = voteOptionToIndicator[option ?? ''];
-        const labelDescription = t(`app.plugins.token.tokenSubmitVote.voteDescription.${isVeto ? 'veto' : 'approve'}`);
+        const labelDescription = t(`app.plugins.lockToVote.lockToVoteSubmitVote.${isVeto ? 'veto' : 'approve'}`);
         const processedLabelDescription = voteLabel === 'abstain' ? undefined : labelDescription;
 
         const vote = {

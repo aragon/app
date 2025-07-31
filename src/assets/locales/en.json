@@ -1194,6 +1194,10 @@
           "createdAt": "Created",
           "votingPower": "Your voting power"
         },
+        "lockToVoteSubmitVote": {
+          "approve": "to approve",
+          "veto": "to veto"
+        },
         "lockToVoteSubmitVoteFeedbackDialog": {
           "default": {
             "cta": {
