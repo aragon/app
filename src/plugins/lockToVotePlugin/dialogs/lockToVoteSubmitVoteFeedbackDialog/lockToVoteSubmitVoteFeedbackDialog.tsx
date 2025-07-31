@@ -7,16 +7,23 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { Dialog, EmptyState, invariant } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
+import { LockToVotePluginDialogId } from '../../constants/lockToVotePluginDialogId';
+import type { ILockToVotePlugin } from '../../types';
+import type { ILockToVoteLockTokensDialogParams } from '../lockToVoteLockTokensDialog';
 
 export interface ILockToVoteSubmitVoteFeedbackDialogParams {
     /**
-     * Address of the lock-to-vote lock manager.
+     * Lock to vote plugin.
      */
-    lockManagerAddress: string;
+    plugin: ILockToVotePlugin;
     /**
      * Network of the plugin.
      */
     network: Network;
+    /**
+     * ID of the DAO.
+     */
+    daoId: string;
     /**
      * Callback called on vote button click.
      */
@@ -42,14 +49,14 @@ export const LockToVoteSubmitVoteFeedbackDialog: React.FC<ILockToVoteSubmitVoteF
 
     const { t } = useTranslations();
     const { address } = useAccount();
-    const { close } = useDialogContext();
+    const { close, open } = useDialogContext();
 
-    const { lockManagerAddress, network, onVoteClick } = location.params;
+    const { plugin, network, daoId, onVoteClick } = location.params;
     const { id: chainId } = networkDefinitions[network];
 
     const { data: lockedBalance } = useReadContract({
         abi: lockManagerAbi,
-        address: lockManagerAddress as Hex,
+        address: plugin.lockManagerAddress as Hex,
         chainId,
         functionName: 'getLockedBalance',
         args: [address as Hex],
@@ -57,7 +64,8 @@ export const LockToVoteSubmitVoteFeedbackDialog: React.FC<ILockToVoteSubmitVoteF
     });
 
     const handleLockTokens = () => {
-        // TODO
+        const params: ILockToVoteLockTokensDialogParams = { plugin, daoId };
+        open(LockToVotePluginDialogId.LOCK_TOKENS, { params });
     };
 
     const hasUnlockedTokens = lockedBalance != null && lockedBalance > 0;

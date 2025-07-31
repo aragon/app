@@ -57,9 +57,9 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (props
     };
 
     const openVoteFeedbackDialog = () => {
-        const { lockManagerAddress } = plugin as ILockToVotePlugin;
         const params: ILockToVoteSubmitVoteFeedbackDialogParams = {
-            lockManagerAddress,
+            plugin: plugin as ILockToVotePlugin,
+            daoId,
             network,
             onVoteClick: openVoteDialog,
         };
