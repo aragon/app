@@ -2,11 +2,11 @@ import type { IBuildPreparePluginInstallDataParams } from '@/modules/createDao/t
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IBuildVoteDataParams } from '@/modules/governance/types';
 import { type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
+import type { ITokenSetupGovernanceForm } from '@/plugins/tokenPlugin/components/tokenSetupGovernance';
 import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
-import { encodeAbiParameters, encodeFunctionData, parseUnits, zeroAddress, type Hex } from 'viem';
-import type { ILockToVoteSetupGovernanceForm } from '../../components/lockToVoteSetupGovernance';
+import { encodeAbiParameters, encodeFunctionData, parseUnits, type Hex } from 'viem';
 import type {
     ILockToVoteSetupMembershipForm,
     ILockToVoteSetupMembershipMember,
@@ -19,7 +19,7 @@ export interface ICreateLockToVoteProposalFormData extends IProposalCreate, Part
 
 export interface IPrepareTokenInstallDataParams
     extends IBuildPreparePluginInstallDataParams<
-        ILockToVoteSetupGovernanceForm,
+        ITokenSetupGovernanceForm,
         ILockToVoteSetupMembershipMember,
         ILockToVoteSetupMembershipForm
     > {}
@@ -47,9 +47,8 @@ class LockToVoteTransactionUtils {
             token.address as Hex,
             votingSettings,
             metadata,
-            /// TODO Figure out what 0x for createProposalCaller, executeCaller
-            zeroAddress,
-            zeroAddress,
+            this.anyAddress,
+            this.anyAddress,
             tokenTarget,
         ]);
 
@@ -78,14 +77,15 @@ class LockToVoteTransactionUtils {
             votingMode,
             supportThresholdRatio: tokenSettingsUtils.percentageToRatio(supportThreshold),
             minParticipationRatio: tokenSettingsUtils.percentageToRatio(minParticipation),
-            // TODO Investigate and adjust for value when field creation entry is identified on UI
-            minApprovalRatio: tokenSettingsUtils.percentageToRatio(0),
+            minApprovalRatio: 0,
             proposalDuration: BigInt(processedVotingPeriod),
             minProposerVotingPower: parsedProposerVotingPower,
         };
 
         return votingSettings;
     };
+
+    private anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';
 }
 
 export const lockToVoteTransactionUtils = new LockToVoteTransactionUtils();
