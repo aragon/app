@@ -27,7 +27,7 @@ export interface ILockToVoteSubmitVoteFeedbackDialogParams {
     /**
      * Callback called on vote button click.
      */
-    onVoteClick: () => void;
+    onVoteClick: (lockAmount?: bigint) => void;
 }
 
 export interface ILockToVoteSubmitVoteFeedbackDialogProps
@@ -46,12 +46,12 @@ const lockManagerAbi = [
 export const LockToVoteSubmitVoteFeedbackDialog: React.FC<ILockToVoteSubmitVoteFeedbackDialogProps> = (props) => {
     const { location } = props;
     invariant(location.params != null, 'TokenApproveNftDialog: required parameters must be set.');
+    const { plugin, network, daoId, onVoteClick } = location.params;
 
     const { t } = useTranslations();
     const { address } = useAccount();
     const { close, open } = useDialogContext();
 
-    const { plugin, network, daoId, onVoteClick } = location.params;
     const { id: chainId } = networkDefinitions[network];
 
     const { data: lockedBalance } = useReadContract({
@@ -64,7 +64,7 @@ export const LockToVoteSubmitVoteFeedbackDialog: React.FC<ILockToVoteSubmitVoteF
     });
 
     const handleLockTokens = () => {
-        const params: ILockToVoteLockTokensDialogParams = { plugin, daoId };
+        const params: ILockToVoteLockTokensDialogParams = { plugin, daoId, onVoteClick };
         open(LockToVotePluginDialogId.LOCK_TOKENS, { params });
     };
 
@@ -78,7 +78,7 @@ export const LockToVoteSubmitVoteFeedbackDialog: React.FC<ILockToVoteSubmitVoteF
 
     const secondaryAction = {
         label: t(`app.plugins.lockToVote.lockToVoteSubmitVoteFeedbackDialog.${translationVariant}.cta.secondary`),
-        onClick: hasUnlockedTokens ? onVoteClick : () => close(),
+        onClick: hasUnlockedTokens ? () => onVoteClick() : () => close(),
     };
 
     return (

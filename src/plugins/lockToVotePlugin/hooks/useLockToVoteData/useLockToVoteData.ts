@@ -14,7 +14,7 @@ import type { ILockToVotePlugin } from '../../types';
 
 export interface IUseLockToVoteDataParams {
     /**
-     * lock-to-vote DAO plugin.
+     * Lock to vote DAO plugin.
      */
     plugin: ILockToVotePlugin;
     /**
@@ -35,7 +35,7 @@ export interface IUseLockToVoteDataResult {
     /**
      * Current (available) token balance of the member.
      */
-    balance?: { value: bigint };
+    balance?: bigint;
     /**
      * Locked amount of tokens for the member.
      */
@@ -49,6 +49,10 @@ export interface IUseLockToVoteDataResult {
      * Handles unlocking tokens, all at once.
      */
     unlockTokens: () => void;
+    /**
+     * Handles the approve tokens flow.
+     */
+    approveTokens: (amount: bigint, onSuccess: () => void) => void;
     /**
      * Refetches member data and invalidates token queries.
      */
@@ -102,7 +106,7 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
         }
     }, [balanceStatus, balance?.value, token, onBalanceUpdated]);
 
-    const handleApproveTokens = (amount: bigint, onSuccess: () => void) => {
+    const approveTokens = (amount: bigint, onSuccess: () => void) => {
         const { symbol } = token;
         const txInfoTitle = t('app.plugins.lockToVote.lockToVoteLockForm.approveTransactionInfoTitle', { symbol });
         const transactionInfo = { title: txInfoTitle, current: 1, total: 2 };
@@ -142,7 +146,7 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
     const lockTokens = (amount: bigint) => {
         if (amount > allowance) {
             const onApproveSuccess = () => handleLockUnlockTokens('lock', amount, true);
-            handleApproveTokens(amount, onApproveSuccess);
+            approveTokens(amount, onApproveSuccess);
         } else {
             handleLockUnlockTokens('lock', amount);
         }
@@ -157,10 +161,11 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
 
     return {
         allowance,
-        balance,
+        balance: balance?.value,
         lockedAmount,
         lockTokens,
         unlockTokens,
+        approveTokens,
         refetchData,
     };
 };

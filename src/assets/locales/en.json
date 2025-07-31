@@ -1166,6 +1166,14 @@
             "unlock": "Unlock {{amount}} {{symbol}}"
           }
         },
+        "lockToVoteLockTokensDialog": {
+          "action": {
+            "cancel": "Cancel",
+            "lock": "Lock now"
+          },
+          "info": "Locking tokens will transfer them out of your wallet to the locking contract, where they can be withdrawn back to your wallet after the minimum locktime.",
+          "title": "Lock tokens"
+        },
         "lockToVoteLockUnlockDialog": {
           "lock": {
             "description": "To lock your tokens, confirm the onchain transaction in your wallet.",

@@ -7,13 +7,12 @@ import { TokenSubmitVote } from '@/plugins/tokenPlugin/components/tokenSubmitVot
 import { VoteOption, type ITokenProposal } from '@/plugins/tokenPlugin/types';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import type { VoteIndicator } from '@aragon/gov-ui-kit';
-import { erc20Abi, type Hex } from 'viem';
-import { useAccount, useReadContract } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { LockToVotePluginDialogId } from '../../constants/lockToVotePluginDialogId';
 import type { ILockToVoteSubmitVoteFeedbackDialogParams } from '../../dialogs/lockToVoteSubmitVoteFeedbackDialog';
+import { useLockToVoteData } from '../../hooks/useLockToVoteData';
 import type { ILockToVotePlugin } from '../../types';
 
 export interface ILockToVoteSubmitVoteProps extends ISubmitVoteProps<ITokenProposal> {}
@@ -26,49 +25,55 @@ const voteOptionToIndicator: Record<string, VoteIndicator> = {
 
 export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (props) => {
     const { daoId, proposal, isVeto } = props;
-    const { pluginAddress, network, settings } = proposal;
+    const { pluginAddress, network } = proposal;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const { address } = useAccount();
 
     const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress, includeSubPlugins: true })![0];
-    const { id: chainId } = networkDefinitions[network];
 
-    const { data: tokenBalance } = useReadContract({
-        abi: erc20Abi,
-        address: settings.token.address as Hex,
-        chainId,
-        functionName: 'balanceOf',
-        args: [address as Hex],
-        query: { enabled: address != null },
-    });
+    const { balance, allowance, approveTokens } = useLockToVoteData({ plugin: plugin as ILockToVotePlugin, daoId });
 
-    const openVoteDialog = (option?: string) => {
+    const openVoteDialog = (option?: string, lockAmount?: bigint) => {
         const voteLabel = voteOptionToIndicator[option ?? ''];
-        const voteLabelDescription =
-            voteLabel === 'abstain'
-                ? undefined
-                : t(`app.plugins.token.tokenSubmitVote.voteDescription.${isVeto ? 'veto' : 'approve'}`);
-        const vote = { value: Number(option), label: voteLabel, labelDescription: voteLabelDescription };
+        const labelDescription = t(`app.plugins.token.tokenSubmitVote.voteDescription.${isVeto ? 'veto' : 'approve'}`);
+        const processedLabelDescription = voteLabel === 'abstain' ? undefined : labelDescription;
+
+        const vote = {
+            value: Number(option),
+            lockAmount,
+            voter: address,
+            label: voteLabel,
+            labelDescription: processedLabelDescription,
+        };
+
         const params: IVoteDialogParams = { daoId, proposal, vote, isVeto, plugin };
 
         open(GovernanceDialogId.VOTE, { params });
     };
 
-    const openVoteFeedbackDialog = () => {
+    const handleLockAndVote = (option?: string) => (lockAmount?: bigint) => {
+        if (lockAmount != null && lockAmount > allowance) {
+            approveTokens(lockAmount, () => openVoteDialog(option, lockAmount));
+        } else {
+            openVoteDialog(option, lockAmount);
+        }
+    };
+
+    const openVoteFeedbackDialog = (option?: string) => {
         const params: ILockToVoteSubmitVoteFeedbackDialogParams = {
             plugin: plugin as ILockToVotePlugin,
             daoId,
             network,
-            onVoteClick: openVoteDialog,
+            onVoteClick: handleLockAndVote(option),
         };
         open(LockToVotePluginDialogId.SUBMIT_VOTE_FEEDBACK, { params });
     };
 
     const handleSubmitVote = (option?: string) => {
-        if (tokenBalance != null && tokenBalance > 0) {
-            openVoteFeedbackDialog();
+        if (balance != null && balance > 0) {
+            openVoteFeedbackDialog(option);
         } else {
             openVoteDialog(option);
         }
