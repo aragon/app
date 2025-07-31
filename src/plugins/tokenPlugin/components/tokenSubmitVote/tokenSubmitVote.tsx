@@ -57,7 +57,6 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
 
         const vote = { value: Number(selectedOption), label: voteLabel, labelDescription: processedDescriptionLabel };
         const params: IVoteDialogParams = { daoId, proposal, vote, isVeto, plugin };
-        console.log('open');
 
         open(GovernanceDialogId.VOTE, { params });
     };
@@ -78,9 +77,8 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
 
     const handleVoteClick = () => (canSubmitVote ? setShowOptions(true) : submitVoteGuard());
 
-    console.log({ onSubmitVoteClick });
     const handleSubmitVoteClick = () =>
-        onSubmitVoteClick != null ? onSubmitVoteClick(selectedOption) : openTransactionDialog;
+        onSubmitVoteClick != null ? onSubmitVoteClick(selectedOption) : openTransactionDialog();
 
     useEffect(() => setSelectedOption(latestVote?.voteOption.toString()), [latestVote]);
 
