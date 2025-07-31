@@ -72,13 +72,15 @@ export const LockToVoteLockUnlockDialog: React.FC<ILockToVoteLockUnlockDialogPro
 
     const parsedAmount = formatUnits(amount, token.decimals);
 
-    const transactionInfo = {
-        title: t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.transactionInfoTitle`, {
-            symbol: token.symbol,
-        }),
-        current: 2,
-        total: 2,
-    };
+    const transactionInfo = showTransactionInfo
+        ? {
+              title: t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.transactionInfoTitle`, {
+                  symbol: token.symbol,
+              }),
+              current: 2,
+              total: 2,
+          }
+        : undefined;
 
     return (
         <TransactionDialog
@@ -93,7 +95,7 @@ export const LockToVoteLockUnlockDialog: React.FC<ILockToVoteLockUnlockDialogPro
                 label: t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.success`),
                 onClick: () => router.refresh(),
             }}
-            transactionInfo={showTransactionInfo ? transactionInfo : undefined}
+            transactionInfo={transactionInfo}
         >
             <AssetDataListItem.Structure
                 logoSrc={token.logo}
