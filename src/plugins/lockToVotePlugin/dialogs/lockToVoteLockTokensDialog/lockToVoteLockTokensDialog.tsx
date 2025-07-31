@@ -36,10 +36,9 @@ export const LockToVoteLockTokensDialog: React.FC<ILockToVoteLockTokensDialogPro
     const { balance } = useLockToVoteData({ plugin, daoId });
 
     const { token } = plugin.settings;
-    const formValues = useForm<IAssetInputFormData>({
-        mode: 'onSubmit',
-        defaultValues: { asset: { token, amount: '0' } },
-    });
+
+    const defaultValues = { asset: { token, amount: '0' } };
+    const formValues = useForm<IAssetInputFormData>({ mode: 'onSubmit', defaultValues });
 
     const lockAmount = useWatch<IAssetInputFormData, 'amount'>({ control: formValues.control, name: 'amount' });
     const lockAmountWei = parseUnits(lockAmount ?? '0', token.decimals);
