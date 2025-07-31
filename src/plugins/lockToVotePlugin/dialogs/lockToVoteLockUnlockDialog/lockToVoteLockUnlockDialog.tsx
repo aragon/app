@@ -14,9 +14,9 @@ import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import { tokenLockUnlockDialogUtils } from './tokenLockUnlockDialogUtils';
+import { lockToVoteLockUnlockDialogUtils } from './lockToVoteLockUnlockDialogUtils';
 
-export interface ITokenLockUnlockDialogParams {
+export interface ILockToVoteLockUnlockDialogParams {
     /**
      * Action to be performed.
      */
@@ -48,14 +48,14 @@ export interface ITokenLockUnlockDialogParams {
     showTransactionInfo: boolean;
 }
 
-export interface ITokenLockUnlockDialogProps extends IDialogComponentProps<ITokenLockUnlockDialogParams> {}
+export interface ILockToVoteLockUnlockDialogProps extends IDialogComponentProps<ILockToVoteLockUnlockDialogParams> {}
 
-export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (props) => {
+export const LockToVoteLockUnlockDialog: React.FC<ILockToVoteLockUnlockDialogProps> = (props) => {
     const { location } = props;
-    invariant(location.params != null, 'TokenLockUnlockDialog: required parameters must be set.');
+    invariant(location.params != null, 'LockToVoteLockUnlockDialog: required parameters must be set.');
 
     const { address } = useAccount();
-    invariant(address != null, 'TokenLockUnlockDialog: user must be connected to perform the action');
+    invariant(address != null, 'LockToVoteLockUnlockDialog: user must be connected to perform the action');
 
     const { action, token, lockManagerAddress, amount, network, onSuccess, showTransactionInfo } = location.params;
 
@@ -67,13 +67,13 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
 
     const handlePrepareTransaction = () =>
         action === 'lock'
-            ? tokenLockUnlockDialogUtils.buildLockTransaction(amount, lockManagerAddress)
-            : tokenLockUnlockDialogUtils.buildUnlockTransaction(lockManagerAddress);
+            ? lockToVoteLockUnlockDialogUtils.buildLockTransaction(amount, lockManagerAddress)
+            : lockToVoteLockUnlockDialogUtils.buildUnlockTransaction(lockManagerAddress);
 
     const parsedAmount = formatUnits(amount, token.decimals);
 
     const transactionInfo = {
-        title: t(`app.plugins.lockToVote.tokenLockUnlockDialog.${action}.transactionInfoTitle`, {
+        title: t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.transactionInfoTitle`, {
             symbol: token.symbol,
         }),
         current: 2,
@@ -82,15 +82,15 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
 
     return (
         <TransactionDialog
-            title={t(`app.plugins.lockToVote.tokenLockUnlockDialog.${action}.title`)}
-            description={t(`app.plugins.lockToVote.tokenLockUnlockDialog.${action}.description`)}
-            submitLabel={t(`app.plugins.lockToVote.tokenLockUnlockDialog.${action}.submit`)}
+            title={t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.title`)}
+            description={t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.description`)}
+            submitLabel={t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.submit`)}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
             network={network}
             onSuccess={onSuccess}
             successLink={{
-                label: t(`app.plugins.lockToVote.tokenLockUnlockDialog.${action}.success`),
+                label: t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.success`),
                 onClick: () => router.refresh(),
             }}
             transactionInfo={showTransactionInfo ? transactionInfo : undefined}

@@ -8,7 +8,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { LockToVotePluginDialogId } from '../../constants/lockToVotePluginDialogId';
-import type { ITokenLockUnlockDialogParams } from '../../dialogs/tokenLockUnlockDialog';
+import type { ILockToVoteLockUnlockDialogParams } from '../../dialogs/lockToVoteLockUnlockDialog';
 import type { ILockToVoteMember, ILockToVotePlugin } from '../../types';
 
 export interface IUseLockToVoteDataParams {
@@ -104,7 +104,7 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
     };
 
     const handleLockUnlockTokens = (action: 'lock' | 'unlock', amount: bigint, showTransactionInfo = false) => {
-        const params: ITokenLockUnlockDialogParams = {
+        const params: ILockToVoteLockUnlockDialogParams = {
             action,
             token,
             lockManagerAddress,

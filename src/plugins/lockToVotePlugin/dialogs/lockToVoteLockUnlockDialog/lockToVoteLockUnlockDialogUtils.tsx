@@ -6,7 +6,7 @@ const lockManagerAbi = [
     { type: 'function', name: 'unlock', inputs: [], outputs: [] },
 ] as const;
 
-class TokenLockUnlockDialogUtils {
+class LockToVoteLockUnlockDialogUtils {
     buildLockTransaction = (amount: bigint, lockManagerAddress: string): Promise<ITransactionRequest> => {
         const transactionData = encodeFunctionData({
             abi: lockManagerAbi,
@@ -32,4 +32,4 @@ class TokenLockUnlockDialogUtils {
     };
 }
 
-export const tokenLockUnlockDialogUtils = new TokenLockUnlockDialogUtils();
+export const lockToVoteLockUnlockDialogUtils = new LockToVoteLockUnlockDialogUtils();
