@@ -604,6 +604,13 @@
     "finance": {
       "assetInput": {
         "maxButtonLabel": "Max",
+        "percentage": {
+          "0": "None",
+          "100": "100%",
+          "25": "25%",
+          "50": "50%",
+          "75": "75%"
+        },
         "token": {
           "trigger": "Select"
         }
@@ -1149,6 +1156,32 @@
         }
       },
       "lockToVote": {
+        "lockToVoteLockForm": {
+          "approveTransactionInfoTitle": "Approve {{symbol}}",
+          "footerInfo": "Locking tokens will transfer them out of your wallet to the lock manager contract, where they can be unlocked at any time to regain control.",
+          "info": "Lock {{symbol}} to participate in governance.",
+          "submit": {
+            "approve": "Approve {{symbol}}",
+            "lock": "Lock {{symbol}}",
+            "unlock": "Unlock {{amount}} {{symbol}}"
+          }
+        },
+        "lockToVoteLockUnlockDialog": {
+          "lock": {
+            "description": "To lock your tokens, confirm the onchain transaction in your wallet.",
+            "submit": "Lock tokens",
+            "success": "View members",
+            "title": "Lock tokens",
+            "transactionInfoTitle": "Lock {{symbol}}"
+          },
+          "unlock": {
+            "description": "To unlock your tokens, confirm the onchain transaction in your wallet.",
+            "submit": "Unlock tokens",
+            "success": "View members",
+            "title": "Unlock tokens",
+            "transactionInfoTitle": "Unlock {{symbol}}"
+          }
+        },
         "meta": {
           "setup": {
             "description": "Majority voting with locked ERC20 tokens",
@@ -1442,13 +1475,6 @@
           },
           "footerInfo": "Locking tokens will transfer them out of your wallet to the locking contract, where they can be withdrawn back to your wallet after the minimum locktime.",
           "locks": "View {{count}} locks",
-          "percentage": {
-            "0": "None",
-            "100": "100%",
-            "25": "25%",
-            "50": "50%",
-            "75": "75%"
-          },
           "submit": {
             "approve": "Approve {{symbol}}",
             "lock": "Lock {{symbol}}"
@@ -1737,13 +1763,6 @@
           "approveTransactionInfoTitle": "Approve {{symbol}}",
           "footerInfo": "Wrapping tokens will transfer them out of your wallet to the wrapping contract, where they can be withdrawn back to your wallet at any time.",
           "info": "Wrap {{underlyingSymbol}} to increase your voting power.",
-          "percentage": {
-            "0": "None",
-            "100": "100%",
-            "25": "25%",
-            "50": "50%",
-            "75": "75%"
-          },
           "submit": {
             "approve": "Approve {{underlyingSymbol}}",
             "unwrap": "Unwrap {{amount}} {{symbol}}",
