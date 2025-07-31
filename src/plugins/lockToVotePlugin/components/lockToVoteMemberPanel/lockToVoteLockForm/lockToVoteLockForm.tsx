@@ -29,10 +29,10 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (props) =>
 
     const handleBalanceUpdated = useCallback(
         (balance: bigint) => {
-            const parsedBalance = formatUnits(balance, token.decimals);
+            const parsedBalance = formatUnits(balance, decimals);
             setValue('asset', { token, amount: parsedBalance });
         },
-        [setValue, token],
+        [decimals, setValue, token],
     );
 
     const { balance, allowance, lockedAmount, lockTokens, unlockTokens } = useLockToVoteData({
@@ -42,7 +42,7 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (props) =>
     });
 
     const lockAmount = useWatch<ILockToVoteLockFormData, 'amount'>({ control, name: 'amount' });
-    const lockAmountWei = parseUnits(lockAmount ?? '0', token.decimals);
+    const lockAmountWei = parseUnits(lockAmount ?? '0', decimals);
 
     const needsApprovalForAmount = isConnected && lockAmountWei > allowance;
 

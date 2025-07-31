@@ -28,7 +28,7 @@ export interface IAssetInputPercentageSelectionConfig {
     /**
      * Token decimals for percentage calculations.
      */
-    tokenDecimals?: number;
+    tokenDecimals: number;
 }
 
 export interface IAssetInputFormData {
@@ -99,8 +99,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     const [percentageValue, setPercentageValue] = useState('100');
 
     const isPercentageSelectionEnabled = percentageSelection != null;
-    const totalBalance = percentageSelection?.totalBalance;
-    const tokenDecimals = percentageSelection?.tokenDecimals ?? 18;
+    const { totalBalance, tokenDecimals } = percentageSelection ?? {};
 
     const assetField = useFormField<IAssetInputFormData, 'asset'>('asset', { rules: { required: true }, fieldPrefix });
 
@@ -131,7 +130,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
 
     const updateAmountField = useCallback(
         (percentageValue?: string) => {
-            if (totalBalance == null || percentageValue == null) {
+            if (totalBalance == null || tokenDecimals == null || percentageValue == null) {
                 return;
             }
 
