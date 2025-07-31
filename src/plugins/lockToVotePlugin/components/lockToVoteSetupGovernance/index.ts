@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 
-export const TokenSetupGovernance = dynamic(() =>
-    import('./tokenSetupGovernance').then((mod) => mod.TokenSetupGovernance),
+export const LockToVoteSetupGovernance = dynamic(() =>
+    import('./lockToVoteSetupGovernance').then((mod) => mod.LockToVoteSetupGovernance),
 );
 
-export type { ITokenSetupGovernanceForm, ITokenSetupGovernanceProps } from './tokenSetupGovernance.api';
+export type { ILockToVoteSetupGovernanceForm, ILockToVoteSetupGovernanceProps } from './lockToVoteSetupGovernance.api';
