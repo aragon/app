@@ -18,8 +18,6 @@ import { mainnet } from 'viem/chains';
 import { useLockToVoteErc20Token } from './hooks/useLockToVoteErc20Token';
 import type { ILockToVoteSetupMembershipForm, ILockToVoteSetupMembershipProps } from './lockToVoteSetupMembership.api';
 
-type StepState = ITransactionStatusStepMeta['state'];
-
 export const LockToVoteSetupMembership: React.FC<ILockToVoteSetupMembershipProps> = (props) => {
     const { formPrefix, daoId } = props;
     const { t } = useTranslations();
