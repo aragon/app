@@ -1,3 +1,1 @@
-import type { PluginInterfaceType } from '@/shared/api/daoService';
-
-export type IWhitelistedAddresses = Partial<Record<PluginInterfaceType, string[]>>;
+export type IWhitelistedAddresses = Partial<Record<string, string[]>>;

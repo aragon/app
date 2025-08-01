@@ -1,48 +1,42 @@
 import { useWhitelistedAddresses } from '@/modules/explore/api/cmsService/queries/useWhitelistedAddresses';
-import { PluginInterfaceType } from '@/shared/api/daoService';
 import { useDebugContext } from '@/shared/components/debugProvider';
-import type { IPluginInfo } from '@/shared/types';
-import { useMemo } from 'react';
+import { addressUtils } from '@aragon/gov-ui-kit';
+import { useAccount } from 'wagmi';
+import type { IWhitelistValidationParams, IWhitelistValidationResult } from './useWhiteListValidation.api';
 
-export const useWhitelistValidation = (
-    plugins: IPluginInfo[],
-    address?: string,
-): { approvals: Record<string, boolean> } => {
+export const useWhitelistValidation = (params: IWhitelistValidationParams): IWhitelistValidationResult => {
+    const { plugins } = params;
+
+    const { address: connectedAddress } = useAccount();
     const { data } = useWhitelistedAddresses();
 
     const { values } = useDebugContext<{ enableAllPlugins: boolean }>();
     const { enableAllPlugins } = values;
 
-    const approvals = useMemo(() => {
-        const result: Record<string, boolean> = {};
-
-        if (enableAllPlugins) {
-            for (const plugin of plugins) {
-                result[plugin.id] = true;
-            }
-            return result;
-        }
-
-        const isPluginInterfaceType = (key: string): key is PluginInterfaceType => {
-            return Object.values(PluginInterfaceType).includes(key as PluginInterfaceType);
+    if (enableAllPlugins || !data) {
+        return {
+            enabledPlugins: plugins,
+            disabledPlugins: [],
         };
+    }
 
-        for (const plugin of plugins) {
-            const key = plugin.id;
+    const enabledPlugins = [];
+    const disabledPlugins = [];
 
-            if (!isPluginInterfaceType(key)) {
-                result[key] = true;
-                continue;
-            }
+    for (const plugin of plugins) {
+        const key = plugin.id;
 
-            const list = data?.[key];
+        const list = data[key];
 
-            result[key] =
-                !address || !data ? true : !list || list.some((addr) => addr.toLowerCase() === address.toLowerCase());
+        const approved =
+            !list || list.some((whitelistAddress) => addressUtils.isAddressEqual(whitelistAddress, connectedAddress));
+
+        if (approved) {
+            enabledPlugins.push(plugin);
+        } else {
+            disabledPlugins.push(plugin);
         }
+    }
 
-        return result;
-    }, [plugins, enableAllPlugins, address, data]);
-
-    return { approvals };
+    return { enabledPlugins, disabledPlugins };
 };

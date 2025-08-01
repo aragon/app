@@ -78,7 +78,7 @@ export const LockToVoteSetupMembership: React.FC<ILockToVoteSetupMembershipProps
         setValue(`${tokenFormPrefix}.totalSupply`, totalSupply);
     }, [setValue, token, tokenFormPrefix]);
 
-    const [erc20StepState]: [StepState] = isLoading ? ['pending'] : isError ? ['error'] : ['success'];
+    const erc20StepState = isLoading ? 'pending' : isError ? 'error' : 'success';
 
     const getStepLabel = (step: string) =>
         t(`app.plugins.lockToVote.lockToVoteSetupMembership.importToken.step.${step}`);

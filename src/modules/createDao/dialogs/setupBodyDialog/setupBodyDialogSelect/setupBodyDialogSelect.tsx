@@ -4,7 +4,6 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import type { IPluginInfo } from '@/shared/types';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
-import { useAccount } from 'wagmi';
 import { SetupBodyType, type ISetupBodyForm } from '../setupBodyDialogDefinitions';
 
 export interface ISetupBodyDialogSelectProps {
@@ -21,15 +20,12 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (pro
 
     const { t } = useTranslations();
 
-    const { address } = useAccount();
-
     const plugins = pluginRegistryUtils.getPlugins() as IPluginInfo[];
     const availablePlugins = plugins.filter((plugin) => plugin.setup != null);
 
-    const { approvals } = useWhitelistValidation(availablePlugins, address);
-
-    const enabledPlugins = availablePlugins.filter((plugin) => approvals[plugin.id]);
-    const disabledPlugins = availablePlugins.filter((plugin) => !approvals[plugin.id]);
+    const { enabledPlugins, disabledPlugins } = useWhitelistValidation({
+        plugins: availablePlugins,
+    });
 
     const { onChange: onPluginChange, ...governanceTypeField } = useFormField<ISetupBodyForm, 'plugin'>('plugin', {
         label: t('app.createDao.setupBodyDialog.select.plugin.label'),
