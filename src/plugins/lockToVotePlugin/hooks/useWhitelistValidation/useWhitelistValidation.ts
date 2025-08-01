@@ -8,7 +8,7 @@ export const useWhitelistValidation = (params: IWhitelistValidationParams): IWhi
     const { plugins } = params;
 
     const { address: connectedAddress } = useAccount();
-    const { data, isFetched } = useWhitelistedAddresses();
+    const { data } = useWhitelistedAddresses();
 
     const { values } = useDebugContext<{ enableAllPlugins: boolean }>();
     const { enableAllPlugins } = values;
@@ -20,10 +20,10 @@ export const useWhitelistValidation = (params: IWhitelistValidationParams): IWhi
         };
     }
 
-    if (isFetched || !data) {
+    if (!data) {
         return {
             enabledPlugins: [],
-            disabledPlugins: plugins,
+            disabledPlugins: [],
         };
     }
 
