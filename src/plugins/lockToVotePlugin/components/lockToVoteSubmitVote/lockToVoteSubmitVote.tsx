@@ -25,13 +25,12 @@ const voteOptionToIndicator: Record<string, VoteIndicator> = {
 
 export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (props) => {
     const { daoId, proposal, isVeto } = props;
-    const { pluginAddress, network } = proposal;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const { address } = useAccount();
 
-    const plugins = useDaoPlugins({ daoId, pluginAddress, includeSubPlugins: true })!;
+    const plugins = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress, includeSubPlugins: true })!;
     const plugin = plugins[0].meta as ILockToVotePlugin;
 
     const { balance, allowance, approveTokens } = useLockToVoteData({ plugin, daoId });
@@ -66,7 +65,7 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (props
 
     const openVoteFeedbackDialog = (option?: string) => {
         const onVoteClick = handleLockAndVote(option);
-        const params: ILockToVoteSubmitVoteFeedbackDialogParams = { plugin, daoId, network, onVoteClick };
+        const params: ILockToVoteSubmitVoteFeedbackDialogParams = { plugin, daoId, onVoteClick };
         open(LockToVotePluginDialogId.SUBMIT_VOTE_FEEDBACK, { params });
     };
 
