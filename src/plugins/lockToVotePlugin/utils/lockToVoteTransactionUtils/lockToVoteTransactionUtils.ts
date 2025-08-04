@@ -1,16 +1,12 @@
 import type { IBuildVoteDataOption, IBuildVoteDataParams } from '@/modules/governance/types';
 import { encodeFunctionData, type Hex } from 'viem';
-import { lockManagerAbi, lockToVoteAbi } from './lockToVoteAbi';
+import { lockManagerAbi } from './lockToVoteAbi';
 
 export interface ILockToVoteOption extends IBuildVoteDataOption {
     /**
      * Amount to be locked before voting.
      */
     lockAmount?: bigint;
-    /**
-     * Address of the voter.
-     */
-    voter: string;
 }
 
 class LockToVoteTransactionUtils {
@@ -39,9 +35,9 @@ class LockToVoteTransactionUtils {
         const { proposalIndex, vote } = params;
 
         const data = encodeFunctionData({
-            abi: lockToVoteAbi,
+            abi: lockManagerAbi,
             functionName: 'vote',
-            args: [BigInt(proposalIndex), vote.voter as Hex, vote.value, BigInt(0)], // todo: new-voting-power
+            args: [BigInt(proposalIndex), vote.value],
         });
 
         return data;

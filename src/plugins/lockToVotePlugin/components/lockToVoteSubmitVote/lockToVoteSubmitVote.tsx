@@ -9,7 +9,6 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import type { VoteIndicator } from '@aragon/gov-ui-kit';
-import { useAccount } from 'wagmi';
 import { LockToVotePluginDialogId } from '../../constants/lockToVotePluginDialogId';
 import type { ILockToVoteSubmitVoteFeedbackDialogParams } from '../../dialogs/lockToVoteSubmitVoteFeedbackDialog';
 import { useLockToVoteData } from '../../hooks/useLockToVoteData';
@@ -31,7 +30,6 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (props
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const { address } = useAccount();
 
     const plugins = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress, includeSubPlugins: true })!;
     const plugin = plugins[0].meta as ILockToVotePlugin;
@@ -43,10 +41,7 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (props
         const voteDescription = t(`app.plugins.lockToVote.lockToVoteSubmitVote.${isVeto ? 'veto' : 'approve'}`);
         const labelDescription = voteLabel === 'abstain' ? undefined : voteDescription;
 
-        const vote = { value: Number(option), lockAmount, voter: address!, label: voteLabel, labelDescription };
-
-        // The target for the vote transaction is the lockManager for the lockAndVote transaction
-        const target = lockAmount != null ? plugin.lockManagerAddress : undefined;
+        const vote = { value: Number(option), lockAmount, label: voteLabel, labelDescription };
 
         const params: IVoteDialogParams<number, ILockToVoteOptionVoteDialog> = {
             daoId,
@@ -54,7 +49,7 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (props
             vote,
             isVeto,
             plugin,
-            target,
+            target: plugin.lockManagerAddress,
         };
 
         open(GovernanceDialogId.VOTE, { params });
