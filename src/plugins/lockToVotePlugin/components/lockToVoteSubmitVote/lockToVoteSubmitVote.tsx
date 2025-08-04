@@ -31,9 +31,10 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (props
     const { open } = useDialogContext();
     const { address } = useAccount();
 
-    const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress, includeSubPlugins: true })![0];
+    const plugins = useDaoPlugins({ daoId, pluginAddress, includeSubPlugins: true })!;
+    const plugin = plugins[0].meta as ILockToVotePlugin;
 
-    const { balance, allowance, approveTokens } = useLockToVoteData({ plugin: plugin as ILockToVotePlugin, daoId });
+    const { balance, allowance, approveTokens } = useLockToVoteData({ plugin, daoId });
 
     const openVoteDialog = (option?: string, lockAmount?: bigint) => {
         const voteLabel = voteOptionToIndicator[option ?? ''];
@@ -48,8 +49,10 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (props
             labelDescription: processedLabelDescription,
         };
 
-        const params: IVoteDialogParams = { daoId, proposal, vote, isVeto, plugin };
+        // The target for the vote transaction is the lockManager for the lockAndVote transaction
+        const target = lockAmount != null ? plugin.lockManagerAddress : undefined;
 
+        const params: IVoteDialogParams = { daoId, proposal, vote, isVeto, plugin, target };
         open(GovernanceDialogId.VOTE, { params });
     };
 
@@ -62,12 +65,8 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (props
     };
 
     const openVoteFeedbackDialog = (option?: string) => {
-        const params: ILockToVoteSubmitVoteFeedbackDialogParams = {
-            plugin: plugin as ILockToVotePlugin,
-            daoId,
-            network,
-            onVoteClick: handleLockAndVote(option),
-        };
+        const onVoteClick = handleLockAndVote(option);
+        const params: ILockToVoteSubmitVoteFeedbackDialogParams = { plugin, daoId, network, onVoteClick };
         open(LockToVotePluginDialogId.SUBMIT_VOTE_FEEDBACK, { params });
     };
 

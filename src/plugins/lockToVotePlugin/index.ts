@@ -29,6 +29,7 @@ import { lockToVoteTransactionUtils } from './utils/lockToVoteTransactionUtils';
 
 export const initialiseLockToVotePlugin = () => {
     pluginRegistryUtils
+        // Plugin definitions
         .registerPlugin(lockToVotePlugin)
 
         // Governance module slots
