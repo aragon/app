@@ -42,7 +42,6 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (props
         const labelDescription = voteLabel === 'abstain' ? undefined : voteDescription;
 
         const vote = { value: Number(option), lockAmount, label: voteLabel, labelDescription };
-
         const params: IVoteDialogParams<number, ILockToVoteOptionVoteDialog> = {
             daoId,
             proposal,
