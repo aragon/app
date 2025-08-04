@@ -1,21 +1,15 @@
 import type { IBuildPreparePluginInstallDataParams } from '@/modules/createDao/types';
-import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
-import type { IBuildVoteDataParams } from '@/modules/governance/types';
-import { type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import type { ITokenSetupGovernanceForm } from '@/plugins/tokenPlugin/components/tokenSetupGovernance';
 import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
-import { encodeAbiParameters, encodeFunctionData, parseUnits, type Hex } from 'viem';
+import { encodeAbiParameters, parseUnits, type Hex } from 'viem';
 import type {
     ILockToVoteSetupMembershipForm,
     ILockToVoteSetupMembershipMember,
 } from '../../components/lockToVoteSetupMembership';
 import { lockToVotePlugin } from '../../constants/lockToVotePlugin';
-import { lockToVotePluginAbi, lockToVotePluginSetupAbi } from './lockToVotePluginAbi';
-
-// The end-date form values are set to "partial" because users can also create proposals without the proposal wizard
-export interface ICreateLockToVoteProposalFormData extends IProposalCreate, Partial<ICreateProposalEndDateForm> {}
+import { lockToVotePluginSetupAbi } from './lockToVotePluginAbi';
 
 export interface IPrepareTokenInstallDataParams
     extends IBuildPreparePluginInstallDataParams<
@@ -25,15 +19,6 @@ export interface IPrepareTokenInstallDataParams
     > {}
 
 class LockToVoteTransactionUtils {
-    buildVoteData = (params: IBuildVoteDataParams): Hex => {
-        const { proposalIndex, vote } = params;
-
-        const functionArgs = [proposalIndex, vote, false];
-        const data = encodeFunctionData({ abi: lockToVotePluginAbi, functionName: 'vote', args: functionArgs });
-
-        return data;
-    };
-
     buildPrepareInstallData = (params: IPrepareTokenInstallDataParams) => {
         const { body, metadata, dao, stageVotingPeriod } = params;
         const { token } = body.membership;
@@ -43,19 +28,16 @@ class LockToVoteTransactionUtils {
         const votingSettings = this.buildInstallDataVotingSettings(params);
         const targetConfig = pluginTransactionUtils.getPluginTargetConfig(dao, stageVotingPeriod != null);
 
-        const pluginSettingsData = encodeAbiParameters(
-            [{ name: 'params', type: 'tuple', components: lockToVotePluginSetupAbi }],
-            [
-                {
-                    token: token.address as Hex,
-                    votingSettings,
-                    pluginMetadata: metadata,
-                    createProposalCaller: this.anyAddress,
-                    executeCaller: this.anyAddress,
-                    targetConfig,
-                },
-            ],
-        );
+        const pluginSettingsData = encodeAbiParameters(lockToVotePluginSetupAbi, [
+            {
+                token: token.address as Hex,
+                votingSettings,
+                pluginMetadata: metadata,
+                createProposalCaller: this.anyAddress,
+                executeCaller: this.anyAddress,
+                targetConfig,
+            },
+        ]);
 
         const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
             repositoryAddress,

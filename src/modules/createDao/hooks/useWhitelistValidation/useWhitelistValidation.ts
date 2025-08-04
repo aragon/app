@@ -4,12 +4,15 @@ import { addressUtils } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import type { IWhitelistValidationParams, IWhitelistValidationResult } from './useWhiteListValidation.api';
 
-export const useWhitelistValidation = (params: IWhitelistValidationParams): IWhitelistValidationResult => {
+export interface IWhitelistValidationStatus extends IWhitelistValidationResult {
+    isValidating: boolean;
+}
+
+export const useWhitelistValidation = (params: IWhitelistValidationParams): IWhitelistValidationStatus => {
     const { plugins } = params;
 
-    const { address: connectedAddress } = useAccount();
-    const { data } = useWhitelistedAddresses();
-
+    const { address: connectedAddress, isConnected } = useAccount();
+    const { data, isLoading: isDataLoading } = useWhitelistedAddresses();
     const { values } = useDebugContext<{ enableAllPlugins: boolean }>();
     const { enableAllPlugins } = values;
 
@@ -17,26 +20,32 @@ export const useWhitelistValidation = (params: IWhitelistValidationParams): IWhi
         return {
             enabledPlugins: plugins,
             disabledPlugins: [],
+            isValidating: false,
         };
     }
 
-    if (!data) {
+    const accountPending = !isConnected;
+    const dataPending = isDataLoading || data === undefined;
+
+    if (accountPending || dataPending) {
         return {
             enabledPlugins: [],
-            disabledPlugins: [],
+            disabledPlugins: plugins,
+            isValidating: true,
         };
     }
 
-    const enabledPlugins = [];
-    const disabledPlugins = [];
+    const enabledPlugins: typeof plugins = [];
+    const disabledPlugins: typeof plugins = [];
 
     for (const plugin of plugins) {
         const key = plugin.id;
-
         const list = data[key];
 
         const approved =
-            !list || list.some((whitelistAddress) => addressUtils.isAddressEqual(whitelistAddress, connectedAddress));
+            !list ||
+            (connectedAddress != null &&
+                list.some((whitelistAddress) => addressUtils.isAddressEqual(whitelistAddress, connectedAddress)));
 
         if (approved) {
             enabledPlugins.push(plugin);
@@ -45,5 +54,9 @@ export const useWhitelistValidation = (params: IWhitelistValidationParams): IWhi
         }
     }
 
-    return { enabledPlugins, disabledPlugins };
+    return {
+        enabledPlugins,
+        disabledPlugins,
+        isValidating: false,
+    };
 };

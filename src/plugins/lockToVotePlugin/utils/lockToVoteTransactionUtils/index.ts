@@ -1,1 +1,1 @@
-export { lockToVoteTransactionUtils, type ICreateLockToVoteProposalFormData } from './lockToVoteTransactionUtils';
+export { lockToVoteTransactionUtils } from './lockToVoteTransactionUtils';

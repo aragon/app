@@ -25,10 +25,11 @@ import { tokenTransactionUtils } from '../tokenPlugin/utils/tokenTransactionUtil
 import { LockToVoteMemberPanel } from './components/lockToVoteMemberPanel';
 import { LockToVoteSetupMembership } from './components/lockToVoteSetupMembership/lockToVoteSetupMembership';
 import { lockToVotePlugin } from './constants/lockToVotePlugin';
-import { lockToVoteTransactionUtils } from './utils';
+import { lockToVoteTransactionUtils } from './utils/lockToVoteTransactionUtils';
 
 export const initialiseLockToVotePlugin = () => {
     pluginRegistryUtils
+        // Plugin definitions
         .registerPlugin(lockToVotePlugin)
 
         // Governance module slots
@@ -141,15 +142,10 @@ export const initialiseLockToVotePlugin = () => {
         })
 
         // Create DAO module slots
-        .registerSlotComponent({
-            slotId: CreateDaoSlotId.CREATE_DAO_SETUP_MEMBERSHIP,
+        .registerSlotFunction({
+            slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA,
             pluginId: lockToVotePlugin.id,
-            component: LockToVoteSetupMembership,
-        })
-        .registerSlotComponent({
-            slotId: CreateDaoSlotId.CREATE_DAO_SETUP_GOVERNANCE,
-            pluginId: lockToVotePlugin.id,
-            component: TokenSetupGovernance,
+            function: lockToVoteTransactionUtils.buildPrepareInstallData,
         })
         .registerSlotComponent({
             slotId: CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD,
@@ -161,9 +157,14 @@ export const initialiseLockToVotePlugin = () => {
             pluginId: lockToVotePlugin.id,
             component: TokenProposalCreationSettings,
         })
-        .registerSlotFunction({
-            slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA,
+        .registerSlotComponent({
+            slotId: CreateDaoSlotId.CREATE_DAO_SETUP_MEMBERSHIP,
             pluginId: lockToVotePlugin.id,
-            function: lockToVoteTransactionUtils.buildPrepareInstallData,
+            component: LockToVoteSetupMembership,
+        })
+        .registerSlotComponent({
+            slotId: CreateDaoSlotId.CREATE_DAO_SETUP_GOVERNANCE,
+            pluginId: lockToVotePlugin.id,
+            component: TokenSetupGovernance,
         });
 };
