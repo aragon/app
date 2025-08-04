@@ -1,7 +1,7 @@
 'use client';
 
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
-import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
+import type { IVoteDialogOption, IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
 import type { ISubmitVoteProps } from '@/modules/governance/types';
 import { TokenSubmitVote } from '@/plugins/tokenPlugin/components/tokenSubmitVote';
 import { VoteOption, type ITokenProposal } from '@/plugins/tokenPlugin/types';
@@ -14,8 +14,11 @@ import { LockToVotePluginDialogId } from '../../constants/lockToVotePluginDialog
 import type { ILockToVoteSubmitVoteFeedbackDialogParams } from '../../dialogs/lockToVoteSubmitVoteFeedbackDialog';
 import { useLockToVoteData } from '../../hooks/useLockToVoteData';
 import type { ILockToVotePlugin } from '../../types';
+import type { ILockToVoteOption } from '../../utils/lockToVoteTransactionUtils';
 
 export interface ILockToVoteSubmitVoteProps extends ISubmitVoteProps<ITokenProposal> {}
+
+interface ILockToVoteOptionVoteDialog extends IVoteDialogOption, ILockToVoteOption {}
 
 const voteOptionToIndicator: Record<string, VoteIndicator> = {
     [VoteOption.YES.toString()]: 'yes',
@@ -37,21 +40,23 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (props
 
     const openVoteDialog = (option?: string, lockAmount?: bigint) => {
         const voteLabel = voteOptionToIndicator[option ?? ''];
-        const labelDescription = t(`app.plugins.lockToVote.lockToVoteSubmitVote.${isVeto ? 'veto' : 'approve'}`);
-        const processedLabelDescription = voteLabel === 'abstain' ? undefined : labelDescription;
+        const voteDescription = t(`app.plugins.lockToVote.lockToVoteSubmitVote.${isVeto ? 'veto' : 'approve'}`);
+        const labelDescription = voteLabel === 'abstain' ? undefined : voteDescription;
 
-        const vote = {
-            value: Number(option),
-            lockAmount,
-            voter: address,
-            label: voteLabel,
-            labelDescription: processedLabelDescription,
-        };
+        const vote = { value: Number(option), lockAmount, voter: address!, label: voteLabel, labelDescription };
 
         // The target for the vote transaction is the lockManager for the lockAndVote transaction
         const target = lockAmount != null ? plugin.lockManagerAddress : undefined;
 
-        const params: IVoteDialogParams = { daoId, proposal, vote, isVeto, plugin, target };
+        const params: IVoteDialogParams<number, ILockToVoteOptionVoteDialog> = {
+            daoId,
+            proposal,
+            vote,
+            isVeto,
+            plugin,
+            target,
+        };
+
         open(GovernanceDialogId.VOTE, { params });
     };
 
