@@ -33,14 +33,14 @@ export const LockToVoteSubmitVoteFeedbackDialog: React.FC<ILockToVoteSubmitVoteF
 
     const { t } = useTranslations();
     const { close, open } = useDialogContext();
-    const { lockedAmount } = useLockToVoteData({ plugin, daoId });
+    const { balance } = useLockToVoteData({ plugin, daoId });
 
     const handleLockTokens = () => {
         const params: ILockToVoteLockBeforeVoteDialogParams = { plugin, daoId, onVoteClick };
         open(LockToVotePluginDialogId.LOCK_BEFORE_VOTE, { params });
     };
 
-    const hasUnlockedTokens = lockedAmount > 0;
+    const hasUnlockedTokens = balance != null && balance > 0;
     const translationVariant = hasUnlockedTokens ? 'lockMore' : 'default';
 
     const primaryAction = {
