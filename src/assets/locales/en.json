@@ -422,6 +422,9 @@
           }
         },
         "select": {
+          "disabled": {
+            "label": "By request"
+          },
           "external": {
             "description": "Add any address as a body, such as a Safe or Governor",
             "label": "External address"
