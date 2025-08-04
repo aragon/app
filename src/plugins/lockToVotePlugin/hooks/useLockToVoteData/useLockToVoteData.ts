@@ -41,6 +41,10 @@ export interface IUseLockToVoteDataResult {
      */
     lockedAmount: bigint;
     /**
+     * Defines if the hook is loading the data or not.
+     */
+    isLoading: boolean;
+    /**
      * Handles the lock flow for a given amount. Triggers approval if needed.
      * @param amount - Amount of tokens to lock, in wei.
      */
@@ -81,7 +85,11 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const { id: chainId } = networkDefinitions[token.network];
-    const { data: lockedBalance, refetch: refetchLockedAmount } = useReadContract({
+    const {
+        data: lockedBalance,
+        refetch: refetchLockedAmount,
+        isLoading: isLockedBalanceLoading,
+    } = useReadContract({
         abi: lockManagerAbi,
         functionName: 'getLockedBalance',
         address: lockManagerAddress as Hex,
@@ -97,6 +105,7 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
         balance,
         status: balanceStatus,
         invalidateQueries,
+        isLoading: isAllowanceCheckLoading,
     } = useCheckTokenAllowance({ spender: lockManagerAddress, token });
 
     // Call onBalanceUpdated when balance changes.
@@ -159,10 +168,13 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
         void refetchLockedAmount();
     };
 
+    const isLoading = isLockedBalanceLoading || isAllowanceCheckLoading;
+
     return {
         allowance,
         balance: balance?.value,
         lockedAmount,
+        isLoading,
         lockTokens,
         unlockTokens,
         approveTokens,

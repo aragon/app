@@ -2,9 +2,8 @@ import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ChainEntityType, DateFormat, formatterUtils, useBlockExplorer } from '@aragon/gov-ui-kit';
-import { erc20Abi, type Hex } from 'viem';
-import { useAccount, useReadContract } from 'wagmi';
 import type { ILockToVotePlugin } from '../../types';
+import { useLockToVoteData } from '../useLockToVoteData';
 
 export interface IUseLockToVotePermissionCheckVoteSubmissionParams extends IPermissionCheckGuardParams {
     /**
@@ -13,45 +12,18 @@ export interface IUseLockToVotePermissionCheckVoteSubmissionParams extends IPerm
     plugin: ILockToVotePlugin;
 }
 
-const lockManagerAbi = [
-    {
-        type: 'function',
-        inputs: [{ name: '_account', type: 'address' }],
-        name: 'getLockedBalance',
-        outputs: [{ name: '', type: 'uint256' }],
-        stateMutability: 'view',
-    },
-] as const;
-
 export const useLockToVotePermissionCheckVoteSubmission = (
     params: IUseLockToVotePermissionCheckVoteSubmissionParams,
 ): IPermissionCheckGuardResult => {
-    const { plugin, proposal } = params;
+    const { plugin, proposal, daoId } = params;
 
-    const { address } = useAccount();
     const { t } = useTranslations();
 
     const { token } = plugin.settings;
     const { blockTimestamp, network, transactionHash } = proposal!;
     const { id: chainId } = networkDefinitions[network];
 
-    const { data: tokenBalance, isLoading: isTokenBalanceLoading } = useReadContract({
-        abi: erc20Abi,
-        address: token.address as Hex,
-        chainId,
-        functionName: 'balanceOf',
-        args: [address as Hex],
-        query: { enabled: address != null },
-    });
-
-    const { data: lockedBalance, isLoading: isLockedBalanceLoading } = useReadContract({
-        abi: lockManagerAbi,
-        address: plugin.lockManagerAddress as Hex,
-        chainId,
-        functionName: 'getLockedBalance',
-        args: [address as Hex],
-        query: { enabled: address != null },
-    });
+    const { balance, lockedAmount, isLoading } = useLockToVoteData({ plugin, daoId });
 
     const creationDate = blockTimestamp * 1000;
     const formattedCreationDate = formatterUtils.formatDate(creationDate, { format: DateFormat.YEAR_MONTH_DAY });
@@ -73,9 +45,7 @@ export const useLockToVotePermissionCheckVoteSubmission = (
 
     // Return positive result for users having token balance greater than 0 to display lock dialog instead of the
     // default permission dialog
-    const hasPermission = (tokenBalance ?? 0) > 0 || (lockedBalance ?? 0) > 0;
-
-    const isLoading = isTokenBalanceLoading || isLockedBalanceLoading;
+    const hasPermission = (balance ?? 0) > 0 || lockedAmount > 0;
 
     return { hasPermission, settings: [settings], isLoading, isRestricted: true };
 };
