@@ -76,7 +76,7 @@ export const initialiseLockToVotePlugin = () => {
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
             pluginId: lockToVotePlugin.id,
-            function: tokenTransactionUtils.buildCreateProposalData,
+            function: lockToVoteTransactionUtils.buildCreateProposalData,
         })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE,
