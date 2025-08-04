@@ -28,7 +28,7 @@ export interface ILockToVoteSubmitVoteFeedbackDialogProps
 
 export const LockToVoteSubmitVoteFeedbackDialog: React.FC<ILockToVoteSubmitVoteFeedbackDialogProps> = (props) => {
     const { location } = props;
-    invariant(location.params != null, 'TokenApproveNftDialog: required parameters must be set.');
+    invariant(location.params != null, 'LockToVoteSubmitVoteFeedbackDialog: required parameters must be set.');
     const { plugin, daoId, onVoteClick } = location.params;
 
     const { t } = useTranslations();
