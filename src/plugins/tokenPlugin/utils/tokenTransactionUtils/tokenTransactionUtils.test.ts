@@ -62,7 +62,7 @@ describe('tokenTransaction utils', () => {
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: tokenPluginAbi,
                 functionName: 'createProposal',
-                args: [params.metadata, params.actions, BigInt(0), startDate, endDate, 0, false],
+                args: [params.metadata, params.actions, BigInt(0), BigInt(startDate), BigInt(endDate), 0, false],
             });
             expect(result).toEqual(transactionData);
         });
@@ -95,7 +95,7 @@ describe('tokenTransaction utils', () => {
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: tokenPluginAbi,
                 functionName: 'createProposal',
-                args: [params.metadata, params.actions, BigInt(0), startDate, endDate, 0, false],
+                args: [params.metadata, params.actions, BigInt(0), BigInt(startDate), BigInt(endDate), 0, false],
             });
         });
     });
@@ -108,7 +108,7 @@ describe('tokenTransaction utils', () => {
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: tokenPluginAbi,
                 functionName: 'vote',
-                args: [proposalIndex, vote, false],
+                args: [BigInt(proposalIndex), vote.value, false],
             });
         });
     });
