@@ -9,7 +9,7 @@ import { parseUnits } from 'viem';
 import { useLockToVoteData } from '../../hooks/useLockToVoteData';
 import type { ILockToVotePlugin } from '../../types';
 
-export interface ILockToVoteLockTokensDialogParams {
+export interface ILockToVoteLockBeforeVoteDialogParams {
     /**
      * Lock to vote plugin.
      */
@@ -24,11 +24,12 @@ export interface ILockToVoteLockTokensDialogParams {
     onVoteClick: (lockAmount?: bigint) => void;
 }
 
-export interface ILockToVoteLockTokensDialogProps extends IDialogComponentProps<ILockToVoteLockTokensDialogParams> {}
+export interface ILockToVoteLockBeforeVoteDialogProps
+    extends IDialogComponentProps<ILockToVoteLockBeforeVoteDialogParams> {}
 
-export const LockToVoteLockTokensDialog: React.FC<ILockToVoteLockTokensDialogProps> = (props) => {
+export const LockToVoteLockBeforeVoteDialog: React.FC<ILockToVoteLockBeforeVoteDialogProps> = (props) => {
     const { location } = props;
-    invariant(location.params != null, 'LockToVoteLockTokensDialog: required parameters must be set.');
+    invariant(location.params != null, 'LockToVoteLockBeforeVoteDialog: required parameters must be set.');
     const { plugin, daoId, onVoteClick } = location.params;
 
     const { t } = useTranslations();
@@ -44,13 +45,13 @@ export const LockToVoteLockTokensDialog: React.FC<ILockToVoteLockTokensDialogPro
     const lockAmountWei = parseUnits(lockAmount ?? '0', token.decimals);
 
     const primaryAction = {
-        label: t('app.plugins.lockToVote.lockToVoteLockTokensDialog.action.lock'),
+        label: t('app.plugins.lockToVote.lockToVoteLockBeforeVoteDialog.action.lock'),
         onClick: () => onVoteClick(lockAmountWei),
         type: 'submit',
     };
 
     const secondaryAction = {
-        label: t('app.plugins.lockToVote.lockToVoteLockTokensDialog.action.cancel'),
+        label: t('app.plugins.lockToVote.lockToVoteLockBeforeVoteDialog.action.cancel'),
         onClick: () => close(),
     };
 
@@ -64,7 +65,7 @@ export const LockToVoteLockTokensDialog: React.FC<ILockToVoteLockTokensDialogPro
                     percentageSelection={{ totalBalance: balance, tokenDecimals: token.decimals }}
                 />
                 <p className="text-sm font-normal text-neutral-500">
-                    {t('app.plugins.lockToVote.lockToVoteLockTokensDialog.info')}
+                    {t('app.plugins.lockToVote.lockToVoteLockBeforeVoteDialog.info')}
                 </p>
             </Dialog.Content>
             <Dialog.Footer primaryAction={primaryAction} secondaryAction={secondaryAction} />

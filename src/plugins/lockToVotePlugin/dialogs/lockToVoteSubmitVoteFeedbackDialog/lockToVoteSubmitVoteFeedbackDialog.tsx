@@ -6,7 +6,7 @@ import { Dialog, EmptyState, invariant } from '@aragon/gov-ui-kit';
 import { LockToVotePluginDialogId } from '../../constants/lockToVotePluginDialogId';
 import { useLockToVoteData } from '../../hooks/useLockToVoteData';
 import type { ILockToVotePlugin } from '../../types';
-import type { ILockToVoteLockTokensDialogParams } from '../lockToVoteLockTokensDialog';
+import type { ILockToVoteLockBeforeVoteDialogParams } from '../lockToVoteLockBeforeVoteDialog';
 
 export interface ILockToVoteSubmitVoteFeedbackDialogParams {
     /**
@@ -36,8 +36,8 @@ export const LockToVoteSubmitVoteFeedbackDialog: React.FC<ILockToVoteSubmitVoteF
     const { lockedAmount } = useLockToVoteData({ plugin, daoId });
 
     const handleLockTokens = () => {
-        const params: ILockToVoteLockTokensDialogParams = { plugin, daoId, onVoteClick };
-        open(LockToVotePluginDialogId.LOCK_TOKENS, { params });
+        const params: ILockToVoteLockBeforeVoteDialogParams = { plugin, daoId, onVoteClick };
+        open(LockToVotePluginDialogId.LOCK_BEFORE_VOTE, { params });
     };
 
     const hasUnlockedTokens = lockedAmount > 0;
