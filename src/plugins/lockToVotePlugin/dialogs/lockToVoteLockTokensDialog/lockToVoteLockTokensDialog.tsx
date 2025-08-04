@@ -56,13 +56,16 @@ export const LockToVoteLockTokensDialog: React.FC<ILockToVoteLockTokensDialogPro
 
     return (
         <FormProvider {...formValues}>
-            <Dialog.Content>
+            <Dialog.Content className="flex flex-col gap-4">
                 <AssetInput
                     disableAssetField={true}
                     hideMax={true}
                     hideAmountLabel={true}
                     percentageSelection={{ totalBalance: balance, tokenDecimals: token.decimals }}
                 />
+                <p className="text-sm font-normal text-neutral-500">
+                    {t('app.plugins.lockToVote.lockToVoteLockTokensDialog.info')}
+                </p>
             </Dialog.Content>
             <Dialog.Footer primaryAction={primaryAction} secondaryAction={secondaryAction} />
         </FormProvider>
