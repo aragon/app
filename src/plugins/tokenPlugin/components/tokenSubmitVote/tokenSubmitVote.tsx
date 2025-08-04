@@ -5,6 +5,7 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
+import type { ISubmitVoteProps } from '@/modules/governance/types';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -14,19 +15,16 @@ import { useCallback, useEffect, useState } from 'react';
 import { DaoTokenVotingMode, VoteOption, type ITokenProposal, type ITokenVote } from '../../types';
 import { TokenVotingOptions } from './components/tokenVotingOptions';
 
-export interface ITokenSubmitVoteProps {
+export interface ITokenSubmitVoteProps extends ISubmitVoteProps<ITokenProposal> {
     /**
-     * ID of the DAO to create the proposal for.
+     * Callback called on submit vote click. Overrides the default behaviour of opening the vote dialog when set.
      */
-    daoId: string;
+    onSubmitVoteClick?: (option?: string) => void;
     /**
-     * Proposal to submit the vote for.
+     * Namespace of the submit vote button.
+     * @default change
      */
-    proposal: ITokenProposal;
-    /**
-     * Defines if the vote is to approve or veto the proposal.
-     */
-    isVeto?: boolean;
+    submitNamespace?: 'change' | 'update';
 }
 
 const voteOptionToIndicator: Record<string, VoteIndicator> = {
@@ -36,7 +34,7 @@ const voteOptionToIndicator: Record<string, VoteIndicator> = {
 };
 
 export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
-    const { daoId, proposal, isVeto } = props;
+    const { daoId, proposal, isVeto, onSubmitVoteClick, submitNamespace = 'change' } = props;
     const { pluginAddress, network } = proposal;
 
     const { t } = useTranslations();
@@ -54,15 +52,10 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
 
     const openTransactionDialog = () => {
         const voteLabel = voteOptionToIndicator[selectedOption ?? ''];
-        const voteLabelDescription =
-            voteLabel === 'abstain'
-                ? undefined
-                : t(`app.plugins.token.tokenSubmitVote.voteDescription.${isVeto ? 'veto' : 'approve'}`);
-        const vote = {
-            value: Number(selectedOption),
-            label: voteLabel,
-            labelDescription: voteLabelDescription,
-        };
+        const descriptionLabel = t(`app.plugins.token.tokenSubmitVote.voteDescription.${isVeto ? 'veto' : 'approve'}`);
+        const processedDescriptionLabel = voteLabel === 'abstain' ? undefined : descriptionLabel;
+
+        const vote = { value: Number(selectedOption), label: voteLabel, labelDescription: processedDescriptionLabel };
         const params: IVoteDialogParams = { daoId, proposal, vote, isVeto, plugin };
 
         open(GovernanceDialogId.VOTE, { params });
@@ -84,9 +77,10 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
 
     const handleVoteClick = () => (canSubmitVote ? setShowOptions(true) : submitVoteGuard());
 
-    useEffect(() => {
-        setSelectedOption(latestVote?.voteOption.toString());
-    }, [latestVote]);
+    const handleSubmitVoteClick = () =>
+        onSubmitVoteClick != null ? onSubmitVoteClick(selectedOption) : openTransactionDialog();
+
+    useEffect(() => setSelectedOption(latestVote?.voteOption.toString()), [latestVote]);
 
     useEffect(() => {
         if (!canSubmitVote) {
@@ -98,7 +92,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         <div className="flex flex-col gap-4">
             {!showOptions && latestVote == null && (
                 <Button className="w-fit" size="md" onClick={handleVoteClick}>
-                    {t('app.plugins.token.tokenSubmitVote.buttons.default')}
+                    {t('app.plugins.token.tokenSubmitVote.buttons.vote')}
                 </Button>
             )}
             {!showOptions && latestVote != null && (
@@ -120,7 +114,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                             size="md"
                             onClick={() => setShowOptions(true)}
                         >
-                            {t('app.plugins.token.tokenSubmitVote.buttons.change')}
+                            {t(`app.plugins.token.tokenSubmitVote.buttons.${submitNamespace}.vote`)}
                         </Button>
                     )}
                 </div>
@@ -133,14 +127,14 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
             {showOptions && (
                 <div className="flex w-full flex-col items-center gap-y-3 md:flex-row md:gap-x-4">
                     <Button
-                        onClick={openTransactionDialog}
+                        onClick={handleSubmitVoteClick}
                         disabled={!selectedOption || selectedOption === latestVote?.voteOption.toString()}
                         size="md"
                         className="w-full md:w-fit"
                         variant="primary"
                     >
                         {latestVote
-                            ? t('app.plugins.token.tokenSubmitVote.buttons.submitChange')
+                            ? t(`app.plugins.token.tokenSubmitVote.buttons.${submitNamespace}.submit`)
                             : t('app.plugins.token.tokenSubmitVote.buttons.submit')}
                     </Button>
                     <Button size="md" variant="tertiary" className="w-full md:w-fit" onClick={resetVoteOptions}>

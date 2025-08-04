@@ -62,7 +62,7 @@ describe('tokenTransaction utils', () => {
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: tokenPluginAbi,
                 functionName: 'createProposal',
-                args: [params.metadata, params.actions, BigInt(0), startDate, endDate, 0, false],
+                args: [params.metadata, params.actions, BigInt(0), BigInt(startDate), BigInt(endDate), 0, false],
             });
             expect(result).toEqual(transactionData);
         });
@@ -95,7 +95,7 @@ describe('tokenTransaction utils', () => {
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: tokenPluginAbi,
                 functionName: 'createProposal',
-                args: [params.metadata, params.actions, BigInt(0), startDate, endDate, 0, false],
+                args: [params.metadata, params.actions, BigInt(0), BigInt(startDate), BigInt(endDate), 0, false],
             });
         });
     });
@@ -103,12 +103,12 @@ describe('tokenTransaction utils', () => {
     describe('buildVoteData', () => {
         it('correctly encodes vote data with given proposal index and vote', () => {
             const proposalIndex = '3';
-            const vote = 1;
+            const vote = { value: 1 };
             tokenTransactionUtils.buildVoteData({ proposalIndex, vote });
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: tokenPluginAbi,
                 functionName: 'vote',
-                args: [proposalIndex, vote, false],
+                args: [BigInt(proposalIndex), vote.value, false],
             });
         });
     });

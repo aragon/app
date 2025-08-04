@@ -1166,6 +1166,14 @@
             "unlock": "Unlock {{amount}} {{symbol}}"
           }
         },
+        "lockToVoteLockTokensDialog": {
+          "action": {
+            "cancel": "Cancel",
+            "lock": "Lock now"
+          },
+          "info": "Locking tokens will transfer them out of your wallet to the locking contract, where they can be withdrawn back to your wallet after the minimum locktime.",
+          "title": "Lock tokens"
+        },
         "lockToVoteLockUnlockDialog": {
           "lock": {
             "description": "To lock your tokens, confirm the onchain transaction in your wallet.",
@@ -1180,6 +1188,32 @@
             "success": "View members",
             "title": "Unlock tokens",
             "transactionInfoTitle": "Unlock {{symbol}}"
+          }
+        },
+        "lockToVotePermissionCheckVoteSubmission": {
+          "createdAt": "Created",
+          "votingPower": "Your voting power"
+        },
+        "lockToVoteSubmitVote": {
+          "approve": "to approve",
+          "veto": "to veto"
+        },
+        "lockToVoteSubmitVoteFeedbackDialog": {
+          "default": {
+            "cta": {
+              "primary": "Lock now",
+              "secondary": "Cancel"
+            },
+            "description": "Lock {{symbol}} in order to be able to vote.",
+            "title": "You have no voting power"
+          },
+          "lockMore": {
+            "cta": {
+              "primary": "Lock now",
+              "secondary": "Proceed to vote"
+            },
+            "description": "Lock more {{symbol}} to increase your voting power.",
+            "title": "You have unlocked tokens"
           }
         }
       },
@@ -1723,11 +1757,17 @@
         "tokenSubmitVote": {
           "buttons": {
             "cancel": "Cancel",
-            "change": "Change vote",
-            "default": "Vote on proposal",
+            "change": {
+              "submit": "Submit change",
+              "vote": "Change vote"
+            },
             "submit": "Submit vote",
-            "submitChange": "Submit change",
-            "submitted": "Vote submitted"
+            "submitted": "Vote submitted",
+            "update": {
+              "submit": "Submit update",
+              "vote": "Update vote"
+            },
+            "vote": "Vote on proposal"
           },
           "options": {
             "abstain": "Abstain",

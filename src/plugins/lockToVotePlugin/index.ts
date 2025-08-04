@@ -1,7 +1,7 @@
+import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { CreateDaoSlotId } from '../../modules/createDao/constants/moduleSlots';
-import { GovernanceSlotId } from '../../modules/governance/constants/moduleSlots';
-import { SettingsSlotId } from '../../modules/settings/constants/moduleSlots';
 import { TokenCreateProposalSettingsForm } from '../tokenPlugin/components/tokenCreateProposalSettingsForm';
 import { TokenGovernanceInfo } from '../tokenPlugin/components/tokenGovernanceInfo';
 import { TokenMemberInfo } from '../tokenPlugin/components/tokenMemberInfo';
@@ -12,24 +12,26 @@ import { TokenProposalVotingBreakdown } from '../tokenPlugin/components/tokenPro
 import { TokenProposalVotingSummary } from '../tokenPlugin/components/tokenProposalVotingSummary';
 import { TokenSetupGovernance } from '../tokenPlugin/components/tokenSetupGovernance';
 import { TokenSetupMembership } from '../tokenPlugin/components/tokenSetupMembership';
-import { TokenSubmitVote } from '../tokenPlugin/components/tokenSubmitVote';
 import { TokenVoteList } from '../tokenPlugin/components/tokenVoteList';
 import { useTokenActions } from '../tokenPlugin/hooks/useTokenActions';
 import { useTokenGovernanceSettings } from '../tokenPlugin/hooks/useTokenGovernanceSettings';
 import { useTokenMemberStats } from '../tokenPlugin/hooks/useTokenMemberStats';
 import { useTokenNormalizeActions } from '../tokenPlugin/hooks/useTokenNormalizeActions';
 import { useTokenPermissionCheckProposalCreation } from '../tokenPlugin/hooks/useTokenPermissionCheckProposalCreation';
-import { useTokenPermissionCheckVoteSubmission } from '../tokenPlugin/hooks/useTokenPermissionCheckVoteSubmission';
 import { tokenBodyUtils } from '../tokenPlugin/utils/tokenBodyUtils';
 import { tokenProposalUtils } from '../tokenPlugin/utils/tokenProposalUtils';
 import { tokenTransactionUtils } from '../tokenPlugin/utils/tokenTransactionUtils';
 import { LockToVoteMemberPanel } from './components/lockToVoteMemberPanel';
+import { LockToVoteSubmitVote } from './components/lockToVoteSubmitVote';
 import { lockToVotePlugin } from './constants/lockToVotePlugin';
+import { useLockToVotePermissionCheckVoteSubmission } from './hooks/useLockToVotePermissionCheckVoteSubmission';
+import { lockToVoteTransactionUtils } from './utils/lockToVoteTransactionUtils';
 
 export const initialiseLockToVotePlugin = () => {
     pluginRegistryUtils
         // Plugin definitions
         .registerPlugin(lockToVotePlugin)
+
         // Governance module slots
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST,
@@ -79,12 +81,12 @@ export const initialiseLockToVotePlugin = () => {
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE,
             pluginId: lockToVotePlugin.id,
-            component: TokenSubmitVote,
+            component: LockToVoteSubmitVote,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_VOTE_DATA,
             pluginId: lockToVotePlugin.id,
-            function: tokenTransactionUtils.buildVoteData,
+            function: lockToVoteTransactionUtils.buildVoteData,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
@@ -109,7 +111,7 @@ export const initialiseLockToVotePlugin = () => {
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
             pluginId: lockToVotePlugin.id,
-            function: useTokenPermissionCheckVoteSubmission,
+            function: useLockToVotePermissionCheckVoteSubmission,
         })
 
         // Settings module slots
