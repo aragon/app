@@ -40,6 +40,7 @@ export const LockToVoteSubmitVoteFeedbackDialog: React.FC<ILockToVoteSubmitVoteF
         open(LockToVotePluginDialogId.LOCK_BEFORE_VOTE, { params });
     };
 
+    const { symbol: tokenSymbol } = plugin.settings.token;
     const hasUnlockedTokens = balance != null && balance > 0;
     const translationVariant = hasUnlockedTokens ? 'lockMore' : 'default';
 
@@ -59,6 +60,7 @@ export const LockToVoteSubmitVoteFeedbackDialog: React.FC<ILockToVoteSubmitVoteF
                 heading={t(`app.plugins.lockToVote.lockToVoteSubmitVoteFeedbackDialog.${translationVariant}.title`)}
                 description={t(
                     `app.plugins.lockToVote.lockToVoteSubmitVoteFeedbackDialog.${translationVariant}.description`,
+                    { symbol: tokenSymbol },
                 )}
                 objectIllustration={{ object: hasUnlockedTokens ? 'WALLET' : 'USERS' }}
                 primaryButton={primaryAction}

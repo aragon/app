@@ -57,7 +57,8 @@ export const LockToVoteLockBeforeVoteDialog: React.FC<ILockToVoteLockBeforeVoteD
 
     return (
         <FormProvider {...formValues}>
-            <Dialog.Content className="flex flex-col gap-4">
+            <Dialog.Header title={t('app.plugins.lockToVote.lockToVoteLockBeforeVoteDialog.title')} onClose={close} />
+            <Dialog.Content className="flex flex-col gap-4 pt-4 pb-6">
                 <AssetInput
                     disableAssetField={true}
                     hideMax={true}
