@@ -46,9 +46,7 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (props) =>
 
     const needsApprovalForAmount = isConnected && lockAmountWei > allowance;
 
-    const handleFormSubmit = () => {
-        lockTokens(lockAmountWei);
-    };
+    const handleFormSubmit = () => lockTokens(lockAmountWei);
 
     const parsedLockedAmount = formatUnits(lockedAmount, decimals);
     const formattedLockedAmount = formatterUtils.formatNumber(parsedLockedAmount, {
@@ -56,7 +54,7 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (props) =>
     });
 
     const submitLabel = needsApprovalForAmount ? 'approve' : 'lock';
-    const disableSubmit = balance?.value === BigInt(0);
+    const disableSubmit = balance === BigInt(0);
 
     return (
         <FormProvider {...formValues}>
@@ -64,17 +62,12 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (props) =>
                 <p className="text-base leading-normal font-normal text-neutral-500">
                     {t('app.plugins.lockToVote.lockToVoteLockForm.info', { symbol: token.symbol })}
                 </p>
-                <div className="flex flex-col gap-3">
-                    <AssetInput
-                        disableAssetField={true}
-                        hideMax={true}
-                        hideAmountLabel={true}
-                        percentageSelection={{
-                            totalBalance: balance?.value,
-                            tokenDecimals: decimals,
-                        }}
-                    />
-                </div>
+                <AssetInput
+                    disableAssetField={true}
+                    hideMax={true}
+                    hideAmountLabel={true}
+                    percentageSelection={{ totalBalance: balance, tokenDecimals: decimals }}
+                />
                 <div className="flex flex-col gap-3">
                     <Button
                         type={isConnected ? 'submit' : undefined}

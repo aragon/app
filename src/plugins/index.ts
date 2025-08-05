@@ -23,6 +23,7 @@ export const initialisePlugins = () => {
 export const pluginDialogsDefinitions = {
     ...adminPluginDialogsDefinitions,
     ...capitalDistributorPluginDialogsDefinitions,
+    ...lockToVotePluginDialogsDefinitions,
     ...multisigPluginDialogsDefinitions,
     ...sppPluginDialogsDefinitions,
     ...tokenPluginDialogsDefinitions,
