@@ -422,6 +422,9 @@
           }
         },
         "select": {
+          "disabled": {
+            "label": "By request"
+          },
           "external": {
             "description": "Add any address as a body, such as a Safe or Governor",
             "label": "External address"
@@ -1194,6 +1197,15 @@
           "createdAt": "Created",
           "votingPower": "Your voting power"
         },
+        "lockToVoteSetupMembership": {
+          "importToken": {
+            "helpText": "The address must be an ERC-20 token contract deployed on the same chain as your DAO.",
+            "label": "Token address",
+            "step": {
+              "erc20": "ERC-20 token standard"
+            }
+          }
+        },
         "lockToVoteSubmitVote": {
           "approve": "to approve",
           "veto": "to veto"
@@ -1214,6 +1226,12 @@
             },
             "description": "Lock more {{symbol}} to increase your voting power.",
             "title": "You have unlocked tokens"
+          }
+        },
+        "meta": {
+          "setup": {
+            "description": "Majority voting with locked ERC20 tokens",
+            "name": "Lock to vote"
           }
         }
       },

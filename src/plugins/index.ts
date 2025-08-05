@@ -12,12 +12,12 @@ import { initialiseTokenPlugin } from './tokenPlugin';
 import { tokenPluginDialogsDefinitions } from './tokenPlugin/constants/tokenPluginDialogsDefinitions';
 
 export const initialisePlugins = () => {
+    initialiseMultisigPlugin();
+    initialiseTokenPlugin();
     initialiseAdminPlugin();
     initialiseCapitalDistributorPlugin();
     initialiseLockToVotePlugin();
-    initialiseMultisigPlugin();
     initialiseSppPlugin();
-    initialiseTokenPlugin();
 };
 
 export const pluginDialogsDefinitions = {

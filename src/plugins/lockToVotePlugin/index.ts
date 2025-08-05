@@ -2,17 +2,16 @@ import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { TokenCreateProposalSettingsForm } from '../tokenPlugin/components/tokenCreateProposalSettingsForm';
-import { TokenGovernanceInfo } from '../tokenPlugin/components/tokenGovernanceInfo';
-import { TokenMemberInfo } from '../tokenPlugin/components/tokenMemberInfo';
-import { TokenMemberList } from '../tokenPlugin/components/tokenMemberList';
-import { TokenProcessBodyField } from '../tokenPlugin/components/tokenProcessBodyField';
-import { TokenProposalCreationSettings } from '../tokenPlugin/components/tokenProposalCreationSettings';
-import { TokenProposalVotingBreakdown } from '../tokenPlugin/components/tokenProposalVotingBreakdown';
-import { TokenProposalVotingSummary } from '../tokenPlugin/components/tokenProposalVotingSummary';
-import { TokenSetupGovernance } from '../tokenPlugin/components/tokenSetupGovernance';
-import { TokenSetupMembership } from '../tokenPlugin/components/tokenSetupMembership';
-import { TokenVoteList } from '../tokenPlugin/components/tokenVoteList';
+import { TokenCreateProposalSettingsForm } from '../tokenPlugin/components/tokenCreateProposalSettingsForm/tokenCreateProposalSettingsForm';
+import { TokenGovernanceInfo } from '../tokenPlugin/components/tokenGovernanceInfo/tokenGovernanceInfo';
+import { TokenMemberInfo } from '../tokenPlugin/components/tokenMemberInfo/tokenMemberInfo';
+import { TokenMemberList } from '../tokenPlugin/components/tokenMemberList/tokenMemberList';
+import { TokenProcessBodyField } from '../tokenPlugin/components/tokenProcessBodyField/tokenProcessBodyField';
+import { TokenProposalCreationSettings } from '../tokenPlugin/components/tokenProposalCreationSettings/tokenProposalCreationSettings';
+import { TokenProposalVotingBreakdown } from '../tokenPlugin/components/tokenProposalVotingBreakdown/tokenProposalVotingBreakdown';
+import { TokenProposalVotingSummary } from '../tokenPlugin/components/tokenProposalVotingSummary/tokenProposalVotingSummary';
+import { TokenSetupGovernance } from '../tokenPlugin/components/tokenSetupGovernance/tokenSetupGovernance';
+import { TokenVoteList } from '../tokenPlugin/components/tokenVoteList/tokenVoteList';
 import { useTokenActions } from '../tokenPlugin/hooks/useTokenActions';
 import { useTokenGovernanceSettings } from '../tokenPlugin/hooks/useTokenGovernanceSettings';
 import { useTokenMemberStats } from '../tokenPlugin/hooks/useTokenMemberStats';
@@ -22,6 +21,7 @@ import { tokenBodyUtils } from '../tokenPlugin/utils/tokenBodyUtils';
 import { tokenProposalUtils } from '../tokenPlugin/utils/tokenProposalUtils';
 import { tokenTransactionUtils } from '../tokenPlugin/utils/tokenTransactionUtils';
 import { LockToVoteMemberPanel } from './components/lockToVoteMemberPanel';
+import { LockToVoteSetupMembership } from './components/lockToVoteSetupMembership/lockToVoteSetupMembership';
 import { LockToVoteSubmitVote } from './components/lockToVoteSubmitVote';
 import { lockToVotePlugin } from './constants/lockToVotePlugin';
 import { useLockToVotePermissionCheckVoteSubmission } from './hooks/useLockToVotePermissionCheckVoteSubmission';
@@ -145,7 +145,7 @@ export const initialiseLockToVotePlugin = () => {
         .registerSlotFunction({
             slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA,
             pluginId: lockToVotePlugin.id,
-            function: tokenTransactionUtils.buildPrepareInstallData,
+            function: lockToVoteTransactionUtils.buildPrepareInstallData,
         })
         .registerSlotComponent({
             slotId: CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD,
@@ -160,7 +160,7 @@ export const initialiseLockToVotePlugin = () => {
         .registerSlotComponent({
             slotId: CreateDaoSlotId.CREATE_DAO_SETUP_MEMBERSHIP,
             pluginId: lockToVotePlugin.id,
-            component: TokenSetupMembership,
+            component: LockToVoteSetupMembership,
         })
         .registerSlotComponent({
             slotId: CreateDaoSlotId.CREATE_DAO_SETUP_GOVERNANCE,
