@@ -28,9 +28,9 @@ export interface IProvidersProps {
      */
     wagmiInitialState?: State;
     /**
-     * Initial state of whitelisted addresses.
+     * Dehydrated state for the react-query provider.
      */
-    whitelistedInitialState?: DehydratedState;
+    dehydratedState?: DehydratedState;
     /**
      * Children of the component.
      */
@@ -40,7 +40,7 @@ export interface IProvidersProps {
 const coreProviderValues = { Link: Link, Img: Image };
 
 export const Providers: React.FC<IProvidersProps> = (props) => {
-    const { translations, wagmiInitialState, whitelistedInitialState, children } = props;
+    const { translations, wagmiInitialState, dehydratedState, children } = props;
 
     const queryClient = queryClientUtils.getQueryClient();
 
@@ -51,7 +51,7 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
     return (
         <DebugContextProvider>
             <QueryClientProvider client={queryClient}>
-                <HydrationBoundary state={whitelistedInitialState}>
+                <HydrationBoundary state={dehydratedState}>
                     <TranslationsProvider translations={translations}>
                         <BlockNavigationContextProvider>
                             <GukModulesProvider

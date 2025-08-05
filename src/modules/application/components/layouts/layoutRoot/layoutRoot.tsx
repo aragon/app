@@ -35,7 +35,6 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
 
     const queryClient = new QueryClient();
     await queryClient.prefetchQuery(whitelistedAddressesOptions());
-    const dehydratedState = dehydrate(queryClient);
 
     return (
         <html lang="en" className="h-full">
@@ -50,7 +49,7 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
                 <Providers
                     translations={translationAssets}
                     wagmiInitialState={wagmiInitialState}
-                    whitelistedInitialState={dehydratedState}
+                    dehydratedState={dehydrate(queryClient)}
                 >
                     <ErrorBoundary>
                         <div className="flex grow flex-col">{children}</div>
