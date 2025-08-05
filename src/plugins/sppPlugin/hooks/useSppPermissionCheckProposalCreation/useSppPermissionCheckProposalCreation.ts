@@ -1,17 +1,16 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import type {
+    IEncapsulatedPermissionCheckGuardParams,
+    IPermissionCheckGuardParams,
+    IPermissionCheckGuardResult,
+} from '@/modules/governance/types';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, invariant } from '@aragon/gov-ui-kit';
 import type { ISppPluginSettings } from '../../types';
 
-export interface IUseSppPermissionCheckProposalCreationParams extends IPermissionCheckGuardParams<ISppPluginSettings> {
-    /**
-     * Plugin to check permissions for.
-     */
-    plugin: IDaoPlugin<ISppPluginSettings>;
-}
+export interface IUseSppPermissionCheckProposalCreationParams
+    extends IEncapsulatedPermissionCheckGuardParams<ISppPluginSettings> {}
 
 export const useSppPermissionCheckProposalCreation = (
     params: IUseSppPermissionCheckProposalCreationParams,

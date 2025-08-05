@@ -7,6 +7,9 @@ export type { IDaoMemberPageParams } from './daoMemberPageParams';
 export type { IDaoProposalPageParams } from './daoProposalPageParams';
 export type { IMemberExistsResult } from './memberExistsResult';
 export type { INormalizeActionsParams } from './normalizeActionsParams';
-export type { IPermissionCheckGuardParams } from './permissionCheckGuardParams';
+export type {
+    IEncapsulatedPermissionCheckGuardParams,
+    IPermissionCheckGuardParams,
+} from './permissionCheckGuardParams';
 export type { IPermissionCheckGuardResult } from './permissionCheckGuardResult';
 export type { IUsePluginMemberStatsParams } from './usePluginMemberStatsParams';

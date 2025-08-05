@@ -1,18 +1,13 @@
-import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import type { IEncapsulatedPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { VoteOption, type ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ChainEntityType, DateFormat, formatterUtils, useBlockExplorer } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 
-export interface ITokenPermissionCheckVoteSubmissionParams extends IPermissionCheckGuardParams<ITokenPluginSettings> {
-    /**
-     * Plugin to check permissions for.
-     */
-    plugin: IDaoPlugin<ITokenPluginSettings>;
-}
+export interface ITokenPermissionCheckVoteSubmissionParams
+    extends IEncapsulatedPermissionCheckGuardParams<ITokenPluginSettings> {}
 
 const tokenVotingAbi = [
     {

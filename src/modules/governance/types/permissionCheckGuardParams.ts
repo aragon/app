@@ -20,3 +20,13 @@ export interface IPermissionCheckGuardParams<TPluginSettings extends IPluginSett
      */
     useConnectedUserInfo?: boolean;
 }
+
+export type IEncapsulatedPermissionCheckGuardParams<TPluginSettings extends IPluginSettings = IPluginSettings> = Omit<
+    IPermissionCheckGuardParams<TPluginSettings>,
+    'plugin'
+> & {
+    /**
+     * Required plugin for encapsulated permission checks.
+     */
+    plugin: IDaoPlugin<TPluginSettings>;
+};
