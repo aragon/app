@@ -91,8 +91,6 @@ class LockToVoteTransactionUtils {
         return votingSettings;
     };
 
-    private anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';
-
     buildCreateProposalData = (
         params: IBuildCreateProposalDataParams<ICreateLockToVoteProposalFormData, ITokenPluginSettings>,
     ): Hex => {
@@ -150,6 +148,8 @@ class LockToVoteTransactionUtils {
 
         return data;
     };
+
+    private anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';
 }
 
 export const lockToVoteTransactionUtils = new LockToVoteTransactionUtils();
