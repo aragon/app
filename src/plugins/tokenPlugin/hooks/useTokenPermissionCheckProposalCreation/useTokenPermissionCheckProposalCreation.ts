@@ -1,20 +1,16 @@
 import { useMember } from '@/modules/governance/api/governanceService';
 import { useCanCreateProposal } from '@/modules/governance/api/governanceService/queries/useCanCreateProposal';
-import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import type { IEncapsulatedPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import type { ITokenMember, ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import { type IDaoPlugin, type Network, useDao } from '@/shared/api/daoService';
+import { type Network, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 
-export interface ITokenPermissionCheckProposalCreationParams extends IPermissionCheckGuardParams<ITokenPluginSettings> {
-    /**
-     * Plugin to check permissions for.
-     */
-    plugin: IDaoPlugin<ITokenPluginSettings>;
-}
+export interface ITokenPermissionCheckProposalCreationParams
+    extends IEncapsulatedPermissionCheckGuardParams<ITokenPluginSettings> {}
 
 export const useTokenPermissionCheckProposalCreation = (
     params: ITokenPermissionCheckProposalCreationParams,
