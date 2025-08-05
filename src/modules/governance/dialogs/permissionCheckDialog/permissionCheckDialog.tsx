@@ -39,7 +39,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
 
     const checkPermissions = useSlotSingleFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
         slotId: slotId,
-        pluginId: plugin.interfaceType,
+        pluginId: plugin?.interfaceType ?? '',
         params: { plugin, ...otherParams },
     }) ?? { hasPermission: true, isLoading: false, settings: [] };
 

@@ -1,10 +1,16 @@
 import { useMemberExists } from '@/modules/governance/api/governanceService';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useAccount } from 'wagmi';
 
-export interface IUseAdminPermissionCheckProposalCreationParams extends IPermissionCheckGuardParams {}
+export interface IUseAdminPermissionCheckProposalCreationParams extends IPermissionCheckGuardParams {
+    /**
+     * Plugin to check permissions for.
+     */
+    plugin: IDaoPlugin;
+}
 
 export const useAdminPermissionCheckProposalCreation = (
     params: IUseAdminPermissionCheckProposalCreationParams,

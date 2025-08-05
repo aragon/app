@@ -69,7 +69,7 @@ describe('<DaoSettingsPageClient /> component', () => {
     });
 
     it('renders the dao settings, info and contract update components', () => {
-        const dao = generateDao({ id: 'my-dao', name: 'My Dao Name' });
+        const dao = generateDao({ id: 'my-dao', name: 'My Dao Name', plugins: [generateDaoPlugin()] });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent());
         expect(screen.getByText(/daoSettingsPage.main.settingsInfoTitle/)).toBeInTheDocument();
