@@ -46,7 +46,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     const { check: createProposalGuard } = usePermissionCheckGuard({
         permissionNamespace: 'proposal',
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
-        plugin: processPlugins[0].meta,
+        plugin: processPlugins[0]?.meta,
         daoId,
     });
 
@@ -127,7 +127,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
             <Page.Aside>
                 <Page.AsideCard title={t('app.settings.daoSettingsPage.aside.versionInfoTitle')}>
                     <DaoVersionInfo dao={dao} />
-                    <UpdateDaoContracts dao={dao} />
+                    {dao.plugins.length > 0 && <UpdateDaoContracts dao={dao} />}
                 </Page.AsideCard>
             </Page.Aside>
         </>

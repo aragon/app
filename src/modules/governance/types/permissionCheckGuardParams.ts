@@ -5,7 +5,7 @@ export interface IPermissionCheckGuardParams<TPluginSettings extends IPluginSett
     /**
      * Plugin to check permissions for.
      */
-    plugin: IDaoPlugin<TPluginSettings>;
+    plugin?: IDaoPlugin<TPluginSettings>;
     /**
      * ID of the DAO.
      */

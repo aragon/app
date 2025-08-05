@@ -17,11 +17,13 @@ export const usePermissionCheckGuard = (params: IUsePermissionCheckGuardParams) 
     // the property is not stable we break the rules of hooks (see https://react.dev/warnings/invalid-hook-call-warning)
     const plugin = useRef(pluginProp).current;
 
-    const { hasPermission } = useSlotSingleFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
-        slotId: slotId,
-        pluginId: plugin.interfaceType,
+    const slotResult = useSlotSingleFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
+        slotId,
+        pluginId: plugin?.interfaceType ?? '',
         params: { plugin, daoId, proposal },
     }) ?? { hasPermission: true };
+
+    const hasPermission = plugin != null ? slotResult.hasPermission : true;
 
     const checkUserPermission = useCallback(
         (functionParams?: Partial<IUsePermissionCheckGuardParams>) => {
