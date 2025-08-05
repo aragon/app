@@ -7,6 +7,7 @@ import type { IWhitelistedAddresses } from '../../domain';
 export const whitelistedAddressesOptions = (options?: QueryOptions<IWhitelistedAddresses>) => ({
     queryKey: cmsServiceKeys.whitelistedAddresses(),
     queryFn: () => cmsService.getWhitelistedAddresses(),
+    staleTime: Infinity,
     ...options,
 });
 

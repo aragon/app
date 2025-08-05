@@ -3,7 +3,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IPluginInfo } from '@/shared/types';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { RadioCard, RadioGroup, StateSkeletonBar } from '@aragon/gov-ui-kit';
+import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { SetupBodyType, type ISetupBodyForm } from '../setupBodyDialogDefinitions';
 
 export interface ISetupBodyDialogSelectProps {
@@ -23,9 +23,7 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (pro
     const plugins = pluginRegistryUtils.getPlugins() as IPluginInfo[];
     const availablePlugins = plugins.filter((plugin) => plugin.setup != null);
 
-    const { enabledPlugins, disabledPlugins, isValidating } = useWhitelistValidation({
-        plugins: availablePlugins,
-    });
+    const { enabledPlugins, disabledPlugins } = useWhitelistValidation({ plugins: availablePlugins });
 
     const { onChange: onPluginChange, ...governanceTypeField } = useFormField<ISetupBodyForm, 'plugin'>('plugin', {
         label: t('app.createDao.setupBodyDialog.select.plugin.label'),
@@ -41,10 +39,6 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (pro
         onTypeChange(bodyType);
         onPluginChange(value);
     };
-
-    if (isValidating) {
-        return <StateSkeletonBar size="2xl" width="full" />;
-    }
 
     return (
         <RadioGroup

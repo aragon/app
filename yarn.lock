@@ -54,6 +54,7 @@ __metadata:
     "@tailwindcss/postcss": "npm:^4.1.11"
     "@tailwindcss/typography": "npm:^0.5.16"
     "@tanstack/react-query": "npm:^5.83.0"
+    "@tanstack/react-query-devtools": "npm:^5.84.1"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.3.0"
@@ -4904,6 +4905,25 @@ __metadata:
   version: 5.83.0
   resolution: "@tanstack/query-core@npm:5.83.0"
   checksum: 10c0/e6dc480bc99eaca552a9ad65423788b60368cf99308681252fc7dbe42a3f2c1c978db0d3471cc3349b9112cfb4d967ace4e192a1d7e987e30c5c1ff74809c77c
+  languageName: node
+  linkType: hard
+
+"@tanstack/query-devtools@npm:5.84.0":
+  version: 5.84.0
+  resolution: "@tanstack/query-devtools@npm:5.84.0"
+  checksum: 10c0/8257bebbf648e850f0186175a6e17aa6ac50e2dbb9413953927a698a2f73db8009693980f4c6b0f928a703be353a0b1bd1316031029818be7672db98c1b42cde
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query-devtools@npm:^5.84.1":
+  version: 5.84.1
+  resolution: "@tanstack/react-query-devtools@npm:5.84.1"
+  dependencies:
+    "@tanstack/query-devtools": "npm:5.84.0"
+  peerDependencies:
+    "@tanstack/react-query": ^5.84.1
+    react: ^18 || ^19
+  checksum: 10c0/f26180835d92640ed55644e3aed557a62e662120b94fc6b3887ff67f5f3711912a258e9898117936927e94ce80eae4de3d89f4b4cbed77b1d8d4719581929915
   languageName: node
   linkType: hard
 
