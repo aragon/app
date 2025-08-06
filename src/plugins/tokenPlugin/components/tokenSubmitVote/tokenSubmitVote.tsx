@@ -21,10 +21,10 @@ export interface ITokenSubmitVoteProps extends ISubmitVoteProps<ITokenProposal> 
      */
     onSubmitVoteClick?: (option?: string) => void;
     /**
-     * Namespace of the submit vote button.
-     * @default change
+     * Support updating the existing vote (e.g. to increase the current voting power). Updating the existing vote does
+     * not support replacing / changing the already selected vote option.
      */
-    submitNamespace?: 'change' | 'update';
+    supportUpdateVote?: boolean;
 }
 
 const voteOptionToIndicator: Record<string, VoteIndicator> = {
@@ -34,7 +34,7 @@ const voteOptionToIndicator: Record<string, VoteIndicator> = {
 };
 
 export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
-    const { daoId, proposal, isVeto, onSubmitVoteClick, submitNamespace = 'change' } = props;
+    const { daoId, proposal, isVeto, onSubmitVoteClick, supportUpdateVote = false } = props;
     const { pluginAddress, network } = proposal;
 
     const { t } = useTranslations();
@@ -88,6 +88,8 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         }
     }, [canSubmitVote, setShowOptions]);
 
+    const submitNamespace = supportUpdateVote ? 'update' : 'change';
+
     return (
         <div className="flex flex-col gap-4">
             {!showOptions && latestVote == null && (
@@ -107,7 +109,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                     >
                         {t('app.plugins.token.tokenSubmitVote.buttons.submitted')}
                     </Button>
-                    {proposal.settings.votingMode === DaoTokenVotingMode.VOTE_REPLACEMENT && (
+                    {(proposal.settings.votingMode === DaoTokenVotingMode.VOTE_REPLACEMENT || supportUpdateVote) && (
                         <Button
                             variant="tertiary"
                             className="w-full md:w-fit"
@@ -121,14 +123,22 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
             )}
             {showOptions && (
                 <Card className="shadow-neutral-sm border border-neutral-100 p-6">
-                    <TokenVotingOptions value={selectedOption} onChange={setSelectedOption} isVeto={isVeto} />
+                    <TokenVotingOptions
+                        value={selectedOption}
+                        onChange={setSelectedOption}
+                        isVeto={isVeto}
+                        disableOptions={supportUpdateVote}
+                    />
                 </Card>
             )}
             {showOptions && (
                 <div className="flex w-full flex-col items-center gap-y-3 md:flex-row md:gap-x-4">
                     <Button
                         onClick={handleSubmitVoteClick}
-                        disabled={!selectedOption || selectedOption === latestVote?.voteOption.toString()}
+                        disabled={
+                            !selectedOption ||
+                            (!supportUpdateVote && selectedOption === latestVote?.voteOption.toString())
+                        }
                         size="md"
                         className="w-full md:w-fit"
                         variant="primary"

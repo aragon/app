@@ -1218,19 +1218,16 @@
             "description": "Submit your vote or lock more tokens.",
             "title": "Submit vote"
           },
+          "cta": {
+            "cancel": "Cancel",
+            "lock": "Lock now",
+            "vote": "Proceed to vote"
+          },
           "default": {
-            "cta": {
-              "primary": "Lock now",
-              "secondary": "Cancel"
-            },
             "description": "Lock {{symbol}} in order to be able to vote.",
             "title": "You have no voting power"
           },
           "lockMore": {
-            "cta": {
-              "primary": "Lock now",
-              "secondary": "Proceed to vote"
-            },
             "description": "Lock more {{symbol}} to increase your voting power.",
             "title": "You have unlocked tokens"
           }

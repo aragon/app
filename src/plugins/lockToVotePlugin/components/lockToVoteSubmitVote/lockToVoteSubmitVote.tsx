@@ -76,5 +76,5 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (props
         }
     };
 
-    return <TokenSubmitVote {...props} onSubmitVoteClick={handleSubmitVote} submitNamespace="update" />;
+    return <TokenSubmitVote {...props} onSubmitVoteClick={handleSubmitVote} supportUpdateVote={true} />;
 };
