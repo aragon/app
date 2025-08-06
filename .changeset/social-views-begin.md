@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-Enable usePermissionCheckGuard to fail gracefully when no plugins are available
+Fix crash on settings DAO page when all plugins have been uninstalled
