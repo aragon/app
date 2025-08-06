@@ -117,18 +117,11 @@ const nextConfig = {
     env: {
         version: packageInfo.version,
     },
+    // **WARN**: Avoid adding to webpack config, as long term plan for Next.js is to move away from Webpack to Turbopack.
     webpack: (config) => {
         // Configs needed by wallet-connect (see https://docs.walletconnect.com/appkit/next/core/installation#extra-configuration)
+        // Needed only in production builds, Turbopack (used in `yarn dev`) does not require this.
         config.externals.push('pino-pretty', 'lokijs', 'encoding');
-
-        // Loader needed for mp4 files (background textures)
-        config.module.rules.push({
-            test: /\.mp4$/,
-            type: 'asset/resource',
-            generator: {
-                filename: 'static/media/[name].[hash][ext]',
-            },
-        });
 
         return config;
     },
