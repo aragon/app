@@ -1160,6 +1160,9 @@
       },
       "lockToVote": {
         "lockToVoteLockBeforeVoteDialog": {
+          "a11y": {
+            "description": "Lock tokens before voting on the proposal"
+          },
           "action": {
             "cancel": "Cancel",
             "lock": "Lock now"
@@ -1211,6 +1214,10 @@
           "veto": "to veto"
         },
         "lockToVoteSubmitVoteFeedbackDialog": {
+          "a11y": {
+            "description": "Submit your vote or lock more tokens.",
+            "title": "Submit vote"
+          },
           "default": {
             "cta": {
               "primary": "Lock now",

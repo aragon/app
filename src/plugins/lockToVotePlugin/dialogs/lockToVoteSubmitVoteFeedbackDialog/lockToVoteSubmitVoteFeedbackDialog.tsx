@@ -33,7 +33,7 @@ export const LockToVoteSubmitVoteFeedbackDialog: React.FC<ILockToVoteSubmitVoteF
 
     const { t } = useTranslations();
     const { close, open } = useDialogContext();
-    const { balance } = useLockToVoteData({ plugin, daoId });
+    const { lockedAmount } = useLockToVoteData({ plugin, daoId });
 
     const handleLockTokens = () => {
         const params: ILockToVoteLockBeforeVoteDialogParams = { plugin, daoId, onVoteClick };
@@ -41,8 +41,8 @@ export const LockToVoteSubmitVoteFeedbackDialog: React.FC<ILockToVoteSubmitVoteF
     };
 
     const { symbol: tokenSymbol } = plugin.settings.token;
-    const hasUnlockedTokens = balance != null && balance > 0;
-    const translationVariant = hasUnlockedTokens ? 'lockMore' : 'default';
+    const hasVotingPower = lockedAmount > 0;
+    const translationVariant = hasVotingPower ? 'lockMore' : 'default';
 
     const primaryAction = {
         label: t(`app.plugins.lockToVote.lockToVoteSubmitVoteFeedbackDialog.${translationVariant}.cta.primary`),
@@ -51,7 +51,7 @@ export const LockToVoteSubmitVoteFeedbackDialog: React.FC<ILockToVoteSubmitVoteF
 
     const secondaryAction = {
         label: t(`app.plugins.lockToVote.lockToVoteSubmitVoteFeedbackDialog.${translationVariant}.cta.secondary`),
-        onClick: hasUnlockedTokens ? () => onVoteClick() : () => close(),
+        onClick: hasVotingPower ? () => onVoteClick() : () => close(),
     };
 
     return (
@@ -62,7 +62,7 @@ export const LockToVoteSubmitVoteFeedbackDialog: React.FC<ILockToVoteSubmitVoteF
                     `app.plugins.lockToVote.lockToVoteSubmitVoteFeedbackDialog.${translationVariant}.description`,
                     { symbol: tokenSymbol },
                 )}
-                objectIllustration={{ object: hasUnlockedTokens ? 'WALLET' : 'USERS' }}
+                objectIllustration={{ object: hasVotingPower ? 'WALLET' : 'USERS' }}
                 primaryButton={primaryAction}
                 secondaryButton={secondaryAction}
             />
