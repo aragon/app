@@ -909,7 +909,7 @@
           "title": "Not eligible to create a proposal"
         },
         "vote": {
-          "description": "You didn’t meet the voting requirements at the block the proposal was created.",
+          "description": "You don’t meet the voting requirements.",
           "title": "Not eligible to vote"
         }
       },
@@ -1198,7 +1198,7 @@
         },
         "lockToVotePermissionCheckVoteSubmission": {
           "createdAt": "Created",
-          "votingPower": "Your voting power"
+          "votingPower": "Your token balance"
         },
         "lockToVoteSetupMembership": {
           "importToken": {
