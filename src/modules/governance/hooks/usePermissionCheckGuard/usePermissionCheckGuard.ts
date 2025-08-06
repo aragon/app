@@ -9,7 +9,8 @@ import type { IPermissionCheckDialogParams } from '../../dialogs/permissionCheck
 
 export interface IUsePermissionCheckGuardParams extends Omit<IPermissionCheckDialogParams, 'plugin'> {
     /**
-     * ...
+     * Plugin to check permissions for.
+     * Possibly undefined if all plugins have been uninstalled.
      */
     plugin?: IDaoPlugin;
 }
