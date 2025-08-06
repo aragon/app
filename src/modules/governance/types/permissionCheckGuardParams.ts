@@ -5,7 +5,7 @@ export interface IPermissionCheckGuardParams<TPluginSettings extends IPluginSett
     /**
      * Plugin to check permissions for.
      */
-    plugin?: IDaoPlugin<TPluginSettings>;
+    plugin: IDaoPlugin<TPluginSettings>;
     /**
      * ID of the DAO.
      */
@@ -20,13 +20,3 @@ export interface IPermissionCheckGuardParams<TPluginSettings extends IPluginSett
      */
     useConnectedUserInfo?: boolean;
 }
-
-export type IEncapsulatedPermissionCheckGuardParams<TPluginSettings extends IPluginSettings = IPluginSettings> = Omit<
-    IPermissionCheckGuardParams<TPluginSettings>,
-    'plugin'
-> & {
-    /**
-     * Required plugin for encapsulated permission checks.
-     */
-    plugin: IDaoPlugin<TPluginSettings>;
-};

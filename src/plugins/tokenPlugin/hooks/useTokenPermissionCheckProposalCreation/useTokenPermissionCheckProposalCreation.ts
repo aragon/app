@@ -1,6 +1,6 @@
 import { useMember } from '@/modules/governance/api/governanceService';
 import { useCanCreateProposal } from '@/modules/governance/api/governanceService/queries/useCanCreateProposal';
-import type { IEncapsulatedPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import type { ITokenMember, ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { type Network, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -10,7 +10,7 @@ import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 
 export interface ITokenPermissionCheckProposalCreationParams
-    extends IEncapsulatedPermissionCheckGuardParams<ITokenPluginSettings> {}
+    extends IPermissionCheckGuardParams<ITokenPluginSettings> {}
 
 export const useTokenPermissionCheckProposalCreation = (
     params: ITokenPermissionCheckProposalCreationParams,

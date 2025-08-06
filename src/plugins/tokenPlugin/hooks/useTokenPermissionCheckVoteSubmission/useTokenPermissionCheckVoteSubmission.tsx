@@ -1,4 +1,4 @@
-import type { IEncapsulatedPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { VoteOption, type ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -6,8 +6,7 @@ import { ChainEntityType, DateFormat, formatterUtils, useBlockExplorer } from '@
 import type { Hex } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 
-export interface ITokenPermissionCheckVoteSubmissionParams
-    extends IEncapsulatedPermissionCheckGuardParams<ITokenPluginSettings> {}
+export interface ITokenPermissionCheckVoteSubmissionParams extends IPermissionCheckGuardParams<ITokenPluginSettings> {}
 
 const tokenVotingAbi = [
     {

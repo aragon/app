@@ -1,12 +1,12 @@
 import { useMemberExists } from '@/modules/governance/api/governanceService';
-import type { IEncapsulatedPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useAccount } from 'wagmi';
 import type { IMultisigPluginSettings } from '../../types';
 
 export interface IUseMultisigPermissionCheckProposalCreationParams
-    extends IEncapsulatedPermissionCheckGuardParams<IMultisigPluginSettings> {}
+    extends IPermissionCheckGuardParams<IMultisigPluginSettings> {}
 
 export const useMultisigPermissionCheckProposalCreation = (
     params: IUseMultisigPermissionCheckProposalCreationParams,
