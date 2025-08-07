@@ -201,7 +201,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0xdD68D6b46b887AcB795eCC3Fc7bb3fEf2Dfebf8f',
             pluginSetupProcessor: '0xD39Fd78987000C1aa96209d76bec576F31DbC9bE',
             globalExecutor: '0xcF34b77813f5d5daBa0A6F085bf0911e00E7b99A',
-            conditionFactory: '0x0000000000000000000000000000000000000000',
+            conditionFactory: '0x92628038421A0719bb99Fe065A7A255d983C443e',
         },
     },
     [Network.PEAQ_MAINNET]: {
