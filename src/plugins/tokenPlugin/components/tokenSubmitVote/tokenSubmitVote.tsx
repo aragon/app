@@ -127,7 +127,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                         value={selectedOption}
                         onChange={setSelectedOption}
                         isVeto={isVeto}
-                        disableOptions={supportUpdateVote}
+                        disableOptions={supportUpdateVote && latestVote != null}
                     />
                 </Card>
             )}
