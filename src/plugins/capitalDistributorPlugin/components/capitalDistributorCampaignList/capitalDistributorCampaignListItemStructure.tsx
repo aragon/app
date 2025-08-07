@@ -39,9 +39,10 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
     const { open } = useDialogContext();
     const plugin = useDaoPlugins({ daoId: id, interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR })![0];
 
-    const { amount, token, txHash, title, description } = campaign;
+    const { userData, token, title, description } = campaign;
+    const { amount, txHash, status } = userData;
 
-    const isClaimed = campaign.status === CampaignStatus.CLAIMED;
+    const isClaimed = status === CampaignStatus.CLAIMED;
 
     const parsedAmount = formatUnits(BigInt(amount), token.decimals);
     const formattedAmount = formatterUtils.formatNumber(parsedAmount, { format: NumberFormat.TOKEN_AMOUNT_SHORT });

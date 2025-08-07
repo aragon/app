@@ -14,7 +14,8 @@ export interface ICapitalDistributorClaimDialogDetailsProps {
 
 export const CapitalDistributorClaimDialogDetails: React.FC<ICapitalDistributorClaimDialogDetailsProps> = (props) => {
     const { campaign } = props;
-    const { resources, type, token, amount, endTime } = campaign;
+    const { resources, type, token, userData, endTime } = campaign;
+    const { amount } = userData;
 
     const { t } = useTranslations();
 

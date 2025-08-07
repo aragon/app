@@ -13,7 +13,7 @@ export interface ICapitalDistributorRewardsStatsProps {
     /**
      * Initial parameters for the campaign list query.
      */
-    initialParams?: IGetCampaignListParams;
+    initialParams: IGetCampaignListParams;
 }
 
 export const CapitalDistributorRewardsStats: React.FC<ICapitalDistributorRewardsStatsProps> = (props) => {
@@ -23,20 +23,19 @@ export const CapitalDistributorRewardsStats: React.FC<ICapitalDistributorRewards
     const { address } = useAccount();
 
     const claimableCampaignParams = {
-        queryParams: { ...initialParams?.queryParams, memberAddress: address!, status: CampaignStatus.CLAIMABLE },
+        queryParams: { ...initialParams.queryParams, userAddress: address!, status: CampaignStatus.CLAIMABLE },
     };
     const { data: claimableCampaignData } = useCampaignList(claimableCampaignParams, { enabled: address != null });
 
     const claimedCampaignParams = {
-        queryParams: { ...initialParams?.queryParams, memberAddress: address!, status: CampaignStatus.CLAIMED },
+        queryParams: { ...initialParams.queryParams, userAddress: address!, status: CampaignStatus.CLAIMED },
     };
     const { data: claimedCampaigns } = useCampaignList(claimedCampaignParams, { enabled: address != null });
 
-    const campaignStatsParams = { urlParams: { memberAddress: address! } };
+    const campaignStatsParams = { urlParams: { userAddress: address! } };
     const { data: campaignStats } = useCampaignStats(campaignStatsParams, { enabled: address != null });
 
-    // Assuming backend returns sorted by default
-    const { claimTimestamp: latestClaimTimestamp } = claimedCampaigns?.pages[0].data[0] ?? {};
+    const { txTimestamp: latestClaimTimestamp } = claimedCampaigns?.pages[0].data[0]?.userData ?? {};
     const latestClaimDate = latestClaimTimestamp ? latestClaimTimestamp * 1000 : undefined;
 
     const formattedClaimDate = formatterUtils.formatDate(latestClaimDate, { format: DateFormat.RELATIVE });

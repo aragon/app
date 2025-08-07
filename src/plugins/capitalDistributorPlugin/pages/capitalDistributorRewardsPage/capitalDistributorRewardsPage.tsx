@@ -2,8 +2,9 @@
 
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import type { IDaoPluginPageProps } from '@/modules/application/types';
-import { daoOptions } from '@/shared/api/daoService';
+import { daoOptions, PluginInterfaceType } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { QueryClient } from '@tanstack/react-query';
 import { headers } from 'next/headers';
 import { cookieToInitialState } from 'wagmi';
@@ -33,14 +34,21 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
     const cookieHeader = (await headers()).get('cookie');
     const userAddress = getConnectedAccount(cookieHeader);
 
-    const defaultQueryParams = { pageSize: campaignsPerPage, page: 1, status: CampaignStatus.CLAIMABLE };
-    const initialParams = { queryParams: { ...defaultQueryParams, memberAddress: userAddress as string } };
+    const plugin = daoUtils.getDaoPlugins(dao, { interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR })![0];
+    const defaultQueryParams = {
+        plugin: plugin.address,
+        network: dao.network,
+        pageSize: campaignsPerPage,
+        page: 1,
+        status: CampaignStatus.CLAIMABLE,
+    };
+    const initialParams = { queryParams: { ...defaultQueryParams, userAddress: userAddress as string } };
 
     queryClient.setQueryData(daoOptions({ urlParams: { id: dao.id } }).queryKey, dao);
 
     if (userAddress) {
         await queryClient.prefetchInfiniteQuery(campaignListOptions(initialParams));
-        await queryClient.fetchQuery(campaignStatsOptions({ urlParams: { memberAddress: userAddress } }));
+        await queryClient.fetchQuery(campaignStatsOptions({ urlParams: { userAddress: userAddress } }));
     }
 
     return (

@@ -12,11 +12,9 @@ describe('useCampaignStats query', () => {
 
     it('fetches the campaign stats for a user', async () => {
         const campaignStatsResult = { totalClaimed: '100', totalClaimable: '200' };
-
         capitalDistributorServiceSpy.mockResolvedValue(campaignStatsResult);
 
-        const urlParams = { memberAddress: '0x123' };
-
+        const urlParams = { userAddress: '0x123' };
         const { result } = renderHook(() => useCampaignStats({ urlParams }), { wrapper: ReactQueryWrapper });
 
         await waitFor(() => expect(result.current.data).toEqual(campaignStatsResult));

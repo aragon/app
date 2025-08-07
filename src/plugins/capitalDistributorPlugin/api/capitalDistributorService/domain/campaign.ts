@@ -1,8 +1,8 @@
 import type { IToken } from '@/modules/finance/api/financeService';
 import type { IResource } from '@/shared/api/daoService';
-import type { CampaignStatus } from './enum';
+import type { ICampaignUserData } from './campaignUserData';
 
-export interface ICampaign {
+export interface ICampaign<TUserData extends ICampaignUserData = ICampaignUserData, TStrategy = unknown> {
     /**
      * Unique identifier for the campaign.
      */
@@ -24,17 +24,9 @@ export interface ICampaign {
      */
     resources?: IResource[];
     /**
-     * Status of the campaign (claimed/claimable).
-     */
-    status: CampaignStatus;
-    /**
      * The token associated with the campaign.
      */
     token: IToken;
-    /**
-     * The amount of tokens the user has claimed or is eligible to claim.
-     */
-    amount: string;
     /**
      * The start time of the campaign (can be 0 meaning no time restriction).
      */
@@ -48,11 +40,15 @@ export interface ICampaign {
      */
     active: boolean;
     /**
-     * The tx hash of the claim transaction. Only present if the campaign has been claimed.
+     * Flag indicating whether the user can claim multiple times.
      */
-    txHash?: string;
+    multipleClaimsAllowed: boolean;
     /**
-     * The block timestamp of when the campaign was claimed. Only present if the campaign has been claimed.
+     * Campaign data specific to a user.
      */
-    claimTimestamp?: number;
+    userData: TUserData;
+    /**
+     * Data specific to the distribution strategy of the campaign.
+     */
+    strategy: TStrategy;
 }

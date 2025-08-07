@@ -7,11 +7,15 @@ export const generateCampaign = (campaign?: Partial<ICampaign>): ICampaign => ({
     title: 'Campaign Name',
     description: 'Campaign Description',
     type: 'Type',
-    status: CampaignStatus.CLAIMABLE,
     token: generateToken(),
-    amount: '0',
     startTime: 0,
     endTime: 0,
     active: true,
+    multipleClaimsAllowed: false,
+    strategy: null,
+    userData: {
+        status: CampaignStatus.CLAIMABLE,
+        amount: '0',
+    },
     ...campaign,
 });
