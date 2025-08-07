@@ -51,7 +51,7 @@ export const UpdateDaoContracts: React.FC<IUpdateDaoContractsProps> = (props) =>
     const availableUpdates = daoUtils.hasAvailableUpdates(dao);
     const isFeatureEnabled = process.env.NEXT_PUBLIC_FEATURE_OSX_UPDATES === 'true';
 
-    if (!isFeatureEnabled || (!availableUpdates.osx && !availableUpdates.plugins)) {
+    if (!isFeatureEnabled || (!availableUpdates.osx && !availableUpdates.plugins) || dao.plugins.length === 0) {
         return null;
     }
 
