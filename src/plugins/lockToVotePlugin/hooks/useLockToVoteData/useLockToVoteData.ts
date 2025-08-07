@@ -115,6 +115,11 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
         }
     }, [balanceStatus, balance?.value, token, onBalanceUpdated]);
 
+    const refetchData = () => {
+        invalidateQueries();
+        void refetchLockedAmount();
+    };
+
     const approveTokens = (amount: bigint, onSuccess: () => void) => {
         const { symbol } = token;
         const txInfoTitle = t('app.plugins.lockToVote.lockToVoteLockForm.approveTransactionInfoTitle', { symbol });
@@ -147,14 +152,15 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
         open(LockToVotePluginDialogId.LOCK_UNLOCK, { params });
     };
 
-    const onLockUnlockTokensSuccess = () => {
-        invalidateQueries();
-        void refetchLockedAmount();
-    };
+    const onLockUnlockTokensSuccess = () => refetchData();
 
     const lockTokens = (amount: bigint) => {
         if (amount > allowance) {
-            const onApproveSuccess = () => handleLockUnlockTokens('lock', amount, true);
+            const onApproveSuccess = () => {
+                // Refetch data after approval to ensure the allowance is updated in the case followup lock is cancelled
+                refetchData();
+                handleLockUnlockTokens('lock', amount, true);
+            };
             approveTokens(amount, onApproveSuccess);
         } else {
             handleLockUnlockTokens('lock', amount);
@@ -162,11 +168,6 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
     };
 
     const unlockTokens = () => handleLockUnlockTokens('unlock', lockedAmount);
-
-    const refetchData = () => {
-        invalidateQueries();
-        void refetchLockedAmount();
-    };
 
     const isLoading = isLockedBalanceLoading || isAllowanceCheckLoading;
 

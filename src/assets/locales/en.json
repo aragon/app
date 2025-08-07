@@ -909,7 +909,7 @@
           "title": "Not eligible to create a proposal"
         },
         "vote": {
-          "description": "You didn’t meet the voting requirements at the block the proposal was created.",
+          "description": "You don’t meet the voting requirements.",
           "title": "Not eligible to vote"
         }
       },
@@ -1167,12 +1167,12 @@
             "cancel": "Cancel",
             "lock": "Lock now"
           },
-          "info": "Locking tokens will transfer them out of your wallet to the locking contract, where they can be withdrawn back to your wallet after the minimum locktime.",
+          "info": "Locking tokens will transfer them out of your wallet to the lock manager contract, where they can be unlocked to regain control.",
           "title": "Lock tokens"
         },
         "lockToVoteLockForm": {
           "approveTransactionInfoTitle": "Approve {{symbol}}",
-          "footerInfo": "Locking tokens will transfer them out of your wallet to the lock manager contract, where they can be unlocked at any time to regain control.",
+          "footerInfo": "Locking tokens will transfer them out of your wallet to the lock manager contract, where they can be unlocked to regain control.",
           "info": "Lock {{symbol}} to participate in governance.",
           "submit": {
             "approve": "Approve {{symbol}}",
@@ -1198,7 +1198,7 @@
         },
         "lockToVotePermissionCheckVoteSubmission": {
           "createdAt": "Created",
-          "votingPower": "Your voting power"
+          "votingPower": "Your token balance"
         },
         "lockToVoteSetupMembership": {
           "importToken": {
