@@ -36,11 +36,8 @@ export const CapitalDistributorClaimDialog: React.FC<ICapitalDistributorClaimDia
     const { open } = useDialogContext();
 
     const handleSubmit = (values: ICapitalDistributorClaimDialogForm) => {
-        const params: ICapitalDistributorClaimTransactionDialogParams = {
-            campaignId: campaign.id,
-            pluginAddress,
-            ...values,
-        };
+        const { recipient } = values;
+        const params: ICapitalDistributorClaimTransactionDialogParams = { campaign, pluginAddress, recipient };
         open(CapitalDistributorPluginDialogId.CLAIM_TRANSACTION, { params });
     };
 

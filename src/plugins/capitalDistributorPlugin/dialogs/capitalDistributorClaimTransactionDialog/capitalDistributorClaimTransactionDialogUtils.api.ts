@@ -1,8 +1,10 @@
+import type { ICampaign } from '../../api/capitalDistributorService';
+
 export interface IBuildClaimTransactionParams {
     /**
-     * The ID of the campaign to claim.
+     * The campaign to claim.
      */
-    campaignId: number;
+    campaign: ICampaign;
     /**
      * The address of the recipient.
      */
@@ -11,8 +13,4 @@ export interface IBuildClaimTransactionParams {
      * The address of the plugin to use for the claim.
      */
     pluginAddress: string;
-    /**
-     * Additional data for the transaction.
-     */
-    auxData?: string;
 }

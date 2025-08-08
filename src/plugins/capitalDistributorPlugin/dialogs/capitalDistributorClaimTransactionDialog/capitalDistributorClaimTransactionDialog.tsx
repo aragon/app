@@ -11,13 +11,14 @@ import { useStepper } from '@/shared/hooks/useStepper/useStepper';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import type { Hex } from 'viem';
+import type { ICampaign } from '../../api/capitalDistributorService';
 import { capitalDistributorClaimTransactionDialogUtils } from './capitalDistributorClaimTransactionDialogUtils';
 
 export interface ICapitalDistributorClaimTransactionDialogParams {
     /**
-     * The ID of the campaign to claim.
+     * Campaign to be claimed.
      */
-    campaignId: number;
+    campaign: ICampaign;
     /**
      * The address of the recipient.
      */
@@ -41,7 +42,7 @@ export const CapitalDistributorClaimTransactionDialog: React.FC<ICapitalDistribu
     const { location } = props;
     invariant(location.params != null, 'CapitalDistributorClaimTransactionDialog: required parameters must be set.');
 
-    const { campaignId, recipient, pluginAddress } = location.params;
+    const { campaign, recipient, pluginAddress } = location.params;
 
     const { t } = useTranslations();
 
@@ -51,7 +52,7 @@ export const CapitalDistributorClaimTransactionDialog: React.FC<ICapitalDistribu
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
     const prepareTransaction = () =>
-        capitalDistributorClaimTransactionDialogUtils.buildTransaction({ campaignId, recipient, pluginAddress });
+        capitalDistributorClaimTransactionDialogUtils.buildTransaction({ campaign, recipient, pluginAddress });
 
     return (
         <TransactionDialog
