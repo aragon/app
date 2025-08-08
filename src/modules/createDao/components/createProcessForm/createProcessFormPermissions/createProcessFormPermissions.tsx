@@ -44,7 +44,12 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     const validateSelectors = (selectors: IProposalActionData[]) => {
         const isAlreadyInList = selectors.some(
             (selector, index) =>
-                selectors.findIndex((sel) => sel.to === selector.to && sel.type === selector.type) !== index,
+                selectors.findIndex(
+                    (sel) =>
+                        sel.to === selector.to &&
+                        sel.type === selector.type &&
+                        sel.inputData?.function === selector.inputData?.function,
+                ) !== index,
         );
 
         return !isAlreadyInList || 'app.createDao.createProcessForm.permissions.permissionField.error.invalid';
