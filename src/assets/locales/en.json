@@ -1527,7 +1527,6 @@
           }
         },
         "tokenMemberStats": {
-          "delegations": "Delegations",
           "tokenBalance": "Token balance",
           "votingPower": "Voting power"
         },
