@@ -1200,6 +1200,75 @@
           "createdAt": "Created",
           "votingPower": "Your token balance"
         },
+        "lockToVoteProcessBodyField": {
+          "disabled": "Disabled",
+          "distributionTerm": "Distribution",
+          "earlyExecution": "Early execution",
+          "enabled": "Enabled",
+          "holders": "{{count}} token holders",
+          "minParticipationDefinition": "≥ {{minParticipation}}",
+          "minParticipationTerm": "Minimum participation",
+          "proposalDurationDefinition": "{{days}} days {{hours}} hours {{minutes}} minutes",
+          "proposalDurationTerm": "Proposal duration",
+          "supplyTerm": "Supply",
+          "supportDefinition": "> {{threshold}}%",
+          "supportTerm": "Support threshold",
+          "tokenTerm": "Token",
+          "voteChange": "Vote change"
+        },
+        "lockToVoteSetupGovernance": {
+          "earlyExecution": {
+            "helpText": "Allows a proposal to be executed before the voting period ends. This is only possible if the proposal meets the support threshold, satisfies the minimum participation, and can’t be overturned by remaining voters.",
+            "label": "Early execution",
+            "switch": {
+              "label": "Enabled"
+            }
+          },
+          "eligibleField": {
+            "anyWallet": {
+              "description": "Any connected address.",
+              "label": "Any wallet"
+            },
+            "helpText": "Specify who can create proposals and the minimum token requirement.",
+            "label": "Who is eligible",
+            "members": {
+              "description": "Only members with at least this much voting power or token balance can create proposals.",
+              "label": "Members"
+            }
+          },
+          "minParticipation": {
+            "helpText": "The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal to this value.",
+            "label": "Minimum participation"
+          },
+          "minVotingPower": {
+            "helpText": "Only members with at least this much voting power or token balance can create proposals.",
+            "label": "Minimum requirement"
+          },
+          "proposalDuration": {
+            "alertInfo": "Ensure members have enough time to vote. It's recommended to set this to at least 1 day.",
+            "helpText": "The amount of time a proposal is open for voting.",
+            "label": "Proposal duration"
+          },
+          "supportThreshold": {
+            "alert": {
+              "majority": "Proposal will be approved by majority",
+              "minority": "Proposals could be approved by a minority rather than a majority."
+            },
+            "helpText": "The percentage of tokens that vote 'Yes' in support of a proposal, out of all tokens that have voted, must be greater than this value.",
+            "label": "Support threshold",
+            "tag": {
+              "no": "No",
+              "yes": "Yes"
+            }
+          },
+          "voteChange": {
+            "helpText": "Allows voters to change their vote during the voting period. This prevents the body from giving early approval or veto.",
+            "label": "Vote change",
+            "switch": {
+              "label": "Enabled"
+            }
+          }
+        },
         "lockToVoteSetupMembership": {
           "importToken": {
             "helpText": "The address must be an ERC-20 token contract deployed on the same chain as your DAO.",
