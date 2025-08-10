@@ -42,20 +42,20 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         defaultValue: ANY,
     });
 
-    const validateSelectors = (selectors: IProposalActionData[]) => {
-        const isInvalidInList = selectors.some((selector) => !selector.to || !selector.inputData);
+    const validateActions = (actions: IProposalActionData[]) => {
+        const isInvalidInList = actions.some((selector) => !selector.to || !selector.inputData);
 
         if (isInvalidInList) {
             return 'app.createDao.createProcessForm.permissions.permissionField.error.invalid';
         }
 
-        const isAlreadyInList = selectors.some(
+        const toSelector = proposalActionUtils.actionInputDataToFunctionSelector;
+        const isAlreadyInList = actions.some(
             (currentSelector, index) =>
-                selectors.findIndex(
+                actions.findIndex(
                     (selectorToCheck) =>
                         selectorToCheck.to === currentSelector.to &&
-                        proposalActionUtils.actionInputDataToFunctionSelector(currentSelector.inputData!) ===
-                            proposalActionUtils.actionInputDataToFunctionSelector(selectorToCheck.inputData!),
+                        toSelector(currentSelector.inputData!) === toSelector(selectorToCheck.inputData!),
                 ) !== index,
         );
 
@@ -70,7 +70,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         name: 'permissionSelectors',
         rules: {
             required: processPermission === SELECTED,
-            validate: (selectors) => validateSelectors(selectors),
+            validate: validateActions,
         },
     });
 

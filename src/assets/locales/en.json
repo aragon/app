@@ -298,7 +298,7 @@
             "anyLabel": "Any action",
             "error": {
               "duplicate": "Duplicate actions found in list",
-              "invalid": "Duplicate actions found in list"
+              "invalid": "Actions with invalid target found in list"
             },
             "helpText": "Each action is defined by a function selector on a specific smart contract address.",
             "label": "Authorized actions",
