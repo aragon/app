@@ -15,10 +15,11 @@ import {
     type IProposalAction as IGukProposalAction,
     type IProposalActionUpdateMetadata as IGukProposalActionUpdateMetadata,
     type IProposalActionWithdrawToken as IGukProposalActionWithdrawToken,
+    type IProposalActionInputData,
     type IProposalActionUpdateMetadataDaoMetadata,
     type IProposalActionUpdateMetadataDaoMetadataLink,
 } from '@aragon/gov-ui-kit';
-import { formatUnits } from 'viem';
+import { formatUnits, toFunctionSelector, type AbiStateMutability, type Hex } from 'viem';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { INormalizeActionsParams } from '../../types';
 
@@ -96,6 +97,16 @@ class ProposalActionUtils {
 
     isUpdateMetadataAction = (action: Partial<IProposalAction>): action is IProposalActionUpdateMetadata =>
         action.type === ProposalActionType.METADATA_UPDATE || action.type === ProposalActionType.METADATA_PLUGIN_UPDATE;
+
+    actionInputDataToFunctionSelector = (inputData: IProposalActionInputData): Hex => {
+        return toFunctionSelector({
+            type: 'function',
+            name: inputData.function,
+            inputs: inputData.parameters,
+            outputs: [],
+            stateMutability: inputData.stateMutability as AbiStateMutability,
+        });
+    };
 }
 
 export const proposalActionUtils = new ProposalActionUtils();

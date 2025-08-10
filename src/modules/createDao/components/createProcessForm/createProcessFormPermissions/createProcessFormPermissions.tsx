@@ -5,6 +5,7 @@ import {
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { ActionComposer, ActionItemId } from '@/modules/governance/components/actionComposer';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm/createProposalFormDefinitions';
+import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import {
@@ -42,17 +43,23 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     });
 
     const validateSelectors = (selectors: IProposalActionData[]) => {
+        const isInvalidInList = selectors.some((selector) => !selector.to || !selector.inputData);
+
+        if (isInvalidInList) {
+            return 'app.createDao.createProcessForm.permissions.permissionField.error.invalid';
+        }
+
         const isAlreadyInList = selectors.some(
-            (selector, index) =>
+            (currentSelector, index) =>
                 selectors.findIndex(
-                    (sel) =>
-                        sel.to === selector.to &&
-                        sel.type === selector.type &&
-                        sel.inputData?.function === selector.inputData?.function,
+                    (selectorToCheck) =>
+                        selectorToCheck.to === currentSelector.to &&
+                        proposalActionUtils.actionInputDataToFunctionSelector(currentSelector.inputData!) ===
+                            proposalActionUtils.actionInputDataToFunctionSelector(selectorToCheck.inputData!),
                 ) !== index,
         );
 
-        return !isAlreadyInList || 'app.createDao.createProcessForm.permissions.permissionField.error.invalid';
+        return !isAlreadyInList || 'app.createDao.createProcessForm.permissions.permissionField.error.duplicate';
     };
 
     const {
@@ -127,7 +134,11 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                                 onRemove={() => removePermissionSelectorByIndex(index)}
                                 functionName={selector.inputData?.function}
                                 contractName={selector.inputData?.contract}
-                                functionParameters={selector.inputData?.parameters}
+                                functionSelector={
+                                    selector.inputData
+                                        ? proposalActionUtils.actionInputDataToFunctionSelector(selector.inputData)
+                                        : undefined
+                                }
                             />
                         ))}
                     </InputContainer>
