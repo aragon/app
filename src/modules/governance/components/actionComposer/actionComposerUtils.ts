@@ -4,7 +4,7 @@ import type { TranslationFunction } from '@/shared/components/translationsProvid
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { type AbiStateMutability, toFunctionSelector, zeroAddress } from 'viem';
+import { zeroAddress } from 'viem';
 import type { IAllowedAction } from '../../api/executeSelectorsService';
 import {
     type IProposalAction,
@@ -14,6 +14,7 @@ import {
 import type { ISmartContractAbi, ISmartContractAbiFunction } from '../../api/smartContractService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IActionComposerPluginData } from '../../types';
+import { proposalActionUtils } from '../../utils/proposalActionUtils';
 import type { IActionComposerInputItem, IActionComposerInputProps } from './actionComposerInput';
 
 export enum ActionItemId {
@@ -293,15 +294,7 @@ class ActionComposerUtils {
             return item.info;
         }
 
-        const { inputData } = item.defaultValue;
-
-        return toFunctionSelector({
-            type: 'function',
-            name: inputData.function,
-            inputs: inputData.parameters,
-            outputs: [],
-            stateMutability: inputData.stateMutability as AbiStateMutability,
-        });
+        return proposalActionUtils.actionToFunctionSelector(item.defaultValue);
     };
 
     private getCustomActionGroups = ({ abis }: IGetCustomActionParams): IAutocompleteInputGroup[] =>
