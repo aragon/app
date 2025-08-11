@@ -43,7 +43,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     });
 
     const validateActions = (actions: IProposalActionData[]) => {
-        const isInvalidInList = actions.some((action) => !action.to || !action.inputData);
+        const isInvalidInList = actions.some((action) => action.inputData == null);
 
         if (isInvalidInList) {
             return 'app.createDao.createProcessForm.permissions.permissionField.error.invalid';
