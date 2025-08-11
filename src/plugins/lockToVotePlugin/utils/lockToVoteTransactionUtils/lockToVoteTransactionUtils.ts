@@ -98,15 +98,12 @@ class LockToVoteTransactionUtils {
         const { metadata, actions, proposal, plugin } = params;
         const { minDuration } = plugin.settings;
 
-        // Handle proposals without time settings in the following way:
-        //   - startDate set to 0
-        //   - if there is minDuration, and minDuration is more than 7 days, set endDate to minDuration
-        //   - otherwise, set endDate to 7 days from now
         const startDate = createProposalUtils.parseStartDate(proposal);
-        const endDate =
-            proposal.endTimeMode != null
-                ? createProposalUtils.parseEndDate(proposal)
-                : createProposalUtils.createDefaultEndDate(minDuration);
+
+        // If startDate is parsed as 0 → also set endDate to 0, letting the contract calculate
+        // endDate = actual start at execution + minDuration.
+        // If startDate is fixed → compute endDate as an absolute timestamp of the two values.
+        const endDate = startDate === 0 ? 0 : startDate + minDuration;
 
         const data = encodeFunctionData({
             abi: lockToVoteAbi,

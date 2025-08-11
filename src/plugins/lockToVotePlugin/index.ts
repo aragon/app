@@ -2,7 +2,6 @@ import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { TokenCreateProposalSettingsForm } from '../tokenPlugin/components/tokenCreateProposalSettingsForm';
 import { TokenGovernanceInfo } from '../tokenPlugin/components/tokenGovernanceInfo';
 import { TokenMemberInfo } from '../tokenPlugin/components/tokenMemberInfo';
 import { TokenMemberList } from '../tokenPlugin/components/tokenMemberList';
@@ -18,6 +17,7 @@ import { useTokenPermissionCheckProposalCreation } from '../tokenPlugin/hooks/us
 import { tokenBodyUtils } from '../tokenPlugin/utils/tokenBodyUtils';
 import { tokenProposalUtils } from '../tokenPlugin/utils/tokenProposalUtils';
 import { tokenTransactionUtils } from '../tokenPlugin/utils/tokenTransactionUtils';
+import { LockToVoteCreateProposalSettingsForm } from './components/lockToVoteCreateProposalSettingsForm/lockToVoteCreateProposalSettingsForm';
 import { LockToVoteMemberPanel } from './components/lockToVoteMemberPanel';
 import { LockToVoteProcessBodyField } from './components/lockToVoteProcessBodyField/lockToVoteProcessBodyField';
 import { LockToVoteSetupGovernance } from './components/lockToVoteSetupGovernance/lockToVoteSetupGovernance';
@@ -71,7 +71,7 @@ export const initialiseLockToVotePlugin = () => {
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM,
             pluginId: lockToVotePlugin.id,
-            component: TokenCreateProposalSettingsForm,
+            component: LockToVoteCreateProposalSettingsForm,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,

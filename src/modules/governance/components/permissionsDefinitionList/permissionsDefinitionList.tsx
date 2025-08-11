@@ -20,6 +20,8 @@ export const PermissionsDefinitionList: React.FC<IPermissionsDefinitionListProps
 
     const hasSettingsGroups = settings.length > 1;
 
+    console.log('settings', settings);
+
     return (
         <div>
             {settings.map((settingsGroup, groupIndex) => (
