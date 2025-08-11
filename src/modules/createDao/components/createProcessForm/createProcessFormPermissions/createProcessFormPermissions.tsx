@@ -49,13 +49,13 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
             return 'app.createDao.createProcessForm.permissions.permissionField.error.invalid';
         }
 
-        const toSelector = proposalActionUtils.actionInputDataToFunctionSelector;
         const isAlreadyInList = actions.some(
             (currentAction, index) =>
                 actions.findIndex(
                     (actionToCheck) =>
                         actionToCheck.to === currentAction.to &&
-                        toSelector(currentAction.inputData!) === toSelector(actionToCheck.inputData!),
+                        proposalActionUtils.actionToFunctionSelector(currentAction) ===
+                            proposalActionUtils.actionToFunctionSelector(actionToCheck),
                 ) !== index,
         );
 
@@ -134,11 +134,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                                 onRemove={() => removePermissionSelectorByIndex(index)}
                                 functionName={action.inputData?.function}
                                 contractName={action.inputData?.contract}
-                                functionSelector={
-                                    action.inputData
-                                        ? proposalActionUtils.actionInputDataToFunctionSelector(action.inputData)
-                                        : undefined
-                                }
+                                functionSelector={proposalActionUtils.actionToFunctionSelector(action)}
                             />
                         ))}
                     </InputContainer>

@@ -294,9 +294,7 @@ class ActionComposerUtils {
             return item.info;
         }
 
-        const { inputData } = item.defaultValue;
-
-        return proposalActionUtils.actionInputDataToFunctionSelector(inputData);
+        return proposalActionUtils.actionToFunctionSelector(item.defaultValue);
     };
 
     private getCustomActionGroups = ({ abis }: IGetCustomActionParams): IAutocompleteInputGroup[] =>

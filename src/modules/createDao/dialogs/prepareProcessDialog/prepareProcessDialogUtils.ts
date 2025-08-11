@@ -179,11 +179,9 @@ class PrepareProcessDialogUtils {
 
         const groupedByAddress = Object.groupBy(permissionSelectors, (selector) => selector.to);
 
-        const selectorTargets = Object.entries(groupedByAddress).map(([address, actions]) => ({
+        const selectorTargets = Object.entries(groupedByAddress).map(([address, actions = []]) => ({
             where: address as Hex,
-            selectors:
-                actions?.map((action) => proposalActionUtils.actionInputDataToFunctionSelector(action.inputData!)) ??
-                [],
+            selectors: actions.map((action) => proposalActionUtils.actionToFunctionSelector(action)) as Hex[],
         }));
 
         const transactionData = encodeFunctionData({

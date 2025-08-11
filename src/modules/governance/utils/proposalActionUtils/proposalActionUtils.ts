@@ -15,7 +15,6 @@ import {
     type IProposalAction as IGukProposalAction,
     type IProposalActionUpdateMetadata as IGukProposalActionUpdateMetadata,
     type IProposalActionWithdrawToken as IGukProposalActionWithdrawToken,
-    type IProposalActionInputData,
     type IProposalActionUpdateMetadataDaoMetadata,
     type IProposalActionUpdateMetadataDaoMetadataLink,
 } from '@aragon/gov-ui-kit';
@@ -98,14 +97,18 @@ class ProposalActionUtils {
     isUpdateMetadataAction = (action: Partial<IProposalAction>): action is IProposalActionUpdateMetadata =>
         action.type === ProposalActionType.METADATA_UPDATE || action.type === ProposalActionType.METADATA_PLUGIN_UPDATE;
 
-    actionInputDataToFunctionSelector = (inputData: IProposalActionInputData): Hex => {
-        return toFunctionSelector({
-            type: 'function',
-            name: inputData.function,
-            inputs: inputData.parameters,
-            outputs: [],
-            stateMutability: inputData.stateMutability as AbiStateMutability,
-        });
+    actionToFunctionSelector = (action: IProposalAction): Hex | undefined => {
+        const { inputData } = action;
+
+        return inputData == null
+            ? undefined
+            : toFunctionSelector({
+                  type: 'function',
+                  name: inputData.function,
+                  inputs: inputData.parameters,
+                  outputs: [],
+                  stateMutability: inputData.stateMutability as AbiStateMutability,
+              });
     };
 }
 
