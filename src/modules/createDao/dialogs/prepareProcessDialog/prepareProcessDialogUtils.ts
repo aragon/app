@@ -182,9 +182,8 @@ class PrepareProcessDialogUtils {
         const selectorTargets = Object.entries(groupedByAddress).map(([address, actions]) => ({
             where: address as Hex,
             selectors:
-                actions
-                    ?.filter((action) => action.inputData != null)
-                    .map((action) => proposalActionUtils.actionInputDataToFunctionSelector(action.inputData!)) ?? [],
+                actions?.map((action) => proposalActionUtils.actionInputDataToFunctionSelector(action.inputData!)) ??
+                [],
         }));
 
         const transactionData = encodeFunctionData({
