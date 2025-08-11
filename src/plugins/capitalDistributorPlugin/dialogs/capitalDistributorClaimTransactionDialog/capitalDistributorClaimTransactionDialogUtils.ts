@@ -1,5 +1,5 @@
 import { type ITransactionRequest } from '@/shared/utils/transactionUtils';
-import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
+import { encodeAbiParameters, encodeFunctionData, zeroHash, type Hex } from 'viem';
 import type { ICampaign, ICampaignUserDataMerkle } from '../../api/capitalDistributorService';
 import type { IBuildClaimTransactionParams } from './capitalDistributorClaimTransactionDialogUtils.api';
 import { capitalDistributorAbi, merkleClaimDataAbi } from './capitalDistributorPluginAbi';
@@ -13,7 +13,7 @@ class CapitalDistributorClaimTransactionDialogUtils {
         const data = encodeFunctionData({
             abi: capitalDistributorAbi,
             functionName: 'claimCampaignPayout',
-            args: [campaignId, recipient as Hex, auxData],
+            args: [campaignId, recipient as Hex, auxData, zeroHash],
         });
 
         const transaction = { to: pluginAddress as Hex, data, value: BigInt(0) };

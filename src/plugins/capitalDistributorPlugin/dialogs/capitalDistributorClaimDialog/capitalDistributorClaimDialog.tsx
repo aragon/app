@@ -1,5 +1,6 @@
 'use client';
 
+import type { Network } from '@/shared/api/daoService';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
@@ -21,6 +22,10 @@ export interface ICapitalDistributorClaimDialogParams {
      * Address of the plugin to use for the claim.
      */
     pluginAddress: string;
+    /**
+     * Network of the plugin.
+     */
+    network: Network;
 }
 
 export interface ICapitalDistributorClaimDialogProps
@@ -29,7 +34,7 @@ export interface ICapitalDistributorClaimDialogProps
 export const CapitalDistributorClaimDialog: React.FC<ICapitalDistributorClaimDialogProps> = (props) => {
     const { location } = props;
     invariant(location.params != null, 'CapitalDistributorClaimDialog: params must be defined');
-    const { campaign, pluginAddress } = location.params;
+    const { campaign, pluginAddress, network } = location.params;
 
     const { address } = useAccount();
     const { t } = useTranslations();
@@ -37,7 +42,7 @@ export const CapitalDistributorClaimDialog: React.FC<ICapitalDistributorClaimDia
 
     const handleSubmit = (values: ICapitalDistributorClaimDialogForm) => {
         const { recipient } = values;
-        const params: ICapitalDistributorClaimTransactionDialogParams = { campaign, pluginAddress, recipient };
+        const params: ICapitalDistributorClaimTransactionDialogParams = { campaign, pluginAddress, recipient, network };
         open(CapitalDistributorPluginDialogId.CLAIM_TRANSACTION, { params });
     };
 

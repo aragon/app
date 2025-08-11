@@ -4,9 +4,10 @@ export const capitalDistributorAbi = [
         name: 'claimCampaignPayout',
         stateMutability: 'nonpayable',
         inputs: [
-            { name: 'campaignId', type: 'uint256' },
-            { name: 'recipient', type: 'address' },
-            { name: 'auxData', type: 'bytes' },
+            { name: '_campaignId', type: 'uint256' },
+            { name: '_recipient', type: 'address' },
+            { name: '_strategyAuxData', type: 'bytes' },
+            { name: '_encoderAuxData', type: 'bytes' },
         ],
         outputs: [],
     },

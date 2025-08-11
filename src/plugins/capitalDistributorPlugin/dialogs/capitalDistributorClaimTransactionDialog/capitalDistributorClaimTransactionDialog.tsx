@@ -1,5 +1,6 @@
 'use client';
 
+import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider/dialogProvider.api';
 import {
     type ITransactionDialogStepMeta,
@@ -19,6 +20,10 @@ export interface ICapitalDistributorClaimTransactionDialogParams {
      * Campaign to be claimed.
      */
     campaign: ICampaign;
+    /**
+     * Network of the plugin.
+     */
+    network: Network;
     /**
      * The address of the recipient.
      */
@@ -42,7 +47,7 @@ export const CapitalDistributorClaimTransactionDialog: React.FC<ICapitalDistribu
     const { location } = props;
     invariant(location.params != null, 'CapitalDistributorClaimTransactionDialog: required parameters must be set.');
 
-    const { campaign, recipient, pluginAddress } = location.params;
+    const { campaign, recipient, pluginAddress, network } = location.params;
 
     const { t } = useTranslations();
 
@@ -65,6 +70,7 @@ export const CapitalDistributorClaimTransactionDialog: React.FC<ICapitalDistribu
             }}
             stepper={stepper}
             prepareTransaction={prepareTransaction}
+            network={network}
         />
     );
 };
