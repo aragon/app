@@ -11,6 +11,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import {
     CardEmptyState,
     InputContainer,
+    invariant,
     RadioCard,
     RadioGroup,
     SmartContractFunctionDataListItem,
@@ -45,9 +46,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     const validateActions = (actions: IProposalActionData[]) => {
         const isInvalidInList = actions.some((action) => action.inputData == null);
 
-        if (isInvalidInList) {
-            return 'app.createDao.createProcessForm.permissions.permissionField.error.invalid';
-        }
+        invariant(!isInvalidInList, 'CreateProcessFormPermissions: actions with invalid inputData found in list.');
 
         const isAlreadyInList = actions.some(
             (currentAction, index) =>
