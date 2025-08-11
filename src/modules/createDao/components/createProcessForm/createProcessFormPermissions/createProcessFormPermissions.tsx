@@ -127,16 +127,16 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                         excludeActionTypes={[ProposalActionType.TRANSFER, ActionItemId.RAW_CALLDATA]}
                     />
                     <InputContainer alert={fieldAlert} useCustomWrapper={true} className="w-full" id="selectors">
-                        {permissionSelectors.map((selector, index) => (
+                        {permissionSelectors.map((action, index) => (
                             <SmartContractFunctionDataListItem.Structure
-                                key={selector.id}
-                                contractAddress={selector.to}
+                                key={action.id}
+                                contractAddress={action.to}
                                 onRemove={() => removePermissionSelectorByIndex(index)}
-                                functionName={selector.inputData?.function}
-                                contractName={selector.inputData?.contract}
+                                functionName={action.inputData?.function}
+                                contractName={action.inputData?.contract}
                                 functionSelector={
-                                    selector.inputData
-                                        ? proposalActionUtils.actionInputDataToFunctionSelector(selector.inputData)
+                                    action.inputData
+                                        ? proposalActionUtils.actionInputDataToFunctionSelector(action.inputData)
                                         : undefined
                                 }
                             />
