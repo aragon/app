@@ -40,7 +40,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@aragon/app-next@workspace:."
   dependencies:
-    "@aragon/gov-ui-kit": "npm:1.15.0"
+    "@aragon/gov-ui-kit": "npm:^1.15.0"
     "@changesets/changelog-github": "npm:^0.5.1"
     "@changesets/cli": "npm:^2.29.5"
     "@floating-ui/react": "npm:^0.27.13"
@@ -106,7 +106,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@aragon/gov-ui-kit@npm:1.15.0":
+"@aragon/gov-ui-kit@npm:^1.15.0":
   version: 1.15.0
   resolution: "@aragon/gov-ui-kit@npm:1.15.0"
   dependencies:
