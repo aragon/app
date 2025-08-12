@@ -1159,6 +1159,11 @@
         }
       },
       "lockToVote": {
+        "lockToVoteCreateProposalSettingsForm": {
+          "startTime": {
+            "label": "Voting start time"
+          }
+        },
         "lockToVoteLockBeforeVoteDialog": {
           "a11y": {
             "description": "Lock tokens before voting on the proposal"

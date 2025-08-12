@@ -26,6 +26,7 @@ export const LockToVoteCreateProposalSettingsForm: React.FC<ILockToVoteCreatePro
 
     // This is the set proposal duration for Lock To Vote
     // as we don't allow users to set a specific minimum on this plugin
+    // but we reuse minimumDuration naming for minimal backend changes
     useFormField<ICreateProposalEndDateForm, 'minimumDuration'>('minimumDuration', {
         defaultValue: parsedProposalDuration,
     });
@@ -33,7 +34,7 @@ export const LockToVoteCreateProposalSettingsForm: React.FC<ILockToVoteCreatePro
     return (
         <div className="flex flex-col gap-6 md:gap-12">
             <AdvancedDateInput
-                label={t('app.plugins.token.tokenCreateProposalSettingsForm.startTime.label')}
+                label={t('app.plugins.lockToVote.lockToVoteCreateProposalSettingsForm.startTime.label')}
                 field="startTime"
                 minTime={DateTime.now()}
             />

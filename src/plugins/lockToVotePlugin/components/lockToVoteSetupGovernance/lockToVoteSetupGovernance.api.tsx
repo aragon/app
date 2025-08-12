@@ -8,7 +8,7 @@ export interface ILockToVoteSetupGovernanceMembershipSettings
 
 export interface ILockToVoteSetupGovernanceProps extends Omit<IPluginSetupGovernanceParams, 'membershipSettings'> {
     /**
-     * Membership settings of the multisig body.
+     * Membership settings of the lock to vote body.
      */
     membershipSettings: ILockToVoteSetupGovernanceMembershipSettings;
 }
