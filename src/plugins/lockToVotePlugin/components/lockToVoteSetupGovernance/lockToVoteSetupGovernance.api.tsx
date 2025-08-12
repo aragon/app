@@ -1,6 +1,7 @@
 import type { IPluginSetupGovernanceParams } from '@/modules/createDao/types';
 import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
+import { DaoLockToVoteVotingMode } from '../../types';
 
 export interface ILockToVoteSetupGovernanceMembershipSettings
     extends Partial<Pick<ITokenSetupMembershipForm, 'members'>>,
@@ -14,12 +15,13 @@ export interface ILockToVoteSetupGovernanceProps extends Omit<IPluginSetupGovern
 }
 
 export interface ILockToVoteSetupGovernanceForm
-    extends Pick<
-        ITokenPluginSettings,
-        'supportThreshold' | 'minParticipation' | 'minProposerVotingPower' | 'votingMode'
-    > {
+    extends Pick<ITokenPluginSettings, 'supportThreshold' | 'minParticipation' | 'minProposerVotingPower'> {
     /**
      * Amount of time a proposal can be live.
      */
     proposalDuration: number;
+    /**
+     * Voting mode of the DAO.
+     */
+    votingMode: DaoLockToVoteVotingMode;
 }

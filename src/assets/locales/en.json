@@ -1208,7 +1208,6 @@
         "lockToVoteProcessBodyField": {
           "disabled": "Disabled",
           "distributionTerm": "Distribution",
-          "earlyExecution": "Early execution",
           "enabled": "Enabled",
           "holders": "{{count}} token holders",
           "minParticipationDefinition": "≥ {{minParticipation}}",

@@ -10,7 +10,6 @@ import type {
     ITokenSetupMembershipForm,
     ITokenSetupMembershipMember,
 } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
-import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -26,6 +25,7 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
+import { DaoLockToVoteVotingMode } from '../../types';
 import type { ILockToVoteSetupGovernanceForm } from '../lockToVoteSetupGovernance';
 
 export interface ILockToVoteProcessBodyFieldProps {
@@ -88,8 +88,7 @@ export const LockToVoteProcessBodyField = (props: ILockToVoteProcessBodyFieldPro
         format: NumberFormat.PERCENTAGE_LONG,
     });
 
-    const voteChangeLabel = votingMode === DaoTokenVotingMode.VOTE_REPLACEMENT ? 'enabled' : 'disabled';
-    const earlyExecutionLabel = votingMode === DaoTokenVotingMode.EARLY_EXECUTION ? 'enabled' : 'disabled';
+    const voteChangeLabel = votingMode === DaoLockToVoteVotingMode.VOTE_REPLACEMENT ? 'enabled' : 'disabled';
 
     const proposalDurationObject = dateUtils.secondsToDuration(proposalDuration);
     const formattedMinDuration = t(
@@ -158,13 +157,6 @@ export const LockToVoteProcessBodyField = (props: ILockToVoteProcessBodyFieldPro
                         term={t('app.plugins.lockToVote.lockToVoteProcessBodyField.proposalDurationTerm')}
                     >
                         {formattedMinDuration}
-                    </DefinitionList.Item>
-                    <DefinitionList.Item term={t('app.plugins.lockToVote.lockToVoteProcessBodyField.earlyExecution')}>
-                        <Tag
-                            label={t(`app.plugins.lockToVote.lockToVoteProcessBodyField.${earlyExecutionLabel}`)}
-                            variant={earlyExecutionLabel === 'enabled' ? 'primary' : 'neutral'}
-                            className="max-w-fit"
-                        />
                     </DefinitionList.Item>
                 </>
             )}
