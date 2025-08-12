@@ -1,6 +1,12 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { actionComposerUtils } from '@/modules/governance/components/actionComposer';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
+import {
+    type ITokenActionTokenMint,
+    type ITokenPluginSettings,
+    type ITokenProposalAction,
+} from '@/plugins/tokenPlugin/types';
+import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -13,19 +19,12 @@ import {
     type IProposalActionTokenMint as IGukProposalActionTokenMint,
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
-import { TokenMintTokensAction } from '../../components/tokenActions/tokenMintTokensAction';
-import { TokenUpdateSettingsAction } from '../../components/tokenActions/tokenUpdateSettingsAction';
-import {
-    TokenProposalActionType,
-    type ITokenActionChangeSettings,
-    type ITokenActionTokenMint,
-    type ITokenPluginSettings,
-} from '../../types';
-import type { ITokenProposalAction } from '../../types/tokenProposalAction';
-import { tokenSettingsUtils } from '../tokenSettingsUtils';
-import { defaultMintAction, defaultUpdateSettings } from './tokenActionDefinitions';
+import { LockToVoteUpdateSettingsAction } from '../../components/lockToVoteActions/lockToVoteUpdateSettingsAction';
+import { LockToVoteProposalActionType } from '../../types/enums';
+import type { ILockToVoteActionChangeSettings } from '../../types/lockToVoteActionChangeSettings';
+import { defaultUpdateSettings } from './lockToVoteActionDefinitions';
 
-export interface IGetTokenActionsProps {
+export interface IGetLockToVoteActionProps {
     /**
      * DAO plugin data.
      */
@@ -40,7 +39,7 @@ export interface INormalizeChangeSettingsParams {
     /**
      * Action to be normalised.
      */
-    action: ITokenActionChangeSettings;
+    action: ILockToVoteActionChangeSettings;
     /*
      * Translation function for internationalization.
      */
@@ -51,15 +50,14 @@ export interface INormalizeChangeSettingsParams {
     token: ITokenPluginSettings['token'];
 }
 
-export type IGetTokenActionsResult = IActionComposerPluginData<IDaoPlugin<ITokenPluginSettings>>;
+export type IGetLockToVoteActionsResult = IActionComposerPluginData<IDaoPlugin<ITokenPluginSettings>>;
 
-class TokenActionUtils {
-    getTokenActions = ({ plugin, t }: IGetTokenActionsProps): IGetTokenActionsResult => {
+class LockToVoteActionUtils {
+    getLockToVoteActions = ({ plugin, t }: IGetLockToVoteActionProps): IGetLockToVoteActionsResult => {
         const { address, settings } = plugin;
         const { address: tokenAddress, name } = settings.token;
 
-        // The setMetadata function on the TokenVoting plugin is only supported from version 1.3 onwards
-        const minVersion = { release: 1, build: 3 };
+        const minVersion = { release: 1, build: 1 };
         const includePluginMetadataAction = versionComparatorUtils.isGreaterOrEqualTo(plugin, minVersion);
 
         return {
@@ -79,16 +77,10 @@ class TokenActionUtils {
             ],
             items: [
                 {
-                    id: `${tokenAddress}-${TokenProposalActionType.MINT}`,
-                    name: t(`app.plugins.token.tokenActions.${TokenProposalActionType.MINT}`),
-                    icon: IconType.SETTINGS,
-                    groupId: tokenAddress,
-                    meta: plugin,
-                    defaultValue: defaultMintAction(settings),
-                },
-                {
-                    id: `${address}-${TokenProposalActionType.UPDATE_TOKEN_VOTE_SETTINGS}`,
-                    name: t(`app.plugins.token.tokenActions.${TokenProposalActionType.UPDATE_TOKEN_VOTE_SETTINGS}`),
+                    id: `${address}-${LockToVoteProposalActionType.UPDATE_LOCK_TO_VOTE_VOTE_SETTINGS}`,
+                    name: t(
+                        `app.plugins.lockToVote.lockToVoteActions.${LockToVoteProposalActionType.UPDATE_LOCK_TO_VOTE_VOTE_SETTINGS}`,
+                    ),
                     icon: IconType.SETTINGS,
                     groupId: address,
                     defaultValue: defaultUpdateSettings(plugin),
@@ -101,18 +93,15 @@ class TokenActionUtils {
                 },
             ],
             components: {
-                [TokenProposalActionType.UPDATE_TOKEN_VOTE_SETTINGS]: TokenUpdateSettingsAction,
-                [TokenProposalActionType.MINT]: TokenMintTokensAction,
+                [LockToVoteProposalActionType.UPDATE_LOCK_TO_VOTE_VOTE_SETTINGS]: LockToVoteUpdateSettingsAction,
             },
         };
     };
 
-    isChangeSettingsAction = (action: IProposalAction | ITokenProposalAction): action is ITokenActionChangeSettings =>
-        action.type === TokenProposalActionType.UPDATE_TOKEN_VOTE_SETTINGS;
-
-    isTokenMintAction = (action: IProposalAction | ITokenProposalAction): action is ITokenActionTokenMint => {
-        return action.type === TokenProposalActionType.MINT;
-    };
+    isChangeSettingsAction = (
+        action: IProposalAction | ITokenProposalAction,
+    ): action is ILockToVoteActionChangeSettings =>
+        action.type === LockToVoteProposalActionType.UPDATE_LOCK_TO_VOTE_VOTE_SETTINGS;
 
     normalizeTokenMintAction = (action: ITokenActionTokenMint): IGukProposalActionTokenMint => {
         const { token, receivers, ...otherValues } = action;
@@ -149,4 +138,4 @@ class TokenActionUtils {
     };
 }
 
-export const tokenActionUtils = new TokenActionUtils();
+export const lockToVoteActionUtils = new LockToVoteActionUtils();

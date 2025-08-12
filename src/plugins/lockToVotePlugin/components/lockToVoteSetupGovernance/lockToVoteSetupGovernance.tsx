@@ -44,7 +44,7 @@ export const LockToVoteSetupGovernance: React.FC<ILockToVoteSetupGovernanceProps
                 >
                     <Card className="shadow-neutral-sm flex flex-col gap-6 border border-neutral-100 p-6">
                         <AdvancedDateInputDuration
-                            field={`${formPrefix}.proposalDuration`}
+                            field={`${formPrefix}.minDuration`}
                             label={t('app.plugins.lockToVote.lockToVoteSetupGovernance.proposalDuration.label')}
                             className="!p-0"
                             minDuration={voteDurationMin}
