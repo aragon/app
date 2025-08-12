@@ -1221,13 +1221,6 @@
           "voteChange": "Vote change"
         },
         "lockToVoteSetupGovernance": {
-          "earlyExecution": {
-            "helpText": "Allows a proposal to be executed before the voting period ends. This is only possible if the proposal meets the support threshold, satisfies the minimum participation, and can’t be overturned by remaining voters.",
-            "label": "Early execution",
-            "switch": {
-              "label": "Enabled"
-            }
-          },
           "eligibleField": {
             "anyWallet": {
               "description": "Any connected address.",
