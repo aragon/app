@@ -119,12 +119,6 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
             )}
             {processPermission === SELECTED && (
                 <div className="flex flex-col gap-3">
-                    <ActionComposer
-                        daoId={daoId}
-                        onAddAction={addPermissionSelector}
-                        hideWalletConnect={true}
-                        excludeActionTypes={[ProposalActionType.TRANSFER, ActionItemId.RAW_CALLDATA]}
-                    />
                     <InputContainer alert={fieldAlert} useCustomWrapper={true} className="w-full" id="selectors">
                         {permissionSelectors.map((action, index) => (
                             <SmartContractFunctionDataListItem.Structure
@@ -137,6 +131,12 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                             />
                         ))}
                     </InputContainer>
+                    <ActionComposer
+                        daoId={daoId}
+                        onAddAction={addPermissionSelector}
+                        hideWalletConnect={true}
+                        excludeActionTypes={[ProposalActionType.TRANSFER, ActionItemId.RAW_CALLDATA]}
+                    />
                 </div>
             )}
         </div>
