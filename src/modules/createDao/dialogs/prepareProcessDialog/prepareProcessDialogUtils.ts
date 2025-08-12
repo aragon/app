@@ -1,7 +1,7 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { conditionFactoryAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/conditionFactoryAbi';
 import { executeSelectorConditionAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/executeSelectorConditionAbi';
-import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import type { IDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -11,7 +11,7 @@ import {
     type IBuildApplyPluginsInstallationActionsParams,
 } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils, type ITransactionRequest } from '@/shared/utils/transactionUtils';
-import { encodeFunctionData, parseEventLogs, toFunctionSelector, type Hex, type TransactionReceipt } from 'viem';
+import { encodeFunctionData, parseEventLogs, type Hex, type TransactionReceipt } from 'viem';
 import { GovernanceType, ProcessPermission, type ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
 import { SetupBodyType, type ISetupBodyFormNew } from '../setupBodyDialog';
@@ -174,20 +174,14 @@ class PrepareProcessDialogUtils {
         return prepareFunction(prepareFunctionParams);
     };
 
-    private actionToFunctionSelector = (action: IProposalActionData): Hex => {
-        return toFunctionSelector(
-            `${action.inputData!.function}(${action.inputData!.parameters.map((param) => param.type).join(',')})`,
-        );
-    };
-
     private buildDeployExecuteSelectorConditionData = (params: IBuildDeployExecuteSelectorConditionDataParams) => {
         const { dao, permissionSelectors } = params;
 
         const groupedByAddress = Object.groupBy(permissionSelectors, (selector) => selector.to);
 
-        const selectorTargets = Object.entries(groupedByAddress).map(([address, actions]) => ({
+        const selectorTargets = Object.entries(groupedByAddress).map(([address, actions = []]) => ({
             where: address as Hex,
-            selectors: actions?.map((action) => this.actionToFunctionSelector(action)) ?? [],
+            selectors: actions.map((action) => proposalActionUtils.actionToFunctionSelector(action)) as Hex[],
         }));
 
         const transactionData = encodeFunctionData({
