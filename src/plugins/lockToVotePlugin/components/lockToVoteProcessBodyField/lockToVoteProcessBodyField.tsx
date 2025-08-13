@@ -6,6 +6,7 @@ import {
     type ISetupBodyFormNew,
 } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useMemberList } from '@/modules/governance/api/governanceService';
+import type { ITokenSetupGovernanceForm } from '@/plugins/tokenPlugin/components/tokenSetupGovernance';
 import type {
     ITokenSetupMembershipForm,
     ITokenSetupMembershipMember,
@@ -26,19 +27,14 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
-import type { ILockToVoteSetupGovernanceForm } from '../lockToVoteSetupGovernance';
 
 export interface ILockToVoteProcessBodyFieldProps {
     /**
      * The field from the create process form.
      */
     body:
-        | ISetupBodyFormNew<ILockToVoteSetupGovernanceForm, ITokenSetupMembershipMember, ITokenSetupMembershipForm>
-        | ISetupBodyFormExisting<
-              ILockToVoteSetupGovernanceForm,
-              ITokenSetupMembershipMember,
-              ITokenSetupMembershipForm
-          >;
+        | ISetupBodyFormNew<ITokenSetupGovernanceForm, ITokenSetupMembershipMember, ITokenSetupMembershipForm>
+        | ISetupBodyFormExisting<ITokenSetupGovernanceForm, ITokenSetupMembershipMember, ITokenSetupMembershipForm>;
     /**
      * Displays / hides some of the token-voting governance settings depending on the process governance type.
      */
@@ -76,7 +72,7 @@ export const LockToVoteProcessBodyField = (props: ILockToVoteProcessBodyFieldPro
         decimals: tokenDecimals,
         totalSupply,
     } = membership.token;
-    const { votingMode, supportThreshold, minParticipation, proposalDuration } = governance;
+    const { votingMode, supportThreshold, minParticipation, minDuration } = governance;
 
     const parsedTotalSupply = formatUnits(BigInt(totalSupply), tokenDecimals);
     const formattedSupply = formatterUtils.formatNumber(parsedTotalSupply, {
@@ -91,7 +87,7 @@ export const LockToVoteProcessBodyField = (props: ILockToVoteProcessBodyFieldPro
     const voteChangeLabel = votingMode === DaoTokenVotingMode.VOTE_REPLACEMENT ? 'enabled' : 'disabled';
     const earlyExecutionLabel = votingMode === DaoTokenVotingMode.EARLY_EXECUTION ? 'enabled' : 'disabled';
 
-    const proposalDurationObject = dateUtils.secondsToDuration(proposalDuration);
+    const proposalDurationObject = dateUtils.secondsToDuration(minDuration);
     const formattedMinDuration = t(
         'app.plugins.lockToVote.lockToVoteProcessBodyField.proposalDurationDefinition',
         proposalDurationObject,

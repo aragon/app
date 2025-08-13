@@ -6,20 +6,23 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Card, InputContainer, Switch } from '@aragon/gov-ui-kit';
 
+import type {
+    ITokenSetupGovernanceForm,
+    ITokenSetupGovernanceProps,
+} from '@/plugins/tokenPlugin/components/tokenSetupGovernance';
 import { MinParticipationField } from '@/plugins/tokenPlugin/components/tokenSetupGovernance/fields/minParticipationField';
 import { ProposalCreationEligibilityField } from '@/plugins/tokenPlugin/components/tokenSetupGovernance/fields/proposalCreationEligibilityField';
 import { SupportThresholdField } from '@/plugins/tokenPlugin/components/tokenSetupGovernance/fields/supportThresholdField';
-import type { ILockToVoteSetupGovernanceForm, ILockToVoteSetupGovernanceProps } from './lockToVoteSetupGovernance.api';
 
 const voteDurationMin = { days: 0, hours: 1, minutes: 0 };
 const voteDurationDefault = { days: 1, hours: 0, minutes: 0 };
 
-export const LockToVoteSetupGovernance: React.FC<ILockToVoteSetupGovernanceProps> = (props) => {
+export const LockToVoteSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (props) => {
     const { formPrefix, membershipSettings, isSubPlugin, showProposalCreationSettings } = props;
 
     const { t } = useTranslations();
 
-    const votingModeField = useFormField<ILockToVoteSetupGovernanceForm, 'votingMode'>('votingMode', {
+    const votingModeField = useFormField<ITokenSetupGovernanceForm, 'votingMode'>('votingMode', {
         fieldPrefix: formPrefix,
         defaultValue: DaoTokenVotingMode.STANDARD,
     });
