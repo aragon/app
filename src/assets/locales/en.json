@@ -1108,7 +1108,7 @@
             "resources": "Resources",
             "status": "Status",
             "termsConditionsAccepted": {
-              "error": "Agree to the terms and conditions to proceed.",
+              "error": "You haven't agreed to the terms of service.",
               "label": "I agree to the",
               "link": "terms & conditions"
             },
