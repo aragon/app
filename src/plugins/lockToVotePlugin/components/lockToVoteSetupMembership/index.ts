@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 
 export const LockToVoteSetupMembership = dynamic(() =>
-    import('./lockToVoteSetupMembership.jsx').then((mod) => mod.LockToVoteSetupMembership),
+    import('./lockToVoteSetupMembership').then((mod) => mod.LockToVoteSetupMembership),
 );
 
 export type {
