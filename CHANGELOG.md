@@ -1,5 +1,103 @@
 # @aragon/app-next
 
+## 1.8.0
+
+### Minor Changes
+
+- [#659](https://github.com/aragon/app-next/pull/659) [`6eb0257`](https://github.com/aragon/app-next/commit/6eb025717fe966d1a234470fcd22a05f4e62bbb7) Thanks [@evanaronson](https://github.com/evanaronson)! - Apply minor UI changes to the transfer basic action component and fix validation of AssetInput component
+
+- [#679](https://github.com/aragon/app-next/pull/679) [`a79a660`](https://github.com/aragon/app-next/commit/a79a660cc0fa7b0237c99ed25f424c1508551c72) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Update tabs handling to reflect state on URL search parameters
+
+- [#677](https://github.com/aragon/app-next/pull/677) [`aa22d3a`](https://github.com/aragon/app-next/commit/aa22d3ab95f4965404f3b886fe680e2f43b77ef5) Thanks [@milosh86](https://github.com/milosh86)! - Implement proper merging of native and custom actions in the `ActionComposer`
+
+- [#660](https://github.com/aragon/app-next/pull/660) [`cbc80cd`](https://github.com/aragon/app-next/commit/cbc80cd68a1c37940a5e9182d356879bbe389bb2) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Support capital-distributor plugin and base claim experience
+
+- [#669](https://github.com/aragon/app-next/pull/669) [`1906da8`](https://github.com/aragon/app-next/commit/1906da82c35bc52a55558325a01869f78cce74ad) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#676](https://github.com/aragon/app-next/pull/676) [`693dfd0`](https://github.com/aragon/app-next/commit/693dfd0085a4bcaac8f434959a467336d159023c) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#654](https://github.com/aragon/app-next/pull/654) [`439c190`](https://github.com/aragon/app-next/commit/439c190aad733d3c80605b06a13d0878953ef1c2) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Update addresses validation
+
+- [#662](https://github.com/aragon/app-next/pull/662) [`ee8f1ad`](https://github.com/aragon/app-next/commit/ee8f1adce4955c035d2f1bd65e71308ad7c02341) Thanks [@shan8851](https://github.com/shan8851)! - Refactor governance designer flow to support read-only view
+
+- [#702](https://github.com/aragon/app-next/pull/702) [`2115878`](https://github.com/aragon/app-next/commit/211587829429ec6392b7d889ebee72bb154ae780) Thanks [@dependabot](https://github.com/apps/dependabot)! - Bump @eslint/plugin-kit from 0.3.1 to 0.3.4
+
+- [#674](https://github.com/aragon/app-next/pull/674) [`9866f6c`](https://github.com/aragon/app-next/commit/9866f6c0b897657837166e4077f5e3381921cc83) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Update useMemberLocks params to use escrowAddress instead of pluginAddress
+
+- [#703](https://github.com/aragon/app-next/pull/703) [`8183696`](https://github.com/aragon/app-next/commit/8183696be3b14b54679c811c0df667b2f6381dcf) Thanks [@dependabot](https://github.com/apps/dependabot)! - Bump linkifyjs from 4.3.1 to 4.3.2
+
+- [#667](https://github.com/aragon/app-next/pull/667) [`fc71493`](https://github.com/aragon/app-next/commit/fc71493a8dd813b8661ef4c9c3736a5f726e02f9) Thanks [@evanaronson](https://github.com/evanaronson)! - Add token name and symbol fallback to fix an issue where form validation would block token importing
+
+- [#677](https://github.com/aragon/app-next/pull/677) [`aa22d3a`](https://github.com/aragon/app-next/commit/aa22d3ab95f4965404f3b886fe680e2f43b77ef5) Thanks [@milosh86](https://github.com/milosh86)! - Add `excludeActionTypes` prop to `ActionComposer` to filter out specific action types
+
+- [#658](https://github.com/aragon/app-next/pull/658) [`214b242`](https://github.com/aragon/app-next/commit/214b2426dab3bf8524e219d960dd0b27c07ac53e) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#691](https://github.com/aragon/app-next/pull/691) [`1f1e82e`](https://github.com/aragon/app-next/commit/1f1e82e362aa547f6c9b49e74d7ad2333eb4c975) Thanks [@shan8851](https://github.com/shan8851)! - Add restriction to remove admin to processes with full execute
+
+- [#684](https://github.com/aragon/app-next/pull/684) [`b396783`](https://github.com/aragon/app-next/commit/b3967831b2a6c0c3c76b4931d950763d7068a82a) Thanks [@dependabot](https://github.com/apps/dependabot)! - Bump @eslint/plugin-kit to 0.3.3
+
+- [#693](https://github.com/aragon/app-next/pull/693) [`af629a3`](https://github.com/aragon/app-next/commit/af629a3ae2fcbc5de42eb29059cd9249d2208719) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Display authorized actions on process pages
+
+- [#711](https://github.com/aragon/app-next/pull/711) [`8ac04ff`](https://github.com/aragon/app-next/commit/8ac04ff66e4b5a90fe7914d2ed65d7a4541c43c0) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Fix crash on settings DAO page when all plugins have been uninstalled
+
+- [#672](https://github.com/aragon/app-next/pull/672) [`1febb73`](https://github.com/aragon/app-next/commit/1febb730fb2b9752f2d7368fcf33ae286981d0e2) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Update Collapsible component for collapsedLines prop change
+
+- [#681](https://github.com/aragon/app-next/pull/681) [`2d62015`](https://github.com/aragon/app-next/commit/2d6201555fa2b37ebf934c5f7a3773dda07fa064) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement ProcessDetails page with read-only Process form components
+
+- [#683](https://github.com/aragon/app-next/pull/683) [`bc9be7d`](https://github.com/aragon/app-next/commit/bc9be7d4a3162aacd0cafed8751559861f317203) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Display governance processes on settings page
+
+- [#686](https://github.com/aragon/app-next/pull/686) [`c165d6e`](https://github.com/aragon/app-next/commit/c165d6eda5a0080455c8ffbfc3197eadfd747c20) Thanks [@shan8851](https://github.com/shan8851)! - Implement permission granting to a governance process
+
+- [#714](https://github.com/aragon/app-next/pull/714) [`a8f3487`](https://github.com/aragon/app-next/commit/a8f34878fb79ce799acefe8fd9a6b32ca47a4e77) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Remove delegationCount from app experience
+
+- [#670](https://github.com/aragon/app-next/pull/670) [`6830e95`](https://github.com/aragon/app-next/commit/6830e95ee4b432260ba564cc0a306f55b886d55a) Thanks [@milosh86](https://github.com/milosh86)! - Update action composer to merge native and custom actions
+
+- [#661](https://github.com/aragon/app-next/pull/661) [`7dc9260`](https://github.com/aragon/app-next/commit/7dc9260c59f2ef47764031264550d7e7717c2ad4) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Update DAO creation transaction dialog to wait for the admin plugin to be indexed
+
+- [#698](https://github.com/aragon/app-next/pull/698) [`894ea8e`](https://github.com/aragon/app-next/commit/894ea8ec8d6f567c2cd2606f5b7f05f9a4f3be30) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement LockToVote plugin setup
+
+- [#688](https://github.com/aragon/app-next/pull/688) [`cd369cb`](https://github.com/aragon/app-next/commit/cd369cb404e8e3a1aff4f7dc245adbd775c5d5b9) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#665](https://github.com/aragon/app-next/pull/665) [`10d1331`](https://github.com/aragon/app-next/commit/10d133175e54e7d9c4468f83f2a5b8353594a8f1) Thanks [@evanaronson](https://github.com/evanaronson)! - Fixed an issue where non-mainnet DAOs with a subname but no ENS were crashing the app
+
+- [#699](https://github.com/aragon/app-next/pull/699) [`e60afea`](https://github.com/aragon/app-next/commit/e60afea5557877725d637b0578254cd37512a67e) Thanks [@dependabot](https://github.com/apps/dependabot)! - Bump cross-env to v10
+
+### Patch Changes
+
+- [#715](https://github.com/aragon/app-next/pull/715) [`68080f1`](https://github.com/aragon/app-next/commit/68080f1bbcdeb786354e8177a1bdcca9a19c5abd) Thanks [@milosh86](https://github.com/milosh86)! - Refactor function selector util to make it reusable across the app
+
+- [#708](https://github.com/aragon/app-next/pull/708) [`9a89b99`](https://github.com/aragon/app-next/commit/9a89b99dbf6b86b117a63378defc731198895c8c) Thanks [@milosh86](https://github.com/milosh86)! - Introduce Turbopack into dev build to improve HMR speed
+
+- [#695](https://github.com/aragon/app-next/pull/695) [`d176bac`](https://github.com/aragon/app-next/commit/d176bac95ad3702371a4e931abbe71408d347d4f) Thanks [@milosh86](https://github.com/milosh86)! - Fix allowed actions switch init logic in `ActionComposer`
+
+- [#695](https://github.com/aragon/app-next/pull/695) [`d176bac`](https://github.com/aragon/app-next/commit/d176bac95ad3702371a4e931abbe71408d347d4f) Thanks [@milosh86](https://github.com/milosh86)! - Set maximum page size for `useAllowedActions` hook in `ActionComposer`
+
+- [#694](https://github.com/aragon/app-next/pull/694) [`60e2798`](https://github.com/aragon/app-next/commit/60e2798a938b27db4f92760e649e5c26bd25f412) Thanks [@shan8851](https://github.com/shan8851)! - Fix transaction for building execute conditions and add validation to selectors field
+
+- [#697](https://github.com/aragon/app-next/pull/697) [`f5fbbd0`](https://github.com/aragon/app-next/commit/f5fbbd0eea185b2b5f7cbb33ab2b762a29a0936f) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Fix formatting of min participation setting value for token-voting plugin
+
+- [#678](https://github.com/aragon/app-next/pull/678) [`a0bb3bd`](https://github.com/aragon/app-next/commit/a0bb3bdb2b1de7ec2207171b847c7452f955801e) Thanks [@milosh86](https://github.com/milosh86)! - Refactor ActionComposer into shared, reusable component
+
+- [#695](https://github.com/aragon/app-next/pull/695) [`d176bac`](https://github.com/aragon/app-next/commit/d176bac95ad3702371a4e931abbe71408d347d4f) Thanks [@milosh86](https://github.com/milosh86)! - Fix `getAllowedActionItems` in `ActionComposer` to properly handle native items from all plugins
+
+- [#664](https://github.com/aragon/app-next/pull/664) [`6517943`](https://github.com/aragon/app-next/commit/651794377affb3c3b09a5e7c197051d2cb1efb87) Thanks [@shan8851](https://github.com/shan8851)! - Fix manage admins flow by adding new max page size param
+
+- [#713](https://github.com/aragon/app-next/pull/713) [`277dbf7`](https://github.com/aragon/app-next/commit/277dbf76d9c43ad81cdeacd608da0af75799e544) Thanks [@milosh86](https://github.com/milosh86)! - Add missing condition factory addresses
+
+- [#685](https://github.com/aragon/app-next/pull/685) [`bff98d7`](https://github.com/aragon/app-next/commit/bff98d7a3e385201affd295d09e341d0f5dc5155) Thanks [@milosh86](https://github.com/milosh86)! - Update `ActionComposer` to show by default only actions that process has permissions to do
+
+- [#689](https://github.com/aragon/app-next/pull/689) [`2d4b8c0`](https://github.com/aragon/app-next/commit/2d4b8c010e3e27cbb3fda430f994acb3fefeeaff) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Correctly handle decimal values for `minParticipation` setting on token-voting plugin
+
+- [#682](https://github.com/aragon/app-next/pull/682) [`10cb0ba`](https://github.com/aragon/app-next/commit/10cb0baf19fab4ec57c53eaa8ba112756df77ae4) Thanks [@milosh86](https://github.com/milosh86)! - Wrap generateMetadata utils in try-catch to properly log Sentry errors
+
+- [#696](https://github.com/aragon/app-next/pull/696) [`c6904d6`](https://github.com/aragon/app-next/commit/c6904d6bd72be669450767bfb78a8afabcb05d54) Thanks [@shan8851](https://github.com/shan8851)! - Fix transaction data for deploying execute condition with selectors to match what is expected on the smart contract
+
+- [#687](https://github.com/aragon/app-next/pull/687) [`9032e22`](https://github.com/aragon/app-next/commit/9032e22fa749ea63dbdfb8dc04a419f8fd1d0709) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Update values of tab IDs to lowercase for better URL consistency
+
+- [#675](https://github.com/aragon/app-next/pull/675) [`1491370`](https://github.com/aragon/app-next/commit/1491370fbc1830c6031236c0c2c0c8a50118baf8) Thanks [@milosh86](https://github.com/milosh86)! - Refactor plugin system to prefer interfaceType over subdomain
+
+- [#715](https://github.com/aragon/app-next/pull/715) [`68080f1`](https://github.com/aragon/app-next/commit/68080f1bbcdeb786354e8177a1bdcca9a19c5abd) Thanks [@milosh86](https://github.com/milosh86)! - Fix invalid duplicate action validation on actions from imported contract
+
 ## 1.7.0
 
 ### Minor Changes

@@ -7,6 +7,7 @@ import {
     generateReactQueryResultError,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
+import { timeUtils } from '@/test/utils';
 import {
     addressUtils,
     clipboardUtils,
@@ -18,9 +19,7 @@ import {
 import type * as ReactQuery from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { DateTime } from 'luxon';
 import { networkUtils } from '../../../../shared/utils/networkUtils';
-import { timeUtils } from '../../../../test/utils';
 import * as governanceService from '../../api/governanceService';
 import { generateMember, generateMemberMetrics } from '../../testUtils';
 import { DaoMemberDetailsPageClient, type IDaoMemberDetailsPageClientProps } from './daoMemberDetailsPageClient';
@@ -178,20 +177,16 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     });
 
     it('renders the correct last activity date', () => {
-        const now = '2024-10-20T09:00:00';
-        const lastActivity = '2024-03-20T09:00:00';
-
-        timeUtils.setTime(now);
-
-        const metrics = generateMemberMetrics({ lastActivity: DateTime.fromISO(lastActivity).toSeconds() });
+        timeUtils.setTime('2025-08-10T09:30:00');
+        const metrics = generateMemberMetrics({ lastActivity: 1754559000 });
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
 
         render(createTestComponent());
-        const duration = formatterUtils.formatDate(metrics.lastActivity! * 1000, { format: DateFormat.DURATION });
-        const [value] = duration?.split(' ') ?? [];
 
-        expect(screen.getByText(value)).toBeInTheDocument();
-        expect(screen.getByText(/daoMemberDetailsPage.header.stat.latestActivityUnit/)).toBeInTheDocument();
+        expect(screen.getByText('3')).toBeInTheDocument();
+        expect(
+            screen.getByText(/daoMemberDetailsPage.header.stat.latestActivityUnit \(unit=days\)/),
+        ).toBeInTheDocument();
     });
 
     it('renders fallback of `-` when firstActivity is null', () => {

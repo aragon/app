@@ -1,6 +1,5 @@
 import {
     generateTokenMember,
-    generateTokenMemberMetrics,
     generateTokenPluginSettings,
     generateTokenPluginSettingsToken,
 } from '@/plugins/tokenPlugin/testUtils';
@@ -41,18 +40,6 @@ describe('<TokenMemberListItem /> component', () => {
         const member = generateTokenMember({ ens: 'tttt.eth', address: '0x123' });
         render(createTestComponent({ member }));
         expect(screen.getByText(member.ens!)).toBeInTheDocument();
-    });
-
-    it('renders the token member with correct delegation count', () => {
-        const member = generateTokenMember({
-            ens: 'tttt.eth',
-            address: '0x123',
-            metrics: generateTokenMemberMetrics({ delegateReceivedCount: 5 }),
-        });
-        render(createTestComponent({ member }));
-        expect(screen.getByText(member.ens!)).toBeInTheDocument();
-        expect(screen.getByText('5')).toBeInTheDocument();
-        expect(screen.getByText('Delegations')).toBeInTheDocument();
     });
 
     it('retrieves the plugin settings to parse the member voting power using the decimals of the governance token', () => {
