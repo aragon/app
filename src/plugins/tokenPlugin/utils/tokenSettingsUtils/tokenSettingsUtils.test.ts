@@ -34,14 +34,14 @@ describe('tokenSettings utils', () => {
         });
 
         it('correctly formats and displays the minimum participation', () => {
-            const settings = generateTokenPluginSettings({ minParticipation: 200000 });
+            const settings = generateTokenPluginSettings({ minParticipation: 123456 });
             const result = tokenSettingsUtils.parseSettings({ settings, t: mockTranslations.tMock });
 
             const [, minimumParticipationTerm] = result;
 
             expect(minimumParticipationTerm.term).toMatch(/tokenGovernanceSettings.minimumParticipation/);
             expect(minimumParticipationTerm.definition).toMatch(
-                /tokenGovernanceSettings.participation \(participation=20%,tokenValue=0,tokenSymbol=ETH\)/,
+                /tokenGovernanceSettings.participation \(participation=12\.35%,tokenValue=0,tokenSymbol=ETH\)/,
             );
         });
 
@@ -56,7 +56,7 @@ describe('tokenSettings utils', () => {
 
             expect(minimumParticipationTerm.term).toMatch(/tokenGovernanceSettings.minimumParticipation/);
             expect(minimumParticipationTerm.definition).toMatch(
-                /tokenGovernanceSettings.participation \(participation=20%,tokenValue=400,tokenSymbol=ETH\)/,
+                /tokenGovernanceSettings.participation \(participation=20\.00%,tokenValue=400,tokenSymbol=ETH\)/,
             );
         });
 

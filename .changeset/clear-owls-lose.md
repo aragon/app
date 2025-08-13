@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-Bump @eslint/plugin-kit to 0.3.3
+Bump actions/cache to 4.2.4

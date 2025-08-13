@@ -65,9 +65,10 @@ export const DaoProcessAllowedActions: React.FC<IDaoProcessAllowedActionsProps> 
                 {allowedActionsList?.map((action, index) => (
                     <SmartContractFunctionDataListItem.Structure
                         key={index}
-                        functionName={action.decoded.functionName}
                         contractAddress={action.target}
                         contractName={action.decoded.contractName}
+                        functionName={action.decoded.functionName}
+                        functionSelector={action.selector ?? undefined}
                         chainId={chainId}
                     />
                 ))}

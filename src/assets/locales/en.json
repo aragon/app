@@ -297,7 +297,7 @@
             "anyDescription": "Any action can be added to proposals",
             "anyLabel": "Any action",
             "error": {
-              "invalid": "Duplicate actions found in list"
+              "duplicate": "Duplicate actions found in list"
             },
             "helpText": "Each action is defined by a function selector on a specific smart contract address.",
             "label": "Authorized actions",
@@ -1527,7 +1527,6 @@
           }
         },
         "tokenMemberStats": {
-          "delegations": "Delegations",
           "tokenBalance": "Token balance",
           "votingPower": "Voting power"
         },
@@ -1559,7 +1558,7 @@
           "holders": "{{count}} token holders",
           "minDurationDefinition": "{{days}} days {{hours}} hours {{minutes}} minutes",
           "minDurationTerm": "Minimum duration",
-          "minParticipationDefinition": "≥ {{minParticipation}}%",
+          "minParticipationDefinition": "≥ {{minParticipation}}",
           "minParticipationTerm": "Minimum participation",
           "supplyTerm": "Supply",
           "supportDefinition": "> {{threshold}}%",

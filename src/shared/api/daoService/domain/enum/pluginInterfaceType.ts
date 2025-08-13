@@ -5,5 +5,6 @@ export enum PluginInterfaceType {
     SPP = 'spp',
     GAUGE = 'gauge',
     CAPITAL_DISTRIBUTOR = 'capitalDistributor',
+    LOCK_TO_VOTE = 'lockToVote',
     UNKNOWN = 'unknown',
 }
