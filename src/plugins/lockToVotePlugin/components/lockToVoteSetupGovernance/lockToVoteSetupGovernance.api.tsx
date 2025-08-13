@@ -15,11 +15,10 @@ export interface ILockToVoteSetupGovernanceProps extends Omit<IPluginSetupGovern
 }
 
 export interface ILockToVoteSetupGovernanceForm
-    extends Pick<ITokenPluginSettings, 'supportThreshold' | 'minParticipation' | 'minProposerVotingPower'> {
-    /**
-     * Amount of time a proposal can be live.
-     */
-    proposalDuration: number;
+    extends Pick<
+        ITokenPluginSettings,
+        'supportThreshold' | 'minParticipation' | 'minProposerVotingPower' | 'minDuration'
+    > {
     /**
      * Voting mode of the DAO.
      */

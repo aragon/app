@@ -6,7 +6,6 @@ import {
     type ISetupBodyFormNew,
 } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useMemberList } from '@/modules/governance/api/governanceService';
-import type { ITokenSetupGovernanceForm } from '@/plugins/tokenPlugin/components/tokenSetupGovernance';
 import type {
     ITokenSetupMembershipForm,
     ITokenSetupMembershipMember,
@@ -27,15 +26,19 @@ import {
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { DaoLockToVoteVotingMode } from '../../types';
+import type { ILockToVoteSetupGovernanceForm } from '../lockToVoteSetupGovernance/lockToVoteSetupGovernance.api';
 
-// TODO: check ILockToVoteSetupGovernanceForm
 export interface ILockToVoteProcessBodyFieldProps {
     /**
      * The field from the create process form.
      */
     body:
-        | ISetupBodyFormNew<ITokenSetupGovernanceForm, ITokenSetupMembershipMember, ITokenSetupMembershipForm>
-        | ISetupBodyFormExisting<ITokenSetupGovernanceForm, ITokenSetupMembershipMember, ITokenSetupMembershipForm>;
+        | ISetupBodyFormNew<ILockToVoteSetupGovernanceForm, ITokenSetupMembershipMember, ITokenSetupMembershipForm>
+        | ISetupBodyFormExisting<
+              ILockToVoteSetupGovernanceForm,
+              ITokenSetupMembershipMember,
+              ITokenSetupMembershipForm
+          >;
     /**
      * Displays / hides some of the token-voting governance settings depending on the process governance type.
      */
