@@ -37,8 +37,8 @@ export const defaultUpdateSettings = ({
                 value: '',
                 components: [
                     { name: 'votingMode', type: 'uint8' },
-                    { name: 'supportThreshold', type: 'uint32' },
-                    { name: 'minParticipation', type: 'uint32' },
+                    { name: 'supportThresholdRatio', type: 'uint32' },
+                    { name: 'minParticipationRatio', type: 'uint32' },
                     { name: 'minApprovalRatio', type: 'uint32' },
                     { name: 'proposalDuration', type: 'uint64' },
                     { name: 'minProposerVotingPower', type: 'uint256' },

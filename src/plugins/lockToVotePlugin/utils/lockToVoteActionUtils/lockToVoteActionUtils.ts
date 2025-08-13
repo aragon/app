@@ -1,11 +1,7 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { actionComposerUtils } from '@/modules/governance/components/actionComposer';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
-import {
-    type ITokenActionTokenMint,
-    type ITokenPluginSettings,
-    type ITokenProposalAction,
-} from '@/plugins/tokenPlugin/types';
+import { type ITokenPluginSettings, type ITokenProposalAction } from '@/plugins/tokenPlugin/types';
 import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
@@ -16,9 +12,7 @@ import {
     ProposalActionType as GukProposalActionType,
     IconType,
     type IProposalActionChangeSettings as IGukProposalActionChangeSettings,
-    type IProposalActionTokenMint as IGukProposalActionTokenMint,
 } from '@aragon/gov-ui-kit';
-import { formatUnits } from 'viem';
 import { LockToVoteUpdateSettingsAction } from '../../components/lockToVoteActions/lockToVoteUpdateSettingsAction';
 import { LockToVoteProposalActionType } from '../../types/enums';
 import type { ILockToVoteActionChangeSettings } from '../../types/lockToVoteActionChangeSettings';
@@ -102,22 +96,6 @@ class LockToVoteActionUtils {
         action: IProposalAction | ITokenProposalAction,
     ): action is ILockToVoteActionChangeSettings =>
         action.type === LockToVoteProposalActionType.UPDATE_LOCK_TO_VOTE_VOTE_SETTINGS;
-
-    normalizeTokenMintAction = (action: ITokenActionTokenMint): IGukProposalActionTokenMint => {
-        const { token, receivers, ...otherValues } = action;
-        const { currentBalance, newBalance, ...otherReceiverValues } = receivers;
-
-        return {
-            ...otherValues,
-            type: GukProposalActionType.TOKEN_MINT,
-            tokenSymbol: token.symbol,
-            receiver: {
-                ...otherReceiverValues,
-                currentBalance: formatUnits(BigInt(currentBalance), token.decimals),
-                newBalance: formatUnits(BigInt(newBalance), token.decimals),
-            },
-        };
-    };
 
     normalizeChangeSettingsAction = (params: INormalizeChangeSettingsParams): IGukProposalActionChangeSettings => {
         const { action, t, token } = params;
