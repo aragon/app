@@ -7,17 +7,16 @@ import { TokenMemberInfo } from '../tokenPlugin/components/tokenMemberInfo';
 import { TokenMemberList } from '../tokenPlugin/components/tokenMemberList';
 import { TokenProposalCreationSettings } from '../tokenPlugin/components/tokenProposalCreationSettings';
 import { TokenProposalVotingBreakdown } from '../tokenPlugin/components/tokenProposalVotingBreakdown';
-import { TokenProposalVotingSummary } from '../tokenPlugin/components/tokenProposalVotingSummary';
 import { TokenVoteList } from '../tokenPlugin/components/tokenVoteList';
 import { useTokenGovernanceSettings } from '../tokenPlugin/hooks/useTokenGovernanceSettings';
 import { useTokenMemberStats } from '../tokenPlugin/hooks/useTokenMemberStats';
 import { useTokenPermissionCheckProposalCreation } from '../tokenPlugin/hooks/useTokenPermissionCheckProposalCreation';
 import { tokenBodyUtils } from '../tokenPlugin/utils/tokenBodyUtils';
-import { tokenProposalUtils } from '../tokenPlugin/utils/tokenProposalUtils';
 import { tokenTransactionUtils } from '../tokenPlugin/utils/tokenTransactionUtils';
 import { LockToVoteCreateProposalSettingsForm } from './components/lockToVoteCreateProposalSettingsForm/lockToVoteCreateProposalSettingsForm';
 import { LockToVoteMemberPanel } from './components/lockToVoteMemberPanel';
 import { LockToVoteProcessBodyField } from './components/lockToVoteProcessBodyField/lockToVoteProcessBodyField';
+import { LockToVoteProposalVotingSummary } from './components/lockToVoteProposalVotingSummary';
 import { LockToVoteSetupGovernance } from './components/lockToVoteSetupGovernance/lockToVoteSetupGovernance';
 import { LockToVoteSetupMembership } from './components/lockToVoteSetupMembership/lockToVoteSetupMembership';
 import { LockToVoteSubmitVote } from './components/lockToVoteSubmitVote';
@@ -25,6 +24,7 @@ import { lockToVotePlugin } from './constants/lockToVotePlugin';
 import { useLockToVoteActions } from './hooks/useLockToVoteActions';
 import { useLockToVoteNormalizeActions } from './hooks/useLockToVoteNormalizeActions';
 import { useLockToVotePermissionCheckVoteSubmission } from './hooks/useLockToVotePermissionCheckVoteSubmission';
+import { lockToVoteProposalUtils } from './utils/lockToVoteProposalUtils';
 import { lockToVoteTransactionUtils } from './utils/lockToVoteTransactionUtils';
 
 export const initialiseLockToVotePlugin = () => {
@@ -61,12 +61,12 @@ export const initialiseLockToVotePlugin = () => {
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
             pluginId: lockToVotePlugin.id,
-            function: tokenProposalUtils.getProposalStatus,
+            function: lockToVoteProposalUtils.getProposalStatus,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_SUCCEEDED,
             pluginId: lockToVotePlugin.id,
-            function: tokenProposalUtils.hasSucceeded,
+            function: lockToVoteProposalUtils.hasSucceeded,
         })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM,
@@ -101,7 +101,7 @@ export const initialiseLockToVotePlugin = () => {
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY,
             pluginId: lockToVotePlugin.id,
-            component: TokenProposalVotingSummary,
+            component: LockToVoteProposalVotingSummary,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,

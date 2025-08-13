@@ -1223,6 +1223,15 @@
           "tokenTerm": "Token",
           "voteChange": "Vote change"
         },
+        "lockToVoteProposalVotingSummary": {
+          "approved": "approved",
+          "notApproved": "did not approve",
+          "notVetoed": "did not veto",
+          "optimisticSupportLabel": "veto support",
+          "supportLabel": "support",
+          "vetoed": "vetoed",
+          "votesDescription": "of {{details}}"
+        },
         "lockToVoteSetupGovernance": {
           "eligibleField": {
             "anyWallet": {
