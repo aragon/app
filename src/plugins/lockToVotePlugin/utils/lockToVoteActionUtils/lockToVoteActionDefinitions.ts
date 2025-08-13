@@ -33,7 +33,7 @@ export const defaultUpdateSettings = ({
             {
                 name: '_votingSettings',
                 type: 'tuple',
-                notice: 'The new settings',
+                notice: 'The new voting settings',
                 value: '',
                 components: [
                     { name: 'votingMode', type: 'uint8' },
