@@ -24,15 +24,10 @@ export interface ITokenProposalVotingSummaryProps {
      * Additional executed status when plugin is a sub-plugin.
      */
     isExecuted?: boolean;
-    /**
-     *  Status of the proposal. Used to override the `tokenProposalUtils.getProposalStatus` call for lock to vote case.
-     *
-     */
-    proposalStatus?: ProposalStatus;
 }
 
 export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryProps> = (props) => {
-    const { proposal, name, isVeto, isExecuted, proposalStatus } = props;
+    const { proposal, name, isVeto, isExecuted } = props;
 
     const { t } = useTranslations();
 
@@ -43,7 +38,7 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
     const { supportThreshold, historicalTotalSupply } = proposal.settings;
     const { symbol, decimals } = proposal.settings.token;
 
-    const status = proposalStatus ?? tokenProposalUtils.getProposalStatus(proposal);
+    const status = tokenProposalUtils.getProposalStatus(proposal);
 
     const yesVotes = Number(tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.YES));
     const noVotes = Number(tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.NO));

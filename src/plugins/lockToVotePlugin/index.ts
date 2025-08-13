@@ -7,7 +7,7 @@ import { TokenMemberInfo } from '../tokenPlugin/components/tokenMemberInfo';
 import { TokenMemberList } from '../tokenPlugin/components/tokenMemberList';
 import { TokenProposalCreationSettings } from '../tokenPlugin/components/tokenProposalCreationSettings';
 import { TokenProposalVotingBreakdown } from '../tokenPlugin/components/tokenProposalVotingBreakdown';
-import { TokenProposalVotingSummaryNoEarlyExecution } from '../tokenPlugin/components/tokenProposalVotingSummary';
+import { TokenProposalVotingSummary } from '../tokenPlugin/components/tokenProposalVotingSummary';
 import { TokenVoteList } from '../tokenPlugin/components/tokenVoteList';
 import { useTokenGovernanceSettings } from '../tokenPlugin/hooks/useTokenGovernanceSettings';
 import { useTokenMemberStats } from '../tokenPlugin/hooks/useTokenMemberStats';
@@ -61,12 +61,12 @@ export const initialiseLockToVotePlugin = () => {
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
             pluginId: lockToVotePlugin.id,
-            function: tokenProposalUtils.getProposalStatusNoEarlyExecution,
+            function: tokenProposalUtils.getProposalStatus,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_SUCCEEDED,
             pluginId: lockToVotePlugin.id,
-            function: tokenProposalUtils.hasSucceededNoEarlyExecution,
+            function: tokenProposalUtils.hasSucceeded,
         })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM,
@@ -101,7 +101,7 @@ export const initialiseLockToVotePlugin = () => {
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY,
             pluginId: lockToVotePlugin.id,
-            component: TokenProposalVotingSummaryNoEarlyExecution,
+            component: TokenProposalVotingSummary,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
