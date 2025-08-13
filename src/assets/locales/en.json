@@ -1167,6 +1167,20 @@
             "label": "Voting start time"
           }
         },
+        "lockToVoteGovernanceSettings": {
+          "approvalThreshold": "Support threshold",
+          "duration": "{{days}} days {{hours}} hours {{minutes}} minutes",
+          "minimumParticipation": "Minimum participation",
+          "no": "Disabled",
+          "participation": "≥ {{participation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
+          "proposalAccess": "Members with ≥ {{balance}} {{symbol}} voting power or balance",
+          "proposalDuration": "Proposal duration",
+          "proposalThreshold": "Proposal threshold",
+          "threshold": "> {{threshold}}",
+          "vetoThreshold": "Veto support threshold",
+          "voteChange": "Vote change",
+          "yes": "Enabled"
+        },
         "lockToVoteLockBeforeVoteDialog": {
           "a11y": {
             "description": "Lock tokens before voting on the proposal"

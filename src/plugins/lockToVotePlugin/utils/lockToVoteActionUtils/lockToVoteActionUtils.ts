@@ -1,8 +1,7 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { actionComposerUtils } from '@/modules/governance/components/actionComposer';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
-import { type ITokenPluginSettings, type ITokenProposalAction } from '@/plugins/tokenPlugin/types';
-import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
+import { type ITokenProposalAction } from '@/plugins/tokenPlugin/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -14,15 +13,20 @@ import {
     type IProposalActionChangeSettings as IGukProposalActionChangeSettings,
 } from '@aragon/gov-ui-kit';
 import { LockToVoteUpdateSettingsAction } from '../../components/lockToVoteActions/lockToVoteUpdateSettingsAction';
+import type {
+    ILockToVoteActionChangeSettings,
+    ILockToVotePluginSettings,
+    ILockToVotePluginSettingsToken,
+} from '../../types';
 import { LockToVoteProposalActionType } from '../../types/enums';
-import type { ILockToVoteActionChangeSettings } from '../../types/lockToVoteActionChangeSettings';
+import { lockToVoteSettingsUtils } from '../lockToVoteSettingsUtils';
 import { defaultUpdateSettings } from './lockToVoteActionDefinitions';
 
 export interface IGetLockToVoteActionProps {
     /**
      * DAO plugin data.
      */
-    plugin: IDaoPlugin<ITokenPluginSettings>;
+    plugin: IDaoPlugin<ILockToVotePluginSettings>;
     /**
      * The translation function for internationalization.
      */
@@ -41,10 +45,10 @@ export interface INormalizeChangeSettingsParams {
     /**
      * Token linked to the plugin.
      */
-    token: ITokenPluginSettings['token'];
+    token: ILockToVotePluginSettingsToken;
 }
 
-export type IGetLockToVoteActionsResult = IActionComposerPluginData<IDaoPlugin<ITokenPluginSettings>>;
+export type IGetLockToVoteActionsResult = IActionComposerPluginData<IDaoPlugin<ILockToVotePluginSettings>>;
 
 class LockToVoteActionUtils {
     getLockToVoteActions = ({ plugin, t }: IGetLockToVoteActionProps): IGetLockToVoteActionsResult => {
@@ -104,8 +108,8 @@ class LockToVoteActionUtils {
         const completeExistingSettings = { ...existingSettings, token };
         const completeProposedSettings = { ...completeExistingSettings, ...proposedSettings };
 
-        const parsedExistingSettings = tokenSettingsUtils.parseSettings({ settings: completeExistingSettings, t });
-        const parsedProposedSettings = tokenSettingsUtils.parseSettings({ settings: completeProposedSettings, t });
+        const parsedExistingSettings = lockToVoteSettingsUtils.parseSettings({ settings: completeExistingSettings, t });
+        const parsedProposedSettings = lockToVoteSettingsUtils.parseSettings({ settings: completeProposedSettings, t });
 
         return {
             ...otherValues,
