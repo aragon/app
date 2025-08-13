@@ -27,8 +27,8 @@ const updateLockToVoteSettingsAbi = {
                     internalType: 'enum MajorityVotingBase.VotingMode',
                     type: 'uint8',
                 },
-                { name: 'supportThreshold', internalType: 'uint32', type: 'uint32' },
-                { name: 'minParticipation', internalType: 'uint32', type: 'uint32' },
+                { name: 'supportThresholdRatio', internalType: 'uint32', type: 'uint32' },
+                { name: 'minParticipationRatio', internalType: 'uint32', type: 'uint32' },
                 { name: 'minApprovalRatio', internalType: 'uint32', type: 'uint32' },
                 { name: 'proposalDuration', internalType: 'uint64', type: 'uint64' },
                 {
@@ -42,7 +42,7 @@ const updateLockToVoteSettingsAbi = {
     name: 'updateVotingSettings',
     outputs: [],
     stateMutability: 'nonpayable',
-};
+} as const;
 
 export const LockToVoteUpdateSettingsAction: React.FC<ILockToVoteUpdateSettingsActionProps> = (props) => {
     const { index, action } = props;
@@ -84,10 +84,10 @@ export const LockToVoteUpdateSettingsAction: React.FC<ILockToVoteUpdateSettingsA
     useEffect(() => {
         const updateSettingsParams = {
             votingMode,
-            supportThreshold: tokenSettingsUtils.percentageToRatio(supportThreshold),
-            minParticipation: tokenSettingsUtils.percentageToRatio(minParticipation),
+            supportThresholdRatio: tokenSettingsUtils.percentageToRatio(supportThreshold),
+            minParticipationRatio: tokenSettingsUtils.percentageToRatio(minParticipation),
             minApprovalRatio: 0,
-            proposalDuration,
+            proposalDuration: BigInt(proposalDuration),
             minProposerVotingPower: parseUnits(minVotingPowerValue, decimals),
         };
 
