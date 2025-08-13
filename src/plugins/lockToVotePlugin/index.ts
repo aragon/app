@@ -9,10 +9,8 @@ import { TokenProposalCreationSettings } from '../tokenPlugin/components/tokenPr
 import { TokenProposalVotingBreakdown } from '../tokenPlugin/components/tokenProposalVotingBreakdown';
 import { TokenProposalVotingSummaryNoEarlyExecution } from '../tokenPlugin/components/tokenProposalVotingSummary';
 import { TokenVoteList } from '../tokenPlugin/components/tokenVoteList';
-import { useTokenActions } from '../tokenPlugin/hooks/useTokenActions';
 import { useTokenGovernanceSettings } from '../tokenPlugin/hooks/useTokenGovernanceSettings';
 import { useTokenMemberStats } from '../tokenPlugin/hooks/useTokenMemberStats';
-import { useTokenNormalizeActions } from '../tokenPlugin/hooks/useTokenNormalizeActions';
 import { useTokenPermissionCheckProposalCreation } from '../tokenPlugin/hooks/useTokenPermissionCheckProposalCreation';
 import { tokenBodyUtils } from '../tokenPlugin/utils/tokenBodyUtils';
 import { tokenProposalUtils } from '../tokenPlugin/utils/tokenProposalUtils';
@@ -24,6 +22,8 @@ import { LockToVoteSetupGovernance } from './components/lockToVoteSetupGovernanc
 import { LockToVoteSetupMembership } from './components/lockToVoteSetupMembership/lockToVoteSetupMembership';
 import { LockToVoteSubmitVote } from './components/lockToVoteSubmitVote';
 import { lockToVotePlugin } from './constants/lockToVotePlugin';
+import { useLockToVoteActions } from './hooks/useLockToVoteActions';
+import { useLockToVoteNormalizeActions } from './hooks/useLockToVoteNormalizeActions';
 import { useLockToVotePermissionCheckVoteSubmission } from './hooks/useLockToVotePermissionCheckVoteSubmission';
 import { lockToVoteTransactionUtils } from './utils/lockToVoteTransactionUtils';
 
@@ -91,12 +91,12 @@ export const initialiseLockToVotePlugin = () => {
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
             pluginId: lockToVotePlugin.id,
-            function: useTokenActions,
+            function: useLockToVoteActions,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_NORMALIZE_ACTIONS,
             pluginId: lockToVotePlugin.id,
-            function: useTokenNormalizeActions,
+            function: useLockToVoteNormalizeActions,
         })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY,

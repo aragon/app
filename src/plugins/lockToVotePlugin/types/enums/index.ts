@@ -1,0 +1,1 @@
+export { LockToVoteProposalActionType } from './lockToVoteProposalActionType';

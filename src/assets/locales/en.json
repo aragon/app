@@ -1159,6 +1159,9 @@
         }
       },
       "lockToVote": {
+        "lockToVoteActions": {
+          "UpdateLockToVoteVoteSettings": "Update settings"
+        },
         "lockToVoteCreateProposalSettingsForm": {
           "startTime": {
             "label": "Voting start time"
@@ -1513,7 +1516,7 @@
         },
         "tokenActions": {
           "Mint": "Mint",
-          "UpdateVoteSettings": "Update settings"
+          "UpdateTokenVoteSettings": "Update settings"
         },
         "tokenApproveNftDialog": {
           "UNLOCK": {

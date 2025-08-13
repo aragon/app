@@ -1,13 +1,13 @@
+import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { type IProposalActionChangeSettings as IGukProposalActionChangeSettings } from '@aragon/gov-ui-kit';
-import type { TokenProposalActionType } from './enum';
-import type { ITokenPluginSettings } from './tokenPluginSettings';
+import type { LockToVoteProposalActionType } from './enums';
 
-export interface ITokenActionChangeSettings
+export interface ILockToVoteActionChangeSettings
     extends Omit<IGukProposalActionChangeSettings, 'type' | 'proposedSettings' | 'existingSettings'> {
     /**
      * The type of the proposal action.
      */
-    type: TokenProposalActionType.UPDATE_TOKEN_VOTE_SETTINGS;
+    type: LockToVoteProposalActionType.UPDATE_LOCK_TO_VOTE_VOTE_SETTINGS;
     /**
      * The proposed settings to be updated.
      */

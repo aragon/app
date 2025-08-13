@@ -6,12 +6,12 @@ import type {
     IBuildVoteDataParams,
 } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
+import type { ITokenSetupGovernanceForm } from '@/plugins/tokenPlugin/components/tokenSetupGovernance';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, parseUnits, zeroHash, type Hex } from 'viem';
-import type { ILockToVoteSetupGovernanceForm } from '../../components/lockToVoteSetupGovernance';
 import type {
     ILockToVoteSetupMembershipForm,
     ILockToVoteSetupMembershipMember,
@@ -32,7 +32,7 @@ export interface ILockToVoteOption extends IBuildVoteDataOption {
 
 export interface IPrepareTokenInstallDataParams
     extends IBuildPreparePluginInstallDataParams<
-        ILockToVoteSetupGovernanceForm,
+        ITokenSetupGovernanceForm,
         ILockToVoteSetupMembershipMember,
         ILockToVoteSetupMembershipForm
     > {}
@@ -71,13 +71,12 @@ class LockToVoteTransactionUtils {
     private buildInstallDataVotingSettings = (params: IPrepareTokenInstallDataParams) => {
         const { body, stageVotingPeriod } = params;
 
-        const { votingMode, supportThreshold, minParticipation, minProposerVotingPower, proposalDuration } =
-            body.governance;
+        const { votingMode, supportThreshold, minParticipation, minProposerVotingPower, minDuration } = body.governance;
         const { decimals } = body.membership.token;
 
         const stageVotingPeriodSeconds = stageVotingPeriod ? dateUtils.durationToSeconds(stageVotingPeriod) : undefined;
 
-        const processedVotingPeriod = stageVotingPeriodSeconds ?? proposalDuration;
+        const processedVotingPeriod = stageVotingPeriodSeconds ?? minDuration;
         const parsedProposerVotingPower = parseUnits(minProposerVotingPower, decimals);
 
         const votingSettings = {
