@@ -18,7 +18,9 @@ import {
 import type * as ReactQuery from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { DateTime } from 'luxon';
 import { networkUtils } from '../../../../shared/utils/networkUtils';
+import { timeUtils } from '../../../../test/utils';
 import * as governanceService from '../../api/governanceService';
 import { generateMember, generateMemberMetrics } from '../../testUtils';
 import { DaoMemberDetailsPageClient, type IDaoMemberDetailsPageClientProps } from './daoMemberDetailsPageClient';
@@ -176,7 +178,12 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     });
 
     it('renders the correct last activity date', () => {
-        const metrics = generateMemberMetrics({ lastActivity: 1723472877 });
+        const now = '2024-10-20T09:00:00';
+        const lastActivity = '2024-03-20T09:00:00';
+
+        timeUtils.setTime(now);
+
+        const metrics = generateMemberMetrics({ lastActivity: DateTime.fromISO(lastActivity).toSeconds() });
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
 
         render(createTestComponent());

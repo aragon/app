@@ -1,7 +1,7 @@
 import type { IPluginSetupGovernanceParams } from '@/modules/createDao/types';
 import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import { DaoLockToVoteVotingMode } from '../../types';
+import type { DaoLockToVoteVotingMode } from '../../types';
 
 export interface ILockToVoteSetupGovernanceMembershipSettings
     extends Partial<Pick<ITokenSetupMembershipForm, 'members'>>,

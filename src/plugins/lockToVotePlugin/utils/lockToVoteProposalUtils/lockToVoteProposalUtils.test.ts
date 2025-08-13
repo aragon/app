@@ -5,15 +5,19 @@ import { DateTime } from 'luxon';
 import { type ITokenProposalOptionVotes, VoteOption } from '../../../tokenPlugin/types';
 import { generateLockToVotePluginSettings } from '../../testUtils/generators/lockToVotePluginSettings';
 import { generateLockToVoteProposal } from '../../testUtils/generators/lockToVoteProposal';
-import { ILockToVoteProposal } from '../../types';
+import type { ILockToVoteProposal } from '../../types';
 import { lockToVoteProposalUtils } from './lockToVoteProposalUtils';
 
-describe('tokenProposal utils', () => {
+describe('lockToVoteProposalUtils', () => {
     describe('getProposalStatus', () => {
         const isApprovalReachedSpy = jest.spyOn(lockToVoteProposalUtils, 'isApprovalReached');
 
         afterEach(() => {
             isApprovalReachedSpy.mockReset();
+        });
+
+        afterAll(() => {
+            isApprovalReachedSpy.mockRestore();
         });
 
         it('returns executed status when proposal has been executed', () => {
@@ -95,7 +99,7 @@ describe('tokenProposal utils', () => {
         it('returns false when minParticipation is reached but support is not reached', () => {
             isMinParticipationReachedSpy.mockReturnValue(true);
             isSupportReachedSpy.mockReturnValue(false);
-            expect(lockToVoteProposalUtils.isApprovalReached(generateLockToVoteProposal())).toBeFalsy();
+            expect(lockToVoteProposalUtils.isApprovalReached(generateLockToVoteProposal())).toBe(false);
         });
 
         it('returns false when support is reached but minParticipation is not reached', () => {
