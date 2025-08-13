@@ -1107,6 +1107,11 @@
             "deadline": "Deadline",
             "resources": "Resources",
             "status": "Status",
+            "termsConditionsAccepted": {
+              "error": "Agree to the terms and conditions to proceed.",
+              "label": "I agree to the",
+              "link": "terms & conditions"
+            },
             "timeLeft": "{{time}} left",
             "type": "Type",
             "value": "Value"

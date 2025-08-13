@@ -54,8 +54,8 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
     const addressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: txHash });
 
     const handleOpenDialog = () => {
-        const { address: pluginAddress } = plugin.meta;
-        const dialogParams: ICapitalDistributorClaimDialogParams = { campaign, pluginAddress, network: dao.network };
+        const { network } = dao;
+        const dialogParams: ICapitalDistributorClaimDialogParams = { campaign, plugin: plugin.meta, network };
         open(CapitalDistributorPluginDialogId.CLAIM, { params: dialogParams });
     };
 
