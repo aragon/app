@@ -55,7 +55,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
     }, [isNativeToken, receiverAddress, tokenAddress, fieldName, setValue]);
 
     useEffect(() => {
-        const newAmount = formatUnits(weiAmount, tokenDecimals).toString();
+        const newAmount = formatUnits(weiAmount, tokenDecimals);
 
         setValue(`${fieldName}.amount`, newAmount);
     }, [weiAmount, tokenDecimals, fieldName, setValue]);
