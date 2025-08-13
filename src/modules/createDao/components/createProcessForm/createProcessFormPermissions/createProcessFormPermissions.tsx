@@ -5,11 +5,13 @@ import {
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { ActionComposer, ActionItemId } from '@/modules/governance/components/actionComposer';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm/createProposalFormDefinitions';
+import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import {
     CardEmptyState,
     InputContainer,
+    invariant,
     RadioCard,
     RadioGroup,
     SmartContractFunctionDataListItem,
@@ -41,13 +43,22 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         defaultValue: ANY,
     });
 
-    const validateSelectors = (selectors: IProposalActionData[]) => {
-        const isAlreadyInList = selectors.some(
-            (selector, index) =>
-                selectors.findIndex((sel) => sel.to === selector.to && sel.type === selector.type) !== index,
+    const validateActions = (actions: IProposalActionData[]) => {
+        const isInvalidInList = actions.some((action) => action.inputData == null);
+
+        invariant(!isInvalidInList, 'CreateProcessFormPermissions: actions with invalid inputData found in list.');
+
+        const isAlreadyInList = actions.some(
+            (currentAction, index) =>
+                actions.findIndex(
+                    (actionToCheck) =>
+                        actionToCheck.to === currentAction.to &&
+                        proposalActionUtils.actionToFunctionSelector(currentAction) ===
+                            proposalActionUtils.actionToFunctionSelector(actionToCheck),
+                ) !== index,
         );
 
-        return !isAlreadyInList || 'app.createDao.createProcessForm.permissions.permissionField.error.invalid';
+        return !isAlreadyInList || 'app.createDao.createProcessForm.permissions.permissionField.error.duplicate';
     };
 
     const {
@@ -58,7 +69,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         name: 'permissionSelectors',
         rules: {
             required: processPermission === SELECTED,
-            validate: (selectors) => validateSelectors(selectors),
+            validate: validateActions,
         },
     });
 
@@ -115,14 +126,14 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                         excludeActionTypes={[ProposalActionType.TRANSFER, ActionItemId.RAW_CALLDATA]}
                     />
                     <InputContainer alert={fieldAlert} useCustomWrapper={true} className="w-full" id="selectors">
-                        {permissionSelectors.map((selector, index) => (
+                        {permissionSelectors.map((action, index) => (
                             <SmartContractFunctionDataListItem.Structure
-                                key={selector.id}
-                                contractAddress={selector.to}
+                                key={action.id}
+                                contractAddress={action.to}
                                 onRemove={() => removePermissionSelectorByIndex(index)}
-                                functionName={selector.inputData?.function}
-                                contractName={selector.inputData?.contract}
-                                functionParameters={selector.inputData?.parameters}
+                                functionName={action.inputData?.function}
+                                contractName={action.inputData?.contract}
+                                functionSelector={proposalActionUtils.actionToFunctionSelector(action)}
                             />
                         ))}
                     </InputContainer>

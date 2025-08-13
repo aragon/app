@@ -34,7 +34,6 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (props) 
             ensName={member.ens ?? undefined}
             className="min-w-0"
             href={daoUtils.getDaoUrl(dao, `members/${member.address}`)}
-            delegationCount={member.metrics.delegateReceivedCount}
         />
     );
 };

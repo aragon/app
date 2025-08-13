@@ -39,16 +39,13 @@ describe('useTokenMemberStats hook', () => {
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
 
         const { result } = renderHook(() => useTokenMemberStats(memberStatsParams));
-        const [votingPower, tokenBalance, delegates] = result.current;
+        const [votingPower, tokenBalance] = result.current;
 
         expect(votingPower.label).toBe('app.plugins.token.tokenMemberStats.votingPower');
         expect(votingPower.value).toBe('47.93M');
 
         expect(tokenBalance.label).toBe('app.plugins.token.tokenMemberStats.tokenBalance');
         expect(tokenBalance.value).toBe('123.46K');
-
-        expect(delegates.label).toBe('app.plugins.token.tokenMemberStats.delegations');
-        expect(delegates.value).toBe('47.93M');
     });
 
     it('returns empty list when member is not a token member', () => {

@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-Implement LockToVote plugin setup
+Bump actions/cache to 4.2.4
