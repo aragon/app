@@ -7,13 +7,22 @@ import { tokenSettingsUtils } from '../tokenSettingsUtils';
 
 class TokenProposalUtils {
     getProposalStatus = (proposal: ITokenProposal): ProposalStatus => {
+        const isEarlyExecution = proposal.settings.votingMode === DaoTokenVotingMode.EARLY_EXECUTION;
+
+        return this.getProposalStatusCommon(proposal, isEarlyExecution);
+    };
+
+    getProposalStatusNoEarlyExecution = (proposal: ITokenProposal): ProposalStatus => {
+        return this.getProposalStatusCommon(proposal, false);
+    };
+
+    private getProposalStatusCommon = (proposal: ITokenProposal, isEarlyExecution: boolean): ProposalStatus => {
         const { startDate, endDate, hasActions, executed } = proposal;
 
         const endsInTheFuture = proposalStatusUtils.endsInTheFuture(endDate);
         const approvalReached = this.isApprovalReached(proposal);
         const approvalReachedEarly = this.isApprovalReached(proposal, true);
 
-        const isEarlyExecution = proposal.settings.votingMode === DaoTokenVotingMode.EARLY_EXECUTION;
         const paramsMet = isEarlyExecution && endsInTheFuture ? approvalReachedEarly : approvalReached;
 
         const status = proposalStatusUtils.getProposalStatus({
@@ -52,6 +61,10 @@ class TokenProposalUtils {
         }
 
         return isApprovalReached;
+    };
+
+    hasSucceededNoEarlyExecution = (proposal: ITokenProposal) => {
+        return this.isApprovalReached(proposal);
     };
 
     isMinParticipationReached = (proposal: ITokenProposal): boolean => {
