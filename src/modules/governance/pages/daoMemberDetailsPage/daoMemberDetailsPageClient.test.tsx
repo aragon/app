@@ -7,6 +7,7 @@ import {
     generateReactQueryResultError,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
+import { timeUtils } from '@/test/utils';
 import {
     addressUtils,
     clipboardUtils,
@@ -176,15 +177,16 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     });
 
     it('renders the correct last activity date', () => {
-        const metrics = generateMemberMetrics({ lastActivity: 1723472877 });
+        timeUtils.setTime('2025-08-10T09:30:00');
+        const metrics = generateMemberMetrics({ lastActivity: 1754559000 });
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
 
         render(createTestComponent());
-        const duration = formatterUtils.formatDate(metrics.lastActivity! * 1000, { format: DateFormat.DURATION });
-        const [value] = duration?.split(' ') ?? [];
 
-        expect(screen.getByText(value)).toBeInTheDocument();
-        expect(screen.getByText(/daoMemberDetailsPage.header.stat.latestActivityUnit/)).toBeInTheDocument();
+        expect(screen.getByText('3')).toBeInTheDocument();
+        expect(
+            screen.getByText(/daoMemberDetailsPage.header.stat.latestActivityUnit \(unit=days\)/),
+        ).toBeInTheDocument();
     });
 
     it('renders fallback of `-` when firstActivity is null', () => {
