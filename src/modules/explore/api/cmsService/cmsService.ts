@@ -8,8 +8,7 @@ class CmsService extends HttpService {
 
     private urls = {
         featuredDaos: '/main/featured-daos.json',
-        // TODO: update URL
-        sanctionedAddresses: '/refs/heads/add-sanctioned-addresses-list/sanctioned-addresses.json',
+        sanctionedAddresses: '/main/sanctioned-addresses.json',
     };
 
     getFeaturedDaos = async (): Promise<IFeaturedDao[]> => {
