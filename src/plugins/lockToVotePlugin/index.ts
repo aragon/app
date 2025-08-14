@@ -6,7 +6,6 @@ import { TokenGovernanceInfo } from '../tokenPlugin/components/tokenGovernanceIn
 import { TokenMemberInfo } from '../tokenPlugin/components/tokenMemberInfo';
 import { TokenMemberList } from '../tokenPlugin/components/tokenMemberList';
 import { TokenProposalCreationSettings } from '../tokenPlugin/components/tokenProposalCreationSettings';
-import { TokenProposalVotingBreakdown } from '../tokenPlugin/components/tokenProposalVotingBreakdown';
 import { TokenVoteList } from '../tokenPlugin/components/tokenVoteList';
 import { useTokenGovernanceSettings } from '../tokenPlugin/hooks/useTokenGovernanceSettings';
 import { useTokenMemberStats } from '../tokenPlugin/hooks/useTokenMemberStats';
@@ -16,6 +15,7 @@ import { tokenTransactionUtils } from '../tokenPlugin/utils/tokenTransactionUtil
 import { LockToVoteCreateProposalSettingsForm } from './components/lockToVoteCreateProposalSettingsForm';
 import { LockToVoteMemberPanel } from './components/lockToVoteMemberPanel';
 import { LockToVoteProcessBodyField } from './components/lockToVoteProcessBodyField';
+import { LockToVoteProposalVotingBreakdown } from './components/lockToVoteProposalVotingBreakdown';
 import { LockToVoteProposalVotingSummary } from './components/lockToVoteProposalVotingSummary';
 import { LockToVoteSetupGovernance } from './components/lockToVoteSetupGovernance';
 import { LockToVoteSetupMembership } from './components/lockToVoteSetupMembership';
@@ -51,7 +51,7 @@ export const initialiseLockToVotePlugin = () => {
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN,
             pluginId: lockToVotePlugin.id,
-            component: TokenProposalVotingBreakdown,
+            component: LockToVoteProposalVotingBreakdown,
         })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_VOTE_LIST,
