@@ -1,7 +1,9 @@
 import { initPluginRegistry } from '@/initPluginRegistry';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { fetchInterceptorUtils } from '@/modules/application/utils/fetchInterceptorUtils';
+import { sanctionedAddressesOptions } from '@/modules/explore/api/cmsService';
 import { translations } from '@/shared/constants/translations';
+import { QueryClient } from '@tanstack/react-query';
 import { headers } from 'next/headers';
 import NextTopLoader from 'nextjs-toploader';
 import type { ReactNode } from 'react';
@@ -30,6 +32,9 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
 
     const requestHeaders = await headers();
     const wagmiInitialState = cookieToInitialState(wagmiConfig, requestHeaders.get('cookie'));
+
+    const queryClient = new QueryClient();
+    await queryClient.prefetchQuery(sanctionedAddressesOptions());
 
     return (
         <html lang="en" className="h-full">

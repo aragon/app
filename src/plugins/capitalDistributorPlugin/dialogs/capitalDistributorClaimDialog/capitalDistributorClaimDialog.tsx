@@ -65,7 +65,7 @@ export const CapitalDistributorClaimDialog: React.FC<ICapitalDistributorClaimDia
                 <CapitalDistributorClaimDialogDetails campaign={campaign} plugin={plugin} />
             </WizardDialog.Step>
             <WizardDialog.Step id="claim" order={2} meta={{ name: '' }} className="flex grow flex-col gap-6">
-                <CapitalDistributorClaimDialogInputs plugin={plugin} />
+                <CapitalDistributorClaimDialogInputs plugin={plugin} network={network} />
             </WizardDialog.Step>
         </WizardDialog.Container>
     );

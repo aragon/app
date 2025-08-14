@@ -1,6 +1,7 @@
+import { useSanctionedAddresses } from '@/modules/explore/api/cmsService';
 import type { ICapitalDistributorPlugin } from '@/plugins/capitalDistributorPlugin/types';
+import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { sanctionedAddressList } from '@/shared/constants/sanctionedAddressList';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { addressUtils, InputText } from '@aragon/gov-ui-kit';
@@ -12,20 +13,26 @@ export interface ICapitalDistributorClaimDialogInputsProps {
      * Capital distributor plugin.
      */
     plugin: ICapitalDistributorPlugin;
+    /**
+     * Network of the plugin.
+     */
+    network: Network;
 }
 
 export const CapitalDistributorClaimDialogInputs: React.FC<ICapitalDistributorClaimDialogInputsProps> = (props) => {
-    const { plugin } = props;
+    const { plugin, network } = props;
 
     const { t } = useTranslations();
     const { address } = useAccount();
+
+    const { data: sanctionedAddresses } = useSanctionedAddresses();
 
     const validateRecipient = (value: string) => {
         if (!addressUtils.isAddress(value)) {
             return false;
         }
 
-        const isSanctionedAddress = sanctionedAddressList.includes(value);
+        const isSanctionedAddress = sanctionedAddresses?.[network]?.includes(value);
 
         if (plugin.enableOfacCheck && isSanctionedAddress) {
             const context = { pluginAddress: plugin.address, userAddress: address, recipient: value };
