@@ -5,7 +5,6 @@ import { type ITokenProposalAction } from '@/plugins/tokenPlugin/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 import {
     addressUtils,
     ProposalActionType as GukProposalActionType,
@@ -55,9 +54,6 @@ class LockToVoteActionUtils {
         const { address, settings } = plugin;
         const { address: tokenAddress, name } = settings.token;
 
-        const minVersion = { release: 1, build: 1 };
-        const includePluginMetadataAction = versionComparatorUtils.isGreaterOrEqualTo(plugin, minVersion);
-
         return {
             groups: [
                 {
@@ -87,7 +83,6 @@ class LockToVoteActionUtils {
                 {
                     ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),
                     meta: plugin,
-                    hidden: !includePluginMetadataAction,
                 },
             ],
             components: {
