@@ -32,7 +32,9 @@ export const CapitalDistributorClaimDialogInputs: React.FC<ICapitalDistributorCl
             return false;
         }
 
-        const isSanctionedAddress = sanctionedAddresses?.[network]?.includes(value);
+        const isSanctionedAddress = sanctionedAddresses?.[network]?.some((value) =>
+            addressUtils.isAddressEqual(address, value),
+        );
 
         if (plugin.enableOfacCheck && isSanctionedAddress) {
             const context = { pluginAddress: plugin.address, userAddress: address, recipient: value };
