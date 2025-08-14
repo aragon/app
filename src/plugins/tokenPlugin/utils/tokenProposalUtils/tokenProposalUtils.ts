@@ -55,12 +55,12 @@ class TokenProposalUtils {
     };
 
     isMinParticipationReached = (proposal: ITokenProposal): boolean => {
-        const { minParticipation } = proposal.settings;
+        const { minParticipation, historicalTotalSupply } = proposal.settings;
 
         // Don't do the ratio-to-percentage conversion here as the minParticipation can be a value with decimals and
         // the BigInt contructor does not support such values.
         const parsedMinParticipation = BigInt(minParticipation);
-        const parsedTotalSupply = BigInt(this.getProposalTokenTotalSupply(proposal));
+        const parsedTotalSupply = BigInt(historicalTotalSupply!);
 
         if (parsedTotalSupply === BigInt(0)) {
             return false;
@@ -74,17 +74,16 @@ class TokenProposalUtils {
     };
 
     isSupportReached = (proposal: ITokenProposal, early?: boolean): boolean => {
-        const { supportThreshold } = proposal.settings;
+        const { supportThreshold, historicalTotalSupply } = proposal.settings;
         const { votesByOption } = proposal.metrics;
 
-        const totalSupply = this.getProposalTokenTotalSupply(proposal);
         const parsedSupport = BigInt(tokenSettingsUtils.ratioToPercentage(supportThreshold));
 
         const yesVotes = this.getVoteByType(votesByOption, VoteOption.YES);
         const abstainVotes = this.getVoteByType(votesByOption, VoteOption.ABSTAIN);
 
         const noVotesCurrent = this.getVoteByType(votesByOption, VoteOption.NO);
-        const noVotesWorstCase = BigInt(totalSupply) - yesVotes - abstainVotes;
+        const noVotesWorstCase = BigInt(historicalTotalSupply!) - yesVotes - abstainVotes;
 
         // For early-execution, check that the support threshold is met even if all remaining votes are no votes.
         const noVotesComparator = early ? noVotesWorstCase : noVotesCurrent;
@@ -117,14 +116,6 @@ class TokenProposalUtils {
         const parsedVotingPower = formatUnits(BigInt(votes?.totalVotingPower ?? 0), proposal.settings.token.decimals);
 
         return parsedVotingPower;
-    };
-
-    getProposalTokenTotalSupply = (proposal: ITokenProposal) => {
-        const { historicalTotalSupply, token } = proposal.settings;
-        // Fallback to the token total-supply as some plugins (e.g. lock-to-vote) do not use snapshot votes.
-        const totalSupply = historicalTotalSupply ?? token.totalSupply;
-
-        return totalSupply;
     };
 }
 

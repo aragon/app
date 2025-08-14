@@ -27,9 +27,8 @@ export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdow
     const { proposal, children, isVeto } = props;
 
     const { symbol, decimals } = proposal.settings.token;
-    const { minParticipation, supportThreshold } = proposal.settings;
+    const { minParticipation, supportThreshold, historicalTotalSupply } = proposal.settings;
 
-    const totalSupply = tokenProposalUtils.getProposalTokenTotalSupply(proposal);
     const yesVotes = tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.YES);
     const noVotes = tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.NO);
     const abstainVotes = tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.ABSTAIN);
@@ -43,7 +42,7 @@ export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdow
             minParticipation={tokenSettingsUtils.ratioToPercentage(minParticipation)}
             supportThreshold={tokenSettingsUtils.ratioToPercentage(supportThreshold)}
             tokenSymbol={symbol}
-            tokenTotalSupply={formatUnits(BigInt(totalSupply), decimals)}
+            tokenTotalSupply={formatUnits(BigInt(historicalTotalSupply!), decimals)}
         >
             {children}
         </ProposalVoting.BreakdownToken>
