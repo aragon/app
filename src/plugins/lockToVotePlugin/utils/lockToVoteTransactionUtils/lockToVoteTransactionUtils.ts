@@ -94,18 +94,12 @@ class LockToVoteTransactionUtils {
     buildCreateProposalData = (
         params: IBuildCreateProposalDataParams<ICreateLockToVoteProposalFormData, ITokenPluginSettings>,
     ): Hex => {
-        const { metadata, actions, proposal, plugin } = params;
-        const { minDuration } = plugin.settings;
+        const { metadata, actions, proposal } = params;
 
-        // Handle proposals without time settings in the following way:
-        //   - startDate set to 0
-        //   - if there is minDuration, and minDuration is more than 7 days, set endDate to minDuration
-        //   - otherwise, set endDate to 7 days from now
         const startDate = createProposalUtils.parseStartDate(proposal);
-        const endDate =
-            proposal.endTimeMode != null
-                ? createProposalUtils.parseEndDate(proposal)
-                : createProposalUtils.createDefaultEndDate(minDuration);
+        // If set to 0, smart contracts will use the default end date `startDate + votingSettings.proposalDuration`, so
+        // we don't need to set it manually based on plugin.settings.minDuration
+        const endDate = 0;
 
         const data = encodeFunctionData({
             abi: lockToVoteAbi,

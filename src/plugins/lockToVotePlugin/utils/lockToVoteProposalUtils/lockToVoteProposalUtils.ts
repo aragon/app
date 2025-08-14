@@ -1,66 +1,48 @@
+import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import { type ProposalStatus } from '@aragon/gov-ui-kit';
-import { DateTime } from 'luxon';
 import { formatUnits } from 'viem';
-import { DaoTokenVotingMode, VoteOption, type ITokenProposal, type ITokenProposalOptionVotes } from '../../types';
-import { tokenSettingsUtils } from '../tokenSettingsUtils';
+import { type ITokenProposalOptionVotes, VoteOption } from '../../../tokenPlugin/types';
+import type { ILockToVoteProposal } from '../../types';
 
-class TokenProposalUtils {
-    getProposalStatus = (proposal: ITokenProposal): ProposalStatus => {
+class LockToVoteProposalUtils {
+    getProposalStatus = (proposal: ILockToVoteProposal): ProposalStatus => {
         const { startDate, endDate, hasActions, executed } = proposal;
 
-        const endsInTheFuture = proposalStatusUtils.endsInTheFuture(endDate);
         const approvalReached = this.isApprovalReached(proposal);
-        const approvalReachedEarly = this.isApprovalReached(proposal, true);
-
-        const isEarlyExecution = proposal.settings.votingMode === DaoTokenVotingMode.EARLY_EXECUTION;
-        const paramsMet = isEarlyExecution && endsInTheFuture ? approvalReachedEarly : approvalReached;
-
         const status = proposalStatusUtils.getProposalStatus({
             isExecuted: executed.status,
             isVetoed: false,
             startDate,
             endDate,
-            paramsMet,
+            paramsMet: approvalReached,
             hasActions,
-            canExecuteEarly: isEarlyExecution,
+            canExecuteEarly: false, // LockToVote does not support early execution
         });
 
         return status;
     };
 
-    isApprovalReached = (proposal: ITokenProposal, early?: boolean): boolean => {
+    isApprovalReached = (proposal: ILockToVoteProposal): boolean => {
         const isMinParticipationReached = this.isMinParticipationReached(proposal);
-        const isSupportReached = this.isSupportReached(proposal, early);
+        const isSupportReached = this.isSupportReached(proposal);
 
         return isMinParticipationReached && isSupportReached;
     };
 
-    hasSucceeded = (proposal: ITokenProposal) => {
+    hasSucceeded = (proposal: ILockToVoteProposal) => {
         const isApprovalReached = this.isApprovalReached(proposal);
-
-        const now = DateTime.utc();
-        const startDate = DateTime.fromMillis(proposal.startDate * 1000);
-        const endDate = DateTime.fromMillis(proposal.endDate * 1000);
-
-        const isProposalOpen = now > startDate && now < endDate;
-
-        if (isProposalOpen) {
-            const isApprovalReachedEarly = this.isApprovalReached(proposal, true);
-
-            return proposal.settings.votingMode !== DaoTokenVotingMode.VOTE_REPLACEMENT && isApprovalReachedEarly;
-        }
 
         return isApprovalReached;
     };
 
-    isMinParticipationReached = (proposal: ITokenProposal): boolean => {
-        const { minParticipation, historicalTotalSupply } = proposal.settings;
+    isMinParticipationReached = (proposal: ILockToVoteProposal): boolean => {
+        const { minParticipation } = proposal.settings;
 
         // Don't do the ratio-to-percentage conversion here as the minParticipation can be a value with decimals and
-        // the BigInt contructor does not support such values.
+        // the BigInt constructor does not support such values.
         const parsedMinParticipation = BigInt(minParticipation);
-        const parsedTotalSupply = BigInt(historicalTotalSupply!);
+        const parsedTotalSupply = BigInt(this.getProposalTokenTotalSupply(proposal));
 
         if (parsedTotalSupply === BigInt(0)) {
             return false;
@@ -73,25 +55,19 @@ class TokenProposalUtils {
         return totalVotes >= minVotingPower;
     };
 
-    isSupportReached = (proposal: ITokenProposal, early?: boolean): boolean => {
-        const { supportThreshold, historicalTotalSupply } = proposal.settings;
+    isSupportReached = (proposal: ILockToVoteProposal): boolean => {
+        const { supportThreshold } = proposal.settings;
         const { votesByOption } = proposal.metrics;
 
         const parsedSupport = BigInt(tokenSettingsUtils.ratioToPercentage(supportThreshold));
-
         const yesVotes = this.getVoteByType(votesByOption, VoteOption.YES);
-        const abstainVotes = this.getVoteByType(votesByOption, VoteOption.ABSTAIN);
-
         const noVotesCurrent = this.getVoteByType(votesByOption, VoteOption.NO);
-        const noVotesWorstCase = BigInt(historicalTotalSupply!) - yesVotes - abstainVotes;
-
-        // For early-execution, check that the support threshold is met even if all remaining votes are no votes.
-        const noVotesComparator = early ? noVotesWorstCase : noVotesCurrent;
+        const noVotesComparator = noVotesCurrent;
 
         return (BigInt(100) - parsedSupport) * yesVotes > parsedSupport * noVotesComparator;
     };
 
-    getTotalVotes = (proposal: ITokenProposal, excludeAbstain?: boolean): bigint => {
+    getTotalVotes = (proposal: ILockToVoteProposal, excludeAbstain?: boolean): bigint => {
         const { votesByOption } = proposal.metrics;
 
         const totalVotes = votesByOption.reduce((accumulator, current) => {
@@ -111,12 +87,20 @@ class TokenProposalUtils {
         return BigInt(optionVotes?.totalVotingPower ?? 0);
     };
 
-    getOptionVotingPower = (proposal: ITokenProposal, option: VoteOption) => {
+    getOptionVotingPower = (proposal: ILockToVoteProposal, option: VoteOption) => {
         const votes = proposal.metrics.votesByOption.find((vote) => vote.type === option);
         const parsedVotingPower = formatUnits(BigInt(votes?.totalVotingPower ?? 0), proposal.settings.token.decimals);
 
         return parsedVotingPower;
     };
+
+    getProposalTokenTotalSupply = (proposal: ILockToVoteProposal) => {
+        const { historicalTotalSupply, token } = proposal.settings;
+        // Fallback to the token total-supply as some plugins (e.g. lock-to-vote) do not use snapshot votes.
+        const totalSupply = historicalTotalSupply ?? token.totalSupply;
+
+        return totalSupply;
+    };
 }
 
-export const tokenProposalUtils = new TokenProposalUtils();
+export const lockToVoteProposalUtils = new LockToVoteProposalUtils();
