@@ -17,7 +17,7 @@ import type {
     ILockToVotePluginSettings,
     ILockToVotePluginSettingsToken,
 } from '../../types';
-import { LockToVoteProposalActionType } from '../../types/enums';
+import { LockToVoteProposalActionType } from '../../types/enum';
 import { lockToVoteSettingsUtils } from '../lockToVoteSettingsUtils';
 import { defaultUpdateSettings } from './lockToVoteActionDefinitions';
 
@@ -71,9 +71,9 @@ class LockToVoteActionUtils {
             ],
             items: [
                 {
-                    id: `${address}-${LockToVoteProposalActionType.UPDATE_LOCK_TO_VOTE_VOTE_SETTINGS}`,
+                    id: `${address}-${LockToVoteProposalActionType.UPDATE_VOTE_SETTINGS}`,
                     name: t(
-                        `app.plugins.lockToVote.lockToVoteActions.${LockToVoteProposalActionType.UPDATE_LOCK_TO_VOTE_VOTE_SETTINGS}`,
+                        `app.plugins.lockToVote.lockToVoteActions.${LockToVoteProposalActionType.UPDATE_VOTE_SETTINGS}`,
                     ),
                     icon: IconType.SETTINGS,
                     groupId: address,
@@ -86,15 +86,14 @@ class LockToVoteActionUtils {
                 },
             ],
             components: {
-                [LockToVoteProposalActionType.UPDATE_LOCK_TO_VOTE_VOTE_SETTINGS]: LockToVoteUpdateSettingsAction,
+                [LockToVoteProposalActionType.UPDATE_VOTE_SETTINGS]: LockToVoteUpdateSettingsAction,
             },
         };
     };
 
     isChangeSettingsAction = (
         action: IProposalAction | ITokenProposalAction,
-    ): action is ILockToVoteActionChangeSettings =>
-        action.type === LockToVoteProposalActionType.UPDATE_LOCK_TO_VOTE_VOTE_SETTINGS;
+    ): action is ILockToVoteActionChangeSettings => action.type === LockToVoteProposalActionType.UPDATE_VOTE_SETTINGS;
 
     normalizeChangeSettingsAction = (params: INormalizeChangeSettingsParams): IGukProposalActionChangeSettings => {
         const { action, t, token } = params;

@@ -1,4 +1,4 @@
 export enum TokenProposalActionType {
     MINT = 'Mint',
-    UPDATE_TOKEN_VOTE_SETTINGS = 'UpdateTokenVoteSettings',
+    UPDATE_VOTE_SETTINGS = 'UpdateVoteSettings',
 }

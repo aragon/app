@@ -38,7 +38,7 @@ export const defaultUpdateSettings = ({
     address,
     settings,
 }: IDaoPlugin<ITokenPluginSettings>): ITokenActionChangeSettings => ({
-    type: TokenProposalActionType.UPDATE_TOKEN_VOTE_SETTINGS,
+    type: TokenProposalActionType.UPDATE_VOTE_SETTINGS,
     from: '',
     to: address,
     data: '0x',

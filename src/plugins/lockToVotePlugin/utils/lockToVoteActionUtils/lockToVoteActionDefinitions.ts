@@ -2,13 +2,13 @@ import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUti
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { formatUnits } from 'viem';
 import type { ILockToVoteActionChangeSettings, ILockToVotePluginSettings } from '../../types';
-import { LockToVoteProposalActionType } from '../../types/enums';
+import { LockToVoteProposalActionType } from '../../types/enum';
 
 export const defaultUpdateSettings = ({
     address,
     settings,
 }: IDaoPlugin<ILockToVotePluginSettings>): ILockToVoteActionChangeSettings => ({
-    type: LockToVoteProposalActionType.UPDATE_LOCK_TO_VOTE_VOTE_SETTINGS,
+    type: LockToVoteProposalActionType.UPDATE_VOTE_SETTINGS,
     from: '',
     to: address,
     data: '0x',

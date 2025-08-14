@@ -87,8 +87,8 @@ class TokenActionUtils {
                     defaultValue: defaultMintAction(settings),
                 },
                 {
-                    id: `${address}-${TokenProposalActionType.UPDATE_TOKEN_VOTE_SETTINGS}`,
-                    name: t(`app.plugins.token.tokenActions.${TokenProposalActionType.UPDATE_TOKEN_VOTE_SETTINGS}`),
+                    id: `${address}-${TokenProposalActionType.UPDATE_VOTE_SETTINGS}`,
+                    name: t(`app.plugins.token.tokenActions.${TokenProposalActionType.UPDATE_VOTE_SETTINGS}`),
                     icon: IconType.SETTINGS,
                     groupId: address,
                     defaultValue: defaultUpdateSettings(plugin),
@@ -101,14 +101,14 @@ class TokenActionUtils {
                 },
             ],
             components: {
-                [TokenProposalActionType.UPDATE_TOKEN_VOTE_SETTINGS]: TokenUpdateSettingsAction,
+                [TokenProposalActionType.UPDATE_VOTE_SETTINGS]: TokenUpdateSettingsAction,
                 [TokenProposalActionType.MINT]: TokenMintTokensAction,
             },
         };
     };
 
     isChangeSettingsAction = (action: IProposalAction | ITokenProposalAction): action is ITokenActionChangeSettings =>
-        action.type === TokenProposalActionType.UPDATE_TOKEN_VOTE_SETTINGS;
+        action.type === TokenProposalActionType.UPDATE_VOTE_SETTINGS;
 
     isTokenMintAction = (action: IProposalAction | ITokenProposalAction): action is ITokenActionTokenMint => {
         return action.type === TokenProposalActionType.MINT;
@@ -142,7 +142,7 @@ class TokenActionUtils {
 
         return {
             ...otherValues,
-            type: GukProposalActionType.CHANGE_SETTINGS_MULTISIG,
+            type: GukProposalActionType.CHANGE_SETTINGS_TOKENVOTE,
             existingSettings: parsedExistingSettings,
             proposedSettings: parsedProposedSettings,
         };

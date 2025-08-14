@@ -7,7 +7,7 @@ export interface ITokenActionChangeSettings
     /**
      * The type of the proposal action.
      */
-    type: TokenProposalActionType.UPDATE_TOKEN_VOTE_SETTINGS;
+    type: TokenProposalActionType.UPDATE_VOTE_SETTINGS;
     /**
      * The proposed settings to be updated.
      */

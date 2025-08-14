@@ -1539,7 +1539,7 @@
         },
         "tokenActions": {
           "Mint": "Mint",
-          "UpdateTokenVoteSettings": "Update settings"
+          "UpdateVoteSettings": "Update settings"
         },
         "tokenApproveNftDialog": {
           "UNLOCK": {
