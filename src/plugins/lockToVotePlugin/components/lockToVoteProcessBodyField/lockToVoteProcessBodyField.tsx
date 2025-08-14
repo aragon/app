@@ -103,7 +103,10 @@ export const LockToVoteProcessBodyField = (props: ILockToVoteProcessBodyFieldPro
     const readOnlyTokenProps = {
         link: { href: buildEntityUrl({ type: ChainEntityType.TOKEN, id: tokenAddress }) },
         copyValue: tokenAddress,
-        description: t('app.plugins.lockToVote.tokenMemberInfo.tokenNameAndSymbol', { tokenName, tokenSymbol }),
+        description: t('app.plugins.lockToVote.lockToVoteProcessBodyField.tokenNameAndSymbol', {
+            tokenName,
+            tokenSymbol,
+        }),
     };
 
     const contractInfo = useDaoPluginInfo({ daoId, address: body.type === SetupBodyType.EXISTING ? body.address : '' });

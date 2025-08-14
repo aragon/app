@@ -1234,6 +1234,7 @@
           "supplyTerm": "Supply",
           "supportDefinition": "> {{threshold}}%",
           "supportTerm": "Support threshold",
+          "tokenNameAndSymbol": "{{tokenName}} ({{tokenSymbol}})",
           "tokenTerm": "Token",
           "voteChange": "Vote change"
         },
@@ -1539,7 +1540,7 @@
         },
         "tokenActions": {
           "Mint": "Mint",
-          "UpdateVoteSettings": "Update settings"
+          "UpdateTokenVoteSettings": "Update settings"
         },
         "tokenApproveNftDialog": {
           "UNLOCK": {
