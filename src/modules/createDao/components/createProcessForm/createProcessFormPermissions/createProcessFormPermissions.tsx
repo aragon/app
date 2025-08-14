@@ -110,34 +110,35 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                     isStacked={false}
                 />
             )}
-            {processPermission === SELECTED && permissionSelectors.length === 0 && (
-                <CardEmptyState
-                    heading={t('app.createDao.createProcessForm.permissions.specificEmptyState.heading')}
-                    objectIllustration={{ object: 'SETTINGS' }}
-                    isStacked={false}
-                />
-            )}
             {processPermission === SELECTED && (
-                <div className="flex flex-col gap-3">
+                <>
+                    {permissionSelectors.length === 0 ? (
+                        <CardEmptyState
+                            heading={t('app.createDao.createProcessForm.permissions.specificEmptyState.heading')}
+                            objectIllustration={{ object: 'SETTINGS' }}
+                            isStacked={false}
+                        />
+                    ) : (
+                        <InputContainer alert={fieldAlert} useCustomWrapper={true} className="w-full" id="selectors">
+                            {permissionSelectors.map((action, index) => (
+                                <SmartContractFunctionDataListItem.Structure
+                                    key={action.id}
+                                    contractAddress={action.to}
+                                    onRemove={() => removePermissionSelectorByIndex(index)}
+                                    functionName={action.inputData?.function}
+                                    contractName={action.inputData?.contract}
+                                    functionSelector={proposalActionUtils.actionToFunctionSelector(action)}
+                                />
+                            ))}
+                        </InputContainer>
+                    )}
                     <ActionComposer
                         daoId={daoId}
                         onAddAction={addPermissionSelector}
                         hideWalletConnect={true}
                         excludeActionTypes={[ProposalActionType.TRANSFER, ActionItemId.RAW_CALLDATA]}
                     />
-                    <InputContainer alert={fieldAlert} useCustomWrapper={true} className="w-full" id="selectors">
-                        {permissionSelectors.map((action, index) => (
-                            <SmartContractFunctionDataListItem.Structure
-                                key={action.id}
-                                contractAddress={action.to}
-                                onRemove={() => removePermissionSelectorByIndex(index)}
-                                functionName={action.inputData?.function}
-                                contractName={action.inputData?.contract}
-                                functionSelector={proposalActionUtils.actionToFunctionSelector(action)}
-                            />
-                        ))}
-                    </InputContainer>
-                </div>
+                </>
             )}
         </div>
     );
