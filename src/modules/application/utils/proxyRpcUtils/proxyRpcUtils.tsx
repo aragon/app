@@ -34,7 +34,7 @@ export class ProxyRpcUtils {
         const requestOptions = this.buildRequestOptions(request);
 
         if (rpcEndpoint == null) {
-            return NextResponse.json({ error: `Chain ${chainId.toString()} is not supported` }, { status: 501 });
+            return NextResponse.json({ error: `Chain ${chainId} is not supported` }, { status: 501 });
         }
 
         const result = await fetch(rpcEndpoint, requestOptions);
