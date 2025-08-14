@@ -12,6 +12,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
+import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
 import type { ICreateProposalFormData, IProposalActionData } from '../createProposalFormDefinitions';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
@@ -139,6 +140,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                         <ProposalActions.Item<IProposalActionData>
                             key={action.id}
                             action={action}
+                            actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(action)}
                             value={action.id}
                             CustomComponent={customActionComponents[action.type]}
                             dropdownItems={getActionDropdownItems(index)}

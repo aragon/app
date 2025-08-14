@@ -98,9 +98,10 @@ class ProposalActionUtils {
         action.type === ProposalActionType.METADATA_UPDATE || action.type === ProposalActionType.METADATA_PLUGIN_UPDATE;
 
     actionToFunctionSelector = (action: IProposalAction): Hex | undefined => {
-        const { inputData } = action;
+        const { inputData, data } = action;
+        const isNativeTransfer = data === '0x';
 
-        return inputData == null
+        return inputData == null || isNativeTransfer
             ? undefined
             : toFunctionSelector({
                   type: 'function',
