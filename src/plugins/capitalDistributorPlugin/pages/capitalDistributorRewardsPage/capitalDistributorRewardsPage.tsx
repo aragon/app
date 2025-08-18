@@ -5,10 +5,12 @@ import type { IDaoPluginPageProps } from '@/modules/application/types';
 import { daoOptions, PluginInterfaceType } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { QueryClient } from '@tanstack/react-query';
-import { headers } from 'next/headers';
+import { headers as nextHeaders } from 'next/headers';
 import { cookieToInitialState } from 'wagmi';
 import { campaignListOptions, campaignStatsOptions, CampaignStatus } from '../../api/capitalDistributorService';
+import type { ICapitalDistributorPlugin } from '../../types';
 import { CapitalDistributorRewardsPageClient } from './capitalDistributorRewardsPageClient';
 
 export interface ICapitalDistributorRewardsPageProps extends IDaoPluginPageProps {}
@@ -25,16 +27,22 @@ const getConnectedAccount = (cookieHeader: string | null): string | undefined =>
 };
 
 const campaignsPerPage = 5;
+const blockedCountryError = 'Capital Distributor: Claim country error';
 
 export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsPageProps> = async (props) => {
     const { dao } = props;
 
     const queryClient = new QueryClient();
+    const headers = await nextHeaders();
 
-    const cookieHeader = (await headers()).get('cookie');
+    const countryCode = headers.get('x-vercel-ip-country');
+    const cookieHeader = headers.get('cookie');
+
     const userAddress = getConnectedAccount(cookieHeader);
 
-    const plugin = daoUtils.getDaoPlugins(dao, { interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR })![0];
+    const interfaceType = PluginInterfaceType.CAPITAL_DISTRIBUTOR;
+    const plugin: ICapitalDistributorPlugin = daoUtils.getDaoPlugins(dao, { interfaceType })![0];
+
     const defaultQueryParams = {
         plugin: plugin.address,
         network: dao.network,
@@ -45,6 +53,19 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
     const initialParams = { queryParams: { ...defaultQueryParams, userAddress: userAddress as string } };
 
     queryClient.setQueryData(daoOptions({ urlParams: { id: dao.id } }).queryKey, dao);
+
+    if (countryCode != null && plugin.blockedCountries?.includes(countryCode)) {
+        const context = { pluginAddress: plugin.address, userAddress, country: countryCode };
+        monitoringUtils.logMessage(blockedCountryError, { level: 'warning', context });
+
+        return (
+            <Page.Error
+                title="app.plugins.capitalDistributor.capitalDistributorRewardsPage.error.restricted.title"
+                description="app.plugins.capitalDistributor.capitalDistributorRewardsPage.error.restricted.description"
+                errorNamespace=""
+            />
+        );
+    }
 
     if (userAddress) {
         await queryClient.prefetchInfiniteQuery(campaignListOptions(initialParams));

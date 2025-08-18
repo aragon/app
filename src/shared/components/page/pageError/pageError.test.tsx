@@ -13,7 +13,7 @@ describe('<Page.Error /> component', () => {
         const completeProps: IPageErrorProps = {
             error: null,
             actionLink: '',
-            notFoundNamespace: '',
+            errorNamespace: '',
             ...props,
         };
 
@@ -22,29 +22,29 @@ describe('<Page.Error /> component', () => {
 
     it('renders a generic error but uses the specified label for primary action when error is not a not-found error', () => {
         const actionLink = '/explore';
-        const notFoundNamespace = 'app.governance.memberDetailsPage';
+        const errorNamespace = 'app.governance.memberDetailsPage';
         isNotFoundErrorSpy.mockReturnValue(false);
 
-        render(createTestComponent({ actionLink, notFoundNamespace, error: 'error' }));
+        render(createTestComponent({ actionLink, errorNamespace, error: 'error' }));
         expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
         expect(screen.getByText(/errorFeedback.description/)).toBeInTheDocument();
         expect(screen.getByText(/errorFeedback.link.report/)).toBeInTheDocument();
 
-        const customLink = screen.getByRole('link', { name: `${notFoundNamespace}.notFound.action` });
+        const customLink = screen.getByRole('link', { name: `${errorNamespace}.notFound.action` });
         expect(customLink).toBeInTheDocument();
         expect(customLink.getAttribute('href')).toEqual(actionLink);
     });
 
     it('renders the not-found specific strings without the report button when error is a not-found error', () => {
         const actionLink = '/proposals';
-        const notFoundNamespace = 'app.governance.proposalDetailsPage';
+        const errorNamespace = 'app.governance.proposalDetailsPage';
         isNotFoundErrorSpy.mockReturnValue(true);
 
-        render(createTestComponent({ actionLink, notFoundNamespace, error: '404-error' }));
-        expect(screen.getByText(`${notFoundNamespace}.notFound.title`)).toBeInTheDocument();
-        expect(screen.getByText(`${notFoundNamespace}.notFound.description`)).toBeInTheDocument();
+        render(createTestComponent({ actionLink, errorNamespace, error: '404-error' }));
+        expect(screen.getByText(`${errorNamespace}.notFound.title`)).toBeInTheDocument();
+        expect(screen.getByText(`${errorNamespace}.notFound.description`)).toBeInTheDocument();
 
-        const customLink = screen.getByRole('link', { name: `${notFoundNamespace}.notFound.action` });
+        const customLink = screen.getByRole('link', { name: `${errorNamespace}.notFound.action` });
         expect(customLink).toBeInTheDocument();
         expect(customLink.getAttribute('href')).toEqual(actionLink);
 

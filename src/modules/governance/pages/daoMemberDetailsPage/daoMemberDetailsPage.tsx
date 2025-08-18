@@ -28,13 +28,11 @@ export const DaoMemberDetailsPage: React.FC<IDaoMemberDetailsPageProps> = async 
     try {
         await queryClient.fetchQuery(memberOptions(memberParams));
     } catch (error: unknown) {
-        return (
-            <Page.Error
-                error={JSON.parse(JSON.stringify(error)) as unknown}
-                actionLink={`/dao/${network}/${addressOrEns}/members`}
-                notFoundNamespace="app.governance.daoMemberDetailsPage"
-            />
-        );
+        const parsedError = JSON.parse(JSON.stringify(error)) as unknown;
+        const errorNamespace = 'app.governance.daoMemberDetailsPage.error';
+        const actionLink = `/dao/${network}/${addressOrEns}/members`;
+
+        return <Page.Error error={parsedError} actionLink={actionLink} errorNamespace={errorNamespace} />;
     }
 
     return (

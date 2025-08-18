@@ -3,44 +3,50 @@
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { useEffect } from 'react';
-import { ErrorFeedback } from '../../errorFeedback';
+import { ErrorFeedback, type IErrorFeedbackProps } from '../../errorFeedback';
 import { useTranslations } from '../../translationsProvider';
 
-export interface IPageErrorProps {
+export interface IPageErrorProps extends Pick<IErrorFeedbackProps, 'title' | 'description'> {
     /**
      * Error to be processed.
      */
-    error: unknown;
+    error?: unknown;
     /**
      * Link of the primary action.
      */
-    actionLink: string;
+    actionLink?: string;
     /**
-     * Namespace used to render the 404 not found error message.
+     * Namespace used to render the error message.
      */
-    notFoundNamespace: string;
+    errorNamespace: string;
 }
 
 export const PageError: React.FC<IPageErrorProps> = (props) => {
-    const { error, actionLink, notFoundNamespace } = props;
+    const { error, actionLink, errorNamespace, title, description } = props;
 
     const { t } = useTranslations();
 
-    useEffect(() => {
-        monitoringUtils.logError(error);
-    }, [error]);
+    useEffect(() => monitoringUtils.logError(error), [error]);
 
-    if (!AragonBackendServiceError.isNotFoundError(error)) {
-        return <ErrorFeedback primaryButton={{ label: t(`${notFoundNamespace}.notFound.action`), href: actionLink }} />;
+    const primaryButton = actionLink ? { label: t(`${errorNamespace}.action`), href: actionLink } : undefined;
+
+    if (AragonBackendServiceError.isNotFoundError(error)) {
+        return (
+            <ErrorFeedback
+                title={t(`${errorNamespace}.notFound.title`)}
+                description={t(`${errorNamespace}.notFound.description`)}
+                primaryButton={primaryButton}
+                illustration="NOT_FOUND"
+                hideReportButton={true}
+            />
+        );
     }
 
     return (
         <ErrorFeedback
-            title={t(`${notFoundNamespace}.notFound.title`)}
-            description={t(`${notFoundNamespace}.notFound.description`)}
-            primaryButton={{ label: t(`${notFoundNamespace}.notFound.action`), href: actionLink }}
-            illustration="NOT_FOUND"
-            hideReportButton={true}
+            title={title ? t(title) : undefined}
+            description={description ? t(description) : undefined}
+            primaryButton={primaryButton}
         />
     );
 };
