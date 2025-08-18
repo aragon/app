@@ -40,7 +40,7 @@ describe('tokenTransaction utils', () => {
             const endDate = 1728660603;
             const proposal = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
             const actions: ITransactionRequest[] = [
-                { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
+                { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x000', value: BigInt(0) },
             ];
             const plugin = generateDaoPlugin({
                 interfaceType: PluginInterfaceType.TOKEN_VOTING,
@@ -73,7 +73,7 @@ describe('tokenTransaction utils', () => {
             const minDuration = 10 * 24 * 60 * 60;
             const proposal = generateProposalCreate();
             const actions: ITransactionRequest[] = [
-                { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x', value: BigInt(0) },
+                { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x000', value: BigInt(0) },
             ];
             const plugin = generateDaoPlugin({
                 interfaceType: PluginInterfaceType.TOKEN_VOTING,
