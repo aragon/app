@@ -12,7 +12,7 @@ export const defaultMintAction = (settings: ITokenPluginSettings): ITokenProposa
     type: TokenProposalActionType.MINT,
     from: '',
     to: settings.token.address,
-    data: '0x',
+    data: '',
     value: '0',
     inputData: {
         function: 'mint',
@@ -41,7 +41,7 @@ export const defaultUpdateSettings = ({
     type: TokenProposalActionType.UPDATE_VOTE_SETTINGS,
     from: '',
     to: address,
-    data: '0x',
+    data: '',
     value: '0',
     proposedSettings: {
         ...settings,

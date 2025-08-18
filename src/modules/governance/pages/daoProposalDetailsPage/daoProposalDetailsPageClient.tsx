@@ -127,7 +127,12 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         >
                             <ProposalActions.Container emptyStateDescription="">
                                 {normalizedProposalActions.map((action, index) => (
-                                    <ProposalActions.Item key={index} action={action} chainId={chainId} />
+                                    <ProposalActions.Item
+                                        key={index}
+                                        action={action}
+                                        actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(action)}
+                                        chainId={chainId}
+                                    />
                                 ))}
                             </ProposalActions.Container>
                             <ProposalActions.Footer>
