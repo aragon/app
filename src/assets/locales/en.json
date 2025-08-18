@@ -1117,8 +1117,13 @@
             "value": "Value"
           },
           "inputs": {
-            "helpText": "The address to get the payout",
-            "recipient": "Recipient"
+            "recipient": {
+              "error": {
+                "ofac": "This address is restricted and can't be used."
+              },
+              "helpText": "The address to get the payout",
+              "label": "Recipient"
+            }
           },
           "submit": "Claim"
         },
