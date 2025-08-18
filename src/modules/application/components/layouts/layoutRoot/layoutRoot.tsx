@@ -3,7 +3,7 @@ import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { fetchInterceptorUtils } from '@/modules/application/utils/fetchInterceptorUtils';
 import { sanctionedAddressesOptions } from '@/modules/explore/api/cmsService';
 import { translations } from '@/shared/constants/translations';
-import { QueryClient } from '@tanstack/react-query';
+import { dehydrate, QueryClient } from '@tanstack/react-query';
 import { headers } from 'next/headers';
 import NextTopLoader from 'nextjs-toploader';
 import type { ReactNode } from 'react';
@@ -35,6 +35,7 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
 
     const queryClient = new QueryClient();
     await queryClient.prefetchQuery(sanctionedAddressesOptions());
+    const dehydratedState = dehydrate(queryClient);
 
     return (
         <html lang="en" className="h-full">
@@ -46,7 +47,11 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
                     easing="ease-in-out"
                     shadow="0 1px 3px 0 #003BF510, 0 1px 2px -1px #003BF510"
                 />
-                <Providers translations={translationAssets} wagmiInitialState={wagmiInitialState}>
+                <Providers
+                    translations={translationAssets}
+                    wagmiInitialState={wagmiInitialState}
+                    dehydratedState={dehydratedState}
+                >
                     <ErrorBoundary>
                         <div className="flex grow flex-col">{children}</div>
                         {process.env.NEXT_PUBLIC_FEATURE_DEBUG === 'true' && <DebugPanel />}
