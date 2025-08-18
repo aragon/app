@@ -75,7 +75,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const getProposalsLink = ({ slug }: IBuildTransactionDialogSuccessLinkHref) => {
         setIsBlocked(false);
 
-        return daoUtils.getDaoUrl(dao, `proposals/${slug!}`)!;
+        return daoUtils.getDaoUrl(dao, `proposals/${slug!.toUpperCase()}`)!;
     };
 
     const customSteps: Array<ITransactionDialogStep<PublishProposalStep>> = useMemo(

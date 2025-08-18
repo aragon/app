@@ -91,7 +91,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
             href: daoUtils.getDaoUrl(dao, 'proposals'),
             label: t('app.governance.daoProposalDetailsPage.header.breadcrumb.proposals'),
         },
-        { label: proposalSlug },
+        { label: proposalSlug.toUpperCase() },
     ];
 
     return (
@@ -156,7 +156,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                 <p className="truncate text-neutral-500">{proposal.proposalIndex}</p>
                             </DefinitionList.Item>
                             <DefinitionList.Item term={t('app.governance.daoProposalDetailsPage.aside.details.id')}>
-                                <p className="truncate text-neutral-500">{proposalSlug}</p>
+                                <p className="truncate text-neutral-500">{proposalSlug.toUpperCase()}</p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.creator')}
