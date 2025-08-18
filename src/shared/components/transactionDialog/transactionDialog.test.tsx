@@ -216,7 +216,7 @@ describe('<TransactionDialog /> component', () => {
     });
 
     it('approve transaction step sends the transaction to the user wallet when network prop matches current chain', () => {
-        const transaction = { from: '0x', data: '0x' };
+        const transaction = { from: '0x123', data: '0x000' };
         const sendTransaction = jest.fn();
         const network = Network.POLYGON_MAINNET;
         useAccountSpy.mockReturnValue({
@@ -263,7 +263,7 @@ describe('<TransactionDialog /> component', () => {
     });
 
     it('confirmation action step retries sending the transaction and updates active step', () => {
-        const transaction = { from: '0x', data: '0x' };
+        const transaction = { from: '0x123', data: '0x000' };
         const sendTransaction = jest.fn();
         useMutationSpy.mockReturnValue({ data: transaction } as unknown as ReactQuery.UseMutationResult);
         useSendTransactionSpy.mockReturnValue({ sendTransaction } as unknown as Wagmi.UseSendTransactionReturnType);
