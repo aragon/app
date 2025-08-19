@@ -85,7 +85,11 @@ export const CapitalDistributorCampaignList: React.FC<ICapitalDistributorCampaig
                     SkeletonElement={CapitalDistributorCampaignListItemSkeleton}
                 >
                     {campaignList?.map((campaign) => (
-                        <CapitalDistributorCampaignListItemStructure key={campaign.id} campaign={campaign} dao={dao} />
+                        <CapitalDistributorCampaignListItemStructure
+                            key={campaign.campaignId}
+                            campaign={campaign}
+                            dao={dao}
+                        />
                     ))}
                 </DataListContainer>
                 <DataListPagination />

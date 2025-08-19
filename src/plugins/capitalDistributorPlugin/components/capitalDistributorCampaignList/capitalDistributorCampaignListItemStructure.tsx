@@ -40,10 +40,11 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
     const plugin = useDaoPlugins({ daoId: id, interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR })![0];
 
     const { userData, token, title, description } = campaign;
-    const { amount, txHash, status } = userData;
+    const { totalAmount, totalClaimed, claims, status } = userData;
 
     const isClaimed = status === CampaignStatus.CLAIMED;
 
+    const amount = isClaimed ? totalClaimed : totalAmount;
     const parsedAmount = formatUnits(BigInt(amount), token.decimals);
     const formattedAmount = formatterUtils.formatNumber(parsedAmount, { format: NumberFormat.TOKEN_AMOUNT_SHORT });
 
@@ -51,7 +52,7 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
     const formattedValue = formatterUtils.formatNumber(value, { format: NumberFormat.FIAT_TOTAL_SHORT });
 
     const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[network].id });
-    const addressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: txHash });
+    const addressLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: claims[0].transactionHash });
 
     const handleOpenDialog = () => {
         const { network } = dao;

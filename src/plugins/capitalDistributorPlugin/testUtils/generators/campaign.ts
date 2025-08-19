@@ -3,7 +3,7 @@ import type { ICampaign } from '../../api/capitalDistributorService';
 import { CampaignStatus } from '../../api/capitalDistributorService/domain/enum/campaignStatus';
 
 export const generateCampaign = (campaign?: Partial<ICampaign>): ICampaign => ({
-    id: 1,
+    campaignId: '1',
     title: 'Campaign Name',
     description: 'Campaign Description',
     type: 'Type',
@@ -15,7 +15,9 @@ export const generateCampaign = (campaign?: Partial<ICampaign>): ICampaign => ({
     strategy: null,
     userData: {
         status: CampaignStatus.CLAIMABLE,
-        amount: '0',
+        totalAmount: '0',
+        totalClaimed: '0',
+        claims: [],
     },
     ...campaign,
 });

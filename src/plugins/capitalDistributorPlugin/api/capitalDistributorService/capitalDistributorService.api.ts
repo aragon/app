@@ -7,7 +7,7 @@ export interface IGetCampaignListQueryParams extends IPaginatedRequest {
     /**
      * Address of the plugin to fetch the campaigns for.
      */
-    plugin: string;
+    pluginAddress: string;
     /**
      * Network of the plugin.
      */
