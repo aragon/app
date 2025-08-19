@@ -52,7 +52,7 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
     const formattedValue = formatterUtils.formatNumber(value, { format: NumberFormat.FIAT_TOTAL_SHORT });
 
     const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[network].id });
-    const addressLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: claims[0].transactionHash });
+    const addressLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: claims[0]?.transactionHash });
 
     const handleOpenDialog = () => {
         const { network } = dao;
