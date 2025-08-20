@@ -27,7 +27,6 @@ const getConnectedAccount = (cookieHeader: string | null): string | undefined =>
 };
 
 const campaignsPerPage = 5;
-const blockedCountryError = 'Capital Distributor: Claim country error';
 
 export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsPageProps> = async (props) => {
     const { dao } = props;
@@ -57,15 +56,10 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
 
     if (countryCode != null && plugin.blockedCountries?.includes(countryCode)) {
         const context = { pluginAddress: plugin.address, userAddress, country: countryCode };
-        monitoringUtils.logMessage(blockedCountryError, { level: 'warning', context });
+        const errorNamespace = 'app.plugins.capitalDistributor.capitalDistributorRewardsPage.error.restricted';
+        monitoringUtils.logMessage('Capital Distributor: Claim error (geolocation)', { level: 'warning', context });
 
-        return (
-            <Page.Error
-                title="app.plugins.capitalDistributor.capitalDistributorRewardsPage.error.restricted.title"
-                description="app.plugins.capitalDistributor.capitalDistributorRewardsPage.error.restricted.description"
-                errorNamespace=""
-            />
-        );
+        return <Page.Error title={`${errorNamespace}.title`} description={`${errorNamespace}.description`} />;
     }
 
     if (userAddress) {

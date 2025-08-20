@@ -16,13 +16,13 @@ export interface IPageErrorProps extends Pick<IErrorFeedbackProps, 'title' | 'de
      */
     actionLink?: string;
     /**
-     * Namespace used to render the error message.
+     * Namespace used to render the not-found error message and action link label.
      */
-    errorNamespace: string;
+    errorNamespace?: string;
 }
 
 export const PageError: React.FC<IPageErrorProps> = (props) => {
-    const { error, actionLink, errorNamespace, title, description } = props;
+    const { error, actionLink, errorNamespace = '', title, description } = props;
 
     const { t } = useTranslations();
 
