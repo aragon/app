@@ -40,6 +40,7 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
         network: dao.network,
         pageSize: campaignsPerPage,
         page: 1,
+        sort: 'campaignId',
         status: CampaignStatus.CLAIMABLE,
     };
     const initialParams = { queryParams: { ...defaultQueryParams, userAddress: userAddress as string } };
