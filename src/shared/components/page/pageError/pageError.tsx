@@ -26,7 +26,11 @@ export const PageError: React.FC<IPageErrorProps> = (props) => {
 
     const { t } = useTranslations();
 
-    useEffect(() => monitoringUtils.logError(error), [error]);
+    useEffect(() => {
+        if (error != null) {
+            monitoringUtils.logError(error);
+        }
+    }, [error]);
 
     const isNotFoundError = AragonBackendServiceError.isNotFoundError(error);
 
