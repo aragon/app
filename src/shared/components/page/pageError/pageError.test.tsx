@@ -47,12 +47,12 @@ describe('<Page.Error /> component', () => {
     });
 
     it('renders the specified error title and description', () => {
-        const title = 'app.error.title';
-        const description = 'app.error.description';
+        const titleKey = 'app.error.title';
+        const descriptionKey = 'app.error.description';
 
-        render(createTestComponent({ title, description }));
+        render(createTestComponent({ titleKey, descriptionKey }));
 
-        expect(screen.getByText(title)).toBeInTheDocument();
-        expect(screen.getByText(description)).toBeInTheDocument();
+        expect(screen.getByText(titleKey)).toBeInTheDocument();
+        expect(screen.getByText(descriptionKey)).toBeInTheDocument();
     });
 });

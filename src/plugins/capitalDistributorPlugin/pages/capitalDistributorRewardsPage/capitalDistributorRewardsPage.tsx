@@ -59,7 +59,7 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
         const errorNamespace = 'app.plugins.capitalDistributor.capitalDistributorRewardsPage.error.restricted';
         monitoringUtils.logMessage('Capital Distributor: Claim error (geolocation)', { level: 'warning', context });
 
-        return <Page.Error title={`${errorNamespace}.title`} description={`${errorNamespace}.description`} />;
+        return <Page.Error titleKey={`${errorNamespace}.title`} descriptionKey={`${errorNamespace}.description`} />;
     }
 
     if (userAddress) {

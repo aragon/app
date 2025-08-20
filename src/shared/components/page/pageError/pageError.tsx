@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { ErrorFeedback, type IErrorFeedbackProps } from '../../errorFeedback';
 import { useTranslations } from '../../translationsProvider';
 
-export interface IPageErrorProps extends Pick<IErrorFeedbackProps, 'title' | 'description'> {
+export interface IPageErrorProps extends Pick<IErrorFeedbackProps, 'titleKey' | 'descriptionKey'> {
     /**
      * Error to be processed.
      */
@@ -22,31 +22,26 @@ export interface IPageErrorProps extends Pick<IErrorFeedbackProps, 'title' | 'de
 }
 
 export const PageError: React.FC<IPageErrorProps> = (props) => {
-    const { error, actionLink, errorNamespace = '', title, description } = props;
+    const { error, actionLink, errorNamespace = '', titleKey, descriptionKey } = props;
 
     const { t } = useTranslations();
 
     useEffect(() => monitoringUtils.logError(error), [error]);
 
-    const primaryButton = actionLink ? { label: t(`${errorNamespace}.action`), href: actionLink } : undefined;
+    const isNotFoundError = AragonBackendServiceError.isNotFoundError(error);
 
-    if (AragonBackendServiceError.isNotFoundError(error)) {
-        return (
-            <ErrorFeedback
-                title={t(`${errorNamespace}.notFound.title`)}
-                description={t(`${errorNamespace}.notFound.description`)}
-                primaryButton={primaryButton}
-                illustration="NOT_FOUND"
-                hideReportButton={true}
-            />
-        );
-    }
+    const processedTitle = isNotFoundError ? `${errorNamespace}.notFound.title` : titleKey;
+    const processedDescription = isNotFoundError ? `${errorNamespace}.notFound.description` : descriptionKey;
+
+    const primaryButton = actionLink ? { label: t(`${errorNamespace}.action`), href: actionLink } : undefined;
 
     return (
         <ErrorFeedback
-            title={title ? t(title) : undefined}
-            description={description ? t(description) : undefined}
+            titleKey={processedTitle}
+            descriptionKey={processedDescription}
             primaryButton={primaryButton}
+            illustration={isNotFoundError ? 'NOT_FOUND' : undefined}
+            hideReportButton={isNotFoundError}
         />
     );
 };
