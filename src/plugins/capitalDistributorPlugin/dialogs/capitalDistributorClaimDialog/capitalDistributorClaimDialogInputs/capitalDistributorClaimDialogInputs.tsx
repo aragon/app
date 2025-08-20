@@ -33,7 +33,7 @@ export const CapitalDistributorClaimDialogInputs: React.FC<ICapitalDistributorCl
         }
 
         // TODO: remove
-        const isSanctionedAddress = sanctionedAddresses?.[Network.ETHEREUM_MAINNET]?.some((value) =>
+        const isSanctionedAddress = sanctionedAddresses?.[Network.ETHEREUM_MAINNET]?.some((address) =>
             addressUtils.isAddressEqual(address, value),
         );
 
