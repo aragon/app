@@ -1,4 +1,4 @@
-import type { ICampaign } from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
+import { CampaignStatus, type ICampaign } from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
 import type { ICapitalDistributorPlugin } from '@/plugins/capitalDistributorPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -32,7 +32,7 @@ export interface ICapitalDistributorClaimDialogDetailsProps {
 export const CapitalDistributorClaimDialogDetails: React.FC<ICapitalDistributorClaimDialogDetailsProps> = (props) => {
     const { campaign, plugin } = props;
     const { resources, type, token, userData, endTime } = campaign;
-    const { amount } = userData;
+    const { totalAmount, totalClaimed, status } = userData;
 
     const { t } = useTranslations();
     const { formState } = useFormContext();
@@ -48,6 +48,7 @@ export const CapitalDistributorClaimDialogDetails: React.FC<ICapitalDistributorC
         defaultValue: false,
     });
 
+    const amount = status === CampaignStatus.CLAIMED ? totalClaimed : totalAmount;
     const parsedAmount = formatUnits(BigInt(amount), token.decimals);
     const formattedAmount = formatterUtils.formatNumber(parsedAmount, { format: NumberFormat.TOKEN_AMOUNT_SHORT })!;
 

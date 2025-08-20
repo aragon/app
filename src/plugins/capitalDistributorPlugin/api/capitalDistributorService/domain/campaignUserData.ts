@@ -1,3 +1,4 @@
+import type { ICampaignUserDataClaim } from './campaignUserDataClaim';
 import type { CampaignStatus } from './enum';
 
 export interface ICampaignUserData {
@@ -6,15 +7,15 @@ export interface ICampaignUserData {
      */
     status: CampaignStatus;
     /**
-     * The amount of tokens the user has claimed or is eligible to claim.
+     * The amount of tokens the user is eligible to claim.
      */
-    amount: string;
+    totalAmount: string;
     /**
-     * The tx hash of the claim transaction. Only present if the campaign has been claimed.
+     * The amount of tokens the user has claimed.
      */
-    txHash?: string;
+    totalClaimed: string;
     /**
-     * The block timestamp of when the campaign was claimed. Only present if the campaign has been claimed.
+     * Information about the user claim transactions.
      */
-    txTimestamp?: number;
+    claims: ICampaignUserDataClaim[];
 }

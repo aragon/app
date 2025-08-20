@@ -6,7 +6,7 @@ export interface ICampaign<TUserData extends ICampaignUserData = ICampaignUserDa
     /**
      * Unique identifier for the campaign.
      */
-    id: number;
+    campaignId: string;
     /**
      * Title of the campaign.
      */

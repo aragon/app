@@ -10,9 +10,9 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper/useStepper';
 import { invariant } from '@aragon/gov-ui-kit';
-import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import type { Hex } from 'viem';
-import type { ICampaign } from '../../api/capitalDistributorService';
+import { CapitalDistributorServiceKey, type ICampaign } from '../../api/capitalDistributorService';
 import { capitalDistributorClaimTransactionDialogUtils } from './capitalDistributorClaimTransactionDialogUtils';
 
 export interface ICapitalDistributorClaimTransactionDialogParams {
@@ -50,8 +50,7 @@ export const CapitalDistributorClaimTransactionDialog: React.FC<ICapitalDistribu
     const { campaign, recipient, pluginAddress, network } = location.params;
 
     const { t } = useTranslations();
-
-    const router = useRouter();
+    const queryClient = useQueryClient();
 
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
@@ -59,13 +58,18 @@ export const CapitalDistributorClaimTransactionDialog: React.FC<ICapitalDistribu
     const prepareTransaction = () =>
         capitalDistributorClaimTransactionDialogUtils.buildTransaction({ campaign, recipient, pluginAddress });
 
+    const onSuccessClick = () => {
+        void queryClient.invalidateQueries({ queryKey: [CapitalDistributorServiceKey.CAMPAIGN_LIST] });
+        void queryClient.invalidateQueries({ queryKey: [CapitalDistributorServiceKey.CAMPAIGN_STATS] });
+    };
+
     return (
         <TransactionDialog
             title={t('app.plugins.capitalDistributor.capitalDistributorClaimTransactionDialog.title')}
             description={t('app.plugins.capitalDistributor.capitalDistributorClaimTransactionDialog.description')}
             submitLabel={t('app.plugins.capitalDistributor.capitalDistributorClaimTransactionDialog.submit')}
             successLink={{
-                onClick: () => router.refresh(),
+                onClick: onSuccessClick,
                 label: t('app.plugins.capitalDistributor.capitalDistributorClaimTransactionDialog.successLinkLabel'),
             }}
             stepper={stepper}

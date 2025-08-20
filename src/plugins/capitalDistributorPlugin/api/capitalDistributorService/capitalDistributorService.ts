@@ -4,8 +4,8 @@ import type { ICampaign, ICapitalDistributorStats } from './domain';
 
 class CapitalDistributorService extends AragonBackendService {
     private urls = {
-        campaigns: '/v1/campaigns',
-        stats: '/v1/stats/:address',
+        campaigns: '/capital-distributor/campaigns',
+        stats: '/capital-distributor/stats/:address',
     };
 
     getCampaignList = async ({ queryParams }: IGetCampaignListParams): Promise<IPaginatedResponse<ICampaign>> => {

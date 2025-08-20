@@ -7,7 +7,7 @@ import { capitalDistributorAbi, merkleClaimDataAbi } from './capitalDistributorP
 class CapitalDistributorClaimTransactionDialogUtils {
     buildTransaction = (params: IBuildClaimTransactionParams): Promise<ITransactionRequest> => {
         const { campaign, recipient, pluginAddress } = params;
-        const campaignId = BigInt(campaign.id);
+        const campaignId = BigInt(campaign.campaignId);
 
         const auxData = this.buildClaimAuxData(campaign);
         const data = encodeFunctionData({
@@ -33,8 +33,8 @@ class CapitalDistributorClaimTransactionDialogUtils {
         campaign.strategy != null && typeof campaign.strategy === 'object' && 'root' in campaign.strategy;
 
     private buildMerkleTreeAuxData = (campaign: ICampaign<ICampaignUserDataMerkle>): Hex => {
-        const { amount, proofs } = campaign.userData;
-        const auxData = encodeAbiParameters(merkleClaimDataAbi, [proofs as Hex[], BigInt(amount)]);
+        const { totalAmount, proofs } = campaign.userData;
+        const auxData = encodeAbiParameters(merkleClaimDataAbi, [proofs as Hex[], BigInt(totalAmount)]);
 
         return auxData;
     };

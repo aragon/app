@@ -44,10 +44,11 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
     const plugin: ICapitalDistributorPlugin = daoUtils.getDaoPlugins(dao, { interfaceType })![0];
 
     const defaultQueryParams = {
-        plugin: plugin.address,
+        pluginAddress: plugin.address,
         network: dao.network,
         pageSize: campaignsPerPage,
         page: 1,
+        sort: 'campaignId',
         status: CampaignStatus.CLAIMABLE,
     };
     const initialParams = { queryParams: { ...defaultQueryParams, userAddress: userAddress as string } };
@@ -69,7 +70,7 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
 
     if (userAddress) {
         await queryClient.prefetchInfiniteQuery(campaignListOptions(initialParams));
-        await queryClient.fetchQuery(campaignStatsOptions({ urlParams: { userAddress: userAddress } }));
+        await queryClient.prefetchQuery(campaignStatsOptions({ urlParams: { userAddress: userAddress } }));
     }
 
     return (
