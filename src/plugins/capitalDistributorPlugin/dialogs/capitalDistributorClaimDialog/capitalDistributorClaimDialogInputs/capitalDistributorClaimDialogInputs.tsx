@@ -1,6 +1,6 @@
 import { useSanctionedAddresses } from '@/modules/explore/api/cmsService';
 import type { ICapitalDistributorPlugin } from '@/plugins/capitalDistributorPlugin/types';
-import type { Network } from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
@@ -20,7 +20,7 @@ export interface ICapitalDistributorClaimDialogInputsProps {
 }
 
 export const CapitalDistributorClaimDialogInputs: React.FC<ICapitalDistributorClaimDialogInputsProps> = (props) => {
-    const { plugin, network } = props;
+    const { plugin } = props;
 
     const { t } = useTranslations();
     const { address } = useAccount();
@@ -32,7 +32,8 @@ export const CapitalDistributorClaimDialogInputs: React.FC<ICapitalDistributorCl
             return false;
         }
 
-        const isSanctionedAddress = sanctionedAddresses?.[network]?.some((value) =>
+        // TODO: remove
+        const isSanctionedAddress = sanctionedAddresses?.[Network.ETHEREUM_MAINNET]?.some((value) =>
             addressUtils.isAddressEqual(address, value),
         );
 
