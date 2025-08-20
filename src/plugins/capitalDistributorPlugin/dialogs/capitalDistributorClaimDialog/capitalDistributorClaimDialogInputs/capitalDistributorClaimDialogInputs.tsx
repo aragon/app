@@ -32,7 +32,7 @@ export const CapitalDistributorClaimDialogInputs: React.FC<ICapitalDistributorCl
             return false;
         }
 
-        const isSanctionedAddress = sanctionedAddresses?.[network]?.some((value) =>
+        const isSanctionedAddress = sanctionedAddresses?.[network]?.some((address) =>
             addressUtils.isAddressEqual(address, value),
         );
 
