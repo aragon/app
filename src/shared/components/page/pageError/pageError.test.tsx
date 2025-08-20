@@ -10,44 +10,49 @@ describe('<Page.Error /> component', () => {
     });
 
     const createTestComponent = (props?: Partial<IPageErrorProps>) => {
-        const completeProps: IPageErrorProps = {
-            error: null,
-            actionLink: '',
-            errorNamespace: '',
-            ...props,
-        };
+        const completeProps: IPageErrorProps = { ...props };
 
         return <PageError {...completeProps} />;
     };
 
-    it('renders a generic error but uses the specified label for primary action when error is not a not-found error', () => {
+    it('renders a generic error with the specified action link', () => {
         const actionLink = '/explore';
         const errorNamespace = 'app.governance.memberDetailsPage';
-        isNotFoundErrorSpy.mockReturnValue(false);
 
         render(createTestComponent({ actionLink, errorNamespace, error: 'error' }));
+
         expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
         expect(screen.getByText(/errorFeedback.description/)).toBeInTheDocument();
         expect(screen.getByText(/errorFeedback.link.report/)).toBeInTheDocument();
 
-        const customLink = screen.getByRole('link', { name: `${errorNamespace}.notFound.action` });
+        const customLink = screen.getByRole('link', { name: `${errorNamespace}.action` });
         expect(customLink).toBeInTheDocument();
         expect(customLink.getAttribute('href')).toEqual(actionLink);
     });
 
-    it('renders the not-found specific strings without the report button when error is a not-found error', () => {
+    it('renders a not-found feedback when the error is a not-found error', () => {
         const actionLink = '/proposals';
         const errorNamespace = 'app.governance.proposalDetailsPage';
         isNotFoundErrorSpy.mockReturnValue(true);
 
-        render(createTestComponent({ actionLink, errorNamespace, error: '404-error' }));
+        render(createTestComponent({ actionLink, errorNamespace }));
         expect(screen.getByText(`${errorNamespace}.notFound.title`)).toBeInTheDocument();
         expect(screen.getByText(`${errorNamespace}.notFound.description`)).toBeInTheDocument();
 
-        const customLink = screen.getByRole('link', { name: `${errorNamespace}.notFound.action` });
+        const customLink = screen.getByRole('link', { name: `${errorNamespace}.action` });
         expect(customLink).toBeInTheDocument();
         expect(customLink.getAttribute('href')).toEqual(actionLink);
 
         expect(screen.queryByText(/errorFeedback.link.report/)).not.toBeInTheDocument();
+    });
+
+    it('renders the specified error title and description', () => {
+        const title = 'app.error.title';
+        const description = 'app.error.description';
+
+        render(createTestComponent({ title, description }));
+
+        expect(screen.getByText(title)).toBeInTheDocument();
+        expect(screen.getByText(description)).toBeInTheDocument();
     });
 });

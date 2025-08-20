@@ -29,7 +29,7 @@ export const DaoProposalDetailsPage: React.FC<IDaoProposalDetailsPageProps> = as
         await queryClient.fetchQuery(proposalActionsOptions({ urlParams: { id: proposal.id } }));
     } catch (error: unknown) {
         const parsedError = JSON.parse(JSON.stringify(error)) as unknown;
-        const errorNamespace = 'app.governance.daoProposalDetailsPage';
+        const errorNamespace = 'app.governance.daoProposalDetailsPage.error';
         const actionLink = `/dao/${network}/${addressOrEns}/proposals`;
 
         return <Page.Error error={parsedError} actionLink={actionLink} errorNamespace={errorNamespace} />;
