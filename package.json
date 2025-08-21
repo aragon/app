@@ -86,7 +86,7 @@
     "ts-jest": "^29.4.1",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.40.0",
-    "vercel": "^44.7.3"
+    "vercel": "^46.0.2"
   },
   "repository": {
     "type": "git",
