@@ -1,6 +1,6 @@
 import type { IPaginatedRequest } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
-import type { IRequestQueryParams, IRequestUrlParams } from '@/shared/api/httpService';
+import type { IRequestQueryParams } from '@/shared/api/httpService';
 import type { CampaignStatus } from './domain';
 
 export interface IGetCampaignListQueryParams extends IPaginatedRequest {
@@ -24,11 +24,19 @@ export interface IGetCampaignListQueryParams extends IPaginatedRequest {
 
 export interface IGetCampaignListParams extends IRequestQueryParams<IGetCampaignListQueryParams> {}
 
-export interface IGetCampaignStatsUrlParams {
+export interface IGetCampaignStatsQueryParams {
     /**
-     * Address of the user to fetch the campaign stats for.
+     * Address of the plugin to fetch the campaigns stats for.
+     */
+    pluginAddress: string;
+    /**
+     * Network of the plugin to fetch the campaigns stats for.
+     */
+    network: Network;
+    /**
+     * Address of the user to fetch the stats for.
      */
     userAddress: string;
 }
 
-export interface IGetCampaignStatsParams extends IRequestUrlParams<IGetCampaignStatsUrlParams> {}
+export interface IGetCampaignStatsParams extends IRequestQueryParams<IGetCampaignStatsQueryParams> {}
