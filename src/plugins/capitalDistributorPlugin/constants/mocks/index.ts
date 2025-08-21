@@ -4,7 +4,7 @@ import { injectPluginMock } from './injectPluginMock';
 import { rewardStatsMock } from './rewardStatsMock';
 
 export const capitalDistributorPluginMocks = [
-    ...injectPluginMock,
+    injectPluginMock,
     ...claimableCampaignsMock,
     ...claimedCampaignsMock,
     rewardStatsMock,
