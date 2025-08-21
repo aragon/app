@@ -32,7 +32,8 @@ export const CapitalDistributorRewardsStats: React.FC<ICapitalDistributorRewards
     };
     const { data: claimedCampaigns } = useCampaignList(claimedCampaignParams, { enabled: address != null });
 
-    const campaignStatsParams = { urlParams: { userAddress: address! } };
+    const { pluginAddress, network } = initialParams.queryParams;
+    const campaignStatsParams = { queryParams: { pluginAddress, network, userAddress: address! } };
     const { data: campaignStats } = useCampaignStats(campaignStatsParams, { enabled: address != null });
 
     const { blockTimestamp: latestClaimTimestamp } = claimedCampaigns?.pages[0].data[0]?.userData.claims[0] ?? {};

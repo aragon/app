@@ -9,6 +9,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { headers } from 'next/headers';
 import { cookieToInitialState } from 'wagmi';
 import { campaignListOptions, campaignStatsOptions, CampaignStatus } from '../../api/capitalDistributorService';
+import type { ICapitalDistributorPlugin } from '../../types';
 import { CapitalDistributorRewardsPageClient } from './capitalDistributorRewardsPageClient';
 
 export interface ICapitalDistributorRewardsPageProps extends IDaoPluginPageProps {}
@@ -34,10 +35,12 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
     const cookieHeader = (await headers()).get('cookie');
     const userAddress = getConnectedAccount(cookieHeader);
 
-    const plugin = daoUtils.getDaoPlugins(dao, { interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR })![0];
+    const interfaceType = PluginInterfaceType.CAPITAL_DISTRIBUTOR;
+    const plugin: ICapitalDistributorPlugin = daoUtils.getDaoPlugins(dao, { interfaceType })![0];
+
+    const commonQueryParams = { pluginAddress: plugin.address, network: dao.network };
     const defaultQueryParams = {
-        pluginAddress: plugin.address,
-        network: dao.network,
+        ...commonQueryParams,
         pageSize: campaignsPerPage,
         page: 1,
         sort: 'campaignId',
@@ -49,7 +52,9 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
 
     if (userAddress) {
         await queryClient.prefetchInfiniteQuery(campaignListOptions(initialParams));
-        await queryClient.prefetchQuery(campaignStatsOptions({ urlParams: { userAddress: userAddress } }));
+        await queryClient.prefetchQuery(
+            campaignStatsOptions({ queryParams: { ...commonQueryParams, userAddress: userAddress } }),
+        );
     }
 
     return (
