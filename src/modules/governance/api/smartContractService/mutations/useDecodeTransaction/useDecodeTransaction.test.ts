@@ -14,7 +14,7 @@ describe('useDecodeTransaction mutation', () => {
 
     it('decodes the given transaction and returns a proposal action', async () => {
         const proposalAction = generateProposalAction();
-        const body = { data: '0x', from: '0x123', value: '1000000' };
+        const body = { data: '0x000', from: '0x123', value: '1000000' };
         const urlParams = { network: Network.ETHEREUM_MAINNET, address: '0x456' };
         decodeTransactionSpy.mockResolvedValue(proposalAction);
         const { result } = renderHook(() => useDecodeTransaction(), { wrapper: ReactQueryWrapper });
