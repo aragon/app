@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup
-        uses: aragon/app-next/.github/actions/setup@main
+        uses: aragon/app/.github/actions/setup@main
         with:
           # Checkout full history to correclty check changeset status
           fetch-depth: 0

@@ -35,9 +35,9 @@ jobs:
         uses: aragon/github-templates/steps/credential-retrieval@v0.4
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
-          op-vault: "kv_app-next_infra"
+          op-vault: "kv_app_infra"
       - name: Setup
-        uses: aragon/app-next/.github/actions/setup@main
+        uses: aragon/app/.github/actions/setup@main
         with:
           node-version: 22
       - name: Retrieve NextJs build
@@ -48,7 +48,7 @@ jobs:
         uses: aragon/github-templates/steps/credential-retrieval@v0.4
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
-          op-vault: "kv_app-next_${{ inputs.env }}"
+          op-vault: "kv_app_${{ inputs.env }}"
           secret-filepath: ".env"
           mode: alltofile
       - name: Bundle Vercel application
