@@ -98,7 +98,7 @@ describe('<DaoProposalDetailsPage /> component', () => {
         fetchQuerySpy.mockRejectedValue('error');
 
         render(await createTestComponent({ params: Promise.resolve(params) }));
-        const errorLink = screen.getByRole('link', { name: /daoProposalDetailsPage.notFound.action/ });
+        const errorLink = screen.getByRole('link', { name: /daoProposalDetailsPage.error.action/ });
         expect(errorLink).toBeInTheDocument();
         expect(errorLink.getAttribute('href')).toEqual(`/dao/${daoNetwork}/${daoEns}/proposals`);
     });

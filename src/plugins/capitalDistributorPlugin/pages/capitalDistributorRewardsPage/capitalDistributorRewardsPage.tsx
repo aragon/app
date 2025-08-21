@@ -5,8 +5,9 @@ import type { IDaoPluginPageProps } from '@/modules/application/types';
 import { daoOptions, PluginInterfaceType } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { QueryClient } from '@tanstack/react-query';
-import { headers } from 'next/headers';
+import { headers as nextHeaders } from 'next/headers';
 import { cookieToInitialState } from 'wagmi';
 import { campaignListOptions, campaignStatsOptions, CampaignStatus } from '../../api/capitalDistributorService';
 import type { ICapitalDistributorPlugin } from '../../types';
@@ -31,8 +32,11 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
     const { dao } = props;
 
     const queryClient = new QueryClient();
+    const headers = await nextHeaders();
 
-    const cookieHeader = (await headers()).get('cookie');
+    const countryCode = headers.get('x-vercel-ip-country');
+    const cookieHeader = headers.get('cookie');
+
     const userAddress = getConnectedAccount(cookieHeader);
 
     const interfaceType = PluginInterfaceType.CAPITAL_DISTRIBUTOR;
@@ -49,6 +53,14 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
     const initialParams = { queryParams: { ...defaultQueryParams, userAddress: userAddress as string } };
 
     queryClient.setQueryData(daoOptions({ urlParams: { id: dao.id } }).queryKey, dao);
+
+    if (countryCode != null && plugin.blockedCountries?.includes(countryCode)) {
+        const context = { pluginAddress: plugin.address, userAddress, country: countryCode };
+        const errorNamespace = 'app.plugins.capitalDistributor.capitalDistributorRewardsPage.error.restricted';
+        monitoringUtils.logMessage('Capital Distributor: Claim error (geolocation)', { level: 'warning', context });
+
+        return <Page.Error titleKey={`${errorNamespace}.title`} descriptionKey={`${errorNamespace}.description`} />;
+    }
 
     if (userAddress) {
         await queryClient.prefetchInfiniteQuery(campaignListOptions(initialParams));

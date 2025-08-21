@@ -28,13 +28,11 @@ export const DaoProposalDetailsPage: React.FC<IDaoProposalDetailsPageProps> = as
         const proposal = await queryClient.fetchQuery(proposalBySlugOptions(proposalParams));
         await queryClient.fetchQuery(proposalActionsOptions({ urlParams: { id: proposal.id } }));
     } catch (error: unknown) {
-        return (
-            <Page.Error
-                error={JSON.parse(JSON.stringify(error)) as unknown}
-                actionLink={`/dao/${network}/${addressOrEns}/proposals`}
-                notFoundNamespace="app.governance.daoProposalDetailsPage"
-            />
-        );
+        const parsedError = JSON.parse(JSON.stringify(error)) as unknown;
+        const errorNamespace = 'app.governance.daoProposalDetailsPage.error';
+        const actionLink = `/dao/${network}/${addressOrEns}/proposals`;
+
+        return <Page.Error error={parsedError} actionLink={actionLink} errorNamespace={errorNamespace} />;
     }
 
     return (

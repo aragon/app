@@ -32,14 +32,14 @@ describe('<ErrorFeedback /> component', () => {
     });
 
     it('supports the customisation of the title, description, illustration and primary button', () => {
-        const title = 'test-title';
-        const description = 'test-description';
+        const titleKey = 'test-title';
+        const descriptionKey = 'test-description';
         const illustration = 'NOT_FOUND';
         const primaryButton = { label: 'test-primary-button', href: '/test' };
-        render(createTestComponent({ title, description, illustration, primaryButton }));
+        render(createTestComponent({ titleKey, descriptionKey, illustration, primaryButton }));
 
-        expect(screen.getByText(title)).toBeInTheDocument();
-        expect(screen.getByText(description)).toBeInTheDocument();
+        expect(screen.getByText(titleKey)).toBeInTheDocument();
+        expect(screen.getByText(descriptionKey)).toBeInTheDocument();
         expect(screen.getByTestId(illustration)).toBeInTheDocument();
 
         const button = screen.getByRole('link', { name: primaryButton.label });
