@@ -26,7 +26,9 @@ describe('capitalDistributor service', () => {
 
     it('getCampaignStats fetches the campaign stats for a user', async () => {
         const campaignStats = { totalContributions: '1000', totalClaimed: '500' };
-        const params = { urlParams: { userAddress: '0x123' } };
+        const params = {
+            queryParams: { pluginAddress: '0x123', network: Network.ETHEREUM_MAINNET, userAddress: '0x456' },
+        };
 
         requestSpy.mockResolvedValue(campaignStats);
         const result = await capitalDistributorService.getCampaignStats(params);
