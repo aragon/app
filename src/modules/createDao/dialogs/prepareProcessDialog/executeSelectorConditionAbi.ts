@@ -1,11 +1,8 @@
 export const executeSelectorConditionAbi = [
     {
         type: 'event',
-        name: 'SelectorAllowed',
+        name: 'ExecuteSelectorConditionDeployed',
         anonymous: false,
-        inputs: [
-            { indexed: false, name: 'selector', type: 'bytes4', internalType: 'bytes4' },
-            { indexed: false, name: 'where', type: 'address', internalType: 'address' },
-        ],
+        inputs: [{ indexed: false, name: 'newContract', type: 'address' }],
     },
 ] as const;
