@@ -22,11 +22,11 @@ jobs:
           export-env: false
         env:
           OP_SERVICE_ACCOUNT_TOKEN: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
-          GPG_PASSPHRASE: op://kv_app-next_infra/arabot-1_SIGN_CERTS/credential
-          GPG_PRIVATE_KEY: op://kv_app-next_infra/arabot-1_SIGN_CERTS/private_key
-          ARABOT_PAT: op://kv_app-next_infra/ARABOT_PAT/credential
+          GPG_PASSPHRASE: op://kv_app_infra/arabot-1_SIGN_CERTS/credential
+          GPG_PRIVATE_KEY: op://kv_app_infra/arabot-1_SIGN_CERTS/private_key
+          ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
       - name: Setup
-        uses: aragon/app-next/.github/actions/setup@main
+        uses: aragon/app/.github/actions/setup@main
         with:
           token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
           node-version: 22

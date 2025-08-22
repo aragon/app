@@ -1,9 +1,9 @@
 {
-  "name": "@aragon/app-next",
+  "name": "@aragon/app",
   "version": "1.8.0",
   "description": "Human-centered DAO infrastructure",
   "author": "Aragon Association",
-  "homepage": "https://github.com/aragon/app-next#readme",
+  "homepage": "https://github.com/aragon/app#readme",
   "private": true,
   "license": "GPL-3.0",
   "scripts": {
@@ -90,10 +90,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aragon/app-next.git"
+    "url": "git+https://github.com/aragon/app.git"
   },
   "bugs": {
-    "url": "https://github.com/aragon/app-next/issues"
+    "url": "https://github.com/aragon/app/issues"
   },
   "keywords": [
     "aragon",
