@@ -53,12 +53,12 @@ export const initialiseMultisigPlugin = () => {
 
 The Plugin Registry is a record containing information about the available Plugins and their Slot Components. It is
 implemented as a JavaScript class in the
-[pluginRegistryUtils](https://github.com/aragon/app-next/blob/develop/src/shared/utils/pluginRegistryUtils/pluginRegistryUtils.ts)
+[pluginRegistryUtils](https://github.com/aragon/app/blob/develop/src/shared/utils/pluginRegistryUtils/pluginRegistryUtils.ts)
 file and populated on the client side at startup by the
-[`<Providers />`](https://github.com/aragon/app-next/blob/develop/src/modules/application/components/providers/providers.tsx)
+[`<Providers />`](https://github.com/aragon/app/blob/develop/src/modules/application/components/providers/providers.tsx)
 component of the Application module. The `<Providers />` component imports and triggers the
-[initialisePlugins](https://github.com/aragon/app-next/blob/develop/src/plugins/index.ts) function, which initializes
-all the supported plugins by registering the Plugin information and their Slot Components.
+[initialisePlugins](https://github.com/aragon/app/blob/develop/src/plugins/index.ts) function, which initializes all the
+supported plugins by registering the Plugin information and their Slot Components.
 
 ### Slot
 
@@ -100,12 +100,11 @@ export const initialiseMultisigPlugin = () => {
 #### Rendering of Slot Components
 
 - The
-  [`<PluginSingleComponent />`](https://github.com/aragon/app-next/tree/develop/src/shared/components/pluginSingleComponent)
+  [`<PluginSingleComponent />`](https://github.com/aragon/app/tree/develop/src/shared/components/pluginSingleComponent)
   React component is located under the `/shared/components` folder and renders a Slot Component from a given Slot ID and
   Plugin ID.
 
-- The
-  [`<PluginTabComponent />`](https://github.com/aragon/app-next/tree/develop/src/shared/components/pluginTabComponent)
+- The [`<PluginTabComponent />`](https://github.com/aragon/app/tree/develop/src/shared/components/pluginTabComponent)
   React component supports rendering multiple Slot Components for the given Slot ID and Plugins. The component renders
   Slot Components through a Tab component to be able to switch between the Slot Component views.
 
