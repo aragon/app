@@ -1,5 +1,5 @@
 ---
-'@aragon/app-next': minor
+'@aragon/app': minor
 ---
 
 Bump actions/download-artifact to v5
