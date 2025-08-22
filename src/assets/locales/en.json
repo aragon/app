@@ -1768,8 +1768,8 @@
       },
       "daoProcessAllowedActions": {
         "emptyState": {
-          "description": "This process cannot execute any action on behalf of the DAO and must only be used for signaling proposals.",
-          "heading": "No action execution"
+          "description": "This process doesn't have permission to execute actions on behalf of the DAO. All proposals can only be used for signaling.",
+          "heading": "Restricted execution"
         },
         "unrestricted": {
           "description": "This process will be granted permission to execute on behalf of the DAO. It could withdraw funds, modify governance contracts, and call any function on any smart contract.",
