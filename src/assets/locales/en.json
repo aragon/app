@@ -1768,7 +1768,7 @@
       },
       "daoProcessAllowedActions": {
         "emptyState": {
-          "description": "This process doesn't have permission to execute actions on behalf of the DAO. All proposals can only be used for signaling.",
+          "description": "This process doesn't have permission to execute actions on behalf of the DAO. Proposals can only be used for signaling.",
           "heading": "Restricted execution"
         },
         "unrestricted": {
