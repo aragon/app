@@ -70,6 +70,11 @@ describe('prepareProcessDialog utils', () => {
 
     describe('buildPrepareProcessTransaction', () => {
         const encodeTransactionRequestsSpy = jest.spyOn(transactionUtils, 'encodeTransactionRequests');
+        const buildDeployExecuteSelectorConditionDataSpy = jest.spyOn(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            prepareProcessDialogUtils as any,
+            'buildDeployExecuteSelectorConditionData',
+        );
         const buildPrepareInstallProcessorActionDataSpy = jest.spyOn(
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             prepareProcessDialogUtils as any,
@@ -86,17 +91,20 @@ describe('prepareProcessDialog utils', () => {
             buildPrepareInstallProcessorActionDataSpy.mockReturnValue('');
             buildPrepareInstallPluginsActionDataSpy.mockReturnValue([]);
             encodeTransactionRequestsSpy.mockReturnValue({ data: '0x1', to: '0x1', value: BigInt(0) });
+            buildDeployExecuteSelectorConditionDataSpy.mockReturnValue('0x');
         });
 
         afterEach(() => {
             buildPrepareInstallProcessorActionDataSpy.mockReset();
             buildPrepareInstallPluginsActionDataSpy.mockReset();
             encodeTransactionRequestsSpy.mockReset();
+            buildDeployExecuteSelectorConditionDataSpy.mockReset();
         });
 
         afterAll(() => {
             buildPrepareInstallProcessorActionDataSpy.mockRestore();
             buildPrepareInstallPluginsActionDataSpy.mockRestore();
+            buildDeployExecuteSelectorConditionDataSpy.mockRestore();
         });
 
         it('builds the prepare install action of the processor when processor metadata is set', async () => {
