@@ -1145,10 +1145,8 @@
         "capitalDistributorRewardsAside": {
           "stats": {
             "claimableCount": "Claimable campaigns",
-            "claimableNow": "Claimable now",
             "latestClaim": "Latest claim",
-            "recentUnit": " {{unit}} ago",
-            "totalEarned": "Total earned"
+            "recentUnit": " {{unit}} ago"
           }
         },
         "capitalDistributorRewardsPage": {

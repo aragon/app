@@ -58,10 +58,8 @@ export const CapitalDistributorClaimTransactionDialog: React.FC<ICapitalDistribu
     const prepareTransaction = () =>
         capitalDistributorClaimTransactionDialogUtils.buildTransaction({ campaign, recipient, pluginAddress });
 
-    const onSuccessClick = () => {
-        void queryClient.invalidateQueries({ queryKey: [CapitalDistributorServiceKey.CAMPAIGN_LIST] });
-        void queryClient.invalidateQueries({ queryKey: [CapitalDistributorServiceKey.CAMPAIGN_STATS] });
-    };
+    const onSuccessClick = () =>
+        queryClient.invalidateQueries({ queryKey: [CapitalDistributorServiceKey.CAMPAIGN_LIST] });
 
     return (
         <TransactionDialog

@@ -23,17 +23,4 @@ describe('capitalDistributor service', () => {
         expect(requestSpy).toHaveBeenCalledWith(capitalDistributorService['urls'].campaigns, params);
         expect(result).toEqual(campaignsListResponse);
     });
-
-    it('getCampaignStats fetches the campaign stats for a user', async () => {
-        const campaignStats = { totalContributions: '1000', totalClaimed: '500' };
-        const params = {
-            queryParams: { pluginAddress: '0x123', network: Network.ETHEREUM_MAINNET, userAddress: '0x456' },
-        };
-
-        requestSpy.mockResolvedValue(campaignStats);
-        const result = await capitalDistributorService.getCampaignStats(params);
-
-        expect(requestSpy).toHaveBeenCalledWith(capitalDistributorService['urls'].stats, params);
-        expect(result).toEqual(campaignStats);
-    });
 });

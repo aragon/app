@@ -23,20 +23,3 @@ export interface IGetCampaignListQueryParams extends IPaginatedRequest {
 }
 
 export interface IGetCampaignListParams extends IRequestQueryParams<IGetCampaignListQueryParams> {}
-
-export interface IGetCampaignStatsQueryParams {
-    /**
-     * Address of the plugin to fetch the campaigns stats for.
-     */
-    pluginAddress: string;
-    /**
-     * Network of the plugin to fetch the campaigns stats for.
-     */
-    network: Network;
-    /**
-     * Address of the user to fetch the stats for.
-     */
-    userAddress: string;
-}
-
-export interface IGetCampaignStatsParams extends IRequestQueryParams<IGetCampaignStatsQueryParams> {}
