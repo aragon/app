@@ -15,5 +15,5 @@ export interface ILockToVotePluginSettings extends Omit<ITokenPluginSettings, 'v
      * The minimum ratio of approvals the proposal needs to succeed. Different from supportThreshold.
      * Not currently used in the App, set to 0 by default.
      */
-    minApprovalRatio: number
+    minApprovalRatio: number;
 }
