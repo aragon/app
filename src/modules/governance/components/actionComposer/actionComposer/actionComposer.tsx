@@ -18,7 +18,8 @@ import {
     type IActionComposerInputItem,
     type IActionComposerInputProps,
 } from '../actionComposerInput';
-import { actionComposerUtils, ActionItemId } from '../actionComposerUtils';
+import { actionComposerUtils } from '../actionComposerUtils';
+import { ActionItemId } from '../actionComposerUtils.api';
 
 export interface IActionComposerProps extends Pick<IActionComposerInputProps, 'excludeActionTypes'> {
     /**
@@ -46,7 +47,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
-    const { pluginItems, pluginGroups } = actionComposerUtils.getPluginActionsFromDao(dao);
+    const { pluginItems, pluginGroups } = actionComposerUtils.getDaoPluginActions(dao);
 
     const { t } = useTranslations();
     const { open } = useDialogContext();

@@ -24,6 +24,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
     const { action, index } = props;
 
     const { setValue } = useFormContext();
+    const { data: dao } = useDao({ urlParams: { id: action.daoId } });
 
     const fieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
@@ -35,11 +36,13 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
     const tokenDecimals = asset?.token.decimals ?? 18;
     const tokenAddress = asset?.token.address ?? zeroAddress;
     const tokenName = asset?.token.name ?? 'Ether';
-    const isNativeToken = tokenAddress === zeroAddress;
 
+    const isNativeToken = tokenAddress === zeroAddress;
     const receiverAddress = addressUtils.isAddress(receiver?.address) ? receiver?.address : zeroAddress;
 
     const weiAmount = parseUnits(amount ?? '0', tokenDecimals);
+
+    const disableAssetField = action.to !== zeroAddress;
 
     useEffect(() => {
         const transferParams = [receiverAddress, weiAmount];
@@ -78,8 +81,12 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
         setValue(`${fieldName}.inputData.parameters`, processedParameters);
     }, [isNativeToken, receiverAddress, weiAmount, setValue, fieldName]);
 
-    const daoUrlParams = { id: action.daoId };
-    const { data: dao } = useDao({ urlParams: daoUrlParams });
-
-    return <TransferAssetForm sender={dao!.address} network={dao!.network} fieldPrefix={fieldName} />;
+    return (
+        <TransferAssetForm
+            sender={dao!.address}
+            network={dao!.network}
+            fieldPrefix={fieldName}
+            disableAssetField={disableAssetField}
+        />
+    );
 };

@@ -122,7 +122,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         return dropdownItems.filter((item) => !item.hidden);
     };
 
-    const { pluginComponents } = actionComposerUtils.getPluginActionsFromDao(dao);
+    const { pluginComponents } = actionComposerUtils.getDaoPluginActions(dao);
 
     const customActionComponents: Record<string, ProposalActionComponent<IProposalActionData>> = {
         ...coreCustomActionComponents,
