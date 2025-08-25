@@ -8,6 +8,7 @@ export const generateLockToVotePluginSettings = (
     ...generatePluginSettings(),
     votingMode: DaoLockToVoteVotingMode.STANDARD,
     supportThreshold: 0,
+    minApprovalRatio: 0,
     minDuration: 0,
     minParticipation: 0,
     minProposerVotingPower: '0',
