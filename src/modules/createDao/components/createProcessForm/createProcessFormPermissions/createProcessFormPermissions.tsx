@@ -25,11 +25,17 @@ export interface ICreateProcessFormPermissionsProps {
     daoId: string;
 }
 
+const compareActionSelectors = (actionOne: IProposalActionData, actionTwo: IProposalActionData) => {
+    const selectorOne = proposalActionUtils.actionToFunctionSelector(actionOne);
+    const selectorTwo = proposalActionUtils.actionToFunctionSelector(actionTwo);
+
+    return actionOne.to === actionTwo.to && selectorOne === selectorTwo;
+};
+
 export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionsProps> = (props) => {
     const { daoId } = props;
 
     const { t } = useTranslations();
-
     const { getFieldState } = useFormContext();
 
     const { ANY, SELECTED } = ProcessPermission;
@@ -44,21 +50,18 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     });
 
     const validateActions = (actions: IProposalActionData[]) => {
-        const isInvalidInList = actions.some((action) => action.inputData == null);
+        const hasInvalidActions = actions.some(({ inputData }) => inputData == null);
+        invariant(!hasInvalidActions, 'CreateProcessFormPermissions: actions with invalid inputData found in list.');
 
-        invariant(!isInvalidInList, 'CreateProcessFormPermissions: actions with invalid inputData found in list.');
-
-        const isAlreadyInList = actions.some(
-            (currentAction, index) =>
-                actions.findIndex(
-                    (actionToCheck) =>
-                        actionToCheck.to === currentAction.to &&
-                        proposalActionUtils.actionToFunctionSelector(currentAction) ===
-                            proposalActionUtils.actionToFunctionSelector(actionToCheck),
-                ) !== index,
+        const hasDuplicateActions = actions.some(
+            (action, index) => actions.findIndex((current) => compareActionSelectors(action, current)) !== index,
         );
 
-        return !isAlreadyInList || 'app.createDao.createProcessForm.permissions.permissionField.error.duplicate';
+        if (hasDuplicateActions) {
+            return 'app.createDao.createProcessForm.permissions.permissionField.error.duplicate';
+        }
+
+        return true;
     };
 
     const {
@@ -67,15 +70,10 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         remove: removePermissionSelector,
     } = useFieldArray<ICreateProcessFormData, 'permissionSelectors'>({
         name: 'permissionSelectors',
-        rules: {
-            required: processPermission === SELECTED,
-            validate: validateActions,
-        },
+        rules: { validate: validateActions },
     });
 
     const addPermissionSelector = (actions: IProposalActionData[]) => appendPermissionSelector(actions);
-
-    const removePermissionSelectorByIndex = (index: number) => removePermissionSelector(index);
 
     const { message: fieldErrorMessage } = getFieldState('permissionSelectors').error?.root ?? {};
     const fieldAlert = fieldErrorMessage ? { message: t(fieldErrorMessage), variant: 'critical' as const } : undefined;
@@ -124,7 +122,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                                 <SmartContractFunctionDataListItem.Structure
                                     key={action.id}
                                     contractAddress={action.to}
-                                    onRemove={() => removePermissionSelectorByIndex(index)}
+                                    onRemove={() => removePermissionSelector(index)}
                                     functionName={action.inputData?.function}
                                     contractName={action.inputData?.contract}
                                     functionSelector={proposalActionUtils.actionToFunctionSelector(action)}
