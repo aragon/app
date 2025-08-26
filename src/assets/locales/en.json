@@ -1130,7 +1130,7 @@
               "error": {
                 "ofac": "This address is restricted and can't be used."
               },
-              "helpText": "The address to get the payout",
+              "helpText": "The address where the payout will be sent.",
               "label": "Recipient"
             }
           },

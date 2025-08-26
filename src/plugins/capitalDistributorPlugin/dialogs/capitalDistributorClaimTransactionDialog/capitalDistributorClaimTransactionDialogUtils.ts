@@ -12,7 +12,7 @@ class CapitalDistributorClaimTransactionDialogUtils {
         const auxData = this.buildClaimAuxData(campaign);
         const data = encodeFunctionData({
             abi: capitalDistributorAbi,
-            functionName: 'claimCampaignPayout',
+            functionName: 'claimCampaignPayoutToAddress',
             args: [campaignId, recipient as Hex, auxData, zeroHash],
         });
 

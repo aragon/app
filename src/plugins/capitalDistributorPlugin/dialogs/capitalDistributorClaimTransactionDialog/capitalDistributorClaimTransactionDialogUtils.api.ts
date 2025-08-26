@@ -6,7 +6,7 @@ export interface IBuildClaimTransactionParams {
      */
     campaign: ICampaign;
     /**
-     * The address of the recipient.
+     * The address where the payout will be sent.
      */
     recipient: string;
     /**
