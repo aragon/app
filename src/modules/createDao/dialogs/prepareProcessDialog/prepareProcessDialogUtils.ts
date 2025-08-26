@@ -53,16 +53,11 @@ class PrepareProcessDialogUtils {
         const { processor: processorMetadata, plugins: pluginsMetadata } = processMetadata;
         const { pluginSetupProcessor, conditionFactory } = networkDefinitions[dao.network].addresses;
 
-        const needsExecuteCondition = values.permissions === ProcessPermission.SELECTED;
-        const conditionDeployTransaction = needsExecuteCondition
-            ? [
-                  {
-                      to: conditionFactory,
-                      value: BigInt(0),
-                      data: this.buildDeployExecuteSelectorConditionData({ dao, permissionSelectors }),
-                  },
-              ]
-            : [];
+        const deploySelectorConditionData = this.buildDeployExecuteSelectorConditionData({ dao, permissionSelectors });
+        const conditionDeployTransaction =
+            values.permissions === ProcessPermission.SELECTED
+                ? [{ to: conditionFactory, value: BigInt(0), data: deploySelectorConditionData }]
+                : [];
 
         const processorInstallAction =
             processorMetadata != null ? this.buildPrepareInstallProcessorActionData(processorMetadata, dao) : undefined;
@@ -106,12 +101,12 @@ class PrepareProcessDialogUtils {
     getExecuteSelectorConditionAddress = (txReceipt: TransactionReceipt): Hex | undefined => {
         const selectorLogs = parseEventLogs({
             abi: executeSelectorConditionAbi,
-            eventName: 'SelectorAllowed',
+            eventName: 'ExecuteSelectorConditionDeployed',
             logs: txReceipt.logs,
             strict: false,
         });
 
-        return selectorLogs[0]?.address ?? undefined;
+        return selectorLogs[0]?.args.newContract;
     };
 
     private preparePluginMetadata = (plugin: ISetupBodyFormNew) => {
@@ -177,9 +172,8 @@ class PrepareProcessDialogUtils {
     private buildDeployExecuteSelectorConditionData = (params: IBuildDeployExecuteSelectorConditionDataParams) => {
         const { dao, permissionSelectors } = params;
 
-        const groupedByAddress = Object.groupBy(permissionSelectors, (selector) => selector.to);
-
-        const selectorTargets = Object.entries(groupedByAddress).map(([address, actions = []]) => ({
+        const groupedSelectors = Object.groupBy(permissionSelectors, (selector) => selector.to);
+        const selectorTargets = Object.entries(groupedSelectors).map(([address, actions = []]) => ({
             where: address as Hex,
             selectors: actions.map((action) => proposalActionUtils.actionToFunctionSelector(action)) as Hex[],
         }));
