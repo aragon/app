@@ -101,15 +101,20 @@ class ProposalActionUtils {
         const { inputData, data } = action;
         const isNativeTransfer = data === '0x';
 
-        return inputData == null || isNativeTransfer
-            ? undefined
-            : toFunctionSelector({
-                  type: 'function',
-                  name: inputData.function,
-                  inputs: inputData.parameters,
-                  outputs: [],
-                  stateMutability: inputData.stateMutability as AbiStateMutability,
-              });
+        if (inputData == null || isNativeTransfer) {
+            return undefined;
+        }
+
+        const { function: actionFunction, parameters, stateMutability } = inputData;
+        const functionSelector = toFunctionSelector({
+            type: 'function',
+            name: actionFunction,
+            inputs: parameters,
+            outputs: [],
+            stateMutability: stateMutability as AbiStateMutability,
+        });
+
+        return functionSelector;
     };
 }
 
