@@ -17,12 +17,12 @@ import { proposalActionUtils } from '../../utils/proposalActionUtils';
 import type { IActionComposerInputItem } from './actionComposerInput';
 import {
     ActionItemId,
-    IGetActionItemsParams,
-    IGetNativeActionGroupsParams,
-    IGetNativeActionItemsParams,
+    type IGetActionItemsParams,
     type IGetAllowedActionBaseParams,
     type IGetAllowedActionItemsParams,
     type IGetCustomActionParams,
+    type IGetNativeActionGroupsParams,
+    type IGetNativeActionItemsParams,
 } from './actionComposerUtils.api';
 
 class ActionComposerUtils {

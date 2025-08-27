@@ -70,7 +70,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
         const asset: IAsset = { token: tokenAsset, amount: tokenBalance };
 
         setValue(`${fieldName}.asset`, asset);
-    }, [token, balance, tokenAddress, tokenDecimals, setValue, fieldName]);
+    }, [token, balance, tokenAddress, tokenDecimals, setValue, fieldName, dao]);
 
     useEffect(() => {
         const transferParams = [receiverAddress, weiAmount];
