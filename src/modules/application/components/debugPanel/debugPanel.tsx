@@ -46,7 +46,11 @@ export const DebugPanel: React.FC<IDebugPanelProps> = () => {
     return (
         <>
             <Button
-                className="fixed right-4.5 bottom-18"
+                className={classNames(
+                    'fixed right-4.5',
+                    { 'bottom-4.5': process.env.NEXT_PUBLIC_ENV !== 'local' },
+                    { 'bottom-18': process.env.NEXT_PUBLIC_ENV === 'local' },
+                )}
                 variant="secondary"
                 iconLeft={IconType.SETTINGS}
                 onClick={togglePanel}
