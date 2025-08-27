@@ -1,6 +1,5 @@
 import type { IAsset } from '@/modules/finance/api/financeService';
 import { type ITransferAssetFormData, TransferAssetForm } from '@/modules/finance/components/transferAssetForm';
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -12,8 +11,7 @@ import { encodeFunctionData, erc20Abi, formatUnits, type Hex, parseUnits, zeroAd
 import { useReadContract } from 'wagmi';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 
-export interface ITransferAssetActionProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, string>> {}
+export interface ITransferAssetActionProps extends IProposalActionComponentProps<IProposalActionData> {}
 
 const erc20TransferAbi = {
     type: 'function',
