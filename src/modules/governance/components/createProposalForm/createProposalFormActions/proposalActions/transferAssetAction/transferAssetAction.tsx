@@ -35,7 +35,8 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
     const fieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
 
-    // Fetch the token info when the target of the action is set as the token address to correctly initialize the form data
+    // Fetch the token info when the target of the action is set to an ERC-20 token address to correctly initialize the
+    // form data with the ERC-20 token data and balance
     const isErc20Transfer = action.to !== zeroAddress;
     const { id: chainId } = networkDefinitions[dao!.network];
     const { data: token } = useToken({ address: action.to as Hex, chainId, enabled: isErc20Transfer });
