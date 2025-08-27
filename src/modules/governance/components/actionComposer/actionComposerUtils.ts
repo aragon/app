@@ -299,6 +299,7 @@ class ActionComposerUtils {
         icon: IconType.APP_TRANSACTIONS,
         defaultValue: this.buildDefaultActionTransfer(token),
         groupId: token,
+        info: token != null ? this.transferSelector : undefined,
     });
 
     private buildDefaultActionPluginMetadata = (
