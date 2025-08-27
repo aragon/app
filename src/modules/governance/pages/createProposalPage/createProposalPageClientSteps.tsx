@@ -2,9 +2,10 @@
 
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IWizardStepperStep } from '@/shared/components/wizards/wizard';
-import { WizardPage } from '@/shared/components/wizards/wizardPage';
+import { type IRenderNextButtonProps, WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { Dropdown } from '@aragon/gov-ui-kit';
 import { useWatch } from 'react-hook-form';
 import { CreateProposalForm, type ICreateProposalFormData } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -38,6 +39,21 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
     const slotId = GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM;
     const hideSettingsStep = pluginRegistryUtils.getSlotComponent({ slotId, pluginId }) == null;
 
+    const renderNextButton = ({ submitLabel, submitVariant, triggerSubmit }: IRenderNextButtonProps) => (
+        <Dropdown.Container size="lg" label={submitLabel} variant={submitVariant}>
+            <Dropdown.Item
+                onClick={() => {
+                    console.log('OPEN DIALOG');
+                }}
+            >
+                {t('app.governance.createProposalPage.createProposalPageClientSteps.simulate')}
+            </Dropdown.Item>
+            <Dropdown.Item onClick={triggerSubmit}>
+                {t('app.governance.createProposalPage.createProposalPageClientSteps.skipSimulation')}
+            </Dropdown.Item>
+        </Dropdown.Container>
+    );
+
     return (
         <>
             <WizardPage.Step
@@ -55,6 +71,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
                     `app.governance.createProposalPage.steps.${CreateProposalWizardStep.ACTIONS}.description`,
                 )}
                 hidden={addActions === false}
+                renderNextButton={renderNextButton}
                 {...actionsStep}
             >
                 <CreateProposalForm.Actions daoId={daoId} pluginAddress={pluginAddress} />

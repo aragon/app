@@ -735,6 +735,10 @@
         }
       },
       "createProposalPage": {
+        "createProposalPageClientSteps": {
+          "simulate": "Simulate actions",
+          "skipSimulation": "Skip simulation"
+        },
         "finalStep": "Publish proposal",
         "steps": {
           "ACTIONS": {
@@ -755,6 +759,7 @@
         },
         "submitLabel": "Publish proposal"
       },
+
       "daoMemberDetailsPage": {
         "aside": {
           "details": {
@@ -947,6 +952,14 @@
           "description": "Select the proposal type you want to create.",
           "title": "Create proposal"
         }
+      },
+      "simulateActionsDialog": {
+        "action": {
+          "cancel": "Cancel",
+          "continue": "Continue",
+          "continueAnyway": "Continue anyway"
+        },
+        "title": "Simulate actions"
       },
       "verifySmartContractDialog": {
         "action": {
