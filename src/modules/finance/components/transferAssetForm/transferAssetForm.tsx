@@ -1,4 +1,4 @@
-import { AssetInput, IAssetInputProps, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
+import { AssetInput, type IAssetInputFormData, type IAssetInputProps } from '@/modules/finance/components/assetInput';
 import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';

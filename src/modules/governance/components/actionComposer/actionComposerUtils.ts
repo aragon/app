@@ -297,9 +297,8 @@ class ActionComposerUtils {
         id: ProposalActionType.TRANSFER,
         name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.TRANSFER}`),
         icon: IconType.APP_TRANSACTIONS,
-        defaultValue: this.buildDefaultActionTransfer(),
+        defaultValue: this.buildDefaultActionTransfer(token),
         groupId: token,
-        meta: token as undefined,
     });
 
     private buildDefaultActionPluginMetadata = (
@@ -373,10 +372,10 @@ class ActionComposerUtils {
         },
     });
 
-    private buildDefaultActionTransfer = (): IProposalAction => ({
+    private buildDefaultActionTransfer = (token?: string): IProposalAction => ({
         type: ProposalActionType.TRANSFER,
         from: '',
-        to: zeroAddress,
+        to: token ?? zeroAddress,
         data: '',
         value: '0',
         inputData: { function: 'transfer', contract: 'Ether', parameters: [] },

@@ -1,6 +1,6 @@
-import { IAsset } from '@/modules/finance/api/financeService';
+import type { IAsset } from '@/modules/finance/api/financeService';
 import { type ITransferAssetFormData, TransferAssetForm } from '@/modules/finance/components/transferAssetForm';
-import { IProposalAction } from '@/modules/governance/api/governanceService';
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -8,7 +8,8 @@ import { useToken } from '@/shared/hooks/useToken';
 import { addressUtils, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { encodeFunctionData, formatUnits, Hex, parseUnits, zeroAddress } from 'viem';
+import { encodeFunctionData, erc20Abi, formatUnits, type Hex, parseUnits, zeroAddress } from 'viem';
+import { useReadContract } from 'wagmi';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 
 export interface ITransferAssetActionProps
@@ -35,17 +36,23 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
 
     // Fetch the token info when the target of the action is set as the token address to correctly initialize the form data
-    // TODO: fetch token info from the backend?
-    const isErc20Transfer = action.meta != null;
+    const isErc20Transfer = action.to !== zeroAddress;
     const { id: chainId } = networkDefinitions[dao!.network];
-    const { data: token } = useToken({ address: action.meta as Hex, chainId, enabled: isErc20Transfer });
+    const { data: token } = useToken({ address: action.to as Hex, chainId, enabled: isErc20Transfer });
+    const { data: balance } = useReadContract({
+        abi: erc20Abi,
+        address: action.to as Hex,
+        functionName: 'balanceOf',
+        args: [dao!.address as Hex],
+        chainId,
+    });
 
     const receiver = useWatch<Record<string, ITransferAssetFormData['receiver']>>({ name: `${fieldName}.receiver` });
     const asset = useWatch<Record<string, ITransferAssetFormData['asset']>>({ name: `${fieldName}.asset` });
     const amount = useWatch<Record<string, ITransferAssetFormData['amount']>>({ name: `${fieldName}.amount` });
 
     const tokenDecimals = asset?.token.decimals ?? 18;
-    const tokenAddress = asset?.token.address ?? zeroAddress;
+    const tokenAddress = asset?.token.address ?? action.to;
     const tokenName = asset?.token.name ?? 'Ether';
 
     const isNativeToken = tokenAddress === zeroAddress;
@@ -54,15 +61,16 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
     const weiAmount = parseUnits(amount ?? '0', tokenDecimals);
 
     useEffect(() => {
-        if (token == null) {
+        if (token == null || balance == null) {
             return;
         }
 
-        const tokenAsset = { ...token, address: action.to, network: dao!.network, logo: '', priceUsd: '0' };
-        const asset: IAsset = { token: tokenAsset, amount: '0' };
+        const tokenAsset = { ...token, address: tokenAddress, network: dao!.network, logo: '', priceUsd: '0' };
+        const tokenBalance = formatUnits(balance, tokenDecimals);
+        const asset: IAsset = { token: tokenAsset, amount: tokenBalance };
 
         setValue(`${fieldName}.asset`, asset);
-    }, [token, setValue, fieldName]);
+    }, [token, balance, tokenAddress, tokenDecimals, setValue, fieldName]);
 
     useEffect(() => {
         const transferParams = [receiverAddress, weiAmount];
