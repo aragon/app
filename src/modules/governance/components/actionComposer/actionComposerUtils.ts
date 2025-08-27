@@ -26,6 +26,8 @@ import {
 } from './actionComposerUtils.api';
 
 class ActionComposerUtils {
+    private transferSelector = '0xa9059cbb';
+
     getDaoPluginActions = (dao?: IDao) => {
         const { plugins = [] } = dao ?? {};
         const pluginActions = plugins.map((plugin) => {
@@ -58,15 +60,15 @@ class ActionComposerUtils {
     };
 
     getAllowedActionItems = (params: IGetAllowedActionItemsParams): IActionComposerInputItem[] => {
-        const { allowedActions } = params;
-        const [transferItem, ...nativeActionItems] = this.getNativeActionItems(params).map(this.infoToSelectorMapper);
+        const { t, allowedActions } = params;
+        const nativeActionItems = this.getNativeActionItems(params).map(this.infoToSelectorMapper);
 
         const actionItems: IActionComposerInputItem[] = allowedActions.map((action, actionIndex) => {
             const { selector, target, decoded } = action;
 
-            // Return transfer item for native transfers (ERC20 transfers shown but only native will work)
-            if (selector === null) {
-                return transferItem;
+            // Return transfer item for native or erc-20 transfers
+            if (selector === null || selector === this.transferSelector) {
+                return this.buildTransferNativeAction(t, target);
             }
 
             // Use native item if available to enable proper basic view
@@ -96,7 +98,7 @@ class ActionComposerUtils {
         const { t, dao, abis, nativeGroups } = params;
 
         const completeNativeGroups = this.getNativeActionGroups({ dao, t, nativeGroups });
-        const completeCustomGroups = this.getCustomActionGroups({ dao, t, abis });
+        const completeCustomGroups = abis.map(this.buildCustomActionGroup);
 
         const nativeGroupIds = new Set(
             [...completeNativeGroups.map((group) => group.id), dao?.address].filter(Boolean),
@@ -224,19 +226,14 @@ class ActionComposerUtils {
     });
 
     private getFunctionSelector = (item: IActionComposerInputItem) => {
-        if (item.defaultValue?.inputData == null || item.id === ProposalActionType.TRANSFER) {
+        const { defaultValue, id, info } = item;
+
+        if (defaultValue?.inputData == null || id === ProposalActionType.TRANSFER) {
             return undefined;
         }
 
-        if (item.info) {
-            return item.info;
-        }
-
-        return proposalActionUtils.actionToFunctionSelector(item.defaultValue);
+        return info ?? proposalActionUtils.actionToFunctionSelector(defaultValue);
     };
-
-    private getCustomActionGroups = ({ abis }: IGetCustomActionParams): IAutocompleteInputGroup[] =>
-        abis.map(this.buildCustomActionGroup);
 
     private buildCustomActionGroup = ({ address, name }: Pick<ISmartContractAbi, 'address' | 'name'>) => ({
         id: address,
@@ -296,11 +293,13 @@ class ActionComposerUtils {
         return [transferAction, metadataUpdateAction, ...nativeItems];
     };
 
-    private buildTransferNativeAction = (t: TranslationFunction, tokenAddress?: string) => ({
+    private buildTransferNativeAction = (t: TranslationFunction, token?: string) => ({
         id: ProposalActionType.TRANSFER,
         name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.TRANSFER}`),
         icon: IconType.APP_TRANSACTIONS,
-        defaultValue: this.buildDefaultActionTransfer(tokenAddress),
+        defaultValue: this.buildDefaultActionTransfer(),
+        groupId: token,
+        meta: token as undefined,
     });
 
     private buildDefaultActionPluginMetadata = (
@@ -374,10 +373,10 @@ class ActionComposerUtils {
         },
     });
 
-    private buildDefaultActionTransfer = (tokenAddress?: string): IProposalAction => ({
+    private buildDefaultActionTransfer = (): IProposalAction => ({
         type: ProposalActionType.TRANSFER,
         from: '',
-        to: tokenAddress ?? zeroAddress,
+        to: zeroAddress,
         data: '',
         value: '0',
         inputData: { function: 'transfer', contract: 'Ether', parameters: [] },

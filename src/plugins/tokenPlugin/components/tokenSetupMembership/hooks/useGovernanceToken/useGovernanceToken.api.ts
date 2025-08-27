@@ -1,4 +1,4 @@
-import type { IUseTokenParams, IUseTokenResult } from '../useToken';
+import type { IUseTokenParams, IUseTokenResult } from '@/shared/hooks/useToken';
 
 export interface IUseGovernanceTokenParams extends IUseTokenParams {}
 

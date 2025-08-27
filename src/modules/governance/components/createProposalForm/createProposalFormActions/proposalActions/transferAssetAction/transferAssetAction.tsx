@@ -1,13 +1,18 @@
+import { IAsset } from '@/modules/finance/api/financeService';
 import { type ITransferAssetFormData, TransferAssetForm } from '@/modules/finance/components/transferAssetForm';
+import { IProposalAction } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { useToken } from '@/shared/hooks/useToken';
 import { addressUtils, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { encodeFunctionData, formatUnits, parseUnits, zeroAddress } from 'viem';
+import { encodeFunctionData, formatUnits, Hex, parseUnits, zeroAddress } from 'viem';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 
-export interface ITransferAssetActionProps extends IProposalActionComponentProps<IProposalActionData> {}
+export interface ITransferAssetActionProps
+    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, string>> {}
 
 const erc20TransferAbi = {
     type: 'function',
@@ -29,6 +34,12 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
     const fieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
 
+    // Fetch the token info when the target of the action is set as the token address to correctly initialize the form data
+    // TODO: fetch token info from the backend?
+    const isErc20Transfer = action.meta != null;
+    const { id: chainId } = networkDefinitions[dao!.network];
+    const { data: token } = useToken({ address: action.meta as Hex, chainId, enabled: isErc20Transfer });
+
     const receiver = useWatch<Record<string, ITransferAssetFormData['receiver']>>({ name: `${fieldName}.receiver` });
     const asset = useWatch<Record<string, ITransferAssetFormData['asset']>>({ name: `${fieldName}.asset` });
     const amount = useWatch<Record<string, ITransferAssetFormData['amount']>>({ name: `${fieldName}.amount` });
@@ -42,7 +53,16 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
 
     const weiAmount = parseUnits(amount ?? '0', tokenDecimals);
 
-    const disableAssetField = action.to !== zeroAddress;
+    useEffect(() => {
+        if (token == null) {
+            return;
+        }
+
+        const tokenAsset = { ...token, address: action.to, network: dao!.network, logo: '', priceUsd: '0' };
+        const asset: IAsset = { token: tokenAsset, amount: '0' };
+
+        setValue(`${fieldName}.asset`, asset);
+    }, [token, setValue, fieldName]);
 
     useEffect(() => {
         const transferParams = [receiverAddress, weiAmount];
@@ -86,7 +106,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
             sender={dao!.address}
             network={dao!.network}
             fieldPrefix={fieldName}
-            disableAssetField={disableAssetField}
+            disableAssetField={isErc20Transfer}
         />
     );
 };
