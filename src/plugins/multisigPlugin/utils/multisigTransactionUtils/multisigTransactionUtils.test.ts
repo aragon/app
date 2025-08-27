@@ -89,7 +89,8 @@ describe('multisigTransaction utils', () => {
     describe('buildVoteData', () => {
         it('correctly encodes vote data with the given proposal index', () => {
             const proposalIndex = '3';
-            multisigTransactionUtils.buildVoteData({ proposalIndex });
+            const vote = { value: undefined };
+            multisigTransactionUtils.buildVoteData({ proposalIndex, vote });
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: multisigPluginAbi,
                 functionName: 'approve',

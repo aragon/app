@@ -8,7 +8,7 @@ export const lockToVotePlugin: IPluginInfo = {
     installVersion: { release: 1, build: 1, releaseNotes: '', description: '' },
     repositoryAddresses: {
         [Network.ETHEREUM_MAINNET]: '0x0000000000000000000000000000000000000000',
-        [Network.ETHEREUM_SEPOLIA]: '0x0000000000000000000000000000000000000000',
+        [Network.ETHEREUM_SEPOLIA]: '0x63C801B187B3312550e19E5E7E36713a25cec267',
         [Network.POLYGON_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.BASE_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.ARBITRUM_MAINNET]: '0x0000000000000000000000000000000000000000',
@@ -18,5 +18,9 @@ export const lockToVotePlugin: IPluginInfo = {
         [Network.OPTIMISM_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.CORN_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.CHILIZ_MAINNET]: '0x0000000000000000000000000000000000000000',
+    },
+    setup: {
+        nameKey: 'app.plugins.lockToVote.meta.setup.name',
+        descriptionKey: 'app.plugins.lockToVote.meta.setup.description',
     },
 };

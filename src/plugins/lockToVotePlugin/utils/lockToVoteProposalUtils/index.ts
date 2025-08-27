@@ -1,0 +1,1 @@
+export { lockToVoteProposalUtils } from './lockToVoteProposalUtils';

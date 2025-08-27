@@ -9,8 +9,8 @@ import type { ITokenMember, ITokenPluginSettings } from '@/plugins/tokenPlugin/t
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, formatterUtils, NumberFormat, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Button, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
+import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
@@ -33,8 +33,6 @@ export interface ITokenWrapFormProps {
 
 export interface ITokenWrapFormData extends IAssetInputFormData {}
 
-const valuePercentages = ['0', '25', '50', '75', '100'];
-
 export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     const { plugin, daoId, underlyingToken } = props;
 
@@ -46,8 +44,6 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
 
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-
-    const [percentageValue, setPercentageValue] = useState<string>('100');
 
     const { result: isConnected, check: walletGuard } = useConnectedWalletGuard();
 
@@ -127,30 +123,6 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         void refetchMember();
     };
 
-    const updateAmountField = useCallback(
-        (value?: string) => {
-            if (unwrappedBalance == null || value == null) {
-                return;
-            }
-
-            const processedValue = (unwrappedBalance.value * BigInt(value)) / BigInt(100);
-            const parsedValue = formatUnits(processedValue, decimals);
-            setValue('amount', parsedValue);
-        },
-        [unwrappedBalance, decimals, setValue],
-    );
-
-    const handlePercentageChange = useCallback(
-        (value = '') => {
-            updateAmountField(value);
-            setPercentageValue(value);
-        },
-        [updateAmountField],
-    );
-
-    // Update amount field and percentage value to 100% of user unwrapped balance on user balance change
-    useEffect(() => handlePercentageChange('100'), [handlePercentageChange]);
-
     // Initialize asset field after fetching unwrapped balance
     useEffect(() => {
         if (unwrappedBalanceStatus === 'success') {
@@ -176,25 +148,14 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                 </p>
                 <div className="flex flex-col gap-3">
                     <AssetInput
-                        onAmountChange={() => setPercentageValue('')}
                         disableAssetField={true}
                         hideMax={true}
                         hideAmountLabel={true}
+                        percentageSelection={{
+                            totalBalance: unwrappedBalance?.value,
+                            tokenDecimals: decimals,
+                        }}
                     />
-                    <ToggleGroup
-                        isMultiSelect={false}
-                        value={percentageValue}
-                        onChange={handlePercentageChange}
-                        variant="space-between"
-                    >
-                        {valuePercentages.map((value) => (
-                            <Toggle
-                                key={value}
-                                value={value}
-                                label={t(`app.plugins.token.tokenWrapForm.percentage.${value}`)}
-                            />
-                        ))}
-                    </ToggleGroup>
                 </div>
                 <div className="flex flex-col gap-3">
                     <Button

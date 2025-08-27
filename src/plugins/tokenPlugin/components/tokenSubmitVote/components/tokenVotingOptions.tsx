@@ -16,10 +16,14 @@ export interface ITokenVotingOptionsProps {
      * Callback to set the selected vote option.
      */
     onChange: (value?: string) => void;
+    /**
+     * Disables the options when set to true.
+     */
+    disableOptions?: boolean;
 }
 
 export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (props) => {
-    const { isVeto, value: selectedValue, onChange } = props;
+    const { isVeto, value: selectedValue, onChange, disableOptions } = props;
     const { t } = useTranslations();
     const id = useRandomId();
 
@@ -67,6 +71,7 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (props) =>
                         isSelected={value === selectedValue}
                         variant={variant}
                         description={description}
+                        disabled={disableOptions}
                     />
                 ))}
             </ToggleGroup>

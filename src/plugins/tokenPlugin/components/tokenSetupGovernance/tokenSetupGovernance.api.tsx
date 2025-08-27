@@ -8,7 +8,7 @@ export interface ITokenSetupGovernanceMembershipSettings
 
 export interface ITokenSetupGovernanceProps extends Omit<IPluginSetupGovernanceParams, 'membershipSettings'> {
     /**
-     * Membership settings of the multisig body.
+     * Membership settings of the token voting body.
      */
     membershipSettings: ITokenSetupGovernanceMembershipSettings;
 }

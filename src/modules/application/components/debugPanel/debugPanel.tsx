@@ -19,10 +19,16 @@ export const DebugPanel: React.FC<IDebugPanelProps> = () => {
 
     const togglePanel = () => setIsOpen((current) => !current);
 
-    useEffect(
-        () => registerControl({ name: 'highlightSlots', type: 'boolean', label: 'Highlight slot components' }),
-        [registerControl],
-    );
+    useEffect(() => {
+        registerControl({ name: 'highlightSlots', type: 'boolean', label: 'Highlight slot components' });
+        registerControl({
+            name: 'enableAllPlugins',
+            type: 'boolean',
+            label: 'Enable all plugins on body creation',
+            value: process.env.NEXT_PUBLIC_FEATURE_ENABLE_ALL_PLUGINS,
+            group: 'Governance designer',
+        });
+    }, [registerControl]);
 
     useEffect(() => {
         const handleMouseDown = (event: MouseEvent) => {
@@ -40,7 +46,11 @@ export const DebugPanel: React.FC<IDebugPanelProps> = () => {
     return (
         <>
             <Button
-                className="fixed right-5 bottom-5"
+                className={classNames(
+                    'fixed right-4.5',
+                    { 'bottom-4.5': process.env.NEXT_PUBLIC_ENV !== 'local' },
+                    { 'bottom-18': process.env.NEXT_PUBLIC_ENV === 'local' },
+                )}
                 variant="secondary"
                 iconLeft={IconType.SETTINGS}
                 onClick={togglePanel}

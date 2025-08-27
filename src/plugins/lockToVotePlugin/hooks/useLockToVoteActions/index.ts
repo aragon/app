@@ -1,0 +1,1 @@
+export { useLockToVoteActions } from './useLockToVoteActions';
