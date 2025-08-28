@@ -32,6 +32,7 @@ export interface ICreateProposalFormActionsProps {
 
 const coreCustomActionComponents = {
     [ProposalActionType.TRANSFER]: TransferAssetAction,
+    [actionComposerUtils.transferActionLocked]: TransferAssetAction,
     [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction,
     [ProposalActionType.METADATA_PLUGIN_UPDATE]: UpdatePluginMetadataAction,
 } as unknown as Record<string, ProposalActionComponent<IProposalActionData>>;

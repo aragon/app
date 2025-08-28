@@ -1,5 +1,6 @@
 import type { IAsset } from '@/modules/finance/api/financeService';
 import { type ITransferAssetFormData, TransferAssetForm } from '@/modules/finance/components/transferAssetForm';
+import { actionComposerUtils } from '@/modules/governance/components/actionComposer';
 import { useDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -33,11 +34,11 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
     const fieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
 
-    // Fetch the token info when the target of the action is set to an ERC-20 token address to correctly initialize the
-    // form data with the ERC-20 token data and balance
-    const isErc20Transfer = action.to !== zeroAddress;
+    // Fetch the token info and the balance of the DAO using the "to" attribute set on the action when the action type
+    // is transferActionLocked to correctly initialize the form data and disable the token selection.
+    const disableTokenSelection = action.type === actionComposerUtils.transferActionLocked;
     const { id: chainId } = networkDefinitions[dao!.network];
-    const { data: token } = useToken({ address: action.to as Hex, chainId, enabled: isErc20Transfer });
+    const { data: token } = useToken({ address: action.to as Hex, chainId, enabled: disableTokenSelection });
     const { data: balance } = useReadContract({
         abi: erc20Abi,
         address: action.to as Hex,
@@ -113,7 +114,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
             sender={dao!.address}
             network={dao!.network}
             fieldPrefix={fieldName}
-            disableAssetField={isErc20Transfer}
+            disableAssetField={disableTokenSelection}
         />
     );
 };

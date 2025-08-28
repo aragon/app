@@ -26,6 +26,10 @@ import {
 } from './actionComposerUtils.api';
 
 class ActionComposerUtils {
+    // The TransferActionLocked is a UI-only variant of the TransferAction which locks the token field to the one set as
+    // the "to" attribute of the action. It is used to display the native transfer UI on ERC-20 transfer actions.
+    transferActionLocked = 'TransferActionLocked';
+
     private transferSelector = '0xa9059cbb';
 
     getDaoPluginActions = (dao?: IDao) => {
@@ -374,7 +378,7 @@ class ActionComposerUtils {
     });
 
     private buildDefaultActionTransfer = (token?: string): IProposalAction => ({
-        type: ProposalActionType.TRANSFER,
+        type: token != null ? this.transferActionLocked : ProposalActionType.TRANSFER,
         from: '',
         to: token ?? zeroAddress,
         data: '',
