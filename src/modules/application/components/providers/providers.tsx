@@ -10,6 +10,7 @@ import { Link } from '@/shared/components/link';
 import { TranslationsProvider } from '@/shared/components/translationsProvider';
 import type { Translations } from '@/shared/utils/translationsUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { HydrationBoundary, type DehydratedState } from '@tanstack/react-query';
 import { type ReactNode } from 'react';
 import { type State } from 'wagmi';
 import { wagmiConfig } from '../../constants/wagmi';
@@ -27,6 +28,10 @@ export interface IProvidersProps {
      */
     wagmiInitialState?: State;
     /**
+     * Dehydrated state for the react-query provider.
+     */
+    dehydratedState?: DehydratedState;
+    /**
      * Children of the component.
      */
     children?: ReactNode;
@@ -35,7 +40,7 @@ export interface IProvidersProps {
 const coreProviderValues = { Link: Link, Img: Image };
 
 export const Providers: React.FC<IProvidersProps> = (props) => {
-    const { translations, wagmiInitialState, children } = props;
+    const { translations, wagmiInitialState, dehydratedState, children } = props;
 
     const queryClient = queryClientUtils.getQueryClient();
 
@@ -53,10 +58,12 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
                         queryClient={queryClient}
                         coreProviderValues={coreProviderValues}
                     >
-                        <DialogProvider>
-                            {children}
-                            <DialogRoot dialogs={providersDialogs} />
-                        </DialogProvider>
+                        <HydrationBoundary state={dehydratedState}>
+                            <DialogProvider>
+                                {children}
+                                <DialogRoot dialogs={providersDialogs} />
+                            </DialogProvider>
+                        </HydrationBoundary>
                     </GukModulesProvider>
                 </BlockNavigationContextProvider>
             </TranslationsProvider>

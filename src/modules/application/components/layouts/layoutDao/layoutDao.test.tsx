@@ -86,7 +86,7 @@ describe('<LayoutDao /> component', () => {
         fetchQuerySpy.mockRejectedValue('error');
 
         render(await createTestComponent());
-        const errorLink = screen.getByRole('link', { name: /layoutDao.notFound.action/ });
+        const errorLink = screen.getByRole('link', { name: /link.explore/ });
         expect(errorLink).toBeInTheDocument();
         expect(errorLink.getAttribute('href')).toEqual(`/`);
     });

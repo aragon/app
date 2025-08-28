@@ -16,7 +16,7 @@ export interface ICapitalDistributorCampaignListProps {
     /**
      * Initial parameters for the campaign list query.
      */
-    initialParams?: IGetCampaignListParams;
+    initialParams: IGetCampaignListParams;
 }
 
 export const CapitalDistributorCampaignList: React.FC<ICapitalDistributorCampaignListProps> = (props) => {
@@ -29,7 +29,7 @@ export const CapitalDistributorCampaignList: React.FC<ICapitalDistributorCampaig
 
     const handleToggleChange = (value?: string) => (value ? setCampaignFilter(value as CampaignStatus) : undefined);
 
-    const campaignQueryParams = { ...initialParams?.queryParams, memberAddress: address!, status: campaignFilter };
+    const campaignQueryParams = { ...initialParams.queryParams, userAddress: address!, status: campaignFilter };
     const {
         data: campaignData,
         fetchNextPage,
@@ -85,7 +85,11 @@ export const CapitalDistributorCampaignList: React.FC<ICapitalDistributorCampaig
                     SkeletonElement={CapitalDistributorCampaignListItemSkeleton}
                 >
                     {campaignList?.map((campaign) => (
-                        <CapitalDistributorCampaignListItemStructure key={campaign.id} campaign={campaign} dao={dao} />
+                        <CapitalDistributorCampaignListItemStructure
+                            key={campaign.campaignId}
+                            campaign={campaign}
+                            dao={dao}
+                        />
                     ))}
                 </DataListContainer>
                 <DataListPagination />

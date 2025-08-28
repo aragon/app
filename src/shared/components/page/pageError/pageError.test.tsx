@@ -10,44 +10,49 @@ describe('<Page.Error /> component', () => {
     });
 
     const createTestComponent = (props?: Partial<IPageErrorProps>) => {
-        const completeProps: IPageErrorProps = {
-            error: null,
-            actionLink: '',
-            notFoundNamespace: '',
-            ...props,
-        };
+        const completeProps: IPageErrorProps = { ...props };
 
         return <PageError {...completeProps} />;
     };
 
-    it('renders a generic error but uses the specified label for primary action when error is not a not-found error', () => {
+    it('renders a generic error with the specified action link', () => {
         const actionLink = '/explore';
-        const notFoundNamespace = 'app.governance.memberDetailsPage';
-        isNotFoundErrorSpy.mockReturnValue(false);
+        const errorNamespace = 'app.governance.memberDetailsPage';
 
-        render(createTestComponent({ actionLink, notFoundNamespace, error: 'error' }));
+        render(createTestComponent({ actionLink, errorNamespace, error: 'error' }));
+
         expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
         expect(screen.getByText(/errorFeedback.description/)).toBeInTheDocument();
         expect(screen.getByText(/errorFeedback.link.report/)).toBeInTheDocument();
 
-        const customLink = screen.getByRole('link', { name: `${notFoundNamespace}.notFound.action` });
+        const customLink = screen.getByRole('link', { name: `${errorNamespace}.action` });
         expect(customLink).toBeInTheDocument();
         expect(customLink.getAttribute('href')).toEqual(actionLink);
     });
 
-    it('renders the not-found specific strings without the report button when error is a not-found error', () => {
+    it('renders a not-found feedback when the error is a not-found error', () => {
         const actionLink = '/proposals';
-        const notFoundNamespace = 'app.governance.proposalDetailsPage';
+        const errorNamespace = 'app.governance.proposalDetailsPage';
         isNotFoundErrorSpy.mockReturnValue(true);
 
-        render(createTestComponent({ actionLink, notFoundNamespace, error: '404-error' }));
-        expect(screen.getByText(`${notFoundNamespace}.notFound.title`)).toBeInTheDocument();
-        expect(screen.getByText(`${notFoundNamespace}.notFound.description`)).toBeInTheDocument();
+        render(createTestComponent({ actionLink, errorNamespace }));
+        expect(screen.getByText(`${errorNamespace}.notFound.title`)).toBeInTheDocument();
+        expect(screen.getByText(`${errorNamespace}.notFound.description`)).toBeInTheDocument();
 
-        const customLink = screen.getByRole('link', { name: `${notFoundNamespace}.notFound.action` });
+        const customLink = screen.getByRole('link', { name: `${errorNamespace}.action` });
         expect(customLink).toBeInTheDocument();
         expect(customLink.getAttribute('href')).toEqual(actionLink);
 
         expect(screen.queryByText(/errorFeedback.link.report/)).not.toBeInTheDocument();
+    });
+
+    it('renders the specified error title and description', () => {
+        const titleKey = 'app.error.title';
+        const descriptionKey = 'app.error.description';
+
+        render(createTestComponent({ titleKey, descriptionKey }));
+
+        expect(screen.getByText(titleKey)).toBeInTheDocument();
+        expect(screen.getByText(descriptionKey)).toBeInTheDocument();
     });
 });

@@ -89,7 +89,7 @@ describe('<LayoutWizard /> component', () => {
         fetchQuerySpy.mockRejectedValue('error');
 
         render(await createTestComponent({ params: Promise.resolve(params) }));
-        const errorLink = screen.getByRole('link', { name: /layoutWizard.notFound.action/ });
+        const errorLink = screen.getByRole('link', { name: /link.explore/ });
         expect(errorLink).toBeInTheDocument();
         expect(errorLink.getAttribute('href')).toEqual(`/`);
     });

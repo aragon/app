@@ -1,5 +1,5 @@
 import { HttpService } from '@/shared/api/httpService';
-import type { IFeaturedDao } from './domain';
+import type { IFeaturedDao, ISanctionedAddressesResult } from './domain';
 
 class CmsService extends HttpService {
     constructor() {
@@ -8,10 +8,17 @@ class CmsService extends HttpService {
 
     private urls = {
         featuredDaos: '/main/featured-daos.json',
+        sanctionedAddresses: '/main/sanctioned-addresses.json',
     };
 
     getFeaturedDaos = async (): Promise<IFeaturedDao[]> => {
         const result = await this.request<IFeaturedDao[]>(this.urls.featuredDaos);
+
+        return result;
+    };
+
+    getSanctionedAddresses = async (): Promise<ISanctionedAddressesResult> => {
+        const result = await this.request<ISanctionedAddressesResult>(this.urls.sanctionedAddresses);
 
         return result;
     };
