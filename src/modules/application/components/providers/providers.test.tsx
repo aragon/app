@@ -25,6 +25,13 @@ jest.mock('@aragon/gov-ui-kit', () => ({
     ),
 }));
 
+jest.mock('@tanstack/react-query', () => ({
+    ...jest.requireActual<typeof GovUiKit>('@tanstack/react-query'),
+    HydrationBoundary: (props: { children: ReactNode }) => (
+        <div data-testid="hydration-boundary-test">{props.children}</div>
+    ),
+}));
+
 describe('<Providers /> component', () => {
     const createTestComponent = (props?: Partial<IProvidersProps>) => {
         const completeProps: IProvidersProps = {

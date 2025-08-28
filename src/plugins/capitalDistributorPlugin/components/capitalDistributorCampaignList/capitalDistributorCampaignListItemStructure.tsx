@@ -39,10 +39,12 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
     const { open } = useDialogContext();
     const plugin = useDaoPlugins({ daoId: id, interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR })![0];
 
-    const { amount, token, txHash, title, description } = campaign;
+    const { userData, token, title, description } = campaign;
+    const { totalAmount, totalClaimed, claims, status } = userData;
 
-    const isClaimed = campaign.status === CampaignStatus.CLAIMED;
+    const isClaimed = status === CampaignStatus.CLAIMED;
 
+    const amount = isClaimed ? totalClaimed : totalAmount;
     const parsedAmount = formatUnits(BigInt(amount), token.decimals);
     const formattedAmount = formatterUtils.formatNumber(parsedAmount, { format: NumberFormat.TOKEN_AMOUNT_SHORT });
 
@@ -50,10 +52,11 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
     const formattedValue = formatterUtils.formatNumber(value, { format: NumberFormat.FIAT_TOTAL_SHORT });
 
     const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[network].id });
-    const addressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: txHash });
+    const addressLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: claims[0]?.transactionHash });
 
     const handleOpenDialog = () => {
-        const dialogParams: ICapitalDistributorClaimDialogParams = { campaign, pluginAddress: plugin.meta.address };
+        const { network } = dao;
+        const dialogParams: ICapitalDistributorClaimDialogParams = { campaign, plugin: plugin.meta, network };
         open(CapitalDistributorPluginDialogId.CLAIM, { params: dialogParams });
     };
 

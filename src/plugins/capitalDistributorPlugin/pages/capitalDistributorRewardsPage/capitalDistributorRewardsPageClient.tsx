@@ -21,7 +21,7 @@ export interface ICapitalDistributorRewardsPageClientProps {
     /**
      * Initial parameters for the campaign list query.
      */
-    initialParams?: IGetCampaignListParams;
+    initialParams: IGetCampaignListParams;
 }
 
 export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRewardsPageClientProps> = (props) => {

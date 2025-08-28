@@ -1,11 +1,23 @@
-import type { ClientOptions } from '@sentry/core';
-import { captureException, captureRequestError, withServerActionInstrumentation } from '@sentry/nextjs';
+import type { ClientOptions, ScopeContext } from '@sentry/core';
+import { captureException, captureMessage, captureRequestError, withServerActionInstrumentation } from '@sentry/nextjs';
 
 export interface ILogErrorParams {
     /**
      * Additional data to be logged.
      */
     context?: Record<string, unknown>;
+}
+
+export interface ILogMessageParams {
+    /**
+     * Additional data to be logged.
+     */
+    context?: ScopeContext['tags'];
+    /**
+     * Severity level of the message.
+     * @default info
+     */
+    level?: ScopeContext['level'];
 }
 
 class MonitoringUtils {
@@ -23,6 +35,11 @@ class MonitoringUtils {
     logError = (error: unknown, params?: ILogErrorParams) => {
         const { context } = params ?? {};
         captureException(error, { extra: context });
+    };
+
+    logMessage = (name: string, params?: ILogMessageParams) => {
+        const { context, level = 'info' } = params ?? {};
+        captureMessage(name, { level, tags: context });
     };
 
     logRequestError = captureRequestError;
