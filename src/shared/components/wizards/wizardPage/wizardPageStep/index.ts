@@ -1,1 +1,1 @@
-export { WizardPageStep, type IWizardPageStepProps, type IRenderNextButtonProps } from './wizardPageStep';
+export { WizardPageStep, type IRenderNextButtonProps, type IWizardPageStepProps } from './wizardPageStep';

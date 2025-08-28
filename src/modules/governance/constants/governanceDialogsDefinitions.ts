@@ -20,5 +20,5 @@ export const governanceDialogsDefinitions: Record<GovernanceDialogId, IDialogCom
         hiddenDescription: 'app.governance.permissionCheckDialog.a11y.description',
     },
     [GovernanceDialogId.WALLET_CONNECT_ACTION]: { Component: WalletConnectActionDialog },
-    [GovernanceDialogId.SIMULATE_ACTIONS]: { Component: SimulateActionsDialog },
+    [GovernanceDialogId.SIMULATE_ACTIONS]: { Component: SimulateActionsDialog, size: 'lg' },
 };

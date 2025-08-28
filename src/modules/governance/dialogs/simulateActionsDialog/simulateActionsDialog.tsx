@@ -1,8 +1,8 @@
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Dialog, invariant, ProposalActionSimulationStructure } from '@aragon/gov-ui-kit';
+import { wizardFormId } from '@/shared/components/wizards/wizard/wizardForm/wizardForm';
+import { ActionSimulation, Dialog, invariant } from '@aragon/gov-ui-kit';
 import type { IProposalCreateAction } from '../publishProposalDialog';
-import {wizardFormId} from '../../../../shared/components/wizards/wizard/wizardForm/wizardForm';
 
 export interface ISimulateActionsDialogParams {
     /**
@@ -29,8 +29,8 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
     return (
         <>
             <Dialog.Header title={t(`app.governance.simulateActionsDialog.title`)} onClose={close} />
-            <Dialog.Content>
-                <ProposalActionSimulationStructure isLoading={isSimulating} totalActions={actions.length} />
+            <Dialog.Content className="pt-2 pb-3">
+                <ActionSimulation isEnabled={false} isLoading={isSimulating} totalActions={actions.length} />
             </Dialog.Content>
             <Dialog.Footer
                 hasError={hasFailed}

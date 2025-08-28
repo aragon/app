@@ -7,6 +7,7 @@ import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { useWatch } from 'react-hook-form';
+import { wizardFormId } from '../../../../shared/components/wizards/wizard/wizardForm/wizardForm';
 import {
     CreateProposalForm,
     type ICreateProposalFormData,
@@ -17,9 +18,6 @@ import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { publishProposalDialogUtils } from '../../dialogs/publishProposalDialog/publishProposalDialogUtils';
 import type { ISimulateActionsDialogParams } from '../../dialogs/simulateActionsDialog';
 import { CreateProposalWizardStep } from './createProposalPageDefinitions';
-import {
-    wizardFormId
-} from '../../../../shared/components/wizards/wizard/wizardForm/wizardForm';
 
 export interface ICreateProposalPageClientStepsProps {
     /**
