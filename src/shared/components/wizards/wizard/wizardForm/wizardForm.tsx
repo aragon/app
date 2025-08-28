@@ -10,6 +10,8 @@ export interface IWizardFormProps<TFormData extends FieldValues = FieldValues>
     onSubmit?: (data: TFormData) => void;
 }
 
+export const wizardFormId = 'wizard-form';
+
 export const WizardForm = <TFormData extends FieldValues = FieldValues>(props: IWizardFormProps<TFormData>) => {
     const { children, onSubmit = () => null, ...otherProps } = props;
 
@@ -24,7 +26,7 @@ export const WizardForm = <TFormData extends FieldValues = FieldValues>(props: I
     };
 
     return (
-        <form onSubmit={handleFormSubmit} {...otherProps}>
+        <form onSubmit={handleFormSubmit} {...otherProps} id={wizardFormId}>
             {children}
         </form>
     );
