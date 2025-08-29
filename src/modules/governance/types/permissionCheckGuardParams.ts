@@ -1,11 +1,11 @@
 import type { IProposal } from '@/modules/governance/api/governanceService';
-import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 
-export interface IPermissionCheckGuardParams<TPluginSettings extends IPluginSettings = IPluginSettings> {
+export interface IPermissionCheckGuardParams<TPlugin extends IDaoPlugin = IDaoPlugin> {
     /**
      * Plugin to check permissions for.
      */
-    plugin: IDaoPlugin<TPluginSettings>;
+    plugin: TPlugin;
     /**
      * ID of the DAO.
      */
@@ -13,7 +13,7 @@ export interface IPermissionCheckGuardParams<TPluginSettings extends IPluginSett
     /**
      * Proposal to check permissions for.
      */
-    proposal?: IProposal<TPluginSettings>;
+    proposal?: IProposal<TPlugin['settings']>;
     /**
      * Whether to show the connected user's permissions info.
      * @default true
