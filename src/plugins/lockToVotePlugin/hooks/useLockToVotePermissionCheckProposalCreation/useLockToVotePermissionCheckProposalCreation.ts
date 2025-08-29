@@ -41,6 +41,7 @@ export const useLockToVotePermissionCheckProposalCreation = (
     const { minProposerVotingPower, token } = plugin.settings;
     const { decimals: tokenDecimals, symbol: tokenSymbol } = token;
 
+    // TODO: use getRequiredLockAmount view function on condition smart contract when available from the backend
     const { data: activeProposalsCount = BigInt(0), isLoading: isLoadingActiveProposals } = useReadContract({
         abi: lockManagerAbi,
         functionName: 'activeProposalsCreatedBy',
