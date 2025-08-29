@@ -1,13 +1,20 @@
 'use client';
 
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IWizardStepperStep } from '@/shared/components/wizards/wizard';
+import { wizardFormId } from '@/shared/components/wizards/wizard/wizardForm/wizardForm';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { useWatch } from 'react-hook-form';
 import { CreateProposalForm, type ICreateProposalFormData } from '../../components/createProposalForm';
+import { useCreateProposalFormContext } from '../../components/createProposalForm/createProposalFormProvider';
+import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { publishProposalDialogUtils } from '../../dialogs/publishProposalDialog/publishProposalDialogUtils';
+import type { ISimulateActionsDialogParams } from '../../dialogs/simulateActionsDialog';
 import { CreateProposalWizardStep } from './createProposalPageDefinitions';
 
 export interface ICreateProposalPageClientStepsProps {
@@ -29,7 +36,11 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
     const { steps, daoId, pluginAddress } = props;
 
     const { t } = useTranslations();
+    const { open } = useDialogContext();
+
     const addActions = useWatch<ICreateProposalFormData>({ name: 'addActions' });
+    const actions = useWatch<Record<string, ICreateProposalFormData['actions']>>({ name: 'actions' });
+    const { prepareActions } = useCreateProposalFormContext();
 
     const [metadataStep, actionsStep, settingsStep] = steps;
 
@@ -37,6 +48,30 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
     const { id: pluginId } = useDaoPlugins({ daoId, pluginAddress })![0];
     const slotId = GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM;
     const hideSettingsStep = pluginRegistryUtils.getSlotComponent({ slotId, pluginId }) == null;
+
+    const handleSimulateActions = async () => {
+        const processedActions = await publishProposalDialogUtils.prepareActions({ actions, prepareActions });
+
+        const { network } = daoUtils.parseDaoId(daoId);
+
+        const params: ISimulateActionsDialogParams = {
+            network,
+            pluginAddress,
+            actions: processedActions,
+        };
+        open(GovernanceDialogId.SIMULATE_ACTIONS, { params });
+    };
+
+    const actionsStepNextDropdownItems = [
+        {
+            label: t('app.governance.createProposalPage.createProposalPageClientSteps.simulate'),
+            onClick: handleSimulateActions,
+        },
+        {
+            label: t('app.governance.createProposalPage.createProposalPageClientSteps.skipSimulation'),
+            formId: wizardFormId,
+        },
+    ];
 
     return (
         <>
@@ -55,6 +90,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
                     `app.governance.createProposalPage.steps.${CreateProposalWizardStep.ACTIONS}.description`,
                 )}
                 hidden={addActions === false}
+                nextDropdownItems={actionsStepNextDropdownItems}
                 {...actionsStep}
             >
                 <CreateProposalForm.Actions daoId={daoId} pluginAddress={pluginAddress} />
