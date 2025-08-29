@@ -5,14 +5,12 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IWizardStepperStep } from '@/shared/components/wizards/wizard';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { useWatch } from 'react-hook-form';
 import { wizardFormId } from '../../../../shared/components/wizards/wizard/wizardForm/wizardForm';
-import {
-    CreateProposalForm,
-    type ICreateProposalFormData,
-    useCreateProposalFormContext,
-} from '../../components/createProposalForm';
+import { CreateProposalForm, type ICreateProposalFormData } from '../../components/createProposalForm';
+import { useCreateProposalFormContext } from '../../components/createProposalForm/createProposalFormProvider';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { publishProposalDialogUtils } from '../../dialogs/publishProposalDialog/publishProposalDialogUtils';
@@ -54,7 +52,11 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
     const handleSimulateActions = async () => {
         const processedActions = await publishProposalDialogUtils.prepareActions({ actions, prepareActions });
 
+        const { network } = daoUtils.parseDaoId(daoId);
+
         const params: ISimulateActionsDialogParams = {
+            network,
+            pluginAddress,
             actions: processedActions,
         };
         open(GovernanceDialogId.SIMULATE_ACTIONS, { params });
