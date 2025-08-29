@@ -1,5 +1,9 @@
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
-import type { ISetupBodyDialogParams, ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import {
+    SetupBodyType,
+    type ISetupBodyDialogParams,
+    type ISetupBodyForm,
+} from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, CardEmptyState, IconType, InputContainer } from '@aragon/gov-ui-kit';
@@ -102,7 +106,9 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
                                 key={body.id}
                                 fieldName={`${formPrefix}.bodies.${index.toString()}`}
                                 body={body}
-                                onEdit={() => openSetupBodyDialog(index)}
+                                onEdit={
+                                    body.type !== SetupBodyType.EXISTING ? () => openSetupBodyDialog(index) : undefined
+                                }
                                 onDelete={() => remove(index)}
                                 readOnly={readOnly}
                             />

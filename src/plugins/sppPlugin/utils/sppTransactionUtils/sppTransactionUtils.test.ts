@@ -149,7 +149,7 @@ describe('sppTransaction utils', () => {
 
     describe('buildBodyPermissionActions', () => {
         it('correctly builds permission actions for the bodies of the SPP', () => {
-            const pluginData = generatePluginInstallationSetupData({ pluginAddress: '0x123' });
+            const pluginAddress = '0x123';
             const daoAddress = '0xDao' as Viem.Hex;
             const sppAddress = '0xSpp' as Viem.Hex;
 
@@ -162,23 +162,23 @@ describe('sppTransaction utils', () => {
                 .mockReturnValueOnce(revokeExecutePermissionAction);
             grantPermissionSpy.mockReturnValueOnce(grantAction);
 
-            const result = sppTransactionUtils['buildBodyPermissionActions'](pluginData, daoAddress, sppAddress);
+            const result = sppTransactionUtils['buildBodyPermissionActions'](pluginAddress, daoAddress, sppAddress);
             expect(result).toEqual([revokeCreateProposalAction, grantAction, revokeExecutePermissionAction]);
 
             expect(revokePermissionSpy).toHaveBeenNthCalledWith(1, {
-                where: pluginData.pluginAddress,
+                where: pluginAddress,
                 who: sppTransactionUtils['anyAddress'],
                 what: permissionTransactionUtils.permissionIds.createProposalPermission,
                 to: daoAddress,
             });
             expect(revokePermissionSpy).toHaveBeenNthCalledWith(2, {
                 where: daoAddress,
-                who: pluginData.pluginAddress,
+                who: pluginAddress,
                 what: permissionTransactionUtils.permissionIds.executePermission,
                 to: daoAddress,
             });
             expect(grantPermissionSpy).toHaveBeenCalledWith({
-                where: pluginData.pluginAddress,
+                where: pluginAddress,
                 who: sppAddress,
                 what: permissionTransactionUtils.permissionIds.createProposalPermission,
                 to: daoAddress,

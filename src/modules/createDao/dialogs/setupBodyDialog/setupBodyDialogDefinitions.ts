@@ -93,6 +93,10 @@ export interface ISetupBodyFormExisting<
      * Release of the existing body.
      */
     release?: string;
+    /**
+     * Address of the create proposal condition of the body.
+     */
+    createProposalConditionAddress?: string;
 }
 
 export type ISetupBodyForm<
