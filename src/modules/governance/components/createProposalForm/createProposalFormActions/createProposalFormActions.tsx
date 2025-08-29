@@ -32,6 +32,7 @@ export interface ICreateProposalFormActionsProps {
 
 const coreCustomActionComponents = {
     [ProposalActionType.TRANSFER]: TransferAssetAction,
+    [actionComposerUtils.transferActionLocked]: TransferAssetAction,
     [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction,
     [ProposalActionType.METADATA_PLUGIN_UPDATE]: UpdatePluginMetadataAction,
 } as unknown as Record<string, ProposalActionComponent<IProposalActionData>>;
@@ -122,7 +123,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         return dropdownItems.filter((item) => !item.hidden);
     };
 
-    const { pluginComponents } = actionComposerUtils.getPluginActionsFromDao(dao);
+    const { pluginComponents } = actionComposerUtils.getDaoPluginActions(dao);
 
     const customActionComponents: Record<string, ProposalActionComponent<IProposalActionData>> = {
         ...coreCustomActionComponents,
