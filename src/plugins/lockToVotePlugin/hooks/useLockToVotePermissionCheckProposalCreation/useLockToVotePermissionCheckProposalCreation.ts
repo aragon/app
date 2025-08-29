@@ -6,7 +6,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
-import { formatUnits, Hex } from 'viem';
+import { formatUnits, type Hex } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 import type { ILockToVotePlugin } from '../../types';
 import { useLockToVoteData } from '../useLockToVoteData';
