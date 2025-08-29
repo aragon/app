@@ -9,6 +9,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
+    ActionSimulation,
     addressUtils,
     CardCollapsible,
     ChainEntityType,
@@ -24,6 +25,7 @@ import {
     useBlockExplorer,
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
+import { useLastSimulation, useSimulateProposal } from '../../api/actionSimulationService';
 import { type IProposal, useProposalActions, useProposalBySlug } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -64,6 +66,19 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         { urlParams: { id: proposal?.id as string } },
         { enabled: proposal != null, refetchInterval: ({ state }) => (state.data?.decoding ? 2000 : false) },
     );
+
+    const { data: lastSimulation, isError: hasGettingLastSimulationFailed } = useLastSimulation(
+        { urlParams: { proposalId: proposal?.id as string } },
+        { enabled: proposal != null },
+    );
+
+    const {
+        mutate: triggerProposalSimulation,
+        isPending: isSimulationLoading,
+        isError: hasSimulationFailed,
+    } = useSimulateProposal();
+
+    const showSimulationError = hasSimulationFailed || hasGettingLastSimulationFailed;
 
     if (proposal == null || dao == null) {
         return null;
@@ -121,6 +136,19 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         />
                     </Page.MainSection>
                     <Page.MainSection title={t('app.governance.daoProposalDetailsPage.main.actions.header')}>
+                        <ActionSimulation
+                            totalActions={3}
+                            lastSimulation={lastSimulation && { ...lastSimulation, timestamp: lastSimulation.runAt }}
+                            isLoading={isSimulationLoading}
+                            error={
+                                showSimulationError
+                                    ? t(
+                                          `app.governance.daoProposalDetailsPage.main.actions.${hasSimulationFailed ? 'simulationError' : 'lastSimulationError'}`,
+                                      )
+                                    : undefined
+                            }
+                            onSimulate={() => triggerProposalSimulation({ urlParams: { proposalId: proposal.id } })}
+                        />
                         <ProposalActions.Root
                             isLoading={actionData?.decoding}
                             actionsCount={actionData?.rawActions?.length ?? 0}
