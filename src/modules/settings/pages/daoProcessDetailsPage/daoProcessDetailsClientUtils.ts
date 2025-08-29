@@ -59,7 +59,8 @@ export class DaoProcessDetailsClientUtils {
             membership,
             release: plugin.release,
             build: plugin.build,
-            canCreateProposal: false,
+            canCreateProposal: true,
+            createProposalConditionAddress: plugin.createProposalConditionAddress,
         };
     };
 
@@ -130,6 +131,7 @@ export class DaoProcessDetailsClientUtils {
             address: plugin?.address ?? stagePlugin.address,
             blockTimestamp: plugin?.blockTimestamp ?? 0,
             transactionHash: plugin?.transactionHash ?? '',
+            createProposalConditionAddress: plugin?.createProposalConditionAddress,
         };
     }
 }

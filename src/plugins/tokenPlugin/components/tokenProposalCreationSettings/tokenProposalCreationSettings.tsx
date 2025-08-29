@@ -1,11 +1,11 @@
 'use client';
 
 import { ProposalCreationMode } from '@/modules/createDao/components/createProcessForm';
-import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { SetupBodyType, type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import type { IPluginProposalCreationSettingsParams } from '@/modules/createDao/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { CheckboxCard, type CheckboxState, InputNumber } from '@aragon/gov-ui-kit';
+import { CheckboxCard, InputNumber, type CheckboxState } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { formatUnits } from 'viem';
@@ -25,7 +25,7 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
     const { t } = useTranslations();
     const { trigger, setValue } = useFormContext();
 
-    const { name, description, membership } = body;
+    const { type, name = '', description, membership } = body;
     const { totalSupply, decimals } = membership.token;
 
     const parsedTotalSupply = formatUnits(BigInt(totalSupply), decimals);
@@ -93,6 +93,7 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
                         max={totalSupply === '0' ? undefined : Number(parsedTotalSupply)}
                         onChange={onMinVotingPowerChange}
                         value={minVotingPower}
+                        disabled={type === SetupBodyType.EXISTING}
                         {...minVotingPowerField}
                     />
                 </object>

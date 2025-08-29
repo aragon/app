@@ -81,9 +81,11 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
                     />
                     {!readOnly && (
                         <div className="flex w-full grow justify-between">
-                            <Button variant="secondary" size="md" onClick={onEdit}>
-                                {t('app.createDao.createProcessForm.governance.bodyField.action.edit')}
-                            </Button>
+                            {onEdit != null && (
+                                <Button variant="secondary" size="md" onClick={onEdit}>
+                                    {t('app.createDao.createProcessForm.governance.bodyField.action.edit')}
+                                </Button>
+                            )}
                             <Dropdown.Container
                                 constrainContentWidth={false}
                                 size="md"
