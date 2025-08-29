@@ -667,7 +667,7 @@
       },
       "transferAssetForm": {
         "amount": {
-          "label": "Token",
+          "label": "Amount",
           "placeholder": "0"
         },
         "receiver": {

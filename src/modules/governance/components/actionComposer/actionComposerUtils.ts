@@ -5,99 +5,55 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { zeroAddress } from 'viem';
-import type { IAllowedAction } from '../../api/executeSelectorsService';
 import {
+    ProposalActionType,
     type IProposalAction,
     type IProposalActionUpdatePluginMetadata,
-    ProposalActionType,
 } from '../../api/governanceService';
 import type { ISmartContractAbi, ISmartContractAbiFunction } from '../../api/smartContractService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IActionComposerPluginData } from '../../types';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
-import type { IActionComposerInputItem, IActionComposerInputProps } from './actionComposerInput';
-
-export enum ActionItemId {
-    CUSTOM_ACTION = 'CUSTOM_ACTION',
-    ADD_CONTRACT = 'ADD_CONTRACT',
-    RAW_CALLDATA = 'RAW_CALLDATA',
-}
-
-export interface IGetActionBaseParams {
-    /**
-     * DAO to build the native action groups for.
-     */
-    dao?: IDao;
-    /**
-     * Translation function for group labels.
-     */
-    t: TranslationFunction;
-}
-
-export interface IGetNativeActionGroupsParams extends IGetActionBaseParams {
-    /**
-     * Additional action groups.
-     */
-    nativeGroups: IAutocompleteInputGroup[];
-}
-
-export interface IGetNativeActionItemsParams extends IGetActionBaseParams {
-    /**
-     * Additional action items.
-     */
-    nativeItems: IActionComposerInputItem[];
-}
-
-export interface IGetCustomActionParams extends IGetActionBaseParams {
-    /**
-     * Smart contract ABIs to be processed.
-     */
-    abis: ISmartContractAbi[];
-}
-
-interface IGetActionItemsParams
-    extends IGetCustomActionParams,
-        IGetNativeActionItemsParams,
-        Pick<IActionComposerInputProps, 'excludeActionTypes'> {}
-
-export interface IGetAllowedActionBaseParams extends IGetActionBaseParams {
-    /**
-     * List of allowed actions to transform into action items.
-     */
-    allowedActions: IAllowedAction[];
-}
-
-export interface IGetAllowedActionItemsParams
-    extends IGetAllowedActionBaseParams,
-        Pick<IGetNativeActionItemsParams, 'nativeItems'> {}
+import type { IActionComposerInputItem } from './actionComposerInput';
+import {
+    ActionItemId,
+    type IGetActionItemsParams,
+    type IGetAllowedActionBaseParams,
+    type IGetAllowedActionItemsParams,
+    type IGetCustomActionParams,
+    type IGetNativeActionGroupsParams,
+    type IGetNativeActionItemsParams,
+} from './actionComposerUtils.api';
 
 class ActionComposerUtils {
-    getPluginActionsFromDao = (dao?: IDao) => {
-        const pluginActions =
-            dao?.plugins.map((plugin) =>
-                pluginRegistryUtils.getSlotFunction<IDaoPlugin, IActionComposerPluginData>({
-                    pluginId: plugin.interfaceType,
-                    slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
-                })?.(plugin),
-            ) ?? [];
+    // The TransferActionLocked is a UI-only variant of the TransferAction which locks the token field to the one set as
+    // the "to" attribute of the action. It is used to display the native transfer UI on ERC-20 transfer actions.
+    transferActionLocked = 'TransferActionLocked';
+
+    private transferSelector = '0xa9059cbb';
+
+    getDaoPluginActions = (dao?: IDao) => {
+        const { plugins = [] } = dao ?? {};
+        const pluginActions = plugins.map((plugin) => {
+            const slotFunction = pluginRegistryUtils.getSlotFunction<IDaoPlugin, IActionComposerPluginData>({
+                pluginId: plugin.interfaceType,
+                slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
+            });
+
+            return slotFunction?.(plugin);
+        });
+
         const pluginItems = pluginActions.flatMap((data) => data?.items ?? []);
         const pluginGroups = pluginActions.flatMap((data) => data?.groups ?? []);
         const pluginComponents = pluginActions.reduce((acc, data) => ({ ...acc, ...data?.components }), {});
 
-        return {
-            pluginItems,
-            pluginGroups,
-            pluginComponents,
-        };
+        return { pluginItems, pluginGroups, pluginComponents };
     };
 
     getAllowedActionGroups = ({ t, dao, allowedActions }: IGetAllowedActionBaseParams): IAutocompleteInputGroup[] => {
         const daoAddress = dao!.address;
-        const [daoGroup] = this.getNativeActionGroups({
-            t,
-            dao,
-            nativeGroups: [],
-        });
+        const [daoGroup] = this.getNativeActionGroups({ t, dao, nativeGroups: [] });
+
         const actionGroups: IAutocompleteInputGroup[] = allowedActions.map((action) =>
             addressUtils.isAddressEqual(action.target, daoAddress)
                 ? daoGroup
@@ -107,39 +63,34 @@ class ActionComposerUtils {
         return actionGroups;
     };
 
-    getAllowedActionItems = ({
-        t,
-        dao,
-        allowedActions,
-        nativeItems,
-    }: IGetAllowedActionItemsParams): IActionComposerInputItem[] => {
-        const [transferItem, ...otherNativeActionItems] = this.getNativeActionItems({
-            t,
-            dao,
-            nativeItems,
-        }).map(this.infoToSelectorMapper);
+    getAllowedActionItems = (params: IGetAllowedActionItemsParams): IActionComposerInputItem[] => {
+        const { t, allowedActions } = params;
+        const nativeActionItems = this.getNativeActionItems(params).map(this.infoToSelectorMapper);
+
         const actionItems: IActionComposerInputItem[] = allowedActions.map((action, actionIndex) => {
-            if (action.selector === null) {
-                // Return transfer item for native transfers (ERC20 transfers shown but only native will work)
-                return transferItem;
+            const { selector, target, decoded } = action;
+
+            // Return transfer item for native or erc-20 transfers
+            if (selector === null || selector === this.transferSelector) {
+                return this.buildTransferNativeAction(t, target);
             }
 
-            // use native item if available (to enable proper basic view and icon)
-            const nativeItem = otherNativeActionItems.find(
-                (item) => addressUtils.isAddressEqual(item.groupId, action.target) && item.info === action.selector,
+            // Use native item if available to enable proper basic view
+            const nativeItem = nativeActionItems.find(
+                (item) => addressUtils.isAddressEqual(item.groupId, target) && item.info === selector,
             );
 
             if (nativeItem) {
                 return nativeItem;
             }
 
-            const decodedAction = action.decoded;
             const item = this.buildDefaultCustomAction(
-                { address: action.target, name: decodedAction.contractName },
-                { name: decodedAction.functionName, parameters: decodedAction.inputs },
+                { address: action.target, name: decoded.contractName },
+                { name: decoded.functionName, parameters: decoded.inputs },
                 actionIndex,
             );
-            item.info = action.selector;
+
+            item.info = selector;
 
             return item;
         });
@@ -147,14 +98,11 @@ class ActionComposerUtils {
         return actionItems;
     };
 
-    getActionGroups = ({
-        t,
-        dao,
-        abis,
-        nativeGroups,
-    }: IGetCustomActionParams & IGetNativeActionGroupsParams): IAutocompleteInputGroup[] => {
+    getActionGroups = (params: IGetCustomActionParams & IGetNativeActionGroupsParams): IAutocompleteInputGroup[] => {
+        const { t, dao, abis, nativeGroups } = params;
+
         const completeNativeGroups = this.getNativeActionGroups({ dao, t, nativeGroups });
-        const completeCustomGroups = this.getCustomActionGroups({ dao, t, abis });
+        const completeCustomGroups = abis.map(this.buildCustomActionGroup);
 
         const nativeGroupIds = new Set(
             [...completeNativeGroups.map((group) => group.id), dao?.address].filter(Boolean),
@@ -165,13 +113,9 @@ class ActionComposerUtils {
         return [...filteredCustomGroups, ...completeNativeGroups];
     };
 
-    getActionItems = ({
-        t,
-        dao,
-        abis,
-        nativeItems,
-        excludeActionTypes,
-    }: IGetActionItemsParams): IActionComposerInputItem[] => {
+    getActionItems = (params: IGetActionItemsParams): IActionComposerInputItem[] => {
+        const { t, dao, abis, nativeItems, excludeActionTypes } = params;
+
         // Show items in the following order:
         // 1. NO CONTRACT: first show actions not belonging to any group (i.e. add contract, transfer)
         // 2. CUSTOM ACTIONS: second, show imported custom contracts with its actions, but only contracts which are unique, i.e. there is no collision with some of the native contracts.
@@ -286,19 +230,14 @@ class ActionComposerUtils {
     });
 
     private getFunctionSelector = (item: IActionComposerInputItem) => {
-        if (item.defaultValue?.inputData == null || item.id === ProposalActionType.TRANSFER) {
+        const { defaultValue, id, info } = item;
+
+        if (defaultValue?.inputData == null || id === ProposalActionType.TRANSFER) {
             return undefined;
         }
 
-        if (item.info) {
-            return item.info;
-        }
-
-        return proposalActionUtils.actionToFunctionSelector(item.defaultValue);
+        return info ?? proposalActionUtils.actionToFunctionSelector(defaultValue);
     };
-
-    private getCustomActionGroups = ({ abis }: IGetCustomActionParams): IAutocompleteInputGroup[] =>
-        abis.map(this.buildCustomActionGroup);
 
     private buildCustomActionGroup = ({ address, name }: Pick<ISmartContractAbi, 'address' | 'name'>) => ({
         id: address,
@@ -329,40 +268,43 @@ class ActionComposerUtils {
         ];
     };
 
-    private getNativeActionGroups = ({
-        t,
-        dao,
-        nativeGroups,
-    }: IGetNativeActionGroupsParams): IAutocompleteInputGroup[] => [
-        {
-            id: dao!.address,
-            name: t(`app.governance.actionComposer.nativeGroup.DAO`),
-            info: addressUtils.truncateAddress(dao?.address),
-            indexData: [dao!.address],
-        },
-        ...nativeGroups,
-    ];
+    private getNativeActionGroups = (params: IGetNativeActionGroupsParams): IAutocompleteInputGroup[] => {
+        const { t, dao, nativeGroups } = params;
 
-    private getNativeActionItems = ({
-        t,
-        dao,
-        nativeItems,
-    }: IGetNativeActionItemsParams): IActionComposerInputItem[] => [
-        {
-            id: ProposalActionType.TRANSFER,
-            name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.TRANSFER}`),
-            icon: IconType.APP_TRANSACTIONS,
-            defaultValue: this.buildDefaultActionTransfer(),
-        },
-        {
+        return [
+            {
+                id: dao!.address,
+                name: t(`app.governance.actionComposer.nativeGroup.DAO`),
+                info: addressUtils.truncateAddress(dao?.address),
+                indexData: [dao!.address],
+            },
+            ...nativeGroups,
+        ];
+    };
+
+    private getNativeActionItems = (params: IGetNativeActionItemsParams): IActionComposerInputItem[] => {
+        const { t, dao, nativeItems } = params;
+
+        const transferAction = this.buildTransferNativeAction(t);
+        const metadataUpdateAction = {
             id: ProposalActionType.METADATA_UPDATE,
             name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.METADATA_UPDATE}`),
             icon: IconType.SETTINGS,
             groupId: dao!.address,
             defaultValue: this.buildDefaultActionMetadata(dao!),
-        },
-        ...nativeItems,
-    ];
+        };
+
+        return [transferAction, metadataUpdateAction, ...nativeItems];
+    };
+
+    private buildTransferNativeAction = (t: TranslationFunction, token?: string) => ({
+        id: ProposalActionType.TRANSFER,
+        name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.TRANSFER}`),
+        icon: IconType.APP_TRANSACTIONS,
+        defaultValue: this.buildDefaultActionTransfer(token),
+        groupId: token,
+        info: token != null ? this.transferSelector : undefined,
+    });
 
     private buildDefaultActionPluginMetadata = (
         plugin: IDaoPlugin,
@@ -383,12 +325,7 @@ class ActionComposerUtils {
                 function: 'setMetadata',
                 contract: plugin.subdomain,
                 parameters: [
-                    {
-                        name: '_metadata',
-                        type: 'bytes',
-                        notice: 'The IPFS hash of the new metadata object',
-                        value: '',
-                    },
+                    { name: '_metadata', type: 'bytes', notice: 'The IPFS hash of the new metadata object', value: '' },
                 ],
             },
         };
@@ -440,10 +377,10 @@ class ActionComposerUtils {
         },
     });
 
-    private buildDefaultActionTransfer = (): IProposalAction => ({
-        type: ProposalActionType.TRANSFER,
+    private buildDefaultActionTransfer = (token?: string): IProposalAction => ({
+        type: token != null ? this.transferActionLocked : ProposalActionType.TRANSFER,
         from: '',
-        to: zeroAddress,
+        to: token ?? zeroAddress,
         data: '',
         value: '0',
         inputData: { function: 'transfer', contract: 'Ether', parameters: [] },
