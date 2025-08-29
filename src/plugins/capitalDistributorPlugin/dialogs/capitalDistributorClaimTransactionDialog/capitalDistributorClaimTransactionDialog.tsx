@@ -1,5 +1,6 @@
 'use client';
 
+import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider/dialogProvider.api';
 import {
     type ITransactionDialogStepMeta,
@@ -9,15 +10,20 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper/useStepper';
 import { invariant } from '@aragon/gov-ui-kit';
-import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import type { Hex } from 'viem';
+import { CapitalDistributorServiceKey, type ICampaign } from '../../api/capitalDistributorService';
 import { capitalDistributorClaimTransactionDialogUtils } from './capitalDistributorClaimTransactionDialogUtils';
 
 export interface ICapitalDistributorClaimTransactionDialogParams {
     /**
-     * The ID of the campaign to claim.
+     * Campaign to be claimed.
      */
-    campaignId: number;
+    campaign: ICampaign;
+    /**
+     * Network of the plugin.
+     */
+    network: Network;
     /**
      * The address of the recipient.
      */
@@ -41,17 +47,19 @@ export const CapitalDistributorClaimTransactionDialog: React.FC<ICapitalDistribu
     const { location } = props;
     invariant(location.params != null, 'CapitalDistributorClaimTransactionDialog: required parameters must be set.');
 
-    const { campaignId, recipient, pluginAddress } = location.params;
+    const { campaign, recipient, pluginAddress, network } = location.params;
 
     const { t } = useTranslations();
-
-    const router = useRouter();
+    const queryClient = useQueryClient();
 
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
     const prepareTransaction = () =>
-        capitalDistributorClaimTransactionDialogUtils.buildTransaction({ campaignId, recipient, pluginAddress });
+        capitalDistributorClaimTransactionDialogUtils.buildTransaction({ campaign, recipient, pluginAddress });
+
+    const onSuccessClick = () =>
+        queryClient.invalidateQueries({ queryKey: [CapitalDistributorServiceKey.CAMPAIGN_LIST] });
 
     return (
         <TransactionDialog
@@ -59,11 +67,12 @@ export const CapitalDistributorClaimTransactionDialog: React.FC<ICapitalDistribu
             description={t('app.plugins.capitalDistributor.capitalDistributorClaimTransactionDialog.description')}
             submitLabel={t('app.plugins.capitalDistributor.capitalDistributorClaimTransactionDialog.submit')}
             successLink={{
-                onClick: () => router.refresh(),
+                onClick: onSuccessClick,
                 label: t('app.plugins.capitalDistributor.capitalDistributorClaimTransactionDialog.successLinkLabel'),
             }}
             stepper={stepper}
             prepareTransaction={prepareTransaction}
+            network={network}
         />
     );
 };

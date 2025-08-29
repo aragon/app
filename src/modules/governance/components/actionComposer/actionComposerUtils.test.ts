@@ -4,7 +4,8 @@ import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { ProposalActionType } from '../../api/governanceService';
 import { generateSmartContractAbi } from '../../testUtils';
 import type { IActionComposerInputItem } from './actionComposerInput';
-import { actionComposerUtils, ActionItemId } from './actionComposerUtils';
+import { actionComposerUtils } from './actionComposerUtils';
+import { ActionItemId } from './actionComposerUtils.api';
 
 describe('actionComposerUtils', () => {
     describe('getActionGroups', () => {
