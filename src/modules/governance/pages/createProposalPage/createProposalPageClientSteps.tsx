@@ -3,12 +3,12 @@
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IWizardStepperStep } from '@/shared/components/wizards/wizard';
+import { wizardFormId } from '@/shared/components/wizards/wizard/wizardForm/wizardForm';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { useWatch } from 'react-hook-form';
-import { wizardFormId } from '../../../../shared/components/wizards/wizard/wizardForm/wizardForm';
 import { CreateProposalForm, type ICreateProposalFormData } from '../../components/createProposalForm';
 import { useCreateProposalFormContext } from '../../components/createProposalForm/createProposalFormProvider';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';

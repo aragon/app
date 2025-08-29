@@ -1,9 +1,9 @@
+import type { Network } from '@/shared/api/daoService';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { wizardFormId } from '@/shared/components/wizards/wizard/wizardForm/wizardForm';
 import { ActionSimulation, Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
-import type { Network } from '../../../../shared/api/daoService';
 import { useSimulateActions } from '../../api/actionSimulationService';
 import type { IProposalCreateAction } from '../publishProposalDialog';
 
