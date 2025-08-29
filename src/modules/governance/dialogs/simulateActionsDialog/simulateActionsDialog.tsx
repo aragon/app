@@ -33,17 +33,17 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
-    const { mutate: triggerSimulation, isError, isPending } = useSimulateActions();
+    const { mutate: triggerSimulation, isError, isPending, data } = useSimulateActions();
 
     useEffect(() => {
         triggerSimulation({
             urlParams: { network },
             body: actions.map(({ to, data, value }) => ({ from: pluginAddress, to, data, value: value as string })),
         });
-    }, []);
+    }, [actions, network, pluginAddress, triggerSimulation]);
 
-    const hasFailed = isError || status === 'failure';
-    console.log('actionsactionsactions', actions);
+    const hasFailed = isError || data?.status === 'failure';
+
     return (
         <>
             <Dialog.Header title={t(`app.governance.simulateActionsDialog.title`)} onClose={close} />
@@ -52,6 +52,7 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
                     isEnabled={false}
                     isLoading={isPending}
                     totalActions={actions.length}
+                    lastSimulation={data && { url: data.url, timestamp: data.runAt, status: data.status }}
                     error={isError ? t('app.governance.simulateActionsDialog.error') : undefined}
                 />
             </Dialog.Content>
