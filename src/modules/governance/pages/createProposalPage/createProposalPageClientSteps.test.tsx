@@ -5,13 +5,12 @@ import { generateDialogContext, generateTabComponentPlugin } from '@/shared/test
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { render, screen } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
+import * as CreateProposalProvider from '../../components/createProposalForm/createProposalFormProvider';
 import {
     CreateProposalPageClientSteps,
     type ICreateProposalPageClientStepsProps,
 } from './createProposalPageClientSteps';
 import { CreateProposalWizardStep, createProposalWizardSteps } from './createProposalPageDefinitions';
-import * as CreateProposalProvider
-    from '../../components/createProposalForm/createProposalFormProvider';
 
 jest.mock('../../components/createProposalForm', () => ({
     CreateProposalForm: {

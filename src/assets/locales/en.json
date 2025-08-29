@@ -958,8 +958,8 @@
           "continue": "Continue",
           "continueAnyway": "Continue anyway"
         },
-        "title": "Simulate actions",
-        "error": "There was an error simulating the actions. Please try again later."
+        "error": "There was an error simulating the actions. Please try again later.",
+        "title": "Simulate actions"
       },
       "verifySmartContractDialog": {
         "action": {
