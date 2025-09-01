@@ -1,5 +1,5 @@
-import { type TransactionType } from '@/modules/finance/api/financeService/domain/enum/transactionType';
 import { type Network } from '@/shared/api/daoService';
+import { type TransactionSide } from './enum';
 import { type IToken } from './token';
 
 export interface ITransaction {
@@ -32,9 +32,9 @@ export interface ITransaction {
      */
     value: string;
     /**
-     * The type of the transaction.
+     * The side of the transaction (deposit or withdrawal).
      */
-    type: TransactionType;
+    side: TransactionSide;
     /**
      * The hash of the transaction.
      */

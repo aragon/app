@@ -1,4 +1,4 @@
-import { TransactionType } from '@/modules/finance/api/financeService/domain/enum';
+import { TransactionSide } from '@/modules/finance/api/financeService/domain/enum';
 import { type ITransaction } from '@/modules/finance/api/financeService/domain/transaction';
 import { Network } from '@/shared/api/daoService';
 import { DateTime } from 'luxon';
@@ -12,7 +12,7 @@ export const generateTransaction = (transaction?: Partial<ITransaction>): ITrans
     toAddress: '0x0000000000000000000000000000000000000000',
     token: generateToken(),
     value: '0',
-    type: TransactionType.DEPOSIT,
+    side: TransactionSide.DEPOSIT,
     transactionHash: '0x0000000000000000000000000000000000000000',
     id: '0',
     amountUsd: '0',
