@@ -1,9 +1,9 @@
 import { GovernanceType } from '@/modules/createDao/components/createProcessForm';
-import { SetupBodyType } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { generateSppPluginSettings, generateSppStage, generateSppStagePlugin } from '@/plugins/sppPlugin/testUtils';
 import { generateTokenPluginSettings } from '@/plugins/tokenPlugin/testUtils';
 import { generateTokenPluginSettingsToken } from '@/plugins/tokenPlugin/testUtils/generators/tokenPluginSettingsToken';
 import { generateDaoPlugin, generatePluginSettings } from '@/shared/testUtils';
+import { BodyType } from '../../../createDao/types/enum';
 import { daoProcessDetailsClientUtils } from './daoProcessDetailsClientUtils';
 
 describe('daoProcessDetailsClient Utils', () => {
@@ -24,7 +24,7 @@ describe('daoProcessDetailsClient Utils', () => {
                 expect(result.governanceType).toBe(GovernanceType.BASIC);
                 expect('body' in result).toBe(true);
                 if ('body' in result) {
-                    expect(result.body.type).toBe(SetupBodyType.EXISTING);
+                    expect(result.body.type).toBe(BodyType.EXISTING);
                     expect(result.body.name).toBe('TokenPlugin');
                     if ('governance' in result.body) {
                         expect(result.body.governance).toEqual(plugin.settings);
@@ -45,7 +45,7 @@ describe('daoProcessDetailsClient Utils', () => {
                 expect(result.governanceType).toBe(GovernanceType.BASIC);
                 expect('body' in result).toBe(true);
                 if ('body' in result) {
-                    expect(result.body.type).toBe(SetupBodyType.EXISTING);
+                    expect(result.body.type).toBe(BodyType.EXISTING);
                     expect(result.body.name).toBe('Multisig');
                 }
             });

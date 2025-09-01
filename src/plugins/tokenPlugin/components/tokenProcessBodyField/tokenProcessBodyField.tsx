@@ -1,10 +1,7 @@
 'use client';
 
-import {
-    SetupBodyType,
-    type ISetupBodyFormExisting,
-    type ISetupBodyFormNew,
-} from '@/modules/createDao/dialogs/setupBodyDialog';
+import { type ISetupBodyFormExisting, type ISetupBodyFormNew } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { BodyType } from '@/modules/createDao/types/enum';
 import { useMemberList } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -58,9 +55,9 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     const { membership, governance } = body;
 
     const initialParams = {
-        queryParams: { daoId, pluginAddress: body.type === SetupBodyType.EXISTING ? body.address : '' },
+        queryParams: { daoId, pluginAddress: body.type === BodyType.EXISTING ? body.address : '' },
     };
-    const { data: memberList } = useMemberList(initialParams, { enabled: body.type === SetupBodyType.EXISTING });
+    const { data: memberList } = useMemberList(initialParams, { enabled: body.type === BodyType.EXISTING });
 
     const {
         address: tokenAddress,
@@ -97,7 +94,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
         description: t('app.plugins.token.tokenMemberInfo.tokenNameAndSymbol', { tokenName, tokenSymbol }),
     };
 
-    const contractInfo = useDaoPluginInfo({ daoId, address: body.type === SetupBodyType.EXISTING ? body.address : '' });
+    const contractInfo = useDaoPluginInfo({ daoId, address: body.type === BodyType.EXISTING ? body.address : '' });
 
     return (
         <DefinitionList.Container className="w-full">

@@ -5,8 +5,9 @@ import {
     ProcessStageType,
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
-import { type ISetupBodyForm, SetupBodyType } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import type { ISetupStageSettingsForm } from '@/modules/createDao/dialogs/setupStageSettingsDialog';
+import { BodyType } from '@/modules/createDao/types/enum';
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
@@ -79,7 +80,7 @@ class SppTransactionUtils {
 
         const updateExistingPluginPermissions = values.stages
             .flatMap((stage) => stage.bodies)
-            .filter((body) => body.type === SetupBodyType.EXISTING)
+            .filter((body) => body.type === BodyType.EXISTING)
             .map((body) => this.buildGrantSppProposalCreationAction(body.address as Hex, daoAddress, sppAddress));
 
         return [
@@ -140,12 +141,12 @@ class SppTransactionUtils {
         const bodies = stages.flatMap((stage) => stage.bodies);
 
         const existingConditionAddresses = bodies
-            .filter((body) => body.type === SetupBodyType.EXISTING)
+            .filter((body) => body.type === BodyType.EXISTING)
             .map((body) => body.proposalCreationConditionAddress)
             .filter((address) => address != null);
 
         const newConditionAddresses = bodies
-            .filter((body) => body.type === SetupBodyType.NEW)
+            .filter((body) => body.type === BodyType.NEW)
             .reduce<string[]>((current, body, index) => {
                 const conditionAddress = pluginSetupData[index].preparedSetupData.helpers[0];
                 return body.canCreateProposal ? [...current, conditionAddress] : current;
@@ -179,10 +180,10 @@ class SppTransactionUtils {
             const resultType = type === ProcessStageType.NORMAL ? SppProposalType.APPROVAL : SppProposalType.VETO;
 
             const processedBodies = bodies.map((body) => ({
-                addr: body.type === SetupBodyType.NEW ? processedBodyAddresses.shift()! : body.address,
+                addr: body.type === BodyType.NEW ? processedBodyAddresses.shift()! : body.address,
                 resultType,
                 tryAdvance: true,
-                isManual: body.type === SetupBodyType.EXTERNAL,
+                isManual: body.type === BodyType.EXTERNAL,
             }));
 
             return { bodies: processedBodies, ...stageApprovals, ...stageTiming, cancelable: false, editable: false };

@@ -1,5 +1,5 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
-import { SetupBodyType, type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { GovernanceBodyInfo } from '@/shared/components/governanceBodyInfo';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -8,6 +8,7 @@ import type { IPluginInfo } from '@/shared/types';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { Accordion, Button, Dropdown, IconType } from '@aragon/gov-ui-kit';
 import { useWatch } from 'react-hook-form';
+import { BodyType } from '../../../../../types/enum';
 import { GovernanceType, type ICreateProcessFormData } from '../../../createProcessFormDefinitions';
 import { GovernanceBodiesFieldItemDefault } from './governanceBodiesFieldItemDefault';
 
@@ -52,8 +53,8 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
 
     const plugin = pluginRegistryUtils.getPlugin(body.plugin) as IPluginInfo | undefined;
 
-    const isNew = body.type === SetupBodyType.NEW;
-    const isExternal = body.type === SetupBodyType.EXTERNAL;
+    const isNew = body.type === BodyType.NEW;
+    const isExternal = body.type === BodyType.EXTERNAL;
 
     return (
         <Accordion.Container isMulti={true} defaultValue={readOnly ? [body.internalId] : undefined}>

@@ -6,7 +6,8 @@ import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import { addressUtils, invariant } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
-import { SetupBodyType, type ISetupBodyForm } from './setupBodyDialogDefinitions';
+import { BodyType } from '../../types/enum';
+import { type ISetupBodyForm } from './setupBodyDialogDefinitions';
 import { SetupBodyDialogSteps, type ISetupBodyDialogStepsProps } from './setupBodyDialogSteps';
 
 export interface ISetupBodyDialogParams extends ISetupBodyDialogStepsProps {
@@ -30,7 +31,7 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const processedInitialValues = useMemo(() => {
-        if (initialValues?.type === SetupBodyType.EXTERNAL || initialValues?.membership.members.length) {
+        if (initialValues?.type === BodyType.EXTERNAL || initialValues?.membership.members.length) {
             return initialValues;
         }
 
@@ -38,7 +39,7 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
     }, [initialValues, address]);
 
     const handleSubmit = (values: ISetupBodyForm) => {
-        if (values.type === SetupBodyType.EXTERNAL) {
+        if (values.type === BodyType.EXTERNAL) {
             const existingPlugin = dao?.plugins.find((plugin) =>
                 addressUtils.isAddressEqual(plugin.address, values.address),
             );
