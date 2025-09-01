@@ -96,7 +96,7 @@ export interface ISetupBodyFormExisting<
     /**
      * Address of the create proposal condition of the body.
      */
-    createProposalConditionAddress?: string;
+    proposalCreationConditionAddress?: string;
 }
 
 export type ISetupBodyForm<

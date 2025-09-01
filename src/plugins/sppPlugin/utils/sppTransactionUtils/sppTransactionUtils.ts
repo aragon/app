@@ -141,7 +141,7 @@ class SppTransactionUtils {
 
         const existingConditionAddresses = bodies
             .filter((body) => body.type === SetupBodyType.EXISTING)
-            .map((body) => body.createProposalConditionAddress)
+            .map((body) => body.proposalCreationConditionAddress)
             .filter((address) => address != null);
 
         const newConditionAddresses = bodies

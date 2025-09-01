@@ -107,6 +107,7 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
                                 fieldName={`${formPrefix}.bodies.${index.toString()}`}
                                 body={body}
                                 onEdit={
+                                    // TODO: pass readonly=true when existing instead?
                                     body.type !== SetupBodyType.EXISTING ? () => openSetupBodyDialog(index) : undefined
                                 }
                                 onDelete={() => remove(index)}

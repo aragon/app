@@ -83,5 +83,5 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
     /**
      * Address of the create proposal condition of the plugin.
      */
-    createProposalConditionAddress?: string;
+    proposalCreationConditionAddress?: string;
 }
