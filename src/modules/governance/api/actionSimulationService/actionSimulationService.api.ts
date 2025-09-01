@@ -6,13 +6,13 @@ export interface ISimulateActionsUrlParams {
      * Network to simulate the actions on.
      */
     network: Network;
+    /**
+     * Address of the plugin to simulate the actions for. Used as `from` address.
+     */
+    pluginAddress: string;
 }
 
 export interface ISimulateActionsItem {
-    /**
-     * Address to simulate the transaction from.
-     */
-    from: string;
     /**
      * Address to simulate the transaction to.
      */

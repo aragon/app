@@ -6,7 +6,7 @@ export interface ISimulationResult {
     /**
      * Status of the simulation.
      */
-    status: 'success' | 'failure';
+    status: 'success' | 'failed';
     /**
      * URL to view the simulation in Tenderly.
      */

@@ -13,7 +13,7 @@ export interface ISimulateActionsDialogParams {
      */
     network: Network;
     /**
-     * Address of the plugin of the proposal.
+     * Address of the plugin on which the proposal is created.
      */
     pluginAddress: string;
     /**
@@ -37,12 +37,12 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
 
     useEffect(() => {
         triggerSimulation({
-            urlParams: { network },
-            body: actions.map(({ to, data, value }) => ({ from: pluginAddress, to, data, value: value as string })),
+            urlParams: { network, pluginAddress },
+            body: actions.map(({ to, data, value }) => ({ to, data, value: value.toString() })),
         });
     }, [actions, network, pluginAddress, triggerSimulation]);
 
-    const hasFailed = isError || data?.status === 'failure';
+    const hasFailed = isError || data?.status === 'failed';
 
     return (
         <>

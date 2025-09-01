@@ -18,10 +18,9 @@ describe('useSimulateActions mutation', () => {
             url: 'https://tenderly.co/simulation/123',
         };
         const params = {
-            urlParams: { network: Network.ETHEREUM_MAINNET },
+            urlParams: { network: Network.ETHEREUM_MAINNET, pluginAddress: '0x123' },
             body: [
                 {
-                    from: '0x123',
                     to: '0x456',
                     data: '0x000',
                     value: '0',
