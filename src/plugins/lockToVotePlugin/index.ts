@@ -7,7 +7,6 @@ import { TokenMemberInfo } from '../tokenPlugin/components/tokenMemberInfo';
 import { TokenMemberList } from '../tokenPlugin/components/tokenMemberList';
 import { TokenProposalCreationSettings } from '../tokenPlugin/components/tokenProposalCreationSettings';
 import { TokenVoteList } from '../tokenPlugin/components/tokenVoteList';
-import { useTokenGovernanceSettings } from '../tokenPlugin/hooks/useTokenGovernanceSettings';
 import { useTokenMemberStats } from '../tokenPlugin/hooks/useTokenMemberStats';
 import { tokenBodyUtils } from '../tokenPlugin/utils/tokenBodyUtils';
 import { tokenTransactionUtils } from '../tokenPlugin/utils/tokenTransactionUtils';
@@ -21,6 +20,7 @@ import { LockToVoteSetupMembership } from './components/lockToVoteSetupMembershi
 import { LockToVoteSubmitVote } from './components/lockToVoteSubmitVote';
 import { lockToVotePlugin } from './constants/lockToVotePlugin';
 import { useLockToVoteActions } from './hooks/useLockToVoteActions';
+import { useLockToVoteGovernanceSettings } from './hooks/useLockToVoteGovernanceSettings';
 import { useLockToVoteNormalizeActions } from './hooks/useLockToVoteNormalizeActions';
 import { useLockToVotePermissionCheckProposalCreation } from './hooks/useLockToVotePermissionCheckProposalCreation';
 import { useLockToVotePermissionCheckVoteSubmission } from './hooks/useLockToVotePermissionCheckVoteSubmission';
@@ -118,7 +118,7 @@ export const initialiseLockToVotePlugin = () => {
         .registerSlotFunction({
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
             pluginId: lockToVotePlugin.id,
-            function: useTokenGovernanceSettings,
+            function: useLockToVoteGovernanceSettings,
         })
         .registerSlotComponent({
             slotId: SettingsSlotId.SETTINGS_MEMBERS_INFO,
