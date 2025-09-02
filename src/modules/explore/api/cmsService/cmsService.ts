@@ -1,5 +1,5 @@
 import { HttpService } from '@/shared/api/httpService';
-import type { IFeaturedDao, IWhitelistedAddresses, ISanctionedAddressesResult } from './domain';
+import type { IFeaturedDao, ISanctionedAddressesResult, IWhitelistedAddresses } from './domain';
 
 class CmsService extends HttpService {
     constructor() {

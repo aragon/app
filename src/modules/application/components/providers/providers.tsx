@@ -61,7 +61,7 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
                                 queryClient={queryClient}
                                 coreProviderValues={coreProviderValues}
                             >
-                            <DialogProvider>
+                                <DialogProvider>
                                     {children}
                                     <DialogRoot dialogs={providersDialogs} />
                                     <ReactQueryDevtools />
