@@ -130,10 +130,7 @@ class SppTransactionUtils {
         const newBodies = stages.flatMap((stage) => stage.bodies).filter((body) => body.type === SetupBodyType.NEW);
         const conditionAddresses = newBodies.reduce<string[]>((current, body, bodyIndex) => {
             const isBodyAllowed = body.canCreateProposal;
-            const bodyConditionAddress =
-                body.plugin === 'lockToVote'
-                    ? pluginSetupData[bodyIndex].preparedSetupData.permissions[5].condition
-                    : pluginSetupData[bodyIndex].preparedSetupData.helpers[0];
+            const bodyConditionAddress = pluginSetupData[bodyIndex].preparedSetupData.helpers[0];
 
             return isBodyAllowed ? [...current, bodyConditionAddress] : current;
         }, []);
