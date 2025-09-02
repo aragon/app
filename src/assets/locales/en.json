@@ -1332,6 +1332,16 @@
         },
         "lockToVoteSubmitVote": {
           "approve": "to approve",
+          "buttons": {
+            "cancel": "Cancel",
+            "submit": "Submit vote",
+            "submitted": "Vote submitted",
+            "update": {
+              "submit": "Submit update",
+              "vote": "Update vote"
+            },
+            "vote": "Vote on proposal"
+          },
           "veto": "to veto"
         },
         "lockToVoteSubmitVoteFeedbackDialog": {
@@ -1905,10 +1915,6 @@
             },
             "submit": "Submit vote",
             "submitted": "Vote submitted",
-            "update": {
-              "submit": "Submit update",
-              "vote": "Update vote"
-            },
             "vote": "Vote on proposal"
           },
           "options": {

@@ -5,7 +5,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, EmptyState, invariant } from '@aragon/gov-ui-kit';
 import { LockToVotePluginDialogId } from '../../constants/lockToVotePluginDialogId';
 import { useLockToVoteData } from '../../hooks/useLockToVoteData';
-import type { ILockToVotePlugin } from '../../types';
+import { type ILockToVotePlugin } from '../../types';
 import type { ILockToVoteLockBeforeVoteDialogParams } from '../lockToVoteLockBeforeVoteDialog';
 
 export interface ILockToVoteSubmitVoteFeedbackDialogParams {
@@ -22,9 +22,9 @@ export interface ILockToVoteSubmitVoteFeedbackDialogParams {
      */
     onVoteClick: (lockAmount?: bigint) => void;
     /**
-     * Defines if the submit-vote feedback is displayed for a proposal with vote replacement enabled or not.
+     *  Flag indicating whether the user can vote.
      */
-    isVoteReplacement?: boolean;
+    canVote: boolean;
 }
 
 export interface ILockToVoteSubmitVoteFeedbackDialogProps
@@ -33,7 +33,7 @@ export interface ILockToVoteSubmitVoteFeedbackDialogProps
 export const LockToVoteSubmitVoteFeedbackDialog: React.FC<ILockToVoteSubmitVoteFeedbackDialogProps> = (props) => {
     const { location } = props;
     invariant(location.params != null, 'LockToVoteSubmitVoteFeedbackDialog: required parameters must be set.');
-    const { plugin, daoId, onVoteClick, isVoteReplacement } = location.params;
+    const { plugin, daoId, onVoteClick, canVote } = location.params;
 
     const { t } = useTranslations();
     const { close, open } = useDialogContext();
@@ -46,9 +46,8 @@ export const LockToVoteSubmitVoteFeedbackDialog: React.FC<ILockToVoteSubmitVoteF
 
     const { symbol: tokenSymbol } = plugin.settings.token;
     const hasVotingPower = lockedAmount > 0;
-
     const translationVariant = hasVotingPower ? 'lockMore' : 'default';
-    const displayVoteButton = hasVotingPower && isVoteReplacement;
+    const displayVoteButton = hasVotingPower && canVote;
 
     const primaryAction = {
         label: t(`app.plugins.lockToVote.lockToVoteSubmitVoteFeedbackDialog.cta.lock`),
