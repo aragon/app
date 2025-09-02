@@ -1,4 +1,4 @@
-import { type IUseTokenResult, useToken } from '../useToken';
+import { type IUseTokenResult, useToken } from '@/shared/hooks/useToken';
 import type { IUseGovernanceTokenParams, IUseGovernanceTokenResult } from './useGovernanceToken.api';
 import { useGovernanceTokenDelegationCheck } from './useGovernanceTokenDelegationCheck';
 import { useGovernanceTokenErc20Check } from './useGovernanceTokenErc20Check';

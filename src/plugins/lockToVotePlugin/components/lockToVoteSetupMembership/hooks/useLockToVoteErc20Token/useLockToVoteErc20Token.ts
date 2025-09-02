@@ -1,7 +1,4 @@
-import type {
-    IUseTokenParams,
-    IUseTokenResult,
-} from '@/plugins/tokenPlugin/components/tokenSetupMembership/hooks/useToken';
+import type { IUseTokenParams, IUseTokenResult } from '@/shared/hooks/useToken';
 import { useMemo } from 'react';
 import { erc20Abi } from 'viem';
 import { useReadContracts } from 'wagmi';

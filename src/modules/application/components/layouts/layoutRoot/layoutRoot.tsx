@@ -1,6 +1,7 @@
 import { initPluginRegistry } from '@/initPluginRegistry';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { fetchInterceptorUtils } from '@/modules/application/utils/fetchInterceptorUtils';
+import { sanctionedAddressesOptions } from '@/modules/explore/api/cmsService';
 import { whitelistedAddressesOptions } from '@/modules/explore/api/cmsService/queries/useWhitelistedAddresses';
 import { translations } from '@/shared/constants/translations';
 import { dehydrate, QueryClient } from '@tanstack/react-query';
@@ -34,7 +35,9 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const wagmiInitialState = cookieToInitialState(wagmiConfig, requestHeaders.get('cookie'));
 
     const queryClient = new QueryClient();
+    await queryClient.prefetchQuery(sanctionedAddressesOptions());
     await queryClient.prefetchQuery(whitelistedAddressesOptions());
+    const dehydratedState = dehydrate(queryClient);
 
     return (
         <html lang="en" className="h-full">
@@ -49,7 +52,7 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
                 <Providers
                     translations={translationAssets}
                     wagmiInitialState={wagmiInitialState}
-                    dehydratedState={dehydrate(queryClient)}
+                    dehydratedState={dehydratedState}
                 >
                     <ErrorBoundary>
                         <div className="flex grow flex-col">{children}</div>

@@ -46,14 +46,12 @@
       },
       "layoutDao": {
         "notFound": {
-          "action": "Explore DAOs",
           "description": "We couldn't find the DAO you're looking for.",
           "title": "DAO not found"
         }
       },
       "layoutWizard": {
         "notFound": {
-          "action": "Explore DAOs",
           "description": "We couldn't find the DAO you're looking for.",
           "title": "DAO not found"
         }
@@ -679,7 +677,7 @@
       },
       "transferAssetForm": {
         "amount": {
-          "label": "Token",
+          "label": "Amount",
           "placeholder": "0"
         },
         "receiver": {
@@ -777,6 +775,13 @@
             "title": "Ethereum Follow Protocol"
           }
         },
+        "error": {
+          "action": "Explore members",
+          "notFound": {
+            "description": "We couldn't find the member you're looking for.",
+            "title": "Member not found"
+          }
+        },
         "header": {
           "breadcrumb": {
             "members": "Members"
@@ -796,11 +801,6 @@
           "votingActivity": {
             "title": "Voting activity"
           }
-        },
-        "notFound": {
-          "action": "Explore members",
-          "description": "We couldn't find the member you're looking for.",
-          "title": "Member not found"
         }
       },
       "daoMemberList": {
@@ -833,6 +833,13 @@
             "title": "Links"
           }
         },
+        "error": {
+          "action": "Explore proposals",
+          "notFound": {
+            "description": "We couldn't find the proposal you're looking for.",
+            "title": "Proposal not found"
+          }
+        },
         "header": {
           "breadcrumb": {
             "proposals": "Proposals"
@@ -848,11 +855,6 @@
             "readMore": "Read more"
           },
           "voting": "Voting"
-        },
-        "notFound": {
-          "action": "Explore proposals",
-          "description": "We couldn't find the proposal you're looking for.",
-          "title": "Proposal not found"
         }
       },
       "daoProposalList": {
@@ -894,6 +896,13 @@
         "name": "Create DAO"
       },
       "layoutWizardCreateProposal": {
+        "error": {
+          "action": "Explore proposals",
+          "notFound": {
+            "description": "We couldn't find the DAO you're looking for.",
+            "title": "DAO not found"
+          }
+        },
         "name": "Create proposal",
         "namePlugin": "{{plugin}}: Create proposal"
       },
@@ -1117,13 +1126,23 @@
             "deadline": "Deadline",
             "resources": "Resources",
             "status": "Status",
+            "termsConditionsAccepted": {
+              "error": "You haven't agreed to the terms of service.",
+              "label": "I agree to the",
+              "link": "terms & conditions"
+            },
             "timeLeft": "{{time}} left",
             "type": "Type",
             "value": "Value"
           },
           "inputs": {
-            "helpText": "The address to get the payout",
-            "recipient": "Recipient"
+            "recipient": {
+              "error": {
+                "ofac": "This address is restricted and can't be used."
+              },
+              "helpText": "The address where the payout will be sent.",
+              "label": "Recipient"
+            }
           },
           "submit": "Claim"
         },
@@ -1136,13 +1155,17 @@
         "capitalDistributorRewardsAside": {
           "stats": {
             "claimableCount": "Claimable campaigns",
-            "claimableNow": "Claimable now",
             "latestClaim": "Latest claim",
-            "recentUnit": " {{unit}} ago",
-            "totalEarned": "Total earned"
+            "recentUnit": " {{unit}} ago"
           }
         },
         "capitalDistributorRewardsPage": {
+          "error": {
+            "restricted": {
+              "description": "You can't continue because access from your location isn't permitted.",
+              "title": "Location restricted"
+            }
+          },
           "main": {
             "connect": {
               "action": "Connect",
@@ -1962,6 +1985,13 @@
         "processKey": "Process key"
       },
       "daoProcessDetailsPage": {
+        "error": {
+          "action": "Explore settings",
+          "notFound": {
+            "description": "We couldn't find the process you're looking for.",
+            "title": "Process not found"
+          }
+        },
         "header": {
           "breadcrumb": {
             "settings": "Settings"
@@ -1971,11 +2001,6 @@
             "latestActivityUnit": "{{unit}} ago",
             "proposals": "Proposals"
           }
-        },
-        "notFound": {
-          "action": "Explore settings",
-          "description": "We couldn't find the process you're looking for.",
-          "title": "Process not found"
         },
         "section": {
           "actions": "Authorized actions",
