@@ -7,6 +7,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import type { IPluginInfo } from '@/shared/types';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { Accordion, Button, Dropdown, IconType } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import { useWatch } from 'react-hook-form';
 import { BodyType } from '../../../../../types/enum';
 import { GovernanceType, type ICreateProcessFormData } from '../../../createProcessFormDefinitions';
@@ -55,6 +56,7 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
 
     const isNew = body.type === BodyType.NEW;
     const isExternal = body.type === BodyType.EXTERNAL;
+    const isEditAllowed = onEdit != null;
 
     return (
         <Accordion.Container isMulti={true} defaultValue={readOnly ? [body.internalId] : undefined}>
@@ -81,8 +83,13 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
                         Fallback={GovernanceBodiesFieldItemDefault}
                     />
                     {!readOnly && (
-                        <div className="flex w-full grow justify-between">
-                            {onEdit != null && (
+                        <div
+                            className={classNames(
+                                'flex w-full grow',
+                                isEditAllowed ? 'justify-between' : 'justify-end',
+                            )}
+                        >
+                            {isEditAllowed && (
                                 <Button variant="secondary" size="md" onClick={onEdit}>
                                     {t('app.createDao.createProcessForm.governance.bodyField.action.edit')}
                                 </Button>

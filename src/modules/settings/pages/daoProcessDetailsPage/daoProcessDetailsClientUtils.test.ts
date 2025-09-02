@@ -26,6 +26,7 @@ describe('daoProcessDetailsClient Utils', () => {
                 if ('body' in result) {
                     expect(result.body.type).toBe(BodyType.EXISTING);
                     expect(result.body.name).toBe('TokenPlugin');
+                    expect(result.body.canCreateProposal).toBe(true);
                     if ('governance' in result.body) {
                         expect(result.body.governance).toEqual(plugin.settings);
                     }
@@ -47,6 +48,7 @@ describe('daoProcessDetailsClient Utils', () => {
                 if ('body' in result) {
                     expect(result.body.type).toBe(BodyType.EXISTING);
                     expect(result.body.name).toBe('Multisig');
+                    expect(result.body.canCreateProposal).toBe(true);
                 }
             });
 
