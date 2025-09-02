@@ -1241,6 +1241,11 @@
             "transactionInfoTitle": "Unlock {{symbol}}"
           }
         },
+        "lockToVotePermissionCheckProposalCreation": {
+          "function": "Proposal creation",
+          "pluginNameLabel": "Name",
+          "userLockedBalance": "Locked balance"
+        },
         "lockToVotePermissionCheckVoteSubmission": {
           "createdAt": "Created",
           "votingPower": "Your token balance"
