@@ -3,15 +3,15 @@ import { EmptyState, IconType, type IEmptyStateBaseProps, type IllustrationObjec
 
 export interface IErrorFeedbackProps {
     /**
-     * Custom error title.
+     * Translation key for the error title.
      * @default app.shared.errorFeedback.title
      */
-    title?: string;
+    titleKey?: string;
     /**
-     * Custom error description.
+     * Translation key for the error description.
      * @default app.shared.errorFeedback.description
      */
-    description?: string;
+    descriptionKey?: string;
     /**
      * Custom object illustration.
      * @default 'WARNING'
@@ -29,7 +29,7 @@ export interface IErrorFeedbackProps {
 }
 
 export const ErrorFeedback: React.FC<IErrorFeedbackProps> = (props) => {
-    const { title, description, illustration = 'WARNING', primaryButton, hideReportButton } = props;
+    const { titleKey, descriptionKey, illustration = 'WARNING', primaryButton, hideReportButton } = props;
 
     const { t } = useTranslations();
 
@@ -40,8 +40,8 @@ export const ErrorFeedback: React.FC<IErrorFeedbackProps> = (props) => {
         iconRight: IconType.LINK_EXTERNAL,
     };
 
-    const processedTitle = title ?? t('app.shared.errorFeedback.title');
-    const processedDescription = description ?? t('app.shared.errorFeedback.description');
+    const processedTitle = t(titleKey ?? 'app.shared.errorFeedback.title');
+    const processedDescription = t(descriptionKey ?? 'app.shared.errorFeedback.description');
 
     const processedPrimaryButton = primaryButton ?? { label: t('app.shared.errorFeedback.link.explore'), href: '/' };
     const processedSecondaryButton = hideReportButton ? undefined : reportIssueButton;

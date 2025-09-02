@@ -31,13 +31,8 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
         const daoUrlParams = { id: daoId };
         dao = await queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }));
     } catch (error: unknown) {
-        return (
-            <Page.Error
-                error={JSON.parse(JSON.stringify(error)) as unknown}
-                actionLink="/"
-                notFoundNamespace="app.application.layoutDao"
-            />
-        );
+        const parsedError = JSON.parse(JSON.stringify(error)) as unknown;
+        return <Page.Error error={parsedError} errorNamespace="app.application.layoutDao.error" />;
     }
 
     return (

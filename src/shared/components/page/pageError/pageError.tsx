@@ -3,44 +3,49 @@
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { useEffect } from 'react';
-import { ErrorFeedback } from '../../errorFeedback';
+import { ErrorFeedback, type IErrorFeedbackProps } from '../../errorFeedback';
 import { useTranslations } from '../../translationsProvider';
 
-export interface IPageErrorProps {
+export interface IPageErrorProps extends Pick<IErrorFeedbackProps, 'titleKey' | 'descriptionKey'> {
     /**
      * Error to be processed.
      */
-    error: unknown;
+    error?: unknown;
     /**
      * Link of the primary action.
      */
-    actionLink: string;
+    actionLink?: string;
     /**
-     * Namespace used to render the 404 not found error message.
+     * Namespace used to render the not-found error message and action link label.
      */
-    notFoundNamespace: string;
+    errorNamespace?: string;
 }
 
 export const PageError: React.FC<IPageErrorProps> = (props) => {
-    const { error, actionLink, notFoundNamespace } = props;
+    const { error, actionLink, errorNamespace = '', titleKey, descriptionKey } = props;
 
     const { t } = useTranslations();
 
     useEffect(() => {
-        monitoringUtils.logError(error);
+        if (error != null) {
+            monitoringUtils.logError(error);
+        }
     }, [error]);
 
-    if (!AragonBackendServiceError.isNotFoundError(error)) {
-        return <ErrorFeedback primaryButton={{ label: t(`${notFoundNamespace}.notFound.action`), href: actionLink }} />;
-    }
+    const isNotFoundError = AragonBackendServiceError.isNotFoundError(error);
+
+    const processedTitle = isNotFoundError ? `${errorNamespace}.notFound.title` : titleKey;
+    const processedDescription = isNotFoundError ? `${errorNamespace}.notFound.description` : descriptionKey;
+
+    const primaryButton = actionLink ? { label: t(`${errorNamespace}.action`), href: actionLink } : undefined;
 
     return (
         <ErrorFeedback
-            title={t(`${notFoundNamespace}.notFound.title`)}
-            description={t(`${notFoundNamespace}.notFound.description`)}
-            primaryButton={{ label: t(`${notFoundNamespace}.notFound.action`), href: actionLink }}
-            illustration="NOT_FOUND"
-            hideReportButton={true}
+            titleKey={processedTitle}
+            descriptionKey={processedDescription}
+            primaryButton={primaryButton}
+            illustration={isNotFoundError ? 'NOT_FOUND' : undefined}
+            hideReportButton={isNotFoundError}
         />
     );
 };

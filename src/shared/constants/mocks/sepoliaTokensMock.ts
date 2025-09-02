@@ -6,7 +6,6 @@ const usdc = {
     name: 'USDC',
     type: 'ERC-20',
     decimals: 6,
-    priceChangeOnDayUsd: '0.00',
     priceUsd: '1.00',
     totalSupply: '411951434436125256',
 };
@@ -19,7 +18,6 @@ const link = {
     name: 'LINK',
     type: 'ERC-20',
     decimals: 18,
-    priceChangeOnDayUsd: '0.00',
     priceUsd: '13.08',
     totalSupply: '87316352000002120500000000',
 };

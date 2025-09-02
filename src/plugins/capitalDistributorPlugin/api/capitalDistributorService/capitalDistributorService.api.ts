@@ -1,25 +1,25 @@
 import type { IPaginatedRequest } from '@/shared/api/aragonBackendService';
-import type { IRequestQueryParams, IRequestUrlParams } from '@/shared/api/httpService';
+import type { Network } from '@/shared/api/daoService';
+import type { IRequestQueryParams } from '@/shared/api/httpService';
 import type { CampaignStatus } from './domain';
 
 export interface IGetCampaignListQueryParams extends IPaginatedRequest {
     /**
-     * Address of the member to fetch the campaigns for.
+     * Address of the plugin to fetch the campaigns for.
      */
-    memberAddress: string;
+    pluginAddress: string;
     /**
-     * Status of the campaign (claimed/claimable).
+     * Network of the plugin.
+     */
+    network: Network;
+    /**
+     * Address of the user to retrieve the user-specific data for the campaigns.
+     */
+    userAddress: string;
+    /**
+     * Status of the campaigns to be fetched (claimed/claimable).
      */
     status?: CampaignStatus;
 }
 
 export interface IGetCampaignListParams extends IRequestQueryParams<IGetCampaignListQueryParams> {}
-
-export interface IGetCampaignStatsUrlParams {
-    /**
-     * Address of the member to fetch the campaign stats for.
-     */
-    memberAddress: string;
-}
-
-export interface IGetCampaignStatsParams extends IRequestUrlParams<IGetCampaignStatsUrlParams> {}
