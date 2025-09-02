@@ -14,11 +14,11 @@ import { useLockToVoteData } from '../useLockToVoteData';
 export interface ILockToVotePermissionCheckProposalCreationParams
     extends IPermissionCheckGuardParams<ILockToVotePlugin> {}
 
-const lockManagerAbi = [
+const proposalCreationConditionAbi = [
     {
         type: 'function',
-        inputs: [{ name: '_creator', type: 'address' }],
-        name: 'activeProposalsCreatedBy',
+        inputs: [{ name: '_who', type: 'address' }],
+        name: 'getRequiredLockAmount',
         outputs: [{ name: '_result', type: 'uint256' }],
         stateMutability: 'view',
     },
@@ -28,7 +28,6 @@ export const useLockToVotePermissionCheckProposalCreation = (
     params: ILockToVotePermissionCheckProposalCreationParams,
 ): IPermissionCheckGuardResult => {
     const { plugin, daoId, useConnectedUserInfo = true } = params;
-
     const { address } = useAccount();
     const { t } = useTranslations();
 
@@ -41,17 +40,15 @@ export const useLockToVotePermissionCheckProposalCreation = (
     const { minProposerVotingPower, token } = plugin.settings;
     const { decimals: tokenDecimals, symbol: tokenSymbol } = token;
 
-    // TODO: use getRequiredLockAmount view function on condition smart contract when available from the backend
-    const { data: activeProposalsCount = BigInt(0), isLoading: isLoadingActiveProposals } = useReadContract({
-        abi: lockManagerAbi,
-        functionName: 'activeProposalsCreatedBy',
-        address: plugin.lockManagerAddress as Hex,
+    const { data: requiredLockAmount = BigInt(0), isLoading: isLoadingRequiredLockAmount } = useReadContract({
+        abi: proposalCreationConditionAbi,
+        functionName: 'getRequiredLockAmount',
+        address: plugin.proposalCreationConditionAddress as Hex,
         chainId,
         args: [address as Hex],
         query: { enabled: address != null },
     });
 
-    const requiredLockAmount = BigInt(minProposerVotingPower) * (activeProposalsCount + BigInt(1));
     const parsedRequiredLockAmount = formatUnits(requiredLockAmount, tokenDecimals);
     const formattedRequiredLockAMount = formatterUtils.formatNumber(parsedRequiredLockAmount, {
         format: NumberFormat.TOKEN_AMOUNT_SHORT,
@@ -84,13 +81,13 @@ export const useLockToVotePermissionCheckProposalCreation = (
 
     const processedSettings = useConnectedUserInfo ? defaultSettings.concat(connectedUserSettings) : defaultSettings;
 
-    const hasPermission = lockedAmount >= requiredLockAmount;
+    const hasPermission = !isLoadingRequiredLockAmount && lockedAmount >= requiredLockAmount;
     const isRestricted = BigInt(minProposerVotingPower) > 0;
 
     return {
         hasPermission,
         settings: [processedSettings],
-        isLoading: isLoadingActiveProposals || isLoadingLockToVoteData,
+        isLoading: isLoadingRequiredLockAmount || isLoadingLockToVoteData,
         isRestricted,
     };
 };
