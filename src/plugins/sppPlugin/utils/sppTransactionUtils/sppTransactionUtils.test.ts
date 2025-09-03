@@ -116,8 +116,8 @@ describe('sppTransaction utils', () => {
         const buildUpdateRulesTransactionSpy = jest.spyOn(sppTransactionUtils as any, 'buildUpdateRulesTransaction');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const buildBodyPermissionActionsSpy = jest.spyOn(sppTransactionUtils as any, 'buildBodyPermissionActions');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const buildGrantSppProposalCreationActionSpy = jest.spyOn(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             sppTransactionUtils as any,
             'buildGrantSppProposalCreationAction',
         );
