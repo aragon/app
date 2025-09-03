@@ -8,6 +8,7 @@ import {
     generateCreateProcessFormStage,
     generateCreateProcessFormStageSettings,
     generateSetupBodyFormData,
+    generateSetupBodyFormExisting,
     generateSetupBodyFormExternal,
     generateSetupBodyFormNew,
 } from '@/modules/createDao/testUtils';
@@ -115,17 +116,24 @@ describe('sppTransaction utils', () => {
         const buildUpdateRulesTransactionSpy = jest.spyOn(sppTransactionUtils as any, 'buildUpdateRulesTransaction');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const buildBodyPermissionActionsSpy = jest.spyOn(sppTransactionUtils as any, 'buildBodyPermissionActions');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const buildGrantSppProposalCreationActionSpy = jest.spyOn(
+            sppTransactionUtils as any,
+            'buildGrantSppProposalCreationAction',
+        );
 
         afterEach(() => {
             buildUpdateStagesTransactionSpy.mockReset();
             buildUpdateRulesTransactionSpy.mockReset();
             buildBodyPermissionActionsSpy.mockReset();
+            buildGrantSppProposalCreationActionSpy.mockReset();
         });
 
         afterAll(() => {
             buildUpdateStagesTransactionSpy.mockRestore();
             buildUpdateRulesTransactionSpy.mockRestore();
             buildBodyPermissionActionsSpy.mockRestore();
+            buildGrantSppProposalCreationActionSpy.mockRestore();
         });
 
         it('correctly builds the install actions for plugins', () => {
@@ -144,6 +152,45 @@ describe('sppTransaction utils', () => {
 
             const result = sppTransactionUtils.buildPluginsSetupActions(values, setupData, dao);
             expect(result).toEqual([updateStagesAction, updateRulesAction, ...bodyPermissionActions]);
+        });
+
+        it('grants SPP proposal creation permission to existing bodies', () => {
+            const existingBody = generateSetupBodyFormExisting({
+                address: '0xExistingBody',
+                canCreateProposal: true,
+            });
+            const newBody = generateSetupBodyFormNew({ canCreateProposal: true });
+            const stage = generateCreateProcessFormStage({ bodies: [newBody, existingBody] });
+            const values = generateCreateProcessFormDataAdvanced({
+                governanceType: GovernanceType.ADVANCED,
+                stages: [stage],
+            });
+
+            const setupData = [
+                generatePluginInstallationSetupData({ pluginAddress: '0xSpp' }),
+                generatePluginInstallationSetupData({ pluginAddress: '0xNewPlugin' }),
+            ];
+            const dao = generateDao({ address: '0xDao' });
+
+            const updateStagesAction = { to: '0xSpp', data: '0xstages', value: BigInt(0) };
+            const updateRulesAction = { to: '0xRuleCondition', data: '0xRules', value: BigInt(0) };
+            const bodyPermissionActions = [{ to: '0xDao', data: '0xBody', value: BigInt(0) }];
+            const existingBodyPermissionAction = { to: '0xDao', data: '0xExisting', value: BigInt(0) };
+
+            buildUpdateStagesTransactionSpy.mockReturnValueOnce(updateStagesAction);
+            buildUpdateRulesTransactionSpy.mockReturnValueOnce(updateRulesAction);
+            buildBodyPermissionActionsSpy.mockReturnValueOnce(bodyPermissionActions);
+            buildGrantSppProposalCreationActionSpy.mockReturnValueOnce(existingBodyPermissionAction);
+
+            const result = sppTransactionUtils.buildPluginsSetupActions(values, setupData, dao);
+
+            expect(buildGrantSppProposalCreationActionSpy).toHaveBeenCalledWith(
+                existingBody.address,
+                dao.address,
+                '0xSpp',
+            );
+
+            expect(result).toContain(existingBodyPermissionAction);
         });
     });
 
@@ -186,8 +233,37 @@ describe('sppTransaction utils', () => {
         });
     });
 
+    describe('buildGrantSppProposalCreationAction', () => {
+        it('correctly builds grant permission action for SPP to create proposals on sub-plugins', () => {
+            const bodyAddress = '0xBodyAddress' as Viem.Hex;
+            const daoAddress = '0xDao' as Viem.Hex;
+            const sppAddress = '0xSpp' as Viem.Hex;
+
+            const grantAction = { to: daoAddress, data: '0xGrant' as Viem.Hex, value: BigInt(0) };
+            grantPermissionSpy.mockReturnValueOnce(grantAction);
+
+            const result = sppTransactionUtils['buildGrantSppProposalCreationAction'](
+                bodyAddress,
+                daoAddress,
+                sppAddress,
+            );
+
+            expect(grantPermissionSpy).toHaveBeenCalledWith({
+                where: bodyAddress,
+                who: sppAddress,
+                what: permissionTransactionUtils.permissionIds.createProposalPermission,
+                to: daoAddress,
+            });
+            expect(result).toEqual(grantAction);
+        });
+    });
+
     describe('buildUpdateRulesTransaction', () => {
         const buildRuleConditionsSpy = jest.spyOn(permissionTransactionUtils, 'buildRuleConditions');
+
+        afterEach(() => {
+            buildRuleConditionsSpy.mockReset();
+        });
 
         it('returns undefined when proposalCreationMode is ANY_WALLET', () => {
             const proposalCreationMode = ProposalCreationMode.ANY_WALLET;
@@ -235,6 +311,95 @@ describe('sppTransaction utils', () => {
             const expectedTransaction = { to: '0xSppRuleCondition', data: updateRulesTxData, value: BigInt(0) };
             expect(result).toEqual(expectedTransaction);
         });
+
+        it('includes proposalCreationConditionAddress for existing bodies in rule conditions', () => {
+            const existingBody = generateSetupBodyFormExisting({
+                canCreateProposal: true,
+                proposalCreationConditionAddress: '0xConditionAddress',
+            });
+            const newBody = generateSetupBodyFormNew({ canCreateProposal: true });
+            const stage = generateCreateProcessFormStage({ bodies: [newBody, existingBody] });
+            const values = generateCreateProcessFormDataAdvanced({
+                stages: [stage],
+                proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
+            });
+
+            const sppSetupData = generatePluginInstallationSetupData({
+                preparedSetupData: { helpers: ['0xSppRuleCondition'], permissions: [] },
+            });
+
+            const pluginSetupData = [
+                generatePluginInstallationSetupData({
+                    preparedSetupData: { helpers: ['0xNewCondition'], permissions: [] },
+                }),
+            ];
+
+            const expectedConditionRules = [{ id: 202, op: 1, value: '0xConditions', permissionId: zeroHash }];
+            buildRuleConditionsSpy.mockReturnValueOnce(expectedConditionRules);
+
+            const updateRulesTxData = '0xUpdateRulesTxData';
+            encodeFunctionDataSpy.mockReturnValueOnce(updateRulesTxData);
+
+            const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, sppSetupData, pluginSetupData);
+
+            // Should include both existing condition address and new condition address
+            expect(buildRuleConditionsSpy).toHaveBeenCalledWith(
+                ['0xConditionAddress', '0xNewCondition'], // All condition addresses combined
+                [], // Empty permissions array
+            );
+
+            expect(result).toBeDefined();
+        });
+
+        it('handles mix of existing and new bodies with different canCreateProposal settings', () => {
+            const existingBodyCanCreate = generateSetupBodyFormExisting({
+                canCreateProposal: true,
+                proposalCreationConditionAddress: '0xConditionAddress1',
+            });
+            const existingBodyCannotCreate = generateSetupBodyFormExisting({
+                canCreateProposal: false,
+                proposalCreationConditionAddress: '0xConditionAddress2',
+            });
+            const newBodyCanCreate = generateSetupBodyFormNew({ canCreateProposal: true });
+            const newBodyCannotCreate = generateSetupBodyFormNew({ canCreateProposal: false });
+
+            const stage = generateCreateProcessFormStage({
+                bodies: [existingBodyCanCreate, existingBodyCannotCreate, newBodyCanCreate, newBodyCannotCreate],
+            });
+            const values = generateCreateProcessFormDataAdvanced({
+                stages: [stage],
+                proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
+            });
+
+            const sppSetupData = generatePluginInstallationSetupData({
+                preparedSetupData: { helpers: ['0xSppRuleCondition'], permissions: [] },
+            });
+
+            const pluginSetupData = [
+                generatePluginInstallationSetupData({
+                    preparedSetupData: { helpers: ['0xNewCondition1'], permissions: [] },
+                }),
+                generatePluginInstallationSetupData({
+                    preparedSetupData: { helpers: ['0xNewCondition2'], permissions: [] },
+                }),
+            ];
+
+            const expectedConditionRules = [{ id: 202, op: 1, value: '0xConditions', permissionId: zeroHash }];
+            buildRuleConditionsSpy.mockReturnValueOnce(expectedConditionRules);
+
+            const updateRulesTxData = '0xUpdateRulesTxData';
+            encodeFunctionDataSpy.mockReturnValueOnce(updateRulesTxData);
+
+            sppTransactionUtils['buildUpdateRulesTransaction'](values, sppSetupData, pluginSetupData);
+
+            // Should only include condition addresses for bodies that can create proposals
+            // Existing body conditions are always included (filtering happens at UI level)
+            // New body conditions are filtered by canCreateProposal in the implementation
+            expect(buildRuleConditionsSpy).toHaveBeenLastCalledWith(
+                [existingBodyCanCreate.proposalCreationConditionAddress, '0xNewCondition1'],
+                [], // Empty permissions array
+            );
+        });
     });
 
     describe('buildUpdateStagesTransaction', () => {
@@ -255,8 +420,12 @@ describe('sppTransaction utils', () => {
 
         it('correctly builds the update stages transaction', () => {
             const sppBody = generateSetupBodyFormData();
-            const externalBody = generateSetupBodyFormExternal({ address: '0xexternal' });
-            const sppStage = generateCreateProcessFormStage({ internalId: '0', bodies: [sppBody, externalBody] });
+            const externalBody = generateSetupBodyFormExternal({ address: '0xExternal' });
+            const existingBody = generateSetupBodyFormExisting({ address: '0xExisting' });
+            const sppStage = generateCreateProcessFormStage({
+                internalId: '0',
+                bodies: [sppBody, externalBody, existingBody],
+            });
             const transactionData = '0xupdate-stages';
 
             const timing = {
@@ -278,6 +447,7 @@ describe('sppTransaction utils', () => {
             const expectedProcessedBodies = [
                 { addr: pluginAddresses[0], resultType: 1, isManual: false, tryAdvance: true },
                 { addr: externalBody.address, resultType: 1, isManual: true, tryAdvance: true },
+                { addr: existingBody.address, resultType: 1, isManual: false, tryAdvance: true },
             ];
             const expectedProcessedStages = [
                 { bodies: expectedProcessedBodies, ...thresholds, ...timing, cancelable: false, editable: false },

@@ -1,6 +1,7 @@
 import {
     type ISetupBodyForm,
     type ISetupBodyFormBase,
+    type ISetupBodyFormExisting,
     type ISetupBodyFormExternal,
     type ISetupBodyFormNew,
 } from '../../dialogs/setupBodyDialog';
@@ -31,7 +32,26 @@ export const generateSetupBodyFormExternal = (data?: Partial<ISetupBodyFormExter
     ...data,
 });
 
-export const generateSetupBodyFormData = (data?: Partial<ISetupBodyForm>): ISetupBodyForm =>
-    data?.type === BodyType.EXTERNAL
-        ? generateSetupBodyFormExternal(data)
-        : generateSetupBodyFormNew(data as ISetupBodyFormNew);
+export const generateSetupBodyFormExisting = (data?: Partial<ISetupBodyFormExisting>): ISetupBodyFormExisting => ({
+    ...generateSetupBodyFormBase(data),
+    type: BodyType.EXISTING,
+    address: '0xExistingBody',
+    resources: [],
+    governance: {},
+    membership: { members: [] },
+    proposalCreationConditionAddress: '0xConditionAddress',
+    canCreateProposal: true,
+    ...data,
+});
+
+export const generateSetupBodyFormData = (data?: Partial<ISetupBodyForm>): ISetupBodyForm => {
+    if (data?.type === BodyType.EXTERNAL) {
+        return generateSetupBodyFormExternal(data);
+    }
+
+    if (data?.type === BodyType.EXISTING) {
+        return generateSetupBodyFormExisting(data);
+    }
+
+    return generateSetupBodyFormNew(data as ISetupBodyFormNew);
+};

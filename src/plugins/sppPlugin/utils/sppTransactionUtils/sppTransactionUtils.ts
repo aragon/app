@@ -142,6 +142,7 @@ class SppTransactionUtils {
 
         const existingConditionAddresses = bodies
             .filter((body) => body.type === BodyType.EXISTING)
+            .filter((body) => body.canCreateProposal)
             .map((body) => body.proposalCreationConditionAddress)
             .filter((address) => address != null);
 
