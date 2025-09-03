@@ -94,6 +94,7 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
                         max={totalSupply === '0' ? undefined : Number(parsedTotalSupply)}
                         onChange={onMinVotingPowerChange}
                         value={minVotingPower}
+                        // for existing bodies, the conditions are already deployed, so the ability to edit the token requirement for proposal creation wouldn't make sense.
                         disabled={type === BodyType.EXISTING}
                         {...minVotingPowerField}
                     />
