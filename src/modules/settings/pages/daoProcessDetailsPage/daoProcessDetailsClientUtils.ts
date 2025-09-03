@@ -9,7 +9,7 @@ import {
     type ICreateProcessFormDataAdvanced,
 } from '@/modules/createDao/components/createProcessForm';
 import type { ISetupBodyFormExisting, ISetupBodyFormMembership } from '@/modules/createDao/dialogs/setupBodyDialog';
-import { SetupBodyType } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { BodyType } from '@/modules/createDao/types/enum';
 import type { ISppPluginSettings, ISppStagePlugin } from '@/plugins/sppPlugin/types';
 import { PluginInterfaceType, type IDaoPlugin, type IPluginSettings } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -49,7 +49,7 @@ export class DaoProcessDetailsClientUtils {
 
         return {
             internalId: plugin.address,
-            type: SetupBodyType.EXISTING,
+            type: BodyType.EXISTING,
             plugin: plugin.interfaceType,
             address: plugin.address,
             name: daoUtils.getPluginName(plugin),
@@ -59,7 +59,8 @@ export class DaoProcessDetailsClientUtils {
             membership,
             release: plugin.release,
             build: plugin.build,
-            canCreateProposal: false,
+            canCreateProposal: true,
+            proposalCreationConditionAddress: plugin.proposalCreationConditionAddress,
         };
     };
 
@@ -130,6 +131,7 @@ export class DaoProcessDetailsClientUtils {
             address: plugin?.address ?? stagePlugin.address,
             blockTimestamp: plugin?.blockTimestamp ?? 0,
             transactionHash: plugin?.transactionHash ?? '',
+            proposalCreationConditionAddress: plugin?.proposalCreationConditionAddress,
         };
     }
 }

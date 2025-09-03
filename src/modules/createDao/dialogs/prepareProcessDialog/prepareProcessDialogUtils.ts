@@ -14,7 +14,8 @@ import { transactionUtils, type ITransactionRequest } from '@/shared/utils/trans
 import { encodeFunctionData, parseEventLogs, type Hex, type TransactionReceipt } from 'viem';
 import { GovernanceType, ProcessPermission, type ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
-import { SetupBodyType, type ISetupBodyFormNew } from '../setupBodyDialog';
+import { BodyType } from '../../types/enum';
+import { type ISetupBodyFormNew } from '../setupBodyDialog';
 import type {
     IBuildDeployExecuteSelectorConditionDataParams,
     IBuildPrepareInstallPluginActionParams,
@@ -40,7 +41,7 @@ class PrepareProcessDialogUtils {
 
         const newStageBodies = values.stages
             .flatMap((stage) => stage.bodies)
-            .filter((body) => body.type === SetupBodyType.NEW);
+            .filter((body) => body.type === BodyType.NEW);
         const pluginsMetadata = newStageBodies.map((body) => prepareProcessDialogUtils.preparePluginMetadata(body));
 
         return { pluginsMetadata, processorMetadata };
@@ -144,7 +145,7 @@ class PrepareProcessDialogUtils {
 
         const newStageBodies = values.stages
             .flatMap((stage, stageIndex) => stage.bodies.map((body) => ({ ...body, stageIndex })))
-            .filter((body) => body.type === SetupBodyType.NEW);
+            .filter((body) => body.type === BodyType.NEW);
 
         const installData = newStageBodies.map((body, index) => {
             const { votingPeriod: stageVotingPeriod } = values.stages[body.stageIndex].settings;
