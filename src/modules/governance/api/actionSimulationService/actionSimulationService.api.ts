@@ -27,7 +27,9 @@ export interface ISimulateActionsItem {
     value: string;
 }
 
-export type ISimulateActionsBody = ISimulateActionsItem[];
+export interface ISimulateActionsBody {
+    actions: ISimulateActionsItem[];
+}
 
 export interface ISimulateActionsParams
     extends IRequestUrlBodyParams<ISimulateActionsUrlParams, ISimulateActionsBody> {}

@@ -33,14 +33,20 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
-    const { mutate: triggerSimulation, isError, isPending, data } = useSimulateActions();
+    const { mutate: triggerSimulation, isError, isPending, status, data } = useSimulateActions();
 
     useEffect(() => {
+        if (status !== 'idle') {
+            return;
+        }
+
         triggerSimulation({
             urlParams: { network, pluginAddress },
-            body: actions.map(({ to, data, value }) => ({ to, data, value: value.toString() })),
+            body: {
+                actions: actions.map(({ to, data, value }) => ({ to, data, value: value.toString() })),
+            },
         });
-    }, [actions, network, pluginAddress, triggerSimulation]);
+    }, [actions, network, pluginAddress, status, triggerSimulation]);
 
     const hasFailed = isError || data?.status === 'failed';
 
