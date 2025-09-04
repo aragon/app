@@ -67,11 +67,12 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         { enabled: proposal != null, refetchInterval: ({ state }) => (state.data?.decoding ? 2000 : false) },
     );
 
-    const { data: lastSimulation, isError: hasGettingLastSimulationFailed } = useLastSimulation(
-        { urlParams: { proposalId: proposal?.id as string } },
-        { enabled: proposal != null },
-    );
-
+    const {
+        data: lastSimulation,
+        isError: hasGettingLastSimulationFailed,
+        isPending,
+    } = useLastSimulation({ urlParams: { proposalId: proposal?.id as string } }, { enabled: proposal != null });
+    console.log('lastSimulation', lastSimulation, isPending);
     const {
         mutate: triggerProposalSimulation,
         isPending: isSimulationLoading,

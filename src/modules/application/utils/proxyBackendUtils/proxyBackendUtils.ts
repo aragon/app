@@ -6,6 +6,7 @@ export class ProxyBackendUtils {
     request = async (request: NextRequest) => {
         const url = this.buildBackendUrl(request);
 
+        console.log('URL:', url, request, request.body);
         const result = await fetch(url, request);
         const parsedResult = (await result.json()) as unknown;
 
