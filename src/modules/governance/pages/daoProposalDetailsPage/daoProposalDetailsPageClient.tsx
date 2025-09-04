@@ -70,9 +70,10 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const {
         data: lastSimulation,
         isError: hasGettingLastSimulationFailed,
+        error,
         isPending,
     } = useLastSimulation({ urlParams: { proposalId: proposal?.id as string } }, { enabled: proposal != null });
-    console.log('lastSimulation', lastSimulation, isPending);
+
     const {
         mutate: triggerProposalSimulation,
         isPending: isSimulationLoading,

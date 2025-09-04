@@ -5,9 +5,10 @@ export class ProxyBackendUtils {
 
     request = async (request: NextRequest) => {
         const url = this.buildBackendUrl(request);
+        const requestOptions = await this.buildRequestOptions(request);
 
-        console.log('URL:', url, request, request.body);
-        const result = await fetch(url, request);
+        const result = await fetch(url, requestOptions);
+        console.log('resultresultresultresult', result);
         const parsedResult = (await result.json()) as unknown;
 
         return NextResponse.json(parsedResult);
@@ -18,6 +19,13 @@ export class ProxyBackendUtils {
         const url = `${process.env.ARAGON_BACKEND_URL!}${relativeUrl}`;
 
         return url;
+    };
+
+    private buildRequestOptions = async (request: NextRequest): Promise<RequestInit> => {
+        const { method, headers } = request;
+        const body = method.toUpperCase() === 'POST' ? await request.text() : undefined;
+
+        return { method, body, headers };
     };
 }
 
