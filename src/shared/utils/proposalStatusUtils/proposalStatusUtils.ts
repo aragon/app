@@ -60,9 +60,15 @@ class ProposalStatusUtils {
     };
 
     endsInTheFuture = (endDate?: number) => {
-        const now = DateTime.now();
+        const now = DateTime.now().toSeconds();
 
-        return endDate == null || now < DateTime.fromSeconds(endDate);
+        return endDate == null || now < endDate;
+    };
+
+    isEnded = (endDate?: number) => {
+        const now = DateTime.now().toSeconds();
+
+        return endDate != null && now >= endDate;
     };
 }
 

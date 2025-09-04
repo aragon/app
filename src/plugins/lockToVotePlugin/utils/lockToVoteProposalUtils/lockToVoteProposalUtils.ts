@@ -1,6 +1,6 @@
 import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
-import { type ProposalStatus } from '@aragon/gov-ui-kit';
+import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { type ITokenProposalOptionVotes, VoteOption } from '../../../tokenPlugin/types';
 import type { ILockToVoteProposal } from '../../types';
@@ -31,6 +31,14 @@ class LockToVoteProposalUtils {
     };
 
     hasSucceeded = (proposal: ILockToVoteProposal) => {
+        const status = this.getProposalStatus(proposal);
+        const hasEndDatePassed = proposalStatusUtils.isEnded(proposal.endDate);
+        const isProposalEnded = hasEndDatePassed || status === ProposalStatus.EXECUTED;
+
+        if (!isProposalEnded) {
+            return false;
+        }
+
         const isApprovalReached = this.isApprovalReached(proposal);
 
         return isApprovalReached;
