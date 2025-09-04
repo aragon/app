@@ -71,7 +71,6 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         data: lastSimulation,
         isError: hasGettingLastSimulationFailed,
         error,
-        isPending,
     } = useLastSimulation({ urlParams: { proposalId: proposal?.id as string } }, { enabled: proposal != null });
 
     const {
@@ -80,7 +79,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         isError: hasSimulationFailed,
     } = useSimulateProposal();
 
-    const showSimulationError = hasSimulationFailed || hasGettingLastSimulationFailed;
+    const showSimulationError = hasSimulationFailed || (hasGettingLastSimulationFailed && error.code !== 'notFound');
 
     if (proposal == null || dao == null) {
         return null;

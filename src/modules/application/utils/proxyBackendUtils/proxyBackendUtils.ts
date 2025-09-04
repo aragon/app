@@ -8,10 +8,14 @@ export class ProxyBackendUtils {
         const requestOptions = await this.buildRequestOptions(request);
 
         const result = await fetch(url, requestOptions);
-        console.log('resultresultresultresult', result);
         const parsedResult = (await result.json()) as unknown;
 
-        return NextResponse.json(parsedResult);
+        return NextResponse.json(parsedResult, {
+            // pass original status and header data, or otherwise it will always return 200 OK
+            status: result.status,
+            statusText: result.statusText,
+            headers: result.headers,
+        });
     };
 
     private buildBackendUrl = (request: NextRequest): string => {
