@@ -31,11 +31,13 @@ class LockToVoteProposalUtils {
     };
 
     hasSucceeded = (proposal: ILockToVoteProposal) => {
-        const status = this.getProposalStatus(proposal);
-        const hasEndDatePassed = proposalStatusUtils.isEnded(proposal.endDate);
-        const isProposalEnded = hasEndDatePassed || status === ProposalStatus.EXECUTED;
+        const { executed, endDate } = proposal;
+        const hasEnded = proposalStatusUtils.hasEnded({
+            isExecuted: executed.status,
+            endDate,
+        });
 
-        if (!isProposalEnded) {
+        if (!hasEnded) {
             return false;
         }
 
