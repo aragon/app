@@ -80,4 +80,8 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
      * When set, the process has restricted execution permissions (allowed actions are set).
      */
     conditionAddress?: string;
+    /**
+     * Address of the create proposal condition of the plugin.
+     */
+    proposalCreationConditionAddress?: string;
 }

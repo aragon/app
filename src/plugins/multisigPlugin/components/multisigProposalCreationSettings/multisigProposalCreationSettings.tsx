@@ -12,7 +12,7 @@ export interface IMultisigProposalCreationSettingsProps extends IPluginProposalC
 
 export const MultisigProposalCreationSettings: React.FC<IMultisigProposalCreationSettingsProps> = (props) => {
     const { body, formPrefix, mode, disableCheckbox } = props;
-    const { name, description } = body;
+    const { name = '', description } = body;
 
     const { value: canCreateProposal, onChange: onCreateProposalChange } = useFormField<
         ISetupBodyForm,

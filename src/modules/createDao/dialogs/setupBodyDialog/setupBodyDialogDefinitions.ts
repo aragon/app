@@ -1,11 +1,6 @@
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
-
-export enum SetupBodyType {
-    NEW = 'NEW',
-    EXTERNAL = 'EXTERNAL',
-    EXISTING = 'EXISTING',
-}
+import type { BodyType } from '../../types/enum';
 
 export interface ISetupBodyFormBase {
     /**
@@ -15,7 +10,7 @@ export interface ISetupBodyFormBase {
     /**
      * Type of the body to setup.
      */
-    type: SetupBodyType;
+    type: BodyType;
     /**
      * ID of the plugin defining the membership and governance settings of the body.
      */
@@ -30,7 +25,7 @@ export interface ISetupBodyFormNew<
     /**
      * NEW body type.
      */
-    type: SetupBodyType.NEW;
+    type: BodyType.NEW;
     /**
      * Name of the body.
      */
@@ -62,7 +57,7 @@ export interface ISetupBodyFormExternal extends ISetupBodyFormBase, ICompositeAd
     /**
      * EXTERNAL body type.
      */
-    type: SetupBodyType.EXTERNAL;
+    type: BodyType.EXTERNAL;
 }
 
 export interface ISetupBodyFormExisting<
@@ -76,7 +71,7 @@ export interface ISetupBodyFormExisting<
     /**
      * EXISTING body type.
      */
-    type: SetupBodyType.EXISTING;
+    type: BodyType.EXISTING;
     /**
      * Name of existing body, optional as not set for existing but external bodies.
      */
@@ -93,6 +88,10 @@ export interface ISetupBodyFormExisting<
      * Release of the existing body.
      */
     release?: string;
+    /**
+     * Address of the create proposal condition of the body.
+     */
+    proposalCreationConditionAddress?: string;
 }
 
 export type ISetupBodyForm<
