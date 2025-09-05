@@ -1,3 +1,4 @@
+import { useWhitelistValidation } from '@/modules/createDao/hooks/useWhitelistValidation';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IPluginInfo } from '@/shared/types';
@@ -22,9 +23,11 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (pro
     const plugins = pluginRegistryUtils.getPlugins() as IPluginInfo[];
     const availablePlugins = plugins.filter((plugin) => plugin.setup != null);
 
+    const { enabledPlugins, disabledPlugins } = useWhitelistValidation({ plugins: availablePlugins });
+
     const { onChange: onPluginChange, ...governanceTypeField } = useFormField<ISetupBodyForm, 'plugin'>('plugin', {
         label: t('app.createDao.setupBodyDialog.select.plugin.label'),
-        defaultValue: availablePlugins[0]?.id,
+        defaultValue: enabledPlugins[0]?.id,
     });
 
     const { onChange: onTypeChange } = useFormField<ISetupBodyForm, 'type'>('type', {
@@ -43,7 +46,7 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (pro
             onValueChange={handlePluginChange}
             {...governanceTypeField}
         >
-            {availablePlugins.map((plugin) => (
+            {enabledPlugins.map((plugin) => (
                 <RadioCard
                     key={plugin.id}
                     label={t(plugin.setup!.nameKey)}
@@ -58,6 +61,16 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (pro
                     value={externalPluginId}
                 />
             )}
+            {disabledPlugins.map((plugin) => (
+                <RadioCard
+                    key={plugin.id}
+                    label={t(plugin.setup!.nameKey)}
+                    description={t(plugin.setup!.descriptionKey)}
+                    value={plugin.id}
+                    disabled={true}
+                    tag={{ variant: 'info', label: t('app.createDao.setupBodyDialog.select.disabled.label') }}
+                />
+            ))}
         </RadioGroup>
     );
 };

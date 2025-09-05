@@ -142,7 +142,7 @@ class TokenActionUtils {
 
         return {
             ...otherValues,
-            type: GukProposalActionType.CHANGE_SETTINGS_MULTISIG,
+            type: GukProposalActionType.CHANGE_SETTINGS_TOKENVOTE,
             existingSettings: parsedExistingSettings,
             proposedSettings: parsedProposedSettings,
         };

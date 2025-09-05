@@ -98,7 +98,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         <div className="flex flex-col gap-4">
             {!showOptions && latestVote == null && (
                 <Button className="w-fit" size="md" onClick={handleVoteClick}>
-                    {t('app.plugins.token.tokenSubmitVote.buttons.default')}
+                    {t('app.plugins.token.tokenSubmitVote.buttons.vote')}
                 </Button>
             )}
             {!showOptions && latestVote != null && (
@@ -120,7 +120,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                             size="md"
                             onClick={() => setShowOptions(true)}
                         >
-                            {t('app.plugins.token.tokenSubmitVote.buttons.change')}
+                            {t('app.plugins.token.tokenSubmitVote.buttons.change.vote')}
                         </Button>
                     )}
                 </div>
@@ -140,7 +140,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                         variant="primary"
                     >
                         {latestVote
-                            ? t('app.plugins.token.tokenSubmitVote.buttons.submitChange')
+                            ? t('app.plugins.token.tokenSubmitVote.buttons.change.submit')
                             : t('app.plugins.token.tokenSubmitVote.buttons.submit')}
                     </Button>
                     <Button size="md" variant="tertiary" className="w-full md:w-fit" onClick={resetVoteOptions}>

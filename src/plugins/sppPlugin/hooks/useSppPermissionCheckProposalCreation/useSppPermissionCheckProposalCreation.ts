@@ -1,11 +1,13 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, invariant } from '@aragon/gov-ui-kit';
 import type { ISppPluginSettings } from '../../types';
 
-export interface IUseSppPermissionCheckProposalCreationParams extends IPermissionCheckGuardParams<ISppPluginSettings> {}
+export interface IUseSppPermissionCheckProposalCreationParams
+    extends IPermissionCheckGuardParams<IDaoPlugin<ISppPluginSettings>> {}
 
 export const useSppPermissionCheckProposalCreation = (
     params: IUseSppPermissionCheckProposalCreationParams,

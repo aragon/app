@@ -23,7 +23,11 @@ export const useCheckTokenAllowance = (props: IUseCheckTokenAllowanceParams) => 
 
     const { id: chainId } = networkDefinitions[token.network];
 
-    const { data: allowance, queryKey: allowanceQueryKey } = useReadContract({
+    const {
+        data: allowance,
+        queryKey: allowanceQueryKey,
+        isLoading: isAllowanceLoading,
+    } = useReadContract({
         abi: erc20Abi,
         functionName: 'allowance',
         address: token.address as Hex,
@@ -36,6 +40,7 @@ export const useCheckTokenAllowance = (props: IUseCheckTokenAllowanceParams) => 
         data: balance,
         queryKey: balanceQueryKey,
         status,
+        isLoading: isBalanceLoading,
     } = useBalance({ address, token: token.address as Hex, chainId });
 
     const invalidateQueries = () => {
@@ -43,5 +48,7 @@ export const useCheckTokenAllowance = (props: IUseCheckTokenAllowanceParams) => 
         void queryClient.invalidateQueries({ queryKey: balanceQueryKey });
     };
 
-    return { allowance, balance, status, invalidateQueries };
+    const isLoading = isAllowanceLoading || isBalanceLoading;
+
+    return { allowance, balance, status, isLoading, invalidateQueries };
 };

@@ -32,15 +32,15 @@ export interface ITokenVotingOptionToggleProps extends Omit<ComponentProps<'butt
 const variantToClassNames: Record<TokenVotingOptionToggleVariant, string[]> = {
     success: [
         'active:border-success-500',
-        'data-[state=on]:border-success-300 data-[state=on]:text-success-800 data-[state=on]:shadow-success-sm',
+        'data-[state=on]:enabled:border-success-300 data-[state=on]:text-success-800 data-[state=on]:shadow-success-sm',
     ],
     neutral: [
         'active:border-primary-400',
-        'data-[state=on]:border-primary-300 data-[state=on]:text-neutral-800 data-[state=on]:shadow-primary-sm',
+        'data-[state=on]:enabled:border-primary-300 data-[state=on]:text-neutral-800 data-[state=on]:shadow-primary-sm',
     ],
     critical: [
         'active:border-critical-500',
-        'data-[state=on]:border-critical-300 data-[state=on]:text-critical-800 data-[state=on]:shadow-critical-sm',
+        'data-[state=on]:enabled:border-critical-300 data-[state=on]:text-critical-800 data-[state=on]:shadow-critical-sm',
     ],
 };
 
@@ -56,9 +56,6 @@ const variantToIconVariant: Record<TokenVotingOptionToggleVariant, 'success' | '
     critical: 'critical',
 };
 
-/**
- * **NOTE**: The component must be used inside a `<ToggleGroup />` component in order to work properly.
- */
 export const TokenVotingOptionToggle: React.FC<ITokenVotingOptionToggleProps> = (props) => {
     const { className, label, description, value, disabled, variant = 'neutral', isSelected, ...otherProps } = props;
 
@@ -68,6 +65,7 @@ export const TokenVotingOptionToggle: React.FC<ITokenVotingOptionToggleProps> = 
         'border-neutral-100 text-neutral-500 shadow-neutral-sm focus-ring-primary',
         'active:shadow-none',
         'hover:border-neutral-200 hover:shadow-neutral',
+        'disabled:border-neutral-100 disabled:bg-neutral-100 disabled:text-neutral-300 disabled:cursor-default',
         variantToClassNames[variant],
         className,
     );
