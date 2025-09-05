@@ -15,4 +15,6 @@
   --guk-dialog-alert-content-z-index: 30;
 
   --guk-dropdown-container-content-z-index: 40;
+
+  --w3m-z-index: 999;
 }
