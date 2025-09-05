@@ -1,7 +1,7 @@
 'use client';
 
 import { ProposalExecutionStatus } from '@/modules/governance/components/proposalExecutionStatus';
-import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
+import type { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
