@@ -1,6 +1,6 @@
 import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
-import { ProposalStatus } from '@aragon/gov-ui-kit';
+import type { ProposalStatus } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { type ITokenProposalOptionVotes, VoteOption } from '../../../tokenPlugin/types';
 import type { ILockToVoteProposal } from '../../types';
