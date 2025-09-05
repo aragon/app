@@ -35,7 +35,7 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (props) =>
         [decimals, setValue, token],
     );
 
-    const { balance, allowance, lockedAmount, lockTokens, unlockTokens } = useLockToVoteData({
+    const { balance, allowance, lockedAmount, lockTokens, unlockTokens, isLoading } = useLockToVoteData({
         plugin,
         daoId,
         onBalanceUpdated: handleBalanceUpdated,
@@ -54,7 +54,7 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (props) =>
     });
 
     const submitLabel = needsApprovalForAmount ? 'approve' : 'lock';
-    const disableSubmit = balance === BigInt(0);
+    const disableSubmit = isLoading || balance === BigInt(0);
 
     return (
         <FormProvider {...formValues}>
@@ -81,7 +81,7 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (props) =>
                         })}
                     </Button>
                     {lockedAmount > 0 && (
-                        <Button variant="secondary" size="lg" onClick={unlockTokens}>
+                        <Button variant="secondary" size="lg" onClick={unlockTokens} disabled={isLoading}>
                             {t('app.plugins.lockToVote.lockToVoteLockForm.submit.unlock', {
                                 amount: formattedLockedAmount,
                                 symbol,

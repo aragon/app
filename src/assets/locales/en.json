@@ -1368,6 +1368,16 @@
             "description": "Majority voting with locked ERC20 tokens",
             "name": "Lock to vote"
           }
+        },
+        "unlockBlockedInfoDialog": {
+          "a11y": {
+            "description": "Dialog informing user they cannot unlock tokens due to active proposals"
+          },
+          "action": {
+            "ok": "OK"
+          },
+          "message": "There's an active proposal that you've created or voted on.",
+          "title": "You can't unlock yet"
         }
       },
       "multisig": {

@@ -2,6 +2,7 @@ import type { IDialogComponentDefinitions } from '@/shared/components/dialogProv
 import { LockToVoteLockBeforeVoteDialog } from '../dialogs/lockToVoteLockBeforeVoteDialog';
 import { LockToVoteLockUnlockDialog } from '../dialogs/lockToVoteLockUnlockDialog';
 import { LockToVoteSubmitVoteFeedbackDialog } from '../dialogs/lockToVoteSubmitVoteFeedbackDialog';
+import { UnlockBlockedInfoDialog } from '../dialogs/unlockBlockedInfoDialog';
 import { LockToVotePluginDialogId } from './lockToVotePluginDialogId';
 
 export const lockToVotePluginDialogsDefinitions: Record<LockToVotePluginDialogId, IDialogComponentDefinitions> = {
@@ -15,4 +16,8 @@ export const lockToVotePluginDialogsDefinitions: Record<LockToVotePluginDialogId
         hiddenDescription: 'app.plugins.lockToVote.lockToVoteLockBeforeVoteDialog.a11y.description',
     },
     [LockToVotePluginDialogId.LOCK_UNLOCK]: { Component: LockToVoteLockUnlockDialog },
+    [LockToVotePluginDialogId.UNLOCK_BLOCKED_INFO]: {
+        Component: UnlockBlockedInfoDialog,
+        hiddenDescription: 'app.plugins.lockToVote.unlockBlockedInfoDialog.a11y.description',
+    },
 };

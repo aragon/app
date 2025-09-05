@@ -11,6 +11,7 @@ import { networkDefinitions } from '../../../../shared/constants/networkDefiniti
 import { LockToVotePluginDialogId } from '../../constants/lockToVotePluginDialogId';
 import type { ILockToVoteLockUnlockDialogParams } from '../../dialogs/lockToVoteLockUnlockDialog';
 import type { ILockToVotePlugin } from '../../types';
+import { useUnlockGuard } from '../useUnlockGuard';
 
 export interface IUseLockToVoteDataParams {
     /**
@@ -154,6 +155,11 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
 
     const onLockUnlockTokensSuccess = () => refetchData();
 
+    const unlockGuard = useUnlockGuard({
+        plugin,
+        onSuccess: () => handleLockUnlockTokens('unlock', lockedAmount),
+    });
+
     const lockTokens = (amount: bigint) => {
         if (amount > allowance) {
             const onApproveSuccess = () => {
@@ -167,9 +173,9 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
         }
     };
 
-    const unlockTokens = () => handleLockUnlockTokens('unlock', lockedAmount);
+    const unlockTokens = () => unlockGuard.check();
 
-    const isLoading = isLockedBalanceLoading || isAllowanceCheckLoading;
+    const isLoading = isLockedBalanceLoading || isAllowanceCheckLoading || unlockGuard.isLoading;
 
     return {
         allowance,
