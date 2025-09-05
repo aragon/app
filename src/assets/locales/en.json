@@ -733,6 +733,10 @@
         }
       },
       "createProposalPage": {
+        "createProposalPageClientSteps": {
+          "simulate": "Simulate actions",
+          "skipSimulation": "Skip simulation"
+        },
         "finalStep": "Publish proposal",
         "steps": {
           "ACTIONS": {
@@ -837,7 +841,9 @@
         },
         "main": {
           "actions": {
-            "header": "Actions"
+            "header": "Actions",
+            "lastSimulationError": "There was an error getting the last simulation data. Please try again later.",
+            "simulationError": "There was an error simulating the actions. Please try again later."
           },
           "description": {
             "header": "Proposal",
@@ -956,6 +962,15 @@
           "description": "Select the proposal type you want to create.",
           "title": "Create proposal"
         }
+      },
+      "simulateActionsDialog": {
+        "action": {
+          "cancel": "Cancel",
+          "continue": "Continue",
+          "continueAnyway": "Continue anyway"
+        },
+        "error": "There was an error simulating the actions. Please try again later.",
+        "title": "Simulate actions"
       },
       "verifySmartContractDialog": {
         "action": {

@@ -1,6 +1,7 @@
 'use client';
 
 import { ProposalExecutionStatus } from '@/modules/governance/components/proposalExecutionStatus';
+import type { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
@@ -9,6 +10,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
+    ActionSimulation,
     addressUtils,
     CardCollapsible,
     ChainEntityType,
@@ -24,6 +26,7 @@ import {
     useBlockExplorer,
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
+import { useLastSimulation, useSimulateProposal } from '../../api/actionSimulationService';
 import { type IProposal, useProposalActions, useProposalBySlug } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -64,6 +67,23 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         { urlParams: { id: proposal?.id as string } },
         { enabled: proposal != null, refetchInterval: ({ state }) => (state.data?.decoding ? 2000 : false) },
     );
+
+    const {
+        data: lastSimulation,
+        isError: hasGettingLastSimulationFailed,
+        error,
+        refetch: refetchLastSimulation,
+    } = useLastSimulation({ urlParams: { proposalId: proposal?.id as string } }, { enabled: proposal?.hasActions });
+
+    const {
+        mutate: triggerProposalSimulation,
+        isPending: isSimulationLoading,
+        isError: hasSimulationFailed,
+    } = useSimulateProposal();
+
+    const showSimulationError =
+        hasSimulationFailed ||
+        (hasGettingLastSimulationFailed && (error as AragonBackendServiceError).code !== 'notFound');
 
     if (proposal == null || dao == null) {
         return null;
@@ -121,6 +141,28 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         />
                     </Page.MainSection>
                     <Page.MainSection title={t('app.governance.daoProposalDetailsPage.main.actions.header')}>
+                        {proposal.hasActions && (
+                            <ActionSimulation
+                                totalActions={normalizedProposalActions.length}
+                                lastSimulation={
+                                    lastSimulation && { ...lastSimulation, timestamp: lastSimulation.runAt }
+                                }
+                                isLoading={isSimulationLoading}
+                                error={
+                                    showSimulationError
+                                        ? t(
+                                              `app.governance.daoProposalDetailsPage.main.actions.${hasSimulationFailed ? 'simulationError' : 'lastSimulationError'}`,
+                                          )
+                                        : undefined
+                                }
+                                onSimulate={() =>
+                                    triggerProposalSimulation(
+                                        { urlParams: { proposalId: proposal.id } },
+                                        { onSuccess: () => refetchLastSimulation() },
+                                    )
+                                }
+                            />
+                        )}
                         <ProposalActions.Root
                             isLoading={actionData?.decoding}
                             actionsCount={actionData?.rawActions?.length ?? 0}
