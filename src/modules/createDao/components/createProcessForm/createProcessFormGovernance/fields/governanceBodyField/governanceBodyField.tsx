@@ -77,7 +77,6 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
                         pluginId={body.plugin}
                         slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}
                         daoId={daoId}
-                        readOnly={readOnly}
                         body={body}
                         isAdvancedGovernance={isAdvancedGovernance}
                         Fallback={GovernanceBodiesFieldItemDefault}

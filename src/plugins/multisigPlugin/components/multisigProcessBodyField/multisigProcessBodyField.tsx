@@ -19,28 +19,24 @@ export interface IMultisigProcessBodyFieldProps {
      * ID of the DAO.
      */
     daoId: string;
-    /**
-     * If the component field is read-only.
-     * @default false
-     */
-    readOnly?: boolean;
 }
 
 export const MultisigProcessBodyField = (props: IMultisigProcessBodyFieldProps) => {
-    const { body, daoId, readOnly } = props;
+    const { body, daoId } = props;
 
     const { t } = useTranslations();
     const { membership, governance } = body;
+    const isExisting = body.type === BodyType.EXISTING;
 
     const { minApprovals } = governance;
     const baseTranslationKey = 'app.plugins.multisig.multisigProcessBodyField';
 
     const initialParams = {
-        queryParams: { daoId, pluginAddress: body.type === BodyType.EXISTING ? body.address : '' },
+        queryParams: { daoId, pluginAddress: isExisting ? body.address : '' },
     };
-    const { data: memberList } = useMemberList(initialParams, { enabled: body.type === BodyType.EXISTING });
+    const { data: memberList } = useMemberList(initialParams, { enabled: isExisting });
 
-    const membersCount = readOnly ? (memberList?.pages[0].metadata.totalRecords ?? '-') : membership.members.length;
+    const membersCount = isExisting ? (memberList?.pages[0].metadata.totalRecords ?? '-') : membership.members.length;
 
     return (
         <DefinitionList.Container className="w-full">
