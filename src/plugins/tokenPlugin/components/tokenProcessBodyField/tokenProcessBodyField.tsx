@@ -64,7 +64,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     } = membership.token;
     const { votingMode, supportThreshold, minParticipation, minDuration } = governance;
 
-    const parsedTotalSupply = formatUnits(BigInt(totalSupply), tokenDecimals);
+    const parsedTotalSupply = totalSupply && formatUnits(BigInt(totalSupply), tokenDecimals);
     const formattedSupply = formatterUtils.formatNumber(parsedTotalSupply, {
         format: NumberFormat.TOKEN_AMOUNT_LONG,
         fallback: '0',
@@ -122,9 +122,11 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                     })}
                 </DefinitionList.Item>
             )}
-            <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.supplyTerm')}>
-                {formattedSupply!} (${tokenSymbol})
-            </DefinitionList.Item>
+            {totalSupply && (
+                <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.supplyTerm')}>
+                    {formattedSupply} (${tokenSymbol})
+                </DefinitionList.Item>
+            )}
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.supportTerm')}>
                 {t('app.plugins.token.tokenProcessBodyField.supportDefinition', {
                     threshold: supportThreshold,

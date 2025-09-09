@@ -29,7 +29,7 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
     const { type, name = '', description, membership } = body;
     const { totalSupply, decimals } = membership.token;
 
-    const parsedTotalSupply = formatUnits(BigInt(totalSupply), decimals);
+    const parsedTotalSupply = totalSupply && formatUnits(BigInt(totalSupply), decimals);
 
     const { value: canCreateProposal, onChange: onCreateProposalChange } = useFormField<
         ISetupBodyForm,
@@ -91,7 +91,7 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
                         prefix="≥"
                         helpText={t('app.plugins.token.tokenProposalCreationSettings.helpText')}
                         placeholder={t('app.plugins.token.tokenProposalCreationSettings.placeholder')}
-                        max={totalSupply === '0' ? undefined : Number(parsedTotalSupply)}
+                        max={totalSupply === '0' || parsedTotalSupply == null ? undefined : Number(parsedTotalSupply)}
                         onChange={onMinVotingPowerChange}
                         value={minVotingPower}
                         // for existing bodies, the conditions are already deployed, so the ability to edit the token requirement for proposal creation wouldn't make sense.
