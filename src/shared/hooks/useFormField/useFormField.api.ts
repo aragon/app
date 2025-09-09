@@ -38,7 +38,7 @@ export interface IUseFormFieldOptions<TFieldValues extends FieldValues, TName ex
      */
     control?: UseControllerProps<TFieldValues, TName>['control'];
     /**
-     * Value to be forwarded to the translation function when definining custom error messages.
+     * Value to be forwarded to the translation function when defining custom error messages.
      */
     alertValue?: ITFuncOptions;
 }
