@@ -50,7 +50,7 @@ describe('Http service', () => {
             await expect(serviceTest.request('/test')).rejects.toEqual(expectedError);
         });
 
-        it('throws default erorr when errorHandler is not defined', async () => {
+        it('throws default error when errorHandler is not defined', async () => {
             const response = generateResponse({ ok: false, statusText: 'status-text' });
             const expectedError = new Error(response.statusText);
             fetchSpy.mockResolvedValue(response);
