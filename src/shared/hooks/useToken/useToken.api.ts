@@ -32,7 +32,7 @@ export interface IUseTokenResultToken {
     /**
      * Total supply of the token.
      */
-    totalSupply: string;
+    totalSupply: string | null;
 }
 
 export interface IUseTokenResult {
