@@ -50,7 +50,7 @@ describe('<TransactionList /> component', () => {
         });
     });
 
-    it('renders the correct token amount in usd', () => {
+    it('does not render the token price in usd', () => {
         const transaction = generateTransaction({
             token: generateToken({ symbol: 'AAA' }),
             value: '150',
