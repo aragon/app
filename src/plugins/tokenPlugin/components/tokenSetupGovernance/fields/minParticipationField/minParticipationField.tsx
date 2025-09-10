@@ -25,12 +25,12 @@ export const MinParticipationField: React.FC<IMinParticipationFieldProps> = (pro
     const { t } = useTranslations();
 
     const fieldName = `${formPrefix}.minParticipation`;
-    const value = useWatch<Record<string, ITokenSetupGovernanceForm['minParticipation']>>({
+    const percentageValue = useWatch<Record<string, ITokenSetupGovernanceForm['minParticipation']>>({
         name: fieldName,
         defaultValue: defaultMinParticipation,
     });
 
-    const amount = (Number(totalSupply) * value) / 100;
+    const amount = Math.round((Number(totalSupply) * percentageValue) / 100);
     const parsedAmount = formatUnits(BigInt(amount), decimals);
     const formattedAmount = formatterUtils.formatNumber(parsedAmount, { format: NumberFormat.TOKEN_AMOUNT_SHORT })!;
 
