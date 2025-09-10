@@ -250,6 +250,7 @@
             "governanceType": "Governance type",
             "label": "Settings",
             "no": "Disabled",
+            "vetoThreshold": "Veto threshold",
             "votingPeriod": "Stage duration",
             "yes": "Enabled"
           },
