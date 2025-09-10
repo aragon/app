@@ -79,7 +79,6 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         blockNumber: firstBlockNumber,
         query: { enabled: !!firstBlockNumber },
     });
-
     const { data: lastBlock } = useBlock({
         chainId,
         blockNumber: lastBlockNumber,
@@ -87,13 +86,11 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     });
 
     const parsedFirstActivity = firstBlock?.timestamp != null ? Number(firstBlock.timestamp) * 1000 : undefined;
-
     const parsedLatestActivity = lastBlock?.timestamp != null ? Number(lastBlock.timestamp) * 1000 : undefined;
 
     const formattedFirstActivity = formatterUtils.formatDate(parsedFirstActivity, {
         format: DateFormat.YEAR_MONTH_DAY,
     });
-
     const formattedLatestActivity = formatterUtils.formatDate(parsedLatestActivity, {
         format: DateFormat.DURATION,
     });
