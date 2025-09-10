@@ -74,7 +74,6 @@ class TokenTransactionUtils {
             tokenTarget,
             BigInt(0),
             metadata,
-            [],
         ]);
 
         const transactionData = pluginTransactionUtils.buildPrepareInstallationData(

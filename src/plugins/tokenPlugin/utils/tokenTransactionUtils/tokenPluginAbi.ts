@@ -37,7 +37,6 @@ export const tokenPluginSetupAbi = [
     },
     { name: 'minApprovals', type: 'uint256' },
     { name: 'pluginMetadata', type: 'bytes' },
-    { name: 'excludedAccounts', type: 'address[]' },
 ] as const;
 
 export const tokenPluginPrepareUpdateAbi = [
