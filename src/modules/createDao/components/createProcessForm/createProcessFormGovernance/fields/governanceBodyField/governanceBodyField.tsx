@@ -1,5 +1,5 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
-import { SetupBodyType, type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { GovernanceBodyInfo } from '@/shared/components/governanceBodyInfo';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -7,7 +7,9 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import type { IPluginInfo } from '@/shared/types';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { Accordion, Button, Dropdown, IconType } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import { useWatch } from 'react-hook-form';
+import { BodyType } from '../../../../../types/enum';
 import { GovernanceType, type ICreateProcessFormData } from '../../../createProcessFormDefinitions';
 import { GovernanceBodiesFieldItemDefault } from './governanceBodiesFieldItemDefault';
 
@@ -52,8 +54,9 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
 
     const plugin = pluginRegistryUtils.getPlugin(body.plugin) as IPluginInfo | undefined;
 
-    const isNew = body.type === SetupBodyType.NEW;
-    const isExternal = body.type === SetupBodyType.EXTERNAL;
+    const isNew = body.type === BodyType.NEW;
+    const isExternal = body.type === BodyType.EXTERNAL;
+    const isEditAllowed = onEdit != null;
 
     return (
         <Accordion.Container isMulti={true} defaultValue={readOnly ? [body.internalId] : undefined}>
@@ -74,16 +77,22 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
                         pluginId={body.plugin}
                         slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}
                         daoId={daoId}
-                        readOnly={readOnly}
                         body={body}
                         isAdvancedGovernance={isAdvancedGovernance}
                         Fallback={GovernanceBodiesFieldItemDefault}
                     />
                     {!readOnly && (
-                        <div className="flex w-full grow justify-between">
-                            <Button variant="secondary" size="md" onClick={onEdit}>
-                                {t('app.createDao.createProcessForm.governance.bodyField.action.edit')}
-                            </Button>
+                        <div
+                            className={classNames(
+                                'flex w-full grow',
+                                isEditAllowed ? 'justify-between' : 'justify-end',
+                            )}
+                        >
+                            {isEditAllowed && (
+                                <Button variant="secondary" size="md" onClick={onEdit}>
+                                    {t('app.createDao.createProcessForm.governance.bodyField.action.edit')}
+                                </Button>
+                            )}
                             <Dropdown.Container
                                 constrainContentWidth={false}
                                 size="md"

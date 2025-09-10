@@ -5,8 +5,9 @@ import {
     ProcessStageType,
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
-import { type ISetupBodyForm, SetupBodyType } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import type { ISetupStageSettingsForm } from '@/modules/createDao/dialogs/setupStageSettingsDialog';
+import { BodyType } from '@/modules/createDao/types/enum';
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
@@ -73,45 +74,55 @@ class SppTransactionUtils {
         const updateStages = this.buildUpdateStagesTransaction(values.stages, sppAddress, pluginAddresses);
         const updateCreateProposalRules = this.buildUpdateRulesTransaction(values, sppSetupData, pluginSetupData);
 
-        const updatePluginPermissions = pluginSetupData
-            .map((data) => this.buildBodyPermissionActions(data, daoAddress, sppAddress))
-            .flat();
+        const updateNewPluginPermissions = pluginAddresses.map((bodyAddress) =>
+            this.buildBodyPermissionActions(bodyAddress, daoAddress, sppAddress),
+        );
 
-        return [updateStages, updateCreateProposalRules, ...updatePluginPermissions].filter((action) => action != null);
+        const updateExistingPluginPermissions = values.stages
+            .flatMap((stage) => stage.bodies)
+            .filter((body) => body.type === BodyType.EXISTING)
+            .map((body) => this.buildGrantSppProposalCreationAction(body.address as Hex, daoAddress, sppAddress));
+
+        return [
+            updateStages,
+            updateCreateProposalRules,
+            ...updateNewPluginPermissions.flat(),
+            ...updateExistingPluginPermissions.flat(),
+        ].filter((action) => action != null);
     };
 
-    private buildBodyPermissionActions = (
-        pluginData: IPluginInstallationSetupData,
-        daoAddress: Hex,
-        sppAddress: Hex,
-    ): ITransactionRequest[] => {
-        const { pluginAddress: bodyAddress } = pluginData;
-
+    private buildBodyPermissionActions = (body: Hex, dao: Hex, spp: Hex): ITransactionRequest[] => {
         // No address should be able to create proposals directly on sub-plugins
         const revokePluginCreateProposalAction = permissionTransactionUtils.buildRevokePermissionTransaction({
-            where: bodyAddress,
+            where: body,
             who: this.anyAddress,
             what: permissionTransactionUtils.permissionIds.createProposalPermission,
-            to: daoAddress,
+            to: dao,
         });
 
-        // Allow SPP to create proposals on sub-plugins
-        const grantSppCreateProposalAction = permissionTransactionUtils.buildGrantPermissionTransaction({
-            where: bodyAddress,
-            who: sppAddress,
-            what: permissionTransactionUtils.permissionIds.createProposalPermission,
-            to: daoAddress,
-        });
+        const grantSppCreateProposalAction = this.buildGrantSppProposalCreationAction(body, dao, spp);
 
         // Sub-plugin should not have execute permission on the DAO, only SPP should have execute permission
         const revokeExecutePermission = permissionTransactionUtils.buildRevokePermissionTransaction({
-            where: daoAddress,
-            who: bodyAddress,
+            where: dao,
+            who: body,
             what: permissionTransactionUtils.permissionIds.executePermission,
-            to: daoAddress,
+            to: dao,
         });
 
         return [revokePluginCreateProposalAction, grantSppCreateProposalAction, revokeExecutePermission];
+    };
+
+    private buildGrantSppProposalCreationAction = (body: Hex, dao: Hex, spp: Hex) => {
+        // Allow SPP to create proposals on sub-plugins
+        const action = permissionTransactionUtils.buildGrantPermissionTransaction({
+            where: body,
+            who: spp,
+            what: permissionTransactionUtils.permissionIds.createProposalPermission,
+            to: dao,
+        });
+
+        return action;
     };
 
     private buildUpdateRulesTransaction = (
@@ -127,14 +138,22 @@ class SppTransactionUtils {
             return undefined;
         }
 
-        const newBodies = stages.flatMap((stage) => stage.bodies).filter((body) => body.type === SetupBodyType.NEW);
-        const conditionAddresses = newBodies.reduce<string[]>((current, body, bodyIndex) => {
-            const isBodyAllowed = body.canCreateProposal;
-            const bodyConditionAddress = pluginSetupData[bodyIndex].preparedSetupData.helpers[0];
+        const bodies = stages.flatMap((stage) => stage.bodies);
 
-            return isBodyAllowed ? [...current, bodyConditionAddress] : current;
-        }, []);
+        const existingConditionAddresses = bodies
+            .filter((body) => body.type === BodyType.EXISTING)
+            .filter((body) => body.canCreateProposal)
+            .map((body) => body.proposalCreationConditionAddress)
+            .filter((address) => address != null);
 
+        const newConditionAddresses = bodies
+            .filter((body) => body.type === BodyType.NEW)
+            .reduce<string[]>((current, body, index) => {
+                const conditionAddress = pluginSetupData[index].preparedSetupData.helpers[0];
+                return body.canCreateProposal ? [...current, conditionAddress] : current;
+            }, []);
+
+        const conditionAddresses = existingConditionAddresses.concat(newConditionAddresses);
         const conditionRules = permissionTransactionUtils.buildRuleConditions(conditionAddresses, []);
 
         const transactionData = encodeFunctionData({
@@ -162,10 +181,10 @@ class SppTransactionUtils {
             const resultType = type === ProcessStageType.NORMAL ? SppProposalType.APPROVAL : SppProposalType.VETO;
 
             const processedBodies = bodies.map((body) => ({
-                addr: body.type === SetupBodyType.EXTERNAL ? body.address : processedBodyAddresses.shift()!,
+                addr: body.type === BodyType.NEW ? processedBodyAddresses.shift()! : body.address,
                 resultType,
                 tryAdvance: true,
-                isManual: body.type === SetupBodyType.EXTERNAL,
+                isManual: body.type === BodyType.EXTERNAL,
             }));
 
             return { bodies: processedBodies, ...stageApprovals, ...stageTiming, cancelable: false, editable: false };
