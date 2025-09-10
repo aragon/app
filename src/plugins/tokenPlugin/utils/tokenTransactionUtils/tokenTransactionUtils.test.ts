@@ -167,7 +167,6 @@ describe('tokenTransaction utils', () => {
                 target,
                 BigInt(0),
                 metadata,
-                [],
             ]);
         });
 
