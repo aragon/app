@@ -69,14 +69,10 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
 
     const { lastActivity, firstActivity } = member?.metrics ?? {};
 
-    console.log({ lastActivity, firstActivity });
-
     const chainId = dao ? networkDefinitions[dao.network].id : undefined;
 
     const firstBlockNumber = firstActivity != null ? BigInt(firstActivity) : undefined;
     const lastBlockNumber = lastActivity != null ? BigInt(lastActivity) : undefined;
-
-    console.log({ firstBlockNumber, lastBlockNumber });
 
     const { data: firstBlock } = useBlock({
         chainId,
@@ -89,8 +85,6 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         blockNumber: lastBlockNumber,
         query: { enabled: !!lastBlockNumber },
     });
-
-    console.log({ firstBlock, lastBlock });
 
     const parsedFirstActivity = firstBlock?.timestamp != null ? Number(firstBlock.timestamp) * 1000 : undefined;
 
