@@ -1,10 +1,7 @@
 'use client';
 
-import {
-    SetupBodyType,
-    type ISetupBodyFormExisting,
-    type ISetupBodyFormNew,
-} from '@/modules/createDao/dialogs/setupBodyDialog';
+import { type ISetupBodyFormExisting, type ISetupBodyFormNew } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { BodyType } from '@/modules/createDao/types/enum';
 import { useMemberList } from '@/modules/governance/api/governanceService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DefinitionList, type ICompositeAddress } from '@aragon/gov-ui-kit';
@@ -22,28 +19,24 @@ export interface IMultisigProcessBodyFieldProps {
      * ID of the DAO.
      */
     daoId: string;
-    /**
-     * If the component field is read-only.
-     * @default false
-     */
-    readOnly?: boolean;
 }
 
 export const MultisigProcessBodyField = (props: IMultisigProcessBodyFieldProps) => {
-    const { body, daoId, readOnly } = props;
+    const { body, daoId } = props;
 
     const { t } = useTranslations();
     const { membership, governance } = body;
+    const isExisting = body.type === BodyType.EXISTING;
 
     const { minApprovals } = governance;
     const baseTranslationKey = 'app.plugins.multisig.multisigProcessBodyField';
 
     const initialParams = {
-        queryParams: { daoId, pluginAddress: body.type === SetupBodyType.EXISTING ? body.address : '' },
+        queryParams: { daoId, pluginAddress: isExisting ? body.address : '' },
     };
-    const { data: memberList } = useMemberList(initialParams, { enabled: body.type === SetupBodyType.EXISTING });
+    const { data: memberList } = useMemberList(initialParams, { enabled: isExisting });
 
-    const membersCount = readOnly ? (memberList?.pages[0].metadata.totalRecords ?? '-') : membership.members.length;
+    const membersCount = isExisting ? (memberList?.pages[0].metadata.totalRecords ?? '-') : membership.members.length;
 
     return (
         <DefinitionList.Container className="w-full">

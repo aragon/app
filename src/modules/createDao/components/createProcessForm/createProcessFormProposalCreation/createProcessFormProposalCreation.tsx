@@ -1,11 +1,11 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
-import { SetupBodyType } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputContainer, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { BodyType } from '../../../types/enum';
 import { GovernanceType, ProposalCreationMode, type ICreateProcessFormData } from '../createProcessFormDefinitions';
 
 export interface ICreateProcessFormProposalCreationProps {}
@@ -24,14 +24,14 @@ export const CreateProcessFormProposalCreation: React.FC<ICreateProcessFormPropo
         stageIndex != null ? `stages.${stageIndex.toString()}.bodies.${bodyIndex.toString()}` : 'body';
 
     const processBodies = useMemo(() => {
-        // we need to keep the original bodyIndex since EXTERNAL bodies are filtered out!
+        // Keep the original bodyIndex since EXTERNAL bodies are filtered out
         const processedBodies = isAdvancedGovernance
             ? stages.flatMap((stage, stageIndex) =>
                   stage.bodies.map((body, bodyIndex) => ({ ...body, stageIndex, bodyIndex })),
               )
             : [{ ...basicProcessBody, stageIndex: undefined, bodyIndex: 0 }];
 
-        return processedBodies.filter((body) => body.type === SetupBodyType.NEW);
+        return processedBodies.filter((body) => body.type !== BodyType.EXTERNAL);
     }, [isAdvancedGovernance, stages, basicProcessBody]);
 
     const canBodiesCreateProposals = processBodies.some((body) => body.canCreateProposal);

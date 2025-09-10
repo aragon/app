@@ -1,10 +1,11 @@
-import { SetupBodyType, type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { addressUtils, ChainEntityType, DefinitionList, useBlockExplorer } from '@aragon/gov-ui-kit';
 import type { Hash } from 'viem';
 import { useEnsName } from 'wagmi';
+import { BodyType } from '../../../../../types/enum';
 
 export interface IGovernanceBodiesFieldItemDefaultProps {
     /**
@@ -25,10 +26,10 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const { data: ensName } = useEnsName({
-        address: body.type !== SetupBodyType.NEW ? (body.address as Hash) : undefined,
+        address: body.type !== BodyType.NEW ? (body.address as Hash) : undefined,
     });
 
-    if (body.type !== SetupBodyType.EXTERNAL && body.type !== SetupBodyType.EXISTING) {
+    if (body.type !== BodyType.EXTERNAL && body.type !== BodyType.EXISTING) {
         return null;
     }
 
