@@ -1,6 +1,6 @@
 {
   "name": "@aragon/app",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "Human-centered DAO infrastructure",
   "author": "Aragon Association",
   "homepage": "https://github.com/aragon/app#readme",
@@ -22,7 +22,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@aragon/gov-ui-kit": "^1.15.0",
+    "@aragon/gov-ui-kit": "^1.17.0",
     "@floating-ui/react": "^0.27.15",
     "@number-flow/react": "^0.5.10",
     "@reown/appkit": "^1.7.19",

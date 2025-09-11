@@ -250,6 +250,7 @@
             "governanceType": "Governance type",
             "label": "Settings",
             "no": "Disabled",
+            "vetoThreshold": "Veto threshold",
             "votingPeriod": "Stage duration",
             "yes": "Enabled"
           },
@@ -516,8 +517,8 @@
               "title": "Stake"
             }
           },
-          "info": "Boundless DAO is a community-led organization advancing the Boundless vision: bringing ZK to every blockchain, developer, and everyone in between.",
-          "to": "to Boundless DAO",
+          "info": "Boundless Governance is dedicated to advancing the Boundless vision: bringing ZK to every blockchain, developer, and everyone in between.",
+          "to": "to Boundless Governance",
           "welcome": "Welcome"
         }
       }

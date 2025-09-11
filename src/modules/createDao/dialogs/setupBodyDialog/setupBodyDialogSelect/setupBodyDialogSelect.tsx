@@ -4,7 +4,8 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import type { IPluginInfo } from '@/shared/types';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
-import { SetupBodyType, type ISetupBodyForm } from '../setupBodyDialogDefinitions';
+import { BodyType } from '../../../types/enum';
+import { type ISetupBodyForm } from '../setupBodyDialogDefinitions';
 
 export interface ISetupBodyDialogSelectProps {
     /**
@@ -31,11 +32,11 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (pro
     });
 
     const { onChange: onTypeChange } = useFormField<ISetupBodyForm, 'type'>('type', {
-        defaultValue: SetupBodyType.NEW,
+        defaultValue: BodyType.NEW,
     });
 
     const handlePluginChange = (value: string) => {
-        const bodyType = value === externalPluginId ? SetupBodyType.EXTERNAL : SetupBodyType.NEW;
+        const bodyType = value === externalPluginId ? BodyType.EXTERNAL : BodyType.NEW;
         onTypeChange(bodyType);
         onPluginChange(value);
     };

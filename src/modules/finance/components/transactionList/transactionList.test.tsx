@@ -50,7 +50,7 @@ describe('<TransactionList /> component', () => {
         });
     });
 
-    it('renders the correct token amount in usd', () => {
+    it('does not render the token price in usd', () => {
         const transaction = generateTransaction({
             token: generateToken({ symbol: 'AAA' }),
             value: '150',
@@ -69,6 +69,6 @@ describe('<TransactionList /> component', () => {
 
         render(createTestComponent());
 
-        expect(screen.getByText('$1.46K')).toBeInTheDocument();
+        expect(screen.queryByText('$1.46K')).not.toBeInTheDocument();
     });
 });
