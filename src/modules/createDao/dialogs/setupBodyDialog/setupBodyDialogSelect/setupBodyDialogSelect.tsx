@@ -1,9 +1,11 @@
 import { useWhitelistValidation } from '@/modules/createDao/hooks/useWhitelistValidation';
+import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IPluginInfo } from '@/shared/types';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
+import { zeroAddress } from 'viem';
 import { BodyType } from '../../../types/enum';
 import { type ISetupBodyForm } from '../setupBodyDialogDefinitions';
 
@@ -12,17 +14,28 @@ export interface ISetupBodyDialogSelectProps {
      * Defines if the body is being setup as a sub-plugin or not.
      */
     isSubPlugin?: boolean;
+    /**
+     * Network of the DAO.
+     */
+    network: Network;
 }
 
 export const externalPluginId = 'external';
 
 export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (props) => {
-    const { isSubPlugin } = props;
+    const { isSubPlugin, network } = props;
 
     const { t } = useTranslations();
 
     const plugins = pluginRegistryUtils.getPlugins() as IPluginInfo[];
-    const availablePlugins = plugins.filter((plugin) => plugin.setup != null);
+
+    const availablePlugins = plugins
+        .filter((plugin) => plugin.setup != null)
+        .filter((plugin) => {
+            // keep only plugins that have a non-zero repository address for the current network
+            const repositoryAddress = plugin.repositoryAddresses[network];
+            return repositoryAddress !== zeroAddress;
+        });
 
     const { enabledPlugins, disabledPlugins } = useWhitelistValidation({ plugins: availablePlugins });
 
