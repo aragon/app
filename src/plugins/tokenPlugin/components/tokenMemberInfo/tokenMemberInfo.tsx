@@ -77,7 +77,7 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
             >
                 {t('app.plugins.token.tokenMemberInfo.tokenDistribution', { count: distribution })}
             </DefinitionList.Item>
-            {formattedTotalSupply && (
+            {formattedTotalSupply && Number(formattedTotalSupply) > 0 && (
                 <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.supply')}>
                     <p className="text-neutral-500">
                         {t('app.plugins.token.tokenMemberInfo.tokenSupply', {
