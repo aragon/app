@@ -1,4 +1,5 @@
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { useWatch } from 'react-hook-form';
 import type { ISetupBodyForm } from './setupBodyDialogDefinitions';
 import { SetupBodyDialogGovernance } from './setupBodyDialogGovernance';
@@ -38,10 +39,12 @@ export const SetupBodyDialogSteps: React.FC<ISetupBodyDialogStepsProps> = (props
 
     const [selectStep, metadataStep, externalAddress, membershipStep, governanceStep] = setupBodySteps;
 
+    const { network } = daoUtils.parseDaoId(daoId);
+
     return (
         <>
             <WizardDialog.Step {...selectStep} hidden={initialValues != null}>
-                <SetupBodyDialogSelect isSubPlugin={isSubPlugin} />
+                <SetupBodyDialogSelect isSubPlugin={isSubPlugin} network={network} />
             </WizardDialog.Step>
             <WizardDialog.Step {...metadataStep} hidden={!isSubPlugin || isExternalPlugin}>
                 <SetupBodyDialogMetadata />

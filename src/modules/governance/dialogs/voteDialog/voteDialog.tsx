@@ -13,10 +13,25 @@ import { invariant, type VoteIndicator, VoteProposalDataListItemStructure } from
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
+import type { IBuildVoteDataOption } from '../../types';
 import { proposalUtils } from '../../utils/proposalUtils';
 import { voteDialogUtils } from './voteDialogUtils';
 
-export interface IVoteDialogParams {
+export interface IVoteDialogOption<TOptionValue = number> extends IBuildVoteDataOption<TOptionValue> {
+    /**
+     * Label of the vote option.
+     */
+    label: VoteIndicator;
+    /**
+     * Description of the vote option.
+     */
+    labelDescription?: string;
+}
+
+export interface IVoteDialogParams<
+    TOptionValue = number,
+    TOption extends IVoteDialogOption<TOptionValue> = IVoteDialogOption<TOptionValue>,
+> {
     /**
      * ID of the DAO to create the proposal for.
      */
@@ -24,11 +39,15 @@ export interface IVoteDialogParams {
     /**
      * Vote option.
      */
-    vote: { value?: number; label: VoteIndicator; labelDescription?: string };
+    vote: TOption;
     /**
      * Proposal to submit the vote for.
      */
     proposal: IProposal;
+    /**
+     * Target of the transaction for the "to" field, defaults to the plugin address of the proposal.
+     */
+    target?: string;
     /**
      * Defines if the vote to approve or veto the proposal.
      */
@@ -52,7 +71,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     const { address } = useAccount();
     invariant(address != null, 'VoteDialog: user must be connected.');
 
-    const { vote, proposal, isVeto, daoId, plugin } = location.params;
+    const { vote, proposal, isVeto, daoId, plugin, target } = location.params;
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
@@ -60,7 +79,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
 
-    const handlePrepareTransaction = () => voteDialogUtils.buildTransaction({ proposal, voteValue: vote.value });
+    const handlePrepareTransaction = () => voteDialogUtils.buildTransaction({ proposal, vote, target });
 
     // Fallback to the parent plugin to display the slug of the parent proposal (if exists)
     const pluginAddress = plugin.parentPlugin ?? plugin.address;

@@ -8,8 +8,8 @@ import type { ITokenPlugin } from '@/plugins/tokenPlugin/types';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, invariant, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Button, invariant } from '@aragon/gov-ui-kit';
+import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
@@ -29,8 +29,6 @@ export interface ITokenLockFormProps {
 }
 
 export interface ITokenLockFormData extends IAssetInputFormData {}
-
-const valuePercentages = ['0', '25', '50', '75', '100'];
 
 export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { plugin, daoId } = props;
@@ -54,8 +52,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         { enabled: address != null },
     );
     const locksCount = memberLocks?.pages[0].metadata.totalRecords ?? 0;
-
-    const [percentageValue, setPercentageValue] = useState<string>('100');
 
     const { result: isConnected, check: walletGuard } = useConnectedWalletGuard();
 
@@ -132,30 +128,6 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
         open(TokenPluginDialogId.VIEW_LOCKS, { params });
     };
 
-    const updateAmountField = useCallback(
-        (value?: string) => {
-            if (unlockedBalance == null || value == null) {
-                return;
-            }
-
-            const processedValue = (unlockedBalance.value * BigInt(value)) / BigInt(100);
-            const parsedValue = formatUnits(processedValue, decimals);
-            setValue('amount', parsedValue);
-        },
-        [unlockedBalance, decimals, setValue],
-    );
-
-    const handlePercentageChange = useCallback(
-        (value = '') => {
-            updateAmountField(value);
-            setPercentageValue(value);
-        },
-        [updateAmountField],
-    );
-
-    // Update amount field and percentage value to 100% of user unlocked balance on user balance change
-    useEffect(() => handlePercentageChange('100'), [handlePercentageChange]);
-
     // Initialize asset field after fetching unlocked balance
     useEffect(() => {
         if (unlockedBalanceStatus === 'success') {
@@ -175,26 +147,15 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                 <div className="flex flex-col gap-3">
                     <TokenLockFormChart amount={lockAmount} settings={plugin.settings} />
                     <AssetInput
-                        onAmountChange={() => setPercentageValue('')}
                         disableAssetField={true}
                         hideMax={true}
                         hideAmountLabel={true}
                         minAmount={parseFloat(formattedMinDeposit)}
+                        percentageSelection={{
+                            totalBalance: unlockedBalance?.value,
+                            tokenDecimals: decimals,
+                        }}
                     />
-                    <ToggleGroup
-                        isMultiSelect={false}
-                        value={percentageValue}
-                        onChange={handlePercentageChange}
-                        variant="space-between"
-                    >
-                        {valuePercentages.map((value) => (
-                            <Toggle
-                                key={value}
-                                value={value}
-                                label={t(`app.plugins.token.tokenLockForm.percentage.${value}`)}
-                            />
-                        ))}
-                    </ToggleGroup>
                 </div>
                 <div className="flex flex-col gap-3">
                     <Button
