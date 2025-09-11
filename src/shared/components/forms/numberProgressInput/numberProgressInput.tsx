@@ -3,6 +3,7 @@ import { AlertInline, Card, InputContainer, InputNumber, invariant, Progress, Ta
 import classNames from 'classnames';
 import { useId } from 'react';
 import type { INumberProgressInputProps } from './numberProgressInput.api';
+import { numberProgressInputUtils } from './numberProgressInputUtils';
 
 export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) => {
     const {
@@ -60,7 +61,9 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
                         value={value}
                         className="w-full md:max-w-40"
                         max={total}
-                        onChange={(value) => onChange(Number(value))}
+                        onChange={(inputValue) => {
+                            onChange(numberProgressInputUtils.toFullDecimalString(inputValue));
+                        }}
                         prefix={prefix}
                         suffix={suffix}
                         {...numberField}
