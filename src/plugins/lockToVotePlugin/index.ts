@@ -2,7 +2,6 @@ import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { TokenGovernanceInfo } from '../tokenPlugin/components/tokenGovernanceInfo';
 import { TokenMemberInfo } from '../tokenPlugin/components/tokenMemberInfo';
 import { TokenMemberList } from '../tokenPlugin/components/tokenMemberList';
 import { TokenProposalCreationSettings } from '../tokenPlugin/components/tokenProposalCreationSettings';
@@ -124,11 +123,6 @@ export const initialiseLockToVotePlugin = () => {
             slotId: SettingsSlotId.SETTINGS_MEMBERS_INFO,
             pluginId: lockToVotePlugin.id,
             component: TokenMemberInfo,
-        })
-        .registerSlotComponent({
-            slotId: SettingsSlotId.SETTINGS_GOVERNANCE_INFO,
-            pluginId: lockToVotePlugin.id,
-            component: TokenGovernanceInfo,
         })
         .registerSlotFunction({
             slotId: SettingsSlotId.SETTINGS_BUILD_PREPARE_PLUGIN_UPDATE_DATA,
