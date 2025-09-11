@@ -61,9 +61,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
                         value={value}
                         className="w-full md:max-w-40"
                         max={total}
-                        onChange={(inputValue) => {
-                            onChange(numberProgressInputUtils.toFullDecimalString(inputValue));
-                        }}
+                        onChange={(inputValue) => onChange(numberProgressInputUtils.toFullDecimalString(inputValue))}
                         prefix={prefix}
                         suffix={suffix}
                         {...numberField}
