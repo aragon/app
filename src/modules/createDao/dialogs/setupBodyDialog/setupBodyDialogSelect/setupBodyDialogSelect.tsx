@@ -33,8 +33,7 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (pro
         .filter((plugin) => plugin.setup != null)
         .filter((plugin) => {
             // keep only plugins that have a non-zero repository address for the current network
-            const repositoryAddress = plugin.repositoryAddresses[network];
-            return repositoryAddress !== zeroAddress;
+            return plugin.repositoryAddresses[network] !== zeroAddress;
         });
 
     const { enabledPlugins, disabledPlugins } = useWhitelistValidation({ plugins: availablePlugins });

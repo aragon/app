@@ -27,5 +27,4 @@ export const pluginDialogsDefinitions = {
     ...multisigPluginDialogsDefinitions,
     ...sppPluginDialogsDefinitions,
     ...tokenPluginDialogsDefinitions,
-    ...lockToVotePluginDialogsDefinitions,
 };
