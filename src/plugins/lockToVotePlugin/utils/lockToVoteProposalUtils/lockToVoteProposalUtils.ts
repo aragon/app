@@ -52,7 +52,7 @@ class LockToVoteProposalUtils {
         // Don't do the ratio-to-percentage conversion here as the minParticipation can be a value with decimals and
         // the BigInt constructor does not support such values.
         const parsedMinParticipation = BigInt(minParticipation);
-        const parsedTotalSupply = BigInt(this.getProposalTokenTotalSupply(proposal));
+        const parsedTotalSupply = BigInt(this.getProposalTokenTotalSupply(proposal) ?? 0);
 
         if (parsedTotalSupply === BigInt(0)) {
             return false;

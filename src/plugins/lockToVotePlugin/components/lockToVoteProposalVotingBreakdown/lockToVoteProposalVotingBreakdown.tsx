@@ -43,7 +43,7 @@ export const LockToVoteProposalVotingBreakdown: React.FC<ILockToVoteProposalVoti
             minParticipation={tokenSettingsUtils.ratioToPercentage(minParticipation)}
             supportThreshold={tokenSettingsUtils.ratioToPercentage(supportThreshold)}
             tokenSymbol={symbol}
-            tokenTotalSupply={formatUnits(BigInt(totalSupply), decimals)}
+            tokenTotalSupply={formatUnits(BigInt(totalSupply ?? 0), decimals)}
         >
             {children}
         </ProposalVoting.BreakdownToken>

@@ -1,10 +1,7 @@
 'use client';
 
-import {
-    SetupBodyType,
-    type ISetupBodyFormExisting,
-    type ISetupBodyFormNew,
-} from '@/modules/createDao/dialogs/setupBodyDialog';
+import { type ISetupBodyFormExisting, type ISetupBodyFormNew } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { BodyType } from '@/modules/createDao/types/enum';
 import { useMemberList } from '@/modules/governance/api/governanceService';
 import type {
     ITokenSetupMembershipForm,
@@ -65,9 +62,9 @@ export const LockToVoteProcessBodyField = (props: ILockToVoteProcessBodyFieldPro
     const { membership, governance } = body;
 
     const initialParams = {
-        queryParams: { daoId, pluginAddress: body.type === SetupBodyType.EXISTING ? body.address : '' },
+        queryParams: { daoId, pluginAddress: body.type === BodyType.EXISTING ? body.address : '' },
     };
-    const { data: memberList } = useMemberList(initialParams, { enabled: body.type === SetupBodyType.EXISTING });
+    const { data: memberList } = useMemberList(initialParams, { enabled: body.type === BodyType.EXISTING });
 
     const {
         address: tokenAddress,
@@ -78,7 +75,7 @@ export const LockToVoteProcessBodyField = (props: ILockToVoteProcessBodyFieldPro
     } = membership.token;
     const { votingMode, supportThreshold, minParticipation, minDuration } = governance;
 
-    const parsedTotalSupply = formatUnits(BigInt(totalSupply), tokenDecimals);
+    const parsedTotalSupply = totalSupply && formatUnits(BigInt(totalSupply), tokenDecimals);
     const formattedSupply = formatterUtils.formatNumber(parsedTotalSupply, {
         format: NumberFormat.TOKEN_AMOUNT_LONG,
         fallback: '0',
@@ -109,7 +106,7 @@ export const LockToVoteProcessBodyField = (props: ILockToVoteProcessBodyFieldPro
         }),
     };
 
-    const contractInfo = useDaoPluginInfo({ daoId, address: body.type === SetupBodyType.EXISTING ? body.address : '' });
+    const contractInfo = useDaoPluginInfo({ daoId, address: body.type === BodyType.EXISTING ? body.address : '' });
 
     return (
         <DefinitionList.Container className="w-full">
@@ -141,9 +138,11 @@ export const LockToVoteProcessBodyField = (props: ILockToVoteProcessBodyFieldPro
                     })}
                 </DefinitionList.Item>
             )}
-            <DefinitionList.Item term={t('app.plugins.lockToVote.lockToVoteProcessBodyField.supplyTerm')}>
-                {formattedSupply!} (${tokenSymbol})
-            </DefinitionList.Item>
+            {formattedSupply && Number(formattedSupply) > 0 && (
+                <DefinitionList.Item term={t('app.plugins.lockToVote.lockToVoteProcessBodyField.supplyTerm')}>
+                    {formattedSupply} (${tokenSymbol})
+                </DefinitionList.Item>
+            )}
             <DefinitionList.Item term={t('app.plugins.lockToVote.lockToVoteProcessBodyField.supportTerm')}>
                 {t('app.plugins.lockToVote.lockToVoteProcessBodyField.supportDefinition', {
                     threshold: supportThreshold,
