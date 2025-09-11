@@ -9,8 +9,7 @@ export const lockToVotePlugin: IPluginInfo = {
         release: 1,
         build: 1,
         releaseNotes: 'https://github.com/aragon/lock-to-vote-plugin/releases/tag/v1.1',
-        description:
-            'This is the initial release of Lock To Vote.',
+        description: 'This is the initial release of Lock To Vote.',
     },
     repositoryAddresses: {
         [Network.ETHEREUM_MAINNET]: '0x0f4FBD2951Db08B45dE16e7519699159aE1b4bb7',
