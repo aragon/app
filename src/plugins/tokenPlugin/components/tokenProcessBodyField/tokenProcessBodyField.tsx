@@ -122,7 +122,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                     })}
                 </DefinitionList.Item>
             )}
-            {totalSupply && (
+            {totalSupply && Number(totalSupply) > 0 && (
                 <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.supplyTerm')}>
                     {formattedSupply} (${tokenSymbol})
                 </DefinitionList.Item>

@@ -2,7 +2,6 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { SppCreateProposalSettingsForm } from './components/sppCreateProposalSettingsForm';
-import { SppGovernanceInfo } from './components/sppGovernanceInfo';
 import { SppProposalListItem } from './components/sppProposalListItem';
 import { SppVotingTerminal } from './components/sppVotingTerminal';
 import { sppPlugin } from './constants/sppPlugin';
@@ -59,10 +58,5 @@ export const initialiseSppPlugin = () => {
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
             pluginId: sppPlugin.id,
             function: useSppGovernanceSettings,
-        })
-        .registerSlotComponent({
-            slotId: SettingsSlotId.SETTINGS_GOVERNANCE_INFO,
-            pluginId: sppPlugin.id,
-            component: SppGovernanceInfo,
         });
 };

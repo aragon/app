@@ -173,7 +173,14 @@ describe.skip('<DaoMemberDetailsPageClient /> component', () => {
     });
 
     it('renders fallback of `-` when lastActivity is null', () => {
-        const metrics = generateMemberMetrics({ lastActivity: null, firstActivity: 1723472877 });
+        const metrics = generateMemberMetrics({ firstActivity: 1723472877, lastActivity: null });
+        useBlockSpy
+            .mockReturnValueOnce({
+                data: { timestamp: 3204230420 },
+            } as unknown as wagmi.UseBlockReturnType)
+            .mockReturnValueOnce({
+                data: { timestamp: null },
+            } as unknown as wagmi.UseBlockReturnType);
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
 
         render(createTestComponent());
@@ -183,6 +190,9 @@ describe.skip('<DaoMemberDetailsPageClient /> component', () => {
     it('renders the correct last activity date', () => {
         timeUtils.setTime('2025-08-10T09:30:00');
         const metrics = generateMemberMetrics({ lastActivity: 1754559000 });
+        useBlockSpy.mockReturnValue({
+            data: { timestamp: metrics.lastActivity },
+        } as unknown as wagmi.UseBlockReturnType);
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
 
         render(createTestComponent());
@@ -195,6 +205,13 @@ describe.skip('<DaoMemberDetailsPageClient /> component', () => {
 
     it('renders fallback of `-` when firstActivity is null', () => {
         const metrics = generateMemberMetrics({ firstActivity: null, lastActivity: 1723472877 });
+        useBlockSpy
+            .mockReturnValueOnce({
+                data: { timestamp: null },
+            } as unknown as wagmi.UseBlockReturnType)
+            .mockReturnValueOnce({
+                data: { timestamp: metrics.lastActivity },
+            } as unknown as wagmi.UseBlockReturnType);
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
 
         render(createTestComponent());
@@ -203,6 +220,9 @@ describe.skip('<DaoMemberDetailsPageClient /> component', () => {
 
     it('renders the correct first activity date', () => {
         const metrics = generateMemberMetrics({ firstActivity: 1723472877 });
+        useBlockSpy.mockReturnValue({
+            data: { timestamp: metrics.firstActivity },
+        } as unknown as wagmi.UseBlockReturnType);
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
 
         render(createTestComponent());
