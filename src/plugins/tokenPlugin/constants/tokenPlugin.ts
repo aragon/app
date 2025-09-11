@@ -8,7 +8,7 @@ export const tokenPlugin: IPluginInfo = {
     installVersion: {
         release: 1,
         build: 4,
-        releaseNotes: 'https://github.com/aragon/token-voting-plugin/releases/tag/v1.3.0',
+        releaseNotes: 'https://github.com/aragon/token-voting-plugin/releases/tag/v1.4.0',
         description:
             'This optional upgrade introduces minor new features, including the ability to customize metadata for governance plugins.',
     },
