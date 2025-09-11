@@ -41,8 +41,11 @@ class TokenTransactionUtils {
                 ? createProposalUtils.parseEndDate(proposal)
                 : createProposalUtils.createDefaultEndDate(minDuration);
 
-        const functionArgs = [metadata, actions, BigInt(0), startDate, endDate, 0, false];
-        const data = encodeFunctionData({ abi: tokenPluginAbi, functionName: 'createProposal', args: functionArgs });
+        const data = encodeFunctionData({
+            abi: tokenPluginAbi,
+            functionName: 'createProposal',
+            args: [metadata, actions, BigInt(0), BigInt(startDate), BigInt(endDate), 0, false],
+        });
 
         return data;
     };
@@ -50,8 +53,11 @@ class TokenTransactionUtils {
     buildVoteData = (params: IBuildVoteDataParams): Hex => {
         const { proposalIndex, vote } = params;
 
-        const functionArgs = [proposalIndex, vote, false];
-        const data = encodeFunctionData({ abi: tokenPluginAbi, functionName: 'vote', args: functionArgs });
+        const data = encodeFunctionData({
+            abi: tokenPluginAbi,
+            functionName: 'vote',
+            args: [BigInt(proposalIndex), vote.value, false],
+        });
 
         return data;
     };

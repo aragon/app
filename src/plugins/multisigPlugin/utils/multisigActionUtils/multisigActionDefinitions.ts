@@ -64,7 +64,7 @@ export const defaultUpdateSettings = ({
             {
                 name: '_multisigSettings',
                 type: 'tuple',
-                notice: 'The new settings',
+                notice: 'The new voting settings',
                 value: undefined,
                 components: [
                     { name: 'onlyListed', type: 'bool' },

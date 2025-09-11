@@ -42,3 +42,5 @@ export interface IGetProposalStatusParams {
      */
     hasExpiredStages?: boolean;
 }
+
+export interface IHasEndedParams extends Pick<IGetProposalStatusParams, 'endDate' | 'isExecuted'> {}

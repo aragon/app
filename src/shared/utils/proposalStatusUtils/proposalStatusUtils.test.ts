@@ -183,4 +183,33 @@ describe('proposalStatus utils', () => {
             expect(proposalStatusUtils.endsInTheFuture(endDate)).toBeFalsy();
         });
     });
+
+    describe('hasEnded', () => {
+        it('returns false when endDate is not defined', () => {
+            const endDate = undefined;
+            expect(proposalStatusUtils.hasEnded({ isExecuted: false, endDate })).toBeFalsy();
+        });
+
+        it('returns true when end date is in the past', () => {
+            const now = '2024-05-05T11:00:00';
+            const endDate = DateTime.fromISO('2024-05-02T09:00:00').toSeconds();
+            timeUtils.setTime(now);
+            expect(proposalStatusUtils.hasEnded({ isExecuted: false, endDate })).toBeTruthy();
+        });
+
+        it('returns false when end date is in the future', () => {
+            const now = '2024-05-05T11:00:00';
+            const endDate = DateTime.fromISO('2024-05-06T09:00:00').toSeconds();
+            timeUtils.setTime(now);
+            expect(proposalStatusUtils.hasEnded({ isExecuted: false, endDate })).toBeFalsy();
+        });
+
+        it('returns true when end date is in the future and proposal is executed', () => {
+            const isExecuted = true;
+            const now = '2024-05-05T11:00:00';
+            const endDate = DateTime.fromISO('2024-05-06T09:00:00').toSeconds();
+            timeUtils.setTime(now);
+            expect(proposalStatusUtils.hasEnded({ isExecuted, endDate })).toBeTruthy();
+        });
+    });
 });
