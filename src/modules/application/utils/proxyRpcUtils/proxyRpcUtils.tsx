@@ -56,6 +56,18 @@ export class ProxyRpcUtils {
     private buildRequestOptions = (request: Request): RequestInit => {
         const { method, body, headers } = request;
 
-        return { method, body, headers, duplex: 'half' } as RequestInit;
+        // Remove cookies: avoid RPC 413 "Request Entity Too Large" errors caused by sending too much cookies data.
+        const filteredHeaders = new Headers(headers);
+        filteredHeaders.delete('cookie');
+        filteredHeaders.delete('Cookie');
+
+        return {
+            method,
+            body,
+            headers: filteredHeaders,
+            // Ensure no implicit credential forwarding
+            credentials: 'omit',
+            duplex: 'half',
+        } as RequestInit;
     };
 }
