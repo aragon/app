@@ -59,8 +59,7 @@ export class ProxyRpcUtils {
         // Remove cookies: avoid RPC 413 "Request Entity Too Large" errors caused by sending too much cookies' data.
         // (Also, beneficial to prevent potential sensitive cookie leaks to 3rd party services.)
         const filteredHeaders = new Headers(headers);
-        filteredHeaders.delete('cookie');
-        filteredHeaders.delete('Cookie');
+        filteredHeaders.delete('cookie'); // delete is case-insensitive.
 
         return {
             method,
