@@ -89,6 +89,11 @@
     "typescript-eslint": "^8.40.0",
     "vercel": "^46.0.2"
   },
+  "resolutions": {
+    "@walletconnect/core": "2.21.7",
+    "@walletconnect/sign-client": "2.21.7",
+    "@walletconnect/utils": "2.21.7"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aragon/app.git"
