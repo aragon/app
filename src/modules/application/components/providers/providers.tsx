@@ -10,7 +10,8 @@ import { Link } from '@/shared/components/link';
 import { TranslationsProvider } from '@/shared/components/translationsProvider';
 import type { Translations } from '@/shared/utils/translationsUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { HydrationBoundary, type DehydratedState } from '@tanstack/react-query';
+import { type DehydratedState, HydrationBoundary, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { type ReactNode } from 'react';
 import { type State } from 'wagmi';
 import { wagmiConfig } from '../../constants/wagmi';
@@ -50,23 +51,26 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
 
     return (
         <DebugContextProvider>
-            <TranslationsProvider translations={translations}>
-                <BlockNavigationContextProvider>
-                    <GukModulesProvider
-                        wagmiConfig={wagmiConfig}
-                        wagmiInitialState={wagmiInitialState}
-                        queryClient={queryClient}
-                        coreProviderValues={coreProviderValues}
-                    >
-                        <HydrationBoundary state={dehydratedState}>
-                            <DialogProvider>
-                                {children}
-                                <DialogRoot dialogs={providersDialogs} />
-                            </DialogProvider>
-                        </HydrationBoundary>
-                    </GukModulesProvider>
-                </BlockNavigationContextProvider>
-            </TranslationsProvider>
+            <QueryClientProvider client={queryClient}>
+                <HydrationBoundary state={dehydratedState}>
+                    <TranslationsProvider translations={translations}>
+                        <BlockNavigationContextProvider>
+                            <GukModulesProvider
+                                wagmiConfig={wagmiConfig}
+                                wagmiInitialState={wagmiInitialState}
+                                queryClient={queryClient}
+                                coreProviderValues={coreProviderValues}
+                            >
+                                <DialogProvider>
+                                    {children}
+                                    <DialogRoot dialogs={providersDialogs} />
+                                    <ReactQueryDevtools />
+                                </DialogProvider>
+                            </GukModulesProvider>
+                        </BlockNavigationContextProvider>
+                    </TranslationsProvider>
+                </HydrationBoundary>
+            </QueryClientProvider>
         </DebugContextProvider>
     );
 };

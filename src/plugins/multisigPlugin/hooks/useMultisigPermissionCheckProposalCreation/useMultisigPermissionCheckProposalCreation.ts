@@ -1,12 +1,13 @@
 import { useMemberExists } from '@/modules/governance/api/governanceService';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useAccount } from 'wagmi';
 import type { IMultisigPluginSettings } from '../../types';
 
 export interface IUseMultisigPermissionCheckProposalCreationParams
-    extends IPermissionCheckGuardParams<IMultisigPluginSettings> {}
+    extends IPermissionCheckGuardParams<IDaoPlugin<IMultisigPluginSettings>> {}
 
 export const useMultisigPermissionCheckProposalCreation = (
     params: IUseMultisigPermissionCheckProposalCreationParams,

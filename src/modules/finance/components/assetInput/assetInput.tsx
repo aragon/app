@@ -1,14 +1,35 @@
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { addressUtils, Button, formatterUtils, IconType, InputContainer, NumberFormat } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    Button,
+    formatterUtils,
+    IconType,
+    InputContainer,
+    NumberFormat,
+    Toggle,
+    ToggleGroup,
+} from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { type ChangeEvent, type MouseEvent, useId } from 'react';
+import { type ChangeEvent, type MouseEvent, useCallback, useEffect, useId, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { formatUnits } from 'viem';
 import type { IAsset } from '../../api/financeService';
 import { FinanceDialogId } from '../../constants/financeDialogId';
 import type { IAssetSelectionDialogParams } from '../../dialogs/assetSelectionDialog';
 import { AssetInputToken } from './assetInputToken';
+
+export interface IAssetInputPercentageSelectionConfig {
+    /**
+     * Total available balance for percentage calculations.
+     */
+    totalBalance?: bigint;
+    /**
+     * Token decimals for percentage calculations.
+     */
+    tokenDecimals: number;
+}
 
 export interface IAssetInputFormData {
     /**
@@ -50,16 +71,35 @@ export interface IAssetInputProps {
      * Minimum value for the amount field.
      */
     minAmount?: number;
+    /**
+     * Configuration for percentage selection feature.
+     */
+    percentageSelection?: IAssetInputPercentageSelectionConfig;
 }
 
+const valuePercentages = ['0', '25', '50', '75', '100'] as const;
+
 export const AssetInput: React.FC<IAssetInputProps> = (props) => {
-    const { fetchAssetsParams, fieldPrefix, onAmountChange, disableAssetField, hideMax, hideAmountLabel, minAmount } =
-        props;
+    const {
+        fetchAssetsParams,
+        fieldPrefix,
+        onAmountChange,
+        disableAssetField,
+        hideMax,
+        hideAmountLabel,
+        minAmount,
+        percentageSelection,
+    } = props;
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
     const inputId = useId();
     const { clearErrors } = useFormContext();
+
+    const [percentageValue, setPercentageValue] = useState('100');
+
+    const isPercentageSelectionEnabled = percentageSelection != null;
+    const { totalBalance, tokenDecimals } = percentageSelection ?? {};
 
     const assetField = useFormField<IAssetInputFormData, 'asset'>('asset', { rules: { required: true }, fieldPrefix });
 
@@ -81,7 +121,40 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     const handleAmountFieldChange = (amount?: string | ChangeEvent<HTMLInputElement>) => {
         onAmountFieldChange(amount);
         onAmountChange?.();
+
+        // Clear percentage selection when manually typing
+        if (isPercentageSelectionEnabled) {
+            setPercentageValue('');
+        }
     };
+
+    const updateAmountField = useCallback(
+        (percentageValue?: string) => {
+            if (totalBalance == null || tokenDecimals == null || percentageValue == null) {
+                return;
+            }
+
+            const processedValue = (totalBalance * BigInt(percentageValue)) / BigInt(100);
+            const parsedValue = formatUnits(processedValue, tokenDecimals);
+            onAmountFieldChange(parsedValue);
+        },
+        [totalBalance, tokenDecimals, onAmountFieldChange],
+    );
+
+    const handlePercentageChange = useCallback(
+        (value?: string) => {
+            if (!value) {
+                return;
+            }
+
+            updateAmountField(value);
+            setPercentageValue(value);
+        },
+        [updateAmountField],
+    );
+
+    // Update amount field and percentage value to 100% on user balance change
+    useEffect(() => handlePercentageChange('100'), [handlePercentageChange]);
 
     // Prevent default behaviour of the select button mouse-down event to avoid displaying a validation error on the
     // amount field on select button click.
@@ -160,6 +233,18 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                 />
                 <p>{formattedAmountValue}</p>
             </InputContainer>
+            {isPercentageSelectionEnabled && (
+                <ToggleGroup
+                    isMultiSelect={false}
+                    value={percentageValue}
+                    onChange={handlePercentageChange}
+                    variant="space-between"
+                >
+                    {valuePercentages.map((value) => (
+                        <Toggle key={value} value={value} label={t(`app.finance.assetInput.percentage.${value}`)} />
+                    ))}
+                </ToggleGroup>
+            )}
             {assetField.value?.amount && !hideMax && (
                 <div className="flex items-center gap-x-1 self-end pr-4">
                     <button

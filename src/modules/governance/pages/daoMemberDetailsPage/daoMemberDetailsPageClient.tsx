@@ -19,6 +19,7 @@ import {
     MemberAvatar,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
+import { useBlock } from 'wagmi';
 import EfpLogo from '../../../../assets/images/efp-logo.svg';
 import { daoUtils } from '../../../../shared/utils/daoUtils';
 import { useMember } from '../../api/governanceService';
@@ -68,12 +69,30 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
 
     const { lastActivity, firstActivity } = member?.metrics ?? {};
 
-    const parsedLatestActivity = lastActivity != null ? lastActivity * 1000 : undefined;
-    const formattedLatestActivity = formatterUtils.formatDate(parsedLatestActivity, { format: DateFormat.DURATION });
+    const chainId = dao ? networkDefinitions[dao.network].id : undefined;
 
-    const parsedFirstActivity = firstActivity != null ? firstActivity * 1000 : undefined;
+    const firstBlockNumber = firstActivity != null ? BigInt(firstActivity) : undefined;
+    const lastBlockNumber = lastActivity != null ? BigInt(lastActivity) : undefined;
+
+    const { data: firstBlock } = useBlock({
+        chainId,
+        blockNumber: firstBlockNumber,
+        query: { enabled: !!firstBlockNumber },
+    });
+    const { data: lastBlock } = useBlock({
+        chainId,
+        blockNumber: lastBlockNumber,
+        query: { enabled: !!lastBlockNumber },
+    });
+
+    const parsedFirstActivity = firstBlock?.timestamp != null ? Number(firstBlock.timestamp) * 1000 : undefined;
+    const parsedLatestActivity = lastBlock?.timestamp != null ? Number(lastBlock.timestamp) * 1000 : undefined;
+
     const formattedFirstActivity = formatterUtils.formatDate(parsedFirstActivity, {
         format: DateFormat.YEAR_MONTH_DAY,
+    });
+    const formattedLatestActivity = formatterUtils.formatDate(parsedLatestActivity, {
+        format: DateFormat.DURATION,
     });
 
     const [value, unit] = formattedLatestActivity?.split(' ') ?? [undefined, undefined];
@@ -97,7 +116,6 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const truncatedAddress = addressUtils.truncateAddress(address);
     const memberName = ens ?? truncatedAddress;
 
-    const { id: chainId } = networkDefinitions[dao.network];
     const addressUrl = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address, chainId });
 
     const pageBreadcrumbs = [

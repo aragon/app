@@ -44,7 +44,7 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     const { token } = plugin.settings;
-    const parsedTotalSupply = formatUnits(BigInt(token.totalSupply), token.decimals);
+    const parsedTotalSupply = token.totalSupply && formatUnits(BigInt(token.totalSupply), token.decimals);
 
     const formattedTotalSupply = formatterUtils.formatNumber(parsedTotalSupply, {
         format: NumberFormat.TOKEN_AMOUNT_LONG,
@@ -77,14 +77,16 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
             >
                 {t('app.plugins.token.tokenMemberInfo.tokenDistribution', { count: distribution })}
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.supply')}>
-                <p className="text-neutral-500">
-                    {t('app.plugins.token.tokenMemberInfo.tokenSupply', {
-                        supply: formattedTotalSupply,
-                        symbol: token.symbol,
-                    })}
-                </p>
-            </DefinitionList.Item>
+            {formattedTotalSupply && Number(formattedTotalSupply) > 0 && (
+                <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.supply')}>
+                    <p className="text-neutral-500">
+                        {t('app.plugins.token.tokenMemberInfo.tokenSupply', {
+                            supply: formattedTotalSupply,
+                            symbol: token.symbol,
+                        })}
+                    </p>
+                </DefinitionList.Item>
+            )}
         </DefinitionList.Container>
     );
 };

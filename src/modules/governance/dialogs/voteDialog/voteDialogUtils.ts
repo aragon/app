@@ -3,7 +3,7 @@ import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import { type IBuildVoteDataParams } from '../../types';
+import { type IBuildVoteDataOption, type IBuildVoteDataParams } from '../../types';
 
 export interface IBuildTransactionParams {
     /**
@@ -13,21 +13,26 @@ export interface IBuildTransactionParams {
     /**
      * Vote option selected by the user.
      */
-    voteValue?: number;
+    vote: IBuildVoteDataOption;
+    /**
+     * Target of the transaction, defaults to the plugin address of the proposal.
+     */
+    target?: string;
 }
 
 class VoteDialogUtils {
     buildTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
-        const { proposal, voteValue } = params;
+        const { proposal, vote, target } = params;
 
         const buildDataFunction = pluginRegistryUtils.getSlotFunction<IBuildVoteDataParams, Hex>({
             pluginId: proposal.pluginInterfaceType,
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_VOTE_DATA,
         })!;
 
-        const buildDataParams: IBuildVoteDataParams = { proposalIndex: proposal.proposalIndex, vote: voteValue };
-        const transactionData = buildDataFunction(buildDataParams);
-        const transaction = { to: proposal.pluginAddress as Hex, data: transactionData, value: BigInt(0) };
+        const transactionData = buildDataFunction({ proposalIndex: proposal.proposalIndex, vote });
+        const transactionTarget = (target ?? proposal.pluginAddress) as Hex;
+
+        const transaction = { to: transactionTarget, data: transactionData, value: BigInt(0) };
 
         return Promise.resolve(transaction);
     };
