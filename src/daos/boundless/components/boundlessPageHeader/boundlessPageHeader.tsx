@@ -65,6 +65,7 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (props) 
                             description={action.description}
                             image={action.image}
                             href={action.href}
+                            isExternal={action.isExternal}
                         />
                     ))}
                 </div>

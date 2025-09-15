@@ -2,4 +2,4 @@
 '@aragon/app': patch
 ---
 
-Launch Boundless DAO on mainnet
+Include assets for Boundless DAO on mainnet
