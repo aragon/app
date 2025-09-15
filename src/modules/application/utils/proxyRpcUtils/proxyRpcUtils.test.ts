@@ -115,13 +115,33 @@ describe('proxyRpc utils', () => {
     describe('buildRequestOptions', () => {
         it('returns the parameters for the fetch call', () => {
             const testClass = createTestClass();
-            const request = generateRequest({ method: 'POST', body: {} as ReadableStream });
-            expect(testClass['buildRequestOptions'](request)).toEqual({
-                method: request.method,
-                body: request.body,
-                headers: request.headers,
-                duplex: 'half',
+            const request = generateRequest({ method: 'POST', body: {} as ReadableStream, credentials: 'include' });
+
+            const requestOptions = testClass['buildRequestOptions'](request);
+
+            expect(requestOptions.method).toEqual(request.method);
+            expect(requestOptions.body).toEqual(request.body);
+            expect(requestOptions.duplex).toEqual('half');
+            expect(requestOptions.credentials).toEqual('omit'); // always omit credentials on proxy requests
+        });
+
+        it('filters out cookies from the request headers', () => {
+            const testClass = createTestClass();
+            const headers = new Headers({
+                'test-header': 'test-value',
+                cookie: 'test-cookie=test-value',
+                Cookie: 'test-cookie=test-value',
             });
+            const request = generateRequest({
+                headers,
+            });
+
+            const requestOptions = testClass['buildRequestOptions'](request);
+            const requestHeaders = requestOptions.headers as Headers;
+
+            expect(requestHeaders.get('test-header')).toEqual('test-value');
+            expect(requestHeaders.get('cookie')).toBeNull();
+            expect(requestHeaders.get('Cookie')).toBeNull();
         });
     });
 });
