@@ -6,7 +6,17 @@ export class ProxyBackendUtils {
     request = async (request: NextRequest) => {
         const url = this.buildBackendUrl(request);
 
-        const result = await fetch(url, request);
+        // Add Authorization header if API key is available
+        const headers = new Headers(request.headers);
+        if (process.env.ARAGON_BACKEND_API_KEY) {
+            headers.set('Authorization', `Bearer ${process.env.ARAGON_BACKEND_API_KEY}`);
+        }
+
+        const result = await fetch(url, {
+            method: request.method,
+            headers,
+            body: request.body,
+        });
         const parsedResult = (await result.json()) as unknown;
 
         return NextResponse.json(parsedResult);

@@ -1,4 +1,4 @@
-import { HttpService, type IRequestQueryParams } from '../httpService';
+import { HttpService, type IRequestQueryParams, type IRequestOptions, type IRequestParams } from '../httpService';
 import { AragonBackendServiceError } from './aragonBackendServiceError';
 import type { IPaginatedResponse } from './domain';
 
@@ -8,6 +8,25 @@ export class AragonBackendService extends HttpService {
         // it through the /api/backend NextJs route.
         const baseUrl = typeof window === 'undefined' ? process.env.ARAGON_BACKEND_URL! : '/api/backend';
         super(baseUrl, AragonBackendServiceError.fromResponse);
+    }
+
+    async request<TData, TUrlParams = unknown, TQueryParams = unknown, TBody = unknown>(
+        url: string,
+        params: IRequestParams<TUrlParams, TQueryParams, TBody> = {},
+        options?: IRequestOptions,
+    ): Promise<TData> {
+        // Add Authorization header for server-side requests
+        const processedOptions: IRequestOptions | undefined = typeof window === 'undefined' && process.env.ARAGON_BACKEND_API_KEY
+            ? {
+                ...options,
+                headers: {
+                    ...options?.headers,
+                    'Authorization': `Bearer ${process.env.ARAGON_BACKEND_API_KEY}`,
+                },
+            }
+            : options;
+
+        return super.request(url, params, processedOptions);
     }
 
     getNextPageParams = <TParams extends IRequestQueryParams<object>, TData = unknown>(

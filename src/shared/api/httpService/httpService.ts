@@ -9,11 +9,11 @@ export class HttpService {
         this.errorHandler = errorHandler;
     }
 
-    request = async <TData, TUrlParams = unknown, TQueryParams = unknown, TBody = unknown>(
+    async request<TData, TUrlParams = unknown, TQueryParams = unknown, TBody = unknown>(
         url: string,
         params: IRequestParams<TUrlParams, TQueryParams, TBody> = {},
         options?: IRequestOptions,
-    ): Promise<TData> => {
+    ): Promise<TData> {
         const completeUrl = this.buildUrl(url, params);
         const processedOptions = this.buildOptions(options, params.body);
         const parsedBody = this.parseBody(params.body);
@@ -28,7 +28,7 @@ export class HttpService {
         }
 
         return response.json() as TData;
-    };
+    }
 
     private buildUrl = <TUrlParams, TQueryParams, TBody>(
         url: string,
