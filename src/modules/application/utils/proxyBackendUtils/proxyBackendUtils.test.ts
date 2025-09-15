@@ -28,6 +28,24 @@ describe('proxyBackend utils', () => {
             expect(fetchReturn.json).toHaveBeenCalled();
             expect(nextResponseJsonSpy).toHaveBeenCalledWith(parsedResponse);
         });
+
+        it('adds Authorization header when ARAGON_BACKEND_API_KEY is set', async () => {
+            const apiKey = 'test-api-key-123';
+            process.env.ARAGON_BACKEND_API_KEY = apiKey;
+            process.env.ARAGON_BACKEND_URL = 'https://test-backend.com';
+
+            const parsedResponse = { result: 'test' };
+            const fetchReturn = generateResponse({ json: jest.fn(() => Promise.resolve(parsedResponse)) });
+            fetchSpy.mockResolvedValue(fetchReturn);
+
+            await proxyBackendUtils.request(generateNextRequest());
+
+            expect(fetchSpy).toHaveBeenCalledTimes(1);
+
+            const [, options] = fetchSpy.mock.calls[0] as [string, RequestInit];
+            const headers = options.headers as Headers;
+            expect(headers.get('Authorization')).toBe(`Bearer ${apiKey}`);
+        });
     });
 
     describe('buildBackendUrl', () => {
