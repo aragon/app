@@ -1,4 +1,4 @@
-import { HttpService, type IRequestQueryParams, type IRequestOptions, type IRequestParams } from '../httpService';
+import { HttpService, type IRequestOptions, type IRequestParams, type IRequestQueryParams } from '../httpService';
 import { AragonBackendServiceError } from './aragonBackendServiceError';
 import type { IPaginatedResponse } from './domain';
 
@@ -15,16 +15,16 @@ export class AragonBackendService extends HttpService {
         params: IRequestParams<TUrlParams, TQueryParams, TBody> = {},
         options?: IRequestOptions,
     ): Promise<TData> {
-        // Add Authorization header for server-side requests
-        const processedOptions: IRequestOptions | undefined = typeof window === 'undefined' && process.env.ARAGON_BACKEND_API_KEY
-            ? {
-                ...options,
-                headers: {
-                    ...options?.headers,
-                    'Authorization': `Bearer ${process.env.ARAGON_BACKEND_API_KEY}`,
-                },
-            }
-            : options;
+        const processedOptions: IRequestOptions | undefined =
+            typeof window === 'undefined' && process.env.ARAGON_BACKEND_API_KEY
+                ? {
+                      ...options,
+                      headers: {
+                          ...options?.headers,
+                          Authorization: `Bearer ${process.env.ARAGON_BACKEND_API_KEY}`,
+                      },
+                  }
+                : options;
 
         return super.request(url, params, processedOptions);
     }

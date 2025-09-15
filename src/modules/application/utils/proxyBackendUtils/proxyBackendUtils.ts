@@ -5,9 +5,8 @@ export class ProxyBackendUtils {
 
     request = async (request: NextRequest) => {
         const url = this.buildBackendUrl(request);
-
-        // Add Authorization header if API key is available
         const headers = new Headers(request.headers);
+
         if (process.env.ARAGON_BACKEND_API_KEY) {
             headers.set('Authorization', `Bearer ${process.env.ARAGON_BACKEND_API_KEY}`);
         }
