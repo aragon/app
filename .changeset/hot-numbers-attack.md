@@ -2,4 +2,4 @@
 '@aragon/app': minor
 ---
 
-Implement proposal actions tenderly simulations
+Implement Tenderly simulations for proposal actions

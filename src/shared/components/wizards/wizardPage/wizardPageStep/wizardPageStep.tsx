@@ -1,13 +1,7 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { AlertCard, Button, Dropdown, Heading, IconType, type ButtonVariant } from '@aragon/gov-ui-kit';
+import { AlertCard, Button, Dropdown, Heading, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useWizardContext, useWizardFooter, Wizard, type IWizardStepProps } from '../../wizard';
-
-export interface IRenderNextButtonProps {
-    submitVariant: ButtonVariant;
-    submitLabel: string;
-    triggerSubmit: () => void;
-}
 
 export interface IWizardPageStepProps extends IWizardStepProps {
     /**

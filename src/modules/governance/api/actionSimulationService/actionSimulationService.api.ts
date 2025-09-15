@@ -28,6 +28,9 @@ export interface ISimulateActionsItem {
 }
 
 export interface ISimulateActionsBody {
+    /**
+     * List of actions to simulate.
+     */
     actions: ISimulateActionsItem[];
 }
 

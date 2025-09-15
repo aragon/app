@@ -3,7 +3,7 @@ import { ExecuteDialog } from '../dialogs/executeDialog';
 import { PermissionCheckDialog } from '../dialogs/permissionCheckDialog';
 import { PublishProposalDialog } from '../dialogs/publishProposalDialog';
 import { SelectPluginDialog } from '../dialogs/selectPluginDialog';
-import { SimulateActionsDialog } from '../dialogs/simulateActionsDialog/simulateActionsDialog';
+import { SimulateActionsDialog } from '../dialogs/simulateActionsDialog';
 import { VerifySmartContractDialog } from '../dialogs/verifySmartContractDialog';
 import { VoteDialog } from '../dialogs/voteDialog';
 import { WalletConnectActionDialog } from '../dialogs/walletConnectActionDialog';
