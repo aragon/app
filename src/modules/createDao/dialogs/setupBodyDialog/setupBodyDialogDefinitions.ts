@@ -53,7 +53,10 @@ export interface ISetupBodyFormNew<
     canCreateProposal: boolean;
 }
 
-export interface ISetupBodyFormExternal extends ISetupBodyFormBase, ICompositeAddress {
+export interface ISetupBodyFormExternal
+    extends ISetupBodyFormBase,
+        ICompositeAddress,
+        Pick<ISetupBodyFormNew, 'canCreateProposal'> {
     /**
      * EXTERNAL body type.
      */

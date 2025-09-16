@@ -29,6 +29,8 @@ export const generateSetupBodyFormExternal = (data?: Partial<ISetupBodyFormExter
     ...generateSetupBodyFormBase(data),
     type: BodyType.EXTERNAL,
     address: '0x000',
+    isSafe: false,
+    canCreateProposal: false,
     ...data,
 });
 
