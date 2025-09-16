@@ -62,16 +62,15 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
         open(GovernanceDialogId.SIMULATE_ACTIONS, { params });
     };
 
-    const actionsStepNextDropdownItems = [
-        {
-            label: t('app.governance.createProposalPage.createProposalPageClientSteps.simulate'),
-            onClick: handleSimulateActions,
-        },
-        {
-            label: t('app.governance.createProposalPage.createProposalPageClientSteps.skipSimulation'),
-            formId: createProposalWizardId,
-        },
-    ];
+    const getActionStepDropdownItems = () => {
+        const labelBase = 'app.governance.createProposalPage.createProposalPageClientSteps';
+        const dropdownItems = [
+            { label: t(`${labelBase}.simulate`), onClick: handleSimulateActions },
+            { label: t(`${labelBase}.skipSimulation`), formId: createProposalWizardId },
+        ];
+
+        return actions.length > 0 ? dropdownItems : undefined;
+    };
 
     return (
         <>
@@ -90,7 +89,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
                     `app.governance.createProposalPage.steps.${CreateProposalWizardStep.ACTIONS}.description`,
                 )}
                 hidden={addActions === false}
-                nextDropdownItems={actionsStepNextDropdownItems}
+                nextDropdownItems={getActionStepDropdownItems()}
                 {...actionsStep}
             >
                 <CreateProposalForm.Actions daoId={daoId} pluginAddress={pluginAddress} />
