@@ -44,6 +44,9 @@ export interface IDaoProposalDetailsPageClientProps {
     proposalSlug: string;
 }
 
+// Proposal actions cannot be simulated if last simulation has been triggered less than 10 minutes ago
+const actionSimulationLimitMillis = 10 * 60 * 1_000;
+
 export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClientProps> = (props) => {
     const { daoId, proposalSlug } = props;
 
@@ -69,6 +72,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         { urlParams: { id: proposal?.id as string } },
         { enabled: proposal != null, refetchInterval: ({ state }) => (state.data?.decoding ? 2000 : false) },
     );
+    const actionsCount = actionData?.rawActions?.length ?? 0;
 
     const {
         data: lastSimulation,
@@ -117,17 +121,16 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         label: copy.proposalDataListItemStatus.statusLabel[proposalStatus],
         variant: proposalStatusToTagVariant[proposalStatus],
     };
+
+    const proposalsUrl = daoUtils.getDaoUrl(dao, 'proposals');
     const pageBreadcrumbs = [
-        {
-            href: daoUtils.getDaoUrl(dao, 'proposals'),
-            label: t('app.governance.daoProposalDetailsPage.header.breadcrumb.proposals'),
-        },
+        { href: proposalsUrl, label: t('app.governance.daoProposalDetailsPage.header.breadcrumb.proposals') },
         { label: proposalSlug.toUpperCase() },
     ];
 
-    const simulationError = t(
-        `app.governance.daoProposalDetailsPage.main.actions.${hasSimulationFailed ? 'simulationError' : 'lastSimulationError'}`,
-    );
+    const canSimulate = lastSimulation == null || Date.now() - lastSimulation.runAt > actionSimulationLimitMillis;
+    const simulationErrorContext = hasSimulationFailed ? 'simulationError' : 'lastSimulationError';
+    const simulationError = t(`app.governance.daoProposalDetailsPage.main.actions.${simulationErrorContext}`);
 
     return (
         <>
@@ -158,19 +161,17 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                     <Page.MainSection title={t('app.governance.daoProposalDetailsPage.main.actions.header')}>
                         {proposal.hasActions && (
                             <ActionSimulation
-                                totalActions={normalizedProposalActions.length}
+                                totalActions={actionsCount}
                                 lastSimulation={
                                     lastSimulation && { ...lastSimulation, timestamp: lastSimulation.runAt }
                                 }
                                 isLoading={isSimulationLoading}
                                 error={showSimulationError ? simulationError : undefined}
                                 onSimulate={handleSimulateProposal}
+                                isEnabled={canSimulate}
                             />
                         )}
-                        <ProposalActions.Root
-                            isLoading={actionData?.decoding}
-                            actionsCount={actionData?.rawActions?.length ?? 0}
-                        >
+                        <ProposalActions.Root isLoading={actionData?.decoding} actionsCount={actionsCount}>
                             <ProposalActions.Container emptyStateDescription="">
                                 {normalizedProposalActions.map((action, index) => (
                                     <ProposalActions.Item
