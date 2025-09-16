@@ -21,11 +21,8 @@ describe('proxyBackend utils', () => {
     describe('request', () => {
         it('calls the rpc endpoint with the specified parameters, parses and returns the result', async () => {
             const parsedResponse = { result: 'test' };
-            const mockHeaders = new Headers();
-            const fetchReturn = generateResponse({
-                json: jest.fn(() => Promise.resolve(parsedResponse)),
-                headers: mockHeaders,
-            });
+            const headers = new Headers();
+            const fetchReturn = generateResponse({ json: jest.fn(() => Promise.resolve(parsedResponse)), headers });
             const mockNextResponse = {} as NextResponse;
             fetchSpy.mockResolvedValue(fetchReturn);
             nextResponseJsonSpy.mockReturnValue(mockNextResponse);
@@ -34,12 +31,8 @@ describe('proxyBackend utils', () => {
 
             expect(fetchSpy).toHaveBeenCalled();
             expect(fetchReturn.json).toHaveBeenCalled();
-            expect(nextResponseJsonSpy).toHaveBeenCalledWith(parsedResponse, {
-                status: fetchReturn.status,
-                statusText: fetchReturn.statusText,
-                headers: mockHeaders,
-            });
-            expect(result).toBe(mockNextResponse);
+            expect(nextResponseJsonSpy).toHaveBeenCalledWith(parsedResponse, fetchReturn);
+            expect(result).toEqual(mockNextResponse);
         });
     });
 

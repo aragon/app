@@ -10,12 +10,7 @@ export class ProxyBackendUtils {
         const result = await fetch(url, requestOptions);
         const parsedResult = (await result.json()) as unknown;
 
-        return NextResponse.json(parsedResult, {
-            // pass original status and header data, or otherwise it will always return 200 OK
-            status: result.status,
-            statusText: result.statusText,
-            headers: result.headers,
-        });
+        return NextResponse.json(parsedResult, result);
     };
 
     private buildBackendUrl = (request: NextRequest): string => {

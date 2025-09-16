@@ -1,3 +1,4 @@
+import { generateSimulationResult } from '@/modules/governance/testUtils';
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import { act, renderHook, waitFor } from '@testing-library/react';
@@ -12,22 +13,10 @@ describe('useSimulateActions mutation', () => {
     });
 
     it('simulates actions and returns the result', async () => {
-        const simulationResult = {
-            runAt: Date.now(),
-            status: 'success' as const,
-            url: 'https://tenderly.co/simulation/123',
-        };
+        const simulationResult = generateSimulationResult();
         const params = {
             urlParams: { network: Network.ETHEREUM_MAINNET, pluginAddress: '0x123' },
-            body: {
-                actions: [
-                    {
-                        to: '0x456',
-                        data: '0x000',
-                        value: '0',
-                    },
-                ],
-            },
+            body: { actions: [{ to: '0x456', data: '0x000', value: '0' }] },
         };
         simulateActionsSpy.mockResolvedValue(simulationResult);
         const { result } = renderHook(() => useSimulateActions(), { wrapper: ReactQueryWrapper });

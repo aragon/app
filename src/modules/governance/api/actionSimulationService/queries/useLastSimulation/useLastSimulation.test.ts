@@ -1,3 +1,4 @@
+import { generateSimulationResult } from '@/modules/governance/testUtils';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import { renderHook, waitFor } from '@testing-library/react';
 import { actionSimulationService } from '../../actionSimulationService';
@@ -11,11 +12,7 @@ describe('useLastSimulation query', () => {
     });
 
     it('fetches last simulation result for a proposal', async () => {
-        const simulationResult = {
-            runAt: Date.now(),
-            status: 'success' as const,
-            url: 'https://tenderly.co/simulation/123',
-        };
+        const simulationResult = generateSimulationResult();
         const params = { urlParams: { proposalId: 'proposal-123' } };
         getLastSimulationSpy.mockResolvedValue(simulationResult);
         const { result } = renderHook(() => useLastSimulation(params), { wrapper: ReactQueryWrapper });
