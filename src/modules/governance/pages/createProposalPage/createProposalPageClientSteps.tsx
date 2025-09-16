@@ -2,8 +2,7 @@
 
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import type { IWizardStepperStep } from '@/shared/components/wizards/wizard';
-import { wizardFormId } from '@/shared/components/wizards/wizard/wizardForm/wizardForm';
+import { type IWizardStepperStep } from '@/shared/components/wizards/wizard';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -15,7 +14,7 @@ import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { publishProposalDialogUtils } from '../../dialogs/publishProposalDialog/publishProposalDialogUtils';
 import type { ISimulateActionsDialogParams } from '../../dialogs/simulateActionsDialog';
-import { CreateProposalWizardStep } from './createProposalPageDefinitions';
+import { createProposalWizardId, CreateProposalWizardStep } from './createProposalPageDefinitions';
 
 export interface ICreateProposalPageClientStepsProps {
     /**
@@ -58,6 +57,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
             network,
             pluginAddress,
             actions: processedActions,
+            formId: createProposalWizardId,
         };
         open(GovernanceDialogId.SIMULATE_ACTIONS, { params });
     };
@@ -69,7 +69,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
         },
         {
             label: t('app.governance.createProposalPage.createProposalPageClientSteps.skipSimulation'),
-            formId: wizardFormId,
+            formId: createProposalWizardId,
         },
     ];
 

@@ -1,7 +1,6 @@
 import type { Network } from '@/shared/api/daoService';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { wizardFormId } from '@/shared/components/wizards/wizard/wizardForm/wizardForm';
 import { ActionSimulation, Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useSimulateActions } from '../../api/actionSimulationService';
@@ -20,6 +19,10 @@ export interface ISimulateActionsDialogParams {
      * List of actions to simulate.
      */
     actions: IProposalCreateAction[];
+    /**
+     * ID of the form to trigger the submit for.
+     */
+    formId?: string;
 }
 
 export interface ISimulateActionsDialogProps extends IDialogComponentProps<ISimulateActionsDialogParams> {}
@@ -28,27 +31,28 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
     const { location } = props;
 
     invariant(location.params != null, 'SimulateActionsDialog: params must be set for the dialog to work correctly');
-    const { actions, network, pluginAddress } = location.params;
+    const { actions, network, pluginAddress, formId } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
-    const { mutate: triggerSimulation, isError, isPending, status, data } = useSimulateActions();
+    const { mutate: simulateActions, isError, isPending, status, data } = useSimulateActions();
 
     useEffect(() => {
         if (status !== 'idle') {
             return;
         }
 
-        triggerSimulation({
-            urlParams: { network, pluginAddress },
-            body: {
-                actions: actions.map(({ to, data, value }) => ({ to, data, value: value.toString() })),
-            },
-        });
-    }, [actions, network, pluginAddress, status, triggerSimulation]);
+        const urlParams = { network, pluginAddress };
+        const processedActions = actions.map(({ to, data, value }) => ({ to, data, value: value.toString() }));
+        simulateActions({ urlParams, body: { actions: processedActions } });
+    }, [actions, network, pluginAddress, status, simulateActions]);
 
-    const hasFailed = isError || data?.status === 'failed';
+    const hasSimulationFailed = isError || data?.status === 'failed';
+    const lastSimulation = data != null ? { url: data.url, timestamp: data.runAt, status: data.status } : undefined;
+
+    const error = isError ? t('app.governance.simulateActionsDialog.error') : undefined;
+    const primaryLabel = t(`app.governance.simulateActionsDialog.action.${hasSimulationFailed ? 'error' : 'success'}`);
 
     return (
         <>
@@ -58,18 +62,16 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
                     isEnabled={false}
                     isLoading={isPending}
                     totalActions={actions.length}
-                    lastSimulation={data && { url: data.url, timestamp: data.runAt, status: data.status }}
-                    error={isError ? t('app.governance.simulateActionsDialog.error') : undefined}
+                    lastSimulation={lastSimulation}
+                    error={error}
                 />
             </Dialog.Content>
             <Dialog.Footer
-                hasError={hasFailed}
+                hasError={hasSimulationFailed}
                 primaryAction={{
                     type: 'submit',
-                    form: wizardFormId,
-                    label: t(
-                        `app.governance.simulateActionsDialog.action.${hasFailed ? 'continueAnyway' : 'continue'}`,
-                    ),
+                    form: formId,
+                    label: primaryLabel,
                     disabled: isPending,
                     onClick: () => close(),
                 }}

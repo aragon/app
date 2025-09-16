@@ -977,8 +977,8 @@
       "simulateActionsDialog": {
         "action": {
           "cancel": "Cancel",
-          "continue": "Continue",
-          "continueAnyway": "Continue anyway"
+          "error": "Continue anyway",
+          "success": "Continue"
         },
         "error": "There was an error simulating the actions. Please try again later.",
         "title": "Simulate actions"
