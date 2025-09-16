@@ -43,6 +43,3 @@ next-env.d.ts
 
 # code editors
 .idea
-
-# junie config
-.junie/
