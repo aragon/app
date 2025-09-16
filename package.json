@@ -1,6 +1,6 @@
 {
   "name": "@aragon/app",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "description": "Human-centered DAO infrastructure",
   "author": "Aragon Association",
   "homepage": "https://github.com/aragon/app#readme",
@@ -88,6 +88,11 @@
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.43.0",
     "vercel": "^46.0.2"
+  },
+  "resolutions": {
+    "@walletconnect/core": "2.21.7",
+    "@walletconnect/sign-client": "2.21.7",
+    "@walletconnect/utils": "2.21.7"
   },
   "repository": {
     "type": "git",
