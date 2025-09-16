@@ -199,7 +199,9 @@
             },
             "default": {
               "address": "Address",
-              "ens": "ENS name"
+              "ens": "ENS name",
+              "safe": "Safe{Wallet}",
+              "type": "Type"
             }
           },
           "stageBodiesField": {
