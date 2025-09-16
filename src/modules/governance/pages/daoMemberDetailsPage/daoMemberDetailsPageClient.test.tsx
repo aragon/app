@@ -38,7 +38,7 @@ jest.mock('@/modules/governance/components/voteList', () => ({
     VoteList: jest.fn(() => <div data-testid="vote-list-mock" />),
 }));
 
-describe.skip('<DaoMemberDetailsPageClient /> component', () => {
+describe('<DaoMemberDetailsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useMemberSpy = jest.spyOn(governanceService, 'useMember');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');

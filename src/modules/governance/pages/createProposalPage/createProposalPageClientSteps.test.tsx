@@ -58,7 +58,7 @@ describe('<CreateProposalPageClientSteps /> component', () => {
 
     const createTestComponent = (props?: Partial<ICreateProposalPageClientStepsProps>) => {
         const completeProps: ICreateProposalPageClientStepsProps = {
-            daoId: 'test',
+            daoId: 'ethereum-mainnet-0x123',
             pluginAddress: '0x123',
             steps: createProposalWizardSteps,
             ...props,
