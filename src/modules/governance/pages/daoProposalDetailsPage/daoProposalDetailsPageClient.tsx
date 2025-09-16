@@ -20,7 +20,7 @@ import {
     formatterUtils,
     Link,
     ProposalActions,
-    type ProposalStatus,
+    ProposalStatus,
     proposalStatusToTagVariant,
     Tag,
     useBlockExplorer,
@@ -128,7 +128,10 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         { label: proposalSlug.toUpperCase() },
     ];
 
-    const canSimulate = lastSimulation == null || Date.now() - lastSimulation.runAt > actionSimulationLimitMillis;
+    const canSimulate =
+        proposalStatus === ProposalStatus.ACTIVE &&
+        (lastSimulation == null || Date.now() - lastSimulation.runAt > actionSimulationLimitMillis);
+
     const simulationErrorContext = hasSimulationFailed ? 'simulationError' : 'lastSimulationError';
     const simulationError = t(`app.governance.daoProposalDetailsPage.main.actions.${simulationErrorContext}`);
 
