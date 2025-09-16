@@ -1,11 +1,12 @@
 'use client';
 
 import { ProposalCreationMode } from '@/modules/createDao/components/createProcessForm';
-import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import type { IPluginProposalCreationSettingsParams } from '@/modules/createDao/types';
+import { BodyType } from '@/modules/createDao/types/enum';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { CheckboxCard, type CheckboxState, InputNumber } from '@aragon/gov-ui-kit';
+import { CheckboxCard, InputNumber, type CheckboxState } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { formatUnits } from 'viem';
@@ -25,10 +26,10 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
     const { t } = useTranslations();
     const { trigger, setValue } = useFormContext();
 
-    const { name, description, membership } = body;
+    const { type, name = '', description, membership } = body;
     const { totalSupply, decimals } = membership.token;
 
-    const parsedTotalSupply = formatUnits(BigInt(totalSupply), decimals);
+    const parsedTotalSupply = totalSupply && formatUnits(BigInt(totalSupply), decimals);
 
     const { value: canCreateProposal, onChange: onCreateProposalChange } = useFormField<
         ISetupBodyForm,
@@ -90,9 +91,11 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
                         prefix="≥"
                         helpText={t('app.plugins.token.tokenProposalCreationSettings.helpText')}
                         placeholder={t('app.plugins.token.tokenProposalCreationSettings.placeholder')}
-                        max={totalSupply === '0' ? undefined : Number(parsedTotalSupply)}
+                        max={totalSupply === '0' || parsedTotalSupply == null ? undefined : Number(parsedTotalSupply)}
                         onChange={onMinVotingPowerChange}
                         value={minVotingPower}
+                        // For existing bodies, the conditions are already deployed, so the ability to edit the token requirement for proposal creation wouldn't make sense.
+                        disabled={type === BodyType.EXISTING}
                         {...minVotingPowerField}
                     />
                 </object>

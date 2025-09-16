@@ -2,12 +2,15 @@
 
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import type { IDaoPluginPageProps } from '@/modules/application/types';
-import { daoOptions } from '@/shared/api/daoService';
+import { daoOptions, PluginInterfaceType } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { QueryClient } from '@tanstack/react-query';
-import { headers } from 'next/headers';
+import { headers as nextHeaders } from 'next/headers';
 import { cookieToInitialState } from 'wagmi';
-import { campaignListOptions, campaignStatsOptions, CampaignStatus } from '../../api/capitalDistributorService';
+import { campaignListOptions, CampaignStatus } from '../../api/capitalDistributorService';
+import type { ICapitalDistributorPlugin } from '../../types';
 import { CapitalDistributorRewardsPageClient } from './capitalDistributorRewardsPageClient';
 
 export interface ICapitalDistributorRewardsPageProps extends IDaoPluginPageProps {}
@@ -29,18 +32,38 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
     const { dao } = props;
 
     const queryClient = new QueryClient();
+    const headers = await nextHeaders();
 
-    const cookieHeader = (await headers()).get('cookie');
+    const countryCode = headers.get('x-vercel-ip-country');
+    const cookieHeader = headers.get('cookie');
+
     const userAddress = getConnectedAccount(cookieHeader);
 
-    const defaultQueryParams = { pageSize: campaignsPerPage, page: 1, status: CampaignStatus.CLAIMABLE };
-    const initialParams = { queryParams: { ...defaultQueryParams, memberAddress: userAddress as string } };
+    const interfaceType = PluginInterfaceType.CAPITAL_DISTRIBUTOR;
+    const plugin: ICapitalDistributorPlugin = daoUtils.getDaoPlugins(dao, { interfaceType })![0];
+
+    const defaultQueryParams = {
+        pluginAddress: plugin.address,
+        network: dao.network,
+        pageSize: campaignsPerPage,
+        page: 1,
+        sort: 'campaignId',
+        status: CampaignStatus.CLAIMABLE,
+    };
+    const initialParams = { queryParams: { ...defaultQueryParams, userAddress: userAddress as string } };
 
     queryClient.setQueryData(daoOptions({ urlParams: { id: dao.id } }).queryKey, dao);
 
+    if (countryCode != null && plugin.blockedCountries?.includes(countryCode)) {
+        const context = { pluginAddress: plugin.address, userAddress, country: countryCode };
+        const errorNamespace = 'app.plugins.capitalDistributor.capitalDistributorRewardsPage.error.restricted';
+        monitoringUtils.logMessage('Capital Distributor: Claim error (geolocation)', { level: 'warning', context });
+
+        return <Page.Error titleKey={`${errorNamespace}.title`} descriptionKey={`${errorNamespace}.description`} />;
+    }
+
     if (userAddress) {
         await queryClient.prefetchInfiniteQuery(campaignListOptions(initialParams));
-        await queryClient.fetchQuery(campaignStatsOptions({ urlParams: { memberAddress: userAddress } }));
     }
 
     return (

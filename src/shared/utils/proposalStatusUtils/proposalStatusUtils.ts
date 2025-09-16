@@ -1,6 +1,6 @@
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import type { IGetProposalStatusParams } from './proposalStatusUtils.api';
+import type { IGetProposalStatusParams, IHasEndedParams } from './proposalStatusUtils.api';
 
 class ProposalStatusUtils {
     getProposalStatus = (params: IGetProposalStatusParams) => {
@@ -60,9 +60,17 @@ class ProposalStatusUtils {
     };
 
     endsInTheFuture = (endDate?: number) => {
-        const now = DateTime.now();
+        const now = DateTime.now().toSeconds();
 
-        return endDate == null || now < DateTime.fromSeconds(endDate);
+        return endDate == null || now < endDate;
+    };
+
+    hasEnded = (params: IHasEndedParams) => {
+        const { endDate, isExecuted } = params;
+        const now = DateTime.now().toSeconds();
+        const hasEndDatePassed = endDate != null && now > endDate;
+
+        return hasEndDatePassed || isExecuted;
     };
 }
 

@@ -11,7 +11,7 @@ import {
     TransactionDataListItem,
     TransactionStatus,
 } from '@aragon/gov-ui-kit';
-import type { IGetTransactionListParams, TransactionType } from '../../api/financeService';
+import type { IGetTransactionListParams, TransactionSide } from '../../api/financeService';
 
 export interface ITransactionListProps {
     /**
@@ -20,7 +20,7 @@ export interface ITransactionListProps {
     initialParams: IGetTransactionListParams;
 }
 
-const transactionTypeToDataListType: Record<TransactionType, DataListTransactionType> = {
+const transactionSideToDataListType: Record<TransactionSide, DataListTransactionType> = {
     withdraw: DataListTransactionType.WITHDRAW,
     deposit: DataListTransactionType.DEPOSIT,
 };
@@ -55,11 +55,11 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
                         hash={transaction.transactionHash}
                         target="_blank"
                         date={transaction.blockTimestamp * 1000}
-                        type={transactionTypeToDataListType[transaction.type]}
+                        type={transactionSideToDataListType[transaction.side]}
                         status={TransactionStatus.SUCCESS}
                         tokenSymbol={transaction.token.symbol}
                         tokenAmount={transaction.value}
-                        amountUsd={transaction.amountUsd}
+                        hideValue={true}
                     />
                 ))}
             </DataListContainer>

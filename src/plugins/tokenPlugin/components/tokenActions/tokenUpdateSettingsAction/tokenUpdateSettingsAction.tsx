@@ -40,7 +40,7 @@ const updateTokenSettingsAbi = {
     name: 'updateVotingSettings',
     outputs: [],
     stateMutability: 'nonpayable',
-};
+} as const;
 
 export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps> = (props) => {
     const { index, action } = props;
@@ -84,7 +84,7 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
             votingMode,
             supportThreshold: tokenSettingsUtils.percentageToRatio(supportThreshold),
             minParticipation: tokenSettingsUtils.percentageToRatio(minParticipation),
-            minDuration,
+            minDuration: BigInt(minDuration),
             minProposerVotingPower: parseUnits(minVotingPowerValue, decimals),
         };
 

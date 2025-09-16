@@ -42,13 +42,8 @@ export const LayoutWizard = async <IPageParams extends IDaoPageParams = IDaoPage
             dao = await reactQueryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }));
         }
     } catch (error: unknown) {
-        return (
-            <Page.Error
-                error={JSON.parse(JSON.stringify(error)) as unknown}
-                actionLink="/"
-                notFoundNamespace="app.application.layoutWizard"
-            />
-        );
+        const parsedError = JSON.parse(JSON.stringify(error)) as unknown;
+        return <Page.Error error={parsedError} errorNamespace="app.application.layoutWizard" />;
     }
 
     return (
