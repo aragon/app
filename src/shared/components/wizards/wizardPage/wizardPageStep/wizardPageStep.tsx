@@ -3,6 +3,21 @@ import { AlertCard, Button, Dropdown, Heading, IconType } from '@aragon/gov-ui-k
 import classNames from 'classnames';
 import { useWizardContext, useWizardFooter, Wizard, type IWizardStepProps } from '../../wizard';
 
+export interface IWizardPageStepDropdownItem {
+    /**
+     * Label of the dropdown item.
+     */
+    label: string;
+    /**
+     * ID of the form to trigger the submit for.
+     */
+    formId?: string;
+    /**
+     * Function triggered on dropdown item click.
+     */
+    onClick?: () => void;
+}
+
 export interface IWizardPageStepProps extends IWizardStepProps {
     /**
      * Title of the step.
@@ -15,7 +30,7 @@ export interface IWizardPageStepProps extends IWizardStepProps {
     /**
      * Instead of "Next" button, render a dropdown with given items.
      */
-    nextDropdownItems?: Array<{ label: string; formId?: string; onClick?: () => void }>;
+    nextDropdownItems?: IWizardPageStepDropdownItem[];
 }
 
 export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
