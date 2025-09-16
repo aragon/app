@@ -4,6 +4,7 @@ import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { Area, AreaChart, ReferenceDot, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import type { MouseHandlerDataParam } from 'recharts/types/synchronisation/types';
 import { parseUnits } from 'viem';
 import { tokenLockUtils } from '../tokenLockUtils';
 
@@ -58,8 +59,10 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
     const formatVotingPower = (value: number) =>
         formatterUtils.formatNumber(value, { format: NumberFormat.GENERIC_SHORT }) ?? '';
 
-    const handleMouseMove = (data: { activePayload?: Array<{ payload: IChartPoint }> }) =>
-        setHoveredPoint(data.activePayload?.[0].payload ?? points[0]);
+    const handleMouseMove = (data: MouseHandlerDataParam) => {
+        const { activeIndex } = data;
+        setHoveredPoint(activeIndex ? points[Number(activeIndex)] : points[0]);
+    };
 
     const activePoint = hoveredPoint ?? points[0];
 
