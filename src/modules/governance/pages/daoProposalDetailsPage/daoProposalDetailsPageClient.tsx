@@ -61,6 +61,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     const daoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoParams });
+    const { tenderlySupport } = dao ? networkDefinitions[dao.network] : {};
 
     const proposalStatus = useSlotSingleFunction<IProposal, ProposalStatus>({
         params: proposal!,
@@ -74,11 +75,13 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     );
     const actionsCount = actionData?.rawActions?.length ?? 0;
 
+    const showActionSimulation = proposal?.hasActions && tenderlySupport;
+
     const {
         data: lastSimulation,
         isError: isLastSimulationError,
         error: lastSimulationError,
-    } = useLastSimulation({ urlParams: { proposalId: proposal?.id as string } }, { enabled: proposal?.hasActions });
+    } = useLastSimulation({ urlParams: { proposalId: proposal?.id as string } }, { enabled: showActionSimulation });
 
     const {
         mutate: simulateProposal,
@@ -86,12 +89,12 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         isError: hasSimulationFailed,
     } = useSimulateProposal();
 
-    const isLastSimulationNotFoundError = AragonBackendServiceError.isNotFoundError(lastSimulationError);
-    const showSimulationError = hasSimulationFailed || (isLastSimulationError && !isLastSimulationNotFoundError);
-
     if (proposal == null || dao == null) {
         return null;
     }
+
+    const isLastSimulationNotFoundError = AragonBackendServiceError.isNotFoundError(lastSimulationError);
+    const showSimulationError = hasSimulationFailed || (isLastSimulationError && !isLastSimulationNotFoundError);
 
     const handleSimulateProposalSuccess = () => {
         const urlParams = { proposalId: proposal.id };
@@ -132,6 +135,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         proposalStatus === ProposalStatus.ACTIVE &&
         (lastSimulation == null || Date.now() - lastSimulation.runAt > actionSimulationLimitMillis);
 
+    const processedLastSimulation = lastSimulation ? { ...lastSimulation, timestamp: lastSimulation.runAt } : undefined;
     const simulationErrorContext = hasSimulationFailed ? 'simulationError' : 'lastSimulationError';
     const simulationError = t(`app.governance.daoProposalDetailsPage.main.actions.${simulationErrorContext}`);
 
@@ -162,12 +166,10 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         />
                     </Page.MainSection>
                     <Page.MainSection title={t('app.governance.daoProposalDetailsPage.main.actions.header')}>
-                        {proposal.hasActions && (
+                        {showActionSimulation && (
                             <ActionSimulation
                                 totalActions={actionsCount}
-                                lastSimulation={
-                                    lastSimulation && { ...lastSimulation, timestamp: lastSimulation.runAt }
-                                }
+                                lastSimulation={processedLastSimulation}
                                 isLoading={isSimulationLoading}
                                 error={showSimulationError ? simulationError : undefined}
                                 onSimulate={handleSimulateProposal}

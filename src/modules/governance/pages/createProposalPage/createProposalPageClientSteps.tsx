@@ -4,6 +4,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { type IWizardStepperStep } from '@/shared/components/wizards/wizard';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
@@ -64,12 +65,16 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
 
     const getActionStepDropdownItems = () => {
         const labelBase = 'app.governance.createProposalPage.createProposalPageClientSteps';
+
+        const { network } = daoUtils.parseDaoId(daoId);
+        const { tenderlySupport } = networkDefinitions[network];
+
         const dropdownItems = [
             { label: t(`${labelBase}.simulate`), onClick: handleSimulateActions },
             { label: t(`${labelBase}.skipSimulation`), formId: createProposalWizardId },
         ];
 
-        return actions.length > 0 ? dropdownItems : undefined;
+        return actions.length > 0 && tenderlySupport ? dropdownItems : undefined;
     };
 
     return (

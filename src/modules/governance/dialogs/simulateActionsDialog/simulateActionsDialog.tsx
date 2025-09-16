@@ -49,7 +49,7 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
     }, [actions, network, pluginAddress, status, simulateActions]);
 
     const hasSimulationFailed = isError || data?.status === 'failed';
-    const lastSimulation = data != null ? { url: data.url, timestamp: data.runAt, status: data.status } : undefined;
+    const lastSimulation = data != null ? { ...data, timestamp: data.runAt } : undefined;
 
     const error = isError ? t('app.governance.simulateActionsDialog.error') : undefined;
     const primaryLabel = t(`app.governance.simulateActionsDialog.action.${hasSimulationFailed ? 'error' : 'success'}`);
