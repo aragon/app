@@ -58,6 +58,10 @@ export interface ISetupBodyFormExternal extends ISetupBodyFormBase, ICompositeAd
      * EXTERNAL body type.
      */
     type: BodyType.EXTERNAL;
+    /**
+     * Is given address a Safe multisig address.
+     */
+    isSafe: boolean;
 }
 
 export interface ISetupBodyFormExisting<
