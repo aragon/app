@@ -137,11 +137,8 @@ describe('proxyRpc utils', () => {
             });
 
             const requestOptions = testClass['buildRequestOptions'](request);
-            const requestHeaders = requestOptions.headers as Headers;
 
-            expect(requestHeaders.get('test-header')).toBeNull();
-            expect(requestHeaders.get('cookie')).toBeNull();
-            expect(requestHeaders.get('Cookie')).toBeNull();
+            expect(requestOptions.headers).toBeUndefined();
         });
     });
 });
