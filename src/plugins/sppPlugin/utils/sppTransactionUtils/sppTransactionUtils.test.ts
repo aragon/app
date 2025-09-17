@@ -150,7 +150,7 @@ describe('sppTransaction utils', () => {
             buildUpdateRulesTransactionSpy.mockReturnValueOnce(updateRulesAction);
             buildBodyPermissionActionsSpy.mockReturnValueOnce(bodyPermissionActions);
 
-            const result = sppTransactionUtils.buildPluginsSetupActions(values, setupData, dao);
+            const result = sppTransactionUtils.buildPluginsSetupActions(values, setupData, dao, []);
             expect(result).toEqual([updateStagesAction, updateRulesAction, ...bodyPermissionActions]);
         });
 
@@ -182,7 +182,7 @@ describe('sppTransaction utils', () => {
             buildBodyPermissionActionsSpy.mockReturnValueOnce(bodyPermissionActions);
             buildGrantSppProposalCreationActionSpy.mockReturnValueOnce(existingBodyPermissionAction);
 
-            const result = sppTransactionUtils.buildPluginsSetupActions(values, setupData, dao);
+            const result = sppTransactionUtils.buildPluginsSetupActions(values, setupData, dao, []);
 
             expect(buildGrantSppProposalCreationActionSpy).toHaveBeenCalledWith(
                 existingBody.address,
@@ -269,7 +269,7 @@ describe('sppTransaction utils', () => {
             const proposalCreationMode = ProposalCreationMode.ANY_WALLET;
             const values = generateCreateProcessFormDataAdvanced({ proposalCreationMode });
             const setupData = generatePluginInstallationSetupData();
-            const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, setupData, []);
+            const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, setupData, [], []);
             expect(result).toBeUndefined();
         });
 
@@ -298,7 +298,7 @@ describe('sppTransaction utils', () => {
             const updateRulesTxData = '0xUpdateRulesTxData';
             encodeFunctionDataSpy.mockReturnValueOnce(updateRulesTxData);
 
-            const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, sppSetupData, pluginSetupData);
+            const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, sppSetupData, pluginSetupData, []);
 
             expect(buildRuleConditionsSpy).toHaveBeenCalledWith(['0x0'], []);
 
@@ -340,7 +340,7 @@ describe('sppTransaction utils', () => {
             const updateRulesTxData = '0xUpdateRulesTxData';
             encodeFunctionDataSpy.mockReturnValueOnce(updateRulesTxData);
 
-            const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, sppSetupData, pluginSetupData);
+            const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, sppSetupData, pluginSetupData, []);
 
             // Should include both existing condition address and new condition address
             expect(buildRuleConditionsSpy).toHaveBeenCalledWith(
@@ -390,7 +390,7 @@ describe('sppTransaction utils', () => {
             const updateRulesTxData = '0xUpdateRulesTxData';
             encodeFunctionDataSpy.mockReturnValueOnce(updateRulesTxData);
 
-            sppTransactionUtils['buildUpdateRulesTransaction'](values, sppSetupData, pluginSetupData);
+            sppTransactionUtils['buildUpdateRulesTransaction'](values, sppSetupData, pluginSetupData, []);
 
             // Should only include condition addresses for bodies that can create proposals
             // Existing body conditions are always included (filtering happens at UI level)
@@ -399,6 +399,48 @@ describe('sppTransaction utils', () => {
                 [existingBodyCanCreate.proposalCreationConditionAddress, '0xNewCondition1'],
                 [], // Empty permissions array
             );
+        });
+
+        it('includes safeConditionAddresses in the condition rules', () => {
+            const newBody = generateSetupBodyFormNew({ canCreateProposal: true });
+            const stage = generateCreateProcessFormStage({ bodies: [newBody] });
+            const values = generateCreateProcessFormDataAdvanced({
+                stages: [stage],
+                proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
+            });
+
+            const sppSetupData = generatePluginInstallationSetupData({
+                preparedSetupData: { helpers: ['0xSppRuleCondition'], permissions: [] },
+            });
+
+            const pluginSetupData = [
+                generatePluginInstallationSetupData({
+                    preparedSetupData: { helpers: ['0xNewCondition'], permissions: [] },
+                }),
+            ];
+
+            const safeConditionAddresses = ['0xSafeCondition1', '0xSafeCondition2'] as Viem.Hex[];
+
+            const expectedConditionRules = [{ id: 202, op: 1, value: '0xConditions', permissionId: zeroHash }];
+            buildRuleConditionsSpy.mockReturnValueOnce(expectedConditionRules);
+
+            const updateRulesTxData = '0xUpdateRulesTxData';
+            encodeFunctionDataSpy.mockReturnValueOnce(updateRulesTxData);
+
+            const result = sppTransactionUtils['buildUpdateRulesTransaction'](
+                values,
+                sppSetupData,
+                pluginSetupData,
+                safeConditionAddresses,
+            );
+
+            // Should include new body condition addresses and safe condition addresses
+            expect(buildRuleConditionsSpy).toHaveBeenCalledWith(
+                ['0xNewCondition', '0xSafeCondition1', '0xSafeCondition2'],
+                [], // Empty permissions array
+            );
+
+            expect(result).toBeDefined();
         });
     });
 
