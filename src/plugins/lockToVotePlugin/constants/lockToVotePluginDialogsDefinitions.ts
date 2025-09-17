@@ -15,7 +15,7 @@ export const lockToVotePluginDialogsDefinitions: Record<LockToVotePluginDialogId
         Component: LockToVoteLockBeforeVoteDialog,
         hiddenDescription: 'app.plugins.lockToVote.lockToVoteLockBeforeVoteDialog.a11y.description',
     },
-    [LockToVotePluginDialogId.LOCK_UNLOCK]: { Component: LockToVoteLockUnlockDialog },
+    [LockToVotePluginDialogId.LOCK_UNLOCK_L2V]: { Component: LockToVoteLockUnlockDialog },
     [LockToVotePluginDialogId.UNLOCK_BLOCKED_INFO]: {
         Component: UnlockBlockedInfoDialog,
         hiddenDescription: 'app.plugins.lockToVote.unlockBlockedInfoDialog.a11y.description',
