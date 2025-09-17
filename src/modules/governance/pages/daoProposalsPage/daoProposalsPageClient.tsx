@@ -59,8 +59,8 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
         daoId,
     });
 
-    const handlePluginSelected = (plugin: IDaoPlugin) =>
-        createProposalGuard({ plugin, onSuccess: () => handlePermissionGuardSuccess(plugin) });
+    const handlePluginSelected = (plugin: IDaoPlugin) => handlePermissionGuardSuccess(plugin);
+    // createProposalGuard({ plugin, onSuccess: () => handlePermissionGuardSuccess(plugin) });
 
     const openSelectPluginDialog = () => {
         const initialPlugin = activePlugin.id === pluginGroupTab.id ? undefined : activePlugin;
