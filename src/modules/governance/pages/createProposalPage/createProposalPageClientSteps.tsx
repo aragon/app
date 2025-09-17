@@ -9,8 +9,11 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { useWatch } from 'react-hook-form';
-import { CreateProposalForm, type ICreateProposalFormData } from '../../components/createProposalForm';
-import { useCreateProposalFormContext } from '../../components/createProposalForm/createProposalFormProvider';
+import {
+    CreateProposalForm,
+    useCreateProposalFormContext,
+    type ICreateProposalFormData,
+} from '../../components/createProposalForm';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { publishProposalDialogUtils } from '../../dialogs/publishProposalDialog/publishProposalDialogUtils';
