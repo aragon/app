@@ -150,7 +150,7 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
             showTransactionInfo,
         };
 
-        open(LockToVotePluginDialogId.LOCK_UNLOCK, { params });
+        open(LockToVotePluginDialogId.LOCK_UNLOCK_L2V, { params });
     };
 
     const onLockUnlockTokensSuccess = () => refetchData();
