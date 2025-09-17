@@ -5,7 +5,7 @@ import { generateDialogContext, generateTabComponentPlugin } from '@/shared/test
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { render, screen } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
-import * as CreateProposalForm from '../../components/createProposalForm';
+import * as CreateProposalProvider from '../../components/createProposalForm/createProposalFormProvider';
 import {
     CreateProposalPageClientSteps,
     type ICreateProposalPageClientStepsProps,
@@ -35,7 +35,7 @@ describe('<CreateProposalPageClientSteps /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const getSlotComponentSpy = jest.spyOn(pluginRegistryUtils, 'getSlotComponent');
     const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
-    const useCreateProposalFormContextSpy = jest.spyOn(CreateProposalForm, 'useCreateProposalFormContext');
+    const useCreateProposalFormContextSpy = jest.spyOn(CreateProposalProvider, 'useCreateProposalFormContext');
 
     beforeEach(() => {
         useWatchSpy.mockReturnValue(true);
