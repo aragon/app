@@ -55,17 +55,14 @@ export class ProxyRpcUtils {
 
     // Return type extended to include Node-specific 'duplex' property used for streamed requests.
     private buildRequestOptions = (request: Request): RequestInit & { duplex?: 'half' } => {
-        const { method, body, headers } = request;
+        const { method, body } = request;
 
-        // Remove cookies: avoid RPC 413 "Request Entity Too Large" errors caused by sending too much cookies' data.
-        // (Also, beneficial to prevent potential sensitive cookie leaks to 3rd party services.)
-        const filteredHeaders = new Headers(headers);
-        filteredHeaders.delete('cookie'); // delete is case-insensitive.
+        // Strip all headers: avoid RPC 413 "Request Entity Too Large" errors caused by sending headers' data, specifically cookies.
+        // (Also, beneficial to prevent potential sensitive data leaks to 3rd party services.)
 
         return {
             method,
             body,
-            headers: filteredHeaders,
             // Ensure no implicit credential forwarding
             credentials: 'omit',
             duplex: 'half',

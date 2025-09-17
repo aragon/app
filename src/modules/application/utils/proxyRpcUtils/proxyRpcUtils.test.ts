@@ -125,7 +125,7 @@ describe('proxyRpc utils', () => {
             expect(requestOptions.credentials).toEqual('omit'); // always omit credentials on proxy requests
         });
 
-        it('filters out cookies from the request headers', () => {
+        it('strips all headers from the request', () => {
             const testClass = createTestClass();
             const headers = new Headers({
                 'test-header': 'test-value',
@@ -139,7 +139,7 @@ describe('proxyRpc utils', () => {
             const requestOptions = testClass['buildRequestOptions'](request);
             const requestHeaders = requestOptions.headers as Headers;
 
-            expect(requestHeaders.get('test-header')).toEqual('test-value');
+            expect(requestHeaders.get('test-header')).toBeNull();
             expect(requestHeaders.get('cookie')).toBeNull();
             expect(requestHeaders.get('Cookie')).toBeNull();
         });
