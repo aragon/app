@@ -2,4 +2,4 @@
 '@aragon/app': patch
 ---
 
-Align page error internalization pattern
+Align page error internationalization pattern
