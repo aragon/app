@@ -233,7 +233,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0xB815791c233807D39b7430127975244B36C19C8e',
             pluginSetupProcessor: '0xC24188a73dc09aA7C721f96Ad8857B469C01dC9f',
             globalExecutor: '0x7a20760b89EF507759DD2c5A0d1f1657614341A9',
-            conditionFactory: '0xC5a8A87a13E97260D8F14dbB4D584660554B5B53',
+            conditionFactory: '0xf81B4D3d99cB48818524944eF2A5268D4030b1E2',
         },
     },
     [Network.ZKSYNC_SEPOLIA]: {

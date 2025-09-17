@@ -17,4 +17,29 @@ export const conditionFactoryAbi = [
         ],
         outputs: [{ name: '', type: 'address', internalType: 'contract ExecuteSelectorCondition' }],
     },
+    {
+        type: 'function',
+        name: 'deploySafeOwnerCondition',
+        stateMutability: 'nonpayable',
+        inputs: [{ name: '_safe', type: 'address', internalType: 'address' }],
+        outputs: [
+            {
+                name: 'newContract',
+                type: 'address',
+                internalType: 'contract SafeOwnerCondition',
+            },
+        ],
+    },
+    {
+        type: 'event',
+        name: 'ExecuteSelectorConditionDeployed',
+        anonymous: false,
+        inputs: [{ indexed: false, name: 'newContract', type: 'address' }],
+    },
+    {
+        type: 'event',
+        name: 'SafeOwnerConditionDeployed',
+        anonymous: false,
+        inputs: [{ indexed: false, name: 'newContract', type: 'address' }],
+    },
 ] as const;
