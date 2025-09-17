@@ -1,10 +1,7 @@
 'use client';
 
-import {
-    SetupBodyType,
-    type ISetupBodyFormExisting,
-    type ISetupBodyFormNew,
-} from '@/modules/createDao/dialogs/setupBodyDialog';
+import { type ISetupBodyFormExisting, type ISetupBodyFormNew } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { BodyType } from '@/modules/createDao/types/enum';
 import { useMemberList } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -40,27 +37,23 @@ export interface ITokenProcessBodyFieldProps {
      * ID of the DAO.
      */
     daoId: string;
-    /**
-     * If the component field is read-only.
-     * @default false
-     */
-    readOnly?: boolean;
 }
 
 export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
-    const { body, isAdvancedGovernance, daoId, readOnly } = props;
+    const { body, isAdvancedGovernance, daoId } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
     const { t } = useTranslations();
 
+    const isExisting = body.type === BodyType.EXISTING;
     const { membership, governance } = body;
 
     const initialParams = {
-        queryParams: { daoId, pluginAddress: body.type === SetupBodyType.EXISTING ? body.address : '' },
+        queryParams: { daoId, pluginAddress: isExisting ? body.address : '' },
     };
-    const { data: memberList } = useMemberList(initialParams, { enabled: body.type === SetupBodyType.EXISTING });
+    const { data: memberList } = useMemberList(initialParams, { enabled: isExisting });
 
     const {
         address: tokenAddress,
@@ -71,7 +64,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     } = membership.token;
     const { votingMode, supportThreshold, minParticipation, minDuration } = governance;
 
-    const parsedTotalSupply = formatUnits(BigInt(totalSupply), tokenDecimals);
+    const parsedTotalSupply = totalSupply && formatUnits(BigInt(totalSupply), tokenDecimals);
     const formattedSupply = formatterUtils.formatNumber(parsedTotalSupply, {
         format: NumberFormat.TOKEN_AMOUNT_LONG,
         fallback: '0',
@@ -87,21 +80,21 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     const minDurationObject = dateUtils.secondsToDuration(minDuration);
     const formattedMinDuration = t('app.plugins.token.tokenProcessBodyField.minDurationDefinition', minDurationObject);
 
-    const numberOfMembers = readOnly ? memberList?.pages[0].metadata.totalRecords : membership.members.length;
+    const numberOfMembers = isExisting ? memberList?.pages[0].metadata.totalRecords : membership.members.length;
 
     const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[dao!.network].id });
 
-    const readOnlyTokenProps = {
+    const existingTokenProps = {
         link: { href: buildEntityUrl({ type: ChainEntityType.TOKEN, id: tokenAddress }) },
         copyValue: tokenAddress,
         description: t('app.plugins.token.tokenMemberInfo.tokenNameAndSymbol', { tokenName, tokenSymbol }),
     };
 
-    const contractInfo = useDaoPluginInfo({ daoId, address: body.type === SetupBodyType.EXISTING ? body.address : '' });
+    const contractInfo = useDaoPluginInfo({ daoId, address: isExisting ? body.address : '' });
 
     return (
         <DefinitionList.Container className="w-full">
-            {readOnly &&
+            {isExisting &&
                 contractInfo.map(({ term, definition, description, link, copyValue }) => (
                     <DefinitionList.Item
                         key={term}
@@ -115,23 +108,25 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                 ))}
             <DefinitionList.Item
                 term={t('app.plugins.token.tokenProcessBodyField.tokenTerm')}
-                {...(readOnly ? readOnlyTokenProps : {})}
+                {...(isExisting ? existingTokenProps : {})}
             >
                 {tokenName} (${tokenSymbol})
             </DefinitionList.Item>
             {numberOfMembers! > 0 && (
                 <DefinitionList.Item
                     term={t('app.plugins.token.tokenProcessBodyField.distributionTerm')}
-                    link={readOnly ? { href: daoUtils.getDaoUrl(dao, 'members'), isExternal: false } : undefined}
+                    link={isExisting ? { href: daoUtils.getDaoUrl(dao, 'members'), isExternal: false } : undefined}
                 >
                     {t('app.plugins.token.tokenProcessBodyField.holders', {
                         count: numberOfMembers,
                     })}
                 </DefinitionList.Item>
             )}
-            <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.supplyTerm')}>
-                {formattedSupply!} (${tokenSymbol})
-            </DefinitionList.Item>
+            {totalSupply && Number(totalSupply) > 0 && (
+                <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.supplyTerm')}>
+                    {formattedSupply} (${tokenSymbol})
+                </DefinitionList.Item>
+            )}
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.supportTerm')}>
                 {t('app.plugins.token.tokenProcessBodyField.supportDefinition', {
                     threshold: supportThreshold,

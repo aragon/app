@@ -97,4 +97,4 @@ export const tokenPluginAbi = [
         outputs: [],
         stateMutability: 'nonpayable',
     },
-];
+] as const;

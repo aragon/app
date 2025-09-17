@@ -120,7 +120,9 @@ export const GovernanceStageSettingsField: React.FC<IGovernanceStageSettingsFiel
                 )}
                 {bodies.length > 0 && (
                     <DefinitionList.Item
-                        term={t('app.createDao.createProcessForm.governance.stageSettingsField.approvalThreshold')}
+                        term={t(
+                            `app.createDao.createProcessForm.governance.stageSettingsField.${isOptimisticStage ? 'vetoThreshold' : 'approvalThreshold'}`,
+                        )}
                     >
                         {requiredApprovals}
                     </DefinitionList.Item>

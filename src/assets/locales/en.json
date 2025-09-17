@@ -45,15 +45,19 @@
         }
       },
       "layoutDao": {
-        "notFound": {
-          "description": "We couldn't find the DAO you're looking for.",
-          "title": "DAO not found"
+        "error": {
+          "notFound": {
+            "description": "We couldn't find the DAO you're looking for.",
+            "title": "DAO not found"
+          }
         }
       },
       "layoutWizard": {
-        "notFound": {
-          "description": "We couldn't find the DAO you're looking for.",
-          "title": "DAO not found"
+        "error": {
+          "notFound": {
+            "description": "We couldn't find the DAO you're looking for.",
+            "title": "DAO not found"
+          }
         }
       },
       "navigationDao": {
@@ -250,6 +254,7 @@
             "governanceType": "Governance type",
             "label": "Settings",
             "no": "Disabled",
+            "vetoThreshold": "Veto threshold",
             "votingPeriod": "Stage duration",
             "yes": "Enabled"
           },
@@ -420,6 +425,9 @@
           }
         },
         "select": {
+          "disabled": {
+            "label": "By request"
+          },
           "external": {
             "description": "Add any address as a body, such as a Safe or Governor",
             "label": "External address"
@@ -602,6 +610,13 @@
     "finance": {
       "assetInput": {
         "maxButtonLabel": "Max",
+        "percentage": {
+          "0": "None",
+          "100": "100%",
+          "25": "25%",
+          "50": "50%",
+          "75": "75%"
+        },
         "token": {
           "trigger": "Select"
         }
@@ -908,7 +923,7 @@
           "title": "Not eligible to create a proposal"
         },
         "vote": {
-          "description": "You didn’t meet the voting requirements at the block the proposal was created.",
+          "description": "You don’t meet the voting requirements.",
           "title": "Not eligible to vote"
         }
       },
@@ -1171,6 +1186,205 @@
           }
         }
       },
+      "lockToVote": {
+        "lockToVoteActions": {
+          "UpdateLockToVoteVoteSettings": "Update settings"
+        },
+        "lockToVoteCreateProposalSettingsForm": {
+          "startTime": {
+            "label": "Voting start time"
+          }
+        },
+        "lockToVoteGovernanceSettings": {
+          "approvalThreshold": "Support threshold",
+          "duration": "{{days}} days {{hours}} hours {{minutes}} minutes",
+          "minimumParticipation": "Minimum participation",
+          "no": "Disabled",
+          "participation": "≥ {{participation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
+          "proposalAccess": "Members with ≥ {{balance}} {{symbol}} voting power or balance",
+          "proposalDuration": "Proposal duration",
+          "proposalThreshold": "Proposal threshold",
+          "threshold": "> {{threshold}}",
+          "vetoThreshold": "Veto support threshold",
+          "voteChange": "Vote change",
+          "yes": "Enabled"
+        },
+        "lockToVoteLockBeforeVoteDialog": {
+          "a11y": {
+            "description": "Lock tokens before voting on the proposal"
+          },
+          "action": {
+            "cancel": "Cancel",
+            "lock": "Lock now"
+          },
+          "info": "Locking tokens will transfer them out of your wallet to the lock manager contract, where they can be unlocked to regain control.",
+          "title": "Lock tokens"
+        },
+        "lockToVoteLockForm": {
+          "approveTransactionInfoTitle": "Approve {{symbol}}",
+          "footerInfo": "Locking tokens will transfer them out of your wallet to the lock manager contract, where they can be unlocked to regain control.",
+          "info": "Lock {{symbol}} to participate in governance.",
+          "submit": {
+            "approve": "Approve {{symbol}}",
+            "lock": "Lock {{symbol}}",
+            "unlock": "Unlock {{amount}} {{symbol}}"
+          }
+        },
+        "lockToVoteLockUnlockDialog": {
+          "lock": {
+            "description": "To lock your tokens, confirm the onchain transaction in your wallet.",
+            "submit": "Lock tokens",
+            "success": "View members",
+            "title": "Lock tokens",
+            "transactionInfoTitle": "Lock {{symbol}}"
+          },
+          "unlock": {
+            "description": "To unlock your tokens, confirm the onchain transaction in your wallet.",
+            "submit": "Unlock tokens",
+            "success": "View members",
+            "title": "Unlock tokens",
+            "transactionInfoTitle": "Unlock {{symbol}}"
+          }
+        },
+        "lockToVotePermissionCheckProposalCreation": {
+          "function": "Proposal creation",
+          "pluginNameLabel": "Name",
+          "userLockedBalance": "Locked balance"
+        },
+        "lockToVotePermissionCheckVoteSubmission": {
+          "createdAt": "Created",
+          "votingPower": "Your token balance"
+        },
+        "lockToVoteProcessBodyField": {
+          "disabled": "Disabled",
+          "distributionTerm": "Distribution",
+          "enabled": "Enabled",
+          "holders": "{{count}} token holders",
+          "minParticipationDefinition": "≥ {{minParticipation}}",
+          "minParticipationTerm": "Minimum participation",
+          "proposalDurationDefinition": "{{days}} days {{hours}} hours {{minutes}} minutes",
+          "proposalDurationTerm": "Proposal duration",
+          "supplyTerm": "Supply",
+          "supportDefinition": "> {{threshold}}%",
+          "supportTerm": "Support threshold",
+          "tokenNameAndSymbol": "{{tokenName}} ({{tokenSymbol}})",
+          "tokenTerm": "Token",
+          "voteChange": "Vote change"
+        },
+        "lockToVoteProposalVotingSummary": {
+          "approved": "approved",
+          "notApproved": "did not approve",
+          "notVetoed": "did not veto",
+          "optimisticSupportLabel": "veto support",
+          "supportLabel": "support",
+          "vetoed": "vetoed",
+          "votesDescription": "of {{details}}"
+        },
+        "lockToVoteSetupGovernance": {
+          "eligibleField": {
+            "anyWallet": {
+              "description": "Any connected address.",
+              "label": "Any wallet"
+            },
+            "helpText": "Specify who can create proposals and the minimum token requirement.",
+            "label": "Who is eligible",
+            "members": {
+              "description": "Only members with at least this much voting power or token balance can create proposals.",
+              "label": "Members"
+            }
+          },
+          "minParticipation": {
+            "helpText": "The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal to this value.",
+            "label": "Minimum participation"
+          },
+          "minVotingPower": {
+            "helpText": "Only members with at least this much voting power or token balance can create proposals.",
+            "label": "Minimum requirement"
+          },
+          "proposalDuration": {
+            "alertInfo": "Ensure members have enough time to vote. It's recommended to set this to at least 1 day.",
+            "helpText": "The amount of time a proposal is open for voting.",
+            "label": "Proposal duration"
+          },
+          "supportThreshold": {
+            "alert": {
+              "majority": "Proposal will be approved by majority",
+              "minority": "Proposals could be approved by a minority rather than a majority."
+            },
+            "helpText": "The percentage of tokens that vote 'Yes' in support of a proposal, out of all tokens that have voted, must be greater than this value.",
+            "label": "Support threshold",
+            "tag": {
+              "no": "No",
+              "yes": "Yes"
+            }
+          },
+          "voteChange": {
+            "helpText": "Allows voters to change their vote during the voting period. This prevents the body from giving early approval or veto.",
+            "label": "Vote change",
+            "switch": {
+              "label": "Enabled"
+            }
+          }
+        },
+        "lockToVoteSetupMembership": {
+          "importToken": {
+            "helpText": "The address must be an ERC-20 token contract deployed on the same chain as your DAO.",
+            "label": "Token address",
+            "step": {
+              "erc20": "ERC-20 token standard"
+            }
+          }
+        },
+        "lockToVoteSubmitVote": {
+          "approve": "to approve",
+          "buttons": {
+            "cancel": "Cancel",
+            "submit": "Submit vote",
+            "submitted": "Vote submitted",
+            "update": {
+              "submit": "Submit update",
+              "vote": "Update vote"
+            },
+            "vote": "Vote on proposal"
+          },
+          "veto": "to veto"
+        },
+        "lockToVoteSubmitVoteFeedbackDialog": {
+          "a11y": {
+            "description": "Submit your vote or lock more tokens.",
+            "title": "Submit vote"
+          },
+          "cta": {
+            "cancel": "Cancel",
+            "lock": "Lock now",
+            "vote": "Proceed to vote"
+          },
+          "default": {
+            "description": "Lock {{symbol}} in order to be able to vote.",
+            "title": "You have no voting power"
+          },
+          "lockMore": {
+            "description": "Lock more {{symbol}} to increase your voting power.",
+            "title": "You have unlocked tokens"
+          }
+        },
+        "meta": {
+          "setup": {
+            "description": "Majority voting with locked ERC20 tokens",
+            "name": "Lock to vote"
+          }
+        },
+        "unlockBlockedInfoDialog": {
+          "a11y": {
+            "description": "Dialog informing user they cannot unlock tokens due to active proposals"
+          },
+          "action": {
+            "ok": "OK"
+          },
+          "message": "There's an active proposal that you've created or voted on.",
+          "title": "You can't unlock yet"
+        }
+      },
       "multisig": {
         "meta": {
           "setup": {
@@ -1379,7 +1593,7 @@
         },
         "tokenActions": {
           "Mint": "Mint",
-          "UpdateVoteSettings": "Update settings"
+          "UpdateTokenVoteSettings": "Update settings"
         },
         "tokenApproveNftDialog": {
           "UNLOCK": {
@@ -1457,13 +1671,6 @@
           },
           "footerInfo": "Locking tokens will transfer them out of your wallet to the locking contract, where they can be withdrawn back to your wallet after the minimum locktime.",
           "locks": "View {{count}} locks",
-          "percentage": {
-            "0": "None",
-            "100": "100%",
-            "25": "25%",
-            "50": "50%",
-            "75": "75%"
-          },
           "submit": {
             "approve": "Approve {{symbol}}",
             "lock": "Lock {{symbol}}"
@@ -1717,11 +1924,13 @@
         "tokenSubmitVote": {
           "buttons": {
             "cancel": "Cancel",
-            "change": "Change vote",
-            "default": "Vote on proposal",
+            "change": {
+              "submit": "Submit change",
+              "vote": "Change vote"
+            },
             "submit": "Submit vote",
-            "submitChange": "Submit change",
-            "submitted": "Vote submitted"
+            "submitted": "Vote submitted",
+            "vote": "Vote on proposal"
           },
           "options": {
             "abstain": "Abstain",
@@ -1751,13 +1960,6 @@
           "approveTransactionInfoTitle": "Approve {{symbol}}",
           "footerInfo": "Wrapping tokens will transfer them out of your wallet to the wrapping contract, where they can be withdrawn back to your wallet at any time.",
           "info": "Wrap {{underlyingSymbol}} to increase your voting power.",
-          "percentage": {
-            "0": "None",
-            "100": "100%",
-            "25": "25%",
-            "50": "50%",
-            "75": "75%"
-          },
           "submit": {
             "approve": "Approve {{underlyingSymbol}}",
             "unwrap": "Unwrap {{amount}} {{symbol}}",
