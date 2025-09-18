@@ -13,6 +13,7 @@ import type {
     PrepareProposalActionFunction,
     PrepareProposalActionMap,
 } from '../../dialogs/publishProposalDialog';
+import { useProposalPermissionCheckGuard } from '../../hooks/useProposalPermissionCheckGuard';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
 import { createProposalWizardSteps } from './createProposalPageDefinitions';
 
@@ -35,7 +36,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
 
     const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress })![0];
 
-    // useProposalPermissionCheckGuard({ daoId, pluginAddress, redirectTab: 'proposals' });
+    useProposalPermissionCheckGuard({ daoId, pluginAddress, redirectTab: 'proposals' });
 
     const [prepareActions, setPrepareActions] = useState<PrepareProposalActionMap>({});
 
