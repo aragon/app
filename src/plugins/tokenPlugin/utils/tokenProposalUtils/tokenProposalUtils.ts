@@ -78,6 +78,7 @@ class TokenProposalUtils {
         const { votesByOption } = proposal.metrics;
 
         const yesVotes = this.getVoteByType(votesByOption, VoteOption.YES);
+        const yesVotesToRatio = tokenSettingsUtils.valueToRatioBase(yesVotes);
         const abstainVotes = this.getVoteByType(votesByOption, VoteOption.ABSTAIN);
 
         const noVotesCurrent = this.getVoteByType(votesByOption, VoteOption.NO);
@@ -86,7 +87,7 @@ class TokenProposalUtils {
 
         const supportThresholdBigInt = BigInt(supportThreshold);
 
-        return yesVotes * tokenSettingsUtils.ratioBase > supportThresholdBigInt * (yesVotes + noVotesComparator);
+        return yesVotesToRatio > supportThresholdBigInt * (yesVotes + noVotesComparator);
     };
 
     getTotalVotes = (proposal: ITokenProposal, excludeAbstain?: boolean): bigint => {
