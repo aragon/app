@@ -43,7 +43,7 @@ export const LayoutWizard = async <IPageParams extends IDaoPageParams = IDaoPage
         }
     } catch (error: unknown) {
         const parsedError = JSON.parse(JSON.stringify(error)) as unknown;
-        return <Page.Error error={parsedError} errorNamespace="app.application.layoutWizard" />;
+        return <Page.Error error={parsedError} errorNamespace="app.application.layoutWizard.error" />;
     }
 
     return (

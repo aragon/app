@@ -45,15 +45,19 @@
         }
       },
       "layoutDao": {
-        "notFound": {
-          "description": "We couldn't find the DAO you're looking for.",
-          "title": "DAO not found"
+        "error": {
+          "notFound": {
+            "description": "We couldn't find the DAO you're looking for.",
+            "title": "DAO not found"
+          }
         }
       },
       "layoutWizard": {
-        "notFound": {
-          "description": "We couldn't find the DAO you're looking for.",
-          "title": "DAO not found"
+        "error": {
+          "notFound": {
+            "description": "We couldn't find the DAO you're looking for.",
+            "title": "DAO not found"
+          }
         }
       },
       "navigationDao": {

@@ -102,7 +102,9 @@ export class DaoProcessDetailsClientUtils {
                     earlyStageAdvance: stage.minAdvance === 0,
                     requiredApprovals: stage.approvalThreshold > 0 ? stage.approvalThreshold : stage.vetoThreshold,
                     stageExpiration:
-                        stage.maxAdvance !== 3155760000 ? dateUtils.secondsToDuration(stage.maxAdvance) : undefined,
+                        stage.maxAdvance !== 3155760000
+                            ? dateUtils.secondsToDuration(stage.maxAdvance - stage.voteDuration)
+                            : undefined,
                 },
                 bodies,
             };
