@@ -1,9 +1,11 @@
+import * as DialogProvider from '@/shared/components/dialogProvider';
 import type { IWizardPageStepProps } from '@/shared/components/wizards/wizardPage';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateTabComponentPlugin } from '@/shared/testUtils';
+import { generateDialogContext, generateTabComponentPlugin } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { render, screen } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
+import * as CreateProposalProvider from '../../components/createProposalForm/createProposalFormProvider';
 import {
     CreateProposalPageClientSteps,
     type ICreateProposalPageClientStepsProps,
@@ -32,22 +34,31 @@ describe('<CreateProposalPageClientSteps /> component', () => {
     const useWatchSpy: jest.SpyInstance<unknown> = jest.spyOn(ReactHookForm, 'useWatch');
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const getSlotComponentSpy = jest.spyOn(pluginRegistryUtils, 'getSlotComponent');
+    const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
+    const useCreateProposalFormContextSpy = jest.spyOn(CreateProposalProvider, 'useCreateProposalFormContext');
 
     beforeEach(() => {
         useWatchSpy.mockReturnValue(true);
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin()]);
         getSlotComponentSpy.mockReturnValue(undefined);
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
+        useCreateProposalFormContextSpy.mockReturnValue({
+            prepareActions: {},
+            addPrepareAction: jest.fn(),
+        });
     });
 
     afterEach(() => {
         useWatchSpy.mockReset();
         useDaoPluginsSpy.mockReset();
         getSlotComponentSpy.mockReset();
+        useDialogContextSpy.mockReset();
+        useCreateProposalFormContextSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ICreateProposalPageClientStepsProps>) => {
         const completeProps: ICreateProposalPageClientStepsProps = {
-            daoId: 'test',
+            daoId: 'ethereum-mainnet-0x123',
             pluginAddress: '0x123',
             steps: createProposalWizardSteps,
             ...props,
