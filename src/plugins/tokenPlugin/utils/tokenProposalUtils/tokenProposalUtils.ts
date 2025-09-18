@@ -77,18 +77,16 @@ class TokenProposalUtils {
         const { supportThreshold, historicalTotalSupply } = proposal.settings;
         const { votesByOption } = proposal.metrics;
 
-        const parsedSupport = BigInt(tokenSettingsUtils.ratioToPercentage(supportThreshold));
-
         const yesVotes = this.getVoteByType(votesByOption, VoteOption.YES);
         const abstainVotes = this.getVoteByType(votesByOption, VoteOption.ABSTAIN);
 
         const noVotesCurrent = this.getVoteByType(votesByOption, VoteOption.NO);
-        const noVotesWorstCase = BigInt(historicalTotalSupply!) - yesVotes - abstainVotes;
-
-        // For early-execution, check that the support threshold is met even if all remaining votes are no votes.
+        const noVotesWorstCase = BigInt(historicalTotalSupply ?? 0) - yesVotes - abstainVotes;
         const noVotesComparator = early ? noVotesWorstCase : noVotesCurrent;
 
-        return (BigInt(100) - parsedSupport) * yesVotes > parsedSupport * noVotesComparator;
+        const supportThresholdBigInt = BigInt(supportThreshold);
+
+        return yesVotes * tokenSettingsUtils.ratioBase > supportThresholdBigInt * (yesVotes + noVotesComparator);
     };
 
     getTotalVotes = (proposal: ITokenProposal, excludeAbstain?: boolean): bigint => {
