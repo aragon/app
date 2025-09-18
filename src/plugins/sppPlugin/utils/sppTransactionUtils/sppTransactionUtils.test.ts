@@ -298,7 +298,12 @@ describe('sppTransaction utils', () => {
             const updateRulesTxData = '0xUpdateRulesTxData';
             encodeFunctionDataSpy.mockReturnValueOnce(updateRulesTxData);
 
-            const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, sppSetupData, pluginSetupData, []);
+            const result = sppTransactionUtils['buildUpdateRulesTransaction'](
+                values,
+                sppSetupData,
+                pluginSetupData,
+                [],
+            );
 
             expect(buildRuleConditionsSpy).toHaveBeenCalledWith(['0x0'], []);
 
@@ -340,7 +345,12 @@ describe('sppTransaction utils', () => {
             const updateRulesTxData = '0xUpdateRulesTxData';
             encodeFunctionDataSpy.mockReturnValueOnce(updateRulesTxData);
 
-            const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, sppSetupData, pluginSetupData, []);
+            const result = sppTransactionUtils['buildUpdateRulesTransaction'](
+                values,
+                sppSetupData,
+                pluginSetupData,
+                [],
+            );
 
             // Should include both existing condition address and new condition address
             expect(buildRuleConditionsSpy).toHaveBeenCalledWith(
