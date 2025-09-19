@@ -132,7 +132,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     ];
 
     const canSimulate =
-        proposalStatus === ProposalStatus.ACTIVE &&
+        [ProposalStatus.ACTIVE, ProposalStatus.ADVANCEABLE, ProposalStatus.PENDING, ProposalStatus.EXECUTABLE].includes(
+            proposalStatus,
+        ) &&
         (lastSimulation == null || Date.now() - lastSimulation.runAt > actionSimulationLimitMillis);
 
     const processedLastSimulation = lastSimulation ? { ...lastSimulation, timestamp: lastSimulation.runAt } : undefined;
