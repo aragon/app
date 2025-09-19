@@ -23,3 +23,5 @@ export const createProposalWizardSteps: IWizardStepperStep[] = [
         meta: { name: `app.governance.createProposalPage.steps.${CreateProposalWizardStep.SETTINGS}.name` },
     },
 ];
+
+export const createProposalWizardId = 'createProposalWizard';
