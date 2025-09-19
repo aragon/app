@@ -73,6 +73,8 @@ class LockToVoteProposalUtils {
 
         const yesVotes = this.getVoteByType(votesByOption, VoteOption.YES);
         const noVotesCurrent = this.getVoteByType(votesByOption, VoteOption.NO);
+
+        // Keeps mental model more closely aligned with token plugin implementation
         const noVotesComparator = noVotesCurrent;
 
         return (tokenSettingsUtils.ratioBase - parsedSupport) * yesVotes > parsedSupport * noVotesComparator;

@@ -84,6 +84,8 @@ class TokenProposalUtils {
 
         const noVotesCurrent = this.getVoteByType(votesByOption, VoteOption.NO);
         const noVotesWorstCase = BigInt(historicalTotalSupply!) - yesVotes - abstainVotes;
+
+        // For early-execution, check that the support threshold is met even if all remaining votes are no votes.
         const noVotesComparator = early ? noVotesWorstCase : noVotesCurrent;
 
         return (tokenSettingsUtils.ratioBase - parsedSupport) * yesVotes > parsedSupport * noVotesComparator;
