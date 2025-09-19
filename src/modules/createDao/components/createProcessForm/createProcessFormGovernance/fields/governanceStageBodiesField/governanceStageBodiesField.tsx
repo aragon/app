@@ -46,7 +46,7 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
     const handleBodySubmit = (index?: number) => (values: ISetupBodyForm) => {
         if (index == null) {
             const bodyId = crypto.randomUUID();
-            append({ ...values, internalId: bodyId });
+            append({ ...values, internalId: bodyId, canCreateProposal: true });
         } else {
             update(index, values);
         }
