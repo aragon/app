@@ -23,7 +23,6 @@ export const useTokenPermissionCheckProposalCreation = (
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const pluginName = daoUtils.getPluginName(plugin);
-
     const { minProposerVotingPower, token } = plugin.settings;
     const { decimals: tokenDecimals, symbol: tokenSymbol } = token;
 

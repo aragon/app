@@ -1,6 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { addressUtils, invariant } from '@aragon/gov-ui-kit';
+import { addressUtils, Avatar, invariant } from '@aragon/gov-ui-kit';
 
 export interface IGovernanceBodyInfoProps {
     /**
@@ -23,10 +23,14 @@ export interface IGovernanceBodyInfoProps {
      * The build number of the plugin.
      */
     build?: string;
+    /**
+     * The logo of the body, i.e., Safe logo
+     */
+    logoSrc?: string;
 }
 
 export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (props) => {
-    const { name, subdomain, address, release, build } = props;
+    const { name, subdomain, address, release, build, logoSrc } = props;
 
     invariant(address != null || subdomain != null, 'GovernanceBodyInfo: address or subdomain must be set.');
 
@@ -45,7 +49,10 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (props) =>
     return (
         <div className="flex w-full flex-col items-start gap-1">
             <div className="flex w-full items-center justify-between">
-                <p className="text-base leading-tight text-neutral-800 md:text-lg">{bodyName}</p>
+                <p className="flex items-center gap-2 text-base leading-tight text-neutral-800 md:text-lg">
+                    {bodyName}
+                    {logoSrc && <Avatar src={logoSrc} size="sm" />}
+                </p>
                 {address && name != null && name != '' && (
                     <p className="text-base leading-tight text-neutral-500 md:text-lg">{truncatedAddress}</p>
                 )}

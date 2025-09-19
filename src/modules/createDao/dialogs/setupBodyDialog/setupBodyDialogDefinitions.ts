@@ -53,11 +53,18 @@ export interface ISetupBodyFormNew<
     canCreateProposal: boolean;
 }
 
-export interface ISetupBodyFormExternal extends ISetupBodyFormBase, ICompositeAddress {
+export interface ISetupBodyFormExternal
+    extends ISetupBodyFormBase,
+        ICompositeAddress,
+        Pick<ISetupBodyFormNew, 'canCreateProposal'> {
     /**
      * EXTERNAL body type.
      */
     type: BodyType.EXTERNAL;
+    /**
+     * Is given address a Safe multisig address.
+     */
+    isSafe: boolean;
 }
 
 export interface ISetupBodyFormExisting<

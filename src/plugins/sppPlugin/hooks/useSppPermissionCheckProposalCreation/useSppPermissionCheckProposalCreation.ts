@@ -1,4 +1,5 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { useSimulateProposalCreation } from '@/modules/governance/hooks/useSimulateProposal/useSimulateProposalCreation';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
@@ -18,6 +19,10 @@ export const useSppPermissionCheckProposalCreation = (
 
     invariant(daoPlugins != null, 'useSppPermissionCheckProposalCreation: Plugins are required');
 
+    const { isLoading: isSimulationLoading, isSuccess: hasSimulationSucceeded } = useSimulateProposalCreation({
+        plugin,
+    });
+
     const sppPlugins = plugin.settings.stages.flatMap((stage) => stage.plugins);
 
     // Find the sub plugins that are part of the DAO and filter out any potential undefined values
@@ -32,12 +37,33 @@ export const useSppPermissionCheckProposalCreation = (
         })?.({ plugin, daoId, useConnectedUserInfo }),
     );
 
+    if (isSimulationLoading) {
+        return {
+            isLoading: true,
+            isRestricted: false,
+            hasPermission: false,
+            settings: [],
+        };
+    }
+
+    if (hasSimulationSucceeded) {
+        return {
+            isLoading: false,
+            isRestricted: false,
+            hasPermission: true,
+            settings: [],
+        };
+    }
+
     // Allow proposal creation if either:
-    // - All plugins are unrestricted.
-    // - User has permission on at least one restricted plugin.
-    const permissionGranted =
-        pluginProposalCreationGuardResults.every((result) => !result?.isRestricted) ||
-        pluginProposalCreationGuardResults.some((result) => result?.isRestricted && result.hasPermission);
+    // OLD LOGIC:
+    //   - All plugins are unrestricted.
+    //   - User has permission on at least one restricted plugin.
+    // NEW LOGIC:
+    //   - Simulation is successful.
+    //
+    // GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION is now used only to get settings in the SPP case (we still miss settings for Safe bodies, though).
+    const permissionGranted = hasSimulationSucceeded;
 
     const isLoading = pluginProposalCreationGuardResults.some((result) => result?.isLoading);
 

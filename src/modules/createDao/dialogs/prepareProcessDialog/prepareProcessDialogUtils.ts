@@ -1,6 +1,5 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { conditionFactoryAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/conditionFactoryAbi';
-import { executeSelectorConditionAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/executeSelectorConditionAbi';
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import type { IDao } from '@/shared/api/daoService';
@@ -15,7 +14,7 @@ import { encodeFunctionData, parseEventLogs, type Hex, type TransactionReceipt }
 import { GovernanceType, ProcessPermission, type ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
 import { BodyType } from '../../types/enum';
-import { type ISetupBodyFormNew } from '../setupBodyDialog';
+import { type ISetupBodyFormExternal, type ISetupBodyFormNew } from '../setupBodyDialog';
 import type {
     IBuildDeployExecuteSelectorConditionDataParams,
     IBuildPrepareInstallPluginActionParams,
@@ -54,23 +53,35 @@ class PrepareProcessDialogUtils {
         const { processor: processorMetadata, plugins: pluginsMetadata } = processMetadata;
         const { pluginSetupProcessor, conditionFactory } = networkDefinitions[dao.network].addresses;
 
-        const deploySelectorConditionData = this.buildDeployExecuteSelectorConditionData({ dao, permissionSelectors });
-        const conditionDeployTransaction =
+        const deployExecuteSelectorConditionData = this.buildDeployExecuteSelectorConditionData({
+            dao,
+            permissionSelectors,
+        });
+        const executeConditionDeployTransaction =
             values.permissions === ProcessPermission.SELECTED
-                ? [{ to: conditionFactory, value: BigInt(0), data: deploySelectorConditionData }]
+                ? [{ to: conditionFactory, value: BigInt(0), data: deployExecuteSelectorConditionData }]
                 : [];
 
         const processorInstallAction =
             processorMetadata != null ? this.buildPrepareInstallProcessorActionData(processorMetadata, dao) : undefined;
         const pluginInstallActions = this.buildPrepareInstallPluginsActionData({ values, dao, pluginsMetadata });
+        const safeConditionsDeployData = this.buildSafeConditionsDeployData({ values, dao, pluginsMetadata });
 
         const installActionsData =
             processorInstallAction != null ? [processorInstallAction, ...pluginInstallActions] : pluginInstallActions;
 
-        const actionValues = { to: pluginSetupProcessor, value: BigInt(0) };
-        const installActionTransactions = installActionsData.map((data) => ({ ...actionValues, data }));
+        const installActionTransactions = installActionsData.map((data) => ({
+            to: pluginSetupProcessor,
+            value: BigInt(0),
+            data,
+        }));
+        const safeConditionsDeployTransactions = safeConditionsDeployData.map((data) => ({
+            to: conditionFactory,
+            value: BigInt(0),
+            data,
+        }));
         const encodedTransaction = transactionUtils.encodeTransactionRequests(
-            [...conditionDeployTransaction, ...installActionTransactions],
+            [...executeConditionDeployTransaction, ...installActionTransactions, ...safeConditionsDeployTransactions],
             dao.network,
         );
 
@@ -78,12 +89,12 @@ class PrepareProcessDialogUtils {
     };
 
     buildPublishProcessProposalActions = (params: IBuildProcessProposalActionsParams): ITransactionRequest[] => {
-        const { values, dao, setupData, executeConditionAddress } = params;
+        const { values, dao, setupData, executeConditionAddress, safeConditionAddresses = [] } = params;
 
         const isAdvancedGovernance = values.governanceType === 'ADVANCED';
 
         const processorSetupActions = isAdvancedGovernance
-            ? sppTransactionUtils.buildPluginsSetupActions(values, setupData, dao)
+            ? sppTransactionUtils.buildPluginsSetupActions(values, setupData, dao, safeConditionAddresses)
             : [];
 
         const buildActionsParams: IBuildApplyPluginsInstallationActionsParams = {
@@ -101,13 +112,24 @@ class PrepareProcessDialogUtils {
 
     getExecuteSelectorConditionAddress = (txReceipt: TransactionReceipt): Hex | undefined => {
         const selectorLogs = parseEventLogs({
-            abi: executeSelectorConditionAbi,
+            abi: conditionFactoryAbi,
             eventName: 'ExecuteSelectorConditionDeployed',
             logs: txReceipt.logs,
             strict: false,
         });
 
         return selectorLogs[0]?.args.newContract;
+    };
+
+    getSafeConditionAddresses = (txReceipt: TransactionReceipt): Hex[] | undefined => {
+        const safeConditionLogs = parseEventLogs({
+            abi: conditionFactoryAbi,
+            eventName: 'SafeOwnerConditionDeployed',
+            logs: txReceipt.logs,
+            strict: false,
+        });
+
+        return safeConditionLogs.map((log) => log.args.newContract).filter((value) => value != null);
     };
 
     private preparePluginMetadata = (plugin: ISetupBodyFormNew) => {
@@ -155,6 +177,32 @@ class PrepareProcessDialogUtils {
         });
 
         return installData;
+    };
+
+    private buildSafeConditionsDeployData = (params: IBuildPrepareInstallPluginsActionParams) => {
+        const { values } = params;
+        const { governanceType } = values;
+
+        const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
+
+        if (!isAdvancedGovernance) {
+            return [];
+        }
+
+        const safeBodies = values.stages
+            .flatMap((stage, stageIndex) => stage.bodies.map((body) => ({ ...body, stageIndex })))
+            .filter((body) => body.type === BodyType.EXTERNAL && body.isSafe)
+            .filter((body) => body.canCreateProposal) as ISetupBodyFormExternal[];
+
+        const safeInstallData = safeBodies.map((body) =>
+            encodeFunctionData({
+                abi: conditionFactoryAbi,
+                functionName: 'deploySafeOwnerCondition',
+                args: [body.address as Hex],
+            }),
+        );
+
+        return safeInstallData;
     };
 
     private buildPrepareInstallPluginActionData = (params: IBuildPrepareInstallPluginActionParams) => {

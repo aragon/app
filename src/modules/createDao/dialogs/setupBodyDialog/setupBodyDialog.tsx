@@ -3,6 +3,8 @@ import { useDao } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
+import { contractUtils } from '@/shared/utils/contractUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, invariant } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
@@ -38,17 +40,29 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
         return { ...initialValues, membership: { ...initialValues?.membership, members: [{ address }] } };
     }, [initialValues, address]);
 
-    const handleSubmit = (values: ISetupBodyForm) => {
+    const handleSubmit = async (values: ISetupBodyForm) => {
         if (values.type === BodyType.EXTERNAL) {
             const existingPlugin = dao?.plugins.find((plugin) =>
                 addressUtils.isAddressEqual(plugin.address, values.address),
             );
 
-            const processedValues = existingPlugin
-                ? daoProcessDetailsClientUtils.bodyToFormData({ plugin: existingPlugin, membership: { members: [] } })
-                : values;
+            if (existingPlugin) {
+                // Converts type from EXTERNAL to EXISTING here.
+                onSubmit(
+                    daoProcessDetailsClientUtils.bodyToFormData({
+                        plugin: existingPlugin,
+                        membership: { members: [] },
+                    }),
+                );
+                return;
+            }
 
-            onSubmit(processedValues);
+            // check if it's Safe
+            const { network } = daoUtils.parseDaoId(daoId);
+            const isSafe = await contractUtils.isSafeContract(values.address, network);
+            const updatedValues = { ...values, isSafe };
+
+            onSubmit(updatedValues);
         } else {
             onSubmit(values);
         }

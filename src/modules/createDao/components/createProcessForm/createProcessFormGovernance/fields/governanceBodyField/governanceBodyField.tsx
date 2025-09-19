@@ -1,3 +1,4 @@
+import safeWallet from '@/assets/images/safeWallet.png';
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { GovernanceBodyInfo } from '@/shared/components/governanceBodyInfo';
@@ -70,6 +71,7 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
                             isNew ? plugin?.installVersion.release.toString() : isExternal ? undefined : body.release
                         }
                         build={isNew ? plugin?.installVersion.build.toString() : isExternal ? undefined : body.build}
+                        logoSrc={isExternal && body.isSafe ? safeWallet.src : undefined}
                     />
                 </Accordion.ItemHeader>
                 <Accordion.ItemContent className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6">

@@ -52,6 +52,11 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
             >
                 {addressUtils.truncateAddress(body.address)}
             </DefinitionList.Item>
+            {body.type === BodyType.EXTERNAL && body.isSafe && (
+                <DefinitionList.Item term={t('app.createDao.createProcessForm.governance.bodyField.default.type')}>
+                    {t('app.createDao.createProcessForm.governance.bodyField.default.safe')}
+                </DefinitionList.Item>
+            )}
         </DefinitionList.Container>
     );
 };
