@@ -1,7 +1,22 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { AlertCard, Button, Heading, IconType } from '@aragon/gov-ui-kit';
+import { AlertCard, Button, Dropdown, Heading, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useWizardContext, useWizardFooter, Wizard, type IWizardStepProps } from '../../wizard';
+
+export interface IWizardPageStepDropdownItem {
+    /**
+     * Label of the dropdown item.
+     */
+    label: string;
+    /**
+     * ID of the form to trigger the submit for.
+     */
+    formId?: string;
+    /**
+     * Function triggered on dropdown item click.
+     */
+    onClick?: () => void;
+}
 
 export interface IWizardPageStepProps extends IWizardStepProps {
     /**
@@ -12,10 +27,14 @@ export interface IWizardPageStepProps extends IWizardStepProps {
      * Description of the step.
      */
     description: string;
+    /**
+     * Instead of "Next" button, render a dropdown with given items.
+     */
+    nextDropdownItems?: IWizardPageStepDropdownItem[];
 }
 
 export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
-    const { title, description, children, className, ...otherProps } = props;
+    const { title, description, children, className, nextDropdownItems, ...otherProps } = props;
 
     const { t } = useTranslations();
 
@@ -55,9 +74,19 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
                         >
                             {t('app.shared.wizardPage.step.back')}
                         </Button>
-                        <Button iconRight={IconType.CHEVRON_RIGHT} variant={submitVariant} size="lg" type="submit">
-                            {submitLabel}
-                        </Button>
+                        {nextDropdownItems != null && nextDropdownItems.length > 0 ? (
+                            <Dropdown.Container size="lg" label={submitLabel} variant={submitVariant}>
+                                {nextDropdownItems.map(({ label, onClick, formId }) => (
+                                    <Dropdown.Item key={label} onClick={onClick} formId={formId}>
+                                        {label}
+                                    </Dropdown.Item>
+                                ))}
+                            </Dropdown.Container>
+                        ) : (
+                            <Button iconRight={IconType.CHEVRON_RIGHT} variant={submitVariant} size="lg" type="submit">
+                                {submitLabel}
+                            </Button>
+                        )}
                     </div>
                     {submitHelpText && (
                         <p className="text-right text-sm leading-tight font-normal text-neutral-500">

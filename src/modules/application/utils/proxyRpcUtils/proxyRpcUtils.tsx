@@ -53,9 +53,18 @@ export class ProxyRpcUtils {
     private chainIdToNetwork = (chainId: string): Network | undefined =>
         Object.values(Network).find((network) => networkDefinitions[network as Network].id === Number(chainId));
 
-    private buildRequestOptions = (request: Request): RequestInit => {
-        const { method, body, headers } = request;
+    // Return type extended to include Node-specific 'duplex' property used for streamed requests.
+    private buildRequestOptions = (request: Request): RequestInit & { duplex?: 'half' } => {
+        const { method, body } = request;
 
-        return { method, body, headers, duplex: 'half' } as RequestInit;
+        // Don't forward headers: avoid RPC 413 "Request Entity Too Large" errors caused by sending headers' data, specifically cookies.
+        // (Also, beneficial to prevent potential sensitive data leaks to 3rd party services.)
+        return {
+            method,
+            body,
+            // Ensure no implicit credential forwarding
+            credentials: 'omit',
+            duplex: 'half',
+        };
     };
 }
