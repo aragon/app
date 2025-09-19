@@ -7,10 +7,10 @@ export const tokenPlugin: IPluginInfo = {
     name: 'Token',
     installVersion: {
         release: 1,
-        build: 3,
-        releaseNotes: 'https://github.com/aragon/token-voting-plugin/releases/tag/v1.3.0',
+        build: 4,
+        releaseNotes: 'https://github.com/aragon/token-voting-plugin/releases/tag/v1.4',
         description:
-            'This optional upgrade introduces minor new features, including the ability to customize metadata for governance plugins.',
+            'This optional upgrade introduces minor new features, including the ability to exclude specified addresses from the quorum calculation.',
     },
     repositoryAddresses: {
         [Network.ARBITRUM_MAINNET]: '0x1AeD2BEb470aeFD65B43f905Bd5371b1E4749d18',
