@@ -83,7 +83,7 @@ class TokenProposalUtils {
         const abstainVotes = this.getVoteByType(votesByOption, VoteOption.ABSTAIN);
 
         const noVotesCurrent = this.getVoteByType(votesByOption, VoteOption.NO);
-        const noVotesWorstCase = BigInt(historicalTotalSupply ?? 0) - yesVotes - abstainVotes;
+        const noVotesWorstCase = BigInt(historicalTotalSupply!) - yesVotes - abstainVotes;
         const noVotesComparator = early ? noVotesWorstCase : noVotesCurrent;
 
         return (tokenSettingsUtils.ratioBase - parsedSupport) * yesVotes > parsedSupport * noVotesComparator;

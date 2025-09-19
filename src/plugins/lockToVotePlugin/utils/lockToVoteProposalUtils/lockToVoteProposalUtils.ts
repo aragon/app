@@ -72,9 +72,10 @@ class LockToVoteProposalUtils {
         const parsedSupport = BigInt(supportThreshold);
 
         const yesVotes = this.getVoteByType(votesByOption, VoteOption.YES);
-        const noVotes = this.getVoteByType(votesByOption, VoteOption.NO);
+        const noVotesCurrent = this.getVoteByType(votesByOption, VoteOption.NO);
+        const noVotesComparator = noVotesCurrent;
 
-        return (tokenSettingsUtils.ratioBase - parsedSupport) * yesVotes > parsedSupport * noVotes;
+        return (tokenSettingsUtils.ratioBase - parsedSupport) * yesVotes > parsedSupport * noVotesComparator;
     };
 
     getTotalVotes = (proposal: ILockToVoteProposal, excludeAbstain?: boolean): bigint => {
