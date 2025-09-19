@@ -56,11 +56,14 @@ export const useSppPermissionCheckProposalCreation = (
     }
 
     // Allow proposal creation if either:
-    // - All plugins are unrestricted.
-    // - User has permission on at least one restricted plugin.
-    const permissionGranted =
-        pluginProposalCreationGuardResults.every((result) => !result?.isRestricted) ||
-        pluginProposalCreationGuardResults.some((result) => result?.isRestricted && result.hasPermission);
+    // OLD LOGIC:
+    //   - All plugins are unrestricted.
+    //   - User has permission on at least one restricted plugin.
+    // NEW LOGIC:
+    //   - Simulation is successful.
+    //
+    // GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION is now used only to get settings in the SPP case (we still miss settings for Safe bodies, though).
+    const permissionGranted = hasSimulationSucceeded;
 
     const isLoading = pluginProposalCreationGuardResults.some((result) => result?.isLoading);
 
