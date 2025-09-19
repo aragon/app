@@ -2,18 +2,20 @@ import type { HttpServiceErrorHandler, IRequestOptions, IRequestParams } from '.
 
 export class HttpService {
     private baseUrl: string;
-    private errorHandler: HttpServiceErrorHandler | undefined;
+    private errorHandler?: HttpServiceErrorHandler;
+    private apiKey?: string;
 
-    constructor(baseUrl: string, errorHandler?: HttpServiceErrorHandler) {
+    constructor(baseUrl: string, errorHandler?: HttpServiceErrorHandler, apiKey?: string) {
         this.baseUrl = baseUrl;
         this.errorHandler = errorHandler;
+        this.apiKey = apiKey;
     }
 
-    async request<TData, TUrlParams = unknown, TQueryParams = unknown, TBody = unknown>(
+    request = async <TData, TUrlParams = unknown, TQueryParams = unknown, TBody = unknown>(
         url: string,
         params: IRequestParams<TUrlParams, TQueryParams, TBody> = {},
         options?: IRequestOptions,
-    ): Promise<TData> {
+    ): Promise<TData> => {
         const completeUrl = this.buildUrl(url, params);
         const processedOptions = this.buildOptions(options, params.body);
         const parsedBody = this.parseBody(params.body);
@@ -28,7 +30,7 @@ export class HttpService {
         }
 
         return response.json() as TData;
-    }
+    };
 
     private buildUrl = <TUrlParams, TQueryParams, TBody>(
         url: string,
@@ -44,10 +46,16 @@ export class HttpService {
 
     private buildOptions = (options?: IRequestOptions, body?: unknown) => {
         const { method, headers, ...otherOptions } = options ?? {};
-        const processedHeaders =
-            method === 'POST' && !(body instanceof FormData)
-                ? { 'Content-type': 'application/json', ...headers }
-                : headers;
+
+        const processedHeaders = new Headers(headers);
+
+        if (method === 'POST' && !(body instanceof FormData)) {
+            processedHeaders.set('Content-type', 'application/json');
+        }
+
+        if (this.apiKey != null) {
+            processedHeaders.set('Authorization', `Bearer ${this.apiKey}`);
+        }
 
         return { method, headers: processedHeaders, ...otherOptions };
     };
