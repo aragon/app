@@ -25,7 +25,10 @@ export class ProxyBackendUtils {
         const body = method.toUpperCase() === 'POST' ? await request.text() : undefined;
 
         const processedHeaders = new Headers(headers);
-        processedHeaders.set('Authorization', `Bearer ${process.env.NEXT_SECRET_ARAGON_BACKEND_API_KEY!}`);
+
+        if (process.env.NEXT_SECRET_ARAGON_BACKEND_API_KEY) {
+            processedHeaders.set('Authorization', `Bearer ${process.env.NEXT_SECRET_ARAGON_BACKEND_API_KEY}`);
+        }
 
         return { method, body, headers: processedHeaders };
     };

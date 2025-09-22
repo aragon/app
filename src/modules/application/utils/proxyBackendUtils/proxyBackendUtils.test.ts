@@ -39,7 +39,7 @@ describe('proxyBackend utils', () => {
             expect(result).toEqual(mockNextResponse);
         });
 
-        it('appends the authorization header', async () => {
+        it('appends the authorization header when set', async () => {
             const apiKey = 'test-api-key-123';
             process.env.NEXT_SECRET_ARAGON_BACKEND_API_KEY = apiKey;
             await proxyBackendUtils.request(generateNextRequest({ url: 'http://test.com' }));
