@@ -37,7 +37,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const { trigger } = useFormContext();
+    const { formState } = useFormContext();
 
     const addActions = useWatch<ICreateProposalFormData>({ name: 'addActions' });
     const actions = useWatch<Record<string, ICreateProposalFormData['actions']>>({ name: 'actions' });
@@ -51,10 +51,8 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
     const hideSettingsStep = pluginRegistryUtils.getSlotComponent({ slotId, pluginId }) == null;
 
     const handleSimulateActions = async () => {
-        // because validation is triggered on form submit, we need to check validation manually here to prevent running simulation if form is invalid.
-        const isValid = await trigger();
-
-        if (!isValid) {
+        // Prevent running simulation if form is invalid.
+        if (!formState.isValid) {
             return;
         }
 
