@@ -1,5 +1,23 @@
 # @aragon/app
 
+## 1.10.0
+
+### Minor Changes
+
+- [#706](https://github.com/aragon/app/pull/706) [`facccf9`](https://github.com/aragon/app/commit/facccf93b678038768ca3287375c89a91ca2d3e1) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Add support for `lock-to-vote` plugin
+
+### Patch Changes
+
+- [#760](https://github.com/aragon/app/pull/760) [`3f0f702`](https://github.com/aragon/app/commit/3f0f702ab900d5bf095e8cd30433659a03e9c038) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Update assets for Boundless DAO launch on mainnet
+
+- [#752](https://github.com/aragon/app/pull/752) [`e345715`](https://github.com/aragon/app/commit/e345715e83546ca66297528034612fd9ba0a1ccc) Thanks [@milosh86](https://github.com/milosh86)! - Handle all nullish cases for `totalSupply` on token data lists
+
+- [#762](https://github.com/aragon/app/pull/762) [`f649090`](https://github.com/aragon/app/commit/f6490901fd80ec8206fc39b0385b30a25b27bbe4) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Resolve @walletconnect packages on 2.21.7 release
+
+- [#740](https://github.com/aragon/app/pull/740) [`0b4ed2a`](https://github.com/aragon/app/commit/0b4ed2ae87bafcd5eb1f38ebbd5e6cebec10e15f) Thanks [@milosh86](https://github.com/milosh86)! - Remove unused SETTINGS_GOVERNANCE_INFO plugin slot
+
+- [#757](https://github.com/aragon/app/pull/757) [`0919c56`](https://github.com/aragon/app/commit/0919c568d31a7643e1abfafa98b158436f0c57f8) Thanks [@milosh86](https://github.com/milosh86)! - Remove unused slot component from lockToVote plugin
+
 ## 1.9.0
 
 ### Minor Changes

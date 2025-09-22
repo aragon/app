@@ -1,6 +1,7 @@
 'use client';
 
 import { ProposalExecutionStatus } from '@/modules/governance/components/proposalExecutionStatus';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
@@ -9,6 +10,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
+    ActionSimulation,
     addressUtils,
     CardCollapsible,
     ChainEntityType,
@@ -18,12 +20,14 @@ import {
     formatterUtils,
     Link,
     ProposalActions,
-    type ProposalStatus,
+    ProposalStatus,
     proposalStatusToTagVariant,
     Tag,
     useBlockExplorer,
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
+import { useQueryClient } from '@tanstack/react-query';
+import { actionSimulationServiceKeys, useLastSimulation, useSimulateProposal } from '../../api/actionSimulationService';
 import { type IProposal, useProposalActions, useProposalBySlug } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -40,12 +44,16 @@ export interface IDaoProposalDetailsPageClientProps {
     proposalSlug: string;
 }
 
+// Proposal actions cannot be simulated if last simulation has been triggered less than 10 minutes ago
+const actionSimulationLimitMillis = 10 * 60 * 1_000;
+
 export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClientProps> = (props) => {
     const { daoId, proposalSlug } = props;
 
     const { t } = useTranslations();
     const { buildEntityUrl } = useBlockExplorer();
     const { copy } = useGukModulesContext();
+    const queryClient = useQueryClient();
 
     const proposalUrlParams = { slug: proposalSlug };
     const proposalParams = { urlParams: proposalUrlParams, queryParams: { daoId } };
@@ -53,6 +61,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     const daoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoParams });
+    const { tenderlySupport } = dao ? networkDefinitions[dao.network] : {};
 
     const proposalStatus = useSlotSingleFunction<IProposal, ProposalStatus>({
         params: proposal!,
@@ -64,10 +73,39 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         { urlParams: { id: proposal?.id as string } },
         { enabled: proposal != null, refetchInterval: ({ state }) => (state.data?.decoding ? 2000 : false) },
     );
+    const actionsCount = actionData?.rawActions?.length ?? 0;
+
+    const showActionSimulation = proposal?.hasActions && tenderlySupport;
+
+    const {
+        data: lastSimulation,
+        isError: isLastSimulationError,
+        error: lastSimulationError,
+    } = useLastSimulation({ urlParams: { proposalId: proposal?.id as string } }, { enabled: showActionSimulation });
+
+    const {
+        mutate: simulateProposal,
+        isPending: isSimulationLoading,
+        isError: hasSimulationFailed,
+    } = useSimulateProposal();
 
     if (proposal == null || dao == null) {
         return null;
     }
+
+    const isLastSimulationNotFoundError = AragonBackendServiceError.isNotFoundError(lastSimulationError);
+    const showSimulationError = hasSimulationFailed || (isLastSimulationError && !isLastSimulationNotFoundError);
+
+    const handleSimulateProposalSuccess = () => {
+        const urlParams = { proposalId: proposal.id };
+        const simulationQueryKey = actionSimulationServiceKeys.lastSimulation({ urlParams });
+        void queryClient.invalidateQueries({ queryKey: simulationQueryKey });
+    };
+
+    const handleSimulateProposal = () => {
+        const urlParams = { proposalId: proposal.id };
+        simulateProposal({ urlParams }, { onSuccess: handleSimulateProposalSuccess });
+    };
 
     const { blockTimestamp, creator, transactionHash, summary, title, description, resources } = proposal;
 
@@ -86,13 +124,20 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         label: copy.proposalDataListItemStatus.statusLabel[proposalStatus],
         variant: proposalStatusToTagVariant[proposalStatus],
     };
+
+    const proposalsUrl = daoUtils.getDaoUrl(dao, 'proposals');
     const pageBreadcrumbs = [
-        {
-            href: daoUtils.getDaoUrl(dao, 'proposals'),
-            label: t('app.governance.daoProposalDetailsPage.header.breadcrumb.proposals'),
-        },
+        { href: proposalsUrl, label: t('app.governance.daoProposalDetailsPage.header.breadcrumb.proposals') },
         { label: proposalSlug.toUpperCase() },
     ];
+
+    const canSimulate =
+        proposalStatus === ProposalStatus.ACTIVE &&
+        (lastSimulation == null || Date.now() - lastSimulation.runAt > actionSimulationLimitMillis);
+
+    const processedLastSimulation = lastSimulation ? { ...lastSimulation, timestamp: lastSimulation.runAt } : undefined;
+    const simulationErrorContext = hasSimulationFailed ? 'simulationError' : 'lastSimulationError';
+    const simulationError = t(`app.governance.daoProposalDetailsPage.main.actions.${simulationErrorContext}`);
 
     return (
         <>
@@ -121,10 +166,17 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         />
                     </Page.MainSection>
                     <Page.MainSection title={t('app.governance.daoProposalDetailsPage.main.actions.header')}>
-                        <ProposalActions.Root
-                            isLoading={actionData?.decoding}
-                            actionsCount={actionData?.rawActions?.length ?? 0}
-                        >
+                        {showActionSimulation && (
+                            <ActionSimulation
+                                totalActions={actionsCount}
+                                lastSimulation={processedLastSimulation}
+                                isLoading={isSimulationLoading}
+                                error={showSimulationError ? simulationError : undefined}
+                                onSimulate={handleSimulateProposal}
+                                isEnabled={canSimulate}
+                            />
+                        )}
+                        <ProposalActions.Root isLoading={actionData?.decoding} actionsCount={actionsCount}>
                             <ProposalActions.Container emptyStateDescription="">
                                 {normalizedProposalActions.map((action, index) => (
                                     <ProposalActions.Item

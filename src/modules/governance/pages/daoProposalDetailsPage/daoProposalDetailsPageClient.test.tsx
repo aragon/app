@@ -2,7 +2,7 @@ import {
     DaoProposalDetailsPageClient,
     type IDaoProposalDetailsPageClientProps,
 } from '@/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient';
-import { generateProposal } from '@/modules/governance/testUtils';
+import { generateProposal, generateSimulationResult } from '@/modules/governance/testUtils';
 import * as DaoService from '@/shared/api/daoService';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
@@ -14,6 +14,7 @@ import {
 } from '@/shared/testUtils';
 import { clipboardUtils, GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
+import * as actionSimulationService from '../../api/actionSimulationService';
 import * as governanceService from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
@@ -28,6 +29,7 @@ jest.mock('../../components/proposalExecutionStatus', () => ({
 describe('<DaoProposalDetailsPageClient /> component', () => {
     const useProposalSpy = jest.spyOn(governanceService, 'useProposalBySlug');
     const useProposalActionsSpy = jest.spyOn(governanceService, 'useProposalActions');
+    const useLastSimulationSpy = jest.spyOn(actionSimulationService, 'useLastSimulation');
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
     const useSlotSingleFunctionSpy = jest.spyOn(useSlotSingleFunction, 'useSlotSingleFunction');
@@ -38,6 +40,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
             generateReactQueryResultSuccess({ data: { decoding: false, actions: [], rawActions: [] } }),
         );
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        useLastSimulationSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateSimulationResult() }));
     });
 
     afterEach(() => {
@@ -46,6 +49,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         useDaoSpy.mockReset();
         clipboardCopySpy.mockReset();
         useSlotSingleFunctionSpy.mockReset();
+        useLastSimulationSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoProposalDetailsPageClientProps>) => {

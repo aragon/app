@@ -15,7 +15,7 @@ import type {
 } from '../../dialogs/publishProposalDialog';
 import { useProposalPermissionCheckGuard } from '../../hooks/useProposalPermissionCheckGuard';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
-import { createProposalWizardSteps } from './createProposalPageDefinitions';
+import { createProposalWizardId, createProposalWizardSteps } from './createProposalPageDefinitions';
 
 export interface ICreateProposalPageClientProps {
     /**
@@ -73,6 +73,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
                 defaultValues={{ actions: [] }}
+                id={createProposalWizardId}
             >
                 <CreateProposalForm.Provider value={contextValues}>
                     <CreateProposalPageClientSteps steps={processedSteps} daoId={daoId} pluginAddress={pluginAddress} />

@@ -25,15 +25,20 @@ export interface IBoundlessActionItemProps extends ComponentProps<'button'> {
      * The href to navigate to when the card is clicked.
      */
     href: Route;
+    /**
+     * Whether the link is external or not.
+     */
+    isExternal?: boolean;
 }
 
 export const BoundlessActionItem: React.FC<IBoundlessActionItemProps> = (props) => {
-    const { title, description, image, href, className } = props;
+    const { title, description, image, href, isExternal, className } = props;
     const [isHovered, setIsHovered] = useState(false);
 
     return (
         <Link
             href={href}
+            target={isExternal ? '_blank' : '_self'}
             className={classNames(
                 'group relative flex h-40 w-80 items-center justify-between overflow-hidden rounded-lg p-4 transition-all md:w-[400px] md:p-6',
                 className,
