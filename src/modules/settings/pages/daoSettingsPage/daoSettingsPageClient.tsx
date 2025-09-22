@@ -7,7 +7,7 @@ import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissio
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
-import { PluginFilterComponent } from '@/shared/components/PluginFilterComponent';
+import { PluginFilterComponent } from '@/shared/components/pluginFilterComponent';
 import { ProcessDataListItem } from '@/shared/components/processDataListItem';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
