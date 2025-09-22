@@ -68,10 +68,11 @@ export interface ISetupBodyFormExisting<
     TGovernance = unknown,
     TMember extends ICompositeAddress = ICompositeAddress,
     TMembership extends ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
-> extends Pick<
-        ISetupBodyFormNew<TGovernance, TMember, TMembership>,
-        'internalId' | 'plugin' | 'description' | 'resources' | 'governance' | 'membership'
-    > {
+> extends ISetupBodyFormBase,
+        Pick<
+            ISetupBodyFormNew<TGovernance, TMember, TMembership>,
+            'description' | 'resources' | 'governance' | 'membership'
+        > {
     /**
      * EXISTING body type.
      */
