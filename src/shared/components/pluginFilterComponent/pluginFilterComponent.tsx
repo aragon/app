@@ -1,20 +1,20 @@
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { Tabs } from '@aragon/gov-ui-kit';
+import { Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { PluginSingleComponent } from '../pluginSingleComponent';
-import type { IPluginTabComponentProps } from './pluginTabComponent.api';
+import type { IPluginFilterComponentProps } from './pluginFilterComponent.api';
 
-export const pluginTabComponentFilterParam = 'plugin';
+export const pluginFilterComponentFilterParam = 'plugin';
 
-export const PluginTabComponent = <TMeta extends object, TProps extends object>(
-    props: IPluginTabComponentProps<TMeta, TProps>,
+export const PluginFilterComponent = <TMeta extends object, TProps extends object>(
+    props: IPluginFilterComponentProps<TMeta, TProps>,
 ) => {
     const {
         slotId,
         plugins = [],
         value,
         onValueChange,
-        searchParamName = pluginTabComponentFilterParam,
+        searchParamName = pluginFilterComponentFilterParam,
         Fallback,
         ...otherProps
     } = props;
@@ -40,8 +40,8 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
         validValues: plugins.map((plugin) => plugin.uniqueId),
     });
 
-    const updateActivePlugin = (tabId: string) => {
-        const plugin = plugins.find((plugin) => plugin.uniqueId === tabId)!;
+    const updateActivePlugin = (uniqueId: string) => {
+        const plugin = plugins.find((plugin) => plugin.uniqueId === uniqueId)!;
         setActivePlugin(plugin.uniqueId);
         onValueChange?.(plugin);
     };
@@ -57,23 +57,35 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
     }
 
     return (
-        <Tabs.Root value={activePlugin} onValueChange={updateActivePlugin}>
-            <Tabs.List>
+        <div>
+            <ToggleGroup
+                isMultiSelect={false}
+                defaultValue={activePlugin}
+                onChange={(val) => {
+                    updateActivePlugin(val!);
+                }}
+            >
                 {plugins.map(({ uniqueId, label }) => (
-                    <Tabs.Trigger key={uniqueId} label={label} value={uniqueId} />
+                    <Toggle key={uniqueId} label={label} value={uniqueId} />
                 ))}
-            </Tabs.List>
-            {plugins.map(({ id, uniqueId, props }) => (
-                <Tabs.Content key={uniqueId} value={uniqueId} className="pt-6">
-                    <PluginSingleComponent
-                        slotId={slotId}
-                        pluginId={id}
-                        Fallback={Fallback}
-                        {...props}
-                        {...otherProps}
-                    />
-                </Tabs.Content>
-            ))}
-        </Tabs.Root>
+            </ToggleGroup>
+
+            {plugins.map(({ id, uniqueId, props: pluginProps }) => {
+                const isActive = activePlugin === uniqueId;
+                return (
+                    <div key={uniqueId} role="region" hidden={!isActive} className="pt-6">
+                        {isActive ? (
+                            <PluginSingleComponent
+                                slotId={slotId}
+                                pluginId={id}
+                                Fallback={Fallback}
+                                {...pluginProps}
+                                {...otherProps}
+                            />
+                        ) : null}
+                    </div>
+                );
+            })}
+        </div>
     );
 };

@@ -1,5 +1,5 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
+import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { useCallback, useMemo } from 'react';
 import { useDaoPlugins, type IUseDaoPluginsParams } from '../useDaoPlugins';
 import { useFilterUrlParam, type IUseFilterUrlParamParams } from '../useFilterUrlParam';
@@ -23,7 +23,7 @@ export const useDaoPluginFilterUrlParam = (params: IUseDaoPluginFilterUrlParamPa
     );
 
     const setActivePlugin = useCallback(
-        (plugin: ITabComponentPlugin<IDaoPlugin>) => setActiveFilter(plugin.meta.slug),
+        (plugin: IFilterComponentPlugin<IDaoPlugin>) => setActiveFilter(plugin.meta.slug),
         [setActiveFilter],
     );
 

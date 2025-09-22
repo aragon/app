@@ -1,7 +1,7 @@
 'use client';
 
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import { type IPluginTabComponentProps, PluginTabComponent } from '@/shared/components/pluginTabComponent';
+import { type IPluginTabComponentProps, PluginTabComponent } from '@/shared/components/pluginFilterComponent';
 import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
 import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';

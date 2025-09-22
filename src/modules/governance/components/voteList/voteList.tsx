@@ -1,6 +1,6 @@
 'use client';
 
-import { PluginTabComponent } from '@/shared/components/pluginTabComponent';
+import { PluginTabComponent } from '@/shared/components/pluginFilterComponent';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';

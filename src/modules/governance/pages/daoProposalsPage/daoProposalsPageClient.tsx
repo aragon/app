@@ -8,7 +8,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
-import { pluginGroupTab } from '@/shared/hooks/useDaoPlugins';
+import { pluginGroupFilter } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { invariant } from '@aragon/gov-ui-kit';
@@ -40,7 +40,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     const { activePlugin, setActivePlugin, plugins } = useDaoPluginFilterUrlParam({
         daoId,
         type: PluginType.PROCESS,
-        includeGroupTab: true,
+        includeGroupFilter: true,
         name: daoProposalsPageFilterParam,
     });
 
@@ -63,7 +63,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
         createProposalGuard({ plugin, onSuccess: () => handlePermissionGuardSuccess(plugin) });
 
     const openSelectPluginDialog = () => {
-        const initialPlugin = activePlugin.id === pluginGroupTab.id ? undefined : activePlugin;
+        const initialPlugin = activePlugin.id === pluginGroupFilter.id ? undefined : activePlugin;
         const params: ISelectPluginDialogParams = { daoId, initialPlugin, onPluginSelected: handlePluginSelected };
         open(GovernanceDialogId.SELECT_PLUGIN, { params });
     };
@@ -75,7 +75,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
 
     const actionProps = plugins && plugins.length > 1 ? { onClick: openSelectPluginDialog } : defaultActionProps;
 
-    const allProposalsSelected = activePlugin.uniqueId === pluginGroupTab.uniqueId;
+    const allProposalsSelected = activePlugin.uniqueId === pluginGroupFilter.uniqueId;
     const asideCardTitle = allProposalsSelected
         ? t('app.governance.daoProposalsPage.aside.stats')
         : `${activePlugin.label} (${activePlugin.meta.slug.toUpperCase()})`;

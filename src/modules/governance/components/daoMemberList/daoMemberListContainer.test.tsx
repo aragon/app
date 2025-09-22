@@ -1,4 +1,3 @@
-import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';

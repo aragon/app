@@ -1,5 +1,5 @@
 import { type IDaoPlugin, type PluginInterfaceType, useDao } from '@/shared/api/daoService';
-import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
+import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import type { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 
@@ -23,7 +23,7 @@ export interface IUseDaoPluginsParams {
     /**
      * Adds an "all" tab component item when set to true and DAO has more than one plugin.
      */
-    includeGroupTab?: boolean;
+    includeGroupFilter?: boolean;
     /**
      * Only returns the plugin with the specified interfaceType when set.
      */
@@ -38,7 +38,7 @@ export interface IUseDaoPluginsParams {
     hasExecute?: boolean;
 }
 
-export const pluginGroupTab: ITabComponentPlugin<IDaoPlugin> = {
+export const pluginGroupFilter: IFilterComponentPlugin<IDaoPlugin> = {
     id: 'all',
     uniqueId: 'all',
     label: '',
@@ -46,8 +46,9 @@ export const pluginGroupTab: ITabComponentPlugin<IDaoPlugin> = {
     props: {},
 };
 
-export const useDaoPlugins = (params: IUseDaoPluginsParams): Array<ITabComponentPlugin<IDaoPlugin>> | undefined => {
-    const { daoId, type, pluginAddress, includeSubPlugins, includeGroupTab, interfaceType, slug, hasExecute } = params;
+export const useDaoPlugins = (params: IUseDaoPluginsParams): Array<IFilterComponentPlugin<IDaoPlugin>> | undefined => {
+    const { daoId, type, pluginAddress, includeSubPlugins, includeGroupFilter, interfaceType, slug, hasExecute } =
+        params;
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const plugins = daoUtils.getDaoPlugins(dao, {
@@ -67,7 +68,7 @@ export const useDaoPlugins = (params: IUseDaoPluginsParams): Array<ITabComponent
         props: {},
     }));
 
-    const addGroupTab = includeGroupTab && processedPlugins != null && processedPlugins.length > 1;
+    const addGroupFilter = includeGroupFilter && processedPlugins != null && processedPlugins.length > 1;
 
-    return addGroupTab ? [pluginGroupTab].concat(processedPlugins) : processedPlugins;
+    return addGroupFilter ? [pluginGroupFilter].concat(processedPlugins) : processedPlugins;
 };
