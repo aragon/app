@@ -1,6 +1,6 @@
 'use client';
 
-import { PluginTabComponent } from '@/shared/components/pluginFilterComponent';
+import { PluginFilterComponent } from '@/shared/components/pluginFilterComponent';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
@@ -42,7 +42,7 @@ export const VoteList: React.FC<IVoteListProps> = (props) => {
     });
 
     return (
-        <PluginTabComponent
+        <PluginFilterComponent
             slotId={GovernanceSlotId.GOVERNANCE_VOTE_LIST}
             plugins={processedPlugins}
             daoId={daoId}

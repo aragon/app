@@ -7,15 +7,15 @@ export interface IFilterComponentPlugin<TMeta extends object = object, TProps ex
      */
     id: string;
     /**
-     * Unique ID to be used on the Tab component.
+     * Unique ID to be used on the Filter component.
      */
     uniqueId: string;
     /**
-     * Label of the plugin to be displayed as on the tab list. Defaults to the plugin id when not set.
+     * Label of the plugin to be displayed as on the filter list. Defaults to the plugin id when not set.
      */
     label: string;
     /**
-     * Metadata of the tab component plugin.
+     * Metadata of the filter component plugin.
      */
     meta: TMeta;
     /**

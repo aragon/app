@@ -5,9 +5,9 @@ import * as UseDaoPluginsModule from '@/shared/hooks/useDaoPlugins';
 import {
     generateDao,
     generateDaoPlugin,
+    generateFilterComponentPlugin,
     generateReactQueryResultError,
     generateReactQueryResultSuccess,
-    generateTabComponentPlugin,
 } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 
@@ -29,7 +29,7 @@ describe('<DaoSettingsPageClient /> component', () => {
 
     beforeEach(() => {
         useDaoPluginsSpy.mockReturnValue([
-            generateTabComponentPlugin({
+            generateFilterComponentPlugin({
                 id: 'one',
                 uniqueId: '1',
                 label: 'one',
@@ -81,8 +81,8 @@ describe('<DaoSettingsPageClient /> component', () => {
 
     it('renders the governance processes of the DAO', () => {
         const plugins = [
-            generateTabComponentPlugin({ uniqueId: '1', meta: generateDaoPlugin({ description: 'one' }) }),
-            generateTabComponentPlugin({ uniqueId: '2', meta: generateDaoPlugin({ description: 'two' }) }),
+            generateFilterComponentPlugin({ uniqueId: '1', meta: generateDaoPlugin({ description: 'one' }) }),
+            generateFilterComponentPlugin({ uniqueId: '2', meta: generateDaoPlugin({ description: 'two' }) }),
         ];
         hasSupportedPluginsSpy.mockReturnValue(true);
         useDaoPluginsSpy.mockReturnValue(plugins);

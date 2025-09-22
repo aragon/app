@@ -1,5 +1,5 @@
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
+import { generateDaoPlugin, generateFilterComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { DaoMembersPageClient, type IDaoMembersPageClientProps } from './daoMembersPageClient';
 
@@ -15,7 +15,7 @@ describe('<DaoMembersPageClient /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
 
     beforeEach(() => {
-        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
+        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin({ meta: generateDaoPlugin() })]);
     });
 
     afterEach(() => {

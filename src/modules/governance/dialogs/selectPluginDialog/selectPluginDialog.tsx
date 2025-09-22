@@ -1,6 +1,6 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
-import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
+import type { ITabComponentPlugin } from '@/shared/components/PluginFilterComponent';
 import { ProcessDataListItem } from '@/shared/components/processDataListItem';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';

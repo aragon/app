@@ -1,13 +1,13 @@
 import { Network } from '@/shared/api/daoService';
-import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
+import type { IPluginFilterComponentProps } from '@/shared/components/pluginFilterComponent';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
+import { generateDaoPlugin, generateFilterComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { VoteList, type IVoteListProps } from './voteList';
 
-jest.mock('@/shared/components/pluginTabComponent', () => ({
-    PluginTabComponent: (props: { slotId: string; plugins: ITabComponentPlugin[] }) => (
+jest.mock('@/shared/components/pluginFilterComponent', () => ({
+    PluginFilterComponent: (props: { slotId: string; plugins: IPluginFilterComponentProps[] }) => (
         <div data-testid="plugin-component-mock" data-slotid={props.slotId} data-plugins={props.plugins[0].id} />
     ),
 }));
@@ -31,7 +31,7 @@ describe('<VoteList /> component', () => {
 
     it('renders a plugin tab component with the process plugins and the dao-vote-list slot id', () => {
         const daoPlugin = generateDaoPlugin({ address: '0x1239478' });
-        const plugins = [generateTabComponentPlugin({ id: 'token', meta: daoPlugin })];
+        const plugins = [generateFilterComponentPlugin({ id: 'token', meta: daoPlugin })];
         useDaoPluginsSpy.mockReturnValue(plugins);
 
         render(createTestComponent());

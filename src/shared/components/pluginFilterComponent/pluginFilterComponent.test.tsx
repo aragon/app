@@ -33,7 +33,7 @@ describe('<PluginFilterComponent /> component', () => {
         const component = () => <div data-testid="component-mock" />;
         getSlotComponentSpy.mockReturnValue(component);
         render(createTestComponent({ plugins }));
-        expect(screen.queryByRole('tablist')).not.toBeInTheDocument();
+        expect(screen.queryByRole('group')).not.toBeInTheDocument();
         expect(screen.getByTestId('component-mock')).toBeInTheDocument();
     });
 
@@ -43,7 +43,7 @@ describe('<PluginFilterComponent /> component', () => {
         const Fallback = () => <div data-testid="fallback-mock" />;
         getSlotComponentSpy.mockReturnValue(registeredComponent);
         render(createTestComponent({ plugins, Fallback }));
-        expect(screen.queryByRole('tablist')).not.toBeInTheDocument();
+        expect(screen.queryByRole('group')).not.toBeInTheDocument();
         expect(screen.getByTestId('fallback-mock')).toBeInTheDocument();
     });
 
@@ -56,9 +56,9 @@ describe('<PluginFilterComponent /> component', () => {
         const Fallback = () => <div data-testid="fallback-mock" />;
         getSlotComponentSpy.mockReturnValue(registeredComponent);
         render(createTestComponent({ plugins, Fallback }));
-        expect(screen.getByRole('tablist')).toBeInTheDocument();
-        expect(screen.getByRole('tab', { name: plugins[0].label })).toBeInTheDocument();
-        expect(screen.getByRole('tab', { name: plugins[1].label })).toBeInTheDocument();
+        expect(screen.getByRole('group')).toBeInTheDocument();
+        expect(screen.getByRole('radio', { name: plugins[0].label })).toBeInTheDocument();
+        expect(screen.getByRole('radio', { name: plugins[1].label })).toBeInTheDocument();
         expect(screen.getByTestId('fallback-mock')).toBeInTheDocument();
     });
 
@@ -73,9 +73,9 @@ describe('<PluginFilterComponent /> component', () => {
             params.pluginId === 'token' ? tokenComponent : multisigComponent,
         );
         render(createTestComponent({ plugins }));
-        expect(screen.getByRole('tablist')).toBeInTheDocument();
-        expect(screen.getByRole('tab', { name: plugins[0].label })).toBeInTheDocument();
-        expect(screen.getByRole('tab', { name: plugins[1].label })).toBeInTheDocument();
+        expect(screen.getByRole('group')).toBeInTheDocument();
+        expect(screen.getByRole('radio', { name: plugins[0].label })).toBeInTheDocument();
+        expect(screen.getByRole('radio', { name: plugins[1].label })).toBeInTheDocument();
         expect(screen.getByTestId('token-component')).toBeInTheDocument();
     });
 
@@ -89,7 +89,7 @@ describe('<PluginFilterComponent /> component', () => {
         render(createTestComponent({ plugins, onValueChange }));
 
         expect(screen.getByText('component-1')).toBeInTheDocument();
-        await userEvent.click(screen.getByRole('tab', { name: plugins[1].label }));
+        await userEvent.click(screen.getByRole('radio', { name: plugins[1].label }));
         expect(screen.getByText('component-2')).toBeInTheDocument();
         expect(onValueChange).toHaveBeenCalledWith(plugins[1]);
     });
