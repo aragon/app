@@ -67,7 +67,6 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
                 />
             </Dialog.Content>
             <Dialog.Footer
-                hasError={hasSimulationFailed}
                 primaryAction={{
                     type: 'submit',
                     form: formId,

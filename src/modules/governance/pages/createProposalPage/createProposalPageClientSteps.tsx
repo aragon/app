@@ -8,7 +8,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { useWatch } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { CreateProposalForm, type ICreateProposalFormData } from '../../components/createProposalForm';
 import { useCreateProposalFormContext } from '../../components/createProposalForm/createProposalFormProvider';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
@@ -37,6 +37,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
+    const { formState } = useFormContext();
 
     const addActions = useWatch<ICreateProposalFormData>({ name: 'addActions' });
     const actions = useWatch<Record<string, ICreateProposalFormData['actions']>>({ name: 'actions' });
@@ -50,6 +51,11 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
     const hideSettingsStep = pluginRegistryUtils.getSlotComponent({ slotId, pluginId }) == null;
 
     const handleSimulateActions = async () => {
+        // Prevent running simulation if form is invalid.
+        if (!formState.isValid) {
+            return;
+        }
+
         const processedActions = await publishProposalDialogUtils.prepareActions({ actions, prepareActions });
 
         const { network } = daoUtils.parseDaoId(daoId);

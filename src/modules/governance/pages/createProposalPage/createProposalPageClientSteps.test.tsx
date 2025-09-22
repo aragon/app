@@ -1,7 +1,7 @@
 import * as DialogProvider from '@/shared/components/dialogProvider';
 import type { IWizardPageStepProps } from '@/shared/components/wizards/wizardPage';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateDialogContext, generateFilterComponentPlugin } from '@/shared/testUtils';
+import { generateDialogContext, generateFilterComponentPlugin, generateFormContext } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { render, screen } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
@@ -35,6 +35,7 @@ describe('<CreateProposalPageClientSteps /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const getSlotComponentSpy = jest.spyOn(pluginRegistryUtils, 'getSlotComponent');
     const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
+    const useFormContext = jest.spyOn(ReactHookForm, 'useFormContext');
     const useCreateProposalFormContextSpy = jest.spyOn(CreateProposalProvider, 'useCreateProposalFormContext');
 
     beforeEach(() => {
@@ -42,6 +43,7 @@ describe('<CreateProposalPageClientSteps /> component', () => {
         useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin()]);
         getSlotComponentSpy.mockReturnValue(undefined);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
+        useFormContext.mockReturnValue(generateFormContext());
         useCreateProposalFormContextSpy.mockReturnValue({
             prepareActions: {},
             addPrepareAction: jest.fn(),
@@ -53,6 +55,7 @@ describe('<CreateProposalPageClientSteps /> component', () => {
         useDaoPluginsSpy.mockReset();
         getSlotComponentSpy.mockReset();
         useDialogContextSpy.mockReset();
+        useFormContext.mockReset();
         useCreateProposalFormContextSpy.mockReset();
     });
 
