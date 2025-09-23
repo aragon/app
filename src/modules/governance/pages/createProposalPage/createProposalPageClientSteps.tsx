@@ -37,7 +37,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const { formState } = useFormContext();
+    const { trigger } = useFormContext();
 
     const addActions = useWatch<ICreateProposalFormData>({ name: 'addActions' });
     const actions = useWatch<Record<string, ICreateProposalFormData['actions']>>({ name: 'actions' });
@@ -52,7 +52,8 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
 
     const handleSimulateActions = async () => {
         // Prevent running simulation if form is invalid.
-        if (!formState.isValid) {
+        const isValid = await trigger();
+        if (!isValid) {
             return;
         }
 
