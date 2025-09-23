@@ -6,6 +6,7 @@ import type { IPluginProposalCreationSettingsParams } from '@/modules/createDao/
 import { useFormField } from '@/shared/hooks/useFormField';
 import { addressUtils, CheckboxCard, type CheckboxState } from '@aragon/gov-ui-kit';
 import { BodyType } from '../../../types/enum';
+import { createProcessFormUtils } from '../createProcessFormUtils';
 
 export interface IProposalCreationSettingsDefaultProps extends IPluginProposalCreationSettingsParams {}
 
@@ -30,7 +31,7 @@ export const ProposalCreationSettingsDefault: React.FC<IProposalCreationSettings
 
     return (
         <CheckboxCard
-            avatar={isExternal && body.isSafe ? safeWallet.src : undefined}
+            avatar={createProcessFormUtils.isBodySafe(body) ? safeWallet.src : undefined}
             label={name}
             description={description}
             onCheckedChange={handleCheckedChange}

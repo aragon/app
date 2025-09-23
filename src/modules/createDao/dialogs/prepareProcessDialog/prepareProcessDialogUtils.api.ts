@@ -71,7 +71,7 @@ export interface IBuildProcessProposalActionsParams {
      */
     executeConditionAddress?: Hex;
     /**
-     * Addresses of the Safe conditions for bodies enabled to create proposals.
+     * Addresses of the Safe condition contracts for bodies enabled to create proposals.
      */
     safeConditionAddresses?: Hex[];
 }

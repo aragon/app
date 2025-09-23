@@ -355,7 +355,7 @@ describe('sppTransaction utils', () => {
             // Should include both existing condition address and new condition address
             expect(buildRuleConditionsSpy).toHaveBeenCalledWith(
                 ['0xConditionAddress', '0xNewCondition'], // All condition addresses combined
-                [], // Empty permissions array
+                [],
             );
 
             expect(result).toBeDefined();
@@ -407,7 +407,7 @@ describe('sppTransaction utils', () => {
             // New body conditions are filtered by canCreateProposal in the implementation
             expect(buildRuleConditionsSpy).toHaveBeenLastCalledWith(
                 [existingBodyCanCreate.proposalCreationConditionAddress, '0xNewCondition1'],
-                [], // Empty permissions array
+                [],
             );
         });
 
@@ -447,7 +447,7 @@ describe('sppTransaction utils', () => {
             // Should include new body condition addresses and safe condition addresses
             expect(buildRuleConditionsSpy).toHaveBeenCalledWith(
                 ['0xNewCondition', '0xSafeCondition1', '0xSafeCondition2'],
-                [], // Empty permissions array
+                [],
             );
 
             expect(result).toBeDefined();

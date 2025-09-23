@@ -11,10 +11,15 @@ import {
 } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils, type ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { encodeFunctionData, parseEventLogs, type Hex, type TransactionReceipt } from 'viem';
-import { GovernanceType, ProcessPermission, type ICreateProcessFormData } from '../../components/createProcessForm';
+import {
+    createProcessFormUtils,
+    GovernanceType,
+    ProcessPermission,
+    type ICreateProcessFormData,
+} from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
 import { BodyType } from '../../types/enum';
-import { type ISetupBodyFormExternal, type ISetupBodyFormNew } from '../setupBodyDialog';
+import type { ISetupBodyFormExternal, ISetupBodyFormNew } from '../setupBodyDialog';
 import type {
     IBuildDeployExecuteSelectorConditionDataParams,
     IBuildPrepareInstallPluginActionParams,
@@ -192,7 +197,7 @@ class PrepareProcessDialogUtils {
         const safeBodies = values.stages
             .flatMap((stage) => stage.bodies)
             .filter(
-                (body) => body.canCreateProposal && body.type === BodyType.EXTERNAL && body.isSafe,
+                (body) => body.canCreateProposal && createProcessFormUtils.isBodySafe(body),
             ) as ISetupBodyFormExternal[];
 
         const safeInstallData = safeBodies.map((body) =>

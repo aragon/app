@@ -12,6 +12,7 @@ import classNames from 'classnames';
 import { useWatch } from 'react-hook-form';
 import { BodyType } from '../../../../../types/enum';
 import { GovernanceType, type ICreateProcessFormData } from '../../../createProcessFormDefinitions';
+import { createProcessFormUtils } from '../../../createProcessFormUtils';
 import { GovernanceBodiesFieldItemDefault } from './governanceBodiesFieldItemDefault';
 
 export interface IGovernanceBodyFieldProps {
@@ -71,7 +72,7 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
                             isNew ? plugin?.installVersion.release.toString() : isExternal ? undefined : body.release
                         }
                         build={isNew ? plugin?.installVersion.build.toString() : isExternal ? undefined : body.build}
-                        logoSrc={isExternal && body.isSafe ? safeWallet.src : undefined}
+                        logoSrc={createProcessFormUtils.isBodySafe(body) ? safeWallet.src : undefined}
                     />
                 </Accordion.ItemHeader>
                 <Accordion.ItemContent className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6">

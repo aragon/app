@@ -37,13 +37,6 @@ export const useSppPermissionCheckProposalCreation = (
         })?.({ plugin, daoId, useConnectedUserInfo }),
     );
 
-    // Allow proposal creation if either:
-    // OLD LOGIC:
-    //   - All plugins are unrestricted.
-    //   - User has permission on at least one restricted plugin.
-    // NEW LOGIC:
-    //   - Simulation is successful.
-    //
     // GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION is now used only to get settings in the SPP case (we still miss settings for Safe bodies, though).
     const permissionGranted = hasSimulationSucceeded;
 

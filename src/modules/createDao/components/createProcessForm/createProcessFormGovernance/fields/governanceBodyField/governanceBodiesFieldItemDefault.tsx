@@ -6,6 +6,7 @@ import { addressUtils, ChainEntityType, DefinitionList, useBlockExplorer } from 
 import type { Hash } from 'viem';
 import { useEnsName } from 'wagmi';
 import { BodyType } from '../../../../../types/enum';
+import { createProcessFormUtils } from '../../../createProcessFormUtils';
 
 export interface IGovernanceBodiesFieldItemDefaultProps {
     /**
@@ -52,7 +53,7 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
             >
                 {addressUtils.truncateAddress(body.address)}
             </DefinitionList.Item>
-            {body.type === BodyType.EXTERNAL && body.isSafe && (
+            {createProcessFormUtils.isBodySafe(body) && (
                 <DefinitionList.Item term={t('app.createDao.createProcessForm.governance.bodyField.default.type')}>
                     {t('app.createDao.createProcessForm.governance.bodyField.default.safe')}
                 </DefinitionList.Item>
