@@ -3,8 +3,6 @@ import { useDao } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
-import { contractUtils } from '@/shared/utils/contractUtils';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, invariant } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
@@ -46,23 +44,11 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
                 addressUtils.isAddressEqual(plugin.address, values.address),
             );
 
-            if (existingPlugin) {
-                // Converts type from EXTERNAL to EXISTING here.
-                onSubmit(
-                    daoProcessDetailsClientUtils.bodyToFormData({
-                        plugin: existingPlugin,
-                        membership: { members: [] },
-                    }),
-                );
-                return;
-            }
+            const processedValues = existingPlugin
+                ? daoProcessDetailsClientUtils.bodyToFormData({ plugin: existingPlugin, membership: { members: [] } })
+                : values;
 
-            // check if it's Safe
-            const { network } = daoUtils.parseDaoId(daoId);
-            const isSafe = await contractUtils.isSafeContract(values.address, network);
-            const updatedValues = { ...values, isSafe };
-
-            onSubmit(updatedValues);
+            onSubmit(processedValues);
         } else {
             onSubmit(values);
         }
