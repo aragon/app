@@ -2,9 +2,9 @@ import { smartContractService } from '@/modules/governance/api/smartContractServ
 import type { Network } from '@/shared/api/daoService';
 import { addressUtils } from '@aragon/gov-ui-kit';
 
-const safeInterfaceIndicators = ['GnosisSafe', 'Safe', 'Gnosis Safe', 'SafeProxy'];
-
 class ContractUtils {
+    private safeInterfaceIndicators = ['GnosisSafe', 'Safe', 'Gnosis Safe', 'SafeProxy'];
+
     /**
      * Checks if a given contract address is a Safe (Gnosis Safe) contract.
      * This function checks the contract name for known Safe-related keywords.
@@ -28,7 +28,7 @@ class ContractUtils {
             }
 
             const contractName = contractAbi.name.toLowerCase();
-            const hasNameIndicator = safeInterfaceIndicators.some((indicator) =>
+            const hasNameIndicator = this.safeInterfaceIndicators.some((indicator) =>
                 contractName.includes(indicator.toLowerCase()),
             );
 
