@@ -70,6 +70,7 @@ const config = tsEslint.config(
             '@typescript-eslint/consistent-type-imports': ['warn', { fixStyle: 'inline-type-imports' }],
             '@typescript-eslint/consistent-type-exports': ['warn', { fixMixedExportsWithInlineTypeSpecifier: true }],
             '@typescript-eslint/non-nullable-type-assertion-style': 'off',
+            '@typescript-eslint/triple-slash-reference': 'off',
             'import/no-cycle': 'warn',
             'react/prop-types': 'off',
             'react/jsx-boolean-value': ['warn', 'always'],
