@@ -46,6 +46,8 @@ export const PluginFilterComponent = <TMeta extends object, TProps extends objec
         onValueChange?.(plugin);
     };
 
+    const activePluginRecord = plugins.find((plugin) => plugin.uniqueId === activePlugin);
+
     if (hasNoContent) {
         return null;
     }
@@ -70,22 +72,17 @@ export const PluginFilterComponent = <TMeta extends object, TProps extends objec
                 ))}
             </ToggleGroup>
 
-            {plugins.map(({ id, uniqueId, props: pluginProps }) => {
-                const isActive = activePlugin === uniqueId;
-                return (
-                    <div key={uniqueId} role="region" hidden={!isActive} className="pt-6">
-                        {isActive ? (
-                            <PluginSingleComponent
-                                slotId={slotId}
-                                pluginId={id}
-                                Fallback={Fallback}
-                                {...pluginProps}
-                                {...otherProps}
-                            />
-                        ) : null}
-                    </div>
-                );
-            })}
+            <div role="region" className="pt-6">
+                {activePluginRecord ? (
+                    <PluginSingleComponent
+                        slotId={slotId}
+                        pluginId={activePluginRecord.id}
+                        Fallback={Fallback}
+                        {...activePluginRecord.props}
+                        {...otherProps}
+                    />
+                ) : null}
+            </div>
         </div>
     );
 };
