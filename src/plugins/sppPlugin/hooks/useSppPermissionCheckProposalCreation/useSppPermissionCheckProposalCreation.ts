@@ -1,5 +1,5 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { useSimulateProposalCreation } from '@/modules/governance/hooks/useSimulateProposal/useSimulateProposalCreation';
+import { useSimulateProposalCreation } from '@/modules/governance/hooks/useSimulateProposal';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
@@ -37,24 +37,6 @@ export const useSppPermissionCheckProposalCreation = (
         })?.({ plugin, daoId, useConnectedUserInfo }),
     );
 
-    if (isSimulationLoading) {
-        return {
-            isLoading: true,
-            isRestricted: false,
-            hasPermission: false,
-            settings: [],
-        };
-    }
-
-    if (hasSimulationSucceeded) {
-        return {
-            isLoading: false,
-            isRestricted: false,
-            hasPermission: true,
-            settings: [],
-        };
-    }
-
     // Allow proposal creation if either:
     // OLD LOGIC:
     //   - All plugins are unrestricted.
@@ -65,7 +47,7 @@ export const useSppPermissionCheckProposalCreation = (
     // GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION is now used only to get settings in the SPP case (we still miss settings for Safe bodies, though).
     const permissionGranted = hasSimulationSucceeded;
 
-    const isLoading = pluginProposalCreationGuardResults.some((result) => result?.isLoading);
+    const isLoading = isSimulationLoading || pluginProposalCreationGuardResults.some((result) => result?.isLoading);
 
     // Individual settings are returned as a nested array, so we need to flatten them
     const settings = pluginProposalCreationGuardResults.flatMap((result) =>
