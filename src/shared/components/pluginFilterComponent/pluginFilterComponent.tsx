@@ -40,9 +40,17 @@ export const PluginFilterComponent = <TMeta extends object, TProps extends objec
         validValues: plugins.map((plugin) => plugin.uniqueId),
     });
 
-    const updateActivePlugin = (uniqueId: string) => {
-        const plugin = plugins.find((plugin) => plugin.uniqueId === uniqueId)!;
-        setActivePlugin(plugin.uniqueId);
+    const handleChange = (uniqueId?: string) => {
+        if (!uniqueId || uniqueId === activePlugin) {
+            return;
+        }
+
+        const plugin = plugins.find((p) => p.uniqueId === uniqueId);
+        if (!plugin) {
+            return;
+        }
+
+        setActivePlugin(uniqueId);
         onValueChange?.(plugin);
     };
 
@@ -60,13 +68,7 @@ export const PluginFilterComponent = <TMeta extends object, TProps extends objec
 
     return (
         <div>
-            <ToggleGroup
-                isMultiSelect={false}
-                defaultValue={activePlugin}
-                onChange={(val) => {
-                    updateActivePlugin(val!);
-                }}
-            >
+            <ToggleGroup isMultiSelect={false} value={activePlugin} onChange={handleChange}>
                 {plugins.map(({ uniqueId, label }) => (
                     <Toggle key={uniqueId} label={label} value={uniqueId} />
                 ))}
