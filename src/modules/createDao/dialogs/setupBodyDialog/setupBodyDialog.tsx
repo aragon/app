@@ -38,7 +38,7 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
         return { ...initialValues, membership: { ...initialValues?.membership, members: [{ address }] } };
     }, [initialValues, address]);
 
-    const handleSubmit = async (values: ISetupBodyForm) => {
+    const handleSubmit = (values: ISetupBodyForm) => {
         if (values.type === BodyType.EXTERNAL) {
             const existingPlugin = dao?.plugins.find((plugin) =>
                 addressUtils.isAddressEqual(plugin.address, values.address),
