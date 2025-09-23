@@ -190,9 +190,10 @@ class PrepareProcessDialogUtils {
         }
 
         const safeBodies = values.stages
-            .flatMap((stage, stageIndex) => stage.bodies.map((body) => ({ ...body, stageIndex })))
-            .filter((body) => body.type === BodyType.EXTERNAL && body.isSafe)
-            .filter((body) => body.canCreateProposal) as ISetupBodyFormExternal[];
+            .flatMap((stage) => stage.bodies)
+            .filter(
+                (body) => body.canCreateProposal && body.type === BodyType.EXTERNAL && body.isSafe,
+            ) as ISetupBodyFormExternal[];
 
         const safeInstallData = safeBodies.map((body) =>
             encodeFunctionData({
