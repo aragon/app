@@ -188,7 +188,6 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         const proposal = generateProposal({ resources: [] });
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
         render(createTestComponent());
-        console.log('I RAN FINE');
         expect(screen.queryByText(/daoProposalDetailsPage.aside.links.title/)).not.toBeInTheDocument();
     });
 
