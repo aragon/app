@@ -9,6 +9,9 @@ class ContractUtils {
      * Checks if a given contract address is a Safe (Gnosis Safe) contract.
      * This function checks the contract name for known Safe-related keywords.
      *
+     * @deprecated For React components, prefer using the useIsSafeContract hook from '@/shared/hooks/useIsSafeContract'
+     * which provides better caching and loading states with React Query.
+     *
      * @param address - The contract address to check
      * @param network - The network where the contract is deployed
      * @returns Promise<boolean> - True if the contract is likely a Safe, false otherwise
