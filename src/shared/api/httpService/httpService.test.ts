@@ -7,8 +7,8 @@ class ServiceTest extends HttpService {}
 describe('Http service', () => {
     const fetchSpy = jest.spyOn(global, 'fetch');
 
-    const generateHttpService = (url = '', errorHandler?: HttpServiceErrorHandler) =>
-        new ServiceTest(url, errorHandler);
+    const generateHttpService = (url = '', errorHandler?: HttpServiceErrorHandler, apiKey?: string) =>
+        new ServiceTest(url, errorHandler, apiKey);
 
     let serviceTest = generateHttpService();
 
@@ -37,7 +37,7 @@ describe('Http service', () => {
             fetchSpy.mockResolvedValue(generateResponse({ ok: true }));
             const url = '/entity';
             await serviceTest.request(url);
-            expect(fetchSpy).toHaveBeenCalledWith(expect.anything(), { cache: 'no-store' });
+            expect(fetchSpy).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ cache: 'no-store' }));
         });
 
         it('throws error from errorHandler property on request error', async () => {
@@ -100,20 +100,28 @@ describe('Http service', () => {
             const options = { method: 'POST', headers: { key: 'value' } };
             const body = { key: 'value' };
             const processedOptions = generateHttpService()['buildOptions'](options, body);
-            expect(processedOptions.headers).toEqual({ 'Content-type': 'application/json', ...options.headers });
+            expect(processedOptions.headers.get('Content-type')).toEqual('application/json');
+            expect(processedOptions.headers.get('key')).toEqual(options.headers.key);
         });
 
         it('does not append content-type header when request type is POST and body is FormData', () => {
             const options = { method: 'POST' };
             const body = new FormData();
             const processedOptions = generateHttpService()['buildOptions'](options, body);
-            expect(processedOptions.headers).toBeUndefined();
+            expect(processedOptions.headers).toEqual(new Headers());
         });
 
         it('returns default options when parameter is not defined', () => {
             const processedOptions = generateHttpService()['buildOptions']({});
-            expect(processedOptions.headers).toBeUndefined();
+            expect(processedOptions.headers).toEqual(new Headers());
             expect(processedOptions.method).toBeUndefined();
+        });
+
+        it('appends the authorization header when the apiKey parameter is set', () => {
+            const apiKey = 'test-api-key';
+            serviceTest = generateHttpService('', undefined, apiKey);
+            const processedOptions = serviceTest['buildOptions']({});
+            expect(processedOptions.headers.get('Authorization')).toEqual(`Bearer ${apiKey}`);
         });
     });
 
