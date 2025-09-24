@@ -40,7 +40,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
     const { trigger } = useFormContext();
 
     const addActions = useWatch<ICreateProposalFormData>({ name: 'addActions' });
-    const actions = useWatch<Record<string, ICreateProposalFormData['actions']>>({ name: 'actions' });
+    const actions = useWatch<ICreateProposalFormData['actions']>({ name: 'actions' });
     const { prepareActions } = useCreateProposalFormContext();
 
     const [metadataStep, actionsStep, settingsStep] = steps;
