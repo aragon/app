@@ -1,7 +1,7 @@
 'use client';
 
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import { type IPluginTabComponentProps, PluginTabComponent } from '@/shared/components/pluginTabComponent';
+import { type IPluginFilterComponentProps, PluginFilterComponent } from '@/shared/components/pluginFilterComponent';
 import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
 import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
@@ -11,7 +11,7 @@ import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DaoMemberListDefault } from './daoMemberListDefault';
 
 export interface IDaoMemberListContainerProps
-    extends Pick<IPluginTabComponentProps<IDaoPlugin>, 'value' | 'onValueChange'> {
+    extends Pick<IPluginFilterComponentProps<IDaoPlugin>, 'value' | 'onValueChange'> {
     /**
      * Initial parameters to use for fetching the member list.
      */
@@ -49,7 +49,7 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (p
     });
 
     return (
-        <PluginTabComponent
+        <PluginFilterComponent
             slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST}
             plugins={processedPlugins}
             Fallback={DaoMemberListDefault}

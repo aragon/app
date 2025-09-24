@@ -6,8 +6,8 @@ import {
     generateDao,
     generateDaoPlugin,
     generateDialogContext,
+    generateFilterComponentPlugin,
     generateReactQueryResultSuccess,
-    generateTabComponentPlugin,
 } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
@@ -35,7 +35,7 @@ describe('<DaoProposalsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
 
     beforeEach(() => {
-        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
+        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin({ meta: generateDaoPlugin() })]);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: false });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
@@ -76,7 +76,7 @@ describe('<DaoProposalsPageClient /> component', () => {
         getDaoUrlSpy.mockReturnValue(testCreateProposalUrl);
         const plugin = generateDaoPlugin({ address: pluginAddress });
 
-        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: plugin })]);
+        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin({ meta: plugin })]);
         usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: true });
 
         render(createTestComponent({ initialParams }));

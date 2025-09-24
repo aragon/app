@@ -3,9 +3,10 @@
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import { Button, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
 import { DaoList } from '../daoList';
@@ -17,6 +18,8 @@ export interface IExploreDaosProps {
     initialParams: IGetDaoListParams;
 }
 
+export const exploreDaoFilterParam = 'daoFilter';
+
 export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
     const { initialParams } = props;
 
@@ -24,7 +27,12 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
     const { address } = useAccount();
     const { open } = useDialogContext();
 
-    const [daoFilter, setDaoFilter] = useState('all');
+    const [daoFilter, setDaoFilter] = useFilterUrlParam({
+        name: exploreDaoFilterParam,
+        fallbackValue: 'all',
+        validValues: ['all', 'member'],
+        enableUrlUpdate: true,
+    });
 
     // Only update filter when value is defined and not empty string to ensure that one of the filters is always selected
     // Note: value comes back as empty string when toggle is deselected
@@ -39,7 +47,7 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
         if (address == null && daoFilter === 'member') {
             setDaoFilter('all');
         }
-    }, [address, daoFilter]);
+    }, [address, daoFilter, setDaoFilter]);
 
     const memberQueryParams = { sort: 'blockTimestamp', networks: networkUtils.getSupportedNetworks() };
     const memberParams =

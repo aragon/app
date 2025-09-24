@@ -6,8 +6,8 @@ import {
     generateDao,
     generateDaoPlugin,
     generateDialogContext,
+    generateFilterComponentPlugin,
     generateReactQueryResultSuccess,
-    generateTabComponentPlugin,
 } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -31,7 +31,7 @@ describe('<CreateProposalPageClient /> component', () => {
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: false });
-        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin()]);
+        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin()]);
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
     });
 
@@ -65,7 +65,7 @@ describe('<CreateProposalPageClient /> component', () => {
         const open = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
         const plugins = [
-            generateTabComponentPlugin({ id: 'multisig', meta: generateDaoPlugin({ address: pluginAddress }) }),
+            generateFilterComponentPlugin({ id: 'multisig', meta: generateDaoPlugin({ address: pluginAddress }) }),
         ];
         useDaoPluginsSpy.mockReturnValue(plugins);
         render(createTestComponent({ daoId, pluginAddress }));

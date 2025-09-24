@@ -4,8 +4,8 @@ import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
 import {
     generateDao,
     generateDaoPlugin,
+    generateFilterComponentPlugin,
     generateReactQueryResultSuccess,
-    generateTabComponentPlugin,
 } from '@/shared/testUtils';
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
@@ -18,7 +18,7 @@ describe('<DaoProposalListDefaultItem /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
 
     beforeEach(() => {
-        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
+        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin({ meta: generateDaoPlugin() })]);
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
     });
 

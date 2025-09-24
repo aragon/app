@@ -4,7 +4,7 @@ To keep the logic of Plugins isolated, every service, component, utility, and ty
 implemented under the `/plugins` folder. This allows us to easily add, change, and remove supported Plugins.
 
 The Plugin Encapsulation logic is currently implemented through the `pluginRegistryUtils` utility file and other
-components (e.g. `<PluginTabComponent />`) and utilities (e.g. `useSlotSingleFunction`) located under the `/shared`
+components (e.g. `<PluginFilterComponent />`) and utilities (e.g. `useSlotSingleFunction`) located under the `/shared`
 folder.
 
 ## Glossary
@@ -104,7 +104,8 @@ export const initialiseMultisigPlugin = () => {
   React component is located under the `/shared/components` folder and renders a Slot Component from a given Slot ID and
   Plugin ID.
 
-- The [`<PluginTabComponent />`](https://github.com/aragon/app/tree/develop/src/shared/components/pluginTabComponent)
+- The
+  [`<PluginFilterComponent />`](https://github.com/aragon/app/tree/develop/src/shared/components/PluginFilterComponent)
   React component supports rendering multiple Slot Components for the given Slot ID and Plugins. The component renders
   Slot Components through a Tab component to be able to switch between the Slot Component views.
 
