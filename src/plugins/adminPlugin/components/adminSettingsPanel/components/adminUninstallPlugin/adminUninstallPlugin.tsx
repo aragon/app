@@ -1,6 +1,6 @@
 import { SettingsDialogId } from '@/modules/settings/constants/settingsDialogId';
 import type { IGovernanceProcessRequiredDialogParams } from '@/modules/settings/dialogs/governanceProcessRequiredDialog';
-import type { IUninstallProcessDialogParams } from '@/modules/settings/dialogs/uninstallProcessDialog';
+import type { IUninstallProcessAlertDialogParams } from '@/modules/settings/dialogs/uninstallProcessAlertDialog';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -26,8 +26,8 @@ export const AdminUninstallPlugin: React.FC<IAdminUninstallPluginProps> = (props
 
     const handleOpenDialog = () => {
         if (processPlugins.length > 1) {
-            const params: IUninstallProcessDialogParams = { daoId, plugin: adminPlugin };
-            open(SettingsDialogId.UNINSTALL_PROCESS, { params });
+            const params: IUninstallProcessAlertDialogParams = { daoId, plugin: adminPlugin };
+            open(SettingsDialogId.UNINSTALL_PROCESS_ALERT, { params });
         } else {
             const dialogTitle = t('app.plugins.admin.adminUninstallPlugin.fallbackDialogTitle');
             const params: IGovernanceProcessRequiredDialogParams = { daoId, plugin: adminPlugin, title: dialogTitle };
