@@ -1,5 +1,27 @@
 # @aragon/app
 
+## 1.11.0
+
+### Minor Changes
+
+- [#735](https://github.com/aragon/app/pull/735) [`e025ee6`](https://github.com/aragon/app/commit/e025ee6b4a1c143fa23ed94ae9bb8dd3d0aea86b) Thanks [@milosh86](https://github.com/milosh86)! - Implement Tenderly simulations for proposal actions
+
+- [#754](https://github.com/aragon/app/pull/754) [`6f3b6e8`](https://github.com/aragon/app/commit/6f3b6e87d735ced17846ddbd2825b056c88b5a90) Thanks [@milosh86](https://github.com/milosh86)! - Add support for token voting 1.4
+
+### Patch Changes
+
+- [#765](https://github.com/aragon/app/pull/765) [`50079a0`](https://github.com/aragon/app/commit/50079a02740b99bccee602920beb5116879e8801) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Align page error internationalization pattern
+
+- [#767](https://github.com/aragon/app/pull/767) [`34425b8`](https://github.com/aragon/app/commit/34425b8c8a67ebaed4e8c9d43d81eafb11696a57) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement unique enum ID for LockToVote dialog
+
+- [#759](https://github.com/aragon/app/pull/759) [`19d9a09`](https://github.com/aragon/app/commit/19d9a090302ce176cc4983ac37aacaf9c47243e4) Thanks [@milosh86](https://github.com/milosh86)! - Strip all headers from RPC requests to prevent 413 errors
+
+- [#763](https://github.com/aragon/app/pull/763) [`de9bc77`](https://github.com/aragon/app/commit/de9bc7751f625f56131317c6f80107d24a7e89ba) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Fix calculation for stage 'Expiration period' on process details
+
+- [#769](https://github.com/aragon/app/pull/769) [`9820915`](https://github.com/aragon/app/commit/9820915e6a0d7bc4e3081e4d11b80e07c6eec760) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Fix isSupportReached utility for token-based plugins to handle support-threshold setting with decimals
+
+- [#764](https://github.com/aragon/app/pull/764) [`5ee5042`](https://github.com/aragon/app/commit/5ee5042240d2e6a67491b9ecb826dfded54716f7) Thanks [@evanaronson](https://github.com/evanaronson)! - Add Lock To Vote plugin support for ZKsync and ZKsync Sepolia
+
 ## 1.10.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@aragon/app",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "description": "Human-centered DAO infrastructure",
   "author": "Aragon Association",
   "homepage": "https://github.com/aragon/app#readme",
@@ -43,7 +43,7 @@
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.63.0",
     "react-use-measure": "^2.1.7",
-    "recharts": "^2.15.3",
+    "recharts": "^3.2.1",
     "server-only": "^0.0.1",
     "viem": "^2.37.8",
     "wagmi": "^2.17.2"

@@ -2,11 +2,13 @@ import type { HttpServiceErrorHandler, IRequestOptions, IRequestParams } from '.
 
 export class HttpService {
     private baseUrl: string;
-    private errorHandler: HttpServiceErrorHandler | undefined;
+    private errorHandler?: HttpServiceErrorHandler;
+    private apiKey?: string;
 
-    constructor(baseUrl: string, errorHandler?: HttpServiceErrorHandler) {
+    constructor(baseUrl: string, errorHandler?: HttpServiceErrorHandler, apiKey?: string) {
         this.baseUrl = baseUrl;
         this.errorHandler = errorHandler;
+        this.apiKey = apiKey;
     }
 
     request = async <TData, TUrlParams = unknown, TQueryParams = unknown, TBody = unknown>(
@@ -44,10 +46,16 @@ export class HttpService {
 
     private buildOptions = (options?: IRequestOptions, body?: unknown) => {
         const { method, headers, ...otherOptions } = options ?? {};
-        const processedHeaders =
-            method === 'POST' && !(body instanceof FormData)
-                ? { 'Content-type': 'application/json', ...headers }
-                : headers;
+
+        const processedHeaders = new Headers(headers);
+
+        if (method === 'POST' && !(body instanceof FormData)) {
+            processedHeaders.set('Content-type', 'application/json');
+        }
+
+        if (this.apiKey != null) {
+            processedHeaders.set('Authorization', `Bearer ${this.apiKey}`);
+        }
 
         return { method, headers: processedHeaders, ...otherOptions };
     };
