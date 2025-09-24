@@ -39,7 +39,7 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
     const { daoId, proposalPlugin } = location.params;
 
     const { address } = useAccount();
-    invariant(address != null, 'PrepareProcessDialog: user must be connected.');
+    invariant(address != null, 'PreparePluginUninstallationDialog: user must be connected.');
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
