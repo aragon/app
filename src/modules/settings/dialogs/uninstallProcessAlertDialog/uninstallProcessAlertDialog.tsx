@@ -2,15 +2,14 @@ import { GovernanceDialogId } from '@/modules/governance/constants/governanceDia
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
-import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DialogAlert, DialogAlertFooter, invariant } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import type { Hex } from 'viem';
-import { uninstallProcessDialogUtils } from './uninstallProcessDialogUtils';
+import type { IPreparePluginUninstallationDialogParams } from '../preparePluginUninstallationDialog';
 
-export interface IUninstallProcessDialogParams {
+export interface IUninstallProcessAlertDialogParams {
     /**
      * ID of the DAO.
      */
@@ -21,9 +20,9 @@ export interface IUninstallProcessDialogParams {
     plugin: IDaoPlugin;
 }
 
-export interface IUninstallProcessDialogProps extends IDialogComponentProps<IUninstallProcessDialogParams> {}
+export interface IUninstallProcessAlertDialogProps extends IDialogComponentProps<IUninstallProcessAlertDialogParams> {}
 
-export const UninstallProcessDialog: React.FC<IUninstallProcessDialogProps> = (props) => {
+export const UninstallProcessAlertDialog: React.FC<IUninstallProcessAlertDialogProps> = (props) => {
     const { location } = props;
     invariant(location.params != null, 'UninstallProcessDialog: required parameters must be set.');
 
@@ -34,12 +33,8 @@ export const UninstallProcessDialog: React.FC<IUninstallProcessDialogProps> = (p
 
     const [selectedPlugin, setSelectedPlugin] = useState<IDaoPlugin>();
 
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const daoAddress = dao!.address as Hex;
-
-    const handleGuardSuccess = (selectedPlugin: IDaoPlugin) => {
-        const proposal = uninstallProcessDialogUtils.buildProposal(daoAddress, plugin.address as Hex);
-        const params = { proposal, daoId, plugin: selectedPlugin };
+    const handleGuardSuccess = (proposalPlugin: IDaoPlugin) => {
+        const params: IPreparePluginUninstallationDialogParams = { daoId, uninstallPlugin: plugin, proposalPlugin };
         open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
     };
 

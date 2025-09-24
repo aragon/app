@@ -8,7 +8,7 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { Button, DefinitionList } from '@aragon/gov-ui-kit';
 import { SettingsDialogId } from '../../constants/settingsDialogId';
 import type { IGovernanceProcessRequiredDialogParams } from '../../dialogs/governanceProcessRequiredDialog';
-import type { IUninstallProcessDialogParams } from '../../dialogs/uninstallProcessDialog';
+import type { IUninstallProcessAlertDialogParams } from '../../dialogs/uninstallProcessAlertDialog';
 
 export interface IDaoProcessDetailsInfoProps {
     /**
@@ -41,8 +41,8 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
 
     const handleUninstallProcess = () => {
         if (processPlugins.length > 1) {
-            const params: IUninstallProcessDialogParams = { daoId, plugin };
-            open(SettingsDialogId.UNINSTALL_PROCESS, { params });
+            const params: IUninstallProcessAlertDialogParams = { daoId, plugin };
+            open(SettingsDialogId.UNINSTALL_PROCESS_ALERT, { params });
         } else {
             const dialogTitle = t('app.settings.daoProcessDetailsInfo.fallbackDialogTitle');
             const params: IGovernanceProcessRequiredDialogParams = { daoId, plugin, title: dialogTitle };

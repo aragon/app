@@ -2077,6 +2077,22 @@
         "title": "Publish contract upgrades",
         "transactionInfoTitle": "Prepare installation"
       },
+      "preparePluginUninstallationDialog": {
+        "button": {
+          "submit": "Prepare uninstallation"
+        },
+        "description": "To uninstall your governance process, confirm the two onchain transactions in your wallet.",
+        "publishUninstallProposal": {
+          "button": {
+            "submit": "Propose uninstallation"
+          },
+          "description": "To uninstall your governance process, confirm the two onchain transactions in your wallet.",
+          "title": "Publish process uninstallation",
+          "transactionInfoTitle": "Propose uninstallation"
+        },
+        "title": "Uninstall process",
+        "transactionInfoTitle": "Prepare uninstallation"
+      },
       "publishDaoContractsUpdateDialog": {
         "button": {
           "submit": "Propose contract upgrades"
