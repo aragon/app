@@ -412,6 +412,10 @@
           "address": {
             "helpText": "Add any address as a body, such as a Safe or Governor",
             "label": "External address"
+          },
+          "safeCheck": {
+            "loading": "Checking if the address is Safe{Wallet}...",
+            "validation": "Please wait for the Safe check to complete"
           }
         },
         "metadata": {

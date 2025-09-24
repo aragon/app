@@ -27,16 +27,28 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
         ...addressField
     } = useFormField<ISetupBodyForm, 'address'>('address', {
         label: t('app.createDao.setupBodyDialog.externalAddress.address.label'),
-        rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
+        rules: {
+            required: true,
+            validate: {
+                isAddress: (value) => addressUtils.isAddress(value),
+                isSafeCheckLoading: () =>
+                    !isSafeCheckLoading || t('app.createDao.setupBodyDialog.externalAddress.safeCheck.validation'),
+            },
+        },
     });
 
-    const { data: isSafe } = useIsSafeContract({ network, address: value });
+    const { data: isSafe, isLoading: isSafeCheckLoading } = useIsSafeContract({
+        network,
+        address: value,
+    });
 
     useEffect(() => {
-        if (isSafe != null) {
-            setValue('isSafe', isSafe);
+        if (isSafeCheckLoading) {
+            return;
         }
-    }, [isSafe, setValue]);
+
+        setValue('isSafe', isSafe);
+    }, [isSafe, isSafeCheckLoading, setValue]);
 
     const [addressInput, setAddressInput] = useState<string | undefined>(value);
 
@@ -46,12 +58,17 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
     };
 
     return (
-        <AddressInput
-            helpText={t('app.createDao.setupBodyDialog.externalAddress.address.helpText')}
-            value={addressInput}
-            onChange={setAddressInput}
-            onAccept={handleAddressAccept}
-            {...addressField}
-        />
+        <div className="flex w-full flex-col gap-3">
+            <AddressInput
+                helpText={t('app.createDao.setupBodyDialog.externalAddress.address.helpText')}
+                value={addressInput}
+                onChange={setAddressInput}
+                onAccept={handleAddressAccept}
+                {...addressField}
+            />
+            {isSafeCheckLoading && (
+                <p className="text-info-800">{t('app.createDao.setupBodyDialog.externalAddress.safeCheck.loading')}</p>
+            )}
+        </div>
     );
 };

@@ -33,21 +33,14 @@ export const useIsSafeContract = (params: IUseIsSafeContractParams, options?: Qu
         { urlParams: { network, address: address as string } },
         {
             enabled,
+            retry: false,
         },
     );
 
     const data = useMemo(() => {
-        if (!isAddressValid) {
-            return false;
-        }
-
-        if (!smartContractAbi) {
-            return undefined;
-        }
-
-        const contractName = smartContractAbi.name.toLowerCase();
-        return safeInterfaceIndicators.some((indicator) => contractName.includes(indicator.toLowerCase()));
-    }, [isAddressValid, smartContractAbi]);
+        const contractName = smartContractAbi?.name.toLowerCase();
+        return safeInterfaceIndicators.some((indicator) => contractName?.includes(indicator.toLowerCase()));
+    }, [smartContractAbi]);
 
     return {
         data,

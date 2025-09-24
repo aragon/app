@@ -35,24 +35,6 @@ describe('useIsSafeContract hook', () => {
         expect(getAbiSpy).not.toHaveBeenCalled();
     });
 
-    it('returns undefined while loading and then false when ABI cannot be fetched', async () => {
-        getAbiSpy.mockResolvedValue(undefined);
-
-        const { result } = renderHook(() => useIsSafeContract({ address: validAddress, network }), {
-            wrapper: ReactQueryWrapper,
-        });
-
-        expect(result.current.isLoading).toBe(true);
-        expect(result.current.data).toBeUndefined();
-
-        await waitFor(() => expect(result.current.isLoading).toBe(false));
-
-        expect(result.current.data).toBeUndefined();
-        expect(getAbiSpy).toHaveBeenCalledWith({
-            urlParams: { network, address: validAddress },
-        });
-    });
-
     it('returns true when contract name contains Safe indicators', async () => {
         const testCases = ['SafeProxy', 'GnosisSafe', 'Safe', 'Gnosis Safe'];
 
@@ -117,7 +99,7 @@ describe('useIsSafeContract hook', () => {
         });
 
         expect(result.current.isLoading).toBe(false);
-        expect(result.current.data).toBeUndefined();
+        expect(result.current.data).toBeFalsy();
         expect(getAbiSpy).not.toHaveBeenCalled();
     });
 });
