@@ -1,10 +1,10 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { contractUtils } from '@/shared/utils/contractUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { AddressInput, addressUtils, type IAddressInputResolvedValue } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useIsSafeContract } from '../../../../../shared/hooks/useIsSafeContract';
 import type { ISetupBodyForm } from '../setupBodyDialogDefinitions';
 
 export interface ISetupBodyDialogExternalAddressProps {
@@ -16,6 +16,7 @@ export interface ISetupBodyDialogExternalAddressProps {
 
 export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAddressProps> = (props) => {
     const { daoId } = props;
+    const { network } = daoUtils.parseDaoId(daoId);
     const { t } = useTranslations();
 
     const { setValue } = useFormContext<ISetupBodyForm>();
@@ -29,17 +30,19 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
         rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
     });
 
-    const [addressInput, setAddressInput] = useState<string | undefined>(value);
+    const { data: isSafe } = useIsSafeContract({ network, address: value });
 
-    const handleAddressAccept = async (value?: IAddressInputResolvedValue) => {
-        onReceiverChange(value?.address);
-        setValue('name', value?.name);
-
-        if (value?.address) {
-            const { network } = daoUtils.parseDaoId(daoId);
-            const isSafe = await contractUtils.isSafeContract(value.address, network);
+    useEffect(() => {
+        if (isSafe != null) {
             setValue('isSafe', isSafe);
         }
+    }, [isSafe, setValue]);
+
+    const [addressInput, setAddressInput] = useState<string | undefined>(value);
+
+    const handleAddressAccept = (value?: IAddressInputResolvedValue) => {
+        onReceiverChange(value?.address);
+        setValue('name', value?.name);
     };
 
     return (
