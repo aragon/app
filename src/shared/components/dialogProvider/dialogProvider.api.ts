@@ -1,4 +1,4 @@
-import type { IDialogRootProps } from '@aragon/gov-ui-kit';
+import type { IDialogAlertRootProps, IDialogRootProps } from '@aragon/gov-ui-kit';
 import type { ComponentType } from 'react';
 
 // Default properties type for dialog components.
@@ -55,7 +55,8 @@ export interface IDialogComponentProps<TParams extends DialogComponentProps = Di
 }
 
 export interface IDialogComponentDefinitions<TParams extends DialogComponentProps = DialogComponentProps>
-    extends Pick<IDialogRootProps, 'hiddenTitle' | 'hiddenDescription' | 'useFocusTrap' | 'size'> {
+    extends Pick<IDialogRootProps, 'hiddenTitle' | 'hiddenDescription' | 'useFocusTrap' | 'size'>,
+        Pick<IDialogAlertRootProps, 'variant'> {
     /**
      * Component to be rendered.
      */

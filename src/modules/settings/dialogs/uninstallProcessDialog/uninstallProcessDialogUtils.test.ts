@@ -1,10 +1,8 @@
-import { PluginInterfaceType } from '@/shared/api/daoService';
-import { generateDaoPlugin } from '@/shared/testUtils';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import type { Hex } from 'viem';
-import { adminUninstallProcessDialogSelectUtils } from './adminUninstallProcessDialogSelectUtils';
+import { uninstallProcessDialogUtils } from './uninstallProcessDialogUtils';
 
-describe('adminUninstallSelectProcessDialogUtils', () => {
+describe('uninstallProcessDialogUtils', () => {
     const buildRevokePermissionTransactionSpy = jest.spyOn(
         permissionTransactionUtils,
         'buildRevokePermissionTransaction',
@@ -21,22 +19,14 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
     describe('buildProposalParams', () => {
         it('builds the correct proposal parameters', () => {
             const daoAddress: Hex = '0xDaoAddress';
-            const daoId = 'dao-123';
             const adminAddress: Hex = '0xPluginSetupProcessor';
             const permissionId = 'EXECUTE_PERMISSION';
-
-            const plugin = generateDaoPlugin({ address: '0x123', interfaceType: PluginInterfaceType.ADMIN });
 
             const to = '0xTo';
             const data = '0xData';
             buildRevokePermissionTransactionSpy.mockReturnValue({ to, data, value: BigInt(0) });
 
-            const result = adminUninstallProcessDialogSelectUtils.buildProposalParams(
-                daoAddress,
-                adminAddress,
-                plugin,
-                daoId,
-            );
+            const result = uninstallProcessDialogUtils.buildProposal(daoAddress, adminAddress);
 
             expect(buildRevokePermissionTransactionSpy).toHaveBeenCalledWith({
                 where: daoAddress,
@@ -45,13 +35,9 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
                 to: daoAddress,
             });
 
-            expect(result).toMatchObject({
-                proposal: {
-                    ...adminUninstallProcessDialogSelectUtils.prepareProposalMetadata(),
-                    actions: [{ to, data, value: BigInt(0) }],
-                },
-                daoId,
-                plugin,
+            expect(result).toEqual({
+                ...uninstallProcessDialogUtils.prepareProposalMetadata(),
+                actions: [{ to, data, value: BigInt(0) }],
             });
         });
     });
