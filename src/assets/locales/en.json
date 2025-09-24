@@ -2101,7 +2101,7 @@
         "title": "Publish contract upgrades",
         "transactionInfoTitle": "Propose contract upgrades"
       },
-      "uninstallProcessDialog": {
+      "uninstallPluginAlertDialog": {
         "a11y": {
           "description": "Confirm uninstallation of the process"
         },
@@ -2110,10 +2110,10 @@
           "select": "Select process"
         },
         "description": {
-          "1": "You have to create and pass a proposal in another governance process to remove admin control from the DAO.",
-          "2": "This should only be done when the DAO is ready and no longer requires admin control."
+          "1": "You have to create and pass a proposal in another governance process to uninstall this process.",
+          "2": "Once uninstalled, this process will no longer be able to govern the DAO. This should only be done only when you are certain it is not needed and have the other processes needed by the DAO."
         },
-        "title": "Remove all admins"
+        "title": "Uninstall {{name}} ({{slug}}) process"
       },
       "updateDaoContracts": {
         "button": "Upgrade contracts",

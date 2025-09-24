@@ -60,7 +60,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
         hasExecute: fullExecuteOnly,
     })!;
 
-    const processedDaoPlugins = daoPlugins.filter((plugin) => !excludePluginIds?.includes(plugin.id));
+    const processedDaoPlugins = daoPlugins.filter((plugin) => !excludePluginIds?.includes(plugin.uniqueId));
 
     const [selectedPlugin, setSelectedPlugin] = useState(initialPlugin);
 
