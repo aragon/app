@@ -2,7 +2,7 @@ import type { IDialogComponentDefinitions } from '@/shared/components/dialogProv
 import { GovernanceProcessRequiredDialog } from '../dialogs/governanceProcessRequiredDialog';
 import { PrepareDaoContractsUpdateDialog } from '../dialogs/prepareDaoContractsUpdateDialog';
 import { PreparePluginUninstallationDialog } from '../dialogs/preparePluginUninstallationDialog';
-import { UninstallProcessAlertDialog } from '../dialogs/uninstallProcessAlertDialog';
+import { UninstallPluginAlertDialog } from '../dialogs/uninstallPluginAlertDialog';
 import { UpdateDaoContractsListDialog } from '../dialogs/updateDaoContractsListDialog';
 import { SettingsDialogId } from './settingsDialogId';
 
@@ -14,10 +14,10 @@ export const settingsDialogDefinitions: Record<SettingsDialogId, IDialogComponen
         size: 'lg',
         hiddenDescription: 'app.settings.governanceProcessRequiredDialog.a11y.description',
     },
-    [SettingsDialogId.UNINSTALL_PROCESS_ALERT]: {
-        Component: UninstallProcessAlertDialog,
+    [SettingsDialogId.UNINSTALL_PLUGIN_ALERT]: {
+        Component: UninstallPluginAlertDialog,
         size: 'lg',
-        hiddenDescription: 'app.settings.uninstallProcessDialog.a11y.description',
+        hiddenDescription: 'app.settings.uninstallProcessAlertDialog.a11y.description',
         variant: 'critical',
     },
     [SettingsDialogId.PREPARE_PLUGIN_UNINSTALLATION]: { Component: PreparePluginUninstallationDialog },
