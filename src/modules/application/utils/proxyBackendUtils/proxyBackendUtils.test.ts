@@ -4,13 +4,17 @@
 
 import { generateNextRequest, generateResponse } from '@/shared/testUtils';
 import type { NextURL } from 'next/dist/server/web/next-url';
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { ProxyBackendUtils, proxyBackendUtils } from './proxyBackendUtils';
 
 describe('proxyBackend utils', () => {
     const originalEnv = process.env;
     const fetchSpy = jest.spyOn(global, 'fetch');
     const nextResponseJsonSpy = jest.spyOn(NextResponse, 'json');
+
+    beforeEach(() => {
+        fetchSpy.mockResolvedValue(generateResponse());
+    });
 
     afterEach(() => {
         fetchSpy.mockReset();
@@ -27,12 +31,20 @@ describe('proxyBackend utils', () => {
             fetchSpy.mockResolvedValue(fetchReturn);
             nextResponseJsonSpy.mockReturnValue(mockNextResponse);
 
-            const result = await proxyBackendUtils.request(generateNextRequest());
+            const result = await proxyBackendUtils.request(generateNextRequest({ url: 'http://test.com' }));
 
             expect(fetchSpy).toHaveBeenCalled();
             expect(fetchReturn.json).toHaveBeenCalled();
             expect(nextResponseJsonSpy).toHaveBeenCalledWith(parsedResponse, fetchReturn);
             expect(result).toEqual(mockNextResponse);
+        });
+
+        it('appends the authorization header when set', async () => {
+            const apiKey = 'test-api-key-123';
+            process.env.NEXT_SECRET_ARAGON_BACKEND_API_KEY = apiKey;
+            await proxyBackendUtils.request(generateNextRequest({ url: 'http://test.com' }));
+            const request = fetchSpy.mock.calls[0][1] as NextRequest;
+            expect(request.headers.get('Authorization')).toEqual(`Bearer ${apiKey}`);
         });
     });
 
