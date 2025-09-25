@@ -1,7 +1,7 @@
 import * as DialogProvider from '@/shared/components/dialogProvider';
 import type { IWizardPageStepProps } from '@/shared/components/wizards/wizardPage';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateDialogContext, generateFormContext, generateTabComponentPlugin } from '@/shared/testUtils';
+import { generateDialogContext, generateFilterComponentPlugin, generateFormContext } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { render, screen } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
@@ -40,7 +40,7 @@ describe('<CreateProposalPageClientSteps /> component', () => {
 
     beforeEach(() => {
         useWatchSpy.mockReturnValue(true);
-        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin()]);
+        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin()]);
         getSlotComponentSpy.mockReturnValue(undefined);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useFormContext.mockReturnValue(generateFormContext());

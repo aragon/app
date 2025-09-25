@@ -1,12 +1,12 @@
-import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
+import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
+import { generateDaoPlugin, generateFilterComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DaoProposalList, type IDaoProposalListProps } from './daoProposalList';
 
-jest.mock('@/shared/components/pluginTabComponent', () => ({
-    PluginTabComponent: (props: { slotId: string; plugins: ITabComponentPlugin[] }) => (
+jest.mock('@/shared/components/pluginFilterComponent', () => ({
+    PluginFilterComponent: (props: { slotId: string; plugins: IFilterComponentPlugin[] }) => (
         <div data-testid="plugin-component-mock" data-slotid={props.slotId} data-plugins={props.plugins[0].id} />
     ),
 }));
@@ -28,7 +28,7 @@ describe('<DaoProposalList /> component', () => {
     };
 
     it('renders a plugin tab component with the process plugins and the correct slot id', () => {
-        const plugins = [generateTabComponentPlugin({ id: 'token', meta: generateDaoPlugin() })];
+        const plugins = [generateFilterComponentPlugin({ id: 'token', meta: generateDaoPlugin() })];
         useDaoPluginsSpy.mockReturnValue(plugins);
         render(createTestComponent());
         const pluginComponent = screen.getByTestId('plugin-component-mock');

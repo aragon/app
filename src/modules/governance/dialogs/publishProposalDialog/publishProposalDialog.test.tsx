@@ -10,10 +10,10 @@ import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import {
     generateDao,
     generateDaoPlugin,
+    generateFilterComponentPlugin,
     generateReactQueryMutationResultIdle,
     generateReactQueryMutationResultSuccess,
     generateReactQueryResultSuccess,
-    generateTabComponentPlugin,
 } from '@/shared/testUtils';
 import { testLogger, timeUtils } from '@/test/utils';
 import { GukModulesProvider, modulesCopy } from '@aragon/gov-ui-kit';
@@ -42,7 +42,7 @@ describe('<PublishProposalDialog /> component', () => {
     beforeEach(() => {
         useAccountSpy.mockReturnValue({ address: '0x123' } as unknown as Wagmi.UseAccountReturnType);
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
-        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin()]);
+        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin()]);
         usePinJsonSpy.mockReturnValue(generateReactQueryMutationResultIdle());
         buildTransactionSpy.mockReturnValue({ to: '0x123', data: '0x123', value: BigInt(0) });
     });
@@ -159,7 +159,7 @@ describe('<PublishProposalDialog /> component', () => {
         const daoPlugin = generateDaoPlugin();
         const ipfsResult = { IpfsHash: 'test' };
         const proposal = generateProposalCreate();
-        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: daoPlugin })]);
+        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin({ meta: daoPlugin })]);
         usePinJsonSpy.mockReturnValue(generateReactQueryMutationResultSuccess({ data: ipfsResult }));
         const location = generateDialogLocation({ proposal });
 

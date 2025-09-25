@@ -1,21 +1,21 @@
 import type { SlotId } from '@/shared/utils/pluginRegistryUtils';
 import type { IPluginSingleComponentProps } from '../pluginSingleComponent';
 
-export interface ITabComponentPlugin<TMeta extends object = object, TProps extends object = object> {
+export interface IFilterComponentPlugin<TMeta extends object = object, TProps extends object = object> {
     /**
      * ID of the plugin.
      */
     id: string;
     /**
-     * Unique ID to be used on the Tab component.
+     * Unique ID to be used on the Filter component.
      */
     uniqueId: string;
     /**
-     * Label of the plugin to be displayed as on the tab list. Defaults to the plugin id when not set.
+     * Label of the plugin to be displayed as on the filter list. Defaults to the plugin id when not set.
      */
     label: string;
     /**
-     * Metadata of the tab component plugin.
+     * Metadata of the filter component plugin.
      */
     meta: TMeta;
     /**
@@ -24,7 +24,7 @@ export interface ITabComponentPlugin<TMeta extends object = object, TProps exten
     props: TProps;
 }
 
-export interface IPluginTabComponentProps<TMeta extends object = object, TProps extends object = object> {
+export interface IPluginFilterComponentProps<TMeta extends object = object, TProps extends object = object> {
     /**
      * Id of the slot component to load.
      */
@@ -32,15 +32,15 @@ export interface IPluginTabComponentProps<TMeta extends object = object, TProps 
     /**
      * Plugin definitions to load the component from.
      */
-    plugins?: Array<ITabComponentPlugin<TMeta, TProps>>;
+    plugins?: Array<IFilterComponentPlugin<TMeta, TProps>>;
     /**
      * Current active plugin to be displayed, defaults to the first plugin.
      */
-    value?: ITabComponentPlugin<TMeta, TProps>;
+    value?: IFilterComponentPlugin<TMeta, TProps>;
     /**
      * Callback triggered on active plugin change.
      */
-    onValueChange?: (value: ITabComponentPlugin<TMeta, TProps>) => void;
+    onValueChange?: (value: IFilterComponentPlugin<TMeta, TProps>) => void;
     /**
      * Name of the search parameter to be used on the URL when selecting a tab.
      * @default plugin

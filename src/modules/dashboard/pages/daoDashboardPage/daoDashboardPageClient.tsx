@@ -64,7 +64,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const { activePlugin: proposalsPlugin, setActivePlugin: setProposalsPlugin } = useDaoPluginFilterUrlParam({
         daoId,
         type: PluginType.PROCESS,
-        includeGroupTab: true,
+        includeGroupFilter: true,
         name: daoDashboardPageProposalsFilterParam,
     });
 

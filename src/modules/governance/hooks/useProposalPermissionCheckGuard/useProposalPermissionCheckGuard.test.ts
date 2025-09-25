@@ -4,8 +4,8 @@ import * as UseDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import {
     generateDao,
     generateDaoPlugin,
+    generateFilterComponentPlugin,
     generateReactQueryResultSuccess,
-    generateTabComponentPlugin,
 } from '@/shared/testUtils';
 import { renderHook } from '@testing-library/react';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
@@ -32,7 +32,7 @@ describe('useProposalPermissionCheckGuard hook', () => {
 
     it('calls createProposalGuard when canCreateProposal check returns false', () => {
         const checkCreateProposalGuard = jest.fn();
-        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
+        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin({ meta: generateDaoPlugin() })]);
         usePermissionCheckGuardSpy.mockReturnValue({
             result: false,
             check: checkCreateProposalGuard,
@@ -44,7 +44,7 @@ describe('useProposalPermissionCheckGuard hook', () => {
 
     it('does not call createProposalGuard when canCreateProposal check returns true', () => {
         const checkCreateProposalGuard = jest.fn();
-        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
+        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin({ meta: generateDaoPlugin() })]);
         usePermissionCheckGuardSpy.mockReturnValue({
             result: true,
             check: checkCreateProposalGuard,
@@ -65,7 +65,7 @@ describe('useProposalPermissionCheckGuard hook', () => {
         const redirectTab = 'settings';
         const checkCreateProposalGuard = jest.fn();
 
-        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
+        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin({ meta: generateDaoPlugin() })]);
         usePermissionCheckGuardSpy.mockReturnValue({ result: false, check: checkCreateProposalGuard });
         const mockRouter = { push: jest.fn() };
         useRouterSpy.mockReturnValue(mockRouter as unknown as AppRouterInstance);

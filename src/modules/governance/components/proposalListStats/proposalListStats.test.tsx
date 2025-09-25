@@ -1,6 +1,6 @@
 import * as daoService from '@/shared/api/daoService';
 import * as pluginHooks from '@/shared/hooks/useDaoPlugins';
-import { generateDao, generateReactQueryResultSuccess, generateTabComponentPlugin } from '@/shared/testUtils';
+import { generateDao, generateFilterComponentPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import * as formatterUtilsModule from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as proposalHooks from '../../hooks/useProposalListData';
@@ -55,7 +55,7 @@ describe('<ProposalListStats /> component', () => {
             .mockReturnValueOnce(createProposalListData({ proposalList: proposals, itemsCount: 20 }))
             .mockReturnValueOnce(createProposalListData({ proposalList: [], itemsCount: 5 }));
 
-        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin(), generateTabComponentPlugin()]);
+        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin(), generateFilterComponentPlugin()]);
         formatDateSpy.mockReturnValue('13 days ago');
 
         render(createTestComponent());

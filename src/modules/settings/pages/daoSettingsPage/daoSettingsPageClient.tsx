@@ -7,7 +7,7 @@ import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissio
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
-import { PluginTabComponent } from '@/shared/components/pluginTabComponent';
+import { PluginFilterComponent } from '@/shared/components/pluginFilterComponent';
 import { ProcessDataListItem } from '@/shared/components/processDataListItem';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
@@ -97,7 +97,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     return (
         <>
             <Page.Main title={t('app.settings.daoSettingsPage.main.title')}>
-                <PluginTabComponent
+                <PluginFilterComponent
                     plugins={processPlugins}
                     slotId={SettingsSlotId.SETTINGS_PANEL}
                     daoId={daoId}
