@@ -26,7 +26,7 @@ describe('useTokenCurrentDelegate hook', () => {
             }),
         );
 
-        expect(result.current.currentDelegate).toBe(mockDelegate);
+        expect(result.current.data).toBe(mockDelegate);
     });
 
     it('returns null when contract returns undefined data', () => {
@@ -44,7 +44,7 @@ describe('useTokenCurrentDelegate hook', () => {
             }),
         );
 
-        expect(result.current.currentDelegate).toBe(null);
+        expect(result.current.data).toBe(undefined);
     });
 
     it('disables query when tokenAddress is missing', () => {

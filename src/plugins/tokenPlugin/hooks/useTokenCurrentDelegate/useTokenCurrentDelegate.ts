@@ -41,7 +41,7 @@ export const useTokenCurrentDelegate = (params: IUseTokenCurrentDelegateParams):
     });
 
     return {
-        currentDelegate: (data as string) || null,
+        data,
         isLoading,
         isError,
     };

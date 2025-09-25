@@ -1,8 +1,10 @@
+import type { Address } from 'viem';
+
 export interface IUseTokenCurrentDelegateResult {
     /**
      * The current delegate address.
      */
-    currentDelegate: string | null;
+    data?: Address;
     /**
      * Whether the query is loading.
      */

@@ -31,7 +31,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const { currentDelegate, isLoading: isCurrentDelegateLoading } = useTokenCurrentDelegate({
+    const { data: currentDelegate, isLoading: isCurrentDelegateLoading } = useTokenCurrentDelegate({
         userAddress: address,
         tokenAddress: plugin.settings.token.address,
         network: dao!.network,
