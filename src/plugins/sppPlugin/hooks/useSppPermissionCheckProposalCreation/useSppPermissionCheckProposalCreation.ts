@@ -1,7 +1,7 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { useSimulateProposalCreation } from '@/modules/governance/hooks/useSimulateProposal';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, invariant } from '@aragon/gov-ui-kit';
@@ -16,17 +16,14 @@ export const useSppPermissionCheckProposalCreation = (
     const { daoId, plugin, useConnectedUserInfo = true } = params;
 
     const daoPlugins = useDaoPlugins({ daoId, includeSubPlugins: true });
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     invariant(daoPlugins != null, 'useSppPermissionCheckProposalCreation: Plugins are required');
 
-    const {
-        isLoading: isSimulationLoading,
-        isSuccess: hasSimulationSucceeded,
-        data,
-    } = useSimulateProposalCreation({
+    const { isLoading: isSimulationLoading, isSuccess: hasSimulationSucceeded } = useSimulateProposalCreation({
         plugin,
+        network: dao!.network,
     });
-    console.log('datadatadata', data);
     const sppPlugins = plugin.settings.stages.flatMap((stage) => stage.plugins);
 
     // Find the sub plugins that are part of the DAO and filter out any potential undefined values
