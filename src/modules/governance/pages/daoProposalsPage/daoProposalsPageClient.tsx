@@ -83,7 +83,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     return (
         <>
             <Page.Main
-                title={t('app.governance.daoProposalsPage.main.title')}
+                title={t('app.governance.daoProposalsPage.main.title') + 'HELLO'}
                 action={{
                     label: t('app.governance.daoProposalsPage.main.action'),
                     ...actionProps,

@@ -19,10 +19,14 @@ export const useSppPermissionCheckProposalCreation = (
 
     invariant(daoPlugins != null, 'useSppPermissionCheckProposalCreation: Plugins are required');
 
-    const { isLoading: isSimulationLoading, isSuccess: hasSimulationSucceeded } = useSimulateProposalCreation({
+    const {
+        isLoading: isSimulationLoading,
+        isSuccess: hasSimulationSucceeded,
+        data,
+    } = useSimulateProposalCreation({
         plugin,
     });
-
+    console.log('datadatadata', data);
     const sppPlugins = plugin.settings.stages.flatMap((stage) => stage.plugins);
 
     // Find the sub plugins that are part of the DAO and filter out any potential undefined values
