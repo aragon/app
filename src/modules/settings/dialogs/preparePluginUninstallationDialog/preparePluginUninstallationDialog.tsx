@@ -9,6 +9,7 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { invariant } from '@aragon/gov-ui-kit';
 import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
@@ -36,7 +37,7 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
     const { location } = props;
 
     invariant(location.params != null, 'PreparePluginUninstallationDialog: required parameters must be set.');
-    const { daoId, proposalPlugin } = location.params;
+    const { daoId, uninstallPlugin, proposalPlugin } = location.params;
 
     const { address } = useAccount();
     invariant(address != null, 'PreparePluginUninstallationDialog: user must be connected.');
@@ -51,7 +52,10 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
 
     const handlePrepareTransaction = async () => {
         invariant(dao != null, 'PreparePluginUninstallationDialog: DAO not found.');
-        const transaction = await preparePluginUninstallationDialogUtils.buildPrepareUninstallationTransaction();
+        const transaction = await preparePluginUninstallationDialogUtils.buildPrepareUninstallationTransaction(
+            dao,
+            uninstallPlugin,
+        );
 
         return transaction;
     };
@@ -59,16 +63,18 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
     const handlePrepareUninstallationSuccess = (txReceipt: TransactionReceipt) => {
         invariant(dao != null, 'PreparePluginUninstallationDialog: DAO not found.');
 
-        const setupData = preparePluginUninstallationDialogUtils.getPluginUninstallationSetupData(txReceipt);
-        const proposalActions =
-            preparePluginUninstallationDialogUtils.buildApplyUninstallationProposalActions(setupData);
+        const setupData = pluginTransactionUtils.getPluginUninstallSetupData(txReceipt);
+        const uninstallAction = pluginTransactionUtils.buildApplyPluginUninstallationAction({ dao, setupData });
 
-        const proposalMetadata = preparePluginUninstallationDialogUtils.prepareApplyUninstallationProposalMetadata();
+        const proposalMetadata = preparePluginUninstallationDialogUtils.prepareApplyUninstallationProposalMetadata(
+            uninstallPlugin,
+            proposalPlugin,
+        );
         const translationNamespace = 'app.settings.preparePluginUninstallationDialog.publishUninstallProposal';
 
         const txInfo = { title: t(`${translationNamespace}.transactionInfoTitle`), current: 2, total: 2 };
         const params: IPublishProposalDialogParams = {
-            proposal: { ...proposalMetadata, resources: [], actions: proposalActions },
+            proposal: { ...proposalMetadata, resources: [], actions: [uninstallAction] },
             daoId,
             plugin: proposalPlugin,
             translationNamespace,

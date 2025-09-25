@@ -1,5 +1,6 @@
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import type { IPluginInfo } from '@/shared/types';
 import {
     encodeAbiParameters,
     encodeFunctionData,
@@ -9,13 +10,17 @@ import {
     type TransactionReceipt,
 } from 'viem';
 import { permissionTransactionUtils } from '../permissionTransactionUtils';
+import { pluginRegistryUtils } from '../pluginRegistryUtils';
 import type { ITransactionRequest } from '../transactionUtils';
+import { versionComparatorUtils } from '../versionComparatorUtils';
 import { pluginSetupProcessorAbi } from './abi/pluginSetupProcessorAbi';
 import type {
     IBuildApplyPluginsInstallationActionsParams,
     IBuildApplyPluginsUpdateActionsParams,
+    IBuildApplyPluginUninstallationActionParams,
     IPluginInstallationSetupData,
     IPluginSetupVersionTag,
+    IPluginUninstallSetupData,
     IPluginUpdateSetupData,
 } from './pluginTransactionUtils.api';
 
@@ -53,12 +58,37 @@ class PluginTransactionUtils {
         }));
     };
 
+    getPluginUninstallSetupData = (receipt: TransactionReceipt): IPluginUninstallSetupData => {
+        const { logs } = receipt;
+        const eventName = 'UninstallationPrepared';
+        const uninstallationPreparedLog = parseEventLogs({ abi: pluginSetupProcessorAbi, eventName, logs })[0];
+        const { pluginSetupRepo, versionTag, permissions, setupPayload } = uninstallationPreparedLog.args;
+
+        return { pluginAddress: setupPayload.plugin, pluginSetupRepo, versionTag, permissions };
+    };
+
     buildPrepareInstallationData = (pluginAddress: Hex, versionTag: IPluginSetupVersionTag, data: Hex, dao: Hex) => {
         const pluginSetupRef = { pluginSetupRepo: pluginAddress, versionTag };
         const transactionData = encodeFunctionData({
             abi: pluginSetupProcessorAbi,
             functionName: 'prepareInstallation',
             args: [dao, { pluginSetupRef, data }],
+        });
+
+        return transactionData;
+    };
+
+    buildPrepareUninstallData = (dao: IDao, plugin: IDaoPlugin, helpers: Hex[], data: Hex) => {
+        const versionTag = versionComparatorUtils.normaliseComparatorInput(plugin)!;
+        const pluginDefinitions = pluginRegistryUtils.getPlugin(plugin.interfaceType)! as IPluginInfo;
+
+        const pluginSetupRef = { pluginSetupRepo: pluginDefinitions.repositoryAddresses[dao.network], versionTag };
+        const setupPayload = { plugin: plugin.address as Hex, currentHelpers: helpers, data };
+
+        const transactionData = encodeFunctionData({
+            abi: pluginSetupProcessorAbi,
+            functionName: 'prepareUninstallation',
+            args: [dao.address as Hex, { pluginSetupRef, setupPayload }],
         });
 
         return transactionData;
@@ -109,6 +139,24 @@ class PluginTransactionUtils {
             revokeRootTx,
             ...executeWithConditionTransactions,
         ];
+    };
+
+    buildApplyPluginUninstallationAction = (
+        params: IBuildApplyPluginUninstallationActionParams,
+    ): ITransactionRequest => {
+        const { dao, setupData } = params;
+        const { pluginSetupRepo, versionTag, permissions, pluginAddress } = setupData;
+
+        const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
+        const pluginSetupRef = { versionTag, pluginSetupRepo };
+
+        const transactionData = encodeFunctionData({
+            abi: pluginSetupProcessorAbi,
+            functionName: 'applyUninstallation',
+            args: [dao.address as Hex, { plugin: pluginAddress, pluginSetupRef, permissions }],
+        });
+
+        return { to: pluginSetupProcessor, data: transactionData, value: BigInt(0) };
     };
 
     buildApplyPluginsUpdateActions = (params: IBuildApplyPluginsUpdateActionsParams): ITransactionRequest[] => {
