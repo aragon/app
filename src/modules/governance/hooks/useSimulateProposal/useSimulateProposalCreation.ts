@@ -1,7 +1,5 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import { invariant } from '@aragon/gov-ui-kit';
-import { useQuery } from '@tanstack/react-query';
-import { useAccount, usePublicClient } from 'wagmi';
+import { useAccount, useCall } from 'wagmi';
 import { publishProposalDialogUtils } from '../../dialogs/publishProposalDialog/publishProposalDialogUtils';
 
 export interface IUseSimulateProposalCreationParams {
@@ -28,30 +26,16 @@ const dummyCid = 'QmVZjGBGNmkgTsch6E8Eu1EzYJRqZZKQZoc2xRaySanWvs';
  */
 export const useSimulateProposalCreation = (params: IUseSimulateProposalCreationParams) => {
     const { plugin } = params;
-    const viemPublicClient = usePublicClient();
     const { address: userAddress } = useAccount();
 
-    const { isSuccess, isLoading } = useQuery({
-        queryKey: ['simulateProposal', plugin.address, userAddress],
-        queryFn: async () => {
-            invariant(viemPublicClient != null, 'useSimulateProposal: Viem client not available');
-
-            const transaction = await publishProposalDialogUtils.buildTransaction({
-                proposal: dummyProposal,
-                metadataCid: dummyCid,
-                plugin,
-            });
-
-            const result = await viemPublicClient.call({
-                account: userAddress,
-                ...transaction,
-            });
-
-            return result;
-        },
-        enabled: !!userAddress,
-        retry: false,
+    const transactionData = publishProposalDialogUtils.buildTransaction({
+        proposal: dummyProposal,
+        metadataCid: dummyCid,
+        plugin,
     });
 
-    return { isSuccess, isLoading };
+    return useCall({
+        account: userAddress,
+        ...transactionData,
+    });
 };

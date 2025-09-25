@@ -40,7 +40,7 @@ describe('publishProposalDialog utils', () => {
     });
 
     describe('buildTransaction', () => {
-        it('calls the plugin-specific function to prepare the transaction data and resolves with a transaction object', async () => {
+        it('calls the plugin-specific function to prepare the transaction data and resolves with a transaction object', () => {
             const transactionData = '0xfbd56e4100000000000000000000000000000000000000000000000000000000000000e';
             const slotFunction = jest.fn(() => transactionData);
             getSlotFunctionSpy.mockReturnValue(slotFunction);
@@ -53,7 +53,7 @@ describe('publishProposalDialog utils', () => {
             const metadataCid = 'test-cid';
             const plugin = generateDaoPlugin({ address: '0x123', interfaceType: PluginInterfaceType.MULTISIG });
 
-            const transaction = await publishProposalDialogUtils.buildTransaction({ proposal, metadataCid, plugin });
+            const transaction = publishProposalDialogUtils.buildTransaction({ proposal, metadataCid, plugin });
 
             expect(getSlotFunctionSpy).toHaveBeenCalledWith({
                 pluginId: plugin.interfaceType,
