@@ -39,7 +39,7 @@ class PublishProposalDialogUtils {
         return { title, summary, description, resources };
     };
 
-    buildTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
+    buildTransaction = (params: IBuildTransactionParams): ITransactionRequest => {
         const { proposal, metadataCid, plugin } = params;
         const { actions } = proposal;
 
@@ -55,7 +55,7 @@ class PublishProposalDialogUtils {
         const transactionData = buildDataFunction(buildDataParams);
         const transaction = { to: plugin.address as Hex, data: transactionData, value: BigInt(0) };
 
-        return Promise.resolve(transaction);
+        return transaction;
     };
 
     prepareActions = async (params: IPrepareActionsParams) => {

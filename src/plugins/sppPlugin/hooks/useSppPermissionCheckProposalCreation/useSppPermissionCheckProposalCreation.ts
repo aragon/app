@@ -1,6 +1,7 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { useSimulateProposalCreation } from '@/modules/governance/hooks/useSimulateProposal';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, invariant } from '@aragon/gov-ui-kit';
@@ -15,9 +16,14 @@ export const useSppPermissionCheckProposalCreation = (
     const { daoId, plugin, useConnectedUserInfo = true } = params;
 
     const daoPlugins = useDaoPlugins({ daoId, includeSubPlugins: true });
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     invariant(daoPlugins != null, 'useSppPermissionCheckProposalCreation: Plugins are required');
 
+    const { isLoading: isSimulationLoading, isSuccess: hasSimulationSucceeded } = useSimulateProposalCreation({
+        plugin,
+        network: dao!.network,
+    });
     const sppPlugins = plugin.settings.stages.flatMap((stage) => stage.plugins);
 
     // Find the sub plugins that are part of the DAO and filter out any potential undefined values
@@ -32,14 +38,10 @@ export const useSppPermissionCheckProposalCreation = (
         })?.({ plugin, daoId, useConnectedUserInfo }),
     );
 
-    // Allow proposal creation if either:
-    // - All plugins are unrestricted.
-    // - User has permission on at least one restricted plugin.
-    const permissionGranted =
-        pluginProposalCreationGuardResults.every((result) => !result?.isRestricted) ||
-        pluginProposalCreationGuardResults.some((result) => result?.isRestricted && result.hasPermission);
+    // GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION is now used only to get settings in the SPP case (we still miss settings for Safe bodies, though).
+    const permissionGranted = hasSimulationSucceeded;
 
-    const isLoading = pluginProposalCreationGuardResults.some((result) => result?.isLoading);
+    const isLoading = isSimulationLoading || pluginProposalCreationGuardResults.some((result) => result?.isLoading);
 
     // Individual settings are returned as a nested array, so we need to flatten them
     const settings = pluginProposalCreationGuardResults.flatMap((result) =>

@@ -11,6 +11,7 @@ export const generateSetupBodyFormBase = (data?: Partial<ISetupBodyFormBase>): I
     internalId: '0',
     plugin: 'plugin-name',
     type: BodyType.NEW,
+    canCreateProposal: false,
     ...data,
 });
 
@@ -21,7 +22,6 @@ export const generateSetupBodyFormNew = (data?: Partial<ISetupBodyFormNew>): ISe
     resources: [],
     governance: {},
     membership: { members: [] },
-    canCreateProposal: false,
     ...data,
 });
 
@@ -29,6 +29,7 @@ export const generateSetupBodyFormExternal = (data?: Partial<ISetupBodyFormExter
     ...generateSetupBodyFormBase(data),
     type: BodyType.EXTERNAL,
     address: '0x000',
+    isSafe: false,
     ...data,
 });
 
@@ -40,7 +41,6 @@ export const generateSetupBodyFormExisting = (data?: Partial<ISetupBodyFormExist
     governance: {},
     membership: { members: [] },
     proposalCreationConditionAddress: '0xConditionAddress',
-    canCreateProposal: true,
     ...data,
 });
 

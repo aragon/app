@@ -50,7 +50,7 @@ export const SetupBodyDialogSteps: React.FC<ISetupBodyDialogStepsProps> = (props
                 <SetupBodyDialogMetadata />
             </WizardDialog.Step>
             <WizardDialog.Step {...externalAddress} hidden={!isExternalPlugin}>
-                <SetupBodyDialogExternalAddress />
+                <SetupBodyDialogExternalAddress daoId={daoId} />
             </WizardDialog.Step>
             <WizardDialog.Step {...membershipStep} hidden={isExternalPlugin}>
                 <SetupBodyDialogMembership daoId={daoId} />

@@ -7,6 +7,7 @@ import { useEffect, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { BodyType } from '../../../types/enum';
 import { GovernanceType, ProposalCreationMode, type ICreateProcessFormData } from '../createProcessFormDefinitions';
+import { ProposalCreationSettingsDefault } from './proposalCreationSettingsDefault';
 
 export interface ICreateProcessFormProposalCreationProps {}
 
@@ -31,7 +32,7 @@ export const CreateProcessFormProposalCreation: React.FC<ICreateProcessFormPropo
               )
             : [{ ...basicProcessBody, stageIndex: undefined, bodyIndex: 0 }];
 
-        return processedBodies.filter((body) => body.type !== BodyType.EXTERNAL);
+        return processedBodies.filter((body) => body.type !== BodyType.EXTERNAL || body.isSafe);
     }, [isAdvancedGovernance, stages, basicProcessBody]);
 
     const canBodiesCreateProposals = processBodies.some((body) => body.canCreateProposal);
@@ -89,6 +90,7 @@ export const CreateProcessFormProposalCreation: React.FC<ICreateProcessFormPropo
                         mode={mode}
                         disableCheckbox={processBodies.length === 1}
                         formPrefix={getBodyFormPrefix(body.bodyIndex, body.stageIndex)}
+                        Fallback={ProposalCreationSettingsDefault}
                     />
                 ))}
             </InputContainer>

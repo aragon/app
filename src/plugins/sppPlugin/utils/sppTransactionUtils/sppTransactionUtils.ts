@@ -64,6 +64,7 @@ class SppTransactionUtils {
         values: ICreateProcessFormDataAdvanced,
         setupData: IPluginInstallationSetupData[],
         dao: IDao,
+        safeConditionAddresses: Hex[],
     ): ITransactionRequest[] => {
         const daoAddress = dao.address as Hex;
 
@@ -72,7 +73,12 @@ class SppTransactionUtils {
         const [sppSetupData, ...pluginSetupData] = setupData;
 
         const updateStages = this.buildUpdateStagesTransaction(values.stages, sppAddress, pluginAddresses);
-        const updateCreateProposalRules = this.buildUpdateRulesTransaction(values, sppSetupData, pluginSetupData);
+        const updateCreateProposalRules = this.buildUpdateRulesTransaction(
+            values,
+            sppSetupData,
+            pluginSetupData,
+            safeConditionAddresses,
+        );
 
         const updateNewPluginPermissions = pluginAddresses.map((bodyAddress) =>
             this.buildBodyPermissionActions(bodyAddress, daoAddress, sppAddress),
@@ -129,6 +135,7 @@ class SppTransactionUtils {
         values: ICreateProcessFormDataAdvanced,
         sppSetupData: IPluginInstallationSetupData,
         pluginSetupData: IPluginInstallationSetupData[],
+        safeConditionAddresses: Hex[],
     ): ITransactionRequest | undefined => {
         const { stages, proposalCreationMode } = values;
 
@@ -153,7 +160,7 @@ class SppTransactionUtils {
                 return body.canCreateProposal ? [...current, conditionAddress] : current;
             }, []);
 
-        const conditionAddresses = existingConditionAddresses.concat(newConditionAddresses);
+        const conditionAddresses = [...existingConditionAddresses, ...newConditionAddresses, ...safeConditionAddresses];
         const conditionRules = permissionTransactionUtils.buildRuleConditions(conditionAddresses, []);
 
         const transactionData = encodeFunctionData({
