@@ -58,5 +58,10 @@ export const initialiseSppPlugin = () => {
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
             pluginId: sppPlugin.id,
             function: useSppGovernanceSettings,
+        })
+        .registerSlotFunction({
+            slotId: SettingsSlotId.SETTINGS_GET_UNINSTALL_HELPERS,
+            pluginId: sppPlugin.id,
+            function: sppTransactionUtils.getUninstallHelpers,
         });
 };

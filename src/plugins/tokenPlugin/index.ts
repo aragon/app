@@ -133,6 +133,11 @@ export const initialiseTokenPlugin = () => {
             pluginId: tokenPlugin.id,
             function: tokenBodyUtils.pluginToFormData,
         })
+        .registerSlotFunction({
+            slotId: SettingsSlotId.SETTINGS_GET_UNINSTALL_HELPERS,
+            pluginId: tokenPlugin.id,
+            function: tokenTransactionUtils.getUninstallHelpers,
+        })
 
         // Create DAO module slots
         .registerSlotFunction({
