@@ -7,7 +7,6 @@ import type {
 export const generatePluginSetupData = (data?: Partial<IPluginSetupData>): IPluginSetupData => ({
     pluginSetupRepo: '0xPluginSetupRepo',
     versionTag: { release: 1, build: 1 },
-    preparedSetupData: { permissions: [], helpers: [] },
     ...data,
 });
 
@@ -16,11 +15,13 @@ export const generatePluginInstallationSetupData = (
 ): IPluginInstallationSetupData => ({
     ...generatePluginSetupData(),
     pluginAddress: '0x',
+    preparedSetupData: { permissions: [], helpers: [] },
     ...data,
 });
 
 export const generatePluginUpdateSetupData = (data?: Partial<IPluginUpdateSetupData>): IPluginUpdateSetupData => ({
     ...generatePluginSetupData(),
     initData: '0x',
+    preparedSetupData: { permissions: [], helpers: [] },
     ...data,
 });
