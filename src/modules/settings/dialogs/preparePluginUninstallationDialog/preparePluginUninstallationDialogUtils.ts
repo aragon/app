@@ -17,8 +17,8 @@ class PreparePluginUninstallationDialogUtils {
     };
 
     prepareApplyUninstallationProposalMetadata = (uninstallPlugin: IDaoPlugin, proposalPlugin: IDaoPlugin) => {
-        const uninstallPluginInfo = `${daoUtils.getPluginName(uninstallPlugin)} (${uninstallPlugin.slug})`;
-        const proposalPluginInfo = `${daoUtils.getPluginName(proposalPlugin)} (${proposalPlugin.slug})`;
+        const uninstallPluginInfo = `${daoUtils.getPluginName(uninstallPlugin)} (${uninstallPlugin.slug.toUpperCase()})`;
+        const proposalPluginInfo = `${daoUtils.getPluginName(proposalPlugin)} (${proposalPlugin.slug.toUpperCase()})`;
 
         const title = `Uninstall ${uninstallPluginInfo} process`;
         const summary = [
