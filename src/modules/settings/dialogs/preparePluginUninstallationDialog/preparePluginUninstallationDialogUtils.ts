@@ -21,11 +21,12 @@ class PreparePluginUninstallationDialogUtils {
         const proposalPluginInfo = `${daoUtils.getPluginName(proposalPlugin)} (${proposalPlugin.slug})`;
 
         const title = `Uninstall ${uninstallPluginInfo} process`;
-        const summary = `
-            If approved, this proposal will uninstall the ${uninstallPluginInfo} plugin. It will revoke the
-            plugin's permission to execute actions on the DAO's behalf. Vote in favor only if you're confident other
-            installed governance processes are enough for the DAO to function as intended. The current
-            ${proposalPluginInfo} process will not be affected.`;
+        const summary = [
+            `If approved, this proposal will uninstall the ${uninstallPluginInfo} plugin. It will revoke the`,
+            `plugin's permission to execute actions on the DAO's behalf. Vote in favor only if you're confident other`,
+            `installed governance processes are enough for the DAO to function as intended. The current`,
+            `${proposalPluginInfo} process will not be affected`,
+        ].join(' ');
 
         return { title, summary };
     };

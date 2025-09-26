@@ -17,7 +17,7 @@ export const settingsDialogDefinitions: Record<SettingsDialogId, IDialogComponen
     [SettingsDialogId.UNINSTALL_PLUGIN_ALERT]: {
         Component: UninstallPluginAlertDialog,
         size: 'lg',
-        hiddenDescription: 'app.settings.uninstallProcessAlertDialog.a11y.description',
+        hiddenDescription: 'app.settings.uninstallPluginAlertDialog.a11y.description',
         variant: 'critical',
     },
     [SettingsDialogId.PREPARE_PLUGIN_UNINSTALLATION]: { Component: PreparePluginUninstallationDialog },
