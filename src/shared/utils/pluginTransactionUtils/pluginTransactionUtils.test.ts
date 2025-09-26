@@ -5,6 +5,7 @@ import {
     generateDaoPlugin,
     generatePluginInstallationSetupData,
     generatePluginSetupDataPermission,
+    generatePluginUninstallSetupData,
     generatePluginUpdateSetupData,
 } from '@/shared/testUtils';
 import type { Hex } from 'viem';
@@ -265,7 +266,7 @@ describe('pluginTransaction utils', () => {
             setupUpdateDataToActionSpy.mockRestore();
         });
 
-        it('build the transactions required to apply a plugin update', () => {
+        it('builds the transactions required to apply a plugin update', () => {
             const dao = generateDao({ network: Network.BASE_MAINNET });
             const plugin = generateDaoPlugin({ address: '0x123' });
             const setupData = generatePluginUpdateSetupData();
@@ -285,6 +286,30 @@ describe('pluginTransaction utils', () => {
             });
             expect(setupUpdateDataToActionSpy).toHaveBeenCalledWith(dao, plugin, setupData);
             expect(result).toEqual([grantRevokeActions[0], updateAction, grantRevokeActions[1]]);
+        });
+    });
+
+    describe('buildApplyPluginsInstallationActions', () => {
+        it('builds the transactions required to apply a plugin uninstallation', () => {
+            const dao = generateDao({ address: '0x123', network: Network.ETHEREUM_MAINNET });
+            const setupData = generatePluginUninstallSetupData();
+            const grantRevokeActions = [
+                { to: '0x', data: '0xgrant', value: BigInt(0) },
+                { to: '0x', data: '0xrevoke', value: BigInt(0) },
+            ] as const;
+            const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
+            const uninstallActionData = '0xuninstall';
+            const uninstallAction = { to: pluginSetupProcessor, data: uninstallActionData, value: BigInt(0) };
+            encodeFunctionDataSpy.mockReturnValue(uninstallActionData);
+            grantRevokePermissionSpy.mockReturnValue([grantRevokeActions[0], grantRevokeActions[1]]);
+            const result = pluginTransactionUtils.buildApplyPluginUninstallationAction({ dao, setupData });
+            expect(grantRevokePermissionSpy).toHaveBeenCalledWith({
+                where: dao.address,
+                who: pluginSetupProcessor,
+                what: permissionTransactionUtils.permissionIds.rootPermission,
+                to: dao.address,
+            });
+            expect(result).toEqual([grantRevokeActions[0], uninstallAction, grantRevokeActions[1]]);
         });
     });
 
