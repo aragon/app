@@ -5,7 +5,7 @@ import { erc20DelegatesAbi } from './erc20DelegatesAbi';
 import type { IUseTokenCurrentDelegateParams, IUseTokenCurrentDelegateResult } from './useTokenCurrentDelegate.api';
 
 export const useTokenCurrentDelegate = (params: IUseTokenCurrentDelegateParams): IUseTokenCurrentDelegateResult => {
-    const { tokenAddress, userAddress, network, enabled = true } = params;
+    const { tokenAddress, userAddress, network, enabled } = params;
 
     const { id: chainId } = networkDefinitions[network];
 
@@ -15,7 +15,7 @@ export const useTokenCurrentDelegate = (params: IUseTokenCurrentDelegateParams):
         functionName: 'delegates',
         args: [userAddress as Hex],
         query: {
-            enabled: enabled && tokenAddress != null && userAddress != null,
+            enabled: enabled !== false && tokenAddress != null && userAddress != null,
         },
         chainId,
     });
