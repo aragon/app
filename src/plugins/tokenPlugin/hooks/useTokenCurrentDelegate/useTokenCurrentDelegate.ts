@@ -1,28 +1,8 @@
-import type { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type { Hex } from 'viem';
 import { useReadContract } from 'wagmi';
-import type { IUseTokenCurrentDelegateResult } from '../../types';
 import { erc20DelegatesAbi } from './erc20DelegatesAbi';
-
-export interface IUseTokenCurrentDelegateParams {
-    /**
-     * The ERC20 token address to check delegation for.
-     */
-    tokenAddress?: string;
-    /**
-     * The address to check delegation for.
-     */
-    userAddress?: string;
-    /**
-     * The network to make the call on.
-     */
-    network: Network;
-    /**
-     * Whether the query should be enabled.
-     */
-    enabled?: boolean;
-}
+import type { IUseTokenCurrentDelegateParams, IUseTokenCurrentDelegateResult } from './useTokenCurrentDelegate.api';
 
 export const useTokenCurrentDelegate = (params: IUseTokenCurrentDelegateParams): IUseTokenCurrentDelegateResult => {
     const { tokenAddress, userAddress, network, enabled = true } = params;
