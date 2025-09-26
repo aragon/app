@@ -12,6 +12,9 @@ class PreparePluginUninstallationDialogUtils {
     buildPrepareUninstallationTransaction = (dao: IDao, plugin: IDaoPlugin): Promise<ITransactionRequest> => {
         const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
 
+        // Retrieve the plugin-specific helper addresses required to build the prepare-uninstallation transaction. The
+        // returned array must exactly match the helper addresses that were defined during installation preparation of
+        // the plugin.
         const getHelpersFunction = pluginRegistryUtils.getSlotFunction<IGetUninstallHelpersParams, Hex[]>({
             slotId: SettingsSlotId.SETTINGS_GET_UNINSTALL_HELPERS,
             pluginId: plugin.interfaceType,
