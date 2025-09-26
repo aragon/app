@@ -1,1 +1,2 @@
-export { useTokenCurrentDelegate, type IUseTokenCurrentDelegateParams } from './useTokenCurrentDelegate';
+export { useTokenCurrentDelegate } from './useTokenCurrentDelegate';
+export type { IUseTokenCurrentDelegateParams } from './useTokenCurrentDelegate.api';
