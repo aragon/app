@@ -1,6 +1,7 @@
 import type {
     IPluginInstallationSetupData,
     IPluginSetupData,
+    IPluginUninstallSetupData,
     IPluginUpdateSetupData,
 } from '@/shared/utils/pluginTransactionUtils';
 
@@ -23,5 +24,14 @@ export const generatePluginUpdateSetupData = (data?: Partial<IPluginUpdateSetupD
     ...generatePluginSetupData(),
     initData: '0x',
     preparedSetupData: { permissions: [], helpers: [] },
+    ...data,
+});
+
+export const generatePluginUninstallSetupData = (
+    data?: Partial<IPluginUninstallSetupData>,
+): IPluginUninstallSetupData => ({
+    ...generatePluginSetupData(),
+    pluginAddress: '0x',
+    permissions: [],
     ...data,
 });
