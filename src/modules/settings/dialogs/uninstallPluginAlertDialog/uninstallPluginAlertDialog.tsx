@@ -8,6 +8,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { DialogAlert, DialogAlertFooter, invariant } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
+import { SettingsDialogId } from '../../constants/settingsDialogId';
 import type { IPreparePluginUninstallationDialogParams } from '../preparePluginUninstallationDialog';
 
 export interface IUninstallPluginAlertDialogParams {
@@ -36,7 +37,7 @@ export const UninstallPluginAlertDialog: React.FC<IUninstallPluginAlertDialogPro
 
     const handleGuardSuccess = (proposalPlugin: IDaoPlugin) => {
         const params: IPreparePluginUninstallationDialogParams = { daoId, uninstallPlugin, proposalPlugin };
-        open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
+        open(SettingsDialogId.PREPARE_PLUGIN_UNINSTALLATION, { params });
     };
 
     const handlePluginSelected = (proposalPlugin: IDaoPlugin) => {

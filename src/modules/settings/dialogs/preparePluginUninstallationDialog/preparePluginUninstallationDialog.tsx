@@ -64,7 +64,7 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
         invariant(dao != null, 'PreparePluginUninstallationDialog: DAO not found.');
 
         const setupData = pluginTransactionUtils.getPluginUninstallSetupData(txReceipt);
-        const uninstallAction = pluginTransactionUtils.buildApplyPluginUninstallationAction({ dao, setupData });
+        const proposalActions = pluginTransactionUtils.buildApplyPluginUninstallationAction({ dao, setupData });
 
         const proposalMetadata = preparePluginUninstallationDialogUtils.prepareApplyUninstallationProposalMetadata(
             uninstallPlugin,
@@ -74,7 +74,7 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
 
         const txInfo = { title: t(`${translationNamespace}.transactionInfoTitle`), current: 2, total: 2 };
         const params: IPublishProposalDialogParams = {
-            proposal: { ...proposalMetadata, resources: [], actions: [uninstallAction] },
+            proposal: { ...proposalMetadata, resources: [], actions: proposalActions },
             daoId,
             plugin: proposalPlugin,
             translationNamespace,

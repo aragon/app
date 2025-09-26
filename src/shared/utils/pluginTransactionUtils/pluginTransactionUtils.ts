@@ -143,20 +143,30 @@ class PluginTransactionUtils {
 
     buildApplyPluginUninstallationAction = (
         params: IBuildApplyPluginUninstallationActionParams,
-    ): ITransactionRequest => {
+    ): ITransactionRequest[] => {
         const { dao, setupData } = params;
         const { pluginSetupRepo, versionTag, permissions, pluginAddress } = setupData;
 
         const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
-        const pluginSetupRef = { versionTag, pluginSetupRepo };
 
-        const transactionData = encodeFunctionData({
+        // Temporarily grant the ROOT_PERMISSION to the plugin setup processor contract.
+        const [grantRootTx, revokeRootTx] = permissionTransactionUtils.buildGrantRevokePermissionTransactions({
+            where: dao.address as Hex,
+            who: pluginSetupProcessor,
+            what: permissionTransactionUtils.permissionIds.rootPermission,
+            to: dao.address as Hex,
+        });
+
+        const pluginSetupRef = { versionTag, pluginSetupRepo };
+        const uninstallData = encodeFunctionData({
             abi: pluginSetupProcessorAbi,
             functionName: 'applyUninstallation',
             args: [dao.address as Hex, { plugin: pluginAddress, pluginSetupRef, permissions }],
         });
 
-        return { to: pluginSetupProcessor, data: transactionData, value: BigInt(0) };
+        const uninstallAction = { to: pluginSetupProcessor, data: uninstallData, value: BigInt(0) };
+
+        return [grantRootTx, uninstallAction, revokeRootTx];
     };
 
     buildApplyPluginsUpdateActions = (params: IBuildApplyPluginsUpdateActionsParams): ITransactionRequest[] => {
