@@ -1,16 +1,23 @@
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import type { Hex } from 'viem';
+import { SettingsSlotId } from '../../constants/moduleSlots';
+import type { IGetUninstallHelpersParams } from '../../types';
 
 class PreparePluginUninstallationDialogUtils {
     buildPrepareUninstallationTransaction = (dao: IDao, plugin: IDaoPlugin): Promise<ITransactionRequest> => {
-        const { proposalCreationConditionAddress } = plugin;
         const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
 
-        const helpers = proposalCreationConditionAddress != null ? [proposalCreationConditionAddress as Hex] : [];
+        const getHelpersFunction = pluginRegistryUtils.getSlotFunction<IGetUninstallHelpersParams, Hex[]>({
+            slotId: SettingsSlotId.SETTINGS_GET_UNINSTALL_HELPERS,
+            pluginId: plugin.interfaceType,
+        });
+
+        const helpers = getHelpersFunction?.({ plugin }) ?? [];
         const prepareUninstallData = pluginTransactionUtils.buildPrepareUninstallData(dao, plugin, helpers, '0x');
 
         return Promise.resolve({ data: prepareUninstallData, value: BigInt(0), to: pluginSetupProcessor });

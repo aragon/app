@@ -6,6 +6,7 @@ import type {
     IBuildVoteDataParams,
 } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
+import type { IGetUninstallHelpersParams } from '@/modules/settings/types';
 import type { ITokenSetupGovernanceForm } from '@/plugins/tokenPlugin/components/tokenSetupGovernance';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
@@ -17,6 +18,7 @@ import type {
     ILockToVoteSetupMembershipMember,
 } from '../../components/lockToVoteSetupMembership';
 import { lockToVotePlugin } from '../../constants/lockToVotePlugin';
+import type { ILockToVotePlugin } from '../../types';
 import { lockManagerAbi, lockToVoteAbi } from './lockToVoteAbi';
 import { lockToVotePluginSetupAbi } from './lockToVotePluginAbi';
 
@@ -38,6 +40,8 @@ export interface IPrepareTokenInstallDataParams
     > {}
 
 class LockToVoteTransactionUtils {
+    private anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';
+
     buildPrepareInstallData = (params: IPrepareTokenInstallDataParams) => {
         const { body, metadata, dao, stageVotingPeriod } = params;
         const { token } = body.membership;
@@ -68,29 +72,6 @@ class LockToVoteTransactionUtils {
         return transactionData;
     };
 
-    private buildInstallDataVotingSettings = (params: IPrepareTokenInstallDataParams) => {
-        const { body, stageVotingPeriod } = params;
-
-        const { votingMode, supportThreshold, minParticipation, minProposerVotingPower, minDuration } = body.governance;
-        const { decimals } = body.membership.token;
-
-        const stageVotingPeriodSeconds = stageVotingPeriod ? dateUtils.durationToSeconds(stageVotingPeriod) : undefined;
-
-        const processedVotingPeriod = stageVotingPeriodSeconds ?? minDuration;
-        const parsedProposerVotingPower = parseUnits(minProposerVotingPower, decimals);
-
-        const votingSettings = {
-            votingMode,
-            supportThresholdRatio: tokenSettingsUtils.percentageToRatio(supportThreshold),
-            minParticipationRatio: tokenSettingsUtils.percentageToRatio(minParticipation),
-            minApprovalRatio: 0,
-            proposalDuration: BigInt(processedVotingPeriod),
-            minProposerVotingPower: parsedProposerVotingPower,
-        };
-
-        return votingSettings;
-    };
-
     buildCreateProposalData = (
         params: IBuildCreateProposalDataParams<ICreateLockToVoteProposalFormData, ITokenPluginSettings>,
     ): Hex => {
@@ -119,6 +100,40 @@ class LockToVoteTransactionUtils {
         return data;
     };
 
+    getUninstallHelpers = (params: IGetUninstallHelpersParams<ILockToVotePlugin>): Hex[] => {
+        const { plugin } = params;
+
+        return [
+            plugin.proposalCreationConditionAddress,
+            plugin.lockManagerAddress,
+            this.anyAddress,
+            this.anyAddress,
+        ] as Hex[];
+    };
+
+    private buildInstallDataVotingSettings = (params: IPrepareTokenInstallDataParams) => {
+        const { body, stageVotingPeriod } = params;
+
+        const { votingMode, supportThreshold, minParticipation, minProposerVotingPower, minDuration } = body.governance;
+        const { decimals } = body.membership.token;
+
+        const stageVotingPeriodSeconds = stageVotingPeriod ? dateUtils.durationToSeconds(stageVotingPeriod) : undefined;
+
+        const processedVotingPeriod = stageVotingPeriodSeconds ?? minDuration;
+        const parsedProposerVotingPower = parseUnits(minProposerVotingPower, decimals);
+
+        const votingSettings = {
+            votingMode,
+            supportThresholdRatio: tokenSettingsUtils.percentageToRatio(supportThreshold),
+            minParticipationRatio: tokenSettingsUtils.percentageToRatio(minParticipation),
+            minApprovalRatio: 0,
+            proposalDuration: BigInt(processedVotingPeriod),
+            minProposerVotingPower: parsedProposerVotingPower,
+        };
+
+        return votingSettings;
+    };
+
     private buildLockAndVoteData = (params: IBuildVoteDataParams<number, ILockToVoteOption>): Hex => {
         const { proposalIndex, vote } = params;
 
@@ -142,8 +157,6 @@ class LockToVoteTransactionUtils {
 
         return data;
     };
-
-    private anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';
 }
 
 export const lockToVoteTransactionUtils = new LockToVoteTransactionUtils();
