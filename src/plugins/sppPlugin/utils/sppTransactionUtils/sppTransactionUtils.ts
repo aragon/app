@@ -11,6 +11,7 @@ import { BodyType } from '@/modules/createDao/types/enum';
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
+import type { IGetUninstallHelpersParams } from '@/modules/settings/types';
 import type { IDao } from '@/shared/api/daoService';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
@@ -89,6 +90,12 @@ class SppTransactionUtils {
             ...updateNewPluginPermissions.flat(),
             ...updateExistingPluginPermissions.flat(),
         ].filter((action) => action != null);
+    };
+
+    getUninstallHelpers = (params: IGetUninstallHelpersParams): Hex[] => {
+        const { plugin } = params;
+
+        return [plugin.proposalCreationConditionAddress] as Hex[];
     };
 
     private buildBodyPermissionActions = (body: Hex, dao: Hex, spp: Hex): ITransactionRequest[] => {

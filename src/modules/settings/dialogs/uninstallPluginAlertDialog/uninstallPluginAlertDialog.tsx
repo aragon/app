@@ -67,7 +67,7 @@ export const UninstallPluginAlertDialog: React.FC<IUninstallPluginAlertDialogPro
             <DialogAlert.Header
                 title={t('app.settings.uninstallPluginAlertDialog.title', {
                     name: daoUtils.getPluginName(uninstallPlugin),
-                    slug: uninstallPlugin.slug,
+                    slug: uninstallPlugin.slug.toUpperCase(),
                 })}
             />
             <DialogAlert.Content>
