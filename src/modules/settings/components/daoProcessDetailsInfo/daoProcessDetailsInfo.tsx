@@ -34,7 +34,7 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
 
     const { id: daoId } = dao;
     const settings = useDaoPluginInfo({ daoId, address: plugin.address, settings: pluginInfoSettings });
-    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, hasExecute: true })!;
+    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, hasExecute: true }) ?? [];
 
     const [pluginDefinition, launchedAtDefinition, ...customSettings] = settings;
     const orderedSettings = [...customSettings, pluginDefinition, launchedAtDefinition];

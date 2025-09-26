@@ -10,6 +10,7 @@ import {
 import type { Hex } from 'viem';
 import * as Viem from 'viem';
 import { permissionTransactionUtils } from '../permissionTransactionUtils';
+import { pluginRegistryUtils } from '../pluginRegistryUtils';
 import { pluginSetupProcessorAbi } from './abi/pluginSetupProcessorAbi';
 import { pluginTransactionUtils } from './pluginTransactionUtils';
 
@@ -19,6 +20,7 @@ describe('pluginTransaction utils', () => {
     const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
     const grantRevokePermissionSpy = jest.spyOn(permissionTransactionUtils, 'buildGrantRevokePermissionTransactions');
+    const getPluginSpy = jest.spyOn(pluginRegistryUtils, 'getPlugin');
 
     afterEach(() => {
         parseEventLogsSpy.mockReset();
@@ -26,6 +28,7 @@ describe('pluginTransaction utils', () => {
         encodeAbiParametersSpy.mockReset();
         encodeFunctionDataSpy.mockReset();
         grantRevokePermissionSpy.mockReset();
+        getPluginSpy.mockReset();
     });
 
     describe('getPluginInstallationSetupData', () => {
@@ -71,6 +74,28 @@ describe('pluginTransaction utils', () => {
         });
     });
 
+    describe('getPluginUninstallSetupData', () => {
+        it('parses the transaction logs to return an array of plugin uninstall setup-data', () => {
+            const transaction = { logs: [{ address: '0x123' }] } as unknown as Viem.TransactionReceipt;
+            const versionTag = { build: 1, release: 1 };
+            const permissions = ['0x456'];
+            const setupPayload = { plugin: '0x789' };
+            const parsedLog = { args: { pluginSetupRepo: '0x234', versionTag, permissions, setupPayload } };
+
+            parseEventLogsSpy.mockReturnValue([parsedLog as unknown as Viem.Log<bigint, number, false>]);
+
+            const result = pluginTransactionUtils.getPluginUninstallSetupData(transaction);
+            expect(parseEventLogsSpy).toHaveBeenCalledWith({
+                abi: pluginSetupProcessorAbi,
+                eventName: 'UninstallationPrepared',
+                logs: transaction.logs,
+            });
+
+            const { setupPayload: payload, ...expectedResult } = parsedLog.args;
+            expect(result).toEqual({ ...expectedResult, pluginAddress: parsedLog.args.setupPayload.plugin });
+        });
+    });
+
     describe('buildPrepareInstallationData', () => {
         it('encodes function data with correct arguments', () => {
             const transactionData = '0xencoded-data';
@@ -91,6 +116,33 @@ describe('pluginTransaction utils', () => {
                 abi: pluginSetupProcessorAbi,
                 functionName: 'prepareInstallation',
                 args: [daoAddress, { pluginSetupRef: { pluginSetupRepo, versionTag }, data }],
+            });
+            expect(result).toEqual(transactionData);
+        });
+    });
+
+    describe('buildPrepareUninstallData', () => {
+        it('encodes function data with correct arguments', () => {
+            const dao = generateDao({ address: '0x123', network: Network.ETHEREUM_MAINNET });
+            const plugin = generateDaoPlugin({ address: '0x456', build: '1', release: '5' });
+            const pluginInfo = { id: '', name: '', repositoryAddresses: { [dao.network]: '0x999' } };
+            const helpers: Hex[] = ['0x123'];
+            const data = '0x0';
+            const transactionData = '0xencoded-data';
+
+            getPluginSpy.mockReturnValue(pluginInfo);
+            encodeFunctionDataSpy.mockReturnValue(transactionData);
+            const result = pluginTransactionUtils.buildPrepareUninstallData(dao, plugin, helpers, data);
+
+            const pluginSetupRef = {
+                pluginSetupRepo: pluginInfo.repositoryAddresses[dao.network],
+                versionTag: { build: Number(plugin.build), release: Number(plugin.release) },
+            };
+            const setupPayload = { plugin: plugin.address, currentHelpers: helpers, data };
+            expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
+                abi: pluginSetupProcessorAbi,
+                functionName: 'prepareUninstallation',
+                args: [dao.address, { pluginSetupRef, setupPayload }],
             });
             expect(result).toEqual(transactionData);
         });
