@@ -84,9 +84,9 @@ class MultisigTransactionUtils {
     };
 
     getUninstallHelpers = (params: IGetUninstallHelpersParams): Hex[] => {
-        const { plugin } = params;
+        const { proposalCreationConditionAddress } = params.plugin;
 
-        return [plugin.proposalCreationConditionAddress] as Hex[];
+        return [proposalCreationConditionAddress] as Hex[];
     };
 }
 

@@ -105,10 +105,10 @@ class TokenTransactionUtils {
     };
 
     getUninstallHelpers = (params: IGetUninstallHelpersParams<ITokenPlugin>): Hex[] => {
-        const { plugin } = params;
-        const { address: tokenAddress } = plugin.settings.token;
+        const { proposalCreationConditionAddress, settings } = params.plugin;
+        const { address: tokenAddress } = settings.token;
 
-        return [plugin.proposalCreationConditionAddress, tokenAddress] as Hex[];
+        return [proposalCreationConditionAddress, tokenAddress] as Hex[];
     };
 
     private buildInstallDataTokenSettings = (token: ITokenSetupMembershipForm['token']) => {

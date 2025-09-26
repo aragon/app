@@ -93,9 +93,9 @@ class SppTransactionUtils {
     };
 
     getUninstallHelpers = (params: IGetUninstallHelpersParams): Hex[] => {
-        const { plugin } = params;
+        const { proposalCreationConditionAddress } = params.plugin;
 
-        return [plugin.proposalCreationConditionAddress] as Hex[];
+        return [proposalCreationConditionAddress] as Hex[];
     };
 
     private buildBodyPermissionActions = (body: Hex, dao: Hex, spp: Hex): ITransactionRequest[] => {
