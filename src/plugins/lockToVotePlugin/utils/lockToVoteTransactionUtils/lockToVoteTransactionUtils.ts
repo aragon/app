@@ -101,14 +101,9 @@ class LockToVoteTransactionUtils {
     };
 
     getUninstallHelpers = (params: IGetUninstallHelpersParams<ILockToVotePlugin>): Hex[] => {
-        const { plugin } = params;
+        const { proposalCreationConditionAddress, lockManagerAddress } = params.plugin;
 
-        return [
-            plugin.proposalCreationConditionAddress,
-            plugin.lockManagerAddress,
-            this.anyAddress,
-            this.anyAddress,
-        ] as Hex[];
+        return [proposalCreationConditionAddress, lockManagerAddress, this.anyAddress, this.anyAddress] as Hex[];
     };
 
     private buildInstallDataVotingSettings = (params: IPrepareTokenInstallDataParams) => {
