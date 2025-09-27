@@ -1,8 +1,7 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
-import { useMember } from '@/modules/governance/api/governanceService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenDelegationDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenDelegationDialog';
-import type { ITokenMember } from '@/plugins/tokenPlugin/types';
+import { useTokenCurrentDelegate } from '@/plugins/tokenPlugin/hooks/useTokenCurrentDelegate';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -32,20 +31,21 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const { data: tokenMember, isLoading: isMemberLoading } = useMember<ITokenMember>(
-        { urlParams: { address: address as string }, queryParams: { daoId, pluginAddress: plugin.address } },
-        { enabled: address != null },
-    );
+    const { data: currentDelegate, isLoading: isCurrentDelegateLoading } = useTokenCurrentDelegate({
+        userAddress: address,
+        tokenAddress: plugin.settings.token.address,
+        network: dao!.network,
+    });
 
     const defaultValues: ITokenDelegationFormData = useMemo(() => {
-        const isSelfDelegate = addressUtils.isAddressEqual(address, tokenMember?.currentDelegate ?? undefined);
-        const defaultDelegate = tokenMember?.currentDelegate ?? undefined;
+        const isSelfDelegate = addressUtils.isAddressEqual(address, currentDelegate ?? undefined);
+        const defaultDelegate = currentDelegate ?? undefined;
 
         return {
             selection: isSelfDelegate ? TokenDelegationSelection.YOURSELF : TokenDelegationSelection.OTHER,
             delegate: defaultDelegate,
         };
-    }, [address, tokenMember]);
+    }, [address, currentDelegate]);
 
     const { handleSubmit, reset, control } = useForm<ITokenDelegationFormData>({
         mode: 'onTouched',
@@ -75,7 +75,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
     });
 
     const handleSelectionChange = (value: string) => {
-        const newDelegateInput = value === TokenDelegationSelection.YOURSELF ? address : tokenMember?.currentDelegate;
+        const newDelegateInput = value === TokenDelegationSelection.YOURSELF ? address : currentDelegate;
         setDelegateInput(newDelegateInput ?? undefined);
         onSelectionChange(value);
     };
@@ -98,13 +98,13 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
     }, [reset, defaultValues]);
 
     const isDelegateUnchanged = useMemo(
-        () => addressUtils.isAddressEqual(delegate, tokenMember?.currentDelegate ?? undefined),
-        [delegate, tokenMember?.currentDelegate],
+        () => addressUtils.isAddressEqual(delegate, currentDelegate ?? undefined),
+        [delegate, currentDelegate],
     );
 
     // disable submit button if delegate address has not been changed, but also, disable while isMemberLoading to prevent
     // multiple button state changes during page refresh
-    const isSubmitDisabled = isMemberLoading || isDelegateUnchanged;
+    const isSubmitDisabled = isCurrentDelegateLoading || isDelegateUnchanged;
 
     return (
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
