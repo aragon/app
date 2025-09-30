@@ -111,7 +111,7 @@ export class ProxyRpcUtils {
             method,
             body,
             headers: {
-                ['content-type']: 'application/json',
+                'Content-Type': 'application/json',
             },
             // Ensure no implicit credential forwarding
             credentials: 'omit',
