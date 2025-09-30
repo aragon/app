@@ -67,7 +67,7 @@ export const PluginFilterComponent = <TMeta extends object, TProps extends objec
     }
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2 md:gap-3">
             <ToggleGroup isMultiSelect={false} value={activePlugin} onChange={handleChange}>
                 {plugins.map(({ uniqueId, label }) => (
                     <Toggle key={uniqueId} label={label} value={uniqueId} />
