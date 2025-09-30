@@ -101,7 +101,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0x246503df057A9a85E0144b6867a828c99676128B',
             pluginSetupProcessor: '0xE978942c691e43f65c1B7c7F8f1dc8cDF061B13f',
             globalExecutor: '0x56ce4D8006292Abf418291FaE813C1E3769240A4',
-            conditionFactory: '0x2680D4088BC00Af4d97C245534dC71a80e5a661d',
+            conditionFactory: '0x988B0e1542d5e9494897778ebc444E9FfDa58Ddb',
         },
     },
     [Network.POLYGON_MAINNET]: {
@@ -247,7 +247,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0xB815791c233807D39b7430127975244B36C19C8e',
             pluginSetupProcessor: '0xC24188a73dc09aA7C721f96Ad8857B469C01dC9f',
             globalExecutor: '0x7a20760b89EF507759DD2c5A0d1f1657614341A9',
-            conditionFactory: '0xf81B4D3d99cB48818524944eF2A5268D4030b1E2',
+            conditionFactory: '0x988B0e1542d5e9494897778ebc444E9FfDa58Ddb',
         },
     },
     [Network.ZKSYNC_SEPOLIA]: {
