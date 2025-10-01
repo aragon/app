@@ -125,7 +125,7 @@ describe('proxyRpc utils', () => {
             expect(requestOptions.credentials).toEqual('omit'); // always omit credentials on proxy requests
         });
 
-        it('strips all headers from the request', () => {
+        it('strips all headers from the request, but leaves content-type', () => {
             const testClass = createTestClass();
             const headers = new Headers({
                 'test-header': 'test-value',
@@ -138,7 +138,7 @@ describe('proxyRpc utils', () => {
 
             const requestOptions = testClass['buildRequestOptions'](request);
 
-            expect(requestOptions.headers).toBeUndefined();
+            expect(requestOptions.headers).toEqual({ 'Content-Type': 'application/json' });
         });
     });
 });
