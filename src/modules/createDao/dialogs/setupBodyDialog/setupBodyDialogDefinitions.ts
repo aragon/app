@@ -15,6 +15,11 @@ export interface ISetupBodyFormBase {
      * ID of the plugin defining the membership and governance settings of the body.
      */
     plugin: string;
+    /**
+     * Generic boolean which reflects the internal plugin-specific proposal creation settings, used for validation and
+     * for setting the correct condition rules when the plugin is installed as SPP sub-plugin.
+     */
+    canCreateProposal: boolean;
 }
 
 export interface ISetupBodyFormNew<
@@ -46,11 +51,6 @@ export interface ISetupBodyFormNew<
      * Plugin-specific membership settings of the body.
      */
     membership: TMembership;
-    /**
-     * Generic boolean which reflects the internal plugin-specific proposal creation settings, used for validation and
-     * for setting the correct condition rules when the plugin is installed as SPP sub-plugin.
-     */
-    canCreateProposal: boolean;
 }
 
 export interface ISetupBodyFormExternal extends ISetupBodyFormBase, ICompositeAddress {
@@ -58,16 +58,21 @@ export interface ISetupBodyFormExternal extends ISetupBodyFormBase, ICompositeAd
      * EXTERNAL body type.
      */
     type: BodyType.EXTERNAL;
+    /**
+     * Is given address a Safe multisig address.
+     */
+    isSafe: boolean;
 }
 
 export interface ISetupBodyFormExisting<
     TGovernance = unknown,
     TMember extends ICompositeAddress = ICompositeAddress,
     TMembership extends ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
-> extends Pick<
-        ISetupBodyFormNew<TGovernance, TMember, TMembership>,
-        'internalId' | 'plugin' | 'description' | 'resources' | 'governance' | 'membership' | 'canCreateProposal'
-    > {
+> extends ISetupBodyFormBase,
+        Pick<
+            ISetupBodyFormNew<TGovernance, TMember, TMembership>,
+            'description' | 'resources' | 'governance' | 'membership'
+        > {
     /**
      * EXISTING body type.
      */

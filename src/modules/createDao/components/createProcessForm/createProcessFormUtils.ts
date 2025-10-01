@@ -1,3 +1,5 @@
+import type { ISetupBodyForm } from '../../dialogs/setupBodyDialog';
+import { BodyType } from '../../types/enum';
 import { type ICreateProcessFormDataAdvanced, ProcessStageType } from './createProcessFormDefinitions';
 
 class CreateProcessFormUtils {
@@ -22,6 +24,8 @@ class CreateProcessFormUtils {
             bodies: [],
         };
     };
+
+    isBodySafe = (body: ISetupBodyForm) => body.type === BodyType.EXTERNAL && body.isSafe;
 }
 
 export const createProcessFormUtils = new CreateProcessFormUtils();

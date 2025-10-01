@@ -70,6 +70,10 @@ export interface IBuildProcessProposalActionsParams {
      * Address of the execute condition contract if specific permissions are set.
      */
     executeConditionAddress?: Hex;
+    /**
+     * Addresses of the Safe condition contracts for bodies enabled to create proposals.
+     */
+    safeConditionAddresses?: Hex[];
 }
 
 export interface IBuildDeployExecuteSelectorConditionDataParams {
