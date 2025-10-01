@@ -2,7 +2,7 @@ import type { IPluginSetupPermission } from '@/shared/utils/pluginTransactionUti
 import type { Hex } from 'viem';
 import type { EventLogPluginType } from './enum';
 
-export interface IPluginLog {
+export interface IPluginEventLog {
     id: string;
     event: EventLogPluginType;
     preparedSetupId: string | null;

@@ -6,7 +6,11 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { Button, DefinitionList } from '@aragon/gov-ui-kit';
-import { EventLogPluginType, type IGetPluginLogsUrlParams, usePluginLogs } from '../../api/settingsService';
+import {
+    EventLogPluginType,
+    type IGetLastPluginEventLogUrlParams,
+    useLastPluginEventLog,
+} from '../../api/settingsService';
 import { SettingsDialogId } from '../../constants/settingsDialogId';
 import type { IGovernanceProcessRequiredDialogParams } from '../../dialogs/governanceProcessRequiredDialog';
 import type { IUninstallPluginAlertDialogParams } from '../../dialogs/uninstallPluginAlertDialog';
@@ -33,12 +37,12 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
         { term: t('app.settings.daoProcessDetailsInfo.processKey'), definition: plugin.slug.toUpperCase() },
     ];
 
-    const getLogsUrlParams: IGetPluginLogsUrlParams = {
+    const eventLogParams: IGetLastPluginEventLogUrlParams = {
         pluginAddress: plugin.address,
         network: dao.network,
-        event: EventLogPluginType.UninstallationPrepared,
+        event: EventLogPluginType.UNINSTALLATION_PREPARED,
     };
-    const { data: uninstallationPreparedEventLog } = usePluginLogs({ urlParams: getLogsUrlParams });
+    const { data: uninstallationPreparedEventLog } = useLastPluginEventLog({ urlParams: eventLogParams });
 
     const { id: daoId } = dao;
     const settings = useDaoPluginInfo({ daoId, address: plugin.address, settings: pluginInfoSettings });
@@ -48,17 +52,6 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
     const orderedSettings = [...customSettings, pluginDefinition, launchedAtDefinition];
 
     const handleUninstallProcess = () => {
-        // if (uninstallationPreparedEventLog) {
-        //     // uninstallation prepared but not applied
-        //     const publishProposalParams = preparePluginUninstallationDialogUtils.preparePublishProposalDialogParams({
-        //         dao,
-        //         daoId,
-        //         setupData,
-        //         uninstallPlugin,
-        //         proposalPlugin
-        //     });
-        //     return;
-        // }
         if (processPlugins.length > 1) {
             const params: IUninstallPluginAlertDialogParams = {
                 daoId,
@@ -72,7 +65,6 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
             open(SettingsDialogId.GOVERNANCE_PROCESS_REQUIRED, { params });
         }
     };
-    console.log('PLUGIN', uninstallationPreparedEventLog);
     return (
         <div className="flex flex-col gap-6">
             <DefinitionList.Container>

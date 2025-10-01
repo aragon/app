@@ -15,7 +15,7 @@ export interface IGetPluginInstallationDataQueryParams {
 
 export interface IGetPluginInstallationDataParams extends IRequestQueryParams<IGetPluginInstallationDataQueryParams> {}
 
-export interface IGetPluginLogsUrlParams {
+export interface IGetLastPluginEventLogUrlParams {
     /**
      * Address of the plugin to fetch logs for.
      */
@@ -30,4 +30,4 @@ export interface IGetPluginLogsUrlParams {
     event: EventLogPluginType;
 }
 
-export interface IGetPluginLogsParams extends IRequestUrlParams<IGetPluginLogsUrlParams> {}
+export interface IGetLastPluginEventLogParams extends IRequestUrlParams<IGetLastPluginEventLogUrlParams> {}

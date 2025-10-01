@@ -8,7 +8,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { DialogAlert, DialogAlertFooter, invariant } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import type { IPluginLog } from '../../api/settingsService';
+import type { IPluginEventLog } from '../../api/settingsService';
 import { SettingsDialogId } from '../../constants/settingsDialogId';
 import type { IPreparePluginUninstallationDialogParams } from '../preparePluginUninstallationDialog';
 
@@ -25,7 +25,7 @@ export interface IUninstallPluginAlertDialogParams {
      *  Tx log for UninstallationPrepared event, if available. This means that
      *  the plugin uninstallation was already prepared but not applied yet.
      */
-    uninstallationPreparedEventLog?: IPluginLog;
+    uninstallationPreparedEventLog?: IPluginEventLog;
 }
 
 export interface IUninstallPluginAlertDialogProps extends IDialogComponentProps<IUninstallPluginAlertDialogParams> {}

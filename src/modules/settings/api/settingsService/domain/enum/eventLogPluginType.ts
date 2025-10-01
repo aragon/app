@@ -1,8 +1,8 @@
 export enum EventLogPluginType {
-    InstallationPrepared = 'InstallationPrepared',
-    InstallationApplied = 'InstallationApplied',
-    UninstallationPrepared = 'UninstallationPrepared',
-    UninstallationApplied = 'UninstallationApplied',
-    UpdatePrepared = 'UpdatePrepared',
-    UpdateApplied = 'UpdateApplied',
+    INSTALLATION_PREPARED = 'InstallationPrepared',
+    INSTALLATION_APPLIED = 'InstallationApplied',
+    UNINSTALLATION_PREPARED = 'UninstallationPrepared',
+    UNINSTALLATION_APPLIED = 'UninstallationApplied',
+    UPDATE_PREPARED = 'UpdatePrepared',
+    UPDATE_APPLIED = 'UpdateApplied',
 }

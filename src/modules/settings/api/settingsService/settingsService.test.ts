@@ -1,5 +1,6 @@
 import { Network } from '@/shared/api/daoService';
-import { EventLogPluginType } from './domain';
+import type { Hex } from 'viem';
+import { EventLogPluginType, type IPluginEventLog } from './domain';
 import { settingsService } from './settingsService';
 
 describe('settings service', () => {
@@ -20,31 +21,30 @@ describe('settings service', () => {
         expect(result).toEqual(installationData);
     });
 
-    it('getPluginLogs fetches the logs of the plugin for the specified event', async () => {
-        const pluginLogs = {
-            logs: [
-                {
-                    id: '1',
-                    event: EventLogPluginType.InstallationPrepared,
-                    transactionHash: '0xabc',
-                    blockNumber: 12345,
-                    timestamp: 1625097600,
-                    data: { param1: 'value1' },
-                },
-            ],
+    it('getLastPluginEventLog fetches the last event tx log of the plugin for the specified event', async () => {
+        const pluginLog: IPluginEventLog = {
+            id: '1',
+            event: EventLogPluginType.INSTALLATION_PREPARED,
+            preparedSetupId: null,
+            appliedSetupId: null,
+            pluginSetupRepo: '0xabc' as Hex,
+            pluginAddress: '0x789' as Hex,
+            permissions: [],
+            build: '1',
+            release: '1',
         };
         const params = {
             urlParams: {
                 pluginAddress: '0x789',
                 network: Network.BASE_MAINNET,
-                event: EventLogPluginType.InstallationPrepared,
+                event: EventLogPluginType.INSTALLATION_PREPARED,
             },
         };
 
-        requestSpy.mockResolvedValue(pluginLogs);
-        const result = await settingsService.getPluginLogs(params);
+        requestSpy.mockResolvedValue(pluginLog);
+        const result = await settingsService.getLastPluginEventLog(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(settingsService['urls'].pluginLogs, params);
-        expect(result).toEqual(pluginLogs);
+        expect(requestSpy).toHaveBeenCalledWith(settingsService['urls'].lastPluginEventLog, params);
+        expect(result).toEqual(pluginLog);
     });
 });
