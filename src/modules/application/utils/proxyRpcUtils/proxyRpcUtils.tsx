@@ -1,5 +1,6 @@
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export interface IRpcRequestParams {
@@ -37,10 +38,57 @@ export class ProxyRpcUtils {
             return NextResponse.json({ error: `Chain ${chainId} is not supported` }, { status: 501 });
         }
 
-        const result = await fetch(rpcEndpoint, requestOptions);
-        const parsedResult = (await result.json()) as unknown;
+        const monitoringContext = {
+            chainId,
+            rpcEndpoint,
+            requestMethod: request.method,
+            requestOptions,
+        };
 
-        return NextResponse.json(parsedResult);
+        try {
+            const result = await fetch(rpcEndpoint, requestOptions);
+
+            if (!result.ok) {
+                monitoringUtils.logError(new Error('RPC endpoint returned error status'), {
+                    context: {
+                        status: result.status,
+                        statusText: result.statusText,
+                        ...monitoringContext,
+                    },
+                });
+
+                return NextResponse.json(
+                    { error: `RPC request failed with status ${String(result.status)}` },
+                    { status: 500 },
+                );
+            }
+
+            try {
+                const parsedResult = (await result.json()) as unknown;
+
+                return NextResponse.json(parsedResult);
+            } catch (jsonError) {
+                monitoringUtils.logError(jsonError, {
+                    context: {
+                        errorType: 'json_parse_error',
+                        status: result.status,
+                        statusText: result.statusText,
+                        ...monitoringContext,
+                    },
+                });
+
+                return NextResponse.json({ error: 'Invalid JSON response from RPC endpoint' }, { status: 500 });
+            }
+        } catch (fetchError) {
+            monitoringUtils.logError(fetchError, {
+                context: {
+                    errorType: 'fetch_error',
+                    ...monitoringContext,
+                },
+            });
+
+            return NextResponse.json({ error: 'Failed to connect to RPC endpoint' }, { status: 500 });
+        }
     };
 
     private chainIdToRpcEndpoint = (chainId: string): string | undefined => {
@@ -62,6 +110,9 @@ export class ProxyRpcUtils {
         return {
             method,
             body,
+            headers: {
+                'Content-Type': 'application/json',
+            },
             // Ensure no implicit credential forwarding
             credentials: 'omit',
             duplex: 'half',
