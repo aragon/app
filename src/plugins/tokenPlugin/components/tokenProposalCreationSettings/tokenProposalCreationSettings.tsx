@@ -6,7 +6,7 @@ import type { IPluginProposalCreationSettingsParams } from '@/modules/createDao/
 import { BodyType } from '@/modules/createDao/types/enum';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { CheckboxCard, InputNumber, type CheckboxState } from '@aragon/gov-ui-kit';
+import { CheckboxCard, InputNumber, invariant, type CheckboxState } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { formatUnits } from 'viem';
@@ -25,6 +25,8 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
 
     const { t } = useTranslations();
     const { trigger, setValue } = useFormContext();
+
+    invariant(body.type !== BodyType.EXTERNAL, 'TokenProposalCreationSettings: External body type not expected here.');
 
     const { type, name = '', description, membership } = body;
     const { totalSupply, decimals } = membership.token;

@@ -203,7 +203,9 @@
             },
             "default": {
               "address": "Address",
-              "ens": "ENS name"
+              "ens": "ENS name",
+              "safe": "Safe{Wallet}",
+              "type": "Type"
             }
           },
           "stageBodiesField": {
@@ -410,6 +412,12 @@
           "address": {
             "helpText": "Add any address as a body, such as a Safe or Governor",
             "label": "External address"
+          },
+          "addressTypeCheck": {
+            "loading": "Analyzing address type",
+            "success": "Address type detected",
+            "successSafe": "Safe contract detected",
+            "validation": "Please wait for the address type checks to complete"
           }
         },
         "metadata": {
