@@ -49,7 +49,7 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
             open(SettingsDialogId.GOVERNANCE_PROCESS_REQUIRED, { params });
         }
     };
-
+    console.log('PLUGIN', settings, plugin);
     return (
         <div className="flex flex-col gap-6">
             <DefinitionList.Container>

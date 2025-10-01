@@ -1,4 +1,5 @@
 import { Network } from '@/shared/api/daoService';
+import { IEventLogPluginType } from './domain';
 import { settingsService } from './settingsService';
 
 describe('settings service', () => {
@@ -17,5 +18,33 @@ describe('settings service', () => {
 
         expect(requestSpy).toHaveBeenCalledWith(settingsService['urls'].pluginInstallationData, params);
         expect(result).toEqual(installationData);
+    });
+
+    it('getPluginLogs fetches the logs of the plugin for the specified event', async () => {
+        const pluginLogs = {
+            logs: [
+                {
+                    id: '1',
+                    event: IEventLogPluginType.InstallationPrepared,
+                    transactionHash: '0xabc',
+                    blockNumber: 12345,
+                    timestamp: 1625097600,
+                    data: { param1: 'value1' },
+                },
+            ],
+        };
+        const params = {
+            urlParams: {
+                pluginAddress: '0x789',
+                network: Network.BASE_MAINNET,
+                event: IEventLogPluginType.InstallationPrepared,
+            },
+        };
+
+        requestSpy.mockResolvedValue(pluginLogs);
+        const result = await settingsService.getPluginLogs(params);
+
+        expect(requestSpy).toHaveBeenCalledWith(settingsService['urls'].pluginLogs, params);
+        expect(result).toEqual(pluginLogs);
     });
 });

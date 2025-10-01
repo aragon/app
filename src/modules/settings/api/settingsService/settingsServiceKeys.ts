@@ -1,7 +1,8 @@
-import type { IGetPluginInstallationDataParams } from './settingsService.api';
+import type { IGetPluginInstallationDataParams, IGetPluginLogsParams } from './settingsService.api';
 
 export enum SettingsServiceKey {
     PLUGIN_INSTALLATION_DATA = 'PLUGIN_INSTALLATION_DATA',
+    PLUGIN_LOGS = 'PLUGIN_LOGS',
 }
 
 export const settingsServiceKeys = {
@@ -9,4 +10,5 @@ export const settingsServiceKeys = {
         SettingsServiceKey.PLUGIN_INSTALLATION_DATA,
         params,
     ],
+    pluginLogs: (params: IGetPluginLogsParams) => [SettingsServiceKey.PLUGIN_LOGS, params],
 };

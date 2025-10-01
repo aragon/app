@@ -1,0 +1,1 @@
+export { IEventLogPluginType } from './eventLogPluginType';
