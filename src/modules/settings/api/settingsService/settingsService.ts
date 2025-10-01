@@ -1,11 +1,11 @@
 import { AragonBackendService } from '@/shared/api/aragonBackendService';
-import type { IPluginInstallationData, IPluginLogs } from './domain';
+import type { IPluginInstallationData, IPluginLog } from './domain';
 import type { IGetPluginInstallationDataParams, IGetPluginLogsParams } from './settingsService.api';
 
 class SettingsService extends AragonBackendService {
     private urls = {
         pluginInstallationData: '/v2/plugins/installation-data',
-        pluginLogs: '/v2/logs/:pluginAddress/:network/:event',
+        pluginLog: '/v2/plugins/logs/:pluginAddress/:network/:event',
     };
 
     getPluginInstallationData = async ({
@@ -16,8 +16,8 @@ class SettingsService extends AragonBackendService {
         return result;
     };
 
-    getPluginLogs = async (params: IGetPluginLogsParams): Promise<IPluginLogs> => {
-        const result = await this.request<IPluginLogs>(this.urls.pluginLogs, params);
+    getPluginLogs = async (params: IGetPluginLogsParams): Promise<IPluginLog> => {
+        const result = await this.request<IPluginLog>(this.urls.pluginLog, params);
 
         return result;
     };

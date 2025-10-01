@@ -1,7 +1,7 @@
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import { renderHook, waitFor } from '@testing-library/react';
-import { IEventLogPluginType } from '../../domain';
+import { EventLogPluginType } from '../../domain';
 import { settingsService } from '../../settingsService';
 import { usePluginLogs } from './usePluginLogs';
 
@@ -17,14 +17,14 @@ describe('usePluginLogs query', () => {
             urlParams: {
                 pluginAddress: '0x123',
                 network: Network.ZKSYNC_MAINNET,
-                event: IEventLogPluginType.InstallationPrepared,
+                event: EventLogPluginType.InstallationPrepared,
             },
         };
         const pluginLogs = {
             logs: [
                 {
                     id: '1',
-                    event: IEventLogPluginType.InstallationPrepared,
+                    event: EventLogPluginType.InstallationPrepared,
                     transactionHash: '0xabc',
                     blockNumber: 12345,
                     timestamp: 1625097600,

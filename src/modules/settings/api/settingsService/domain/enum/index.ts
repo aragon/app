@@ -1,1 +1,1 @@
-export { IEventLogPluginType } from './eventLogPluginType';
+export { EventLogPluginType } from './eventLogPluginType';

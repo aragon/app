@@ -1,14 +1,15 @@
-import type { IEventLogPluginType } from './enum';
-
-export interface IPluginLogs {
-    logs: IPluginLog[];
-}
+import type { IPluginSetupPermission } from '@/shared/utils/pluginTransactionUtils';
+import type { Hex } from 'viem';
+import type { EventLogPluginType } from './enum';
 
 export interface IPluginLog {
     id: string;
-    event: IEventLogPluginType;
-    transactionHash: string;
-    blockNumber: number;
-    timestamp: number;
-    data: Record<string, unknown>;
+    event: EventLogPluginType;
+    preparedSetupId: string | null;
+    appliedSetupId: string | null;
+    pluginSetupRepo: Hex;
+    pluginAddress: Hex;
+    permissions: IPluginSetupPermission[];
+    build: string;
+    release: string;
 }

@@ -1,6 +1,6 @@
 import type { Network } from '@/shared/api/daoService';
 import type { IRequestQueryParams, IRequestUrlParams } from '@/shared/api/httpService';
-import type { IEventLogPluginType } from './domain';
+import type { EventLogPluginType } from './domain';
 
 export interface IGetPluginInstallationDataQueryParams {
     /**
@@ -27,7 +27,7 @@ export interface IGetPluginLogsUrlParams {
     /**
      * Event type to filter logs by.
      */
-    event: IEventLogPluginType;
+    event: EventLogPluginType;
 }
 
 export interface IGetPluginLogsParams extends IRequestUrlParams<IGetPluginLogsUrlParams> {}

@@ -1,4 +1,4 @@
-export enum IEventLogPluginType {
+export enum EventLogPluginType {
     InstallationPrepared = 'InstallationPrepared',
     InstallationApplied = 'InstallationApplied',
     UninstallationPrepared = 'UninstallationPrepared',

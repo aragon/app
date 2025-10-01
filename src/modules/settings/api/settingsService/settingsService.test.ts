@@ -1,5 +1,5 @@
 import { Network } from '@/shared/api/daoService';
-import { IEventLogPluginType } from './domain';
+import { EventLogPluginType } from './domain';
 import { settingsService } from './settingsService';
 
 describe('settings service', () => {
@@ -25,7 +25,7 @@ describe('settings service', () => {
             logs: [
                 {
                     id: '1',
-                    event: IEventLogPluginType.InstallationPrepared,
+                    event: EventLogPluginType.InstallationPrepared,
                     transactionHash: '0xabc',
                     blockNumber: 12345,
                     timestamp: 1625097600,
@@ -37,7 +37,7 @@ describe('settings service', () => {
             urlParams: {
                 pluginAddress: '0x789',
                 network: Network.BASE_MAINNET,
-                event: IEventLogPluginType.InstallationPrepared,
+                event: EventLogPluginType.InstallationPrepared,
             },
         };
 
