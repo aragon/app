@@ -1,0 +1,2 @@
+export { GaugeVoterGaugeDetailsDialog } from './gaugeVoterGaugeDetailsDialog';
+export type { IGaugeVoterGaugeDetailsDialogProps, IGaugeVoterGaugeDetailsDialogParams } from './gaugeVoterGaugeDetailsDialog';
