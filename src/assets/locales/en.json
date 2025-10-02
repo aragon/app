@@ -1209,6 +1209,13 @@
           }
         }
       },
+      "gaugeVoter": {
+        "meta": {
+          "link": {
+            "gauges": "Gauges"
+          }
+        }
+      },
       "lockToVote": {
         "lockToVoteActions": {
           "UpdateLockToVoteVoteSettings": "Update settings"
