@@ -22,3 +22,28 @@ export interface IGetDaoByEnsUrlParams {
 }
 
 export interface IGetDaoByEnsParams extends IRequestUrlParams<IGetDaoByEnsUrlParams> {}
+
+export interface IGetPluginsByDaoUrlParams {
+    /**
+     * Network of the DAO.
+     */
+    network: Network;
+    /**
+     * Address of the DAO.
+     */
+    daoAddress: string;
+}
+
+export interface IGetPluginsByDaoQueryParams {
+    /**
+     * Filter by plugin status.
+     */
+    status?: PluginStatus;
+    /**
+     * Filter by plugin interface type.
+     */
+    interfaceType?: PluginInterfaceType;
+}
+
+export interface IGetPluginsByDaoParams
+    extends IRequestUrlQueryParams<IGetPluginsByDaoUrlParams, IGetPluginsByDaoQueryParams> {}
