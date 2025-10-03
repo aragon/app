@@ -23,33 +23,45 @@ integration of the [Aragon OSx SDK](https://github.com/aragon/sdk) and the
 
 Before setting up the project, ensure you have the following installed:
 
-- Node.js: Version >= 20
+- Node.js: Version >= 22
 - EditorConfig: Ensure your IDE has EditorConfig support enabled
 
 ## Getting Started
 
 Follow these steps to get the app running on your machine:
 
-1. Install the required dependencies by running:
+1. Ensure you are using the correct Node.js version (repo provides `.nvmrc` ->
+   [nvm install instruction](https://github.com/nvm-sh/nvm?tab=readme-ov-file#install--update-script)):
+
+```bash
+# If you use nvm, this will read .nvmrc and activate the right version
+nvm use || nvm install
+# If Yarn isn't available, enable Corepack
+corepack enable
+```
+
+If you prefer not to use nvm, just make sure your Node.js version is >= 22 before installing dependencies.
+
+2. Install the required dependencies by running:
 
 ```bash
 yarn install
 ```
 
-2. Create a `.env` file in the root of the project and populate it with the required environment variables. Use the
+3. Create a `.env` file in the root of the project and populate it with the required environment variables. Use the
    `.env.example` file as a template:
 
 ```bash
 cp .env.example .env
 ```
 
-3. Start the development server with:
+4. Start the development server with:
 
 ```bash
 yarn dev
 ```
 
-4. Access the Aragon App by navigating to [http://localhost:3000](http://localhost:3000) in your browser.
+5. Access the Aragon App by navigating to [http://localhost:3000](http://localhost:3000) in your browser.
 
 Other available commands include:
 

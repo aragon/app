@@ -149,7 +149,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                     {description && (
                         <Page.MainSection title={t('app.governance.daoProposalDetailsPage.main.description.header')}>
                             <CardCollapsible
-                                collapsedLines={2}
+                                collapsedLines={8}
                                 buttonLabelClosed={t('app.governance.daoProposalDetailsPage.main.description.readMore')}
                                 buttonLabelOpened={t('app.governance.daoProposalDetailsPage.main.description.readLess')}
                             >
