@@ -56,10 +56,6 @@ export interface IPluginSetupData {
      * The version of the plugin to be installed.
      */
     versionTag: IPluginSetupVersionTag;
-    /**
-     * Helpers and permissions for the plugin setup.
-     */
-    preparedSetupData: IPluginSetupPreparedSetupData;
 }
 
 export interface IPluginInstallationSetupData extends IPluginSetupData {
@@ -67,6 +63,10 @@ export interface IPluginInstallationSetupData extends IPluginSetupData {
      * The address of the plugin contract to be installed.
      */
     pluginAddress: Hex;
+    /**
+     * Helpers and permissions for the plugin setup.
+     */
+    preparedSetupData: IPluginSetupPreparedSetupData;
 }
 
 export interface IPluginUpdateSetupData extends IPluginSetupData {
@@ -74,6 +74,21 @@ export interface IPluginUpdateSetupData extends IPluginSetupData {
      * Initialization data to be passed to the contract update function.
      */
     initData: Hex;
+    /**
+     * Helpers and permissions for the plugin setup.
+     */
+    preparedSetupData: IPluginSetupPreparedSetupData;
+}
+
+export interface IPluginUninstallSetupData extends IPluginSetupData {
+    /**
+     * The address of the plugin contract to be uninstalled.
+     */
+    pluginAddress: Hex;
+    /**
+     * Permissions to be revoked for uninstalling the plugin.
+     */
+    permissions: readonly IPluginSetupPermission[];
 }
 
 export interface IBuildApplyPluginsInstallationActionsParams {
@@ -108,4 +123,15 @@ export interface IBuildApplyPluginsUpdateActionsParams {
      * List of plugin update setup data to be applied.
      */
     setupData: IPluginUpdateSetupData[];
+}
+
+export interface IBuildApplyPluginUninstallationActionParams {
+    /**
+     * DAO to apply the plugin uninstallation for.
+     */
+    dao: IDao;
+    /**
+     * Plugin uninstallation setup data to be applied.
+     */
+    setupData: IPluginUninstallSetupData;
 }

@@ -2,7 +2,7 @@ import type { IBuildPreparePluginInstallDataParams } from '@/modules/createDao/t
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
-import type { IBuildPreparePluginUpdateDataParams } from '@/modules/settings/types';
+import type { IBuildPreparePluginUpdateDataParams, IGetUninstallHelpersParams } from '@/modules/settings/types';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
@@ -10,7 +10,7 @@ import { encodeAbiParameters, encodeFunctionData, parseUnits, zeroHash, type Hex
 import type { ITokenSetupGovernanceForm } from '../../components/tokenSetupGovernance';
 import type { ITokenSetupMembershipForm, ITokenSetupMembershipMember } from '../../components/tokenSetupMembership';
 import { tokenPlugin } from '../../constants/tokenPlugin';
-import type { ITokenPluginSettings } from '../../types';
+import type { ITokenPlugin, ITokenPluginSettings } from '../../types';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
 import { tokenPluginAbi, tokenPluginPrepareUpdateAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
 
@@ -102,6 +102,13 @@ class TokenTransactionUtils {
         const transactionData = encodeAbiParameters(tokenPluginPrepareUpdateAbi, [BigInt(0), targetConfig, metadata]);
 
         return transactionData;
+    };
+
+    getUninstallHelpers = (params: IGetUninstallHelpersParams<ITokenPlugin>): Hex[] => {
+        const { proposalCreationConditionAddress, settings } = params.plugin;
+        const { address: tokenAddress } = settings.token;
+
+        return [proposalCreationConditionAddress, tokenAddress] as Hex[];
     };
 
     private buildInstallDataTokenSettings = (token: ITokenSetupMembershipForm['token']) => {

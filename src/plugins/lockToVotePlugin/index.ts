@@ -134,6 +134,11 @@ export const initialiseLockToVotePlugin = () => {
             pluginId: lockToVotePlugin.id,
             function: tokenBodyUtils.pluginToFormData,
         })
+        .registerSlotFunction({
+            slotId: SettingsSlotId.SETTINGS_GET_UNINSTALL_HELPERS,
+            pluginId: lockToVotePlugin.id,
+            function: lockToVoteTransactionUtils.getUninstallHelpers,
+        })
 
         // Create DAO module slots
         .registerSlotFunction({

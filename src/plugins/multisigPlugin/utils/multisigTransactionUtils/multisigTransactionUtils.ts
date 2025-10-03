@@ -2,7 +2,7 @@ import type { IBuildPreparePluginInstallDataParams } from '@/modules/createDao/t
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
-import type { IBuildPreparePluginUpdateDataParams } from '@/modules/settings/types';
+import type { IBuildPreparePluginUpdateDataParams, IGetUninstallHelpersParams } from '@/modules/settings/types';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { encodeAbiParameters, encodeFunctionData, zeroHash, type Hex } from 'viem';
@@ -81,6 +81,12 @@ class MultisigTransactionUtils {
         const transactionData = encodeAbiParameters(multisigPluginPrepareUpdateAbi, [targetConfig, metadata]);
 
         return transactionData;
+    };
+
+    getUninstallHelpers = (params: IGetUninstallHelpersParams): Hex[] => {
+        const { proposalCreationConditionAddress } = params.plugin;
+
+        return [proposalCreationConditionAddress] as Hex[];
     };
 }
 
