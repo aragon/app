@@ -122,7 +122,10 @@ class TokenTransactionUtils {
             initialData,
         );
 
-        return mintSettings;
+        return {
+            ...mintSettings,
+            ensureDelegationOnMint: true,
+        };
     };
 
     private buildInstallDataVotingSettings = (params: IPrepareTokenInstallDataParams) => {
