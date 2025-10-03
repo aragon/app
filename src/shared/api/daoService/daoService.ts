@@ -1,6 +1,6 @@
 import { AragonBackendService } from '../aragonBackendService';
-import type { IGetDaoByEnsParams, IGetDaoParams } from './daoService.api';
-import type { IDao } from './domain';
+import type { IGetDaoByEnsParams, IGetDaoParams, IGetPluginsByDaoParams } from './daoService.api';
+import type { IDao, IDaoPlugin } from './domain';
 
 class DaoService extends AragonBackendService {
     private urls = {

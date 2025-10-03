@@ -1,5 +1,6 @@
-import type { IRequestUrlParams } from '../httpService';
-import type { Network } from './domain';
+import type { IRequestUrlParams, IRequestUrlQueryParams } from '../httpService';
+import type { Network, PluginInterfaceType } from './domain';
+import type { PluginStatus } from './domain/enum';
 
 export interface IGetDaoUrlParams {
     /**
