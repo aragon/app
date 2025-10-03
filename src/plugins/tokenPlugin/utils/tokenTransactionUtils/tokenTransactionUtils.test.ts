@@ -243,7 +243,8 @@ describe('tokenTransaction utils', () => {
                 { address: '0x123', tokenAmount: 0.01 },
                 { address: '0x456', tokenAmount: 1.5 },
             ];
-            const result = tokenTransactionUtils['buildInstallDataMintSettings'](members);
+            const daoAddress = '0x789';
+            const result = tokenTransactionUtils['buildInstallDataMintSettings'](members, daoAddress);
             expect(result).toEqual({
                 receivers: ['0x123', '0x456'],
                 amounts: [BigInt(10000000000000000), BigInt(1500000000000000000)],
