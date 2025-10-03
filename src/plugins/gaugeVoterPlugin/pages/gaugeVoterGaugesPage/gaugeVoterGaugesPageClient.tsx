@@ -1,44 +1,35 @@
 'use client';
 
-import { useAccount } from 'wagmi';
-import type { Network } from '@/shared/api/daoService';
+import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useAccount } from 'wagmi';
+import { useDaoPlugins } from '../../../../shared/hooks/useDaoPlugins';
+import type { IGetGaugeListParams } from '../../api/gaugeVoterService';
+import type { IGauge } from '../../api/gaugeVoterService/domain';
+import { useGaugeList } from '../../api/gaugeVoterService/queries';
 import { GaugeVoterGaugeList } from '../../components/gaugeVoterGaugeList';
 import { GaugeVoterVotingStats } from '../../components/gaugeVoterVotingStats';
-import { useGaugeList } from '../../api/gaugeVoterService/queries';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
-import type { IGauge } from '../../api/gaugeVoterService/domain';
-import type { IGaugeVoterPlugin } from '../../types';
 
 export interface IGaugeVoterGaugesPageClientProps {
     /**
-     * Gauge voter plugin instance.
+     * The DAO with the capital-distributor plugin installed.
      */
-    plugin: IGaugeVoterPlugin;
+    dao: IDao;
     /**
-     * Network of the plugin.
+     * Initial parameters for the campaign list query.
      */
-    network: Network;
+    initialParams: IGetGaugeListParams;
 }
 
 export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientProps> = (props) => {
-    const { plugin, network } = props;
+    const { dao, initialParams } = props;
     const { address } = useAccount();
     const { open, close } = useDialogContext();
 
-    const {
-        data: gaugeListData,
-        isLoading,
-        error,
-    } = useGaugeList({
-        urlParams: {
-            userAddress: address ?? '',
-        },
-        queryParams: {
-            pluginAddress: plugin.address,
-            network,
-        },
-    });
+    const plugin = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_VOTER })![0];
+
+    const { data: gaugeListData, isLoading, error } = useGaugeList(initialParams);
 
     const result = gaugeListData?.pages[0]?.data[0]; // Get the first result from pagination
     const gauges = result?.gauges ?? [];
@@ -49,7 +40,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
             params: {
                 gauge,
                 plugin,
-                network,
+                network: dao.network,
                 close,
             },
         });
@@ -59,14 +50,14 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const votingStats = {
         totalVotingPower: metrics?.votingPower.toString() ?? '0',
         allocatedVotingPower: metrics?.usedVotingPower.toString() ?? '0',
-        activeVotes: gauges.filter(g => g.userVotes > 0).length,
+        activeVotes: gauges.filter((g) => g.userVotes > 0).length,
     };
 
     if (error) {
         return (
             <div className="p-6 text-center">
                 <p className="text-critical-600">Failed to load gauges</p>
-                <p className="text-sm text-neutral-500 mt-2">
+                <p className="mt-2 text-sm text-neutral-500">
                     {error instanceof Error ? error.message : 'Unknown error occurred'}
                 </p>
             </div>
@@ -93,7 +84,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
             )}
 
             <div>
-                <h2 className="text-xl font-semibold mb-4">Available Gauges</h2>
+                <h2 className="mb-4 text-xl font-semibold">Available Gauges</h2>
                 <GaugeVoterGaugeList
                     gauges={gauges}
                     isLoading={isLoading}
@@ -102,7 +93,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
             </div>
 
             {!address && (
-                <div className="text-center py-8 bg-neutral-50 rounded-lg">
+                <div className="rounded-lg bg-neutral-50 py-8 text-center">
                     <p className="text-neutral-600">Connect your wallet to participate in gauge voting</p>
                 </div>
             )}
