@@ -1,4 +1,5 @@
 import { generateDialogContext } from '@/shared/testUtils';
+import { testLogger } from '@/test/utils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as useDialogContext from '../dialogProvider';
@@ -63,5 +64,16 @@ describe('<DialogRoot /> component', () => {
         render(createTestComponent({ dialogs }));
         await userEvent.keyboard('{Escape}');
         expect(close).toHaveBeenCalled();
+    });
+
+    it('renders an alert dialog when active dialog has the variant property set', () => {
+        testLogger.suppressErrors(); // Suppress missing title & description errors
+        const dialogId = 'test';
+        const variant = 'critical' as const;
+        const dialogs = { [dialogId]: { Component: () => 'test', variant } };
+        const location = { id: dialogId };
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ location }));
+        render(createTestComponent({ dialogs }));
+        expect(screen.getByRole('alertdialog')).toBeInTheDocument();
     });
 });
