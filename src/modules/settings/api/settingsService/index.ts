@@ -1,3 +1,4 @@
+export * from './domain';
 export * from './queries';
 export { settingsService } from './settingsService';
 export type * from './settingsService.api';

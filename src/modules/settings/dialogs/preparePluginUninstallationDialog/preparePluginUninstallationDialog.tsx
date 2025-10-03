@@ -9,21 +9,14 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import { type IPluginUninstallSetupData, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { invariant } from '@aragon/gov-ui-kit';
 import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
+import type { IUninstallPluginAlertDialogParams } from '../uninstallPluginAlertDialog';
 import { preparePluginUninstallationDialogUtils } from './preparePluginUninstallationDialogUtils';
 
-export interface IPreparePluginUninstallationDialogParams {
-    /**
-     * ID of the DAO.
-     */
-    daoId: string;
-    /**
-     * Plugin to be uninstalled.
-     */
-    uninstallPlugin: IDaoPlugin;
+export interface IPreparePluginUninstallationDialogParams extends IUninstallPluginAlertDialogParams {
     /**
      * Plugin for creating the uninstall proposal.
      */
@@ -37,7 +30,7 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
     const { location } = props;
 
     invariant(location.params != null, 'PreparePluginUninstallationDialog: required parameters must be set.');
-    const { daoId, uninstallPlugin, proposalPlugin } = location.params;
+    const { daoId, uninstallPlugin, proposalPlugin, uninstallationPreparedEventLog } = location.params;
 
     const { address } = useAccount();
     invariant(address != null, 'PreparePluginUninstallationDialog: user must be connected.');
@@ -52,6 +45,23 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
 
     const handlePrepareTransaction = async () => {
         invariant(dao != null, 'PreparePluginUninstallationDialog: DAO not found.');
+
+        if (uninstallationPreparedEventLog) {
+            const { pluginAddress, pluginSetupRepo, permissions, build, release } = uninstallationPreparedEventLog;
+            const setupData: IPluginUninstallSetupData = {
+                pluginSetupRepo,
+                pluginAddress,
+                permissions,
+                versionTag: {
+                    build: Number(build),
+                    release: Number(release),
+                },
+            };
+            console.log('setupDatasetupData', setupData, uninstallationPreparedEventLog);
+            openProposalPublishDialog(setupData);
+            return;
+        }
+
         const transaction = await preparePluginUninstallationDialogUtils.buildPrepareUninstallationTransaction(
             dao,
             uninstallPlugin,
@@ -61,9 +71,14 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
     };
 
     const handlePrepareUninstallationSuccess = (txReceipt: TransactionReceipt) => {
+        const setupData = pluginTransactionUtils.getPluginUninstallSetupData(txReceipt);
+        console.log('setupData', setupData, txReceipt);
+        openProposalPublishDialog(setupData);
+    };
+
+    const openProposalPublishDialog = (setupData: IPluginUninstallSetupData) => {
         invariant(dao != null, 'PreparePluginUninstallationDialog: DAO not found.');
 
-        const setupData = pluginTransactionUtils.getPluginUninstallSetupData(txReceipt);
         const proposalActions = pluginTransactionUtils.buildApplyPluginUninstallationAction({ dao, setupData });
 
         const proposalMetadata = preparePluginUninstallationDialogUtils.prepareApplyUninstallationProposalMetadata(
