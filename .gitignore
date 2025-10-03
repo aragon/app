@@ -41,5 +41,6 @@ deployment-url.txt
 *.tsbuildinfo
 next-env.d.ts
 
-# code editors
+# IDE/AI
 .idea
+.claude
