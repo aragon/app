@@ -11,6 +11,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { type IPluginUninstallSetupData, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { invariant } from '@aragon/gov-ui-kit';
+import { useCallback, useEffect, useRef } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
 import type { IUninstallPluginAlertDialogParams } from '../uninstallPluginAlertDialog';
@@ -37,6 +38,7 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
+    const hasProposalDialogOpened = useRef(false);
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
@@ -45,22 +47,6 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
 
     const handlePrepareTransaction = async () => {
         invariant(dao != null, 'PreparePluginUninstallationDialog: DAO not found.');
-
-        if (uninstallationPreparedEventLog) {
-            const { pluginAddress, pluginSetupRepo, permissions, build, release } = uninstallationPreparedEventLog;
-            const setupData: IPluginUninstallSetupData = {
-                pluginSetupRepo,
-                pluginAddress,
-                permissions,
-                versionTag: {
-                    build: Number(build),
-                    release: Number(release),
-                },
-            };
-            console.log('setupDatasetupData', setupData, uninstallationPreparedEventLog);
-            openProposalPublishDialog(setupData);
-            return;
-        }
 
         const transaction = await preparePluginUninstallationDialogUtils.buildPrepareUninstallationTransaction(
             dao,
@@ -72,31 +58,61 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
 
     const handlePrepareUninstallationSuccess = (txReceipt: TransactionReceipt) => {
         const setupData = pluginTransactionUtils.getPluginUninstallSetupData(txReceipt);
-        console.log('setupData', setupData, txReceipt);
         openProposalPublishDialog(setupData);
     };
 
-    const openProposalPublishDialog = (setupData: IPluginUninstallSetupData) => {
-        invariant(dao != null, 'PreparePluginUninstallationDialog: DAO not found.');
+    const openProposalPublishDialog = useCallback(
+        (setupData: IPluginUninstallSetupData) => {
+            if (hasProposalDialogOpened.current) {
+                return;
+            }
 
-        const proposalActions = pluginTransactionUtils.buildApplyPluginUninstallationAction({ dao, setupData });
+            invariant(dao != null, 'PreparePluginUninstallationDialog: DAO not found.');
 
-        const proposalMetadata = preparePluginUninstallationDialogUtils.prepareApplyUninstallationProposalMetadata(
-            uninstallPlugin,
-            proposalPlugin,
-        );
-        const translationNamespace = 'app.settings.preparePluginUninstallationDialog.publishUninstallProposal';
+            const proposalActions = pluginTransactionUtils.buildApplyPluginUninstallationAction({ dao, setupData });
 
-        const txInfo = { title: t(`${translationNamespace}.transactionInfoTitle`), current: 2, total: 2 };
-        const params: IPublishProposalDialogParams = {
-            proposal: { ...proposalMetadata, resources: [], actions: proposalActions },
-            daoId,
-            plugin: proposalPlugin,
-            translationNamespace,
-            transactionInfo: txInfo,
-        };
-        open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
-    };
+            const proposalMetadata = preparePluginUninstallationDialogUtils.prepareApplyUninstallationProposalMetadata(
+                uninstallPlugin,
+                proposalPlugin,
+            );
+            const translationNamespace = 'app.settings.preparePluginUninstallationDialog.publishUninstallProposal';
+
+            const txInfo = { title: t(`${translationNamespace}.transactionInfoTitle`), current: 2, total: 2 };
+            const params: IPublishProposalDialogParams = {
+                proposal: { ...proposalMetadata, resources: [], actions: proposalActions },
+                daoId,
+                plugin: proposalPlugin,
+                translationNamespace,
+                transactionInfo: txInfo,
+            };
+
+            open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
+            hasProposalDialogOpened.current = true;
+        },
+        [dao, daoId, open, proposalPlugin, t, uninstallPlugin],
+    );
+
+    useEffect(() => {
+        if (uninstallationPreparedEventLog && !hasProposalDialogOpened.current) {
+            const { pluginAddress, pluginSetupRepo, permissions, build, release } = uninstallationPreparedEventLog;
+            const setupData: IPluginUninstallSetupData = {
+                pluginSetupRepo,
+                pluginAddress,
+                permissions,
+                versionTag: {
+                    build: Number(build),
+                    release: Number(release),
+                },
+            };
+
+            openProposalPublishDialog(setupData);
+            return;
+        }
+    }, [openProposalPublishDialog, uninstallationPreparedEventLog]);
+
+    if (uninstallationPreparedEventLog) {
+        return null;
+    }
 
     return (
         <TransactionDialog
