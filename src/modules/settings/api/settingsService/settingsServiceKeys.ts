@@ -10,8 +10,5 @@ export const settingsServiceKeys = {
         SettingsServiceKey.PLUGIN_INSTALLATION_DATA,
         params,
     ],
-    lastPluginEventLog: (params: IGetLastPluginEventLogParams) => [
-        SettingsServiceKey.LAST_PLUGIN_EVENT_LOG,
-        params,
-    ],
+    lastPluginEventLog: (params: IGetLastPluginEventLogParams) => [SettingsServiceKey.LAST_PLUGIN_EVENT_LOG, params],
 };

@@ -1,2 +1,2 @@
-export * from './usePluginInstallationData';
 export * from './useLastPluginEventLog';
+export * from './usePluginInstallationData';
