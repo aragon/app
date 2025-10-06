@@ -38,7 +38,7 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const hasProposalDialogOpened = useRef(false);
+    const hasProposalDialogBeenOpened = useRef(false);
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
@@ -63,10 +63,6 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
 
     const openProposalPublishDialog = useCallback(
         (setupData: IPluginUninstallSetupData) => {
-            if (hasProposalDialogOpened.current) {
-                return;
-            }
-
             invariant(dao != null, 'PreparePluginUninstallationDialog: DAO not found.');
 
             const proposalActions = pluginTransactionUtils.buildApplyPluginUninstallationAction({ dao, setupData });
@@ -87,13 +83,13 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
             };
 
             open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
-            hasProposalDialogOpened.current = true;
+            hasProposalDialogBeenOpened.current = true;
         },
         [dao, daoId, open, proposalPlugin, t, uninstallPlugin],
     );
 
     useEffect(() => {
-        if (uninstallationPreparedEventLog && !hasProposalDialogOpened.current) {
+        if (uninstallationPreparedEventLog && !hasProposalDialogBeenOpened.current) {
             const { pluginAddress, pluginSetupRepo, permissions, build, release } = uninstallationPreparedEventLog;
             const setupData: IPluginUninstallSetupData = {
                 pluginSetupRepo,
@@ -104,9 +100,7 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
                     release: Number(release),
                 },
             };
-
             openProposalPublishDialog(setupData);
-            return;
         }
     }, [openProposalPublishDialog, uninstallationPreparedEventLog]);
 
