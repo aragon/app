@@ -23,10 +23,7 @@ describe('settings service', () => {
 
     it('getLastPluginEventLog fetches the last event tx log of the plugin for the specified event', async () => {
         const pluginLog: IPluginEventLog = {
-            id: '1',
             event: EventLogPluginType.INSTALLATION_PREPARED,
-            preparedSetupId: null,
-            appliedSetupId: null,
             pluginSetupRepo: '0xabc' as Hex,
             pluginAddress: '0x789' as Hex,
             permissions: [],
