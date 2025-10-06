@@ -1,3 +1,5 @@
+import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
+import { addressUtils, Avatar, Button, DataList, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
 
 export interface IGaugeVoterGaugeListItemStructureProps {
@@ -6,39 +8,76 @@ export interface IGaugeVoterGaugeListItemStructureProps {
      */
     gauge: IGauge;
     /**
+     * Total votes across all gauges for percentage calculation.
+     */
+    totalEpochVotes?: number;
+    /**
      * Function to handle gauge voting.
      */
     onVote?: (gauge: IGauge) => void;
 }
 
 export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItemStructureProps> = (props) => {
-    const { gauge, onVote } = props;
+    const { gauge, totalEpochVotes, onVote } = props;
+    const { t } = useTranslations();
+
+    const formattedTotalVotes = formatterUtils.formatNumber(gauge.totalVotes, {
+        format: NumberFormat.TOKEN_AMOUNT_SHORT,
+    });
+    const formattedUserVotes =
+        gauge.userVotes > 0
+            ? formatterUtils.formatNumber(gauge.userVotes, { format: NumberFormat.TOKEN_AMOUNT_SHORT })
+            : t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.noVotes');
+
+    // Calculate percentage if total epoch votes is available
+    const percentage = totalEpochVotes && totalEpochVotes > 0 ? (gauge.totalVotes / totalEpochVotes) * 100 : 0;
+    const formattedPercentage = totalEpochVotes
+        ? formatterUtils.formatNumber(percentage, { format: NumberFormat.PERCENTAGE_SHORT })
+        : null;
+
+    const truncatedAddress = addressUtils.truncateAddress(gauge.address);
+
+    const handleVoteClick = () => {
+        console.log('HELELEO');
+        if (onVote) {
+            onVote(gauge);
+        }
+    };
 
     return (
-        <div className="border border-neutral-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h3 className="font-semibold text-lg">{gauge.name}</h3>
-                    {gauge.description && (
-                        <p className="text-neutral-600 mt-1">{gauge.description}</p>
-                    )}
-                    <div className="flex gap-4 mt-2 text-sm text-neutral-500">
-                        <span>Total Votes: {gauge.totalVotes}</span>
-                        <span>Your Votes: {gauge.userVotes}</span>
-                    </div>
-                    <div className="mt-1 text-xs text-neutral-400">
-                        Address: <span className="font-mono">{gauge.address}</span>
-                    </div>
+        <DataList.Item className="flex min-h-20 items-center gap-4 px-6 py-3" onClick={handleVoteClick}>
+            {/* Header - Name and Address */}
+            <div className="flex min-w-0 grow basis-0 items-center gap-4">
+                <Avatar size="lg" />
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                    <p className="text-lg text-neutral-800">{gauge.name}</p>
+                    <p className="truncate text-sm text-neutral-500">{truncatedAddress}</p>
                 </div>
-                {onVote && (
-                    <button
-                        onClick={() => onVote(gauge)}
-                        className="px-4 py-2 bg-primary-500 text-white rounded hover:bg-primary-600 transition-colors"
-                    >
-                        Vote
-                    </button>
-                )}
             </div>
-        </div>
+
+            {/* Total Votes */}
+            <div className="flex grow basis-0 flex-col gap-1 text-right">
+                <p className="text-lg text-neutral-800">{formattedTotalVotes} votes</p>
+                <p className="text-sm text-neutral-500">
+                    {formattedPercentage ? `${formattedPercentage} of total` : '-- of total'}
+                </p>
+            </div>
+
+            {/* User Votes */}
+            <div className="flex min-h-11 grow basis-0 flex-col items-end">
+                <div className="flex items-center justify-end gap-2">
+                    <p className="text-right text-lg text-neutral-500">{formattedUserVotes}</p>
+                </div>
+            </div>
+
+            {/* Actions */}
+            {onVote && (
+                <div className="flex w-36 items-center justify-end pl-8">
+                    <Button size="sm" variant="tertiary">
+                        {t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.select')}
+                    </Button>
+                </div>
+            )}
+        </DataList.Item>
     );
 };

@@ -1210,6 +1210,14 @@
         }
       },
       "gaugeVoter": {
+        "gaugeVoterGaugeList": {
+          "item": {
+            "noVotes": "None",
+            "select": "Select",
+            "totalVotes": "Total votes",
+            "yourVotes": "Your votes"
+          }
+        },
         "meta": {
           "link": {
             "gauges": "Gauges"
