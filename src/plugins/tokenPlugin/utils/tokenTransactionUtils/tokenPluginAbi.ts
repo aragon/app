@@ -25,6 +25,7 @@ export const tokenPluginSetupAbi = [
         components: [
             { name: 'receivers', type: 'address[]' },
             { name: 'amounts', type: 'uint256[]' },
+            { name: 'ensureDelegationOnMint', type: 'bool' },
         ],
     },
     {

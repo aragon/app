@@ -1,4 +1,6 @@
 import { Network } from '@/shared/api/daoService';
+import type { Hex } from 'viem';
+import { EventLogPluginType, type IPluginEventLog } from './domain';
 import { settingsService } from './settingsService';
 
 describe('settings service', () => {
@@ -17,5 +19,29 @@ describe('settings service', () => {
 
         expect(requestSpy).toHaveBeenCalledWith(settingsService['urls'].pluginInstallationData, params);
         expect(result).toEqual(installationData);
+    });
+
+    it('getLastPluginEventLog fetches the last event tx log of the plugin for the specified event', async () => {
+        const pluginLog: IPluginEventLog = {
+            event: EventLogPluginType.INSTALLATION_PREPARED,
+            pluginSetupRepo: '0xabc' as Hex,
+            pluginAddress: '0x789' as Hex,
+            permissions: [],
+            build: '1',
+            release: '1',
+        };
+        const params = {
+            urlParams: {
+                pluginAddress: '0x789',
+                network: Network.BASE_MAINNET,
+                event: EventLogPluginType.INSTALLATION_PREPARED,
+            },
+        };
+
+        requestSpy.mockResolvedValue(pluginLog);
+        const result = await settingsService.getLastPluginEventLog(params);
+
+        expect(requestSpy).toHaveBeenCalledWith(settingsService['urls'].lastPluginEventLog, params);
+        expect(result).toEqual(pluginLog);
     });
 });

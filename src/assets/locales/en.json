@@ -1102,24 +1102,7 @@
           "title": "Admin"
         },
         "adminUninstallPlugin": {
-          "adminUninstallProcessDialogCreate": {
-            "description": "To remove all admins, you need to first create at least one governance process that can execute any actions on behalf of the DAO.",
-            "heading": "No valid governance process found",
-            "label": "Create governance process",
-            "title": "Remove all admins"
-          },
-          "adminUninstallProcessDialogSelect": {
-            "a11y": {
-              "description": "You have to create and pass a proposal in another governance process to remove admin control from the DAO. This should only be done when the DAO is ready and no longer requires admin control."
-            },
-            "action": {
-              "cancel": "Cancel",
-              "select": "Select process"
-            },
-            "descriptionFirstLine": "You have to create and pass a proposal in another governance process to remove admin control from the DAO.",
-            "descriptionSecondLine": "This should only be done when the DAO is ready and no longer requires admin control.",
-            "title": "Remove all admins"
-          },
+          "fallbackDialogTitle": "Remove all admins",
           "label": "Remove all admins"
         },
         "adminVotingTerminal": {
@@ -2048,8 +2031,13 @@
         }
       },
       "daoProcessDetailsInfo": {
+        "fallbackDialogTitle": "Uninstall process",
         "pluginName": "Plugin name",
-        "processKey": "Process key"
+        "processKey": "Process key",
+        "uninstall": {
+          "action": "Uninstall Process",
+          "info": "Proposals of this type can't be executed once this process is uninstalled."
+        }
       },
       "daoProcessDetailsPage": {
         "error": {
@@ -2102,6 +2090,16 @@
         "osLabel": "Operating system",
         "osValue": "Aragon OSx v{{version}}"
       },
+      "governanceProcessRequiredDialog": {
+        "a11y": {
+          "description": "Create a governance process to uninstall a plugin"
+        },
+        "feedback": {
+          "action": "Create governance process",
+          "description": "To uninstall a process, you must first create at least one governance process that can execute any actions on behalf of the DAO.",
+          "title": "No valid governance process found"
+        }
+      },
       "prepareDaoContractsUpdateDialog": {
         "button": {
           "submit": "Prepare installation"
@@ -2110,6 +2108,22 @@
         "title": "Publish contract upgrades",
         "transactionInfoTitle": "Prepare installation"
       },
+      "preparePluginUninstallationDialog": {
+        "button": {
+          "submit": "Prepare uninstallation"
+        },
+        "description": "To uninstall your governance process, confirm the two onchain transactions in your wallet.",
+        "publishUninstallProposal": {
+          "button": {
+            "submit": "Propose uninstallation"
+          },
+          "description": "To uninstall your governance process, confirm the two onchain transactions in your wallet.",
+          "title": "Publish process uninstallation",
+          "transactionInfoTitle": "Propose uninstallation"
+        },
+        "title": "Uninstall process",
+        "transactionInfoTitle": "Prepare uninstallation"
+      },
       "publishDaoContractsUpdateDialog": {
         "button": {
           "submit": "Propose contract upgrades"
@@ -2117,6 +2131,20 @@
         "description": "To publish the contract upgrades, confirm the two onchain transactions in your wallet.",
         "title": "Publish contract upgrades",
         "transactionInfoTitle": "Propose contract upgrades"
+      },
+      "uninstallPluginAlertDialog": {
+        "a11y": {
+          "description": "Confirm uninstallation of the process"
+        },
+        "action": {
+          "cancel": "Cancel",
+          "select": "Select process"
+        },
+        "description": {
+          "1": "You have to create and pass a proposal in another governance process to uninstall this process.",
+          "2": "Once uninstalled, this process will no longer be able to govern the DAO. This should only be done only when you are certain it is not needed and have the other processes needed by the DAO."
+        },
+        "title": "Uninstall {{name}} ({{slug}}) process"
       },
       "updateDaoContracts": {
         "button": "Upgrade contracts",

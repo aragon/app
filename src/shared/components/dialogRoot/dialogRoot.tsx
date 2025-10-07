@@ -1,6 +1,6 @@
 'use client';
 
-import { Dialog, type IDialogRootProps as IGukDialogRootProps } from '@aragon/gov-ui-kit';
+import { Dialog, DialogAlert, type IDialogRootProps as IGukDialogRootProps } from '@aragon/gov-ui-kit';
 import { useDialogContext, type IDialogComponentDefinitions } from '../dialogProvider';
 import { useTranslations } from '../translationsProvider';
 
@@ -27,6 +27,7 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
         ...activeDialogProps
     } = activeDialog ?? {};
 
+    const isAlertDialog = 'variant' in activeDialogProps;
     const { disableOutsideClick, onClose } = location ?? {};
 
     const handleInteractOutside = (event: Event) => {
@@ -40,17 +41,23 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
         closeFunction();
     };
 
+    const DialogWrapper = isAlertDialog ? DialogAlert.Root : Dialog.Root;
+
+    const processedHiddenTitle = hiddenTitle ? t(hiddenTitle) : undefined;
+    const processedHiddenDescription = hiddenDescription ? t(hiddenDescription) : undefined;
+    const onOpenChange = !isAlertDialog ? handleOpenChange : undefined;
+
     return (
-        <Dialog.Root
+        <DialogWrapper
             {...props}
             open={isOpen}
-            onOpenChange={handleOpenChange}
+            onOpenChange={onOpenChange}
             onInteractOutside={handleInteractOutside}
-            hiddenTitle={hiddenTitle ? t(hiddenTitle) : undefined}
-            hiddenDescription={hiddenDescription ? t(hiddenDescription) : undefined}
+            hiddenTitle={processedHiddenTitle}
+            hiddenDescription={processedHiddenDescription}
             {...activeDialogProps}
         >
             {ActiveDialogComponent && <ActiveDialogComponent location={location!} />}
-        </Dialog.Root>
+        </DialogWrapper>
     );
 };
