@@ -6,6 +6,11 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { Button, DefinitionList } from '@aragon/gov-ui-kit';
+import {
+    EventLogPluginType,
+    type IGetLastPluginEventLogUrlParams,
+    useLastPluginEventLog,
+} from '../../api/settingsService';
 import { SettingsDialogId } from '../../constants/settingsDialogId';
 import type { IGovernanceProcessRequiredDialogParams } from '../../dialogs/governanceProcessRequiredDialog';
 import type { IUninstallPluginAlertDialogParams } from '../../dialogs/uninstallPluginAlertDialog';
@@ -32,6 +37,13 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
         { term: t('app.settings.daoProcessDetailsInfo.processKey'), definition: plugin.slug.toUpperCase() },
     ];
 
+    const eventLogParams: IGetLastPluginEventLogUrlParams = {
+        pluginAddress: plugin.address,
+        network: dao.network,
+        event: EventLogPluginType.UNINSTALLATION_PREPARED,
+    };
+    const { data: uninstallationPreparedEventLog } = useLastPluginEventLog({ urlParams: eventLogParams });
+
     const { id: daoId } = dao;
     const settings = useDaoPluginInfo({ daoId, address: plugin.address, settings: pluginInfoSettings });
     const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, hasExecute: true }) ?? [];
@@ -41,7 +53,11 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
 
     const handleUninstallProcess = () => {
         if (processPlugins.length > 1) {
-            const params: IUninstallPluginAlertDialogParams = { daoId, uninstallPlugin: plugin };
+            const params: IUninstallPluginAlertDialogParams = {
+                daoId,
+                uninstallPlugin: plugin,
+                uninstallationPreparedEventLog,
+            };
             open(SettingsDialogId.UNINSTALL_PLUGIN_ALERT, { params });
         } else {
             const dialogTitle = t('app.settings.daoProcessDetailsInfo.fallbackDialogTitle');
@@ -49,7 +65,6 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
             open(SettingsDialogId.GOVERNANCE_PROCESS_REQUIRED, { params });
         }
     };
-
     return (
         <div className="flex flex-col gap-6">
             <DefinitionList.Container>

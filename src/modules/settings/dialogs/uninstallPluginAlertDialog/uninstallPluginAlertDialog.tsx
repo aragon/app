@@ -8,6 +8,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { DialogAlert, DialogAlertFooter, invariant } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
+import type { IPluginEventLog } from '../../api/settingsService';
 import { SettingsDialogId } from '../../constants/settingsDialogId';
 import type { IPreparePluginUninstallationDialogParams } from '../preparePluginUninstallationDialog';
 
@@ -20,6 +21,11 @@ export interface IUninstallPluginAlertDialogParams {
      * Plugin to be uninstalled.
      */
     uninstallPlugin: IDaoPlugin;
+    /**
+     *  Tx log for UninstallationPrepared event, if available. This means that
+     *  the plugin uninstallation was already prepared but not applied yet.
+     */
+    uninstallationPreparedEventLog?: IPluginEventLog;
 }
 
 export interface IUninstallPluginAlertDialogProps extends IDialogComponentProps<IUninstallPluginAlertDialogParams> {}
@@ -28,7 +34,7 @@ export const UninstallPluginAlertDialog: React.FC<IUninstallPluginAlertDialogPro
     const { location } = props;
     invariant(location.params != null, 'UninstallPluginAlertDialog: required parameters must be set.');
 
-    const { daoId, uninstallPlugin } = location.params;
+    const { daoId, uninstallPlugin, uninstallationPreparedEventLog } = location.params;
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
@@ -36,7 +42,12 @@ export const UninstallPluginAlertDialog: React.FC<IUninstallPluginAlertDialogPro
     const [selectedPlugin, setSelectedPlugin] = useState<IDaoPlugin>();
 
     const handleGuardSuccess = (proposalPlugin: IDaoPlugin) => {
-        const params: IPreparePluginUninstallationDialogParams = { daoId, uninstallPlugin, proposalPlugin };
+        const params: IPreparePluginUninstallationDialogParams = {
+            daoId,
+            uninstallPlugin,
+            proposalPlugin,
+            uninstallationPreparedEventLog,
+        };
         open(SettingsDialogId.PREPARE_PLUGIN_UNINSTALLATION, { params });
     };
 
