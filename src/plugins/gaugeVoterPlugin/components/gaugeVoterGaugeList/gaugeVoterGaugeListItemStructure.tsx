@@ -15,10 +15,14 @@ export interface IGaugeVoterGaugeListItemStructureProps {
      * Function to handle gauge voting.
      */
     onVote?: (gauge: IGauge) => void;
+    /**
+     * Function to handle viewing gauge details.
+     */
+    onViewDetails?: (gauge: IGauge) => void;
 }
 
 export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItemStructureProps> = (props) => {
-    const { gauge, totalEpochVotes, onVote } = props;
+    const { gauge, totalEpochVotes, onVote, onViewDetails } = props;
     const { t } = useTranslations();
 
     const formattedTotalVotes = formatterUtils.formatNumber(gauge.totalVotes, {
@@ -44,8 +48,14 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
         }
     };
 
+    const handleRowClick = () => {
+        if (onViewDetails) {
+            onViewDetails(gauge);
+        }
+    };
+
     return (
-        <DataList.Item className="flex min-h-20 items-center gap-4 px-6 py-3" onClick={handleVoteClick}>
+        <DataList.Item className="flex min-h-20 items-center gap-4 px-6 py-3" onClick={handleRowClick}>
             {/* Header - Name and Address */}
             <div className="flex min-w-0 grow basis-0 items-center gap-4">
                 <Avatar size="lg" />

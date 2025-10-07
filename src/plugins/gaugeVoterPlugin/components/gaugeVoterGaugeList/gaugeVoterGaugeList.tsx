@@ -1,6 +1,7 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { DataListContainer, DataListPagination, DataListRoot } from '@aragon/gov-ui-kit';
+import type { IGetGaugeListParams } from '../../api/gaugeVoterService';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
 import { useGaugeList } from '../../api/gaugeVoterService/queries';
 import { GaugeVoterGaugeListItemSkeleton } from './gaugeVoterGaugeListItemSkeleton';
@@ -8,21 +9,21 @@ import { GaugeVoterGaugeListItemStructure } from './gaugeVoterGaugeListItemStruc
 
 export interface IGaugeVoterGaugeListProps {
     /**
-     * List of gauges to display.
+     * Initial parameters for the gauge list query.
      */
-    gauges: IGauge[];
-    /**
-     * Whether the list is loading.
-     */
-    isLoading?: boolean;
+    initialParams: IGetGaugeListParams;
     /**
      * Function to handle gauge voting.
      */
     onVote?: (gauge: IGauge) => void;
+    /**
+     * Function to handle viewing gauge details.
+     */
+    onViewDetails?: (gauge: IGauge) => void;
 }
 
 export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) => {
-    const { initialParams, onVote } = props;
+    const { initialParams, onVote, onViewDetails } = props;
 
     const { t } = useTranslations();
 
@@ -63,6 +64,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
                         key={gauge.address}
                         gauge={gauge}
                         onVote={onVote}
+                        onViewDetails={onViewDetails}
                         totalEpochVotes={100000000}
                     />
                 ))}
