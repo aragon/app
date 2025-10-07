@@ -2,8 +2,12 @@
 
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { Page } from '@/shared/components/page';
+import { Link } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
+import { useTranslations } from '../../../../shared/components/translationsProvider';
 import { useDaoPlugins } from '../../../../shared/hooks/useDaoPlugins';
+import { daoUtils } from '../../../../shared/utils/daoUtils';
 import type { IGetGaugeListParams } from '../../api/gaugeVoterService';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
 import { useGaugeList } from '../../api/gaugeVoterService/queries';
@@ -24,10 +28,15 @@ export interface IGaugeVoterGaugesPageClientProps {
 
 export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientProps> = (props) => {
     const { dao, initialParams } = props;
+
     const { address } = useAccount();
     const { open, close } = useDialogContext();
+    const { t } = useTranslations();
 
     const plugin = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_VOTER })![0];
+
+    const pluginName = daoUtils.getPluginName(plugin.meta);
+    const { description, links } = plugin.meta;
 
     const { data: gaugeListData, isLoading, error } = useGaugeList(initialParams);
 
@@ -53,50 +62,35 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
         activeVotes: gauges.filter((g) => g.userVotes > 0).length,
     };
 
-    if (error) {
-        return (
-            <div className="p-6 text-center">
-                <p className="text-critical-600">Failed to load gauges</p>
-                <p className="mt-2 text-sm text-neutral-500">
-                    {error instanceof Error ? error.message : 'Unknown error occurred'}
-                </p>
-            </div>
-        );
-    }
-
     return (
-        <div className="space-y-6 p-6">
-            <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold">Gauge Voting</h1>
-                {address && (
-                    <div className="text-sm text-neutral-600">
-                        Connected: {address.slice(0, 6)}...{address.slice(-4)}
-                    </div>
-                )}
-            </div>
-
-            {address && (
-                <GaugeVoterVotingStats
-                    totalVotingPower={votingStats.totalVotingPower}
-                    allocatedVotingPower={votingStats.allocatedVotingPower}
-                    activeVotes={votingStats.activeVotes}
-                />
-            )}
-
-            <div>
-                <h2 className="mb-4 text-xl font-semibold">Available Gauges</h2>
+        <Page.Content>
+            <Page.Main title={t('app.plugins.gaugeVoter.gaugeVoterGaugesPage.main.title')}>
                 <GaugeVoterGaugeList
                     gauges={gauges}
                     isLoading={isLoading}
                     onVote={address ? handleVoteClick : undefined}
                 />
-            </div>
+            </Page.Main>
 
-            {!address && (
-                <div className="rounded-lg bg-neutral-50 py-8 text-center">
-                    <p className="text-neutral-600">Connect your wallet to participate in gauge voting</p>
-                </div>
-            )}
-        </div>
+            <Page.Aside>
+                <Page.AsideCard
+                    title={t('app.plugins.gaugeVoter.gaugeVoterGaugesPage.aside.title', { epochId: metrics?.epochId })}
+                >
+                    {description && <p className="text-base text-gray-500">{description}</p>}
+                    {address && (
+                        <GaugeVoterVotingStats
+                            totalVotingPower={votingStats.totalVotingPower}
+                            allocatedVotingPower={votingStats.allocatedVotingPower}
+                            activeVotes={votingStats.activeVotes}
+                        />
+                    )}
+                    {links?.map(({ url, name }) => (
+                        <Link key={url} href={url} isExternal={true} showUrl={true}>
+                            {name}
+                        </Link>
+                    ))}
+                </Page.AsideCard>
+            </Page.Aside>
+        </Page.Content>
     );
 };
