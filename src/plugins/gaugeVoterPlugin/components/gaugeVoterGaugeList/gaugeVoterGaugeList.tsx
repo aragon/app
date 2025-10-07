@@ -1,4 +1,9 @@
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { dataListUtils } from '@/shared/utils/dataListUtils';
+import { DataListContainer, DataListPagination, DataListRoot } from '@aragon/gov-ui-kit';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
+import { useGaugeList } from '../../api/gaugeVoterService/queries';
+import { GaugeVoterGaugeListItemSkeleton } from './gaugeVoterGaugeListItemSkeleton';
 import { GaugeVoterGaugeListItemStructure } from './gaugeVoterGaugeListItemStructure';
 
 export interface IGaugeVoterGaugeListProps {
@@ -17,36 +22,52 @@ export interface IGaugeVoterGaugeListProps {
 }
 
 export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) => {
-    const { gauges, isLoading, onVote } = props;
+    const { initialParams, onVote } = props;
 
-    if (isLoading) {
-        return (
-            <div className="space-y-4">
-                {Array.from({ length: 3 }).map((_, index) => (
-                    <div key={index} className="h-20 animate-pulse rounded bg-neutral-100" />
-                ))}
-            </div>
-        );
-    }
+    const { t } = useTranslations();
 
-    if (gauges.length === 0) {
-        return (
-            <div className="py-8 text-center">
-                <p className="text-neutral-500">No gauges available</p>
-            </div>
-        );
-    }
+    const { data: gaugeListData, fetchNextPage, status, fetchStatus, isFetchingNextPage } = useGaugeList(initialParams);
 
+    const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
+
+    const itemsCount = gaugeListData?.pages[0]?.metadata?.totalRecords;
+    const pageSize = gaugeListData?.pages[0]?.metadata?.pageSize;
+
+    const emptyState = {
+        heading: t('app.plugins.gaugeVoter.gaugeVoterGaugeList.emptyState.heading'),
+        description: t('app.plugins.gaugeVoter.gaugeVoterGaugeList.emptyState.description'),
+    };
+
+    const errorState = {
+        heading: t('app.plugins.gaugeVoter.gaugeVoterGaugeList.errorState.heading'),
+        description: t('app.plugins.gaugeVoter.gaugeVoterGaugeList.errorState.description'),
+    };
+
+    const gaugeList = gaugeListData?.pages.flatMap((page) => page.data.flatMap((data) => data.gauges));
+    console.log('gaugeList', gaugeList);
     return (
-        <div className="space-y-4">
-            {gauges.map((gauge) => (
-                <GaugeVoterGaugeListItemStructure
-                    key={gauge.address}
-                    gauge={gauge}
-                    onVote={onVote}
-                    totalEpochVotes={100000000}
-                />
-            ))}
-        </div>
+        <DataListRoot
+            entityLabel={t('app.plugins.gaugeVoter.gaugeVoterGaugeList.entity')}
+            onLoadMore={fetchNextPage}
+            state={state}
+            pageSize={pageSize}
+            itemsCount={itemsCount}
+        >
+            <DataListContainer
+                errorState={errorState}
+                emptyState={emptyState}
+                SkeletonElement={GaugeVoterGaugeListItemSkeleton}
+            >
+                {gaugeList?.map((gauge) => (
+                    <GaugeVoterGaugeListItemStructure
+                        key={gauge.address}
+                        gauge={gauge}
+                        onVote={onVote}
+                        totalEpochVotes={100000000}
+                    />
+                ))}
+            </DataListContainer>
+            <DataListPagination />
+        </DataListRoot>
     );
 };

@@ -7,7 +7,6 @@ import { Link } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import { useTranslations } from '../../../../shared/components/translationsProvider';
 import { useDaoPlugins } from '../../../../shared/hooks/useDaoPlugins';
-import { daoUtils } from '../../../../shared/utils/daoUtils';
 import type { IGetGaugeListParams } from '../../api/gaugeVoterService';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
 import { useGaugeList } from '../../api/gaugeVoterService/queries';
@@ -34,11 +33,9 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const { t } = useTranslations();
 
     const plugin = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_VOTER })![0];
-
-    const pluginName = daoUtils.getPluginName(plugin.meta);
     const { description, links } = plugin.meta;
 
-    const { data: gaugeListData, isLoading, error } = useGaugeList(initialParams);
+    const { data: gaugeListData } = useGaugeList(initialParams);
 
     const result = gaugeListData?.pages[0]?.data[0]; // Get the first result from pagination
     const gauges = result?.gauges ?? [];
@@ -67,7 +64,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
             <Page.Main title={t('app.plugins.gaugeVoter.gaugeVoterGaugesPage.main.title')}>
                 <GaugeVoterGaugeList
                     gauges={gauges}
-                    isLoading={isLoading}
+                    initialParams={initialParams}
                     onVote={address ? handleVoteClick : undefined}
                 />
             </Page.Main>

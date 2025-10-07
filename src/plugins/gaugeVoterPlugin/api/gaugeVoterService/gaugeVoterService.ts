@@ -32,6 +32,14 @@ class GaugeVoterService extends AragonBackendService {
                             userVotes: 0,
                             resources: [],
                         },
+                        {
+                            address: '0x9834',
+                            name: 'Test Gauge 2',
+                            description: 'Test Gauge 2 description',
+                            totalVotes: 1000000,
+                            userVotes: 100,
+                            resources: [],
+                        },
                     ],
                     metrics: {
                         epochId: 'epoch-1',
