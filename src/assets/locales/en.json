@@ -2096,7 +2096,7 @@
           },
           "description": "To uninstall your governance process, confirm the two onchain transactions in your wallet.",
           "title": "Publish process uninstallation",
-          "transactionInfoTitle": "Propose uninstallation"
+          "transactionInfoTitle": "Propose uninstall"
         },
         "title": "Uninstall process",
         "transactionInfoTitle": "Prepare uninstallation"
