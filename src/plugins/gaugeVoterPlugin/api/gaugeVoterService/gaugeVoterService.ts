@@ -29,7 +29,7 @@ class GaugeVoterService extends AragonBackendService {
                             name: 'Charged Particles',
                             description:
                                 'Charged Particles is the groundbreaking protocol that lets you put digital assets inside your NFTs. Now, ordinary NFTs (think neutral molecules) can contain a digital "charge" inside — ERC20, ERC721 or ERC1155 — giving you the unprecedented power to create nested NFTs. If you can digitize it, you can deposit it into your NFTs.',
-                            icon: 'https://pbs.twimg.com/profile_images/1721880644345622528/G2czctJJ_400x400.jpg',
+                            logo: 'https://pbs.twimg.com/profile_images/1721880644345622528/G2czctJJ_400x400.jpg',
                             totalVotes: 1000000,
                             userVotes: 0,
                             resources: [
@@ -47,7 +47,7 @@ class GaugeVoterService extends AragonBackendService {
                             address: '0x9834',
                             name: 'Ionic',
                             description: 'Ionic is a powerful protocol that enables the creation of nested NFTs.',
-                            icon: 'https://raw.githubusercontent.com/mode-network/brandkit/refs/heads/main/Assets/Logo/Token.png',
+                            logo: 'https://raw.githubusercontent.com/mode-network/brandkit/refs/heads/main/Assets/Logo/Token.png',
                             totalVotes: 1000000,
                             userVotes: 100,
                             resources: [],
