@@ -46,8 +46,7 @@ class GaugeVoterService extends AragonBackendService {
                         {
                             address: '0x9834',
                             name: 'Ionic',
-                            description:
-                                'Ionic is a powerful protocol that enables the creation of nested NFTs by allowing ordinary NFTs to contain a digital "charge" inside — ERC20, ERC721 or ERC1155 — giving you the unprecedented power to create nested NFTs. If you can digitize it, you can deposit it into your NFTs.',
+                            description: 'Ionic is a powerful protocol that enables the creation of nested NFTs.',
                             icon: 'https://raw.githubusercontent.com/mode-network/brandkit/refs/heads/main/Assets/Logo/Token.png',
                             totalVotes: 1000000,
                             userVotes: 100,
