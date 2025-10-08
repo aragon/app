@@ -1,5 +1,5 @@
-import type { Hex } from 'viem';
 import type { IResource } from '@/shared/api/daoService';
+import type { Hex } from 'viem';
 
 export interface IGauge {
     /**
@@ -14,6 +14,10 @@ export interface IGauge {
      * Description of the gauge from metadata.
      */
     description: string;
+    /**
+     * URI of the gauge from metadata.
+     */
+    icon?: string;
     /**
      * Resources associated with the gauge.
      */

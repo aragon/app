@@ -53,10 +53,13 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     };
 
     const handleViewDetails = (gauge: IGauge) => {
+        const selectedIndex = gauges.findIndex((g) => g.address === gauge.address);
         open(GaugeVoterPluginDialogId.GAUGE_DETAILS, {
             params: {
-                gauge,
+                gauges,
+                selectedIndex,
                 plugin,
+                network: dao.network,
                 close,
             },
         });

@@ -1193,6 +1193,21 @@
         }
       },
       "gaugeVoter": {
+        "gaugeVoterGaugeDetailsDialog": {
+          "content": {
+            "contract": "Contract",
+            "haveYouVotedFor": "Have you voted for?",
+            "totalRewards": "Total rewards",
+            "votedNo": "No",
+            "votedYes": "Yes",
+            "yourRewards": "Your rewards",
+            "yourRewardsDescription": "If you vote with your 100% voting power"
+          },
+          "footer": {
+            "next": "Next",
+            "previous": "Previous"
+          }
+        },
         "gaugeVoterGaugeList": {
           "emptyState": {
             "description": "This will show your gauges when available.",

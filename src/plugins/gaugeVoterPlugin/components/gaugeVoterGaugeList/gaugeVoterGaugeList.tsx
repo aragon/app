@@ -45,7 +45,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
     };
 
     const gaugeList = gaugeListData?.pages.flatMap((page) => page.data.flatMap((data) => data.gauges));
-    console.log('gaugeList', gaugeList);
+
     return (
         <DataListRoot
             entityLabel={t('app.plugins.gaugeVoter.gaugeVoterGaugeList.entity')}
