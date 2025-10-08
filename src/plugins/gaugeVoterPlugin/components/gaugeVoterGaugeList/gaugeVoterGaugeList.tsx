@@ -2,19 +2,17 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { DataListContainer, DataListPagination, DataListRoot } from '@aragon/gov-ui-kit';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
+import type { IGetGaugeListParams } from '../../api/gaugeVoterService/gaugeVoterService.api';
 import { useGaugeList } from '../../api/gaugeVoterService/queries';
+import { GaugeVoterGaugeListHeading } from './gaugeVoterGaugeListHeading';
 import { GaugeVoterGaugeListItemSkeleton } from './gaugeVoterGaugeListItemSkeleton';
 import { GaugeVoterGaugeListItemStructure } from './gaugeVoterGaugeListItemStructure';
 
 export interface IGaugeVoterGaugeListProps {
     /**
-     * List of gauges to display.
+     * Initial parameters for gauge list query.
      */
-    gauges: IGauge[];
-    /**
-     * Whether the list is loading.
-     */
-    isLoading?: boolean;
+    initialParams: IGetGaugeListParams;
     /**
      * Function to handle gauge voting.
      */
@@ -44,7 +42,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
     };
 
     const gaugeList = gaugeListData?.pages.flatMap((page) => page.data.flatMap((data) => data.gauges));
-    console.log('gaugeList', gaugeList);
+    
     return (
         <DataListRoot
             entityLabel={t('app.plugins.gaugeVoter.gaugeVoterGaugeList.entity')}
@@ -53,6 +51,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
             pageSize={pageSize}
             itemsCount={itemsCount}
         >
+            <GaugeVoterGaugeListHeading />
             <DataListContainer
                 errorState={errorState}
                 emptyState={emptyState}

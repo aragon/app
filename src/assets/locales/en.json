@@ -1203,6 +1203,11 @@
             "description": "There was an error loading the gauges. Try again later.",
             "heading": "Error loading gauges"
           },
+          "heading": {
+            "name": "Name",
+            "totalVotes": "Total Votes",
+            "yourVotes": "Your Votes"
+          },
           "item": {
             "noVotes": "None",
             "select": "Select",

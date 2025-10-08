@@ -78,7 +78,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
 
             {/* Actions */}
             {onVote && (
-                <div className="flex w-36 items-center justify-end pl-8">
+                <div className="flex w-30 items-center justify-end md:w-36">
                     <Button size="sm" variant="tertiary">
                         {t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.select')}
                     </Button>
