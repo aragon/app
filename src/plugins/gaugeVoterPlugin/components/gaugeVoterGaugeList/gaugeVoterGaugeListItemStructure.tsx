@@ -1,5 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { addressUtils, Avatar, Button, DataList, formatterUtils, IconType, NumberFormat } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
 
 export interface IGaugeVoterGaugeListItemStructureProps {
@@ -70,8 +71,12 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
 
     const actionButtonTranslationKey = isVoted ? 'voted' : isSelected ? 'selected' : 'select';
 
+    const itemClassName = classNames('flex min-h-20 items-center gap-4 px-6 py-3', {
+        'border-primary-300 hover:border-primary-300': isSelected,
+    });
+
     return (
-        <DataList.Item className="flex min-h-20 items-center gap-4 px-6 py-3" onClick={handleVoteClick}>
+        <DataList.Item className={itemClassName} onClick={handleVoteClick}>
             <div className="flex min-w-0 grow basis-0 items-center gap-4">
                 <Avatar alt="Gauge icon" size="lg" fallback={avatarFallback} src={gauge.logo ?? undefined} />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
