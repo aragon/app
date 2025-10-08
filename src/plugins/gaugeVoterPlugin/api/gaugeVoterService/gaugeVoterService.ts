@@ -36,6 +36,7 @@ class GaugeVoterService extends AragonBackendService {
                             address: '0x9834',
                             name: 'Test Gauge 2',
                             description: 'Test Gauge 2 description',
+                            logo: 'https://assets.coingecko.com/coins/images/33033/standard/weETH.png?1701438396',
                             totalVotes: 1000000,
                             userVotes: 100,
                             resources: [],

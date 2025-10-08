@@ -1,5 +1,5 @@
-import type { Hex } from 'viem';
 import type { IResource } from '@/shared/api/daoService';
+import type { Hex } from 'viem';
 
 export interface IGauge {
     /**
@@ -18,6 +18,10 @@ export interface IGauge {
      * Resources associated with the gauge.
      */
     resources: IResource[];
+    /**
+     * Logo url of the gauge from metadata.
+     */
+    logo?: string;
     /**
      * Total votes allocated to this gauge from GaugeVoterContract.
      */
