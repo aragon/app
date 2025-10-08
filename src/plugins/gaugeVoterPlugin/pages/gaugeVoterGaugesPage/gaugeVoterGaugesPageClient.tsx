@@ -3,7 +3,7 @@
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
-import { Button, Link } from '@aragon/gov-ui-kit';
+import { Link } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { useTranslations } from '../../../../shared/components/translationsProvider';
@@ -13,6 +13,7 @@ import type { IGauge } from '../../api/gaugeVoterService/domain';
 import { useGaugeList } from '../../api/gaugeVoterService/queries';
 import { GaugeVoterGaugeList } from '../../components/gaugeVoterGaugeList';
 import { GaugeVoterVotingStats } from '../../components/gaugeVoterVotingStats';
+import { GaugeVoterVotingTerminal } from '../../components/gaugeVoterVotingTerminal';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
 
 export interface IGaugeVoterGaugesPageClientProps {
@@ -103,21 +104,19 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
         <Page.Content>
             <Page.Main title={t('app.plugins.gaugeVoter.gaugeVoterGaugesPage.main.title')}>
                 <div className="flex flex-col gap-6">
-                    {address && selectedGauges.length > 0 && (
-                        <div className="flex justify-end">
-                            <Button variant="primary" onClick={handleVoteClick}>
-                                {t('app.plugins.gaugeVoter.gaugeVoterGaugesPage.main.voteOnSelected', {
-                                    count: selectedGauges.length,
-                                })}
-                            </Button>
-                        </div>
-                    )}
                     <GaugeVoterGaugeList
                         initialParams={initialParams}
                         selectedGauges={selectedGauges}
                         votedGauges={votedGauges}
                         onSelect={address ? handleSelectGauge : undefined}
                         onItemClick={handleGaugeItemClick}
+                    />
+                    <GaugeVoterVotingTerminal
+                        totalVotingPower={votingStats.totalVotingPower}
+                        usedVotingPower={votingStats.allocatedVotingPower}
+                        selectedCount={selectedGauges.length}
+                        tokenSymbol="PDT"
+                        onVote={handleVoteClick}
                     />
                 </div>
             </Page.Main>

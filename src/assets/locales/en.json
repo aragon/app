@@ -1227,6 +1227,12 @@
             "voteOnSelected_plural": "Vote on {{count}} selected gauges"
           }
         },
+        "gaugeVoterVotingTerminal": {
+          "yourVotes": "Your votes",
+          "used": "used",
+          "selected": "{{count}} selected",
+          "voteOnSelected": "Vote on selected"
+        },
         "meta": {
           "link": {
             "gauges": "Gauges"
