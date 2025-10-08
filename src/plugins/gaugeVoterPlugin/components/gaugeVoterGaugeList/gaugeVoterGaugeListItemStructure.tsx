@@ -50,11 +50,13 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
 
     const truncatedAddress = addressUtils.truncateAddress(gauge.address);
 
-    const handleSelectClick = (event: React.MouseEvent) => {
+    const handleActionClick = (event: React.MouseEvent) => {
         event.stopPropagation();
-        if (onSelect) {
-            onSelect(gauge);
+        if (isVoted) {
+            return;
         }
+
+        onSelect?.(gauge);
     };
 
     const avatarFallback = (
@@ -98,7 +100,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
                     <Button
                         size="sm"
                         variant="secondary"
-                        onClick={isVoted ? undefined : handleSelectClick}
+                        onClick={handleActionClick}
                         iconLeft={isVoted ? IconType.CHECKMARK : isSelected ? IconType.CHECKMARK : undefined}
                     >
                         {t(`app.plugins.gaugeVoter.gaugeVoterGaugeList.item.${actionButtonTranslationKey}`)}
