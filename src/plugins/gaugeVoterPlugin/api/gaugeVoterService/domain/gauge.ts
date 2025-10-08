@@ -23,6 +23,10 @@ export interface IGauge {
      */
     resources: IResource[];
     /**
+     * Logo url of the gauge from metadata.
+     */
+    logo?: string;
+    /**
      * Total votes allocated to this gauge from GaugeVoterContract.
      */
     totalVotes: number;

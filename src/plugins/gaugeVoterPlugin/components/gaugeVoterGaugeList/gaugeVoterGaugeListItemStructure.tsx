@@ -47,11 +47,17 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
     //     }
     // };
 
+    const avatarFallback = (
+        <span className="bg-primary-400 text-neutral-0 flex size-full items-center justify-center">
+            {gauge.name.slice(0, 2).toUpperCase()}
+        </span>
+    );
+
     return (
         <DataList.Item className="flex min-h-20 items-center gap-4 px-6 py-3" onClick={() => onViewDetails?.(gauge)}>
             {/* Header - Name and Address */}
             <div className="flex min-w-0 grow basis-0 items-center gap-4">
-                <Avatar size="lg" src={gauge.icon} />
+                <Avatar alt="Gauge icon" size="lg" fallback={avatarFallback} src={gauge.logo} />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                     <p className="text-lg text-neutral-800">{gauge.name}</p>
                     <p className="truncate text-sm text-neutral-500">{truncatedAddress}</p>
