@@ -4,18 +4,27 @@ import { DataListContainer, DataListPagination, DataListRoot } from '@aragon/gov
 import type { IGetGaugeListParams } from '../../api/gaugeVoterService';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
 import { useGaugeList } from '../../api/gaugeVoterService/queries';
+import { GaugeVoterGaugeListHeading } from './gaugeVoterGaugeListHeading';
 import { GaugeVoterGaugeListItemSkeleton } from './gaugeVoterGaugeListItemSkeleton';
 import { GaugeVoterGaugeListItemStructure } from './gaugeVoterGaugeListItemStructure';
 
 export interface IGaugeVoterGaugeListProps {
     /**
-     * Initial parameters for the gauge list query.
+     * Initial parameters for gauge list query.
      */
     initialParams: IGetGaugeListParams;
     /**
-     * Function to handle gauge voting.
+     * Array of selected gauge addresses.
      */
-    onVote?: (gauge: IGauge) => void;
+    selectedGauges?: string[];
+    /**
+     * Array of voted gauge addresses.
+     */
+    votedGauges?: string[];
+    /**
+     * Function to handle gauge selection/deselection.
+     */
+    onSelect?: (gauge: IGauge) => void;
     /**
      * Function to handle viewing gauge details.
      */
@@ -23,7 +32,7 @@ export interface IGaugeVoterGaugeListProps {
 }
 
 export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) => {
-    const { initialParams, onVote, onViewDetails } = props;
+    const { initialParams, selectedGauges, votedGauges, onSelect, onViewDetails } = props;
 
     const { t } = useTranslations();
 
@@ -54,6 +63,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
             pageSize={pageSize}
             itemsCount={itemsCount}
         >
+            <GaugeVoterGaugeListHeading />
             <DataListContainer
                 errorState={errorState}
                 emptyState={emptyState}
@@ -63,7 +73,9 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
                     <GaugeVoterGaugeListItemStructure
                         key={gauge.address}
                         gauge={gauge}
-                        onVote={onVote}
+                        isSelected={selectedGauges?.includes(gauge.address) ?? false}
+                        isVoted={votedGauges?.includes(gauge.address) ?? false}
+                        onSelect={onSelect}
                         onViewDetails={onViewDetails}
                         totalEpochVotes={100000000}
                     />

@@ -4,6 +4,7 @@ import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { Link } from '@aragon/gov-ui-kit';
+import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { useTranslations } from '../../../../shared/components/translationsProvider';
 import { useDaoPlugins } from '../../../../shared/hooks/useDaoPlugins';
@@ -12,6 +13,7 @@ import type { IGauge } from '../../api/gaugeVoterService/domain';
 import { useGaugeList } from '../../api/gaugeVoterService/queries';
 import { GaugeVoterGaugeList } from '../../components/gaugeVoterGaugeList';
 import { GaugeVoterVotingStats } from '../../components/gaugeVoterVotingStats';
+import { GaugeVoterVotingTerminal } from '../../components/gaugeVoterVotingTerminal';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
 
 export interface IGaugeVoterGaugesPageClientProps {
@@ -32,6 +34,9 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const { open, close } = useDialogContext();
     const { t } = useTranslations();
 
+    // State for selected gauges for voting (using array instead of Set)
+    const [selectedGauges, setSelectedGauges] = useState<string[]>([]);
+
     const plugin = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_VOTER })![0];
     const { description, links } = plugin.meta;
 
@@ -41,10 +46,36 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const gauges = result?.gauges ?? [];
     const metrics = result?.metrics;
 
-    const handleVoteClick = (gauge: IGauge) => {
+    const votedGauges = [gauges[0]?.address].filter(Boolean) as string[];
+
+    const handleSelectGauge = (gauge: IGauge) => {
+        // Don't allow selection of already voted gauges
+        if (votedGauges.includes(gauge.address)) {
+            return;
+        }
+
+        setSelectedGauges((prev) => {
+            if (prev.includes(gauge.address)) {
+                return prev.filter((address) => address !== gauge.address);
+            } else {
+                return [...prev, gauge.address];
+            }
+        });
+    };
+
+    const handleVoteClick = () => {
+        // Filter out any voted gauges from selection (additional safety)
+        const selectedGaugeList = gauges
+            .filter((gauge) => selectedGauges.includes(gauge.address))
+            .filter((gauge) => !votedGauges.includes(gauge.address));
+
+        if (selectedGaugeList.length === 0) {
+            return; // No gauges selected
+        }
+
         open(GaugeVoterPluginDialogId.VOTE_GAUGES, {
             params: {
-                gauge,
+                gauges: selectedGaugeList,
                 plugin,
                 network: dao.network,
                 close,
@@ -54,6 +85,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
 
     const handleViewDetails = (gauge: IGauge) => {
         const selectedIndex = gauges.findIndex((g) => g.address === gauge.address);
+
         open(GaugeVoterPluginDialogId.GAUGE_DETAILS, {
             params: {
                 gauges,
@@ -75,13 +107,23 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     return (
         <Page.Content>
             <Page.Main title={t('app.plugins.gaugeVoter.gaugeVoterGaugesPage.main.title')}>
-                <GaugeVoterGaugeList
-                    initialParams={initialParams}
-                    onVote={address ? handleVoteClick : undefined}
-                    onViewDetails={handleViewDetails}
-                />
+                <div className="flex flex-col gap-6">
+                    <GaugeVoterGaugeList
+                        initialParams={initialParams}
+                        selectedGauges={selectedGauges}
+                        votedGauges={votedGauges}
+                        onSelect={address ? handleSelectGauge : undefined}
+                        onViewDetails={handleViewDetails}
+                    />
+                    <GaugeVoterVotingTerminal
+                        totalVotingPower={votingStats.totalVotingPower}
+                        usedVotingPower={votingStats.allocatedVotingPower}
+                        selectedCount={selectedGauges.length}
+                        tokenSymbol="PDT"
+                        onVote={handleVoteClick}
+                    />
+                </div>
             </Page.Main>
-
             <Page.Aside>
                 <Page.AsideCard
                     title={t('app.plugins.gaugeVoter.gaugeVoterGaugesPage.aside.title', { epochId: metrics?.epochId })}

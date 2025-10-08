@@ -1218,10 +1218,17 @@
             "description": "There was an error loading the gauges. Try again later.",
             "heading": "Error loading gauges"
           },
+          "heading": {
+            "name": "Name",
+            "totalVotes": "Total Votes",
+            "yourVotes": "Your Votes"
+          },
           "item": {
             "noVotes": "None",
             "select": "Select",
+            "selected": "Selected",
             "totalVotes": "Total votes",
+            "voted": "Voted",
             "yourVotes": "Your votes"
           }
         },
@@ -1230,8 +1237,16 @@
             "title": "Epoch {{epochId}}"
           },
           "main": {
-            "title": "Gauges"
+            "title": "Gauges",
+            "voteOnSelected": "Vote on {{count}} selected gauge",
+            "voteOnSelected_plural": "Vote on {{count}} selected gauges"
           }
+        },
+        "gaugeVoterVotingTerminal": {
+          "selected": "{{count}} selected",
+          "used": "used",
+          "voteOnSelected": "Vote on selected",
+          "yourVotes": "Your votes"
         },
         "meta": {
           "link": {
