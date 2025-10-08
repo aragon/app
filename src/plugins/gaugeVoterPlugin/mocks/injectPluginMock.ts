@@ -1,8 +1,8 @@
 import type { IBackendApiMock } from '@/shared/types';
 
-// Add capital-distributor plugin to Boundless demo DAO
+// Add gauge-voter plugin to Sepolia test DAO
 export const injectPluginMock: IBackendApiMock = {
-    url: /\/v2\/daos\/ethereum-sepolia-0x72dE80980d19EDF05f0Ad5085B87f6477CfcCb75$/,
+    url: /\/v2\/daos\/ethereum-sepolia-0x3eb4fc049637ddb6c4C0c06f4709Ac6BC8cd829e$/,
     type: 'merge',
     data: {
         plugins: [

@@ -1,8 +1,8 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { DataListContainer, DataListPagination, DataListRoot } from '@aragon/gov-ui-kit';
+import type { IGetGaugeListParams } from '../../api/gaugeVoterService';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
-import type { IGetGaugeListParams } from '../../api/gaugeVoterService/gaugeVoterService.api';
 import { useGaugeList } from '../../api/gaugeVoterService/queries';
 import { GaugeVoterGaugeListHeading } from './gaugeVoterGaugeListHeading';
 import { GaugeVoterGaugeListItemSkeleton } from './gaugeVoterGaugeListItemSkeleton';
@@ -26,17 +26,13 @@ export interface IGaugeVoterGaugeListProps {
      */
     onSelect?: (gauge: IGauge) => void;
     /**
-     * Function to handle gauge voting.
+     * Function to handle viewing gauge details.
      */
-    onVote?: (gauge: IGauge) => void;
-    /**
-     * Function to handle gauge item click (for opening details dialog).
-     */
-    onItemClick?: (gauge: IGauge) => void;
+    onViewDetails?: (gauge: IGauge) => void;
 }
 
 export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) => {
-    const { initialParams, selectedGauges, votedGauges, onSelect, onVote, onItemClick } = props;
+    const { initialParams, selectedGauges, votedGauges, onSelect, onViewDetails } = props;
 
     const { t } = useTranslations();
 
@@ -58,7 +54,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
     };
 
     const gaugeList = gaugeListData?.pages.flatMap((page) => page.data.flatMap((data) => data.gauges));
-    
+
     return (
         <DataListRoot
             entityLabel={t('app.plugins.gaugeVoter.gaugeVoterGaugeList.entity')}
@@ -80,8 +76,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
                         isSelected={selectedGauges?.includes(gauge.address) ?? false}
                         isVoted={votedGauges?.includes(gauge.address) ?? false}
                         onSelect={onSelect}
-                        onVote={onVote}
-                        onItemClick={onItemClick}
+                        onViewDetails={onViewDetails}
                         totalEpochVotes={100000000}
                     />
                 ))}

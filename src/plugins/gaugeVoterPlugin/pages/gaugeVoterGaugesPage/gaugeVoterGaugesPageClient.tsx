@@ -83,11 +83,15 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
         });
     };
 
-    const handleGaugeItemClick = (gauge: IGauge) => {
+    const handleViewDetails = (gauge: IGauge) => {
+        const selectedIndex = gauges.findIndex((g) => g.address === gauge.address);
+
         open(GaugeVoterPluginDialogId.GAUGE_DETAILS, {
             params: {
-                gauge,
+                gauges,
+                selectedIndex,
                 plugin,
+                network: dao.network,
                 close,
             },
         });
@@ -109,7 +113,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         selectedGauges={selectedGauges}
                         votedGauges={votedGauges}
                         onSelect={address ? handleSelectGauge : undefined}
-                        onItemClick={handleGaugeItemClick}
+                        onViewDetails={handleViewDetails}
                     />
                     <GaugeVoterVotingTerminal
                         totalVotingPower={votingStats.totalVotingPower}
@@ -120,7 +124,6 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                     />
                 </div>
             </Page.Main>
-
             <Page.Aside>
                 <Page.AsideCard
                     title={t('app.plugins.gaugeVoter.gaugeVoterGaugesPage.aside.title', { epochId: metrics?.epochId })}

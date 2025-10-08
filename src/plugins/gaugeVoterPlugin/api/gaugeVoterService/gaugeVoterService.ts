@@ -7,7 +7,7 @@ class GaugeVoterService extends AragonBackendService {
     };
 
     getGaugeList = async ({
-        urlParams,
+        // urlParams,
         queryParams,
     }: IGetGaugeListParams): Promise<IPaginatedResponse<IGetGaugeListResult>> => {
         // TODO: Replace with actual API call when backend is implemented
@@ -26,17 +26,28 @@ class GaugeVoterService extends AragonBackendService {
                     gauges: [
                         {
                             address: '0x1234567890123456789012345678901234567890',
-                            name: 'Test Gauge',
-                            description: 'Test Gauge description',
+                            name: 'Charged Particles',
+                            description:
+                                'Charged Particles is the groundbreaking protocol that lets you put digital assets inside your NFTs. Now, ordinary NFTs (think neutral molecules) can contain a digital "charge" inside — ERC20, ERC721 or ERC1155 — giving you the unprecedented power to create nested NFTs. If you can digitize it, you can deposit it into your NFTs.',
+                            logo: 'https://pbs.twimg.com/profile_images/1721880644345622528/G2czctJJ_400x400.jpg',
                             totalVotes: 1000000,
                             userVotes: 0,
-                            resources: [],
+                            resources: [
+                                {
+                                    name: 'Website',
+                                    url: 'https://charged.fi',
+                                },
+                                {
+                                    name: 'Docs',
+                                    url: 'https://forum.charged.fi',
+                                },
+                            ],
                         },
                         {
                             address: '0x9834',
-                            name: 'Test Gauge 2',
-                            description: 'Test Gauge 2 description',
-                            logo: 'https://assets.coingecko.com/coins/images/33033/standard/weETH.png?1701438396',
+                            name: 'Ionic',
+                            description: 'Ionic is a powerful protocol that enables the creation of nested NFTs.',
+                            logo: 'https://raw.githubusercontent.com/mode-network/brandkit/refs/heads/main/Assets/Logo/Token.png',
                             totalVotes: 1000000,
                             userVotes: 100,
                             resources: [],

@@ -1193,6 +1193,21 @@
         }
       },
       "gaugeVoter": {
+        "gaugeVoterGaugeDetailsDialog": {
+          "content": {
+            "contract": "Contract",
+            "haveYouVotedFor": "Have you voted for?",
+            "totalRewards": "Total rewards",
+            "votedNo": "No",
+            "votedYes": "Yes",
+            "yourRewards": "Your rewards",
+            "yourRewardsDescription": "If you vote with your 100% voting power"
+          },
+          "footer": {
+            "next": "Next",
+            "previous": "Previous"
+          }
+        },
         "gaugeVoterGaugeList": {
           "emptyState": {
             "description": "This will show your gauges when available.",
@@ -1212,8 +1227,8 @@
             "noVotes": "None",
             "select": "Select",
             "selected": "Selected",
-            "voted": "Voted",
             "totalVotes": "Total votes",
+            "voted": "Voted",
             "yourVotes": "Your votes"
           }
         },
@@ -1228,10 +1243,10 @@
           }
         },
         "gaugeVoterVotingTerminal": {
-          "yourVotes": "Your votes",
-          "used": "used",
           "selected": "{{count}} selected",
-          "voteOnSelected": "Vote on selected"
+          "used": "used",
+          "voteOnSelected": "Vote on selected",
+          "yourVotes": "Your votes"
         },
         "meta": {
           "link": {
