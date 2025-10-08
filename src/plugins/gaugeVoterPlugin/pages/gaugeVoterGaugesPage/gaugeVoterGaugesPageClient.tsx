@@ -3,7 +3,8 @@
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
-import { Link } from '@aragon/gov-ui-kit';
+import { Button, Link } from '@aragon/gov-ui-kit';
+import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { useTranslations } from '../../../../shared/components/translationsProvider';
 import { useDaoPlugins } from '../../../../shared/hooks/useDaoPlugins';
@@ -32,6 +33,8 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const { open, close } = useDialogContext();
     const { t } = useTranslations();
 
+    const [selectedGauges, setSelectedGauges] = useState<Set<string>>(new Set());
+
     const plugin = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_VOTER })![0];
     const { description, links } = plugin.meta;
 
@@ -41,10 +44,28 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const gauges = result?.gauges ?? [];
     const metrics = result?.metrics;
 
-    const handleVoteClick = (gauge: IGauge) => {
+    const handleSelectGauge = (gauge: IGauge) => {
+        setSelectedGauges((prev) => {
+            const newSelected = new Set(prev);
+            if (newSelected.has(gauge.address)) {
+                newSelected.delete(gauge.address);
+            } else {
+                newSelected.add(gauge.address);
+            }
+            return newSelected;
+        });
+    };
+
+    const handleVoteClick = () => {
+        const selectedGaugeList = gauges.filter((gauge) => selectedGauges.has(gauge.address));
+
+        if (selectedGaugeList.length === 0) {
+            return; // No gauges selected
+        }
+
         open(GaugeVoterPluginDialogId.VOTE_GAUGES, {
             params: {
-                gauge,
+                gauges: selectedGaugeList,
                 plugin,
                 network: dao.network,
                 close,
@@ -62,11 +83,22 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     return (
         <Page.Content>
             <Page.Main title={t('app.plugins.gaugeVoter.gaugeVoterGaugesPage.main.title')}>
-                <GaugeVoterGaugeList
-                    gauges={gauges}
-                    initialParams={initialParams}
-                    onVote={address ? handleVoteClick : undefined}
-                />
+                <div className="flex flex-col gap-6">
+                    {address && selectedGauges.size > 0 && (
+                        <div className="flex justify-end">
+                            <Button variant="primary" onClick={handleVoteClick}>
+                                {t('app.plugins.gaugeVoter.gaugeVoterGaugesPage.main.voteOnSelected', {
+                                    count: selectedGauges.size,
+                                })}
+                            </Button>
+                        </div>
+                    )}
+                    <GaugeVoterGaugeList
+                        initialParams={initialParams}
+                        selectedGauges={selectedGauges}
+                        onSelect={address ? handleSelectGauge : undefined}
+                    />
+                </div>
             </Page.Main>
 
             <Page.Aside>

@@ -1,5 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
-import { addressUtils, Avatar, Button, DataList, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
+import { addressUtils, Avatar, Button, DataList, formatterUtils, IconType, NumberFormat } from '@aragon/gov-ui-kit';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
 
 export interface IGaugeVoterGaugeListItemStructureProps {
@@ -12,13 +12,21 @@ export interface IGaugeVoterGaugeListItemStructureProps {
      */
     totalEpochVotes?: number;
     /**
+     * Whether this gauge is currently selected for voting.
+     */
+    isSelected?: boolean;
+    /**
+     * Function to handle gauge selection/deselection.
+     */
+    onSelect?: (gauge: IGauge) => void;
+    /**
      * Function to handle gauge voting.
      */
     onVote?: (gauge: IGauge) => void;
 }
 
 export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItemStructureProps> = (props) => {
-    const { gauge, totalEpochVotes, onVote } = props;
+    const { gauge, totalEpochVotes, isSelected, onSelect, onVote } = props;
     const { t } = useTranslations();
 
     const formattedTotalVotes = formatterUtils.formatNumber(gauge.totalVotes, {
@@ -38,9 +46,15 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
     const truncatedAddress = addressUtils.truncateAddress(gauge.address);
 
     const handleVoteClick = () => {
-        console.log('HELELEO');
         if (onVote) {
             onVote(gauge);
+        }
+    };
+
+    const handleSelectClick = (event: React.MouseEvent) => {
+        event.stopPropagation();
+        if (onSelect) {
+            onSelect(gauge);
         }
     };
 
@@ -53,7 +67,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
     return (
         <DataList.Item className="flex min-h-20 items-center gap-4 px-6 py-3" onClick={handleVoteClick}>
             <div className="flex min-w-0 grow basis-0 items-center gap-4">
-                <Avatar alt="Gauge icon" size="lg" fallback={avatarFallback} src={gauge.logo} />
+                <Avatar alt="Gauge icon" size="lg" fallback={avatarFallback} src={gauge.logo ?? undefined} />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                     <p className="text-lg text-neutral-800">{gauge.name}</p>
                     <p className="truncate text-sm text-neutral-500">{truncatedAddress}</p>
@@ -73,10 +87,15 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
                 </div>
             </div>
 
-            {onVote && (
+            {onSelect && (
                 <div className="flex w-30 items-center justify-end md:w-36">
-                    <Button size="sm" variant="secondary">
-                        {t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.select')}
+                    <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={handleSelectClick}
+                        iconLeft={isSelected ? IconType.CHECKMARK : undefined}
+                    >
+                        {t(`app.plugins.gaugeVoter.gaugeVoterGaugeList.item.${isSelected ? 'selected' : 'select'}`)}
                     </Button>
                 </div>
             )}

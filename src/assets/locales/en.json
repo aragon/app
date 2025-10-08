@@ -1211,6 +1211,7 @@
           "item": {
             "noVotes": "None",
             "select": "Select",
+            "selected": "Selected",
             "totalVotes": "Total votes",
             "yourVotes": "Your votes"
           }
@@ -1220,7 +1221,9 @@
             "title": "Epoch {{epochId}}"
           },
           "main": {
-            "title": "Gauges"
+            "title": "Gauges",
+            "voteOnSelected": "Vote on {{count}} selected gauge",
+            "voteOnSelected_plural": "Vote on {{count}} selected gauges"
           }
         },
         "meta": {
