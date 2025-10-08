@@ -14,9 +14,13 @@ export interface IGaugeVoterGaugeListProps {
      */
     initialParams: IGetGaugeListParams;
     /**
-     * Set of selected gauge addresses.
+     * Array of selected gauge addresses.
      */
-    selectedGauges?: Set<string>;
+    selectedGauges?: string[];
+    /**
+     * Array of voted gauge addresses.
+     */
+    votedGauges?: string[];
     /**
      * Function to handle gauge selection/deselection.
      */
@@ -28,7 +32,7 @@ export interface IGaugeVoterGaugeListProps {
 }
 
 export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) => {
-    const { initialParams, selectedGauges, onSelect, onVote } = props;
+    const { initialParams, selectedGauges, votedGauges, onSelect, onVote } = props;
 
     const { t } = useTranslations();
 
@@ -69,7 +73,8 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
                     <GaugeVoterGaugeListItemStructure
                         key={gauge.address}
                         gauge={gauge}
-                        isSelected={selectedGauges?.has(gauge.address) ?? false}
+                        isSelected={selectedGauges?.includes(gauge.address) ?? false}
+                        isVoted={votedGauges?.includes(gauge.address) ?? false}
                         onSelect={onSelect}
                         onVote={onVote}
                         totalEpochVotes={100000000}

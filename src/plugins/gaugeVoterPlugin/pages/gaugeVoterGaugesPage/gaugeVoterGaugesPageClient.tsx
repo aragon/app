@@ -33,7 +33,8 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const { open, close } = useDialogContext();
     const { t } = useTranslations();
 
-    const [selectedGauges, setSelectedGauges] = useState<Set<string>>(new Set());
+    // State for selected gauges for voting (using array instead of Set)
+    const [selectedGauges, setSelectedGauges] = useState<string[]>([]);
 
     const plugin = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_VOTER })![0];
     const { description, links } = plugin.meta;
@@ -44,20 +45,28 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const gauges = result?.gauges ?? [];
     const metrics = result?.metrics;
 
+    const votedGauges = [gauges[0]?.address].filter(Boolean) as string[];
+
     const handleSelectGauge = (gauge: IGauge) => {
+        // Don't allow selection of already voted gauges
+        if (votedGauges.includes(gauge.address)) {
+            return;
+        }
+
         setSelectedGauges((prev) => {
-            const newSelected = new Set(prev);
-            if (newSelected.has(gauge.address)) {
-                newSelected.delete(gauge.address);
+            if (prev.includes(gauge.address)) {
+                return prev.filter((address) => address !== gauge.address);
             } else {
-                newSelected.add(gauge.address);
+                return [...prev, gauge.address];
             }
-            return newSelected;
         });
     };
 
     const handleVoteClick = () => {
-        const selectedGaugeList = gauges.filter((gauge) => selectedGauges.has(gauge.address));
+        // Filter out any voted gauges from selection (additional safety)
+        const selectedGaugeList = gauges
+            .filter((gauge) => selectedGauges.includes(gauge.address))
+            .filter((gauge) => !votedGauges.includes(gauge.address));
 
         if (selectedGaugeList.length === 0) {
             return; // No gauges selected
@@ -84,11 +93,11 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
         <Page.Content>
             <Page.Main title={t('app.plugins.gaugeVoter.gaugeVoterGaugesPage.main.title')}>
                 <div className="flex flex-col gap-6">
-                    {address && selectedGauges.size > 0 && (
+                    {address && selectedGauges.length > 0 && (
                         <div className="flex justify-end">
                             <Button variant="primary" onClick={handleVoteClick}>
                                 {t('app.plugins.gaugeVoter.gaugeVoterGaugesPage.main.voteOnSelected', {
-                                    count: selectedGauges.size,
+                                    count: selectedGauges.length,
                                 })}
                             </Button>
                         </div>
@@ -96,6 +105,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                     <GaugeVoterGaugeList
                         initialParams={initialParams}
                         selectedGauges={selectedGauges}
+                        votedGauges={votedGauges}
                         onSelect={address ? handleSelectGauge : undefined}
                     />
                 </div>

@@ -16,6 +16,10 @@ export interface IGaugeVoterGaugeListItemStructureProps {
      */
     isSelected?: boolean;
     /**
+     * Whether this gauge has already been voted on.
+     */
+    isVoted?: boolean;
+    /**
      * Function to handle gauge selection/deselection.
      */
     onSelect?: (gauge: IGauge) => void;
@@ -26,7 +30,7 @@ export interface IGaugeVoterGaugeListItemStructureProps {
 }
 
 export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItemStructureProps> = (props) => {
-    const { gauge, totalEpochVotes, isSelected, onSelect, onVote } = props;
+    const { gauge, totalEpochVotes, isSelected, isVoted, onSelect, onVote } = props;
     const { t } = useTranslations();
 
     const formattedTotalVotes = formatterUtils.formatNumber(gauge.totalVotes, {
@@ -64,6 +68,8 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
         </span>
     );
 
+    const actionButtonTranslationKey = isVoted ? 'voted' : isSelected ? 'selected' : 'select';
+
     return (
         <DataList.Item className="flex min-h-20 items-center gap-4 px-6 py-3" onClick={handleVoteClick}>
             <div className="flex min-w-0 grow basis-0 items-center gap-4">
@@ -87,15 +93,15 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
                 </div>
             </div>
 
-            {onSelect && (
+            {(onSelect ?? isVoted) && (
                 <div className="flex w-30 items-center justify-end md:w-36">
                     <Button
                         size="sm"
                         variant="secondary"
-                        onClick={handleSelectClick}
-                        iconLeft={isSelected ? IconType.CHECKMARK : undefined}
+                        onClick={isVoted ? undefined : handleSelectClick}
+                        iconLeft={isVoted ? IconType.CHECKMARK : isSelected ? IconType.CHECKMARK : undefined}
                     >
-                        {t(`app.plugins.gaugeVoter.gaugeVoterGaugeList.item.${isSelected ? 'selected' : 'select'}`)}
+                        {t(`app.plugins.gaugeVoter.gaugeVoterGaugeList.item.${actionButtonTranslationKey}`)}
                     </Button>
                 </div>
             )}

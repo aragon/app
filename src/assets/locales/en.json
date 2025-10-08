@@ -1212,6 +1212,7 @@
             "noVotes": "None",
             "select": "Select",
             "selected": "Selected",
+            "voted": "Voted",
             "totalVotes": "Total votes",
             "yourVotes": "Your votes"
           }
