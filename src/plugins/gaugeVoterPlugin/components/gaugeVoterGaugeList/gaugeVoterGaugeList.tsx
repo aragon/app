@@ -29,10 +29,14 @@ export interface IGaugeVoterGaugeListProps {
      * Function to handle gauge voting.
      */
     onVote?: (gauge: IGauge) => void;
+    /**
+     * Function to handle gauge item click (for opening details dialog).
+     */
+    onItemClick?: (gauge: IGauge) => void;
 }
 
 export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) => {
-    const { initialParams, selectedGauges, votedGauges, onSelect, onVote } = props;
+    const { initialParams, selectedGauges, votedGauges, onSelect, onVote, onItemClick } = props;
 
     const { t } = useTranslations();
 
@@ -77,6 +81,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
                         isVoted={votedGauges?.includes(gauge.address) ?? false}
                         onSelect={onSelect}
                         onVote={onVote}
+                        onItemClick={onItemClick}
                         totalEpochVotes={100000000}
                     />
                 ))}

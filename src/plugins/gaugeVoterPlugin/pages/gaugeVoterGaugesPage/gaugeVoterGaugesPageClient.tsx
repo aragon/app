@@ -82,6 +82,16 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
         });
     };
 
+    const handleGaugeItemClick = (gauge: IGauge) => {
+        open(GaugeVoterPluginDialogId.GAUGE_DETAILS, {
+            params: {
+                gauge,
+                plugin,
+                close,
+            },
+        });
+    };
+
     // Calculate stats from metrics or provide defaults
     const votingStats = {
         totalVotingPower: metrics?.votingPower.toString() ?? '0',
@@ -107,6 +117,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         selectedGauges={selectedGauges}
                         votedGauges={votedGauges}
                         onSelect={address ? handleSelectGauge : undefined}
+                        onItemClick={handleGaugeItemClick}
                     />
                 </div>
             </Page.Main>

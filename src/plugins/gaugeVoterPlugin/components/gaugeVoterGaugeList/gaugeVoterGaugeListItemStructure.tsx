@@ -28,10 +28,14 @@ export interface IGaugeVoterGaugeListItemStructureProps {
      * Function to handle gauge voting.
      */
     onVote?: (gauge: IGauge) => void;
+    /**
+     * Function to handle gauge item click (for opening details dialog).
+     */
+    onItemClick?: (gauge: IGauge) => void;
 }
 
 export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItemStructureProps> = (props) => {
-    const { gauge, totalEpochVotes, isSelected, isVoted, onSelect, onVote } = props;
+    const { gauge, totalEpochVotes, isSelected, isVoted, onSelect, onItemClick } = props;
     const { t } = useTranslations();
 
     const formattedTotalVotes = formatterUtils.formatNumber(gauge.totalVotes, {
@@ -50,9 +54,9 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
 
     const truncatedAddress = addressUtils.truncateAddress(gauge.address);
 
-    const handleVoteClick = () => {
-        if (onVote) {
-            onVote(gauge);
+    const handleItemClick = () => {
+        if (onItemClick) {
+            onItemClick(gauge);
         }
     };
 
@@ -76,7 +80,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
     });
 
     return (
-        <DataList.Item className={itemClassName} onClick={handleVoteClick}>
+        <DataList.Item className={itemClassName} onClick={handleItemClick}>
             <div className="flex min-w-0 grow basis-0 items-center gap-4">
                 <Avatar alt="Gauge icon" size="lg" fallback={avatarFallback} src={gauge.logo ?? undefined} />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
