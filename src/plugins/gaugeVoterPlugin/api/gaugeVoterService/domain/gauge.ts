@@ -15,10 +15,6 @@ export interface IGauge {
      */
     description: string;
     /**
-     * URI of the gauge from metadata.
-     */
-    icon?: string;
-    /**
      * Resources associated with the gauge.
      */
     resources: IResource[];
