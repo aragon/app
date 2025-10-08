@@ -52,7 +52,6 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
 
     return (
         <DataList.Item className="flex min-h-20 items-center gap-4 px-6 py-3" onClick={handleVoteClick}>
-            {/* Header - Name and Address */}
             <div className="flex min-w-0 grow basis-0 items-center gap-4">
                 <Avatar alt="Gauge icon" size="lg" fallback={avatarFallback} src={gauge.logo} />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -61,7 +60,6 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
                 </div>
             </div>
 
-            {/* Total Votes */}
             <div className="flex grow basis-0 flex-col gap-1 text-right">
                 <p className="text-lg text-neutral-800">{formattedTotalVotes} votes</p>
                 <p className="text-sm text-neutral-500">
@@ -69,17 +67,15 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
                 </p>
             </div>
 
-            {/* User Votes */}
             <div className="flex min-h-11 grow basis-0 flex-col items-end">
                 <div className="flex items-center justify-end gap-2">
                     <p className="text-right text-lg text-neutral-500">{formattedUserVotes}</p>
                 </div>
             </div>
 
-            {/* Actions */}
             {onVote && (
                 <div className="flex w-30 items-center justify-end md:w-36">
-                    <Button size="sm" variant="tertiary">
+                    <Button size="sm" variant="secondary">
                         {t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.select')}
                     </Button>
                 </div>

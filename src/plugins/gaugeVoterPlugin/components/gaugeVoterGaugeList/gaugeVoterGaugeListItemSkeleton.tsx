@@ -2,9 +2,8 @@ import { DataList } from '@aragon/gov-ui-kit';
 
 export const GaugeVoterGaugeListItemSkeleton: React.FC = () => {
     return (
-        <DataList.Item className="flex items-center gap-4 min-h-20 px-6 py-3">
-            {/* Header - Name and Address */}
-            <div className="flex basis-0 grow items-center gap-4 min-w-0">
+        <DataList.Item className="flex min-h-20 items-center gap-4 px-6 py-3">
+            <div className="flex min-w-0 grow basis-0 items-center gap-4">
                 <div className="size-10 shrink-0 animate-pulse rounded-full bg-neutral-200" />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                     <div className="h-6 w-3/4 animate-pulse rounded bg-neutral-200" />
@@ -12,19 +11,16 @@ export const GaugeVoterGaugeListItemSkeleton: React.FC = () => {
                 </div>
             </div>
 
-            {/* Total Votes */}
-            <div className="flex basis-0 grow flex-col gap-1 text-right">
+            <div className="flex grow basis-0 flex-col gap-1 text-right">
                 <div className="ml-auto h-6 w-24 animate-pulse rounded bg-neutral-200" />
                 <div className="ml-auto h-4 w-16 animate-pulse rounded bg-neutral-200" />
             </div>
 
-            {/* User Votes */}
-            <div className="flex basis-0 grow flex-col items-end min-h-11">
+            <div className="flex min-h-11 grow basis-0 flex-col items-end">
                 <div className="h-6 w-12 animate-pulse rounded bg-neutral-200" />
             </div>
 
-            {/* Actions */}
-            <div className="flex w-36 items-center justify-end pl-8">
+            <div className="flex w-30 items-center justify-end md:w-36">
                 <div className="h-8 w-20 animate-pulse rounded bg-neutral-200" />
             </div>
         </DataList.Item>
