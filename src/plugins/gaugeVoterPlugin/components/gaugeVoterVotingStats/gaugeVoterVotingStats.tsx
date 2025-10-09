@@ -1,4 +1,11 @@
+import { StatCard } from '@/shared/components/statCard';
+import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
+
 export interface IGaugeVoterVotingStatsProps {
+    /**
+     * Number of days left to vote in the current epoch.
+     */
+    daysLeftToVote: number;
     /**
      * Total voting power available to the user.
      */
@@ -11,36 +18,52 @@ export interface IGaugeVoterVotingStatsProps {
      * Number of active gauges the user is voting for.
      */
     activeVotes: number;
+    /**
+     * Whether the user is connected.
+     */
+    isUserConnected: boolean;
 }
 
 export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (props) => {
-    const { totalVotingPower, allocatedVotingPower, activeVotes } = props;
+    const { daysLeftToVote, totalVotingPower, allocatedVotingPower, isUserConnected } = props;
 
-    const remainingVotingPower = (
-        parseFloat(totalVotingPower) - parseFloat(allocatedVotingPower)
-    ).toString();
+    const { t } = useTranslations();
+
+    const totalPower = parseFloat(totalVotingPower || '0');
+    const allocatedPower = parseFloat(allocatedVotingPower || '0');
+
+    const usagePercentage = !isUserConnected
+        ? '-'
+        : totalPower > 0
+          ? Math.round((allocatedPower / totalPower) * 100)
+          : 0;
+
+    const stats = [
+        {
+            value: (daysLeftToVote || 0).toString(),
+            suffix: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.daysLeftSuffix'),
+            label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.toVote'),
+        },
+        {
+            value: totalVotingPower || '0',
+            label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.totalVotes'),
+        },
+        {
+            value: !isUserConnected ? '-' : allocatedVotingPower || '0',
+            label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.yourVotes'),
+        },
+        {
+            value: usagePercentage.toString(),
+            suffix: isUserConnected ? '%' : undefined,
+            label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.usedVotes'),
+        },
+    ];
 
     return (
-        <div className="bg-neutral-50 rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4">Your Voting Statistics</h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="text-center">
-                    <div className="text-2xl font-bold text-primary-600">{totalVotingPower}</div>
-                    <div className="text-sm text-neutral-600">Total Voting Power</div>
-                </div>
-                <div className="text-center">
-                    <div className="text-2xl font-bold text-secondary-600">{allocatedVotingPower}</div>
-                    <div className="text-sm text-neutral-600">Allocated Power</div>
-                </div>
-                <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600">{remainingVotingPower}</div>
-                    <div className="text-sm text-neutral-600">Remaining Power</div>
-                </div>
-                <div className="text-center">
-                    <div className="text-2xl font-bold text-purple-600">{activeVotes}</div>
-                    <div className="text-sm text-neutral-600">Active Votes</div>
-                </div>
-            </div>
+        <div className="grid w-full grid-cols-2 gap-3">
+            {stats.map(({ label, value, suffix }) => (
+                <StatCard key={label} value={value} suffix={suffix} label={label} />
+            ))}
         </div>
     );
 };

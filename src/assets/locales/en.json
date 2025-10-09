@@ -1246,7 +1246,17 @@
           "selected": "{{count}} selected",
           "used": "used",
           "voteOnSelected": "Vote on selected",
-          "yourVotes": "Your votes"
+          "yourVotes": "Your votes",
+          "daysLeft": "{{count}} days left",
+          "notVoted": "Not voted yet",
+          "nextVotingIn": "Next voting in {{count}} days"
+        },
+        "gaugeVoterVotingStats": {
+          "daysLeftSuffix": " days left",
+          "toVote": "To vote",
+          "totalVotes": "Total votes",
+          "yourVotes": "Your votes",
+          "usedVotes": "Used votes"
         },
         "meta": {
           "link": {

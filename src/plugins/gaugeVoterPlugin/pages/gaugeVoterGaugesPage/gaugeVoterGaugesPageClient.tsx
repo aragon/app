@@ -1,5 +1,6 @@
 'use client';
 
+import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
@@ -33,8 +34,11 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const { address } = useAccount();
     const { open, close } = useDialogContext();
     const { t } = useTranslations();
+    const { check: checkWalletConnection } = useConnectedWalletGuard();
 
-    // State for selected gauges for voting (using array instead of Set)
+    const isUserConnected = !!address;
+    const isVotingActive = true;
+
     const [selectedGauges, setSelectedGauges] = useState<string[]>([]);
 
     const plugin = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_VOTER })![0];
@@ -46,7 +50,8 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const gauges = result?.gauges ?? [];
     const metrics = result?.metrics;
 
-    const votedGauges = [gauges[0]?.address].filter(Boolean) as string[];
+    // const votedGauges = [gauges[0]?.address].filter(Boolean) as string[];
+    const votedGauges: string[] = [];
 
     const handleSelectGauge = (gauge: IGauge) => {
         // Don't allow selection of already voted gauges
@@ -64,21 +69,24 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     };
 
     const handleVoteClick = () => {
-        // Filter out any voted gauges from selection (additional safety)
-        const selectedGaugeList = gauges
-            .filter((gauge) => selectedGauges.includes(gauge.address))
-            .filter((gauge) => !votedGauges.includes(gauge.address));
+        checkWalletConnection({
+            onSuccess: () => {
+                const selectedGaugeList = gauges
+                    .filter((gauge) => selectedGauges.includes(gauge.address))
+                    .filter((gauge) => !votedGauges.includes(gauge.address));
 
-        if (selectedGaugeList.length === 0) {
-            return; // No gauges selected
-        }
+                if (selectedGaugeList.length === 0) {
+                    return; // No gauges selected
+                }
 
-        open(GaugeVoterPluginDialogId.VOTE_GAUGES, {
-            params: {
-                gauges: selectedGaugeList,
-                plugin,
-                network: dao.network,
-                close,
+                open(GaugeVoterPluginDialogId.VOTE_GAUGES, {
+                    params: {
+                        gauges: selectedGaugeList,
+                        plugin,
+                        network: dao.network,
+                        close,
+                    },
+                });
             },
         });
     };
@@ -112,15 +120,20 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         initialParams={initialParams}
                         selectedGauges={selectedGauges}
                         votedGauges={votedGauges}
-                        onSelect={address ? handleSelectGauge : undefined}
+                        onSelect={handleSelectGauge}
                         onViewDetails={handleViewDetails}
+                        isUserConnected={isUserConnected}
+                        isVotingActive={isVotingActive}
                     />
                     <GaugeVoterVotingTerminal
+                        daysLeftToVote={7}
+                        hasVoted={votedGauges.length > 0}
                         totalVotingPower={votingStats.totalVotingPower}
                         usedVotingPower={votingStats.allocatedVotingPower}
                         selectedCount={selectedGauges.length}
                         tokenSymbol="PDT"
                         onVote={handleVoteClick}
+                        isVotingActive={isVotingActive}
                     />
                 </div>
             </Page.Main>
@@ -129,13 +142,13 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                     title={t('app.plugins.gaugeVoter.gaugeVoterGaugesPage.aside.title', { epochId: metrics?.epochId })}
                 >
                     {description && <p className="text-base text-gray-500">{description}</p>}
-                    {address && (
-                        <GaugeVoterVotingStats
-                            totalVotingPower={votingStats.totalVotingPower}
-                            allocatedVotingPower={votingStats.allocatedVotingPower}
-                            activeVotes={votingStats.activeVotes}
-                        />
-                    )}
+                    <GaugeVoterVotingStats
+                        daysLeftToVote={7}
+                        totalVotingPower={votingStats.totalVotingPower}
+                        allocatedVotingPower={votingStats.allocatedVotingPower}
+                        activeVotes={votingStats.activeVotes}
+                        isUserConnected={isUserConnected}
+                    />
                     {links?.map(({ url, name }) => (
                         <Link key={url} href={url} isExternal={true} showUrl={true}>
                             {name}
