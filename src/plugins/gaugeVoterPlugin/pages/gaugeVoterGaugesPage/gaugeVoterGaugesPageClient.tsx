@@ -1,5 +1,6 @@
 'use client';
 
+import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
@@ -33,10 +34,10 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const { address } = useAccount();
     const { open, close } = useDialogContext();
     const { t } = useTranslations();
+    const { check: checkWalletConnection } = useConnectedWalletGuard();
 
     const isUserConnected = !!address;
 
-    // State for selected gauges for voting (using array instead of Set)
     const [selectedGauges, setSelectedGauges] = useState<string[]>([]);
 
     const plugin = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_VOTER })![0];
@@ -66,21 +67,24 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     };
 
     const handleVoteClick = () => {
-        // Filter out any voted gauges from selection (additional safety)
-        const selectedGaugeList = gauges
-            .filter((gauge) => selectedGauges.includes(gauge.address))
-            .filter((gauge) => !votedGauges.includes(gauge.address));
+        checkWalletConnection({
+            onSuccess: () => {
+                const selectedGaugeList = gauges
+                    .filter((gauge) => selectedGauges.includes(gauge.address))
+                    .filter((gauge) => !votedGauges.includes(gauge.address));
 
-        if (selectedGaugeList.length === 0) {
-            return; // No gauges selected
-        }
+                if (selectedGaugeList.length === 0) {
+                    return; // No gauges selected
+                }
 
-        open(GaugeVoterPluginDialogId.VOTE_GAUGES, {
-            params: {
-                gauges: selectedGaugeList,
-                plugin,
-                network: dao.network,
-                close,
+                open(GaugeVoterPluginDialogId.VOTE_GAUGES, {
+                    params: {
+                        gauges: selectedGaugeList,
+                        plugin,
+                        network: dao.network,
+                        close,
+                    },
+                });
             },
         });
     };
