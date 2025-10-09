@@ -104,7 +104,8 @@
     "tailwind"
   ],
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.0.0",
+    "npm": "please-use-yarn"
   },
   "packageManager": "yarn@4.9.2"
 }
