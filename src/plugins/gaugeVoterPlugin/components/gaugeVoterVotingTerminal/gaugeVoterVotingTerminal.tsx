@@ -1,7 +1,16 @@
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { Avatar, Button, formatterUtils, NumberFormat, Tag } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 
 export interface IGaugeVoterVotingTerminalProps {
+    /**
+     * Number of days left to vote in the current epoch.
+     */
+    daysLeftToVote: number;
+    /**
+     * Whether the user has already voted in the current epoch.
+     */
+    hasVoted: boolean;
     /**
      * Total voting power available
      */
@@ -26,10 +35,24 @@ export interface IGaugeVoterVotingTerminalProps {
      * Function to handle vote action
      */
     onVote?: () => void;
+    /**
+     * Whether voting is active
+     */
+    isVotingActive: boolean;
 }
 
 export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> = (props) => {
-    const { totalVotingPower, usedVotingPower, selectedCount, tokenSymbol, tokenLogo, onVote } = props;
+    const {
+        hasVoted,
+        daysLeftToVote,
+        totalVotingPower,
+        usedVotingPower,
+        selectedCount,
+        tokenSymbol,
+        tokenLogo,
+        onVote,
+        isVotingActive,
+    } = props;
     const { t } = useTranslations();
 
     const formattedTotalPower = formatterUtils.formatNumber(totalVotingPower, {
@@ -42,8 +65,14 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
         format: NumberFormat.PERCENTAGE_SHORT,
     });
 
+    const showVoteButton = isVotingActive && (hasVoted || selectedCount > 0);
+
+    const wrapperClassName = classNames('bg-neutral-0  flex items-center justify-between rounded-xl border px-6 py-3', {
+        'border-neutral-100': !showVoteButton,
+        'border-primary-100': showVoteButton,
+    });
     return (
-        <div className="bg-neutral-0 border-primary-100 flex items-center justify-between rounded-xl border px-6 py-3">
+        <div className={wrapperClassName}>
             <div className="flex items-center gap-6">
                 <p className="text-sm font-semibold text-neutral-800 uppercase">
                     {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.yourVotes')}
@@ -65,13 +94,32 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
                 </div>
             </div>
             <div className="flex items-center gap-4">
-                <Tag
-                    label={t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.selected', { count: selectedCount })}
-                    variant="primary"
-                />
-                <Button size="sm" variant="primary" onClick={onVote}>
-                    {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.voteOnSelected')}
-                </Button>
+                {!isVotingActive && (
+                    <Button size="sm" variant="primary" disabled={true}>
+                        {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.nextVotingIn', { count: 7 })}
+                    </Button>
+                )}
+                {showVoteButton && (
+                    <>
+                        <Tag
+                            label={t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.selected', {
+                                count: selectedCount,
+                            })}
+                            variant="primary"
+                        />
+                        <Button size="sm" variant="primary" onClick={onVote} disabled={selectedCount === 0}>
+                            {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.voteOnSelected')}
+                        </Button>
+                    </>
+                )}
+                {!showVoteButton && isVotingActive && (
+                    <>
+                        <span className="text-sm text-neutral-500">
+                            {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.daysLeft', { count: daysLeftToVote })}
+                        </span>
+                        <Tag label={t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.notVoted')} />
+                    </>
+                )}
             </div>
         </div>
     );

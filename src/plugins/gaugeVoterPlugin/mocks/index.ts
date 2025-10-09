@@ -1,3 +1,3 @@
-import { injectPluginMock } from './injectPluginMock';
+import { injectPluginMocks } from './injectPluginMocks';
 
-export const gaugeVoterPluginMocks = [injectPluginMock];
+export const gaugeVoterPluginMocks = [...injectPluginMocks];

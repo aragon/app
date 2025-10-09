@@ -1242,7 +1242,17 @@
             "voteOnSelected_plural": "Vote on {{count}} selected gauges"
           }
         },
+        "gaugeVoterVotingStats": {
+          "daysLeftSuffix": " days left",
+          "toVote": "To vote",
+          "totalVotes": "Total votes",
+          "usedVotes": "Used votes",
+          "yourVotes": "Your votes"
+        },
         "gaugeVoterVotingTerminal": {
+          "daysLeft": "{{count}} days left",
+          "nextVotingIn": "Next voting in {{count}} days",
+          "notVoted": "Not voted yet",
           "selected": "{{count}} selected",
           "used": "used",
           "voteOnSelected": "Vote on selected",

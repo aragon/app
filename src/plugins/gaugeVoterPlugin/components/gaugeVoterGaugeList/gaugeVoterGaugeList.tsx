@@ -24,15 +24,24 @@ export interface IGaugeVoterGaugeListProps {
     /**
      * Function to handle gauge selection/deselection.
      */
-    onSelect?: (gauge: IGauge) => void;
+    onSelect: (gauge: IGauge) => void;
     /**
      * Function to handle viewing gauge details.
      */
     onViewDetails?: (gauge: IGauge) => void;
+    /**
+     * Whether the user is connected.
+     */
+    isUserConnected: boolean;
+    /**
+     * Whether voting is active.
+     */
+    isVotingActive: boolean;
 }
 
 export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) => {
-    const { initialParams, selectedGauges, votedGauges, onSelect, onViewDetails } = props;
+    const { initialParams, selectedGauges, votedGauges, onSelect, onViewDetails, isUserConnected, isVotingActive } =
+        props;
 
     const { t } = useTranslations();
 
@@ -73,11 +82,13 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
                     <GaugeVoterGaugeListItemStructure
                         key={gauge.address}
                         gauge={gauge}
+                        isUserConnected={isUserConnected}
                         isSelected={selectedGauges?.includes(gauge.address) ?? false}
                         isVoted={votedGauges?.includes(gauge.address) ?? false}
                         onSelect={onSelect}
                         onViewDetails={onViewDetails}
                         totalEpochVotes={100000000}
+                        isVotingActive={isVotingActive}
                     />
                 ))}
             </DataListContainer>
