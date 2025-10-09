@@ -5,5 +5,5 @@ import { GaugeVoterPluginDialogId } from './gaugeVoterPluginDialogId';
 
 export const gaugeVoterPluginDialogsDefinitions: Record<GaugeVoterPluginDialogId, IDialogComponentDefinitions> = {
     [GaugeVoterPluginDialogId.GAUGE_DETAILS]: { Component: GaugeVoterGaugeDetailsDialog, size: 'lg' },
-    [GaugeVoterPluginDialogId.VOTE_GAUGES]: { Component: GaugeVoterVoteDialog },
+    [GaugeVoterPluginDialogId.VOTE_GAUGES]: { Component: GaugeVoterVoteDialog, size: 'xl' },
 };

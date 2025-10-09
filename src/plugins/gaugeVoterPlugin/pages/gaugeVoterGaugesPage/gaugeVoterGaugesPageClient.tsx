@@ -50,8 +50,8 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const gauges = result?.gauges ?? [];
     const metrics = result?.metrics;
 
-    // const votedGauges = [gauges[0]?.address].filter(Boolean) as string[];
-    const votedGauges: string[] = [];
+    const votedGauges = [gauges[0]?.address].filter(Boolean) as string[];
+    // const votedGauges: string[] = [];
 
     const handleSelectGauge = (gauge: IGauge) => {
         // Don't allow selection of already voted gauges
@@ -68,6 +68,10 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
         });
     };
 
+    const handleRemoveGauge = (gaugeAddress: string) => {
+        setSelectedGauges((prev) => prev.filter((address) => address !== gaugeAddress));
+    };
+
     const handleVoteClick = () => {
         checkWalletConnection({
             onSuccess: () => {
@@ -76,14 +80,20 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                     .filter((gauge) => !votedGauges.includes(gauge.address));
 
                 if (selectedGaugeList.length === 0) {
-                    return; // No gauges selected
+                    return; // No new gauges selected
                 }
+
+                const votedGaugeList = gauges.filter((gauge) => votedGauges.includes(gauge.address));
+
+                // Combine filtered gauge data lists
+                const allGaugesToVote = [...votedGaugeList, ...selectedGaugeList];
 
                 open(GaugeVoterPluginDialogId.VOTE_GAUGES, {
                     params: {
-                        gauges: selectedGaugeList,
+                        gauges: allGaugesToVote,
                         plugin,
                         network: dao.network,
+                        onRemoveGauge: handleRemoveGauge,
                         close,
                     },
                 });

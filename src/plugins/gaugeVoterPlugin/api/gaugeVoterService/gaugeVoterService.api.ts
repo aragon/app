@@ -1,7 +1,7 @@
 import type { IPaginatedRequest } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
 import type { IRequestUrlQueryParams } from '@/shared/api/httpService';
-import type { IGauge, IEpochStats } from './domain';
+import type { IEpochStats, IGauge } from './domain';
 
 export interface IGetGaugeListUrlParams {
     /**

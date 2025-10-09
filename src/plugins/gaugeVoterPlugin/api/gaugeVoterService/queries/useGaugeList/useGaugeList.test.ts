@@ -1,5 +1,5 @@
-import { renderHook } from '@testing-library/react';
 import { Network } from '@/shared/api/daoService';
+import { renderHook } from '@testing-library/react';
 import { useGaugeList } from './useGaugeList';
 
 // Mock the service
