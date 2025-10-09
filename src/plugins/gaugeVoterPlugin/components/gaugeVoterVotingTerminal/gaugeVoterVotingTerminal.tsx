@@ -3,6 +3,14 @@ import { Avatar, Button, formatterUtils, NumberFormat, Tag } from '@aragon/gov-u
 
 export interface IGaugeVoterVotingTerminalProps {
     /**
+     * Number of days left to vote in the current epoch.
+     */
+    daysLeftToVote: number;
+    /**
+     * Whether the user has already voted in the current epoch.
+     */
+    hasVoted: boolean;
+    /**
      * Total voting power available
      */
     totalVotingPower: string;
@@ -29,7 +37,16 @@ export interface IGaugeVoterVotingTerminalProps {
 }
 
 export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> = (props) => {
-    const { totalVotingPower, usedVotingPower, selectedCount, tokenSymbol, tokenLogo, onVote } = props;
+    const {
+        hasVoted,
+        daysLeftToVote,
+        totalVotingPower,
+        usedVotingPower,
+        selectedCount,
+        tokenSymbol,
+        tokenLogo,
+        onVote,
+    } = props;
     const { t } = useTranslations();
 
     const formattedTotalPower = formatterUtils.formatNumber(totalVotingPower, {
@@ -41,6 +58,8 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
     const formattedUsagePercentage = formatterUtils.formatNumber(usagePercentage, {
         format: NumberFormat.PERCENTAGE_SHORT,
     });
+
+    const showVoteButton = hasVoted || selectedCount > 0;
 
     return (
         <div className="bg-neutral-0 border-primary-100 flex items-center justify-between rounded-xl border px-6 py-3">
@@ -65,13 +84,27 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
                 </div>
             </div>
             <div className="flex items-center gap-4">
-                <Tag
-                    label={t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.selected', { count: selectedCount })}
-                    variant="primary"
-                />
-                <Button size="sm" variant="primary" onClick={onVote}>
-                    {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.voteOnSelected')}
-                </Button>
+                {showVoteButton && (
+                    <>
+                        <Tag
+                            label={t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.selected', {
+                                count: selectedCount,
+                            })}
+                            variant="primary"
+                        />
+                        <Button size="sm" variant="primary" onClick={onVote} disabled={selectedCount === 0}>
+                            {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.voteOnSelected')}
+                        </Button>
+                    </>
+                )}
+                {!showVoteButton && (
+                    <>
+                        <span className="text-sm text-neutral-500">
+                            {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.daysLeft', { count: daysLeftToVote })}
+                        </span>
+                        <Tag label={t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.notVoted')} />
+                    </>
+                )}
             </div>
         </div>
     );

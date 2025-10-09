@@ -49,7 +49,8 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const gauges = result?.gauges ?? [];
     const metrics = result?.metrics;
 
-    const votedGauges = [gauges[0]?.address].filter(Boolean) as string[];
+    // const votedGauges = [gauges[0]?.address].filter(Boolean) as string[];
+    const votedGauges: string[] = [];
 
     const handleSelectGauge = (gauge: IGauge) => {
         // Don't allow selection of already voted gauges
@@ -123,6 +124,8 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         isUserConnected={isUserConnected}
                     />
                     <GaugeVoterVotingTerminal
+                        daysLeftToVote={7}
+                        hasVoted={votedGauges.length > 0}
                         totalVotingPower={votingStats.totalVotingPower}
                         usedVotingPower={votingStats.allocatedVotingPower}
                         selectedCount={selectedGauges.length}
