@@ -34,6 +34,8 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const { open, close } = useDialogContext();
     const { t } = useTranslations();
 
+    const isUserConnected = !!address;
+
     // State for selected gauges for voting (using array instead of Set)
     const [selectedGauges, setSelectedGauges] = useState<string[]>([]);
 
@@ -112,8 +114,9 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         initialParams={initialParams}
                         selectedGauges={selectedGauges}
                         votedGauges={votedGauges}
-                        onSelect={address ? handleSelectGauge : undefined}
+                        onSelect={handleSelectGauge}
                         onViewDetails={handleViewDetails}
+                        isUserConnected={isUserConnected}
                     />
                     <GaugeVoterVotingTerminal
                         totalVotingPower={votingStats.totalVotingPower}
@@ -129,13 +132,13 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                     title={t('app.plugins.gaugeVoter.gaugeVoterGaugesPage.aside.title', { epochId: metrics?.epochId })}
                 >
                     {description && <p className="text-base text-gray-500">{description}</p>}
-                    {address && (
-                        <GaugeVoterVotingStats
-                            totalVotingPower={votingStats.totalVotingPower}
-                            allocatedVotingPower={votingStats.allocatedVotingPower}
-                            activeVotes={votingStats.activeVotes}
-                        />
-                    )}
+                    <GaugeVoterVotingStats
+                        daysLeftToVote={7}
+                        totalVotingPower={votingStats.totalVotingPower}
+                        allocatedVotingPower={votingStats.allocatedVotingPower}
+                        activeVotes={votingStats.activeVotes}
+                        isUserConnected={isUserConnected}
+                    />
                     {links?.map(({ url, name }) => (
                         <Link key={url} href={url} isExternal={true} showUrl={true}>
                             {name}

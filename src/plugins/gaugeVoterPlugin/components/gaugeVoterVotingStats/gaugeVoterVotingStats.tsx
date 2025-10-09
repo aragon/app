@@ -18,17 +18,25 @@ export interface IGaugeVoterVotingStatsProps {
      * Number of active gauges the user is voting for.
      */
     activeVotes: number;
+    /**
+     * Whether the user is connected.
+     */
+    isUserConnected: boolean;
 }
 
 export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (props) => {
-    const { daysLeftToVote, totalVotingPower, allocatedVotingPower } = props;
+    const { daysLeftToVote, totalVotingPower, allocatedVotingPower, isUserConnected } = props;
 
     const { t } = useTranslations();
 
     const totalPower = parseFloat(totalVotingPower || '0');
     const allocatedPower = parseFloat(allocatedVotingPower || '0');
 
-    const usagePercentage = totalPower > 0 ? Math.round((allocatedPower / totalPower) * 100) : 0;
+    const usagePercentage = !isUserConnected
+        ? '-'
+        : totalPower > 0
+          ? Math.round((allocatedPower / totalPower) * 100)
+          : 0;
 
     const stats = [
         {
@@ -41,12 +49,12 @@ export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (pro
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.totalVotes'),
         },
         {
-            value: allocatedVotingPower || '0',
+            value: !isUserConnected ? '-' : allocatedVotingPower || '0',
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.yourVotes'),
         },
         {
             value: usagePercentage.toString(),
-            suffix: '%',
+            suffix: isUserConnected ? '%' : undefined,
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.usedVotes'),
         },
     ];

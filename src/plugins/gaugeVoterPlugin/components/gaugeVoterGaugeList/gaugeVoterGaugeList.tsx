@@ -24,15 +24,19 @@ export interface IGaugeVoterGaugeListProps {
     /**
      * Function to handle gauge selection/deselection.
      */
-    onSelect?: (gauge: IGauge) => void;
+    onSelect: (gauge: IGauge) => void;
     /**
      * Function to handle viewing gauge details.
      */
     onViewDetails?: (gauge: IGauge) => void;
+    /**
+     * Whether the user is connected.
+     */
+    isUserConnected: boolean;
 }
 
 export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) => {
-    const { initialParams, selectedGauges, votedGauges, onSelect, onViewDetails } = props;
+    const { initialParams, selectedGauges, votedGauges, onSelect, onViewDetails, isUserConnected } = props;
 
     const { t } = useTranslations();
 
@@ -73,6 +77,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
                     <GaugeVoterGaugeListItemStructure
                         key={gauge.address}
                         gauge={gauge}
+                        isUserConnected={isUserConnected}
                         isSelected={selectedGauges?.includes(gauge.address) ?? false}
                         isVoted={votedGauges?.includes(gauge.address) ?? false}
                         onSelect={onSelect}

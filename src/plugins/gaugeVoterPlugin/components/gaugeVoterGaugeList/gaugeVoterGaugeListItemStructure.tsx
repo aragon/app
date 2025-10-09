@@ -23,24 +23,29 @@ export interface IGaugeVoterGaugeListItemStructureProps {
     /**
      * Function to handle gauge selection/deselection.
      */
-    onSelect?: (gauge: IGauge) => void;
+    onSelect: (gauge: IGauge) => void;
     /**
      * Function to handle viewing gauge details.
      */
     onViewDetails?: (gauge: IGauge) => void;
+    /**
+     * Whether the user is connected.
+     */
+    isUserConnected: boolean;
 }
 
 export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItemStructureProps> = (props) => {
-    const { gauge, totalEpochVotes, isSelected, isVoted, onSelect, onViewDetails } = props;
+    const { gauge, totalEpochVotes, isSelected, isVoted, onSelect, onViewDetails, isUserConnected } = props;
     const { t } = useTranslations();
 
     const formattedTotalVotes = formatterUtils.formatNumber(gauge.totalVotes, {
         format: NumberFormat.TOKEN_AMOUNT_SHORT,
     });
-    const formattedUserVotes =
-        gauge.userVotes > 0
-            ? formatterUtils.formatNumber(gauge.userVotes, { format: NumberFormat.TOKEN_AMOUNT_SHORT })
-            : t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.noVotes');
+    const formattedUserVotes = !isUserConnected
+        ? '-'
+        : gauge.userVotes > 0
+          ? formatterUtils.formatNumber(gauge.userVotes, { format: NumberFormat.TOKEN_AMOUNT_SHORT })
+          : t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.noVotes');
 
     // Calculate percentage if total epoch votes is available
     const percentage = totalEpochVotes && totalEpochVotes > 0 ? (gauge.totalVotes / totalEpochVotes) * 100 : 0;
@@ -56,7 +61,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
             return;
         }
 
-        onSelect?.(gauge);
+        onSelect(gauge);
     };
 
     const avatarFallback = (
@@ -95,18 +100,16 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
                 </div>
             </div>
 
-            {(onSelect ?? isVoted) && (
-                <div className="flex w-30 items-center justify-end md:w-36">
-                    <Button
-                        size="sm"
-                        variant="secondary"
-                        onClick={handleActionClick}
-                        iconLeft={isVoted ? IconType.CHECKMARK : isSelected ? IconType.CHECKMARK : undefined}
-                    >
-                        {t(`app.plugins.gaugeVoter.gaugeVoterGaugeList.item.${actionButtonTranslationKey}`)}
-                    </Button>
-                </div>
-            )}
+            <div className="flex w-30 items-center justify-end md:w-36">
+                <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={handleActionClick}
+                    iconLeft={isVoted ? IconType.CHECKMARK : isSelected ? IconType.CHECKMARK : undefined}
+                >
+                    {t(`app.plugins.gaugeVoter.gaugeVoterGaugeList.item.${actionButtonTranslationKey}`)}
+                </Button>
+            </div>
         </DataList.Item>
     );
 };
