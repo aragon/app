@@ -114,6 +114,7 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
     }, [totalPercentageUsed, voteAllocations.length]);
 
     const handleSubmit = () => {
+        // eslint-disable-next-line
         console.log('Submitting votes:', voteAllocations);
         close();
     };

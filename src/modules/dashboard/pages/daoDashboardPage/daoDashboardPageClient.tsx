@@ -48,7 +48,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
 
     const useDaoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: useDaoParams });
-    console.log('dao', dao);
+
     const { buildEntityUrl } = useBlockExplorer();
 
     const daoEns = daoUtils.getDaoEns(dao);

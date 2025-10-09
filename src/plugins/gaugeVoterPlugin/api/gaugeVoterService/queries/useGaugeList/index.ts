@@ -1,1 +1,1 @@
-export { useGaugeList, gaugeListOptions } from './useGaugeList';
+export { gaugeListOptions, useGaugeList } from './useGaugeList';
