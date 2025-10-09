@@ -19,8 +19,13 @@ class MiddlewareUtils {
         const isProd = env === 'production' || env === 'staging';
         const isLocal = env === 'local';
 
+        const allowedInFrameHosts = ['https://app.cg'];
+        const allowedInFrameHostsNonProd = ['https://vercel.live'];
+
         const scriptSrc = isProd ? `'strict-dynamic'` : isLocal ? `'unsafe-eval'` : 'https://vercel.live';
-        const frameSrc = isProd ? `'none'` : 'https://vercel.live';
+        const frameSrc = isProd
+            ? allowedInFrameHosts.join(' ')
+            : [...allowedInFrameHosts, ...allowedInFrameHostsNonProd].join(' ');
         const fontSrc = isProd ? '' : ' https://vercel.live';
 
         return [
