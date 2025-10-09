@@ -75,7 +75,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
             <div className="flex min-w-0 grow basis-0 items-center gap-4">
                 <Avatar alt="Gauge icon" size="lg" fallback={avatarFallback} src={gauge.logo ?? undefined} />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <p className="text-lg text-neutral-800">{gauge.name}</p>
+                    <p className="truncate text-lg text-neutral-800">{gauge.name}</p>
                     <p className="truncate text-sm text-neutral-500">{truncatedAddress}</p>
                 </div>
             </div>

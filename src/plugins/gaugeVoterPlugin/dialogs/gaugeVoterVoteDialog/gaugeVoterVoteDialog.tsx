@@ -2,8 +2,18 @@
 
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { Avatar, Button, DataList, Dialog, Icon, IconType, InputNumber, invariant } from '@aragon/gov-ui-kit';
-import classNames from 'classnames';
+import {
+    addressUtils,
+    Avatar,
+    Button,
+    DataList,
+    Dialog,
+    formatterUtils,
+    IconType,
+    InputNumber,
+    invariant,
+    NumberFormat,
+} from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
 import type { IGaugeVoterPlugin } from '../../types';
@@ -22,6 +32,10 @@ export interface IGaugeVoterVoteDialogParams {
      */
     network: Network;
     /**
+     * Callback called when a gauge is removed from the vote list.
+     */
+    onRemoveGauge?: (gaugeAddress: string) => void;
+    /**
      * Callback called on dialog close.
      */
     close: () => void;
@@ -39,7 +53,12 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
 
     invariant(location.params != null, 'GaugeVoterVoteDialog: required parameters must be set.');
 
-    const { gauges, close } = location.params;
+    const { gauges, onRemoveGauge, close } = location.params;
+
+    // Calculate total user voting power (existing votes + new epoch rewards)
+    const existingVotes = useMemo(() => gauges.reduce((sum, gauge) => sum + gauge.userVotes, 0), [gauges]);
+    const newEpochRewards = 15000; // TODO: Get from separate endpoint later
+    const totalVotingPower = existingVotes + newEpochRewards;
 
     const [voteAllocations, setVoteAllocations] = useState<IGaugeVoteAllocation[]>(
         gauges.map((gauge) => ({ gauge, percentage: 0 })),
@@ -60,22 +79,18 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
         );
     };
 
-    const incrementVote = (gaugeAddress: string) => {
-        const allocation = voteAllocations.find((a) => a.gauge.address === gaugeAddress);
-        if (allocation && totalPercentageUsed < 100) {
-            updateVotePercentage(gaugeAddress, allocation.percentage + 1);
-        }
-    };
-
-    const decrementVote = (gaugeAddress: string) => {
-        const allocation = voteAllocations.find((a) => a.gauge.address === gaugeAddress);
-        if (allocation && allocation.percentage > 0) {
-            updateVotePercentage(gaugeAddress, allocation.percentage - 1);
-        }
-    };
-
     const removeGauge = (gaugeAddress: string) => {
-        setVoteAllocations((prev) => prev.filter((allocation) => allocation.gauge.address !== gaugeAddress));
+        setVoteAllocations((prev) => {
+            const updated = prev.filter((allocation) => allocation.gauge.address !== gaugeAddress);
+
+            // Close dialog if no gauges remain
+            if (updated.length === 0) {
+                close();
+            }
+
+            return updated;
+        });
+        onRemoveGauge?.(gaugeAddress);
     };
 
     const distributeEvenly = () => {
@@ -90,22 +105,17 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
         );
     };
 
-    const reset = () => {
+    const resetAllocation = () => {
         setVoteAllocations((prev) => prev.map((allocation) => ({ ...allocation, percentage: 0 })));
     };
 
     const canSubmit = useMemo(() => {
-        return totalPercentageUsed > 0 && totalPercentageUsed <= 100 && voteAllocations.length > 0;
+        return totalPercentageUsed > 0 && totalPercentageUsed === 100 && voteAllocations.length > 0;
     }, [totalPercentageUsed, voteAllocations.length]);
 
     const handleSubmit = () => {
-        // TODO: Implement transaction logic using gaugeVoterTransactionUtils
         console.log('Submitting votes:', voteAllocations);
         close();
-    };
-
-    const truncateAddress = (address: string) => {
-        return `${address.slice(0, 6)}...${address.slice(-4)}`;
     };
 
     return (
@@ -133,65 +143,73 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
                                         {allocation.gauge.name}
                                     </span>
                                     <span className="text-sm text-neutral-500">
-                                        {truncateAddress(allocation.gauge.address)}
+                                        {addressUtils.truncateAddress(allocation.gauge.address)}
                                     </span>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                <InputNumber min={0} max={100} suffix="%" defaultValue={0} className="max-w-48" />
+                                {allocation.percentage > 0 && (
+                                    <span className="text-sm font-semibold text-neutral-500">
+                                        {formatterUtils.formatNumber((allocation.percentage / 100) * totalVotingPower, {
+                                            format: NumberFormat.TOKEN_AMOUNT_SHORT,
+                                        })}{' '}
+                                        ARG
+                                    </span>
+                                )}
+                                <InputNumber
+                                    min={0}
+                                    max={100}
+                                    suffix="%"
+                                    value={allocation.percentage.toString()}
+                                    className="max-w-40"
+                                    onChange={(value) => updateVotePercentage(allocation.gauge.address, Number(value))}
+                                />
 
-                                <Button iconLeft={IconType.CLOSE} onClick={close} variant="tertiary" size="sm" />
+                                <Button
+                                    iconLeft={IconType.CLOSE}
+                                    onClick={() => removeGauge(allocation.gauge.address)}
+                                    variant="tertiary"
+                                    size="sm"
+                                />
                             </div>
                         </DataList.Item>
                     ))}
                 </div>
-
-                {/* Voting Summary Section */}
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <span className="text-sm font-semibold text-neutral-500 uppercase">YOUR VOTES</span>
-                        <div className="flex items-center gap-2">
-                            <Avatar size="sm" responsiveSize={{ md: 'sm' }} alt="PDT" />
-                            <span className="text-base font-semibold text-neutral-800">9.00M PDT</span>
+                <div className="flex items-center justify-between gap-x-6">
+                    <div className="flex grow items-center gap-x-6">
+                        <span className="text-sm font-semibold text-neutral-800 uppercase">YOUR VOTES</span>
+                        <div className="flex items-center gap-x-3">
+                            <div className="flex items-center gap-x-2">
+                                <Avatar
+                                    size="sm"
+                                    responsiveSize={{ md: 'sm' }}
+                                    alt="Token logo"
+                                    src="https://pbs.twimg.com/profile_images/1851934141782331394/Z0ZqlyIo_400x400.png"
+                                />
+                                <span className="text-base font-semibold text-neutral-800">
+                                    {totalVotingPower.toString()} ARG
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-x-1 text-lg">
+                                {totalPercentageUsed}%<span className="text-base text-neutral-500"> used</span>
+                            </div>
                         </div>
-                        <span
-                            className={classNames(
-                                'text-base font-semibold',
-                                totalPercentageUsed > 100 ? 'text-critical-500' : 'text-neutral-600',
-                            )}
-                        >
-                            {totalPercentageUsed}% used
-                        </span>
                     </div>
                     <div className="flex gap-3">
                         <Button variant="secondary" size="md" onClick={distributeEvenly} className="w-fit">
                             Distribute evenly
                         </Button>
-                        <Button variant="tertiary" size="md" onClick={reset} className="w-fit">
+                        <Button variant="tertiary" size="md" onClick={resetAllocation} className="w-fit">
                             Reset
                         </Button>
                     </div>
                 </div>
-
-                {/* Error State */}
-                {totalPercentageUsed > 100 && (
-                    <div className="bg-critical-100 flex items-center gap-2 rounded-lg p-3">
-                        <Icon icon={IconType.WARNING} className="text-critical-500" />
-                        <span className="text-critical-800 text-sm">
-                            Vote allocation exceeds 100%. Please adjust your votes.
-                        </span>
-                    </div>
-                )}
             </Dialog.Content>
 
-            <Dialog.Footer>
-                <Button variant="tertiary" onClick={close}>
-                    Cancel
-                </Button>
-                <Button variant="primary" onClick={handleSubmit} disabled={!canSubmit}>
-                    Submit votes
-                </Button>
-            </Dialog.Footer>
+            <Dialog.Footer
+                primaryAction={{ onClick: handleSubmit, label: 'Submit votes', disabled: !canSubmit }}
+                secondaryAction={{ onClick: () => close(), label: 'Cancel' }}
+            />
         </>
     );
 };
