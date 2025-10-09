@@ -1,5 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { Avatar, Button, formatterUtils, NumberFormat, Tag } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 
 export interface IGaugeVoterVotingTerminalProps {
     /**
@@ -34,6 +35,10 @@ export interface IGaugeVoterVotingTerminalProps {
      * Function to handle vote action
      */
     onVote?: () => void;
+    /**
+     * Whether voting is active
+     */
+    isVotingActive: boolean;
 }
 
 export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> = (props) => {
@@ -46,6 +51,7 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
         tokenSymbol,
         tokenLogo,
         onVote,
+        isVotingActive,
     } = props;
     const { t } = useTranslations();
 
@@ -59,10 +65,14 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
         format: NumberFormat.PERCENTAGE_SHORT,
     });
 
-    const showVoteButton = hasVoted || selectedCount > 0;
+    const showVoteButton = isVotingActive && (hasVoted || selectedCount > 0);
 
+    const wrapperClassName = classNames('bg-neutral-0  flex items-center justify-between rounded-xl border px-6 py-3', {
+        'border-neutral-100': !showVoteButton,
+        'border-primary-100': showVoteButton,
+    });
     return (
-        <div className="bg-neutral-0 border-primary-100 flex items-center justify-between rounded-xl border px-6 py-3">
+        <div className={wrapperClassName}>
             <div className="flex items-center gap-6">
                 <p className="text-sm font-semibold text-neutral-800 uppercase">
                     {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.yourVotes')}
@@ -84,6 +94,11 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
                 </div>
             </div>
             <div className="flex items-center gap-4">
+                {!isVotingActive && (
+                    <Button size="sm" variant="primary" disabled={true}>
+                        {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.nextVotingIn', { count: 7 })}
+                    </Button>
+                )}
                 {showVoteButton && (
                     <>
                         <Tag
@@ -97,7 +112,7 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
                         </Button>
                     </>
                 )}
-                {!showVoteButton && (
+                {!showVoteButton && isVotingActive && (
                     <>
                         <span className="text-sm text-neutral-500">
                             {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.daysLeft', { count: daysLeftToVote })}

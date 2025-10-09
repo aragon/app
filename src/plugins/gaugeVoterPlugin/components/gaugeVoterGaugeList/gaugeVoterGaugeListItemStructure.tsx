@@ -32,10 +32,15 @@ export interface IGaugeVoterGaugeListItemStructureProps {
      * Whether the user is connected.
      */
     isUserConnected: boolean;
+    /**
+     * Whether voting is active.
+     */
+    isVotingActive: boolean;
 }
 
 export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItemStructureProps> = (props) => {
-    const { gauge, totalEpochVotes, isSelected, isVoted, onSelect, onViewDetails, isUserConnected } = props;
+    const { gauge, totalEpochVotes, isSelected, isVoted, onSelect, onViewDetails, isUserConnected, isVotingActive } =
+        props;
     const { t } = useTranslations();
 
     const formattedTotalVotes = formatterUtils.formatNumber(gauge.totalVotes, {
@@ -106,6 +111,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
                     variant="secondary"
                     onClick={handleActionClick}
                     iconLeft={isVoted ? IconType.CHECKMARK : isSelected ? IconType.CHECKMARK : undefined}
+                    disabled={!isVotingActive}
                 >
                     {t(`app.plugins.gaugeVoter.gaugeVoterGaugeList.item.${actionButtonTranslationKey}`)}
                 </Button>

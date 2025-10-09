@@ -37,6 +37,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const { check: checkWalletConnection } = useConnectedWalletGuard();
 
     const isUserConnected = !!address;
+    const isVotingActive = true;
 
     const [selectedGauges, setSelectedGauges] = useState<string[]>([]);
 
@@ -122,6 +123,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         onSelect={handleSelectGauge}
                         onViewDetails={handleViewDetails}
                         isUserConnected={isUserConnected}
+                        isVotingActive={isVotingActive}
                     />
                     <GaugeVoterVotingTerminal
                         daysLeftToVote={7}
@@ -131,6 +133,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         selectedCount={selectedGauges.length}
                         tokenSymbol="PDT"
                         onVote={handleVoteClick}
+                        isVotingActive={isVotingActive}
                     />
                 </div>
             </Page.Main>

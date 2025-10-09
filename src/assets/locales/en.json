@@ -1248,7 +1248,8 @@
           "voteOnSelected": "Vote on selected",
           "yourVotes": "Your votes",
           "daysLeft": "{{count}} days left",
-          "notVoted": "Not voted yet"
+          "notVoted": "Not voted yet",
+          "nextVotingIn": "Next voting in {{count}} days"
         },
         "gaugeVoterVotingStats": {
           "daysLeftSuffix": " days left",
