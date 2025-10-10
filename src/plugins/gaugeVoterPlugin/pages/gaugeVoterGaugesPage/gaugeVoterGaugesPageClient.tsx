@@ -16,6 +16,8 @@ import { GaugeVoterGaugeList } from '../../components/gaugeVoterGaugeList';
 import { GaugeVoterVotingStats } from '../../components/gaugeVoterVotingStats';
 import { GaugeVoterVotingTerminal } from '../../components/gaugeVoterVotingTerminal';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
+import type { IGaugeVoterGaugeDetailsDialogParams } from '../../dialogs/gaugeVoterGaugeDetailsDialog';
+import type { IGaugeVoterVoteDialogParams } from '../../dialogs/gaugeVoterVoteDialog';
 
 export interface IGaugeVoterGaugesPageClientProps {
     /**
@@ -32,7 +34,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const { dao, initialParams } = props;
 
     const { address } = useAccount();
-    const { open, close } = useDialogContext();
+    const { open } = useDialogContext();
     const { t } = useTranslations();
     const { check: checkWalletConnection } = useConnectedWalletGuard();
 
@@ -48,7 +50,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     // Mark gauges as voted if they have user votes
     const votedGauges = gauges.filter((gauge) => gauge.userVotes > 0).map((gauge) => gauge.address);
 
-    const [selectedGauges, setSelectedGauges] = useState<string[]>(votedGauges);
+    const [selectedGauges, setSelectedGauges] = useState<string[]>([]);
 
     const plugin = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_VOTER })![0];
     const { description, links } = plugin.meta;
@@ -89,17 +91,15 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
 
                 const allGaugesToVote = [...votedGaugeList, ...selectedGaugeList];
 
-                open(GaugeVoterPluginDialogId.VOTE_GAUGES, {
-                    params: {
-                        gauges: allGaugesToVote,
-                        plugin,
-                        network: dao.network,
-                        totalVotingPower: userVotingPower,
-                        tokenSymbol: tokenSymbol,
-                        onRemoveGauge: handleRemoveGauge,
-                        close,
-                    },
-                });
+                const voteParams: IGaugeVoterVoteDialogParams = {
+                    gauges: allGaugesToVote,
+                    pluginAddress: plugin.meta.address,
+                    network: dao.network,
+                    onRemoveGauge: handleRemoveGauge,
+                    totalVotingPower: userVotingPower,
+                    tokenSymbol: tokenSymbol,
+                };
+                open(GaugeVoterPluginDialogId.VOTE_GAUGES, { params: voteParams });
             },
         });
     };
@@ -107,16 +107,15 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const handleViewDetails = (gauge: IGauge) => {
         const selectedIndex = gauges.findIndex((g) => g.address === gauge.address);
 
+        const gaugeDetailsParams: IGaugeVoterGaugeDetailsDialogParams = {
+            gauges,
+            selectedIndex,
+            network: dao.network,
+            totalVotingPower: userVotingPower,
+            tokenSymbol: tokenSymbol,
+        };
         open(GaugeVoterPluginDialogId.GAUGE_DETAILS, {
-            params: {
-                gauges,
-                selectedIndex,
-                plugin,
-                network: dao.network,
-                totalVotingPower: userVotingPower,
-                tokenSymbol: tokenSymbol,
-                close,
-            },
+            params: gaugeDetailsParams,
         });
     };
 

@@ -1264,6 +1264,12 @@
           },
           "title": "Vote"
         },
+        "gaugeVoterVoteTransactionDialog": {
+          "description": "To submit your gauge vote allocations, confirm the onchain transaction in your wallet.",
+          "submit": "Submit votes",
+          "successLinkLabel": "View gauges",
+          "title": "Submit gauge votes"
+        },
         "gaugeVoterVotingStats": {
           "daysLeftSuffix": " days left",
           "toVote": "To vote",
