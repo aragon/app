@@ -2,6 +2,7 @@
 
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import {
     addressUtils,
     Avatar,
@@ -16,7 +17,8 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
-import type { IGaugeVoterPlugin } from '../../types';
+import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
+import type { IGaugeVote, IGaugeVoterVoteTransactionDialogParams } from '../gaugeVoterVoteTransactionDialog';
 
 export interface IGaugeVoterVoteDialogParams {
     /**
@@ -24,9 +26,9 @@ export interface IGaugeVoterVoteDialogParams {
      */
     gauges: IGauge[];
     /**
-     * Gauge voter plugin instance.
+     * Gauge voter plugin address.
      */
-    plugin: IGaugeVoterPlugin;
+    pluginAddress: string;
     /**
      * Network of the plugin.
      */
@@ -35,10 +37,6 @@ export interface IGaugeVoterVoteDialogParams {
      * Callback called when a gauge is removed from the vote list.
      */
     onRemoveGauge?: (gaugeAddress: string) => void;
-    /**
-     * Callback called on dialog close.
-     */
-    close: () => void;
 }
 
 export interface IGaugeVoterVoteDialogProps extends IDialogComponentProps<IGaugeVoterVoteDialogParams> {}
@@ -53,7 +51,9 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
 
     invariant(location.params != null, 'GaugeVoterVoteDialog: required parameters must be set.');
 
-    const { gauges, onRemoveGauge, close } = location.params;
+    const { gauges, pluginAddress, network, onRemoveGauge } = location.params;
+
+    const { open, close } = useDialogContext();
 
     // Calculate total user voting power (existing votes + new epoch rewards)
     const existingVotes = useMemo(() => gauges.reduce((sum, gauge) => sum + gauge.userVotes, 0), [gauges]);
@@ -114,9 +114,20 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
     }, [totalPercentageUsed, voteAllocations.length]);
 
     const handleSubmit = () => {
-        // eslint-disable-next-line
-        console.log('Submitting votes:', voteAllocations);
-        close();
+        const votes: IGaugeVote[] = voteAllocations
+            .filter((allocation) => allocation.percentage > 0)
+            .map((allocation) => ({
+                weight: BigInt(allocation.percentage),
+                gauge: allocation.gauge.address,
+            }));
+
+        const params: IGaugeVoterVoteTransactionDialogParams = {
+            votes,
+            pluginAddress,
+            network,
+        };
+        open(GaugeVoterPluginDialogId.VOTE_GAUGES_TRANSACTION, { params });
+        close(GaugeVoterPluginDialogId.VOTE_GAUGES);
     };
 
     return (

@@ -1,11 +1,10 @@
 'use client';
 
 import type { Network } from '@/shared/api/daoService';
-import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
-import type { IGaugeVoterPlugin } from '../../types';
 import { GaugeVoterGaugeDetailsDialogContent } from './gaugeVoterGaugeDetailsDialogContent';
 import { GaugeVoterGaugeDetailsDialogFooter } from './gaugeVoterGaugeDetailsDialogFooter';
 
@@ -19,17 +18,9 @@ export interface IGaugeVoterGaugeDetailsDialogParams {
      */
     selectedIndex: number;
     /**
-     * Gauge voter plugin instance.
-     */
-    plugin: IGaugeVoterPlugin;
-    /**
      * Network of the DAO.
      */
     network: Network;
-    /**
-     * Callback called on dialog close.
-     */
-    close: () => void;
 }
 
 export interface IGaugeVoterGaugeDetailsDialogProps
@@ -40,7 +31,9 @@ export const GaugeVoterGaugeDetailsDialog: React.FC<IGaugeVoterGaugeDetailsDialo
 
     invariant(location.params != null, 'GaugeVoterGaugeDetailsDialog: required parameters must be set.');
 
-    const { gauges, selectedIndex, network, close } = location.params;
+    const { gauges, selectedIndex, network } = location.params;
+
+    const { close } = useDialogContext();
 
     const [currentIndex, setCurrentIndex] = useState(selectedIndex);
 
