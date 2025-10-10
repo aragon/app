@@ -1194,6 +1194,9 @@
       },
       "gaugeVoter": {
         "gaugeVoterGaugeDetailsDialog": {
+          "a11y": {
+            "description": "A dialog for displaying gauge details."
+          },
           "content": {
             "contract": "Contract",
             "haveYouVotedFor": "Have you voted for?",
@@ -1242,6 +1245,25 @@
             "voteOnSelected_plural": "Vote on {{count}} selected gauges"
           }
         },
+        "gaugeVoterVoteDialog": {
+          "a11y": {
+            "description": "An allocation dialog for electing your gauge sentiment."
+          },
+          "action": {
+            "cancel": "Cancel",
+            "distributeEvenly": "Distribute evenly",
+            "reset": "Reset",
+            "submit": "Submit votes"
+          },
+          "content": {
+            "description": "Proportionally distribute your voting power approach across your selected gauges.",
+            "used": "used"
+          },
+          "footer": {
+            "yourVotes": "YOUR VOTES"
+          },
+          "title": "Vote"
+        },
         "gaugeVoterVotingStats": {
           "daysLeftSuffix": " days left",
           "toVote": "To vote",
@@ -1254,6 +1276,7 @@
           "nextVotingIn": "Next voting in {{count}} days",
           "notVoted": "Not voted yet",
           "selected": "{{count}} selected",
+          "updateVote": "Update vote",
           "used": "used",
           "voteOnSelected": "Vote on selected",
           "yourVotes": "Your votes"

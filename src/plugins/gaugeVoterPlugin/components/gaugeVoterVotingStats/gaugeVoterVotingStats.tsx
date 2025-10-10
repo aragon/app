@@ -1,5 +1,6 @@
 import { StatCard } from '@/shared/components/statCard';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
+import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 
 export interface IGaugeVoterVotingStatsProps {
     /**
@@ -7,17 +8,17 @@ export interface IGaugeVoterVotingStatsProps {
      */
     daysLeftToVote: number;
     /**
-     * Total voting power available to the user.
+     * Total voting power of the epoch.
      */
-    totalVotingPower: string;
+    epochVotingPower: string;
     /**
      * Total voting power already allocated by the user.
      */
-    allocatedVotingPower: string;
+    userVotingPower: string;
     /**
-     * Number of active gauges the user is voting for.
+     * Total voting power already allocated by the user.
      */
-    activeVotes: number;
+    userUsedVotingPower: string;
     /**
      * Whether the user is connected.
      */
@@ -25,18 +26,11 @@ export interface IGaugeVoterVotingStatsProps {
 }
 
 export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (props) => {
-    const { daysLeftToVote, totalVotingPower, allocatedVotingPower, isUserConnected } = props;
+    const { daysLeftToVote, epochVotingPower, userVotingPower, userUsedVotingPower, isUserConnected } = props;
 
     const { t } = useTranslations();
 
-    const totalPower = parseFloat(totalVotingPower || '0');
-    const allocatedPower = parseFloat(allocatedVotingPower || '0');
-
-    const usagePercentage = !isUserConnected
-        ? '-'
-        : totalPower > 0
-          ? Math.round((allocatedPower / totalPower) * 100)
-          : 0;
+    const usagePercentage = (Number(userUsedVotingPower) / Number(userVotingPower)) * 100;
 
     const stats = [
         {
@@ -45,11 +39,11 @@ export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (pro
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.toVote'),
         },
         {
-            value: totalVotingPower || '0',
+            value: formatterUtils.formatNumber(epochVotingPower, { format: NumberFormat.GENERIC_SHORT }) ?? '0',
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.totalVotes'),
         },
         {
-            value: !isUserConnected ? '-' : allocatedVotingPower || '0',
+            value: !isUserConnected ? '-' : userVotingPower || '0',
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.yourVotes'),
         },
         {

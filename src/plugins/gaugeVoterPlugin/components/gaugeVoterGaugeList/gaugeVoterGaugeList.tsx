@@ -64,6 +64,9 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
 
     const gaugeList = gaugeListData?.pages.flatMap((page) => page.data.flatMap((data) => data.gauges));
 
+    // Get total votes from metrics
+    const totalEpochVotes = gaugeListData?.pages[0]?.data[0]?.metrics?.totalVotes ?? 0;
+
     return (
         <DataListRoot
             entityLabel={t('app.plugins.gaugeVoter.gaugeVoterGaugeList.entity')}
@@ -87,7 +90,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
                         isVoted={votedGauges?.includes(gauge.address) ?? false}
                         onSelect={onSelect}
                         onViewDetails={onViewDetails}
-                        totalEpochVotes={100000000}
+                        totalEpochVotes={totalEpochVotes}
                         isVotingActive={isVotingActive}
                     />
                 ))}

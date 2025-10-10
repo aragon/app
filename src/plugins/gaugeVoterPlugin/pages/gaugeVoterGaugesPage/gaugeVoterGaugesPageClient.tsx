@@ -38,20 +38,22 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
 
     const isUserConnected = !!address;
     const isVotingActive = true;
-
-    const [selectedGauges, setSelectedGauges] = useState<string[]>([]);
-
-    const plugin = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_VOTER })![0];
-    const { description, links } = plugin.meta;
-
     const { data: gaugeListData } = useGaugeList(initialParams);
 
     const result = gaugeListData?.pages[0]?.data[0]; // Get the first result from pagination
     const gauges = result?.gauges ?? [];
     const metrics = result?.metrics;
+    const tokenSymbol = 'PDT';
 
-    const votedGauges = [gauges[0]?.address].filter(Boolean) as string[];
-    // const votedGauges: string[] = [];
+    // Mark gauges as voted if they have user votes
+    const votedGauges = gauges.filter((gauge) => gauge.userVotes > 0).map((gauge) => gauge.address);
+
+    const [selectedGauges, setSelectedGauges] = useState<string[]>(votedGauges);
+
+    const plugin = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_VOTER })![0];
+    const { description, links } = plugin.meta;
+
+    const selectedCount = selectedGauges.length + votedGauges.length;
 
     const handleSelectGauge = (gauge: IGauge) => {
         // Don't allow selection of already voted gauges
@@ -75,13 +77,13 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const handleVoteClick = () => {
         checkWalletConnection({
             onSuccess: () => {
+                if (selectedCount === 0) {
+                    return; // No new gauges selected
+                }
+
                 const selectedGaugeList = gauges
                     .filter((gauge) => selectedGauges.includes(gauge.address))
                     .filter((gauge) => !votedGauges.includes(gauge.address));
-
-                if (selectedGaugeList.length === 0) {
-                    return; // No new gauges selected
-                }
 
                 const votedGaugeList = gauges.filter((gauge) => votedGauges.includes(gauge.address));
 
@@ -93,6 +95,8 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         gauges: allGaugesToVote,
                         plugin,
                         network: dao.network,
+                        totalVotingPower: userVotingPower,
+                        tokenSymbol: tokenSymbol,
                         onRemoveGauge: handleRemoveGauge,
                         close,
                     },
@@ -110,16 +114,25 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                 selectedIndex,
                 plugin,
                 network: dao.network,
+                totalVotingPower: userVotingPower,
+                tokenSymbol: tokenSymbol,
                 close,
             },
         });
     };
 
-    // Calculate stats from metrics or provide defaults
+    // User's voting power for current epoch
+    const userVotingPower = metrics?.votingPower ?? 0;
+    // User's current votes amount for the epoch
+    const userTotalVotes = metrics?.usedVotingPower ?? 0;
+
+    // Check if user has already voted (usedVotingPower equals votingPower)
+    const hasVoted = userTotalVotes === userVotingPower && userTotalVotes > 0;
+
     const votingStats = {
-        totalVotingPower: metrics?.votingPower.toString() ?? '0',
-        allocatedVotingPower: metrics?.usedVotingPower.toString() ?? '0',
-        activeVotes: gauges.filter((g) => g.userVotes > 0).length,
+        epochVotingPower: metrics?.totalVotes.toString(),
+        userVotingPower: userVotingPower.toString(),
+        userUsedVotingPower: userTotalVotes.toString(),
     };
 
     return (
@@ -135,16 +148,18 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         isUserConnected={isUserConnected}
                         isVotingActive={isVotingActive}
                     />
-                    <GaugeVoterVotingTerminal
-                        daysLeftToVote={7}
-                        hasVoted={votedGauges.length > 0}
-                        totalVotingPower={votingStats.totalVotingPower}
-                        usedVotingPower={votingStats.allocatedVotingPower}
-                        selectedCount={selectedGauges.length}
-                        tokenSymbol="PDT"
-                        onVote={handleVoteClick}
-                        isVotingActive={isVotingActive}
-                    />
+                    {address && (
+                        <GaugeVoterVotingTerminal
+                            daysLeftToVote={7}
+                            hasVoted={hasVoted}
+                            totalVotingPower={votingStats.userVotingPower}
+                            usedVotingPower={votingStats.userUsedVotingPower}
+                            selectedCount={selectedCount}
+                            tokenSymbol={tokenSymbol}
+                            onVote={handleVoteClick}
+                            isVotingActive={isVotingActive}
+                        />
+                    )}
                 </div>
             </Page.Main>
             <Page.Aside>
@@ -154,9 +169,9 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                     {description && <p className="text-base text-gray-500">{description}</p>}
                     <GaugeVoterVotingStats
                         daysLeftToVote={7}
-                        totalVotingPower={votingStats.totalVotingPower}
-                        allocatedVotingPower={votingStats.allocatedVotingPower}
-                        activeVotes={votingStats.activeVotes}
+                        epochVotingPower={votingStats.epochVotingPower ?? '0'}
+                        userVotingPower={votingStats.userVotingPower}
+                        userUsedVotingPower={votingStats.userUsedVotingPower}
                         isUserConnected={isUserConnected}
                     />
                     {links?.map(({ url, name }) => (

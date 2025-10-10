@@ -13,17 +13,22 @@ export interface IGaugeVoterGaugeDetailsDialogContentProps {
      * Network of the DAO.
      */
     network: Network;
+    /**
+     * Token symbol for voting power display.
+     */
+    tokenSymbol: string;
 }
 
 export const GaugeVoterGaugeDetailsDialogContent: React.FC<IGaugeVoterGaugeDetailsDialogContentProps> = (props) => {
-    const { gauge, network } = props;
+    const { gauge, network, tokenSymbol } = props;
 
     const { t } = useTranslations();
 
     const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[network].id });
     const gaugeAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: gauge.address });
 
-    const votedFor = Math.random() > 0.5;
+    // Check if user has voted for this gauge
+    const hasVoted = gauge.userVotes > 0;
 
     return (
         <div className="flex flex-col gap-y-4">
@@ -46,7 +51,7 @@ export const GaugeVoterGaugeDetailsDialogContent: React.FC<IGaugeVoterGaugeDetai
                 <DefinitionList.Item
                     term={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.totalRewards')}
                 >
-                    420.69k PDT
+                    420.69k {tokenSymbol}
                 </DefinitionList.Item>
                 <DefinitionList.Item
                     term={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.yourRewards')}
@@ -54,20 +59,24 @@ export const GaugeVoterGaugeDetailsDialogContent: React.FC<IGaugeVoterGaugeDetai
                         'app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.yourRewardsDescription',
                     )}
                 >
-                    120 PDT
+                    {hasVoted ? 120 : 0} {tokenSymbol}
                 </DefinitionList.Item>
                 <DefinitionList.Item
                     term={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.haveYouVotedFor')}
                 >
-                    <Tag
-                        variant={votedFor ? 'success' : 'neutral'}
-                        label={
-                            votedFor
-                                ? t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.votedYes')
-                                : t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.votedNo')
-                        }
-                        className="w-fit"
-                    />
+                    {hasVoted ? (
+                        <Tag
+                            variant="success"
+                            label={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.votedYes')}
+                            className="w-fit"
+                        />
+                    ) : (
+                        <Tag
+                            variant="neutral"
+                            label={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.votedNo')}
+                            className="w-fit"
+                        />
+                    )}
                 </DefinitionList.Item>
             </DefinitionList.Container>
         </div>

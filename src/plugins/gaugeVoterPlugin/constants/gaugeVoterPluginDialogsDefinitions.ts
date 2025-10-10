@@ -4,6 +4,14 @@ import { GaugeVoterVoteDialog } from '../dialogs/gaugeVoterVoteDialog';
 import { GaugeVoterPluginDialogId } from './gaugeVoterPluginDialogId';
 
 export const gaugeVoterPluginDialogsDefinitions: Record<GaugeVoterPluginDialogId, IDialogComponentDefinitions> = {
-    [GaugeVoterPluginDialogId.GAUGE_DETAILS]: { Component: GaugeVoterGaugeDetailsDialog, size: 'lg' },
-    [GaugeVoterPluginDialogId.VOTE_GAUGES]: { Component: GaugeVoterVoteDialog, size: 'xl' },
+    [GaugeVoterPluginDialogId.GAUGE_DETAILS]: {
+        Component: GaugeVoterGaugeDetailsDialog,
+        size: 'lg',
+        hiddenDescription: 'plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.a11y.description',
+    },
+    [GaugeVoterPluginDialogId.VOTE_GAUGES]: {
+        Component: GaugeVoterVoteDialog,
+        size: 'xl',
+        hiddenDescription: 'plugins.gaugeVoter.gaugeVoterVoteDialog.a11y.description',
+    },
 };

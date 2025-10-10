@@ -27,6 +27,14 @@ export interface IGaugeVoterGaugeDetailsDialogParams {
      */
     network: Network;
     /**
+     * User's total voting power for the epoch.
+     */
+    totalVotingPower: number;
+    /**
+     * Token symbol for voting power display.
+     */
+    tokenSymbol: string;
+    /**
      * Callback called on dialog close.
      */
     close: () => void;
@@ -40,7 +48,7 @@ export const GaugeVoterGaugeDetailsDialog: React.FC<IGaugeVoterGaugeDetailsDialo
 
     invariant(location.params != null, 'GaugeVoterGaugeDetailsDialog: required parameters must be set.');
 
-    const { gauges, selectedIndex, network, close } = location.params;
+    const { gauges, selectedIndex, network, tokenSymbol, close } = location.params;
 
     const [currentIndex, setCurrentIndex] = useState(selectedIndex);
 
@@ -68,7 +76,7 @@ export const GaugeVoterGaugeDetailsDialog: React.FC<IGaugeVoterGaugeDetailsDialo
         <>
             <Dialog.Header title={gauge.name} onClose={close} />
             <Dialog.Content className="pb-3">
-                <GaugeVoterGaugeDetailsDialogContent gauge={gauge} network={network} />
+                <GaugeVoterGaugeDetailsDialogContent gauge={gauge} network={network} tokenSymbol={tokenSymbol} />
             </Dialog.Content>
             <GaugeVoterGaugeDetailsDialogFooter onPrevious={handlePrevious} onNext={handleNext} />
         </>

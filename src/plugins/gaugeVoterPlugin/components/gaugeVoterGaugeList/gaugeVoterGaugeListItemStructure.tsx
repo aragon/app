@@ -53,7 +53,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
           : t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.noVotes');
 
     // Calculate percentage if total epoch votes is available
-    const percentage = totalEpochVotes && totalEpochVotes > 0 ? (gauge.totalVotes / totalEpochVotes) * 100 : 0;
+    const percentage = totalEpochVotes && totalEpochVotes > 0 ? gauge.totalVotes / totalEpochVotes : 0;
     const formattedPercentage = totalEpochVotes
         ? formatterUtils.formatNumber(percentage, { format: NumberFormat.PERCENTAGE_SHORT })
         : null;

@@ -2,6 +2,7 @@
 
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     addressUtils,
     Avatar,
@@ -32,6 +33,14 @@ export interface IGaugeVoterVoteDialogParams {
      */
     network: Network;
     /**
+     * User's total voting power for the epoch.
+     */
+    totalVotingPower: number;
+    /**
+     * Token symbol for voting power display.
+     */
+    tokenSymbol: string;
+    /**
      * Callback called when a gauge is removed from the vote list.
      */
     onRemoveGauge?: (gaugeAddress: string) => void;
@@ -50,18 +59,24 @@ interface IGaugeVoteAllocation {
 
 export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props) => {
     const { location } = props;
+    const { t } = useTranslations();
 
     invariant(location.params != null, 'GaugeVoterVoteDialog: required parameters must be set.');
 
-    const { gauges, onRemoveGauge, close } = location.params;
+    const { gauges, totalVotingPower, tokenSymbol, onRemoveGauge, close } = location.params;
 
-    // Calculate total user voting power (existing votes + new epoch rewards)
-    const existingVotes = useMemo(() => gauges.reduce((sum, gauge) => sum + gauge.userVotes, 0), [gauges]);
-    const newEpochRewards = 15000; // TODO: Get from separate endpoint later
-    const totalVotingPower = existingVotes + newEpochRewards;
-
+    // Initialize vote allocations with existing votes converted to percentages
     const [voteAllocations, setVoteAllocations] = useState<IGaugeVoteAllocation[]>(
-        gauges.map((gauge) => ({ gauge, percentage: 0 })),
+        gauges.map((gauge) => {
+            // Calculate existing vote percentage if user has already voted for this gauge
+            const existingPercentage =
+                gauge.userVotes > 0 && totalVotingPower > 0 ? (gauge.userVotes / totalVotingPower) * 100 : 0;
+
+            return {
+                gauge,
+                percentage: Math.round(existingPercentage), // Round to whole number
+            };
+        }),
     );
 
     const totalPercentageUsed = useMemo(
@@ -69,7 +84,11 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
         [voteAllocations],
     );
 
+    // Track if any allocation has been modified from initial state
+    const [hasModified, setHasModified] = useState(false);
+
     const updateVotePercentage = (gaugeAddress: string, newPercentage: number) => {
+        setHasModified(true);
         setVoteAllocations((prev) =>
             prev.map((allocation) =>
                 allocation.gauge.address === gaugeAddress
@@ -94,6 +113,7 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
     };
 
     const distributeEvenly = () => {
+        setHasModified(true);
         const evenPercentage = Math.floor(100 / voteAllocations.length);
         const remainder = 100 - evenPercentage * voteAllocations.length;
 
@@ -106,6 +126,7 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
     };
 
     const resetAllocation = () => {
+        setHasModified(true);
         setVoteAllocations((prev) => prev.map((allocation) => ({ ...allocation, percentage: 0 })));
     };
 
@@ -121,10 +142,10 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
 
     return (
         <>
-            <Dialog.Header title="Vote" onClose={close} />
+            <Dialog.Header title={t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.title')} onClose={close} />
             <Dialog.Content className="flex flex-col gap-6 py-6">
                 <p className="text-sm text-neutral-600">
-                    Proportionally distribute your voting power approach across your selected gauges.
+                    {t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.content.description')}
                 </p>
                 <div className="flex flex-col gap-4">
                     {voteAllocations.map((allocation) => (
@@ -151,10 +172,19 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
                             <div className="flex items-center gap-3">
                                 {allocation.percentage > 0 && (
                                     <span className="text-sm font-semibold text-neutral-500">
-                                        {formatterUtils.formatNumber((allocation.percentage / 100) * totalVotingPower, {
-                                            format: NumberFormat.TOKEN_AMOUNT_SHORT,
-                                        })}{' '}
-                                        ARG
+                                        {!hasModified && allocation.gauge.userVotes > 0
+                                            ? // Show exact user votes if unmodified
+                                              formatterUtils.formatNumber(allocation.gauge.userVotes, {
+                                                  format: NumberFormat.TOKEN_AMOUNT_SHORT,
+                                              })
+                                            : // Calculate from percentage once modified
+                                              formatterUtils.formatNumber(
+                                                  (allocation.percentage / 100) * totalVotingPower,
+                                                  {
+                                                      format: NumberFormat.TOKEN_AMOUNT_SHORT,
+                                                  },
+                                              )}{' '}
+                                        {tokenSymbol}
                                     </span>
                                 )}
                                 <InputNumber
@@ -176,9 +206,23 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
                         </DataList.Item>
                     ))}
                 </div>
+            </Dialog.Content>
+            <Dialog.Footer
+                primaryAction={{
+                    onClick: handleSubmit,
+                    label: t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.action.submit'),
+                    disabled: !canSubmit,
+                }}
+                secondaryAction={{
+                    onClick: () => close(),
+                    label: t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.action.cancel'),
+                }}
+            >
                 <div className="flex items-center justify-between gap-x-6">
                     <div className="flex grow items-center gap-x-6">
-                        <span className="text-sm font-semibold text-neutral-800 uppercase">YOUR VOTES</span>
+                        <span className="text-sm font-semibold text-neutral-800 uppercase">
+                            {t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.footer.yourVotes')}
+                        </span>
                         <div className="flex items-center gap-x-3">
                             <div className="flex items-center gap-x-2">
                                 <Avatar
@@ -188,29 +232,28 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
                                     src="https://pbs.twimg.com/profile_images/1851934141782331394/Z0ZqlyIo_400x400.png"
                                 />
                                 <span className="text-base font-semibold text-neutral-800">
-                                    {totalVotingPower.toString()} ARG
+                                    {totalVotingPower.toString()} {tokenSymbol}
                                 </span>
                             </div>
                             <div className="flex items-center gap-x-1 text-lg">
-                                {totalPercentageUsed}%<span className="text-base text-neutral-500"> used</span>
+                                {totalPercentageUsed}%
+                                <span className="text-base text-neutral-500">
+                                    {' '}
+                                    {t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.content.used')}
+                                </span>
                             </div>
                         </div>
                     </div>
                     <div className="flex gap-3">
                         <Button variant="secondary" size="md" onClick={distributeEvenly} className="w-fit">
-                            Distribute evenly
+                            {t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.action.distributeEvenly')}
                         </Button>
                         <Button variant="tertiary" size="md" onClick={resetAllocation} className="w-fit">
-                            Reset
+                            {t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.action.reset')}
                         </Button>
                     </div>
                 </div>
-            </Dialog.Content>
-
-            <Dialog.Footer
-                primaryAction={{ onClick: handleSubmit, label: 'Submit votes', disabled: !canSubmit }}
-                secondaryAction={{ onClick: () => close(), label: 'Cancel' }}
-            />
+            </Dialog.Footer>
         </>
     );
 };
