@@ -67,10 +67,14 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
 
     const showVoteButton = isVotingActive && (hasVoted || selectedCount > 0);
 
-    const wrapperClassName = classNames('bg-neutral-0  flex items-center justify-between rounded-xl border px-6 py-3', {
-        'border-neutral-100': !showVoteButton,
-        'border-primary-100': showVoteButton,
-    });
+    const wrapperClassName = classNames(
+        'bg-neutral-0 flex items-center justify-between rounded-xl border px-6 py-3 sticky bottom-3',
+        {
+            'border-neutral-100 shadow-neutral-md': !showVoteButton,
+            'border-primary-100 shadow-primary-xl': showVoteButton,
+        },
+    );
+
     return (
         <div className={wrapperClassName}>
             <div className="flex items-center gap-6">
