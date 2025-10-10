@@ -131,8 +131,8 @@ class GaugeVoterService extends AragonBackendService {
             metadata: {
                 page: queryParams.page ?? 1,
                 pageSize: queryParams.pageSize ?? 10,
-                totalPages: 1,
-                totalRecords: 1,
+                totalPages: 2,
+                totalRecords: 12,
             },
         };
     };
