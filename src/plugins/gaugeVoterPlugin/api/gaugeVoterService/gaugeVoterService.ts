@@ -30,8 +30,8 @@ class GaugeVoterService extends AragonBackendService {
                             description:
                                 'Charged Particles is the groundbreaking protocol that lets you put digital assets inside your NFTs. Now, ordinary NFTs (think neutral molecules) can contain a digital "charge" inside — ERC20, ERC721 or ERC1155 — giving you the unprecedented power to create nested NFTs. If you can digitize it, you can deposit it into your NFTs.',
                             logo: 'https://pbs.twimg.com/profile_images/1721880644345622528/G2czctJJ_400x400.jpg',
-                            totalVotes: 1000000,
-                            userVotes: 25000,
+                            totalVotes: 432345,
+                            userVotes: 16000,
                             resources: [
                                 {
                                     name: 'Website',
@@ -48,8 +48,8 @@ class GaugeVoterService extends AragonBackendService {
                             name: 'Ionic',
                             description: 'Ionic is a powerful protocol that enables the creation of nested NFTs.',
                             logo: 'https://raw.githubusercontent.com/mode-network/brandkit/refs/heads/main/Assets/Logo/Token.png',
-                            totalVotes: 0,
-                            userVotes: 0,
+                            totalVotes: 287612,
+                            userVotes: 12000,
                             resources: [],
                         },
                         {
@@ -58,7 +58,7 @@ class GaugeVoterService extends AragonBackendService {
                             description:
                                 'DeFi Forge is a decentralized liquidity protocol where users can earn yield on their crypto assets through optimized farming strategies and automated market making.',
                             logo: 'https://aragon-1.mypinata.cloud/ipfs/QmRXNfeMtFVGuuJFLFBj8WuH6ZjMr6kykzNfesinF5mhA7',
-                            totalVotes: 0,
+                            totalVotes: 354891,
                             userVotes: 0,
                             resources: [
                                 {
@@ -81,7 +81,7 @@ class GaugeVoterService extends AragonBackendService {
                             description:
                                 'ZeroSwap is a multi-chain compatible decentralized exchange aggregator providing the best swap rates across multiple DEXs with zero-knowledge privacy features.',
                             logo: 'https://pbs.twimg.com/profile_images/1823377013186691072/jPGLrNT0_400x400.png',
-                            totalVotes: 0,
+                            totalVotes: 198473,
                             userVotes: 0,
                             resources: [
                                 {
@@ -100,7 +100,7 @@ class GaugeVoterService extends AragonBackendService {
                             description:
                                 'Nebula Staking offers institutional-grade liquid staking solutions with enhanced security and the highest APY in the ecosystem through strategic validator partnerships.',
                             logo: 'https://pbs.twimg.com/profile_images/1937810644964716545/LDiOF-l0_400x400.jpg',
-                            totalVotes: 45000,
+                            totalVotes: 226679,
                             userVotes: 0,
                             resources: [
                                 {
@@ -122,9 +122,9 @@ class GaugeVoterService extends AragonBackendService {
                         epochId: 'epoch-1',
                         isVotingPeriod: true,
                         endTime: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days from now
-                        totalVotes: 0,
-                        votingPower: 1000,
-                        usedVotingPower: 0,
+                        totalVotes: 1500000,
+                        votingPower: 28000,
+                        usedVotingPower: 28000,
                     },
                 },
             ],
