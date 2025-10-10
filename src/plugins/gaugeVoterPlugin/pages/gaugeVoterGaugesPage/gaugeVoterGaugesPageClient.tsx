@@ -78,7 +78,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
         checkWalletConnection({
             onSuccess: () => {
                 if (selectedCount === 0) {
-                    return; // No new gauges selected
+                    return;
                 }
 
                 const selectedGaugeList = gauges
@@ -87,7 +87,6 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
 
                 const votedGaugeList = gauges.filter((gauge) => votedGauges.includes(gauge.address));
 
-                // Combine filtered gauge data lists
                 const allGaugesToVote = [...votedGaugeList, ...selectedGaugeList];
 
                 open(GaugeVoterPluginDialogId.VOTE_GAUGES, {
@@ -121,12 +120,9 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
         });
     };
 
-    // User's voting power for current epoch
     const userVotingPower = metrics?.votingPower ?? 0;
-    // User's current votes amount for the epoch
     const userTotalVotes = metrics?.usedVotingPower ?? 0;
 
-    // Check if user has already voted (usedVotingPower equals votingPower)
     const hasVoted = userTotalVotes === userVotingPower && userTotalVotes > 0;
 
     const votingStats = {

@@ -83,7 +83,6 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
 
     return (
         <DataList.Item className={itemClassName} onClick={() => onViewDetails?.(gauge)}>
-            {/* Header - Name and Address */}
             <div className="flex min-w-0 grow basis-0 items-center gap-4">
                 <Avatar alt="Gauge icon" size="lg" fallback={avatarFallback} src={gauge.logo ?? undefined} />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">

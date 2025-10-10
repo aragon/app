@@ -64,7 +64,6 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
 
     const gaugeList = gaugeListData?.pages.flatMap((page) => page.data.flatMap((data) => data.gauges));
 
-    // Get total votes from metrics
     const totalEpochVotes = gaugeListData?.pages[0]?.data[0]?.metrics?.totalVotes ?? 0;
 
     return (

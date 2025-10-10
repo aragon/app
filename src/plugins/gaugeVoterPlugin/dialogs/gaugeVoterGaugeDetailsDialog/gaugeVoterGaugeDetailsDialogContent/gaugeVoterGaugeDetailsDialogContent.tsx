@@ -27,7 +27,6 @@ export const GaugeVoterGaugeDetailsDialogContent: React.FC<IGaugeVoterGaugeDetai
     const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[network].id });
     const gaugeAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: gauge.address });
 
-    // Check if user has voted for this gauge
     const hasVoted = gauge.userVotes > 0;
 
     return (

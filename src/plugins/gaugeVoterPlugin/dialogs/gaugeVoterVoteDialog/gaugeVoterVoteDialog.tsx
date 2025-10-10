@@ -65,10 +65,8 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
 
     const { gauges, totalVotingPower, tokenSymbol, onRemoveGauge, close } = location.params;
 
-    // Initialize vote allocations with existing votes converted to percentages
     const [voteAllocations, setVoteAllocations] = useState<IGaugeVoteAllocation[]>(
         gauges.map((gauge) => {
-            // Calculate existing vote percentage if user has already voted for this gauge
             const existingPercentage =
                 gauge.userVotes > 0 && totalVotingPower > 0 ? (gauge.userVotes / totalVotingPower) * 100 : 0;
 
@@ -84,7 +82,6 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
         [voteAllocations],
     );
 
-    // Track if any allocation has been modified from initial state
     const [hasModified, setHasModified] = useState(false);
 
     const updateVotePercentage = (gaugeAddress: string, newPercentage: number) => {
@@ -102,7 +99,6 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
         setVoteAllocations((prev) => {
             const updated = prev.filter((allocation) => allocation.gauge.address !== gaugeAddress);
 
-            // Close dialog if no gauges remain
             if (updated.length === 0) {
                 close();
             }
