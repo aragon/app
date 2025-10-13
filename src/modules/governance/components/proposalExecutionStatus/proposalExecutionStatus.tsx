@@ -1,4 +1,3 @@
-import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import type { IExecuteDialogParams } from '@/modules/governance/dialogs/executeDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -15,6 +14,7 @@ import {
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { useProposalExecuteGuard } from '../../hooks/useProposalExecuteGuard';
 
 export interface IProposalExecutionStatusProps {
     /**
@@ -54,7 +54,9 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
         open(GovernanceDialogId.EXECUTE, { params });
     };
 
-    const { check: promptWalletConnection, result: isConnected } = useConnectedWalletGuard({
+    const { check: checkProposalExecutePermission } = useProposalExecuteGuard({
+        daoId,
+        pluginAddress: proposal.pluginAddress,
         onSuccess: openTransactionDialog,
     });
 
@@ -69,7 +71,7 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
         [ProposalStatus.EXECUTABLE]: {
             children: t('app.governance.proposalExecutionStatus.buttons.execute'),
             variant: 'primary',
-            onClick: () => (isConnected ? openTransactionDialog() : promptWalletConnection()),
+            onClick: () => checkProposalExecutePermission(),
         },
     };
 

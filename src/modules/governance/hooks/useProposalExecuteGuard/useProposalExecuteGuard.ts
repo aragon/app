@@ -1,9 +1,10 @@
 import { useDao } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useCallback } from 'react';
 import { useConnectedWalletGuard } from '../../../application/hooks/useConnectedWalletGuard';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
-import type { IUsePermissionCheckGuardParams } from '../usePermissionCheckGuard/usePermissionCheckGuard';
+import type { IExecuteCheckDialogParams } from '../../dialogs/executeCheckDialog';
 
 export interface IUseProposalExecuteGuardParams {
     /**
@@ -14,29 +15,39 @@ export interface IUseProposalExecuteGuardParams {
      * Plugin address used to create a proposal.
      */
     pluginAddress: string;
+    /**
+     * Callback called when the user has the required permissions.
+     */
+    onSuccess?: () => void;
+    /**
+     * Callback called when the user does not have the required permissions.
+     */
+    onError?: () => void;
 }
 
 export const useProposalExecuteGuard = (params: IUseProposalExecuteGuardParams) => {
-    const { daoId, pluginAddress } = params;
+    const { daoId, pluginAddress, onSuccess, onError } = params;
 
+    const { open } = useDialogContext();
     const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress })![0];
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const checkUserPermission = useCallback(
-        (functionParams?: Partial<IUsePermissionCheckGuardParams>) => {
-            const dialogParams = {
-                slotId,
-                onError,
-                onSuccess,
-                permissionNamespace,
-                daoId,
-                proposal,
+        (functionParams?: Partial<IUseProposalExecuteGuardParams>) => {
+            if (!dao) {
+                return;
+            }
+
+            const dialogParams: IExecuteCheckDialogParams = {
+                dao,
                 plugin,
+                onSuccess,
+                onError,
                 ...functionParams,
             };
-            open(GovernanceDialogId.PERMISSION_CHECK, { params: dialogParams });
+            open(GovernanceDialogId.EXECUTE_CHECK, { params: dialogParams });
         },
-        [slotId, onError, onSuccess, permissionNamespace, daoId, proposal, plugin, open],
+        [dao, onError, onSuccess, open, plugin],
     );
 
     const { check: checkWalletConnected, result: isConnected } = useConnectedWalletGuard({
@@ -44,22 +55,21 @@ export const useProposalExecuteGuard = (params: IUseProposalExecuteGuardParams) 
         onSuccess: checkUserPermission,
     });
 
-    // const handlePermissionCheckError = useCallback(
-    //     () => router.push(daoUtils.getDaoUrl(dao, redirectTab)!),
-    //     [router, dao, redirectTab],
-    // );
-    //
-    // const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
-    //     permissionNamespace: 'proposal',
-    //     slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
-    //     onError: handlePermissionCheckError,
-    //     plugin,
-    //     daoId,
-    // });
-    //
-    // useEffect(() => {
-    //     if (!canCreateProposal) {
-    //         createProposalGuard();
-    //     }
-    // }, [canCreateProposal, createProposalGuard]);
+    const check = useCallback(
+        (functionParams?: Partial<IUseProposalExecuteGuardParams>) => {
+            if (isConnected) {
+                // Skip wallet-connection check if user is already connected
+                checkUserPermission(functionParams);
+            } else {
+                // Make sure to forward custom checkFunction params to check-permission
+                checkWalletConnected({
+                    onError: functionParams?.onError ?? params.onError,
+                    onSuccess: () => checkUserPermission(functionParams),
+                });
+            }
+        },
+        [isConnected, params.onError, checkUserPermission, checkWalletConnected],
+    );
+
+    return { check };
 };

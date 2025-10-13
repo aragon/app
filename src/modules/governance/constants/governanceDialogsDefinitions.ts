@@ -1,5 +1,5 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { ExecuteCheckDialog } from '../dialogs/executeCheckDialog/executeCheckDialog';
+import { ExecuteCheckDialog } from '../dialogs/executeCheckDialog';
 import { ExecuteDialog } from '../dialogs/executeDialog';
 import { PermissionCheckDialog } from '../dialogs/permissionCheckDialog';
 import { PublishProposalDialog } from '../dialogs/publishProposalDialog';
