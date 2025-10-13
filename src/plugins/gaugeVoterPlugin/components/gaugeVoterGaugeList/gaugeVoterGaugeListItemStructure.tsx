@@ -53,7 +53,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
           : t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.noVotes');
 
     // Calculate percentage if total epoch votes is available
-    const percentage = totalEpochVotes && totalEpochVotes > 0 ? (gauge.totalVotes / totalEpochVotes) * 100 : 0;
+    const percentage = totalEpochVotes && totalEpochVotes > 0 ? gauge.totalVotes / totalEpochVotes : 0;
     const formattedPercentage = totalEpochVotes
         ? formatterUtils.formatNumber(percentage, { format: NumberFormat.PERCENTAGE_SHORT })
         : null;
@@ -83,7 +83,6 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
 
     return (
         <DataList.Item className={itemClassName} onClick={() => onViewDetails?.(gauge)}>
-            {/* Header - Name and Address */}
             <div className="flex min-w-0 grow basis-0 items-center gap-4">
                 <Avatar alt="Gauge icon" size="lg" fallback={avatarFallback} src={gauge.logo ?? undefined} />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">

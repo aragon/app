@@ -14,7 +14,7 @@ export interface IGaugeVoterVotingTerminalProps {
     /**
      * Total voting power available
      */
-    totalVotingPower: string;
+    totalVotingPower?: string | number;
     /**
      * Used voting power amount
      */
@@ -59,7 +59,7 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
         format: NumberFormat.TOKEN_AMOUNT_SHORT,
     });
 
-    const usagePercentage = totalVotingPower !== '0' ? (Number(usedVotingPower) / Number(totalVotingPower)) * 100 : 0;
+    const usagePercentage = totalVotingPower !== '0' ? Number(usedVotingPower) / Number(totalVotingPower) : 0;
 
     const formattedUsagePercentage = formatterUtils.formatNumber(usagePercentage, {
         format: NumberFormat.PERCENTAGE_SHORT,
@@ -68,7 +68,7 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
     const showVoteButton = isVotingActive && (hasVoted || selectedCount > 0);
 
     const wrapperClassName = classNames(
-        'bg-neutral-0 flex items-center justify-between rounded-xl border px-6 py-3 sticky bottom-3 md:-mx-8',
+        'bg-neutral-0 h-[58px] flex items-center justify-between rounded-xl border px-6 py-3 sticky bottom-3 md:bottom-6 md:-mx-6',
         {
             'border-neutral-100 shadow-neutral-md': !showVoteButton,
             'border-primary-100 shadow-primary-xl': showVoteButton,
@@ -112,7 +112,9 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
                             variant="primary"
                         />
                         <Button size="sm" variant="primary" onClick={onVote} disabled={selectedCount === 0}>
-                            {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.voteOnSelected')}
+                            {hasVoted
+                                ? t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.updateVote')
+                                : t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.voteOnSelected')}
                         </Button>
                     </>
                 )}
