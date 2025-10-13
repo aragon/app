@@ -24,7 +24,7 @@ export const gaugeVoterPlugin: IPluginInfo = {
         [Network.CORN_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.CHILIZ_MAINNET]: '0x0000000000000000000000000000000000000000',
     },
-    pages: (baseUrl, context) => [
+    pageLinksLeft: (baseUrl, context) => [
         {
             label: 'app.plugins.gaugeVoter.meta.link.gauges',
             link: `${baseUrl}/${GaugeVoterPluginPages.GAUGES}`,
