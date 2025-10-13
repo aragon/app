@@ -27,7 +27,6 @@ import {
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
-import { useAccount } from 'wagmi';
 import { actionSimulationServiceKeys, useLastSimulation, useSimulateProposal } from '../../api/actionSimulationService';
 import { type IProposal, useProposalActions, useProposalBySlug } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
@@ -55,7 +54,6 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const { buildEntityUrl } = useBlockExplorer();
     const { copy } = useGukModulesContext();
     const queryClient = useQueryClient();
-    const { address } = useAccount();
 
     const proposalUrlParams = { slug: proposalSlug };
     const proposalParams = { urlParams: proposalUrlParams, queryParams: { daoId } };

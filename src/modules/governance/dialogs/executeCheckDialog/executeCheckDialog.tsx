@@ -1,13 +1,13 @@
+import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { keccak256, toBytes, type Hex } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
-import type { IDao, IDaoPlugin } from '../../../../shared/api/daoService';
-import { networkDefinitions } from '../../../../shared/constants/networkDefinitions';
-import { monitoringUtils } from '../../../../shared/utils/monitoringUtils';
-import { pluginRegistryUtils } from '../../../../shared/utils/pluginRegistryUtils';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { daoAbi } from './daoAbi';
@@ -49,12 +49,14 @@ export const ExecuteCheckDialog: React.FC<IExecuteCheckDialogProps> = (props) =>
     // - for plugins with restricted execute, we run hasPermission()
     // - for plugins with open execute, we return true
     //
-    // Checking if plugin has a restricted execute is done by manually comparing supported plugin versions in slot GOVERNANCE_EXECUTE_CHECK_VERSION_SUPPORTED
+    // Checking if a plugin has restricted execute is done by manually comparing supported plugin versions in a slot
+    // GOVERNANCE_EXECUTE_CHECK_VERSION_SUPPORTED. Only old plugins have unrestricted execute, so default is assumed to
+    // be `true` if slot is not implemented.
     const hasExecuteProposalPermissionGuard =
         pluginRegistryUtils.getSlotFunction<{ plugin: IDaoPlugin }, boolean>({
             slotId: GovernanceSlotId.GOVERNANCE_EXECUTE_CHECK_VERSION_SUPPORTED,
             pluginId: interfaceType,
-        })?.({ plugin }) ?? false;
+        })?.({ plugin }) ?? true;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();

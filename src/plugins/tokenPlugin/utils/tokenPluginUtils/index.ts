@@ -1,1 +1,1 @@
-export { multisigSettingsUtils, type IMultisigPluginHasExecutePerrmissionParams } from './tokenPluginUtils';
+export { tokenPluginUtils, type ITokenPluginHasExecutePermissionParams } from './tokenPluginUtils';

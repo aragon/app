@@ -22,7 +22,7 @@ import { useTokenNormalizeActions } from './hooks/useTokenNormalizeActions';
 import { useTokenPermissionCheckProposalCreation } from './hooks/useTokenPermissionCheckProposalCreation';
 import { useTokenPermissionCheckVoteSubmission } from './hooks/useTokenPermissionCheckVoteSubmission';
 import { tokenBodyUtils } from './utils/tokenBodyUtils';
-import { tokenPluginUtils } from './utils/tokenPluginUtils/tokenPluginUtils';
+import { tokenPluginUtils } from './utils/tokenPluginUtils';
 import { tokenProposalUtils } from './utils/tokenProposalUtils';
 import { tokenTransactionUtils } from './utils/tokenTransactionUtils';
 
