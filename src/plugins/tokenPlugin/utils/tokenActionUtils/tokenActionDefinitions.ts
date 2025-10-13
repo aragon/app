@@ -57,7 +57,7 @@ export const defaultUpdateSettings = ({
     },
     inputData: {
         function: 'updateVotingSettings',
-        contract: '',
+        contract: 'token-voting',
         parameters: [
             {
                 name: '_votingSettings',

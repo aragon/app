@@ -27,7 +27,7 @@ export const defaultUpdateSettings = ({
     },
     inputData: {
         function: 'updateVotingSettings',
-        contract: '',
+        contract: 'lock-2-vote',
         parameters: [
             {
                 name: '_votingSettings',

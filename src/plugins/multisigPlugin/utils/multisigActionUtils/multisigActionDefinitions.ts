@@ -12,7 +12,7 @@ export const defaultAddMembers: IMultisigActionChangeMembers = {
     currentMembers: 0,
     inputData: {
         function: 'addAddresses',
-        contract: 'Multisig',
+        contract: 'multisig',
         parameters: [
             {
                 name: '_members',
