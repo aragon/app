@@ -1,5 +1,31 @@
 # @aragon/app
 
+## 1.12.0
+
+### Minor Changes
+
+- [#776](https://github.com/aragon/app/pull/776) [`4b4d02c`](https://github.com/aragon/app/commit/4b4d02c644d1de788becef33a11d67fc04244a5a) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement useTokenCurrentDelegate hook to fix UX on TokenDelegationForm
+
+- [#774](https://github.com/aragon/app/pull/774) [`c7ff966`](https://github.com/aragon/app/commit/c7ff9667db9d5a5a2cfaa814b3a175101143052d) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#766](https://github.com/aragon/app/pull/766) [`f40bfe8`](https://github.com/aragon/app/commit/f40bfe8a823d3d273c52e71b52b30fafaeacba3d) Thanks [@milosh86](https://github.com/milosh86)! - Enable Safe bodies to create proposals
+
+- [#772](https://github.com/aragon/app/pull/772) [`6fe7bec`](https://github.com/aragon/app/commit/6fe7bec2c15a28b20ee892112995182ba90c97b2) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Rename, refactor 'PluginFilterComponent' for Toggle implementation
+
+- [#657](https://github.com/aragon/app/pull/657) [`64102f8`](https://github.com/aragon/app/commit/64102f85b42e257e64f13a5577c7e31e895aa261) Thanks [@dependabot](https://github.com/apps/dependabot)! - Bump `recharts` to v3
+
+- [#777](https://github.com/aragon/app/pull/777) [`4f46a7e`](https://github.com/aragon/app/commit/4f46a7e6a423ed86f888c7057e81b23f864e0d0b) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Implement plugin uninstallation flow
+
+- [#771](https://github.com/aragon/app/pull/771) [`c1024d4`](https://github.com/aragon/app/commit/c1024d4e61b611bb1322bf2527a6e4a248d4a7e1) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Support api-key secret for Aragon backend requests
+
+### Patch Changes
+
+- [#785](https://github.com/aragon/app/pull/785) [`dae895c`](https://github.com/aragon/app/commit/dae895c70a0e840f2275082168732b7ff3ad1cef) Thanks [@milosh86](https://github.com/milosh86)! - Implement check if uninstall prepare event has happened before applying
+
+- [#782](https://github.com/aragon/app/pull/782) [`83b8e47`](https://github.com/aragon/app/commit/83b8e4757c7823ab9b9750cde989d56fa73f1a55) Thanks [@milosh86](https://github.com/milosh86)! - Add content-type header to RPC proxy requests and improve monitoring logs
+
+- [#786](https://github.com/aragon/app/pull/786) [`3eeca4d`](https://github.com/aragon/app/commit/3eeca4d008365ce79adc06b29bd9b7716e1b1518) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Fix breaking transactions with multiple token mint recipients
+
 ## 1.11.0
 
 ### Minor Changes

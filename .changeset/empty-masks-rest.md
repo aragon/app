@@ -2,4 +2,4 @@
 '@aragon/app': minor
 ---
 
-Bump `recharts` to v3
+Enforce Nodejs version checks

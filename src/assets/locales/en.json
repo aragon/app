@@ -2188,12 +2188,12 @@
       },
       "preparePluginUninstallationDialog": {
         "button": {
-          "submit": "Prepare uninstallation"
+          "submit": "Prepare uninstall"
         },
         "description": "To uninstall your governance process, confirm the two onchain transactions in your wallet.",
         "publishUninstallProposal": {
           "button": {
-            "submit": "Propose uninstallation"
+            "submit": "Propose uninstall"
           },
           "description": "To uninstall your governance process, confirm the two onchain transactions in your wallet.",
           "title": "Publish process uninstallation",
