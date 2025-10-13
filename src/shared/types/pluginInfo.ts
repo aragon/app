@@ -23,11 +23,11 @@ export interface IPluginInfo extends IPlugin {
      */
     setup?: IPluginInfoSetup;
     /**
-     * Plugin-specific pages shown on the DAO navigation, on left to existing nav links.
+     * Plugin-specific pages shown on the DAO navigation, on the left to the existing nav links.
      */
     pageLinksLeft?: (baseUrl: string, context: string) => INavigationLink[];
     /**
-     * Plugin-specific pages shown on the DAO navigation, on right to existing nav links.
+     * Plugin-specific pages shown on the DAO navigation, on the right to the existing nav links.
      */
     pageLinksRight?: (baseUrl: string, context: string) => INavigationLink[];
 }
