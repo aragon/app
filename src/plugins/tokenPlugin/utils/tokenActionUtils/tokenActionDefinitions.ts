@@ -1,10 +1,11 @@
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IDaoPlugin } from '@/shared/api/daoService';
+import { PluginContractName } from '@/shared/api/daoService/domain/enum';
 import { formatUnits } from 'viem';
 import {
+    TokenProposalActionType,
     type ITokenActionChangeSettings,
     type ITokenPluginSettings,
     type ITokenProposalAction,
-    TokenProposalActionType,
 } from '../../types';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
 
@@ -57,7 +58,7 @@ export const defaultUpdateSettings = ({
     },
     inputData: {
         function: 'updateVotingSettings',
-        contract: 'token-voting',
+        contract: PluginContractName.TOKEN_VOTING,
         parameters: [
             {
                 name: '_votingSettings',
