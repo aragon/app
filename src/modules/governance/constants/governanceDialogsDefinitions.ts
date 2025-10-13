@@ -1,4 +1,5 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
+import { ExecuteCheckDialog } from '../dialogs/executeCheckDialog/executeCheckDialog';
 import { ExecuteDialog } from '../dialogs/executeDialog';
 import { PermissionCheckDialog } from '../dialogs/permissionCheckDialog';
 import { PublishProposalDialog } from '../dialogs/publishProposalDialog';
@@ -18,6 +19,10 @@ export const governanceDialogsDefinitions: Record<GovernanceDialogId, IDialogCom
     [GovernanceDialogId.PERMISSION_CHECK]: {
         Component: PermissionCheckDialog,
         hiddenDescription: 'app.governance.permissionCheckDialog.a11y.description',
+    },
+    [GovernanceDialogId.EXECUTE_CHECK]: {
+        Component: ExecuteCheckDialog,
+        hiddenDescription: 'app.governance.executeCheckDialog.a11y.description',
     },
     [GovernanceDialogId.WALLET_CONNECT_ACTION]: { Component: WalletConnectActionDialog },
     [GovernanceDialogId.SIMULATE_ACTIONS]: { Component: SimulateActionsDialog, size: 'lg' },

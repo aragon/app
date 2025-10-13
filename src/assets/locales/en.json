@@ -903,6 +903,15 @@
         "following": "Following",
         "info": "The Ethereum Follow Protocol is an onchain social graph for Ethereum."
       },
+      "executeCheckDialog": {
+        "a11y": {
+          "description": "Checking if user has the permission to execute the proposal."
+        },
+        "action": "OK",
+        "description": "You don’t meet the proposal execution requirements.",
+        "loading": "Checking execute permission",
+        "title": "Not eligible to execute"
+      },
       "executeDialog": {
         "buttons": {
           "submit": "Execute proposal",

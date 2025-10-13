@@ -18,6 +18,7 @@ import { multisigPlugin } from './constants/multisigPlugin';
 import { useMultisigActions } from './hooks/useMultisigActions';
 import { useMultisigGovernanceSettings } from './hooks/useMultisigGovernanceSettings';
 import { useMultisigNormalizeActions } from './hooks/useMultisigNormalizeActions';
+import { multisigPluginUtils } from './utils/multisigPluginUtils/multisigPluginUtils';
 import { multisigProposalUtils } from './utils/multisigProposalUtils';
 import { multisigTransactionUtils } from './utils/multisigTransactionUtils';
 
@@ -91,6 +92,11 @@ export const initialiseMultisigPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
             pluginId: multisigPlugin.id,
             function: useMultisigPermissionCheckVoteSubmission,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_EXECUTE_CHECK_VERSION_SUPPORTED,
+            pluginId: multisigPlugin.id,
+            function: multisigPluginUtils.hasExecuteProposalPermissionGuard,
         })
 
         // Settings module slots

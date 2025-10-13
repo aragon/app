@@ -27,6 +27,8 @@ import {
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
+import { type Hex, keccak256, toBytes } from 'viem';
+import { useAccount, useReadContract } from 'wagmi';
 import { actionSimulationServiceKeys, useLastSimulation, useSimulateProposal } from '../../api/actionSimulationService';
 import { type IProposal, useProposalActions, useProposalBySlug } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
@@ -54,6 +56,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const { buildEntityUrl } = useBlockExplorer();
     const { copy } = useGukModulesContext();
     const queryClient = useQueryClient();
+    const { address } = useAccount();
 
     const proposalUrlParams = { slug: proposalSlug };
     const proposalParams = { urlParams: proposalUrlParams, queryParams: { daoId } };
@@ -88,6 +91,54 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         isPending: isSimulationLoading,
         isError: hasSimulationFailed,
     } = useSimulateProposal();
+
+    const { id: testChainId } = networkDefinitions[proposal?.network];
+
+    const EXECUTE_PROPOSAL_PERMISSION_ID = keccak256(toBytes('EXECUTE_PROPOSAL_PERMISSION'));
+    const data = useReadContract({
+        abi: [
+            {
+                name: 'hasPermission',
+                type: 'function',
+                stateMutability: 'view',
+                inputs: [
+                    {
+                        internalType: 'address',
+                        name: '_where',
+                        type: 'address',
+                    },
+                    {
+                        internalType: 'address',
+                        name: '_who',
+                        type: 'address',
+                    },
+                    {
+                        internalType: 'bytes32',
+                        name: '_permissionId',
+                        type: 'bytes32',
+                    },
+                    {
+                        internalType: 'bytes',
+                        name: '_data',
+                        type: 'bytes',
+                    },
+                ],
+                outputs: [
+                    {
+                        internalType: 'bool',
+                        name: '',
+                        type: 'bool',
+                    },
+                ],
+            },
+        ],
+        address: dao?.address as Hex,
+        functionName: 'hasPermission',
+        args: [proposal?.pluginAddress, address, EXECUTE_PROPOSAL_PERMISSION_ID, '0x'],
+        chainId: testChainId,
+        query: { enabled: proposal != null && dao != null },
+    });
+    console.log(' data, isLoading, error', JSON.parse(JSON.stringify(data)));
 
     if (proposal == null || dao == null) {
         return null;
