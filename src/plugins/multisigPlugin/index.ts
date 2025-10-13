@@ -96,7 +96,7 @@ export const initialiseMultisigPlugin = () => {
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_EXECUTE_CHECK_VERSION_SUPPORTED,
             pluginId: multisigPlugin.id,
-            function: multisigPluginUtils.hasExecuteProposalPermissionGuard,
+            function: multisigPluginUtils.hasExecuteProposalPermissionModifier,
         })
 
         // Settings module slots

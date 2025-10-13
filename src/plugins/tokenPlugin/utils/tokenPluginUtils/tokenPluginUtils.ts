@@ -1,15 +1,15 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 
-export interface IMultisigPluginHasExecutePermissionParams {
+export interface ITokenPluginHasExecutePermissionParams {
     /**
-     * Multisig plugin to check if version has EXECUTE_PROPOSAL_PERMISSION auth modifier set in execute() smart contract function.
+     * Token plugin to check if version has EXECUTE_PROPOSAL_PERMISSION auth modifier set in execute() smart contract function.
      */
     plugin: IDaoPlugin;
 }
 
-class MultisigPluginUtils {
-    hasExecuteProposalPermissionModifier = (params: IMultisigPluginHasExecutePermissionParams): boolean => {
+class TokenPluginUtils {
+    hasExecuteProposalPermissionModifier = (params: ITokenPluginHasExecutePermissionParams): boolean => {
         const { plugin } = params;
 
         const normalisedPluginVersion = versionComparatorUtils.normaliseComparatorInput({
@@ -25,4 +25,4 @@ class MultisigPluginUtils {
     };
 }
 
-export const multisigPluginUtils = new MultisigPluginUtils();
+export const tokenPluginUtils = new TokenPluginUtils();

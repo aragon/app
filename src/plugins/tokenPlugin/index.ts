@@ -22,6 +22,7 @@ import { useTokenNormalizeActions } from './hooks/useTokenNormalizeActions';
 import { useTokenPermissionCheckProposalCreation } from './hooks/useTokenPermissionCheckProposalCreation';
 import { useTokenPermissionCheckVoteSubmission } from './hooks/useTokenPermissionCheckVoteSubmission';
 import { tokenBodyUtils } from './utils/tokenBodyUtils';
+import { tokenPluginUtils } from './utils/tokenPluginUtils/tokenPluginUtils';
 import { tokenProposalUtils } from './utils/tokenProposalUtils';
 import { tokenTransactionUtils } from './utils/tokenTransactionUtils';
 
@@ -110,6 +111,11 @@ export const initialiseTokenPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
             pluginId: tokenPlugin.id,
             function: useTokenPermissionCheckVoteSubmission,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_EXECUTE_CHECK_VERSION_SUPPORTED,
+            pluginId: tokenPlugin.id,
+            function: tokenPluginUtils.hasExecuteProposalPermissionModifier,
         })
 
         // Settings module slots
