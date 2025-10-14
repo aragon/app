@@ -47,31 +47,35 @@ export const GaugeVoterGaugeDetailsDialog: React.FC<IGaugeVoterGaugeDetailsDialo
 
     const gauge = gauges[currentIndex];
 
+    const isFirstGauge = currentIndex === 0;
+    const isLastGauge = currentIndex === gauges.length - 1;
+
     const handleNext = () => {
-        const nextIndex = currentIndex + 1;
-        if (nextIndex < gauges.length) {
-            setCurrentIndex(nextIndex);
-        } else {
-            setCurrentIndex(0);
+        if (!isLastGauge) {
+            setCurrentIndex(currentIndex + 1);
         }
     };
 
     const handlePrevious = () => {
-        const prevIndex = currentIndex - 1;
-        if (prevIndex >= 0) {
-            setCurrentIndex(prevIndex);
-        } else {
-            setCurrentIndex(gauges.length - 1);
+        if (!isFirstGauge) {
+            setCurrentIndex(currentIndex - 1);
         }
     };
 
     return (
         <>
-            <Dialog.Header title={gauge.name} onClose={close} />
+            <Dialog.Header title={gauge.name} onClose={close} description={gauge.description} />
             <Dialog.Content className="pb-3">
                 <GaugeVoterGaugeDetailsDialogContent gauge={gauge} network={network} tokenSymbol={tokenSymbol} />
             </Dialog.Content>
-            <GaugeVoterGaugeDetailsDialogFooter onPrevious={handlePrevious} onNext={handleNext} />
+            <GaugeVoterGaugeDetailsDialogFooter
+                onPrevious={handlePrevious}
+                onNext={handleNext}
+                disablePrevious={isFirstGauge}
+                disableNext={isLastGauge}
+                currentGaugeNumber={currentIndex + 1}
+                totalGauges={gauges.length}
+            />
         </>
     );
 };

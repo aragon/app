@@ -4,7 +4,7 @@ export const GaugeVoterGaugeListHeading = () => {
     const { t } = useTranslations();
 
     return (
-        <div className="flex gap-4 px-6 py-3 text-neutral-500 uppercase">
+        <div className="hidden gap-4 px-6 py-3 text-neutral-500 uppercase md:flex">
             <div className="min-w-0 grow basis-0">
                 <p className="text-sm font-semibold tracking-wider">
                     {t('app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.name')}

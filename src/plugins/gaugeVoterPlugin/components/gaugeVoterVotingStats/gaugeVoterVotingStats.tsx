@@ -43,7 +43,9 @@ export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (pro
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.totalVotes'),
         },
         {
-            value: !isUserConnected ? '-' : userVotingPower || '0',
+            value: !isUserConnected
+                ? '-'
+                : (formatterUtils.formatNumber(userVotingPower, { format: NumberFormat.TOKEN_AMOUNT_SHORT }) ?? '0'),
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.yourVotes'),
         },
         {

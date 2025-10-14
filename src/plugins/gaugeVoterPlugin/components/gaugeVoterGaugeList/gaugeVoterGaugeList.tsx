@@ -37,11 +37,23 @@ export interface IGaugeVoterGaugeListProps {
      * Whether voting is active.
      */
     isVotingActive: boolean;
+    /**
+     * Token symbol for voting power display.
+     */
+    tokenSymbol: string;
 }
 
 export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) => {
-    const { initialParams, selectedGauges, votedGauges, onSelect, onViewDetails, isUserConnected, isVotingActive } =
-        props;
+    const {
+        initialParams,
+        selectedGauges,
+        votedGauges,
+        onSelect,
+        onViewDetails,
+        isUserConnected,
+        isVotingActive,
+        tokenSymbol,
+    } = props;
 
     const { t } = useTranslations();
 
@@ -91,6 +103,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
                         onViewDetails={onViewDetails}
                         totalEpochVotes={totalEpochVotes}
                         isVotingActive={isVotingActive}
+                        tokenSymbol={tokenSymbol}
                     />
                 ))}
             </DataListContainer>

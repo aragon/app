@@ -36,11 +36,24 @@ export interface IGaugeVoterGaugeListItemStructureProps {
      * Whether voting is active.
      */
     isVotingActive: boolean;
+    /**
+     * Token symbol for voting power display.
+     */
+    tokenSymbol: string;
 }
 
 export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItemStructureProps> = (props) => {
-    const { gauge, totalEpochVotes, isSelected, isVoted, onSelect, onViewDetails, isUserConnected, isVotingActive } =
-        props;
+    const {
+        gauge,
+        totalEpochVotes,
+        isSelected,
+        isVoted,
+        onSelect,
+        onViewDetails,
+        isUserConnected,
+        isVotingActive,
+        tokenSymbol,
+    } = props;
     const { t } = useTranslations();
 
     const formattedTotalVotes = formatterUtils.formatNumber(gauge.totalVotes, {
@@ -77,40 +90,71 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
 
     const actionButtonTranslationKey = isVoted ? 'voted' : isSelected ? 'selected' : 'select';
 
-    const itemClassName = classNames('flex min-h-20 items-center gap-4 px-6 py-3', {
-        'border-primary-300 hover:border-primary-300': isSelected,
-    });
+    const itemClassName = classNames(
+        'flex flex-col gap-3 px-4 py-3 md:min-h-20 md:flex-row md:items-center md:gap-4 md:px-6',
+        {
+            'border-primary-300 hover:border-primary-300': isSelected,
+        },
+    );
 
     return (
         <DataList.Item className={itemClassName} onClick={() => onViewDetails?.(gauge)}>
-            <div className="flex min-w-0 grow basis-0 items-center gap-4">
-                <Avatar alt="Gauge icon" size="lg" fallback={avatarFallback} src={gauge.logo ?? undefined} />
+            {/* Top section on mobile - Gauge info with border bottom */}
+            <div className="flex min-w-0 grow items-center gap-3 border-b border-neutral-100 pb-3 md:basis-0 md:gap-4 md:border-b-0 md:pb-0">
+                <Avatar
+                    alt="Gauge icon"
+                    size="md"
+                    responsiveSize={{ md: 'lg' }}
+                    fallback={avatarFallback}
+                    src={gauge.logo ?? undefined}
+                />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <p className="truncate text-lg text-neutral-800">{gauge.name}</p>
+                    <p className="truncate text-base text-neutral-800 md:text-lg">{gauge.name}</p>
                     <p className="truncate text-sm text-neutral-500">{truncatedAddress}</p>
                 </div>
             </div>
 
-            <div className="flex grow basis-0 flex-col gap-1 text-right">
-                <p className="text-lg text-neutral-800">{formattedTotalVotes} votes</p>
-                <p className="text-sm text-neutral-500">
-                    {formattedPercentage ? `${formattedPercentage} of total` : '-- of total'}
-                </p>
-            </div>
+            {/* Middle section on mobile - Total votes and Your votes side by side */}
+            <div className="flex items-start justify-between gap-4 md:contents">
+                <div className="flex flex-col gap-1 md:grow md:basis-0 md:text-right">
+                    <p className="text-xs font-semibold tracking-wider text-neutral-500 uppercase md:hidden">
+                        {t('app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.totalVotes')}
+                    </p>
+                    <p className="text-base text-neutral-800 md:text-lg">{formattedTotalVotes} votes</p>
+                    <p className="text-sm text-neutral-500">
+                        {formattedPercentage ? `${formattedPercentage} of total` : '-- of total'}
+                    </p>
+                </div>
 
-            <div className="flex min-h-11 grow basis-0 flex-col items-end">
-                <div className="flex items-center justify-end gap-2">
-                    <p className="text-right text-lg text-neutral-500">{formattedUserVotes}</p>
+                <div className="flex flex-col gap-1 text-right md:grow md:basis-0">
+                    <p className="text-xs font-semibold tracking-wider text-neutral-500 uppercase md:hidden">
+                        {t('app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.yourVotes')}
+                    </p>
+                    <div className="flex min-h-11 flex-col items-end md:justify-center">
+                        <div className="flex items-baseline justify-end gap-1">
+                            {formattedUserVotes === '-' ||
+                            formattedUserVotes === t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.noVotes') ? (
+                                <p className="text-right text-base text-neutral-500 md:text-lg">{formattedUserVotes}</p>
+                            ) : (
+                                <>
+                                    <span className="text-base text-neutral-800 md:text-lg">{formattedUserVotes}</span>
+                                    <span className="text-sm text-neutral-500 md:text-base">{tokenSymbol}</span>
+                                </>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div className="flex w-30 items-center justify-end md:w-36">
+            {/* Button section - full width on mobile */}
+            <div className="flex w-full items-center justify-end md:w-36">
                 <Button
                     size="sm"
                     variant="secondary"
                     onClick={handleActionClick}
                     iconLeft={isVoted ? IconType.CHECKMARK : isSelected ? IconType.CHECKMARK : undefined}
                     disabled={!isVotingActive}
+                    className="w-full md:w-auto"
                 >
                     {t(`app.plugins.gaugeVoter.gaugeVoterGaugeList.item.${actionButtonTranslationKey}`)}
                 </Button>
