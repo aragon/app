@@ -24,7 +24,7 @@ export const multisigPlugin: IPluginInfo = {
         [Network.OPTIMISM_MAINNET]: '0xe903df20cD497F0CC12E870d784aCAd53CC5c9d6',
         [Network.CORN_MAINNET]: '0xf3793d55C5fef8AFB5CDF305996A93281C6Bd220',
         [Network.CHILIZ_MAINNET]: '0x60C2b0B6CB2EB83349eB770f76a1C6dF611E5f03',
-        [Network.AVALANCHE_MAINNET]: '0xeD2cDfDa7A2a423C395666bc271710D4a13CfbdF',
+        [Network.AVAX_MAINNET]: '0xeD2cDfDa7A2a423C395666bc271710D4a13CfbdF',
     },
     setup: {
         nameKey: 'app.plugins.multisig.meta.setup.name',

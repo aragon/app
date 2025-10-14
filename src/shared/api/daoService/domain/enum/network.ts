@@ -10,5 +10,5 @@ export enum Network {
     OPTIMISM_MAINNET = 'optimism-mainnet',
     CORN_MAINNET = 'corn-mainnet',
     CHILIZ_MAINNET = 'chiliz-mainnet',
-    AVALANCHE_MAINNET = 'avalanche-mainnet',
+    AVAX_MAINNET = 'avax-mainnet',
 }

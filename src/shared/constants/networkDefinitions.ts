@@ -169,7 +169,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             conditionFactory: '0x988B0e1542d5e9494897778ebc444E9FfDa58Ddb',
         },
     },
-    [Network.AVALANCHE_MAINNET]: {
+    [Network.AVAX_MAINNET]: {
         ...avalanche,
         name: 'Avalanche',
         logo: 'https://assets.coingecko.com/coins/images/12559/standard/Avalanche_Circle_RedWhite_Trans.png',
