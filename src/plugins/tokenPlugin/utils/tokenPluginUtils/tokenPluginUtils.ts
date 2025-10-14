@@ -1,5 +1,5 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
+import { pluginVersionComparatorUtils } from '@/shared/utils/pluginVersionComparatorUtils';
 
 export interface ITokenPluginHasExecutePermissionParams {
     /**
@@ -11,12 +11,7 @@ export interface ITokenPluginHasExecutePermissionParams {
 class TokenPluginUtils {
     hasExecuteProposalPermissionModifier = (params: ITokenPluginHasExecutePermissionParams): boolean => {
         const { plugin } = params;
-
-        const normalisedPluginVersion = versionComparatorUtils.normaliseComparatorInput({
-            build: plugin.build,
-            release: plugin.release,
-        });
-        const hasExecuteProposalPermissionGuard = versionComparatorUtils.isGreaterOrEqualTo(normalisedPluginVersion, {
+        const hasExecuteProposalPermissionGuard = pluginVersionComparatorUtils.isGreaterOrEqualTo(plugin, {
             release: 1,
             build: 3,
         });
