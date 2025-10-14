@@ -44,7 +44,7 @@ describe('proxyBackend utils', () => {
             process.env.NEXT_SECRET_ARAGON_BACKEND_API_KEY = apiKey;
             await proxyBackendUtils.request(generateNextRequest({ url: 'http://test.com' }));
             const request = fetchSpy.mock.calls[0][1] as NextRequest;
-            expect(request.headers.get('Authorization')).toEqual(`Bearer ${apiKey}`);
+            expect(request.headers.get('X-API-Key')).toEqual(apiKey);
         });
     });
 

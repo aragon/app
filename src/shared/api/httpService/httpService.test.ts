@@ -121,7 +121,7 @@ describe('Http service', () => {
             const apiKey = 'test-api-key';
             serviceTest = generateHttpService('', undefined, apiKey);
             const processedOptions = serviceTest['buildOptions']({});
-            expect(processedOptions.headers.get('Authorization')).toEqual(`Bearer ${apiKey}`);
+            expect(processedOptions.headers.get('X-API-Key')).toEqual(apiKey);
         });
     });
 
