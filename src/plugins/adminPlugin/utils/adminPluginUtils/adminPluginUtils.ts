@@ -1,5 +1,5 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import { pluginVersionComparatorUtils } from '@/shared/utils/pluginVersionComparatorUtils';
+import { pluginMetaUtils } from '@/shared/utils/pluginMetaUtils';
 
 export interface IAdminPluginHasExecutePermissionParams {
     /**
@@ -11,7 +11,7 @@ export interface IAdminPluginHasExecutePermissionParams {
 class AdminPluginUtils {
     hasExecuteProposalPermissionModifier = (params: IAdminPluginHasExecutePermissionParams): boolean => {
         const { plugin } = params;
-        const hasExecuteProposalPermissionGuard = pluginVersionComparatorUtils.isGreaterOrEqualTo(plugin, {
+        const hasExecuteProposalPermissionGuard = pluginMetaUtils.isVersionGreaterOrEqualTo(plugin, {
             release: 1,
             build: 2,
         });

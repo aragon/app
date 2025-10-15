@@ -1,8 +1,8 @@
 import type { IDaoPlugin } from '../../api/daoService';
 import { type IVersion, versionComparatorUtils } from '../versionComparatorUtils';
 
-class PluginVersionComparatorUtils {
-    isGreaterOrEqualTo = (plugin: IDaoPlugin, version: IVersion) => {
+class PluginMetaUtils {
+    isVersionGreaterOrEqualTo = (plugin: IDaoPlugin, version: IVersion) => {
         const normalisedPluginVersion = versionComparatorUtils.normaliseComparatorInput({
             build: plugin.build,
             release: plugin.release,
@@ -13,4 +13,4 @@ class PluginVersionComparatorUtils {
     };
 }
 
-export const pluginVersionComparatorUtils = new PluginVersionComparatorUtils();
+export const pluginMetaUtils = new PluginMetaUtils();
