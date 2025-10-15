@@ -73,8 +73,8 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
 
     return (
         <>
-            <Dialog.Header title={title} />
-            <Dialog.Content description={description} className="pb-3">
+            <Dialog.Header title={title} description={description} />
+            <Dialog.Content className="pb-3">
                 <PermissionsDefinitionList isLoading={isLoading} settings={settings} />
             </Dialog.Content>
             <Dialog.Footer primaryAction={footerAction} />

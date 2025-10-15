@@ -1,7 +1,7 @@
 import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { addressUtils, ChainEntityType, Collapsible, DefinitionList, Tag, useBlockExplorer } from '@aragon/gov-ui-kit';
+import { addressUtils, ChainEntityType, DefinitionList, Tag, useBlockExplorer } from '@aragon/gov-ui-kit';
 import type { IGauge } from '../../../api/gaugeVoterService/domain';
 
 export interface IGaugeVoterGaugeDetailsDialogContentProps {
@@ -31,9 +31,6 @@ export const GaugeVoterGaugeDetailsDialogContent: React.FC<IGaugeVoterGaugeDetai
 
     return (
         <div className="flex flex-col gap-y-4">
-            <Collapsible collapsedLines={2} buttonLabelOpened="Read less" buttonLabelClosed="Read more">
-                <p className="text-neutral-500">{gauge.description}</p>
-            </Collapsible>
             <DefinitionList.Container>
                 <DefinitionList.Item
                     term={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.contract')}

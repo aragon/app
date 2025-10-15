@@ -142,19 +142,18 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         onViewDetails={handleViewDetails}
                         isUserConnected={isUserConnected}
                         isVotingActive={isVotingActive}
+                        tokenSymbol={tokenSymbol}
                     />
-                    {address && (
-                        <GaugeVoterVotingTerminal
-                            daysLeftToVote={7}
-                            hasVoted={hasVoted}
-                            totalVotingPower={votingStats.userVotingPower}
-                            usedVotingPower={votingStats.userUsedVotingPower}
-                            selectedCount={selectedCount}
-                            tokenSymbol={tokenSymbol}
-                            onVote={handleVoteClick}
-                            isVotingActive={isVotingActive}
-                        />
-                    )}
+                    <GaugeVoterVotingTerminal
+                        daysLeftToVote={7}
+                        hasVoted={hasVoted}
+                        totalVotingPower={votingStats.userVotingPower}
+                        usedVotingPower={votingStats.userUsedVotingPower}
+                        selectedCount={selectedCount}
+                        tokenSymbol={tokenSymbol}
+                        onVote={handleVoteClick}
+                        isVotingActive={isVotingActive}
+                    />
                 </div>
             </Page.Main>
             <Page.Aside>

@@ -68,7 +68,7 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
     const showVoteButton = isVotingActive && (hasVoted || selectedCount > 0);
 
     const wrapperClassName = classNames(
-        'bg-neutral-0 h-[58px] flex items-center justify-between rounded-xl border px-6 py-3 sticky bottom-3 md:bottom-6 md:-mx-6',
+        'bg-neutral-0 sticky bottom-3 flex flex-col gap-3 rounded-xl border px-4 py-3 md:bottom-6 lg:-mx-8 md:h-[58px] md:flex-row md:items-center md:justify-between md:gap-6 md:px-6',
         {
             'border-neutral-100 shadow-neutral-md': !showVoteButton,
             'border-primary-100 shadow-primary-xl': showVoteButton,
@@ -77,11 +77,11 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
 
     return (
         <div className={wrapperClassName}>
-            <div className="flex items-center gap-6">
+            <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-6">
                 <p className="text-sm font-semibold text-neutral-800 uppercase">
                     {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.yourVotes')}
                 </p>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
                         {tokenLogo && <Avatar size="sm" src={tokenLogo} alt={`${tokenSymbol} token`} />}
                         <div className="flex items-baseline gap-0.5">
@@ -97,9 +97,9 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
                     </div>
                 </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex w-full items-center justify-between gap-3 md:w-auto md:gap-4">
                 {!isVotingActive && (
-                    <Button size="sm" variant="primary" disabled={true}>
+                    <Button size="sm" variant="primary" disabled={true} className="w-full md:w-auto">
                         {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.nextVotingIn', { count: 7 })}
                     </Button>
                 )}
@@ -111,7 +111,13 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
                             })}
                             variant="primary"
                         />
-                        <Button size="sm" variant="primary" onClick={onVote} disabled={selectedCount === 0}>
+                        <Button
+                            size="sm"
+                            variant="primary"
+                            onClick={onVote}
+                            disabled={selectedCount === 0}
+                            className="flex-1 md:w-auto md:flex-initial"
+                        >
                             {hasVoted
                                 ? t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.updateVote')
                                 : t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.voteOnSelected')}
