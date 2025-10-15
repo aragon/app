@@ -1232,7 +1232,8 @@
             "selected": "Selected",
             "totalVotes": "Total votes",
             "voted": "Voted",
-            "yourVotes": "Your votes"
+            "yourVotes": "Your votes",
+            "votes": "votes"
           }
         },
         "gaugeVoterGaugesPage": {
