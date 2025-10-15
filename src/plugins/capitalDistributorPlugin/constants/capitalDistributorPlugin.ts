@@ -24,7 +24,7 @@ export const capitalDistributorPlugin: IPluginInfo = {
         [Network.CORN_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.CHILIZ_MAINNET]: '0x0000000000000000000000000000000000000000',
     },
-    pages: (baseUrl, context) => [
+    pageLinksRight: (baseUrl, context) => [
         {
             label: 'app.plugins.capitalDistributor.meta.link.rewards',
             link: `${baseUrl}/${CapitalDistributorPluginPages.REWARDS}`,
