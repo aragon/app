@@ -14,12 +14,13 @@ export interface IDaoDashboardPageProps {
 export const DaoDashboardPage: React.FC<IDaoDashboardPageProps> = async (props) => {
     const { params } = props;
     const daoPageParams = await params;
-    const daoId = await daoUtils.resolveDaoId(daoPageParams);
 
     if (!networkUtils.isValidNetwork(daoPageParams.network)) {
         // invalid network handled in DAO layout
         return null;
     }
+
+    const daoId = await daoUtils.resolveDaoId(daoPageParams);
 
     return (
         <Page.Container>

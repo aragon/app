@@ -20,7 +20,6 @@ export const daoProposalsSort = 'blockTimestamp';
 export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (props) => {
     const { params } = props;
     const daoPageParams = await params;
-    const daoId = await daoUtils.resolveDaoId(daoPageParams);
 
     if (!networkUtils.isValidNetwork(daoPageParams.network)) {
         // invalid network handled in DAO layout
@@ -29,6 +28,7 @@ export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (props) 
 
     const queryClient = new QueryClient();
 
+    const daoId = await daoUtils.resolveDaoId(daoPageParams);
     const daoUrlParams = { id: daoId };
     const daoParams = { urlParams: daoUrlParams };
     const dao = await queryClient.fetchQuery(daoOptions(daoParams));

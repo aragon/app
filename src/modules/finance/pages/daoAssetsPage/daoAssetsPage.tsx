@@ -19,7 +19,6 @@ export const daoAssetsCount = 20;
 export const DaoAssetsPage: React.FC<IDaoAssetsPageProps> = async (props) => {
     const { params } = props;
     const daoPageParams = await params;
-    const daoId = await daoUtils.resolveDaoId(daoPageParams);
 
     if (!networkUtils.isValidNetwork(daoPageParams.network)) {
         // invalid network handled in DAO layout
@@ -28,6 +27,7 @@ export const DaoAssetsPage: React.FC<IDaoAssetsPageProps> = async (props) => {
 
     const queryClient = new QueryClient();
 
+    const daoId = await daoUtils.resolveDaoId(daoPageParams);
     const useDaoParams = { id: daoId };
     const dao = await queryClient.fetchQuery(daoOptions({ urlParams: useDaoParams }));
 
