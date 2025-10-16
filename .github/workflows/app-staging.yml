@@ -10,6 +10,9 @@ concurrency:
   group: staging-deployment
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   build:
     uses: ./.github/workflows/shared-build.yml
