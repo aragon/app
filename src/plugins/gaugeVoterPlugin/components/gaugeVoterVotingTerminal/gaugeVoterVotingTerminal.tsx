@@ -38,7 +38,7 @@ export interface IGaugeVoterVotingTerminalProps {
     /**
      * Whether voting is active
      */
-    isVotingActive: boolean;
+    isVotingPeriod: boolean;
 }
 
 export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> = (props) => {
@@ -51,7 +51,7 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
         tokenSymbol,
         tokenLogo,
         onVote,
-        isVotingActive,
+        isVotingPeriod,
     } = props;
     const { t } = useTranslations();
 
@@ -65,7 +65,7 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
         format: NumberFormat.PERCENTAGE_SHORT,
     });
 
-    const showVoteButton = isVotingActive && (hasVoted || selectedCount > 0);
+    const showVoteButton = isVotingPeriod && (hasVoted || selectedCount > 0);
 
     const wrapperClassName = classNames(
         'flex flex-col gap-3 md:flex-row md:gap-6 md:items-center md:justify-between',
@@ -100,7 +100,7 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
                 </div>
             </div>
             <div className="flex w-full items-center justify-between gap-3 md:w-auto md:gap-4">
-                {!isVotingActive && (
+                {!isVotingPeriod && (
                     <Button size="sm" variant="primary" disabled={true} className="w-full md:w-auto">
                         {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.nextVotingIn', { count: 7 })}
                     </Button>
@@ -126,7 +126,7 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
                         </Button>
                     </>
                 )}
-                {!showVoteButton && isVotingActive && (
+                {!showVoteButton && isVotingPeriod && (
                     <>
                         <span className="text-sm text-neutral-500">
                             {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.daysLeft', { count: daysLeftToVote })}

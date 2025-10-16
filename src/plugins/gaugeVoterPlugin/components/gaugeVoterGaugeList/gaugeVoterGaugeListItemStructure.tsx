@@ -35,7 +35,7 @@ export interface IGaugeVoterGaugeListItemStructureProps {
     /**
      * Whether voting is active.
      */
-    isVotingActive: boolean;
+    isVotingPeriod: boolean;
     /**
      * Token symbol for voting power display.
      */
@@ -51,7 +51,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
         onSelect,
         onViewDetails,
         isUserConnected,
-        isVotingActive,
+        isVotingPeriod,
         tokenSymbol,
     } = props;
     const { t } = useTranslations();
@@ -155,7 +155,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
                     variant="secondary"
                     onClick={handleActionClick}
                     iconLeft={isVoted ? IconType.CHECKMARK : isSelected ? IconType.CHECKMARK : undefined}
-                    disabled={!isVotingActive}
+                    disabled={!isVotingPeriod}
                     className="w-full md:w-auto"
                 >
                     {t(`app.plugins.gaugeVoter.gaugeVoterGaugeList.item.${actionButtonTranslationKey}`)}
