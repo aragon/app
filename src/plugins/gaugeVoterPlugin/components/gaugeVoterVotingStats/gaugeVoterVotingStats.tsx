@@ -49,8 +49,8 @@ export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (pro
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.yourVotes'),
         },
         {
-            value: usagePercentage.toString(),
-            suffix: isUserConnected ? '%' : undefined,
+            value: !isUserConnected ? '-' : usagePercentage.toString(),
+            suffix: !isUserConnected ? undefined : '%',
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.usedVotes'),
         },
     ];
