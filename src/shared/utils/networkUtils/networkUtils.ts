@@ -1,4 +1,4 @@
-import type { Network } from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
 class NetworkUtils {
@@ -17,6 +17,14 @@ class NetworkUtils {
     getMainnetNetworks = (): Network[] => {
         const networks = this.getSupportedNetworks();
         return networks.filter((network) => !networkDefinitions[network].testnet);
+    };
+
+    /**
+     * Checks if given value is a valid Network.
+     * @param network
+     */
+    isValidNetwork = (network: unknown): boolean => {
+        return Object.values(Network).includes(network as Network);
     };
 }
 
