@@ -1,6 +1,7 @@
 import { daoOptions, type IDao } from '@/shared/api/daoService';
 import type { IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { networkUtils } from '@/shared/utils/networkUtils';
 import { type PluginComponent, pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { QueryClient } from '@tanstack/react-query';
 import { NotFoundDao } from '../../components/notFound/notFoundDao';
@@ -43,6 +44,11 @@ const getPagePluginComponent = async (dao: IDao, segments: string[], retry?: boo
 export const DaoPluginPage: React.FC<IDaoPluginPageProps> = async (props) => {
     const { params } = props;
     const { addressOrEns, network, segments } = await params;
+
+    if (!networkUtils.isValidNetwork(network)) {
+        // invalid network handled in DAO layout
+        return null;
+    }
 
     const queryClient = new QueryClient();
 
