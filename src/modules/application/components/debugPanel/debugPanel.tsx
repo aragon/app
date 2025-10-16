@@ -28,6 +28,20 @@ export const DebugPanel: React.FC<IDebugPanelProps> = () => {
             value: process.env.NEXT_PUBLIC_FEATURE_ENABLE_ALL_PLUGINS,
             group: 'Governance designer',
         });
+        registerControl({
+            name: 'gaugeVoterHasVoted',
+            type: 'boolean',
+            label: 'User has voted',
+            value: false,
+            group: 'Gauge Voter',
+        });
+        registerControl({
+            name: 'gaugeVoterIsVotingPeriod',
+            type: 'boolean',
+            label: 'Is voting period',
+            value: false,
+            group: 'Gauge Voter',
+        });
     }, [registerControl]);
 
     useEffect(() => {

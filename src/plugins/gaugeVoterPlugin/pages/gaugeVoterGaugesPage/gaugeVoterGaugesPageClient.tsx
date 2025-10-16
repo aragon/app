@@ -2,6 +2,7 @@
 
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
+import { useDebugContext } from '@/shared/components/debugProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { Link } from '@aragon/gov-ui-kit';
@@ -37,15 +38,20 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const { open } = useDialogContext();
     const { t } = useTranslations();
     const { check: checkWalletConnection } = useConnectedWalletGuard();
+    const { values } = useDebugContext<{ gaugeVoterHasVoted: boolean; gaugeVoterIsVotingPeriod: boolean }>();
 
     const isUserConnected = !!address;
-    const isVotingActive = true;
-    const { data: gaugeListData } = useGaugeList(initialParams);
+    const { data: gaugeListData } = useGaugeList(
+        initialParams,
+        values.gaugeVoterHasVoted,
+        values.gaugeVoterIsVotingPeriod,
+    );
 
     const result = gaugeListData?.pages[0]?.data[0]; // Get the first result from pagination
     const gauges = result?.gauges ?? [];
     const metrics = result?.metrics;
     const tokenSymbol = 'PDT';
+    const isVotingActive = metrics?.isVotingPeriod ?? false;
 
     // Mark gauges as voted if they have user votes
     const votedGauges = gauges.filter((gauge) => gauge.userVotes > 0).map((gauge) => gauge.address);

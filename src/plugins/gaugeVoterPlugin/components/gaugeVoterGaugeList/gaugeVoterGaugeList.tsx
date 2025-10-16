@@ -1,3 +1,4 @@
+import { useDebugContext } from '@/shared/components/debugProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { DataListContainer, DataListPagination, DataListRoot } from '@aragon/gov-ui-kit';
@@ -56,8 +57,15 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
     } = props;
 
     const { t } = useTranslations();
+    const { values } = useDebugContext<{ gaugeVoterHasVoted: boolean; gaugeVoterIsVotingPeriod: boolean }>();
 
-    const { data: gaugeListData, fetchNextPage, status, fetchStatus, isFetchingNextPage } = useGaugeList(initialParams);
+    const {
+        data: gaugeListData,
+        fetchNextPage,
+        status,
+        fetchStatus,
+        isFetchingNextPage,
+    } = useGaugeList(initialParams, values.gaugeVoterHasVoted, values.gaugeVoterIsVotingPeriod);
 
     const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
 
