@@ -120,7 +120,9 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
                     <p className="text-xs font-semibold tracking-wider text-neutral-500 uppercase md:hidden">
                         {t('app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.totalVotes')}
                     </p>
-                    <p className="text-base text-neutral-800 md:text-lg">{formattedTotalVotes} votes</p>
+                    <p className="text-base text-neutral-800 md:text-lg">
+                        {formattedTotalVotes} {t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.votes')}
+                    </p>
                     <p className="text-sm text-neutral-500">
                         {formattedPercentage ? `${formattedPercentage} of total` : '-- of total'}
                     </p>

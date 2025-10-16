@@ -68,7 +68,9 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
     const showVoteButton = isVotingActive && (hasVoted || selectedCount > 0);
 
     const wrapperClassName = classNames(
-        'bg-neutral-0 sticky bottom-3 flex flex-col gap-3 rounded-xl border px-4 py-3 md:bottom-6 lg:-mx-8 md:h-[58px] md:flex-row md:items-center md:justify-between md:gap-6 md:px-6',
+        'flex flex-col gap-3 md:flex-row md:gap-6 md:items-center md:justify-between',
+        'sticky bottom-3 md:bottom-6 lg:-mx-4',
+        'bg-neutral-0 border border-b-0 rounded-xl p-3 md:h-[64px] md:px-4 md:py-0',
         {
             'border-neutral-100 shadow-neutral-md': !showVoteButton,
             'border-primary-100 shadow-primary-xl': showVoteButton,
@@ -77,21 +79,21 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
 
     return (
         <div className={wrapperClassName}>
-            <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-6">
-                <p className="text-sm font-semibold text-neutral-800 uppercase">
+            <div className="flex flex-col gap-0 md:flex-row md:items-center md:gap-6">
+                <p className="text-xs font-semibold text-neutral-800 uppercase md:text-sm">
                     {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.yourVotes')}
                 </p>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-8 md:gap-3">
                     <div className="flex items-center gap-2">
                         {tokenLogo && <Avatar size="sm" src={tokenLogo} alt={`${tokenSymbol} token`} />}
                         <div className="flex items-baseline gap-0.5">
-                            <span className="text-lg text-neutral-800">{formattedTotalPower}</span>
-                            <span className="text-base text-neutral-500">{tokenSymbol}</span>
+                            <span className="text-sm text-neutral-800 md:text-lg">{formattedTotalPower}</span>
+                            <span className="text-xs text-neutral-500 md:text-base">{tokenSymbol}</span>
                         </div>
                     </div>
                     <div className="flex items-baseline gap-0.5">
-                        <span className="text-lg text-neutral-800">{formattedUsagePercentage}</span>
-                        <span className="text-base text-neutral-500">
+                        <span className="text-sm text-neutral-800 md:text-lg">{formattedUsagePercentage}</span>
+                        <span className="text-xs text-neutral-500 md:text-base">
                             {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.used')}
                         </span>
                     </div>
