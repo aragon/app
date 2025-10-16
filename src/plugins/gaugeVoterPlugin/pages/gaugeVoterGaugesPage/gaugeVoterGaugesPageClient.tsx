@@ -2,7 +2,6 @@
 
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
-import { useDebugContext } from '@/shared/components/debugProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { Link } from '@aragon/gov-ui-kit';
@@ -38,20 +37,14 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const { open } = useDialogContext();
     const { t } = useTranslations();
     const { check: checkWalletConnection } = useConnectedWalletGuard();
-    const { values } = useDebugContext<{ gaugeVoterHasVoted: boolean; gaugeVoterIsVotingPeriod: boolean }>();
 
     const isUserConnected = !!address;
-    const { data: gaugeListData } = useGaugeList(
-        initialParams,
-        values.gaugeVoterHasVoted,
-        values.gaugeVoterIsVotingPeriod,
-    );
+    const { data: gaugeListData } = useGaugeList(initialParams);
 
     const result = gaugeListData?.pages[0]?.data[0]; // Get the first result from pagination
     const gauges = result?.gauges ?? [];
     const metrics = result?.metrics;
     const tokenSymbol = 'PDT';
-    const isVotingActive = metrics?.isVotingPeriod ?? false;
 
     // Mark gauges as voted if they have user votes
     const votedGauges = gauges.filter((gauge) => gauge.userVotes > 0).map((gauge) => gauge.address);
@@ -62,6 +55,8 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const { description, links } = plugin.meta;
 
     const selectedCount = selectedGauges.length + votedGauges.length;
+
+    const isVotingPeriod = metrics?.isVotingPeriod ?? false;
 
     const handleSelectGauge = (gauge: IGauge) => {
         // Don't allow selection of already voted gauges
@@ -147,7 +142,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         onSelect={handleSelectGauge}
                         onViewDetails={handleViewDetails}
                         isUserConnected={isUserConnected}
-                        isVotingActive={isVotingActive}
+                        isVotingPeriod={isVotingPeriod}
                         tokenSymbol={tokenSymbol}
                     />
                     <GaugeVoterVotingTerminal
@@ -158,7 +153,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         selectedCount={selectedCount}
                         tokenSymbol={tokenSymbol}
                         onVote={handleVoteClick}
-                        isVotingActive={isVotingActive}
+                        isVotingPeriod={isVotingPeriod}
                     />
                 </div>
             </Page.Main>

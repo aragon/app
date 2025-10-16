@@ -6,11 +6,7 @@ class GaugeVoterService extends AragonBackendService {
         gauges: '/v2/gauges/:userAddress',
     };
 
-    getGaugeList = async (
-        { queryParams }: IGetGaugeListParams,
-        debugHasVoted = false,
-        debugIsVotingPeriod = false,
-    ): Promise<IPaginatedResponse<IGetGaugeListResult>> => {
+    getGaugeList = async ({ queryParams }: IGetGaugeListParams): Promise<IPaginatedResponse<IGetGaugeListResult>> => {
         // TODO: Replace with actual API call when backend is implemented
         // const result = await this.request<IPaginatedResponse<IGetGaugeListResult>>(
         //     this.urls.gauges.replace(':userAddress', urlParams.userAddress),
@@ -32,7 +28,7 @@ class GaugeVoterService extends AragonBackendService {
                                 'Charged Particles is the groundbreaking protocol that lets you put digital assets inside your NFTs. Now, ordinary NFTs (think neutral molecules) can contain a digital "charge" inside — ERC20, ERC721 or ERC1155 — giving you the unprecedented power to create nested NFTs. If you can digitize it, you can deposit it into your NFTs.',
                             logo: 'https://pbs.twimg.com/profile_images/1721880644345622528/G2czctJJ_400x400.jpg',
                             totalVotes: 432345,
-                            userVotes: debugHasVoted ? 16000 : 0,
+                            userVotes: 16000,
                             resources: [
                                 {
                                     name: 'Website',
@@ -50,7 +46,7 @@ class GaugeVoterService extends AragonBackendService {
                             description: 'Ionic is a powerful protocol that enables the creation of nested NFTs.',
                             logo: 'https://raw.githubusercontent.com/mode-network/brandkit/refs/heads/main/Assets/Logo/Token.png',
                             totalVotes: 287612,
-                            userVotes: debugHasVoted ? 12000 : 0,
+                            userVotes: 12000,
                             resources: [],
                         },
                         {
@@ -121,11 +117,11 @@ class GaugeVoterService extends AragonBackendService {
                     ],
                     metrics: {
                         epochId: 'epoch-1',
-                        isVotingPeriod: debugIsVotingPeriod,
+                        isVotingPeriod: true,
                         endTime: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days from now
                         totalVotes: 1500000,
                         votingPower: 28000,
-                        usedVotingPower: debugHasVoted ? 28000 : 0,
+                        usedVotingPower: 28000,
                     },
                 },
             ],

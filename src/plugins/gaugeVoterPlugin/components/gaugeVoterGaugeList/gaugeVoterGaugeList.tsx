@@ -1,4 +1,3 @@
-import { useDebugContext } from '@/shared/components/debugProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { DataListContainer, DataListPagination, DataListRoot } from '@aragon/gov-ui-kit';
@@ -37,7 +36,7 @@ export interface IGaugeVoterGaugeListProps {
     /**
      * Whether voting is active.
      */
-    isVotingActive: boolean;
+    isVotingPeriod: boolean;
     /**
      * Token symbol for voting power display.
      */
@@ -52,20 +51,13 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
         onSelect,
         onViewDetails,
         isUserConnected,
-        isVotingActive,
+        isVotingPeriod,
         tokenSymbol,
     } = props;
 
     const { t } = useTranslations();
-    const { values } = useDebugContext<{ gaugeVoterHasVoted: boolean; gaugeVoterIsVotingPeriod: boolean }>();
 
-    const {
-        data: gaugeListData,
-        fetchNextPage,
-        status,
-        fetchStatus,
-        isFetchingNextPage,
-    } = useGaugeList(initialParams, values.gaugeVoterHasVoted, values.gaugeVoterIsVotingPeriod);
+    const { data: gaugeListData, fetchNextPage, status, fetchStatus, isFetchingNextPage } = useGaugeList(initialParams);
 
     const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
 
@@ -110,7 +102,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
                         onSelect={onSelect}
                         onViewDetails={onViewDetails}
                         totalEpochVotes={totalEpochVotes}
-                        isVotingActive={isVotingActive}
+                        isVotingPeriod={isVotingPeriod}
                         tokenSymbol={tokenSymbol}
                     />
                 ))}

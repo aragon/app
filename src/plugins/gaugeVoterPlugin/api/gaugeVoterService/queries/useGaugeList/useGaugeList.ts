@@ -7,20 +7,16 @@ import { gaugeVoterServiceKeys } from '../../gaugeVoterServiceKeys';
 
 export const gaugeListOptions = (
     params: IGetGaugeListParams,
-    debugHasVoted?: boolean,
-    debugIsVotingPeriod?: boolean,
     options?: InfiniteQueryOptions<IPaginatedResponse<IGetGaugeListResult>, IGetGaugeListParams>,
 ): SharedInfiniteQueryOptions<IPaginatedResponse<IGetGaugeListResult>, IGetGaugeListParams> => ({
-    queryKey: [...gaugeVoterServiceKeys.gauges(params), debugHasVoted, debugIsVotingPeriod],
+    queryKey: gaugeVoterServiceKeys.gauges(params),
     initialPageParam: params,
-    queryFn: ({ pageParam }) => gaugeVoterService.getGaugeList(pageParam, debugHasVoted, debugIsVotingPeriod),
+    queryFn: ({ pageParam }) => gaugeVoterService.getGaugeList(pageParam),
     getNextPageParam: gaugeVoterService.getNextPageParams,
     ...options,
 });
 
 export const useGaugeList = (
     params: IGetGaugeListParams,
-    debugHasVoted?: boolean,
-    debugIsVotingPeriod?: boolean,
     options?: InfiniteQueryOptions<IPaginatedResponse<IGetGaugeListResult>, IGetGaugeListParams>,
-) => useInfiniteQuery(gaugeListOptions(params, debugHasVoted, debugIsVotingPeriod, options));
+) => useInfiniteQuery(gaugeListOptions(params, options));
