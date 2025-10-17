@@ -1,4 +1,9 @@
-export { GaugeVoterVoteTransactionDialog } from './gaugeVoterVoteTransactionDialog';
+import dynamic from 'next/dynamic';
+
+export const GaugeVoterVoteTransactionDialog = dynamic(() =>
+    import('./gaugeVoterVoteTransactionDialog').then((mod) => mod.GaugeVoterVoteTransactionDialog),
+);
+
 export type {
     IGaugeVoterVoteTransactionDialogParams,
     IGaugeVoterVoteTransactionDialogProps,

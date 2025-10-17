@@ -52,7 +52,13 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
 
     const [selectedGauges, setSelectedGauges] = useState<string[]>([]);
 
-    const plugin = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_VOTER })![0];
+    const plugins = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_VOTER });
+    const plugin = plugins?.[0];
+
+    if (plugin == null) {
+        return null;
+    }
+
     const { description, links } = plugin.meta;
 
     const selectedCount = selectedGauges.length + votedGauges.length;
