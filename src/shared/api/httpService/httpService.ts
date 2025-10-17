@@ -54,7 +54,7 @@ export class HttpService {
         }
 
         if (this.apiKey != null) {
-            processedHeaders.set('Authorization', `Bearer ${this.apiKey}`);
+            processedHeaders.set('X-API-Key', this.apiKey);
         }
 
         return { method, headers: processedHeaders, ...otherOptions };
