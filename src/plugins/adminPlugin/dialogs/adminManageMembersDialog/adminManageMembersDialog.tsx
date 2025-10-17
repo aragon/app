@@ -107,8 +107,12 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
 
     return (
         <FormProvider {...formMethods}>
-            <Dialog.Header onClose={close} title={t('app.plugins.admin.adminManageMembers.dialog.title')} />
-            <Dialog.Content description={t('app.plugins.admin.adminManageMembers.dialog.description')}>
+            <Dialog.Header
+                onClose={close}
+                title={t('app.plugins.admin.adminManageMembers.dialog.title')}
+                description={t('app.plugins.admin.adminManageMembers.dialog.description')}
+            />
+            <Dialog.Content>
                 <form
                     className="flex w-full flex-col gap-3 pb-6 md:gap-2"
                     onSubmit={handleSubmit(handleSubmitAddresses)}

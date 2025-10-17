@@ -37,8 +37,8 @@ export const WizardDialogContainer = <TFormData extends FieldValues = FieldValue
     return (
         <>
             <Wizard.Root submitLabel={submitLabel} initialSteps={initialSteps} defaultValues={defaultValues}>
-                <Dialog.Header title={title} onClose={close} />
-                <Dialog.Content description={description} className="pb-1.5">
+                <Dialog.Header title={title} description={description} onClose={close} />
+                <Dialog.Content className="pb-1.5">
                     <Wizard.Form onSubmit={onSubmit} id={formId} className="pt-6" {...formProps}>
                         {children}
                     </Wizard.Form>
