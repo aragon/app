@@ -3,22 +3,13 @@
 import type { Network } from '@/shared/api/daoService';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import {
-    addressUtils,
-    Avatar,
-    Button,
-    DataList,
-    Dialog,
-    formatterUtils,
-    IconType,
-    InputNumber,
-    invariant,
-    NumberFormat,
-} from '@aragon/gov-ui-kit';
-import { useMemo, useState } from 'react';
+import { Dialog, formatterUtils, invariant, NumberFormat } from '@aragon/gov-ui-kit';
+import { useEffect, useMemo, useState } from 'react';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
 import type { IGaugeVote, IGaugeVoterVoteTransactionDialogParams } from '../gaugeVoterVoteTransactionDialog';
+import { GaugeVoterVoteDialogContent, type IGaugeVoteAllocation } from './gaugeVoterVoteDialogContent';
+import { GaugeVoterVoteDialogFooter } from './gaugeVoterVoteDialogFooter';
 
 export interface IGaugeVoterVoteDialogParams {
     /**
@@ -48,11 +39,6 @@ export interface IGaugeVoterVoteDialogParams {
 }
 
 export interface IGaugeVoterVoteDialogProps extends IDialogComponentProps<IGaugeVoterVoteDialogParams> {}
-
-interface IGaugeVoteAllocation {
-    gauge: IGauge;
-    percentage: number;
-}
 
 export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props) => {
     const { location } = props;
@@ -95,19 +81,18 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
     };
 
     const removeGauge = (gaugeAddress: string) => {
-        setVoteAllocations((prev) => {
-            const updated = prev.filter((allocation) => allocation.gauge.address !== gaugeAddress);
-
-            if (updated.length === 0) {
-                close();
-            }
-
-            return updated;
-        });
+        setVoteAllocations((prev) => prev.filter((allocation) => allocation.gauge.address !== gaugeAddress));
         onRemoveGauge?.(gaugeAddress);
     };
 
-    const distributeEvenly = () => {
+    // Close dialog when all gauges are removed
+    useEffect(() => {
+        if (voteAllocations.length === 0) {
+            close(GaugeVoterPluginDialogId.VOTE_GAUGES);
+        }
+    }, [voteAllocations.length, close]);
+
+    const handleEqualize = () => {
         setHasModified(true);
         const evenPercentage = Math.floor(100 / voteAllocations.length);
         const remainder = 100 - evenPercentage * voteAllocations.length;
@@ -163,69 +148,14 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
                 description={t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.content.description')}
             />
             <Dialog.Content className="flex flex-col gap-6 py-6">
-                <div className="flex flex-col gap-4">
-                    {voteAllocations.map((allocation) => (
-                        <DataList.Item
-                            key={allocation.gauge.address}
-                            className="bg-neutral-0 flex flex-col gap-4 rounded-xl border border-neutral-100 p-4 md:flex-row md:items-center md:justify-between"
-                        >
-                            <div className="b-0 flex flex-1 items-center gap-3 border-b border-neutral-100 pb-4 md:border-b-0 md:border-none md:pb-0">
-                                <Avatar
-                                    src={allocation.gauge.logo}
-                                    size="md"
-                                    responsiveSize={{ md: 'lg' }}
-                                    alt={allocation.gauge.name}
-                                />
-                                <div className="flex min-w-0 flex-1 flex-col">
-                                    <span className="text-basetext-neutral-800 truncate">{allocation.gauge.name}</span>
-                                    <span className="truncate text-sm text-neutral-500">
-                                        {addressUtils.truncateAddress(allocation.gauge.address)}
-                                    </span>
-                                </div>
-                                <Button
-                                    iconLeft={IconType.CLOSE}
-                                    onClick={() => removeGauge(allocation.gauge.address)}
-                                    variant="tertiary"
-                                    size="sm"
-                                    className="md:hidden"
-                                />
-                            </div>
-                            <div className="flex flex-col gap-3 md:flex-row md:items-center md:self-end">
-                                {allocation.percentage > 0 && (
-                                    <span className="text-base text-neutral-800">
-                                        {!hasModified && allocation.gauge.userVotes > 0
-                                            ? formatterUtils.formatNumber(allocation.gauge.userVotes, {
-                                                  format: NumberFormat.TOKEN_AMOUNT_SHORT,
-                                              })
-                                            : formatterUtils.formatNumber(
-                                                  (allocation.percentage / 100) * totalVotingPower,
-                                                  {
-                                                      format: NumberFormat.TOKEN_AMOUNT_SHORT,
-                                                  },
-                                              )}{' '}
-                                        {tokenSymbol}
-                                    </span>
-                                )}
-                                <InputNumber
-                                    min={0}
-                                    max={100}
-                                    suffix="%"
-                                    value={allocation.percentage.toString()}
-                                    className="w-full md:max-w-40 md:flex-initial"
-                                    onChange={(value) => updateVotePercentage(allocation.gauge.address, Number(value))}
-                                />
-
-                                <Button
-                                    iconLeft={IconType.CLOSE}
-                                    onClick={() => removeGauge(allocation.gauge.address)}
-                                    variant="tertiary"
-                                    size="sm"
-                                    className="hidden md:inline-flex"
-                                />
-                            </div>
-                        </DataList.Item>
-                    ))}
-                </div>
+                <GaugeVoterVoteDialogContent
+                    voteAllocations={voteAllocations}
+                    totalVotingPower={totalVotingPower}
+                    tokenSymbol={tokenSymbol}
+                    hasModified={hasModified}
+                    onUpdatePercentage={updateVotePercentage}
+                    onRemoveGauge={removeGauge}
+                />
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{
@@ -238,41 +168,13 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
                     label: t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.action.cancel'),
                 }}
             >
-                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-x-6">
-                    <div className="flex flex-col gap-3 md:grow md:flex-row md:items-center md:gap-x-6">
-                        <span className="text-sm font-semibold text-neutral-800 uppercase">
-                            {t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.footer.yourVotes')}
-                        </span>
-                        <div className="flex items-center gap-x-3">
-                            <div className="flex items-center gap-x-2">
-                                <Avatar
-                                    size="sm"
-                                    responsiveSize={{ md: 'sm' }}
-                                    alt="Token logo"
-                                    src="https://pbs.twimg.com/profile_images/1851934141782331394/Z0ZqlyIo_400x400.png"
-                                />
-                                <span className="text-base font-semibold text-neutral-800">
-                                    {formattedTotalVotingPower} {tokenSymbol}
-                                </span>
-                            </div>
-                            <div className="flex items-center gap-x-1 text-lg">
-                                {totalPercentageUsed}%
-                                <span className="text-base text-neutral-500">
-                                    {' '}
-                                    {t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.content.used')}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex flex-col gap-3 md:flex-row">
-                        <Button variant="secondary" size="md" onClick={distributeEvenly} className="w-full md:w-fit">
-                            {t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.action.distributeEvenly')}
-                        </Button>
-                        <Button variant="tertiary" size="md" onClick={resetAllocation} className="w-full md:w-fit">
-                            {t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.action.reset')}
-                        </Button>
-                    </div>
-                </div>
+                <GaugeVoterVoteDialogFooter
+                    totalVotingPower={formattedTotalVotingPower}
+                    tokenSymbol={tokenSymbol}
+                    totalPercentageUsed={totalPercentageUsed}
+                    onEqualize={handleEqualize}
+                    onReset={resetAllocation}
+                />
             </Dialog.Footer>
         </>
     );
