@@ -6,10 +6,7 @@ class GaugeVoterService extends AragonBackendService {
         gauges: '/v2/gauges/:userAddress',
     };
 
-    getGaugeList = async ({
-        // urlParams,
-        queryParams,
-    }: IGetGaugeListParams): Promise<IPaginatedResponse<IGetGaugeListResult>> => {
+    getGaugeList = async ({ queryParams }: IGetGaugeListParams): Promise<IPaginatedResponse<IGetGaugeListResult>> => {
         // TODO: Replace with actual API call when backend is implemented
         // const result = await this.request<IPaginatedResponse<IGetGaugeListResult>>(
         //     this.urls.gauges.replace(':userAddress', urlParams.userAddress),
