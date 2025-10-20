@@ -1252,7 +1252,7 @@
           },
           "action": {
             "cancel": "Cancel",
-            "distributeEvenly": "Distribute evenly",
+            "equalize": "Equalize",
             "reset": "Reset",
             "submit": "Submit votes"
           },
