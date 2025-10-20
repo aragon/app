@@ -26,13 +26,13 @@ jobs:
         uses: actions/cache@v4.3.0
         with:
           path: ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
       - name: Build ${{ inputs.env }} application
         run: |
-          yarn setup ${{ inputs.env }}
-          yarn build
+          pnpm setup ${{ inputs.env }}
+          pnpm build
       - name: Store NextJs build
         uses: actions/upload-artifact@v4.6.2
         with:

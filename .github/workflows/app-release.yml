@@ -45,12 +45,12 @@ jobs:
         # changeset as Github does not support soft line breaks.
         # (See https://github.com/changesets/changesets/issues/1452, https://github.com/orgs/community/discussions/10981)
         run: |
-          yarn changeset version
-          yarn prettier --write CHANGELOG.md --print-width 9999999 --ignore-path
+          pnpm changeset version
+          pnpm prettier --write CHANGELOG.md --print-width 9999999 --ignore-path
         env:
           GITHUB_TOKEN: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
       - name: Create tag
-        run: yarn changeset tag
+        run: pnpm changeset tag
       - name: Get package version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@v1.3.1

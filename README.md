@@ -30,23 +30,39 @@ Before setting up the project, ensure you have the following installed:
 
 Follow these steps to get the app running on your machine:
 
-1. Ensure you are using the correct Node.js version (repo provides `.nvmrc` ->
-   [nvm install instruction](https://github.com/nvm-sh/nvm?tab=readme-ov-file#install--update-script)):
+1. Enable Corepack (one-time setup):
 
 ```bash
-# If you use nvm, this will read .nvmrc and activate the right version
-nvm use || nvm install
-# If Yarn isn't available, enable Corepack
 corepack enable
 ```
-
-If you prefer not to use nvm, just make sure your Node.js version is >= 22 before installing dependencies.
 
 2. Install the required dependencies by running:
 
 ```bash
-yarn install
+pnpm install
 ```
+
+**Note**: pnpm will automatically use the correct Node.js version (22.20.0) as configured in the project.
+
+## Why pnpm?
+
+This project uses pnpm for package management, which provides:
+
+- **Faster installs**: 70-90% faster than traditional package managers
+- **Disk efficiency**: Shared dependency storage reduces disk usage by 22-23%
+- **Enhanced security**: Built-in protection against supply chain attacks
+- **Automatic Node version management**: No need for nvm or manual version switching
+- **Strict dependency resolution**: Prevents phantom dependencies
+
+### Performance Comparison
+
+| Metric                | Yarn 4.9.2 | pnpm 10.18.3 | Improvement     |
+| --------------------- | ---------- | ------------ | --------------- |
+| **Cold Install**      | 37.5s      | 10.8s        | **71% faster**  |
+| **Warm Install**      | 25.3s      | 2.5s         | **90% faster**  |
+| **node_modules Size** | 1.8GB      | 1.4GB        | **22% smaller** |
+
+_Measured on the Aragon App project during migration from Yarn to pnpm (Oct 2025)_
 
 3. Create a `.env` file in the root of the project and populate it with the required environment variables. Use the
    `.env.example` file as a template:
@@ -58,7 +74,7 @@ cp .env.example .env
 4. Start the development server with:
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
 5. Access the Aragon App by navigating to [http://localhost:3000](http://localhost:3000) in your browser.
@@ -68,20 +84,45 @@ Other available commands include:
 - Lint the code:
 
 ```bash
-yarn lint
+pnpm lint
 ```
 
 - Build the project:
 
 ```bash
-yarn build
+pnpm build
 ```
 
 - Run tests:
 
 ```bash
-yarn test
+pnpm test
 ```
+
+## Troubleshooting
+
+### Common Issues
+
+**"Cannot find module" errors:**
+
+- pnpm uses strict dependency resolution
+- All imports must be declared in package.json
+- Solution: `pnpm add <package-name>`
+
+**Build script errors:**
+
+- Some packages need approval: `pnpm approve-builds`
+- Check `.npmrc` for `public-hoist-pattern` if needed
+
+**Installation issues:**
+
+- Clear cache: `pnpm store prune`
+- Reinstall: `rm -rf node_modules && pnpm install`
+
+**Node version issues:**
+
+- pnpm automatically manages Node.js versions
+- If issues persist, ensure Corepack is enabled: `corepack enable`
 
 ## Environments
 

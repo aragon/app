@@ -38,18 +38,18 @@ jobs:
         with:
           name: nextjs-build
       - name: Check types
-        run: yarn type-check
+        run: pnpm type-check
       - name: Check linter
-        run: yarn lint
+        run: pnpm lint
       - name: Check prettier
-        run: yarn prettify
+        run: pnpm prettify
       - name: Run tests with coverage
         run: |
           set -eo pipefail
-          yarn test:coverage
+          pnpm test:coverage
       - name: Check changeset
         if: github.event_name == 'pull_request'
-        run: yarn changeset status --since origin/main
+        run: pnpm changeset status --since origin/main
 
   deploy:
     needs: test
