@@ -1,14 +1,14 @@
-import { type IProposalActionChangeSettings as IGukProposalActionChangeSettings } from '@aragon/gov-ui-kit';
+import type { IProposalAction } from '@aragon/gov-ui-kit';
+import type { IRegisterGaugeFormData } from '../components/gaugeRegistrarRegisterGaugeAction/registerGaugeForm';
 import type { GaugeRegistrarActionType } from './enum/gaugeRegistrarActionType';
 
-export interface IGaugeRegistrarActionRegisterGauge
-    extends Omit<IGukProposalActionChangeSettings, 'type' | 'proposedSettings' | 'existingSettings'> {
+export interface IGaugeRegistrarActionRegisterGauge extends Omit<IProposalAction, 'type'> {
     /**
      * The type of the proposal action.
      */
     type: GaugeRegistrarActionType.REGISTER_GAUGE;
     /**
-     * Avatar of the gauge
+     * Gauge details collected from the action form.
      */
-    avatar: string | null;
+    gaugeDetails: IRegisterGaugeFormData | null;
 }

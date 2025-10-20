@@ -1,8 +1,19 @@
 import { type IProposalAction } from '@/modules/governance/api/governanceService';
-import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import {
+    type IProposalActionData,
+    useCreateProposalFormContext,
+} from '@/modules/governance/components/createProposalForm';
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import { type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
-import { RegisterGaugeForm } from './registerGaugeForm';
+import { usePinFile, usePinJson } from '@/shared/api/ipfsService/mutations';
+import { useFormField } from '@/shared/hooks/useFormField';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import { transactionUtils } from '@/shared/utils/transactionUtils';
+import { invariant, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
+import { useCallback, useEffect } from 'react';
+import { encodeFunctionData, type Hex } from 'viem';
+import { GaugeRegistrarActionType } from '../../types/enum/gaugeRegistrarActionType';
+import type { IGaugeRegistrarActionRegisterGauge } from '../../types/gaugeRegistrarActionRegisterGauge';
+import { IncentiveType, RegisterGaugeForm } from './registerGaugeForm';
 
 export interface IGaugeRegistrarRegisterGaugeActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin>> {}
@@ -21,8 +32,59 @@ const registerGaugeAbi = {
 } as const;
 
 export const GaugeRegistrarRegisterGaugeAction: React.FC<IGaugeRegistrarRegisterGaugeActionProps> = (props) => {
-    const { index, action } = props;
-    const actionFieldName = `actions.[${index.toString()}]`;
+    const { index } = props;
 
-    return <RegisterGaugeForm fieldPrefix={actionFieldName} />;
+    const { mutateAsync: pinJsonAsync } = usePinJson();
+    const { mutateAsync: pinFileAsync } = usePinFile();
+    const { addPrepareAction } = useCreateProposalFormContext<IGaugeRegistrarActionRegisterGauge>();
+
+    const fieldName = `actions.[${index.toString()}]`;
+    useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
+
+    const prepareAction = useCallback(
+        async (action: IGaugeRegistrarActionRegisterGauge) => {
+            invariant(
+                action.gaugeDetails != null,
+                'GaugeRegistrarRegisterGaugeAction:gaugeDetails expected to be initialized',
+            );
+
+            const { name, description, resources, avatar, rewardControllerAddress, qiTokenAddress, incentiveType } =
+                action.gaugeDetails;
+
+            const proposedMetadata = { name, description, links: resources };
+            let daoAvatar: string | undefined;
+
+            if (avatar?.file != null) {
+                // Pin the avatar set on the form when the file property is set, meaning that the user changed the DAO avatar
+                const avatarResult = await pinFileAsync({ body: avatar.file });
+                daoAvatar = ipfsUtils.cidToUri(avatarResult.IpfsHash);
+            } else if (avatar?.url) {
+                // Set previous avatar URL if user did not change the DAO avatar and DAO already has an avatar
+                daoAvatar = ipfsUtils.srcToUri(avatar.url);
+            }
+
+            const metadata = daoAvatar ? { ...proposedMetadata, avatar: daoAvatar } : proposedMetadata;
+
+            const ipfsResult = await pinJsonAsync({ body: metadata });
+            const hexResult = transactionUtils.stringToMetadataHex(ipfsResult.IpfsHash);
+            const data = encodeFunctionData({
+                abi: [registerGaugeAbi],
+                args: [
+                    qiTokenAddress?.address as Hex,
+                    incentiveType === IncentiveType.SUPPLY ? 0 : 1,
+                    rewardControllerAddress?.address as Hex,
+                    hexResult,
+                ],
+            });
+
+            return data;
+        },
+        [pinFileAsync, pinJsonAsync],
+    );
+
+    useEffect(() => {
+        addPrepareAction(GaugeRegistrarActionType.REGISTER_GAUGE, prepareAction);
+    }, [addPrepareAction, prepareAction]);
+
+    return <RegisterGaugeForm fieldPrefix={`${fieldName}.gaugeDetails`} />;
 };

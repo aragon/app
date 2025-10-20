@@ -1230,7 +1230,7 @@
             "supplyLabel": "Supply"
           },
           "name": {
-            "label": "DAO name"
+            "label": "Name"
           },
           "qiToken": {
             "helpText": "The address of the market's qiToken.",

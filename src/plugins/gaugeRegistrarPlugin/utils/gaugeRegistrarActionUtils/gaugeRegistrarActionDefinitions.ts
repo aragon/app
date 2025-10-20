@@ -10,7 +10,7 @@ export const defaultRegisterGauge = ({ address }: IDaoPlugin): IGaugeRegistrarAc
     to: address,
     data: '0x',
     value: '0',
-    avatar: null,
+    gaugeDetails: null,
     inputData: {
         function: 'registerGauge',
         contract: PluginContractName.GAUGE_REGISTRAR,
