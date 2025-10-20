@@ -71,8 +71,12 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
 
     return (
         <>
-            <Dialog.Header title={t(`app.governance.selectPluginDialog.${variant}.title`)} onClose={close} />
-            <Dialog.Content description={t(`app.governance.selectPluginDialog.${variant}.description`)}>
+            <Dialog.Header
+                title={t(`app.governance.selectPluginDialog.${variant}.title`)}
+                description={t(`app.governance.selectPluginDialog.${variant}.description`)}
+                onClose={close}
+            />
+            <Dialog.Content>
                 <div className="flex flex-col gap-2 py-2">
                     {processedDaoPlugins.map((plugin) => (
                         <ProcessDataListItem
