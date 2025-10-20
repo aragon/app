@@ -16,7 +16,7 @@ export const defaultRegisterGauge = ({ address }: IDaoPlugin): IGaugeRegistrarAc
         contract: PluginContractName.GAUGE_REGISTRAR,
         parameters: [
             { name: '_qiToken', type: 'address', value: '' },
-            { name: '_incentive', type: 'address', value: '' },
+            { name: '_incentive', type: 'uint8', value: '' },
             { name: '_rewardController', type: 'address', value: '' },
             { name: '_metadataURI', type: 'string', value: '' },
         ],

@@ -11,7 +11,7 @@ const unregisterGaugeAbi = {
     name: 'unregisterGauge',
     inputs: [
         { internalType: 'address', name: '_qiToken', type: 'address' },
-        { internalType: 'Incentive', name: '_incentive', type: 'uint8' },
+        { internalType: 'enum Incentive', name: '_incentive', type: 'uint8' },
         { internalType: 'address', name: '_rewardController', type: 'address' },
     ],
     outputs: [],
