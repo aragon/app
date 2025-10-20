@@ -1,5 +1,2 @@
 ---
-'@aragon/app': minor
 ---
-
-,.ee,
