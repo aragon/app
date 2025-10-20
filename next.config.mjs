@@ -1,8 +1,12 @@
 import BundleAnalyzer from '@next/bundle-analyzer';
 import { withSentryConfig } from '@sentry/nextjs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import packageInfo from './package.json' with { type: 'json' };
 
 const withBundleAnalyzer = BundleAnalyzer({ enabled: process.env.ANALYZE === 'true' });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const webFunctionalities = [
     'accelerometer=()',
@@ -122,6 +126,12 @@ const nextConfig = {
         // Configs needed by wallet-connect (see https://docs.walletconnect.com/appkit/next/core/installation#extra-configuration)
         // Needed only in production builds, Turbopack (used in `yarn dev`) does not require this.
         config.externals.push('pino-pretty', 'lokijs', 'encoding');
+        config.resolve ??= {};
+        config.resolve.alias ??= {};
+        config.resolve.alias['@react-native-async-storage/async-storage'] = path.join(
+            __dirname,
+            'src/polyfills/reactNativeAsyncStorage.ts',
+        );
 
         return config;
     },

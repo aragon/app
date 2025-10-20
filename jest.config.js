@@ -15,6 +15,7 @@ const config = {
     globalSetup: '<rootDir>/src/test/globalSetup.ts',
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
+        '@react-native-async-storage/async-storage': '<rootDir>/src/polyfills/reactNativeAsyncStorage.ts',
     },
     transform: {
         '^.+\\.(svg|jpg|css|mp4|png)$': '<rootDir>/src/test/fileTransform.js',
