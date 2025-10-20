@@ -1201,6 +1201,12 @@
           }
         }
       },
+      "gaugeRegistrar": {
+        "actions": {
+          "RegisterGauge": "Register gauge",
+          "UnregisterGauge": "Unregister gauge"
+        }
+      },
       "lockToVote": {
         "lockToVoteActions": {
           "UpdateLockToVoteVoteSettings": "Update settings"
