@@ -1,6 +1,8 @@
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import type { QueryObserverResult } from '@tanstack/react-query';
 import { erc20Abi, type Hex } from 'viem';
 import { useReadContract } from 'wagmi';
+import type { ReadContractErrorType } from 'wagmi/actions';
 import type { ITokenPluginSettingsToken } from '../../types';
 
 export interface IUseWrappedTokenBalanceParams {
@@ -24,7 +26,7 @@ export interface IUseWrappedTokenBalanceReturn {
      * Function to manually refetch the wrapped token balance from the blockchain.
      * Useful for refreshing the balance after wrap/unwrap transactions.
      */
-    refetch: () => void;
+    refetch: () => Promise<QueryObserverResult<bigint, ReadContractErrorType>>;
 }
 
 export const useWrappedTokenBalance = (params: IUseWrappedTokenBalanceParams): IUseWrappedTokenBalanceReturn => {
