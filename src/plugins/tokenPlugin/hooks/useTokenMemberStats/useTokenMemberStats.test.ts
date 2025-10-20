@@ -8,17 +8,21 @@ import {
     generateTokenPluginSettings,
     generateTokenPluginSettingsToken,
 } from '../../testUtils';
+import * as useWrappedTokenBalanceModule from '../useWrappedTokenBalance';
 import { useTokenMemberStats } from './useTokenMemberStats';
 
 describe('useTokenMemberStats hook', () => {
     const useMemberSpy = jest.spyOn(governanceService, 'useMember');
+    const useWrappedTokenBalanceSpy = jest.spyOn(useWrappedTokenBalanceModule, 'useWrappedTokenBalance');
 
     beforeEach(() => {
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateTokenMember() }));
+        useWrappedTokenBalanceSpy.mockReturnValue({ balance: BigInt(0), refetch: jest.fn() });
     });
 
     afterEach(() => {
         useMemberSpy.mockReset();
+        useWrappedTokenBalanceSpy.mockReset();
     });
 
     it('returns token member stats', () => {
@@ -33,10 +37,10 @@ describe('useTokenMemberStats hook', () => {
 
         const member = generateTokenMember({
             votingPower: '47928374987234',
-            tokenBalance: '123456123456',
             metrics: generateTokenMemberMetrics({ delegateReceivedCount: 47928374 }),
         });
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
+        useWrappedTokenBalanceSpy.mockReturnValue({ balance: BigInt('123456123456'), refetch: jest.fn() });
 
         const { result } = renderHook(() => useTokenMemberStats(memberStatsParams));
         const [votingPower, tokenBalance] = result.current;

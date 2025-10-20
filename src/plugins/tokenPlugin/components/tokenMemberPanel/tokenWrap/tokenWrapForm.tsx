@@ -1,11 +1,11 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import type { IToken } from '@/modules/finance/api/financeService';
 import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
-import { useMember } from '@/modules/governance/api/governanceService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import type { ITokenWrapUnwrapDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenWrapUnwrapDialog';
-import type { ITokenMember, ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
+import { useWrappedTokenBalance } from '@/plugins/tokenPlugin/hooks/useWrappedTokenBalance';
+import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -47,17 +47,18 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
 
     const { result: isConnected, check: walletGuard } = useConnectedWalletGuard();
 
-    const { data: tokenMember, refetch: refetchMember } = useMember<ITokenMember>(
-        { urlParams: { address: address as string }, queryParams: { daoId, pluginAddress: plugin.address } },
-        { enabled: address != null },
-    );
-
     const {
         allowance,
         balance: unwrappedBalance,
         status: unwrappedBalanceStatus,
         invalidateQueries,
     } = useCheckTokenAllowance({ spender: token.address, token: underlyingToken });
+
+    // Read wrapped token balance directly from blockchain
+    const { balance: wrappedBalance, refetch: refetchWrappedBalance } = useWrappedTokenBalance({
+        userAddress: address,
+        token,
+    });
 
     const parsedUnwrappedAmount = formatUnits(unwrappedBalance?.value ?? BigInt(0), decimals);
     const userAsset = useMemo(
@@ -115,12 +116,13 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
 
     const onApproveTokensSuccess = (tokenAmount: bigint) => {
         invalidateQueries();
+        void refetchWrappedBalance();
         handleWrapUnwrapTokens('wrap', tokenAmount);
     };
 
     const onWrapUnwrapTokensSuccess = () => {
         invalidateQueries();
-        void refetchMember();
+        void refetchWrappedBalance();
     };
 
     // Initialize asset field after fetching unwrapped balance
@@ -130,8 +132,8 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         }
     }, [setValue, unwrappedBalanceStatus, userAsset]);
 
-    const wrappedAmount = BigInt(tokenMember?.tokenBalance ?? '0');
-    const parsedWrappedAmount = formatUnits(wrappedAmount, decimals);
+    // Read wrapped token balance directly from blockchain
+    const parsedWrappedAmount = formatUnits(wrappedBalance, decimals);
 
     const formattedWrappedAmount = formatterUtils.formatNumber(parsedWrappedAmount, {
         format: NumberFormat.TOKEN_AMOUNT_SHORT,
@@ -169,11 +171,11 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                             underlyingSymbol: underlyingToken.symbol,
                         })}
                     </Button>
-                    {wrappedAmount > 0 && (
+                    {wrappedBalance > 0 && (
                         <Button
                             variant="secondary"
                             size="lg"
-                            onClick={() => handleWrapUnwrapTokens('unwrap', wrappedAmount)}
+                            onClick={() => handleWrapUnwrapTokens('unwrap', wrappedBalance)}
                         >
                             {t('app.plugins.token.tokenWrapForm.submit.unwrap', {
                                 amount: formattedWrappedAmount,
