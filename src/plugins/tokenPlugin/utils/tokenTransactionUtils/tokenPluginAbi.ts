@@ -39,6 +39,15 @@ export const tokenPluginSetupAbi = [
     { name: 'minApprovals', type: 'uint256' },
     { name: 'pluginMetadata', type: 'bytes' },
     { name: 'excludedAccounts', type: 'address[]' },
+    {
+        name: 'hatsConfig',
+        type: 'tuple',
+        components: [
+            { name: 'proposerHatId', type: 'uint256' },
+            { name: 'voterHatId', type: 'uint256' },
+            { name: 'executorHatId', type: 'uint256' },
+        ],
+    },
 ] as const;
 
 export const tokenPluginPrepareUpdateAbi = [
