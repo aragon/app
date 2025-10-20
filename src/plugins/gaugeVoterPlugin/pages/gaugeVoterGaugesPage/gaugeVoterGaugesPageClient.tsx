@@ -39,7 +39,6 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const { check: checkWalletConnection } = useConnectedWalletGuard();
 
     const isUserConnected = !!address;
-    const isVotingActive = true;
     const { data: gaugeListData } = useGaugeList(initialParams);
 
     const result = gaugeListData?.pages[0]?.data[0]; // Get the first result from pagination
@@ -62,6 +61,8 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const { description, links } = plugin.meta;
 
     const selectedCount = selectedGauges.length + votedGauges.length;
+
+    const isVotingPeriod = metrics?.isVotingPeriod ?? false;
 
     const handleSelectGauge = (gauge: IGauge) => {
         // Don't allow selection of already voted gauges
@@ -147,7 +148,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         onSelect={handleSelectGauge}
                         onViewDetails={handleViewDetails}
                         isUserConnected={isUserConnected}
-                        isVotingActive={isVotingActive}
+                        isVotingPeriod={isVotingPeriod}
                         tokenSymbol={tokenSymbol}
                     />
                     <GaugeVoterVotingTerminal
@@ -158,7 +159,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         selectedCount={selectedCount}
                         tokenSymbol={tokenSymbol}
                         onVote={handleVoteClick}
-                        isVotingActive={isVotingActive}
+                        isVotingPeriod={isVotingPeriod}
                     />
                 </div>
             </Page.Main>
