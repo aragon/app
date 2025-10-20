@@ -72,6 +72,7 @@ class TokenTransactionUtils {
         const mintSettings = this.buildInstallDataMintSettings(members);
         const votingSettings = this.buildInstallDataVotingSettings(params);
         const tokenTarget = pluginTransactionUtils.getPluginTargetConfig(dao, stageVotingPeriod != null);
+        const hatsConfig = this.buildInstallDataHatsConfig();
 
         const pluginSettingsData = encodeAbiParameters(tokenPluginSetupAbi, [
             votingSettings,
@@ -81,6 +82,7 @@ class TokenTransactionUtils {
             BigInt(0),
             metadata,
             [],
+            hatsConfig,
         ]);
 
         const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
@@ -156,6 +158,14 @@ class TokenTransactionUtils {
 
         return votingSettings;
     };
+
+    private buildInstallDataHatsConfig = () => {
+        return {
+            proposerHatId: BigInt('0x0000071700030000000000000000000000000000000000000000000000000000'),
+            voterHatId: BigInt('0x0000071700030000000000000000000000000000000000000000000000000000'),
+            executorHatId: BigInt(1), // public
+        };
+    }
 }
 
 export const tokenTransactionUtils = new TokenTransactionUtils();
