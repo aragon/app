@@ -1,4 +1,5 @@
 import { backendApiMocks } from '@/backendApiMocks';
+import { safeJsonParse } from '@/shared/utils/responseUtils';
 import { deepmerge } from 'deepmerge-ts';
 
 class FetchInterceptorUtils {
@@ -23,7 +24,9 @@ class FetchInterceptorUtils {
 
         if (mock.type === 'merge') {
             const result = await this.originalFetch(url, request);
-            const resultJson = (await result.json()) as { _merged: boolean };
+
+            const parsedResult = await safeJsonParse(result);
+            const resultJson = parsedResult as { _merged?: boolean };
             mockData = resultJson._merged ? resultJson : deepmerge(resultJson, mock.data, { _merged: true });
         }
 

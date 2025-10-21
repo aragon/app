@@ -59,7 +59,11 @@ describe('Http service', () => {
 
         it('returns the parsed json response', async () => {
             const parsedResult = { value: 'key' };
-            const response = generateResponse({ json: () => Promise.resolve(parsedResult) });
+            const headers = new Headers({ 'content-type': 'application/json' });
+            const response = generateResponse({
+                headers,
+                text: () => Promise.resolve(JSON.stringify(parsedResult)),
+            });
             fetchSpy.mockResolvedValue(response);
             const result = await serviceTest.request('/url');
             expect(result).toEqual(parsedResult);
