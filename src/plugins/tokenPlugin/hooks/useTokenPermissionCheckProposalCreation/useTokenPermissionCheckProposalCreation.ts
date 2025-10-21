@@ -8,6 +8,7 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
+import { useWrappedTokenBalance } from '../useWrappedTokenBalance';
 
 export interface ITokenPermissionCheckProposalCreationParams
     extends IPermissionCheckGuardParams<IDaoPlugin<ITokenPluginSettings>> {}
@@ -52,8 +53,13 @@ export const useTokenPermissionCheckProposalCreation = (
         { enabled: address != null && dao != null },
     );
 
+    // Read wrapped token balance directly from blockchain
+    const { balance: userBalance } = useWrappedTokenBalance({
+        userAddress: address,
+        token,
+    });
+
     const userVotingPower = BigInt(member?.votingPower ?? '0');
-    const userBalance = BigInt(member?.tokenBalance ?? '0');
 
     const parsedMemberVotingPower = formatUnits(userVotingPower, tokenDecimals);
     const formattedMemberVotingPower = formatterUtils.formatNumber(parsedMemberVotingPower, {
