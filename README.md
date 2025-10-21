@@ -124,6 +124,8 @@ our [Developer Portal](https://devs.aragon.org/). Join our
 [Developer Community](https://aragonproject.typeform.com/to/LngekEhU) to stay updated and contribute to the growth of
 decentralized governance.
 
+pointless edit
+
 ## License
 
 [GPL-V3](./LICENSE)
