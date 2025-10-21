@@ -19,7 +19,7 @@ export interface IRegisterGaugeFormProps {
     /**
      * Prefix to prepend to all the form fields.
      */
-    fieldPrefix?: string;
+    fieldPrefix: string;
 }
 
 export interface IRegisterGaugeFormData {
@@ -65,15 +65,14 @@ const maxAvatarDimension = 1024;
 
 export const RegisterGaugeForm: React.FC<IRegisterGaugeFormProps> = (props) => {
     const { fieldPrefix } = props;
-
     const { t } = useTranslations();
 
-    const nameField = useFormField<IRegisterGaugeFormData, 'name'>('name', {
+    const { value: nameValue, ...nameFieldRest } = useFormField<IRegisterGaugeFormData, 'name'>('name', {
         label: t('app.plugins.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.name.label'),
         fieldPrefix,
         rules: { required: true, maxLength: nameMaxLength },
         trimOnBlur: true,
-        defaultValue: '',
+        // defaultValue: '' - default value works only when form is initialized with useForm!
     });
 
     const { value, ...avatarField } = useFormField<IRegisterGaugeFormData, 'avatar'>('avatar', {
@@ -91,13 +90,15 @@ export const RegisterGaugeForm: React.FC<IRegisterGaugeFormProps> = (props) => {
     const avatarFieldName = fieldPrefix ? `${fieldPrefix}.avatar` : 'avatar';
     const avatarValue = useWatch<Record<string, IRegisterGaugeFormData['avatar']>>({ name: avatarFieldName });
 
-    const descriptionField = useFormField<IRegisterGaugeFormData, 'description'>('description', {
-        label: t('app.plugins.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.description.label'),
-        fieldPrefix,
-        rules: { required: true, maxLength: descriptionMaxLength },
-        trimOnBlur: true,
-        defaultValue: '',
-    });
+    const { value: descriptionValue, ...descriptionFieldRest } = useFormField<IRegisterGaugeFormData, 'description'>(
+        'description',
+        {
+            label: t('app.plugins.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.description.label'),
+            fieldPrefix,
+            rules: { required: true, maxLength: descriptionMaxLength },
+            trimOnBlur: true,
+        },
+    );
 
     const {
         onChange: onQiTokenAddressChange,
@@ -136,7 +137,7 @@ export const RegisterGaugeForm: React.FC<IRegisterGaugeFormProps> = (props) => {
 
     return (
         <div className="flex flex-col gap-10">
-            <InputText maxLength={nameMaxLength} {...nameField} />
+            <InputText maxLength={nameMaxLength} value={nameValue || ''} {...nameFieldRest} />
             <InputFileAvatar
                 value={avatarValue}
                 helpText={t('app.plugins.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.avatar.helpText')}
@@ -148,7 +149,8 @@ export const RegisterGaugeForm: React.FC<IRegisterGaugeFormProps> = (props) => {
             <TextArea
                 helpText={t('app.plugins.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.description.helpText')}
                 maxLength={descriptionMaxLength}
-                {...descriptionField}
+                value={descriptionValue || ''}
+                {...descriptionFieldRest}
             />
             <ResourcesInput
                 name="resources"

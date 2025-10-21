@@ -5,7 +5,6 @@ import {
 } from '@/modules/governance/components/createProposalForm';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { usePinFile, usePinJson } from '@/shared/api/ipfsService/mutations';
-import { useFormField } from '@/shared/hooks/useFormField';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { invariant, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
@@ -39,7 +38,6 @@ export const GaugeRegistrarRegisterGaugeAction: React.FC<IGaugeRegistrarRegister
     const { addPrepareAction } = useCreateProposalFormContext<IGaugeRegistrarActionRegisterGauge>();
 
     const fieldName = `actions.[${index.toString()}]`;
-    useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
 
     const prepareAction = useCallback(
         async (action: IGaugeRegistrarActionRegisterGauge) => {
