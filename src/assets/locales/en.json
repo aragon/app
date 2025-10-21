@@ -1246,11 +1246,18 @@
             "placeholder": "ENS or 0x…"
           }
         },
+        "gaugeRegistrarSelectGaugeDialog": {
+          "cancel": "Cancel",
+          "description": "Select a gauge to proceed with the action.",
+          "selectGaugePrompt": "Choose a gauge from the available options.",
+          "submit": "Select gauge",
+          "title": "Select Gauge"
+        },
         "gaugeRegistrarUnregisterGaugeAction": {
           "emptyCard": {
+            "action": "Select",
             "description": "Select a gauge to remove from the next epoche.",
-            "heading": "Select gauge",
-            "action": "Select"
+            "heading": "Select gauge"
           }
         }
       },
