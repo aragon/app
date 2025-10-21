@@ -14,6 +14,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useWatch } from 'react-hook-form';
+import { GaugeIncentiveType } from '../../types/enum/gaugeIncentiveType';
 
 export interface IRegisterGaugeFormProps {
     /**
@@ -46,16 +47,11 @@ export interface IRegisterGaugeFormData {
     /**
      * The incentive type (0 for Supply, 1 for Borrow)
      */
-    incentiveType?: IncentiveType;
+    incentiveType?: GaugeIncentiveType;
     /**
      * The address of the associated reward controller contract.
      */
     rewardControllerAddress?: ICompositeAddress;
-}
-
-export enum IncentiveType {
-    SUPPLY = 'SUPPLY',
-    BORROW = 'BORROW',
 }
 
 const nameMaxLength = 128;
@@ -113,13 +109,18 @@ export const RegisterGaugeForm: React.FC<IRegisterGaugeFormProps> = (props) => {
     const [qiTokenAddressInput, setQiTokenAddressInput] = useState<string | undefined>(qiTokenAddress?.address);
 
     const {
-        onChange: onIncentiveTypeChange,
+        onChange: onIncentiveTypeChangeRaw,
         value: incentiveType,
         ...incentiveTypeField
     } = useFormField<IRegisterGaugeFormData, 'incentiveType'>('incentiveType', {
         label: t('app.plugins.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.incentive.label'),
-        defaultValue: IncentiveType.SUPPLY,
+        defaultValue: GaugeIncentiveType.SUPPLY,
     });
+
+    // Convert string value from RadioGroup to numeric enum
+    const onIncentiveTypeChange = (value: string) => {
+        onIncentiveTypeChangeRaw(Number(value) as GaugeIncentiveType);
+    };
 
     const {
         onChange: onRewardControllerAddressChange,
@@ -168,19 +169,19 @@ export const RegisterGaugeForm: React.FC<IRegisterGaugeFormProps> = (props) => {
             <RadioGroup
                 className="flex gap-4 md:!flex-row"
                 onValueChange={onIncentiveTypeChange}
-                value={incentiveType}
+                value={incentiveType != null ? String(incentiveType) : undefined}
                 helpText={t('app.plugins.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.incentive.helpText')}
                 {...incentiveTypeField}
             >
                 <RadioCard
                     className="min-w-0"
                     label={t('app.plugins.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.incentive.supplyLabel')}
-                    value={IncentiveType.SUPPLY}
+                    value={String(GaugeIncentiveType.SUPPLY)}
                 />
                 <RadioCard
                     className="min-w-0"
                     label={t('app.plugins.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.incentive.borrowLabel')}
-                    value={IncentiveType.BORROW}
+                    value={String(GaugeIncentiveType.BORROW)}
                 />
             </RadioGroup>
             <AddressInput

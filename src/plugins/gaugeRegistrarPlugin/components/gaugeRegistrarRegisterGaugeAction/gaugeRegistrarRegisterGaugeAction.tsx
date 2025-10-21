@@ -10,9 +10,10 @@ import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { invariant, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { encodeFunctionData, type Hex } from 'viem';
+import { GaugeIncentiveType } from '../../types/enum/gaugeIncentiveType';
 import { GaugeRegistrarActionType } from '../../types/enum/gaugeRegistrarActionType';
 import type { IGaugeRegistrarActionRegisterGauge } from '../../types/gaugeRegistrarActionRegisterGauge';
-import { IncentiveType, RegisterGaugeForm } from './registerGaugeForm';
+import { RegisterGaugeForm } from './registerGaugeForm';
 
 export interface IGaugeRegistrarRegisterGaugeActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin>> {}
@@ -69,7 +70,7 @@ export const GaugeRegistrarRegisterGaugeAction: React.FC<IGaugeRegistrarRegister
                 abi: [registerGaugeAbi],
                 args: [
                     qiTokenAddress?.address as Hex,
-                    incentiveType === IncentiveType.SUPPLY ? 0 : 1,
+                    incentiveType ?? GaugeIncentiveType.SUPPLY,
                     rewardControllerAddress?.address as Hex,
                     hexResult,
                 ],

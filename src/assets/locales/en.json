@@ -1246,9 +1246,19 @@
             "placeholder": "ENS or 0x…"
           }
         },
+        "gaugeListItem": {
+          "incentive": {
+            "borrow": "Borrow",
+            "supply": "Supply"
+          },
+          "qiToken": "Qi Token",
+          "rewardController": "Reward Controller"
+        },
         "gaugeRegistrarSelectGaugeDialog": {
           "cancel": "Cancel",
           "description": "Select a gauge to proceed with the action.",
+          "emptyState": "No gauges available",
+          "entityLabel": "Gauge",
           "selectGaugePrompt": "Choose a gauge from the available options.",
           "submit": "Select gauge",
           "title": "Select Gauge"
