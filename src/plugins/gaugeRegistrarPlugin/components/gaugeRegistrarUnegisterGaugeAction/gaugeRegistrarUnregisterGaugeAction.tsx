@@ -1,13 +1,14 @@
+'use client';
+
 import { type IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
-import type { IDaoPlugin } from '@/shared/api/daoService';
 import { type IProposalActionComponentProps, CardEmptyState, IconType } from '@aragon/gov-ui-kit';
 import { useDialogContext } from '../../../../shared/components/dialogProvider';
 import { useTranslations } from '../../../../shared/components/translationsProvider';
 import { GaugeRegistrarPluginDialogId } from '../../constants/gaugeRegistrarPluginDialogId';
 
 export interface IGaugeRegistrarUnregisterGaugeActionProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin>> {}
+    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, unknown>> {}
 
 const unregisterGaugeAbi = {
     type: 'function',

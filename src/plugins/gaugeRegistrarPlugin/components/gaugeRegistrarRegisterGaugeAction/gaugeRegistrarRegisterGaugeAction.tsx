@@ -1,13 +1,13 @@
-import { type IProposalAction } from '@/modules/governance/api/governanceService';
+'use client';
+
 import {
     type IProposalActionData,
     useCreateProposalFormContext,
 } from '@/modules/governance/components/createProposalForm';
-import type { IDaoPlugin } from '@/shared/api/daoService';
 import { usePinFile, usePinJson } from '@/shared/api/ipfsService/mutations';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
-import { invariant, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
+import { invariant, type IProposalAction, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { encodeFunctionData, type Hex } from 'viem';
 import { GaugeIncentiveType } from '../../types/enum/gaugeIncentiveType';
@@ -16,7 +16,7 @@ import type { IGaugeRegistrarActionRegisterGauge } from '../../types/gaugeRegist
 import { RegisterGaugeForm } from './registerGaugeForm';
 
 export interface IGaugeRegistrarRegisterGaugeActionProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin>> {}
+    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, unknown>> {}
 
 const registerGaugeAbi = {
     type: 'function',
