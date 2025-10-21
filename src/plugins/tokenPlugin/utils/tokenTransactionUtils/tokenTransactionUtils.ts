@@ -165,7 +165,7 @@ class TokenTransactionUtils {
             voterHatId: BigInt('0x0000071700030000000000000000000000000000000000000000000000000000'),
             executorHatId: BigInt(1), // public
         };
-    }
+    };
 }
 
 export const tokenTransactionUtils = new TokenTransactionUtils();

@@ -9,8 +9,7 @@ export const tokenPlugin: IPluginInfo = {
         release: 1,
         build: 1,
         releaseNotes: '',
-        description:
-            '',
+        description: '',
     },
     repositoryAddresses: {
         [Network.ARBITRUM_MAINNET]: '0x1AeD2BEb470aeFD65B43f905Bd5371b1E4749d18',
