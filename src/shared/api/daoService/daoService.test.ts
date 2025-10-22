@@ -33,12 +33,19 @@ describe('dao service', () => {
 
     it('getDaoPermissions fetches permissions for the specified DAO', async () => {
         const permissions = [generateDaoPermission(), generateDaoPermission({ permissionId: '0xOtherId' })];
-        const params = { urlParams: { network: 'network-test' as Network, daoAddress: '0xDaoAddress' } };
+        const paginatedResponse = {
+            data: permissions,
+            metadata: { page: 1, pageSize: 10, total: 2 },
+        };
+        const params = {
+            urlParams: { network: 'network-test' as Network, daoAddress: '0xDaoAddress' },
+            queryParams: { page: 1, pageSize: 10 },
+        };
 
-        requestSpy.mockResolvedValue(permissions);
+        requestSpy.mockResolvedValue(paginatedResponse);
         const result = await daoService.getDaoPermissions(params);
 
         expect(requestSpy).toHaveBeenCalledWith(daoService['urls'].daoPermissions, params);
-        expect(result).toEqual(permissions);
+        expect(result).toEqual(paginatedResponse);
     });
 });

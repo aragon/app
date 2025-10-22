@@ -1,6 +1,6 @@
 import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
-import { useDao } from '@/shared/api/daoService';
+import { useDao, useDaoPermissions } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -12,7 +12,6 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
-import type { IDaoPermission } from '../../../../../shared/api/daoService/domain/daoPermission';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
 import type { ICreateProposalFormData, IProposalActionData } from '../createProposalFormDefinitions';
@@ -54,8 +53,13 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         { urlParams: { network: dao!.network, pluginAddress }, queryParams: { pageSize: 50 } },
         { enabled: hasConditionalPermissions },
     );
+    const { data: daoPermissionsData, isLoading: isLoadingDaoPermissions } = useDaoPermissions({
+        urlParams: { network: dao!.network, daoAddress: dao!.address },
+        queryParams: { pageSize: 50 },
+    });
 
     const allowedActions = allowedActionsData?.pages.flatMap((page) => page.data);
+    const daoPermissions = daoPermissionsData?.pages.flatMap((page) => page.data);
 
     const {
         append: addAction,
@@ -123,9 +127,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
         return dropdownItems.filter((item) => !item.hidden);
     };
-    const daoPermissions: IDaoPermission[] = [
-        { whoAddress: '0xWho', whereAddress: '0x123', permissionId: 'ID_TEST', conditionAddress: '0xCondition' },
-    ];
 
     const { pluginComponents } = actionComposerUtils.getDaoPluginActions(dao);
     const { components: permissionActionComponents } = actionComposerUtils.getDaoPermissionActions({
@@ -140,7 +141,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     };
 
     // Don't render action composer while it waits for allowed actions to be fetched
-    const showActionComposer = !hasConditionalPermissions || allowedActions != null;
+    const showActionComposer = !isLoadingDaoPermissions && (!hasConditionalPermissions || allowedActions != null);
 
     return (
         <div className="flex flex-col gap-y-10">

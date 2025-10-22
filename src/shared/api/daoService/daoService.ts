@@ -1,4 +1,4 @@
-import { AragonBackendService } from '../aragonBackendService';
+import { AragonBackendService, type IPaginatedResponse } from '../aragonBackendService';
 import type { IGetDaoByEnsParams, IGetDaoParams, IGetDaoPermissionsParams } from './daoService.api';
 import type { IDao, IDaoPermission } from './domain';
 
@@ -21,8 +21,24 @@ class DaoService extends AragonBackendService {
         return result;
     };
 
-    getDaoPermissions = async (params: IGetDaoPermissionsParams): Promise<IDaoPermission[]> => {
-        const result = await this.request<IDaoPermission[]>(this.urls.daoPermissions, params);
+    getDaoPermissions = async (params: IGetDaoPermissionsParams): Promise<IPaginatedResponse<IDaoPermission>> => {
+        return {
+            metadata: {
+                page: 1,
+                pageSize: 1,
+                totalPages: 1,
+                totalRecords: 1,
+            },
+            data: [
+                {
+                    whoAddress: '0xWho',
+                    whereAddress: '0x123',
+                    permissionId: 'ID_TEST',
+                    conditionAddress: '0xCondition',
+                },
+            ],
+        };
+        const result = await this.request<IPaginatedResponse<IDaoPermission>>(this.urls.daoPermissions, params);
 
         return result;
     };
