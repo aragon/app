@@ -25,7 +25,7 @@ export const initGaugeRegistrarActionViews = () => {
             id: 'register-gauge',
             permissionId: gaugeRegistrarPermissionId,
             functionSelector: toFunctionSelector(registerGaugeAbi),
-            component: GaugeRegistrarRegisterGaugeAction,
+            component: { [GaugeRegistrarActionType.REGISTER_GAUGE]: GaugeRegistrarRegisterGaugeAction },
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-RegisterGauge`,
                 name: t('app.actions.gaugeRegistrar.registerActionName'),
@@ -49,7 +49,7 @@ export const initGaugeRegistrarActionViews = () => {
             id: 'unregister-gauge',
             permissionId: gaugeRegistrarPermissionId,
             functionSelector: toFunctionSelector(unregisterGaugeAbi),
-            component: GaugeRegistrarUnregisterGaugeAction,
+            component: { [GaugeRegistrarActionType.UNREGISTER_GAUGE]: GaugeRegistrarUnregisterGaugeAction },
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-${GaugeRegistrarActionType.UNREGISTER_GAUGE}`,
                 name: t('app.actions.gaugeRegistrar.unregisterActionName'),

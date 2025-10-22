@@ -31,7 +31,7 @@ export interface IActionViewDescriptor {
     /**
      * Custom React component to render the action.
      */
-    component: ActionViewComponent;
+    component: Record<string, ActionViewComponent>;
     /**
      *  Action composer item.
      */

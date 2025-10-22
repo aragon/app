@@ -40,9 +40,13 @@ export class ActionViewRegistry {
     getActionsForPermissionId = (permissionId: string, contractAddress: string, t: TranslationFunction) => {
         const groupDescriptor = this.groups.find((group) => group.permissionId === permissionId);
         const group = groupDescriptor ? groupDescriptor.getGroup({ contractAddress, t }) : undefined;
-        const items = this.getViewsByPermissionId(permissionId).map((view) => view.getItem({ contractAddress, t }));
+        const views = this.getViewsByPermissionId(permissionId);
+        const items = views.map((view) => view.getItem({ contractAddress, t }));
+        const components = views.reduce((acc, cur) => {
+            return { ...acc, ...cur.component };
+        }, {});
 
-        return { group, items };
+        return { group, items, components };
     };
 }
 

@@ -5,7 +5,7 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { zeroAddress } from 'viem';
-import { actionViewRegistry } from '../../../../shared/utils/actionViewRegistry';
+import { actionViewRegistry, type ActionViewComponent } from '../../../../shared/utils/actionViewRegistry';
 import {
     ProposalActionType,
     type IProposalAction,
@@ -63,9 +63,17 @@ class ActionComposerUtils {
     };
 
     getDaoPermissionActions = ({ permissions, t }: Omit<IGetDaoActionsParams, 'dao'>) => {
+        if (!permissions) {
+            return {
+                items: [],
+                groups: [],
+                components: {},
+            };
+        }
+
         const result = permissions.reduce(
             (acc, cur) => {
-                const { items, group } = actionViewRegistry.getActionsForPermissionId(
+                const { items, group, components } = actionViewRegistry.getActionsForPermissionId(
                     cur.permissionId,
                     cur.whereAddress,
                     t,
@@ -73,10 +81,15 @@ class ActionComposerUtils {
                 return {
                     items: [...acc.items, ...items],
                     groups: group ? [...acc.groups, group] : acc.groups,
+                    components: { ...acc.components, ...components },
                 };
             },
 
-            { items: [] as IActionComposerInputItem[], groups: [] as IAutocompleteInputGroup[] }, // Removed the extra closing brace
+            {
+                items: [] as IActionComposerInputItem[],
+                groups: [] as IAutocompleteInputGroup[],
+                components: {} as Record<string, ActionViewComponent>,
+            }, // Removed the extra closing brace
         );
 
         return result;

@@ -6,6 +6,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, Button, IconType, Switch } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useCallback, useRef, useState } from 'react';
+import type { IDaoPermission } from '../../../../../shared/api/daoService/domain/daoPermission';
 import type { IAllowedAction } from '../../../api/executeSelectorsService';
 import { type IProposalAction } from '../../../api/governanceService';
 import type { ISmartContractAbi } from '../../../api/smartContractService';
@@ -39,10 +40,14 @@ export interface IActionComposerProps extends Pick<IActionComposerInputProps, 'e
      * Allowed actions to show instead of default actions.
      */
     allowedActions?: IAllowedAction[];
+    /**
+     * Granted permissions for DAO.
+     */
+    daoPermissions?: IDaoPermission[];
 }
 
 export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
-    const { daoId, onAddAction, excludeActionTypes, hideWalletConnect = false, allowedActions } = props;
+    const { daoId, onAddAction, excludeActionTypes, hideWalletConnect = false, allowedActions, daoPermissions } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -50,7 +55,6 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const daoPermissions = [{ whereAddress: '0x123', permissionId: 'ID_TEST' }];
     const { items, groups } = actionComposerUtils.getDaoActions({ dao, permissions: daoPermissions, t });
 
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);

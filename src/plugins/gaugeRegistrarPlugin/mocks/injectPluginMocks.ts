@@ -3,7 +3,7 @@ import type { IBackendApiMock } from '@/shared/types';
 // Add gauge-voter plugin to Sepolia test DAO
 export const injectPluginMocks: IBackendApiMock[] = [
     {
-        url: /\/v2\/daos\/ethereum-sepolia-0x72dE80980d19EDF05f0Ad5085B87f6477CfcCb75$/,
+        url: /\/v2\/daos\/ethereum-sepolia-0xXXX72dE80980d19EDF05f0Ad5085B87f6477CfcCb75$/,
         type: 'merge',
         data: {
             plugins: [

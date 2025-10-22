@@ -12,6 +12,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
+import type { IDaoPermission } from '../../../../../shared/api/daoService/domain/daoPermission';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
 import type { ICreateProposalFormData, IProposalActionData } from '../createProposalFormDefinitions';
@@ -122,12 +123,20 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
         return dropdownItems.filter((item) => !item.hidden);
     };
+    const daoPermissions: IDaoPermission[] = [
+        { whoAddress: '0xWho', whereAddress: '0x123', permissionId: 'ID_TEST', conditionAddress: '0xCondition' },
+    ];
 
     const { pluginComponents } = actionComposerUtils.getDaoPluginActions(dao);
+    const { components: permissionActionComponents } = actionComposerUtils.getDaoPermissionActions({
+        t,
+        permissions: daoPermissions,
+    });
 
     const customActionComponents: Record<string, ProposalActionComponent<IProposalActionData>> = {
         ...coreCustomActionComponents,
         ...pluginComponents,
+        ...permissionActionComponents,
     };
 
     // Don't render action composer while it waits for allowed actions to be fetched
@@ -153,7 +162,12 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 </ProposalActions.Container>
             </ProposalActions.Root>
             {showActionComposer && (
-                <ActionComposer daoId={daoId} onAddAction={handleAddAction} allowedActions={allowedActions} />
+                <ActionComposer
+                    daoId={daoId}
+                    onAddAction={handleAddAction}
+                    allowedActions={allowedActions}
+                    daoPermissions={daoPermissions}
+                />
             )}
         </div>
     );
