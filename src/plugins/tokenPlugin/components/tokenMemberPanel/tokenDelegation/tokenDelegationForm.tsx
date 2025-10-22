@@ -5,6 +5,7 @@ import { useTokenCurrentDelegate } from '@/plugins/tokenPlugin/hooks/useTokenCur
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import {
     AddressInput,
@@ -30,6 +31,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
     const { t } = useTranslations();
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const chainId = dao ? networkDefinitions[dao.network].id : undefined;
 
     const { data: currentDelegate, isLoading: isCurrentDelegateLoading } = useTokenCurrentDelegate({
         userAddress: address,
@@ -125,6 +127,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
                 onChange={setDelegateInput}
                 onAccept={handleDelegateChange}
                 disabled={selectionValue === TokenDelegationSelection.YOURSELF}
+                chainId={chainId}
                 {...delegateField}
             />
             <div className="flex flex-col gap-3">
