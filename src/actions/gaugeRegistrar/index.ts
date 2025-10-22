@@ -17,7 +17,7 @@ export const initGaugeRegistrarActionViews = () => {
             permissionId: gaugeRegistrarPermissionId,
             getGroup: ({ contractAddress, t }) => ({
                 id: contractAddress,
-                name: t('app.actions.gaugeRegistrar.contractName'),
+                name: t('app.actions.gaugeRegistrar.composer.contractName'),
                 info: addressUtils.truncateAddress(contractAddress),
                 indexData: [contractAddress],
             }),
@@ -32,7 +32,7 @@ export const initGaugeRegistrarActionViews = () => {
             componentReadOnly: GaugeRegistrarRegisterGaugeActionReadOnly,
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-RegisterGauge`,
-                name: t('app.actions.gaugeRegistrar.registerActionName'),
+                name: t('app.actions.gaugeRegistrar.composer.registerActionName'),
                 icon: IconType.SETTINGS,
                 groupId: contractAddress,
                 defaultValue: {
@@ -56,7 +56,7 @@ export const initGaugeRegistrarActionViews = () => {
             component: { [GaugeRegistrarActionType.UNREGISTER_GAUGE]: GaugeRegistrarUnregisterGaugeAction },
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-${GaugeRegistrarActionType.UNREGISTER_GAUGE}`,
-                name: t('app.actions.gaugeRegistrar.unregisterActionName'),
+                name: t('app.actions.gaugeRegistrar.composer.unregisterActionName'),
                 icon: IconType.SETTINGS,
                 groupId: contractAddress,
                 defaultValue: {
