@@ -7,6 +7,7 @@ import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { AddressesInput } from '@/shared/components/forms/addressesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { addressUtils, Dialog, invariant, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
@@ -47,6 +48,7 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     invariant(dao != null, 'ManageAdminsDialogPublish: DAO data must be set.');
+    const { id: chainId } = networkDefinitions[dao.network];
 
     // TODO: (APP-4045). Setting this to the max pageSize of 50 for now to ensure we get all of the data
     // in the future we should find a better way to handle this.
@@ -116,7 +118,7 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
                 >
                     <AddressesInput.Container name="members" allowEmptyList={true}>
                         {watchMembersField.map((field, index) => (
-                            <AddressesInput.Item key={index} index={index} />
+                            <AddressesInput.Item key={index} index={index} chainId={chainId} />
                         ))}
                     </AddressesInput.Container>
                 </form>

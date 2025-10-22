@@ -1,6 +1,7 @@
 import { AssetInput, type IAssetInputFormData, type IAssetInputProps } from '@/modules/finance/components/assetInput';
 import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AddressInput, addressUtils } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
@@ -39,6 +40,7 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
     const [receiverInput, setReceiverInput] = useState<string | undefined>(value?.address);
 
     const fetchAssetsParams = { queryParams: { address: sender, network } };
+    const { id: chainId } = networkDefinitions[network];
 
     return (
         <div className={classNames('flex w-full flex-col', { 'gap-6': !assetValue })}>
@@ -53,6 +55,7 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
                 value={receiverInput}
                 onChange={setReceiverInput}
                 onAccept={onReceiverChange}
+                chainId={chainId}
                 {...receiverField}
             />
         </div>
