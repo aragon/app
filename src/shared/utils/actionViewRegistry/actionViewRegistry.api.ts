@@ -1,6 +1,8 @@
 import type { ActionComposerPluginComponent } from '@/modules/governance/types/actionComposerPluginData';
+import type { ProposalActionComponent } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import type { IActionComposerInputItem } from '../../../modules/governance/components/actionComposer';
+import type { IProposalActionData } from '../../../modules/governance/components/createProposalForm';
 import type { IAutocompleteInputGroup } from '../../components/forms/autocompleteInput';
 import type { TranslationFunction } from '../../components/translationsProvider';
 
@@ -22,16 +24,24 @@ export interface IActionViewDescriptor {
      * Function selector to match against (e.g., "0xa9059cbb").
      */
     functionSelector?: Hex;
-
+    /**
+     * Text signature of the smart contract function (e.g. setMetadata(bytes))
+     */
+    textSignature?: string;
     /**
      * Permission ID to match against (alternative matching criteria).
      */
     permissionId?: string;
 
     /**
-     * Custom React component to render the action.
+     * Custom React component to render the action, in edit mode, i.e. create proosal page.
      */
     component: Record<string, ActionViewComponent>;
+    /**
+     * Custom React component to render the action, in read only mode, i.e. proposal details page.
+     */
+    // componentReadOnly?: ActionViewComponent;
+    componentReadOnly?: ProposalActionComponent<IProposalActionData>;
     /**
      *  Action composer item.
      */

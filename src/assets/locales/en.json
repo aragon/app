@@ -2,9 +2,53 @@
   "app": {
     "actions": {
       "gaugeRegistrar": {
-        "contractName": "Gauge Registrar (Actions)",
-        "registerActionName": "Register Gauge (A)",
-        "unregisterActionName": "Unregister Gauge (A)"
+        "composer": {
+          "contractName": "Gauge Registrar (Actions)",
+          "registerActionName": "Register Gauge (A)",
+          "unregisterActionName": "Unregister Gauge (A)"
+        },
+        "gaugeRegistrarRegisterGaugeAction": {
+          "avatar": {
+            "error": {
+              "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, or GIF).",
+              "file-too-large": "The file size exceeds the maximum allowed limit of 1 MB.",
+              "square-only": "The image must be square. Upload a square image.",
+              "too-many-files": "Only one file can be uploaded at a time.",
+              "unknown-file-error": "Unable to upload image",
+              "wrong-dimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
+            },
+            "helpText": "JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px.",
+            "label": "Logo"
+          },
+          "description": {
+            "helpText": "Describe the Gauge in a few sentences. This is listed on gauge detail page so contributors understand the gauge.",
+            "label": "Description"
+          },
+          "incentive": {
+            "borrowLabel": "Borrow",
+            "helpText": "The incentive type (Supply or Borrow).",
+            "label": "Incentive",
+            "supplyLabel": "Supply"
+          },
+          "name": {
+            "label": "Name"
+          },
+          "qiToken": {
+            "helpText": "The address of the market's qiToken.",
+            "label": "Qi token",
+            "placeholder": "ENS or 0x…"
+          },
+          "resources": {
+            "helpText": "Links to the gauge website, social media profiles, or further external resources.",
+            "label": "Links"
+          },
+          "rewardController": {
+            "helpText": "The address of the Benqi protocol contract that controls rewards for this gauge.",
+            "label": "Reward controller",
+            "placeholder": "ENS or 0x…"
+          }
+        },
+        "gaugeRegistrarRegisterGaugeActionReadOnly": {}
       }
     },
     "application": {

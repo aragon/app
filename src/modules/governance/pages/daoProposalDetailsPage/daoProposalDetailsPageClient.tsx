@@ -27,8 +27,10 @@ import {
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
+import { actionViewRegistry } from '../../../../shared/utils/actionViewRegistry';
 import { actionSimulationServiceKeys, useLastSimulation, useSimulateProposal } from '../../api/actionSimulationService';
 import { type IProposal, useProposalActions, useProposalBySlug } from '../../api/governanceService';
+import type { IProposalActionData } from '../../components/createProposalForm';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
@@ -180,14 +182,28 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         )}
                         <ProposalActions.Root isLoading={actionData?.decoding} actionsCount={actionsCount}>
                             <ProposalActions.Container emptyStateDescription="">
-                                {normalizedProposalActions.map((action, index) => (
-                                    <ProposalActions.Item
-                                        key={index}
-                                        action={action}
-                                        actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(action)}
-                                        chainId={chainId}
-                                    />
-                                ))}
+                                {normalizedProposalActions.map((action, index) => {
+                                    const fnSelector = proposalActionUtils.actionToFunctionSelector(action);
+                                    const customView =
+                                        fnSelector && actionViewRegistry.getViewBySelector('0xFnSelector');
+                                    // console.log('asdkjsadjsakj ', action, fnSelector);
+                                    return customView ? (
+                                        <ProposalActions.Item<IProposalActionData>
+                                            key={index}
+                                            action={action as IProposalActionData}
+                                            actionFunctionSelector={fnSelector}
+                                            chainId={chainId}
+                                            CustomComponent={customView.componentReadOnly}
+                                        />
+                                    ) : (
+                                        <ProposalActions.Item
+                                            key={index}
+                                            action={action}
+                                            actionFunctionSelector={fnSelector}
+                                            chainId={chainId}
+                                        />
+                                    );
+                                })}
                             </ProposalActions.Container>
                             <ProposalActions.Footer>
                                 {normalizedProposalActions.length > 0 && (

@@ -4,6 +4,7 @@ import { toFunctionSelector } from 'viem';
 import { GaugeRegistrarActionType } from '../../plugins/gaugeRegistrarPlugin/types/enum/gaugeRegistrarActionType';
 import { PluginContractName } from '../../shared/api/daoService/domain/enum';
 import { GaugeRegistrarRegisterGaugeAction } from './components/gaugeRegistrarRegisterGaugeAction';
+import { GaugeRegistrarRegisterGaugeActionReadOnly } from './components/gaugeRegistrarRegisterGaugeActionReadOnly';
 import { GaugeRegistrarUnregisterGaugeAction } from './components/gaugeRegistrarUnegisterGaugeAction';
 import { registerGaugeAbi, unregisterGaugeAbi } from './constants/gaugeRegistrarAbi';
 
@@ -24,8 +25,11 @@ export const initGaugeRegistrarActionViews = () => {
         .register({
             id: 'register-gauge',
             permissionId: gaugeRegistrarPermissionId,
-            functionSelector: toFunctionSelector(registerGaugeAbi),
+            // functionSelector: toFunctionSelector(registerGaugeAbi),
+            functionSelector: '0xFnSelector',
+            textSignature: 'registerGauge(address,uint8,address,bytes)',
             component: { [GaugeRegistrarActionType.REGISTER_GAUGE]: GaugeRegistrarRegisterGaugeAction },
+            componentReadOnly: GaugeRegistrarRegisterGaugeActionReadOnly,
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-RegisterGauge`,
                 name: t('app.actions.gaugeRegistrar.registerActionName'),
