@@ -1,4 +1,4 @@
-import { generateDao } from '@/shared/testUtils';
+import { generateDao, generateDaoPermission } from '@/shared/testUtils';
 import { daoService } from './daoService';
 import type { Network } from './domain';
 
@@ -29,5 +29,16 @@ describe('dao service', () => {
 
         expect(requestSpy).toHaveBeenCalledWith(daoService['urls'].daoByEns, params);
         expect(result).toEqual(dao);
+    });
+
+    it('getDaoPermissions fetches permissions for the specified DAO', async () => {
+        const permissions = [generateDaoPermission(), generateDaoPermission({ permissionId: '0xOtherId' })];
+        const params = { urlParams: { network: 'network-test' as Network, daoAddress: '0xDaoAddress' } };
+
+        requestSpy.mockResolvedValue(permissions);
+        const result = await daoService.getDaoPermissions(params);
+
+        expect(requestSpy).toHaveBeenCalledWith(daoService['urls'].daoPermissions, params);
+        expect(result).toEqual(permissions);
     });
 });

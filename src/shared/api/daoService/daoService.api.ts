@@ -22,3 +22,16 @@ export interface IGetDaoByEnsUrlParams {
 }
 
 export interface IGetDaoByEnsParams extends IRequestUrlParams<IGetDaoByEnsUrlParams> {}
+
+export interface IGetDaoPermissionsUrlParams {
+    /**
+     * Network of the DAO.
+     */
+    network: Network;
+    /**
+     * Address of the DAO to fetch permissions for.
+     */
+    daoAddress: string;
+}
+
+export interface IGetDaoPermissionsParams extends IRequestUrlParams<IGetDaoPermissionsUrlParams> {}
