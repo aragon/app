@@ -6,8 +6,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, Button, IconType, Switch } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useCallback, useRef, useState } from 'react';
-import type { IAutocompleteInputGroup } from '../../../../../shared/components/forms/autocompleteInput';
-import { actionViewRegistry } from '../../../../../shared/utils/actionViewRegistry';
 import type { IAllowedAction } from '../../../api/executeSelectorsService';
 import { type IProposalAction } from '../../../api/governanceService';
 import type { ISmartContractAbi } from '../../../api/smartContractService';
@@ -48,23 +46,12 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
-    const daoPermissions = [{ where: '0x123', permissionId: 'ID_TEST' }];
-
-    const { pluginItems, pluginGroups } = actionComposerUtils.getDaoPluginActions(dao);
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const result = daoPermissions.reduce(
-        (acc, cur) => {
-            const { items, group } = actionViewRegistry.getActionsForPermissionId(cur.permissionId, cur.where, t);
-            return {
-                items: [...acc.items, ...items],
-                groups: group ? [...acc.groups, group] : acc.groups,
-            };
-        },
-        { items: [] as IActionComposerInputItem[], groups: [] as IAutocompleteInputGroup[] }, // Removed the extra closing brace
-    );
+    const daoPermissions = [{ whereAddress: '0x123', permissionId: 'ID_TEST' }];
+    const { items, groups } = actionComposerUtils.getDaoActions({ dao, permissions: daoPermissions, t });
 
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -164,8 +151,8 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 onActionSelected={handleItemSelected}
                 onOpenChange={setDisplayActionComposer}
                 ref={autocompleteInputRef}
-                nativeItems={[...pluginItems, ...result.items]}
-                nativeGroups={[...pluginGroups, ...result.groups]}
+                nativeItems={items}
+                nativeGroups={groups}
                 allowedActions={onlyShowAuthorizedActions ? allowedActions : undefined}
                 daoId={daoId}
                 importedContractAbis={importedContractAbis}

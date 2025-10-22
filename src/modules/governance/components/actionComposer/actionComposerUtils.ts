@@ -5,6 +5,7 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { zeroAddress } from 'viem';
+import { actionViewRegistry } from '../../../../shared/utils/actionViewRegistry';
 import {
     ProposalActionType,
     type IProposalAction,
@@ -21,6 +22,7 @@ import {
     type IGetAllowedActionBaseParams,
     type IGetAllowedActionItemsParams,
     type IGetCustomActionParams,
+    type IGetDaoActionsParams,
     type IGetNativeActionGroupsParams,
     type IGetNativeActionItemsParams,
 } from './actionComposerUtils.api';
@@ -31,6 +33,16 @@ class ActionComposerUtils {
     transferActionLocked = 'TransferActionLocked';
 
     private transferSelector = '0xa9059cbb';
+
+    getDaoActions = ({ dao, permissions, t }: IGetDaoActionsParams) => {
+        const pluginActions = this.getDaoPluginActions(dao);
+        const permissionActions = this.getDaoPermissionActions({ permissions, t });
+
+        return {
+            items: [...pluginActions.pluginItems, ...permissionActions.items],
+            groups: [...pluginActions.pluginGroups, ...permissionActions.groups],
+        };
+    };
 
     getDaoPluginActions = (dao?: IDao) => {
         const { plugins = [] } = dao ?? {};
@@ -48,6 +60,26 @@ class ActionComposerUtils {
         const pluginComponents = pluginActions.reduce((acc, data) => ({ ...acc, ...data?.components }), {});
 
         return { pluginItems, pluginGroups, pluginComponents };
+    };
+
+    getDaoPermissionActions = ({ permissions, t }: Omit<IGetDaoActionsParams, 'dao'>) => {
+        const result = permissions.reduce(
+            (acc, cur) => {
+                const { items, group } = actionViewRegistry.getActionsForPermissionId(
+                    cur.permissionId,
+                    cur.whereAddress,
+                    t,
+                );
+                return {
+                    items: [...acc.items, ...items],
+                    groups: group ? [...acc.groups, group] : acc.groups,
+                };
+            },
+
+            { items: [] as IActionComposerInputItem[], groups: [] as IAutocompleteInputGroup[] }, // Removed the extra closing brace
+        );
+
+        return result;
     };
 
     getAllowedActionGroups = ({ t, dao, allowedActions }: IGetAllowedActionBaseParams): IAutocompleteInputGroup[] => {

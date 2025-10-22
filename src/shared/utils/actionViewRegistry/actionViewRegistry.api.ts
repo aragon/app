@@ -35,7 +35,7 @@ export interface IActionViewDescriptor {
     /**
      *  Action composer item.
      */
-    getItem: (params: { contractAddress: string }) => IActionComposerInputItem;
+    getItem: (params: { contractAddress: string; t: TranslationFunction }) => IActionComposerInputItem;
 }
 
 /**
@@ -49,5 +49,5 @@ export interface IActionGroupDescriptor {
     /**
      *  Action composer item.
      */
-    getGroup: (params: { t: TranslationFunction; address: string }) => IAutocompleteInputGroup;
+    getGroup: (params: { contractAddress: string; t: TranslationFunction }) => IAutocompleteInputGroup;
 }

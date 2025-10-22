@@ -58,3 +58,7 @@ export interface IGetAllowedActionBaseParams extends IGetActionBaseParams {
 export interface IGetAllowedActionItemsParams
     extends IGetAllowedActionBaseParams,
         Pick<IGetNativeActionItemsParams, 'nativeItems'> {}
+
+export interface IGetDaoActionsParams extends IGetActionBaseParams {
+    permissions: Array<{ permissionId: string; whereAddress: string }>;
+}

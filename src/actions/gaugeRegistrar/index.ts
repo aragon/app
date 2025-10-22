@@ -1,49 +1,34 @@
 import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { toFunctionSelector } from 'viem';
-import { GaugeRegistrarRegisterGaugeAction } from '../../plugins/gaugeRegistrarPlugin/components/gaugeRegistrarRegisterGaugeAction/gaugeRegistrarRegisterGaugeAction';
-import { GaugeRegistrarUnregisterGaugeAction } from '../../plugins/gaugeRegistrarPlugin/components/gaugeRegistrarUnegisterGaugeAction';
 import { GaugeRegistrarActionType } from '../../plugins/gaugeRegistrarPlugin/types/enum/gaugeRegistrarActionType';
 import { PluginContractName } from '../../shared/api/daoService/domain/enum';
+import { GaugeRegistrarRegisterGaugeAction } from './components/gaugeRegistrarRegisterGaugeAction';
+import { GaugeRegistrarUnregisterGaugeAction } from './components/gaugeRegistrarUnegisterGaugeAction';
+import { registerGaugeAbi, unregisterGaugeAbi } from './constants/gaugeRegistrarAbi';
 
 const gaugeRegistrarPermissionId = 'ID_TEST';
 // const gaugeRegistrarPermissionId = keccak256(toBytes('GAUGE_REGISTRAR_ROLE'));
 
-const registerGaugeAbi = {
-    type: 'function',
-    name: 'registerGauge',
-    inputs: [
-        { name: '_qiToken', type: 'address' },
-        { name: '_incentive', type: 'uint8' },
-        { name: '_rewardController', type: 'address' },
-        { name: '_metadataURI', type: 'string' },
-    ],
-    outputs: [{ internalType: 'address', name: 'gaugeAddress', type: 'address' }],
-    stateMutability: 'nonpayable',
-} as const;
-
-const unregisterGaugeAbi = {
-    type: 'function',
-    name: 'unregisterGauge',
-    inputs: [
-        { internalType: 'address', name: '_qiToken', type: 'address' },
-        { internalType: 'enum Incentive', name: '_incentive', type: 'uint8' },
-        { internalType: 'address', name: '_rewardController', type: 'address' },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-} as const;
-
 export const initGaugeRegistrarActionViews = () => {
     actionViewRegistry
+        .registerGroup({
+            permissionId: gaugeRegistrarPermissionId,
+            getGroup: ({ contractAddress, t }) => ({
+                id: contractAddress,
+                name: t('app.actions.gaugeRegistrar.contractName'),
+                info: addressUtils.truncateAddress(contractAddress),
+                indexData: [contractAddress],
+            }),
+        })
         .register({
             id: 'register-gauge',
             permissionId: gaugeRegistrarPermissionId,
             functionSelector: toFunctionSelector(registerGaugeAbi),
             component: GaugeRegistrarRegisterGaugeAction,
-            getItem: ({ contractAddress }) => ({
+            getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-RegisterGauge`,
-                name: 'Register Gauge',
+                name: t('app.actions.gaugeRegistrar.registerActionName'),
                 icon: IconType.SETTINGS,
                 groupId: contractAddress,
                 defaultValue: {
@@ -65,9 +50,9 @@ export const initGaugeRegistrarActionViews = () => {
             permissionId: gaugeRegistrarPermissionId,
             functionSelector: toFunctionSelector(unregisterGaugeAbi),
             component: GaugeRegistrarUnregisterGaugeAction,
-            getItem: ({ contractAddress }) => ({
-                id: `${contractAddress}-UnregisterGauge`,
-                name: 'Unregister Gauge',
+            getItem: ({ contractAddress, t }) => ({
+                id: `${contractAddress}-${GaugeRegistrarActionType.UNREGISTER_GAUGE}`,
+                name: t('app.actions.gaugeRegistrar.unregisterActionName'),
                 icon: IconType.SETTINGS,
                 groupId: contractAddress,
                 defaultValue: {
@@ -82,15 +67,6 @@ export const initGaugeRegistrarActionViews = () => {
                         parameters: unregisterGaugeAbi.inputs.map((param) => ({ ...param, value: '' })),
                     },
                 },
-            }),
-        })
-        .registerGroup({
-            permissionId: gaugeRegistrarPermissionId,
-            getGroup: ({ address, t }) => ({
-                id: address,
-                name: t('app.actions.gaugeRegistrar.contractName'),
-                info: addressUtils.truncateAddress(address),
-                indexData: [address],
             }),
         });
 };

@@ -10,27 +10,14 @@ import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { invariant, type IProposalAction, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { encodeFunctionData, type Hex } from 'viem';
-import type { IDaoPlugin } from '../../../../shared/api/daoService';
+import { registerGaugeAbi } from '../../constants/gaugeRegistrarAbi';
 import { GaugeIncentiveType } from '../../types/enum/gaugeIncentiveType';
 import { GaugeRegistrarActionType } from '../../types/enum/gaugeRegistrarActionType';
 import type { IGaugeRegistrarActionRegisterGauge } from '../../types/gaugeRegistrarActionRegisterGauge';
 import { RegisterGaugeForm } from './registerGaugeForm';
 
 export interface IGaugeRegistrarRegisterGaugeActionProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin>> {}
-
-const registerGaugeAbi = {
-    type: 'function',
-    name: 'registerGauge',
-    inputs: [
-        { internalType: 'address', name: '_qiToken', type: 'address' },
-        { internalType: 'enum Incentive', name: '_incentive', type: 'uint8' },
-        { internalType: 'address', name: '_rewardController', type: 'address' },
-        { internalType: 'string', name: '_metadataURI', type: 'string' },
-    ],
-    outputs: [{ internalType: 'address', name: 'gaugeAddress', type: 'address' }],
-    stateMutability: 'nonpayable',
-} as const;
+    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, unknown>> {}
 
 export const GaugeRegistrarRegisterGaugeAction: React.FC<IGaugeRegistrarRegisterGaugeActionProps> = (props) => {
     const { index } = props;

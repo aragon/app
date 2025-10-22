@@ -39,8 +39,8 @@ export class ActionViewRegistry {
 
     getActionsForPermissionId = (permissionId: string, contractAddress: string, t: TranslationFunction) => {
         const groupDescriptor = this.groups.find((group) => group.permissionId === permissionId);
-        const group = groupDescriptor ? groupDescriptor.getGroup({ address: contractAddress, t }) : undefined;
-        const items = this.getViewsByPermissionId(permissionId).map((view) => view.getItem({ contractAddress }));
+        const group = groupDescriptor ? groupDescriptor.getGroup({ contractAddress, t }) : undefined;
+        const items = this.getViewsByPermissionId(permissionId).map((view) => view.getItem({ contractAddress, t }));
 
         return { group, items };
     };

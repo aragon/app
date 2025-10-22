@@ -1,5 +1,12 @@
 {
   "app": {
+    "actions": {
+      "gaugeRegistrar": {
+        "contractName": "Gauge Registrar (Actions)",
+        "registerActionName": "Register Gauge (A)",
+        "unregisterActionName": "Unregister Gauge (A)"
+      }
+    },
     "application": {
       "bannerDao": {
         "adminMember": {
@@ -1206,6 +1213,14 @@
           "RegisterGauge": "Register gauge",
           "UnregisterGauge": "Unregister gauge"
         },
+        "gaugeListItem": {
+          "incentive": {
+            "borrow": "Borrow",
+            "supply": "Supply"
+          },
+          "qiToken": "Qi Token",
+          "rewardController": "Reward Controller"
+        },
         "gaugeRegistrarRegisterGaugeAction": {
           "avatar": {
             "error": {
@@ -1245,14 +1260,6 @@
             "label": "Reward controller",
             "placeholder": "ENS or 0x…"
           }
-        },
-        "gaugeListItem": {
-          "incentive": {
-            "borrow": "Borrow",
-            "supply": "Supply"
-          },
-          "qiToken": "Qi Token",
-          "rewardController": "Reward Controller"
         },
         "gaugeRegistrarSelectGaugeDialog": {
           "cancel": "Cancel",
