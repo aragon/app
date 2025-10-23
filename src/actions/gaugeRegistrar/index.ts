@@ -53,8 +53,8 @@ export const initGaugeRegistrarActionViews = () => {
         .register({
             id: 'unregister-gauge',
             permissionId: gaugeRegistrarPermissionId,
-            // functionSelector: toFunctionSelector(unregisterGaugeAbi),
-            functionSelector: '0xFnSelector',
+            functionSelector: toFunctionSelector(unregisterGaugeAbi),
+            textSignature: 'setMetadata(bytes)',
             component: { [GaugeRegistrarActionType.UNREGISTER_GAUGE]: GaugeRegistrarUnregisterGaugeAction },
             componentReadOnly: GaugeRegistrarUnegisterGaugeActionReadOnly,
             getItem: ({ contractAddress, t }) => ({

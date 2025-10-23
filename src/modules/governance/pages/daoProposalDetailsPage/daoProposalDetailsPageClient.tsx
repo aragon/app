@@ -184,8 +184,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             <ProposalActions.Container emptyStateDescription="">
                                 {normalizedProposalActions.map((action, index) => {
                                     const fnSelector = proposalActionUtils.actionToFunctionSelector(action);
-                                    const customView =
-                                        fnSelector && actionViewRegistry.getViewBySelector('0xFnSelector');
+                                    const customView = actionViewRegistry.getViewByTextSignature(
+                                        action.inputData?.textSignature,
+                                    );
                                     // console.log('asdkjsadjsakj ', action, fnSelector);
                                     return customView ? (
                                         <ProposalActions.Item<IProposalActionData>
