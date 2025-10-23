@@ -1,35 +1,22 @@
-import type { IPaginatedRequest } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
-import type { IRequestUrlQueryParams } from '@/shared/api/httpService';
-import type { IEpochStats, IGauge } from './domain';
+import type { IRequestUrlParams, IRequestUrlQueryParams } from '@/shared/api/httpService';
+import type { Hex } from 'viem';
 
-export interface IGetGaugeListUrlParams {
-    /**
-     * Address of the user to retrieve the user-specific data for the gauges.
-     */
-    userAddress: string;
+export interface IGetGaugePluginUrlParams {
+    network: Network;
+    daoAddress: Hex;
 }
 
-export interface IGetGaugeListQueryParams extends IPaginatedRequest {
-    /**
-     * Address of the plugin to fetch the gauges for.
-     */
-    pluginAddress: string;
-    /**
-     * Network of the plugin.
-     */
+export interface IGetGaugePluginQueryParams {
+    interfaceType: 'gauge';
+}
+
+export interface IGetGaugePluginParams
+    extends IRequestUrlQueryParams<IGetGaugePluginUrlParams, IGetGaugePluginQueryParams> {}
+
+export interface IGetGaugeListUrlParams {
+    pluginAddress: Hex;
     network: Network;
 }
 
-export interface IGetGaugeListParams extends IRequestUrlQueryParams<IGetGaugeListUrlParams, IGetGaugeListQueryParams> {}
-
-export interface IGetGaugeListResult {
-    /**
-     * List of gauges.
-     */
-    gauges: IGauge[];
-    /**
-     * Epoch statistics.
-     */
-    metrics: IEpochStats;
-}
+export interface IGetGaugeListParams extends IRequestUrlParams<IGetGaugeListUrlParams> {}

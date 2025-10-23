@@ -40,6 +40,10 @@ export interface IGaugeVoterGaugeListItemStructureProps {
      * Token symbol for voting power display.
      */
     tokenSymbol: string;
+    /**
+     * MOCK DATA - User's votes on this gauge (temporary until blockchain integration).
+     */
+    userVotes: number;
 }
 
 export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItemStructureProps> = (props) => {
@@ -53,20 +57,24 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
         isUserConnected,
         isVotingPeriod,
         tokenSymbol,
+        userVotes,
     } = props;
     const { t } = useTranslations();
 
-    const formattedTotalVotes = formatterUtils.formatNumber(gauge.totalVotes, {
+    const gaugeTotalVotes = gauge.metrics.voteCount;
+    const formattedTotalVotes = formatterUtils.formatNumber(gaugeTotalVotes, {
         format: NumberFormat.TOKEN_AMOUNT_SHORT,
     });
+
+    // Use mock user votes passed from parent (will be replaced with blockchain reads)
     const formattedUserVotes = !isUserConnected
         ? '-'
-        : gauge.userVotes > 0
-          ? formatterUtils.formatNumber(gauge.userVotes, { format: NumberFormat.TOKEN_AMOUNT_SHORT })
+        : userVotes > 0
+          ? formatterUtils.formatNumber(userVotes, { format: NumberFormat.TOKEN_AMOUNT_SHORT })
           : t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.noVotes');
 
     // Calculate percentage if total epoch votes is available
-    const percentage = totalEpochVotes && totalEpochVotes > 0 ? gauge.totalVotes / totalEpochVotes : 0;
+    const percentage = totalEpochVotes && totalEpochVotes > 0 ? gaugeTotalVotes / totalEpochVotes : 0;
     const formattedPercentage = totalEpochVotes
         ? formatterUtils.formatNumber(percentage, { format: NumberFormat.PERCENTAGE_SHORT })
         : null;
@@ -82,9 +90,10 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
         onSelect(gauge);
     };
 
+    const gaugeName = gauge.name ?? addressUtils.truncateAddress(gauge.address);
     const avatarFallback = (
         <span className="bg-primary-400 text-neutral-0 flex size-full items-center justify-center">
-            {gauge.name.slice(0, 2).toUpperCase()}
+            {gaugeName.slice(0, 2).toUpperCase()}
         </span>
     );
 
@@ -106,10 +115,10 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
                     size="md"
                     responsiveSize={{ md: 'lg' }}
                     fallback={avatarFallback}
-                    src={gauge.logo ?? undefined}
+                    src={gauge.avatar ?? undefined}
                 />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <p className="truncate text-base text-neutral-800 md:text-lg">{gauge.name}</p>
+                    <p className="truncate text-base text-neutral-800 md:text-lg">{gaugeName}</p>
                     <p className="truncate text-sm text-neutral-500">{truncatedAddress}</p>
                 </div>
             </div>

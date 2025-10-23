@@ -17,17 +17,26 @@ export interface IGaugeVoterGaugeDetailsDialogContentProps {
      * Token symbol for voting power display.
      */
     tokenSymbol: string;
+    /**
+     * MOCK DATA - User's votes on this gauge (temporary).
+     */
+    userVotes: number;
 }
 
 export const GaugeVoterGaugeDetailsDialogContent: React.FC<IGaugeVoterGaugeDetailsDialogContentProps> = (props) => {
-    const { gauge, network, tokenSymbol } = props;
+    const { gauge, network, tokenSymbol, userVotes } = props;
 
     const { t } = useTranslations();
 
     const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[network].id });
     const gaugeAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: gauge.address });
 
-    const hasVoted = gauge.userVotes > 0;
+    // Use mock user votes passed from parent
+    const hasVoted = userVotes > 0;
+
+    // MOCK rewards calculation
+    const mockRewards = getMockRewardsData();
+    const userRewards = mockRewards.getUserRewards(userVotes);
 
     return (
         <div className="flex flex-col gap-y-4">
@@ -39,15 +48,19 @@ export const GaugeVoterGaugeDetailsDialogContent: React.FC<IGaugeVoterGaugeDetai
                 >
                     {addressUtils.truncateAddress(gauge.address)}
                 </DefinitionList.Item>
-                {gauge.resources.map((item) => (
-                    <DefinitionList.Item key={item.url} term={item.name} link={{ href: item.url, isExternal: true }}>
-                        {item.url}
+                {/* TODO: Backend returns links as a string, need to parse or update backend to return array */}
+                {gauge.links && (
+                    <DefinitionList.Item
+                        term={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.links')}
+                        link={{ href: gauge.links, isExternal: true }}
+                    >
+                        {gauge.links}
                     </DefinitionList.Item>
-                ))}
+                )}
                 <DefinitionList.Item
                     term={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.totalRewards')}
                 >
-                    420.69k {tokenSymbol}
+                    {mockRewards.totalRewards.toLocaleString()} {tokenSymbol}
                 </DefinitionList.Item>
                 <DefinitionList.Item
                     term={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.yourRewards')}
@@ -55,7 +68,7 @@ export const GaugeVoterGaugeDetailsDialogContent: React.FC<IGaugeVoterGaugeDetai
                         'app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.yourRewardsDescription',
                     )}
                 >
-                    {hasVoted ? 120 : 0} {tokenSymbol}
+                    {userRewards} {tokenSymbol}
                 </DefinitionList.Item>
                 <DefinitionList.Item
                     term={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.haveYouVotedFor')}

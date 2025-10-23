@@ -7,9 +7,9 @@ export enum GaugeVoterPluginPages {
 }
 
 export const gaugeVoterPlugin: IPluginInfo = {
-    id: PluginInterfaceType.GAUGE_VOTER,
-    subdomain: 'gauge-voter',
-    name: 'Gauge Voter',
+    id: PluginInterfaceType.GAUGE,
+    subdomain: 'gauge',
+    name: 'Gauge',
     installVersion: { release: 1, build: 1, releaseNotes: '', description: '' },
     repositoryAddresses: {
         [Network.ARBITRUM_MAINNET]: '0x0000000000000000000000000000000000000000',

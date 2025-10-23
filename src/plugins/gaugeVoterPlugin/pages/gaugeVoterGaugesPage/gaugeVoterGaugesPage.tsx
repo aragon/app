@@ -33,35 +33,21 @@ export const GaugeVoterGaugesPage: React.FC<IGaugeVoterGaugesPageProps> = async 
     const queryClient = new QueryClient();
     const headers = await nextHeaders();
 
-    const interfaceType = PluginInterfaceType.GAUGE_VOTER;
-    const plugin: IGaugeVoterPlugin = daoUtils.getDaoPlugins(dao, { interfaceType })![0];
+    // Backend returns interfaceType: 'gauge', not 'gaugeVoter'
+    const interfaceType = PluginInterfaceType.GAUGE;
+    const plugins = daoUtils.getDaoPlugins(dao, { interfaceType });
+    const plugin: IGaugeVoterPlugin | undefined = plugins?.[0];
 
-    const cookieHeader = headers.get('cookie');
-    const userAddress = getConnectedAccount(cookieHeader);
+    if (!plugin) {
+        throw new Error(`Gauge plugin not found for DAO: ${dao.id}`);
+    }
 
-    const defaultQueryParams = {
-        pluginAddress: plugin.address,
-        network: dao.network,
-        pageSize: gaugesPerPage,
-        page: 1,
-        userAddress: userAddress ?? '',
-    };
     const initialParams = {
         urlParams: {
-            userAddress: userAddress ?? '',
+            pluginAddress: plugin.address,
+            network: dao.network,
         },
-        queryParams: defaultQueryParams,
     };
-
-    // const initialParams = {
-    //     urlParams: {
-    //         userAddress: userAddress ?? '',
-    //     },
-    //     queryParams: {
-    //         pluginAddress: plugin.address,
-    //         network: dao.network,
-    //     },
-    // };
 
     return (
         <Page.Container queryClient={queryClient}>

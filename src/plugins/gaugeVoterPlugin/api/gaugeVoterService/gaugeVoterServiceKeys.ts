@@ -1,9 +1,11 @@
-import type { IGetGaugeListParams } from './gaugeVoterService.api';
+import type { IGetGaugeListParams, IGetGaugePluginParams } from './gaugeVoterService.api';
 
 export enum GaugeVoterServiceKey {
-    GAUGE_LIST = 'GAUGE_LIST',
+    GAUGE_PLUGIN = 'GAUGE_PLUGIN',
+    GAUGES = 'GAUGES',
 }
 
 export const gaugeVoterServiceKeys = {
-    gauges: (params: IGetGaugeListParams) => [GaugeVoterServiceKey.GAUGE_LIST, params],
+    gaugePlugin: (params: IGetGaugePluginParams) => [GaugeVoterServiceKey.GAUGE_PLUGIN, params],
+    gauges: (params: IGetGaugeListParams) => [GaugeVoterServiceKey.GAUGES, params],
 };

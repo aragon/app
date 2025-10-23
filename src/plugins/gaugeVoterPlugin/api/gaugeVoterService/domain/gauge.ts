@@ -1,33 +1,24 @@
-import type { IResource } from '@/shared/api/daoService';
+import type { Network } from '@/shared/api/daoService';
 import type { Hex } from 'viem';
 
+/**
+ * Gauge data from the backend /v2/gauge/:pluginAddress/:network endpoint.
+ */
 export interface IGauge {
-    /**
-     * Address of the gauge contract.
-     */
+    network: Network;
+    blockNumber: number;
+    transactionHash: Hex;
     address: Hex;
-    /**
-     * Name of the gauge from metadata.
-     */
-    name: string;
-    /**
-     * Description of the gauge from metadata.
-     */
-    description: string;
-    /**
-     * Resources associated with the gauge.
-     */
-    resources: IResource[];
-    /**
-     * Logo url of the gauge from metadata.
-     */
-    logo?: string;
-    /**
-     * Total votes allocated to this gauge from GaugeVoterContract.
-     */
-    totalVotes: number;
-    /**
-     * User's votes allocated to this gauge from GaugeVoterContract.
-     */
-    userVotes: number;
+    pluginAddress: Hex;
+    creatorAddress: Hex;
+    name: string | null;
+    description: string | null;
+    links: string | null;
+    avatar: string | null;
+    isActive: boolean;
+    metrics: {
+        voteCount: number;
+        votingPower: string;
+        epochId: string;
+    };
 }

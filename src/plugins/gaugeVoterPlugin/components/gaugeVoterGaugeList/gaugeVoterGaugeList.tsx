@@ -41,6 +41,10 @@ export interface IGaugeVoterGaugeListProps {
      * Token symbol for voting power display.
      */
     tokenSymbol: string;
+    /**
+     * MOCK DATA - User votes per gauge (temporary until blockchain integration).
+     */
+    mockUserVotes: IMockUserGaugeVote[];
 }
 
 export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) => {
@@ -53,6 +57,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
         isUserConnected,
         isVotingPeriod,
         tokenSymbol,
+        mockUserVotes,
     } = props;
 
     const { t } = useTranslations();
@@ -74,9 +79,10 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
         description: t('app.plugins.gaugeVoter.gaugeVoterGaugeList.errorState.description'),
     };
 
-    const gaugeList = gaugeListData?.pages.flatMap((page) => page.data.flatMap((data) => data.gauges));
+    const gaugeList = gaugeListData?.pages.flatMap((page) => page.data) ?? [];
 
-    const totalEpochVotes = gaugeListData?.pages[0]?.data[0]?.metrics?.totalVotes ?? 0;
+    // Calculate total epoch votes from all gauges
+    const totalEpochVotes = gaugeList.reduce((sum, gauge) => sum + gauge.metrics.voteCount, 0);
 
     return (
         <DataListRoot
@@ -92,20 +98,26 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
                 emptyState={emptyState}
                 SkeletonElement={GaugeVoterGaugeListItemSkeleton}
             >
-                {gaugeList?.map((gauge) => (
-                    <GaugeVoterGaugeListItemStructure
-                        key={gauge.address}
-                        gauge={gauge}
-                        isUserConnected={isUserConnected}
-                        isSelected={selectedGauges?.includes(gauge.address) ?? false}
-                        isVoted={votedGauges?.includes(gauge.address) ?? false}
-                        onSelect={onSelect}
-                        onViewDetails={onViewDetails}
-                        totalEpochVotes={totalEpochVotes}
-                        isVotingPeriod={isVotingPeriod}
-                        tokenSymbol={tokenSymbol}
-                    />
-                ))}
+                {gaugeList?.map((gauge) => {
+                    const userVotesForGauge =
+                        mockUserVotes.find((v) => v.gaugeAddress === gauge.address)?.userVotes ?? 0;
+
+                    return (
+                        <GaugeVoterGaugeListItemStructure
+                            key={gauge.address}
+                            gauge={gauge}
+                            isUserConnected={isUserConnected}
+                            isSelected={selectedGauges?.includes(gauge.address) ?? false}
+                            isVoted={votedGauges?.includes(gauge.address) ?? false}
+                            onSelect={onSelect}
+                            onViewDetails={onViewDetails}
+                            totalEpochVotes={totalEpochVotes}
+                            isVotingPeriod={isVotingPeriod}
+                            tokenSymbol={tokenSymbol}
+                            userVotes={userVotesForGauge}
+                        />
+                    );
+                })}
             </DataListContainer>
             <DataListPagination />
         </DataListRoot>
