@@ -1,6 +1,6 @@
 import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
-import { useDao } from '@/shared/api/daoService';
+import { useDao, useDaoPermissions } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -53,8 +53,13 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         { urlParams: { network: dao!.network, pluginAddress }, queryParams: { pageSize: 50 } },
         { enabled: hasConditionalPermissions },
     );
+    const { data: daoPermissionsData, isLoading: isLoadingDaoPermissions } = useDaoPermissions({
+        urlParams: { network: dao!.network, daoAddress: dao!.address },
+        queryParams: { pageSize: 50 },
+    });
 
     const allowedActions = allowedActionsData?.pages.flatMap((page) => page.data);
+    const daoPermissions = daoPermissionsData?.pages.flatMap((page) => page.data);
 
     const {
         append: addAction,
@@ -124,14 +129,19 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     };
 
     const { pluginComponents } = actionComposerUtils.getDaoPluginActions(dao);
+    const { components: permissionActionComponents } = actionComposerUtils.getDaoPermissionActions({
+        t,
+        permissions: daoPermissions,
+    });
 
     const customActionComponents: Record<string, ProposalActionComponent<IProposalActionData>> = {
         ...coreCustomActionComponents,
         ...pluginComponents,
+        ...permissionActionComponents,
     };
 
     // Don't render action composer while it waits for allowed actions to be fetched
-    const showActionComposer = !hasConditionalPermissions || allowedActions != null;
+    const showActionComposer = !isLoadingDaoPermissions && (!hasConditionalPermissions || allowedActions != null);
 
     return (
         <div className="flex flex-col gap-y-10">
@@ -153,7 +163,12 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 </ProposalActions.Container>
             </ProposalActions.Root>
             {showActionComposer && (
-                <ActionComposer daoId={daoId} onAddAction={handleAddAction} allowedActions={allowedActions} />
+                <ActionComposer
+                    daoId={daoId}
+                    onAddAction={handleAddAction}
+                    allowedActions={allowedActions}
+                    daoPermissions={daoPermissions}
+                />
             )}
         </div>
     );

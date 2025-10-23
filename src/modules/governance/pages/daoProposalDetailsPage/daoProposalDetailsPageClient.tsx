@@ -27,8 +27,10 @@ import {
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
+import { actionViewRegistry } from '../../../../shared/utils/actionViewRegistry';
 import { actionSimulationServiceKeys, useLastSimulation, useSimulateProposal } from '../../api/actionSimulationService';
 import { type IProposal, useProposalActions, useProposalBySlug } from '../../api/governanceService';
+import type { IProposalActionData } from '../../components/createProposalForm';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
@@ -179,14 +181,46 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         )}
                         <ProposalActions.Root isLoading={actionData?.decoding} actionsCount={actionsCount}>
                             <ProposalActions.Container emptyStateDescription="">
-                                {normalizedProposalActions.map((action, index) => (
-                                    <ProposalActions.Item
-                                        key={index}
-                                        action={action}
-                                        actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(action)}
-                                        chainId={chainId}
-                                    />
-                                ))}
+                                {normalizedProposalActions.map((action, index) => {
+                                    const fnSelector = proposalActionUtils.actionToFunctionSelector(action);
+                                    const customActionView = actionViewRegistry.getViewBySelector(fnSelector);
+                                    // console.log('asdkjsadjsakj ', action, fnSelector);
+                                    // const registerDetailsAction = {
+                                    //     type: GaugeRegistrarActionType.REGISTER_GAUGE,
+                                    //     inputData: {
+                                    //         parameters: [
+                                    //             { value: '0xeE567Fe1712Faf6149d80dA1E6934E354124CfE3' },
+                                    //             { value: 1 },
+                                    //             { value: '0x78590B44F9F798212Fd7f446eE9A4183F798f218' },
+                                    //         ],
+                                    //     },
+                                    //     gaugeMetadata: {
+                                    //         name: 'Test gauge name',
+                                    //         description: 'Test gauge description.',
+                                    //         links: [
+                                    //             { name: 'Test link 1', url: 'http://test123.com' },
+                                    //             { name: 'Test link 2', url: 'https://test2.com' },
+                                    //         ],
+                                    //         avatar: 'ipfs://QmTsCeejcmCCWLNWKDpsVdMg9TYU3sQ6fr1KVnUsHxaPxt',
+                                    //     },
+                                    // };
+                                    return customActionView ? (
+                                        <ProposalActions.Item<IProposalActionData>
+                                            key={index}
+                                            action={{ ...action, daoId } as IProposalActionData}
+                                            actionFunctionSelector={fnSelector}
+                                            chainId={chainId}
+                                            CustomComponent={customActionView.componentDetails}
+                                        />
+                                    ) : (
+                                        <ProposalActions.Item
+                                            key={index}
+                                            action={action}
+                                            actionFunctionSelector={fnSelector}
+                                            chainId={chainId}
+                                        />
+                                    );
+                                })}
                             </ProposalActions.Container>
                             <ProposalActions.Footer>
                                 {normalizedProposalActions.length > 0 && (

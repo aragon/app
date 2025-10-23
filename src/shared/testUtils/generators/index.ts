@@ -1,6 +1,7 @@
 export * from './addressInfo';
 export * from './dao';
 export * from './daoMetrics';
+export * from './daoPermission';
 export * from './daoPlugin';
 export * from './dialogContext';
 export * from './filterComponentPlugin';

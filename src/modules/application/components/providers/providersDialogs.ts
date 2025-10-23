@@ -5,6 +5,7 @@ import { governanceDialogsDefinitions } from '@/modules/governance/constants/gov
 import { settingsDialogDefinitions } from '@/modules/settings/constants/settingsDialogDefinitions';
 import { pluginDialogsDefinitions } from '@/plugins';
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
+import { actionsDialogsDefinitions } from '../../../../actions';
 
 export const providersDialogs: Record<string, IDialogComponentDefinitions> = {
     ...applicationDialogsDefinitions,
@@ -13,4 +14,5 @@ export const providersDialogs: Record<string, IDialogComponentDefinitions> = {
     ...createDaoDialogsDefinitions,
     ...pluginDialogsDefinitions,
     ...settingsDialogDefinitions,
+    ...actionsDialogsDefinitions,
 };

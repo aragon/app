@@ -1,6 +1,7 @@
 export type { IAddressInfo } from './addressInfo';
 export type { IDao } from './dao';
 export type { IDaoMetrics } from './daoMetrics';
+export type { IDaoPermission } from './daoPermission';
 export type { IDaoPlugin } from './daoPlugin';
 export { Network, PluginInterfaceType } from './enum';
 export type { IPluginSettings } from './pluginSettings';
