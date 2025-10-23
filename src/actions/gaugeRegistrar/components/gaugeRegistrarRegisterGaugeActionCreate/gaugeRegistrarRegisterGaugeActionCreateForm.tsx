@@ -16,7 +16,7 @@ import { useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { GaugeIncentiveType } from '../../types/enum/gaugeIncentiveType';
 
-export interface IRegisterGaugeFormProps {
+export interface IGaugeRegistrarRegisterGaugeActionCreateFormProps {
     /**
      * Prefix to prepend to all the form fields.
      */
@@ -59,7 +59,9 @@ const descriptionMaxLength = 480;
 const maxAvatarFileSize = 1 * 1024 * 1024; // 1 MB in bytes
 const maxAvatarDimension = 1024;
 
-export const RegisterGaugeForm: React.FC<IRegisterGaugeFormProps> = (props) => {
+export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
+    IGaugeRegistrarRegisterGaugeActionCreateFormProps
+> = (props) => {
     const { fieldPrefix } = props;
     const { t } = useTranslations();
 

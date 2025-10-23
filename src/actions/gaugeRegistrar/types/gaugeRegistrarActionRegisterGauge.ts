@@ -1,6 +1,6 @@
 import type { IProposalAction } from '@aragon/gov-ui-kit';
 import type { IResource } from '../../../shared/api/daoService';
-import type { IRegisterGaugeFormData } from '../components/gaugeRegistrarRegisterGaugeAction/registerGaugeForm';
+import type { IRegisterGaugeFormData } from '../components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm';
 import type { GaugeRegistrarActionType } from './enum/gaugeRegistrarActionType';
 
 export interface IGaugeRegistrarActionRegisterGauge extends Omit<IProposalAction, 'type'> {

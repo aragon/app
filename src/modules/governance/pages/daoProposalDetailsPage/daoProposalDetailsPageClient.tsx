@@ -194,7 +194,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                             action={{ ...action, daoId } as IProposalActionData}
                                             actionFunctionSelector={fnSelector}
                                             chainId={chainId}
-                                            CustomComponent={customView.componentReadOnly}
+                                            CustomComponent={customView.componentDetails}
                                         />
                                     ) : (
                                         <ProposalActions.Item

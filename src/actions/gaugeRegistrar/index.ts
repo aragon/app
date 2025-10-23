@@ -2,7 +2,7 @@ import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { toFunctionSelector } from 'viem';
 import { PluginContractName } from '../../shared/api/daoService/domain/enum';
-import { GaugeRegistrarRegisterGaugeAction } from './components/gaugeRegistrarRegisterGaugeAction';
+import { gaugeRegistrarRegisterGaugeActionCreate } from './components/gaugeRegistrarRegisterGaugeActionCreate';
 import { GaugeRegistrarRegisterGaugeActionReadOnly } from './components/gaugeRegistrarRegisterGaugeActionReadOnly';
 import { GaugeRegistrarUnregisterGaugeAction } from './components/gaugeRegistrarUnegisterGaugeAction';
 import { GaugeRegistrarUnegisterGaugeActionReadOnly } from './components/gaugeRegistrarUnegisterGaugeActionReadOnly/gaugeRegistrarUnegisterGaugeActionReadOnly';
@@ -29,12 +29,12 @@ export const initGaugeRegistrarActionViews = () => {
             functionSelector: toFunctionSelector(registerGaugeAbi),
             // functionSelector: '0xFnSelector',
             textSignature: 'registerGauge(address,uint8,address,bytes)',
-            component: { [GaugeRegistrarActionType.REGISTER_GAUGE]: GaugeRegistrarRegisterGaugeAction },
-            componentReadOnly: GaugeRegistrarRegisterGaugeActionReadOnly,
+            componentCreate: { [GaugeRegistrarActionType.REGISTER_GAUGE]: gaugeRegistrarRegisterGaugeActionCreate },
+            componentDetails: GaugeRegistrarRegisterGaugeActionReadOnly,
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-RegisterGauge`,
                 name: t('app.actions.gaugeRegistrar.composer.registerActionName'),
-                icon: IconType.SETTINGS,
+                icon: IconType.PERSON,
                 groupId: contractAddress,
                 defaultValue: {
                     type: GaugeRegistrarActionType.REGISTER_GAUGE,
@@ -55,8 +55,8 @@ export const initGaugeRegistrarActionViews = () => {
             permissionId: gaugeRegistrarPermissionId,
             functionSelector: toFunctionSelector(unregisterGaugeAbi),
             textSignature: 'setMetadata(bytes)',
-            component: { [GaugeRegistrarActionType.UNREGISTER_GAUGE]: GaugeRegistrarUnregisterGaugeAction },
-            componentReadOnly: GaugeRegistrarUnegisterGaugeActionReadOnly,
+            componentCreate: { [GaugeRegistrarActionType.UNREGISTER_GAUGE]: GaugeRegistrarUnregisterGaugeAction },
+            componentDetails: GaugeRegistrarUnegisterGaugeActionReadOnly,
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-${GaugeRegistrarActionType.UNREGISTER_GAUGE}`,
                 name: t('app.actions.gaugeRegistrar.composer.unregisterActionName'),

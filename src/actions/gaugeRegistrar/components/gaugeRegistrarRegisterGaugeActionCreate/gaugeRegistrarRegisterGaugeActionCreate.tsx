@@ -14,12 +14,14 @@ import { registerGaugeAbi } from '../../constants/gaugeRegistrarAbi';
 import { GaugeIncentiveType } from '../../types/enum/gaugeIncentiveType';
 import { GaugeRegistrarActionType } from '../../types/enum/gaugeRegistrarActionType';
 import type { IGaugeRegistrarActionRegisterGauge } from '../../types/gaugeRegistrarActionRegisterGauge';
-import { RegisterGaugeForm } from './registerGaugeForm';
+import { GaugeRegistrarRegisterGaugeActionCreateForm } from './gaugeRegistrarRegisterGaugeActionCreateForm';
 
-export interface IGaugeRegistrarRegisterGaugeActionProps
+export interface IGaugeRegistrarRegisterGaugeActionCreateProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, unknown>> {}
 
-export const GaugeRegistrarRegisterGaugeAction: React.FC<IGaugeRegistrarRegisterGaugeActionProps> = (props) => {
+export const GaugeRegistrarRegisterGaugeActionCreate: React.FC<IGaugeRegistrarRegisterGaugeActionCreateProps> = (
+    props,
+) => {
     const { index } = props;
 
     const { mutateAsync: pinJsonAsync } = usePinJson();
@@ -73,5 +75,5 @@ export const GaugeRegistrarRegisterGaugeAction: React.FC<IGaugeRegistrarRegister
         addPrepareAction(GaugeRegistrarActionType.REGISTER_GAUGE, prepareAction);
     }, [addPrepareAction, prepareAction]);
 
-    return <RegisterGaugeForm fieldPrefix={`${fieldName}.gaugeDetails`} />;
+    return <GaugeRegistrarRegisterGaugeActionCreateForm fieldPrefix={`${fieldName}.gaugeDetails`} />;
 };

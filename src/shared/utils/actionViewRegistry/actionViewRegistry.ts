@@ -47,7 +47,7 @@ export class ActionViewRegistry {
         const views = this.getViewsByPermissionId(permissionId);
         const items = views.map((view) => view.getItem({ contractAddress, t }));
         const components = views.reduce((acc, cur) => {
-            return { ...acc, ...cur.component };
+            return { ...acc, ...cur.componentCreate };
         }, {});
 
         return { group, items, components };

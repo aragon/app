@@ -36,12 +36,12 @@ export interface IActionViewDescriptor {
     /**
      * Custom React component to render the action, in edit mode, i.e. create proosal page.
      */
-    component: Record<string, ActionViewComponent>;
+    componentCreate: Record<string, ActionViewComponent>;
     /**
      * Custom React component to render the action, in read only mode, i.e. proposal details page.
      */
     // componentReadOnly?: ActionViewComponent;
-    componentReadOnly?: ProposalActionComponent<IProposalActionData>;
+    componentDetails?: ProposalActionComponent<IProposalActionData>;
     /**
      *  Action composer item.
      */
