@@ -11,7 +11,7 @@ export interface IGaugeRegistrarActionRegisterGauge extends Omit<IProposalAction
     /**
      * Gauge details collected from the action form in create phase.
      */
-    gaugeDetails: IRegisterGaugeFormData | null;
+    gaugeDetails?: IRegisterGaugeFormData;
     /**
      * Gauge metadata returned in decoded actions by backend.
      */

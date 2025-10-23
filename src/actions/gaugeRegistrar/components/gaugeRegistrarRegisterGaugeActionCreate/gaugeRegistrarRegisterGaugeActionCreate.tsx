@@ -34,7 +34,7 @@ export const GaugeRegistrarRegisterGaugeActionCreate: React.FC<IGaugeRegistrarRe
         async (action: IGaugeRegistrarActionRegisterGauge) => {
             invariant(
                 action.gaugeDetails != null,
-                'GaugeRegistrarRegisterGaugeAction:gaugeDetails expected to be initialized',
+                'GaugeRegistrarRegisterGaugeAction: gaugeDetails expected to be initialized by the register gauge form.',
             );
 
             const { name, description, resources, avatar, rewardControllerAddress, qiTokenAddress, incentiveType } =
@@ -43,6 +43,7 @@ export const GaugeRegistrarRegisterGaugeActionCreate: React.FC<IGaugeRegistrarRe
             const proposedMetadata = { name, description, links: resources };
             let daoAvatar: string | undefined;
 
+            // TODO: extract to usePinAvatar or usePinImg
             if (avatar?.file != null) {
                 // Pin the avatar set on the form when the file property is set, meaning that the user changed the DAO avatar
                 const avatarResult = await pinFileAsync({ body: avatar.file });
@@ -56,6 +57,7 @@ export const GaugeRegistrarRegisterGaugeActionCreate: React.FC<IGaugeRegistrarRe
 
             const ipfsResult = await pinJsonAsync({ body: metadata });
             const hexResult = transactionUtils.stringToMetadataHex(ipfsResult.IpfsHash);
+
             const data = encodeFunctionData({
                 abi: [registerGaugeAbi],
                 args: [

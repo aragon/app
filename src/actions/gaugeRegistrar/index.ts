@@ -34,13 +34,13 @@ export const initGaugeRegistrarActionViews = () => {
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-RegisterGauge`,
                 name: t('app.actions.gaugeRegistrar.composer.registerActionName'),
-                icon: IconType.PERSON,
+                icon: IconType.SETTINGS,
                 groupId: contractAddress,
                 defaultValue: {
                     type: GaugeRegistrarActionType.REGISTER_GAUGE,
                     from: '',
                     to: contractAddress,
-                    data: '0x',
+                    data: '',
                     value: '0',
                     inputData: {
                         function: registerGaugeAbi.name,
@@ -66,7 +66,7 @@ export const initGaugeRegistrarActionViews = () => {
                     type: GaugeRegistrarActionType.UNREGISTER_GAUGE,
                     from: '',
                     to: contractAddress,
-                    data: '0x',
+                    data: '',
                     value: '0',
                     inputData: {
                         function: unregisterGaugeAbi.name,

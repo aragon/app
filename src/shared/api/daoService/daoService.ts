@@ -32,7 +32,7 @@ class DaoService extends AragonBackendService {
             data: [
                 {
                     whoAddress: '0xWho',
-                    whereAddress: '0x123',
+                    whereAddress: '0xb2B8687c3BE0278C4296F722C3fB72D26725ce9B',
                     permissionId: 'ID_TEST',
                     conditionAddress: '0xCondition',
                 },

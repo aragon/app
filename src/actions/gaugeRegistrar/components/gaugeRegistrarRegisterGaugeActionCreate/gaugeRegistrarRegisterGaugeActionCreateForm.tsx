@@ -140,7 +140,12 @@ export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
 
     return (
         <div className="flex flex-col gap-10">
-            <InputText maxLength={nameMaxLength} value={nameValue || ''} {...nameFieldRest} />
+            <InputText
+                maxLength={nameMaxLength}
+                value={nameValue || ''}
+                helpText={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.name.helpText')}
+                {...nameFieldRest}
+            />
             <InputFileAvatar
                 value={avatarValue}
                 helpText={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.avatar.helpText')}

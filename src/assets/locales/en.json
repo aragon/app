@@ -31,6 +31,7 @@
             "supplyLabel": "Supply"
           },
           "name": {
+            "helpText": "Maximum of 128 characters.",
             "label": "Name"
           },
           "qiToken": {
