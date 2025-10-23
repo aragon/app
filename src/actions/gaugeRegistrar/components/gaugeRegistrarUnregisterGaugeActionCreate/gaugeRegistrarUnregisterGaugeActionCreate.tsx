@@ -12,10 +12,12 @@ import type { IGaugeRegistrarSelectGaugeDialogParams } from '../../dialogs/gauge
 import type { IRegisteredGauge } from '../../types/gaugeRegistrar';
 import { GaugeRegistrarGaugeListItem } from '../gaugeRegistrarGaugeListItem';
 
-export interface IGaugeRegistrarUnregisterGaugeActionProps
+export interface IGaugeRegistrarUnregisterGaugeActionCreateProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, unknown>> {}
 
-export const GaugeRegistrarUnregisterGaugeAction: React.FC<IGaugeRegistrarUnregisterGaugeActionProps> = (props) => {
+export const GaugeRegistrarUnregisterGaugeActionCreate: React.FC<IGaugeRegistrarUnregisterGaugeActionCreateProps> = (
+    props,
+) => {
     const { action } = props;
     const { t } = useTranslations();
     const { open } = useDialogContext();
