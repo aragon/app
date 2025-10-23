@@ -27,6 +27,7 @@ import {
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
+import { GaugeRegistrarActionType } from '../../../../actions/gaugeRegistrar/types/enum/gaugeRegistrarActionType';
 import { actionViewRegistry } from '../../../../shared/utils/actionViewRegistry';
 import { actionSimulationServiceKeys, useLastSimulation, useSimulateProposal } from '../../api/actionSimulationService';
 import { type IProposal, useProposalActions, useProposalBySlug } from '../../api/governanceService';
@@ -188,10 +189,31 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                         action.inputData?.textSignature,
                                     );
                                     // console.log('asdkjsadjsakj ', action, fnSelector);
+                                    const registerDetailsAction = {
+                                        type: GaugeRegistrarActionType.REGISTER_GAUGE,
+                                        inputData: {
+                                            parameters: [
+                                                { value: '0xeE567Fe1712Faf6149d80dA1E6934E354124CfE3' },
+                                                { value: 1 },
+                                                { value: '0x78590B44F9F798212Fd7f446eE9A4183F798f218' },
+                                            ],
+                                        },
+                                        gaugeMetadata: {
+                                            name: 'Test gauge name',
+                                            description: 'Test gauge description.',
+                                            links: [
+                                                { name: 'Test link 1', url: 'http://test123.com' },
+                                                { name: 'Test link 2', url: 'https://test2.com' },
+                                            ],
+                                            avatar: 'ipfs://QmTsCeejcmCCWLNWKDpsVdMg9TYU3sQ6fr1KVnUsHxaPxt',
+                                        },
+                                    };
                                     return customView ? (
                                         <ProposalActions.Item<IProposalActionData>
                                             key={index}
-                                            action={{ ...action, daoId } as IProposalActionData}
+                                            action={
+                                                { ...action, ...registerDetailsAction, daoId } as IProposalActionData
+                                            }
                                             actionFunctionSelector={fnSelector}
                                             chainId={chainId}
                                             CustomComponent={customView.componentDetails}

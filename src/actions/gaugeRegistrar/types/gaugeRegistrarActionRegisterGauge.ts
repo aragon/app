@@ -21,4 +21,8 @@ export interface IGaugeRegistrarActionRegisterGauge extends Omit<IProposalAction
         avatar?: string;
         links?: IResource[];
     };
+    /**
+     * DAO id.
+     */
+    daoId: string;
 }

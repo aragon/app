@@ -3,7 +3,7 @@ import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { toFunctionSelector } from 'viem';
 import { PluginContractName } from '../../shared/api/daoService/domain/enum';
 import { gaugeRegistrarRegisterGaugeActionCreate } from './components/gaugeRegistrarRegisterGaugeActionCreate';
-import { GaugeRegistrarRegisterGaugeActionReadOnly } from './components/gaugeRegistrarRegisterGaugeActionReadOnly';
+import { GaugeRegistrarRegisterGaugeActionDetails } from './components/gaugeRegistrarRegisterGaugeActionDetails';
 import { GaugeRegistrarUnregisterGaugeAction } from './components/gaugeRegistrarUnegisterGaugeAction';
 import { GaugeRegistrarUnegisterGaugeActionReadOnly } from './components/gaugeRegistrarUnegisterGaugeActionReadOnly/gaugeRegistrarUnegisterGaugeActionReadOnly';
 import { registerGaugeAbi, unregisterGaugeAbi } from './constants/gaugeRegistrarAbi';
@@ -28,9 +28,10 @@ export const initGaugeRegistrarActionViews = () => {
             permissionId: gaugeRegistrarPermissionId,
             functionSelector: toFunctionSelector(registerGaugeAbi),
             // functionSelector: '0xFnSelector',
-            textSignature: 'registerGauge(address,uint8,address,bytes)',
+            // textSignature: 'registerGauge(address,uint8,address,bytes)',
+            textSignature: 'setMetadata(bytes)',
             componentCreate: { [GaugeRegistrarActionType.REGISTER_GAUGE]: gaugeRegistrarRegisterGaugeActionCreate },
-            componentDetails: GaugeRegistrarRegisterGaugeActionReadOnly,
+            componentDetails: GaugeRegistrarRegisterGaugeActionDetails,
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-RegisterGauge`,
                 name: t('app.actions.gaugeRegistrar.composer.registerActionName'),
@@ -54,7 +55,7 @@ export const initGaugeRegistrarActionViews = () => {
             id: 'unregister-gauge',
             permissionId: gaugeRegistrarPermissionId,
             functionSelector: toFunctionSelector(unregisterGaugeAbi),
-            textSignature: 'setMetadata(bytes)',
+            // textSignature: 'setMetadata(bytes)',
             componentCreate: { [GaugeRegistrarActionType.UNREGISTER_GAUGE]: GaugeRegistrarUnregisterGaugeAction },
             componentDetails: GaugeRegistrarUnegisterGaugeActionReadOnly,
             getItem: ({ contractAddress, t }) => ({

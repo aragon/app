@@ -2,18 +2,24 @@
 
 import { type IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import {
+    addressUtils,
     Avatar,
+    ChainEntityType,
     DefinitionList,
     type IProposalAction,
     type IProposalActionComponentProps,
     type IProposalActionInputDataParameter,
     Link,
+    useBlockExplorer,
 } from '@aragon/gov-ui-kit';
+import { useDao } from '../../../../shared/api/daoService';
 import { useTranslations } from '../../../../shared/components/translationsProvider';
+import { networkDefinitions } from '../../../../shared/constants/networkDefinitions';
+import { ipfsUtils } from '../../../../shared/utils/ipfsUtils';
 import { GaugeIncentiveType } from '../../types/enum/gaugeIncentiveType';
 import type { IGaugeRegistrarActionRegisterGauge } from '../../types/gaugeRegistrarActionRegisterGauge';
 
-export interface IGaugeRegistrarRegisterGaugeActionReadOnlyProps
+export interface IGaugeRegistrarRegisterGaugeActionDetailsProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
 
 const parseRegisterGaugeInputData = (
@@ -28,29 +34,42 @@ const parseRegisterGaugeInputData = (
     };
 };
 
-export const GaugeRegistrarRegisterGaugeActionReadOnly: React.FC<IGaugeRegistrarRegisterGaugeActionReadOnlyProps> = (
+export const GaugeRegistrarRegisterGaugeActionDetails: React.FC<IGaugeRegistrarRegisterGaugeActionDetailsProps> = (
     props,
 ) => {
     const { action } = props;
-    const { gaugeMetadata } = action as unknown as IGaugeRegistrarActionRegisterGauge;
+
+    const { gaugeMetadata, daoId } = action as unknown as IGaugeRegistrarActionRegisterGauge;
     const { qiTokenAddress, incentiveType, rewardControllerAddress } = parseRegisterGaugeInputData(
         action.inputData?.parameters ?? [],
     );
     const { name, description, avatar, links } = gaugeMetadata ?? {};
+    const avatarSrc = ipfsUtils.cidToSrc(avatar);
+
     const { t } = useTranslations();
+    const { buildEntityUrl } = useBlockExplorer();
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+
+    const chainId = dao ? networkDefinitions[dao.network].id : undefined;
+    const qiTokenAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: qiTokenAddress, chainId });
+    const rewardControllerAddressLink = buildEntityUrl({
+        type: ChainEntityType.ADDRESS,
+        id: rewardControllerAddress,
+        chainId,
+    });
 
     return (
         <DefinitionList.Container>
             <DefinitionList.Item term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.name.label')}>
                 {name}
             </DefinitionList.Item>
+            <DefinitionList.Item term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.avatar.label')}>
+                <Avatar src={avatarSrc} size="md" />
+            </DefinitionList.Item>
             <DefinitionList.Item
                 term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.description.label')}
             >
                 {description}
-            </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.avatar.label')}>
-                <Avatar src={avatar as string} size="md" />
             </DefinitionList.Item>
             {links && (
                 <DefinitionList.Item
@@ -65,8 +84,12 @@ export const GaugeRegistrarRegisterGaugeActionReadOnly: React.FC<IGaugeRegistrar
                     </div>
                 </DefinitionList.Item>
             )}
-            <DefinitionList.Item term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.qiToken.label')}>
-                {qiTokenAddress}
+            <DefinitionList.Item
+                term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.qiToken.label')}
+                link={{ href: qiTokenAddressLink }}
+                copyValue={qiTokenAddress}
+            >
+                {addressUtils.truncateAddress(qiTokenAddress)}
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.incentive.label')}
@@ -75,8 +98,10 @@ export const GaugeRegistrarRegisterGaugeActionReadOnly: React.FC<IGaugeRegistrar
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.rewardController.label')}
+                link={{ href: rewardControllerAddressLink }}
+                copyValue={rewardControllerAddress}
             >
-                {rewardControllerAddress}
+                {addressUtils.truncateAddress(rewardControllerAddress)}
             </DefinitionList.Item>
         </DefinitionList.Container>
     );
