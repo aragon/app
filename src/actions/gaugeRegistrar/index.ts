@@ -6,6 +6,7 @@ import { PluginContractName } from '../../shared/api/daoService/domain/enum';
 import { GaugeRegistrarRegisterGaugeAction } from './components/gaugeRegistrarRegisterGaugeAction';
 import { GaugeRegistrarRegisterGaugeActionReadOnly } from './components/gaugeRegistrarRegisterGaugeActionReadOnly';
 import { GaugeRegistrarUnregisterGaugeAction } from './components/gaugeRegistrarUnegisterGaugeAction';
+import { GaugeRegistrarUnegisterGaugeActionReadOnly } from './components/gaugeRegistrarUnegisterGaugeActionReadOnly/gaugeRegistrarUnegisterGaugeActionReadOnly';
 import { registerGaugeAbi, unregisterGaugeAbi } from './constants/gaugeRegistrarAbi';
 
 const gaugeRegistrarPermissionId = 'ID_TEST';
@@ -25,8 +26,8 @@ export const initGaugeRegistrarActionViews = () => {
         .register({
             id: 'register-gauge',
             permissionId: gaugeRegistrarPermissionId,
-            // functionSelector: toFunctionSelector(registerGaugeAbi),
-            functionSelector: '0xFnSelector',
+            functionSelector: toFunctionSelector(registerGaugeAbi),
+            // functionSelector: '0xFnSelector',
             textSignature: 'registerGauge(address,uint8,address,bytes)',
             component: { [GaugeRegistrarActionType.REGISTER_GAUGE]: GaugeRegistrarRegisterGaugeAction },
             componentReadOnly: GaugeRegistrarRegisterGaugeActionReadOnly,
@@ -52,8 +53,10 @@ export const initGaugeRegistrarActionViews = () => {
         .register({
             id: 'unregister-gauge',
             permissionId: gaugeRegistrarPermissionId,
-            functionSelector: toFunctionSelector(unregisterGaugeAbi),
+            // functionSelector: toFunctionSelector(unregisterGaugeAbi),
+            functionSelector: '0xFnSelector',
             component: { [GaugeRegistrarActionType.UNREGISTER_GAUGE]: GaugeRegistrarUnregisterGaugeAction },
+            componentReadOnly: GaugeRegistrarUnegisterGaugeActionReadOnly,
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-${GaugeRegistrarActionType.UNREGISTER_GAUGE}`,
                 name: t('app.actions.gaugeRegistrar.composer.unregisterActionName'),

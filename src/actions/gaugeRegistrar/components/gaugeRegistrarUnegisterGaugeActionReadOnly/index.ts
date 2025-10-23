@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-export const RaugeRegistrarUnegisterGaugeActionReadOnly = dynamic(() =>
+export const GaugeRegistrarUnegisterGaugeActionReadOnly = dynamic(() =>
     import('./gaugeRegistrarUnegisterGaugeActionReadOnly').then(
         (mod) => mod.GaugeRegistrarUnegisterGaugeActionReadOnly,
     ),

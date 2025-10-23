@@ -16,7 +16,7 @@ import type { IGaugeRegistrarActionRegisterGauge } from '../../types/gaugeRegist
 export interface IGaugeRegistrarRegisterGaugeActionReadOnlyProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
 
-const parseInputData = (
+const parseRegisterGaugeInputData = (
     params: IProposalActionInputDataParameter[],
 ): { qiTokenAddress: string; incentiveType: number; rewardControllerAddress: string } => {
     const [qiTokenAddress, incentiveType, rewardControllerAddress] = params.map((param) => param.value);
@@ -33,7 +33,7 @@ export const GaugeRegistrarRegisterGaugeActionReadOnly: React.FC<IGaugeRegistrar
 ) => {
     const { action } = props;
     const { gaugeMetadata } = action as unknown as IGaugeRegistrarActionRegisterGauge;
-    const { qiTokenAddress, incentiveType, rewardControllerAddress } = parseInputData(
+    const { qiTokenAddress, incentiveType, rewardControllerAddress } = parseRegisterGaugeInputData(
         action.inputData?.parameters ?? [],
     );
     const { name, description, avatar, links } = gaugeMetadata ?? {};
