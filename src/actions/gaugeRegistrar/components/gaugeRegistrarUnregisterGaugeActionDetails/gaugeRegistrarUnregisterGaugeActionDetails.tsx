@@ -2,17 +2,17 @@
 
 import { type IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import { useDao } from '@/shared/api/daoService';
 import {
     type IProposalActionComponentProps,
     type IProposalActionInputDataParameter,
     Spinner,
 } from '@aragon/gov-ui-kit';
-import { type IDaoPlugin, useDao } from '../../../../shared/api/daoService';
 import { useGaugeRegistrarGauges } from '../../hooks/useGaugeRegistrarGauges';
 import { GaugeRegistrarGaugeListItem } from '../gaugeRegistrarGaugeListItem';
 
-export interface IGaugeRegistrarUnregisterGaugeActionReadOnlyProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin>> {}
+export interface IGaugeRegistrarUnregisterGaugeActionDetailsProps
+    extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
 
 const parseUnregisterGaugeInputData = (
     params: IProposalActionInputDataParameter[],
@@ -26,7 +26,7 @@ const parseUnregisterGaugeInputData = (
     };
 };
 
-export const GaugeRegistrarUnegisterGaugeActionReadOnly: React.FC<IGaugeRegistrarUnregisterGaugeActionReadOnlyProps> = (
+export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<IGaugeRegistrarUnregisterGaugeActionDetailsProps> = (
     props,
 ) => {
     const { action } = props;

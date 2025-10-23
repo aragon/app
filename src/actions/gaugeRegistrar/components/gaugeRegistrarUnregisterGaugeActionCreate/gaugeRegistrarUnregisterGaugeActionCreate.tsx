@@ -2,11 +2,11 @@
 
 import { type IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import { useDao } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { type IProposalActionComponentProps, CardEmptyState, IconType } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import { useDao } from '../../../../shared/api/daoService';
-import { useDialogContext } from '../../../../shared/components/dialogProvider';
-import { useTranslations } from '../../../../shared/components/translationsProvider';
 import { GaugeRegistrarDialogId } from '../../constants/gaugeRegistrarDialogId';
 import type { IGaugeRegistrarSelectGaugeDialogParams } from '../../dialogs/gaugeRegistrarSelectGaugeDialog';
 import type { IRegisteredGauge } from '../../types/gaugeRegistrar';
