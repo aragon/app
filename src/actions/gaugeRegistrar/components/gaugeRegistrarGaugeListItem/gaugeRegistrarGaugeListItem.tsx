@@ -29,7 +29,7 @@ export const GaugeRegistrarGaugeListItem: React.FC<IGaugeRegistrarGaugeListItemP
         >
             <div className="flex items-center justify-between gap-12">
                 <div className="flex items-center gap-4">
-                    <Avatar src={gauge.avatar as string} size="lg" />
+                    <Avatar src={gauge.avatar} size="lg" />
                     <div className="flex flex-col gap-1 leading-tight font-normal">
                         <p className="text-lg text-neutral-800">{gauge.name}</p>
                         <p className="text-sm text-neutral-500">{addressUtils.truncateAddress(gauge.gaugeAddress)}</p>

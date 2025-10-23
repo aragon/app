@@ -1,6 +1,5 @@
 import type { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { addressUtils } from '@aragon/gov-ui-kit';
 import { useReadContract } from 'wagmi';
 
 const gaugeRegistrarAbi = [
@@ -57,17 +56,17 @@ export const useGaugeRegistrarGauges = (params: IUseGaugeRegistrarGaugesParams) 
     });
 
     // We need to get metadata from the backend API (name, description, avatar), but we also need registrar specific data.
-    const { data: gauges } = useGauges({ network, pluginAddress: gaugeVoterAddress });
-
-    const mergedData =
-        gauges && gaugesFromRegistrar
-            ? gaugesFromRegistrar.map((gaugeFromRegistrar) => {
-                  const gauge = gauges.find((gauge) =>
-                      addressUtils.isAddressEqual(gauge.address, gaugeFromRegistrar.gaugeAddress),
-                  );
-                  return { ...gauge, ...gaugeFromRegistrar };
-              })
-            : undefined;
+    // const { data: gauges } = useGauges({ network, pluginAddress: gaugeVoterAddress });
+    //
+    // const mergedData =
+    //     gauges && gaugesFromRegistrar
+    //         ? gaugesFromRegistrar.map((gaugeFromRegistrar) => {
+    //               const gauge = gauges.find((gauge) =>
+    //                   addressUtils.isAddressEqual(gauge.address, gaugeFromRegistrar.gaugeAddress),
+    //               );
+    //               return { ...gauge, ...gaugeFromRegistrar };
+    //           })
+    //         : undefined;
 
     return {
         data: [

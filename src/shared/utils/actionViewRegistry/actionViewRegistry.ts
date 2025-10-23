@@ -29,7 +29,11 @@ export class ActionViewRegistry {
         return this;
     }
 
-    getViewBySelector = (selector: Hex): IActionViewDescriptor | undefined => {
+    getViewBySelector = (selector?: Hex): IActionViewDescriptor | undefined => {
+        if (!selector) {
+            return undefined;
+        }
+
         return this.views.find((view) => view.functionSelector === selector);
     };
 

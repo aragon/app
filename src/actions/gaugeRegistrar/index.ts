@@ -5,7 +5,7 @@ import { toFunctionSelector } from 'viem';
 import { gaugeRegistrarRegisterGaugeActionCreate } from './components/gaugeRegistrarRegisterGaugeActionCreate';
 import { GaugeRegistrarRegisterGaugeActionDetails } from './components/gaugeRegistrarRegisterGaugeActionDetails';
 import { GaugeRegistrarUnregisterGaugeActionCreate } from './components/gaugeRegistrarUnregisterGaugeActionCreate';
-import { GaugeRegistrarUnregisterGaugeActionDetails } from './components/gaugeRegistrarUnregisterGaugeActionDetails/gaugeRegistrarUnregisterGaugeActionDetails';
+import { GaugeRegistrarUnregisterGaugeActionDetails } from './components/gaugeRegistrarUnregisterGaugeActionDetails';
 import { registerGaugeAbi, unregisterGaugeAbi } from './constants/gaugeRegistrarAbi';
 import { GaugeRegistrarActionType } from './types/enum/gaugeRegistrarActionType';
 
@@ -27,9 +27,8 @@ export const initGaugeRegistrarActionViews = () => {
             id: 'register-gauge',
             permissionId: gaugeRegistrarPermissionId,
             functionSelector: toFunctionSelector(registerGaugeAbi),
-            // functionSelector: '0xFnSelector',
             // textSignature: 'registerGauge(address,uint8,address,bytes)',
-            textSignature: 'setMetadata(bytes)',
+            // textSignature: 'setMetadata(bytes)',
             componentCreate: { [GaugeRegistrarActionType.REGISTER_GAUGE]: gaugeRegistrarRegisterGaugeActionCreate },
             componentDetails: GaugeRegistrarRegisterGaugeActionDetails,
             getItem: ({ contractAddress, t }) => ({
