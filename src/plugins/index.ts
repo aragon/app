@@ -2,8 +2,6 @@ import { initialiseAdminPlugin } from './adminPlugin';
 import { adminPluginDialogsDefinitions } from './adminPlugin/constants/adminPluginDialogsDefinitions';
 import { initialiseCapitalDistributorPlugin } from './capitalDistributorPlugin';
 import { capitalDistributorPluginDialogsDefinitions } from './capitalDistributorPlugin/constants/capitalDistributorPluginDialogsDefinitions';
-import { initialiseGaugeRegistrarPlugin } from './gaugeRegistrarPlugin';
-import { gaugeRegistrarPluginDialogsDefinitions } from './gaugeRegistrarPlugin/constants/gaugeRegistrarPluginDialogsDefinitions';
 import { initialiseLockToVotePlugin } from './lockToVotePlugin';
 import { lockToVotePluginDialogsDefinitions } from './lockToVotePlugin/constants/lockToVotePluginDialogsDefinitions';
 import { initialiseMultisigPlugin } from './multisigPlugin';
@@ -20,13 +18,11 @@ export const initialisePlugins = () => {
     initialiseCapitalDistributorPlugin();
     initialiseLockToVotePlugin();
     initialiseSppPlugin();
-    initialiseGaugeRegistrarPlugin();
 };
 
 export const pluginDialogsDefinitions = {
     ...adminPluginDialogsDefinitions,
     ...capitalDistributorPluginDialogsDefinitions,
-    ...gaugeRegistrarPluginDialogsDefinitions,
     ...lockToVotePluginDialogsDefinitions,
     ...multisigPluginDialogsDefinitions,
     ...sppPluginDialogsDefinitions,

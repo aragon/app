@@ -1,13 +1,13 @@
 import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { toFunctionSelector } from 'viem';
-import { GaugeRegistrarActionType } from '../../plugins/gaugeRegistrarPlugin/types/enum/gaugeRegistrarActionType';
 import { PluginContractName } from '../../shared/api/daoService/domain/enum';
 import { GaugeRegistrarRegisterGaugeAction } from './components/gaugeRegistrarRegisterGaugeAction';
 import { GaugeRegistrarRegisterGaugeActionReadOnly } from './components/gaugeRegistrarRegisterGaugeActionReadOnly';
 import { GaugeRegistrarUnregisterGaugeAction } from './components/gaugeRegistrarUnegisterGaugeAction';
 import { GaugeRegistrarUnegisterGaugeActionReadOnly } from './components/gaugeRegistrarUnegisterGaugeActionReadOnly/gaugeRegistrarUnegisterGaugeActionReadOnly';
 import { registerGaugeAbi, unregisterGaugeAbi } from './constants/gaugeRegistrarAbi';
+import { GaugeRegistrarActionType } from './types/enum/gaugeRegistrarActionType';
 
 const gaugeRegistrarPermissionId = 'ID_TEST';
 // const gaugeRegistrarPermissionId = keccak256(toBytes('GAUGE_REGISTRAR_ROLE'));
