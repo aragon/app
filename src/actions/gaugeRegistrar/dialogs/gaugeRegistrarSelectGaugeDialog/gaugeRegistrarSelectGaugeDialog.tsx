@@ -1,11 +1,12 @@
 'use client';
 
-import type { Network } from '@/shared/api/daoService';
+import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataList, Dialog, invariant, StateSkeletonBar, StateSkeletonCircular } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
+import { useDaoPlugins } from '../../../../shared/hooks/useDaoPlugins';
 import { GaugeRegistrarGaugeListItem } from '../../components/gaugeRegistrarGaugeListItem';
 import { useGaugeRegistrarGauges } from '../../hooks/useGaugeRegistrarGauges';
 import type { IRegisteredGauge } from '../../types/gaugeRegistrar';
@@ -16,9 +17,9 @@ export interface IGaugeRegistrarSelectGaugeDialogParams {
      */
     pluginAddress: string;
     /**
-     * Network to query
+     * DAO to update gauges for.
      */
-    network: Network;
+    dao: IDao;
     /**
      * Callback called when a gauge is selected
      */
@@ -32,12 +33,17 @@ export const GaugeRegistrarSelectGaugeDialog: React.FC<IGaugeRegistrarSelectGaug
     const { location } = props;
     invariant(location.params != null, 'GaugeRegistrarSelectGaugeDialog: params must be defined');
 
-    const { pluginAddress, network, onGaugeSelected } = location.params;
+    const { pluginAddress, dao, onGaugeSelected } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
-    const { data: gauges, isLoading } = useGaugeRegistrarGauges({ pluginAddress, network });
+    const [plugin] = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_REGISTRAR }) ?? [];
+    const { data: gauges, isLoading } = useGaugeRegistrarGauges({
+        pluginAddress,
+        network: dao.network,
+        gaugeVoterAddress: 'plugin.meta.address',
+    });
 
     const [selectedGauge, setSelectedGauge] = useState<IRegisteredGauge | null>(null);
 
@@ -52,12 +58,14 @@ export const GaugeRegistrarSelectGaugeDialog: React.FC<IGaugeRegistrarSelectGaug
         <>
             <Dialog.Header
                 onClose={close}
-                title={t('app.plugins.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.title')}
+                title={t('app.actions.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.title')}
             />
-            <Dialog.Content description={t('app.plugins.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.description')}>
+            <Dialog.Content description={t('app.actions.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.description')}>
                 <div className="flex w-full flex-col gap-3 py-2 md:gap-2">
                     {isLoading && (
-                        <DataList.Root entityLabel={t('app.plugins.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.entityLabel')}>
+                        <DataList.Root
+                            entityLabel={t('app.actions.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.entityLabel')}
+                        >
                             {Array.from({ length: 3 }).map((_, index) => (
                                 <DataList.Item
                                     key={index}
@@ -76,7 +84,9 @@ export const GaugeRegistrarSelectGaugeDialog: React.FC<IGaugeRegistrarSelectGaug
                         </DataList.Root>
                     )}
                     {!isLoading && gauges != null && gauges.length > 0 && (
-                        <DataList.Root entityLabel={t('app.plugins.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.entityLabel')}>
+                        <DataList.Root
+                            entityLabel={t('app.actions.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.entityLabel')}
+                        >
                             {gauges.map((gauge: IRegisteredGauge) => (
                                 <GaugeRegistrarGaugeListItem
                                     key={gauge.gaugeAddress}
@@ -89,19 +99,19 @@ export const GaugeRegistrarSelectGaugeDialog: React.FC<IGaugeRegistrarSelectGaug
                     )}
                     {!isLoading && (gauges == null || gauges.length === 0) && (
                         <div className="flex items-center justify-center py-8 text-neutral-500">
-                            {t('app.plugins.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.emptyState')}
+                            {t('app.actions.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.emptyState')}
                         </div>
                     )}
                 </div>
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{
-                    label: t('app.plugins.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.submit'),
+                    label: t('app.actions.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.submit'),
                     onClick: handleSubmit,
                     disabled: selectedGauge == null,
                 }}
                 secondaryAction={{
-                    label: t('app.plugins.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.cancel'),
+                    label: t('app.actions.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.cancel'),
                     onClick: () => close(),
                 }}
             />

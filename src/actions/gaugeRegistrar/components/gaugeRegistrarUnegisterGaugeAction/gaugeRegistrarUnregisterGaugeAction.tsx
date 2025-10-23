@@ -24,7 +24,7 @@ export const GaugeRegistrarUnregisterGaugeAction: React.FC<IGaugeRegistrarUnregi
 
     const handleOpenGaugeSelectDialog = () => {
         const params: IGaugeRegistrarSelectGaugeDialogParams = {
-            network: dao!.network,
+            dao: dao!,
             pluginAddress: action.to,
             onGaugeSelected: setSelectedGauge,
         };
@@ -38,11 +38,11 @@ export const GaugeRegistrarUnregisterGaugeAction: React.FC<IGaugeRegistrarUnregi
 
     return (
         <CardEmptyState
-            heading={t('app.plugins.gaugeRegistrar.gaugeRegistrarUnregisterGaugeAction.emptyCard.heading')}
-            description={t('app.plugins.gaugeRegistrar.gaugeRegistrarUnregisterGaugeAction.emptyCard.description')}
+            heading={t('app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeAction.emptyCard.heading')}
+            description={t('app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeAction.emptyCard.description')}
             objectIllustration={{ object: 'SETTINGS' }}
             secondaryButton={{
-                label: t('app.plugins.gaugeRegistrar.gaugeRegistrarUnregisterGaugeAction.emptyCard.action'),
+                label: t('app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeAction.emptyCard.action'),
                 onClick: handleOpenGaugeSelectDialog,
                 iconLeft: IconType.PLUS,
             }}

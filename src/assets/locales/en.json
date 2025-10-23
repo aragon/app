@@ -48,7 +48,22 @@
             "placeholder": "ENS or 0x…"
           }
         },
-        "gaugeRegistrarRegisterGaugeActionReadOnly": {}
+        "gaugeRegistrarRegisterGaugeActionReadOnly": {},
+        "gaugeRegistrarSelectGaugeDialog": {
+          "cancel": "Cancel",
+          "description": "Select a gauge to remove from the next epoche.",
+          "emptyState": "No gauges available",
+          "entityLabel": "Gauge",
+          "submit": "Select gauge",
+          "title": "Select gauge"
+        },
+        "gaugeRegistrarUnregisterGaugeAction": {
+          "emptyCard": {
+            "action": "Select gauge",
+            "description": "Select a gauge to remove from the next epoche.",
+            "heading": "Select gauge"
+          }
+        }
       }
     },
     "application": {
