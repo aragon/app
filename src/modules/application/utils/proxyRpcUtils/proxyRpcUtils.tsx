@@ -1,6 +1,7 @@
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
+import { safeJsonParse } from '@/shared/utils/responseUtils';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export interface IRpcRequestParams {
@@ -64,7 +65,7 @@ export class ProxyRpcUtils {
             }
 
             try {
-                const parsedResult = (await result.json()) as unknown;
+                const parsedResult = await safeJsonParse(result);
 
                 return NextResponse.json(parsedResult);
             } catch (jsonError) {

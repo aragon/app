@@ -1,3 +1,4 @@
+import { safeJsonParse } from '@/shared/utils/responseUtils';
 import type { IErrorResponse } from './domain';
 
 export class AragonBackendServiceError extends Error {
@@ -20,8 +21,14 @@ export class AragonBackendServiceError extends Error {
 
     static fromResponse = async (response: Response): Promise<AragonBackendServiceError> => {
         try {
-            const error = (await response.json()) as IErrorResponse;
-            return new AragonBackendServiceError(error.code, error.description, response.status);
+            const parsedData = await safeJsonParse(response);
+
+            if (parsedData && typeof parsedData === 'object' && 'code' in parsedData && 'description' in parsedData) {
+                const error = parsedData as IErrorResponse;
+                return new AragonBackendServiceError(error.code, error.description, response.status);
+            }
+
+            return new AragonBackendServiceError(this.parseErrorCode, this.parseErrorDescription, response.status);
         } catch {
             return new AragonBackendServiceError(this.parseErrorCode, this.parseErrorDescription, response.status);
         }

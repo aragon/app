@@ -16,7 +16,11 @@ describe('AragonBackendServiceError class', () => {
     describe('fromResponse', () => {
         it('generates an AragonBackendServiceError instance from fetch Response', async () => {
             const error = { code: 'code', description: 'description' };
-            const response = generateResponse({ json: () => Promise.resolve(error), status: 400 });
+            const response = generateResponse({
+                status: 400,
+                headers: new Headers({ 'content-type': 'application/json' }),
+                text: () => Promise.resolve(JSON.stringify(error)),
+            });
             const aragonError = await AragonBackendServiceError.fromResponse(response);
             expect(aragonError.code).toEqual(error.code);
             expect(aragonError.description).toEqual(error.description);
@@ -24,7 +28,11 @@ describe('AragonBackendServiceError class', () => {
         });
 
         it('generates a default error instance on parse response error', async () => {
-            const response = generateResponse({ json: () => Promise.reject(new Error('oops')), status: 500 });
+            const response = generateResponse({
+                status: 500,
+                headers: new Headers({ 'content-type': 'application/json' }),
+                text: () => Promise.resolve('not json'),
+            });
             const aragonError = await AragonBackendServiceError.fromResponse(response);
             expect(aragonError.code).toEqual(AragonBackendServiceError.parseErrorCode);
             expect(aragonError.description).toEqual(AragonBackendServiceError.parseErrorDescription);
