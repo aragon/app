@@ -1,5 +1,5 @@
 .next
-.yarn
 node_modules
 CHANGELOG.md
 public/web-workers
+pnpm-lock.yaml
