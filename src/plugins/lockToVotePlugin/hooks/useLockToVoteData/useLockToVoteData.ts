@@ -10,7 +10,11 @@ import { useAccount, useReadContract } from 'wagmi';
 import { networkDefinitions } from '../../../../shared/constants/networkDefinitions';
 import { LockToVotePluginDialogId } from '../../constants/lockToVotePluginDialogId';
 import type { ILockToVoteLockUnlockDialogParams } from '../../dialogs/lockToVoteLockUnlockDialog';
+import type { ILockToVoteWithdrawDialogParams } from '../../dialogs/lockToVoteWithdrawDialog';
 import type { ILockToVotePlugin } from '../../types';
+import { lockToVoteFeeUtils } from '../../utils/lockToVoteFeeUtils';
+import { useLockToVoteFeeData } from '../useLockToVoteFeeData';
+import { useLockToVoteTokenId } from '../useLockToVoteTokenId';
 import { useUnlockGuard } from '../useUnlockGuard';
 
 export interface IUseLockToVoteDataParams {
@@ -77,7 +81,7 @@ const lockManagerAbi = [
 export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToVoteDataResult => {
     const { plugin, daoId, onBalanceUpdated } = params;
     const { token } = plugin.settings;
-    const { lockManagerAddress } = plugin;
+    const { lockManagerAddress, votingEscrow } = plugin;
 
     const { open } = useDialogContext();
     const { t } = useTranslations();
@@ -101,6 +105,104 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
 
     const lockedAmount = lockedBalance ?? BigInt(0);
 
+    // Query fee settings from DynamicExitQueue contract
+    const {
+        data: feePercentFromContract,
+        isLoading: isFeePercentLoading,
+        error: feePercentError,
+    } = useReadContract({
+        abi: [
+            {
+                type: 'function',
+                name: 'feePercent',
+                inputs: [],
+                outputs: [{ name: '', type: 'uint256' }],
+                stateMutability: 'view',
+            },
+        ] as const,
+        functionName: 'feePercent',
+        address: lockManagerAddress as Hex,
+        chainId,
+    });
+
+    const {
+        data: minFeePercentFromContract,
+        isLoading: isMinFeePercentLoading,
+        error: minFeePercentError,
+    } = useReadContract({
+        abi: [
+            {
+                type: 'function',
+                name: 'minFeePercent',
+                inputs: [],
+                outputs: [{ name: '', type: 'uint256' }],
+                stateMutability: 'view',
+            },
+        ] as const,
+        functionName: 'minFeePercent',
+        address: lockManagerAddress as Hex,
+        chainId,
+    });
+
+    console.log('📊 Contract fee queries:', {
+        lockManagerAddress,
+        feePercentFromContract,
+        minFeePercentFromContract,
+        isFeePercentLoading,
+        isMinFeePercentLoading,
+        feePercentError: feePercentError?.message,
+        minFeePercentError: minFeePercentError?.message,
+    });
+
+    // Use contract values if available, otherwise fall back to plugin settings
+    const feePercent =
+        feePercentFromContract != null ? Number(feePercentFromContract) : (plugin.settings.feePercent ?? 0);
+    const minFeePercent =
+        minFeePercentFromContract != null ? Number(minFeePercentFromContract) : (plugin.settings.minFeePercent ?? 0);
+
+    // TODO: Remove this test override once we have a DAO with fees configured
+    // Temporarily treat all lock-to-vote plugins as having fees configured for testing
+    const TEST_MODE = true;
+    const hasFeesConfigured = TEST_MODE || feePercent > 0 || minFeePercent > 0;
+
+    // Query escrow address from DynamicExitQueue contract if fees are configured
+    const { data: escrowAddressFromContract } = useReadContract({
+        abi: [
+            {
+                type: 'function',
+                name: 'escrow',
+                inputs: [],
+                outputs: [{ name: '', type: 'address' }],
+                stateMutability: 'view',
+            },
+        ] as const,
+        functionName: 'escrow',
+        address: lockManagerAddress as Hex,
+        chainId,
+        query: { enabled: hasFeesConfigured },
+    });
+
+    // Get tokenId if escrow address is available (for fee-based withdrawals)
+    const escrowAddress = (escrowAddressFromContract ?? votingEscrow?.curveAddress) as Hex | undefined;
+    const { tokenId, refetch: refetchTokenId } = useLockToVoteTokenId({
+        escrowAddress: escrowAddress!,
+        userAddress: address,
+        chainId,
+        enabled: hasFeesConfigured && escrowAddress != null && address != null,
+    });
+
+    // Get fee data if tokenId is available and fees are configured
+    const {
+        ticket,
+        feeAmount,
+        refetch: refetchFeeData,
+    } = useLockToVoteFeeData({
+        tokenId: tokenId!,
+        lockManagerAddress: lockManagerAddress as Hex,
+        chainId,
+        enabled: hasFeesConfigured && tokenId != null,
+    });
+
     const {
         allowance = BigInt(0),
         balance,
@@ -119,6 +221,8 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
     const refetchData = () => {
         invalidateQueries();
         void refetchLockedAmount();
+        void refetchTokenId();
+        void refetchFeeData();
     };
 
     const approveTokens = (amount: bigint, onSuccess: () => void) => {
@@ -173,7 +277,59 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
         }
     };
 
-    const unlockTokens = () => unlockGuard.check();
+    const unlockTokens = () => {
+        console.log('🔓 unlockTokens called', {
+            hasFeesConfigured,
+            feePercent,
+            minFeePercent,
+            escrowAddress,
+            tokenId,
+            ticket,
+            feeAmount,
+            dao: !!dao,
+        });
+
+        // If no fees configured, use existing unlock flow
+        if (!hasFeesConfigured) {
+            console.log('❌ No fees configured, using legacy unlock flow');
+            unlockGuard.check();
+            return;
+        }
+
+        // Check if we should bypass the fee dialog (both fees are 0)
+        if (ticket && !lockToVoteFeeUtils.shouldShowFeeDialog(plugin.settings)) {
+            console.log('❌ Should bypass fee dialog (both fees are 0)');
+            unlockGuard.check();
+            return;
+        }
+
+        // If we have all the required data, open the withdraw dialog with fee information
+        if (tokenId != null && ticket != null && feeAmount != null && dao != null) {
+            console.log('✅ Opening withdraw dialog with fee information');
+            const params: ILockToVoteWithdrawDialogParams = {
+                tokenId,
+                token,
+                lockManagerAddress: lockManagerAddress as Hex,
+                ticket,
+                lockedAmount,
+                feeAmount,
+                network: dao.network,
+                onSuccess: refetchData,
+            };
+
+            open(LockToVotePluginDialogId.WITHDRAW_WITH_FEE, { params });
+            return;
+        }
+
+        // Fall back to existing flow if data is not yet available
+        console.log('❌ Missing required data, falling back to legacy unlock flow', {
+            hasTokenId: tokenId != null,
+            hasTicket: ticket != null,
+            hasFeeAmount: feeAmount != null,
+            hasDao: dao != null,
+        });
+        unlockGuard.check();
+    };
 
     const isLoading = isLockedBalanceLoading || isAllowanceCheckLoading || unlockGuard.isLoading;
 
