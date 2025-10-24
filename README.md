@@ -42,27 +42,7 @@ corepack enable
 pnpm install
 ```
 
-**Note**: pnpm will automatically use the correct Node.js version (22.20.0) as configured in the project.
-
-## Why pnpm?
-
-This project uses pnpm for package management, which provides:
-
-- **Faster installs**: 70-90% faster than traditional package managers
-- **Disk efficiency**: Shared dependency storage reduces disk usage by 22-23%
-- **Enhanced security**: Built-in protection against supply chain attacks
-- **Automatic Node version management**: No need for nvm or manual version switching
-- **Strict dependency resolution**: Prevents phantom dependencies
-
-### Performance Comparison
-
-| Metric                | Yarn 4.9.2 | pnpm 10.18.3 | Improvement     |
-| --------------------- | ---------- | ------------ | --------------- |
-| **Cold Install**      | 37.5s      | 10.8s        | **71% faster**  |
-| **Warm Install**      | 25.3s      | 2.5s         | **90% faster**  |
-| **node_modules Size** | 1.8GB      | 1.4GB        | **22% smaller** |
-
-_Measured on the Aragon App project during migration from Yarn to pnpm (Oct 2025)_
+**Note**: pnpm will automatically use the correct Node.js version as configured in the project.
 
 3. Create a `.env` file in the root of the project and populate it with the required environment variables. Use the
    `.env.example` file as a template:

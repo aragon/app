@@ -28,11 +28,19 @@ jobs:
           GPG_PASSPHRASE: op://kv_app_infra/arabot-1_SIGN_CERTS/credential
           GPG_PRIVATE_KEY: op://kv_app_infra/arabot-1_SIGN_CERTS/private_key
           ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
+
+      - name: Checkout actions
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+
       - name: Setup
-        uses: aragon/app/.github/actions/setup@main
+        uses: ./.github/actions/setup
         with:
           token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
-          node-version: 22
+
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v6.3.0
         with:

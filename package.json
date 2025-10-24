@@ -27,8 +27,8 @@
     "@number-flow/react": "^0.5.10",
     "@radix-ui/react-dialog": "1.1.14",
     "@radix-ui/react-toggle-group": "1.1.10",
-    "@reown/appkit": "^1.8.9",
-    "@reown/appkit-adapter-wagmi": "^1.8.9",
+    "@reown/appkit": "^1.8.10",
+    "@reown/appkit-adapter-wagmi": "^1.8.10",
     "@reown/walletkit": "^1.2.11",
     "@sentry/core": "10.18.0",
     "@sentry/nextjs": "^10.18.0",
@@ -49,7 +49,7 @@
     "recharts": "^3.2.1",
     "server-only": "^0.0.1",
     "viem": "^2.38.0",
-    "wagmi": "^2.17.5"
+    "wagmi": "^2.18.1"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.1",
@@ -91,7 +91,8 @@
     "ts-jest": "^29.4.4",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.0",
-    "vercel": "^48.1.6"
+    "vercel": "^48.1.6",
+    "webpack": "^5.96.1"
   },
   "repository": {
     "type": "git",
@@ -108,8 +109,13 @@
     "tailwind"
   ],
   "engines": {
-    "node": ">=22.0.0",
-    "pnpm": ">=10.0.0"
+    "node": ">=22.0.0"
   },
-  "packageManager": "pnpm@10.18.3"
+  "packageManager": "pnpm@10.19.0",
+  "pnpm": {
+    "overrides": {
+      "@reown/appkit": "^1.8.10"
+    },
+    "packageExtensions": {}
+  }
 }

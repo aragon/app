@@ -18,10 +18,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup
-        uses: aragon/app/.github/actions/setup@main
+      - name: Checkout actions
+        uses: actions/checkout@v4.2.2
         with:
-          node-version: 22
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+      - name: Setup
+        uses: ./.github/actions/setup
       - name: Restore NextJs cache
         uses: actions/cache@v4.3.0
         with:

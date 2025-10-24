@@ -26,6 +26,7 @@ permissions:
 env:
   VERCEL_SCOPE: aragon-app
   VERCEL_ARGS: ${{ (inputs.env == 'production' && '--prod') || '' }}
+  ENABLE_EXPERIMENTAL_COREPACK: "1"
 
 jobs:
   deploy:
@@ -39,10 +40,14 @@ jobs:
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
           op-vault: "kv_app_infra"
-      - name: Setup
-        uses: aragon/app/.github/actions/setup@main
+      - name: Checkout actions
+        uses: actions/checkout@v4.2.2
         with:
-          node-version: 22
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+      - name: Setup
+        uses: ./.github/actions/setup
       - name: Retrieve NextJs build
         uses: actions/download-artifact@v5.0.0
         with:

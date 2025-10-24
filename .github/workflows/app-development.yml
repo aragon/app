@@ -27,12 +27,16 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Setup
-        uses: aragon/app/.github/actions/setup@main
+      - name: Checkout actions
+        uses: actions/checkout@v4.2.2
         with:
-          # Checkout full history to correclty check changeset status
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
           fetch-depth: 0
-          node-version: 22
       - name: Retrieve NextJs build
         uses: actions/download-artifact@v5.0.0
         with:
