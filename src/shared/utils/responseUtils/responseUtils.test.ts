@@ -4,9 +4,9 @@
 
 import { generateResponse } from '@/shared/testUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
-import { safeJsonParse } from '@/shared/utils/responseUtils';
+import { responseUtils } from '@/shared/utils/responseUtils';
 
-describe('safeJsonParse', () => {
+describe('responseUtils.safeJsonParse', () => {
     beforeEach(() => {
         jest.spyOn(monitoringUtils, 'logError').mockClear();
     });
@@ -14,7 +14,7 @@ describe('safeJsonParse', () => {
     describe('204 No Content responses', () => {
         it('should return null for 204 status', async () => {
             const response = generateResponse({ status: 204 });
-            const result = await safeJsonParse(response);
+            const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBeNull();
             expect(monitoringUtils.logError).not.toHaveBeenCalled();
@@ -27,7 +27,7 @@ describe('safeJsonParse', () => {
                 status: 200,
                 headers: { 'content-type': 'text/plain' },
             });
-            const result = await safeJsonParse(response);
+            const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBeNull();
             expect(monitoringUtils.logError).not.toHaveBeenCalled();
@@ -35,7 +35,7 @@ describe('safeJsonParse', () => {
 
         it('should return null for missing content-type', async () => {
             const response = new Response('Hello World', { status: 200 });
-            const result = await safeJsonParse(response);
+            const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBeNull();
             expect(monitoringUtils.logError).not.toHaveBeenCalled();
@@ -48,7 +48,7 @@ describe('safeJsonParse', () => {
                 status: 200,
                 headers: { 'content-type': 'application/json' },
             });
-            const result = await safeJsonParse(response);
+            const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBeNull();
             expect(monitoringUtils.logError).not.toHaveBeenCalled();
@@ -59,7 +59,7 @@ describe('safeJsonParse', () => {
                 status: 200,
                 headers: { 'content-type': 'application/json' },
             });
-            const result = await safeJsonParse(response);
+            const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBeNull();
             expect(monitoringUtils.logError).not.toHaveBeenCalled();
@@ -73,7 +73,7 @@ describe('safeJsonParse', () => {
                 status: 200,
                 headers: { 'content-type': 'application/json' },
             });
-            const result = await safeJsonParse(response);
+            const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toEqual(jsonData);
             expect(monitoringUtils.logError).not.toHaveBeenCalled();
@@ -85,7 +85,7 @@ describe('safeJsonParse', () => {
                 status: 200,
                 headers: { 'content-type': 'application/json' },
             });
-            const result = await safeJsonParse(response);
+            const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toEqual(jsonData);
             expect(monitoringUtils.logError).not.toHaveBeenCalled();
@@ -97,7 +97,7 @@ describe('safeJsonParse', () => {
                 status: 200,
                 headers: { 'content-type': 'application/json; charset=utf-8' },
             });
-            const result = await safeJsonParse(response);
+            const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toEqual(jsonData);
             expect(monitoringUtils.logError).not.toHaveBeenCalled();
@@ -111,7 +111,7 @@ describe('safeJsonParse', () => {
                 status: 200,
                 headers: { 'content-type': 'application/json' },
             });
-            const result = await safeJsonParse(response);
+            const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBeNull();
             expect(monitoringUtils.logError).toHaveBeenCalledWith(expect.any(Error), {
@@ -131,7 +131,7 @@ describe('safeJsonParse', () => {
                 status: 200,
                 headers: { 'content-type': 'application/json' },
             });
-            const result = await safeJsonParse(response);
+            const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBeNull();
             expect(monitoringUtils.logError).toHaveBeenCalledWith(expect.any(Error), {
@@ -151,7 +151,7 @@ describe('safeJsonParse', () => {
                 status: 200,
                 headers: { 'content-type': 'application/json' },
             });
-            const result = await safeJsonParse(response);
+            const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toEqual({ data: 'x'.repeat(200) });
             expect(monitoringUtils.logError).not.toHaveBeenCalled();
@@ -165,7 +165,7 @@ describe('safeJsonParse', () => {
                 status: 404,
                 headers: { 'content-type': 'application/json' },
             });
-            const result = await safeJsonParse(response);
+            const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toEqual(errorData);
             expect(monitoringUtils.logError).not.toHaveBeenCalled();
@@ -177,7 +177,7 @@ describe('safeJsonParse', () => {
                 status: 500,
                 headers: { 'content-type': 'application/json' },
             });
-            const result = await safeJsonParse(response);
+            const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toEqual(errorData);
             expect(monitoringUtils.logError).not.toHaveBeenCalled();
@@ -189,7 +189,7 @@ describe('safeJsonParse', () => {
                 status: 500,
                 headers: { 'content-type': 'application/json' },
             });
-            const result = await safeJsonParse(response);
+            const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBeNull();
             expect(monitoringUtils.logError).toHaveBeenCalledWith(expect.any(Error), {
@@ -210,7 +210,7 @@ describe('safeJsonParse', () => {
                 status: 200,
                 headers: { 'content-type': 'application/json' },
             });
-            const result = await safeJsonParse(response);
+            const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBeNull();
             expect(monitoringUtils.logError).not.toHaveBeenCalled();
@@ -221,7 +221,7 @@ describe('safeJsonParse', () => {
                 status: 200,
                 headers: { 'content-type': 'application/json' },
             });
-            const result = await safeJsonParse(response);
+            const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBe(true);
             expect(monitoringUtils.logError).not.toHaveBeenCalled();
@@ -232,7 +232,7 @@ describe('safeJsonParse', () => {
                 status: 200,
                 headers: { 'content-type': 'application/json' },
             });
-            const result = await safeJsonParse(response);
+            const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBe(42);
             expect(monitoringUtils.logError).not.toHaveBeenCalled();
@@ -243,7 +243,7 @@ describe('safeJsonParse', () => {
                 status: 200,
                 headers: { 'content-type': 'application/json' },
             });
-            const result = await safeJsonParse(response);
+            const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBe('hello world');
             expect(monitoringUtils.logError).not.toHaveBeenCalled();

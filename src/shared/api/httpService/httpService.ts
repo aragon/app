@@ -1,4 +1,4 @@
-import { safeJsonParse } from '@/shared/utils/responseUtils';
+import { responseUtils } from '@/shared/utils/responseUtils';
 import type { HttpServiceErrorHandler, IRequestOptions, IRequestParams } from './httpService.api';
 
 export class HttpService {
@@ -30,7 +30,7 @@ export class HttpService {
             throw error;
         }
 
-        const result = await safeJsonParse(response);
+        const result = await responseUtils.safeJsonParse(response);
         return result as TData;
     };
 

@@ -1,4 +1,4 @@
-import { safeJsonParse } from '@/shared/utils/responseUtils';
+import { responseUtils } from '@/shared/utils/responseUtils';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export class ProxyBackendUtils {
@@ -19,7 +19,10 @@ export class ProxyBackendUtils {
 
         // JSON responses
         if (contentType.includes('application/json')) {
-            const parsedResult = await safeJsonParse(result);
+            const parsedResult = await responseUtils.safeJsonParseForResponse(result);
+            if (parsedResult == null) {
+                return new NextResponse(null, { status: result.status, headers: result.headers });
+            }
             return NextResponse.json(parsedResult, { status: result.status, headers: result.headers });
         }
 
