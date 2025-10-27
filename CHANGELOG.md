@@ -1,5 +1,29 @@
 # @aragon/app
 
+## 1.13.0
+
+### Minor Changes
+
+- [#789](https://github.com/aragon/app/pull/789) [`3ea6451`](https://github.com/aragon/app/commit/3ea645156bddadf12d66699f57e80edf181fa4f0) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update dependencies
+
+- [#787](https://github.com/aragon/app/pull/787) [`676db27`](https://github.com/aragon/app/commit/676db27765f8f5ce37641004e2b07a234696e675) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Enforce Nodejs version checks
+
+- [#808](https://github.com/aragon/app/pull/808) [`82b13bb`](https://github.com/aragon/app/commit/82b13bbc75d1e4423f659bffe06cfaca08480f7f) Thanks [@jjavieralv](https://github.com/jjavieralv)! - Add authentication headers between FE and BE
+
+- [#799](https://github.com/aragon/app/pull/799) [`dafa927`](https://github.com/aragon/app/commit/dafa927bad39c987492abf427af080079dc80782) Thanks [@milosh86](https://github.com/milosh86)! - Implement proposal execute guard
+
+- [#802](https://github.com/aragon/app/pull/802) [`f5274dd`](https://github.com/aragon/app/commit/f5274dd9f2c38592e8be457df91c3fcfc1e42758) Thanks [@milosh86](https://github.com/milosh86)! - Add support for Avalanche
+
+### Patch Changes
+
+- [#798](https://github.com/aragon/app/pull/798) [`aec9fe8`](https://github.com/aragon/app/commit/aec9fe811c7c8acead049a2aaeeb92d6ff015393) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Fix issue with erroneous warning for token related proposal actions
+
+- [#830](https://github.com/aragon/app/pull/830) [`d7af187`](https://github.com/aragon/app/commit/d7af187bd0198121a50f5c76ba80f8f9f982e281) Thanks [@evanaronson](https://github.com/evanaronson)! - Fix token voting repo address on Avalanche
+
+- [#806](https://github.com/aragon/app/pull/806) [`a65ba4e`](https://github.com/aragon/app/commit/a65ba4ec7ab9906bea68263d3099ed11b57fbd28) Thanks [@milosh86](https://github.com/milosh86)! - Fix handling of invalid DAO urls
+
+- [#811](https://github.com/aragon/app/pull/811) [`4dfe943`](https://github.com/aragon/app/commit/4dfe943ff1f8982f2923e45e2d9bf2eeb1bea4fc) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement onchain query for wrapped token balances instead of fetching deprecated backend value
+
 ## 1.12.0
 
 ### Minor Changes
