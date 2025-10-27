@@ -1,4 +1,8 @@
-export interface IEpochStats {
+/**
+ * Epoch-level metrics data from the backend /epochMetrics/:pluginAddress/:network endpoint.
+ * This provides metadata about the current voting epoch for the gauge list.
+ */
+export interface IEpochMetrics {
     /**
      * Unique identifier of the epoch.
      */
@@ -8,19 +12,15 @@ export interface IEpochStats {
      */
     isVotingPeriod: boolean;
     /**
-     * End time of the current epoch.
+     * End time of the current epoch (Unix timestamp in milliseconds).
      */
     endTime: number;
     /**
-     * Total votes in the current epoch.
+     * Total votes cast across all gauges in the current epoch.
      */
     totalVotes: number;
     /**
-     * User's total voting power.
+     * Total voting power available in this epoch.
      */
-    votingPower: number;
-    /**
-     * User's used voting power.
-     */
-    usedVotingPower: number;
+    totalVotingPower: string;
 }

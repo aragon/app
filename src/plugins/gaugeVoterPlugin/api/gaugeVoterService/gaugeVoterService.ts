@@ -1,11 +1,12 @@
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
-import type { IGauge, IGaugePlugin } from './domain';
-import type { IGetGaugeListParams, IGetGaugePluginParams } from './gaugeVoterService.api';
+import type { IEpochMetrics, IGauge, IGaugePlugin } from './domain';
+import type { IGetEpochMetricsParams, IGetGaugeListParams, IGetGaugePluginParams } from './gaugeVoterService.api';
 
 class GaugeVoterService extends AragonBackendService {
     private urls = {
         gaugePlugin: '/v2/plugins/by-dao/:network/:daoAddress',
         gauges: '/v2/gauge/:pluginAddress/:network',
+        epochMetrics: '/epochMetrics/:pluginAddress/:network',
     };
 
     /**
@@ -29,6 +30,16 @@ class GaugeVoterService extends AragonBackendService {
      */
     getGaugeList = async (params: IGetGaugeListParams): Promise<IPaginatedResponse<IGauge>> => {
         const result = await this.request<IPaginatedResponse<IGauge>>(this.urls.gauges, params);
+        return result;
+    };
+
+    /**
+     * Fetches epoch-level metrics for the gauge list.
+     * Returns metadata about the current voting epoch including voting period status,
+     * end time, and total votes.
+     */
+    getEpochMetrics = async (params: IGetEpochMetricsParams): Promise<IEpochMetrics> => {
+        const result = await this.request<IEpochMetrics>(this.urls.epochMetrics, params);
         return result;
     };
 }

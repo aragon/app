@@ -20,3 +20,10 @@ export interface IGetGaugeListUrlParams {
 }
 
 export interface IGetGaugeListParams extends IRequestUrlParams<IGetGaugeListUrlParams> {}
+
+export interface IGetEpochMetricsUrlParams {
+    pluginAddress: Hex;
+    network: Network;
+}
+
+export interface IGetEpochMetricsParams extends IRequestUrlParams<IGetEpochMetricsUrlParams> {}
