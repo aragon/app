@@ -35,8 +35,8 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
       - name: Build ${{ inputs.env }} application
         run: |
-          pnpm setup ${{ inputs.env }}
-          pnpm build
+          pnpm run setup ${{ inputs.env }}
+          pnpm run build
       - name: Store NextJs build
         uses: actions/upload-artifact@v4.6.2
         with:

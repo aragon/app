@@ -7,7 +7,7 @@
   "private": true,
   "license": "GPL-3.0",
   "scripts": {
-    "dev": "cross-env pnpm setup local && next dev --turbopack",
+    "dev": "cross-env pnpm run setup local && next dev --turbopack",
     "build": "NODE_OPTIONS=--max-old-space-size=6144 next build --no-lint",
     "build:analyze": "cross-env ANALYZE=true next build --no-lint",
     "start": "next start",
@@ -115,7 +115,6 @@
   "pnpm": {
     "overrides": {
       "@reown/appkit": "^1.8.10"
-    },
-    "packageExtensions": {}
+    }
   }
 }
