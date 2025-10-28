@@ -71,6 +71,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const isVotingPeriod = epochMetrics ? now >= epochMetrics.epochVoteStart && now <= epochMetrics.epochVoteEnd : true; // Fallback to true if no epoch metrics
 
     const tokenSymbol = plugin?.meta.settings.token.symbol;
+    const tokenDecimals = plugin?.meta.settings.token.decimals ?? 18;
 
     // Fetch formatted user voting data with backend → RPC fallback
     const {
@@ -87,6 +88,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
         gaugeAddresses,
         gauges,
         epochTotalVotingPower,
+        tokenDecimals,
         enabled: isUserConnected && !!plugin?.meta.address,
     });
 
@@ -186,6 +188,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         onSelect={handleSelectGauge}
                         onViewDetails={handleViewDetails}
                         isUserConnected={isUserConnected}
+                        isUserVotesLoading={isUserDataLoading}
                         isVotingPeriod={isVotingPeriod}
                         tokenSymbol={tokenSymbol}
                         gaugeVotes={gaugeVotes.map((v) => ({

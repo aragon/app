@@ -11,8 +11,8 @@ import type {
 /**
  * Transforms raw BigInt voting power into display-ready format.
  */
-const formatVotingPower = (rawValue: bigint): IVotingPowerData => {
-    const decimalValue = formatUnits(rawValue, 18);
+const formatVotingPower = (rawValue: bigint, tokenDecimals: number): IVotingPowerData => {
+    const decimalValue = formatUnits(rawValue, tokenDecimals);
     const numericValue = Number(decimalValue);
 
     const formatted = formatterUtils.formatNumber(decimalValue, {
@@ -37,6 +37,7 @@ export const useGaugeVoterPageData = (params: IUseGaugeVoterPageDataParams): IUs
         gaugeAddresses,
         gauges,
         epochTotalVotingPower = BigInt(0),
+        tokenDecimals = 18,
         enabled = true,
     } = params;
 
@@ -57,9 +58,9 @@ export const useGaugeVoterPageData = (params: IUseGaugeVoterPageDataParams): IUs
     });
 
     // Transform raw data to view-ready format
-    const votingPower = formatVotingPower(rawVotingPower);
-    const usedVotingPower = formatVotingPower(rawUsedVotingPower);
-    const epochVotingPower = formatVotingPower(epochTotalVotingPower);
+    const votingPower = formatVotingPower(rawVotingPower, tokenDecimals);
+    const usedVotingPower = formatVotingPower(rawUsedVotingPower, tokenDecimals);
+    const epochVotingPower = formatVotingPower(epochTotalVotingPower, tokenDecimals);
 
     // Calculate usage percentage (0-1)
     const usagePercentage = votingPower.value > 0 ? usedVotingPower.value / votingPower.value : 0;
@@ -69,7 +70,7 @@ export const useGaugeVoterPageData = (params: IUseGaugeVoterPageDataParams): IUs
 
     // Transform gauge votes to include formatted values with backend → RPC fallback
     const gaugeVotes: IGaugeVote[] = rawGaugeVotes.map((vote, index) => {
-        const formattedUserVotes = formatterUtils.formatNumber(formatUnits(vote.userVotes, 18), {
+        const formattedUserVotes = formatterUtils.formatNumber(formatUnits(vote.userVotes, tokenDecimals), {
             format: NumberFormat.TOKEN_AMOUNT_SHORT,
         });
 
@@ -84,7 +85,7 @@ export const useGaugeVoterPageData = (params: IUseGaugeVoterPageDataParams): IUs
 
         // Fallback: Use backend if available and non-zero, otherwise use RPC
         const totalVotesForGauge = backendTotalVotes > BigInt(0) ? backendTotalVotes : rpcTotalVotes;
-        const totalVotesDecimal = formatUnits(totalVotesForGauge, 18);
+        const totalVotesDecimal = formatUnits(totalVotesForGauge, tokenDecimals);
         const formattedTotalVotes = formatterUtils.formatNumber(totalVotesDecimal, {
             format: NumberFormat.TOKEN_AMOUNT_SHORT,
         });

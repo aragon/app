@@ -24,6 +24,10 @@ export interface IUseGaugeVoterPageDataParams {
      */
     epochTotalVotingPower?: bigint;
     /**
+     * Token decimals used for formatting values (defaults to 18).
+     */
+    tokenDecimals?: number;
+    /**
      * Whether to enable the query.
      */
     enabled?: boolean;
@@ -66,7 +70,7 @@ export interface IVotingPowerData {
      */
     formatted: string;
     /**
-     * Decimal number value (converted from 18 decimals).
+     * Decimal number value (converted using token decimals).
      */
     value: number;
 }
