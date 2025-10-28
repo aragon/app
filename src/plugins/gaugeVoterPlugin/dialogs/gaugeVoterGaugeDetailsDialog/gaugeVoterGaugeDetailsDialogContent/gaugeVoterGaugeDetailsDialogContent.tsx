@@ -18,7 +18,7 @@ export interface IGaugeVoterGaugeDetailsDialogContentProps {
      */
     tokenSymbol: string;
     /**
-     * MOCK DATA - User's votes on this gauge (temporary).
+     * User's votes on this gauge from blockchain.
      */
     userVotes: number;
 }
@@ -31,12 +31,7 @@ export const GaugeVoterGaugeDetailsDialogContent: React.FC<IGaugeVoterGaugeDetai
     const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[network].id });
     const gaugeAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: gauge.address });
 
-    // Use mock user votes passed from parent
     const hasVoted = userVotes > 0;
-
-    // MOCK rewards calculation
-    const mockRewards = getMockRewardsData();
-    const userRewards = mockRewards.getUserRewards(userVotes);
 
     return (
         <div className="flex flex-col gap-y-4">
@@ -48,28 +43,20 @@ export const GaugeVoterGaugeDetailsDialogContent: React.FC<IGaugeVoterGaugeDetai
                 >
                     {addressUtils.truncateAddress(gauge.address)}
                 </DefinitionList.Item>
-                {/* TODO: Backend returns links as a string, need to parse or update backend to return array */}
-                {gauge.links && (
-                    <DefinitionList.Item
-                        term={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.links')}
-                        link={{ href: gauge.links, isExternal: true }}
-                    >
-                        {gauge.links}
-                    </DefinitionList.Item>
+                {gauge.links && gauge.links.length > 0 && (
+                    <>
+                        {gauge.links.map((link) => (
+                            <DefinitionList.Item
+                                key={link.url}
+                                term={link.name}
+                                link={{ href: link.url, isExternal: true }}
+                            >
+                                {link.url}
+                            </DefinitionList.Item>
+                        ))}
+                    </>
                 )}
-                <DefinitionList.Item
-                    term={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.totalRewards')}
-                >
-                    {mockRewards.totalRewards.toLocaleString()} {tokenSymbol}
-                </DefinitionList.Item>
-                <DefinitionList.Item
-                    term={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.yourRewards')}
-                    description={t(
-                        'app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.yourRewardsDescription',
-                    )}
-                >
-                    {userRewards} {tokenSymbol}
-                </DefinitionList.Item>
+                {/* TODO: Implement rewards calculation when backend/blockchain data is available */}
                 <DefinitionList.Item
                     term={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.haveYouVotedFor')}
                 >

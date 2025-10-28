@@ -21,7 +21,7 @@ export interface IGauge {
     creatorAddress: Hex;
     name: string | null;
     description: string | null;
-    links: IGaugeLink[];
+    links?: IGaugeLink[];
     avatar: string | null;
     isActive: boolean;
     metrics: {

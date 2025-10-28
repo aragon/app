@@ -50,6 +50,10 @@ export interface IGaugeVoterGaugeListProps {
      * User's votes per gauge from blockchain.
      */
     gaugeVotes: IGaugeUserVote[];
+    /**
+     * Total voting power for the epoch (for percentage calculations).
+     */
+    totalEpochVotingPower?: string;
 }
 
 export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) => {
@@ -63,6 +67,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
         isVotingPeriod,
         tokenSymbol,
         gaugeVotes,
+        totalEpochVotingPower,
     } = props;
 
     const { t } = useTranslations();
@@ -85,9 +90,6 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
     };
 
     const gaugeList = gaugeListData?.pages.flatMap((page) => page.data) ?? [];
-
-    // Calculate total epoch votes from all gauges
-    const totalEpochVotes = gaugeList.reduce((sum, gauge) => sum + gauge.metrics.totalMemberVoteCount, 0);
 
     return (
         <DataListRoot
@@ -115,7 +117,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
                             isVoted={votedGauges?.includes(gauge.address) ?? false}
                             onSelect={onSelect}
                             onViewDetails={onViewDetails}
-                            totalEpochVotes={totalEpochVotes}
+                            totalEpochVotingPower={totalEpochVotingPower}
                             isVotingPeriod={isVotingPeriod}
                             tokenSymbol={tokenSymbol}
                             userVotes={userVotesForGauge}

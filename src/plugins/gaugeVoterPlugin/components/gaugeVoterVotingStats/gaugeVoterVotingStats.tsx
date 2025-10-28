@@ -30,7 +30,14 @@ export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (pro
 
     const { t } = useTranslations();
 
-    const usagePercentage = (Number(userUsedVotingPower) / Number(userVotingPower)) * 100;
+    // Calculate usage percentage, handling division by zero
+    const userVotingPowerNum = Number(userVotingPower);
+    const userUsedVotingPowerNum = Number(userUsedVotingPower);
+    const usagePercentage = userVotingPowerNum > 0 ? (userUsedVotingPowerNum / userVotingPowerNum) * 100 : 0;
+
+    const formattedUsagePercentage = formatterUtils.formatNumber(usagePercentage / 100, {
+        format: NumberFormat.PERCENTAGE_SHORT,
+    });
 
     const stats = [
         {
@@ -49,8 +56,7 @@ export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (pro
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.yourVotes'),
         },
         {
-            value: !isUserConnected ? '-' : usagePercentage.toString(),
-            suffix: !isUserConnected ? undefined : '%',
+            value: !isUserConnected ? '-' : (formattedUsagePercentage ?? '0%'),
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.usedVotes'),
         },
     ];

@@ -9,9 +9,9 @@ export interface IGaugeVoterGaugeListItemStructureProps {
      */
     gauge: IGauge;
     /**
-     * Total votes across all gauges for percentage calculation.
+     * Total voting power for the epoch for percentage calculation.
      */
-    totalEpochVotes?: number;
+    totalEpochVotingPower?: string;
     /**
      * Whether this gauge is currently selected for voting.
      */
@@ -41,7 +41,7 @@ export interface IGaugeVoterGaugeListItemStructureProps {
      */
     tokenSymbol: string;
     /**
-     * MOCK DATA - User's votes on this gauge (temporary until blockchain integration).
+     * User's votes on this gauge from blockchain.
      */
     userVotes: number;
 }
@@ -49,7 +49,7 @@ export interface IGaugeVoterGaugeListItemStructureProps {
 export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItemStructureProps> = (props) => {
     const {
         gauge,
-        totalEpochVotes,
+        totalEpochVotingPower,
         isSelected,
         isVoted,
         onSelect,
@@ -61,23 +61,23 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
     } = props;
     const { t } = useTranslations();
 
-    const gaugeTotalVotes = gauge.metrics.totalMemberVoteCount;
-    const formattedTotalVotes = formatterUtils.formatNumber(gaugeTotalVotes, {
+    // Use the gauge's voting power (sum of all votes on this gauge)
+    const gaugeVotingPower = Number(gauge.metrics.totalGaugeVotingPower);
+    const formattedGaugeVotingPower = formatterUtils.formatNumber(gaugeVotingPower, {
         format: NumberFormat.TOKEN_AMOUNT_SHORT,
     });
 
-    // Use mock user votes passed from parent (will be replaced with blockchain reads)
     const formattedUserVotes = !isUserConnected
         ? '-'
         : userVotes > 0
           ? formatterUtils.formatNumber(userVotes, { format: NumberFormat.TOKEN_AMOUNT_SHORT })
           : t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.noVotes');
 
-    // Calculate percentage if total epoch votes is available
-    const percentage = totalEpochVotes && totalEpochVotes > 0 ? gaugeTotalVotes / totalEpochVotes : 0;
-    const formattedPercentage = totalEpochVotes
-        ? formatterUtils.formatNumber(percentage, { format: NumberFormat.PERCENTAGE_SHORT })
-        : null;
+    // Calculate percentage of total epoch voting power
+    const totalEpochPower = totalEpochVotingPower ? Number(totalEpochVotingPower) : 0;
+    const percentage = totalEpochPower > 0 ? gaugeVotingPower / totalEpochPower : 0;
+    const formattedPercentage =
+        totalEpochPower > 0 ? formatterUtils.formatNumber(percentage, { format: NumberFormat.PERCENTAGE_SHORT }) : null;
 
     const truncatedAddress = addressUtils.truncateAddress(gauge.address);
 
@@ -130,7 +130,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
                         {t('app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.totalVotes')}
                     </p>
                     <p className="text-base text-neutral-800 md:text-lg">
-                        {formattedTotalVotes} {t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.votes')}
+                        {formattedGaugeVotingPower} {t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.votes')}
                     </p>
                     <p className="text-sm text-neutral-500">
                         {formattedPercentage ? `${formattedPercentage} of total` : '-- of total'}

@@ -177,6 +177,8 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
         userUsedVotingPower: userTotalVotes.toString(),
     };
 
+    console.log('voting stats:', votingStats);
+
     return (
         <Page.Content>
             <Page.Main title={t('app.plugins.gaugeVoter.gaugeVoterGaugesPage.main.title')}>
@@ -194,6 +196,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                             gaugeAddress: v.gaugeAddress,
                             userVotes: Number(v.userVotes),
                         }))}
+                        totalEpochVotingPower={votingStats.epochVotingPower}
                     />
                     <GaugeVoterVotingTerminal
                         daysLeftToVote={daysLeftToVote}
