@@ -1,5 +1,15 @@
 # @aragon/app
 
+## 1.13.1
+
+### Patch Changes
+
+- [#836](https://github.com/aragon/app/pull/836) [`2231b77`](https://github.com/aragon/app/commit/2231b77f847488bbd45d7a889fe75b7203be500f) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Enable Avax
+
+- [#828](https://github.com/aragon/app/pull/828) [`1d1bb45`](https://github.com/aragon/app/commit/1d1bb45891572d75ffc618ff2579ef7fb430aac2) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix JSON parse false-positives from no-content responses
+
+- [#816](https://github.com/aragon/app/pull/816) [`5092895`](https://github.com/aragon/app/commit/50928952479e828b7262c8f483a84c5393eb0f42) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Migrate from Yarn to pnpm, update configurations
+
 ## 1.13.0
 
 ### Minor Changes
