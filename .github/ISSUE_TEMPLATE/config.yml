@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Aragon Discord
+    url: https://discord.gg/aragon
+    about: Join our Discord community for questions and discussions
+  - name: Aragon Documentation
+    url: https://docs.aragon.org
+    about: Read the official documentation
+  - name: Security Issues
+    url: https://github.com/aragon/app/security
+    about: Report security vulnerabilities privately

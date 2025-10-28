@@ -113,6 +113,10 @@
       },
       "layoutDao": {
         "error": {
+          "invalidNetwork": {
+            "description": "We don’t support DAOs on that network.",
+            "title": "Invalid network"
+          },
           "notFound": {
             "description": "We couldn't find the DAO you're looking for.",
             "title": "DAO not found"
