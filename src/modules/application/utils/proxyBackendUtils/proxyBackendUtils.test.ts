@@ -23,10 +23,14 @@ describe('proxyBackend utils', () => {
     });
 
     describe('request', () => {
-        it('calls the rpc endpoint with the specified parameters, parses and returns the result', async () => {
+        it('calls the backend, parses JSON when content-type is application/json, and returns it', async () => {
             const parsedResponse = { result: 'test' };
-            const headers = new Headers();
-            const fetchReturn = generateResponse({ json: jest.fn(() => Promise.resolve(parsedResponse)), headers });
+            const headers = new Headers({ 'content-type': 'application/json' });
+            const fetchReturn = generateResponse({
+                status: 200,
+                headers,
+                text: jest.fn(() => Promise.resolve(JSON.stringify(parsedResponse))),
+            });
             const mockNextResponse = {} as NextResponse;
             fetchSpy.mockResolvedValue(fetchReturn);
             nextResponseJsonSpy.mockReturnValue(mockNextResponse);
@@ -34,9 +38,22 @@ describe('proxyBackend utils', () => {
             const result = await proxyBackendUtils.request(generateNextRequest({ url: 'http://test.com' }));
 
             expect(fetchSpy).toHaveBeenCalled();
-            expect(fetchReturn.json).toHaveBeenCalled();
-            expect(nextResponseJsonSpy).toHaveBeenCalledWith(parsedResponse, fetchReturn);
+            expect(fetchReturn.text).toHaveBeenCalled();
+            expect(nextResponseJsonSpy).toHaveBeenCalledWith(parsedResponse, {
+                status: fetchReturn.status,
+                headers: fetchReturn.headers,
+            });
             expect(result).toEqual(mockNextResponse);
+        });
+
+        it('forwards 204 responses without a body', async () => {
+            const fetchReturn = generateResponse({ status: 204, headers: new Headers() });
+            fetchSpy.mockResolvedValue(fetchReturn);
+
+            const result = await proxyBackendUtils.request(generateNextRequest({ url: 'http://test.com' }));
+
+            expect(nextResponseJsonSpy).not.toHaveBeenCalled();
+            expect(result.status).toEqual(204);
         });
 
         it('appends the authorization header when set', async () => {
@@ -44,7 +61,7 @@ describe('proxyBackend utils', () => {
             process.env.NEXT_SECRET_ARAGON_BACKEND_API_KEY = apiKey;
             await proxyBackendUtils.request(generateNextRequest({ url: 'http://test.com' }));
             const request = fetchSpy.mock.calls[0][1] as NextRequest;
-            expect(request.headers.get('Authorization')).toEqual(`Bearer ${apiKey}`);
+            expect(request.headers.get('X-API-Key')).toEqual(apiKey);
         });
     });
 

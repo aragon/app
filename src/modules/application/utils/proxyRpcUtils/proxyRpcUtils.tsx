@@ -1,6 +1,7 @@
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
+import { responseUtils } from '@/shared/utils/responseUtils';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export interface IRpcRequestParams {
@@ -63,8 +64,17 @@ export class ProxyRpcUtils {
                 );
             }
 
+            // Forward no-content responses as-is without a body
+            if (result.status === 204 || result.status === 205 || result.status === 304) {
+                return new NextResponse(null, { status: result.status, headers: result.headers });
+            }
+
             try {
-                const parsedResult = (await result.json()) as unknown;
+                const parsedResult = await responseUtils.safeJsonParseForResponse(result);
+
+                if (parsedResult == null) {
+                    return new NextResponse(null, { status: result.status, headers: result.headers });
+                }
 
                 return NextResponse.json(parsedResult);
             } catch (jsonError) {

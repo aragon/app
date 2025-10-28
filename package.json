@@ -1,17 +1,18 @@
 {
   "name": "@aragon/app",
-  "version": "1.12.0",
+  "version": "1.13.1",
   "description": "Human-centered DAO infrastructure",
   "author": "Aragon Association",
   "homepage": "https://github.com/aragon/app#readme",
   "private": true,
   "license": "GPL-3.0",
   "scripts": {
-    "dev": "cross-env yarn setup local && next dev --turbopack",
+    "dev": "cross-env pnpm run setup local && next dev --turbopack",
     "build": "NODE_OPTIONS=--max-old-space-size=6144 next build --no-lint",
     "build:analyze": "cross-env ANALYZE=true next build --no-lint",
     "start": "next start",
-    "test": "jest --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "lint": "eslint --max-warnings=0 .",
     "lint:fix": "eslint --fix .",
@@ -22,12 +23,15 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@aragon/gov-ui-kit": "0.0.0-20251014164212",
+    "@aragon/gov-ui-kit": "^1.22.0",
     "@floating-ui/react": "^0.27.16",
     "@number-flow/react": "^0.5.10",
-    "@reown/appkit": "^1.8.9",
-    "@reown/appkit-adapter-wagmi": "^1.8.9",
+    "@radix-ui/react-dialog": "1.1.14",
+    "@radix-ui/react-toggle-group": "1.1.10",
+    "@reown/appkit": "^1.8.10",
+    "@reown/appkit-adapter-wagmi": "^1.8.10",
     "@reown/walletkit": "^1.2.11",
+    "@sentry/core": "10.18.0",
     "@sentry/nextjs": "^10.18.0",
     "@tanstack/react-query": "^5.90.2",
     "@tanstack/react-query-devtools": "^5.90.2",
@@ -46,7 +50,7 @@
     "recharts": "^3.2.1",
     "server-only": "^0.0.1",
     "viem": "^2.38.0",
-    "wagmi": "^2.17.5"
+    "wagmi": "^2.18.1"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.1",
@@ -64,6 +68,7 @@
     "@types/node": "^24.7.0",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.1",
+    "@walletconnect/types": "2.21.10",
     "cross-env": "^10.1.0",
     "eslint": "^9.37.0",
     "eslint-config-next": "^15.5.4",
@@ -87,7 +92,8 @@
     "ts-jest": "^29.4.4",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.0",
-    "vercel": "^48.1.6"
+    "vercel": "^48.1.6",
+    "webpack": "^5.96.1"
   },
   "repository": {
     "type": "git",
@@ -104,8 +110,12 @@
     "tailwind"
   ],
   "engines": {
-    "node": ">=22.0.0",
-    "npm": "please-use-yarn"
+    "node": ">=22.0.0"
   },
-  "packageManager": "yarn@4.9.2"
+  "packageManager": "pnpm@10.19.0",
+  "pnpm": {
+    "overrides": {
+      "@reown/appkit": "^1.8.10"
+    }
+  }
 }

@@ -4,6 +4,7 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { metadataUtils } from '@/shared/utils/metadataUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
+import { networkUtils } from '@/shared/utils/networkUtils';
 import type { Metadata } from 'next';
 
 export interface IGenerateDaoMetadataParams {
@@ -17,6 +18,21 @@ class ApplicationMetadataUtils {
     generateDaoMetadata = async ({ params }: IGenerateDaoMetadataParams): Promise<Metadata> => {
         try {
             const daoPageParams = await params;
+
+            if (!networkUtils.isValidNetwork(daoPageParams.network)) {
+                monitoringUtils.logMessage('Invalid DAO URL', {
+                    context: {
+                        network: daoPageParams.network,
+                        addressOrEns: daoPageParams.addressOrEns,
+                    },
+                });
+
+                return metadataUtils.buildMetadata({
+                    title: 'Invalid DAO URL',
+                    description: 'We don’t support DAOs on that network.',
+                });
+            }
+
             const daoId = await daoUtils.resolveDaoId(daoPageParams);
             const dao = await daoService.getDao({ urlParams: { id: daoId } });
 

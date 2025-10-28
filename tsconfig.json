@@ -27,6 +27,6 @@
     "strictNullChecks": true,
     "target": "ES2017"
   },
-  "exclude": ["node_modules", ".next/**/*", ".vercel/**/*", "coverage", ".yarn/**/*", "public/web-workers/**/*"],
+  "exclude": ["node_modules", ".next/**/*", ".vercel/**/*", "coverage", "public/web-workers/**/*"],
   "include": ["*.config.js", "*.config.ts", "*.config.mjs", ".eslintrc.js", "next-env.d.ts", "src", ".next/types/**/*.ts", "./src/shared/types/media.d.ts", "instrumentation-client.ts"]
 }
