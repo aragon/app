@@ -47,7 +47,7 @@ export const GaugeVoterVoteTransactionDialog: React.FC<IGaugeVoterVoteTransactio
 
     const prepareTransaction = () => gaugeVoterVoteTransactionDialogUtils.buildTransaction({ votes, pluginAddress });
 
-    const onSuccessClick = () => queryClient.invalidateQueries({ queryKey: [GaugeVoterServiceKey.GAUGE_LIST] });
+    const onSuccessClick = () => queryClient.invalidateQueries({ queryKey: [GaugeVoterServiceKey.GAUGES] });
 
     return (
         <TransactionDialog

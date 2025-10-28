@@ -4,7 +4,7 @@ import type { DataListState } from '@aragon/gov-ui-kit';
 import { DataListContainer, DataListPagination, DataListRoot } from '@aragon/gov-ui-kit';
 import { useEffect, useRef } from 'react';
 import type { IGetGaugeListParams } from '../../api/gaugeVoterService';
-import type { IGauge } from '../../api/gaugeVoterService/domain';
+import type { IGaugeReturn } from '../../api/gaugeVoterService/domain';
 import { useGaugeList } from '../../api/gaugeVoterService/queries';
 import { GaugeVoterGaugeListHeading } from './gaugeVoterGaugeListHeading';
 import { GaugeVoterGaugeListItemSkeleton } from './gaugeVoterGaugeListItemSkeleton';
@@ -42,11 +42,11 @@ export interface IGaugeVoterGaugeListProps {
     /**
      * Function to handle gauge selection/deselection.
      */
-    onSelect: (gauge: IGauge) => void;
+    onSelect: (gauge: IGaugeReturn) => void;
     /**
      * Function to handle viewing gauge details.
      */
-    onViewDetails?: (gauge: IGauge) => void;
+    onViewDetails?: (gauge: IGaugeReturn) => void;
     /**
      * Whether the user is connected.
      */
@@ -62,7 +62,7 @@ export interface IGaugeVoterGaugeListProps {
     /**
      * Token symbol for voting power display.
      */
-    tokenSymbol: string;
+    tokenSymbol?: string;
     /**
      * User's votes per gauge from blockchain.
      */

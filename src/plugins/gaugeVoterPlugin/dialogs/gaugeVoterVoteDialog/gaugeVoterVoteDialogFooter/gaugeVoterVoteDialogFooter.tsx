@@ -9,7 +9,7 @@ export interface IGaugeVoterVoteDialogFooterProps {
     /**
      * Token symbol for display.
      */
-    tokenSymbol: string;
+    tokenSymbol?: string;
     /**
      * Total percentage used.
      */

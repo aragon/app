@@ -6,6 +6,7 @@ import { Page } from '@/shared/components/page';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { QueryClient } from '@tanstack/react-query';
 import type { Address } from 'viem';
+import { gaugeListOptions } from '../../api/gaugeVoterService/queries';
 import type { IGaugeVoterPlugin } from '../../types';
 import { GaugeVoterGaugesPageClient } from './gaugeVoterGaugesPageClient';
 
@@ -30,7 +31,10 @@ export const GaugeVoterGaugesPage: React.FC<IGaugeVoterGaugesPageProps> = async 
             pluginAddress: plugin.address as Address,
             network: dao.network,
         },
+        queryParams: {},
     };
+
+    await queryClient.prefetchInfiniteQuery(gaugeListOptions(initialParams));
 
     return (
         <Page.Container queryClient={queryClient}>

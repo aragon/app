@@ -1,47 +1,46 @@
-import type { Network } from '@/shared/api/daoService';
+import type { IResource } from '@/shared/api/daoService';
 import type { Hex } from 'viem';
 
+export interface IGaugePluginToken {
+    network: string;
+    type: string;
+    address: Hex;
+    mintableByDao: boolean;
+    logo: string;
+    ignoreTransfer: boolean;
+    isGovernance: boolean;
+    name: string;
+    symbol: string;
+    decimals: number;
+    underlying: string | null;
+    totalSupply: string;
+    hasDelegate: boolean;
+}
+
+export interface IGaugePluginSettings {
+    stages: unknown[];
+    token: IGaugePluginToken;
+}
+
 /**
- * Gauge plugin response from /v2/plugins/by-dao/:network/:daoAddress?interfaceType=gauge endpoint.
+ * Gauge plugin metadata from the API response.
  */
 export interface IGaugePlugin {
-    _id: string;
-    id: string;
     transactionHash: Hex;
-    blockNumber: number;
     blockTimestamp: number;
-    network: Network;
     address: Hex;
     implementationAddress: Hex;
     interfaceType: 'gauge';
-    status: 'installed' | 'uninstalled';
     isSupported: boolean;
-    daoAddress: Hex;
     tokenAddress: Hex;
-    pluginSetupRepoAddress: Hex;
-    sender: Hex;
     release: string;
     build: string;
     subdomain: string;
-    permissions: Array<{
-        operation: number;
-        where: Hex;
-        who: Hex;
-        condition: Hex;
-        permissionId: Hex;
-    }>;
-    uninstalled: {
-        status: boolean;
-        transactionHash: Hex | null;
-        blockNumber: number | null;
-        blockTimestamp: number | null;
-    };
-    hasTarget: boolean;
     isProcess: boolean;
     isBody: boolean;
     isSubPlugin: boolean;
     metadataIpfs: string | null;
-    name: string | null;
+    name: string;
     description: string | null;
     processKey: string | null;
     votingEscrow: string | null;
@@ -51,9 +50,8 @@ export interface IGaugePlugin {
     enableOfacCheck: boolean | null;
     blockedCountries: string[];
     termsConditionsUrl: string | null;
-    subPlugins: string[];
-    links: string[];
-    createdAt: string;
-    updatedAt: string;
-    __v: number;
+    subPlugins: unknown[];
+    links: IResource[];
+    slug: string;
+    settings: IGaugePluginSettings;
 }

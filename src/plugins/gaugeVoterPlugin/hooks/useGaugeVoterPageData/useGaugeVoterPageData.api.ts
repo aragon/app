@@ -1,6 +1,6 @@
 import type { Network } from '@/shared/api/daoService';
 import type { Hex } from 'viem';
-import type { IGauge } from '../../api/gaugeVoterService/domain';
+import type { IGaugeReturn } from '../../api/gaugeVoterService/domain';
 
 export interface IUseGaugeVoterPageDataParams {
     /**
@@ -18,7 +18,7 @@ export interface IUseGaugeVoterPageDataParams {
     /**
      * Gauge data from backend (for fallback comparison).
      */
-    gauges: IGauge[];
+    gauges: IGaugeReturn[];
     /**
      * Total voting power for the epoch (from backend).
      */

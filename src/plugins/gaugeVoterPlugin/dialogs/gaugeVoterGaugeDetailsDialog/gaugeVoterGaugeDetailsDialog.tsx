@@ -4,7 +4,7 @@ import type { Network } from '@/shared/api/daoService';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import type { IGauge } from '../../api/gaugeVoterService/domain';
+import type { IGaugeReturn } from '../../api/gaugeVoterService/domain';
 import { GaugeVoterGaugeDetailsDialogContent } from './gaugeVoterGaugeDetailsDialogContent';
 import { GaugeVoterGaugeDetailsDialogFooter } from './gaugeVoterGaugeDetailsDialogFooter';
 
@@ -12,7 +12,7 @@ export interface IGaugeVoterGaugeDetailsDialogParams {
     /**
      * The gauge to show details for.
      */
-    gauges: IGauge[];
+    gauges: IGaugeReturn[];
     /**
      * The index of the gauge to show details for.
      */
@@ -25,10 +25,6 @@ export interface IGaugeVoterGaugeDetailsDialogParams {
      * User's total voting power for the epoch.
      */
     totalVotingPower: number;
-    /**
-     * Token symbol for voting power display.
-     */
-    tokenSymbol: string;
     /**
      * User's votes per gauge.
      */
@@ -46,7 +42,7 @@ export const GaugeVoterGaugeDetailsDialog: React.FC<IGaugeVoterGaugeDetailsDialo
 
     invariant(location.params != null, 'GaugeVoterGaugeDetailsDialog: required parameters must be set.');
 
-    const { gauges, selectedIndex, network, tokenSymbol, gaugeVotes } = location.params;
+    const { gauges, selectedIndex, network, gaugeVotes } = location.params;
 
     const { close } = useDialogContext();
 
@@ -74,12 +70,7 @@ export const GaugeVoterGaugeDetailsDialog: React.FC<IGaugeVoterGaugeDetailsDialo
         <>
             <Dialog.Header title={gauge.name ?? 'Gauge'} onClose={close} description={gauge.description ?? undefined} />
             <Dialog.Content className="pb-3">
-                <GaugeVoterGaugeDetailsDialogContent
-                    gauge={gauge}
-                    network={network}
-                    tokenSymbol={tokenSymbol}
-                    userVotes={userVotes}
-                />
+                <GaugeVoterGaugeDetailsDialogContent gauge={gauge} network={network} userVotes={userVotes} />
             </Dialog.Content>
             <GaugeVoterGaugeDetailsDialogFooter
                 onPrevious={handlePrevious}

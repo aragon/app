@@ -26,7 +26,7 @@ export interface IGaugeVoterVotingTerminalProps {
     /**
      * Token symbol for voting power
      */
-    tokenSymbol: string;
+    tokenSymbol?: string;
     /**
      * Token logo URL
      */
@@ -88,7 +88,7 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
                 </p>
                 <div className="flex items-center gap-8 md:gap-3">
                     <div className="flex items-center gap-2">
-                        {tokenLogo && <Avatar size="sm" src={tokenLogo} alt={`${tokenSymbol} token`} />}
+                        {tokenLogo && <Avatar size="sm" src={tokenLogo} />}
                         <div className="flex items-baseline gap-0.5">
                             <span className="text-sm text-neutral-800 md:text-lg">{displayVotingPower}</span>
                             <span className="text-xs text-neutral-500 md:text-base">{tokenSymbol}</span>

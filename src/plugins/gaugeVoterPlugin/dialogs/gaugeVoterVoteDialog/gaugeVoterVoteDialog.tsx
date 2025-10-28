@@ -5,7 +5,7 @@ import { useDialogContext, type IDialogComponentProps } from '@/shared/component
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, formatterUtils, invariant, NumberFormat } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo, useState } from 'react';
-import type { IGauge } from '../../api/gaugeVoterService/domain';
+import type { IGaugeReturn } from '../../api/gaugeVoterService/domain';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
 import type { IGaugeVote, IGaugeVoterVoteTransactionDialogParams } from '../gaugeVoterVoteTransactionDialog';
 import { GaugeVoterVoteDialogContent, type IGaugeVoteAllocation } from './gaugeVoterVoteDialogContent';
@@ -15,7 +15,7 @@ export interface IGaugeVoterVoteDialogParams {
     /**
      * The gauges to vote on.
      */
-    gauges: IGauge[];
+    gauges: IGaugeReturn[];
     /**
      * Gauge voter plugin address.
      */
@@ -31,7 +31,7 @@ export interface IGaugeVoterVoteDialogParams {
     /**
      * Token symbol for voting power display.
      */
-    tokenSymbol: string;
+    tokenSymbol?: string;
     /**
      * User's existing votes per gauge (for prepopulation).
      */
@@ -54,22 +54,28 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
 
     invariant(location.params != null, 'GaugeVoterVoteDialog: required parameters must be set.');
 
-    const { gauges, totalVotingPower, tokenSymbol, gaugeVotes, onRemoveGauge, pluginAddress, network } =
+    const { gauges, totalVotingPower, tokenSymbol, onRemoveGauge, pluginAddress, network, gaugeVotes } =
         location.params;
 
     const { open, close } = useDialogContext();
 
     const [voteAllocations, setVoteAllocations] = useState<IGaugeVoteAllocation[]>(
         gauges.map((gauge) => {
-            // Find existing vote for this gauge
-            const existingVote = gaugeVotes.find((v) => v.gaugeAddress === gauge.address);
-            const existingVoteValue = existingVote ? Number(existingVote.votes) / 1e18 : 0;
+            // Find existing votes for this gauge
+            const existingVote = gaugeVotes.find((gv) => gv.gaugeAddress === gauge.address);
+            const existingVotesBigInt = existingVote?.votes ?? BigInt(0);
+
+            // Calculate percentage from existing votes
             const existingPercentage =
-                existingVoteValue > 0 && totalVotingPower > 0 ? (existingVoteValue / totalVotingPower) * 100 : 0;
+                existingVotesBigInt > 0 && totalVotingPower > 0
+                    ? (Number(existingVotesBigInt) / totalVotingPower) * 100
+                    : 0;
 
             return {
                 gauge,
                 percentage: Math.round(existingPercentage), // Round to whole number
+                existingVotes: existingVotesBigInt,
+                formattedExistingVotes: existingVote?.formattedVotes ?? '0',
             };
         }),
     );

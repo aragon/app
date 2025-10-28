@@ -1,5 +1,6 @@
 import { Network } from '@/shared/api/daoService';
 import { renderHook } from '@testing-library/react';
+import type { Hex } from 'viem';
 import { useGaugeList } from './useGaugeList';
 
 // Mock the service
@@ -19,12 +20,10 @@ describe('useGaugeList hook', () => {
     it('should be defined', () => {
         const params = {
             urlParams: {
-                userAddress: '0x123',
-            },
-            queryParams: {
-                pluginAddress: '0x456',
+                pluginAddress: '0x4564564564564564564564564564564564564564' as Hex,
                 network: Network.ETHEREUM_MAINNET,
             },
+            queryParams: {},
         };
 
         const { result } = renderHook(() => useGaugeList(params));

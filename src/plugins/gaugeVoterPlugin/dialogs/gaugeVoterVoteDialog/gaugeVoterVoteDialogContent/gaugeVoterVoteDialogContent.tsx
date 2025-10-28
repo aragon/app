@@ -1,9 +1,11 @@
-import type { IGauge } from '../../../api/gaugeVoterService/domain';
+import type { IGaugeReturn } from '../../../api/gaugeVoterService/domain';
 import { GaugeVoterVoteDialogItem } from '../gaugeVoterVoteDialogItem';
 
 export interface IGaugeVoteAllocation {
-    gauge: IGauge;
+    gauge: IGaugeReturn;
     percentage: number;
+    existingVotes: bigint;
+    formattedExistingVotes: string;
 }
 
 export interface IGaugeVoterVoteDialogContentProps {
@@ -18,7 +20,7 @@ export interface IGaugeVoterVoteDialogContentProps {
     /**
      * Token symbol for display.
      */
-    tokenSymbol: string;
+    tokenSymbol?: string;
     /**
      * Whether the user has modified allocations.
      */
@@ -43,9 +45,10 @@ export const GaugeVoterVoteDialogContent: React.FC<IGaugeVoterVoteDialogContentP
                     key={allocation.gauge.address}
                     gaugeAddress={allocation.gauge.address}
                     gaugeName={allocation.gauge.name}
-                    gaugeLogo={allocation.gauge.logo}
+                    gaugeAvatar={allocation.gauge.avatar}
                     percentage={allocation.percentage}
-                    userVotes={allocation.gauge.userVotes}
+                    existingVotes={allocation.existingVotes}
+                    formattedExistingVotes={allocation.formattedExistingVotes}
                     totalVotingPower={totalVotingPower}
                     tokenSymbol={tokenSymbol}
                     hasModified={hasModified}

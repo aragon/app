@@ -12,7 +12,7 @@ export interface IGaugeLink {
 /**
  * Gauge data from the backend /v2/gauge/:pluginAddress/:network endpoint.
  */
-export interface IGauge {
+export interface IGaugeReturn {
     network: Network;
     blockNumber: number;
     transactionHash: Hex;

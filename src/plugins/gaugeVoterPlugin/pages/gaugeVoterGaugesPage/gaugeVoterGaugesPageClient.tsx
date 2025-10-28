@@ -4,6 +4,7 @@ import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnecte
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
+import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { Link } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import type { Address } from 'viem';
@@ -11,7 +12,7 @@ import { useAccount } from 'wagmi';
 import { useTranslations } from '../../../../shared/components/translationsProvider';
 import { useDaoPlugins } from '../../../../shared/hooks/useDaoPlugins';
 import type { IGetGaugeListParams } from '../../api/gaugeVoterService';
-import type { IGauge } from '../../api/gaugeVoterService/domain';
+import type { IGaugePlugin, IGaugeReturn } from '../../api/gaugeVoterService/domain';
 import { useEpochMetrics, useGaugeList } from '../../api/gaugeVoterService/queries';
 import { GaugeVoterGaugeList } from '../../components/gaugeVoterGaugeList';
 import { GaugeVoterVotingStats } from '../../components/gaugeVoterVotingStats';
@@ -43,7 +44,9 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const isUserConnected = !!address;
     const { data: gaugeListData } = useGaugeList(initialParams);
 
-    const plugins = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE });
+    const plugins = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE }) as
+        | Array<IFilterComponentPlugin<IGaugePlugin>>
+        | undefined;
     const plugin = plugins?.[0];
 
     // Fetch epoch metrics from backend
@@ -67,7 +70,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const now = Math.floor(Date.now() / 1000); // Convert to seconds
     const isVotingPeriod = epochMetrics ? now >= epochMetrics.epochVoteStart && now <= epochMetrics.epochVoteEnd : true; // Fallback to true if no epoch metrics
 
-    const tokenSymbol = 'PDT';
+    const tokenSymbol = plugin?.meta.settings.token.symbol;
 
     // Fetch formatted user voting data with backend → RPC fallback
     const {
@@ -97,7 +100,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
 
     const selectedCount = selectedGauges.length + votedGaugeAddresses.length;
 
-    const handleSelectGauge = (gauge: IGauge) => {
+    const handleSelectGauge = (gauge: IGaugeReturn) => {
         // Don't allow selection of already voted gauges
         if (votedGaugeAddresses.includes(gauge.address)) {
             return;
@@ -138,13 +141,18 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                     onRemoveGauge: handleRemoveGauge,
                     totalVotingPower: votingPower.value,
                     tokenSymbol: tokenSymbol,
+                    gaugeVotes: gaugeVotes.map((gv) => ({
+                        gaugeAddress: gv.gaugeAddress,
+                        votes: gv.votes,
+                        formattedVotes: gv.formattedVotes,
+                    })),
                 };
                 open(GaugeVoterPluginDialogId.VOTE_GAUGES, { params: voteParams });
             },
         });
     };
 
-    const handleViewDetails = (gauge: IGauge) => {
+    const handleViewDetails = (gauge: IGaugeReturn) => {
         const selectedIndex = gauges.findIndex((g) => g.address === gauge.address);
 
         const gaugeDetailsParams: IGaugeVoterGaugeDetailsDialogParams = {
@@ -152,7 +160,6 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
             selectedIndex,
             network: dao.network,
             totalVotingPower: votingPower.value,
-            tokenSymbol: tokenSymbol,
             gaugeVotes: gaugeVotes.map((gauge) => ({
                 gaugeAddress: gauge.gaugeAddress,
                 userVotes: Number(gauge.votes),
@@ -212,7 +219,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         usagePercentage={usagePercentage}
                         isUserConnected={isUserConnected}
                     />
-                    {links?.map(({ url, name }) => (
+                    {links.map(({ url, name }) => (
                         <Link key={url} href={url} isExternal={true} showUrl={true}>
                             {name}
                         </Link>

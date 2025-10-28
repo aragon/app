@@ -2,21 +2,17 @@ import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { addressUtils, ChainEntityType, DefinitionList, Tag, useBlockExplorer } from '@aragon/gov-ui-kit';
-import type { IGauge } from '../../../api/gaugeVoterService/domain';
+import type { IGaugeReturn } from '../../../api/gaugeVoterService/domain';
 
 export interface IGaugeVoterGaugeDetailsDialogContentProps {
     /**
      * The gauge to display details for.
      */
-    gauge: IGauge;
+    gauge: IGaugeReturn;
     /**
      * Network of the DAO.
      */
     network: Network;
-    /**
-     * Token symbol for voting power display.
-     */
-    tokenSymbol: string;
     /**
      * User's votes on this gauge from blockchain.
      */
@@ -24,7 +20,7 @@ export interface IGaugeVoterGaugeDetailsDialogContentProps {
 }
 
 export const GaugeVoterGaugeDetailsDialogContent: React.FC<IGaugeVoterGaugeDetailsDialogContentProps> = (props) => {
-    const { gauge, network, tokenSymbol, userVotes } = props;
+    const { gauge, network, userVotes } = props;
 
     const { t } = useTranslations();
 

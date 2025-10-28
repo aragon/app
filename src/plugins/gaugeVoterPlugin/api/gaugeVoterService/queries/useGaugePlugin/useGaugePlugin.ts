@@ -16,6 +16,6 @@ export const useGaugePlugin = (params: IUseGaugePluginParams) => {
                 urlParams: { network, daoAddress },
                 queryParams: { interfaceType: 'gauge' },
             }),
-        enabled: enabled && !!network && !!daoAddress,
+        enabled: enabled && !!daoAddress,
     });
 };
