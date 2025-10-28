@@ -10,7 +10,7 @@ import { registerGaugeAbi, unregisterGaugeAbi } from './constants/gaugeRegistrar
 import { GaugeRegistrarActionType } from './types/enum/gaugeRegistrarActionType';
 
 // const gaugeRegistrarPermissionId = 'ID_TEST';
-const gaugeRegistrarPermissionId = keccak256(toBytes('GAUGE_REGISTRAR_ROLE'));
+const gaugeRegistrarPermissionId = keccak256(toBytes('GAUGE_REGISTRAR_ROLE')); // 0xc53f13322128412a2489563b920e2f62ed98f26ed6661ec52113af2c0a2f6667
 
 export const initGaugeRegistrarActionViews = () => {
     actionViewRegistry

@@ -9,6 +9,7 @@ import {
     type IProposalActionsItemDropdownItem,
     type ProposalActionComponent,
     ProposalActions,
+    Spinner,
 } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
@@ -174,13 +175,15 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                     ))}
                 </ProposalActions.Container>
             </ProposalActions.Root>
-            {showActionComposer && (
+            {showActionComposer ? (
                 <ActionComposer
                     daoId={daoId}
                     onAddAction={handleAddAction}
                     allowedActions={allowedActions}
                     daoPermissions={daoPermissions}
                 />
+            ) : (
+                <Spinner variant="primary" size="xl" />
             )}
         </div>
     );
