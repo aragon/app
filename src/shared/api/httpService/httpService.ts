@@ -1,3 +1,4 @@
+import { responseUtils } from '@/shared/utils/responseUtils';
 import type { HttpServiceErrorHandler, IRequestOptions, IRequestParams } from './httpService.api';
 
 export class HttpService {
@@ -29,7 +30,8 @@ export class HttpService {
             throw error;
         }
 
-        return response.json() as TData;
+        const result = await responseUtils.safeJsonParse(response);
+        return result as TData;
     };
 
     private buildUrl = <TUrlParams, TQueryParams, TBody>(
@@ -54,7 +56,7 @@ export class HttpService {
         }
 
         if (this.apiKey != null) {
-            processedHeaders.set('Authorization', `Bearer ${this.apiKey}`);
+            processedHeaders.set('X-API-Key', this.apiKey);
         }
 
         return { method, headers: processedHeaders, ...otherOptions };

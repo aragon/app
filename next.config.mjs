@@ -120,8 +120,15 @@ const nextConfig = {
     // **WARN**: Avoid adding to webpack config, as long term plan for Next.js is to move away from Webpack to Turbopack.
     webpack: (config) => {
         // Configs needed by wallet-connect (see https://docs.walletconnect.com/appkit/next/core/installation#extra-configuration)
-        // Needed only in production builds, Turbopack (used in `yarn dev`) does not require this.
+        // Needed only in production builds, Turbopack (used in `pnpm dev`) does not require this.
         config.externals.push('pino-pretty', 'lokijs', 'encoding');
+
+        // Fix for MetaMask SDK React Native dependencies in browser
+        config.resolve.fallback = {
+            ...config.resolve.fallback,
+            '@react-native-async-storage/async-storage': false,
+            'react-native': false,
+        };
 
         return config;
     },
