@@ -35,7 +35,7 @@
     "@sentry/nextjs": "^10.18.0",
     "@tanstack/react-query": "^5.90.2",
     "@tanstack/react-query-devtools": "^5.90.2",
-    "@walletconnect/core": "^2.22.3",
+    "@walletconnect/core": "^2.21.10",
     "@walletconnect/utils": "^2.21.10",
     "classnames": "^2.5.1",
     "deepmerge-ts": "^7.1.5",
