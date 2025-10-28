@@ -107,5 +107,5 @@
     "node": ">=22.0.0",
     "npm": "please-use-yarn"
   },
-  "packageManager": "yarn@4.9.2"
+  "packageManager": "pnpm@10.19.0"
 }
