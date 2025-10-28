@@ -1,7 +1,7 @@
 import { PluginContractName } from '@/shared/api/daoService/domain/enum';
 import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { toFunctionSelector } from 'viem';
+import { keccak256, toBytes, toFunctionSelector } from 'viem';
 import { gaugeRegistrarRegisterGaugeActionCreate } from './components/gaugeRegistrarRegisterGaugeActionCreate';
 import { GaugeRegistrarRegisterGaugeActionDetails } from './components/gaugeRegistrarRegisterGaugeActionDetails';
 import { GaugeRegistrarUnregisterGaugeActionCreate } from './components/gaugeRegistrarUnregisterGaugeActionCreate';
@@ -9,8 +9,8 @@ import { GaugeRegistrarUnregisterGaugeActionDetails } from './components/gaugeRe
 import { registerGaugeAbi, unregisterGaugeAbi } from './constants/gaugeRegistrarAbi';
 import { GaugeRegistrarActionType } from './types/enum/gaugeRegistrarActionType';
 
-const gaugeRegistrarPermissionId = 'ID_TEST';
-// const gaugeRegistrarPermissionId = keccak256(toBytes('GAUGE_REGISTRAR_ROLE'));
+// const gaugeRegistrarPermissionId = 'ID_TEST';
+const gaugeRegistrarPermissionId = keccak256(toBytes('GAUGE_REGISTRAR_ROLE'));
 
 export const initGaugeRegistrarActionViews = () => {
     actionViewRegistry

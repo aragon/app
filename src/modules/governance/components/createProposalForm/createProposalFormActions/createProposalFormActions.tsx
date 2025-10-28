@@ -10,7 +10,7 @@ import {
     type ProposalActionComponent,
     ProposalActions,
 } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
@@ -53,10 +53,22 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         { urlParams: { network: dao!.network, pluginAddress }, queryParams: { pageSize: 50 } },
         { enabled: hasConditionalPermissions },
     );
-    const { data: daoPermissionsData, isLoading: isLoadingDaoPermissions } = useDaoPermissions({
+    const {
+        data: daoPermissionsData,
+        isLoading: isLoadingDaoPermissions,
+        hasNextPage,
+        fetchNextPage,
+        isFetchingNextPage,
+    } = useDaoPermissions({
         urlParams: { network: dao!.network, daoAddress: dao!.address },
         queryParams: { pageSize: 50 },
     });
+
+    useEffect(() => {
+        if (hasNextPage && !isFetchingNextPage) {
+            void fetchNextPage();
+        }
+    }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
     const allowedActions = allowedActionsData?.pages.flatMap((page) => page.data);
     const daoPermissions = daoPermissionsData?.pages.flatMap((page) => page.data);
