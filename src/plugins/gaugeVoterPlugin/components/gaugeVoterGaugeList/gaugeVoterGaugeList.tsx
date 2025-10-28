@@ -8,6 +8,11 @@ import { GaugeVoterGaugeListHeading } from './gaugeVoterGaugeListHeading';
 import { GaugeVoterGaugeListItemSkeleton } from './gaugeVoterGaugeListItemSkeleton';
 import { GaugeVoterGaugeListItemStructure } from './gaugeVoterGaugeListItemStructure';
 
+export interface IGaugeUserVote {
+    gaugeAddress: string;
+    userVotes: number;
+}
+
 export interface IGaugeVoterGaugeListProps {
     /**
      * Initial parameters for gauge list query.
@@ -42,9 +47,9 @@ export interface IGaugeVoterGaugeListProps {
      */
     tokenSymbol: string;
     /**
-     * MOCK DATA - User votes per gauge (temporary until blockchain integration).
+     * User's votes per gauge from blockchain.
      */
-    mockUserVotes: IMockUserGaugeVote[];
+    gaugeVotes: IGaugeUserVote[];
 }
 
 export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) => {
@@ -57,7 +62,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
         isUserConnected,
         isVotingPeriod,
         tokenSymbol,
-        mockUserVotes,
+        gaugeVotes,
     } = props;
 
     const { t } = useTranslations();
@@ -82,7 +87,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
     const gaugeList = gaugeListData?.pages.flatMap((page) => page.data) ?? [];
 
     // Calculate total epoch votes from all gauges
-    const totalEpochVotes = gaugeList.reduce((sum, gauge) => sum + gauge.metrics.voteCount, 0);
+    const totalEpochVotes = gaugeList.reduce((sum, gauge) => sum + gauge.metrics.totalMemberVoteCount, 0);
 
     return (
         <DataListRoot
@@ -98,9 +103,8 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
                 emptyState={emptyState}
                 SkeletonElement={GaugeVoterGaugeListItemSkeleton}
             >
-                {gaugeList?.map((gauge) => {
-                    const userVotesForGauge =
-                        mockUserVotes.find((v) => v.gaugeAddress === gauge.address)?.userVotes ?? 0;
+                {gaugeList.map((gauge) => {
+                    const userVotesForGauge = gaugeVotes.find((v) => v.gaugeAddress === gauge.address)?.userVotes ?? 0;
 
                     return (
                         <GaugeVoterGaugeListItemStructure

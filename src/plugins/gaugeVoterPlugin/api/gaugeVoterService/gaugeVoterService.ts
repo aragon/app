@@ -6,7 +6,7 @@ class GaugeVoterService extends AragonBackendService {
     private urls = {
         gaugePlugin: '/v2/plugins/by-dao/:network/:daoAddress',
         gauges: '/v2/gauge/:pluginAddress/:network',
-        epochMetrics: '/epochMetrics/:pluginAddress/:network',
+        epochMetrics: '/v2/gauge/epochMetrics/:pluginAddress/:network',
     };
 
     /**
@@ -17,7 +17,7 @@ class GaugeVoterService extends AragonBackendService {
         const result = await this.request<IGaugePlugin[]>(this.urls.gaugePlugin, params);
 
         // Backend returns an array, we expect a single plugin
-        if (!result || result.length === 0) {
+        if (result.length === 0) {
             throw new Error('No gauge plugin found for this DAO');
         }
 

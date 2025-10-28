@@ -1,0 +1,55 @@
+import type { Network } from '@/shared/api/daoService';
+import type { Hex } from 'viem';
+
+export interface IUseGaugeVoterUserDataParams {
+    /**
+     * The gauge voter plugin address.
+     */
+    pluginAddress: Hex;
+    /**
+     * The network the plugin is deployed on.
+     */
+    network: Network;
+    /**
+     * Array of gauge addresses to fetch user votes for.
+     */
+    gaugeAddresses: Hex[];
+    /**
+     * Whether to enable the query.
+     */
+    enabled?: boolean;
+}
+
+export interface IGaugeUserVote {
+    /**
+     * The gauge address.
+     */
+    gaugeAddress: Hex;
+    /**
+     * User's votes on this gauge.
+     */
+    userVotes: bigint;
+}
+
+export interface IUseGaugeVoterUserDataResult {
+    /**
+     * User's total voting power.
+     */
+    votingPower: bigint;
+    /**
+     * User's used voting power.
+     */
+    usedVotingPower: bigint;
+    /**
+     * User's votes per gauge.
+     */
+    gaugeVotes: IGaugeUserVote[];
+    /**
+     * Whether the data is loading.
+     */
+    isLoading: boolean;
+    /**
+     * Refetch the data.
+     */
+    refetch: () => void;
+}

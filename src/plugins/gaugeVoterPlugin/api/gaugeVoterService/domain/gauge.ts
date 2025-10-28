@@ -2,6 +2,14 @@ import type { Network } from '@/shared/api/daoService';
 import type { Hex } from 'viem';
 
 /**
+ * Link resource for a gauge.
+ */
+export interface IGaugeLink {
+    name: string;
+    url: string;
+}
+
+/**
  * Gauge data from the backend /v2/gauge/:pluginAddress/:network endpoint.
  */
 export interface IGauge {
@@ -13,12 +21,13 @@ export interface IGauge {
     creatorAddress: Hex;
     name: string | null;
     description: string | null;
-    links: string | null;
+    links: IGaugeLink[];
     avatar: string | null;
     isActive: boolean;
     metrics: {
-        voteCount: number;
-        votingPower: string;
+        totalMemberVoteCount: number;
+        currentEpochVotingPower: string;
+        totalGaugeVotingPower: string;
         epochId: string;
     };
 }

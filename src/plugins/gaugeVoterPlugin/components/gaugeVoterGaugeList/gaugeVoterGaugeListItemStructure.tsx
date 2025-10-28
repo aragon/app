@@ -61,7 +61,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
     } = props;
     const { t } = useTranslations();
 
-    const gaugeTotalVotes = gauge.metrics.voteCount;
+    const gaugeTotalVotes = gauge.metrics.totalMemberVoteCount;
     const formattedTotalVotes = formatterUtils.formatNumber(gaugeTotalVotes, {
         format: NumberFormat.TOKEN_AMOUNT_SHORT,
     });

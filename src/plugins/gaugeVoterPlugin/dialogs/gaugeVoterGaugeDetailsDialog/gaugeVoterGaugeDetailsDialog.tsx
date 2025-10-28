@@ -30,9 +30,12 @@ export interface IGaugeVoterGaugeDetailsDialogParams {
      */
     tokenSymbol: string;
     /**
-     * MOCK DATA - User votes per gauge (temporary).
+     * User's votes per gauge.
      */
-    mockUserVotes: IMockUserGaugeVote[];
+    gaugeVotes: Array<{
+        gaugeAddress: string;
+        userVotes: number;
+    }>;
 }
 
 export interface IGaugeVoterGaugeDetailsDialogProps
@@ -43,14 +46,14 @@ export const GaugeVoterGaugeDetailsDialog: React.FC<IGaugeVoterGaugeDetailsDialo
 
     invariant(location.params != null, 'GaugeVoterGaugeDetailsDialog: required parameters must be set.');
 
-    const { gauges, selectedIndex, network, tokenSymbol, mockUserVotes } = location.params;
+    const { gauges, selectedIndex, network, tokenSymbol, gaugeVotes } = location.params;
 
     const { close } = useDialogContext();
 
     const [currentIndex, setCurrentIndex] = useState(selectedIndex);
 
     const gauge = gauges[currentIndex];
-    const userVotes = mockUserVotes.find((v) => v.gaugeAddress === gauge.address)?.userVotes ?? 0;
+    const userVotes = gaugeVotes.find((v) => v.gaugeAddress === gauge.address)?.userVotes ?? 0;
 
     const isFirstGauge = currentIndex === 0;
     const isLastGauge = currentIndex === gauges.length - 1;
