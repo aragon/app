@@ -33,6 +33,14 @@ export interface IGaugeVoterVoteDialogParams {
      */
     tokenSymbol: string;
     /**
+     * User's existing votes per gauge (for prepopulation).
+     */
+    gaugeVotes: Array<{
+        gaugeAddress: string;
+        votes: bigint;
+        formattedVotes: string;
+    }>;
+    /**
      * Callback called when a gauge is removed from the vote list.
      */
     onRemoveGauge?: (gaugeAddress: string) => void;
@@ -46,14 +54,18 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
 
     invariant(location.params != null, 'GaugeVoterVoteDialog: required parameters must be set.');
 
-    const { gauges, totalVotingPower, tokenSymbol, onRemoveGauge, pluginAddress, network } = location.params;
+    const { gauges, totalVotingPower, tokenSymbol, gaugeVotes, onRemoveGauge, pluginAddress, network } =
+        location.params;
 
     const { open, close } = useDialogContext();
 
     const [voteAllocations, setVoteAllocations] = useState<IGaugeVoteAllocation[]>(
         gauges.map((gauge) => {
+            // Find existing vote for this gauge
+            const existingVote = gaugeVotes.find((v) => v.gaugeAddress === gauge.address);
+            const existingVoteValue = existingVote ? Number(existingVote.votes) / 1e18 : 0;
             const existingPercentage =
-                gauge.userVotes > 0 && totalVotingPower > 0 ? (gauge.userVotes / totalVotingPower) * 100 : 0;
+                existingVoteValue > 0 && totalVotingPower > 0 ? (existingVoteValue / totalVotingPower) * 100 : 0;
 
             return {
                 gauge,

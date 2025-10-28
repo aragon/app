@@ -11,7 +11,7 @@ export interface IGaugeVoterGaugeListItemStructureProps {
     /**
      * Total voting power for the epoch for percentage calculation.
      */
-    totalEpochVotingPower?: string;
+    totalEpochVotingPower?: number;
     /**
      * Whether this gauge is currently selected for voting.
      */
@@ -41,9 +41,21 @@ export interface IGaugeVoterGaugeListItemStructureProps {
      */
     tokenSymbol: string;
     /**
-     * User's votes on this gauge from blockchain.
+     * User's formatted votes on this gauge (e.g., "1.5K").
      */
-    userVotes: number;
+    formattedUserVotes: string;
+    /**
+     * Formatted total votes on gauge.
+     */
+    formattedTotalVotes: string;
+    /**
+     * Numeric value of total votes for percentage calculations.
+     */
+    totalVotesValue: number;
+    /**
+     * Whether the user's vote data is currently loading.
+     */
+    isUserVotesLoading: boolean;
 }
 
 export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItemStructureProps> = (props) => {
@@ -57,25 +69,24 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
         isUserConnected,
         isVotingPeriod,
         tokenSymbol,
-        userVotes,
+        formattedUserVotes,
+        formattedTotalVotes,
+        totalVotesValue,
+        isUserVotesLoading,
     } = props;
     const { t } = useTranslations();
 
-    // Use the gauge's voting power (sum of all votes on this gauge)
-    const gaugeVotingPower = Number(gauge.metrics.totalGaugeVotingPower);
-    const formattedGaugeVotingPower = formatterUtils.formatNumber(gaugeVotingPower, {
-        format: NumberFormat.TOKEN_AMOUNT_SHORT,
-    });
-
-    const formattedUserVotes = !isUserConnected
+    const displayUserVotes = !isUserConnected
         ? '-'
-        : userVotes > 0
-          ? formatterUtils.formatNumber(userVotes, { format: NumberFormat.TOKEN_AMOUNT_SHORT })
-          : t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.noVotes');
+        : isUserVotesLoading
+          ? '--'
+          : formattedUserVotes === '0'
+            ? t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.noVotes')
+            : formattedUserVotes;
 
     // Calculate percentage of total epoch voting power
-    const totalEpochPower = totalEpochVotingPower ? Number(totalEpochVotingPower) : 0;
-    const percentage = totalEpochPower > 0 ? gaugeVotingPower / totalEpochPower : 0;
+    const totalEpochPower = totalEpochVotingPower ?? 0;
+    const percentage = totalEpochPower > 0 ? totalVotesValue / totalEpochPower : 0;
     const formattedPercentage =
         totalEpochPower > 0 ? formatterUtils.formatNumber(percentage, { format: NumberFormat.PERCENTAGE_SHORT }) : null;
 
@@ -83,7 +94,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
 
     const handleActionClick = (event: React.MouseEvent) => {
         event.stopPropagation();
-        if (isVoted) {
+        if (isVoted || isUserVotesLoading) {
             return;
         }
 
@@ -130,7 +141,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
                         {t('app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.totalVotes')}
                     </p>
                     <p className="text-base text-neutral-800 md:text-lg">
-                        {formattedGaugeVotingPower} {t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.votes')}
+                        {formattedTotalVotes} {t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.votes')}
                     </p>
                     <p className="text-sm text-neutral-500">
                         {formattedPercentage ? `${formattedPercentage} of total` : '-- of total'}
@@ -143,12 +154,12 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
                     </p>
                     <div className="flex min-h-11 flex-col items-end md:justify-center">
                         <div className="flex items-baseline justify-end gap-1">
-                            {formattedUserVotes === '-' ||
-                            formattedUserVotes === t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.noVotes') ? (
-                                <p className="text-right text-base text-neutral-500 md:text-lg">{formattedUserVotes}</p>
+                            {displayUserVotes === '-' ||
+                            displayUserVotes === t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.noVotes') ? (
+                                <p className="text-right text-base text-neutral-500 md:text-lg">{displayUserVotes}</p>
                             ) : (
                                 <>
-                                    <span className="text-base text-neutral-800 md:text-lg">{formattedUserVotes}</span>
+                                    <span className="text-base text-neutral-800 md:text-lg">{displayUserVotes}</span>
                                     <span className="text-sm text-neutral-500 md:text-base">{tokenSymbol}</span>
                                 </>
                             )}
@@ -164,7 +175,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
                     variant="secondary"
                     onClick={handleActionClick}
                     iconLeft={isVoted ? IconType.CHECKMARK : isSelected ? IconType.CHECKMARK : undefined}
-                    disabled={!isVotingPeriod}
+                    disabled={!isVotingPeriod || isUserVotesLoading}
                     className="w-full md:w-auto"
                 >
                     {t(`app.plugins.gaugeVoter.gaugeVoterGaugeList.item.${actionButtonTranslationKey}`)}

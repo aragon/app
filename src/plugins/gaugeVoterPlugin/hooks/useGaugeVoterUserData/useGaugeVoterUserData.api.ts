@@ -31,19 +31,44 @@ export interface IGaugeUserVote {
     userVotes: bigint;
 }
 
+export interface IGaugeTotalVotes {
+    /**
+     * The gauge address.
+     */
+    gaugeAddress: Hex;
+    /**
+     * Total votes on this gauge (all users).
+     */
+    totalVotes: bigint;
+}
+
 export interface IUseGaugeVoterUserDataResult {
     /**
      * User's total voting power.
+     * Note: Currently returns the same as usedVotingPower.
+     * To get actual total voting power, query the ivotesAdapter separately.
      */
     votingPower: bigint;
     /**
-     * User's used voting power.
+     * User's used voting power (how much they've already voted with).
      */
     usedVotingPower: bigint;
     /**
      * User's votes per gauge.
      */
     gaugeVotes: IGaugeUserVote[];
+    /**
+     * Total votes per gauge (all users, from RPC).
+     */
+    gaugeTotalVotes: IGaugeTotalVotes[];
+    /**
+     * Whether the user is currently voting in this epoch.
+     */
+    isVoting: boolean;
+    /**
+     * Array of gauge addresses the user has voted for.
+     */
+    gaugesVotedFor: readonly Hex[];
     /**
      * Whether the data is loading.
      */

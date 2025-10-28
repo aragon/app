@@ -19,7 +19,7 @@ import { GaugeVoterVotingTerminal } from '../../components/gaugeVoterVotingTermi
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
 import type { IGaugeVoterGaugeDetailsDialogParams } from '../../dialogs/gaugeVoterGaugeDetailsDialog';
 import type { IGaugeVoterVoteDialogParams } from '../../dialogs/gaugeVoterVoteDialog';
-import { useGaugeVoterUserData } from '../../hooks/useGaugeVoterUserData';
+import { useGaugeVoterPageData } from '../../hooks/useGaugeVoterPageData';
 
 export interface IGaugeVoterGaugesPageClientProps {
     /**
@@ -56,10 +56,12 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     });
 
     const gauges = gaugeListData?.pages.flatMap((page) => page.data) ?? [];
+    const gaugeAddresses = gauges.map((g) => g.address);
 
     // Use backend epoch metrics with fallbacks
     const epochId = epochMetrics?.epochId ?? gauges[0]?.metrics?.epochId;
     const totalVotes = gauges.reduce((sum, gauge) => sum + gauge.metrics.totalMemberVoteCount, 0);
+    const epochTotalVotingPower = BigInt(epochMetrics?.totalVotingPower ?? totalVotes.toString());
 
     // Determine if currently in voting period by comparing current time with vote start/end
     const now = Math.floor(Date.now() / 1000); // Convert to seconds
@@ -67,26 +69,23 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
 
     const tokenSymbol = 'PDT';
 
-    // Fetch user voting data from blockchain
-    const gaugeAddresses = gauges.map((g) => g.address);
+    // Fetch formatted user voting data with backend → RPC fallback
     const {
-        votingPower: userVotingPowerBigInt,
-        usedVotingPower: userUsedVotingPowerBigInt,
+        votingPower,
+        epochVotingPower,
+        usagePercentage,
+        hasVoted,
         gaugeVotes,
-        // isLoading: isUserDataLoading,
-    } = useGaugeVoterUserData({
+        votedGaugeAddresses,
+        isLoading: isUserDataLoading,
+    } = useGaugeVoterPageData({
         pluginAddress: plugin?.meta.address as Address,
         network: dao.network,
         gaugeAddresses,
+        gauges,
+        epochTotalVotingPower,
         enabled: isUserConnected && !!plugin?.meta.address,
     });
-
-    // Convert BigInt to number for display
-    const userVotingPower = Number(userVotingPowerBigInt);
-    const userTotalVotes = Number(userUsedVotingPowerBigInt);
-
-    // Mark gauges as voted if they have user votes from blockchain
-    const votedGauges = gaugeVotes.filter((v) => v.userVotes > 0).map((v) => v.gaugeAddress);
 
     const [selectedGauges, setSelectedGauges] = useState<string[]>([]);
 
@@ -96,11 +95,11 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
 
     const { description, links } = plugin.meta;
 
-    const selectedCount = selectedGauges.length + votedGauges.length;
+    const selectedCount = selectedGauges.length + votedGaugeAddresses.length;
 
     const handleSelectGauge = (gauge: IGauge) => {
         // Don't allow selection of already voted gauges
-        if (votedGauges.includes(gauge.address)) {
+        if (votedGaugeAddresses.includes(gauge.address)) {
             return;
         }
 
@@ -126,9 +125,9 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
 
                 const selectedGaugeList = gauges
                     .filter((gauge) => selectedGauges.includes(gauge.address))
-                    .filter((gauge) => !votedGauges.includes(gauge.address));
+                    .filter((gauge) => !votedGaugeAddresses.includes(gauge.address));
 
-                const votedGaugeList = gauges.filter((gauge) => votedGauges.includes(gauge.address));
+                const votedGaugeList = gauges.filter((gauge) => votedGaugeAddresses.includes(gauge.address));
 
                 const allGaugesToVote = [...votedGaugeList, ...selectedGaugeList];
 
@@ -137,7 +136,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                     pluginAddress: plugin.meta.address,
                     network: dao.network,
                     onRemoveGauge: handleRemoveGauge,
-                    totalVotingPower: userVotingPower,
+                    totalVotingPower: votingPower.value,
                     tokenSymbol: tokenSymbol,
                 };
                 open(GaugeVoterPluginDialogId.VOTE_GAUGES, { params: voteParams });
@@ -152,11 +151,11 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
             gauges,
             selectedIndex,
             network: dao.network,
-            totalVotingPower: userVotingPower,
+            totalVotingPower: votingPower.value,
             tokenSymbol: tokenSymbol,
-            gaugeVotes: gaugeVotes.map((v) => ({
-                gaugeAddress: v.gaugeAddress,
-                userVotes: Number(v.userVotes),
+            gaugeVotes: gaugeVotes.map((gauge) => ({
+                gaugeAddress: gauge.gaugeAddress,
+                userVotes: Number(gauge.votes),
             })),
         };
         open(GaugeVoterPluginDialogId.GAUGE_DETAILS, {
@@ -169,16 +168,6 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
         ? Math.max(0, Math.ceil((epochMetrics.epochVoteEnd * 1000 - Date.now()) / (1000 * 60 * 60 * 24)))
         : 0;
 
-    const hasVoted = userTotalVotes === userVotingPower && userTotalVotes > 0;
-
-    const votingStats = {
-        epochVotingPower: epochMetrics?.totalVotingPower ?? totalVotes.toString(),
-        userVotingPower: userVotingPower.toString(),
-        userUsedVotingPower: userTotalVotes.toString(),
-    };
-
-    console.log('voting stats:', votingStats);
-
     return (
         <Page.Content>
             <Page.Main title={t('app.plugins.gaugeVoter.gaugeVoterGaugesPage.main.title')}>
@@ -186,7 +175,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                     <GaugeVoterGaugeList
                         initialParams={initialParams}
                         selectedGauges={selectedGauges}
-                        votedGauges={votedGauges}
+                        votedGauges={votedGaugeAddresses}
                         onSelect={handleSelectGauge}
                         onViewDetails={handleViewDetails}
                         isUserConnected={isUserConnected}
@@ -194,19 +183,22 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         tokenSymbol={tokenSymbol}
                         gaugeVotes={gaugeVotes.map((v) => ({
                             gaugeAddress: v.gaugeAddress,
-                            userVotes: Number(v.userVotes),
+                            formattedVotes: v.formattedVotes,
+                            formattedTotalVotes: v.formattedTotalVotes,
+                            totalVotesValue: v.totalVotesValue,
                         }))}
-                        totalEpochVotingPower={votingStats.epochVotingPower}
+                        totalEpochVotingPower={epochVotingPower.value}
                     />
                     <GaugeVoterVotingTerminal
                         daysLeftToVote={daysLeftToVote}
                         hasVoted={hasVoted}
-                        totalVotingPower={votingStats.userVotingPower}
-                        usedVotingPower={votingStats.userUsedVotingPower}
+                        formattedVotingPower={votingPower.formatted}
+                        usagePercentage={usagePercentage}
                         selectedCount={selectedCount}
                         tokenSymbol={tokenSymbol}
                         onVote={handleVoteClick}
                         isVotingPeriod={isVotingPeriod}
+                        isLoading={isUserDataLoading}
                     />
                 </div>
             </Page.Main>
@@ -215,9 +207,9 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                     {description && <p className="text-base text-gray-500">{description}</p>}
                     <GaugeVoterVotingStats
                         daysLeftToVote={daysLeftToVote}
-                        epochVotingPower={votingStats.epochVotingPower}
-                        userVotingPower={votingStats.userVotingPower}
-                        userUsedVotingPower={votingStats.userUsedVotingPower}
+                        formattedEpochVotingPower={epochVotingPower.formatted}
+                        formattedUserVotingPower={votingPower.formatted}
+                        usagePercentage={usagePercentage}
                         isUserConnected={isUserConnected}
                     />
                     {links?.map(({ url, name }) => (

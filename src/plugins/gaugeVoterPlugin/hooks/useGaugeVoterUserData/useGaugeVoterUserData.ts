@@ -3,6 +3,7 @@ import type { Hex } from 'viem';
 import { useAccount, useReadContract, useReadContracts } from 'wagmi';
 import { gaugeVoterAbi } from '../../utils/gaugeVoterContractUtils/abi/gaugeVoterAbi';
 import type {
+    IGaugeTotalVotes,
     IGaugeUserVote,
     IUseGaugeVoterUserDataParams,
     IUseGaugeVoterUserDataResult,
@@ -16,21 +17,7 @@ export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUs
 
     const isEnabled = enabled && !!userAddress;
 
-    // Read user's total voting power
-    const {
-        data: votingPowerData,
-        refetch: refetchVotingPower,
-        isLoading: isVotingPowerLoading,
-    } = useReadContract({
-        abi: gaugeVoterAbi,
-        functionName: 'votingPower',
-        address: pluginAddress,
-        args: [userAddress as Hex],
-        chainId,
-        query: { enabled: isEnabled },
-    });
-
-    // Read user's used voting power
+    // Read user's used voting power from the gauge voter
     const {
         data: usedVotingPowerData,
         refetch: refetchUsedVotingPower,
@@ -44,10 +31,30 @@ export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUs
         query: { enabled: isEnabled },
     });
 
+    // Read whether user is currently voting
+    const { data: isVotingData } = useReadContract({
+        abi: gaugeVoterAbi,
+        functionName: 'isVoting',
+        address: pluginAddress,
+        args: [userAddress as Hex],
+        chainId,
+        query: { enabled: isEnabled },
+    });
+
+    // Read which gauges the user has voted for
+    const { data: gaugesVotedForData } = useReadContract({
+        abi: gaugeVoterAbi,
+        functionName: 'gaugesVotedFor',
+        address: pluginAddress,
+        args: [userAddress as Hex],
+        chainId,
+        query: { enabled: isEnabled },
+    });
+
     // Read user's votes for each gauge
     const gaugeVotesContracts = gaugeAddresses.map((gaugeAddress) => ({
         abi: gaugeVoterAbi,
-        functionName: 'getUserVotes' as const,
+        functionName: 'votes' as const,
         address: pluginAddress,
         args: [userAddress as Hex, gaugeAddress],
         chainId,
@@ -62,24 +69,51 @@ export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUs
         query: { enabled: isEnabled && gaugeAddresses.length > 0 },
     });
 
+    // Read total votes for each gauge (all users)
+    const gaugeTotalVotesContracts = gaugeAddresses.map((gaugeAddress) => ({
+        abi: gaugeVoterAbi,
+        functionName: 'gaugeVotes' as const,
+        address: pluginAddress,
+        args: [gaugeAddress],
+        chainId,
+    }));
+
+    const {
+        data: gaugeTotalVotesData,
+        refetch: refetchGaugeTotalVotes,
+        isLoading: isGaugeTotalVotesLoading,
+    } = useReadContracts({
+        contracts: gaugeTotalVotesContracts,
+        query: { enabled: enabled && gaugeAddresses.length > 0 },
+    });
+
     // Transform gauge votes data
     const gaugeVotes: IGaugeUserVote[] = gaugeAddresses.map((gaugeAddress, index) => ({
         gaugeAddress,
-        userVotes: (gaugeVotesData?.[index]?.result as bigint) ?? BigInt(0),
+        userVotes: gaugeVotesData?.[index]?.result ?? BigInt(0),
+    }));
+
+    // Transform gauge total votes data
+    const gaugeTotalVotes: IGaugeTotalVotes[] = gaugeAddresses.map((gaugeAddress, index) => ({
+        gaugeAddress,
+        totalVotes: gaugeTotalVotesData?.[index]?.result ?? BigInt(0),
     }));
 
     const refetch = () => {
-        void refetchVotingPower();
         void refetchUsedVotingPower();
         void refetchGaugeVotes();
+        void refetchGaugeTotalVotes();
     };
 
-    const isLoading = isVotingPowerLoading || isUsedVotingPowerLoading || isGaugeVotesLoading;
+    const isLoading = isUsedVotingPowerLoading || isGaugeVotesLoading || isGaugeTotalVotesLoading;
 
     return {
-        votingPower: votingPowerData ?? BigInt(0),
+        votingPower: usedVotingPowerData ?? BigInt(0),
         usedVotingPower: usedVotingPowerData ?? BigInt(0),
         gaugeVotes,
+        gaugeTotalVotes,
+        isVoting: isVotingData ?? false,
+        gaugesVotedFor: gaugesVotedForData ?? [],
         isLoading,
         refetch,
     };
