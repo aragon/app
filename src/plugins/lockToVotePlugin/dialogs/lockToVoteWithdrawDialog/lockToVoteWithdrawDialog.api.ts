@@ -1,6 +1,7 @@
 import type { IToken } from '@/modules/finance/api/financeService';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { Address } from 'viem';
 import type { ILockToVoteTicket } from '../../types';
 
 export interface ILockToVoteWithdrawDialogParams {
@@ -15,7 +16,7 @@ export interface ILockToVoteWithdrawDialogParams {
     /**
      * Address of the lock manager contract (DynamicExitQueue).
      */
-    lockManagerAddress: string;
+    lockManagerAddress: Address;
     /**
      * Ticket containing fee parameters and queue information.
      */
@@ -24,6 +25,10 @@ export interface ILockToVoteWithdrawDialogParams {
      * Total locked amount (in wei).
      */
     lockedAmount: bigint;
+    /**
+     * Pre-calculated fee amount (in wei). Optional - dialog will calculate if not provided.
+     */
+    feeAmount?: bigint;
     /**
      * Network used for the transaction.
      */

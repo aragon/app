@@ -25,7 +25,7 @@ export const LockToVoteWithdrawTransactionDialog: React.FC<ILockToVoteWithdrawTr
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
-    const handlePrepareTransaction = () => {
+    const handlePrepareTransaction = async () => {
         // Build exit transaction
         const data = encodeFunctionData({
             abi: dynamicExitQueueAbi,

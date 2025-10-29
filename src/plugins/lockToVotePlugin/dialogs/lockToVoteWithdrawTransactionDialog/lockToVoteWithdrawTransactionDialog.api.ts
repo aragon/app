@@ -1,7 +1,7 @@
+import type { IToken } from '@/modules/finance/api/financeService';
 import type { Network } from '@/shared/api/daoService/domain/enum';
-import type { IDialogProps } from '@/shared/components/dialogProvider';
-import type { IToken } from '@/shared/types';
-import type { Hex } from 'viem';
+import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
+import type { Address } from 'viem';
 
 export interface ILockToVoteWithdrawTransactionDialogParams {
     /**
@@ -15,7 +15,7 @@ export interface ILockToVoteWithdrawTransactionDialogParams {
     /**
      * Address of the DynamicExitQueue contract (lock manager).
      */
-    lockManagerAddress: Hex;
+    lockManagerAddress: Address;
     /**
      * Network to execute the transaction on.
      */
@@ -27,4 +27,4 @@ export interface ILockToVoteWithdrawTransactionDialogParams {
 }
 
 export interface ILockToVoteWithdrawTransactionDialogProps
-    extends IDialogProps<ILockToVoteWithdrawTransactionDialogParams> {}
+    extends IDialogComponentProps<ILockToVoteWithdrawTransactionDialogParams> {}

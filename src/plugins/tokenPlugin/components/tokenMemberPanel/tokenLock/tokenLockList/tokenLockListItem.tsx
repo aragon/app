@@ -1,11 +1,6 @@
 import { LockToVotePluginDialogId } from '@/plugins/lockToVotePlugin/constants/lockToVotePluginDialogId';
 import type { ILockToVoteWithdrawDialogParams } from '@/plugins/lockToVotePlugin/dialogs/lockToVoteWithdrawDialog';
 import { useLockToVoteFeeData } from '@/plugins/lockToVotePlugin/hooks/useLockToVoteFeeData';
-import {
-    generateLockToVoteTicket,
-    generateLockToVoteTicketWithFixedFee,
-    generateLockToVoteTicketWithTieredFees,
-} from '@/plugins/lockToVotePlugin/testUtils/generators';
 import { lockToVoteFeeUtils } from '@/plugins/lockToVotePlugin/utils/lockToVoteFeeUtils';
 import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -25,15 +20,14 @@ import {
 } from '@aragon/gov-ui-kit';
 import NumberFlow from '@number-flow/react';
 import { DateTime } from 'luxon';
-import { useMemo } from 'react';
-import { formatUnits, type Hex } from 'viem';
+import { formatUnits, zeroAddress, type Hex } from 'viem';
 import type { IMemberLock } from '../../../../api/tokenService';
 import { TokenPluginDialogId } from '../../../../constants/tokenPluginDialogId';
 import type { ITokenApproveNftDialogParams } from '../../../../dialogs/tokenApproveNftDialog';
 import type { ITokenLockUnlockDialogParams } from '../../../../dialogs/tokenLockUnlockDialog';
 import type { ITokenPlugin } from '../../../../types';
 import { useCheckNftAllowance } from '../../hooks/useCheckNftAllowance';
-import { type TokenLockStatus, tokenLockUtils } from '../tokenLockUtils';
+import { tokenLockUtils, type TokenLockStatus } from '../tokenLockUtils';
 
 export interface ITokenLockListItemProps {
     /**
@@ -81,66 +75,19 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
 
     // Query fee data from DynamicExitQueue for withdraw action
     const { id: chainId } = networkDefinitions[dao.network];
-    // TODO: Remove TEST_MODE once proper fee configuration is in place
-    const TEST_MODE = true;
+    const hasExitQueue = exitQueueAddress != null;
+    const lockManagerAddress = (exitQueueAddress ?? zeroAddress) as Hex;
 
-    console.log('🔍 TokenLockListItem - Fee Data Query Setup:', {
-        tokenId: lock.tokenId,
-        exitQueueAddress,
-        chainId,
-        status,
-        hasExitQueue: exitQueueAddress != null,
-    });
+    const pluginFeeSettings = plugin.settings as Partial<{ feePercent: number; minFeePercent: number }>;
+    const pluginFeePercent = pluginFeeSettings.feePercent ?? 0;
+    const pluginMinFeePercent = pluginFeeSettings.minFeePercent ?? 0;
 
     const { ticket, feeAmount, canExit } = useLockToVoteFeeData({
         tokenId: BigInt(lock.tokenId),
-        lockManagerAddress: exitQueueAddress! as Hex,
+        lockManagerAddress,
         chainId,
-        enabled: exitQueueAddress != null && (TEST_MODE || status === 'available'),
+        enabled: hasExitQueue && status === 'available',
     });
-
-    console.log('📊 TokenLockListItem - Fee Data Result:', {
-        hasTicket: ticket != null,
-        hasFeeAmount: feeAmount != null,
-        canExit,
-        ticket,
-        feeAmount: feeAmount?.toString(),
-    });
-
-    // TODO: Remove mock ticket once proper data is available
-    // For testing: create a mock ticket if we have feeAmount but no ticket
-    const mockTicket = useMemo(() => {
-        if (ticket || !TEST_MODE) {
-            return null;
-        }
-
-        const ticketVariants = [
-            generateLockToVoteTicket(),
-            generateLockToVoteTicketWithTieredFees(),
-            generateLockToVoteTicketWithFixedFee(),
-        ];
-
-        let overrideIndex: number | undefined;
-        if (typeof window !== 'undefined') {
-            const mockModeParam = new URLSearchParams(window.location.search).get('mockFeeMode');
-            const normalizedMode = mockModeParam?.toLowerCase();
-            const overrideMap: Record<string, number> = {
-                dynamic: 0,
-                tiered: 1,
-                fixed: 2,
-            };
-            if (normalizedMode && normalizedMode in overrideMap) {
-                overrideIndex = overrideMap[normalizedMode];
-            }
-        }
-
-        const defaultIndex = 0;
-        const variantIndex = overrideIndex ?? defaultIndex;
-
-        return ticketVariants[variantIndex];
-    }, [TEST_MODE, ticket, lock.tokenId]);
-
-    const ticketToUse = ticket ?? mockTicket;
 
     const openViewLocksDialog = () => open(TokenPluginDialogId.VIEW_LOCKS, { params: { dao, plugin } });
 
@@ -190,36 +137,20 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     };
 
     const handleWithdraw = () => {
-        console.log('🚀 handleWithdraw called', {
-            hasTicketToUse: ticketToUse != null,
-            hasFeeAmount: feeAmount != null,
-            hasExitQueue: exitQueueAddress != null,
-        });
-
         // Check if we have fee data and should show the fee-based withdraw dialog
-        const hasFeeData = ticketToUse != null && feeAmount != null && exitQueueAddress != null;
-        const shouldShowFeeDialog =
-            TEST_MODE ||
-            (hasFeeData &&
-                lockToVoteFeeUtils.shouldShowFeeDialog({
-                    feePercent: ticketToUse!.feePercent,
-                    minFeePercent: ticketToUse!.minFeePercent,
-                } as any));
-
-        console.log('✨ Dialog decision:', {
-            hasFeeData,
-            shouldShowFeeDialog,
-            TEST_MODE,
+        const hasFeeData = hasExitQueue && ticket != null && feeAmount != null;
+        const hasConfiguredFees = lockToVoteFeeUtils.shouldShowFeeDialog({
+            feePercent: ticket?.feePercent ?? pluginFeePercent,
+            minFeePercent: ticket?.minFeePercent ?? pluginMinFeePercent,
         });
+        const shouldShowFeeDialog = hasFeeData && hasConfiguredFees;
 
         if (shouldShowFeeDialog && hasFeeData) {
-            // Use new fee-based withdraw dialog
-            console.log('✅ Opening WITHDRAW_WITH_FEE dialog');
             const dialogParams: ILockToVoteWithdrawDialogParams = {
                 tokenId: BigInt(lock.tokenId),
                 token,
                 lockManagerAddress: exitQueueAddress as Hex,
-                ticket: ticketToUse!,
+                ticket: ticket!,
                 lockedAmount: BigInt(amount),
                 network: dao.network,
                 onBack: openViewLocksDialog,
@@ -340,9 +271,11 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                     </>
                 )}
 
-                <Button className="w-full md:w-auto" variant="tertiary" size="md" onClick={handleWithdraw}>
-                    {t(`app.plugins.token.tokenLockList.item.actions.withdraw`, { symbol: token.symbol })}
-                </Button>
+                {status === 'available' && (
+                    <Button className="w-full md:w-auto" variant="tertiary" size="md" onClick={handleWithdraw}>
+                        {t(`app.plugins.token.tokenLockList.item.actions.withdraw`, { symbol: token.symbol })}
+                    </Button>
+                )}
             </div>
         </DataList.Item>
     );

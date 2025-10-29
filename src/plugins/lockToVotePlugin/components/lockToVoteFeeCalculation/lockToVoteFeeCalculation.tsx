@@ -16,7 +16,7 @@ export const LockToVoteFeeCalculation: React.FC<ILockToVoteFeeCalculationProps> 
     // Format amounts
     const formatAmount = (amount: bigint): string => {
         const parsed = formatUnits(amount, token.decimals);
-        return formatterUtils.formatNumber(parsed, { format: NumberFormat.TOKEN_AMOUNT_SHORT });
+        return formatterUtils.formatNumber(parsed, { format: NumberFormat.TOKEN_AMOUNT_SHORT }) ?? '0';
     };
 
     const formattedLockedAmount = formatAmount(lockedAmount);

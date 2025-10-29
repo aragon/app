@@ -144,26 +144,16 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
         chainId,
     });
 
-    console.log('📊 Contract fee queries:', {
-        lockManagerAddress,
-        feePercentFromContract,
-        minFeePercentFromContract,
-        isFeePercentLoading,
-        isMinFeePercentLoading,
-        feePercentError: feePercentError?.message,
-        minFeePercentError: minFeePercentError?.message,
-    });
-
     // Use contract values if available, otherwise fall back to plugin settings
     const feePercent =
         feePercentFromContract != null ? Number(feePercentFromContract) : (plugin.settings.feePercent ?? 0);
     const minFeePercent =
         minFeePercentFromContract != null ? Number(minFeePercentFromContract) : (plugin.settings.minFeePercent ?? 0);
 
-    // TODO: Remove this test override once we have a DAO with fees configured
-    // Temporarily treat all lock-to-vote plugins as having fees configured for testing
-    const TEST_MODE = true;
-    const hasFeesConfigured = TEST_MODE || feePercent > 0 || minFeePercent > 0;
+    const hasFeesConfigured = lockToVoteFeeUtils.shouldShowFeeDialog({
+        feePercent,
+        minFeePercent,
+    });
 
     // Query escrow address from DynamicExitQueue contract if fees are configured
     const { data: escrowAddressFromContract } = useReadContract({
@@ -278,34 +268,25 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
     };
 
     const unlockTokens = () => {
-        console.log('🔓 unlockTokens called', {
-            hasFeesConfigured,
-            feePercent,
-            minFeePercent,
-            escrowAddress,
-            tokenId,
-            ticket,
-            feeAmount,
-            dao: !!dao,
-        });
-
         // If no fees configured, use existing unlock flow
         if (!hasFeesConfigured) {
-            console.log('❌ No fees configured, using legacy unlock flow');
             unlockGuard.check();
             return;
         }
 
         // Check if we should bypass the fee dialog (both fees are 0)
-        if (ticket && !lockToVoteFeeUtils.shouldShowFeeDialog(plugin.settings)) {
-            console.log('❌ Should bypass fee dialog (both fees are 0)');
+        const shouldShowFeeDialog = lockToVoteFeeUtils.shouldShowFeeDialog({
+            feePercent: ticket?.feePercent ?? plugin.settings.feePercent ?? feePercent,
+            minFeePercent: ticket?.minFeePercent ?? plugin.settings.minFeePercent ?? minFeePercent,
+        });
+
+        if (ticket && !shouldShowFeeDialog) {
             unlockGuard.check();
             return;
         }
 
         // If we have all the required data, open the withdraw dialog with fee information
         if (tokenId != null && ticket != null && feeAmount != null && dao != null) {
-            console.log('✅ Opening withdraw dialog with fee information');
             const params: ILockToVoteWithdrawDialogParams = {
                 tokenId,
                 token,
@@ -322,12 +303,6 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
         }
 
         // Fall back to existing flow if data is not yet available
-        console.log('❌ Missing required data, falling back to legacy unlock flow', {
-            hasTokenId: tokenId != null,
-            hasTicket: ticket != null,
-            hasFeeAmount: feeAmount != null,
-            hasDao: dao != null,
-        });
         unlockGuard.check();
     };
 

@@ -16,7 +16,17 @@ export const LockToVoteWithdrawDialog: React.FC<ILockToVoteWithdrawDialogProps> 
     const { location } = props;
     invariant(location.params != null, 'LockToVoteWithdrawDialog: required parameters must be set.');
 
-    const { tokenId, token, lockManagerAddress, ticket, lockedAmount, network, onBack, onSuccess } = location.params;
+    const {
+        tokenId,
+        token,
+        lockManagerAddress,
+        ticket,
+        lockedAmount,
+        feeAmount: feeAmountFromParams,
+        network,
+        onBack,
+        onSuccess,
+    } = location.params;
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
@@ -37,16 +47,19 @@ export const LockToVoteWithdrawDialog: React.FC<ILockToVoteWithdrawDialogProps> 
 
     // Calculate fee amount in wei
     const feeAmount = useMemo(() => {
+        if (feeAmountFromParams != null) {
+            return feeAmountFromParams;
+        }
+
         const feeBasisPoints = Math.round((currentFeePercent * lockToVoteFeeUtils.MAX_FEE_PERCENT) / 100);
         return (lockedAmount * BigInt(feeBasisPoints)) / BigInt(lockToVoteFeeUtils.MAX_FEE_PERCENT);
-    }, [currentFeePercent, lockedAmount]);
+    }, [currentFeePercent, feeAmountFromParams, lockedAmount]);
 
     // Determine if chart should be shown
     const feeMode = lockToVoteFeeUtils.determineFeeMode(ticket);
     const shouldShowChart = feeMode !== LockToVoteFeeMode.FIXED;
 
     const handleWithdraw = () => {
-        // Close this dialog and open transaction dialog
         close();
 
         const txDialogParams: ILockToVoteWithdrawTransactionDialogParams = {
@@ -67,12 +80,10 @@ export const LockToVoteWithdrawDialog: React.FC<ILockToVoteWithdrawDialogProps> 
                 onClose={close}
             />
             <Dialog.Content className="flex flex-col gap-6">
-                {/* Fee Chart */}
                 {shouldShowChart && <LockToVoteFeeChart ticket={ticket} currentTime={currentTime} />}
 
                 <LockToVoteFeeCalculation lockedAmount={lockedAmount} feeAmount={feeAmount} token={token} />
 
-                {/* Help Text */}
                 <p className="text-center text-sm leading-normal font-normal text-neutral-500">
                     {t('app.plugins.lockToVote.withdrawDialog.helpText')}
                 </p>

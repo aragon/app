@@ -97,12 +97,23 @@ class LockToVoteFeeUtils {
     };
 
     /**
-     * Checks if the fee dialog should be shown based on plugin settings.
-     * @param settings - Plugin settings containing fee parameters.
+     * Checks if the fee dialog should be shown based on fee configuration.
+     * Accepts either plugin settings or a ticket-like object.
+     * @param config - Object containing feePercent and minFeePercent in basis points.
      * @returns True if fees are configured (> 0), false otherwise.
      */
-    shouldShowFeeDialog = (settings: ILockToVotePluginSettings): boolean => {
-        return settings.feePercent > 0 || settings.minFeePercent > 0;
+    shouldShowFeeDialog = (
+        config:
+            | Pick<ILockToVotePluginSettings, 'feePercent' | 'minFeePercent'>
+            | {
+                  feePercent?: number | null;
+                  minFeePercent?: number | null;
+              },
+    ): boolean => {
+        const feePercent = config.feePercent ?? 0;
+        const minFeePercent = config.minFeePercent ?? 0;
+
+        return feePercent > 0 || minFeePercent > 0;
     };
 
     /**
