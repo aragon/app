@@ -223,7 +223,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                     );
                                 })}
                                 {['0x46b7d62b', '0x0de61ed0'].map((selector) => {
-                                    const customActionView = actionViewRegistry.getViewBySelector(selector);
+                                    const customActionView = actionViewRegistry.getViewBySelector(
+                                        selector as `0x${string}`,
+                                    );
 
                                     if (customActionView) {
                                         return (
@@ -260,7 +262,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                                             ],
                                                         },
                                                         daoId,
-                                                    } as IProposalActionData
+                                                    } as unknown as IProposalActionData
                                                 }
                                                 actionFunctionSelector={selector}
                                                 chainId={chainId}

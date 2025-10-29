@@ -37,10 +37,6 @@ export class ActionViewRegistry {
         return this.views.find((view) => view.functionSelector === selector);
     };
 
-    getViewByTextSignature = (textSignature: string): IActionViewDescriptor | undefined => {
-        return this.views.find((view) => view.textSignature === textSignature);
-    };
-
     getViewsByPermissionId = (permissionId: string): IActionViewDescriptor[] => {
         return this.views.filter((view) => view.permissionId === permissionId);
     };
