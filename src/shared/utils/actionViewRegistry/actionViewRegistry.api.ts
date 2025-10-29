@@ -19,7 +19,6 @@ export interface IActionViewDescriptor {
      * Unique identifier for this action view.
      */
     id: string;
-
     /**
      * Function selector to match against (e.g., "0xa9059cbb").
      */
@@ -32,15 +31,13 @@ export interface IActionViewDescriptor {
      * Permission ID to match against (alternative matching criteria).
      */
     permissionId?: string;
-
     /**
-     * Custom React component to render the action, in edit mode, i.e. create proosal page.
+     * Custom React component to render the action in create/edit mode, i.e. create proposal page.
      */
     componentCreate: Record<string, ActionViewComponent>;
     /**
-     * Custom React component to render the action, in read only mode, i.e. proposal details page.
+     * Custom React component to render the action in read only mode, i.e. proposal details page.
      */
-    // componentReadOnly?: ActionViewComponent;
     componentDetails?: ProposalActionComponent<IProposalActionData>;
     /**
      *  Action composer item.
@@ -49,7 +46,7 @@ export interface IActionViewDescriptor {
 }
 
 /**
- * Descriptor for registering a actions group.
+ * Descriptor for registering an actions group.
  */
 export interface IActionGroupDescriptor {
     /**
