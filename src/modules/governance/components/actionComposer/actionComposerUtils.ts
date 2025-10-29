@@ -5,7 +5,7 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { zeroAddress } from 'viem';
-import { actionViewRegistry, type ActionViewComponent } from '../../../../shared/utils/actionViewRegistry';
+import { actionViewRegistry, type ActionViewCreateComponent } from '../../../../shared/utils/actionViewRegistry';
 import {
     ProposalActionType,
     type IProposalAction,
@@ -88,7 +88,7 @@ class ActionComposerUtils {
             {
                 items: [] as IActionComposerInputItem[],
                 groups: [] as IAutocompleteInputGroup[],
-                components: {} as Record<string, ActionViewComponent>,
+                components: {} as Record<string, ActionViewCreateComponent>,
             }, // Removed the extra closing brace
         );
 

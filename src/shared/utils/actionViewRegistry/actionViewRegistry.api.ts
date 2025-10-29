@@ -7,12 +7,18 @@ import type { IAutocompleteInputGroup } from '../../components/forms/autocomplet
 import type { TranslationFunction } from '../../components/translationsProvider';
 
 /**
- * Custom action component type for action views.
+ * Custom action component type for action views in create/edit mode.
  */
-export type ActionViewComponent = ActionComposerPluginComponent<unknown>;
+export type ActionViewCreateComponent = ActionComposerPluginComponent<unknown>;
 
 /**
- * Descriptor for registering a custom action view.
+ * Descriptor for registering a custom action view. Each view has 3 key components:
+ *   - getItem() - callback returning ActionComposer input item
+ *   - componentCreate - custom component for rendering action in create/edit mode
+ *   - componentDetails - custom component for rendering action in read mode
+ *
+ * Views are uniquely identified by `functionSelector` and/or `id`, and could be
+ * grouped by `permissionId`.
  */
 export interface IActionViewDescriptor {
     /**
@@ -24,19 +30,15 @@ export interface IActionViewDescriptor {
      */
     functionSelector?: Hex;
     /**
-     * Text signature of the smart contract function (e.g. setMetadata(bytes))
-     */
-    textSignature?: string;
-    /**
      * Permission ID to match against (alternative matching criteria).
      */
     permissionId?: string;
     /**
      * Custom React component to render the action in create/edit mode, i.e. create proposal page.
      */
-    componentCreate: Record<string, ActionViewComponent>;
+    componentCreate: Record<string, ActionViewCreateComponent>;
     /**
-     * Custom React component to render the action in read only mode, i.e. proposal details page.
+     * Custom React component to render the action in read mode, i.e. proposal details page.
      */
     componentDetails?: ProposalActionComponent<IProposalActionData>;
     /**
