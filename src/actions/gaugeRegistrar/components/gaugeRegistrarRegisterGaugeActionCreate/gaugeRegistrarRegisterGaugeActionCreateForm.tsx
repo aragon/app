@@ -1,3 +1,5 @@
+'use client';
+
 import { type IResourcesInputResource, ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';

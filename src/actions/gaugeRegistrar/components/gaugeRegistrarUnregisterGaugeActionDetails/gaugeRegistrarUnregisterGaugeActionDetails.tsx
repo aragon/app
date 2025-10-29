@@ -1,13 +1,15 @@
 'use client';
 
-import { type IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { useDao } from '@/shared/api/daoService';
 import {
+    type IProposalAction,
     type IProposalActionComponentProps,
     type IProposalActionInputDataParameter,
     Spinner,
 } from '@aragon/gov-ui-kit';
+
+import { useTranslations } from '../../../../shared/components/translationsProvider';
 import { useGaugeRegistrarGauges } from '../../hooks/useGaugeRegistrarGauges';
 import { GaugeRegistrarGaugeListItem } from '../gaugeRegistrarGaugeListItem';
 
@@ -33,6 +35,7 @@ export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<IGaugeRegistra
     const pluginAddress = action.to;
     console.log('action', props);
     const { data: dao } = useDao({ urlParams: { id: action.daoId } });
+    const { t } = useTranslations();
 
     const { qiTokenAddress, incentiveType, rewardControllerAddress } = parseUnregisterGaugeInputData(
         action.inputData?.parameters ?? [],
@@ -56,7 +59,7 @@ export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<IGaugeRegistra
     // );
 
     if (!gaugeToRemove) {
-        return <p>Can&#39;t find a gauge.</p>;
+        return <p>{t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionReadOnly.notFound')}</p>;
     }
 
     return <GaugeRegistrarGaugeListItem gauge={gaugeToRemove} />;

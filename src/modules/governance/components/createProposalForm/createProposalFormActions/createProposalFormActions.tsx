@@ -9,7 +9,6 @@ import {
     type IProposalActionsItemDropdownItem,
     type ProposalActionComponent,
     ProposalActions,
-    Spinner,
 } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
@@ -183,7 +182,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                     daoPermissions={daoPermissions}
                 />
             ) : (
-                <Spinner variant="primary" size="xl" />
+                <p className="text-primary-400">{t('app.governance.createProposalForm.actions.loading')}</p>
             )}
         </div>
     );

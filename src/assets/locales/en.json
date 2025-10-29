@@ -58,7 +58,9 @@
           "resourcesTerm": "Links",
           "rewardControllerTerm": "Reward controller"
         },
-        "gaugeRegistrarRegisterGaugeActionReadOnly": {},
+        "gaugeRegistrarRegisterGaugeActionReadOnly": {
+          "notFound": "Can't find this gauge."
+        },
         "gaugeRegistrarSelectGaugeDialog": {
           "cancel": "Cancel",
           "description": "Select a gauge to remove from the next epoche.",
@@ -67,13 +69,14 @@
           "submit": "Select gauge",
           "title": "Select gauge"
         },
-        "gaugeRegistrarUnregisterGaugeAction": {
+        "gaugeRegistrarUnregisterGaugeActionCreate": {
           "emptyCard": {
             "action": "Select gauge",
             "description": "Select a gauge to remove from the next epoche.",
             "heading": "Select gauge"
           }
-        }
+        },
+        "gaugeRegistrarUnregisterGaugeActionDetails": {}
       }
     },
     "application": {
@@ -811,7 +814,8 @@
             "down": "Move down",
             "remove": "Remove",
             "up": "Move up"
-          }
+          },
+          "loading": "Loading actions data"
         },
         "metadata": {
           "actions": {

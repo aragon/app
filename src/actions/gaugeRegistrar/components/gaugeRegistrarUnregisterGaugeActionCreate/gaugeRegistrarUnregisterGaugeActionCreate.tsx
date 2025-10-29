@@ -40,11 +40,13 @@ export const GaugeRegistrarUnregisterGaugeActionCreate: React.FC<IGaugeRegistrar
 
     return (
         <CardEmptyState
-            heading={t('app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeAction.emptyCard.heading')}
-            description={t('app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeAction.emptyCard.description')}
+            heading={t('app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionCreate.emptyCard.heading')}
+            description={t(
+                'app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionCreate.emptyCard.description',
+            )}
             objectIllustration={{ object: 'SETTINGS' }}
             secondaryButton={{
-                label: t('app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeAction.emptyCard.action'),
+                label: t('app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionCreate.emptyCard.action'),
                 onClick: handleOpenGaugeSelectDialog,
                 iconLeft: IconType.PLUS,
             }}
