@@ -11,7 +11,6 @@ import { useTranslations } from '@/shared/components/translationsProvider/transl
 import { useStepper } from '@/shared/hooks/useStepper/useStepper';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
-import { GaugeVoterServiceKey } from '../../api/gaugeVoterService/gaugeVoterServiceKeys';
 import { gaugeVoterVoteTransactionDialogUtils } from './gaugeVoterVoteTransactionDialogUtils';
 import type { IGaugeVote } from './gaugeVoterVoteTransactionDialogUtils.api';
 
@@ -28,6 +27,10 @@ export interface IGaugeVoterVoteTransactionDialogParams {
      * The address of the gauge voter plugin.
      */
     pluginAddress: string;
+    /**
+     * Callback called after successful vote transaction.
+     */
+    onSuccess?: () => void;
 }
 
 export interface IGaugeVoterVoteTransactionDialogProps
@@ -37,7 +40,7 @@ export const GaugeVoterVoteTransactionDialog: React.FC<IGaugeVoterVoteTransactio
     const { location } = props;
     invariant(location.params != null, 'GaugeVoterVoteTransactionDialog: required parameters must be set.');
 
-    const { votes, pluginAddress, network } = location.params;
+    const { votes, pluginAddress, network, onSuccess: onSuccessCallback } = location.params;
 
     const { t } = useTranslations();
     const queryClient = useQueryClient();
@@ -47,7 +50,18 @@ export const GaugeVoterVoteTransactionDialog: React.FC<IGaugeVoterVoteTransactio
 
     const prepareTransaction = () => gaugeVoterVoteTransactionDialogUtils.buildTransaction({ votes, pluginAddress });
 
-    const onSuccessClick = () => queryClient.invalidateQueries({ queryKey: [GaugeVoterServiceKey.GAUGES] });
+    const handleSuccess = async () => {
+        // Refetch all active queries to get fresh data after vote submission
+        // This includes:
+        // - Backend queries: gauge list (vote totals), epoch metrics
+        // - RPC queries: user's voting power, user's votes per gauge
+        await queryClient.refetchQueries({
+            predicate: (query) => query.isActive(),
+        });
+
+        // Call parent callback (e.g., to reset selected gauges)
+        onSuccessCallback?.();
+    };
 
     return (
         <TransactionDialog
@@ -55,11 +69,12 @@ export const GaugeVoterVoteTransactionDialog: React.FC<IGaugeVoterVoteTransactio
             description={t('app.plugins.gaugeVoter.gaugeVoterVoteTransactionDialog.description')}
             submitLabel={t('app.plugins.gaugeVoter.gaugeVoterVoteTransactionDialog.submit')}
             successLink={{
-                onClick: onSuccessClick,
+                onClick: handleSuccess,
                 label: t('app.plugins.gaugeVoter.gaugeVoterVoteTransactionDialog.successLinkLabel'),
             }}
             stepper={stepper}
             prepareTransaction={prepareTransaction}
+            onSuccess={handleSuccess}
             network={network}
         />
     );

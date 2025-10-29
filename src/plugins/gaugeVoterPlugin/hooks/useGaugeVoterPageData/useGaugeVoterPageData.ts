@@ -29,6 +29,7 @@ const formatVotingPower = (rawValue: bigint, tokenDecimals: number): IVotingPowe
 /**
  * Hook that provides view-ready gauge voter data for page components.
  * Transforms raw blockchain BigInt values into formatted strings and calculated percentages.
+ * Uses backend data for gauge totals and RPC calls only for user-specific data.
  */
 export const useGaugeVoterPageData = (params: IUseGaugeVoterPageDataParams): IUseGaugeVoterPageDataResult => {
     const {
@@ -41,13 +42,11 @@ export const useGaugeVoterPageData = (params: IUseGaugeVoterPageDataParams): IUs
         enabled = true,
     } = params;
 
-    // Fetch raw blockchain data
+    // Fetch user-specific data from RPC
     const {
         votingPower: rawVotingPower,
         usedVotingPower: rawUsedVotingPower,
         gaugeVotes: rawGaugeVotes,
-        gaugeTotalVotes: rawGaugeTotalVotes,
-        isVoting,
         isLoading,
         refetch,
     } = useGaugeVoterUserData({
@@ -68,23 +67,18 @@ export const useGaugeVoterPageData = (params: IUseGaugeVoterPageDataParams): IUs
     // User has voted if they've used all their voting power
     const hasVoted = usedVotingPower.value === votingPower.value && votingPower.value > 0;
 
-    // Transform gauge votes to include formatted values with backend → RPC fallback
-    const gaugeVotes: IGaugeVote[] = rawGaugeVotes.map((vote, index) => {
+    // Transform gauge votes to include formatted values from backend data
+    const gaugeVotes: IGaugeVote[] = rawGaugeVotes.map((vote) => {
         const formattedUserVotes = formatterUtils.formatNumber(formatUnits(vote.userVotes, tokenDecimals), {
             format: NumberFormat.TOKEN_AMOUNT_SHORT,
         });
 
-        // Get backend data for this gauge
+        // Get total votes from backend (using currentEpochVotingPower)
         const backendGauge = gauges.find((g) => g.address === vote.gaugeAddress);
-        const backendTotalVotes = backendGauge?.metrics.totalGaugeVotingPower
-            ? BigInt(backendGauge.metrics.totalGaugeVotingPower)
+        const totalVotesForGauge = backendGauge?.metrics.currentEpochVotingPower
+            ? BigInt(backendGauge.metrics.currentEpochVotingPower)
             : BigInt(0);
 
-        // Get RPC data for this gauge
-        const rpcTotalVotes = rawGaugeTotalVotes[index]?.totalVotes ?? BigInt(0);
-
-        // Fallback: Use backend if available and non-zero, otherwise use RPC
-        const totalVotesForGauge = backendTotalVotes > BigInt(0) ? backendTotalVotes : rpcTotalVotes;
         const totalVotesDecimal = formatUnits(totalVotesForGauge, tokenDecimals);
         const formattedTotalVotes = formatterUtils.formatNumber(totalVotesDecimal, {
             format: NumberFormat.TOKEN_AMOUNT_SHORT,
@@ -111,7 +105,6 @@ export const useGaugeVoterPageData = (params: IUseGaugeVoterPageDataParams): IUs
         hasVoted,
         gaugeVotes,
         votedGaugeAddresses,
-        isVoting,
         isLoading,
         refetch,
     };

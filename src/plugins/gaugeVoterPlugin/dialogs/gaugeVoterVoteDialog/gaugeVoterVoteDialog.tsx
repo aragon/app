@@ -44,6 +44,10 @@ export interface IGaugeVoterVoteDialogParams {
      * Callback called when a gauge is removed from the vote list.
      */
     onRemoveGauge?: (gaugeAddress: string) => void;
+    /**
+     * Callback called after successful vote transaction.
+     */
+    onSuccess?: () => void;
 }
 
 export interface IGaugeVoterVoteDialogProps extends IDialogComponentProps<IGaugeVoterVoteDialogParams> {}
@@ -54,7 +58,7 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
 
     invariant(location.params != null, 'GaugeVoterVoteDialog: required parameters must be set.');
 
-    const { gauges, totalVotingPower, tokenSymbol, onRemoveGauge, pluginAddress, network, gaugeVotes } =
+    const { gauges, totalVotingPower, tokenSymbol, onRemoveGauge, onSuccess, pluginAddress, network, gaugeVotes } =
         location.params;
 
     const { open, close } = useDialogContext();
@@ -144,6 +148,7 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
             votes,
             pluginAddress,
             network,
+            onSuccess,
         };
 
         open(GaugeVoterPluginDialogId.VOTE_GAUGES_TRANSACTION, {

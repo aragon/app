@@ -16,7 +16,7 @@ export interface IUseGaugeVoterPageDataParams {
      */
     gaugeAddresses: Hex[];
     /**
-     * Gauge data from backend (for fallback comparison).
+     * Gauge data from backend (for metadata and total votes).
      */
     gauges: IGaugeReturn[];
     /**
@@ -47,11 +47,11 @@ export interface IGaugeVote {
      */
     formattedVotes: string;
     /**
-     * Total votes on this gauge across all users (as bigint) - backend with RPC fallback.
+     * Total votes on this gauge across all users (as bigint) - from backend.
      */
     totalVotes: bigint;
     /**
-     * Formatted total vote amount for display (backend with RPC fallback).
+     * Formatted total vote amount for display (from backend).
      */
     formattedTotalVotes: string;
     /**
@@ -104,10 +104,6 @@ export interface IUseGaugeVoterPageDataResult {
      * Gauge addresses the user has voted for.
      */
     votedGaugeAddresses: readonly Hex[];
-    /**
-     * Whether the user is currently voting.
-     */
-    isVoting: boolean;
     /**
      * Whether the data is loading.
      */

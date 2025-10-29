@@ -148,6 +148,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         votes: gv.votes,
                         formattedVotes: gv.formattedVotes,
                     })),
+                    onSuccess: () => setSelectedGauges([]),
                 };
                 open(GaugeVoterPluginDialogId.VOTE_GAUGES, { params: voteParams });
             },
