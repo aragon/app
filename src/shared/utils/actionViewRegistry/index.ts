@@ -1,2 +1,7 @@
 export { actionViewRegistry } from './actionViewRegistry';
-export type { ActionViewCreateComponent, IActionViewDescriptor } from './actionViewRegistry.api';
+export type {
+    ActionViewCreateComponent,
+    ActionViewDetailsComponent,
+    IActionGroupDescriptor,
+    IActionViewDescriptor,
+} from './actionViewRegistry.api';

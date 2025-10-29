@@ -12,6 +12,11 @@ import type { TranslationFunction } from '../../components/translationsProvider'
 export type ActionViewCreateComponent = ActionComposerPluginComponent<unknown>;
 
 /**
+ * Custom action component type for action views in create/edit mode.
+ */
+export type ActionViewDetailsComponent = ProposalActionComponent<IProposalActionData>;
+
+/**
  * Descriptor for registering a custom action view. Each view has 3 key components:
  *   - getItem() - callback returning ActionComposer input item
  *   - componentCreate - custom component for rendering action in create/edit mode
@@ -40,7 +45,7 @@ export interface IActionViewDescriptor {
     /**
      * Custom React component to render the action in read mode, i.e. proposal details page.
      */
-    componentDetails?: ProposalActionComponent<IProposalActionData>;
+    componentDetails?: ActionViewDetailsComponent;
     /**
      *  Action composer item.
      */

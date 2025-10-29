@@ -1,3 +1,4 @@
+import { invariant } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import type { TranslationFunction } from '../../components/translationsProvider';
 import type { IActionGroupDescriptor, IActionViewDescriptor } from './actionViewRegistry.api';
@@ -8,15 +9,13 @@ export class ActionViewRegistry {
 
     register = (descriptor: IActionViewDescriptor): this => {
         if (this.views.find((view) => view.id === descriptor.id)) {
-            // throw new Error(`Action view with id "${descriptor.id}" is already registered`);
             return this;
         }
 
-        if (!descriptor.functionSelector && !descriptor.permissionId) {
-            throw new Error(
-                `Action view "${descriptor.id}" must provide at least one matching criterion: functionSelector or permissionId`,
-            );
-        }
+        invariant(
+            !!descriptor.functionSelector || !!descriptor.permissionId,
+            `ActionViewRegistry->register: Action view "${descriptor.id}" must provide at least one matching criterion: functionSelector or permissionId`,
+        );
 
         this.views.push(descriptor);
 
