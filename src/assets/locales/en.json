@@ -49,7 +49,15 @@
             "placeholder": "ENS or 0x…"
           }
         },
-        "gaugeRegistrarRegisterGaugeActionDetails": {},
+        "gaugeRegistrarRegisterGaugeActionDetails": {
+          "avatarTerm": "Logo",
+          "descriptionTerm": "Description",
+          "incentiveTerm": "Incentive",
+          "nameTerm": "Name",
+          "qiTokenTerm": "Qi token",
+          "resourcesTerm": "Links",
+          "rewardControllerTerm": "Reward controller"
+        },
         "gaugeRegistrarRegisterGaugeActionReadOnly": {},
         "gaugeRegistrarSelectGaugeDialog": {
           "cancel": "Cancel",

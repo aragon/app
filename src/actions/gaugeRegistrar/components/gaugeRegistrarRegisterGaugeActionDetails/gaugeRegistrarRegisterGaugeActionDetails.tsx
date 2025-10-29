@@ -1,6 +1,10 @@
 'use client';
 
 import { type IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import { useDao } from '@/shared/api/daoService';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import {
     addressUtils,
     Avatar,
@@ -12,10 +16,6 @@ import {
     Link,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
-import { useDao } from '../../../../shared/api/daoService';
-import { useTranslations } from '../../../../shared/components/translationsProvider';
-import { networkDefinitions } from '../../../../shared/constants/networkDefinitions';
-import { ipfsUtils } from '../../../../shared/utils/ipfsUtils';
 import { GaugeIncentiveType } from '../../types/enum/gaugeIncentiveType';
 import type { IGaugeRegistrarActionRegisterGauge } from '../../types/gaugeRegistrarActionRegisterGauge';
 
@@ -60,20 +60,24 @@ export const GaugeRegistrarRegisterGaugeActionDetails: React.FC<IGaugeRegistrarR
 
     return (
         <DefinitionList.Container>
-            <DefinitionList.Item term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.name.label')}>
+            <DefinitionList.Item
+                term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionDetails.nameTerm')}
+            >
                 {name}
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.avatar.label')}>
+            <DefinitionList.Item
+                term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionDetails.avatarTerm')}
+            >
                 <Avatar src={avatarSrc} size="md" />
             </DefinitionList.Item>
             <DefinitionList.Item
-                term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.description.label')}
+                term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionDetails.descriptionTerm')}
             >
                 {description}
             </DefinitionList.Item>
             {links && (
                 <DefinitionList.Item
-                    term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.resources.label')}
+                    term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionDetails.resourcesTerm')}
                 >
                     <div className="flex flex-col gap-3">
                         {links.map((link) => (
@@ -85,19 +89,19 @@ export const GaugeRegistrarRegisterGaugeActionDetails: React.FC<IGaugeRegistrarR
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item
-                term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.qiToken.label')}
+                term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionDetails.qiTokenTerm')}
                 link={{ href: qiTokenAddressLink }}
                 copyValue={qiTokenAddress}
             >
                 {addressUtils.truncateAddress(qiTokenAddress)}
             </DefinitionList.Item>
             <DefinitionList.Item
-                term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.incentive.label')}
+                term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionDetails.incentiveTerm')}
             >
                 {incentiveType === GaugeIncentiveType.SUPPLY ? 'Supply' : 'Borrow'}
             </DefinitionList.Item>
             <DefinitionList.Item
-                term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeAction.rewardController.label')}
+                term={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionDetails.rewardControllerTerm')}
                 link={{ href: rewardControllerAddressLink }}
                 copyValue={rewardControllerAddress}
             >
