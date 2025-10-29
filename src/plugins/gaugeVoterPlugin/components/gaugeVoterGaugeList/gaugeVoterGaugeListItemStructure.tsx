@@ -88,7 +88,9 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
     const totalEpochPower = totalEpochVotingPower ?? 0;
     const percentage = totalEpochPower > 0 ? totalVotesValue / totalEpochPower : 0;
     const formattedPercentage =
-        totalEpochPower > 0 ? formatterUtils.formatNumber(percentage, { format: NumberFormat.PERCENTAGE_SHORT }) : null;
+        totalEpochPower > 0 && !isNaN(percentage) && isFinite(percentage)
+            ? formatterUtils.formatNumber(percentage, { format: NumberFormat.PERCENTAGE_SHORT })
+            : null;
 
     const truncatedAddress = addressUtils.truncateAddress(gauge.address);
 

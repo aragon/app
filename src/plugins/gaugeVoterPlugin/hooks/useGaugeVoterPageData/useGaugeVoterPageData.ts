@@ -11,7 +11,15 @@ import type {
 /**
  * Transforms raw BigInt voting power into display-ready format.
  */
-const formatVotingPower = (rawValue: bigint, tokenDecimals: number): IVotingPowerData => {
+const formatVotingPower = (rawValue: bigint | undefined, tokenDecimals: number): IVotingPowerData => {
+    if (rawValue === undefined) {
+        return {
+            raw: BigInt(0),
+            formatted: '0',
+            value: 0,
+        };
+    }
+
     const decimalValue = formatUnits(rawValue, tokenDecimals);
     const numericValue = Number(decimalValue);
 

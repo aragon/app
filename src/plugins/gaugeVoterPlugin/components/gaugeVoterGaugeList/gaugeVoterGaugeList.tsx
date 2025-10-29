@@ -1,7 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
-import type { DataListState } from '@aragon/gov-ui-kit';
-import { DataListContainer, DataListPagination, DataListRoot } from '@aragon/gov-ui-kit';
+import { DataListContainer, DataListPagination, DataListRoot, type DataListState } from '@aragon/gov-ui-kit';
 import { useEffect, useRef } from 'react';
 import type { IGetGaugeListParams } from '../../api/gaugeVoterService';
 import type { IGaugeReturn } from '../../api/gaugeVoterService/domain';
@@ -95,6 +94,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
     const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
 
     const userVotesLoadedRef = useRef(false);
+
     useEffect(() => {
         if (!isUserVotesLoading) {
             userVotesLoadedRef.current = true;

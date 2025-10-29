@@ -112,7 +112,7 @@ export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUs
         ? BigInt(backendUsedVotingPower)
         : (rpcUsedVotingPowerData ?? BigInt(0));
 
-    // Only show loading if we're waiting for RPC data (backend is instant)
+    // Show loading if we're waiting for any RPC data
     const isLoading =
         (!hasBackendVotingPower && isTotalVotingPowerLoading) ||
         (!hasBackendUsedVotingPower && isUsedVotingPowerLoading) ||

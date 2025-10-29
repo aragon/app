@@ -64,10 +64,8 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const gauges = gaugeListData?.pages.flatMap((page) => page.data) ?? [];
     const gaugeAddresses = gauges.map((g) => g.address);
 
-    // Use backend epoch metrics with fallbacks
     const epochId = epochMetrics?.epochId ?? gauges[0]?.metrics?.epochId;
-    const totalVotes = gauges.reduce((sum, gauge) => sum + gauge.metrics.totalMemberVoteCount, 0);
-    const epochTotalVotingPower = BigInt(epochMetrics?.totalVotingPower ?? totalVotes.toString());
+    const epochTotalVotingPower = epochMetrics?.totalVotingPower ? BigInt(epochMetrics.totalVotingPower) : undefined;
 
     // Determine if currently in voting period by comparing current time with vote start/end
     const now = Math.floor(Date.now() / 1000); // Convert to seconds
