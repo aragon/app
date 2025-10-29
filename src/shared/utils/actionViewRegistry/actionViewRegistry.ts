@@ -1,4 +1,3 @@
-import { invariant } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import type { TranslationFunction } from '../../components/translationsProvider';
 import type { IActionGroupDescriptor, IActionViewDescriptor } from './actionViewRegistry.api';
@@ -12,10 +11,11 @@ export class ActionViewRegistry {
             return this;
         }
 
-        invariant(
-            !!descriptor.functionSelector || !!descriptor.permissionId,
-            `ActionViewRegistry->register: Action view "${descriptor.actionType}" must provide at least one matching criterion: functionSelector or permissionId`,
-        );
+        if (!descriptor.functionSelector && !descriptor.permissionId) {
+            throw new Error(
+                `ActionViewRegistry: action view "${descriptor.actionType}" must provide at least one matching criterion: functionSelector or permissionId`,
+            );
+        }
 
         this.views.push(descriptor);
 

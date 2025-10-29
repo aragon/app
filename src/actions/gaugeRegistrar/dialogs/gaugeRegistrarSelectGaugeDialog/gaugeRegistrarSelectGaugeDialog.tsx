@@ -4,16 +4,16 @@ import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { DataList, Dialog, invariant, StateSkeletonBar, StateSkeletonCircular } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import { useDaoPlugins } from '../../../../shared/hooks/useDaoPlugins';
 import { GaugeRegistrarGaugeListItem } from '../../components/gaugeRegistrarGaugeListItem';
 import { useGaugeRegistrarGauges } from '../../hooks/useGaugeRegistrarGauges';
 import type { IRegisteredGauge } from '../../types/gaugeRegistrar';
 
 export interface IGaugeRegistrarSelectGaugeDialogParams {
     /**
-     * Address of the gauge registrar plugin contract
+     * Address of the gauge registrar plugin contract.
      */
     pluginAddress: string;
     /**
@@ -21,7 +21,7 @@ export interface IGaugeRegistrarSelectGaugeDialogParams {
      */
     dao: IDao;
     /**
-     * Callback called when a gauge is selected
+     * Callback called when a gauge is selected.
      */
     onGaugeSelected?: (gauge: IRegisteredGauge) => void;
 }
