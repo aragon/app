@@ -1,6 +1,6 @@
 import type { IPaginatedRequest } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
-import type { IRequestUrlParams, IRequestUrlQueryParams } from '@/shared/api/httpService';
+import type { IRequestUrlQueryParams } from '@/shared/api/httpService';
 import type { Hex } from 'viem';
 
 export interface IGetGaugePluginUrlParams {
@@ -29,4 +29,12 @@ export interface IGetEpochMetricsUrlParams {
     network: Network;
 }
 
-export interface IGetEpochMetricsParams extends IRequestUrlParams<IGetEpochMetricsUrlParams> {}
+export interface IGetEpochMetricsQueryParams {
+    /**
+     * Optional member address to fetch user-specific voting power.
+     */
+    memberAddress?: Hex;
+}
+
+export interface IGetEpochMetricsParams
+    extends IRequestUrlQueryParams<IGetEpochMetricsUrlParams, IGetEpochMetricsQueryParams> {}

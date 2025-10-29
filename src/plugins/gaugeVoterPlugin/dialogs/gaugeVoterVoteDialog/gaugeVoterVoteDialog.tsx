@@ -133,8 +133,10 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
     };
 
     const canSubmit = useMemo(() => {
-        return totalPercentageUsed > 0 && totalPercentageUsed === 100 && voteAllocations.length > 0;
-    }, [totalPercentageUsed, voteAllocations.length]);
+        return (
+            totalPercentageUsed > 0 && totalPercentageUsed === 100 && voteAllocations.length > 0 && totalVotingPower > 0
+        );
+    }, [totalPercentageUsed, voteAllocations.length, totalVotingPower]);
 
     const handleSubmit = () => {
         const votes: IGaugeVote[] = voteAllocations

@@ -49,14 +49,17 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
         | undefined;
     const plugin = plugins?.[0];
 
-    // Fetch epoch metrics from backend
-    const { data: epochMetrics } = useEpochMetrics({
-        queryParams: {
-            pluginAddress: plugin?.meta.address ?? '',
+    // Fetch epoch metrics from backend (includes user voting power if connected)
+    const epochMetricsParams = {
+        urlParams: {
+            pluginAddress: (plugin?.meta.address ?? '') as Address,
             network: dao.network,
         },
-        enabled: !!plugin?.meta.address,
-    });
+        queryParams: {
+            memberAddress: address,
+        },
+    };
+    const { data: epochMetrics } = useEpochMetrics(epochMetricsParams, { enabled: !!plugin?.meta.address });
 
     const gauges = gaugeListData?.pages.flatMap((page) => page.data) ?? [];
     const gaugeAddresses = gauges.map((g) => g.address);
@@ -90,6 +93,9 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
         epochTotalVotingPower,
         tokenDecimals,
         enabled: isUserConnected && !!plugin?.meta.address,
+        // Pass backend user voting power if available (skips RPC calls for performance)
+        backendVotingPower: epochMetrics?.memberVotingPower,
+        backendUsedVotingPower: epochMetrics?.memberUsedVotingPower,
     });
 
     const [selectedGauges, setSelectedGauges] = useState<string[]>([]);

@@ -19,25 +19,36 @@ const erc20VotesAbi = [
 ] as const;
 
 export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUseGaugeVoterUserDataResult => {
-    const { pluginAddress, network, gaugeAddresses, enabled = true } = params;
+    const {
+        pluginAddress,
+        network,
+        gaugeAddresses,
+        enabled = true,
+        backendVotingPower,
+        backendUsedVotingPower,
+    } = params;
 
     const { address: userAddress } = useAccount();
     const { id: chainId } = networkDefinitions[network];
 
     const isEnabled = enabled && !!userAddress;
 
-    // Read ivotesAdapter address from the gauge voter contract
+    // Backend-first: Use backend data if available, otherwise fetch from RPC
+    const hasBackendVotingPower = backendVotingPower != null;
+    const hasBackendUsedVotingPower = backendUsedVotingPower != null;
+
+    // Read ivotesAdapter address from the gauge voter contract (only if backend data not available)
     const { data: ivotesAdapterAddress } = useReadContract({
         abi: gaugeVoterAbi,
         functionName: 'ivotesAdapter',
         address: pluginAddress,
         chainId,
-        query: { enabled: isEnabled },
+        query: { enabled: isEnabled && !hasBackendVotingPower },
     });
 
-    // Read user's total voting power from the ivotesAdapter
+    // Read user's total voting power from the ivotesAdapter (only if backend data not available)
     const {
-        data: totalVotingPowerData,
+        data: rpcTotalVotingPowerData,
         refetch: refetchTotalVotingPower,
         isLoading: isTotalVotingPowerLoading,
     } = useReadContract({
@@ -46,12 +57,12 @@ export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUs
         address: ivotesAdapterAddress as Hex,
         args: [userAddress as Hex],
         chainId,
-        query: { enabled: isEnabled && !!ivotesAdapterAddress },
+        query: { enabled: isEnabled && !!ivotesAdapterAddress && !hasBackendVotingPower },
     });
 
-    // Read user's used voting power from the gauge voter
+    // Read user's used voting power from the gauge voter (only if backend data not available)
     const {
-        data: usedVotingPowerData,
+        data: rpcUsedVotingPowerData,
         refetch: refetchUsedVotingPower,
         isLoading: isUsedVotingPowerLoading,
     } = useReadContract({
@@ -60,7 +71,7 @@ export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUs
         address: pluginAddress,
         args: [userAddress as Hex],
         chainId,
-        query: { enabled: isEnabled },
+        query: { enabled: isEnabled && !hasBackendUsedVotingPower },
     });
 
     // Read user's votes for each gauge
@@ -93,11 +104,23 @@ export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUs
         void refetchGaugeVotes();
     };
 
-    const isLoading = isTotalVotingPowerLoading || isUsedVotingPowerLoading || isGaugeVotesLoading;
+    // Use backend data if available, otherwise use RPC data
+    const totalVotingPower = hasBackendVotingPower
+        ? BigInt(backendVotingPower)
+        : (rpcTotalVotingPowerData ?? BigInt(0));
+    const usedVotingPower = hasBackendUsedVotingPower
+        ? BigInt(backendUsedVotingPower)
+        : (rpcUsedVotingPowerData ?? BigInt(0));
+
+    // Only show loading if we're waiting for RPC data (backend is instant)
+    const isLoading =
+        (!hasBackendVotingPower && isTotalVotingPowerLoading) ||
+        (!hasBackendUsedVotingPower && isUsedVotingPowerLoading) ||
+        isGaugeVotesLoading;
 
     return {
-        votingPower: totalVotingPowerData ?? BigInt(0),
-        usedVotingPower: usedVotingPowerData ?? BigInt(0),
+        votingPower: totalVotingPower,
+        usedVotingPower: usedVotingPower,
         gaugeVotes,
         isLoading,
         refetch,

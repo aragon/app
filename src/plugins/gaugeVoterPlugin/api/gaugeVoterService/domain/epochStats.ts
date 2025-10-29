@@ -1,6 +1,7 @@
 /**
  * Epoch-level metrics data from the backend /v2/gauge/epochMetrics/:pluginAddress/:network endpoint.
  * This provides metadata about the current voting epoch for the gauge list.
+ * When memberAddress is provided as a query param, also includes user-specific voting power data.
  */
 export interface IEpochMetrics {
     /**
@@ -35,4 +36,12 @@ export interface IEpochMetrics {
      * End time of the voting period (Unix timestamp in seconds).
      */
     epochVoteEnd: number;
+    /**
+     * User's total voting power (only present when memberAddress query param is provided).
+     */
+    memberVotingPower?: string;
+    /**
+     * User's used voting power (only present when memberAddress query param is provided).
+     */
+    memberUsedVotingPower?: string;
 }

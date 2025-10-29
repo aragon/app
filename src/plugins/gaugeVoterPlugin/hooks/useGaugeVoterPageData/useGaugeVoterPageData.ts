@@ -29,7 +29,8 @@ const formatVotingPower = (rawValue: bigint, tokenDecimals: number): IVotingPowe
 /**
  * Hook that provides view-ready gauge voter data for page components.
  * Transforms raw blockchain BigInt values into formatted strings and calculated percentages.
- * Uses backend data for gauge totals and RPC calls only for user-specific data.
+ * Backend-first approach: Uses backend epochMetrics for user voting power when available,
+ * falls back to RPC calls only when necessary. Always uses backend for gauge totals.
  */
 export const useGaugeVoterPageData = (params: IUseGaugeVoterPageDataParams): IUseGaugeVoterPageDataResult => {
     const {
@@ -40,9 +41,11 @@ export const useGaugeVoterPageData = (params: IUseGaugeVoterPageDataParams): IUs
         epochTotalVotingPower = BigInt(0),
         tokenDecimals = 18,
         enabled = true,
+        backendVotingPower,
+        backendUsedVotingPower,
     } = params;
 
-    // Fetch user-specific data from RPC
+    // Fetch user-specific data: backend-first with RPC fallback
     const {
         votingPower: rawVotingPower,
         usedVotingPower: rawUsedVotingPower,
@@ -54,6 +57,8 @@ export const useGaugeVoterPageData = (params: IUseGaugeVoterPageDataParams): IUs
         network,
         gaugeAddresses,
         enabled,
+        backendVotingPower,
+        backendUsedVotingPower,
     });
 
     // Transform raw data to view-ready format

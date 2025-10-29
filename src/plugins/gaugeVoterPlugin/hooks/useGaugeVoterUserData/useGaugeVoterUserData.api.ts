@@ -18,6 +18,16 @@ export interface IUseGaugeVoterUserDataParams {
      * Whether to enable the query.
      */
     enabled?: boolean;
+    /**
+     * User's total voting power from backend (preferred source).
+     * If provided, RPC call for voting power is skipped.
+     */
+    backendVotingPower?: string;
+    /**
+     * User's used voting power from backend (preferred source).
+     * If provided, RPC call for used voting power is skipped.
+     */
+    backendUsedVotingPower?: string;
 }
 
 export interface IGaugeUserVote {
