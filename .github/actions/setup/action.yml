@@ -1,5 +1,5 @@
 name: "Setup"
-description: "This action checks out the commit, sets up Node and installs the dependencies using yarn."
+description: "This action checks out the commit, sets up Node and installs the dependencies using pnpm."
 
 inputs:
   repository:
@@ -14,6 +14,13 @@ inputs:
     description: "GitHub token used for authentication"
     required: false
     default: ${{ github.token }}
+  ref:
+    description: "The branch, tag or SHA to checkout."
+    required: false
+  registry-url:
+    description: "URL of the registry used for Node setup"
+    required: false
+    default: "https://registry.npmjs.org"
   node-version:
     description: "The version of Node.js to use for the workflow"
     required: false
@@ -21,7 +28,7 @@ inputs:
   node-cache:
     description: "Specifies which package manager to use for caching"
     required: false
-    default: "yarn"
+    default: "pnpm"
 
 runs:
   using: "composite"
@@ -32,11 +39,23 @@ runs:
         repository: ${{ inputs.repository }}
         fetch-depth: ${{ inputs.fetch-depth }}
         token: ${{ inputs.token }}
+        ref: ${{ inputs.ref }}
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4.2.0
+      with:
+        run_install: false
+
+    - name: Enable corepack
+      shell: bash
+      run: corepack enable
+
     - name: Setup Node
       uses: actions/setup-node@v4.2.0
       with:
         node-version: ${{ inputs.node-version }}
         cache: ${{ inputs.node-cache }}
+        registry-url: ${{ inputs.registry-url }}
+
     - name: Install dependencies
       shell: bash
-      run: yarn install --immutable
+      run: pnpm install --frozen-lockfile
