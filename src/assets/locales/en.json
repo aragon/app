@@ -7,7 +7,7 @@
           "registerActionName": "Register Gauge",
           "unregisterActionName": "Unregister Gauge"
         },
-        "gaugeRegistrarRegisterGaugeAction": {
+        "gaugeRegistrarRegisterGaugeActionCreateForm": {
           "avatar": {
             "error": {
               "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, or GIF).",
@@ -49,6 +49,7 @@
             "placeholder": "ENS or 0x…"
           }
         },
+        "gaugeRegistrarRegisterGaugeActionDetails": {},
         "gaugeRegistrarRegisterGaugeActionReadOnly": {},
         "gaugeRegistrarSelectGaugeDialog": {
           "cancel": "Cancel",

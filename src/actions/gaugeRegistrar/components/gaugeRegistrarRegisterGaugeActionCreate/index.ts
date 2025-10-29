@@ -5,3 +5,9 @@ export const GaugeRegistrarRegisterGaugeActionCreate = dynamic(() =>
 );
 
 export type { IGaugeRegistrarRegisterGaugeActionCreateProps } from './gaugeRegistrarRegisterGaugeActionCreate';
+
+export {
+    GaugeRegistrarRegisterGaugeActionCreateForm,
+    type IGaugeRegistrarRegisterGaugeActionCreateFormProps,
+    type IGaugeRegistrarRegisterGaugeFormData,
+} from './gaugeRegistrarRegisterGaugeActionCreateForm';
