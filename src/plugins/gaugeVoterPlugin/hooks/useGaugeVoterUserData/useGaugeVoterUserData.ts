@@ -8,6 +8,16 @@ import type {
     IUseGaugeVoterUserDataResult,
 } from './useGaugeVoterUserData.api';
 
+const erc20VotesAbi = [
+    {
+        type: 'function',
+        name: 'getVotes',
+        inputs: [{ name: 'account', type: 'address' }],
+        outputs: [{ name: '', type: 'uint256' }],
+        stateMutability: 'view',
+    },
+] as const;
+
 export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUseGaugeVoterUserDataResult => {
     const { pluginAddress, network, gaugeAddresses, enabled = true } = params;
 
@@ -15,6 +25,29 @@ export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUs
     const { id: chainId } = networkDefinitions[network];
 
     const isEnabled = enabled && !!userAddress;
+
+    // Read ivotesAdapter address from the gauge voter contract
+    const { data: ivotesAdapterAddress } = useReadContract({
+        abi: gaugeVoterAbi,
+        functionName: 'ivotesAdapter',
+        address: pluginAddress,
+        chainId,
+        query: { enabled: isEnabled },
+    });
+
+    // Read user's total voting power from the ivotesAdapter
+    const {
+        data: totalVotingPowerData,
+        refetch: refetchTotalVotingPower,
+        isLoading: isTotalVotingPowerLoading,
+    } = useReadContract({
+        abi: erc20VotesAbi,
+        functionName: 'getVotes',
+        address: ivotesAdapterAddress as Hex,
+        args: [userAddress as Hex],
+        chainId,
+        query: { enabled: isEnabled && !!ivotesAdapterAddress },
+    });
 
     // Read user's used voting power from the gauge voter
     const {
@@ -55,14 +88,15 @@ export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUs
     }));
 
     const refetch = () => {
+        void refetchTotalVotingPower();
         void refetchUsedVotingPower();
         void refetchGaugeVotes();
     };
 
-    const isLoading = isUsedVotingPowerLoading || isGaugeVotesLoading;
+    const isLoading = isTotalVotingPowerLoading || isUsedVotingPowerLoading || isGaugeVotesLoading;
 
     return {
-        votingPower: usedVotingPowerData ?? BigInt(0),
+        votingPower: totalVotingPowerData ?? BigInt(0),
         usedVotingPower: usedVotingPowerData ?? BigInt(0),
         gaugeVotes,
         isLoading,

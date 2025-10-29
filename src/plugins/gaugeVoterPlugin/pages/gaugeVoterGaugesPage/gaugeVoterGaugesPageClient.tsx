@@ -44,7 +44,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const isUserConnected = !!address;
     const { data: gaugeListData } = useGaugeList(initialParams);
 
-    const plugins = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE }) as
+    const plugins = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_VOTER }) as
         | Array<IFilterComponentPlugin<IGaugePlugin>>
         | undefined;
     const plugin = plugins?.[0];

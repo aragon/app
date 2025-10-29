@@ -17,8 +17,7 @@ export const GaugeVoterGaugesPage: React.FC<IGaugeVoterGaugesPageProps> = async 
 
     const queryClient = new QueryClient();
 
-    // Backend returns interfaceType: 'gauge', not 'gaugeVoter'
-    const interfaceType = PluginInterfaceType.GAUGE;
+    const interfaceType = PluginInterfaceType.GAUGE_VOTER;
     const plugins = daoUtils.getDaoPlugins(dao, { interfaceType });
     const plugin: IGaugeVoterPlugin | undefined = plugins?.[0];
 

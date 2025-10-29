@@ -33,9 +33,7 @@ export interface IGaugeUserVote {
 
 export interface IUseGaugeVoterUserDataResult {
     /**
-     * User's total voting power.
-     * Note: Currently returns the same as usedVotingPower.
-     * To get actual total voting power, query the ivotesAdapter separately.
+     * User's total voting power from the ivotesAdapter contract.
      */
     votingPower: bigint;
     /**
