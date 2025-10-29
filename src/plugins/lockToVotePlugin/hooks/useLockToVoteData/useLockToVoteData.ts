@@ -106,11 +106,7 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
     const lockedAmount = lockedBalance ?? BigInt(0);
 
     // Query fee settings from DynamicExitQueue contract
-    const {
-        data: feePercentFromContract,
-        isLoading: isFeePercentLoading,
-        error: feePercentError,
-    } = useReadContract({
+    const { data: feePercentFromContract } = useReadContract({
         abi: [
             {
                 type: 'function',
@@ -125,11 +121,7 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
         chainId,
     });
 
-    const {
-        data: minFeePercentFromContract,
-        isLoading: isMinFeePercentLoading,
-        error: minFeePercentError,
-    } = useReadContract({
+    const { data: minFeePercentFromContract } = useReadContract({
         abi: [
             {
                 type: 'function',
@@ -145,10 +137,9 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
     });
 
     // Use contract values if available, otherwise fall back to plugin settings
-    const feePercent =
-        feePercentFromContract != null ? Number(feePercentFromContract) : (plugin.settings.feePercent ?? 0);
+    const feePercent = feePercentFromContract != null ? Number(feePercentFromContract) : plugin.settings.feePercent;
     const minFeePercent =
-        minFeePercentFromContract != null ? Number(minFeePercentFromContract) : (plugin.settings.minFeePercent ?? 0);
+        minFeePercentFromContract != null ? Number(minFeePercentFromContract) : plugin.settings.minFeePercent;
 
     const hasFeesConfigured = lockToVoteFeeUtils.shouldShowFeeDialog({
         feePercent,
@@ -210,9 +201,9 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
 
     const refetchData = () => {
         invalidateQueries();
-        void refetchLockedAmount();
-        void refetchTokenId();
-        void refetchFeeData();
+        refetchLockedAmount().catch(() => undefined);
+        refetchTokenId().catch(() => undefined);
+        refetchFeeData().catch(() => undefined);
     };
 
     const approveTokens = (amount: bigint, onSuccess: () => void) => {
@@ -276,8 +267,8 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
 
         // Check if we should bypass the fee dialog (both fees are 0)
         const shouldShowFeeDialog = lockToVoteFeeUtils.shouldShowFeeDialog({
-            feePercent: ticket?.feePercent ?? plugin.settings.feePercent ?? feePercent,
-            minFeePercent: ticket?.minFeePercent ?? plugin.settings.minFeePercent ?? minFeePercent,
+            feePercent: ticket?.feePercent ?? feePercent,
+            minFeePercent: ticket?.minFeePercent ?? minFeePercent,
         });
 
         if (ticket && !shouldShowFeeDialog) {
@@ -286,7 +277,7 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
         }
 
         // If we have all the required data, open the withdraw dialog with fee information
-        if (tokenId != null && ticket != null && feeAmount != null && dao != null) {
+        if (tokenId != null && ticket != null && dao != null) {
             const params: ILockToVoteWithdrawDialogParams = {
                 tokenId,
                 token,

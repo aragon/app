@@ -75,12 +75,8 @@ export const useLockToVoteFeeData = (params: IUseLockToVoteFeeDataParams): IUseL
           }
         : undefined;
 
-    const refetch = () => {
-        void refetchTicket();
-        void refetchFee();
-        void refetchCanExit();
-        void refetchIsCool();
-    };
+    const refetch = () =>
+        Promise.allSettled([refetchTicket(), refetchFee(), refetchCanExit(), refetchIsCool()]).then(() => undefined);
 
     return {
         ticket,

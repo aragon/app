@@ -3,6 +3,7 @@
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import { useMemo } from 'react';
 import { LockToVoteFeeCalculation } from '../../components/lockToVoteFeeCalculation';
 import { LockToVoteFeeChart } from '../../components/lockToVoteFeeChart';
@@ -79,7 +80,7 @@ export const LockToVoteWithdrawDialog: React.FC<ILockToVoteWithdrawDialogProps> 
                 title={t('app.plugins.lockToVote.withdrawDialog.title', { symbol: token.symbol })}
                 onClose={close}
             />
-            <Dialog.Content className="flex flex-col gap-6">
+            <Dialog.Content className={classNames({ 'pt-4': !shouldShowChart }, 'flex flex-col gap-6')}>
                 {shouldShowChart && <LockToVoteFeeChart ticket={ticket} currentTime={currentTime} />}
 
                 <LockToVoteFeeCalculation lockedAmount={lockedAmount} feeAmount={feeAmount} token={token} />

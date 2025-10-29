@@ -1,7 +1,7 @@
 import type { IToken } from '@/modules/finance/api/financeService';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { Address } from 'viem';
+import type { Address } from 'viem';
 import type { ILockToVoteTicket } from '../../types';
 
 export interface ILockToVoteWithdrawDialogParams {

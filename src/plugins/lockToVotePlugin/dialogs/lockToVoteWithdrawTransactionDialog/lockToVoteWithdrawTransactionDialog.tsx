@@ -9,7 +9,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
-import { encodeFunctionData, type Hex } from 'viem';
+import { encodeFunctionData } from 'viem';
 import { dynamicExitQueueAbi } from '../../utils/lockToVoteTransactionUtils/dynamicExitQueueAbi';
 import type { ILockToVoteWithdrawTransactionDialogProps } from './lockToVoteWithdrawTransactionDialog.api';
 
@@ -25,7 +25,7 @@ export const LockToVoteWithdrawTransactionDialog: React.FC<ILockToVoteWithdrawTr
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
-    const handlePrepareTransaction = async () => {
+    const handlePrepareTransaction = () => {
         // Build exit transaction
         const data = encodeFunctionData({
             abi: dynamicExitQueueAbi,
@@ -33,11 +33,11 @@ export const LockToVoteWithdrawTransactionDialog: React.FC<ILockToVoteWithdrawTr
             args: [tokenId],
         });
 
-        return {
-            to: lockManagerAddress as Hex,
+        return Promise.resolve({
+            to: lockManagerAddress,
             data,
             value: BigInt(0),
-        };
+        });
     };
 
     return (

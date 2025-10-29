@@ -70,7 +70,7 @@ const createMockMemberLock = (options: {
                     : options.exitDateOffsetSeconds,
         },
         nft: {
-            name: `Lock NFT #${options.tokenId}`,
+            name: `Lock NFT #${String(options.tokenId)}`,
         },
     };
 };

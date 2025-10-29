@@ -7,7 +7,7 @@ import {
 } from '../generators/lockToVoteTicket';
 import { LOCK_TO_VOTE_TEST_SCENARIOS } from './lockToVoteFeeMocks';
 
-const TOKEN_SCENARIO_OVERRIDES: Record<number, keyof typeof LOCK_TO_VOTE_TEST_SCENARIOS> = {
+const TOKEN_SCENARIO_OVERRIDES: Partial<Record<number, keyof typeof LOCK_TO_VOTE_TEST_SCENARIOS>> = {
     27: 'DYNAMIC_FEES',
     48: 'TIERED_FEES',
     59: 'FIXED_FEE',
@@ -43,7 +43,7 @@ export const useLockToVoteFeeDataMock = (params: IUseLockToVoteFeeDataParams): I
             canExit: false,
             isCool: false,
             isLoading: false,
-            refetch: () => {},
+            refetch: () => undefined,
         };
     }
 
@@ -75,7 +75,7 @@ export const useLockToVoteFeeDataMock = (params: IUseLockToVoteFeeDataParams): I
         canExit,
         isCool,
         isLoading: false,
-        refetch: () => {},
+        refetch: () => undefined,
     };
 };
 

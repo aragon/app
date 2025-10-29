@@ -122,7 +122,7 @@ class LockToVoteFeeUtils {
      * @returns Array of chart data points.
      */
     getChartDataPoints = (params: IGetChartDataPointsParams): IChartDataPoint[] => {
-        const { ticket, currentTime: _currentTime, pointCount = 6 } = params;
+        const { ticket, pointCount = 6 } = params;
 
         const mode = this.determineFeeMode(ticket);
 

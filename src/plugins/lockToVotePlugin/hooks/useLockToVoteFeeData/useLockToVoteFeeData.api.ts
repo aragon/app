@@ -43,5 +43,5 @@ export interface IUseLockToVoteFeeDataReturn {
     /**
      * Refetch all fee data.
      */
-    refetch: () => void;
+    refetch: () => Promise<unknown>;
 }

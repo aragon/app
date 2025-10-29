@@ -44,10 +44,12 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { open } = useDialogContext();
     const { t } = useTranslations();
     const { address } = useAccount();
-    const shouldUseMocks = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
-    const memberAddress = address ?? (shouldUseMocks ? '0x0000000000000000000000000000000000000001' : undefined);
+
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
+    // TODO Remove all mocks logic before merge DEMO ONLY
+    const shouldUseMocks = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
+    const memberAddress = address ?? (shouldUseMocks ? '0x0000000000000000000000000000000000000001' : undefined);
     const memberLocksQueryParams = { network: dao!.network, escrowAddress, onlyActive: !shouldUseMocks };
     const addressForQuery = memberAddress ?? '0x0000000000000000000000000000000000000000';
     const { data: memberLocks, refetch: refetchLocks } = useMemberLocks(
@@ -172,7 +174,8 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                             symbol: token.symbol,
                         })}
                     </Button>
-                    {locksCount > 0 && (
+                    {/*TODO Remove this address check before merge DEMO ONLY*/}
+                    {locksCount > 0 && address && (
                         <Button variant="secondary" size="lg" onClick={handleViewLocks}>
                             {t('app.plugins.token.tokenLockForm.locks', { count: locksCount })}
                         </Button>

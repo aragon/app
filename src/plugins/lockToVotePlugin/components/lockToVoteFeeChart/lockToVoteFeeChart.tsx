@@ -99,10 +99,11 @@ export const LockToVoteFeeChart: React.FC<ILockToVoteFeeChartProps> = (props) =>
         if (index === 0) {
             return 'Day 1';
         }
-        return `${tickDayNumbers[index] ?? ''}`;
+        const day = tickDayNumbers.at(index);
+        return day != null ? day.toString() : '';
     };
 
-    const handleMouseMove = (state: MouseHandlerDataParam) => {
+    const handleMouseMove = (state?: MouseHandlerDataParam) => {
         if (!state) {
             setHoveredIndex(undefined);
             return;
@@ -130,7 +131,7 @@ export const LockToVoteFeeChart: React.FC<ILockToVoteFeeChartProps> = (props) =>
     const hoveredPoint = hoveredIndex != null ? points[hoveredIndex] : undefined;
     const formatPointLabel = (elapsed: number) => {
         const dayNumber = elapsed === 0 ? 1 : Math.max(1, Math.round(elapsed / secondsPerDay));
-        return `Day ${dayNumber}`;
+        return `Day ${dayNumber.toString()}`;
     };
     const activeLabel = hoveredPoint && hoveredIndex != null ? formatPointLabel(hoveredPoint.elapsedSeconds) : nowLabel;
     const activeFeePercent = hoveredPoint ? hoveredPoint.feePercent : currentFeePercent;

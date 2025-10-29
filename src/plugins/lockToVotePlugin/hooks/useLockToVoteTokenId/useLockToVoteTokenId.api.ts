@@ -31,5 +31,5 @@ export interface IUseLockToVoteTokenIdReturn {
     /**
      * Refetch function to manually refresh the data.
      */
-    refetch: () => void;
+    refetch: () => Promise<unknown>;
 }

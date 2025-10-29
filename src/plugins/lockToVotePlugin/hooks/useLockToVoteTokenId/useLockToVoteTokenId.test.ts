@@ -1,9 +1,23 @@
 import { renderHook, waitFor } from '@testing-library/react';
+import type { Hex } from 'viem';
 import * as Wagmi from 'wagmi';
 import { useLockToVoteTokenId } from './useLockToVoteTokenId';
 
 describe('useLockToVoteTokenId hook', () => {
-    const useReadContractSpy = jest.spyOn(Wagmi, 'useReadContract');
+    const useReadContractSpy: jest.SpyInstance<
+        ReturnType<typeof Wagmi.useReadContract>,
+        Parameters<typeof Wagmi.useReadContract>
+    > = jest.spyOn(Wagmi, 'useReadContract');
+
+    const createUseReadContractResult = ({ data, isLoading = false }: { data: unknown; isLoading?: boolean }) => {
+        const baseResult = {
+            data,
+            isLoading,
+            refetch: jest.fn(),
+        } satisfies Pick<ReturnType<typeof Wagmi.useReadContract>, 'data' | 'isLoading' | 'refetch'>;
+
+        return baseResult as ReturnType<typeof Wagmi.useReadContract>;
+    };
 
     afterEach(() => {
         useReadContractSpy.mockReset();
@@ -14,21 +28,13 @@ describe('useLockToVoteTokenId hook', () => {
         const mockBalance = BigInt(1);
 
         useReadContractSpy
-            .mockReturnValueOnce({
-                data: mockBalance,
-                isLoading: false,
-                refetch: jest.fn(),
-            } as any)
-            .mockReturnValueOnce({
-                data: mockTokenId,
-                isLoading: false,
-                refetch: jest.fn(),
-            } as any);
+            .mockReturnValueOnce(createUseReadContractResult({ data: mockBalance }))
+            .mockReturnValueOnce(createUseReadContractResult({ data: mockTokenId }));
 
         const { result } = renderHook(() =>
             useLockToVoteTokenId({
-                escrowAddress: '0x123',
-                userAddress: '0xabc',
+                escrowAddress: '0x123' as Hex,
+                userAddress: '0xabc' as Hex,
                 chainId: 1,
             }),
         );
@@ -43,21 +49,13 @@ describe('useLockToVoteTokenId hook', () => {
         const mockBalance = BigInt(0);
 
         useReadContractSpy
-            .mockReturnValueOnce({
-                data: mockBalance,
-                isLoading: false,
-                refetch: jest.fn(),
-            } as any)
-            .mockReturnValueOnce({
-                data: undefined,
-                isLoading: false,
-                refetch: jest.fn(),
-            } as any);
+            .mockReturnValueOnce(createUseReadContractResult({ data: mockBalance }))
+            .mockReturnValueOnce(createUseReadContractResult({ data: undefined }));
 
         const { result } = renderHook(() =>
             useLockToVoteTokenId({
-                escrowAddress: '0x123',
-                userAddress: '0xabc',
+                escrowAddress: '0x123' as Hex,
+                userAddress: '0xabc' as Hex,
                 chainId: 1,
             }),
         );
@@ -69,45 +67,30 @@ describe('useLockToVoteTokenId hook', () => {
     });
 
     it('respects enabled flag', () => {
-        useReadContractSpy.mockReturnValue({
-            data: undefined,
-            isLoading: false,
-            refetch: jest.fn(),
-        } as any);
+        useReadContractSpy.mockReturnValue(createUseReadContractResult({ data: undefined }));
 
         renderHook(() =>
             useLockToVoteTokenId({
-                escrowAddress: '0x123',
-                userAddress: '0xabc',
+                escrowAddress: '0x123' as Hex,
+                userAddress: '0xabc' as Hex,
                 chainId: 1,
                 enabled: false,
             }),
         );
 
-        expect(useReadContractSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                query: expect.objectContaining({ enabled: false }),
-            }),
-        );
+        const firstCallArgs = useReadContractSpy.mock.calls[0]?.[0];
+        expect(firstCallArgs?.query?.enabled).toBe(false);
     });
 
     it('handles loading state correctly', () => {
         useReadContractSpy
-            .mockReturnValueOnce({
-                data: undefined,
-                isLoading: true,
-                refetch: jest.fn(),
-            } as any)
-            .mockReturnValueOnce({
-                data: undefined,
-                isLoading: false,
-                refetch: jest.fn(),
-            } as any);
+            .mockReturnValueOnce(createUseReadContractResult({ data: undefined, isLoading: true }))
+            .mockReturnValueOnce(createUseReadContractResult({ data: undefined }));
 
         const { result } = renderHook(() =>
             useLockToVoteTokenId({
-                escrowAddress: '0x123',
-                userAddress: '0xabc',
+                escrowAddress: '0x123' as Hex,
+                userAddress: '0xabc' as Hex,
                 chainId: 1,
             }),
         );

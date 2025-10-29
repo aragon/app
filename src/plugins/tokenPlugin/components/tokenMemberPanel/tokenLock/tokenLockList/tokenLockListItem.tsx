@@ -57,7 +57,10 @@ const statusToVariant: Record<TokenLockStatus, TagVariant> = {
 export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const { lock, plugin, dao, onRefreshNeeded } = props;
 
-    const { escrowAddress, nftLockAddress, exitQueueAddress } = plugin.votingEscrow!;
+    const votingEscrowConfig = plugin.votingEscrow;
+    const escrowAddress = votingEscrowConfig?.escrowAddress ?? zeroAddress;
+    const nftLockAddress = votingEscrowConfig?.nftLockAddress ?? zeroAddress;
+    const exitQueueAddress = votingEscrowConfig?.exitQueueAddress;
     const { token, votingEscrow } = plugin.settings;
     const { amount, epochStartAt } = lock;
 
@@ -82,7 +85,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const pluginFeePercent = pluginFeeSettings.feePercent ?? 0;
     const pluginMinFeePercent = pluginFeeSettings.minFeePercent ?? 0;
 
-    const { ticket, feeAmount, canExit } = useLockToVoteFeeData({
+    const { ticket, feeAmount } = useLockToVoteFeeData({
         tokenId: BigInt(lock.tokenId),
         lockManagerAddress,
         chainId,
@@ -138,20 +141,20 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
 
     const handleWithdraw = () => {
         // Check if we have fee data and should show the fee-based withdraw dialog
-        const hasFeeData = hasExitQueue && ticket != null && feeAmount != null;
         const hasConfiguredFees = lockToVoteFeeUtils.shouldShowFeeDialog({
             feePercent: ticket?.feePercent ?? pluginFeePercent,
             minFeePercent: ticket?.minFeePercent ?? pluginMinFeePercent,
         });
-        const shouldShowFeeDialog = hasFeeData && hasConfiguredFees;
+        const shouldShowFeeDialog = exitQueueAddress != null && ticket != null && hasConfiguredFees;
 
-        if (shouldShowFeeDialog && hasFeeData) {
+        if (shouldShowFeeDialog) {
             const dialogParams: ILockToVoteWithdrawDialogParams = {
                 tokenId: BigInt(lock.tokenId),
                 token,
                 lockManagerAddress: exitQueueAddress as Hex,
-                ticket: ticket!,
+                ticket,
                 lockedAmount: BigInt(amount),
+                feeAmount,
                 network: dao.network,
                 onBack: openViewLocksDialog,
                 onSuccess: handleActionSuccess,
@@ -186,15 +189,19 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     });
 
     const multiplier = tokenLockUtils.getMultiplier(lock, plugin.settings);
-    const formattedMultiplier = formatterUtils.formatNumber(multiplier.toString(), {
-        format: NumberFormat.GENERIC_SHORT,
-    });
+    const formattedMultiplier =
+        formatterUtils.formatNumber(multiplier.toString(), { format: NumberFormat.GENERIC_SHORT }) ?? '';
 
     return (
         <DataList.Item className="flex flex-col gap-4 py-4 md:py-6">
             <div className="flex justify-between">
                 <div className="flex items-center gap-3 md:gap-4">
-                    <Avatar src={token.logo} size="md" className="shrink-0" />
+                    {/*TODO Revert to token.logo before merge DEMO ONLY*/}
+                    <Avatar
+                        src="https://pbs.twimg.com/profile_images/1937810644964716545/LDiOF-l0_400x400.jpg"
+                        size="md"
+                        className="shrink-0"
+                    />
                     <Heading size="h4">ID: {lock.tokenId}</Heading>
                 </div>
                 <div className="flex items-center gap-2 md:gap-3">
@@ -221,7 +228,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                     <div className="text-sm text-neutral-500 md:text-base">
                         {t('app.plugins.token.tokenLockList.item.metrics.multiplier')}
                     </div>
-                    <div className="truncate">{`${formattedMultiplier!}x`}</div>
+                    <div className="truncate">{formattedMultiplier ? `${formattedMultiplier}x` : '-'}</div>
                 </div>
                 <div className="flex flex-col">
                     <div className="text-sm text-neutral-500 md:text-base">
