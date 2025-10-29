@@ -1,8 +1,8 @@
+import type { IActionComposerInputItem } from '@/modules/governance/components/actionComposer';
+import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { ActionComposerPluginComponent } from '@/modules/governance/types/actionComposerPluginData';
 import type { ProposalActionComponent } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
-import type { IActionComposerInputItem } from '../../../modules/governance/components/actionComposer';
-import type { IProposalActionData } from '../../../modules/governance/components/createProposalForm';
 import type { IAutocompleteInputGroup } from '../../components/forms/autocompleteInput';
 import type { TranslationFunction } from '../../components/translationsProvider';
 
@@ -22,14 +22,14 @@ export type ActionViewDetailsComponent = ProposalActionComponent<IProposalAction
  *   - componentCreate - custom component for rendering action in create/edit mode
  *   - componentDetails - custom component for rendering action in read mode
  *
- * Views are uniquely identified by `functionSelector` and/or `id`, and could be
+ * Views are uniquely identified by `functionSelector` and/or `actionType`, and could be
  * grouped by `permissionId`.
  */
 export interface IActionViewDescriptor {
     /**
-     * Unique identifier for this action view.
+     * Type of proposal action.
      */
-    id: string;
+    actionType: string;
     /**
      * Function selector to match against (e.g., "0xa9059cbb").
      */
@@ -41,7 +41,7 @@ export interface IActionViewDescriptor {
     /**
      * Custom React component to render the action in create/edit mode, i.e. create proposal page.
      */
-    componentCreate: Record<string, ActionViewCreateComponent>;
+    componentCreate: ActionViewCreateComponent;
     /**
      * Custom React component to render the action in read mode, i.e. proposal details page.
      */

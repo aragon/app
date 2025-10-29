@@ -8,13 +8,13 @@ export class ActionViewRegistry {
     private groups: IActionGroupDescriptor[] = [];
 
     register = (descriptor: IActionViewDescriptor): this => {
-        if (this.views.find((view) => view.id === descriptor.id)) {
+        if (this.views.find((view) => view.actionType === descriptor.actionType)) {
             return this;
         }
 
         invariant(
             !!descriptor.functionSelector || !!descriptor.permissionId,
-            `ActionViewRegistry->register: Action view "${descriptor.id}" must provide at least one matching criterion: functionSelector or permissionId`,
+            `ActionViewRegistry->register: Action view "${descriptor.actionType}" must provide at least one matching criterion: functionSelector or permissionId`,
         );
 
         this.views.push(descriptor);
@@ -46,7 +46,7 @@ export class ActionViewRegistry {
         const views = this.getViewsByPermissionId(permissionId);
         const items = views.map((view) => view.getItem({ contractAddress, t }));
         const components = views.reduce((acc, cur) => {
-            return { ...acc, ...cur.componentCreate };
+            return { ...acc, [cur.actionType]: cur.componentCreate };
         }, {});
 
         return { group, items, components };

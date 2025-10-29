@@ -3,9 +3,9 @@
     "actions": {
       "gaugeRegistrar": {
         "composer": {
-          "contractName": "Gauge Registrar (Actions)",
-          "registerActionName": "Register Gauge (A)",
-          "unregisterActionName": "Unregister Gauge (A)"
+          "contractName": "Gauge Registrar",
+          "registerActionName": "Register Gauge",
+          "unregisterActionName": "Unregister Gauge"
         },
         "gaugeRegistrarRegisterGaugeAction": {
           "avatar": {

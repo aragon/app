@@ -2,14 +2,13 @@ import { PluginContractName } from '@/shared/api/daoService/domain/enum';
 import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { keccak256, toBytes, toFunctionSelector } from 'viem';
-import { gaugeRegistrarRegisterGaugeActionCreate } from './components/gaugeRegistrarRegisterGaugeActionCreate';
+import { GaugeRegistrarRegisterGaugeActionCreate } from './components/gaugeRegistrarRegisterGaugeActionCreate';
 import { GaugeRegistrarRegisterGaugeActionDetails } from './components/gaugeRegistrarRegisterGaugeActionDetails';
 import { GaugeRegistrarUnregisterGaugeActionCreate } from './components/gaugeRegistrarUnregisterGaugeActionCreate';
 import { GaugeRegistrarUnregisterGaugeActionDetails } from './components/gaugeRegistrarUnregisterGaugeActionDetails';
 import { registerGaugeAbi, unregisterGaugeAbi } from './constants/gaugeRegistrarAbi';
 import { GaugeRegistrarActionType } from './types/enum/gaugeRegistrarActionType';
 
-// const gaugeRegistrarPermissionId = 'ID_TEST';
 const gaugeRegistrarPermissionId = keccak256(toBytes('GAUGE_REGISTRAR_ROLE')); // 0xc53f13322128412a2489563b920e2f62ed98f26ed6661ec52113af2c0a2f6667
 
 export const initGaugeRegistrarActionViews = () => {
@@ -24,15 +23,13 @@ export const initGaugeRegistrarActionViews = () => {
             }),
         })
         .register({
-            id: 'register-gauge',
+            actionType: GaugeRegistrarActionType.REGISTER_GAUGE,
             permissionId: gaugeRegistrarPermissionId,
             functionSelector: toFunctionSelector(registerGaugeAbi),
-            // textSignature: 'registerGauge(address,uint8,address,bytes)',
-            // textSignature: 'setMetadata(bytes)',
-            componentCreate: { [GaugeRegistrarActionType.REGISTER_GAUGE]: gaugeRegistrarRegisterGaugeActionCreate },
+            componentCreate: GaugeRegistrarRegisterGaugeActionCreate,
             componentDetails: GaugeRegistrarRegisterGaugeActionDetails,
             getItem: ({ contractAddress, t }) => ({
-                id: `${contractAddress}-RegisterGauge`,
+                id: `${contractAddress}-${GaugeRegistrarActionType.REGISTER_GAUGE}`,
                 name: t('app.actions.gaugeRegistrar.composer.registerActionName'),
                 icon: IconType.SETTINGS,
                 groupId: contractAddress,
@@ -51,11 +48,10 @@ export const initGaugeRegistrarActionViews = () => {
             }),
         })
         .register({
-            id: 'unregister-gauge',
+            actionType: GaugeRegistrarActionType.UNREGISTER_GAUGE,
             permissionId: gaugeRegistrarPermissionId,
             functionSelector: toFunctionSelector(unregisterGaugeAbi),
-            // textSignature: 'setMetadata(bytes)',
-            componentCreate: { [GaugeRegistrarActionType.UNREGISTER_GAUGE]: GaugeRegistrarUnregisterGaugeActionCreate },
+            componentCreate: GaugeRegistrarUnregisterGaugeActionCreate,
             componentDetails: GaugeRegistrarUnregisterGaugeActionDetails,
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-${GaugeRegistrarActionType.UNREGISTER_GAUGE}`,
