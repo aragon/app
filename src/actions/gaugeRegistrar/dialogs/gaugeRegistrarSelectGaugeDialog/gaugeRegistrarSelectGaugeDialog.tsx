@@ -5,9 +5,12 @@ import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { DataList, Dialog, invariant, StateSkeletonBar, StateSkeletonCircular } from '@aragon/gov-ui-kit';
+import { DataList, Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import { GaugeRegistrarGaugeListItem } from '../../components/gaugeRegistrarGaugeListItem';
+import {
+    GaugeRegistrarGaugeListItem,
+    GaugeRegistrarGaugeListItemSkeleton,
+} from '../../components/gaugeRegistrarGaugeListItem';
 import { useGaugeRegistrarGauges } from '../../hooks/useGaugeRegistrarGauges';
 import type { IRegisteredGauge } from '../../types/gaugeRegistrar';
 
@@ -66,21 +69,9 @@ export const GaugeRegistrarSelectGaugeDialog: React.FC<IGaugeRegistrarSelectGaug
                         <DataList.Root
                             entityLabel={t('app.actions.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.entityLabel')}
                         >
-                            {Array.from({ length: 3 }).map((_, index) => (
-                                <DataList.Item
-                                    key={index}
-                                    tabIndex={0}
-                                    aria-busy="true"
-                                    aria-label="loading"
-                                    className="flex items-center gap-4 px-4 py-3 md:p-6"
-                                >
-                                    <StateSkeletonCircular size="lg" />
-                                    <div className="flex min-w-0 flex-1 flex-col gap-2">
-                                        <StateSkeletonBar size="lg" width="75%" />
-                                        <StateSkeletonBar size="sm" width="50%" />
-                                    </div>
-                                </DataList.Item>
-                            ))}
+                            <GaugeRegistrarGaugeListItemSkeleton />
+                            <GaugeRegistrarGaugeListItemSkeleton />
+                            <GaugeRegistrarGaugeListItemSkeleton />
                         </DataList.Root>
                     )}
                     {!isLoading && gauges != null && gauges.length > 0 && (

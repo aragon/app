@@ -59,7 +59,10 @@
           "rewardControllerTerm": "Reward controller"
         },
         "gaugeRegistrarRegisterGaugeActionReadOnly": {
-          "notFound": "Can't find this gauge."
+          "notFound": {
+            "description": "We couldn't find this gauge.",
+            "title": "Not found"
+          }
         },
         "gaugeRegistrarSelectGaugeDialog": {
           "cancel": "Cancel",

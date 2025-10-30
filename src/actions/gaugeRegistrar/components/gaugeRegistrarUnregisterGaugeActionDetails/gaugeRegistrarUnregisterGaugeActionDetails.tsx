@@ -3,15 +3,16 @@
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { useDao } from '@/shared/api/daoService';
 import {
+    DataList,
+    EmptyState,
     type IProposalAction,
     type IProposalActionComponentProps,
     type IProposalActionInputDataParameter,
-    Spinner,
 } from '@aragon/gov-ui-kit';
 
 import { useTranslations } from '../../../../shared/components/translationsProvider';
 import { useGaugeRegistrarGauges } from '../../hooks/useGaugeRegistrarGauges';
-import { GaugeRegistrarGaugeListItem } from '../gaugeRegistrarGaugeListItem';
+import { GaugeRegistrarGaugeListItem, GaugeRegistrarGaugeListItemSkeleton } from '../gaugeRegistrarGaugeListItem';
 
 export interface IGaugeRegistrarUnregisterGaugeActionDetailsProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
@@ -47,7 +48,7 @@ export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<IGaugeRegistra
     });
 
     if (isLoading) {
-        return <Spinner />;
+        return <GaugeRegistrarGaugeListItemSkeleton />;
     }
 
     const gaugeToRemove = gauges[0];
@@ -59,7 +60,18 @@ export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<IGaugeRegistra
     // );
 
     if (!gaugeToRemove) {
-        return <p>{t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionReadOnly.notFound')}</p>;
+        return (
+            <DataList.Item>
+                <EmptyState
+                    heading={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionReadOnly.notFound.title')}
+                    description={t(
+                        'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionReadOnly.notFound.description',
+                    )}
+                    objectIllustration={{ object: 'MAGNIFYING_GLASS' }}
+                    isStacked={false}
+                />
+            </DataList.Item>
+        );
     }
 
     return <GaugeRegistrarGaugeListItem gauge={gaugeToRemove} />;
