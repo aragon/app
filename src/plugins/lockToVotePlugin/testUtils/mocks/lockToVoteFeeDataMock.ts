@@ -43,7 +43,7 @@ export const useLockToVoteFeeDataMock = (params: IUseLockToVoteFeeDataParams): I
             canExit: false,
             isCool: false,
             isLoading: false,
-            refetch: () => undefined,
+            refetch: () => Promise.resolve(undefined),
         };
     }
 
@@ -75,7 +75,7 @@ export const useLockToVoteFeeDataMock = (params: IUseLockToVoteFeeDataParams): I
         canExit,
         isCool,
         isLoading: false,
-        refetch: () => undefined,
+        refetch: () => Promise.resolve(undefined),
     };
 };
 

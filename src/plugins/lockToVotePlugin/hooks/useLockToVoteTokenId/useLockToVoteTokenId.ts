@@ -1,3 +1,4 @@
+import { zeroAddress, type Hex } from 'viem';
 import { useReadContract } from 'wagmi';
 import { votingEscrowAbi } from '../../utils/lockToVoteTransactionUtils/votingEscrowAbi';
 import type { IUseLockToVoteTokenIdParams, IUseLockToVoteTokenIdReturn } from './useLockToVoteTokenId.api';
@@ -9,13 +10,14 @@ import type { IUseLockToVoteTokenIdParams, IUseLockToVoteTokenIdReturn } from '.
  */
 export const useLockToVoteTokenId = (params: IUseLockToVoteTokenIdParams): IUseLockToVoteTokenIdReturn => {
     const { escrowAddress, userAddress, chainId, enabled = true } = params;
+    const normalizedUserAddress: Hex = userAddress ?? zeroAddress;
 
     // First check if the user has any tokens
     const { data: balance, isLoading: isBalanceLoading } = useReadContract({
         abi: votingEscrowAbi,
         functionName: 'balanceOf',
         address: escrowAddress,
-        args: [userAddress!],
+        args: [normalizedUserAddress],
         chainId,
         query: {
             enabled: enabled && userAddress != null,
@@ -33,7 +35,7 @@ export const useLockToVoteTokenId = (params: IUseLockToVoteTokenIdParams): IUseL
         abi: votingEscrowAbi,
         functionName: 'tokenOfOwnerByIndex',
         address: escrowAddress,
-        args: [userAddress!, BigInt(0)],
+        args: [normalizedUserAddress, BigInt(0)],
         chainId,
         query: {
             enabled: enabled && userAddress != null && hasTokens,

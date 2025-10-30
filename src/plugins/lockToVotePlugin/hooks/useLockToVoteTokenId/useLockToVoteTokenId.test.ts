@@ -9,15 +9,12 @@ describe('useLockToVoteTokenId hook', () => {
         Parameters<typeof Wagmi.useReadContract>
     > = jest.spyOn(Wagmi, 'useReadContract');
 
-    const createUseReadContractResult = ({ data, isLoading = false }: { data: unknown; isLoading?: boolean }) => {
-        const baseResult = {
+    const createUseReadContractResult = ({ data, isLoading = false }: { data: unknown; isLoading?: boolean }) =>
+        ({
             data,
             isLoading,
             refetch: jest.fn(),
-        } satisfies Pick<ReturnType<typeof Wagmi.useReadContract>, 'data' | 'isLoading' | 'refetch'>;
-
-        return baseResult as ReturnType<typeof Wagmi.useReadContract>;
-    };
+        }) as unknown as ReturnType<typeof Wagmi.useReadContract>;
 
     afterEach(() => {
         useReadContractSpy.mockReset();
