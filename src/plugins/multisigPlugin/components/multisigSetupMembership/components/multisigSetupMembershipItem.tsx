@@ -1,6 +1,7 @@
 import { useMemberExists } from '@/modules/governance/api/governanceService';
 import type { Network } from '@/shared/api/daoService';
 import { AddressesInput } from '@/shared/components/forms/addressesInput';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { addressUtils, type ICompositeAddress } from '@aragon/gov-ui-kit';
 
 export interface IMultisigSetupMembershipItemProps {
@@ -32,6 +33,7 @@ export interface IMultisigSetupMembershipItemProps {
 
 export const MultisigSetupMembershipItem: React.FC<IMultisigSetupMembershipItemProps> = (props) => {
     const { disabled, index, pluginAddress, member, network } = props;
+    const chainId = network ? networkDefinitions[network].id : undefined;
 
     const memberExistsParams = {
         urlParams: { memberAddress: member.address, pluginAddress: pluginAddress! },
@@ -45,5 +47,7 @@ export const MultisigSetupMembershipItem: React.FC<IMultisigSetupMembershipItemP
 
     const customValidator = () => (isMember ? 'app.plugins.multisig.multisigSetupMembership.item.alreadyMember' : true);
 
-    return <AddressesInput.Item index={index} disabled={disabled} customValidator={customValidator} />;
+    return (
+        <AddressesInput.Item index={index} disabled={disabled} customValidator={customValidator} chainId={chainId} />
+    );
 };

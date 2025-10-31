@@ -41,7 +41,7 @@ const mintTokensAbi = {
 };
 
 export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (props) => {
-    const { index, action } = props;
+    const { index, action, chainId } = props;
 
     const { t } = useTranslations();
 
@@ -97,6 +97,7 @@ export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (pro
                 value={receiverInput}
                 onChange={setReceiverInput}
                 onAccept={onReceiverChange}
+                chainId={chainId}
                 {...receiverField}
             />
             <InputNumber
