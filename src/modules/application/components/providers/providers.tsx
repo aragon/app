@@ -47,7 +47,7 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
 
     // Initialise plugin registry and intercept fetch requests (if enabled) for client-side components
     initPluginRegistry();
-    fetchInterceptorUtils.intecept();
+    fetchInterceptorUtils.intercept();
 
     return (
         <DebugContextProvider>

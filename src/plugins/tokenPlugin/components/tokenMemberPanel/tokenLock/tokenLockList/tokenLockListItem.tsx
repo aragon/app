@@ -1,7 +1,3 @@
-import { LockToVotePluginDialogId } from '@/plugins/lockToVotePlugin/constants/lockToVotePluginDialogId';
-import type { ILockToVoteWithdrawDialogParams } from '@/plugins/lockToVotePlugin/dialogs/lockToVoteWithdrawDialog';
-import { useLockToVoteFeeData } from '@/plugins/lockToVotePlugin/hooks/useLockToVoteFeeData';
-import { lockToVoteFeeUtils } from '@/plugins/lockToVotePlugin/utils/lockToVoteFeeUtils';
 import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -24,8 +20,14 @@ import { formatUnits, zeroAddress, type Hex } from 'viem';
 import type { IMemberLock } from '../../../../api/tokenService';
 import { TokenPluginDialogId } from '../../../../constants/tokenPluginDialogId';
 import type { ITokenApproveNftDialogParams } from '../../../../dialogs/tokenApproveNftDialog';
+
 import type { ITokenLockUnlockDialogParams } from '../../../../dialogs/tokenLockUnlockDialog';
+
 import type { ITokenPlugin } from '../../../../types';
+
+import { ITokenExitQueueWithdrawDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenExitQueueWithdrawDialog/tokenExitQueueWithdrawDialog.api';
+import { useTokenExitQueueFeeData } from '@/plugins/tokenPlugin/hooks/useTokenExitQueueFeeData';
+import { tokenExitQueueFeeUtils } from '@/plugins/tokenPlugin/utils/tokenExitQueueFeeUtils';
 import { useCheckNftAllowance } from '../../hooks/useCheckNftAllowance';
 import { tokenLockUtils, type TokenLockStatus } from '../tokenLockUtils';
 
@@ -81,11 +83,10 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const hasExitQueue = exitQueueAddress != null;
     const lockManagerAddress = (exitQueueAddress ?? zeroAddress) as Hex;
 
-    const pluginFeeSettings = plugin.settings as Partial<{ feePercent: number; minFeePercent: number }>;
-    const pluginFeePercent = pluginFeeSettings.feePercent ?? 0;
-    const pluginMinFeePercent = pluginFeeSettings.minFeePercent ?? 0;
+    const pluginFeePercent = plugin.settings.votingEscrow?.feePercent ?? 0;
+    const pluginMinFeePercent = plugin.settings.votingEscrow?.minFeePercent ?? 0;
 
-    const { ticket, feeAmount } = useLockToVoteFeeData({
+    const { ticket, feeAmount } = useTokenExitQueueFeeData({
         tokenId: BigInt(lock.tokenId),
         lockManagerAddress,
         chainId,
@@ -141,14 +142,14 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
 
     const handleWithdraw = () => {
         // Check if we have fee data and should show the fee-based withdraw dialog
-        const hasConfiguredFees = lockToVoteFeeUtils.shouldShowFeeDialog({
+        const hasConfiguredFees = tokenExitQueueFeeUtils.shouldShowFeeDialog({
             feePercent: ticket?.feePercent ?? pluginFeePercent,
             minFeePercent: ticket?.minFeePercent ?? pluginMinFeePercent,
         });
         const shouldShowFeeDialog = exitQueueAddress != null && ticket != null && hasConfiguredFees;
 
         if (shouldShowFeeDialog) {
-            const dialogParams: ILockToVoteWithdrawDialogParams = {
+            const dialogParams: ITokenExitQueueWithdrawDialogParams = {
                 tokenId: BigInt(lock.tokenId),
                 token,
                 lockManagerAddress: exitQueueAddress as Hex,
@@ -159,7 +160,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                 onBack: openViewLocksDialog,
                 onSuccess: handleActionSuccess,
             };
-            open(LockToVotePluginDialogId.WITHDRAW_WITH_FEE, { params: dialogParams });
+            open(TokenPluginDialogId.EXIT_QUEUE_WITHDRAW_FEE, { params: dialogParams });
         } else {
             // Fall back to legacy withdraw dialog (no fees or data not available)
             const dialogParams: ITokenLockUnlockDialogParams = {

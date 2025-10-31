@@ -1,4 +1,4 @@
-import { lockToVotePluginMocks } from './plugins/lockToVotePlugin/testUtils/mocks';
+import { tokenExitQueuePluginMocks } from './plugins/tokenPlugin/testUtils/mocks/tokenExitQueueFeeMocks';
 import type { IBackendApiMock } from './shared/types';
 
-export const backendApiMocks: IBackendApiMock[] = [...lockToVotePluginMocks];
+export const backendApiMocks: IBackendApiMock[] = [...tokenExitQueuePluginMocks];

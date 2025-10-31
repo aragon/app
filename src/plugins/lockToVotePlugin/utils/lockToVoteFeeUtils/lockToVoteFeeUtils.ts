@@ -1,4 +1,5 @@
-import { LockToVoteFeeMode, type ILockToVotePluginSettings, type ILockToVoteTicket } from '../../types';
+import type { ITokenPluginSettingsEscrowSettings } from '../../../tokenPlugin/types';
+import { LockToVoteFeeMode, type ILockToVoteTicket } from '../../types';
 import type {
     ICalculateFeeAtTimeParams,
     ICalculateReceiveAmountParams,
@@ -104,7 +105,7 @@ class LockToVoteFeeUtils {
      */
     shouldShowFeeDialog = (
         config:
-            | Pick<ILockToVotePluginSettings, 'feePercent' | 'minFeePercent'>
+            | Pick<ITokenPluginSettingsEscrowSettings, 'feePercent' | 'minFeePercent'>
             | {
                   feePercent?: number | null;
                   minFeePercent?: number | null;

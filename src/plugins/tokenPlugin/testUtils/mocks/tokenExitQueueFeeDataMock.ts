@@ -1,13 +1,16 @@
-import type { IUseLockToVoteFeeDataParams, IUseLockToVoteFeeDataReturn } from '../../hooks/useLockToVoteFeeData';
-import { lockToVoteFeeUtils } from '../../utils/lockToVoteFeeUtils';
+import type {
+    IUseTokenExitQueueFeeDataParams,
+    IUseTokenExitQueueFeeDataReturn,
+} from '../../hooks/useTokenExitQueueFeeData';
+import { tokenExitQueueFeeUtils } from '../../utils/tokenExitQueueFeeUtils';
 import {
-    generateLockToVoteTicket,
-    generateLockToVoteTicketWithFixedFee,
-    generateLockToVoteTicketWithTieredFees,
-} from '../generators/lockToVoteTicket';
-import { LOCK_TO_VOTE_TEST_SCENARIOS } from './lockToVoteFeeMocks';
+    generateTokenExitQueueTicket,
+    generateTokenExitQueueTicketWithFixedFee,
+    generateTokenExitQueueTicketWithTieredFees,
+} from '../generators/tokenExitQueueTicket';
+import { TOKEN_EXIT_QUEUE_TEST_SCENARIOS } from './tokenExitQueueFeeMocks';
 
-const TOKEN_SCENARIO_OVERRIDES: Partial<Record<number, keyof typeof LOCK_TO_VOTE_TEST_SCENARIOS>> = {
+const TOKEN_SCENARIO_OVERRIDES: Partial<Record<number, keyof typeof TOKEN_EXIT_QUEUE_TEST_SCENARIOS>> = {
     27: 'DYNAMIC_FEES',
     48: 'TIERED_FEES',
     59: 'FIXED_FEE',
@@ -22,17 +25,19 @@ const TOKEN_LOCKED_AMOUNT_OVERRIDES: Record<number, bigint> = {
 };
 
 /**
- * Mock implementation of useLockToVoteFeeData hook for testing without deployed contracts.
+ * Mock implementation of useTokenExitQueueFeeData hook for testing without deployed contracts.
  *
- * Enable via environment variable: NEXT_PUBLIC_MOCK_FEE_DATA=true
+ * Enabled automatically when NEXT_PUBLIC_USE_MOCKS=true.
  *
  * Features:
  * - Generates realistic ticket data based on contract address
  * - Uses tokenId to vary time elapsed (for testing different chart states)
- * - Calculates fees using real lockToVoteFeeUtils
+ * - Calculates fees using real tokenExitQueueFeeUtils
  * - Supports all three fee modes: DYNAMIC, TIERED, FIXED
  */
-export const useLockToVoteFeeDataMock = (params: IUseLockToVoteFeeDataParams): IUseLockToVoteFeeDataReturn => {
+export const useTokenExitQueueFeeDataMock = (
+    params: IUseTokenExitQueueFeeDataParams,
+): IUseTokenExitQueueFeeDataReturn => {
     const { tokenId, lockManagerAddress, enabled = true } = params;
 
     // Return empty state if disabled
@@ -58,12 +63,12 @@ export const useLockToVoteFeeDataMock = (params: IUseLockToVoteFeeDataParams): I
     // Calculate current fee using real utils
     const currentTime = Math.floor(Date.now() / 1000);
     const timeElapsed = currentTime - ticket.queuedAt;
-    const feePercent = lockToVoteFeeUtils.calculateFeeAtTime({ timeElapsed, ticket });
+    const feePercent = tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed, ticket });
 
     // Mock locked amount (280.42 tokens from Figma design)
     const mockLockedAmount = TOKEN_LOCKED_AMOUNT_OVERRIDES[tokenIdNum] ?? BigInt('280420000000000000000'); // default 280.42 * 10^18
-    const feeBasisPoints = Math.round((feePercent * lockToVoteFeeUtils.MAX_FEE_PERCENT) / 100);
-    const feeAmount = (mockLockedAmount * BigInt(feeBasisPoints)) / BigInt(lockToVoteFeeUtils.MAX_FEE_PERCENT);
+    const feeBasisPoints = Math.round((feePercent * tokenExitQueueFeeUtils.MAX_FEE_PERCENT) / 100);
+    const feeAmount = (mockLockedAmount * BigInt(feeBasisPoints)) / BigInt(tokenExitQueueFeeUtils.MAX_FEE_PERCENT);
 
     // Determine exit eligibility
     const canExit = timeElapsed >= ticket.minCooldown;
@@ -83,7 +88,7 @@ export const useLockToVoteFeeDataMock = (params: IUseLockToVoteFeeDataParams): I
  * Maps contract addresses to test scenarios.
  * Addresses are defined in MOCK_CONTRACT_ADDRESSES.
  */
-const getMockScenarioFromAddress = (address: string): keyof typeof LOCK_TO_VOTE_TEST_SCENARIOS => {
+const getMockScenarioFromAddress = (address: string): keyof typeof TOKEN_EXIT_QUEUE_TEST_SCENARIOS => {
     const addressLower = address.toLowerCase();
 
     if (addressLower.includes('4444')) {
@@ -106,7 +111,7 @@ const getMockScenarioFromAddress = (address: string): keyof typeof LOCK_TO_VOTE_
     return 'DYNAMIC_FEES';
 };
 
-const getScenarioOverride = (): keyof typeof LOCK_TO_VOTE_TEST_SCENARIOS | undefined => {
+const getScenarioOverride = (): keyof typeof TOKEN_EXIT_QUEUE_TEST_SCENARIOS | undefined => {
     if (typeof window === 'undefined') {
         return undefined;
     }
@@ -118,7 +123,7 @@ const getScenarioOverride = (): keyof typeof LOCK_TO_VOTE_TEST_SCENARIOS | undef
     }
 
     const normalizedMode = mockModeParam.trim().toLowerCase();
-    const overrideMap: Record<string, keyof typeof LOCK_TO_VOTE_TEST_SCENARIOS> = {
+    const overrideMap: Record<string, keyof typeof TOKEN_EXIT_QUEUE_TEST_SCENARIOS> = {
         dynamic: 'DYNAMIC_FEES',
         tiered: 'TIERED_FEES',
         fixed: 'FIXED_FEE',
@@ -141,8 +146,8 @@ const getScenarioOverride = (): keyof typeof LOCK_TO_VOTE_TEST_SCENARIOS | undef
  * - tokenId: 15 → queued 15 days ago → mid decay
  * - tokenId: 29 → queued 29 days ago → near min fee
  */
-const generateMockTicket = (scenario: keyof typeof LOCK_TO_VOTE_TEST_SCENARIOS, tokenId: bigint) => {
-    const config = LOCK_TO_VOTE_TEST_SCENARIOS[scenario];
+const generateMockTicket = (scenario: keyof typeof TOKEN_EXIT_QUEUE_TEST_SCENARIOS, tokenId: bigint) => {
+    const config = TOKEN_EXIT_QUEUE_TEST_SCENARIOS[scenario];
 
     // Use tokenId to vary time elapsed for testing different chart states
     const tokenIdNum = Number(tokenId);
@@ -160,16 +165,16 @@ const generateMockTicket = (scenario: keyof typeof LOCK_TO_VOTE_TEST_SCENARIOS, 
 
     switch (scenario) {
         case 'TIERED_FEES':
-            return generateLockToVoteTicketWithTieredFees(baseTicket);
+            return generateTokenExitQueueTicketWithTieredFees(baseTicket);
 
         case 'FIXED_FEE':
-            return generateLockToVoteTicketWithFixedFee({
+            return generateTokenExitQueueTicketWithFixedFee({
                 ...baseTicket,
                 minFeePercent: baseTicket.feePercent, // Force fixed
             });
 
         case 'NO_FEES':
-            return generateLockToVoteTicket({
+            return generateTokenExitQueueTicket({
                 ...baseTicket,
                 feePercent: 0,
                 minFeePercent: 0,
@@ -177,6 +182,6 @@ const generateMockTicket = (scenario: keyof typeof LOCK_TO_VOTE_TEST_SCENARIOS, 
 
         case 'DYNAMIC_FEES':
         default:
-            return generateLockToVoteTicket(baseTicket);
+            return generateTokenExitQueueTicket(baseTicket);
     }
 };

@@ -1,6 +1,7 @@
 export * from './enum';
 export type { ITokenActionChangeSettings } from './tokenActionChangeSettings';
 export type { ITokenActionTokenMint } from './tokenActionTokenMint';
+export type { ITokenExitQueueTicket } from './tokenExitQueueTicket';
 export type { ITokenMember } from './tokenMember';
 export type { ITokenMemberMetrics } from './tokenMemberMetrics';
 export type { ITokenPlugin } from './tokenPlugin';

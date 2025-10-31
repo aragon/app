@@ -5,7 +5,7 @@ import { deepmerge } from 'deepmerge-ts';
 class FetchInterceptorUtils {
     private originalFetch = global.fetch.bind(global);
 
-    intecept = () => {
+    intercept = () => {
         if (process.env.NEXT_PUBLIC_USE_MOCKS === 'true') {
             global.fetch = this.mockDataInterceptor;
         }

@@ -5,7 +5,7 @@ import type { IBackendApiMock } from '@/shared/types';
  * Mock configurations for testing different fee scenarios in Lock-to-Vote plugin.
  * These scenarios test the three fee modes: DYNAMIC, TIERED, and FIXED.
  */
-export const LOCK_TO_VOTE_TEST_SCENARIOS = {
+export const TOKEN_EXIT_QUEUE_TEST_SCENARIOS = {
     DYNAMIC_FEES: {
         name: 'Dynamic Fees (5% → 1% over 30 days)',
         feePercent: 500, // 5% max fee
@@ -127,16 +127,16 @@ const MOCK_MEMBER_LOCKS: IMemberLock[] = [
  * Mock API responses for Lock-to-Vote plugin testing.
  * Injects fee configuration into the Benqi DAO for local development.
  */
-export const lockToVotePluginMocks: IBackendApiMock[] = [
+export const tokenExitQueuePluginMocks: IBackendApiMock[] = [
     {
         url: /\/v2\/daos\/avalanche-0x89071d0b320f24a138d6FCb7BFaaB01bb1978988$/,
         type: 'merge',
         data: {
             plugins: [
                 {
-                    address: '0xLockToVotePluginAddress',
-                    interfaceType: 'lockToVote',
-                    subdomain: 'lock-to-vote',
+                    address: '0xTokenExitQueuePluginAddress',
+                    interfaceType: 'tokenExitQueue',
+                    subdomain: 'token-exit-queue',
                     release: '1',
                     build: '1',
                     isProcess: true,
@@ -157,10 +157,10 @@ export const lockToVotePluginMocks: IBackendApiMock[] = [
                             minLockTime: 86400, // 1 day
                         },
                         // Fee configuration - use DYNAMIC_FEES by default
-                        feePercent: LOCK_TO_VOTE_TEST_SCENARIOS.DYNAMIC_FEES.feePercent,
-                        minFeePercent: LOCK_TO_VOTE_TEST_SCENARIOS.DYNAMIC_FEES.minFeePercent,
-                        cooldown: LOCK_TO_VOTE_TEST_SCENARIOS.DYNAMIC_FEES.cooldown,
-                        minCooldown: LOCK_TO_VOTE_TEST_SCENARIOS.DYNAMIC_FEES.minCooldown,
+                        feePercent: TOKEN_EXIT_QUEUE_TEST_SCENARIOS.DYNAMIC_FEES.feePercent,
+                        minFeePercent: TOKEN_EXIT_QUEUE_TEST_SCENARIOS.DYNAMIC_FEES.minFeePercent,
+                        cooldown: TOKEN_EXIT_QUEUE_TEST_SCENARIOS.DYNAMIC_FEES.cooldown,
+                        minCooldown: TOKEN_EXIT_QUEUE_TEST_SCENARIOS.DYNAMIC_FEES.minCooldown,
                     },
                     votingEscrow: {
                         curveAddress: '0x2222222222222222222222222222222222222222',
