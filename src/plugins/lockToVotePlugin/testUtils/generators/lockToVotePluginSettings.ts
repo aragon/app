@@ -13,5 +13,10 @@ export const generateLockToVotePluginSettings = (
     minParticipation: 0,
     minProposerVotingPower: '0',
     token: generateLockToVotePluginSettingsToken(),
+    // Default: no fees configured (bypass fee dialog)
+    feePercent: 0,
+    minFeePercent: 0,
+    cooldown: 0,
+    minCooldown: 0,
     ...settings,
 });

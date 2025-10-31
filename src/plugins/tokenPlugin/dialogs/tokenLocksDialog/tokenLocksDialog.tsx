@@ -21,13 +21,18 @@ export interface ITokenLocksDialogParams {
 
 export interface ITokenLocksDialogProps extends IDialogComponentProps<ITokenLocksDialogParams> {}
 
+const ALLOW_DEMO_LOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
+
 export const TokenLocksDialog: React.FC<ITokenLocksDialogProps> = (props) => {
     const { location } = props;
     invariant(location.params != null, 'TokenLocksDialog: required parameters must be set.');
     const { plugin, dao } = location.params;
 
     const { address } = useAccount();
-    invariant(address != null, 'TokenLocksDialog: user must be connected.');
+
+    if (!ALLOW_DEMO_LOCKS) {
+        invariant(address != null, 'TokenLocksDialog: user must be connected.');
+    }
 
     const { t } = useTranslations();
     const { close } = useDialogContext();

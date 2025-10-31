@@ -1,6 +1,11 @@
+import { LockToVotePluginDialogId } from '@/plugins/lockToVotePlugin/constants/lockToVotePluginDialogId';
+import type { ILockToVoteWithdrawDialogParams } from '@/plugins/lockToVotePlugin/dialogs/lockToVoteWithdrawDialog';
+import { useLockToVoteFeeData } from '@/plugins/lockToVotePlugin/hooks/useLockToVoteFeeData';
+import { lockToVoteFeeUtils } from '@/plugins/lockToVotePlugin/utils/lockToVoteFeeUtils';
 import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     Avatar,
     Button,
@@ -15,14 +20,14 @@ import {
 } from '@aragon/gov-ui-kit';
 import NumberFlow from '@number-flow/react';
 import { DateTime } from 'luxon';
-import { formatUnits, type Hex } from 'viem';
+import { formatUnits, zeroAddress, type Hex } from 'viem';
 import type { IMemberLock } from '../../../../api/tokenService';
 import { TokenPluginDialogId } from '../../../../constants/tokenPluginDialogId';
 import type { ITokenApproveNftDialogParams } from '../../../../dialogs/tokenApproveNftDialog';
 import type { ITokenLockUnlockDialogParams } from '../../../../dialogs/tokenLockUnlockDialog';
 import type { ITokenPlugin } from '../../../../types';
 import { useCheckNftAllowance } from '../../hooks/useCheckNftAllowance';
-import { type TokenLockStatus, tokenLockUtils } from '../tokenLockUtils';
+import { tokenLockUtils, type TokenLockStatus } from '../tokenLockUtils';
 
 export interface ITokenLockListItemProps {
     /**
@@ -52,7 +57,10 @@ const statusToVariant: Record<TokenLockStatus, TagVariant> = {
 export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const { lock, plugin, dao, onRefreshNeeded } = props;
 
-    const { escrowAddress, nftLockAddress } = plugin.votingEscrow!;
+    const votingEscrowConfig = plugin.votingEscrow;
+    const escrowAddress = votingEscrowConfig?.escrowAddress ?? zeroAddress;
+    const nftLockAddress = votingEscrowConfig?.nftLockAddress ?? zeroAddress;
+    const exitQueueAddress = votingEscrowConfig?.exitQueueAddress;
     const { token, votingEscrow } = plugin.settings;
     const { amount, epochStartAt } = lock;
 
@@ -66,6 +74,22 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
         nftId: BigInt(lock.tokenId),
         network: dao.network,
         enabled: status === 'active',
+    });
+
+    // Query fee data from DynamicExitQueue for withdraw action
+    const { id: chainId } = networkDefinitions[dao.network];
+    const hasExitQueue = exitQueueAddress != null;
+    const lockManagerAddress = (exitQueueAddress ?? zeroAddress) as Hex;
+
+    const pluginFeeSettings = plugin.settings as Partial<{ feePercent: number; minFeePercent: number }>;
+    const pluginFeePercent = pluginFeeSettings.feePercent ?? 0;
+    const pluginMinFeePercent = pluginFeeSettings.minFeePercent ?? 0;
+
+    const { ticket, feeAmount } = useLockToVoteFeeData({
+        tokenId: BigInt(lock.tokenId),
+        lockManagerAddress,
+        chainId,
+        enabled: hasExitQueue && status === 'available',
     });
 
     const openViewLocksDialog = () => open(TokenPluginDialogId.VIEW_LOCKS, { params: { dao, plugin } });
@@ -116,17 +140,40 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     };
 
     const handleWithdraw = () => {
-        const dialogParams: ITokenLockUnlockDialogParams = {
-            action: 'withdraw',
-            dao: dao,
-            escrowContract: escrowAddress,
-            token,
-            tokenId: BigInt(lock.tokenId),
-            onClose: openViewLocksDialog,
-            onSuccessClick: handleActionSuccess,
-            showTransactionInfo: false,
-        };
-        open(TokenPluginDialogId.LOCK_UNLOCK, { params: dialogParams });
+        // Check if we have fee data and should show the fee-based withdraw dialog
+        const hasConfiguredFees = lockToVoteFeeUtils.shouldShowFeeDialog({
+            feePercent: ticket?.feePercent ?? pluginFeePercent,
+            minFeePercent: ticket?.minFeePercent ?? pluginMinFeePercent,
+        });
+        const shouldShowFeeDialog = exitQueueAddress != null && ticket != null && hasConfiguredFees;
+
+        if (shouldShowFeeDialog) {
+            const dialogParams: ILockToVoteWithdrawDialogParams = {
+                tokenId: BigInt(lock.tokenId),
+                token,
+                lockManagerAddress: exitQueueAddress as Hex,
+                ticket,
+                lockedAmount: BigInt(amount),
+                feeAmount,
+                network: dao.network,
+                onBack: openViewLocksDialog,
+                onSuccess: handleActionSuccess,
+            };
+            open(LockToVotePluginDialogId.WITHDRAW_WITH_FEE, { params: dialogParams });
+        } else {
+            // Fall back to legacy withdraw dialog (no fees or data not available)
+            const dialogParams: ITokenLockUnlockDialogParams = {
+                action: 'withdraw',
+                dao: dao,
+                escrowContract: escrowAddress,
+                token,
+                tokenId: BigInt(lock.tokenId),
+                onClose: openViewLocksDialog,
+                onSuccessClick: handleActionSuccess,
+                showTransactionInfo: false,
+            };
+            open(TokenPluginDialogId.LOCK_UNLOCK, { params: dialogParams });
+        }
     };
 
     const minLockTime = epochStartAt + (votingEscrow?.minLockTime ?? 0);
@@ -142,15 +189,19 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     });
 
     const multiplier = tokenLockUtils.getMultiplier(lock, plugin.settings);
-    const formattedMultiplier = formatterUtils.formatNumber(multiplier.toString(), {
-        format: NumberFormat.GENERIC_SHORT,
-    });
+    const formattedMultiplier =
+        formatterUtils.formatNumber(multiplier.toString(), { format: NumberFormat.GENERIC_SHORT }) ?? '';
 
     return (
         <DataList.Item className="flex flex-col gap-4 py-4 md:py-6">
             <div className="flex justify-between">
                 <div className="flex items-center gap-3 md:gap-4">
-                    <Avatar src={token.logo} size="md" className="shrink-0" />
+                    {/*TODO Revert to token.logo before merge DEMO ONLY*/}
+                    <Avatar
+                        src="https://pbs.twimg.com/profile_images/1937810644964716545/LDiOF-l0_400x400.jpg"
+                        size="md"
+                        className="shrink-0"
+                    />
                     <Heading size="h4">ID: {lock.tokenId}</Heading>
                 </div>
                 <div className="flex items-center gap-2 md:gap-3">
@@ -177,7 +228,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                     <div className="text-sm text-neutral-500 md:text-base">
                         {t('app.plugins.token.tokenLockList.item.metrics.multiplier')}
                     </div>
-                    <div className="truncate">{`${formattedMultiplier!}x`}</div>
+                    <div className="truncate">{formattedMultiplier ? `${formattedMultiplier}x` : '-'}</div>
                 </div>
                 <div className="flex flex-col">
                     <div className="text-sm text-neutral-500 md:text-base">
@@ -226,6 +277,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                         </p>
                     </>
                 )}
+
                 {status === 'available' && (
                     <Button className="w-full md:w-auto" variant="tertiary" size="md" onClick={handleWithdraw}>
                         {t(`app.plugins.token.tokenLockList.item.actions.withdraw`, { symbol: token.symbol })}

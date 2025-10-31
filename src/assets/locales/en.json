@@ -1206,6 +1206,15 @@
         }
       },
       "lockToVote": {
+        "feeCalculation": {
+          "lockedTokens": "Locked tokens",
+          "receiveNow": "Receive now",
+          "withdrawFee": "Withdraw fee"
+        },
+        "feeChart": {
+          "fee": "Fee",
+          "now": "Now"
+        },
         "lockToVoteActions": {
           "UpdateLockToVoteVoteSettings": "Update settings"
         },
@@ -1402,6 +1411,24 @@
           },
           "message": "There's an active proposal that you've created or voted on.",
           "title": "You can't unlock yet"
+        },
+        "withdrawDialog": {
+          "a11y": {
+            "description": "Dialog for withdrawing tokens with dynamic fee calculation"
+          },
+          "back": "Back",
+          "helpText": "Check the fee chart above to see how many more days you need to wait before you can withdraw additional tokens with a lower fee.",
+          "submit": "Withdraw tokens",
+          "title": "Withdraw {{symbol}}"
+        },
+        "withdrawTransactionDialog": {
+          "a11y": {
+            "description": "Transaction dialog for confirming token withdrawal"
+          },
+          "description": "To withdraw your {{symbol}}, confirm the onchain transactions in your wallet.",
+          "submit": "Withdraw",
+          "success": "View Transaction",
+          "title": "Withdraw {{symbol}}"
         }
       },
       "multisig": {
