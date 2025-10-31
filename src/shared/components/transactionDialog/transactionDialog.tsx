@@ -208,8 +208,8 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
 
     return (
         <>
-            <Dialog.Header title={title} />
-            <Dialog.Content description={description}>
+            <Dialog.Header title={title} description={description} />
+            <Dialog.Content>
                 <div className="flex flex-col gap-6 pb-3 md:pb-4">
                     {children}
                     <TransactionStatus.Container steps={steps} transactionInfo={transactionInfo}>

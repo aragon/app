@@ -1,0 +1,1 @@
+export { gaugeVoterAbi } from './gaugeVoterAbi';
