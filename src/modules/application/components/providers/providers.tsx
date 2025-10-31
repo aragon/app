@@ -1,5 +1,6 @@
 'use client';
 
+import { initActionViewRegistry } from '@/actions';
 import { initPluginRegistry } from '@/initPluginRegistry';
 import { BlockNavigationContextProvider } from '@/shared/components/blockNavigationContext';
 import { DebugContextProvider } from '@/shared/components/debugProvider/debugProvider';
@@ -48,6 +49,7 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
     // Initialise plugin registry and intercept fetch requests (if enabled) for client-side components
     initPluginRegistry();
     fetchInterceptorUtils.intecept();
+    initActionViewRegistry();
 
     return (
         <DebugContextProvider>
