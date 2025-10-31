@@ -1,32 +1,30 @@
 import { Network } from '@/shared/api/daoService';
 import { renderHook } from '@testing-library/react';
-import type { Hex } from 'viem';
-import { useGaugeList } from './useGaugeList';
+import { useEpochMetrics } from './useEpochMetrics';
 
 // Mock the service
 jest.mock('../../gaugeVoterService', () => ({
     gaugeVoterService: {
-        getGaugeList: jest.fn(),
-        getNextPageParams: jest.fn(),
+        getEpochMetrics: jest.fn(),
     },
 }));
 
 // Mock React Query
 jest.mock('@tanstack/react-query', () => ({
-    useInfiniteQuery: jest.fn(),
+    useQuery: jest.fn(),
 }));
 
-describe('useGaugeList hook', () => {
+describe('useEpochMetrics hook', () => {
     it('should be defined', () => {
         const params = {
             urlParams: {
-                pluginAddress: '0x4564564564564564564564564564564564564564' as Hex,
+                pluginAddress: '0x456' as `0x${string}`,
                 network: Network.ETHEREUM_MAINNET,
             },
             queryParams: {},
         };
 
-        const { result } = renderHook(() => useGaugeList(params));
+        const { result } = renderHook(() => useEpochMetrics(params));
         expect(result).toBeDefined();
     });
 });

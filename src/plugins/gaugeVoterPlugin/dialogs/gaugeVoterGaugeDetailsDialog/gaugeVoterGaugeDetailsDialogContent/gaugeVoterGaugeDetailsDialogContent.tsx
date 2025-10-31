@@ -2,32 +2,32 @@ import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { addressUtils, ChainEntityType, DefinitionList, Tag, useBlockExplorer } from '@aragon/gov-ui-kit';
-import type { IGauge } from '../../../api/gaugeVoterService/domain';
+import type { IGaugeReturn } from '../../../api/gaugeVoterService/domain';
 
 export interface IGaugeVoterGaugeDetailsDialogContentProps {
     /**
      * The gauge to display details for.
      */
-    gauge: IGauge;
+    gauge: IGaugeReturn;
     /**
      * Network of the DAO.
      */
     network: Network;
     /**
-     * Token symbol for voting power display.
+     * User's votes on this gauge from blockchain.
      */
-    tokenSymbol: string;
+    userVotes: number;
 }
 
 export const GaugeVoterGaugeDetailsDialogContent: React.FC<IGaugeVoterGaugeDetailsDialogContentProps> = (props) => {
-    const { gauge, network, tokenSymbol } = props;
+    const { gauge, network, userVotes } = props;
 
     const { t } = useTranslations();
 
     const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[network].id });
     const gaugeAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: gauge.address });
 
-    const hasVoted = gauge.userVotes > 0;
+    const hasVoted = userVotes > 0;
 
     return (
         <div className="flex flex-col gap-y-4">
@@ -39,24 +39,20 @@ export const GaugeVoterGaugeDetailsDialogContent: React.FC<IGaugeVoterGaugeDetai
                 >
                     {addressUtils.truncateAddress(gauge.address)}
                 </DefinitionList.Item>
-                {gauge.resources.map((item) => (
-                    <DefinitionList.Item key={item.url} term={item.name} link={{ href: item.url, isExternal: true }}>
-                        {item.url}
-                    </DefinitionList.Item>
-                ))}
-                <DefinitionList.Item
-                    term={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.totalRewards')}
-                >
-                    420.69k {tokenSymbol}
-                </DefinitionList.Item>
-                <DefinitionList.Item
-                    term={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.yourRewards')}
-                    description={t(
-                        'app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.yourRewardsDescription',
-                    )}
-                >
-                    {hasVoted ? 120 : 0} {tokenSymbol}
-                </DefinitionList.Item>
+                {gauge.links && gauge.links.length > 0 && (
+                    <>
+                        {gauge.links.map((link) => (
+                            <DefinitionList.Item
+                                key={link.url}
+                                term={link.name}
+                                link={{ href: link.url, isExternal: true }}
+                            >
+                                {link.url}
+                            </DefinitionList.Item>
+                        ))}
+                    </>
+                )}
+                {/* TODO: Implement rewards calculation when backend/blockchain data is available */}
                 <DefinitionList.Item
                     term={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.haveYouVotedFor')}
                 >

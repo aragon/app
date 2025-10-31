@@ -8,17 +8,17 @@ export interface IGaugeVoterVotingStatsProps {
      */
     daysLeftToVote: number;
     /**
-     * Total voting power of the epoch.
+     * Formatted total voting power of the epoch.
      */
-    epochVotingPower: string;
+    formattedEpochVotingPower: string;
     /**
-     * Total voting power already allocated by the user.
+     * Formatted user's total voting power.
      */
-    userVotingPower: string;
+    formattedUserVotingPower: string;
     /**
-     * Total voting power already allocated by the user.
+     * Usage percentage (0-1).
      */
-    userUsedVotingPower: string;
+    usagePercentage: number;
     /**
      * Whether the user is connected.
      */
@@ -26,11 +26,14 @@ export interface IGaugeVoterVotingStatsProps {
 }
 
 export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (props) => {
-    const { daysLeftToVote, epochVotingPower, userVotingPower, userUsedVotingPower, isUserConnected } = props;
+    const { daysLeftToVote, formattedEpochVotingPower, formattedUserVotingPower, usagePercentage, isUserConnected } =
+        props;
 
     const { t } = useTranslations();
 
-    const usagePercentage = (Number(userUsedVotingPower) / Number(userVotingPower)) * 100;
+    const formattedUsagePercentage = formatterUtils.formatNumber(usagePercentage, {
+        format: NumberFormat.PERCENTAGE_SHORT,
+    });
 
     const stats = [
         {
@@ -39,18 +42,15 @@ export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (pro
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.toVote'),
         },
         {
-            value: formatterUtils.formatNumber(epochVotingPower, { format: NumberFormat.GENERIC_SHORT }) ?? '0',
+            value: formattedEpochVotingPower,
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.totalVotes'),
         },
         {
-            value: !isUserConnected
-                ? '-'
-                : (formatterUtils.formatNumber(userVotingPower, { format: NumberFormat.TOKEN_AMOUNT_SHORT }) ?? '0'),
+            value: !isUserConnected ? '-' : formattedUserVotingPower,
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.yourVotes'),
         },
         {
-            value: !isUserConnected ? '-' : usagePercentage.toString(),
-            suffix: !isUserConnected ? undefined : '%',
+            value: !isUserConnected ? '-' : (formattedUsagePercentage ?? '0%'),
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.usedVotes'),
         },
     ];

@@ -4,7 +4,7 @@ import type { Network } from '@/shared/api/daoService';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import type { IGauge } from '../../api/gaugeVoterService/domain';
+import type { IGaugeReturn } from '../../api/gaugeVoterService/domain';
 import { GaugeVoterGaugeDetailsDialogContent } from './gaugeVoterGaugeDetailsDialogContent';
 import { GaugeVoterGaugeDetailsDialogFooter } from './gaugeVoterGaugeDetailsDialogFooter';
 
@@ -12,7 +12,7 @@ export interface IGaugeVoterGaugeDetailsDialogParams {
     /**
      * The gauge to show details for.
      */
-    gauges: IGauge[];
+    gauges: IGaugeReturn[];
     /**
      * The index of the gauge to show details for.
      */
@@ -26,9 +26,12 @@ export interface IGaugeVoterGaugeDetailsDialogParams {
      */
     totalVotingPower: number;
     /**
-     * Token symbol for voting power display.
+     * User's votes per gauge.
      */
-    tokenSymbol: string;
+    gaugeVotes: Array<{
+        gaugeAddress: string;
+        userVotes: number;
+    }>;
 }
 
 export interface IGaugeVoterGaugeDetailsDialogProps
@@ -39,13 +42,14 @@ export const GaugeVoterGaugeDetailsDialog: React.FC<IGaugeVoterGaugeDetailsDialo
 
     invariant(location.params != null, 'GaugeVoterGaugeDetailsDialog: required parameters must be set.');
 
-    const { gauges, selectedIndex, network, tokenSymbol } = location.params;
+    const { gauges, selectedIndex, network, gaugeVotes } = location.params;
 
     const { close } = useDialogContext();
 
     const [currentIndex, setCurrentIndex] = useState(selectedIndex);
 
     const gauge = gauges[currentIndex];
+    const userVotes = gaugeVotes.find((v) => v.gaugeAddress === gauge.address)?.userVotes ?? 0;
 
     const isFirstGauge = currentIndex === 0;
     const isLastGauge = currentIndex === gauges.length - 1;
@@ -64,9 +68,9 @@ export const GaugeVoterGaugeDetailsDialog: React.FC<IGaugeVoterGaugeDetailsDialo
 
     return (
         <>
-            <Dialog.Header title={gauge.name} onClose={close} description={gauge.description} />
+            <Dialog.Header title={gauge.name ?? 'Gauge'} onClose={close} description={gauge.description ?? undefined} />
             <Dialog.Content className="pb-3">
-                <GaugeVoterGaugeDetailsDialogContent gauge={gauge} network={network} tokenSymbol={tokenSymbol} />
+                <GaugeVoterGaugeDetailsDialogContent gauge={gauge} network={network} userVotes={userVotes} />
             </Dialog.Content>
             <GaugeVoterGaugeDetailsDialogFooter
                 onPrevious={handlePrevious}

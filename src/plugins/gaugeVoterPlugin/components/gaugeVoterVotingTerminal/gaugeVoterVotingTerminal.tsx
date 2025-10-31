@@ -12,13 +12,13 @@ export interface IGaugeVoterVotingTerminalProps {
      */
     hasVoted: boolean;
     /**
-     * Total voting power available
+     * Formatted total voting power (e.g., "1.5K")
      */
-    totalVotingPower?: string | number;
+    formattedVotingPower: string;
     /**
-     * Used voting power amount
+     * Usage percentage (0-1)
      */
-    usedVotingPower: string;
+    usagePercentage: number;
     /**
      * Number of selected gauges
      */
@@ -26,7 +26,7 @@ export interface IGaugeVoterVotingTerminalProps {
     /**
      * Token symbol for voting power
      */
-    tokenSymbol: string;
+    tokenSymbol?: string;
     /**
      * Token logo URL
      */
@@ -39,31 +39,38 @@ export interface IGaugeVoterVotingTerminalProps {
      * Whether voting is active
      */
     isVotingPeriod: boolean;
+    /**
+     * Whether the voting data is loading
+     */
+    isLoading?: boolean;
+    /**
+     * Whether the user has voting power (> 0). Used to block voting.
+     */
+    hasVotingPower?: boolean;
 }
 
 export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> = (props) => {
     const {
         hasVoted,
         daysLeftToVote,
-        totalVotingPower,
-        usedVotingPower,
+        formattedVotingPower,
+        usagePercentage,
         selectedCount,
         tokenSymbol,
         tokenLogo,
         onVote,
         isVotingPeriod,
+        isLoading = false,
     } = props;
     const { t } = useTranslations();
 
-    const formattedTotalPower = formatterUtils.formatNumber(totalVotingPower, {
-        format: NumberFormat.TOKEN_AMOUNT_SHORT,
-    });
+    const displayVotingPower = isLoading ? '--' : formattedVotingPower;
 
-    const usagePercentage = totalVotingPower !== '0' ? Number(usedVotingPower) / Number(totalVotingPower) : 0;
-
-    const formattedUsagePercentage = formatterUtils.formatNumber(usagePercentage, {
-        format: NumberFormat.PERCENTAGE_SHORT,
-    });
+    const formattedUsagePercentage = isLoading
+        ? '--'
+        : formatterUtils.formatNumber(usagePercentage, {
+              format: NumberFormat.PERCENTAGE_SHORT,
+          });
 
     const showVoteButton = isVotingPeriod && (hasVoted || selectedCount > 0);
 
@@ -85,9 +92,9 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
                 </p>
                 <div className="flex items-center gap-8 md:gap-3">
                     <div className="flex items-center gap-2">
-                        {tokenLogo && <Avatar size="sm" src={tokenLogo} alt={`${tokenSymbol} token`} />}
+                        {tokenLogo && <Avatar size="sm" src={tokenLogo} />}
                         <div className="flex items-baseline gap-0.5">
-                            <span className="text-sm text-neutral-800 md:text-lg">{formattedTotalPower}</span>
+                            <span className="text-sm text-neutral-800 md:text-lg">{displayVotingPower}</span>
                             <span className="text-xs text-neutral-500 md:text-base">{tokenSymbol}</span>
                         </div>
                     </div>
@@ -117,7 +124,7 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
                             size="sm"
                             variant="primary"
                             onClick={onVote}
-                            disabled={selectedCount === 0}
+                            disabled={selectedCount === 0 || isLoading}
                             className="flex-1 md:w-auto md:flex-initial"
                         >
                             {hasVoted

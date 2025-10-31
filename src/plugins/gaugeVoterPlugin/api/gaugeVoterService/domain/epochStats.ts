@@ -1,26 +1,47 @@
-export interface IEpochStats {
+/**
+ * Epoch-level metrics data from the backend /v2/gauge/epochMetrics/:pluginAddress/:network endpoint.
+ * This provides metadata about the current voting epoch for the gauge list.
+ * When memberAddress is provided as a query param, also includes user-specific voting power data.
+ */
+export interface IEpochMetrics {
+    /**
+     * The gauge voter plugin address.
+     */
+    pluginAddress: string;
+    /**
+     * The network the plugin is deployed on.
+     */
+    network: string;
     /**
      * Unique identifier of the epoch.
      */
     epochId: string;
     /**
-     * Whether the current epoch is in voting period.
+     * Total voting power available in this epoch (as string to handle large numbers).
      */
-    isVotingPeriod: boolean;
+    totalVotingPower: string;
     /**
-     * End time of the current epoch.
+     * Whether the voting power hook is enabled for updates.
      */
-    endTime: number;
+    enableUpdateVotingPowerHook: boolean;
     /**
-     * Total votes in the current epoch.
+     * Start time of the current epoch (Unix timestamp in seconds).
      */
-    totalVotes: number;
+    currentEpochStart: number;
     /**
-     * User's total voting power.
+     * Start time of the voting period (Unix timestamp in seconds).
      */
-    votingPower: number;
+    epochVoteStart: number;
     /**
-     * User's used voting power.
+     * End time of the voting period (Unix timestamp in seconds).
      */
-    usedVotingPower: number;
+    epochVoteEnd: number;
+    /**
+     * User's total voting power (only present when memberAddress query param is provided).
+     */
+    memberVotingPower?: string;
+    /**
+     * User's used voting power (only present when memberAddress query param is provided).
+     */
+    memberUsedVotingPower?: string;
 }

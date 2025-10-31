@@ -14,7 +14,18 @@ class NavigationDaoUtils {
         const defaultLinks = this.getDefaultLinks(dao, baseUrl, context);
         const { left, right } = this.getPluginLinks(dao, baseUrl, context);
 
-        return [...left, ...defaultLinks, ...right];
+        const allLinks = [...left, ...defaultLinks, ...right];
+
+        // Deduplicate links by URL to avoid duplicate navigation items
+        // TODO APP-276: Understand why we get duplicate gauges and remove this
+        const seen = new Set<string>();
+        return allLinks.filter((link) => {
+            if (seen.has(link.link)) {
+                return false;
+            }
+            seen.add(link.link);
+            return true;
+        });
     };
 
     private getDefaultLinks = (dao: IDao, baseUrl: string, context: NavigationDaoContext): INavigationLink[] => {

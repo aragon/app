@@ -1,5 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Avatar, Button } from '@aragon/gov-ui-kit';
+import { Button } from '@aragon/gov-ui-kit';
 
 export interface IGaugeVoterVoteDialogFooterProps {
     /**
@@ -9,7 +9,7 @@ export interface IGaugeVoterVoteDialogFooterProps {
     /**
      * Token symbol for display.
      */
-    tokenSymbol: string;
+    tokenSymbol?: string;
     /**
      * Total percentage used.
      */
@@ -37,12 +37,6 @@ export const GaugeVoterVoteDialogFooter: React.FC<IGaugeVoterVoteDialogFooterPro
                 </span>
                 <div className="flex items-center gap-x-3">
                     <div className="flex items-center gap-x-2">
-                        <Avatar
-                            size="sm"
-                            responsiveSize={{ md: 'sm' }}
-                            alt="Token logo"
-                            src="https://pbs.twimg.com/profile_images/1851934141782331394/Z0ZqlyIo_400x400.png"
-                        />
                         <span className="text-base font-semibold text-neutral-800">
                             {totalVotingPower} {tokenSymbol}
                         </span>

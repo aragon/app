@@ -5,7 +5,7 @@ import { useDialogContext, type IDialogComponentProps } from '@/shared/component
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, formatterUtils, invariant, NumberFormat } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo, useState } from 'react';
-import type { IGauge } from '../../api/gaugeVoterService/domain';
+import type { IGaugeReturn } from '../../api/gaugeVoterService/domain';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
 import type { IGaugeVote, IGaugeVoterVoteTransactionDialogParams } from '../gaugeVoterVoteTransactionDialog';
 import { GaugeVoterVoteDialogContent, type IGaugeVoteAllocation } from './gaugeVoterVoteDialogContent';
@@ -15,7 +15,7 @@ export interface IGaugeVoterVoteDialogParams {
     /**
      * The gauges to vote on.
      */
-    gauges: IGauge[];
+    gauges: IGaugeReturn[];
     /**
      * Gauge voter plugin address.
      */
@@ -31,11 +31,23 @@ export interface IGaugeVoterVoteDialogParams {
     /**
      * Token symbol for voting power display.
      */
-    tokenSymbol: string;
+    tokenSymbol?: string;
+    /**
+     * User's existing votes per gauge (for prepopulation).
+     */
+    gaugeVotes: Array<{
+        gaugeAddress: string;
+        votes: bigint;
+        formattedVotes: string;
+    }>;
     /**
      * Callback called when a gauge is removed from the vote list.
      */
     onRemoveGauge?: (gaugeAddress: string) => void;
+    /**
+     * Callback called after successful vote transaction.
+     */
+    onSuccess?: () => void;
 }
 
 export interface IGaugeVoterVoteDialogProps extends IDialogComponentProps<IGaugeVoterVoteDialogParams> {}
@@ -46,18 +58,28 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
 
     invariant(location.params != null, 'GaugeVoterVoteDialog: required parameters must be set.');
 
-    const { gauges, totalVotingPower, tokenSymbol, onRemoveGauge, pluginAddress, network } = location.params;
+    const { gauges, totalVotingPower, tokenSymbol, onRemoveGauge, onSuccess, pluginAddress, network, gaugeVotes } =
+        location.params;
 
     const { open, close } = useDialogContext();
 
     const [voteAllocations, setVoteAllocations] = useState<IGaugeVoteAllocation[]>(
         gauges.map((gauge) => {
+            // Find existing votes for this gauge
+            const existingVote = gaugeVotes.find((gv) => gv.gaugeAddress === gauge.address);
+            const existingVotesBigInt = existingVote?.votes ?? BigInt(0);
+
+            // Calculate percentage from existing votes
             const existingPercentage =
-                gauge.userVotes > 0 && totalVotingPower > 0 ? (gauge.userVotes / totalVotingPower) * 100 : 0;
+                existingVotesBigInt > 0 && totalVotingPower > 0
+                    ? (Number(existingVotesBigInt) / totalVotingPower) * 100
+                    : 0;
 
             return {
                 gauge,
                 percentage: Math.round(existingPercentage), // Round to whole number
+                existingVotes: existingVotesBigInt,
+                formattedExistingVotes: existingVote?.formattedVotes ?? '0',
             };
         }),
     );
@@ -111,8 +133,10 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
     };
 
     const canSubmit = useMemo(() => {
-        return totalPercentageUsed > 0 && totalPercentageUsed === 100 && voteAllocations.length > 0;
-    }, [totalPercentageUsed, voteAllocations.length]);
+        return (
+            totalPercentageUsed > 0 && totalPercentageUsed === 100 && voteAllocations.length > 0 && totalVotingPower > 0
+        );
+    }, [totalPercentageUsed, voteAllocations.length, totalVotingPower]);
 
     const handleSubmit = () => {
         const votes: IGaugeVote[] = voteAllocations
@@ -126,6 +150,7 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
             votes,
             pluginAddress,
             network,
+            onSuccess,
         };
 
         open(GaugeVoterPluginDialogId.VOTE_GAUGES_TRANSACTION, {
