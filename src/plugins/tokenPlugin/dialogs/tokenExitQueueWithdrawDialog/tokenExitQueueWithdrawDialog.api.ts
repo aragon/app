@@ -18,6 +18,10 @@ export interface ITokenExitQueueWithdrawDialogParams {
      */
     lockManagerAddress: Address;
     /**
+     * Address of the VotingEscrow contract where withdraw is called.
+     */
+    escrowAddress: Address;
+    /**
      * Ticket containing fee parameters and queue information.
      */
     ticket: ITokenExitQueueTicket;

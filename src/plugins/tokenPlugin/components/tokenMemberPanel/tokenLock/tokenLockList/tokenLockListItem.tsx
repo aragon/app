@@ -153,6 +153,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                 tokenId: BigInt(lock.tokenId),
                 token,
                 lockManagerAddress: exitQueueAddress as Hex,
+                escrowAddress: escrowAddress as Hex,
                 ticket,
                 lockedAmount: BigInt(amount),
                 feeAmount,

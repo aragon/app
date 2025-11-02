@@ -20,6 +20,7 @@ export const TokenExitQueueWithdrawDialog: React.FC<ITokenExitQueueWithdrawDialo
         tokenId,
         token,
         lockManagerAddress,
+        escrowAddress,
         ticket,
         lockedAmount,
         feeAmount: feeAmountFromParams,
@@ -65,7 +66,7 @@ export const TokenExitQueueWithdrawDialog: React.FC<ITokenExitQueueWithdrawDialo
         const txDialogParams: ITokenExitQueueWithdrawTransactionDialogParams = {
             tokenId,
             token,
-            lockManagerAddress,
+            escrowAddress,
             network,
             onSuccess,
         };

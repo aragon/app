@@ -1,5 +1,6 @@
 'use client';
 
+import { TransactionType } from '@/shared/api/transactionService';
 import {
     TransactionDialog,
     TransactionDialogStep,
@@ -10,7 +11,6 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { encodeFunctionData } from 'viem';
-import { dynamicExitQueueAbi } from '../../utils/tokenExitQueueTransactionUtils/dynamicExitQueueAbi';
 import type { ITokenExitQueueWithdrawTransactionDialogProps } from './tokenExitQueueWithdrawTransactionDialog.api';
 
 export const TokenExitQueueWithdrawTransactionDialog: React.FC<ITokenExitQueueWithdrawTransactionDialogProps> = (
@@ -19,7 +19,7 @@ export const TokenExitQueueWithdrawTransactionDialog: React.FC<ITokenExitQueueWi
     const { location } = props;
     invariant(location.params != null, 'TokenExitQueueWithdrawTransactionDialog: required parameters must be set.');
 
-    const { tokenId, token, lockManagerAddress, network, onSuccess } = location.params;
+    const { tokenId, token, escrowAddress, network, onSuccess } = location.params;
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -28,14 +28,24 @@ export const TokenExitQueueWithdrawTransactionDialog: React.FC<ITokenExitQueueWi
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
     const handlePrepareTransaction = () => {
+        // Call withdraw on VotingEscrow, which will internally call exit on DynamicExitQueue
+        const veAbi = [
+            {
+                type: 'function',
+                name: 'withdraw',
+                inputs: [{ name: '_tokenId', type: 'uint256' }],
+                outputs: [],
+            },
+        ] as const;
+
         const data = encodeFunctionData({
-            abi: dynamicExitQueueAbi,
-            functionName: 'exit',
+            abi: veAbi,
+            functionName: 'withdraw',
             args: [tokenId],
         });
 
         return Promise.resolve({
-            to: lockManagerAddress,
+            to: escrowAddress,
             data,
             value: BigInt(0),
         });
@@ -51,6 +61,7 @@ export const TokenExitQueueWithdrawTransactionDialog: React.FC<ITokenExitQueueWi
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
             network={network}
+            transactionType={TransactionType.WITHDRAW_CREATE}
             onSuccess={onSuccess}
             successLink={{
                 label: t('app.plugins.tokenExitQueue.withdrawTransactionDialog.success'),

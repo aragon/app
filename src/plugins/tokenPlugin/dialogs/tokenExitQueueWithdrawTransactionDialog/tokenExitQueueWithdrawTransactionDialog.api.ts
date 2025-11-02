@@ -13,9 +13,9 @@ export interface ITokenExitQueueWithdrawTransactionDialogParams {
      */
     token: IToken;
     /**
-     * Address of the DynamicExitQueue contract (lock manager).
+     * Address of the VotingEscrow contract where withdraw is called.
      */
-    lockManagerAddress: Address;
+    escrowAddress: Address;
     /**
      * Network where the transaction should execute.
      */
