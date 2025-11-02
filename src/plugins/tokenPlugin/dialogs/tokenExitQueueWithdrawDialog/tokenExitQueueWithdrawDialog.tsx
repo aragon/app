@@ -19,7 +19,6 @@ export const TokenExitQueueWithdrawDialog: React.FC<ITokenExitQueueWithdrawDialo
     const {
         tokenId,
         token,
-        lockManagerAddress,
         escrowAddress,
         ticket,
         lockedAmount,
