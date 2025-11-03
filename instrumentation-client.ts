@@ -14,9 +14,8 @@ Sentry.init({
         }),
     ],
 
-    // Capture Replay for 10% of all sessions, plus for 100% of sessions with an error.
     replaysSessionSampleRate: 0.1,
-    replaysOnErrorSampleRate: 1.0,
+    replaysOnErrorSampleRate: 0.5,
 });
 
 // eslint-disable-next-line import/namespace
