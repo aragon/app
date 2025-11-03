@@ -42,6 +42,3 @@ next-env.d.ts
 # IDE/AI
 .idea
 .claude
-src/plugins/gaugeVoterPlugin/mocks/gaugeVoterMockData.ts
-src/plugins/gaugeVoterPlugin/mocks/index.ts
-src/plugins/gaugeVoterPlugin/mocks/injectPluginMocks.ts

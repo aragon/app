@@ -54,14 +54,14 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     // Fetch epoch metrics from backend (includes user voting power if connected)
     const epochMetricsParams = {
         urlParams: {
-            pluginAddress: (plugin?.meta.address ?? '') as Address,
+            pluginAddress: plugin.meta.address as Address,
             network: dao.network,
         },
         queryParams: {
             memberAddress: address,
         },
     };
-    const { data: epochMetrics } = useEpochMetrics(epochMetricsParams, { enabled: !!plugin?.meta.address });
+    const { data: epochMetrics } = useEpochMetrics(epochMetricsParams, { enabled: !!plugin.meta.address });
 
     const gauges = gaugeListData?.pages.flatMap((page) => page.data) ?? [];
     const gaugeAddresses = gauges.map((g) => g.address);
@@ -73,8 +73,8 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const now = Math.floor(Date.now() / 1000); // Convert to seconds
     const isVotingPeriod = epochMetrics ? now >= epochMetrics.epochVoteStart && now <= epochMetrics.epochVoteEnd : true; // Fallback to true if no epoch metrics
 
-    const tokenSymbol = plugin.meta?.settings.token?.symbol;
-    const tokenDecimals = plugin.meta?.settings.token?.decimals ?? 18;
+    const tokenSymbol = plugin.meta.settings.token?.symbol;
+    const tokenDecimals = plugin.meta.settings.token?.decimals ?? 18;
 
     // Fetch formatted user voting data with backend → RPC fallback
     const {
@@ -86,13 +86,13 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
         votedGaugeAddresses,
         isLoading: isUserDataLoading,
     } = useGaugeVoterPageData({
-        pluginAddress: plugin?.meta.address as Address,
+        pluginAddress: plugin.meta.address as Address,
         network: dao.network,
         gaugeAddresses,
         gauges,
         epochTotalVotingPower,
         tokenDecimals,
-        enabled: isUserConnected && !!plugin?.meta.address,
+        enabled: isUserConnected && !!plugin.meta.address,
         // Pass backend user voting power if available (skips RPC calls for performance)
         backendVotingPower: epochMetrics?.memberVotingPower,
         backendUsedVotingPower: epochMetrics?.memberUsedVotingPower,

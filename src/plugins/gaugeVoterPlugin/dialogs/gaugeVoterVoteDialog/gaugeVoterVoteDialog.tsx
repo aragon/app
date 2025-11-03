@@ -36,8 +36,17 @@ export interface IGaugeVoterVoteDialogParams {
      * User's existing votes per gauge (for prepopulation).
      */
     gaugeVotes: Array<{
+        /**
+         * Address of the gauge.
+         */
         gaugeAddress: string;
+        /**
+         * Weight applied to the gauge.
+         */
         votes: bigint;
+        /**
+         * Weight applied to the gauge, formatted.
+         */
         formattedVotes: string;
     }>;
     /**
@@ -67,18 +76,18 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
         gauges.map((gauge) => {
             // Find existing votes for this gauge
             const existingVote = gaugeVotes.find((gv) => gv.gaugeAddress === gauge.address);
-            const existingVotesBigInt = existingVote?.votes ?? BigInt(0);
+            const existingVotesValue = existingVote?.votes ?? BigInt(0);
 
             // Calculate percentage from existing votes
             const existingPercentage =
-                existingVotesBigInt > 0 && totalVotingPower > 0
-                    ? (Number(existingVotesBigInt) / totalVotingPower) * 100
+                existingVotesValue > 0 && totalVotingPower > 0
+                    ? (Number(existingVotesValue) / totalVotingPower) * 100
                     : 0;
 
             return {
                 gauge,
                 percentage: Math.round(existingPercentage), // Round to whole number
-                existingVotes: existingVotesBigInt,
+                existingVotes: existingVotesValue,
                 formattedExistingVotes: existingVote?.formattedVotes ?? '0',
             };
         }),
