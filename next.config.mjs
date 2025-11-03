@@ -41,9 +41,9 @@ const webFunctionalities = [
 
 const sentryConfig = {
     // Aragon organisation on Sentry
-    org: 'aragonorg',
+    org: process.env.NEXT_PUBLIC_SENTRY_ORG,
     // Sentry project
-    project: 'app-next',
+    project: process.env.NEXT_PUBLIC_SENTRY_PROJECT,
     // Auth token needed for uploading source maps
     authToken: process.env.NEXT_SECRET_SENTRY_AUTH_TOKEN,
     // Make sure to upload all files and source maps
