@@ -8,6 +8,11 @@ export interface IGaugeVoterVotingTerminalProps {
      */
     daysLeftToVote: number;
     /**
+     * Number of days left for the next epoch to start. Valid only in the case
+     * when voting is inactive.
+     */
+    daysToNextVoting?: number;
+    /**
      * Whether the user has already voted in the current epoch.
      */
     hasVoted: boolean;
@@ -49,6 +54,7 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
     const {
         hasVoted,
         daysLeftToVote,
+        daysToNextVoting,
         formattedVotingPower,
         usagePercentage,
         selectedCount,
@@ -105,7 +111,7 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
             <div className="flex w-full items-center justify-between gap-3 md:w-auto md:gap-4">
                 {!isVotingPeriod && (
                     <Button size="sm" variant="primary" disabled={true} className="w-full md:w-auto">
-                        {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.nextVotingIn', { count: 7 })}
+                        {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.nextVotingIn', { count: daysToNextVoting })}
                     </Button>
                 )}
                 {showVoteButton && (

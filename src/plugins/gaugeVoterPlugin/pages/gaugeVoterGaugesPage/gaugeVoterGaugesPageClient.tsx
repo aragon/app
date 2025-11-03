@@ -180,6 +180,12 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
         ? Math.max(0, Math.ceil((epochMetrics.epochVoteEnd * 1000 - Date.now()) / (1000 * 60 * 60 * 24)))
         : 0;
 
+    // Calculate days left for the next voting period to start (if voting is inactive)
+    const daysToNextVoting =
+        isVotingPeriod || epochMetrics?.epochVoteStart == null
+            ? undefined
+            : Math.ceil((epochMetrics.epochVoteStart * 1000 - Date.now()) / (1000 * 60 * 60 * 24));
+
     return (
         <Page.Content>
             <Page.Main title={t('app.plugins.gaugeVoter.gaugeVoterGaugesPage.main.title')}>
@@ -204,6 +210,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                     />
                     <GaugeVoterVotingTerminal
                         daysLeftToVote={daysLeftToVote}
+                        daysToNextVoting={daysToNextVoting}
                         hasVoted={hasVoted}
                         formattedVotingPower={votingPower.formatted}
                         usagePercentage={usagePercentage}
