@@ -29,7 +29,13 @@ export interface IGaugeVoterGaugeDetailsDialogParams {
      * User's votes per gauge.
      */
     gaugeVotes: Array<{
+        /**
+         * Address of the gauge.
+         */
         gaugeAddress: string;
+        /**
+         * User voting power applied in this vote.
+         */
         userVotes: number;
     }>;
 }

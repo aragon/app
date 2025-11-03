@@ -2,9 +2,21 @@ import type { IGauge } from '../../../api/gaugeVoterService/domain';
 import { GaugeVoterVoteDialogItem } from '../gaugeVoterVoteDialogItem';
 
 export interface IGaugeVoteAllocation {
+    /**
+     * Gauge to allocate votes.
+     */
     gauge: IGauge;
+    /**
+     * Percentage value (0-100) to allocate.
+     */
     percentage: number;
+    /**
+     * Votes previously applied.
+     */
     existingVotes: bigint;
+    /**
+     * Votes previously applied, formatted.
+     */
     formattedExistingVotes: string;
 }
 

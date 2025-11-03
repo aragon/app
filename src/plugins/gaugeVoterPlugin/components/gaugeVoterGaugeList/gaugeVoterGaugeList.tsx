@@ -1,7 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { DataListContainer, DataListPagination, DataListRoot, type DataListState } from '@aragon/gov-ui-kit';
-import { useEffect, useRef } from 'react';
 import type { IGetGaugeListParams } from '../../api/gaugeVoterService';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
 import { useGaugeList } from '../../api/gaugeVoterService/queries';
@@ -10,6 +9,9 @@ import { GaugeVoterGaugeListItemSkeleton } from './gaugeVoterGaugeListItemSkelet
 import { GaugeVoterGaugeListItemStructure } from './gaugeVoterGaugeListItemStructure';
 
 export interface IGaugeUserVote {
+    /**
+     * Address of the gauge.
+     */
     gaugeAddress: string;
     /**
      * Formatted user votes for display (e.g., "1.5K").
@@ -93,16 +95,7 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
 
     const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
 
-    const userVotesLoadedRef = useRef(false);
-
-    useEffect(() => {
-        if (!isUserVotesLoading) {
-            userVotesLoadedRef.current = true;
-        }
-    }, [isUserVotesLoading]);
-
-    const shouldShowSkeleton =
-        state === 'initialLoading' || (!userVotesLoadedRef.current && (isUserVotesLoading ?? false));
+    const shouldShowSkeleton = state === 'initialLoading' || !!isUserVotesLoading;
     const effectiveState: DataListState = shouldShowSkeleton ? 'initialLoading' : state;
 
     const itemsCount = gaugeListData?.pages[0]?.metadata?.totalRecords;

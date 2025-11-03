@@ -43,10 +43,6 @@ export interface IGaugeVoterVotingTerminalProps {
      * Whether the voting data is loading
      */
     isLoading?: boolean;
-    /**
-     * Whether the user has voting power (> 0). Used to block voting.
-     */
-    hasVotingPower?: boolean;
 }
 
 export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> = (props) => {
