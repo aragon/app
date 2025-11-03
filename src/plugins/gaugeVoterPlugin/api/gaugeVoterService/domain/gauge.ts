@@ -38,11 +38,18 @@ export interface IGauge {
      */
     metrics: {
         /**
-         * Total voting power applied across all gauges in the current epoch.
+         * Total voting power applied to the gauge in the current epoch. Matches
+         * totalVotingPowerInGauge Voted event argument.
          */
         currentEpochVotingPower: string;
         /**
-         * Total voting power applied to the gauge.
+         * We actually use Epoch metrics instead of this one!
+         *
+         * Total voting power applied across all gauges in the current epoch.
+         * If the votes persist between epochs (as they do in VE) then
+         * totalVotingPower will be across ALL EPOCHS.
+         *
+         * Matches totalVotingPowerInContract Voted event argument.
          */
         totalGaugeVotingPower: string;
         /**
