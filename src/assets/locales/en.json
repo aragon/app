@@ -1288,73 +1288,105 @@
           }
         }
       },
-      "gaugeRegistrar": {
-        "actions": {
-          "RegisterGauge": "Register gauge",
-          "UnregisterGauge": "Unregister gauge"
-        },
-        "gaugeListItem": {
-          "incentive": {
-            "borrow": "Borrow",
-            "supply": "Supply"
+      "gaugeVoter": {
+        "gaugeVoterGaugeDetailsDialog": {
+          "a11y": {
+            "description": "A dialog for displaying gauge details."
           },
-          "qiToken": "Qi Token",
-          "rewardController": "Reward Controller"
-        },
-        "gaugeRegistrarRegisterGaugeAction": {
-          "avatar": {
-            "error": {
-              "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, or GIF).",
-              "file-too-large": "The file size exceeds the maximum allowed limit of 1 MB.",
-              "square-only": "The image must be square. Upload a square image.",
-              "too-many-files": "Only one file can be uploaded at a time.",
-              "unknown-file-error": "Unable to upload image",
-              "wrong-dimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
-            },
-            "helpText": "JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px.",
-            "label": "Logo"
+          "content": {
+            "contract": "Contract",
+            "haveYouVotedFor": "Have you voted for?",
+            "totalRewards": "Total rewards",
+            "votedNo": "No",
+            "votedYes": "Yes",
+            "yourRewards": "Your rewards",
+            "yourRewardsDescription": "If you vote with your 100% voting power"
           },
-          "description": {
-            "helpText": "Describe the Gauge in a few sentences. This is listed on gauge detail page so contributors understand the gauge.",
-            "label": "Description"
-          },
-          "incentive": {
-            "borrowLabel": "Borrow",
-            "helpText": "The incentive type (Supply or Borrow).",
-            "label": "Incentive",
-            "supplyLabel": "Supply"
-          },
-          "name": {
-            "label": "Name"
-          },
-          "qiToken": {
-            "helpText": "The address of the market's qiToken.",
-            "label": "Qi token",
-            "placeholder": "ENS or 0x…"
-          },
-          "resources": {
-            "helpText": "Links to the gauge website, social media profiles, or further external resources."
-          },
-          "rewardController": {
-            "helpText": "The address of the Benqi protocol contract that controls rewards for this gauge.",
-            "label": "Reward controller",
-            "placeholder": "ENS or 0x…"
+          "footer": {
+            "next": "Next",
+            "previous": "Previous"
           }
         },
-        "gaugeRegistrarSelectGaugeDialog": {
-          "cancel": "Cancel",
-          "description": "Select a gauge to proceed with the action.",
-          "emptyState": "No gauges available",
-          "entityLabel": "Gauge",
-          "selectGaugePrompt": "Choose a gauge from the available options.",
-          "submit": "Select gauge",
-          "title": "Select Gauge"
+        "gaugeVoterGaugeList": {
+          "emptyState": {
+            "description": "This will show your gauges when available.",
+            "heading": "No gauges found"
+          },
+          "entity": "Gauges",
+          "errorState": {
+            "description": "There was an error loading the gauges. Try again later.",
+            "heading": "Error loading gauges"
+          },
+          "heading": {
+            "name": "Name",
+            "totalVotes": "Total Votes",
+            "yourVotes": "Your Votes"
+          },
+          "item": {
+            "noVotes": "None",
+            "select": "Select",
+            "selected": "Selected",
+            "totalVotes": "Total votes",
+            "voted": "Voted",
+            "votes": "votes",
+            "yourVotes": "Your votes"
+          }
         },
-        "gaugeRegistrarUnregisterGaugeAction": {
-          "emptyCard": {
-            "action": "Select",
-            "description": "Select a gauge to remove from the next epoche.",
-            "heading": "Select gauge"
+        "gaugeVoterGaugesPage": {
+          "aside": {
+            "title": "Epoch {{epochId}}"
+          },
+          "main": {
+            "title": "Gauges",
+            "voteOnSelected": "Vote on {{count}} selected gauge",
+            "voteOnSelected_plural": "Vote on {{count}} selected gauges"
+          }
+        },
+        "gaugeVoterVoteDialog": {
+          "a11y": {
+            "description": "An allocation dialog for electing your gauge sentiment."
+          },
+          "action": {
+            "cancel": "Cancel",
+            "equalize": "Equalize",
+            "reset": "Reset",
+            "submit": "Submit votes"
+          },
+          "content": {
+            "description": "Proportionally distribute your voting power approach across your selected gauges.",
+            "used": "used"
+          },
+          "footer": {
+            "yourVotes": "YOUR VOTES"
+          },
+          "title": "Vote"
+        },
+        "gaugeVoterVoteTransactionDialog": {
+          "description": "To submit your gauge vote allocations, confirm the onchain transaction in your wallet.",
+          "submit": "Submit votes",
+          "successLinkLabel": "View gauges",
+          "title": "Submit gauge votes"
+        },
+        "gaugeVoterVotingStats": {
+          "daysLeftSuffix": " days left",
+          "toVote": "To vote",
+          "totalVotes": "Total votes",
+          "usedVotes": "Used votes",
+          "yourVotes": "Your votes"
+        },
+        "gaugeVoterVotingTerminal": {
+          "daysLeft": "{{count}} days left",
+          "nextVotingIn": "Next voting in {{count}} days",
+          "notVoted": "Not voted yet",
+          "selected": "{{count}} selected",
+          "updateVote": "Update vote",
+          "used": "used",
+          "voteOnSelected": "Vote on selected",
+          "yourVotes": "Your votes"
+        },
+        "meta": {
+          "link": {
+            "gauges": "Gauges"
           }
         }
       },

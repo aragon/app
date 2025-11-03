@@ -42,8 +42,11 @@ export const WalletConnectActionDialogConnect: React.FC<IWalletConnectActionDial
 
     return (
         <>
-            <Dialog.Header title={t('app.governance.walletConnectActionDialog.connect.title')} />
-            <Dialog.Content description={t('app.governance.walletConnectActionDialog.connect.description')}>
+            <Dialog.Header
+                title={t('app.governance.walletConnectActionDialog.connect.title')}
+                description={t('app.governance.walletConnectActionDialog.connect.description')}
+            />
+            <Dialog.Content>
                 <form onSubmit={handleSubmit(onFormSubmit)} id={formId} className="py-2">
                     <InputText
                         placeholder={t('app.governance.walletConnectActionDialog.connect.uriField.placeholder')}
