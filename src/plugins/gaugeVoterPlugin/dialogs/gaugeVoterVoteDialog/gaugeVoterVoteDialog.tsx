@@ -5,7 +5,7 @@ import { useDialogContext, type IDialogComponentProps } from '@/shared/component
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, formatterUtils, invariant, NumberFormat } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo, useState } from 'react';
-import type { IGaugeReturn } from '../../api/gaugeVoterService/domain';
+import type { IGauge } from '../../api/gaugeVoterService/domain';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
 import type { IGaugeVote, IGaugeVoterVoteTransactionDialogParams } from '../gaugeVoterVoteTransactionDialog';
 import { GaugeVoterVoteDialogContent, type IGaugeVoteAllocation } from './gaugeVoterVoteDialogContent';
@@ -15,7 +15,7 @@ export interface IGaugeVoterVoteDialogParams {
     /**
      * The gauges to vote on.
      */
-    gauges: IGaugeReturn[];
+    gauges: IGauge[];
     /**
      * Gauge voter plugin address.
      */

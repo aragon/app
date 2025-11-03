@@ -2,13 +2,13 @@ import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { addressUtils, ChainEntityType, DefinitionList, Tag, useBlockExplorer } from '@aragon/gov-ui-kit';
-import type { IGaugeReturn } from '../../../api/gaugeVoterService/domain';
+import type { IGauge } from '../../../api/gaugeVoterService/domain';
 
 export interface IGaugeVoterGaugeDetailsDialogContentProps {
     /**
      * The gauge to display details for.
      */
-    gauge: IGaugeReturn;
+    gauge: IGauge;
     /**
      * Network of the DAO.
      */

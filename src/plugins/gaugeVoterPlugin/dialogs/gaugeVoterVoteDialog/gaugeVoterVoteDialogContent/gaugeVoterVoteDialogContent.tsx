@@ -1,8 +1,8 @@
-import type { IGaugeReturn } from '../../../api/gaugeVoterService/domain';
+import type { IGauge } from '../../../api/gaugeVoterService/domain';
 import { GaugeVoterVoteDialogItem } from '../gaugeVoterVoteDialogItem';
 
 export interface IGaugeVoteAllocation {
-    gauge: IGaugeReturn;
+    gauge: IGauge;
     percentage: number;
     existingVotes: bigint;
     formattedExistingVotes: string;

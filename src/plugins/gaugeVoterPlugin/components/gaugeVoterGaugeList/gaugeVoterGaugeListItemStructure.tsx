@@ -1,13 +1,13 @@
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { addressUtils, Avatar, Button, DataList, formatterUtils, IconType, NumberFormat } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import type { IGaugeReturn } from '../../api/gaugeVoterService/domain';
+import type { IGauge } from '../../api/gaugeVoterService/domain';
 
 export interface IGaugeVoterGaugeListItemStructureProps {
     /**
      * Gauge data to display.
      */
-    gauge: IGaugeReturn;
+    gauge: IGauge;
     /**
      * Total voting power for the epoch for percentage calculation.
      */
@@ -23,11 +23,11 @@ export interface IGaugeVoterGaugeListItemStructureProps {
     /**
      * Function to handle gauge selection/deselection.
      */
-    onSelect: (gauge: IGaugeReturn) => void;
+    onSelect: (gauge: IGauge) => void;
     /**
      * Function to handle viewing gauge details.
      */
-    onViewDetails?: (gauge: IGaugeReturn) => void;
+    onViewDetails?: (gauge: IGauge) => void;
     /**
      * Whether the user is connected.
      */

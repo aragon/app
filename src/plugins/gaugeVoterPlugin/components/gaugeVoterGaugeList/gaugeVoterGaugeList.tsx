@@ -3,7 +3,7 @@ import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { DataListContainer, DataListPagination, DataListRoot, type DataListState } from '@aragon/gov-ui-kit';
 import { useEffect, useRef } from 'react';
 import type { IGetGaugeListParams } from '../../api/gaugeVoterService';
-import type { IGaugeReturn } from '../../api/gaugeVoterService/domain';
+import type { IGauge } from '../../api/gaugeVoterService/domain';
 import { useGaugeList } from '../../api/gaugeVoterService/queries';
 import { GaugeVoterGaugeListHeading } from './gaugeVoterGaugeListHeading';
 import { GaugeVoterGaugeListItemSkeleton } from './gaugeVoterGaugeListItemSkeleton';
@@ -41,11 +41,11 @@ export interface IGaugeVoterGaugeListProps {
     /**
      * Function to handle gauge selection/deselection.
      */
-    onSelect: (gauge: IGaugeReturn) => void;
+    onSelect: (gauge: IGauge) => void;
     /**
      * Function to handle viewing gauge details.
      */
-    onViewDetails?: (gauge: IGaugeReturn) => void;
+    onViewDetails?: (gauge: IGauge) => void;
     /**
      * Whether the user is connected.
      */

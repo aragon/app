@@ -16,8 +16,7 @@ class NavigationDaoUtils {
 
         const allLinks = [...left, ...defaultLinks, ...right];
 
-        // Deduplicate links by URL to avoid duplicate navigation items
-        // TODO APP-276: Understand why we get duplicate gauges and remove this
+        // Deduplicate links by URL to avoid duplicate navigation items, e.g. multiple "gauge" plugins are possible
         const seen = new Set<string>();
         return allLinks.filter((link) => {
             if (seen.has(link.link)) {

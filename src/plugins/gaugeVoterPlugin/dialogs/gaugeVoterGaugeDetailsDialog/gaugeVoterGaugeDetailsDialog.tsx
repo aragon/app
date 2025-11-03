@@ -4,7 +4,7 @@ import type { Network } from '@/shared/api/daoService';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import type { IGaugeReturn } from '../../api/gaugeVoterService/domain';
+import type { IGauge } from '../../api/gaugeVoterService/domain';
 import { GaugeVoterGaugeDetailsDialogContent } from './gaugeVoterGaugeDetailsDialogContent';
 import { GaugeVoterGaugeDetailsDialogFooter } from './gaugeVoterGaugeDetailsDialogFooter';
 
@@ -12,7 +12,7 @@ export interface IGaugeVoterGaugeDetailsDialogParams {
     /**
      * The gauge to show details for.
      */
-    gauges: IGaugeReturn[];
+    gauges: IGauge[];
     /**
      * The index of the gauge to show details for.
      */

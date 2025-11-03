@@ -12,7 +12,7 @@ import { useAccount } from 'wagmi';
 import { useTranslations } from '../../../../shared/components/translationsProvider';
 import { useDaoPlugins } from '../../../../shared/hooks/useDaoPlugins';
 import type { IGetGaugeListParams } from '../../api/gaugeVoterService';
-import type { IGaugePlugin, IGaugeReturn } from '../../api/gaugeVoterService/domain';
+import type { IGauge } from '../../api/gaugeVoterService/domain';
 import { useEpochMetrics, useGaugeList } from '../../api/gaugeVoterService/queries';
 import { GaugeVoterGaugeList } from '../../components/gaugeVoterGaugeList';
 import { GaugeVoterVotingStats } from '../../components/gaugeVoterVotingStats';
@@ -21,6 +21,7 @@ import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialog
 import type { IGaugeVoterGaugeDetailsDialogParams } from '../../dialogs/gaugeVoterGaugeDetailsDialog';
 import type { IGaugeVoterVoteDialogParams } from '../../dialogs/gaugeVoterVoteDialog';
 import { useGaugeVoterPageData } from '../../hooks/useGaugeVoterPageData';
+import type { IGaugeVoterPlugin } from '../../types';
 
 export interface IGaugeVoterGaugesPageClientProps {
     /**
@@ -44,10 +45,11 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const isUserConnected = !!address;
     const { data: gaugeListData } = useGaugeList(initialParams);
 
-    const plugins = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_VOTER }) as
-        | Array<IFilterComponentPlugin<IGaugePlugin>>
-        | undefined;
-    const plugin = plugins?.[0];
+    // There are possible multiple gaugeVoter plugins, but we don't support it currently (so we display only the first one).
+    const plugins = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_VOTER }) as Array<
+        IFilterComponentPlugin<IGaugeVoterPlugin>
+    >;
+    const plugin = plugins[0];
 
     // Fetch epoch metrics from backend (includes user voting power if connected)
     const epochMetricsParams = {
@@ -71,8 +73,8 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
     const now = Math.floor(Date.now() / 1000); // Convert to seconds
     const isVotingPeriod = epochMetrics ? now >= epochMetrics.epochVoteStart && now <= epochMetrics.epochVoteEnd : true; // Fallback to true if no epoch metrics
 
-    const tokenSymbol = plugin?.meta.settings.token.symbol;
-    const tokenDecimals = plugin?.meta.settings.token.decimals ?? 18;
+    const tokenSymbol = plugin.meta?.settings.token?.symbol;
+    const tokenDecimals = plugin.meta?.settings.token?.decimals ?? 18;
 
     // Fetch formatted user voting data with backend → RPC fallback
     const {
@@ -98,15 +100,11 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
 
     const [selectedGauges, setSelectedGauges] = useState<string[]>([]);
 
-    if (plugin == null) {
-        return null;
-    }
-
     const { description, links } = plugin.meta;
 
     const selectedCount = selectedGauges.length + votedGaugeAddresses.length;
 
-    const handleSelectGauge = (gauge: IGaugeReturn) => {
+    const handleSelectGauge = (gauge: IGauge) => {
         // Don't allow selection of already voted gauges
         if (votedGaugeAddresses.includes(gauge.address)) {
             return;
@@ -159,7 +157,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
         });
     };
 
-    const handleViewDetails = (gauge: IGaugeReturn) => {
+    const handleViewDetails = (gauge: IGauge) => {
         const selectedIndex = gauges.findIndex((g) => g.address === gauge.address);
 
         const gaugeDetailsParams: IGaugeVoterGaugeDetailsDialogParams = {
@@ -227,7 +225,7 @@ export const GaugeVoterGaugesPageClient: React.FC<IGaugeVoterGaugesPageClientPro
                         usagePercentage={usagePercentage}
                         isUserConnected={isUserConnected}
                     />
-                    {links.map(({ url, name }) => (
+                    {links?.map(({ url, name }) => (
                         <Link key={url} href={url} isExternal={true} showUrl={true}>
                             {name}
                         </Link>
