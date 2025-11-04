@@ -63,7 +63,7 @@ class TokenExitQueueFeeUtils {
 
         // Tiered system (no slope)
         if (ticket.slope === BigInt(0)) {
-            const fee = timeElapsed >= ticket.minCooldown ? scaledMinFee : scaledMaxFee;
+            const fee = timeElapsed >= ticket.cooldown ? scaledMinFee : scaledMaxFee;
             return this.scaledFeeToPercent(fee);
         }
 
