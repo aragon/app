@@ -8,6 +8,7 @@ import {
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 import {
     AlertInline,
     CardEmptyState,
@@ -18,7 +19,6 @@ import {
 import { useCallback, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { encodeFunctionData, type Hex } from 'viem';
-import { useFormField } from '../../../../shared/hooks/useFormField';
 import { unregisterGaugeAbi } from '../../constants/gaugeRegistrarAbi';
 import { GaugeRegistrarDialogId } from '../../constants/gaugeRegistrarDialogId';
 import type { IGaugeRegistrarSelectGaugeDialogParams } from '../../dialogs/gaugeRegistrarSelectGaugeDialog';

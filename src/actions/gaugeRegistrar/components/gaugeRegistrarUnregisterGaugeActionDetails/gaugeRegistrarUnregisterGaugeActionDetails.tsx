@@ -65,9 +65,9 @@ export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<IGaugeRegistra
         return (
             <DataList.Item>
                 <EmptyState
-                    heading={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionReadOnly.notFound.title')}
+                    heading={t('app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionDetails.notFound.title')}
                     description={t(
-                        'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionReadOnly.notFound.description',
+                        'app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionDetails.notFound.description',
                     )}
                     objectIllustration={{ object: 'MAGNIFYING_GLASS' }}
                     isStacked={false}

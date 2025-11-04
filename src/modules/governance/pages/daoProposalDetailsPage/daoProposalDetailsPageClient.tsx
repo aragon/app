@@ -8,6 +8,7 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
+import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     ActionSimulation,
@@ -27,7 +28,6 @@ import {
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
-import { actionViewRegistry } from '../../../../shared/utils/actionViewRegistry';
 import { actionSimulationServiceKeys, useLastSimulation, useSimulateProposal } from '../../api/actionSimulationService';
 import { type IProposal, useProposalActions, useProposalBySlug } from '../../api/governanceService';
 import type { IProposalActionData } from '../../components/createProposalForm';

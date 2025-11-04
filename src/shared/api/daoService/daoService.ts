@@ -22,22 +22,6 @@ class DaoService extends AragonBackendService {
     };
 
     getDaoPermissions = async (params: IGetDaoPermissionsParams): Promise<IPaginatedResponse<IDaoPermission>> => {
-        // return {
-        //     metadata: {
-        //         page: 1,
-        //         pageSize: 1,
-        //         totalPages: 1,
-        //         totalRecords: 1,
-        //     },
-        //     data: [
-        //         {
-        //             whoAddress: '0xWho',
-        //             whereAddress: '0xb2B8687c3BE0278C4296F722C3fB72D26725ce9B',
-        //             permissionId: 'ID_TEST',
-        //             conditionAddress: '0xCondition',
-        //         },
-        //     ],
-        // };
         const result = await this.request<IPaginatedResponse<IDaoPermission>>(this.urls.daoPermissions, params);
 
         return result;

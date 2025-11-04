@@ -9,7 +9,8 @@ import { GaugeRegistrarUnregisterGaugeActionDetails } from './components/gaugeRe
 import { registerGaugeAbi, unregisterGaugeAbi } from './constants/gaugeRegistrarAbi';
 import { GaugeRegistrarActionType } from './types/enum/gaugeRegistrarActionType';
 
-const gaugeRegistrarPermissionId = keccak256(toBytes('GAUGE_REGISTRAR_ROLE')); // 0xc53f13322128412a2489563b920e2f62ed98f26ed6661ec52113af2c0a2f6667
+// 0xc53f13322128412a2489563b920e2f62ed98f26ed6661ec52113af2c0a2f6667
+const gaugeRegistrarPermissionId = keccak256(toBytes('GAUGE_REGISTRAR_ROLE'));
 
 export const initGaugeRegistrarActionViews = () => {
     actionViewRegistry

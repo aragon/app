@@ -1,11 +1,11 @@
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { actionViewRegistry, type ActionViewCreateComponent } from '@/shared/utils/actionViewRegistry';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { zeroAddress } from 'viem';
-import { actionViewRegistry, type ActionViewCreateComponent } from '../../../../shared/utils/actionViewRegistry';
 import {
     ProposalActionType,
     type IProposalAction,

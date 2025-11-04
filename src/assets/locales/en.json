@@ -58,12 +58,6 @@
           "resourcesTerm": "Links",
           "rewardControllerTerm": "Reward controller"
         },
-        "gaugeRegistrarRegisterGaugeActionReadOnly": {
-          "notFound": {
-            "description": "We couldn't find this gauge.",
-            "title": "Not found"
-          }
-        },
         "gaugeRegistrarSelectGaugeDialog": {
           "cancel": "Cancel",
           "description": "Select a gauge to remove from the next epoche.",
@@ -79,7 +73,12 @@
             "heading": "Select gauge"
           }
         },
-        "gaugeRegistrarUnregisterGaugeActionDetails": {}
+        "gaugeRegistrarUnregisterGaugeActionDetails": {
+          "notFound": {
+            "description": "We couldn't find this gauge.",
+            "title": "Not found"
+          }
+        }
       }
     },
     "application": {

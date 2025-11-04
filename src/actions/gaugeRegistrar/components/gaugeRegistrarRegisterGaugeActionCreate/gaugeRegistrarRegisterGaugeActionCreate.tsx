@@ -44,12 +44,8 @@ export const GaugeRegistrarRegisterGaugeActionCreate: React.FC<IGaugeRegistrarRe
             let daoAvatar: string | undefined;
 
             if (avatar?.file != null) {
-                // Pin the avatar set on the form when the file property is set, meaning that the user changed the DAO avatar
                 const avatarResult = await pinFileAsync({ body: avatar.file });
                 daoAvatar = ipfsUtils.cidToUri(avatarResult.IpfsHash);
-            } else if (avatar?.url) {
-                // Set previous avatar URL if user did not change the DAO avatar and DAO already has an avatar
-                daoAvatar = ipfsUtils.srcToUri(avatar.url);
             }
 
             const metadata = daoAvatar ? { ...proposedMetadata, avatar: daoAvatar } : proposedMetadata;
