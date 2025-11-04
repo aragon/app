@@ -21,12 +21,9 @@ export interface ILogMessageParams {
 }
 
 class MonitoringUtils {
-    private serviceDsn =
-        'https://b8ff2260832ae51c6193ee0491746768@o4506830869233664.ingest.us.sentry.io/4508653516816384';
-
     getBaseConfig = (): Pick<ClientOptions, 'enabled' | 'dsn' | 'tracesSampleRate' | 'environment' | 'release'> => ({
         enabled: this.isEnabled(),
-        dsn: this.serviceDsn,
+        dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
         tracesSampleRate: 1.0,
         environment: process.env.NEXT_PUBLIC_ENV,
         release: process.env.version,

@@ -2,7 +2,6 @@ import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, ChainEntityType, DefinitionList, useBlockExplorer } from '@aragon/gov-ui-kit';
 
@@ -21,7 +20,7 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
     const { buildEntityUrl } = useBlockExplorer();
 
     const daoLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address, chainId });
-    const processPlugins = useDaoPlugins({ daoId: dao.id, type: PluginType.PROCESS, includeSubPlugins: true });
+    const processPlugins = useDaoPlugins({ daoId: dao.id, includeSubPlugins: true });
 
     return (
         <DefinitionList.Container>

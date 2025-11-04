@@ -29,10 +29,14 @@ export interface IAddressesInputItemProps extends ComponentProps<'div'> {
      * Custom validator function that extends the default validation.
      */
     customValidator?: (member: IAddressInputResolvedValue) => string | true;
+    /**
+     * Chain id used to build the explorer link for the address input.
+     */
+    chainId?: number;
 }
 
 export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) => {
-    const { index, disabled, customValidator } = props;
+    const { index, disabled, customValidator, chainId } = props;
 
     const { t } = useTranslations();
 
@@ -81,6 +85,7 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
                 onAccept={handleAddressAccept}
                 placeholder={t('app.shared.addressesInput.item.input.placeholder')}
                 disabled={disabled}
+                chainId={chainId}
                 {...addressField}
             />
 
