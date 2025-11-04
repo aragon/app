@@ -3,6 +3,7 @@
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { useDao } from '@/shared/api/daoService';
 import {
+    addressUtils,
     DataList,
     EmptyState,
     type IProposalAction,
@@ -41,7 +42,7 @@ export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<IGaugeRegistra
     const { qiTokenAddress, incentiveType, rewardControllerAddress } = parseUnregisterGaugeInputData(
         action.inputData?.parameters ?? [],
     );
-    const { data: gauges, isLoading } = useGaugeRegistrarGauges({
+    const { data: gauges = [], isLoading } = useGaugeRegistrarGauges({
         pluginAddress,
         network: dao!.network,
         gaugeVoterAddress: 'plugin.meta.address',
@@ -51,13 +52,12 @@ export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<IGaugeRegistra
         return <GaugeRegistrarGaugeListItemSkeleton />;
     }
 
-    const gaugeToRemove = gauges[0];
-    // const gaugeToRemove = gauges.find(
-    //     (gauge) =>
-    //         gauge.qiToken === qiTokenAddress &&
-    //         gauge.rewardController === rewardControllerAddress &&
-    //         gauge.incentive === incentiveType,
-    // );
+    const gaugeToRemove = gauges.find(
+        (gauge) =>
+            addressUtils.isAddressEqual(gauge.qiToken, qiTokenAddress) &&
+            addressUtils.isAddressEqual(gauge.rewardController, rewardControllerAddress) &&
+            gauge.incentive == incentiveType,
+    );
 
     if (!gaugeToRemove) {
         return (

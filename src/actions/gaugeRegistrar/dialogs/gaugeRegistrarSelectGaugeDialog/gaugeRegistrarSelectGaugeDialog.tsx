@@ -41,11 +41,11 @@ export const GaugeRegistrarSelectGaugeDialog: React.FC<IGaugeRegistrarSelectGaug
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
-    const [plugin] = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_REGISTRAR }) ?? [];
+    const [gaugeVoterPlugin] = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.GAUGE_VOTER }) ?? [];
     const { data: gauges, isLoading } = useGaugeRegistrarGauges({
         pluginAddress,
         network: dao.network,
-        gaugeVoterAddress: 'plugin.meta.address',
+        gaugeVoterAddress: gaugeVoterPlugin.meta.address,
     });
 
     const [selectedGauge, setSelectedGauge] = useState<IRegisteredGauge | null>(null);

@@ -5,6 +5,8 @@ import {
     generateDao,
     generateDaoPlugin,
     generateDialogContext,
+    generatePaginatedResponse,
+    generateReactQueryInfiniteResultSuccess,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -13,14 +15,32 @@ import { render, screen } from '@testing-library/react';
 import * as CreateProposalProvider from '../createProposalFormProvider';
 import { CreateProposalFormActions, type ICreateProposalFormActionsProps } from './createProposalFormActions';
 
+// Mock the useAllowedActions hook
+const mockUseAllowedActions = jest.fn();
+jest.mock('@/modules/governance/api/executeSelectorsService', () => ({
+    ...jest.requireActual('@/modules/governance/api/executeSelectorsService'),
+    useAllowedActions: (params: unknown, options?: unknown) => mockUseAllowedActions(params, options),
+}));
+
 describe('<CreateProposalFormActions /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
+    const useDaoPermissionsSpy = jest.spyOn(daoService, 'useDaoPermissions');
     const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
     const useCreateProposalFormContextSpy = jest.spyOn(CreateProposalProvider, 'useCreateProposalFormContext');
     const getDaoPluginsSpy = jest.spyOn(daoUtils, 'getDaoPlugins');
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        useDaoPermissionsSpy.mockReturnValue(
+            generateReactQueryInfiniteResultSuccess({
+                data: { pages: [generatePaginatedResponse({ data: [] })], pageParams: [] },
+            }),
+        );
+        mockUseAllowedActions.mockReturnValue(
+            generateReactQueryInfiniteResultSuccess({
+                data: { pages: [generatePaginatedResponse({ data: [] })], pageParams: [] },
+            }),
+        );
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useCreateProposalFormContextSpy.mockReturnValue({
             prepareActions: {},
@@ -31,6 +51,8 @@ describe('<CreateProposalFormActions /> component', () => {
 
     afterEach(() => {
         useDaoSpy.mockReset();
+        useDaoPermissionsSpy.mockReset();
+        mockUseAllowedActions.mockReset();
         useDialogContextSpy.mockReset();
         useCreateProposalFormContextSpy.mockReset();
         getDaoPluginsSpy.mockReset();
