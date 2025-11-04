@@ -100,7 +100,7 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
 
     const [hasModified, setHasModified] = useState(false);
 
-    const updateVotePercentage = (gaugeAddress: string, newPercentage: number) => {
+    const handleUpdateVotePercentage = (gaugeAddress: string, newPercentage: number) => {
         setHasModified(true);
         setVoteAllocations((prev) =>
             prev.map((allocation) =>
@@ -111,7 +111,7 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
         );
     };
 
-    const removeGauge = (gaugeAddress: string) => {
+    const handleRemoveGauge = (gaugeAddress: string) => {
         setVoteAllocations((prev) => prev.filter((allocation) => allocation.gauge.address !== gaugeAddress));
         onRemoveGauge?.(gaugeAddress);
     };
@@ -187,8 +187,8 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
                     totalVotingPower={totalVotingPower}
                     tokenSymbol={tokenSymbol}
                     hasModified={hasModified}
-                    onUpdatePercentage={updateVotePercentage}
-                    onRemoveGauge={removeGauge}
+                    onUpdatePercentage={handleUpdateVotePercentage}
+                    onRemoveGauge={handleRemoveGauge}
                 />
             </Dialog.Content>
             <Dialog.Footer
