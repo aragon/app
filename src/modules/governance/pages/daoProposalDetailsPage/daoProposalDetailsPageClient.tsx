@@ -185,26 +185,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                 {normalizedProposalActions.map((action, index) => {
                                     const fnSelector = proposalActionUtils.actionToFunctionSelector(action);
                                     const customActionView = actionViewRegistry.getViewBySelector(fnSelector);
-                                    // console.log('asdkjsadjsakj ', action, fnSelector);
-                                    // const registerDetailsAction = {
-                                    //     type: GaugeRegistrarActionType.REGISTER_GAUGE,
-                                    //     inputData: {
-                                    //         parameters: [
-                                    //             { value: '0xeE567Fe1712Faf6149d80dA1E6934E354124CfE3' },
-                                    //             { value: 1 },
-                                    //             { value: '0x78590B44F9F798212Fd7f446eE9A4183F798f218' },
-                                    //         ],
-                                    //     },
-                                    //     gaugeMetadata: {
-                                    //         name: 'Test gauge name',
-                                    //         description: 'Test gauge description.',
-                                    //         links: [
-                                    //             { name: 'Test link 1', url: 'http://test123.com' },
-                                    //             { name: 'Test link 2', url: 'https://test2.com' },
-                                    //         ],
-                                    //         avatar: 'ipfs://QmTsCeejcmCCWLNWKDpsVdMg9TYU3sQ6fr1KVnUsHxaPxt',
-                                    //     },
-                                    // };
+
                                     return customActionView ? (
                                         <ProposalActions.Item<IProposalActionData>
                                             key={index}
@@ -221,55 +202,6 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                             chainId={chainId}
                                         />
                                     );
-                                })}
-                                {['0x46b7d62b', '0x0de61ed0'].map((selector) => {
-                                    const customActionView = actionViewRegistry.getViewBySelector(
-                                        selector as `0x${string}`,
-                                    );
-
-                                    if (customActionView) {
-                                        return (
-                                            <ProposalActions.Item<IProposalActionData>
-                                                key={selector}
-                                                action={
-                                                    {
-                                                        from: '0x6361CbCB86121FB3cb4FA358AECB0E96119A7314',
-                                                        to: '0x2Ac0F2cbc7C3bee636747efeF46322C4224b02d9',
-                                                        data: '0x3f4ba83a',
-                                                        value: '0',
-                                                        type: 'Unknown',
-                                                        inputData: {
-                                                            function: 'Gauge Registrar Demo',
-                                                            textSignature: 'unpause()',
-                                                            parameters: [
-                                                                { value: '0xQiTokenAddress' },
-                                                                { value: 1 },
-                                                                { value: '0xRewardsControllerAddress' },
-                                                            ],
-                                                            notice: null,
-                                                            contract: 'AddressGaugeVoter',
-                                                            proxyName: 'ERC1967Proxy',
-                                                            implementationAddress:
-                                                                '0x2548267A7247e357886C0D535Ff59223bB11cB68',
-                                                        },
-                                                        gaugeMetadata: {
-                                                            name: 'Test gauge 123',
-                                                            description: 'Description of the gauge for test....',
-                                                            avatar: 'ipfs://QmTsCeejcmCCWLNWKDpsVdMg9TYU3sQ6fr1KVnUsHxaPxt',
-                                                            links: [
-                                                                { name: 'Test link 1', url: 'http://hello.com' },
-                                                                { name: 'Test link 2', url: 'http://hello.com' },
-                                                            ],
-                                                        },
-                                                        daoId,
-                                                    } as unknown as IProposalActionData
-                                                }
-                                                actionFunctionSelector={selector}
-                                                chainId={chainId}
-                                                CustomComponent={customActionView.componentDetails}
-                                            />
-                                        );
-                                    }
                                 })}
                             </ProposalActions.Container>
                             <ProposalActions.Footer>
