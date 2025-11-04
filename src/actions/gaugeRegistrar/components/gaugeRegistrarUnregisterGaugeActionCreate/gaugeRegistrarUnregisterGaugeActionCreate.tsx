@@ -48,7 +48,7 @@ export const GaugeRegistrarUnregisterGaugeActionCreate: React.FC<IGaugeRegistrar
         setValue(selectedGaugeFieldName, gauge);
     };
 
-    const { value: selectedGauge, alert } = useFormField<Record<string, IRegisteredGauge>, string>(
+    const { value: selectedGauge, alert } = useFormField<Record<string, IRegisteredGauge | undefined>, string>(
         selectedGaugeFieldName,
         {
             label: t('app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionCreate.emptyCard.heading'),
