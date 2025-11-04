@@ -4,7 +4,7 @@ import { dynamicExitQueueAbi } from '../../utils/tokenExitQueueTransactionUtils/
 import type { IUseTokenExitQueueFeeDataParams, IUseTokenExitQueueFeeDataReturn } from './useTokenExitQueueFeeData.api';
 
 export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams): IUseTokenExitQueueFeeDataReturn => {
-    const { tokenId, lockManagerAddress, chainId, enabled = true } = params;
+    const { tokenId, lockManagerAddress, chainId, enabled = true, refetchInterval } = params;
 
     // Read ticket information
     const {
@@ -17,7 +17,7 @@ export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams
         address: lockManagerAddress as Hex,
         args: [tokenId],
         chainId,
-        query: { enabled },
+        query: { enabled, refetchInterval },
     });
 
     // Read calculated fee amount
@@ -31,7 +31,7 @@ export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams
         address: lockManagerAddress as Hex,
         args: [tokenId],
         chainId,
-        query: { enabled },
+        query: { enabled, refetchInterval },
     });
 
     // Read canExit status
@@ -45,7 +45,7 @@ export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams
         address: lockManagerAddress as Hex,
         args: [tokenId],
         chainId,
-        query: { enabled },
+        query: { enabled, refetchInterval },
     });
 
     // Read isCool status
@@ -59,19 +59,65 @@ export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams
         address: lockManagerAddress as Hex,
         args: [tokenId],
         chainId,
-        query: { enabled },
+        query: { enabled, refetchInterval },
     });
 
-    // Transform ticket data from contract format to ITokenExitQueueTicket
+    // Read global fee parameters as fallback for v1 tickets (2-field struct)
+    // v2 tickets (7-field struct) will have these in ticketData and won't need fallback
+    const { data: globalFeePercent } = useReadContract({
+        abi: dynamicExitQueueAbi,
+        functionName: 'feePercent',
+        address: lockManagerAddress as Hex,
+        chainId,
+        query: { enabled: enabled && ticketData != null },
+    });
+
+    const { data: globalMinFeePercent } = useReadContract({
+        abi: dynamicExitQueueAbi,
+        functionName: 'minFeePercent',
+        address: lockManagerAddress as Hex,
+        chainId,
+        query: { enabled: enabled && ticketData != null },
+    });
+
+    const { data: globalCooldown } = useReadContract({
+        abi: dynamicExitQueueAbi,
+        functionName: 'cooldown',
+        address: lockManagerAddress as Hex,
+        chainId,
+        query: { enabled: enabled && ticketData != null },
+    });
+
+    const { data: globalMinCooldown } = useReadContract({
+        abi: dynamicExitQueueAbi,
+        functionName: 'minCooldown',
+        address: lockManagerAddress as Hex,
+        chainId,
+        query: { enabled: enabled && ticketData != null },
+    });
+
+    // Transform ticket data - handles both v1 (2-field) and v2 (7-field) tickets
+    // v1 tickets: Only have holder/queuedAt, fallback to global params
+    // v2 tickets: Have all 7 fields, use ticket's stored params
+    interface ITicketV2 {
+        holder: `0x${string}`;
+        queuedAt: number;
+        minCooldown: number;
+        cooldown: number;
+        feePercent: number;
+        minFeePercent: number;
+        slope: bigint;
+    }
+
     const ticket = ticketData
         ? {
               holder: ticketData.holder,
               queuedAt: ticketData.queuedAt,
-              minCooldown: ticketData.minCooldown,
-              cooldown: ticketData.cooldown,
-              feePercent: ticketData.feePercent,
-              minFeePercent: ticketData.minFeePercent,
-              slope: ticketData.slope,
+              minCooldown: (ticketData as Partial<ITicketV2>).minCooldown ?? globalMinCooldown ?? 0,
+              cooldown: (ticketData as Partial<ITicketV2>).cooldown ?? globalCooldown ?? 0,
+              feePercent: (ticketData as Partial<ITicketV2>).feePercent ?? Number(globalFeePercent ?? 0),
+              minFeePercent: (ticketData as Partial<ITicketV2>).minFeePercent ?? Number(globalMinFeePercent ?? 0),
+              slope: (ticketData as Partial<ITicketV2>).slope ?? BigInt(0),
           }
         : undefined;
 

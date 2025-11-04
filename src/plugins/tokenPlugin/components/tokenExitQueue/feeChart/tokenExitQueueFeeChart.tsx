@@ -3,7 +3,7 @@
 import { TokenExitQueueFeeMode } from '@/plugins/tokenPlugin/types';
 import { tokenExitQueueFeeUtils } from '@/plugins/tokenPlugin/utils/tokenExitQueueFeeUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Area, AreaChart, ReferenceDot, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import type { MouseHandlerDataParam } from 'recharts/types/synchronisation/types';
 import type { ITokenExitQueueFeeChartProps } from './tokenExitQueueFeeChart.api';
@@ -22,43 +22,91 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
         return null;
     }
 
-    // Generate dense points for smooth line, but only show 6 x-axis labels
-    const points = tokenExitQueueFeeUtils.getChartDataPoints({
-        ticket,
-        currentTime,
-        pointCount: 100,
-    });
+    const secondsPerDay = 24 * 60 * 60;
 
-    // If no points generated, don't render
+    const cooldownDuration = Math.max(ticket.cooldown - ticket.minCooldown, 0);
+    const fallbackDuration = Math.max(secondsPerDay, 1);
+    const domainDuration = cooldownDuration > 0 ? cooldownDuration * 2 : fallbackDuration;
+
+    const minFeePercent = useMemo(
+        () => tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: ticket.cooldown, ticket }),
+        [ticket],
+    );
+
+    const pointCount = 100;
+
+    const points = useMemo(() => {
+        if (pointCount < 2) {
+            return [];
+        }
+
+        if (cooldownDuration <= 0) {
+            const startFee = tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: ticket.minCooldown, ticket });
+            return [
+                { elapsedSeconds: 0, feePercent: startFee },
+                { elapsedSeconds: domainDuration, feePercent: startFee },
+            ];
+        }
+
+        const decayPoints = Array.from({ length: pointCount }, (_, index) => {
+            const ratio = index / (pointCount - 1);
+            const decayElapsed = ratio * cooldownDuration;
+            const timeElapsed = ticket.minCooldown + decayElapsed;
+            const feePercent = tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed, ticket });
+
+            return {
+                elapsedSeconds: decayElapsed,
+                feePercent,
+            };
+        });
+
+        if (decayPoints[decayPoints.length - 1]?.elapsedSeconds !== cooldownDuration) {
+            decayPoints.push({ elapsedSeconds: cooldownDuration, feePercent: minFeePercent });
+        }
+
+        const plateauPoints = decayPoints.map((point) => ({
+            elapsedSeconds: point.elapsedSeconds + cooldownDuration,
+            feePercent: minFeePercent,
+        }));
+
+        return [...decayPoints, ...plateauPoints];
+    }, [cooldownDuration, domainDuration, minFeePercent, pointCount, ticket]);
+
     if (points.length === 0) {
         return null;
     }
 
     const timeElapsedNow = currentTime - ticket.queuedAt;
+    const elapsedSinceMinCooldown = Math.max(0, timeElapsedNow - ticket.minCooldown);
+    const nowX = cooldownDuration > 0 ? Math.min(elapsedSinceMinCooldown, domainDuration) : 0;
+
+    const boundedTimeElapsed = Math.max(0, Math.min(timeElapsedNow, ticket.cooldown));
     const currentFeePercent = tokenExitQueueFeeUtils.calculateFeeAtTime({
-        timeElapsed: timeElapsedNow,
+        timeElapsed: boundedTimeElapsed,
         ticket,
     });
 
     const nowLabel = t('app.plugins.tokenExitQueue.feeChart.now');
-    const secondsPerDay = 24 * 60 * 60;
 
     const baseTickCount = 6;
-    const baseTicks = Array.from({ length: baseTickCount }, (_, index) => {
-        if (index === baseTickCount - 1) {
-            return ticket.cooldown;
-        }
-        return (ticket.cooldown / (baseTickCount - 1)) * index;
-    });
+    const baseTicks =
+        domainDuration === 0
+            ? [0]
+            : Array.from({ length: baseTickCount }, (_, index) => {
+                  if (index === baseTickCount - 1) {
+                      return domainDuration;
+                  }
+                  return (domainDuration / (baseTickCount - 1)) * index;
+              });
 
     const tickSet = new Set<number>(baseTicks);
-    if (mode === TokenExitQueueFeeMode.TIERED) {
-        tickSet.add(ticket.minCooldown);
+    tickSet.add(0);
+    if (cooldownDuration > 0) {
+        tickSet.add(cooldownDuration);
     }
-    const xAxisTicks = Array.from(tickSet).sort((a, b) => a - b);
-    const xAxisTickCount = xAxisTicks.length;
+    tickSet.add(domainDuration);
 
-    const nowX = ticket.cooldown === 0 ? 0 : Math.min(timeElapsedNow, ticket.cooldown);
+    const xAxisTicks = Array.from(tickSet).sort((a, b) => a - b);
 
     const dataMaxFeePercent = points.reduce((max, point) => Math.max(max, point.feePercent), currentFeePercent);
     const configuredMaxFeePercent = Math.max(ticket.feePercent / 100, 0);
@@ -70,37 +118,22 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
         }
         const decimals = value < 1 ? 2 : 2;
         const fixed = value.toFixed(decimals);
-        const trimmed = fixed.replace(/\.?0+$/, '');
+        const trimmed = fixed.replace(/\.0+$/, '').replace(/\.0$/, '');
         return `${trimmed}%`;
     };
 
-    const totalDays = Math.max(1, Math.ceil(ticket.cooldown / secondsPerDay));
-
-    const tickDayNumbers: number[] = [];
-    xAxisTicks.forEach((tickSeconds, index) => {
-        if (index === 0) {
-            tickDayNumbers.push(1);
-            return;
-        }
-        if (index === xAxisTickCount - 1) {
-            tickDayNumbers.push(totalDays);
-            return;
+    const formatElapsed = (elapsedSeconds: number) => {
+        if (!Number.isFinite(elapsedSeconds)) {
+            return '';
         }
 
-        const rawDays = tickSeconds / secondsPerDay;
-        const prevDay = tickDayNumbers[index - 1] ?? 1;
-        const candidate = Math.max(prevDay + 1, Math.ceil(rawDays));
-        const upperBound = Math.max(1, totalDays - 1);
-        const clamped = Math.min(upperBound, candidate);
-        tickDayNumbers.push(clamped);
-    });
-
-    const formatDayTick = (_elapsedSeconds: number, index: number) => {
-        if (index === 0) {
-            return 'Day 1';
+        if (elapsedSeconds < secondsPerDay) {
+            const minutes = Math.max(0, Math.round(elapsedSeconds / 60));
+            return minutes <= 1 ? '1 min' : `${minutes} mins`;
         }
-        const day = tickDayNumbers.at(index);
-        return day != null ? day.toString() : '';
+
+        const days = Math.max(1, Math.round(elapsedSeconds / secondsPerDay));
+        return days === 1 ? 'Day 1' : `Day ${days}`;
     };
 
     const handleMouseMove = (state?: MouseHandlerDataParam) => {
@@ -129,11 +162,7 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
     };
 
     const hoveredPoint = hoveredIndex != null ? points[hoveredIndex] : undefined;
-    const formatPointLabel = (elapsed: number) => {
-        const dayNumber = elapsed === 0 ? 1 : Math.max(1, Math.round(elapsed / secondsPerDay));
-        return `Day ${dayNumber.toString()}`;
-    };
-    const activeLabel = hoveredPoint && hoveredIndex != null ? formatPointLabel(hoveredPoint.elapsedSeconds) : nowLabel;
+    const activeLabel = hoveredPoint && hoveredIndex != null ? formatElapsed(hoveredPoint.elapsedSeconds) : nowLabel;
     const activeFeePercent = hoveredPoint ? hoveredPoint.feePercent : currentFeePercent;
     const activeFeeDisplay = formatFeePercent(activeFeePercent);
     const indicatorX = hoveredPoint ? hoveredPoint.elapsedSeconds : nowX;
@@ -161,9 +190,9 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
                             tickLine={false}
                             axisLine={false}
                             type="number"
-                            domain={[0, ticket.cooldown]}
+                            domain={[0, domainDuration]}
                             ticks={xAxisTicks}
-                            tickFormatter={(value, index) => formatDayTick(Number(value), index)}
+                            tickFormatter={(value) => formatElapsed(Number(value))}
                             tickMargin={8}
                         />
                         <YAxis

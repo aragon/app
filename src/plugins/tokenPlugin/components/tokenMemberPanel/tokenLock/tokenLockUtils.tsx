@@ -8,22 +8,22 @@ export type TokenLockStatus = 'active' | 'cooldown' | 'available';
 class TokenLockUtils {
     getLockStatus = (lock: IMemberLock): TokenLockStatus => {
         const { lockExit } = lock;
-        const { status, exitDateAt } = lockExit;
+        const { status, queuedAt, minCooldown, exitDateAt } = lockExit;
 
         const now = DateTime.now().toSeconds();
 
-        const isActive = !status;
-        const inCooldown = exitDateAt != null && now < exitDateAt;
-
-        if (isActive) {
+        if (!status) {
             return 'active';
         }
 
-        if (inCooldown) {
+        const unlockAt =
+            queuedAt != null && minCooldown != null ? queuedAt + minCooldown : (exitDateAt ?? queuedAt ?? null);
+
+        if (unlockAt == null) {
             return 'cooldown';
         }
 
-        return 'available';
+        return now >= unlockAt ? 'available' : 'cooldown';
     };
 
     getLockVotingPower = (lock: IMemberLock, settings: ITokenPluginSettings) => {

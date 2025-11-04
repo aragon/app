@@ -17,6 +17,10 @@ export interface IUseTokenExitQueueFeeDataParams {
      * Whether the hook should be enabled.
      */
     enabled?: boolean;
+    /**
+     * Refetch interval in milliseconds. If provided, the hook will poll the contract at this interval.
+     */
+    refetchInterval?: number;
 }
 
 export interface IUseTokenExitQueueFeeDataReturn {

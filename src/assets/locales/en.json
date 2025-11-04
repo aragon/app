@@ -1751,7 +1751,8 @@
               "warmup": "In warmup"
             },
             "timeLeftSuffix": "left",
-            "withdrawTimeLeftSuffix": "left until you can withdraw"
+            "withdrawFeeTimeLeftSuffix": "until fee reduces",
+            "withdrawTimeLeftSuffix": "until withdraw"
           }
         },
         "tokenLockUnlockDialog": {

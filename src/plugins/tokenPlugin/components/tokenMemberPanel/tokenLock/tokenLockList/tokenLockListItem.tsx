@@ -66,13 +66,13 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const status = tokenLockUtils.getLockStatus(lock);
+    const baseStatus = tokenLockUtils.getLockStatus(lock);
     const { needsApproval } = useCheckNftAllowance({
         spender: escrowAddress,
         nft: nftLockAddress,
         nftId: BigInt(lock.tokenId),
         network: dao.network,
-        enabled: status === 'active',
+        enabled: baseStatus === 'active',
     });
 
     // Query fee data from DynamicExitQueue for withdraw action
@@ -87,8 +87,20 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
         tokenId: BigInt(lock.tokenId),
         lockManagerAddress,
         chainId,
-        enabled: hasExitQueue && status === 'available',
+        enabled: hasExitQueue && (baseStatus === 'cooldown' || baseStatus === 'available'),
+        refetchInterval: baseStatus === 'cooldown' ? 10_000 : undefined, // Poll every 10 seconds when in cooldown
     });
+
+    const effectiveQueuedAt = lock.lockExit.queuedAt ?? ticket?.queuedAt ?? null;
+    const effectiveMinCooldown = lock.lockExit.minCooldown ?? ticket?.minCooldown ?? null;
+
+    const minCooldownTimestamp =
+        effectiveQueuedAt != null && effectiveMinCooldown != null
+            ? effectiveQueuedAt + effectiveMinCooldown
+            : (lock.lockExit.exitDateAt ?? null);
+    const nowSeconds = DateTime.now().toSeconds();
+    const hasReachedMinCooldown = minCooldownTimestamp != null && nowSeconds >= minCooldownTimestamp;
+    const status: TokenLockStatus = !lock.lockExit.status ? 'active' : hasReachedMinCooldown ? 'available' : 'cooldown';
 
     const openViewLocksDialog = () => open(TokenPluginDialogId.VIEW_LOCKS, { params: { dao, plugin } });
 
@@ -176,11 +188,8 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     };
 
     const minLockTime = epochStartAt + (votingEscrow?.minLockTime ?? 0);
-    const canUnlock = DateTime.now().toSeconds() > minLockTime;
+    const canUnlock = nowSeconds > minLockTime;
     const formattedMinLock = formatterUtils.formatDate(minLockTime * 1000, { format: DateFormat.DURATION });
-
-    const parsedExitDate = (lock.lockExit.exitDateAt ?? 0) * 1000;
-    const formattedExitDate = formatterUtils.formatDate(parsedExitDate, { format: DateFormat.DURATION });
 
     const parsedLockedAmount = formatUnits(BigInt(amount), token.decimals);
     const formattedLockedAmount = formatterUtils.formatNumber(parsedLockedAmount, {
@@ -193,7 +202,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
 
     return (
         <DataList.Item className="flex flex-col gap-4 py-4 md:py-6">
-            <div className="flex justify-between">
+            <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 md:gap-4">
                     {/*TODO Revert to token.logo before merge DEMO ONLY*/}
                     <Avatar
@@ -203,17 +212,11 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                     />
                     <Heading size="h4">ID: {lock.tokenId}</Heading>
                 </div>
-                <div className="flex items-center gap-2 md:gap-3">
-                    {status === 'cooldown' && (
-                        <p className="text-sm leading-tight text-neutral-500 md:text-base">
-                            {formattedExitDate} {t('app.plugins.token.tokenLockList.item.timeLeftSuffix')}
-                        </p>
-                    )}
-                    <Tag
-                        label={t(`app.plugins.token.tokenLockList.item.statusLabel.${status}`)}
-                        variant={statusToVariant[status]}
-                    />
-                </div>
+
+                <Tag
+                    label={t(`app.plugins.token.tokenLockList.item.statusLabel.${status}`)}
+                    variant={statusToVariant[status]}
+                />
             </div>
             <hr className="border-neutral-100" />
             <div className="grid grid-cols-3 gap-4 text-base leading-tight text-neutral-800 md:text-lg">
@@ -266,21 +269,39 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                         )}
                     </>
                 )}
-                {status === 'cooldown' && (
+
+                {lock.lockExit.status && (
                     <>
-                        <Button className="w-full md:w-auto" variant="tertiary" size="md" disabled={true}>
+                        <Button
+                            className="w-full md:w-auto"
+                            variant="tertiary"
+                            size="md"
+                            disabled={status === 'cooldown'}
+                            onClick={status === 'cooldown' ? undefined : handleWithdraw}
+                        >
                             {t(`app.plugins.token.tokenLockList.item.actions.withdraw`, { symbol: token.symbol })}
                         </Button>
-                        <p className="text-sm leading-normal text-neutral-500">
-                            {formattedExitDate} {t('app.plugins.token.tokenLockList.item.withdrawTimeLeftSuffix')}
-                        </p>
-                    </>
-                )}
 
-                {status === 'available' && (
-                    <Button className="w-full md:w-auto" variant="tertiary" size="md" onClick={handleWithdraw}>
-                        {t(`app.plugins.token.tokenLockList.item.actions.withdraw`, { symbol: token.symbol })}
-                    </Button>
+                        {status === 'cooldown' && (
+                            <Rerender>
+                                {() => {
+                                    const formattedMinCooldownDate =
+                                        minCooldownTimestamp != null
+                                            ? formatterUtils.formatDate(minCooldownTimestamp * 1000, {
+                                                  format: DateFormat.DURATION,
+                                              })
+                                            : undefined;
+
+                                    return (
+                                        <p className="text-sm leading-normal text-neutral-500">
+                                            {formattedMinCooldownDate}{' '}
+                                            {t('app.plugins.token.tokenLockList.item.withdrawTimeLeftSuffix')}
+                                        </p>
+                                    );
+                                }}
+                            </Rerender>
+                        )}
+                    </>
                 )}
             </div>
         </DataList.Item>
