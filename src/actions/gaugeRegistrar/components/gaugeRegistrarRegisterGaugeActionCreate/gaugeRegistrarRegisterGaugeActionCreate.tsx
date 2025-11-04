@@ -43,7 +43,6 @@ export const GaugeRegistrarRegisterGaugeActionCreate: React.FC<IGaugeRegistrarRe
             const proposedMetadata = { name, description, links: resources };
             let daoAvatar: string | undefined;
 
-            // TODO: extract to usePinAvatar or usePinImg
             if (avatar?.file != null) {
                 // Pin the avatar set on the form when the file property is set, meaning that the user changed the DAO avatar
                 const avatarResult = await pinFileAsync({ body: avatar.file });

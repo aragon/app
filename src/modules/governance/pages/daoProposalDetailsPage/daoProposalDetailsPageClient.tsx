@@ -143,7 +143,6 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const simulationErrorContext = hasSimulationFailed ? 'simulationError' : 'lastSimulationError';
     const simulationError = t(`app.governance.daoProposalDetailsPage.main.actions.${simulationErrorContext}`);
 
-    console.log('normalizedProposalActions', normalizedProposalActions);
     return (
         <>
             <Page.Header breadcrumbs={pageBreadcrumbs} breadcrumbsTag={statusTag} title={title} description={summary} />

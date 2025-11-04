@@ -15,13 +15,6 @@ import { render, screen } from '@testing-library/react';
 import * as CreateProposalProvider from '../createProposalFormProvider';
 import { CreateProposalFormActions, type ICreateProposalFormActionsProps } from './createProposalFormActions';
 
-// Mock the useAllowedActions hook
-const mockUseAllowedActions = jest.fn();
-jest.mock('@/modules/governance/api/executeSelectorsService', () => ({
-    ...jest.requireActual('@/modules/governance/api/executeSelectorsService'),
-    useAllowedActions: (params: unknown, options?: unknown) => mockUseAllowedActions(params, options),
-}));
-
 describe('<CreateProposalFormActions /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useDaoPermissionsSpy = jest.spyOn(daoService, 'useDaoPermissions');
@@ -32,11 +25,6 @@ describe('<CreateProposalFormActions /> component', () => {
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         useDaoPermissionsSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({
-                data: { pages: [generatePaginatedResponse({ data: [] })], pageParams: [] },
-            }),
-        );
-        mockUseAllowedActions.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({
                 data: { pages: [generatePaginatedResponse({ data: [] })], pageParams: [] },
             }),
@@ -52,7 +40,6 @@ describe('<CreateProposalFormActions /> component', () => {
     afterEach(() => {
         useDaoSpy.mockReset();
         useDaoPermissionsSpy.mockReset();
-        mockUseAllowedActions.mockReset();
         useDialogContextSpy.mockReset();
         useCreateProposalFormContextSpy.mockReset();
         getDaoPluginsSpy.mockReset();

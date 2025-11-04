@@ -11,7 +11,7 @@ import {
     GaugeRegistrarGaugeListItem,
     GaugeRegistrarGaugeListItemSkeleton,
 } from '../../components/gaugeRegistrarGaugeListItem';
-import { useGaugeRegistrarGauges } from '../../hooks/useGaugeRegistrarGauges';
+import { useGaugeRegistrarGauges } from '../../hooks';
 import type { IRegisteredGauge } from '../../types/gaugeRegistrar';
 
 export interface IGaugeRegistrarSelectGaugeDialogParams {
