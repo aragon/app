@@ -1,9 +1,6 @@
 import BundleAnalyzer from '@next/bundle-analyzer';
 import { withSentryConfig } from '@sentry/nextjs';
 import packageInfo from './package.json' with { type: 'json' };
-import envSanitizer from './scripts/dumpEnvSanitized.mjs';
-
-envSanitizer.dump();
 
 const withBundleAnalyzer = BundleAnalyzer({ enabled: process.env.ANALYZE === 'true' });
 
