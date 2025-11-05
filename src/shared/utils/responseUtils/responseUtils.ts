@@ -11,8 +11,6 @@ class ResponseUtils {
      * Safely parses a response as JSON, handling empty responses and various status codes.
      * @returns The parsed JSON data, or null if:
      *   - Response has no-content status (204, 205, 304)
-     *   - Response is not JSON (based on content-type header)
-     *   - Response body is empty or whitespace-only
      *   - JSON parsing fails (error logged to monitoring)
      */
     async safeJsonParse(response: Response): Promise<JsonValue | null> {
@@ -21,6 +19,8 @@ class ResponseUtils {
             return null;
         }
 
+        const clonedResponse = response.clone();
+
         try {
             return (await response.json()) as JsonValue;
         } catch (error) {
@@ -28,7 +28,7 @@ class ResponseUtils {
 
             let text = '';
             try {
-                text = await response.text();
+                text = await clonedResponse.text();
             } catch {
                 text = '';
             }
@@ -42,6 +42,7 @@ class ResponseUtils {
                     bodyPreview: text.substring(0, 100),
                 },
             });
+
             return null;
         }
     }
