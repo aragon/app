@@ -19,6 +19,7 @@ class NavigationDaoUtils {
 
     private getDefaultLinks = (dao: IDao, baseUrl: string, context: NavigationDaoContext): INavigationLink[] => {
         const isSupported = daoUtils.hasSupportedPlugins(dao);
+        const isPluginBody = daoUtils.hasPluginBody(dao);
 
         const isPageContext = context === 'page';
         const isDialogContext = context === 'dialog';
@@ -41,7 +42,7 @@ class NavigationDaoUtils {
                 label: 'app.application.navigationDao.link.members',
                 link: `${baseUrl}/members`,
                 icon: IconType.APP_MEMBERS,
-                hidden: !isSupported,
+                hidden: !isSupported || !isPluginBody,
                 lgHidden: isDialogContext,
             },
             {
