@@ -15,6 +15,7 @@ const config = {
     globalSetup: '<rootDir>/src/test/globalSetup.ts',
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
+        '^next/navigation-original$': 'next/navigation',
     },
     transform: {
         '^.+\\.(svg|jpg|css|mp4|png)$': '<rootDir>/src/test/fileTransform.js',
