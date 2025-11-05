@@ -39,13 +39,17 @@ const webFunctionalities = [
     'xr-spatial-tracking=()',
 ];
 
+const isPreview = process.env.NEXT_PUBLIC_ENV === 'preview';
+const isDevelopment = process.env.NEXT_PUBLIC_ENV === 'development';
+const disableSourcemaps = isPreview || isDevelopment;
+
 const sentryConfig = {
     // Aragon organisation on Sentry
-    org: 'aragonorg',
+    org: process.env.SENTRY_ORG ?? process.env.NEXT_PUBLIC_SENTRY_ORG,
     // Sentry project
-    project: 'app-next',
+    project: process.env.SENTRY_PROJECT ?? process.env.NEXT_PUBLIC_SENTRY_PROJECT,
     // Auth token needed for uploading source maps
-    authToken: process.env.NEXT_SECRET_SENTRY_AUTH_TOKEN,
+    authToken: process.env.SENTRY_AUTH_TOKEN ?? process.env.NEXT_SECRET_SENTRY_AUTH_TOKEN,
     // Make sure to upload all files and source maps
     widenClientFileUpload: true,
     // Use tunneling to forward events to Sentry and circumvent ad blockers
@@ -55,7 +59,8 @@ const sentryConfig = {
     // Release version for Sentry
     release: { name: packageInfo.version },
     // Delete sourcemaps from NextJs build after upload
-    sourcemaps: { deleteSourcemapsAfterUpload: true },
+    // Disable source map upload for preview environments
+    sourcemaps: disableSourcemaps ? { disable: true } : { deleteSourcemapsAfterUpload: true },
     // Disable sending data to Sentry
     telemetry: false,
     // Options to optimise the bundle size
