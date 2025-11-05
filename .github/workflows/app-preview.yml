@@ -20,6 +20,7 @@ permissions:
 jobs:
   build:
     uses: ./.github/workflows/shared-build.yml
+    secrets: inherit
     if: contains(github.event.pull_request.labels.*.name, 'preview')
     with:
       env: "preview"

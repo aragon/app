@@ -23,7 +23,7 @@ export interface ILogMessageParams {
 class MonitoringUtils {
     getBaseConfig = (): Pick<ClientOptions, 'enabled' | 'dsn' | 'tracesSampleRate' | 'environment' | 'release'> => ({
         enabled: this.isEnabled(),
-        dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+        dsn: process.env.SENTRY_DSN ?? process.env.NEXT_PUBLIC_SENTRY_DSN,
         tracesSampleRate: 1.0,
         environment: process.env.NEXT_PUBLIC_ENV,
         release: process.env.version,

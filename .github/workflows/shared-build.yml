@@ -37,6 +37,11 @@ jobs:
         run: |
           pnpm run setup ${{ inputs.env }}
           pnpm run build
+        env:
+          NEXT_PUBLIC_SENTRY_ORG: ${{ vars.NEXT_PUBLIC_SENTRY_ORG }}
+          NEXT_PUBLIC_SENTRY_PROJECT: ${{ vars.NEXT_PUBLIC_SENTRY_PROJECT }}
+          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+          NEXT_SECRET_SENTRY_AUTH_TOKEN: ${{ secrets.NEXT_SECRET_SENTRY_AUTH_TOKEN }}
       - name: Store NextJs build
         uses: actions/upload-artifact@v5.0.0
         with:
