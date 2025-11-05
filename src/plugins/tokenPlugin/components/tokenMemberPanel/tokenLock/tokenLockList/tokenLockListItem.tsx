@@ -83,7 +83,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const pluginFeePercent = plugin.settings.votingEscrow?.feePercent ?? 0;
     const pluginMinFeePercent = plugin.settings.votingEscrow?.minFeePercent ?? 0;
 
-    const { ticket, feeAmount } = useTokenExitQueueFeeData({
+    const { ticket, feeAmount, canExit } = useTokenExitQueueFeeData({
         tokenId: BigInt(lock.tokenId),
         lockManagerAddress,
         chainId,
@@ -98,9 +98,9 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
         effectiveQueuedAt != null && effectiveMinCooldown != null
             ? effectiveQueuedAt + effectiveMinCooldown
             : (lock.lockExit.exitDateAt ?? null);
-    const nowSeconds = DateTime.now().toSeconds();
-    const hasReachedMinCooldown = minCooldownTimestamp != null && nowSeconds >= minCooldownTimestamp;
-    const status: TokenLockStatus = !lock.lockExit.status ? 'active' : hasReachedMinCooldown ? 'available' : 'cooldown';
+
+    // Use canExit from backend (checks minCooldown) to determine if withdrawal is available
+    const status: TokenLockStatus = !lock.lockExit.status ? 'active' : canExit ? 'available' : 'cooldown';
 
     const openViewLocksDialog = () => open(TokenPluginDialogId.VIEW_LOCKS, { params: { dao, plugin } });
 
@@ -187,6 +187,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
         }
     };
 
+    const nowSeconds = DateTime.now().toSeconds();
     const minLockTime = epochStartAt + (votingEscrow?.minLockTime ?? 0);
     const canUnlock = nowSeconds > minLockTime;
     const formattedMinLock = formatterUtils.formatDate(minLockTime * 1000, { format: DateFormat.DURATION });
