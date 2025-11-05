@@ -44,14 +44,17 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
     const processedAmount = parseFloat(amount) > maxAmount ? maxAmount.toString() : amount;
     const processedAmountWei = parseUnits(processedAmount, 18).toString();
 
-    const secondsStep = maxTime / (chartPoints - 1);
+    // Use 6 months as the chart timeframe (instead of full maxTime)
+    const sixMonthsInSeconds = 6 * 30 * 24 * 60 * 60; // ~6 months
+    const chartTimeframe = Math.min(maxTime, sixMonthsInSeconds);
+    const secondsStep = chartTimeframe / (chartPoints - 1);
     const nowLabel = t('app.plugins.token.tokenLockForm.chart.now');
 
     const points: IChartPoint[] = Array.from({ length: chartPoints }, (_, index) => {
-        const pointSeconds = index * secondsStep;
-
-        const dateLabel = index === 0 ? nowLabel : DateTime.now().plus({ seconds: pointSeconds }).toFormat('LLL d');
-        const votingPower = tokenLockUtils.calculateVotingPower(processedAmountWei, pointSeconds, settings);
+        const lockDuration = index * secondsStep;
+        const futureDate = DateTime.now().plus({ seconds: lockDuration });
+        const dateLabel = index === 0 ? nowLabel : futureDate.toFormat('LLL d');
+        const votingPower = tokenLockUtils.calculateVotingPower(processedAmountWei, lockDuration, settings);
 
         return { x: dateLabel, y: parseFloat(votingPower) };
     });
@@ -67,7 +70,7 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
     const activePoint = hoveredPoint ?? points[0];
 
     return (
-        <div className="w-full">
+        <div className="w-full py-2">
             <div className="-mb-10">
                 <p className="font-semibold!">
                     {formatterUtils.formatNumber(activePoint.y, { format: NumberFormat.TOKEN_AMOUNT_SHORT })}{' '}
@@ -80,7 +83,7 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
                     data={points}
                     onMouseMove={handleMouseMove}
                     onMouseLeave={() => setHoveredPoint(undefined)}
-                    margin={{ right: 16, left: 4 }}
+                    margin={{ right: 16, left: 16 }}
                 >
                     <defs>
                         <linearGradient id="colorY" x1="0" y1="0" x2="0" y2="1">
@@ -94,8 +97,9 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
                         tickLine={false}
                         axisLine={false}
                         type="category"
-                        tickCount={points.length}
-                        tick={{ dx: -25 }}
+                        ticks={points.map((p) => p.x)}
+                        interval={0}
+                        tick={{ dy: 12 }}
                     />
                     <YAxis
                         tickFormatter={formatVotingPower}
