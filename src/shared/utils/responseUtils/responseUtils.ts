@@ -22,7 +22,7 @@ class ResponseUtils {
         }
 
         try {
-            return await response.json();
+            return (await response.json()) as JsonValue;
         } catch (error) {
             const contentType = response.headers.get('content-type') ?? '';
 
