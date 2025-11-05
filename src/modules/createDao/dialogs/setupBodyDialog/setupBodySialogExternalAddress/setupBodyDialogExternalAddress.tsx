@@ -4,6 +4,7 @@ import {
     TransactionStatus,
 } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { useIsSafeContract } from '@/shared/hooks/useIsSafeContract';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -24,6 +25,7 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
     const { daoId } = props;
     const { network } = daoUtils.parseDaoId(daoId);
     const { t } = useTranslations();
+    const { id: chainId } = networkDefinitions[network];
 
     const { setValue } = useFormContext<ISetupBodyForm>();
 
@@ -85,6 +87,7 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
                 value={addressInput}
                 onChange={setAddressInput}
                 onAccept={handleAddressAccept}
+                chainId={chainId}
                 {...addressField}
             />
             {value && (

@@ -59,7 +59,11 @@ describe('Http service', () => {
 
         it('returns the parsed json response', async () => {
             const parsedResult = { value: 'key' };
-            const response = generateResponse({ json: () => Promise.resolve(parsedResult) });
+            const headers = new Headers({ 'content-type': 'application/json' });
+            const response = generateResponse({
+                headers,
+                text: () => Promise.resolve(JSON.stringify(parsedResult)),
+            });
             fetchSpy.mockResolvedValue(response);
             const result = await serviceTest.request('/url');
             expect(result).toEqual(parsedResult);
@@ -121,7 +125,7 @@ describe('Http service', () => {
             const apiKey = 'test-api-key';
             serviceTest = generateHttpService('', undefined, apiKey);
             const processedOptions = serviceTest['buildOptions']({});
-            expect(processedOptions.headers.get('Authorization')).toEqual(`Bearer ${apiKey}`);
+            expect(processedOptions.headers.get('X-API-Key')).toEqual(apiKey);
         });
     });
 

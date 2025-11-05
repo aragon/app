@@ -1,31 +1,24 @@
-export const generateResponse = (response?: Partial<Response>): Response => ({
-    headers: {
-        append: jest.fn(),
-        delete: jest.fn(),
-        get: jest.fn(),
-        has: jest.fn(),
-        set: jest.fn(),
-        getSetCookie: jest.fn(),
-        entries: jest.fn(),
-        keys: jest.fn(),
-        values: jest.fn(),
-        forEach: jest.fn(),
-        [Symbol.iterator]: jest.fn(),
-    },
-    ok: true,
-    redirected: false,
-    status: 200,
-    statusText: 'OK',
-    type: 'default',
-    url: '',
-    clone: jest.fn(),
-    body: null,
-    bodyUsed: false,
-    arrayBuffer: jest.fn(),
-    blob: jest.fn(),
-    formData: jest.fn(),
-    text: jest.fn(),
-    json: jest.fn(),
-    bytes: jest.fn(),
-    ...response,
-});
+export const generateResponse = (response?: Partial<Response>): Response => {
+    const defaultHeaders = new Headers();
+    const defaults: Response = {
+        headers: defaultHeaders as unknown as Headers,
+        ok: true,
+        redirected: false,
+        status: 200,
+        statusText: 'OK',
+        type: 'default',
+        url: '',
+        clone: jest.fn(),
+        body: null,
+        bodyUsed: false,
+        arrayBuffer: jest.fn(),
+        blob: jest.fn(),
+        formData: jest.fn(),
+        text: jest.fn(() => Promise.resolve('')),
+        json: jest.fn(() => Promise.resolve({})),
+        bytes: jest.fn(),
+        ...response,
+    };
+
+    return defaults;
+};

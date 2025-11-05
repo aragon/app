@@ -12,9 +12,13 @@ concurrency:
   group: production-deployment
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   build:
     uses: ./.github/workflows/shared-build.yml
+    secrets: inherit
     with:
       env: "production"
 
