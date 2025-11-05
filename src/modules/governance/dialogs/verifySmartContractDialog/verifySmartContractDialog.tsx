@@ -6,6 +6,7 @@ import {
     type ITransactionStatusStepMeta,
 } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { AddressInput, addressUtils, Dialog, invariant, type ICompositeAddress } from '@aragon/gov-ui-kit';
@@ -48,6 +49,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
 
     invariant(location.params != null, 'VerifySmartContractDialog: params must be defined.');
     const { network, onSubmit, initialValue = '' } = location.params;
+    const { id: chainId } = networkDefinitions[network];
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
@@ -141,6 +143,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
                         value={addressInput}
                         onChange={setAddressInput}
                         onAccept={onSmartContractChange}
+                        chainId={chainId}
                         {...smartContractField}
                     />
                     {smartContractValue?.address != null && (

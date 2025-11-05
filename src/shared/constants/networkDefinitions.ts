@@ -183,7 +183,6 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             globalExecutor: '0xAcdA1352B005031ffFaa80A8B16f8fDC91fbF5F1',
             conditionFactory: '0x3AB0866601fD82f255432D2Bb78E37C115537aB5',
         },
-        disabled: true,
     },
     [Network.ZKSYNC_MAINNET]: {
         ...zksync,

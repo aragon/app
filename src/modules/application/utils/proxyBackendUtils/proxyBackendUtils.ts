@@ -1,3 +1,4 @@
+import { responseUtils } from '@/shared/utils/responseUtils';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export class ProxyBackendUtils {
@@ -8,9 +9,26 @@ export class ProxyBackendUtils {
         const requestOptions = await this.buildRequestOptions(request);
 
         const result = await fetch(url, requestOptions);
-        const parsedResult = (await result.json()) as unknown;
 
-        return NextResponse.json(parsedResult, result);
+        // Forward no-content responses as-is without a body
+        if (result.status === 204 || result.status === 205 || result.status === 304) {
+            return new NextResponse(null, { status: result.status, headers: result.headers });
+        }
+
+        const contentType = result.headers.get('content-type') ?? '';
+
+        // JSON responses
+        if (contentType.includes('application/json')) {
+            const parsedResult = await responseUtils.safeJsonParseForResponse(result);
+            if (parsedResult == null) {
+                return new NextResponse(null, { status: result.status, headers: result.headers });
+            }
+            return NextResponse.json(parsedResult, { status: result.status, headers: result.headers });
+        }
+
+        // Non-JSON responses: stream back as text
+        const bodyText = await result.text().catch(() => '');
+        return new NextResponse(bodyText, { status: result.status, headers: result.headers });
     };
 
     private buildBackendUrl = (request: NextRequest): string => {
