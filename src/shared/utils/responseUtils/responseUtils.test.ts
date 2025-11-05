@@ -31,9 +31,11 @@ describe('responseUtils.safeJsonParse', () => {
 
             expect(result).toBeNull();
             expect(monitoringUtils.logError).toHaveBeenCalledTimes(1);
-            const call = (monitoringUtils.logError as jest.Mock).mock.calls[0];
-            expect(call[0].name).toBe('SyntaxError');
-            expect(call[1]).toEqual({
+            const calls = (monitoringUtils.logError as jest.Mock).mock.calls as Array<
+                [Error, { context: Record<string, unknown> }]
+            >;
+            expect(calls[0][0].name).toBe('SyntaxError');
+            expect(calls[0][1]).toEqual({
                 context: {
                     errorType: 'json_parse_error',
                     status: 200,
@@ -118,9 +120,11 @@ describe('responseUtils.safeJsonParse', () => {
 
             expect(result).toBeNull();
             expect(monitoringUtils.logError).toHaveBeenCalledTimes(1);
-            const call = (monitoringUtils.logError as jest.Mock).mock.calls[0];
-            expect(call[0].name).toBe('SyntaxError');
-            expect(call[1]).toEqual({
+            const calls = (monitoringUtils.logError as jest.Mock).mock.calls as Array<
+                [Error, { context: Record<string, unknown> }]
+            >;
+            expect(calls[0][0].name).toBe('SyntaxError');
+            expect(calls[0][1]).toEqual({
                 context: {
                     errorType: 'json_parse_error',
                     status: 200,
@@ -141,9 +145,11 @@ describe('responseUtils.safeJsonParse', () => {
 
             expect(result).toBeNull();
             expect(monitoringUtils.logError).toHaveBeenCalledTimes(1);
-            const call = (monitoringUtils.logError as jest.Mock).mock.calls[0];
-            expect(call[0].name).toBe('SyntaxError');
-            expect(call[1]).toEqual({
+            const calls = (monitoringUtils.logError as jest.Mock).mock.calls as Array<
+                [Error, { context: Record<string, unknown> }]
+            >;
+            expect(calls[0][0].name).toBe('SyntaxError');
+            expect(calls[0][1]).toEqual({
                 context: {
                     errorType: 'json_parse_error',
                     status: 200,
@@ -202,9 +208,11 @@ describe('responseUtils.safeJsonParse', () => {
 
             expect(result).toBeNull();
             expect(monitoringUtils.logError).toHaveBeenCalledTimes(1);
-            const call = (monitoringUtils.logError as jest.Mock).mock.calls[0];
-            expect(call[0].name).toBe('SyntaxError');
-            expect(call[1]).toEqual({
+            const calls = (monitoringUtils.logError as jest.Mock).mock.calls as Array<
+                [Error, { context: Record<string, unknown> }]
+            >;
+            expect(calls[0][0].name).toBe('SyntaxError');
+            expect(calls[0][1]).toEqual({
                 context: {
                     errorType: 'json_parse_error',
                     status: 500,
