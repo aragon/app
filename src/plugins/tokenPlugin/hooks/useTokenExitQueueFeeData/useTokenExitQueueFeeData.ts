@@ -3,6 +3,21 @@ import { useReadContract } from 'wagmi';
 import { dynamicExitQueueAbi } from '../../utils/tokenExitQueueTransactionUtils/dynamicExitQueueAbi';
 import type { IUseTokenExitQueueFeeDataParams, IUseTokenExitQueueFeeDataReturn } from './useTokenExitQueueFeeData.api';
 
+interface ITicketDataV1 {
+    holder: `0x${string}`;
+    queuedAt: number;
+}
+
+interface ITicketDataV2 extends ITicketDataV1 {
+    minCooldown: number;
+    cooldown: number;
+    feePercent: number;
+    minFeePercent: number;
+    slope: bigint;
+}
+
+type ParsedTicketData = ITicketDataV1 | ITicketDataV2;
+
 export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams): IUseTokenExitQueueFeeDataReturn => {
     const { tokenId, lockManagerAddress, chainId, enabled = true, refetchInterval } = params;
 
@@ -103,55 +118,91 @@ export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams
     /**
      * Type guard to check if ticket data is v2 format (has all 7 fields).
      */
-    const isTicketV2 = (
-        data: { holder: `0x${string}`; queuedAt: number } & Partial<{
-            minCooldown: number;
-            cooldown: number;
-            feePercent: number;
-            minFeePercent: number;
-            slope: bigint;
-        }>,
-    ): data is {
-        holder: `0x${string}`;
-        queuedAt: number;
-        minCooldown: number;
-        cooldown: number;
-        feePercent: number;
-        minFeePercent: number;
-        slope: bigint;
-    } => {
-        return (
-            'minCooldown' in data &&
-            'cooldown' in data &&
-            'feePercent' in data &&
-            'minFeePercent' in data &&
-            'slope' in data &&
-            data.minCooldown !== undefined &&
-            data.cooldown !== undefined &&
-            data.feePercent !== undefined &&
-            data.minFeePercent !== undefined &&
-            data.slope !== undefined
-        );
+    const normalizeGlobalNumber = (value: unknown): number => {
+        if (typeof value === 'bigint') {
+            return Number(value);
+        }
+
+        if (typeof value === 'number') {
+            return value;
+        }
+
+        return 0;
     };
 
-    const ticket = ticketData
-        ? isTicketV2(ticketData)
+    const parseTicketData = (data: unknown): ParsedTicketData | undefined => {
+        if (typeof data !== 'object' || data == null) {
+            return undefined;
+        }
+
+        const candidate = data as Record<string, unknown>;
+
+        const holder = candidate.holder;
+        const queuedAt = candidate.queuedAt;
+
+        if (typeof holder !== 'string' || !holder.startsWith('0x')) {
+            return undefined;
+        }
+
+        if (typeof queuedAt !== 'number') {
+            return undefined;
+        }
+
+        const base: ITicketDataV1 = {
+            holder: holder as `0x${string}`,
+            queuedAt,
+        };
+
+        if (
+            typeof candidate.minCooldown === 'number' &&
+            typeof candidate.cooldown === 'number' &&
+            typeof candidate.feePercent === 'number' &&
+            typeof candidate.minFeePercent === 'number' &&
+            typeof candidate.slope === 'bigint'
+        ) {
+            return {
+                ...base,
+                minCooldown: candidate.minCooldown,
+                cooldown: candidate.cooldown,
+                feePercent: candidate.feePercent,
+                minFeePercent: candidate.minFeePercent,
+                slope: candidate.slope,
+            };
+        }
+
+        return base;
+    };
+
+    /**
+     * Type guard to check if ticket data is v2 format (has all 7 fields).
+     */
+    const isTicketV2 = (data: ParsedTicketData): data is ITicketDataV2 => 'minCooldown' in data;
+
+    const parsedTicketData = parseTicketData(ticketData);
+
+    const fallbackMinCooldown = normalizeGlobalNumber(globalMinCooldown);
+    const fallbackCooldown = normalizeGlobalNumber(globalCooldown);
+    const fallbackFeePercent = normalizeGlobalNumber(globalFeePercent);
+    const fallbackMinFeePercent = normalizeGlobalNumber(globalMinFeePercent);
+
+    const ticket = parsedTicketData
+        ? isTicketV2(parsedTicketData)
             ? {
-                  holder: ticketData.holder,
-                  queuedAt: ticketData.queuedAt,
-                  minCooldown: ticketData.minCooldown,
-                  cooldown: ticketData.cooldown,
-                  feePercent: ticketData.feePercent,
-                  minFeePercent: ticketData.minFeePercent,
-                  slope: ticketData.slope,
+                  holder: parsedTicketData.holder,
+                  queuedAt: parsedTicketData.queuedAt,
+                  minCooldown: parsedTicketData.minCooldown,
+                  cooldown: parsedTicketData.cooldown,
+                  feePercent: parsedTicketData.feePercent,
+                  minFeePercent: parsedTicketData.minFeePercent,
+                  slope: parsedTicketData.slope,
               }
             : {
-                  holder: ticketData.holder,
-                  queuedAt: ticketData.queuedAt,
-                  minCooldown: globalMinCooldown ?? 0,
-                  cooldown: globalCooldown ?? 0,
-                  feePercent: Number(globalFeePercent ?? 0),
-                  minFeePercent: Number(globalMinFeePercent ?? 0),
+                  holder: parsedTicketData.holder,
+                  queuedAt: parsedTicketData.queuedAt,
+                  minCooldown: fallbackMinCooldown,
+                  cooldown: fallbackCooldown,
+                  feePercent: fallbackFeePercent,
+                  minFeePercent: fallbackMinFeePercent,
                   slope: BigInt(0),
               }
         : undefined;

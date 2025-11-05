@@ -16,11 +16,7 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
     const [hoveredIndex, setHoveredIndex] = useState<number | undefined>(undefined);
 
     const mode = tokenExitQueueFeeUtils.determineFeeMode(ticket);
-
-    // Don't render chart for fixed fee mode
-    if (mode === TokenExitQueueFeeMode.FIXED) {
-        return null;
-    }
+    const isFixedMode = mode === TokenExitQueueFeeMode.FIXED;
 
     const secondsPerDay = 24 * 60 * 60;
 
@@ -32,15 +28,14 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
     // Total duration: decayDuration * 2 (centered step/decay)
     const domainDuration = decayDuration > 0 ? decayDuration * 2 : fallbackDuration;
 
-    const minFeePercent = useMemo(
-        () => tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: ticket.cooldown, ticket }),
-        [ticket],
-    );
+    const minFeePercent = useMemo(() => {
+        return tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: ticket.cooldown, ticket });
+    }, [ticket]);
 
     const pointCount = 50;
 
     const points = useMemo(() => {
-        if (pointCount < 2) {
+        if (isFixedMode) {
             return [];
         }
 
@@ -83,9 +78,9 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
         });
 
         return [...firstPhasePoints, ...plateauPoints];
-    }, [decayDuration, domainDuration, minFeePercent, pointCount, ticket]);
+    }, [decayDuration, domainDuration, isFixedMode, minFeePercent, ticket]);
 
-    if (points.length === 0) {
+    if (isFixedMode || points.length === 0) {
         return null;
     }
 
@@ -151,10 +146,10 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
         let formatted: string;
         if (elapsedSeconds < secondsPerDay) {
             const minutes = Math.max(0, Math.round(elapsedSeconds / 60));
-            formatted = minutes <= 1 ? '1 min' : `${minutes} mins`;
+            formatted = minutes <= 1 ? '1 min' : `${String(minutes)} mins`;
         } else {
             const days = Math.max(1, Math.round(elapsedSeconds / secondsPerDay));
-            formatted = days === 1 ? 'Day 1' : `Day ${days}`;
+            formatted = days === 1 ? 'Day 1' : `Day ${String(days)}`;
         }
 
         // Add '+' suffix to last tick to indicate clamping beyond this point

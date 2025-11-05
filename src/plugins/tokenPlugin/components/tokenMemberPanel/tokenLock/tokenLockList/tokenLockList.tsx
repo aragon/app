@@ -11,7 +11,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
-import { useMemberLocks } from '../../../../api/tokenService';
+import { TokenServiceKey, useMemberLocks } from '../../../../api/tokenService';
 import { TokenLockListItem } from './tokenLockListItem';
 
 export interface ITokenLockListProps {

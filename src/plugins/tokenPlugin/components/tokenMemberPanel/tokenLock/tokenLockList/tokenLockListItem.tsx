@@ -100,13 +100,21 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
 
     // Poll more frequently as we approach the minCooldown threshold
     const getRefetchInterval = () => {
-        if (baseStatus !== 'cooldown') return undefined;
-        if (secondsUntilMinCooldown == null) return 10_000;
+        if (baseStatus !== 'cooldown') {
+            return undefined;
+        }
+        if (secondsUntilMinCooldown == null) {
+            return 10_000;
+        }
 
         // Last 30 seconds: poll every 1 second
-        if (secondsUntilMinCooldown <= 30) return 1_000;
+        if (secondsUntilMinCooldown <= 30) {
+            return 1_000;
+        }
         // Last 2 minutes: poll every 5 seconds
-        if (secondsUntilMinCooldown <= 120) return 5_000;
+        if (secondsUntilMinCooldown <= 120) {
+            return 5_000;
+        }
         // Otherwise: poll every 10 seconds
         return 10_000;
     };
@@ -128,9 +136,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const effectiveMinCooldown = lock.lockExit.minCooldown ?? ticket?.minCooldown ?? null;
 
     const minCooldownTimestamp =
-        effectiveQueuedAt != null && effectiveMinCooldown != null
-            ? effectiveQueuedAt + effectiveMinCooldown
-            : (lock.lockExit.exitDateAt ?? null);
+        effectiveQueuedAt != null && effectiveMinCooldown != null ? effectiveQueuedAt + effectiveMinCooldown : null;
 
     // Use canExit from backend (checks minCooldown) to determine if withdrawal is available
     const status: TokenLockStatus = !lock.lockExit.status ? 'active' : canExit ? 'available' : 'cooldown';

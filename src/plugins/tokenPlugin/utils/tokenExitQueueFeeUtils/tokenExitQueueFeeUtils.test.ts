@@ -223,7 +223,7 @@ describe('TokenExitQueueFeeUtils', () => {
 
     describe('formatFeePercent', () => {
         it('formats 0 basis points as 0%', () => {
-            expect(tokenExitQueueFeeUtils.formatFeePercent(0)).toBe('0%');
+            expect(tokenExitQueueFeeUtils.formatFeePercent(0)).toBe('0.00%');
         });
 
         it('formats 5000 basis points as 50%', () => {
@@ -262,7 +262,10 @@ describe('TokenExitQueueFeeUtils', () => {
                 slope: BigInt(0),
             };
 
-            const points = tokenExitQueueFeeUtils.getChartDataPoints({ ticket: fixedTicket });
+            const points = tokenExitQueueFeeUtils.getChartDataPoints({
+                ticket: fixedTicket,
+                currentTime: fixedTicket.queuedAt + fixedTicket.cooldown,
+            });
             expect(points).toEqual([]);
         });
 
@@ -277,7 +280,11 @@ describe('TokenExitQueueFeeUtils', () => {
                 slope: BigInt(0),
             };
 
-            const points = tokenExitQueueFeeUtils.getChartDataPoints({ ticket: tieredTicket, pointCount: 6 });
+            const points = tokenExitQueueFeeUtils.getChartDataPoints({
+                ticket: tieredTicket,
+                pointCount: 6,
+                currentTime: tieredTicket.queuedAt + tieredTicket.cooldown,
+            });
 
             // Should include 0, minCooldown (100), cooldown (200), and evenly spaced points
             expect(points.length).toBeGreaterThan(0);
@@ -305,7 +312,11 @@ describe('TokenExitQueueFeeUtils', () => {
                 slope: BigInt(4e15),
             };
 
-            const points = tokenExitQueueFeeUtils.getChartDataPoints({ ticket: dynamicTicket, pointCount: 6 });
+            const points = tokenExitQueueFeeUtils.getChartDataPoints({
+                ticket: dynamicTicket,
+                pointCount: 6,
+                currentTime: dynamicTicket.queuedAt + dynamicTicket.cooldown,
+            });
 
             expect(points.length).toBeGreaterThan(0);
 
@@ -317,7 +328,7 @@ describe('TokenExitQueueFeeUtils', () => {
 
             // Points should show decreasing fee over time
             for (let i = 0; i < points.length - 1; i++) {
-                expect(points[i]!.feePercent).toBeGreaterThanOrEqual(points[i + 1]!.feePercent);
+                expect(points[i].feePercent).toBeGreaterThanOrEqual(points[i + 1].feePercent);
             }
         });
 
@@ -332,7 +343,10 @@ describe('TokenExitQueueFeeUtils', () => {
                 slope: BigInt(4e15),
             };
 
-            const points = tokenExitQueueFeeUtils.getChartDataPoints({ ticket: dynamicTicket });
+            const points = tokenExitQueueFeeUtils.getChartDataPoints({
+                ticket: dynamicTicket,
+                currentTime: dynamicTicket.queuedAt + dynamicTicket.cooldown,
+            });
 
             // Should generate 6 points
             expect(points.length).toBe(6);

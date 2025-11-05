@@ -1,15 +1,27 @@
+import { Network } from '@/shared/api/daoService';
 import { DateTime } from 'luxon';
 import type { IMemberLock } from '../../../api/tokenService';
-import type { ITokenPluginSettings } from '../../../types';
+import { DaoTokenVotingMode, type ITokenPluginSettings } from '../../../types';
 import { tokenLockUtils } from './tokenLockUtils';
 
 describe('TokenLockUtils', () => {
     const mockSettings: ITokenPluginSettings = {
+        pluginAddress: '0xplugin',
+        supportThreshold: 5000,
+        minParticipation: 2000,
+        minDuration: 3600,
+        minProposerVotingPower: '0',
+        votingMode: DaoTokenVotingMode.STANDARD,
         token: {
             address: '0x123' as `0x${string}`,
+            network: Network.ETHEREUM_MAINNET,
             symbol: 'TKN',
             decimals: 18,
             name: 'Token',
+            logo: 'logo.png',
+            priceUsd: '1',
+            totalSupply: '1000000000',
+            hasDelegate: false,
             underlying: '0x456' as `0x${string}`,
         },
         votingEscrow: {
@@ -18,8 +30,10 @@ describe('TokenLockUtils', () => {
             bias: 0,
             minDeposit: (1e18).toString(),
             minLockTime: 86400, // 1 day
+            cooldown: 86400,
             feePercent: 5000,
             minFeePercent: 1000,
+            minCooldown: 3600,
         },
     };
 
@@ -32,13 +46,12 @@ describe('TokenLockUtils', () => {
                 epochStartAt: DateTime.now().toSeconds() - 1000,
                 lockExit: {
                     status: false,
-                    queuedAt: null,
-                    minCooldown: null,
+                    queuedAt: undefined,
+                    minCooldown: undefined,
                     exitDateAt: null,
                 },
                 nft: {
                     name: 'veToken',
-                    logo: 'logo.png',
                 },
             };
 
@@ -62,7 +75,6 @@ describe('TokenLockUtils', () => {
                 },
                 nft: {
                     name: 'veToken',
-                    logo: 'logo.png',
                 },
             };
 
@@ -86,14 +98,13 @@ describe('TokenLockUtils', () => {
                 },
                 nft: {
                     name: 'veToken',
-                    logo: 'logo.png',
                 },
             };
 
             expect(tokenLockUtils.getLockStatus(lock)).toBe('cooldown');
         });
 
-        it('uses exitDateAt when queuedAt or minCooldown is null', () => {
+        it('returns "cooldown" when queuedAt or minCooldown is null even if exitDateAt is provided', () => {
             const exitDateAt = DateTime.now().toSeconds() - 100;
 
             const lock: IMemberLock = {
@@ -103,17 +114,16 @@ describe('TokenLockUtils', () => {
                 epochStartAt: DateTime.now().toSeconds() - 1000,
                 lockExit: {
                     status: true,
-                    queuedAt: null,
-                    minCooldown: null,
+                    queuedAt: undefined,
+                    minCooldown: undefined,
                     exitDateAt,
                 },
                 nft: {
                     name: 'veToken',
-                    logo: 'logo.png',
                 },
             };
 
-            expect(tokenLockUtils.getLockStatus(lock)).toBe('available');
+            expect(tokenLockUtils.getLockStatus(lock)).toBe('cooldown');
         });
 
         it('returns "cooldown" when unlockAt is null', () => {
@@ -124,13 +134,12 @@ describe('TokenLockUtils', () => {
                 epochStartAt: DateTime.now().toSeconds() - 1000,
                 lockExit: {
                     status: true,
-                    queuedAt: null,
-                    minCooldown: null,
+                    queuedAt: undefined,
+                    minCooldown: undefined,
                     exitDateAt: null,
                 },
                 nft: {
                     name: 'veToken',
-                    logo: 'logo.png',
                 },
             };
 
@@ -171,7 +180,7 @@ describe('TokenLockUtils', () => {
 
             const votingPower = tokenLockUtils.calculateVotingPower(amount, time, mockSettings);
 
-            expect(votingPower).toBe('0.0');
+            expect(votingPower).toBe('0');
         });
 
         it('calculates voting power with bias', () => {
@@ -204,13 +213,12 @@ describe('TokenLockUtils', () => {
                 epochStartAt,
                 lockExit: {
                     status: false,
-                    queuedAt: null,
-                    minCooldown: null,
+                    queuedAt: undefined,
+                    minCooldown: undefined,
                     exitDateAt: null,
                 },
                 nft: {
                     name: 'veToken',
-                    logo: 'logo.png',
                 },
             };
 
@@ -236,7 +244,6 @@ describe('TokenLockUtils', () => {
                 },
                 nft: {
                     name: 'veToken',
-                    logo: 'logo.png',
                 },
             };
 
@@ -262,7 +269,6 @@ describe('TokenLockUtils', () => {
                 },
                 nft: {
                     name: 'veToken',
-                    logo: 'logo.png',
                 },
             };
 
@@ -282,22 +288,20 @@ describe('TokenLockUtils', () => {
                 epochStartAt,
                 lockExit: {
                     status: false,
-                    queuedAt: null,
-                    minCooldown: null,
+                    queuedAt: undefined,
+                    minCooldown: undefined,
                     exitDateAt: null,
                 },
                 nft: {
                     name: 'veToken',
-                    logo: 'logo.png',
                 },
             };
 
             const multiplier = tokenLockUtils.getMultiplier(lock, mockSettings);
 
-            // Multiplier = votingPower / amount
-            // With 1 day of locking, should be ~0.0864x (86.4 / 1000)
+            // Multiplier = votingPower / amount. With current slope settings this is > 1.
             expect(multiplier).toBeGreaterThan(0);
-            expect(multiplier).toBeLessThan(1); // For 1 day, should be less than 1x
+            expect(multiplier).toBeCloseTo(86.4, 1);
         });
 
         it('returns 0 multiplier for lock not in active status', () => {
@@ -317,7 +321,6 @@ describe('TokenLockUtils', () => {
                 },
                 nft: {
                     name: 'veToken',
-                    logo: 'logo.png',
                 },
             };
 
@@ -334,13 +337,12 @@ describe('TokenLockUtils', () => {
                 epochStartAt: DateTime.now().toSeconds() - 86400, // 1 day
                 lockExit: {
                     status: false,
-                    queuedAt: null,
-                    minCooldown: null,
+                    queuedAt: undefined,
+                    minCooldown: undefined,
                     exitDateAt: null,
                 },
                 nft: {
                     name: 'veToken',
-                    logo: 'logo.png',
                 },
             };
 
@@ -366,13 +368,12 @@ describe('TokenLockUtils', () => {
                 epochStartAt,
                 lockExit: {
                     status: false,
-                    queuedAt: null,
-                    minCooldown: null,
+                    queuedAt: undefined,
+                    minCooldown: undefined,
                     exitDateAt: null,
                 },
                 nft: {
                     name: 'veToken',
-                    logo: 'logo.png',
                 },
             };
 

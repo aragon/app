@@ -22,7 +22,7 @@ class TokenLockUtils {
      */
     getLockStatus = (lock: IMemberLock): TokenLockStatus => {
         const { lockExit } = lock;
-        const { status, queuedAt, minCooldown, exitDateAt } = lockExit;
+        const { status, queuedAt, minCooldown } = lockExit;
 
         const now = DateTime.now().toSeconds();
 
@@ -30,8 +30,7 @@ class TokenLockUtils {
             return 'active';
         }
 
-        const unlockAt =
-            queuedAt != null && minCooldown != null ? queuedAt + minCooldown : (exitDateAt ?? queuedAt ?? null);
+        const unlockAt = queuedAt != null && minCooldown != null ? queuedAt + minCooldown : null;
 
         if (unlockAt == null) {
             return 'cooldown';
