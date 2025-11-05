@@ -1,6 +1,6 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
-import { TokenServiceKey, useMemberLocks } from '@/plugins/tokenPlugin/api/tokenService';
+import { useMemberLocks } from '@/plugins/tokenPlugin/api/tokenService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import type { ITokenLockUnlockDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenLockUnlockDialog';
@@ -9,7 +9,6 @@ import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, invariant } from '@aragon/gov-ui-kit';
-import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -51,22 +50,17 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { open } = useDialogContext();
     const { t } = useTranslations();
     const { address } = useAccount();
-    const queryClient = useQueryClient();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const memberLocksQueryParams = { network: dao!.network, escrowAddress, onlyActive: true };
-    const { data: memberLocks } = useMemberLocks(
+    const { data: memberLocks, refetch: refetchMemberLocks } = useMemberLocks(
         { urlParams: { address: address! }, queryParams: memberLocksQueryParams },
         { enabled: address != null },
     );
-    const locksCount = memberLocks?.pages.reduce((count, page) => count + page.data.length, 0) ?? 0;
+    const locksCount = memberLocks?.pages[0]?.metadata.totalRecords ?? 0;
 
     const { result: isConnected, check: walletGuard } = useConnectedWalletGuard();
-
-    const invalidateMemberLocks = () => {
-        void queryClient.invalidateQueries({ queryKey: [TokenServiceKey.MEMBER_LOCKS] });
-    };
 
     const {
         allowance,
@@ -132,7 +126,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     };
 
     const onLockTokensSuccessClick = () => {
-        invalidateMemberLocks();
+        void refetchMemberLocks();
         handleViewLocks();
     };
 

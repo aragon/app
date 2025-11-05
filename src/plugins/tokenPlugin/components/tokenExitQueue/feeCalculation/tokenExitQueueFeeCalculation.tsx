@@ -10,10 +10,8 @@ export const TokenExitQueueFeeCalculation: React.FC<ITokenExitQueueFeeCalculatio
 
     const { t } = useTranslations();
 
-    // Calculate net receive amount
     const receiveAmount = lockedAmount - feeAmount;
 
-    // Format amounts
     const formatAmount = (amount: bigint): string => {
         const parsed = formatUnits(amount, token.decimals);
         return formatterUtils.formatNumber(parsed, { format: NumberFormat.TOKEN_AMOUNT_SHORT }) ?? '0';

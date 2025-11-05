@@ -9,9 +9,8 @@ import {
     invariant,
     ProposalDataListItem,
 } from '@aragon/gov-ui-kit';
-import { useQueryClient } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
-import { TokenServiceKey, useMemberLocks } from '../../../../api/tokenService';
+import { useMemberLocks } from '../../../../api/tokenService';
 import { TokenLockListItem } from './tokenLockListItem';
 
 export interface ITokenLockListProps {
@@ -30,7 +29,6 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
 
     const { t } = useTranslations();
     const { address } = useAccount();
-    const queryClient = useQueryClient();
 
     const { votingEscrow } = plugin.settings;
     const { votingEscrow: votingEscrowAddresses } = plugin;
@@ -40,14 +38,17 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
     const { escrowAddress } = votingEscrowAddresses;
 
     const memberLocksQueryParams = { network: dao.network, escrowAddress, onlyActive: true };
-    const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage } = useMemberLocks(
+    const {
+        data,
+        status,
+        fetchStatus,
+        isFetchingNextPage,
+        fetchNextPage,
+        refetch: refetchMemberLocks,
+    } = useMemberLocks(
         { urlParams: { address: address! }, queryParams: memberLocksQueryParams },
         { enabled: address != null },
     );
-
-    const invalidateMemberLocks = () => {
-        void queryClient.invalidateQueries({ queryKey: [TokenServiceKey.MEMBER_LOCKS] });
-    };
 
     const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
     const locksList = data?.pages.flatMap((page) => page.data);
@@ -84,7 +85,7 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
                         lock={lock}
                         plugin={plugin}
                         dao={dao}
-                        onRefreshNeeded={invalidateMemberLocks}
+                        onRefreshNeeded={() => void refetchMemberLocks()}
                     />
                 ))}
             </DataListContainer>

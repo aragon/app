@@ -1,5 +1,7 @@
 import type { ITokenExitQueueTicket } from '../../../types';
 
+export const CHART_POINT_COUNT = 50;
+
 export interface ITokenExitQueueFeeChartProps {
     /**
      * The ticket containing fee parameters for chart generation.

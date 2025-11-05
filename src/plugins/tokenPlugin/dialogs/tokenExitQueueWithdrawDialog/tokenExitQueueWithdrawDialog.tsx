@@ -36,7 +36,6 @@ export const TokenExitQueueWithdrawDialog: React.FC<ITokenExitQueueWithdrawDialo
         onBack?.();
     };
 
-    // Calculate current time and fee
     const currentTime = Math.floor(Date.now() / 1000);
     const timeElapsed = currentTime - ticket.queuedAt;
 
@@ -45,7 +44,6 @@ export const TokenExitQueueWithdrawDialog: React.FC<ITokenExitQueueWithdrawDialo
         ticket,
     });
 
-    // Calculate fee amount in wei
     const feeAmount = useMemo(() => {
         if (feeAmountFromParams != null) {
             return feeAmountFromParams;
@@ -55,7 +53,6 @@ export const TokenExitQueueWithdrawDialog: React.FC<ITokenExitQueueWithdrawDialo
         return (lockedAmount * BigInt(feeBasisPoints)) / BigInt(tokenExitQueueFeeUtils.MAX_FEE_PERCENT);
     }, [currentFeePercent, feeAmountFromParams, lockedAmount]);
 
-    // Determine if chart should be shown
     const feeMode = tokenExitQueueFeeUtils.determineFeeMode(ticket);
     const shouldShowChart = feeMode !== TokenExitQueueFeeMode.FIXED;
 
@@ -84,9 +81,11 @@ export const TokenExitQueueWithdrawDialog: React.FC<ITokenExitQueueWithdrawDialo
 
                 <TokenExitQueueFeeCalculation lockedAmount={lockedAmount} feeAmount={feeAmount} token={token} />
 
-                <p className="text-center text-sm leading-normal font-normal text-neutral-500">
-                    {t('app.plugins.tokenExitQueue.withdrawDialog.helpText')}
-                </p>
+                {shouldShowChart && (
+                    <p className="text-center text-sm leading-normal font-normal text-neutral-500">
+                        {t('app.plugins.tokenExitQueue.withdrawDialog.helpText')}
+                    </p>
+                )}
             </Dialog.Content>
             <Dialog.Footer
                 variant="wizard"

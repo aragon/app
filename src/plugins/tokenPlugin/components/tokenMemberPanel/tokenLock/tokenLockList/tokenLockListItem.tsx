@@ -78,7 +78,6 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
         enabled: baseStatus === 'active',
     });
 
-    // Query fee data from DynamicExitQueue for withdraw action
     const { id: chainId } = networkDefinitions[dao.network];
     const hasExitQueue = exitQueueAddress != null;
     const lockManagerAddress = (exitQueueAddress ?? zeroAddress) as Hex;
@@ -86,7 +85,6 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const pluginFeePercent = plugin.settings.votingEscrow?.feePercent ?? 0;
     const pluginMinFeePercent = plugin.settings.votingEscrow?.minFeePercent ?? 0;
 
-    // Calculate polling interval based on time until minCooldown
     const effectiveQueuedAtPreCheck = lock.lockExit.queuedAt ?? null;
     const effectiveMinCooldownPreCheck = lock.lockExit.minCooldown ?? null;
     const minCooldownTimestampPreCheck =
@@ -98,7 +96,6 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const secondsUntilMinCooldown =
         minCooldownTimestampPreCheck != null ? minCooldownTimestampPreCheck - nowSeconds : null;
 
-    // Poll more frequently as we approach the minCooldown threshold
     const getRefetchInterval = () => {
         if (baseStatus !== 'cooldown') {
             return undefined;
@@ -107,15 +104,12 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
             return 10_000;
         }
 
-        // Last 30 seconds: poll every 1 second
         if (secondsUntilMinCooldown <= 30) {
             return 1_000;
         }
-        // Last 2 minutes: poll every 5 seconds
         if (secondsUntilMinCooldown <= 120) {
             return 5_000;
         }
-        // Otherwise: poll every 10 seconds
         return 10_000;
     };
 
@@ -189,7 +183,6 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     };
 
     const handleWithdraw = () => {
-        // Check if we have fee data and should show the fee-based withdraw dialog
         const hasConfiguredFees = tokenExitQueueFeeUtils.shouldShowFeeDialog({
             feePercent: ticket?.feePercent ?? pluginFeePercent,
             minFeePercent: ticket?.minFeePercent ?? pluginMinFeePercent,
@@ -211,7 +204,6 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
             };
             open(TokenPluginDialogId.EXIT_QUEUE_WITHDRAW_FEE, { params: dialogParams });
         } else {
-            // Fall back to legacy withdraw dialog (no fees or data not available)
             const dialogParams: ITokenLockUnlockDialogParams = {
                 action: 'withdraw',
                 dao: dao,

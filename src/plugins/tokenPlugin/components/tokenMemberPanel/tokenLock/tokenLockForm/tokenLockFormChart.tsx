@@ -44,9 +44,8 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
     const processedAmount = parseFloat(amount) > maxAmount ? maxAmount.toString() : amount;
     const processedAmountWei = parseUnits(processedAmount, 18).toString();
 
-    // Use 6 months as the chart timeframe (instead of full maxTime)
-    const sixMonthsInSeconds = 6 * 30 * 24 * 60 * 60; // ~6 months
-    const chartTimeframe = Math.min(maxTime, sixMonthsInSeconds);
+    const oneYearInSeconds = 365 * 24 * 60 * 60;
+    const chartTimeframe = Math.min(maxTime, oneYearInSeconds);
     const secondsStep = chartTimeframe / (chartPoints - 1);
     const nowLabel = t('app.plugins.token.tokenLockForm.chart.now');
 
