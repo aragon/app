@@ -24,10 +24,13 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
 
     const secondsPerDay = 24 * 60 * 60;
 
-    // Chart X-axis: 0 represents queuedAt (start of queue)
-    // Duration is cooldown * 2 with step centered at cooldown (midpoint)
+    // Chart X-axis: 0 represents queuedAt + minCooldown (when exit becomes available)
+    // Shows fee progression centered: decayDuration of max fee, then decayDuration of min fee
+    // This centers the step/decay visually on the chart
+    const decayDuration = Math.max(ticket.cooldown - ticket.minCooldown, 0);
     const fallbackDuration = Math.max(secondsPerDay, 1);
-    const domainDuration = ticket.cooldown > 0 ? ticket.cooldown * 2 : fallbackDuration;
+    // Total duration: decayDuration * 2 (centered step/decay)
+    const domainDuration = decayDuration > 0 ? decayDuration * 2 : fallbackDuration;
 
     const minFeePercent = useMemo(
         () => tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: ticket.cooldown, ticket }),
@@ -41,55 +44,61 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
             return [];
         }
 
-        if (ticket.cooldown <= 0) {
-            const startFee = tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 0, ticket });
+        if (decayDuration <= 0) {
+            const startFee = tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: ticket.minCooldown, ticket });
             return [
                 { elapsedSeconds: 0, feePercent: startFee },
                 { elapsedSeconds: domainDuration, feePercent: startFee },
             ];
         }
 
-        // Generate points from 0 to cooldown (first phase: max fee → step/decay → min fee)
-        // X-axis position 0 = queuedAt, position cooldown = queuedAt + cooldown (step point, centered)
+        // Generate points from 0 to decayDuration (minCooldown to cooldown)
+        // X = 0: actual time = minCooldown (exit available, max fee)
+        // X = decayDuration: actual time = cooldown (step/decay end, min fee)
         const firstPhasePoints = Array.from({ length: pointCount }, (_, index) => {
             const ratio = index / (pointCount - 1);
-            const timeElapsed = ratio * ticket.cooldown; // Both chart position AND actual time
+            const xPosition = ratio * decayDuration;
+            const timeElapsed = ticket.minCooldown + xPosition;
             const feePercent = tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed, ticket });
 
             return {
-                elapsedSeconds: timeElapsed,
+                elapsedSeconds: xPosition,
                 feePercent,
             };
         });
 
-        // Ensure we have a point exactly at cooldown (step point)
-        if (firstPhasePoints[firstPhasePoints.length - 1]?.elapsedSeconds !== ticket.cooldown) {
-            firstPhasePoints.push({ elapsedSeconds: ticket.cooldown, feePercent: minFeePercent });
+        // Ensure we have a point exactly at decayDuration (cooldown)
+        if (firstPhasePoints[firstPhasePoints.length - 1]?.elapsedSeconds !== decayDuration) {
+            firstPhasePoints.push({ elapsedSeconds: decayDuration, feePercent: minFeePercent });
         }
 
-        // Generate plateau points from cooldown to cooldown * 2 (second phase: min fee plateau)
+        // Generate plateau points from decayDuration to decayDuration * 2 (centered plateau)
         const plateauPoints = Array.from({ length: pointCount }, (_, index) => {
             const ratio = index / (pointCount - 1);
-            const timeElapsed = ticket.cooldown + ratio * ticket.cooldown;
+            const xPosition = decayDuration + ratio * decayDuration;
             return {
-                elapsedSeconds: timeElapsed,
+                elapsedSeconds: xPosition,
                 feePercent: minFeePercent,
             };
         });
 
         return [...firstPhasePoints, ...plateauPoints];
-    }, [domainDuration, minFeePercent, pointCount, ticket]);
+    }, [decayDuration, domainDuration, minFeePercent, pointCount, ticket]);
 
     if (points.length === 0) {
         return null;
     }
 
-    // Calculate current position on chart (X-axis starts at queuedAt as 0)
+    // Calculate current position on chart (X-axis starts at minCooldown as 0)
     const timeElapsedNow = currentTime - ticket.queuedAt;
-    const nowX = ticket.cooldown > 0 ? Math.min(Math.max(0, timeElapsedNow), domainDuration) : 0;
+    const elapsedSinceMinCooldown = Math.max(0, timeElapsedNow - ticket.minCooldown);
+    const nowX = decayDuration > 0 ? Math.min(elapsedSinceMinCooldown, domainDuration) : 0;
 
-    // Calculate current fee (clamp to chart bounds)
-    const boundedTimeElapsed = Math.max(0, Math.min(timeElapsedNow, ticket.cooldown * 2));
+    // Calculate current fee (clamp to actual time elapsed)
+    const boundedTimeElapsed = Math.max(
+        ticket.minCooldown,
+        Math.min(timeElapsedNow, ticket.cooldown + ticket.cooldown),
+    );
     const currentFeePercent = tokenExitQueueFeeUtils.calculateFeeAtTime({
         timeElapsed: boundedTimeElapsed,
         ticket,
@@ -97,7 +106,9 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
 
     const nowLabel = t('app.plugins.tokenExitQueue.feeChart.now');
 
-    const baseTickCount = 6;
+    // Calculate appropriate tick count based on duration to prevent duplicate labels
+    const minuteDuration = Math.round(domainDuration / 60);
+    const baseTickCount = Math.min(6, Math.max(2, minuteDuration + 1));
     const baseTicks =
         domainDuration === 0
             ? [0]
@@ -109,11 +120,10 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
               });
 
     const tickSet = new Set<number>(baseTicks);
-    tickSet.add(0); // Start of chart (queuedAt)
-    if (ticket.cooldown > 0) {
-        tickSet.add(ticket.minCooldown); // Min cooldown (earliest withdraw time)
-        tickSet.add(ticket.cooldown); // Step point (centered on chart)
-        tickSet.add(ticket.cooldown * 2); // End of chart
+    tickSet.add(0); // Start of chart (minCooldown - when exit becomes available)
+    if (decayDuration > 0) {
+        tickSet.add(decayDuration); // End of decay/step (cooldown) - centered
+        tickSet.add(decayDuration * 2); // End of chart
     }
     tickSet.add(domainDuration);
 
@@ -133,18 +143,22 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
         return `${trimmed}%`;
     };
 
-    const formatElapsed = (elapsedSeconds: number) => {
+    const formatElapsed = (elapsedSeconds: number, isLastTick = false) => {
         if (!Number.isFinite(elapsedSeconds)) {
             return '';
         }
 
+        let formatted: string;
         if (elapsedSeconds < secondsPerDay) {
             const minutes = Math.max(0, Math.round(elapsedSeconds / 60));
-            return minutes <= 1 ? '1 min' : `${minutes} mins`;
+            formatted = minutes <= 1 ? '1 min' : `${minutes} mins`;
+        } else {
+            const days = Math.max(1, Math.round(elapsedSeconds / secondsPerDay));
+            formatted = days === 1 ? 'Day 1' : `Day ${days}`;
         }
 
-        const days = Math.max(1, Math.round(elapsedSeconds / secondsPerDay));
-        return days === 1 ? 'Day 1' : `Day ${days}`;
+        // Add '+' suffix to last tick to indicate clamping beyond this point
+        return isLastTick ? `${formatted}+` : formatted;
     };
 
     const handleMouseMove = (state?: MouseHandlerDataParam) => {
@@ -203,7 +217,15 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
                             type="number"
                             domain={[0, domainDuration]}
                             ticks={xAxisTicks}
-                            tickFormatter={(value) => formatElapsed(Number(value))}
+                            tickFormatter={(value) => {
+                                const numValue = Number(value);
+                                const isFirstTick = numValue === 0;
+                                const isLastTick = numValue === domainDuration;
+                                if (isFirstTick) {
+                                    return t('app.plugins.tokenExitQueue.feeChart.exit');
+                                }
+                                return formatElapsed(numValue, isLastTick);
+                            }}
                             tickMargin={8}
                         />
                         <YAxis

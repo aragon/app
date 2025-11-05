@@ -2037,6 +2037,7 @@
           "withdrawFee": "Withdraw fee"
         },
         "feeChart": {
+          "exit": "Exit",
           "fee": "Fee",
           "now": "Now"
         },

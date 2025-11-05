@@ -83,12 +83,42 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const pluginFeePercent = plugin.settings.votingEscrow?.feePercent ?? 0;
     const pluginMinFeePercent = plugin.settings.votingEscrow?.minFeePercent ?? 0;
 
-    const { ticket, feeAmount, canExit } = useTokenExitQueueFeeData({
+    // Calculate polling interval based on time until minCooldown
+    const effectiveQueuedAtPreCheck = lock.lockExit.queuedAt ?? null;
+    const effectiveMinCooldownPreCheck = lock.lockExit.minCooldown ?? null;
+    const minCooldownTimestampPreCheck =
+        effectiveQueuedAtPreCheck != null && effectiveMinCooldownPreCheck != null
+            ? effectiveQueuedAtPreCheck + effectiveMinCooldownPreCheck
+            : null;
+
+    const nowSeconds = DateTime.now().toSeconds();
+    const secondsUntilMinCooldown =
+        minCooldownTimestampPreCheck != null ? minCooldownTimestampPreCheck - nowSeconds : null;
+
+    // Poll more frequently as we approach the minCooldown threshold
+    const getRefetchInterval = () => {
+        if (baseStatus !== 'cooldown') return undefined;
+        if (secondsUntilMinCooldown == null) return 10_000;
+
+        // Last 30 seconds: poll every 1 second
+        if (secondsUntilMinCooldown <= 30) return 1_000;
+        // Last 2 minutes: poll every 5 seconds
+        if (secondsUntilMinCooldown <= 120) return 5_000;
+        // Otherwise: poll every 10 seconds
+        return 10_000;
+    };
+
+    const {
+        ticket,
+        feeAmount,
+        canExit,
+        isLoading: isFeeDataLoading,
+    } = useTokenExitQueueFeeData({
         tokenId: BigInt(lock.tokenId),
         lockManagerAddress,
         chainId,
         enabled: hasExitQueue && (baseStatus === 'cooldown' || baseStatus === 'available'),
-        refetchInterval: baseStatus === 'cooldown' ? 10_000 : undefined, // Poll every 10 seconds when in cooldown
+        refetchInterval: getRefetchInterval(),
     });
 
     const effectiveQueuedAt = lock.lockExit.queuedAt ?? ticket?.queuedAt ?? null;
@@ -187,7 +217,6 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
         }
     };
 
-    const nowSeconds = DateTime.now().toSeconds();
     const minLockTime = epochStartAt + (votingEscrow?.minLockTime ?? 0);
     const canUnlock = nowSeconds > minLockTime;
     const formattedMinLock = formatterUtils.formatDate(minLockTime * 1000, { format: DateFormat.DURATION });
@@ -283,7 +312,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                             {t(`app.plugins.token.tokenLockList.item.actions.withdraw`, { symbol: token.symbol })}
                         </Button>
 
-                        {status === 'cooldown' && (
+                        {status === 'cooldown' && !isFeeDataLoading && (
                             <Rerender>
                                 {() => {
                                     const formattedMinCooldownDate =
