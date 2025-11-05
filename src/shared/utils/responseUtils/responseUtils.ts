@@ -21,28 +21,18 @@ class ResponseUtils {
             return null;
         }
 
-        const contentType = response.headers.get('content-type') ?? '';
-        const contentTypeLower = contentType.toLowerCase();
-        const isJsonResponse = contentTypeLower.includes('application/json') || /\+json(?:$|;)/i.test(contentTypeLower);
-
-        if (!isJsonResponse) {
-            return null;
-        }
-
-        let text = '';
         try {
-            text = await response.text();
-        } catch {
-            text = '';
-        }
-
-        if (!text.trim()) {
-            return null;
-        }
-
-        try {
-            return JSON.parse(text) as JsonValue;
+            return await response.json();
         } catch (error) {
+            const contentType = response.headers.get('content-type') ?? '';
+
+            let text = '';
+            try {
+                text = await response.text();
+            } catch {
+                text = '';
+            }
+
             monitoringUtils.logError(error, {
                 context: {
                     errorType: 'json_parse_error',
