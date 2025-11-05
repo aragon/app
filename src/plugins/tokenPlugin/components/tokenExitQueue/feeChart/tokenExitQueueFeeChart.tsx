@@ -37,7 +37,7 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
         [ticket],
     );
 
-    const pointCount = 100;
+    const pointCount = 50;
 
     const points = useMemo(() => {
         if (pointCount < 2) {

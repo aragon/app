@@ -28,6 +28,9 @@ import type { ITokenPlugin } from '../../../../types';
 import { useCheckNftAllowance } from '../../hooks/useCheckNftAllowance';
 import { tokenLockUtils, type TokenLockStatus } from '../tokenLockUtils';
 
+/**
+ * Props for the TokenLockListItem component.
+ */
 export interface ITokenLockListItemProps {
     /**
      * VE lock to display.
@@ -234,12 +237,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
         <DataList.Item className="flex flex-col gap-4 py-4 md:py-6">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 md:gap-4">
-                    {/*TODO Revert to token.logo before merge DEMO ONLY*/}
-                    <Avatar
-                        src="https://pbs.twimg.com/profile_images/1937810644964716545/LDiOF-l0_400x400.jpg"
-                        size="md"
-                        className="shrink-0"
-                    />
+                    <Avatar src={token.logo} size="md" className="shrink-0" />
                     <Heading size="h4">ID: {lock.tokenId}</Heading>
                 </div>
 

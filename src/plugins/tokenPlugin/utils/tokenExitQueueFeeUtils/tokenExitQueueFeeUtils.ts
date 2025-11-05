@@ -70,10 +70,10 @@ class TokenExitQueueFeeUtils {
         }
 
         // Dynamic system (linear decay using stored slope)
-        // timeElapsed < minCooldown: max fee (cannot exit yet)
-        // minCooldown <= timeElapsed < cooldown: decaying fee
+        // timeElapsed <= minCooldown: max fee (early exit)
+        // minCooldown < timeElapsed < cooldown: decaying fee
         // timeElapsed >= cooldown: min fee
-        if (timeElapsed < ticket.minCooldown) {
+        if (timeElapsed <= ticket.minCooldown) {
             return this.scaledFeeToPercent(scaledMaxFee);
         }
 

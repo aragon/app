@@ -1,6 +1,6 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
-import { useMemberLocks } from '@/plugins/tokenPlugin/api/tokenService';
+import { TokenServiceKey, useMemberLocks } from '@/plugins/tokenPlugin/api/tokenService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import type { ITokenLockUnlockDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenLockUnlockDialog';
@@ -9,6 +9,7 @@ import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, invariant } from '@aragon/gov-ui-kit';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -17,6 +18,9 @@ import type { ITokenLocksDialogParams } from '../../../../dialogs/tokenLocksDial
 import { useCheckTokenAllowance } from '../../hooks/useCheckTokenAllowance';
 import { TokenLockFormChart } from './tokenLockFormChart';
 
+/**
+ * Props for the TokenLockForm component.
+ */
 export interface ITokenLockFormProps {
     /**
      * DAO plugin for the token locking.
@@ -28,6 +32,9 @@ export interface ITokenLockFormProps {
     daoId: string;
 }
 
+/**
+ * Form data for token locking, extends AssetInputFormData.
+ */
 export interface ITokenLockFormData extends IAssetInputFormData {}
 
 export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
@@ -44,21 +51,22 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { open } = useDialogContext();
     const { t } = useTranslations();
     const { address } = useAccount();
+    const queryClient = useQueryClient();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    // TODO Remove all mocks logic before merge DEMO ONLY
-    const shouldUseMocks = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
-    const memberAddress = address ?? (shouldUseMocks ? '0x0000000000000000000000000000000000000001' : undefined);
-    const memberLocksQueryParams = { network: dao!.network, escrowAddress, onlyActive: !shouldUseMocks };
-    const addressForQuery = memberAddress ?? '0x0000000000000000000000000000000000000000';
-    const { data: memberLocks, refetch: refetchLocks } = useMemberLocks(
-        { urlParams: { address: addressForQuery }, queryParams: memberLocksQueryParams },
-        { enabled: memberAddress != null || shouldUseMocks },
+    const memberLocksQueryParams = { network: dao!.network, escrowAddress, onlyActive: true };
+    const { data: memberLocks } = useMemberLocks(
+        { urlParams: { address: address! }, queryParams: memberLocksQueryParams },
+        { enabled: address != null },
     );
     const locksCount = memberLocks?.pages.reduce((count, page) => count + page.data.length, 0) ?? 0;
 
     const { result: isConnected, check: walletGuard } = useConnectedWalletGuard();
+
+    const invalidateMemberLocks = () => {
+        void queryClient.invalidateQueries({ queryKey: [TokenServiceKey.MEMBER_LOCKS] });
+    };
 
     const {
         allowance,
@@ -124,7 +132,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     };
 
     const onLockTokensSuccessClick = () => {
-        void refetchLocks();
+        invalidateMemberLocks();
         handleViewLocks();
     };
 
@@ -174,8 +182,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                             symbol: token.symbol,
                         })}
                     </Button>
-                    {/*TODO Remove this address check before merge DEMO ONLY*/}
-                    {locksCount > 0 && address && (
+                    {locksCount > 0 && (
                         <Button variant="secondary" size="lg" onClick={handleViewLocks}>
                             {t('app.plugins.token.tokenLockForm.locks', { count: locksCount })}
                         </Button>

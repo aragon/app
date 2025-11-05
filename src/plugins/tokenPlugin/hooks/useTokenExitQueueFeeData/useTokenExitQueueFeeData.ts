@@ -99,7 +99,19 @@ export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams
     // Transform ticket data - handles both v1 (2-field) and v2 (7-field) tickets
     // v1 tickets: Only have holder/queuedAt, fallback to global params
     // v2 tickets: Have all 7 fields, use ticket's stored params
-    interface ITicketV2 {
+
+    /**
+     * Type guard to check if ticket data is v2 format (has all 7 fields).
+     */
+    const isTicketV2 = (
+        data: { holder: `0x${string}`; queuedAt: number } & Partial<{
+            minCooldown: number;
+            cooldown: number;
+            feePercent: number;
+            minFeePercent: number;
+            slope: bigint;
+        }>,
+    ): data is {
         holder: `0x${string}`;
         queuedAt: number;
         minCooldown: number;
@@ -107,18 +119,41 @@ export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams
         feePercent: number;
         minFeePercent: number;
         slope: bigint;
-    }
+    } => {
+        return (
+            'minCooldown' in data &&
+            'cooldown' in data &&
+            'feePercent' in data &&
+            'minFeePercent' in data &&
+            'slope' in data &&
+            data.minCooldown !== undefined &&
+            data.cooldown !== undefined &&
+            data.feePercent !== undefined &&
+            data.minFeePercent !== undefined &&
+            data.slope !== undefined
+        );
+    };
 
     const ticket = ticketData
-        ? {
-              holder: ticketData.holder,
-              queuedAt: ticketData.queuedAt,
-              minCooldown: (ticketData as Partial<ITicketV2>).minCooldown ?? globalMinCooldown ?? 0,
-              cooldown: (ticketData as Partial<ITicketV2>).cooldown ?? globalCooldown ?? 0,
-              feePercent: (ticketData as Partial<ITicketV2>).feePercent ?? Number(globalFeePercent ?? 0),
-              minFeePercent: (ticketData as Partial<ITicketV2>).minFeePercent ?? Number(globalMinFeePercent ?? 0),
-              slope: (ticketData as Partial<ITicketV2>).slope ?? BigInt(0),
-          }
+        ? isTicketV2(ticketData)
+            ? {
+                  holder: ticketData.holder,
+                  queuedAt: ticketData.queuedAt,
+                  minCooldown: ticketData.minCooldown,
+                  cooldown: ticketData.cooldown,
+                  feePercent: ticketData.feePercent,
+                  minFeePercent: ticketData.minFeePercent,
+                  slope: ticketData.slope,
+              }
+            : {
+                  holder: ticketData.holder,
+                  queuedAt: ticketData.queuedAt,
+                  minCooldown: globalMinCooldown ?? 0,
+                  cooldown: globalCooldown ?? 0,
+                  feePercent: Number(globalFeePercent ?? 0),
+                  minFeePercent: Number(globalMinFeePercent ?? 0),
+                  slope: BigInt(0),
+              }
         : undefined;
 
     const refetch = () =>

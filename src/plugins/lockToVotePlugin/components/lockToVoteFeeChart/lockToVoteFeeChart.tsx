@@ -26,7 +26,7 @@ export const LockToVoteFeeChart: React.FC<ILockToVoteFeeChartProps> = (props) =>
     const points = lockToVoteFeeUtils.getChartDataPoints({
         ticket,
         currentTime,
-        pointCount: 100,
+        pointCount: 50,
     });
 
     // If no points generated, don't render

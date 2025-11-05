@@ -9,6 +9,7 @@ import {
     invariant,
     ProposalDataListItem,
 } from '@aragon/gov-ui-kit';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 import { useMemberLocks } from '../../../../api/tokenService';
 import { TokenLockListItem } from './tokenLockListItem';
@@ -29,6 +30,7 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
 
     const { t } = useTranslations();
     const { address } = useAccount();
+    const queryClient = useQueryClient();
 
     const { votingEscrow } = plugin.settings;
     const { votingEscrow: votingEscrowAddresses } = plugin;
@@ -38,10 +40,14 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
     const { escrowAddress } = votingEscrowAddresses;
 
     const memberLocksQueryParams = { network: dao.network, escrowAddress, onlyActive: true };
-    const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage, refetch } = useMemberLocks(
+    const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage } = useMemberLocks(
         { urlParams: { address: address! }, queryParams: memberLocksQueryParams },
         { enabled: address != null },
     );
+
+    const invalidateMemberLocks = () => {
+        void queryClient.invalidateQueries({ queryKey: [TokenServiceKey.MEMBER_LOCKS] });
+    };
 
     const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
     const locksList = data?.pages.flatMap((page) => page.data);
@@ -73,7 +79,13 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
                 emptyState={emptyState}
             >
                 {locksList?.map((lock) => (
-                    <TokenLockListItem key={lock.id} lock={lock} plugin={plugin} dao={dao} onRefreshNeeded={refetch} />
+                    <TokenLockListItem
+                        key={lock.id}
+                        lock={lock}
+                        plugin={plugin}
+                        dao={dao}
+                        onRefreshNeeded={invalidateMemberLocks}
+                    />
                 ))}
             </DataListContainer>
             <DataListPagination />
