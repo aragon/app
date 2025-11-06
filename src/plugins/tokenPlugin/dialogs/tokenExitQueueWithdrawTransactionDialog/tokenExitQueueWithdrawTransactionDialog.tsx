@@ -62,10 +62,12 @@ export const TokenExitQueueWithdrawTransactionDialog: React.FC<ITokenExitQueueWi
             prepareTransaction={handlePrepareTransaction}
             network={network}
             transactionType={TransactionType.WITHDRAW_CREATE}
-            onSuccess={onSuccess}
             successLink={{
                 label: t('app.plugins.tokenExitQueue.withdrawTransactionDialog.success'),
-                onClick: () => router.refresh(),
+                onClick: () => {
+                    router.refresh();
+                    onSuccess?.();
+                },
             }}
         />
     );

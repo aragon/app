@@ -6,7 +6,7 @@ import { formatUnits } from 'viem';
 import type { ITokenExitQueueFeeCalculationProps } from './tokenExitQueueFeeCalculation.api';
 
 export const TokenExitQueueFeeCalculation: React.FC<ITokenExitQueueFeeCalculationProps> = (props) => {
-    const { lockedAmount, feeAmount, token } = props;
+    const { lockedAmount, feeAmount, token, helpText } = props;
 
     const { t } = useTranslations();
 
@@ -49,6 +49,9 @@ export const TokenExitQueueFeeCalculation: React.FC<ITokenExitQueueFeeCalculatio
                     {formattedReceiveAmount} {token.symbol}
                 </span>
             </div>
+
+            {/* Help text */}
+            {helpText && <p className="pt-1 text-sm leading-normal font-normal text-neutral-500">{helpText}</p>}
         </div>
     );
 };

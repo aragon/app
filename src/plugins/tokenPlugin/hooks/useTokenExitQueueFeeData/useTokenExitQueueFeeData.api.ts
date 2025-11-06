@@ -1,5 +1,36 @@
 import type { ITokenExitQueueTicket } from '../../types';
 
+export interface ITicketData {
+    /**
+     * Address that holds the ticket.
+     */
+    holder: `0x${string}`;
+    /**
+     * Timestamp when exit was queued (in seconds).
+     */
+    queuedAt: number;
+    /**
+     * Minimum cooldown period in seconds (v2 only, falls back to global).
+     */
+    minCooldown?: number;
+    /**
+     * Full cooldown period in seconds (v2 only, falls back to global).
+     */
+    cooldown?: number;
+    /**
+     * Maximum/early exit fee in basis points (v2 only, falls back to global).
+     */
+    feePercent?: number;
+    /**
+     * Minimum fee after full cooldown in basis points (v2 only, falls back to global).
+     */
+    minFeePercent?: number;
+    /**
+     * Fee decay slope for dynamic fees (v2 only).
+     */
+    slope?: bigint;
+}
+
 export interface IUseTokenExitQueueFeeDataParams {
     /**
      * Token ID for the NFT lock.

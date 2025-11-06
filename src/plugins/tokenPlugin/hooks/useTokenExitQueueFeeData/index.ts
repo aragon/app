@@ -1,2 +1,6 @@
 export { useTokenExitQueueFeeData } from './useTokenExitQueueFeeData';
-export type { IUseTokenExitQueueFeeDataParams, IUseTokenExitQueueFeeDataReturn } from './useTokenExitQueueFeeData.api';
+export type {
+    ITicketData,
+    IUseTokenExitQueueFeeDataParams,
+    IUseTokenExitQueueFeeDataReturn,
+} from './useTokenExitQueueFeeData.api';

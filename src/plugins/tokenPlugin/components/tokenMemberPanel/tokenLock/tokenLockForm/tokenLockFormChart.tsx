@@ -68,9 +68,65 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
 
     const activePoint = hoveredPoint ?? points[0];
 
+    // Calculate dynamic Y-axis domain with rounded values for clean display
+    const minY = Math.min(...points.map((p) => p.y));
+    const maxY = Math.max(...points.map((p) => p.y));
+    const range = maxY - minY;
+
+    // For zero values, show a reasonable default range (0 to 50K)
+    const hasZeroValues = maxY === 0;
+
+    // Add 20% padding below and above for visual breathing room
+    const yPadding = range * 0.2;
+    const paddedMin = Math.max(0, minY - yPadding);
+    const paddedMax = maxY + yPadding;
+
+    // Round to nice numbers based on scale
+    const roundToNice = (value: number, roundUp: boolean): number => {
+        if (value === 0) return 0;
+        const magnitude = Math.pow(10, Math.floor(Math.log10(value)));
+        const normalized = value / magnitude;
+
+        // Round to nearest 1, 2, 5, or 10
+        let rounded: number;
+        if (normalized <= 1) rounded = 1;
+        else if (normalized <= 2) rounded = 2;
+        else if (normalized <= 5) rounded = 5;
+        else rounded = 10;
+
+        const result = rounded * magnitude;
+
+        // For min values, round down to avoid cutting off data
+        if (!roundUp && result > value) {
+            if (rounded === 10) rounded = 5;
+            else if (rounded === 5) rounded = 2;
+            else if (rounded === 2) rounded = 1;
+            else rounded = normalized; // Use smaller step
+            return rounded * magnitude;
+        }
+
+        return result;
+    };
+
+    // Use actual min value as baseline (the "Now" point), round max for clean upper bound
+    const yDomainMin = hasZeroValues ? 0 : minY;
+    const yDomainMax = hasZeroValues ? 50000 : roundToNice(paddedMax, true);
+
+    // Dynamic tick count based on the domain range
+    const domainRange = yDomainMax - yDomainMin;
+    const trillion = 1_000_000_000_000;
+    const billion = 1_000_000_000;
+    const million = 1_000_000;
+    const tickCount = domainRange >= trillion ? 6 : domainRange >= billion ? 5 : domainRange >= million ? 5 : 4;
+
+    // Generate evenly-spaced ticks for visual consistency
+    const yAxisTicks = Array.from({ length: tickCount }, (_, i) => {
+        return yDomainMin + (domainRange / (tickCount - 1)) * i;
+    });
+
     return (
         <div className="w-full py-2">
-            <div className="-mb-10">
+            <div className="mb-3">
                 <p className="font-semibold!">
                     {formatterUtils.formatNumber(activePoint.y, { format: NumberFormat.TOKEN_AMOUNT_SHORT })}{' '}
                     <span className="font-normal">{t('app.plugins.token.tokenLockForm.chart.votingPower')}</span>
@@ -82,11 +138,11 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
                     data={points}
                     onMouseMove={handleMouseMove}
                     onMouseLeave={() => setHoveredPoint(undefined)}
-                    margin={{ right: 16, left: 16 }}
+                    margin={{ top: 10, right: 10, bottom: 5, left: 12 }}
                 >
                     <defs>
                         <linearGradient id="colorY" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="var(--color-primary-400)" stopOpacity={0.8} />
+                            <stop offset="5%" stopColor="var(--color-primary-400)" stopOpacity={0.4} />
                             <stop offset="95%" stopColor="var(--color-primary-400)" stopOpacity={0} />
                         </linearGradient>
                     </defs>
@@ -103,13 +159,14 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
                     <YAxis
                         tickFormatter={formatVotingPower}
                         className="text-xs"
-                        width={25}
+                        width={45}
                         tickLine={false}
                         axisLine={false}
                         type="number"
-                        tickCount={points.length}
+                        ticks={yAxisTicks}
                         dataKey="y"
                         orientation="right"
+                        domain={[yDomainMin, yDomainMax]}
                     />
                     <Area
                         type="monotone"

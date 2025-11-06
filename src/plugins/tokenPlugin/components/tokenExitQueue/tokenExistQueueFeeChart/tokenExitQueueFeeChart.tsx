@@ -22,7 +22,8 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
 
     const decayDuration = Math.max(ticket.cooldown - ticket.minCooldown, 0);
     const fallbackDuration = Math.max(secondsPerDay, 1);
-    const domainDuration = decayDuration > 0 ? decayDuration * 2 : fallbackDuration;
+    // Extend x-axis to 1.5x decay duration so slope line hits at 2/3 of chart (e.g., 10 min decay → 15 min x-axis)
+    const domainDuration = decayDuration > 0 ? decayDuration * 1.5 : fallbackDuration;
 
     const minFeePercent = useMemo(() => {
         return tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: ticket.cooldown, ticket });
@@ -57,9 +58,11 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
             firstPhasePoints.push({ elapsedSeconds: decayDuration, feePercent: minFeePercent });
         }
 
+        // Plateau extends from end of decay to domainDuration (1.5x cooldown)
+        const plateauDuration = domainDuration - decayDuration;
         const plateauPoints = Array.from({ length: CHART_POINT_COUNT }, (_, index) => {
             const ratio = index / (CHART_POINT_COUNT - 1);
-            const xPosition = decayDuration + ratio * decayDuration;
+            const xPosition = decayDuration + ratio * plateauDuration;
             return {
                 elapsedSeconds: xPosition,
                 feePercent: minFeePercent,
@@ -88,27 +91,50 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
 
     const nowLabel = t('app.plugins.tokenExitQueue.feeChart.now');
 
-    const minuteDuration = Math.round(domainDuration / 60);
-    const baseTickCount = Math.min(6, Math.max(2, minuteDuration + 1));
-    const baseTicks =
-        domainDuration === 0
-            ? [0]
-            : Array.from({ length: baseTickCount }, (_, index) => {
-                  if (index === baseTickCount - 1) {
-                      return domainDuration;
-                  }
-                  return (domainDuration / (baseTickCount - 1)) * index;
-              });
+    // Generate nice round ticks that will format cleanly
+    const generateTicks = () => {
+        if (domainDuration === 0) return [0];
 
-    const tickSet = new Set<number>(baseTicks);
-    tickSet.add(0);
-    if (decayDuration > 0) {
-        tickSet.add(decayDuration);
-        tickSet.add(decayDuration * 2);
-    }
-    tickSet.add(domainDuration);
+        const secondsPerMinute = 60;
+        const secondsPerHour = 60 * 60;
+        const domainMinutes = domainDuration / secondsPerMinute;
+        const domainHours = domainDuration / secondsPerHour;
 
-    const xAxisTicks = Array.from(tickSet).sort((a, b) => a - b);
+        const ticks: number[] = [0];
+
+        // Choose appropriate interval based on scale
+        let interval: number;
+        if (domainHours >= 24) {
+            // Days scale: use day intervals
+            interval = secondsPerDay;
+        } else if (domainHours >= 2) {
+            // Hours scale: use hour intervals
+            interval = secondsPerHour;
+        } else if (domainMinutes >= 20) {
+            // Use 5-minute intervals for 20+ minutes
+            interval = 5 * secondsPerMinute;
+        } else if (domainMinutes >= 10) {
+            // Use 3-minute intervals for 10-20 minutes
+            interval = 3 * secondsPerMinute;
+        } else {
+            // Use 2-minute intervals for <10 minutes
+            interval = 2 * secondsPerMinute;
+        }
+
+        // Generate ticks at round intervals up to domainDuration
+        let current = interval;
+        while (current < domainDuration) {
+            ticks.push(current);
+            current += interval;
+        }
+
+        // Always include domain end
+        ticks.push(domainDuration);
+
+        return ticks.sort((a, b) => a - b);
+    };
+
+    const xAxisTicks = generateTicks();
 
     const dataMaxFeePercent = points.reduce((max, point) => Math.max(max, point.feePercent), currentFeePercent);
     const configuredMaxFeePercent = Math.max(ticket.feePercent / 100, 0);
@@ -130,15 +156,24 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
         }
 
         let formatted: string;
-        if (elapsedSeconds < secondsPerDay) {
-            const minutes = Math.max(0, Math.round(elapsedSeconds / 60));
-            formatted = minutes <= 1 ? '1 min' : `${String(minutes)} mins`;
-        } else {
+        const secondsPerHour = 60 * 60;
+        const secondsPerYear = secondsPerDay * 365;
+
+        if (elapsedSeconds >= secondsPerYear) {
+            const years = Math.max(1, Math.round(elapsedSeconds / secondsPerYear));
+            formatted = `${String(years)}${t('app.plugins.tokenExitQueue.feeChart.timeUnit.year')}`;
+        } else if (elapsedSeconds >= secondsPerDay) {
             const days = Math.max(1, Math.round(elapsedSeconds / secondsPerDay));
-            formatted = days === 1 ? 'Day 1' : `Day ${String(days)}`;
+            formatted = `${String(days)}${t('app.plugins.tokenExitQueue.feeChart.timeUnit.day')}`;
+        } else if (elapsedSeconds >= secondsPerHour) {
+            const hours = Math.max(1, Math.round(elapsedSeconds / secondsPerHour));
+            formatted = `${String(hours)}${t('app.plugins.tokenExitQueue.feeChart.timeUnit.hour')}`;
+        } else {
+            const minutes = Math.max(0, Math.round(elapsedSeconds / 60));
+            formatted = `${String(minutes)}${t('app.plugins.tokenExitQueue.feeChart.timeUnit.minute')}`;
         }
 
-        return isLastTick ? `${formatted}+` : formatted;
+        return isLastTick ? `>${formatted}` : formatted;
     };
 
     const handleMouseMove = (state?: MouseHandlerDataParam) => {
@@ -185,7 +220,7 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
                     >
                         <defs>
                             <linearGradient id="colorFee" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="var(--color-primary-400)" stopOpacity={0.8} />
+                                <stop offset="5%" stopColor="var(--color-primary-400)" stopOpacity={0.4} />
                                 <stop offset="95%" stopColor="var(--color-primary-400)" stopOpacity={0} />
                             </linearGradient>
                         </defs>
@@ -202,7 +237,7 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
                                 const isFirstTick = numValue === 0;
                                 const isLastTick = numValue === domainDuration;
                                 if (isFirstTick) {
-                                    return t('app.plugins.tokenExitQueue.feeChart.exit');
+                                    return '0';
                                 }
                                 return formatElapsed(numValue, isLastTick);
                             }}
@@ -240,8 +275,8 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
                     </AreaChart>
                 </ResponsiveContainer>
                 <div className="pointer-events-none absolute top-3 right-3 text-right">
-                    <span className="block text-xs text-neutral-500">{activeLabel}</span>
-                    <span className="block text-sm font-semibold text-neutral-800">{activeFeeDisplay}</span>
+                    <span className="block text-lg font-semibold text-neutral-800">{activeFeeDisplay}</span>
+                    <span className="block text-sm text-neutral-500">{activeLabel}</span>
                 </div>
             </div>
         </div>

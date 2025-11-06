@@ -132,7 +132,6 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const minCooldownTimestamp =
         effectiveQueuedAt != null && effectiveMinCooldown != null ? effectiveQueuedAt + effectiveMinCooldown : null;
 
-    // Use canExit from backend (checks minCooldown) to determine if withdrawal is available
     const status: TokenLockStatus = !lock.lockExit.status ? 'active' : canExit ? 'available' : 'cooldown';
 
     const openViewLocksDialog = () => open(TokenPluginDialogId.VIEW_LOCKS, { params: { dao, plugin } });

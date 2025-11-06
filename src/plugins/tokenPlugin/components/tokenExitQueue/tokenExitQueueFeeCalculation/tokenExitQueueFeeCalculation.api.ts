@@ -14,6 +14,10 @@ export interface ITokenExitQueueFeeCalculationProps {
      */
     token: IToken;
     /**
+     * Optional help text to display below the calculation.
+     */
+    helpText?: string;
+    /**
      * Optional CSS class name for styling.
      */
     className?: string;

@@ -4,8 +4,8 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
-import { TokenExitQueueFeeCalculation } from '../../components/tokenExitQueue/feeCalculation';
 import { TokenExitQueueFeeChart } from '../../components/tokenExitQueue/tokenExistQueueFeeChart';
+import { TokenExitQueueFeeCalculation } from '../../components/tokenExitQueue/tokenExitQueueFeeCalculation';
 import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
 import { TokenExitQueueFeeMode } from '../../types';
 import { tokenExitQueueFeeUtils } from '../../utils/tokenExitQueueFeeUtils';
@@ -79,13 +79,12 @@ export const TokenExitQueueWithdrawDialog: React.FC<ITokenExitQueueWithdrawDialo
             <Dialog.Content className="flex flex-col gap-6 pt-4">
                 {shouldShowChart && <TokenExitQueueFeeChart ticket={ticket} currentTime={currentTime} />}
 
-                <TokenExitQueueFeeCalculation lockedAmount={lockedAmount} feeAmount={feeAmount} token={token} />
-
-                {shouldShowChart && (
-                    <p className="text-center text-sm leading-normal font-normal text-neutral-500">
-                        {t('app.plugins.tokenExitQueue.withdrawDialog.helpText')}
-                    </p>
-                )}
+                <TokenExitQueueFeeCalculation
+                    lockedAmount={lockedAmount}
+                    feeAmount={feeAmount}
+                    token={token}
+                    helpText={shouldShowChart ? t('app.plugins.tokenExitQueue.withdrawDialog.helpText') : undefined}
+                />
             </Dialog.Content>
             <Dialog.Footer
                 variant="wizard"
