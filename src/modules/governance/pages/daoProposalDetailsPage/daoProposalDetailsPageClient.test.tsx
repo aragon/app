@@ -12,12 +12,12 @@ import {
     generateReactQueryResultError,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
+import type * as GukTypes from '@aragon/gov-ui-kit';
 import { clipboardUtils, GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
+import type * as ReactQuery from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useQueryClient } from '@tanstack/react-query';
-import type * as ReactQuery from '@tanstack/react-query';
-import type * as GukTypes from '@aragon/gov-ui-kit';
 import * as actionSimulationService from '../../api/actionSimulationService';
 import * as governanceService from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
