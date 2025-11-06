@@ -84,7 +84,7 @@ export interface IProposal<TSettings extends IPluginSettings = IPluginSettings> 
      */
     hasActions: boolean;
     /**
-     *  Has Tenderly simulation exist for this proposal or not?
+     *  Indicates whether a Tenderly simulation exists for this proposal.
      */
     hasSimulation: boolean;
 }

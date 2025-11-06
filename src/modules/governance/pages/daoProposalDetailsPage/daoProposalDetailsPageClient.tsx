@@ -86,7 +86,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         data: lastSimulation,
         isError: isLastSimulationError,
         error: lastSimulationError,
-    } = useLastSimulation({ urlParams: { proposalId: proposal?.id as string } }, { enabled: proposal?.hasSimulation });
+    } = useLastSimulation({ urlParams: { proposalId: proposal?.id as string } }, { enabled: !!proposal?.hasSimulation });
 
     const {
         mutate: simulateProposal,
