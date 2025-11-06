@@ -126,7 +126,7 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
 
     const displayAmount = action === 'lock' ? amount : lockAmount;
     const parsedAmount = displayAmount != null ? formatUnits(displayAmount, token.decimals) : undefined;
-    console.log('unlock ', parsedAmount);
+
     return (
         <TransactionDialog
             title={t(`app.plugins.token.tokenLockUnlockDialog.${action}.title`, { symbol })}
