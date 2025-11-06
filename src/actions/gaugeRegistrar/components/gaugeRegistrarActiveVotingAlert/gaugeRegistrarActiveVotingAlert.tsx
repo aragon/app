@@ -5,7 +5,7 @@ export const GaugeRegistrarActiveVotingAlert = () => {
     const { t } = useTranslations();
 
     return (
-        <AlertCard message={t('app.actions.gaugeRegistrar.gaugeRegistrarActiveVotingAlert.title')} variant="warning">
+        <AlertCard message={t('app.actions.gaugeRegistrar.gaugeRegistrarActiveVotingAlert.title')} variant="info">
             {t('app.actions.gaugeRegistrar.gaugeRegistrarActiveVotingAlert.message')}
         </AlertCard>
     );
