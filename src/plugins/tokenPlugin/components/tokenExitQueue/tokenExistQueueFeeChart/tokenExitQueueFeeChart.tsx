@@ -6,7 +6,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useMemo, useState } from 'react';
 import { Area, AreaChart, ReferenceDot, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import type { MouseHandlerDataParam } from 'recharts/types/synchronisation/types';
-import { type ITokenExitQueueFeeChartProps } from './tokenExitQueueFeeChart.api';
+import { CHART_POINT_COUNT, type ITokenExitQueueFeeChartProps } from './tokenExitQueueFeeChart.api';
 
 export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (props) => {
     const { ticket, currentTime, className } = props;

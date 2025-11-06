@@ -150,6 +150,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
             network: dao.network,
             token,
             tokenId: BigInt(lock.tokenId),
+            lockAmount: BigInt(amount),
             onClose: openViewLocksDialog,
             onSuccessClick: handleActionSuccess,
         };
@@ -210,6 +211,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                 escrowContract: escrowAddress,
                 token,
                 tokenId: BigInt(lock.tokenId),
+                lockAmount: BigInt(amount),
                 onClose: openViewLocksDialog,
                 onSuccessClick: handleActionSuccess,
                 showTransactionInfo: false,

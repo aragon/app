@@ -5,7 +5,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
 import { TokenExitQueueFeeCalculation } from '../../components/tokenExitQueue/feeCalculation';
-import { TokenExitQueueFeeChart } from '../../components/tokenExitQueue/feeChart';
+import { TokenExitQueueFeeChart } from '../../components/tokenExitQueue/tokenExistQueueFeeChart';
 import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
 import { TokenExitQueueFeeMode } from '../../types';
 import { tokenExitQueueFeeUtils } from '../../utils/tokenExitQueueFeeUtils';

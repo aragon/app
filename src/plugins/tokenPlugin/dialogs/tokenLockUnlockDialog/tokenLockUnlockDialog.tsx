@@ -12,8 +12,9 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { invariant } from '@aragon/gov-ui-kit';
+import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
+import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { tokenLockUnlockDialogUtils } from './tokenLockUnlockDialogUtils';
 
@@ -29,9 +30,13 @@ export interface ITokenLockUnlockDialogParams {
      */
     dao: IDao;
     /**
-     * Amount of tokens to be locked / unlocked in WEI format (required for lock action)
+     * Amount of tokens to be locked in WEI format (required for lock action)
      */
     amount?: bigint;
+    /**
+     * Amount of tokens in the lock in WEI format (required for unlock/withdraw actions to display token info)
+     */
+    lockAmount?: bigint;
     /**
      * The contract address of the voting escrow.
      */
@@ -81,6 +86,7 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
         action,
         dao,
         amount,
+        lockAmount,
         onSuccess,
         onSuccessClick,
         onClose,
@@ -118,6 +124,9 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
     const txInfoTitle = t(`app.plugins.token.tokenLockUnlockDialog.${action}.transactionInfoTitle`, { symbol });
     const transactionInfo = showTransactionInfo ? { title: txInfoTitle, current: 2, total: 2 } : undefined;
 
+    const displayAmount = action === 'lock' ? amount : lockAmount;
+    const parsedAmount = displayAmount != null ? formatUnits(displayAmount, token.decimals) : undefined;
+    console.log('unlock ', parsedAmount);
     return (
         <TransactionDialog
             title={t(`app.plugins.token.tokenLockUnlockDialog.${action}.title`, { symbol })}
@@ -135,6 +144,16 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
             transactionInfo={transactionInfo}
             transactionType={actionToTransactionType[action]}
             indexingFallbackUrl={daoUtils.getDaoUrl(dao, 'members')}
-        />
+        >
+            {parsedAmount != null && (
+                <AssetDataListItem.Structure
+                    logoSrc={token.logo}
+                    name={token.name}
+                    amount={parsedAmount}
+                    symbol={token.symbol}
+                    hideValue={true}
+                />
+            )}
+        </TransactionDialog>
     );
 };
