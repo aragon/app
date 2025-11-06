@@ -12,7 +12,6 @@ import {
     generateReactQueryResultError,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
-import type * as GukTypes from '@aragon/gov-ui-kit';
 import { clipboardUtils, GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import type * as ReactQuery from '@tanstack/react-query';
 import { useQueryClient } from '@tanstack/react-query';
@@ -38,20 +37,6 @@ jest.mock('../../components/proposalExecutionStatus', () => ({
     ProposalExecutionStatus: () => <div data-testid="proposal-execution-status-mock" />,
 }));
 
-jest.mock('@aragon/gov-ui-kit', () => {
-    const actual = jest.requireActual<typeof GukTypes>('@aragon/gov-ui-kit');
-    return {
-        ...actual,
-        ActionSimulation: (props: { onSimulate: () => void }) => (
-            <div data-testid="action-simulation-mock">
-                <button data-testid="simulate-button" onClick={props.onSimulate}>
-                    Simulate
-                </button>
-            </div>
-        ),
-    };
-});
-
 describe('<DaoProposalDetailsPageClient /> component', () => {
     const useProposalSpy = jest.spyOn(governanceService, 'useProposalBySlug');
     const useProposalActionsSpy = jest.spyOn(governanceService, 'useProposalActions');
@@ -59,7 +44,9 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
     const useSlotSingleFunctionSpy = jest.spyOn(useSlotSingleFunction, 'useSlotSingleFunction');
-    const useQueryClientMock = useQueryClient as jest.Mock;
+
+    const mockInvalidateQueries = jest.fn();
+    const mockQueryClient = { invalidateQueries: mockInvalidateQueries };
 
     beforeEach(() => {
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateProposal() }));
@@ -68,9 +55,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         );
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         useLastSimulationSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateSimulationResult() }));
-        useQueryClientMock.mockReturnValue({
-            invalidateQueries: jest.fn(),
-        });
+        (useQueryClient as jest.Mock).mockReturnValue(mockQueryClient);
     });
 
     afterEach(() => {
@@ -80,7 +65,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         clipboardCopySpy.mockReset();
         useSlotSingleFunctionSpy.mockReset();
         useLastSimulationSpy.mockReset();
-        useQueryClientMock.mockReset();
+        mockInvalidateQueries.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoProposalDetailsPageClientProps>) => {
@@ -275,11 +260,6 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         });
 
         it('invalidates proposal query after successful simulation', async () => {
-            const invalidateQueriesMock = jest.fn();
-            (useQueryClient as jest.Mock).mockReturnValue({
-                invalidateQueries: invalidateQueriesMock,
-            });
-
             const mutateFn = jest.fn(
                 (
                     _params: unknown,
@@ -307,7 +287,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
             render(createTestComponent({ daoId: 'test-dao', proposalSlug: 'test-slug' }));
 
-            const simulateButton = screen.getByTestId('simulate-button');
+            const simulateButton = screen.getByRole('button', { name: /simulate/i });
             await userEvent.click(simulateButton);
 
             expect(mutateFn).toHaveBeenCalled();
@@ -320,8 +300,8 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
                 queryParams: { daoId: 'test-dao' },
             });
 
-            expect(invalidateQueriesMock).toHaveBeenCalledWith({ queryKey: simulationQueryKey });
-            expect(invalidateQueriesMock).toHaveBeenCalledWith({ queryKey: proposalQueryKey });
+            expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: simulationQueryKey });
+            expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: proposalQueryKey });
         });
     });
 });
