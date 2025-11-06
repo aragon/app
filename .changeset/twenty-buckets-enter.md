@@ -2,4 +2,4 @@
 '@aragon/app': patch
 ---
 
-Add Common Grounds app to `allowedInFrameHosts`
+Add Common Ground app to `allowedInFrameHosts`
