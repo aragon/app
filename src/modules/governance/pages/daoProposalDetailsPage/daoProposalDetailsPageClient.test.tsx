@@ -13,15 +13,17 @@ import {
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { clipboardUtils, GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
-import { useQueryClient } from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useQueryClient } from '@tanstack/react-query';
+import type * as ReactQuery from '@tanstack/react-query';
+import type * as GukTypes from '@aragon/gov-ui-kit';
 import * as actionSimulationService from '../../api/actionSimulationService';
 import * as governanceService from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
 jest.mock('@tanstack/react-query', () => {
-    const actual = jest.requireActual<typeof import('@tanstack/react-query')>('@tanstack/react-query');
+    const actual = jest.requireActual<typeof ReactQuery>('@tanstack/react-query');
     return {
         ...actual,
         useQueryClient: jest.fn(),
@@ -37,7 +39,7 @@ jest.mock('../../components/proposalExecutionStatus', () => ({
 }));
 
 jest.mock('@aragon/gov-ui-kit', () => {
-    const actual = jest.requireActual<typeof import('@aragon/gov-ui-kit')>('@aragon/gov-ui-kit');
+    const actual = jest.requireActual<typeof GukTypes>('@aragon/gov-ui-kit');
     return {
         ...actual,
         ActionSimulation: (props: { onSimulate: () => void }) => (
