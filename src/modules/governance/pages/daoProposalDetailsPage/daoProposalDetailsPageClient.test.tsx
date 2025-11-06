@@ -13,17 +13,20 @@ import {
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { clipboardUtils, GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
+import { useQueryClient } from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useQueryClient } from '@tanstack/react-query';
 import * as actionSimulationService from '../../api/actionSimulationService';
 import * as governanceService from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
-jest.mock('@tanstack/react-query', () => ({
-    ...jest.requireActual('@tanstack/react-query'),
-    useQueryClient: jest.fn(),
-}));
+jest.mock('@tanstack/react-query', () => {
+    const actual = jest.requireActual<typeof import('@tanstack/react-query')>('@tanstack/react-query');
+    return {
+        ...actual,
+        useQueryClient: jest.fn(),
+    };
+});
 
 jest.mock('../../components/proposalVotingTerminal', () => ({
     ProposalVotingTerminal: () => <div data-testid="voting-terminal-mock" />,
@@ -33,16 +36,19 @@ jest.mock('../../components/proposalExecutionStatus', () => ({
     ProposalExecutionStatus: () => <div data-testid="proposal-execution-status-mock" />,
 }));
 
-jest.mock('@aragon/gov-ui-kit', () => ({
-    ...jest.requireActual('@aragon/gov-ui-kit'),
-    ActionSimulation: (props: any) => (
-        <div data-testid="action-simulation-mock">
-            <button data-testid="simulate-button" onClick={props.onSimulate}>
-                Simulate
-            </button>
-        </div>
-    ),
-}));
+jest.mock('@aragon/gov-ui-kit', () => {
+    const actual = jest.requireActual<typeof import('@aragon/gov-ui-kit')>('@aragon/gov-ui-kit');
+    return {
+        ...actual,
+        ActionSimulation: (props: { onSimulate: () => void }) => (
+            <div data-testid="action-simulation-mock">
+                <button data-testid="simulate-button" onClick={props.onSimulate}>
+                    Simulate
+                </button>
+            </div>
+        ),
+    };
+});
 
 describe('<DaoProposalDetailsPageClient /> component', () => {
     const useProposalSpy = jest.spyOn(governanceService, 'useProposalBySlug');
@@ -227,7 +233,9 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
                 mutate: jest.fn(),
                 isPending: false,
                 isError: false,
-            } as any);
+            } as Partial<ReturnType<typeof actionSimulationService.useSimulateProposal>> as ReturnType<
+                typeof actionSimulationService.useSimulateProposal
+            >);
         });
 
         afterEach(() => {
@@ -270,15 +278,24 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
                 invalidateQueries: invalidateQueriesMock,
             });
 
-            const mutateFn = jest.fn((_params, options) => {
-                options?.onSuccess?.();
-            });
+            const mutateFn = jest.fn(
+                (
+                    _params: unknown,
+                    options?: { onSuccess?: () => void; onError?: () => void; onSettled?: () => void },
+                ) => {
+                    if (options?.onSuccess) {
+                        options.onSuccess();
+                    }
+                },
+            );
 
             useSimulateProposalSpy.mockReturnValue({
                 mutate: mutateFn,
                 isPending: false,
                 isError: false,
-            } as any);
+            } as Partial<ReturnType<typeof actionSimulationService.useSimulateProposal>> as ReturnType<
+                typeof actionSimulationService.useSimulateProposal
+            >);
 
             const proposal = generateProposal({ id: 'test-proposal', hasActions: true });
             const dao = generateDao({ network: Network.ETHEREUM_MAINNET });
