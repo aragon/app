@@ -23,4 +23,16 @@ export interface ITokenPluginSettingsEscrowSettings {
      * The constant coefficient used to calculate the voting power increase over time.
      */
     bias: number;
+    /**
+     * Maximum exit fee percentage (basis points: 0-10000). Used for dynamic exit queue.
+     */
+    feePercent?: number;
+    /**
+     * Minimum exit fee percentage (basis points: 0-10000). Used for dynamic exit queue.
+     */
+    minFeePercent?: number;
+    /**
+     * Minimum cooldown period for early withdrawal (seconds). Used for dynamic exit queue.
+     */
+    minCooldown?: number;
 }
