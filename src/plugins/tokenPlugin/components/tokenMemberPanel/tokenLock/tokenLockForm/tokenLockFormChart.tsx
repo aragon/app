@@ -83,25 +83,37 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
 
     // Round to nice numbers based on scale
     const roundToNice = (value: number, roundUp: boolean): number => {
-        if (value === 0) return 0;
+        if (value === 0) {
+            return 0;
+        }
         const magnitude = Math.pow(10, Math.floor(Math.log10(value)));
         const normalized = value / magnitude;
 
         // Round to nearest 1, 2, 5, or 10
         let rounded: number;
-        if (normalized <= 1) rounded = 1;
-        else if (normalized <= 2) rounded = 2;
-        else if (normalized <= 5) rounded = 5;
-        else rounded = 10;
+        if (normalized <= 1) {
+            rounded = 1;
+        } else if (normalized <= 2) {
+            rounded = 2;
+        } else if (normalized <= 5) {
+            rounded = 5;
+        } else {
+            rounded = 10;
+        }
 
         const result = rounded * magnitude;
 
         // For min values, round down to avoid cutting off data
         if (!roundUp && result > value) {
-            if (rounded === 10) rounded = 5;
-            else if (rounded === 5) rounded = 2;
-            else if (rounded === 2) rounded = 1;
-            else rounded = normalized; // Use smaller step
+            if (rounded === 10) {
+                rounded = 5;
+            } else if (rounded === 5) {
+                rounded = 2;
+            } else if (rounded === 2) {
+                rounded = 1;
+            } else {
+                rounded = normalized; // Use smaller step
+            }
             return rounded * magnitude;
         }
 

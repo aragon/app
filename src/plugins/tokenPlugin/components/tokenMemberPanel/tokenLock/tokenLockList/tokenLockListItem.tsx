@@ -310,7 +310,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                         </Button>
 
                         {status === 'cooldown' && !isFeeDataLoading && (
-                            <Rerender>
+                            <Rerender intervalDuration={60000}>
                                 {() => {
                                     const formattedMinCooldownDate =
                                         minCooldownTimestamp != null

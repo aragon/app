@@ -18,8 +18,6 @@ export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
         useMemberListData<ITokenMember>(initialParams);
     const { daoId } = initialParams.queryParams;
 
-    console.log({ initialParams, memberList, plugin });
-
     return (
         <DataListRoot
             entityLabel={t('app.plugins.token.tokenMemberList.entity')}

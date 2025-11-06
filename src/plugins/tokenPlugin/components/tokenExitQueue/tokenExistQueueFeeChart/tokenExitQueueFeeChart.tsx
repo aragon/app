@@ -93,7 +93,9 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
 
     // Generate nice round ticks that will format cleanly
     const generateTicks = () => {
-        if (domainDuration === 0) return [0];
+        if (domainDuration === 0) {
+            return [0];
+        }
 
         const secondsPerMinute = 60;
         const secondsPerHour = 60 * 60;
