@@ -18,6 +18,7 @@ permissions:
 jobs:
   build:
     uses: ./.github/workflows/shared-build.yml
+    secrets: inherit
     with:
       env: "production"
 
