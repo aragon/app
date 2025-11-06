@@ -78,7 +78,6 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
 
     // Add 20% padding below and above for visual breathing room
     const yPadding = range * 0.2;
-    const paddedMin = Math.max(0, minY - yPadding);
     const paddedMax = maxY + yPadding;
 
     // Round to nice numbers based on scale
