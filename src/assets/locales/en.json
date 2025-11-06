@@ -7,6 +7,10 @@
           "registerActionName": "Register Gauge",
           "unregisterActionName": "Unregister Gauge"
         },
+        "gaugeRegistrarActiveVotingAlert": {
+          "message": "You can still submit a proposal while voting is active, but the Tenderly simulation will correctly fail (as the action isn't allowed at that time).",
+          "title": "This action only succeeds when the voting period is inactive"
+        },
         "gaugeRegistrarRegisterGaugeActionCreateForm": {
           "avatar": {
             "error": {

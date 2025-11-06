@@ -25,6 +25,7 @@ import type { IGaugeRegistrarSelectGaugeDialogParams } from '../../dialogs/gauge
 import { GaugeRegistrarActionType } from '../../types/enum/gaugeRegistrarActionType';
 import type { IRegisteredGauge } from '../../types/gaugeRegistrar';
 import type { IGaugeRegistrarActionUnregisterGauge } from '../../types/gaugeRegistrarActionUnregisterGauge';
+import { GaugeRegistrarActiveVotingAlert } from '../gaugeRegistrarActiveVotingAlert';
 import { GaugeRegistrarGaugeListItem } from '../gaugeRegistrarGaugeListItem';
 
 export interface IGaugeRegistrarUnregisterGaugeActionCreateProps
@@ -93,7 +94,12 @@ export const GaugeRegistrarUnregisterGaugeActionCreate: React.FC<IGaugeRegistrar
     }, [addPrepareAction, prepareAction]);
 
     if (selectedGauge) {
-        return <GaugeRegistrarGaugeListItem gauge={selectedGauge} onRemove={() => setSelectedGauge(undefined)} />;
+        return (
+            <>
+                <GaugeRegistrarGaugeListItem gauge={selectedGauge} onRemove={() => setSelectedGauge(undefined)} />
+                <GaugeRegistrarActiveVotingAlert />
+            </>
+        );
     }
 
     return (

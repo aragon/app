@@ -17,6 +17,7 @@ import {
 import { useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { GaugeIncentiveType } from '../../types/enum/gaugeIncentiveType';
+import { GaugeRegistrarActiveVotingAlert } from '../gaugeRegistrarActiveVotingAlert';
 
 export interface IGaugeRegistrarRegisterGaugeActionCreateFormProps {
     /**
@@ -219,6 +220,7 @@ export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
                 onAccept={onRewardControllerAddressChange}
                 {...rewardControllerAddressField}
             />
+            <GaugeRegistrarActiveVotingAlert />
         </div>
     );
 };
