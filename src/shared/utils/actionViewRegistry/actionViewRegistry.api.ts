@@ -52,9 +52,6 @@ export interface IActionViewDescriptor {
     getItem: (params: { contractAddress: string; t: TranslationFunction }) => IActionComposerInputItem;
 }
 
-/**
- * Descriptor for registering an actions group.
- */
 export interface IActionGroupDescriptor {
     /**
      * Permission ID to match against (alternative matching criteria).
