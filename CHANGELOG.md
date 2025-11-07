@@ -1,5 +1,25 @@
 # @aragon/app
 
+## 1.14.0
+
+### Minor Changes
+
+- [#843](https://github.com/aragon/app/pull/843) [`71d38b6`](https://github.com/aragon/app/commit/71d38b60b792886eb79905cf2b3c9d19f219edb1) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Add Dynamic Exit Queue to the token plugin flow for VE gauges
+
+### Patch Changes
+
+- [#845](https://github.com/aragon/app/pull/845) [`723ca11`](https://github.com/aragon/app/commit/723ca11ce59eabae950cc5e1a84f6f2c1bbd294b) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Adjust Sentry replaysOnErrorSampleRate
+
+- [#844](https://github.com/aragon/app/pull/844) [`3a33f3e`](https://github.com/aragon/app/commit/3a33f3ea0a7f30bdbc859ae890e26d7b9f5f99b1) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Sentry DSN configuration to environment variable
+
+- [#849](https://github.com/aragon/app/pull/849) [`e27c43e`](https://github.com/aragon/app/commit/e27c43e1501f8c5923f92fe1f7da59f53cbb9c62) Thanks [@milosh86](https://github.com/milosh86)! - Update safeJsonParse to try parsing regardless of the response content-type
+
+- [#848](https://github.com/aragon/app/pull/848) [`7104e22`](https://github.com/aragon/app/commit/7104e22b88991ae5d824318137060bff70acabdd) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Add Sentry environments and sanitizer for logging of environment variables during builds
+
+- [#832](https://github.com/aragon/app/pull/832) [`a76906a`](https://github.com/aragon/app/commit/a76906a77706509b21edc9d14a3e904b2b19c70c) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Integrate chainId into address input components
+
+- [#796](https://github.com/aragon/app/pull/796) [`193d5d2`](https://github.com/aragon/app/commit/193d5d25f0cb43c4395591aa661d558365644b11) Thanks [@milosh86](https://github.com/milosh86)! - Add Common Ground app to `allowedInFrameHosts`
+
 ## 1.13.1
 
 ### Patch Changes
