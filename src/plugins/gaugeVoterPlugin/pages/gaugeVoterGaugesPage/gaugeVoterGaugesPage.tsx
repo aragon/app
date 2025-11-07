@@ -6,6 +6,7 @@ import { Page } from '@/shared/components/page';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { QueryClient } from '@tanstack/react-query';
 import type { Address } from 'viem';
+import type { IGetGaugeListParams } from '../../api/gaugeVoterService';
 import { gaugeListOptions } from '../../api/gaugeVoterService/queries';
 import type { IGaugeVoterPlugin } from '../../types';
 import { GaugeVoterGaugesPageClient } from './gaugeVoterGaugesPageClient';
@@ -25,12 +26,14 @@ export const GaugeVoterGaugesPage: React.FC<IGaugeVoterGaugesPageProps> = async 
         throw new Error(`Gauge plugin not found for DAO: ${dao.id}`);
     }
 
-    const initialParams = {
+    const initialParams: IGetGaugeListParams = {
         urlParams: {
             pluginAddress: plugin.address as Address,
             network: dao.network,
         },
-        queryParams: {},
+        queryParams: {
+            status: 'active',
+        },
     };
 
     await queryClient.prefetchInfiniteQuery(gaugeListOptions(initialParams));

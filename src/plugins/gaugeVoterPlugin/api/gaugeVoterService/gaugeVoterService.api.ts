@@ -14,7 +14,12 @@ export interface IGetGaugeListUrlParams {
     network: Network;
 }
 
-export interface IGetGaugeListQueryParams extends IPaginatedRequest {}
+export interface IGetGaugeListQueryParams extends IPaginatedRequest {
+    /**
+     * Filter by status. Returns all gauges if status not set.
+     */
+    status?: 'active' | 'inactive';
+}
 
 export interface IGetGaugeListParams extends IRequestUrlQueryParams<IGetGaugeListUrlParams, IGetGaugeListQueryParams> {}
 
