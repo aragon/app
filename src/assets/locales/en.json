@@ -1912,7 +1912,7 @@
               "warmup": "In warmup"
             },
             "timeLeftSuffix": "left",
-            "withdrawTimeLeftSuffix": "left until you can withdraw"
+            "withdrawTimeLeftSuffix": "until withdraw"
           }
         },
         "tokenLockUnlockDialog": {
@@ -2188,6 +2188,42 @@
             "title": "Wrap tokens",
             "transactionInfoTitle": "Wrap {{symbol}}"
           }
+        }
+      },
+      "tokenExitQueue": {
+        "feeCalculation": {
+          "lockedTokens": "Locked tokens",
+          "receiveNow": "Receive now",
+          "withdrawFee": "Withdraw fee"
+        },
+        "feeChart": {
+          "exit": "Exit",
+          "fee": "Fee",
+          "now": "Now",
+          "timeUnit": {
+            "day": "d",
+            "hour": "h",
+            "minute": "m",
+            "year": "y"
+          }
+        },
+        "withdrawDialog": {
+          "a11y": {
+            "description": "Dialog for withdrawing tokens with dynamic fee calculation"
+          },
+          "back": "Back",
+          "helpText": "Withdrawing early comes with a fee that decreases over time. The chart above shows how your waiting time affects how much you’ll receive when you withdraw.",
+          "submit": "Withdraw tokens",
+          "title": "Withdraw {{symbol}}"
+        },
+        "withdrawTransactionDialog": {
+          "a11y": {
+            "description": "Transaction dialog for confirming token withdrawal"
+          },
+          "description": "To withdraw your {{symbol}}, confirm the onchain transactions in your wallet.",
+          "submit": "Withdraw",
+          "success": "View Transaction",
+          "title": "Withdraw {{symbol}}"
         }
       }
     },

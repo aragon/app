@@ -19,7 +19,7 @@ describe('AragonBackendServiceError class', () => {
             const response = generateResponse({
                 status: 400,
                 headers: new Headers({ 'content-type': 'application/json' }),
-                text: () => Promise.resolve(JSON.stringify(error)),
+                json: () => Promise.resolve(error),
             });
             const aragonError = await AragonBackendServiceError.fromResponse(response);
             expect(aragonError.code).toEqual(error.code);
@@ -31,7 +31,7 @@ describe('AragonBackendServiceError class', () => {
             const response = generateResponse({
                 status: 500,
                 headers: new Headers({ 'content-type': 'application/json' }),
-                text: () => Promise.resolve('not json'),
+                json: () => Promise.reject(new Error('Invalid JSON')),
             });
             const aragonError = await AragonBackendServiceError.fromResponse(response);
             expect(aragonError.code).toEqual(AragonBackendServiceError.parseErrorCode);

@@ -1,6 +1,10 @@
+import type { ITokenExitQueueWithdrawDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenExitQueueWithdrawDialog/tokenExitQueueWithdrawDialog.api';
+import { useTokenExitQueueFeeData } from '@/plugins/tokenPlugin/hooks/useTokenExitQueueFeeData';
+import { tokenExitQueueFeeUtils } from '@/plugins/tokenPlugin/utils/tokenExitQueueFeeUtils';
 import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     Avatar,
     Button,
@@ -15,15 +19,18 @@ import {
 } from '@aragon/gov-ui-kit';
 import NumberFlow from '@number-flow/react';
 import { DateTime } from 'luxon';
-import { formatUnits, type Hex } from 'viem';
+import { formatUnits, zeroAddress, type Hex } from 'viem';
 import type { IMemberLock } from '../../../../api/tokenService';
 import { TokenPluginDialogId } from '../../../../constants/tokenPluginDialogId';
 import type { ITokenApproveNftDialogParams } from '../../../../dialogs/tokenApproveNftDialog';
 import type { ITokenLockUnlockDialogParams } from '../../../../dialogs/tokenLockUnlockDialog';
 import type { ITokenPlugin } from '../../../../types';
 import { useCheckNftAllowance } from '../../hooks/useCheckNftAllowance';
-import { type TokenLockStatus, tokenLockUtils } from '../tokenLockUtils';
+import { tokenLockUtils, type TokenLockStatus } from '../tokenLockUtils';
 
+/**
+ * Props for the TokenLockListItem component.
+ */
 export interface ITokenLockListItemProps {
     /**
      * VE lock to display.
@@ -52,21 +59,80 @@ const statusToVariant: Record<TokenLockStatus, TagVariant> = {
 export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const { lock, plugin, dao, onRefreshNeeded } = props;
 
-    const { escrowAddress, nftLockAddress } = plugin.votingEscrow!;
+    const votingEscrowConfig = plugin.votingEscrow;
+    const escrowAddress = votingEscrowConfig?.escrowAddress ?? zeroAddress;
+    const nftLockAddress = votingEscrowConfig?.nftLockAddress ?? zeroAddress;
+    const exitQueueAddress = votingEscrowConfig?.exitQueueAddress;
     const { token, votingEscrow } = plugin.settings;
     const { amount, epochStartAt } = lock;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const status = tokenLockUtils.getLockStatus(lock);
+    const baseStatus = tokenLockUtils.getLockStatus(lock);
     const { needsApproval } = useCheckNftAllowance({
         spender: escrowAddress,
         nft: nftLockAddress,
         nftId: BigInt(lock.tokenId),
         network: dao.network,
-        enabled: status === 'active',
+        enabled: baseStatus === 'active',
     });
+
+    const { id: chainId } = networkDefinitions[dao.network];
+    const hasExitQueue = exitQueueAddress != null;
+    const lockManagerAddress = (exitQueueAddress ?? zeroAddress) as Hex;
+
+    const pluginFeePercent = plugin.settings.votingEscrow?.feePercent ?? 0;
+    const pluginMinFeePercent = plugin.settings.votingEscrow?.minFeePercent ?? 0;
+
+    const effectiveQueuedAtPreCheck = lock.lockExit.queuedAt ?? null;
+    const effectiveMinCooldownPreCheck = lock.lockExit.minCooldown ?? null;
+    const minCooldownTimestampPreCheck =
+        effectiveQueuedAtPreCheck != null && effectiveMinCooldownPreCheck != null
+            ? effectiveQueuedAtPreCheck + effectiveMinCooldownPreCheck
+            : null;
+
+    const nowSeconds = DateTime.now().toSeconds();
+    const secondsUntilMinCooldown =
+        minCooldownTimestampPreCheck != null ? minCooldownTimestampPreCheck - nowSeconds : null;
+
+    const getRefetchInterval = () => {
+        if (baseStatus !== 'cooldown') {
+            return undefined;
+        }
+        if (secondsUntilMinCooldown == null) {
+            return 10_000;
+        }
+
+        if (secondsUntilMinCooldown <= 30) {
+            return 1_000;
+        }
+        if (secondsUntilMinCooldown <= 120) {
+            return 5_000;
+        }
+        return 10_000;
+    };
+
+    const {
+        ticket,
+        feeAmount,
+        canExit,
+        isLoading: isFeeDataLoading,
+    } = useTokenExitQueueFeeData({
+        tokenId: BigInt(lock.tokenId),
+        lockManagerAddress,
+        chainId,
+        enabled: hasExitQueue && (baseStatus === 'cooldown' || baseStatus === 'available'),
+        refetchInterval: getRefetchInterval(),
+    });
+
+    const effectiveQueuedAt = lock.lockExit.queuedAt ?? ticket?.queuedAt ?? null;
+    const effectiveMinCooldown = lock.lockExit.minCooldown ?? ticket?.minCooldown ?? null;
+
+    const minCooldownTimestamp =
+        effectiveQueuedAt != null && effectiveMinCooldown != null ? effectiveQueuedAt + effectiveMinCooldown : null;
+
+    const status: TokenLockStatus = !lock.lockExit.status ? 'active' : canExit ? 'available' : 'cooldown';
 
     const openViewLocksDialog = () => open(TokenPluginDialogId.VIEW_LOCKS, { params: { dao, plugin } });
 
@@ -83,6 +149,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
             network: dao.network,
             token,
             tokenId: BigInt(lock.tokenId),
+            lockAmount: BigInt(amount),
             onClose: openViewLocksDialog,
             onSuccessClick: handleActionSuccess,
         };
@@ -116,25 +183,45 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     };
 
     const handleWithdraw = () => {
-        const dialogParams: ITokenLockUnlockDialogParams = {
-            action: 'withdraw',
-            dao: dao,
-            escrowContract: escrowAddress,
-            token,
-            tokenId: BigInt(lock.tokenId),
-            onClose: openViewLocksDialog,
-            onSuccessClick: handleActionSuccess,
-            showTransactionInfo: false,
-        };
-        open(TokenPluginDialogId.LOCK_UNLOCK, { params: dialogParams });
+        const hasConfiguredFees = tokenExitQueueFeeUtils.shouldShowFeeDialog({
+            feePercent: ticket?.feePercent ?? pluginFeePercent,
+            minFeePercent: ticket?.minFeePercent ?? pluginMinFeePercent,
+        });
+        const shouldShowFeeDialog = exitQueueAddress != null && ticket != null && hasConfiguredFees;
+
+        if (shouldShowFeeDialog) {
+            const dialogParams: ITokenExitQueueWithdrawDialogParams = {
+                tokenId: BigInt(lock.tokenId),
+                token,
+                lockManagerAddress: exitQueueAddress as Hex,
+                escrowAddress: escrowAddress as Hex,
+                ticket,
+                lockedAmount: BigInt(amount),
+                feeAmount,
+                network: dao.network,
+                onBack: openViewLocksDialog,
+                onSuccess: handleActionSuccess,
+            };
+            open(TokenPluginDialogId.EXIT_QUEUE_WITHDRAW_FEE, { params: dialogParams });
+        } else {
+            const dialogParams: ITokenLockUnlockDialogParams = {
+                action: 'withdraw',
+                dao: dao,
+                escrowContract: escrowAddress,
+                token,
+                tokenId: BigInt(lock.tokenId),
+                lockAmount: BigInt(amount),
+                onClose: openViewLocksDialog,
+                onSuccessClick: handleActionSuccess,
+                showTransactionInfo: false,
+            };
+            open(TokenPluginDialogId.LOCK_UNLOCK, { params: dialogParams });
+        }
     };
 
     const minLockTime = epochStartAt + (votingEscrow?.minLockTime ?? 0);
-    const canUnlock = DateTime.now().toSeconds() > minLockTime;
+    const canUnlock = nowSeconds > minLockTime;
     const formattedMinLock = formatterUtils.formatDate(minLockTime * 1000, { format: DateFormat.DURATION });
-
-    const parsedExitDate = (lock.lockExit.exitDateAt ?? 0) * 1000;
-    const formattedExitDate = formatterUtils.formatDate(parsedExitDate, { format: DateFormat.DURATION });
 
     const parsedLockedAmount = formatUnits(BigInt(amount), token.decimals);
     const formattedLockedAmount = formatterUtils.formatNumber(parsedLockedAmount, {
@@ -142,28 +229,21 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     });
 
     const multiplier = tokenLockUtils.getMultiplier(lock, plugin.settings);
-    const formattedMultiplier = formatterUtils.formatNumber(multiplier.toString(), {
-        format: NumberFormat.GENERIC_SHORT,
-    });
+    const formattedMultiplier =
+        formatterUtils.formatNumber(multiplier.toString(), { format: NumberFormat.GENERIC_SHORT }) ?? '';
 
     return (
         <DataList.Item className="flex flex-col gap-4 py-4 md:py-6">
-            <div className="flex justify-between">
+            <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 md:gap-4">
                     <Avatar src={token.logo} size="md" className="shrink-0" />
                     <Heading size="h4">ID: {lock.tokenId}</Heading>
                 </div>
-                <div className="flex items-center gap-2 md:gap-3">
-                    {status === 'cooldown' && (
-                        <p className="text-sm leading-tight text-neutral-500 md:text-base">
-                            {formattedExitDate} {t('app.plugins.token.tokenLockList.item.timeLeftSuffix')}
-                        </p>
-                    )}
-                    <Tag
-                        label={t(`app.plugins.token.tokenLockList.item.statusLabel.${status}`)}
-                        variant={statusToVariant[status]}
-                    />
-                </div>
+
+                <Tag
+                    label={t(`app.plugins.token.tokenLockList.item.statusLabel.${status}`)}
+                    variant={statusToVariant[status]}
+                />
             </div>
             <hr className="border-neutral-100" />
             <div className="grid grid-cols-3 gap-4 text-base leading-tight text-neutral-800 md:text-lg">
@@ -177,7 +257,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                     <div className="text-sm text-neutral-500 md:text-base">
                         {t('app.plugins.token.tokenLockList.item.metrics.multiplier')}
                     </div>
-                    <div className="truncate">{`${formattedMultiplier!}x`}</div>
+                    <div className="truncate">{formattedMultiplier ? `${formattedMultiplier}x` : '-'}</div>
                 </div>
                 <div className="flex flex-col">
                     <div className="text-sm text-neutral-500 md:text-base">
@@ -216,20 +296,39 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                         )}
                     </>
                 )}
-                {status === 'cooldown' && (
+
+                {lock.lockExit.status && (
                     <>
-                        <Button className="w-full md:w-auto" variant="tertiary" size="md" disabled={true}>
+                        <Button
+                            className="w-full md:w-auto"
+                            variant="tertiary"
+                            size="md"
+                            disabled={status === 'cooldown'}
+                            onClick={status === 'cooldown' ? undefined : handleWithdraw}
+                        >
                             {t(`app.plugins.token.tokenLockList.item.actions.withdraw`, { symbol: token.symbol })}
                         </Button>
-                        <p className="text-sm leading-normal text-neutral-500">
-                            {formattedExitDate} {t('app.plugins.token.tokenLockList.item.withdrawTimeLeftSuffix')}
-                        </p>
+
+                        {status === 'cooldown' && !isFeeDataLoading && (
+                            <Rerender intervalDuration={60000}>
+                                {() => {
+                                    const formattedMinCooldownDate =
+                                        minCooldownTimestamp != null
+                                            ? formatterUtils.formatDate(minCooldownTimestamp * 1000, {
+                                                  format: DateFormat.DURATION,
+                                              })
+                                            : undefined;
+
+                                    return (
+                                        <p className="text-sm leading-normal text-neutral-500">
+                                            {formattedMinCooldownDate}{' '}
+                                            {t('app.plugins.token.tokenLockList.item.withdrawTimeLeftSuffix')}
+                                        </p>
+                                    );
+                                }}
+                            </Rerender>
+                        )}
                     </>
-                )}
-                {status === 'available' && (
-                    <Button className="w-full md:w-auto" variant="tertiary" size="md" onClick={handleWithdraw}>
-                        {t(`app.plugins.token.tokenLockList.item.actions.withdraw`, { symbol: token.symbol })}
-                    </Button>
                 )}
             </div>
         </DataList.Item>
