@@ -1,9 +1,10 @@
+import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/domain';
 import type { GaugeIncentiveType } from './enum/gaugeIncentiveType';
 
-export interface IRegisteredGauge {
-    /////////////////////////////////////////
-    // DATA FROM GaugeRegistrar CONTRACT
-    /////////////////////////////////////////
+/**
+ *  Gauge data merged from GaugeRegistrar and GaugeVoter contracts.
+ */
+export interface IRegisteredGauge extends IGauge {
     /**
      * The deterministic address of the gauge
      */
@@ -20,19 +21,4 @@ export interface IRegisteredGauge {
      * The specific reward controller contract for this gauge
      */
     rewardController: string;
-    /////////////////////////////////////////
-    // DATA FROM BACKEND API
-    /////////////////////////////////////////
-    /**
-     * Name of the gauge.
-     */
-    name: string;
-    /**
-     * Descriptions of the gauge.
-     */
-    description: string;
-    /**
-     * Gauge avatar URL.
-     */
-    avatar?: string;
 }

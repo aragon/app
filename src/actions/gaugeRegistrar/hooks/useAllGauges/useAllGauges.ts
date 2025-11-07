@@ -7,11 +7,11 @@ import { useEffect, useMemo } from 'react';
 
 export interface IUseAllGaugesParams {
     /**
-     * Parameters for fetching gauge list
+     * Parameters for fetching gauge list.
      */
     gaugeListParams: IGetGaugeListParams;
     /**
-     * Optional query options
+     * Optional query options.
      */
     options?: InfiniteQueryOptions<IPaginatedResponse<IGauge>, IGetGaugeListParams>;
 }

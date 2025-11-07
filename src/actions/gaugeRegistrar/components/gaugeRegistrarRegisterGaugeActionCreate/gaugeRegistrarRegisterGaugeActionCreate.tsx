@@ -10,7 +10,7 @@ import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { invariant, type IProposalAction, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { encodeFunctionData, type Hex } from 'viem';
-import { registerGaugeAbi } from '../../constants/gaugeRegistrarAbi';
+import { gaugeRegistrarAbi } from '../../constants/gaugeRegistrarAbi';
 import { GaugeIncentiveType } from '../../types/enum/gaugeIncentiveType';
 import { GaugeRegistrarActionType } from '../../types/enum/gaugeRegistrarActionType';
 import type { IGaugeRegistrarActionRegisterGauge } from '../../types/gaugeRegistrarActionRegisterGauge';
@@ -54,7 +54,8 @@ export const GaugeRegistrarRegisterGaugeActionCreate: React.FC<IGaugeRegistrarRe
             const hexResult = transactionUtils.stringToMetadataHex(ipfsResult.IpfsHash);
 
             const data = encodeFunctionData({
-                abi: [registerGaugeAbi],
+                abi: gaugeRegistrarAbi,
+                functionName: 'registerGauge',
                 args: [
                     qiTokenAddress?.address as Hex,
                     incentiveType ?? GaugeIncentiveType.SUPPLY,

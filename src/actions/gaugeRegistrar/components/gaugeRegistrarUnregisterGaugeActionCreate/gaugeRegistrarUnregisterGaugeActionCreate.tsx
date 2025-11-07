@@ -19,7 +19,7 @@ import {
 import { useCallback, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { encodeFunctionData, type Hex } from 'viem';
-import { unregisterGaugeAbi } from '../../constants/gaugeRegistrarAbi';
+import { gaugeRegistrarAbi } from '../../constants/gaugeRegistrarAbi';
 import { GaugeRegistrarDialogId } from '../../constants/gaugeRegistrarDialogId';
 import type { IGaugeRegistrarSelectGaugeDialogParams } from '../../dialogs/gaugeRegistrarSelectGaugeDialog';
 import { GaugeRegistrarActionType } from '../../types/enum/gaugeRegistrarActionType';
@@ -78,7 +78,8 @@ export const GaugeRegistrarUnregisterGaugeActionCreate: React.FC<IGaugeRegistrar
         );
 
         const data = encodeFunctionData({
-            abi: [unregisterGaugeAbi],
+            abi: gaugeRegistrarAbi,
+            functionName: 'unregisterGauge',
             args: [
                 action.gaugeToRemove.qiToken as Hex,
                 action.gaugeToRemove.incentive,

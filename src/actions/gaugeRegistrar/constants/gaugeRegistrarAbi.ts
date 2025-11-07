@@ -22,3 +22,25 @@ export const unregisterGaugeAbi = {
     outputs: [],
     stateMutability: 'nonpayable',
 } as const;
+
+export const getAllRegisteredGaugeDetailsAbi = {
+    type: 'function',
+    name: 'getAllRegisteredGaugeDetails',
+    inputs: [],
+    outputs: [
+        {
+            components: [
+                { internalType: 'address', name: 'gaugeAddress', type: 'address' },
+                { internalType: 'address', name: 'qiToken', type: 'address' },
+                { internalType: 'enum IGaugeRegistrar.Incentive', name: 'incentive', type: 'uint8' },
+                { internalType: 'address', name: 'rewardController', type: 'address' },
+            ],
+            internalType: 'struct IGaugeRegistrar.RegisteredGauge[]',
+            name: '',
+            type: 'tuple[]',
+        },
+    ],
+    stateMutability: 'view',
+} as const;
+
+export const gaugeRegistrarAbi = [registerGaugeAbi, unregisterGaugeAbi, getAllRegisteredGaugeDetailsAbi];

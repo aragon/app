@@ -5,11 +5,11 @@ import type { IRegisteredGauge } from '../../types/gaugeRegistrar';
 
 export type IGaugeRegistrarGaugeListItemProps = IDataListItemProps & {
     /**
-     * Gauge to display
+     * Gauge to display.
      */
     gauge: IRegisteredGauge;
     /**
-     * Whether the gauge is selected
+     * Whether the gauge is selected.
      */
     isActive?: boolean;
     /**
@@ -20,10 +20,11 @@ export type IGaugeRegistrarGaugeListItemProps = IDataListItemProps & {
 
 export const GaugeRegistrarGaugeListItem: React.FC<IGaugeRegistrarGaugeListItemProps> = (props) => {
     const { gauge, isActive, onRemove, className, ...otherProps } = props;
+    const gaugeName = gauge.name ?? 'NA';
     const avatarSrc = ipfsUtils.cidToSrc(gauge.avatar);
     const avatarFallback = (
         <span className="bg-primary-400 text-neutral-0 flex size-full items-center justify-center">
-            {gauge.name.slice(0, 2).toUpperCase()}
+            {gaugeName.slice(0, 2).toUpperCase()}
         </span>
     );
 

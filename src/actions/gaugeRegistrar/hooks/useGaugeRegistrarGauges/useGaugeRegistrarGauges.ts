@@ -3,30 +3,9 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import { useReadContract } from 'wagmi';
+import { gaugeRegistrarAbi } from '../../constants/gaugeRegistrarAbi';
 import type { IRegisteredGauge } from '../../types/gaugeRegistrar';
 import { useAllGauges } from '../useAllGauges';
-
-const gaugeRegistrarAbi = [
-    {
-        type: 'function',
-        name: 'getAllRegisteredGaugeDetails',
-        inputs: [],
-        outputs: [
-            {
-                components: [
-                    { internalType: 'address', name: 'gaugeAddress', type: 'address' },
-                    { internalType: 'address', name: 'qiToken', type: 'address' },
-                    { internalType: 'enum IGaugeRegistrar.Incentive', name: 'incentive', type: 'uint8' },
-                    { internalType: 'address', name: 'rewardController', type: 'address' },
-                ],
-                internalType: 'struct IGaugeRegistrar.RegisteredGauge[]',
-                name: '',
-                type: 'tuple[]',
-            },
-        ],
-        stateMutability: 'view',
-    },
-] as const;
 
 export interface IUseGaugeRegistrarGaugesParams {
     /**

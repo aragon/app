@@ -48,7 +48,7 @@ export interface IGaugeRegistrarRegisterGaugeFormData {
      */
     qiTokenAddress?: ICompositeAddress;
     /**
-     * The incentive type (0 for Supply, 1 for Borrow)
+     * The incentive type (0 for Supply, 1 for Borrow).
      */
     incentiveType?: GaugeIncentiveType;
     /**
@@ -73,7 +73,6 @@ export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
         fieldPrefix,
         rules: { required: true, maxLength: nameMaxLength },
         trimOnBlur: true,
-        // defaultValue: '' - default value works only when form is initialized with useForm!
     });
 
     const { value, ...avatarField } = useFormField<IGaugeRegistrarRegisterGaugeFormData, 'avatar'>('avatar', {
@@ -147,7 +146,7 @@ export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
         <div className="flex flex-col gap-10">
             <InputText
                 maxLength={nameMaxLength}
-                value={nameValue || ''}
+                value={nameValue || ''} // explicit default because defaultValue didn't work (as per docs, it works only when form is initialized with useForm).
                 helpText={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.name.helpText')}
                 {...nameFieldRest}
             />
