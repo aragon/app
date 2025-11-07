@@ -38,7 +38,14 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
     const { escrowAddress } = votingEscrowAddresses;
 
     const memberLocksQueryParams = { network: dao.network, escrowAddress, onlyActive: true };
-    const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage, refetch } = useMemberLocks(
+    const {
+        data,
+        status,
+        fetchStatus,
+        isFetchingNextPage,
+        fetchNextPage,
+        refetch: refetchMemberLocks,
+    } = useMemberLocks(
         { urlParams: { address: address! }, queryParams: memberLocksQueryParams },
         { enabled: address != null },
     );
@@ -73,7 +80,13 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
                 emptyState={emptyState}
             >
                 {locksList?.map((lock) => (
-                    <TokenLockListItem key={lock.id} lock={lock} plugin={plugin} dao={dao} onRefreshNeeded={refetch} />
+                    <TokenLockListItem
+                        key={lock.id}
+                        lock={lock}
+                        plugin={plugin}
+                        dao={dao}
+                        onRefreshNeeded={() => void refetchMemberLocks()}
+                    />
                 ))}
             </DataListContainer>
             <DataListPagination />

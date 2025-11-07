@@ -4,7 +4,6 @@ import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
-import { useAccount } from 'wagmi';
 import { TokenLockList } from '../../components/tokenMemberPanel/tokenLock';
 import type { ITokenPluginSettings } from '../../types';
 
@@ -26,10 +25,8 @@ export const TokenLocksDialog: React.FC<ITokenLocksDialogProps> = (props) => {
     invariant(location.params != null, 'TokenLocksDialog: required parameters must be set.');
     const { plugin, dao } = location.params;
 
-    const { address } = useAccount();
-    invariant(address != null, 'TokenLocksDialog: user must be connected.');
-
     const { t } = useTranslations();
+
     const { close } = useDialogContext();
 
     const { token } = plugin.settings;

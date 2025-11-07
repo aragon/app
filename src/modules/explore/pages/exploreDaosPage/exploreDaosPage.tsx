@@ -4,7 +4,6 @@ import { QueryClient } from '@tanstack/react-query';
 import { featuredDaosOptions } from '../../api/cmsService';
 import { daoListOptions } from '../../api/daoExplorerService';
 import { ExploreDaosPageClient } from './exploreDaosPageClient';
-
 export interface IExploreDaosPageProps {}
 
 const daosPerPage = 10;
