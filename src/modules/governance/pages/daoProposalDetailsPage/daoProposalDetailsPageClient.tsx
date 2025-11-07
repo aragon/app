@@ -75,7 +75,12 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     );
     const actionsCount = actionData?.rawActions?.length ?? 0;
 
-    const showActionSimulation = proposal?.hasActions && tenderlySupport;
+    const isSimulationSupportedByStatus =
+        [ProposalStatus.ACTIVE, ProposalStatus.ADVANCEABLE, ProposalStatus.PENDING, ProposalStatus.EXECUTABLE].includes(
+            proposalStatus,
+        );
+
+    const showActionSimulation = proposal?.hasActions && tenderlySupport && isSimulationSupportedByStatus;
 
     const {
         data: lastSimulation,
@@ -131,11 +136,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         { label: proposalSlug.toUpperCase() },
     ];
 
-    const canSimulate =
-        [ProposalStatus.ACTIVE, ProposalStatus.ADVANCEABLE, ProposalStatus.PENDING, ProposalStatus.EXECUTABLE].includes(
-            proposalStatus,
-        ) &&
-        (lastSimulation == null || Date.now() - lastSimulation.runAt > actionSimulationLimitMillis);
+    const canSimulate = lastSimulation == null || Date.now() - lastSimulation.runAt > actionSimulationLimitMillis;
 
     const processedLastSimulation = lastSimulation ? { ...lastSimulation, timestamp: lastSimulation.runAt } : undefined;
     const simulationErrorContext = hasSimulationFailed ? 'simulationError' : 'lastSimulationError';
