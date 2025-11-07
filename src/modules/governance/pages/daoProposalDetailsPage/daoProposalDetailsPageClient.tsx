@@ -75,10 +75,12 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     );
     const actionsCount = actionData?.rawActions?.length ?? 0;
 
-    const isSimulationSupportedByStatus =
-        [ProposalStatus.ACTIVE, ProposalStatus.ADVANCEABLE, ProposalStatus.PENDING, ProposalStatus.EXECUTABLE].includes(
-            proposalStatus,
-        );
+    const isSimulationSupportedByStatus = [
+        ProposalStatus.ACTIVE,
+        ProposalStatus.ADVANCEABLE,
+        ProposalStatus.PENDING,
+        ProposalStatus.EXECUTABLE,
+    ].includes(proposalStatus);
 
     const showActionSimulation = proposal?.hasActions && tenderlySupport && isSimulationSupportedByStatus;
 
