@@ -66,9 +66,7 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
         setHoveredPoint(activeIndex ? points[Number(activeIndex)] : points[0]);
     };
 
-    const activePoint = hoveredPoint ?? points[0];
-
-    // Calculate dynamic Y-axis domain with rounded values for clean display
+    const activePoint = hoveredPoint ?? points[0]; // Calculate dynamic Y-axis domain with rounded values for clean display
     const minY = Math.min(...points.map((p) => p.y));
     const maxY = Math.max(...points.map((p) => p.y));
     const range = maxY - minY;

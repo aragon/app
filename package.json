@@ -23,7 +23,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@aragon/gov-ui-kit": "^1.23.0",
+    "@aragon/gov-ui-kit": "0.0.0-20251110082701",
     "@floating-ui/react": "^0.27.16",
     "@number-flow/react": "^0.5.10",
     "@radix-ui/react-dialog": "1.1.15",
