@@ -1,6 +1,6 @@
 import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
-import { redirect } from '@/shared/lib/nextNavigation';
+import { redirect } from 'next/navigation';
 import { PluginType, type IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
@@ -39,7 +39,7 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
 
     if (!plugins?.length) {
         const daoUrl = daoUtils.getDaoUrl(dao, 'dashboard')!;
-        redirect(daoUrl);
+        return redirect(daoUrl);
     }
 
     const bodyPluginAddress = plugins[0].address;
