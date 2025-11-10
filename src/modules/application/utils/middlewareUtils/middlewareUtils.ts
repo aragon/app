@@ -19,8 +19,16 @@ class MiddlewareUtils {
         const isProd = env === 'production' || env === 'staging';
         const isLocal = env === 'local';
 
+        // List of hosts to allow to embed the App in an `iframe`. For now, we
+        // only have Common Ground app as a one-off experiment. If we get more
+        // similar requests, let's move this to an environment variable.
+        const allowedInFrameHosts = ['https://app.cg'];
+        const allowedInFrameHostsNonProd = ['https://vercel.live'];
+
         const scriptSrc = isProd ? `'strict-dynamic'` : isLocal ? `'unsafe-eval'` : 'https://vercel.live';
-        const frameSrc = isProd ? `'none'` : 'https://vercel.live';
+        const frameSrc = isProd
+            ? allowedInFrameHosts.join(' ')
+            : [...allowedInFrameHosts, ...allowedInFrameHostsNonProd].join(' ');
         const fontSrc = isProd ? '' : ' https://vercel.live';
 
         return [

@@ -8,9 +8,9 @@ class TokenService extends AragonBackendService {
     };
 
     getMemberLocks = async (params: IGetMemberLocksParams): Promise<IPaginatedResponse<IMemberLock>> => {
-        const result = await this.request<IPaginatedResponse<IMemberLock>>(this.urls.memberLocks, params);
+        const request = await this.request<IPaginatedResponse<IMemberLock>>(this.urls.memberLocks, params);
 
-        return result;
+        return request;
     };
 }
 

@@ -5,7 +5,7 @@ import { deepmerge } from 'deepmerge-ts';
 class FetchInterceptorUtils {
     private originalFetch = global.fetch.bind(global);
 
-    intecept = () => {
+    intercept = () => {
         if (process.env.NEXT_PUBLIC_USE_MOCKS === 'true') {
             global.fetch = this.mockDataInterceptor;
         }
@@ -33,7 +33,10 @@ class FetchInterceptorUtils {
             mockData = resultJson._merged ? resultJson : deepmerge(resultJson, mock.data, { _merged: true });
         }
 
-        return Promise.resolve({ ok: true, json: () => Promise.resolve(mockData) }) as unknown as Response;
+        return new Response(JSON.stringify(mockData), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+        });
     };
 }
 

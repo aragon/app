@@ -62,7 +62,7 @@ describe('Http service', () => {
             const headers = new Headers({ 'content-type': 'application/json' });
             const response = generateResponse({
                 headers,
-                text: () => Promise.resolve(JSON.stringify(parsedResult)),
+                json: () => Promise.resolve(parsedResult),
             });
             fetchSpy.mockResolvedValue(response);
             const result = await serviceTest.request('/url');

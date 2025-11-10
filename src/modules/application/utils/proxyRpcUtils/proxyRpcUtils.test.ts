@@ -65,12 +65,12 @@ describe('proxyRpc utils', () => {
             const parsedResponse = { result: 'test' };
             const fetchReturn = generateResponse({
                 headers: new Headers({ 'content-type': 'application/json' }),
-                text: jest.fn(() => Promise.resolve(JSON.stringify(parsedResponse))),
+                json: jest.fn(() => Promise.resolve(parsedResponse)),
             });
             fetchSpy.mockResolvedValue(fetchReturn);
             await testClass.request(generateNextRequest(), createTestOptions('1'));
             expect(fetchSpy).toHaveBeenCalled();
-            expect(fetchReturn.text).toHaveBeenCalled();
+            expect(fetchReturn.json).toHaveBeenCalled();
             expect(nextResponseJsonSpy).toHaveBeenCalledWith(parsedResponse);
         });
     });
