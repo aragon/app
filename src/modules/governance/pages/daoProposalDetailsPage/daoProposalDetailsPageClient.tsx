@@ -8,6 +8,7 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
+import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     ActionSimulation,
@@ -29,6 +30,7 @@ import {
 import { useQueryClient } from '@tanstack/react-query';
 import { actionSimulationServiceKeys, useLastSimulation, useSimulateProposal } from '../../api/actionSimulationService';
 import { type IProposal, useProposalActions, useProposalBySlug } from '../../api/governanceService';
+import type { IProposalActionData } from '../../components/createProposalForm';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
@@ -179,14 +181,27 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         )}
                         <ProposalActions.Root isLoading={actionData?.decoding} actionsCount={actionsCount}>
                             <ProposalActions.Container emptyStateDescription="">
-                                {normalizedProposalActions.map((action, index) => (
-                                    <ProposalActions.Item
-                                        key={index}
-                                        action={action}
-                                        actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(action)}
-                                        chainId={chainId}
-                                    />
-                                ))}
+                                {normalizedProposalActions.map((action, index) => {
+                                    const fnSelector = proposalActionUtils.actionToFunctionSelector(action);
+                                    const customActionView = actionViewRegistry.getViewBySelector(fnSelector);
+
+                                    return customActionView ? (
+                                        <ProposalActions.Item<IProposalActionData>
+                                            key={index}
+                                            action={{ ...action, daoId } as IProposalActionData}
+                                            actionFunctionSelector={fnSelector}
+                                            chainId={chainId}
+                                            CustomComponent={customActionView.componentDetails}
+                                        />
+                                    ) : (
+                                        <ProposalActions.Item
+                                            key={index}
+                                            action={action}
+                                            actionFunctionSelector={fnSelector}
+                                            chainId={chainId}
+                                        />
+                                    );
+                                })}
                             </ProposalActions.Container>
                             <ProposalActions.Footer>
                                 {normalizedProposalActions.length > 0 && (

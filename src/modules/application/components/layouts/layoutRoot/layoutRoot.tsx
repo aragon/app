@@ -1,3 +1,4 @@
+import { initActionViewRegistry } from '@/actions';
 import { initPluginRegistry } from '@/initPluginRegistry';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { fetchInterceptorUtils } from '@/modules/application/utils/fetchInterceptorUtils';
@@ -25,6 +26,7 @@ export interface ILayoutRootProps {
 // Initialise plugin registry and intercept fetch requests (if enabled) for server-side components
 initPluginRegistry();
 fetchInterceptorUtils.intercept();
+initActionViewRegistry();
 
 export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const { children } = props;

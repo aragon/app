@@ -1,0 +1,1 @@
+export { GaugeRegistrarActiveVotingAlert } from './gaugeRegistrarActiveVotingAlert';
