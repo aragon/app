@@ -1,6 +1,6 @@
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import type * as Navigation from '@/shared/components/navigation';
-import { generateDao, generateDialogContext } from '@/shared/testUtils';
+import { generateDao, generateDaoPlugin, generateDialogContext } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { GukModulesProvider, type ICompositeAddress } from '@aragon/gov-ui-kit';
@@ -75,7 +75,10 @@ describe('<NavigationDao /> component', () => {
     it('renders only allowed navigation links (excluding dashboard and settings for row variant usage on desktop)', () => {
         hasSupportedPluginsSpy.mockReturnValue(true);
 
-        const dao = generateDao({ id: 'test' });
+        const plugin = generateDaoPlugin({
+            isBody: true,
+        });
+        const dao = generateDao({ id: 'test', plugins: [plugin] });
         render(createTestComponent({ dao }));
 
         expect(screen.getByRole('link', { name: /navigationDao.link.proposals/ })).toBeInTheDocument();
