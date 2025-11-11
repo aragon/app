@@ -1,4 +1,5 @@
 import { useDebugContext, type IDebugContextControl } from '@/shared/components/debugProvider';
+import { sanitizePlainText } from '@/shared/security/htmlSanitizer';
 import { InputText, Switch } from '@aragon/gov-ui-kit';
 
 export interface IDebugPanelControlProps {
@@ -33,7 +34,7 @@ export const DebugPanelControl: React.FC<IDebugPanelControlProps> = (props) => {
     return (
         <InputText
             value={(values[name] as string | undefined) ?? ''}
-            onChange={({ target }) => handleValueChange(name, target.value, onChange)}
+            onChange={({ target }) => handleValueChange(name, sanitizePlainText(target.value), onChange)}
             label={label}
         />
     );

@@ -1,5 +1,6 @@
 'use client';
 
+import { sanitizePlainText } from '@/shared/security/htmlSanitizer';
 import { InputText } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { type ChangeEvent, type FocusEvent, forwardRef, type KeyboardEvent, useState } from 'react';
@@ -61,7 +62,7 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
     const { onFocus: onInputFocus, onKeyDown: onInputKeyDown, ...otherAutocompleteInputProps } = autocompleteInputProps;
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setInputValue(event.target.value);
+        setInputValue(sanitizePlainText(event.target.value));
         setActiveIndex(0);
     };
 

@@ -1,4 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { sanitizePlainText, sanitizePlainTextMultiline } from '@/shared/security/htmlSanitizer';
 import { useMemo } from 'react';
 import { type FieldPath, type FieldValues, type Noop, useController } from 'react-hook-form';
 import type { IUseFormFieldOptions, IUseFormFieldReturn } from './useFormField.api';
@@ -9,7 +10,15 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
 ): IUseFormFieldReturn<TFieldValues, TName> => {
     const { t } = useTranslations();
 
-    const { label, fieldPrefix, rules, trimOnBlur, alertValue: alertValueProp, ...otherOptions } = options ?? {};
+    const {
+        label,
+        fieldPrefix,
+        rules,
+        trimOnBlur,
+        alertValue: alertValueProp,
+        sanitizeMode = 'singleline',
+        ...otherOptions
+    } = options ?? {};
 
     const processedFieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
 
@@ -20,10 +29,15 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
     });
 
     const handleBlur = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        if (trimOnBlur) {
-            const trimmedValue = event.target.value.trim();
-            field.onChange(trimmedValue);
-        }
+        const rawValue = event.target.value;
+        const baseValue = trimOnBlur ? rawValue.trim() : rawValue;
+        const processedValue =
+            sanitizeMode === 'none'
+                ? baseValue
+                : sanitizeMode === 'multiline'
+                  ? sanitizePlainTextMultiline(baseValue)
+                  : sanitizePlainText(baseValue);
+        field.onChange(processedValue);
         field.onBlur();
     };
 

@@ -1,6 +1,7 @@
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { sanitizePlainText } from '@/shared/security/htmlSanitizer';
 import { InputText, TextArea } from '@aragon/gov-ui-kit';
 import type { ChangeEvent } from 'react';
 import type { ICreateProcessFormData } from '../createProcessFormDefinitions';
@@ -57,11 +58,12 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
         fieldPrefix,
         rules: { maxLength: summaryMaxLength },
         trimOnBlur: true,
+        sanitizeMode: 'multiline',
         defaultValue: '',
     });
 
     const handleKeyFieldChange = (event: ChangeEvent<HTMLInputElement>) =>
-        onProcessKeyChange(event.target.value.toUpperCase());
+        onProcessKeyChange(sanitizePlainText(event.target.value).toUpperCase());
 
     const typeLabel = t(`app.createDao.createProcessForm.metadata.type.${pluginType}`);
 

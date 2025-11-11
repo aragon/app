@@ -213,4 +213,19 @@ describe('<AutocompleteInput /> component', () => {
         const optionElement = screen.getByRole('option');
         expect(optionElement).toHaveTextContent('one');
     });
+
+    it('sanitizes the input value before passing it to onChange on selection', async () => {
+        const onChange = jest.fn();
+        const items = [{ id: '1', name: 'one', icon: IconType.APP_ASSETS, alwaysVisible: true }];
+        render(createTestComponent({ items, onChange }));
+        const input = screen.getByRole('combobox');
+        // includes control char and potential html - use paste to input all at once
+        await userEvent.click(input);
+        await userEvent.paste('\u0000<script>alert(1)</script> one ');
+        // Verify input value is sanitized
+        expect(input).toHaveValue('alert(1) one');
+        // pick the visible option
+        await userEvent.click(screen.getByRole('option'));
+        expect(onChange).toHaveBeenCalledWith(items[0].id, 'alert(1) one');
+    });
 });

@@ -1,4 +1,5 @@
 import { useFormField } from '@/shared/hooks/useFormField';
+import { sanitizePlainText } from '@/shared/security/htmlSanitizer';
 import type { IDateFixed } from '@/shared/utils/dateUtils';
 import { dateUtils } from '@/shared/utils/dateUtils/dateUtils';
 import { Card, InputDate, InputText, InputTime } from '@aragon/gov-ui-kit';
@@ -32,7 +33,7 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
     });
 
     const handleFixedDateTimeChange = (type: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = { ...fixedDateField.value, [type]: event.target.value };
+        const newValue = { ...fixedDateField.value, [type]: sanitizePlainText(event.target.value) };
         setValue(field, newValue, { shouldValidate: false });
     };
 

@@ -21,6 +21,7 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
     const summaryField = useFormField<ICreateProposalFormData, 'summary'>('summary', {
         label: t('app.governance.createProposalForm.metadata.summary.title'),
         trimOnBlur: true,
+        sanitizeMode: 'multiline',
     });
 
     const { ref: bodyRef, ...bodyField } = useFormField<ICreateProposalFormData, 'body'>('body', {

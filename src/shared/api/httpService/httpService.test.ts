@@ -158,6 +158,13 @@ describe('Http service', () => {
             const expectedUrl = `/dao/${params.network}/${params.id}/proposals/${params.proposalId}`;
             expect(serviceTest['replaceUrlParams'](url, params)).toEqual(expectedUrl);
         });
+
+        it('encodes unsafe characters in url parameters', () => {
+            const url = '/dao/:network/:id';
+            const params = { network: 'mainnet', id: 'a/b?&=#' };
+            const out = serviceTest['replaceUrlParams'](url, params);
+            expect(out).toBe('/dao/mainnet/a%2Fb%3F%26%3D%23');
+        });
     });
 
     describe('parseQueryParams', () => {
