@@ -152,6 +152,11 @@ describe('tokenTransaction utils', () => {
             const votingSettingsMock = { minDuration: BigInt(7200) };
             const minSettingsMock = [''];
             const tokenSettingsMock = { addr: '0x123' };
+            const hatsConfigMock = {
+                proposerHatId: BigInt('0x0000071700030000000000000000000000000000000000000000000000000000'),
+                voterHatId: BigInt('0x0000071700030000000000000000000000000000000000000000000000000000'),
+                executorHatId: BigInt(1),
+            };
             mintSettingsSpy.mockReturnValue(minSettingsMock);
             votingSettingsSpy.mockReturnValue(votingSettingsMock);
             tokenSettingsSpy.mockReturnValue(tokenSettingsMock);
@@ -168,6 +173,7 @@ describe('tokenTransaction utils', () => {
                 BigInt(0),
                 metadata,
                 [],
+                hatsConfigMock,
             ]);
         });
 
