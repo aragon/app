@@ -1,5 +1,90 @@
 {
   "app": {
+    "actions": {
+      "gaugeRegistrar": {
+        "composer": {
+          "contractName": "Gauge Registrar",
+          "registerActionName": "Register Gauge",
+          "unregisterActionName": "Unregister Gauge"
+        },
+        "gaugeRegistrarActiveVotingAlert": {
+          "message": "Even if simulation fails, you can still create the proposal now and execute it once the gauge vote ends.",
+          "title": "Execution will revert while gauge voting is active"
+        },
+        "gaugeRegistrarRegisterGaugeActionCreateForm": {
+          "avatar": {
+            "error": {
+              "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, or GIF).",
+              "file-too-large": "The file size exceeds the maximum allowed limit of 1 MB.",
+              "square-only": "The image must be square. Upload a square image.",
+              "too-many-files": "Only one file can be uploaded at a time.",
+              "unknown-file-error": "Unable to upload image",
+              "wrong-dimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
+            },
+            "helpText": "JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px.",
+            "label": "Logo"
+          },
+          "description": {
+            "helpText": "Describe the Gauge in a few sentences. This is listed on gauge detail page so contributors understand the gauge.",
+            "label": "Description"
+          },
+          "incentive": {
+            "borrowLabel": "Borrow",
+            "helpText": "The incentive type (Supply or Borrow).",
+            "label": "Incentive",
+            "supplyLabel": "Supply"
+          },
+          "name": {
+            "helpText": "Maximum of 128 characters.",
+            "label": "Name"
+          },
+          "qiToken": {
+            "helpText": "The address of the market's qiToken.",
+            "label": "Qi token",
+            "placeholder": "ENS or 0x…"
+          },
+          "resources": {
+            "helpText": "Links to the gauge website, social media profiles, or further external resources.",
+            "label": "Links"
+          },
+          "rewardController": {
+            "helpText": "The address of the Benqi protocol contract that controls rewards for this gauge.",
+            "label": "Reward controller",
+            "placeholder": "ENS or 0x…"
+          }
+        },
+        "gaugeRegistrarRegisterGaugeActionDetails": {
+          "avatarTerm": "Logo",
+          "descriptionTerm": "Description",
+          "incentiveTerm": "Incentive",
+          "nameTerm": "Name",
+          "qiTokenTerm": "Qi token",
+          "resourcesTerm": "Links",
+          "rewardControllerTerm": "Reward controller"
+        },
+        "gaugeRegistrarSelectGaugeDialog": {
+          "cancel": "Cancel",
+          "description": "Select a gauge to remove from the next epoche.",
+          "emptyState": "No gauges available",
+          "entityLabel": "Gauge",
+          "submit": "Select gauge",
+          "title": "Select gauge"
+        },
+        "gaugeRegistrarUnregisterGaugeActionCreate": {
+          "emptyCard": {
+            "action": "Select gauge",
+            "description": "Select a gauge to remove from the next epoche.",
+            "heading": "Select gauge"
+          }
+        },
+        "gaugeRegistrarUnregisterGaugeActionDetails": {
+          "notFound": {
+            "description": "We couldn't find this gauge.",
+            "title": "Not found"
+          }
+        }
+      }
+    },
     "application": {
       "bannerDao": {
         "adminMember": {
@@ -735,7 +820,8 @@
             "down": "Move down",
             "remove": "Remove",
             "up": "Move up"
-          }
+          },
+          "loading": "Loading actions data"
         },
         "metadata": {
           "actions": {
@@ -1202,6 +1288,108 @@
         "meta": {
           "link": {
             "rewards": "Rewards"
+          }
+        }
+      },
+      "gaugeVoter": {
+        "gaugeVoterGaugeDetailsDialog": {
+          "a11y": {
+            "description": "A dialog for displaying gauge details."
+          },
+          "content": {
+            "contract": "Contract",
+            "haveYouVotedFor": "Have you voted for?",
+            "totalRewards": "Total rewards",
+            "votedNo": "No",
+            "votedYes": "Yes",
+            "yourRewards": "Your rewards",
+            "yourRewardsDescription": "If you vote with your 100% voting power"
+          },
+          "footer": {
+            "next": "Next",
+            "previous": "Previous"
+          }
+        },
+        "gaugeVoterGaugeList": {
+          "emptyState": {
+            "description": "This will show your gauges when available.",
+            "heading": "No gauges found"
+          },
+          "entity": "Gauges",
+          "errorState": {
+            "description": "There was an error loading the gauges. Try again later.",
+            "heading": "Error loading gauges"
+          },
+          "heading": {
+            "name": "Name",
+            "totalVotes": "Total Votes",
+            "yourVotes": "Your Votes"
+          },
+          "item": {
+            "noVotes": "None",
+            "select": "Select",
+            "selected": "Selected",
+            "totalVotes": "Total votes",
+            "voted": "Voted",
+            "votes": "votes",
+            "yourVotes": "Your votes"
+          }
+        },
+        "gaugeVoterGaugesPage": {
+          "aside": {
+            "title": "Epoch {{epochId}}"
+          },
+          "main": {
+            "title": "Gauges",
+            "voteOnSelected": "Vote on {{count}} selected gauge",
+            "voteOnSelected_plural": "Vote on {{count}} selected gauges"
+          }
+        },
+        "gaugeVoterVoteDialog": {
+          "a11y": {
+            "description": "An allocation dialog for electing your gauge sentiment."
+          },
+          "action": {
+            "cancel": "Cancel",
+            "equalize": "Equalize",
+            "reset": "Reset",
+            "submit": "Submit votes"
+          },
+          "content": {
+            "description": "Proportionally distribute your voting power approach across your selected gauges.",
+            "used": "used"
+          },
+          "footer": {
+            "yourVotes": "YOUR VOTES"
+          },
+          "title": "Vote"
+        },
+        "gaugeVoterVoteTransactionDialog": {
+          "description": "To submit your gauge vote allocations, confirm the onchain transaction in your wallet.",
+          "submit": "Submit votes",
+          "successLinkLabel": "View gauges",
+          "title": "Submit gauge votes"
+        },
+        "gaugeVoterVotingStats": {
+          "daysLeftSuffix": " days left",
+          "toVote": "To vote",
+          "totalVotes": "Total votes",
+          "usedVotes": "Used votes",
+          "yourVotes": "Your votes"
+        },
+        "gaugeVoterVotingTerminal": {
+          "daysLeft": "{{count}} days left",
+          "nextVotingIn": "Next voting in {{count}} days",
+          "notVoted": "Not voted yet",
+          "selected": "{{count}} selected",
+          "updateVote": "Update vote",
+          "used": "used",
+          "voteOnSelected": "Vote on selected",
+          "yourVotes": "Your votes"
+        },
+        "meta": {
+          "link": {
+            "gauges": "Gauges"
           }
         }
       },

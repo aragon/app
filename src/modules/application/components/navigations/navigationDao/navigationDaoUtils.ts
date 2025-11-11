@@ -12,9 +12,19 @@ class NavigationDaoUtils {
         const baseUrl = daoUtils.getDaoUrl(dao)!;
 
         const defaultLinks = this.getDefaultLinks(dao, baseUrl, context);
-        const pluginLinks = this.getPluginLinks(dao, baseUrl, context);
+        const { left, right } = this.getPluginLinks(dao, baseUrl, context);
 
-        return defaultLinks.concat(pluginLinks);
+        const allLinks = [...left, ...defaultLinks, ...right];
+
+        // Deduplicate links by URL to avoid duplicate navigation items, e.g. multiple "gauge" plugins are possible
+        const seen = new Set<string>();
+        return allLinks.filter((link) => {
+            if (seen.has(link.link)) {
+                return false;
+            }
+            seen.add(link.link);
+            return true;
+        });
     };
 
     private getDefaultLinks = (dao: IDao, baseUrl: string, context: NavigationDaoContext): INavigationLink[] => {
@@ -66,13 +76,20 @@ class NavigationDaoUtils {
         ];
     };
 
-    private getPluginLinks = (dao: IDao, baseUrl: string, context: NavigationDaoContext): INavigationLink[] => {
-        const pluginLinks = dao.plugins.reduce<INavigationLink[]>((current, plugin) => {
-            const pluginInfo = pluginRegistryUtils.getPlugin(plugin.interfaceType) as IPluginInfo | undefined;
-            const pluginPages = pluginInfo?.pages?.(baseUrl, context) ?? [];
+    private getPluginLinks = (dao: IDao, baseUrl: string, context: NavigationDaoContext) => {
+        const pluginLinks = dao.plugins.reduce<{ left: INavigationLink[]; right: INavigationLink[] }>(
+            (current, plugin) => {
+                const pluginInfo = pluginRegistryUtils.getPlugin(plugin.interfaceType) as IPluginInfo | undefined;
+                const pluginPagesLeft = pluginInfo?.pageLinksLeft?.(baseUrl, context) ?? [];
+                const pluginPagesRight = pluginInfo?.pageLinksRight?.(baseUrl, context) ?? [];
 
-            return current.concat(pluginPages);
-        }, []);
+                return {
+                    left: current.left.concat(pluginPagesLeft),
+                    right: current.right.concat(pluginPagesRight),
+                };
+            },
+            { left: [], right: [] },
+        );
 
         return pluginLinks;
     };

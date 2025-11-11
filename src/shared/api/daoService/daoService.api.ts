@@ -1,4 +1,5 @@
-import type { IRequestUrlParams } from '../httpService';
+import type { IPaginatedRequest } from '../aragonBackendService';
+import type { IRequestUrlParams, IRequestUrlQueryParams } from '../httpService';
 import type { Network } from './domain';
 
 export interface IGetDaoUrlParams {
@@ -22,3 +23,19 @@ export interface IGetDaoByEnsUrlParams {
 }
 
 export interface IGetDaoByEnsParams extends IRequestUrlParams<IGetDaoByEnsUrlParams> {}
+
+export interface IGetDaoPermissionsUrlParams {
+    /**
+     * Network of the DAO.
+     */
+    network: Network;
+    /**
+     * Address of the DAO to fetch permissions for.
+     */
+    daoAddress: string;
+}
+
+export interface IGetDaoPermissionsQueryParams extends IPaginatedRequest {}
+
+export interface IGetDaoPermissionsParams
+    extends IRequestUrlQueryParams<IGetDaoPermissionsUrlParams, IGetDaoPermissionsQueryParams> {}
