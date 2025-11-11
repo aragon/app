@@ -28,30 +28,42 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
 
     const queryClient = new QueryClient();
 
-    const daoId = await daoUtils.resolveDaoId(daoPageParams);
-    const daoUrlParams = { id: daoId };
-    const dao = await queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }));
+    try {
+        console.log('[DaoMembersPage] Starting - daoPageParams:', daoPageParams);
 
-    const plugins = daoUtils.getDaoPlugins(dao, {
-        type: PluginType.BODY,
-        includeSubPlugins: true,
-    });
+        const daoId = await daoUtils.resolveDaoId(daoPageParams);
+        const daoUrlParams = {id: daoId};
+        const dao = await queryClient.fetchQuery(daoOptions({urlParams: daoUrlParams}));
 
-    if (!plugins?.length) {
-        const daoUrl = daoUtils.getDaoUrl(dao, 'dashboard')!;
-        redirect(daoUrl);
+        const plugins = daoUtils.getDaoPlugins(dao, {
+            type: PluginType.BODY,
+            includeSubPlugins: true,
+        });
+
+        if (!plugins?.length) {
+            const daoUrl = daoUtils.getDaoUrl(dao, 'dashboard')!;
+            redirect(daoUrl);
+        }
+
+        const bodyPluginAddress = plugins[0].address;
+        const memberListQueryParams = {daoId, pluginAddress: bodyPluginAddress, pageSize: daoMembersCount};
+        const memberListParams = {queryParams: memberListQueryParams};
+        await queryClient.prefetchInfiniteQuery(memberListOptions({queryParams: memberListQueryParams}));
+
+        return (
+            <Page.Container queryClient={queryClient}>
+                <Page.Content>
+                    <DaoMembersPageClient initialParams={memberListParams}/>
+                </Page.Content>
+            </Page.Container>
+        );
+
+    } catch (error) {
+        console.error('[DaoMembersPage] Error caught:', error);
+        if (error instanceof Error) {
+            console.error('[DaoMembersPage] Error message:', error.message);
+            console.error('[DaoMembersPage] Error stack:', error.stack);
+        }
+        throw error;
     }
-
-    const bodyPluginAddress = plugins[0].address;
-    const memberListQueryParams = { daoId, pluginAddress: bodyPluginAddress, pageSize: daoMembersCount };
-    const memberListParams = { queryParams: memberListQueryParams };
-    await queryClient.prefetchInfiniteQuery(memberListOptions({ queryParams: memberListQueryParams }));
-
-    return (
-        <Page.Container queryClient={queryClient}>
-            <Page.Content>
-                <DaoMembersPageClient initialParams={memberListParams} />
-            </Page.Content>
-        </Page.Container>
-    );
 };
