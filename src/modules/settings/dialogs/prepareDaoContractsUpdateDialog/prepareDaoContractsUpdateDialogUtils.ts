@@ -169,7 +169,7 @@ class PrepareDaoContractsUpdateDialogUtils {
             pluginRegistryUtils.getPlugin(interfaceType) as IPluginInfo
         ).installVersion;
 
-        const pluginName = daoUtils.parsePluginSubdomain(subdomain);
+        const pluginName = daoUtils.getPluginName(plugin);
         const updatedVersion = `${pluginName} ${release.toString()}.${build.toString()}`;
         const currentVersion = `${pluginName} ${currentRelease}.${currentBuild}`;
 

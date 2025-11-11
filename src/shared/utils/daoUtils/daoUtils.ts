@@ -67,8 +67,8 @@ class DaoUtils {
         if (plugin.name) {
             return plugin.name;
         }
-
-        return this.parsePluginSubdomain(plugin.subdomain);
+        const safePluginName = plugin.subdomain || plugin.slug || plugin.interfaceType || 'Unknown Plugin';
+        return this.parsePluginSubdomain(safePluginName);
     };
 
     getDaoPlugins = (dao?: IDao, params?: IGetDaoPluginsParams) => {

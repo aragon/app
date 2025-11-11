@@ -39,7 +39,7 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
                     copyValue={plugin.meta.address}
                     link={{ href: buildEntityUrl({ type: ChainEntityType.ADDRESS, id: plugin.meta.address, chainId }) }}
                     description={t('app.settings.daoVersionInfo.governanceValue', {
-                        name: daoUtils.parsePluginSubdomain(plugin.meta.subdomain),
+                        name: daoUtils.getPluginName(plugin.meta),
                         release: plugin.meta.release,
                         build: plugin.meta.build,
                     })}
