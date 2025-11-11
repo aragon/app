@@ -24,7 +24,7 @@ export interface ILayoutRootProps {
 
 // Initialise plugin registry and intercept fetch requests (if enabled) for server-side components
 initPluginRegistry();
-fetchInterceptorUtils.intecept();
+fetchInterceptorUtils.intercept();
 
 export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const { children } = props;

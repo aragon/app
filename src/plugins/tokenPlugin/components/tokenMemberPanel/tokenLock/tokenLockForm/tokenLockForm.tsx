@@ -17,6 +17,9 @@ import type { ITokenLocksDialogParams } from '../../../../dialogs/tokenLocksDial
 import { useCheckTokenAllowance } from '../../hooks/useCheckTokenAllowance';
 import { TokenLockFormChart } from './tokenLockFormChart';
 
+/**
+ * Props for the TokenLockForm component.
+ */
 export interface ITokenLockFormProps {
     /**
      * DAO plugin for the token locking.
@@ -28,6 +31,9 @@ export interface ITokenLockFormProps {
     daoId: string;
 }
 
+/**
+ * Form data for token locking, extends AssetInputFormData.
+ */
 export interface ITokenLockFormData extends IAssetInputFormData {}
 
 export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
@@ -44,14 +50,15 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { open } = useDialogContext();
     const { t } = useTranslations();
     const { address } = useAccount();
+
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const memberLocksQueryParams = { network: dao!.network, escrowAddress, onlyActive: true };
-    const { data: memberLocks, refetch: refetchLocks } = useMemberLocks(
+    const { data: memberLocks, refetch: refetchMemberLocks } = useMemberLocks(
         { urlParams: { address: address! }, queryParams: memberLocksQueryParams },
         { enabled: address != null },
     );
-    const locksCount = memberLocks?.pages[0].metadata.totalRecords ?? 0;
+    const locksCount = memberLocks?.pages[0]?.metadata.totalRecords ?? 0;
 
     const { result: isConnected, check: walletGuard } = useConnectedWalletGuard();
 
@@ -119,7 +126,7 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     };
 
     const onLockTokensSuccessClick = () => {
-        void refetchLocks();
+        void refetchMemberLocks();
         handleViewLocks();
     };
 

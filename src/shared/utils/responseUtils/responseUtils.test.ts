@@ -30,15 +30,20 @@ describe('responseUtils.safeJsonParse', () => {
             const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBeNull();
-            expect(monitoringUtils.logError).not.toHaveBeenCalled();
-        });
-
-        it('should return null for missing content-type', async () => {
-            const response = new Response('Hello World', { status: 200 });
-            const result = await responseUtils.safeJsonParse(response);
-
-            expect(result).toBeNull();
-            expect(monitoringUtils.logError).not.toHaveBeenCalled();
+            expect(monitoringUtils.logError).toHaveBeenCalledTimes(1);
+            const calls = (monitoringUtils.logError as jest.Mock).mock.calls as Array<
+                [Error, { context: Record<string, unknown> }]
+            >;
+            expect(calls[0][0].name).toBe('SyntaxError');
+            expect(calls[0][1]).toEqual({
+                context: {
+                    errorType: 'json_parse_error',
+                    status: 200,
+                    url: '',
+                    contentType: 'text/plain',
+                    bodyPreview: 'Hello World',
+                },
+            });
         });
     });
 
@@ -51,7 +56,7 @@ describe('responseUtils.safeJsonParse', () => {
             const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBeNull();
-            expect(monitoringUtils.logError).not.toHaveBeenCalled();
+            expect(monitoringUtils.logError).toHaveBeenCalledTimes(1);
         });
 
         it('should return null for whitespace-only body', async () => {
@@ -62,7 +67,7 @@ describe('responseUtils.safeJsonParse', () => {
             const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBeNull();
-            expect(monitoringUtils.logError).not.toHaveBeenCalled();
+            expect(monitoringUtils.logError).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -114,7 +119,12 @@ describe('responseUtils.safeJsonParse', () => {
             const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBeNull();
-            expect(monitoringUtils.logError).toHaveBeenCalledWith(expect.any(Error), {
+            expect(monitoringUtils.logError).toHaveBeenCalledTimes(1);
+            const calls = (monitoringUtils.logError as jest.Mock).mock.calls as Array<
+                [Error, { context: Record<string, unknown> }]
+            >;
+            expect(calls[0][0].name).toBe('SyntaxError');
+            expect(calls[0][1]).toEqual({
                 context: {
                     errorType: 'json_parse_error',
                     status: 200,
@@ -134,7 +144,12 @@ describe('responseUtils.safeJsonParse', () => {
             const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBeNull();
-            expect(monitoringUtils.logError).toHaveBeenCalledWith(expect.any(Error), {
+            expect(monitoringUtils.logError).toHaveBeenCalledTimes(1);
+            const calls = (monitoringUtils.logError as jest.Mock).mock.calls as Array<
+                [Error, { context: Record<string, unknown> }]
+            >;
+            expect(calls[0][0].name).toBe('SyntaxError');
+            expect(calls[0][1]).toEqual({
                 context: {
                     errorType: 'json_parse_error',
                     status: 200,
@@ -192,7 +207,12 @@ describe('responseUtils.safeJsonParse', () => {
             const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBeNull();
-            expect(monitoringUtils.logError).toHaveBeenCalledWith(expect.any(Error), {
+            expect(monitoringUtils.logError).toHaveBeenCalledTimes(1);
+            const calls = (monitoringUtils.logError as jest.Mock).mock.calls as Array<
+                [Error, { context: Record<string, unknown> }]
+            >;
+            expect(calls[0][0].name).toBe('SyntaxError');
+            expect(calls[0][1]).toEqual({
                 context: {
                     errorType: 'json_parse_error',
                     status: 500,

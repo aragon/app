@@ -29,7 +29,7 @@ describe('proxyBackend utils', () => {
             const fetchReturn = generateResponse({
                 status: 200,
                 headers,
-                text: jest.fn(() => Promise.resolve(JSON.stringify(parsedResponse))),
+                json: jest.fn(() => Promise.resolve(parsedResponse)),
             });
             const mockNextResponse = {} as NextResponse;
             fetchSpy.mockResolvedValue(fetchReturn);
@@ -38,7 +38,7 @@ describe('proxyBackend utils', () => {
             const result = await proxyBackendUtils.request(generateNextRequest({ url: 'http://test.com' }));
 
             expect(fetchSpy).toHaveBeenCalled();
-            expect(fetchReturn.text).toHaveBeenCalled();
+            expect(fetchReturn.json).toHaveBeenCalled();
             expect(nextResponseJsonSpy).toHaveBeenCalledWith(parsedResponse, {
                 status: fetchReturn.status,
                 headers: fetchReturn.headers,

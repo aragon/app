@@ -28,7 +28,12 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { actionSimulationServiceKeys, useLastSimulation, useSimulateProposal } from '../../api/actionSimulationService';
-import { type IProposal, useProposalActions, useProposalBySlug } from '../../api/governanceService';
+import {
+    governanceServiceKeys,
+    type IProposal,
+    useProposalActions,
+    useProposalBySlug,
+} from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
@@ -81,7 +86,10 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         data: lastSimulation,
         isError: isLastSimulationError,
         error: lastSimulationError,
-    } = useLastSimulation({ urlParams: { proposalId: proposal?.id as string } }, { enabled: showActionSimulation });
+    } = useLastSimulation(
+        { urlParams: { proposalId: proposal?.id as string } },
+        { enabled: !!proposal?.hasSimulation },
+    );
 
     const {
         mutate: simulateProposal,
@@ -99,7 +107,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const handleSimulateProposalSuccess = () => {
         const urlParams = { proposalId: proposal.id };
         const simulationQueryKey = actionSimulationServiceKeys.lastSimulation({ urlParams });
+        const proposalQueryKey = governanceServiceKeys.proposalBySlug(proposalParams);
         void queryClient.invalidateQueries({ queryKey: simulationQueryKey });
+        void queryClient.invalidateQueries({ queryKey: proposalQueryKey });
     };
 
     const handleSimulateProposal = () => {
