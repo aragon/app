@@ -35,7 +35,7 @@ import {
     useProposalActions,
     useProposalBySlug,
 } from '../../api/governanceService';
-import { IProposalActionData } from '../../components/createProposalForm';
+import type { IProposalActionData } from '../../components/createProposalForm';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
