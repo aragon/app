@@ -384,7 +384,7 @@
         },
         "permissions": {
           "anyEmptyState": {
-            "description": "This process will be granted permission to execute on behalf of the DAO. It could withdraw funds, modify governance contracts, and call any function on any smart contract.",
+            "description": "This process will be granted permission to execute on behalf of the DAO. It could, for example, withdraw funds, modify governance contracts, and call any function on any smart contract.",
             "heading": "Unrestricted execution"
           },
           "permissionField": {
@@ -500,7 +500,7 @@
         "externalAddress": {
           "address": {
             "helpText": "Add any address as a body, such as a Safe or Governor",
-            "label": "External address"
+            "label": "Any address"
           },
           "addressTypeCheck": {
             "loading": "Analyzing address type",
@@ -527,7 +527,7 @@
           },
           "external": {
             "description": "Add any address as a body, such as a Safe or Governor",
-            "label": "External address"
+            "label": "Any address"
           },
           "plugin": {
             "helpText": "This determines the governance the body uses to make decisions.",
@@ -912,7 +912,7 @@
       },
       "daoMemberList": {
         "empty": {
-          "description": "This DAO currently has no members.",
+          "description": "This governing body currently has no members.",
           "title": "No members found"
         },
         "entity": "Members",
@@ -1410,7 +1410,7 @@
           "participation": "≥ {{participation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
           "proposalAccess": "Members with ≥ {{balance}} {{symbol}} voting power or balance",
           "proposalDuration": "Proposal duration",
-          "proposalThreshold": "Proposal threshold",
+          "proposalThreshold": "Proposal creation",
           "threshold": "> {{threshold}}",
           "vetoThreshold": "Veto support threshold",
           "voteChange": "Vote change",
@@ -1464,7 +1464,7 @@
         },
         "lockToVoteProcessBodyField": {
           "disabled": "Disabled",
-          "distributionTerm": "Distribution",
+          "distributionTerm": "Members",
           "enabled": "Enabled",
           "holders": "{{count}} token holders",
           "minParticipationDefinition": "≥ {{minParticipation}}",
@@ -1864,7 +1864,7 @@
           "no": "Disabled",
           "participation": "≥ {{participation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
           "proposalAccess": "Members with ≥ {{balance}} {{symbol}} voting power or balance",
-          "proposalThreshold": "Proposal threshold",
+          "proposalThreshold": "Proposal creation",
           "threshold": "> {{threshold}}",
           "vetoThreshold": "Veto support threshold",
           "voteChange": "Vote change",
@@ -1943,11 +1943,11 @@
           "title": "Your locks"
         },
         "tokenMemberInfo": {
-          "distribution": "Distribution",
+          "distribution": "Members",
           "eligibleVoters": "Eligible voters",
           "members": "Members",
           "supply": "Supply",
-          "tokenDistribution": "{{count}} token holders",
+          "tokenDistribution": "{{count}} delegates",
           "tokenHolders": "Token holders",
           "tokenLabel": "Token",
           "tokenNameAndSymbol": "{{tokenName}} ({{tokenSymbol}})",
@@ -1989,10 +1989,10 @@
         },
         "tokenProcessBodyField": {
           "disabled": "Disabled",
-          "distributionTerm": "Distribution",
+          "distributionTerm": "Members",
           "earlyExecution": "Early execution",
           "enabled": "Enabled",
-          "holders": "{{count}} token holders",
+          "holders": "{{count}} delegates",
           "minDurationDefinition": "{{days}} days {{hours}} hours {{minutes}} minutes",
           "minDurationTerm": "Minimum duration",
           "minParticipationDefinition": "≥ {{minParticipation}}",
@@ -2166,7 +2166,7 @@
         "tokenWrapForm": {
           "approveTransactionInfoTitle": "Approve {{symbol}}",
           "footerInfo": "Wrapping tokens will transfer them out of your wallet to the wrapping contract, where they can be withdrawn back to your wallet at any time.",
-          "info": "Wrap {{underlyingSymbol}} to increase your voting power.",
+          "info": "Wrap {{underlyingSymbol}} to get voting power.",
           "submit": {
             "approve": "Approve {{underlyingSymbol}}",
             "unwrap": "Unwrap {{amount}} {{symbol}}",
@@ -2232,7 +2232,7 @@
         "bodyName": "Body name",
         "processKey": "Process key",
         "processName": "Process name",
-        "viewProcess": "View process"
+        "viewProcess": "View governance process"
       },
       "daoProcessAllowedActions": {
         "emptyState": {
@@ -2240,7 +2240,7 @@
           "heading": "Restricted execution"
         },
         "unrestricted": {
-          "description": "This process will be granted permission to execute on behalf of the DAO. It could withdraw funds, modify governance contracts, and call any function on any smart contract.",
+          "description": "This process has permission to execute on behalf of the DAO. It could, for example, withdraw funds, modify governance contracts, and call any function on any smart contract.",
           "heading": "Unrestricted execution"
         }
       },
@@ -2249,7 +2249,7 @@
         "pluginName": "Plugin name",
         "processKey": "Process key",
         "uninstall": {
-          "action": "Uninstall Process",
+          "action": "Uninstall process",
           "info": "Proposals of this type can't be executed once this process is uninstalled."
         }
       },
