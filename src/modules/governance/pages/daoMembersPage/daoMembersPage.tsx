@@ -1,10 +1,10 @@
 import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
+import { redirect } from '@/shared/lib/nextNavigation';
 import { PluginType, type IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import { QueryClient } from '@tanstack/react-query';
-import { redirect } from 'next/navigation';
 import { memberListOptions } from '../../api/governanceService';
 import { DaoMembersPageClient } from './daoMembersPageClient';
 
