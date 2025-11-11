@@ -2,7 +2,7 @@
 
 import { useRouter as useRouterWithTopLoader } from 'nextjs-toploader/app';
 import { useMemo } from 'react';
-export { redirect, useParams, usePathname, useSearchParams } from 'next/navigation-original';
+export { useParams, usePathname, useSearchParams } from 'next/navigation-original';
 
 // override the default useRouter from next/navigation to enable the top loader
 export const useRouter = () => {
