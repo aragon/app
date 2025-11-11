@@ -13,10 +13,21 @@ import {
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { clipboardUtils, GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
+import type * as ReactQuery from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import * as actionSimulationService from '../../api/actionSimulationService';
 import * as governanceService from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+
+jest.mock('@tanstack/react-query', () => {
+    const actual = jest.requireActual<typeof ReactQuery>('@tanstack/react-query');
+    return {
+        ...actual,
+        useQueryClient: jest.fn(),
+    };
+});
 
 jest.mock('../../components/proposalVotingTerminal', () => ({
     ProposalVotingTerminal: () => <div data-testid="voting-terminal-mock" />,
@@ -34,6 +45,9 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
     const useSlotSingleFunctionSpy = jest.spyOn(useSlotSingleFunction, 'useSlotSingleFunction');
 
+    const mockInvalidateQueries = jest.fn();
+    const mockQueryClient = { invalidateQueries: mockInvalidateQueries };
+
     beforeEach(() => {
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateProposal() }));
         useProposalActionsSpy.mockReturnValue(
@@ -41,6 +55,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         );
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         useLastSimulationSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateSimulationResult() }));
+        (useQueryClient as jest.Mock).mockReturnValue(mockQueryClient);
     });
 
     afterEach(() => {
@@ -50,6 +65,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         clipboardCopySpy.mockReset();
         useSlotSingleFunctionSpy.mockReset();
         useLastSimulationSpy.mockReset();
+        mockInvalidateQueries.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoProposalDetailsPageClientProps>) => {
@@ -194,5 +210,98 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     it('renders the proposal voting terminal', () => {
         render(createTestComponent());
         expect(screen.getByTestId('voting-terminal-mock')).toBeInTheDocument();
+    });
+
+    describe('Action simulation behavior', () => {
+        const useSimulateProposalSpy = jest.spyOn(actionSimulationService, 'useSimulateProposal');
+
+        beforeEach(() => {
+            useSimulateProposalSpy.mockReturnValue({
+                mutate: jest.fn(),
+                isPending: false,
+                isError: false,
+            } as Partial<ReturnType<typeof actionSimulationService.useSimulateProposal>> as ReturnType<
+                typeof actionSimulationService.useSimulateProposal
+            >);
+        });
+
+        afterEach(() => {
+            useSimulateProposalSpy.mockReset();
+        });
+
+        it('does not fetch simulation when hasSimulation is false', () => {
+            const proposal = generateProposal({ hasActions: true, hasSimulation: false });
+            const dao = generateDao({ network: Network.ETHEREUM_MAINNET });
+            useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
+            useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
+            useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.ACTIVE);
+
+            render(createTestComponent());
+
+            expect(useLastSimulationSpy).toHaveBeenCalledWith(
+                { urlParams: { proposalId: proposal.id } },
+                { enabled: false },
+            );
+        });
+
+        it('fetches simulation when hasSimulation is true', () => {
+            const proposal = generateProposal({ hasActions: true, hasSimulation: true });
+            const dao = generateDao({ network: Network.ETHEREUM_MAINNET });
+            useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
+            useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
+            useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.EXECUTED);
+
+            render(createTestComponent());
+
+            expect(useLastSimulationSpy).toHaveBeenCalledWith(
+                { urlParams: { proposalId: proposal.id } },
+                { enabled: true },
+            );
+        });
+
+        it('invalidates proposal query after successful simulation', async () => {
+            const mutateFn = jest.fn(
+                (
+                    _params: unknown,
+                    options?: { onSuccess?: () => void; onError?: () => void; onSettled?: () => void },
+                ) => {
+                    if (options?.onSuccess) {
+                        options.onSuccess();
+                    }
+                },
+            );
+
+            useSimulateProposalSpy.mockReturnValue({
+                mutate: mutateFn,
+                isPending: false,
+                isError: false,
+            } as Partial<ReturnType<typeof actionSimulationService.useSimulateProposal>> as ReturnType<
+                typeof actionSimulationService.useSimulateProposal
+            >);
+
+            const proposal = generateProposal({ id: 'test-proposal', hasActions: true });
+            const dao = generateDao({ network: Network.ETHEREUM_MAINNET });
+            useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
+            useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
+            useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.ACTIVE);
+
+            render(createTestComponent({ daoId: 'test-dao', proposalSlug: 'test-slug' }));
+
+            const simulateButton = screen.getByRole('button', { name: /simulate/i });
+            await userEvent.click(simulateButton);
+
+            expect(mutateFn).toHaveBeenCalled();
+
+            const simulationQueryKey = actionSimulationService.actionSimulationServiceKeys.lastSimulation({
+                urlParams: { proposalId: proposal.id },
+            });
+            const proposalQueryKey = governanceService.governanceServiceKeys.proposalBySlug({
+                urlParams: { slug: 'test-slug' },
+                queryParams: { daoId: 'test-dao' },
+            });
+
+            expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: simulationQueryKey });
+            expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: proposalQueryKey });
+        });
     });
 });
