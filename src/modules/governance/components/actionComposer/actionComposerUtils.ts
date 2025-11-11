@@ -368,7 +368,7 @@ class ActionComposerUtils {
             proposedMetadata: existingMetadata,
             inputData: {
                 function: 'setMetadata',
-                contract: plugin.subdomain,
+                contract: plugin.subdomain ?? plugin.interfaceType,
                 parameters: [
                     { name: '_metadata', type: 'bytes', notice: 'The IPFS hash of the new metadata object', value: '' },
                 ],

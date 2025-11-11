@@ -69,7 +69,7 @@ class DaoUtils {
         }
 
         // Fallback chain: subdomain → slug → interfaceType
-        const pluginIdentifier = plugin.subdomain ?? plugin.slug ?? plugin.interfaceType;
+        const pluginIdentifier = (plugin.subdomain ?? plugin.slug) || plugin.interfaceType;
         return this.parsePluginSubdomain(pluginIdentifier);
     };
 
