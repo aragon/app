@@ -1,23 +1,24 @@
 import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
-import { ProposalActionType } from '@/modules/governance/api/governanceService';
+import { ProposalActionType, type IProposalActionWithdrawToken } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     IconType,
+    ProposalActions,
     type IProposalActionsItemDropdownItem,
     type ProposalActionComponent,
-    ProposalActions,
 } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
-import { useFieldArray, useWatch } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
 import type { ICreateProposalFormData, IProposalActionData } from '../createProposalFormDefinitions';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
 import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';
 import { UpdatePluginMetadataAction } from './proposalActions/updatePluginMetadataAction';
+import { withActionRegistration } from './proposalActions/withActionRegistration';
 
 export interface ICreateProposalFormActionsProps {
     /**
@@ -31,10 +32,10 @@ export interface ICreateProposalFormActionsProps {
 }
 
 const coreCustomActionComponents = {
-    [ProposalActionType.TRANSFER]: TransferAssetAction,
-    [actionComposerUtils.transferActionLocked]: TransferAssetAction,
-    [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction,
-    [ProposalActionType.METADATA_PLUGIN_UPDATE]: UpdatePluginMetadataAction,
+    [ProposalActionType.TRANSFER]: withActionRegistration(TransferAssetAction),
+    [actionComposerUtils.transferActionLocked]: withActionRegistration(TransferAssetAction),
+    [ProposalActionType.METADATA_UPDATE]: withActionRegistration(UpdateDaoMetadataAction),
+    [ProposalActionType.METADATA_PLUGIN_UPDATE]: withActionRegistration(UpdatePluginMetadataAction),
 } as unknown as Record<string, ProposalActionComponent<IProposalActionData>>;
 
 export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = (props) => {
@@ -48,6 +49,21 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const { t } = useTranslations();
     const [expandedActions, setExpandedActions] = useState<string[]>([]);
+    const { control, getValues } = useFormContext<ICreateProposalFormData>();
+
+    const {
+        fields: actions,
+        append,
+        remove,
+        move,
+    } = useFieldArray({
+        control,
+        name: 'actions',
+    });
+
+    useEffect(() => {
+        console.log('AFTER OPERATION:', actions);
+    }, [actions]);
 
     const { data: allowedActionsData } = useAllowedActions(
         { urlParams: { network: dao!.network, pluginAddress }, queryParams: { pageSize: 50 } },
@@ -56,46 +72,34 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const allowedActions = allowedActionsData?.pages.flatMap((page) => page.data);
 
-    const {
-        append: addAction,
-        remove: removeAction,
-        move: moveAction,
-        fields: actions,
-    } = useFieldArray<ICreateProposalFormData, 'actions'>({
-        name: 'actions',
-    });
-
-    // Needed to control the entire field array (see Controlled Field Array on useFieldArray)
-    const watchFieldArray = useWatch<Record<string, ICreateProposalFormData['actions']>>({ name: 'actions' });
-    const controlledActions = actions.map((field, index) => ({ ...field, ...watchFieldArray[index] }));
-
-    // When moving actions up or down, the value field of the decoded parameters does not get unregistered, causing
-    // actions to have redundant parameters (coming from the action before/after) with a value but no type or name.
-    const processedActions = controlledActions.map(({ inputData, ...field }) => ({
-        ...field,
-        inputData: inputData
-            ? { ...inputData, parameters: inputData.parameters.filter(({ type }) => (type as unknown) != null) }
-            : null,
-    }));
-
-    const handleMoveAction = (index: number, newIndex: number) => moveAction(index, newIndex);
+    const handleMoveAction = (index: number, newIndex: number) => {
+        console.log('BEFORE MOVE:', getValues('actions'));
+        move(index, newIndex);
+    };
 
     const handleRemoveAction = (action: IProposalActionData, index: number) => {
-        removeAction(index);
+        console.log('BEFORE REMOVE:', getValues('actions'));
+        remove(index);
+
         setExpandedActions((actionIds) => {
             // Expand the last remaining actions when only two actions are left, otherwise exclude the removed action ID
             const defaultNewIds = actionIds.filter((id) => id !== action.id);
-            const newExpandedActions =
-                controlledActions.length === 2 ? [controlledActions[Math.abs(index - 1)].id] : defaultNewIds;
 
-            return newExpandedActions;
+            if (actions.length === 2) {
+                const remainingActionId = actions[Math.abs(index - 1)]?.id;
+                return remainingActionId ? [remainingActionId] : [];
+            }
+
+            return defaultNewIds;
         });
     };
 
-    const handleAddAction = (actions: IProposalActionData[]) => {
+    const handleAddAction = (newActions: IProposalActionData[]) => {
         // Expand all added actions containing an id
-        setExpandedActions(actions.map((action) => action.id).filter((id) => id != null));
-        addAction(actions);
+        const actionIds = newActions.map((action) => action.id).filter((id): id is string => id != null);
+        setExpandedActions(actionIds);
+
+        append(newActions);
     };
 
     const getActionDropdownItems = (index: number) => {
@@ -104,13 +108,13 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 label: t('app.governance.createProposalForm.actions.editAction.up'),
                 icon: IconType.CHEVRON_UP,
                 onClick: (_, index) => handleMoveAction(index, index - 1),
-                hidden: controlledActions.length < 2 || index === 0,
+                hidden: actions.length < 2 || index === 0,
             },
             {
                 label: t('app.governance.createProposalForm.actions.editAction.down'),
                 icon: IconType.CHEVRON_DOWN,
                 onClick: (_, index) => handleMoveAction(index, index + 1),
-                hidden: controlledActions.length < 2 || index === controlledActions.length - 1,
+                hidden: actions.length < 2 || index === actions.length - 1,
             },
             {
                 label: t('app.governance.createProposalForm.actions.editAction.remove'),
@@ -137,19 +141,50 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         <div className="flex flex-col gap-y-10">
             <ProposalActions.Root expandedActions={expandedActions} onExpandedActionsChange={setExpandedActions}>
                 <ProposalActions.Container emptyStateDescription="">
-                    {processedActions.map((action, index) => (
-                        <ProposalActions.Item<IProposalActionData>
-                            key={action.id}
-                            action={action}
-                            actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(action)}
-                            value={action.id}
-                            CustomComponent={customActionComponents[action.type]}
-                            dropdownItems={getActionDropdownItems(index)}
-                            editMode={true}
-                            formPrefix={`actions.${index.toString()}`}
-                            chainId={networkDefinitions[dao!.network].id}
-                        />
-                    ))}
+                    {actions.map((field, index) => {
+                        // The `field` object from `useFieldArray` can be stale during re-renders.
+                        // To get the most up-to-date data, we read it directly from the form state.
+                        const allActions = getValues('actions');
+                        const currentActionData = allActions?.[index];
+
+                        // If data for the current index doesn't exist, render nothing to prevent crashes.
+                        // This can happen momentarily during a fast `remove` operation.
+                        if (!currentActionData) {
+                            return null;
+                        }
+
+                        // Combine the stable `id` from the field array with the fresh data from the form state.
+                        const freshAction = { ...currentActionData, id: field.id };
+
+                        // The `ProposalActions.Item` component unconditionally calls `BigInt(action.value)`.
+                        if (freshAction.value == null) {
+                            freshAction.value = '0';
+                        }
+
+                        // The custom `TransferAssetAction` component uses `action.amount`. We use a type
+                        // assertion to ensure TypeScript knows this property exists for this action type.
+                        if (
+                            (freshAction.type === ProposalActionType.TRANSFER ||
+                                freshAction.type === actionComposerUtils.transferActionLocked) &&
+                            (freshAction as unknown as IProposalActionWithdrawToken).amount == null
+                        ) {
+                            (freshAction as unknown as IProposalActionWithdrawToken).amount = '0';
+                        }
+
+                        return (
+                            <ProposalActions.Item<IProposalActionData>
+                                key={field.id}
+                                action={freshAction}
+                                actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(freshAction)}
+                                value={field.id}
+                                CustomComponent={customActionComponents[freshAction.type]}
+                                dropdownItems={getActionDropdownItems(index)}
+                                editMode={true}
+                                formPrefix={`actions.${index.toString()}`}
+                                chainId={networkDefinitions[dao!.network].id}
+                            />
+                        );
+                    })}
                 </ProposalActions.Container>
             </ProposalActions.Root>
             {showActionComposer && (

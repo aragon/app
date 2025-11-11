@@ -47,9 +47,18 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
         chainId,
     });
 
-    const receiver = useWatch<Record<string, ITransferAssetFormData['receiver']>>({ name: `${fieldName}.receiver` });
-    const asset = useWatch<Record<string, ITransferAssetFormData['asset']>>({ name: `${fieldName}.asset` });
-    const amount = useWatch<Record<string, ITransferAssetFormData['amount']>>({ name: `${fieldName}.amount` });
+    const receiver = useWatch<Record<string, ITransferAssetFormData['receiver']>>({
+        name: `${fieldName}.receiver`,
+        defaultValue: undefined,
+    });
+    const asset = useWatch<Record<string, ITransferAssetFormData['asset']>>({
+        name: `${fieldName}.asset`,
+        defaultValue: undefined,
+    });
+    const amount = useWatch<Record<string, ITransferAssetFormData['amount']>>({
+        name: `${fieldName}.amount`,
+        defaultValue: '0',
+    });
 
     const tokenDecimals = asset?.token.decimals ?? 18;
     const tokenAddress = asset?.token.address ?? action.to;
