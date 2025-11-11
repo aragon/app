@@ -1,3 +1,5 @@
+'use client';
+
 import { HydrationBoundary, dehydrate, type QueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
