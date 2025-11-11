@@ -164,7 +164,7 @@ class PrepareDaoContractsUpdateDialogUtils {
     };
 
     private getPluginUpdateDetails = (plugin: IDaoPlugin) => {
-        const { interfaceType, subdomain, release: currentRelease, build: currentBuild } = plugin;
+        const { interfaceType, release: currentRelease, build: currentBuild } = plugin;
         const { release, build, description, releaseNotes } = (
             pluginRegistryUtils.getPlugin(interfaceType) as IPluginInfo
         ).installVersion;

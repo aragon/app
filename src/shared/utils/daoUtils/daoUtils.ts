@@ -67,7 +67,7 @@ class DaoUtils {
         if (plugin.name) {
             return plugin.name;
         }
-        const safePluginName = plugin.subdomain || plugin.slug || plugin.interfaceType || 'Unknown Plugin';
+        const safePluginName = plugin.subdomain || plugin.slug || plugin.interfaceType;
         return this.parsePluginSubdomain(safePluginName);
     };
 
