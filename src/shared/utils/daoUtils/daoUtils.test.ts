@@ -71,16 +71,40 @@ describe('dao utils', () => {
     });
 
     describe('getPluginName', () => {
-        it('formats plugin subdomain', () => {
-            const subdomain = 'token-voting';
-            const plugin = generateDaoPlugin({ subdomain });
-            expect(daoUtils.getPluginName(plugin)).toEqual('Token Voting');
-        });
-
         it('returns plugin name when available', () => {
             const name = 'Custom plugin';
             const plugin = generateDaoPlugin({ name });
             expect(daoUtils.getPluginName(plugin)).toEqual(name);
+        });
+
+        it('formats plugin subdomain when name is not available', () => {
+            const subdomain = 'token-voting';
+            const plugin = generateDaoPlugin({ subdomain, name: undefined });
+            expect(daoUtils.getPluginName(plugin)).toEqual('Token Voting');
+        });
+
+        it('falls back to slug when subdomain is null and name is not available', () => {
+            const slug = 'multisig-plugin';
+            const plugin = generateDaoPlugin({ subdomain: undefined, slug, name: undefined });
+            expect(daoUtils.getPluginName(plugin)).toEqual('Multisig Plugin');
+        });
+
+        it('falls back to slug when subdomain is undefined and name is not available', () => {
+            const slug = 'admin-plugin';
+            const plugin = generateDaoPlugin({ subdomain: undefined, slug, name: undefined });
+            expect(daoUtils.getPluginName(plugin)).toEqual('Admin Plugin');
+        });
+
+        it('falls back to interfaceType when both subdomain and slug are null', () => {
+            const interfaceType = PluginInterfaceType.TOKEN_VOTING;
+            const plugin = generateDaoPlugin({ subdomain: undefined, slug: undefined, interfaceType, name: undefined });
+            expect(daoUtils.getPluginName(plugin)).toEqual('TokenVoting');
+        });
+
+        it('falls back to interfaceType when both subdomain and slug are undefined', () => {
+            const interfaceType = PluginInterfaceType.MULTISIG;
+            const plugin = generateDaoPlugin({ subdomain: undefined, slug: undefined, interfaceType, name: undefined });
+            expect(daoUtils.getPluginName(plugin)).toEqual('Multisig');
         });
     });
 
