@@ -1,5 +1,5 @@
 import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
-import { ProposalActionType } from '@/modules/governance/api/governanceService';
+import { IProposalActionWithdrawToken, ProposalActionType } from '@/modules/governance/api/governanceService';
 import { useDao, useDaoPermissions } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -10,8 +10,8 @@ import {
     type IProposalActionsItemDropdownItem,
     type ProposalActionComponent,
 } from '@aragon/gov-ui-kit';
-import { useEffect, useState } from 'react';
-import { useFieldArray } from 'react-hook-form';
+import { useCallback, useEffect, useState } from 'react';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
 import type { ICreateProposalFormData, IProposalActionData } from '../createProposalFormDefinitions';
