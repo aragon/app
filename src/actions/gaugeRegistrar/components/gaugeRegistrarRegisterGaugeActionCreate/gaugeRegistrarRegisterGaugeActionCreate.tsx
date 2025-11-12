@@ -11,7 +11,6 @@ import { invariant, type IProposalAction, type IProposalActionComponentProps } f
 import { useCallback, useEffect } from 'react';
 import { encodeFunctionData, type Hex } from 'viem';
 import { gaugeRegistrarAbi } from '../../constants/gaugeRegistrarAbi';
-import { GaugeIncentiveType } from '../../types/enum/gaugeIncentiveType';
 import { GaugeRegistrarActionType } from '../../types/enum/gaugeRegistrarActionType';
 import type { IGaugeRegistrarActionRegisterGauge } from '../../types/gaugeRegistrarActionRegisterGauge';
 import { GaugeRegistrarRegisterGaugeActionCreateForm } from './gaugeRegistrarRegisterGaugeActionCreateForm';
@@ -39,7 +38,6 @@ export const GaugeRegistrarRegisterGaugeActionCreate: React.FC<IGaugeRegistrarRe
 
             const { name, description, resources, avatar, rewardControllerAddress, qiTokenAddress, incentiveType } =
                 action.gaugeDetails;
-
             const proposedMetadata = { name, description, links: resources };
             let daoAvatar: string | undefined;
 
@@ -53,12 +51,14 @@ export const GaugeRegistrarRegisterGaugeActionCreate: React.FC<IGaugeRegistrarRe
             const ipfsResult = await pinJsonAsync({ body: metadata });
             const hexResult = transactionUtils.stringToMetadataHex(ipfsResult.IpfsHash);
 
+            invariant(incentiveType != null, 'Incentive type not properly set.');
+
             const data = encodeFunctionData({
                 abi: gaugeRegistrarAbi,
                 functionName: 'registerGauge',
                 args: [
                     qiTokenAddress?.address as Hex,
-                    incentiveType ?? GaugeIncentiveType.SUPPLY,
+                    incentiveType,
                     rewardControllerAddress?.address as Hex,
                     hexResult,
                 ],

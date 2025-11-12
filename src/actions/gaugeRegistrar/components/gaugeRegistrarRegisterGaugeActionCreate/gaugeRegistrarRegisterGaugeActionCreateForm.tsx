@@ -121,6 +121,8 @@ export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
     } = useFormField<IGaugeRegistrarRegisterGaugeFormData, 'incentiveType'>('incentiveType', {
         label: t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.incentive.label'),
         defaultValue: GaugeIncentiveType.SUPPLY,
+        rules: { required: true },
+        fieldPrefix,
     });
 
     // Convert string value from RadioGroup to numeric enum
