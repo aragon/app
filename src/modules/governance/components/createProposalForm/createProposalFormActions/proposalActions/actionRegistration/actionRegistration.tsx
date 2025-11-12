@@ -1,7 +1,7 @@
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import type { ComponentType } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import type { IProposalActionData } from '../../createProposalFormDefinitions';
+import { IProposalActionData } from '../../../createProposalFormDefinitions';
 
 /**
  * A Higher-Order Component (HOC) that wraps a proposal action component.
@@ -13,10 +13,10 @@ import type { IProposalActionData } from '../../createProposalFormDefinitions';
  * @param WrappedComponent The action component to wrap.
  * @returns A new component that includes the hidden fields and the wrapped component.
  */
-export const withActionRegistration = <T extends IProposalActionComponentProps<IProposalActionData>>(
+export const ActionRegistration = <T extends IProposalActionComponentProps<IProposalActionData>>(
     WrappedComponent: ComponentType<T>,
 ) => {
-    const WithActionRegistration = (props: T) => {
+    const actionRegistration = (props: T) => {
         const { index } = props;
         const { register, control } = useFormContext();
         const fieldName = `actions.[${index.toString()}]`;
@@ -45,9 +45,9 @@ export const withActionRegistration = <T extends IProposalActionComponentProps<I
         );
     };
 
-    WithActionRegistration.displayName = `withActionRegistration(${
+    actionRegistration.displayName = `actionRegistration(${
         WrappedComponent.displayName || WrappedComponent.name || 'Component'
     })`;
 
-    return WithActionRegistration;
+    return actionRegistration;
 };

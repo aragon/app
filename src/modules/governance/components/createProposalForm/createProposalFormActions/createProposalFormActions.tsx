@@ -15,10 +15,10 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
 import type { ICreateProposalFormData, IProposalActionData } from '../createProposalFormDefinitions';
+import { ActionRegistration } from './proposalActions/actionRegistration';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
 import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';
 import { UpdatePluginMetadataAction } from './proposalActions/updatePluginMetadataAction';
-import { withActionRegistration } from './proposalActions/withActionRegistration';
 
 export interface ICreateProposalFormActionsProps {
     /**
@@ -32,10 +32,10 @@ export interface ICreateProposalFormActionsProps {
 }
 
 const coreCustomActionComponents: Record<string, ProposalActionComponent<IProposalActionData>> = {
-    [ProposalActionType.TRANSFER]: withActionRegistration(TransferAssetAction),
-    [actionComposerUtils.transferActionLocked]: withActionRegistration(TransferAssetAction),
-    [ProposalActionType.METADATA_UPDATE]: withActionRegistration(UpdateDaoMetadataAction),
-    [ProposalActionType.METADATA_PLUGIN_UPDATE]: withActionRegistration(UpdatePluginMetadataAction),
+    [ProposalActionType.TRANSFER]: ActionRegistration(TransferAssetAction),
+    [actionComposerUtils.transferActionLocked]: ActionRegistration(TransferAssetAction),
+    [ProposalActionType.METADATA_UPDATE]: ActionRegistration(UpdateDaoMetadataAction),
+    [ProposalActionType.METADATA_PLUGIN_UPDATE]: ActionRegistration(UpdatePluginMetadataAction),
 };
 
 export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = (props) => {
