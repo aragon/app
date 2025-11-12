@@ -1,3 +1,4 @@
+import { actionsDialogsDefinitions } from '@/actions';
 import { applicationDialogsDefinitions } from '@/modules/application/constants/applicationDialogsDefinitions';
 import { createDaoDialogsDefinitions } from '@/modules/createDao/constants/createDaoDialogsDefinitions';
 import { financeDialogsDefinitions } from '@/modules/finance/constants/financeDialogsDefinitions';
@@ -13,4 +14,5 @@ export const providersDialogs: Record<string, IDialogComponentDefinitions> = {
     ...createDaoDialogsDefinitions,
     ...pluginDialogsDefinitions,
     ...settingsDialogDefinitions,
+    ...actionsDialogsDefinitions,
 };

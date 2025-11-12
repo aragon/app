@@ -40,6 +40,7 @@
     "classnames": "^2.5.1",
     "deepmerge-ts": "^7.1.5",
     "framer-motion": "^12.23.22",
+    "isomorphic-dompurify": "2.30.1",
     "luxon": "^3.7.2",
     "next": "^15.5.4",
     "nextjs-toploader": "^3.9.17",
@@ -112,7 +113,7 @@
   "engines": {
     "node": ">=22.0.0"
   },
-  "packageManager": "pnpm@10.19.0",
+  "packageManager": "pnpm@10.20.0+sha512.cf9998222162dd85864d0a8102e7892e7ba4ceadebbf5a31f9c2fce48dfce317a9c53b9f6464d1ef9042cba2e02ae02a9f7c143a2b438cd93c91840f0192b9dd",
   "pnpm": {
     "overrides": {
       "@reown/appkit": "^1.8.10"

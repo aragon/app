@@ -135,8 +135,11 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
 
     return (
         <>
-            <Dialog.Header title={t('app.governance.verifySmartContractDialog.title')} />
-            <Dialog.Content description={t('app.governance.verifySmartContractDialog.description')}>
+            <Dialog.Header
+                title={t('app.governance.verifySmartContractDialog.title')}
+                description={t('app.governance.verifySmartContractDialog.description')}
+            />
+            <Dialog.Content>
                 <form className="flex flex-col gap-3 py-2" onSubmit={handleSubmit(handleFormSubmit)} id={formId}>
                     <AddressInput
                         placeholder={t('app.finance.transferAssetForm.receiver.placeholder')}

@@ -5,9 +5,11 @@ import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { SafeDocumentParser } from '@/shared/components/SafeDocumentParser';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
+import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     ActionSimulation,
@@ -16,7 +18,6 @@ import {
     ChainEntityType,
     DateFormat,
     DefinitionList,
-    DocumentParser,
     formatterUtils,
     Link,
     ProposalActions,
@@ -28,7 +29,13 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { actionSimulationServiceKeys, useLastSimulation, useSimulateProposal } from '../../api/actionSimulationService';
-import { type IProposal, useProposalActions, useProposalBySlug } from '../../api/governanceService';
+import {
+    governanceServiceKeys,
+    type IProposal,
+    useProposalActions,
+    useProposalBySlug,
+} from '../../api/governanceService';
+import type { IProposalActionData } from '../../components/createProposalForm';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
@@ -75,13 +82,23 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     );
     const actionsCount = actionData?.rawActions?.length ?? 0;
 
-    const showActionSimulation = proposal?.hasActions && tenderlySupport;
+    const isSimulationSupportedByStatus = [
+        ProposalStatus.ACTIVE,
+        ProposalStatus.ADVANCEABLE,
+        ProposalStatus.PENDING,
+        ProposalStatus.EXECUTABLE,
+    ].includes(proposalStatus);
+
+    const showActionSimulation = proposal?.hasActions && tenderlySupport && isSimulationSupportedByStatus;
 
     const {
         data: lastSimulation,
         isError: isLastSimulationError,
         error: lastSimulationError,
-    } = useLastSimulation({ urlParams: { proposalId: proposal?.id as string } }, { enabled: showActionSimulation });
+    } = useLastSimulation(
+        { urlParams: { proposalId: proposal?.id as string } },
+        { enabled: !!proposal?.hasSimulation },
+    );
 
     const {
         mutate: simulateProposal,
@@ -99,7 +116,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const handleSimulateProposalSuccess = () => {
         const urlParams = { proposalId: proposal.id };
         const simulationQueryKey = actionSimulationServiceKeys.lastSimulation({ urlParams });
+        const proposalQueryKey = governanceServiceKeys.proposalBySlug(proposalParams);
         void queryClient.invalidateQueries({ queryKey: simulationQueryKey });
+        void queryClient.invalidateQueries({ queryKey: proposalQueryKey });
     };
 
     const handleSimulateProposal = () => {
@@ -131,11 +150,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         { label: proposalSlug.toUpperCase() },
     ];
 
-    const canSimulate =
-        [ProposalStatus.ACTIVE, ProposalStatus.ADVANCEABLE, ProposalStatus.PENDING, ProposalStatus.EXECUTABLE].includes(
-            proposalStatus,
-        ) &&
-        (lastSimulation == null || Date.now() - lastSimulation.runAt > actionSimulationLimitMillis);
+    const canSimulate = lastSimulation == null || Date.now() - lastSimulation.runAt > actionSimulationLimitMillis;
 
     const processedLastSimulation = lastSimulation ? { ...lastSimulation, timestamp: lastSimulation.runAt } : undefined;
     const simulationErrorContext = hasSimulationFailed ? 'simulationError' : 'lastSimulationError';
@@ -152,7 +167,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                 buttonLabelClosed={t('app.governance.daoProposalDetailsPage.main.description.readMore')}
                                 buttonLabelOpened={t('app.governance.daoProposalDetailsPage.main.description.readLess')}
                             >
-                                <DocumentParser document={description} immediatelyRender={false} />
+                                <SafeDocumentParser document={description} immediatelyRender={false} />
                             </CardCollapsible>
                         </Page.MainSection>
                     )}
@@ -179,14 +194,27 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         )}
                         <ProposalActions.Root isLoading={actionData?.decoding} actionsCount={actionsCount}>
                             <ProposalActions.Container emptyStateDescription="">
-                                {normalizedProposalActions.map((action, index) => (
-                                    <ProposalActions.Item
-                                        key={index}
-                                        action={action}
-                                        actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(action)}
-                                        chainId={chainId}
-                                    />
-                                ))}
+                                {normalizedProposalActions.map((action, index) => {
+                                    const fnSelector = proposalActionUtils.actionToFunctionSelector(action);
+                                    const customActionView = actionViewRegistry.getViewBySelector(fnSelector);
+
+                                    return customActionView ? (
+                                        <ProposalActions.Item<IProposalActionData>
+                                            key={index}
+                                            action={{ ...action, daoId } as IProposalActionData}
+                                            actionFunctionSelector={fnSelector}
+                                            chainId={chainId}
+                                            CustomComponent={customActionView.componentDetails}
+                                        />
+                                    ) : (
+                                        <ProposalActions.Item
+                                            key={index}
+                                            action={action}
+                                            actionFunctionSelector={fnSelector}
+                                            chainId={chainId}
+                                        />
+                                    );
+                                })}
                             </ProposalActions.Container>
                             <ProposalActions.Footer>
                                 {normalizedProposalActions.length > 0 && (

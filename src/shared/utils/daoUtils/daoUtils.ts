@@ -51,6 +51,10 @@ export interface IDaoAvailableUpdates {
 }
 
 class DaoUtils {
+    hasPluginBody = (dao?: IDao): boolean => {
+        return dao?.plugins.some((p) => p.isBody) ?? false;
+    };
+
     hasSupportedPlugins = (dao?: IDao): boolean => {
         const pluginIds = dao?.plugins.map(({ interfaceType }) => interfaceType);
 

@@ -23,5 +23,6 @@ export const generateProposal = (proposal?: Partial<IProposal>): IProposal => ({
     pluginInterfaceType: PluginInterfaceType.UNKNOWN,
     incrementalId: 1,
     hasActions: false,
+    hasSimulation: false,
     ...proposal,
 });

@@ -1,6 +1,6 @@
 import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
-import { ProposalActionType, type IProposalActionWithdrawToken } from '@/modules/governance/api/governanceService';
-import { useDao } from '@/shared/api/daoService';
+import { ProposalActionType } from '@/modules/governance/api/governanceService';
+import { useDao, useDaoPermissions } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -10,8 +10,8 @@ import {
     type IProposalActionsItemDropdownItem,
     type ProposalActionComponent,
 } from '@aragon/gov-ui-kit';
-import { useCallback, useState } from 'react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { useFieldArray } from 'react-hook-form';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
 import type { ICreateProposalFormData, IProposalActionData } from '../createProposalFormDefinitions';
@@ -66,8 +66,24 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         { urlParams: { network: dao!.network, pluginAddress }, queryParams: { pageSize: 50 } },
         { enabled: hasConditionalPermissions },
     );
+    const {
+        data: daoPermissionsData,
+        hasNextPage,
+        fetchNextPage,
+        isFetchingNextPage,
+    } = useDaoPermissions({
+        urlParams: { network: dao!.network, daoAddress: dao!.address },
+        queryParams: { pageSize: 50 },
+    });
+
+    useEffect(() => {
+        if (hasNextPage && !isFetchingNextPage) {
+            void fetchNextPage();
+        }
+    }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
     const allowedActions = allowedActionsData?.pages.flatMap((page) => page.data);
+    const daoPermissions = daoPermissionsData?.pages.flatMap((page) => page.data);
 
     /**
      * Handles moving an action up or down by manually swapping the data in the form state.
@@ -154,10 +170,15 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     };
 
     const { pluginComponents } = actionComposerUtils.getDaoPluginActions(dao);
+    const { components: permissionActionComponents } = actionComposerUtils.getDaoPermissionActions({
+        t,
+        permissions: daoPermissions,
+    });
 
     const customActionComponents: Record<string, ProposalActionComponent<IProposalActionData>> = {
         ...coreCustomActionComponents,
         ...pluginComponents,
+        ...permissionActionComponents,
     };
 
     // Don't render action composer while it waits for allowed actions to be fetched
@@ -213,8 +234,15 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                     })}
                 </ProposalActions.Container>
             </ProposalActions.Root>
-            {showActionComposer && (
-                <ActionComposer daoId={daoId} onAddAction={handleAddAction} allowedActions={allowedActions} />
+            {showActionComposer ? (
+                <ActionComposer
+                    daoId={daoId}
+                    onAddAction={handleAddAction}
+                    allowedActions={allowedActions}
+                    daoPermissions={daoPermissions}
+                />
+            ) : (
+                <p className="text-primary-400">{t('app.governance.createProposalForm.actions.loading')}</p>
             )}
         </div>
     );

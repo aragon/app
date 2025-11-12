@@ -95,4 +95,39 @@ describe('useFormField hook', () => {
         const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>(fieldName, { rules }));
         expect(result.current.alert?.message).toMatch(/formField.error.max \(name=tokens,value=123\)/);
     });
+
+    it('sanitizes input value on blur before forwarding onChange', () => {
+        const onChange = jest.fn();
+        const onBlur = jest.fn();
+        const field = { onChange, onBlur } as unknown as ReactHookForm.UseControllerReturn['field'];
+        useControllerSpy.mockReturnValue({ field, fieldState: {} } as unknown as ReactHookForm.UseControllerReturn);
+
+        const { result } = renderHook(() =>
+            useFormField<ReactHookForm.FieldValues, string>('field', { trimOnBlur: true }),
+        );
+
+        // call returned onBlur with a synthetic event carrying a value
+        (result.current.onBlur as unknown as (e: { target: { value: string } }) => void)({
+            target: { value: '  \u0000<script>hi</script>  ' },
+        });
+        expect(onChange).toHaveBeenCalledWith('hi');
+        expect(onBlur).toHaveBeenCalled();
+    });
+
+    it('supports multiline sanitize mode preserving newlines and tabs', () => {
+        const onChange = jest.fn();
+        const onBlur = jest.fn();
+        const field = { onChange, onBlur } as unknown as ReactHookForm.UseControllerReturn['field'];
+        useControllerSpy.mockReturnValue({ field, fieldState: {} } as unknown as ReactHookForm.UseControllerReturn);
+
+        const { result } = renderHook(() =>
+            useFormField<ReactHookForm.FieldValues, string>('field', { trimOnBlur: false, sanitizeMode: 'multiline' }),
+        );
+
+        (result.current.onBlur as unknown as (e: { target: { value: string } }) => void)({
+            target: { value: ' line1\r\n\tline2\n\u0000line3 ' },
+        });
+        expect(onChange).toHaveBeenCalledWith('line1\n\tline2\nline3');
+        expect(onBlur).toHaveBeenCalled();
+    });
 });

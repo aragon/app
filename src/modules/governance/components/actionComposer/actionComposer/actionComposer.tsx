@@ -1,5 +1,6 @@
 'use client';
 
+import type { IDaoPermission } from '@/shared/api/daoService';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -39,18 +40,22 @@ export interface IActionComposerProps extends Pick<IActionComposerInputProps, 'e
      * Allowed actions to show instead of default actions.
      */
     allowedActions?: IAllowedAction[];
+    /**
+     * Granted permissions for DAO.
+     */
+    daoPermissions?: IDaoPermission[];
 }
 
 export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
-    const { daoId, onAddAction, excludeActionTypes, hideWalletConnect = false, allowedActions } = props;
+    const { daoId, onAddAction, excludeActionTypes, hideWalletConnect = false, allowedActions, daoPermissions } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
-    const { pluginItems, pluginGroups } = actionComposerUtils.getDaoPluginActions(dao);
-
     const { t } = useTranslations();
     const { open } = useDialogContext();
+
+    const { items, groups } = actionComposerUtils.getDaoActions({ dao, permissions: daoPermissions, t });
 
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -150,8 +155,8 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 onActionSelected={handleItemSelected}
                 onOpenChange={setDisplayActionComposer}
                 ref={autocompleteInputRef}
-                nativeItems={pluginItems}
-                nativeGroups={pluginGroups}
+                nativeItems={items}
+                nativeGroups={groups}
                 allowedActions={onlyShowAuthorizedActions ? allowedActions : undefined}
                 daoId={daoId}
                 importedContractAbis={importedContractAbis}

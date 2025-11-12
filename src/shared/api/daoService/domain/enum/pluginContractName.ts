@@ -8,6 +8,7 @@ export enum PluginContractName {
     ADMIN = 'Admin',
     SPP = 'Staged proposal process',
     GAUGE = 'Gauge',
+    GAUGE_REGISTRAR = 'Gauge Registrar',
     CAPITAL_DISTRIBUTOR = 'Capital distributor',
     LOCK_TO_VOTE = 'Lock to vote',
 }
