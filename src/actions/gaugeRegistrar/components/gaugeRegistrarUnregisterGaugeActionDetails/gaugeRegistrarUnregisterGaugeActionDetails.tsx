@@ -2,6 +2,7 @@
 
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     addressUtils,
     DataList,
@@ -10,10 +11,14 @@ import {
     type IProposalActionComponentProps,
     type IProposalActionInputDataParameter,
 } from '@aragon/gov-ui-kit';
+import type { Address, Hex } from 'viem';
+import { useReadContract } from 'wagmi';
 
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { useGaugeRegistrarGauges } from '../../hooks';
+import { gaugeRegistrarAbi } from '../../constants/gaugeRegistrarAbi';
+import { useAllGauges } from '../../hooks';
+import type { GaugeIncentiveType } from '../../types/enum/gaugeIncentiveType';
 import { GaugeRegistrarGaugeListItem, GaugeRegistrarGaugeListItemSkeleton } from '../gaugeRegistrarGaugeListItem';
 
 export interface IGaugeRegistrarUnregisterGaugeActionDetailsProps
@@ -44,22 +49,34 @@ export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<IGaugeRegistra
     const { qiTokenAddress, incentiveType, rewardControllerAddress } = parseUnregisterGaugeInputData(
         action.inputData?.parameters ?? [],
     );
-    const { data: gauges = [], isLoading } = useGaugeRegistrarGauges({
-        pluginAddress,
-        network: dao!.network,
-        gaugeVoterAddress: gaugeVoterPlugin.meta.address,
+
+    const { id: chainId } = networkDefinitions[dao!.network];
+
+    const { data: gaugeAddress, isLoading: isGetGaugeAddressLoading } = useReadContract({
+        address: pluginAddress as Address,
+        abi: gaugeRegistrarAbi,
+        functionName: 'getGaugeAddress',
+        args: [qiTokenAddress as Address, incentiveType as GaugeIncentiveType, rewardControllerAddress as Address],
+        chainId,
     });
 
-    if (isLoading) {
+    const { data: allGauges, isLoading: isAllGaugesLoading } = useAllGauges({
+        gaugeListParams: {
+            urlParams: {
+                pluginAddress: gaugeVoterPlugin.meta.address as Hex,
+                network: dao!.network,
+            },
+            queryParams: {},
+        },
+    });
+
+    if (isGetGaugeAddressLoading || isAllGaugesLoading) {
         return <GaugeRegistrarGaugeListItemSkeleton />;
     }
 
-    const gaugeToRemove = gauges.find(
-        (gauge) =>
-            addressUtils.isAddressEqual(gauge.qiToken, qiTokenAddress) &&
-            addressUtils.isAddressEqual(gauge.rewardController, rewardControllerAddress) &&
-            gauge.incentive == incentiveType,
-    );
+    const gaugeToRemove = gaugeAddress
+        ? allGauges.find((gauge) => addressUtils.isAddressEqual(gauge.address, gaugeAddress))
+        : undefined;
 
     if (!gaugeToRemove) {
         return (
@@ -76,5 +93,15 @@ export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<IGaugeRegistra
         );
     }
 
-    return <GaugeRegistrarGaugeListItem gauge={gaugeToRemove} />;
+    return (
+        <GaugeRegistrarGaugeListItem
+            gauge={{
+                ...gaugeToRemove,
+                gaugeAddress: gaugeToRemove.address,
+                qiToken: qiTokenAddress,
+                rewardController: rewardControllerAddress,
+                incentive: incentiveType,
+            }}
+        />
+    );
 };

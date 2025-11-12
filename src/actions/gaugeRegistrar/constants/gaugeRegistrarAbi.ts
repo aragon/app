@@ -23,6 +23,18 @@ export const unregisterGaugeAbi = {
     stateMutability: 'nonpayable',
 } as const;
 
+export const getGaugeAddressAbi = {
+    type: 'function',
+    name: 'getGaugeAddress',
+    inputs: [
+        { name: '_qiToken', type: 'address' },
+        { name: '_incentive', type: 'uint8' },
+        { name: '_rewardController', type: 'address' },
+    ],
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'pure',
+} as const;
+
 export const getAllRegisteredGaugeDetailsAbi = {
     type: 'function',
     name: 'getAllRegisteredGaugeDetails',
@@ -43,4 +55,9 @@ export const getAllRegisteredGaugeDetailsAbi = {
     stateMutability: 'view',
 } as const;
 
-export const gaugeRegistrarAbi = [registerGaugeAbi, unregisterGaugeAbi, getAllRegisteredGaugeDetailsAbi];
+export const gaugeRegistrarAbi = [
+    registerGaugeAbi,
+    unregisterGaugeAbi,
+    getGaugeAddressAbi,
+    getAllRegisteredGaugeDetailsAbi,
+];

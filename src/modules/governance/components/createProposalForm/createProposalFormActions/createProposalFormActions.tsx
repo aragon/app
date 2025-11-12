@@ -55,7 +55,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     );
     const {
         data: daoPermissionsData,
-        isLoading: isLoadingDaoPermissions,
         hasNextPage,
         fetchNextPage,
         isFetchingNextPage,
@@ -153,7 +152,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     };
 
     // Don't render action composer while it waits for allowed actions to be fetched
-    const showActionComposer = !isLoadingDaoPermissions && (!hasConditionalPermissions || allowedActions != null);
+    const showActionComposer = !hasConditionalPermissions || allowedActions != null;
 
     return (
         <div className="flex flex-col gap-y-10">
