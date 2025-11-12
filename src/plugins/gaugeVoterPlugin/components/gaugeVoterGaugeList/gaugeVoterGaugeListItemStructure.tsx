@@ -1,4 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { addressUtils, Avatar, Button, DataList, formatterUtils, IconType, NumberFormat } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
@@ -118,6 +119,10 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
             'border-primary-300 hover:border-primary-300': isSelected,
         },
     );
+    // Avatar created through the app should always be in ipfs://cid format, but there might be a case where avatar is set
+    // as a regular URL.
+    const { avatar } = gauge;
+    const avatarSrc = avatar?.startsWith('http') ? avatar : ipfsUtils.cidToSrc(avatar);
 
     return (
         <DataList.Item className={itemClassName} onClick={() => onViewDetails?.(gauge)}>
@@ -128,7 +133,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
                     size="md"
                     responsiveSize={{ md: 'lg' }}
                     fallback={avatarFallback}
-                    src={gauge.avatar ?? undefined}
+                    src={avatarSrc}
                 />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                     <p className="truncate text-base text-neutral-800 md:text-lg">{gaugeName}</p>
