@@ -1,7 +1,7 @@
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import type { ComponentType } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import type { IProposalActionData } from '../../../createProposalFormDefinitions';
+import type { IProposalActionData } from '../../createProposalFormDefinitions';
 
 /**
  * A Higher-Order Component (HOC) that wraps a proposal action component.
@@ -34,8 +34,11 @@ export const withActionRegistration = <T extends IProposalActionComponentProps<I
                 <input type="hidden" {...register(`${fieldName}.to`)} />
                 <input type="hidden" {...register(`${fieldName}.from`)} />
                 <input type="hidden" {...register(`${fieldName}.daoId`)} />
+                <input type="hidden" {...register(`${fieldName}.data`)} />
+                <input type="hidden" {...register(`${fieldName}.value`)} />
                 <input type="hidden" {...register(`${fieldName}.inputData.function`)} />
                 <input type="hidden" {...register(`${fieldName}.inputData.contract`)} />
+                <input type="hidden" {...register(`${fieldName}.inputData.stateMutability`)} />
 
                 <WrappedComponent {...props} />
             </>

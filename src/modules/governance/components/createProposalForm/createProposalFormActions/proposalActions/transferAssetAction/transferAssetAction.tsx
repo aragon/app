@@ -28,7 +28,7 @@ const erc20TransferAbi = {
 export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) => {
     const { action, index } = props;
 
-    const { setValue } = useFormContext();
+    const { setValue, getValues } = useFormContext();
     const { data: dao } = useDao({ urlParams: { id: action.daoId } });
 
     const fieldName = `actions.[${index.toString()}]`;
@@ -106,17 +106,24 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
         setValue(`${fieldName}.value`, newValue);
     }, [isNativeToken, weiAmount, fieldName, setValue]);
 
-    useEffect(() => setValue(`${fieldName}.inputData.contract`, tokenName), [setValue, fieldName, tokenName]);
-
     useEffect(() => {
+        // Get current inputData to preserve function and stateMutability
+        const currentAction = getValues(`actions.${index}`);
+        const currentInputData = currentAction?.inputData || {};
+
         const newContractParameters = [
             { name: '_to', type: 'address', value: receiverAddress },
             { name: '_value', type: 'uint256', value: weiAmount.toString() },
         ];
         const processedParameters = isNativeToken ? [] : newContractParameters;
 
-        setValue(`${fieldName}.inputData.parameters`, processedParameters);
-    }, [isNativeToken, receiverAddress, weiAmount, setValue, fieldName]);
+        // Preserve all inputData fields while updating specific ones
+        setValue(`${fieldName}.inputData`, {
+            ...currentInputData,
+            contract: tokenName,
+            parameters: processedParameters,
+        });
+    }, [isNativeToken, receiverAddress, weiAmount, setValue, fieldName, tokenName, index, getValues]);
 
     return (
         <TransferAssetForm

@@ -10,7 +10,7 @@ import {
     type IProposalActionsItemDropdownItem,
     type ProposalActionComponent,
 } from '@aragon/gov-ui-kit';
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
@@ -31,12 +31,12 @@ export interface ICreateProposalFormActionsProps {
     pluginAddress: string;
 }
 
-const coreCustomActionComponents = {
+const coreCustomActionComponents: Record<string, ProposalActionComponent<IProposalActionData>> = {
     [ProposalActionType.TRANSFER]: withActionRegistration(TransferAssetAction),
     [actionComposerUtils.transferActionLocked]: withActionRegistration(TransferAssetAction),
     [ProposalActionType.METADATA_UPDATE]: withActionRegistration(UpdateDaoMetadataAction),
     [ProposalActionType.METADATA_PLUGIN_UPDATE]: withActionRegistration(UpdatePluginMetadataAction),
-} as unknown as Record<string, ProposalActionComponent<IProposalActionData>>;
+};
 
 export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = (props) => {
     const { daoId, pluginAddress } = props;
@@ -49,7 +49,8 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const { t } = useTranslations();
     const [expandedActions, setExpandedActions] = useState<string[]>([]);
-    const { control, getValues } = useFormContext<ICreateProposalFormData>();
+    const [, forceUpdate] = useState({});
+    const { control, getValues, setValue } = useFormContext<ICreateProposalFormData>();
 
     const {
         fields: actions,
@@ -61,10 +62,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         name: 'actions',
     });
 
-    useEffect(() => {
-        console.log('AFTER OPERATION:', actions);
-    }, [actions]);
-
     const { data: allowedActionsData } = useAllowedActions(
         { urlParams: { network: dao!.network, pluginAddress }, queryParams: { pageSize: 50 } },
         { enabled: hasConditionalPermissions },
@@ -72,13 +69,42 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const allowedActions = allowedActionsData?.pages.flatMap((page) => page.data);
 
-    const handleMoveAction = (index: number, newIndex: number) => {
-        console.log('BEFORE MOVE:', getValues('actions'));
-        move(index, newIndex);
-    };
+    /**
+     * Handles moving an action up or down by manually swapping the data in the form state.
+     * This approach avoids the known issues with react-hook-form's useFieldArray.move()
+     * when dealing with deeply nested complex objects.
+     */
+    const handleMoveAction = useCallback(
+        (index: number, newIndex: number) => {
+            if (newIndex < 0 || newIndex >= actions.length) {
+                return;
+            }
+
+            // Get the current actions array from form state
+            const currentActions = getValues('actions');
+
+            // Create a deep copy to avoid mutation
+            const actionsCopy = structuredClone(currentActions);
+
+            // Manually swap the actions
+            const temp = actionsCopy[index];
+            actionsCopy[index] = actionsCopy[newIndex];
+            actionsCopy[newIndex] = temp;
+
+            // Update the entire actions array at once
+            setValue('actions', actionsCopy, {
+                shouldValidate: false,
+                shouldDirty: true,
+                shouldTouch: false,
+            });
+
+            // Force a re-render to ensure components re-register their fields with the new indices
+            forceUpdate({});
+        },
+        [actions.length, getValues, setValue, forceUpdate],
+    );
 
     const handleRemoveAction = (action: IProposalActionData, index: number) => {
-        console.log('BEFORE REMOVE:', getValues('actions'));
         remove(index);
 
         setExpandedActions((actionIds) => {
