@@ -18,7 +18,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { gaugeRegistrarAbi } from '../../constants/gaugeRegistrarAbi';
 import { useAllGauges } from '../../hooks';
-import { GaugeIncentiveType } from '../../types/enum/gaugeIncentiveType';
+import type { GaugeIncentiveType } from '../../types/enum/gaugeIncentiveType';
 import { GaugeRegistrarGaugeListItem, GaugeRegistrarGaugeListItemSkeleton } from '../gaugeRegistrarGaugeListItem';
 
 export interface IGaugeRegistrarUnregisterGaugeActionDetailsProps
@@ -74,7 +74,9 @@ export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<IGaugeRegistra
         return <GaugeRegistrarGaugeListItemSkeleton />;
     }
 
-    const gaugeToRemove = allGauges.find((gauge) => addressUtils.isAddressEqual(gauge.address, gaugeAddress));
+    const gaugeToRemove = gaugeAddress
+        ? allGauges.find((gauge) => addressUtils.isAddressEqual(gauge.address, gaugeAddress))
+        : undefined;
 
     if (!gaugeToRemove) {
         return (
