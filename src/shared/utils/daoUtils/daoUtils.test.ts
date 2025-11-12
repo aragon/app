@@ -83,28 +83,65 @@ describe('dao utils', () => {
             expect(daoUtils.getPluginName(plugin)).toEqual('Token Voting');
         });
 
-        it('falls back to slug when subdomain is null and name is not available', () => {
-            const slug = 'multisig-plugin';
-            const plugin = generateDaoPlugin({ subdomain: undefined, slug, name: undefined });
+        it('uses subdomain over interfaceType when both are present', () => {
+            const subdomain = 'multisig-plugin';
+            const interfaceType = PluginInterfaceType.MULTISIG;
+            const plugin = generateDaoPlugin({ subdomain, interfaceType, name: undefined });
             expect(daoUtils.getPluginName(plugin)).toEqual('Multisig Plugin');
         });
 
-        it('falls back to slug when subdomain is undefined and name is not available', () => {
-            const slug = 'admin-plugin';
-            const plugin = generateDaoPlugin({ subdomain: undefined, slug, name: undefined });
-            expect(daoUtils.getPluginName(plugin)).toEqual('Admin Plugin');
-        });
-
-        it('falls back to interfaceType when both subdomain and slug are null', () => {
+        it('formats subdomain and interfaceType with the same format (spaces)', () => {
+            const subdomain = 'token-voting';
             const interfaceType = PluginInterfaceType.TOKEN_VOTING;
-            const plugin = generateDaoPlugin({ subdomain: undefined, slug: undefined, interfaceType, name: undefined });
-            expect(daoUtils.getPluginName(plugin)).toEqual('TokenVoting');
+            const pluginWithSubdomain = generateDaoPlugin({ subdomain, interfaceType, name: undefined });
+            const pluginWithoutSubdomain = generateDaoPlugin({ subdomain: undefined, interfaceType, name: undefined });
+
+            expect(daoUtils.getPluginName(pluginWithSubdomain)).toEqual('Token Voting');
+            expect(daoUtils.getPluginName(pluginWithoutSubdomain)).toEqual('Token Voting');
         });
 
-        it('falls back to interfaceType when both subdomain and slug are undefined', () => {
+        it('falls back to interfaceType when subdomain is null and name is not available', () => {
             const interfaceType = PluginInterfaceType.MULTISIG;
-            const plugin = generateDaoPlugin({ subdomain: undefined, slug: undefined, interfaceType, name: undefined });
+            const plugin = generateDaoPlugin({
+                subdomain: undefined,
+                interfaceType,
+                name: undefined,
+            });
             expect(daoUtils.getPluginName(plugin)).toEqual('Multisig');
+        });
+
+        it('falls back to interfaceType when subdomain is undefined and name is not available', () => {
+            const interfaceType = PluginInterfaceType.ADMIN;
+            const plugin = generateDaoPlugin({
+                subdomain: undefined,
+                interfaceType,
+                name: undefined,
+            });
+            expect(daoUtils.getPluginName(plugin)).toEqual('Admin');
+        });
+
+        it('falls back to interfaceType when subdomain is null', () => {
+            const interfaceType = PluginInterfaceType.TOKEN_VOTING;
+            const plugin = generateDaoPlugin({ subdomain: undefined, interfaceType, name: undefined });
+            expect(daoUtils.getPluginName(plugin)).toEqual('Token Voting');
+        });
+
+        it('falls back to interfaceType when subdomain is undefined', () => {
+            const interfaceType = PluginInterfaceType.MULTISIG;
+            const plugin = generateDaoPlugin({ subdomain: undefined, interfaceType, name: undefined });
+            expect(daoUtils.getPluginName(plugin)).toEqual('Multisig');
+        });
+
+        it('formats camelCase interfaceType with multiple words correctly', () => {
+            const interfaceType = PluginInterfaceType.CAPITAL_DISTRIBUTOR;
+            const plugin = generateDaoPlugin({ subdomain: undefined, interfaceType, name: undefined });
+            expect(daoUtils.getPluginName(plugin)).toEqual('Capital Distributor');
+        });
+
+        it('formats camelCase interfaceType with three words correctly', () => {
+            const interfaceType = PluginInterfaceType.LOCK_TO_VOTE;
+            const plugin = generateDaoPlugin({ subdomain: undefined, interfaceType, name: undefined });
+            expect(daoUtils.getPluginName(plugin)).toEqual('Lock To Vote');
         });
     });
 
@@ -381,6 +418,33 @@ describe('dao utils', () => {
             const subdomain = 'multisig';
             const expectedResult = 'Multisig';
             expect(daoUtils.parsePluginSubdomain(subdomain)).toEqual(expectedResult);
+        });
+    });
+
+    describe('parsePluginInterfaceType', () => {
+        it('correctly parses camelCase interfaceType with two words', () => {
+            const interfaceType = 'tokenVoting';
+            const expectedResult = 'Token Voting';
+
+            expect(daoUtils.parsePluginInterfaceType(interfaceType)).toEqual(expectedResult);
+        });
+
+        it('correctly parses camelCase interfaceType with multiple words', () => {
+            const interfaceType = 'capitalDistributor';
+            const expectedResult = 'Capital Distributor';
+            expect(daoUtils.parsePluginInterfaceType(interfaceType)).toEqual(expectedResult);
+        });
+
+        it('correctly parses camelCase interfaceType with three words', () => {
+            const interfaceType = 'lockToVote';
+            const expectedResult = 'Lock To Vote';
+            expect(daoUtils.parsePluginInterfaceType(interfaceType)).toEqual(expectedResult);
+        });
+
+        it('correctly parses single word interfaceType', () => {
+            const interfaceType = 'multisig';
+            const expectedResult = 'Multisig';
+            expect(daoUtils.parsePluginInterfaceType(interfaceType)).toEqual(expectedResult);
         });
     });
 
