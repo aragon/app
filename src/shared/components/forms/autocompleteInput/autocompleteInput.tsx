@@ -1,6 +1,6 @@
 'use client';
 
-import { sanitizePlainText } from '@/shared/security/htmlSanitizer';
+import { sanitizePlainText } from '@/shared/security';
 import { InputText } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { type ChangeEvent, type FocusEvent, forwardRef, type KeyboardEvent, useState } from 'react';

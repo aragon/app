@@ -1,5 +1,5 @@
 import { useFormField } from '@/shared/hooks/useFormField';
-import { sanitizePlainText } from '@/shared/security/htmlSanitizer';
+import { sanitizePlainText } from '@/shared/security';
 import type { IDateFixed } from '@/shared/utils/dateUtils';
 import { dateUtils } from '@/shared/utils/dateUtils/dateUtils';
 import { Card, InputDate, InputText, InputTime } from '@aragon/gov-ui-kit';

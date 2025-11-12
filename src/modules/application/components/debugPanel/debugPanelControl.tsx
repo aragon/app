@@ -1,5 +1,5 @@
 import { useDebugContext, type IDebugContextControl } from '@/shared/components/debugProvider';
-import { sanitizePlainText } from '@/shared/security/htmlSanitizer';
+import { sanitizePlainText } from '@/shared/security';
 import { InputText, Switch } from '@aragon/gov-ui-kit';
 
 export interface IDebugPanelControlProps {

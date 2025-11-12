@@ -72,6 +72,10 @@ const config = tsEslint.config(
                     selector: "CallExpression[callee.property.name='insertAdjacentHTML']",
                     message: 'Avoid insertAdjacentHTML; sanitize and use SafeHtml instead.',
                 },
+                {
+                    selector: "JSXAttribute[name.name='dangerouslySetInnerHTML']",
+                    message: 'Avoid dangerouslySetInnerHTML; use SafeHtml component instead.',
+                },
             ],
             '@typescript-eslint/no-empty-object-type': ['error', { allowInterfaces: 'always' }],
             '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],

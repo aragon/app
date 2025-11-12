@@ -1,7 +1,7 @@
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { sanitizePlainText } from '@/shared/security/htmlSanitizer';
+import { sanitizePlainText } from '@/shared/security';
 import { InputText, TextArea } from '@aragon/gov-ui-kit';
 import type { ChangeEvent } from 'react';
 import type { ICreateProcessFormData } from '../createProcessFormDefinitions';

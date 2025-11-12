@@ -1,7 +1,7 @@
 import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { sanitizePlainText } from '@/shared/security/htmlSanitizer';
+import { sanitizePlainText } from '@/shared/security';
 import { Button, IconType, InputContainer, InputText } from '@aragon/gov-ui-kit';
 import { type ChangeEvent, useEffect } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';

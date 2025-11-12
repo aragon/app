@@ -1,5 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { sanitizePlainText, sanitizePlainTextMultiline } from '@/shared/security/htmlSanitizer';
+import { sanitizePlainText, sanitizePlainTextMultiline } from '@/shared/security';
 import { useMemo } from 'react';
 import { type FieldPath, type FieldValues, type Noop, useController } from 'react-hook-form';
 import type { IUseFormFieldOptions, IUseFormFieldReturn } from './useFormField.api';

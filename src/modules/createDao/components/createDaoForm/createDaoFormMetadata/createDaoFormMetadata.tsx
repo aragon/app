@@ -3,7 +3,7 @@ import { Network } from '@/shared/api/daoService';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { sanitizePlainText } from '@/shared/security/htmlSanitizer';
+import { sanitizePlainText } from '@/shared/security';
 import { InputFileAvatar, InputText, TextArea } from '@aragon/gov-ui-kit';
 import { useWatch } from 'react-hook-form';
 import { mainnet } from 'viem/chains';
