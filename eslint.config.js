@@ -59,6 +59,24 @@ const config = tsEslint.config(
             curly: 'warn',
             'prefer-template': 'warn',
             'no-useless-concat': 'warn',
+            'react/no-danger': 'error',
+            'no-eval': 'error',
+            'no-implied-eval': 'error',
+            'no-restricted-syntax': [
+                'error',
+                {
+                    selector: "MemberExpression[property.name='innerHTML']",
+                    message: 'Avoid innerHTML; sanitize and use SafeHtml instead.',
+                },
+                {
+                    selector: "CallExpression[callee.property.name='insertAdjacentHTML']",
+                    message: 'Avoid insertAdjacentHTML; sanitize and use SafeHtml instead.',
+                },
+                {
+                    selector: "JSXAttribute[name.name='dangerouslySetInnerHTML']",
+                    message: 'Avoid dangerouslySetInnerHTML; use SafeHtml component instead.',
+                },
+            ],
             '@typescript-eslint/no-empty-object-type': ['error', { allowInterfaces: 'always' }],
             '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
             '@typescript-eslint/no-misused-promises': ['error', { checksVoidReturn: false }],

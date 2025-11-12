@@ -5,6 +5,7 @@ import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { SafeDocumentParser } from '@/shared/components/SafeDocumentParser';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
@@ -17,7 +18,6 @@ import {
     ChainEntityType,
     DateFormat,
     DefinitionList,
-    DocumentParser,
     formatterUtils,
     Link,
     ProposalActions,
@@ -167,7 +167,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                 buttonLabelClosed={t('app.governance.daoProposalDetailsPage.main.description.readMore')}
                                 buttonLabelOpened={t('app.governance.daoProposalDetailsPage.main.description.readLess')}
                             >
-                                <DocumentParser document={description} immediatelyRender={false} />
+                                <SafeDocumentParser document={description} immediatelyRender={false} />
                             </CardCollapsible>
                         </Page.MainSection>
                     )}

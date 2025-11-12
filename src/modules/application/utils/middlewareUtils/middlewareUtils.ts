@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import packageInfo from '../../../../../package.json' with { type: 'json' };
 
 class MiddlewareUtils {
     middleware = (request: NextRequest): NextResponse => {
@@ -31,7 +32,7 @@ class MiddlewareUtils {
             : [...allowedInFrameHosts, ...allowedInFrameHostsNonProd].join(' ');
         const fontSrc = isProd ? '' : ' https://vercel.live';
 
-        return [
+        const policies = [
             "default-src 'self'",
             `script-src 'self' 'nonce-${nonce}' https: ${scriptSrc}`,
             `style-src 'self' https://fonts.googleapis.com 'unsafe-inline'`,
@@ -45,6 +46,25 @@ class MiddlewareUtils {
             `frame-src ${frameSrc}`,
             'upgrade-insecure-requests',
         ];
+
+        // Add CSP reporting to Sentry
+        try {
+            const envName = process.env.NEXT_PUBLIC_ENV!;
+            const release = packageInfo.version;
+            const sentryUri = process.env.SENTRY_REPORT_URI;
+            const sentryKey = process.env.SENTRY_REPORT_KEY;
+
+            if (sentryUri && sentryKey) {
+                const reportUri = `${sentryUri}?sentry_key=${encodeURIComponent(
+                    sentryKey,
+                )}&sentry_environment=${encodeURIComponent(envName)}&sentry_release=${encodeURIComponent(release)}`;
+                policies.push(`report-uri ${reportUri}`);
+            }
+        } catch {
+            // ignore if env vars are not available
+        }
+
+        return policies;
     };
 }
 

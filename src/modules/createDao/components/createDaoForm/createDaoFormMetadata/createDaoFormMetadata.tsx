@@ -3,6 +3,7 @@ import { Network } from '@/shared/api/daoService';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { sanitizePlainText } from '@/shared/security';
 import { InputFileAvatar, InputText, TextArea } from '@aragon/gov-ui-kit';
 import { useWatch } from 'react-hook-form';
 import { mainnet } from 'viem/chains';
@@ -92,6 +93,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
         fieldPrefix,
         rules: { maxLength: descriptionMaxLength },
         trimOnBlur: true,
+        sanitizeMode: 'multiline',
         defaultValue: '',
     });
 
@@ -102,7 +104,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
                 <InputText
                     value={ensValue}
                     onChange={(e) => {
-                        onChangeEnsField(e.target.value.toLowerCase());
+                        onChangeEnsField(sanitizePlainText(e.target.value).toLowerCase());
                     }}
                     helpText={t('app.createDao.createDaoForm.metadata.ens.helpText')}
                     addon=".dao.eth"
