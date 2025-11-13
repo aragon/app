@@ -134,7 +134,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
                 maxLength={descriptionMaxLength}
                 isOptional={true}
                 {...descriptionField}
-                value={descriptionField.value ?? ''}
+                value={(descriptionField.value as string | null | undefined) ?? ''}
             />
             <ResourcesInput
                 name="resources"

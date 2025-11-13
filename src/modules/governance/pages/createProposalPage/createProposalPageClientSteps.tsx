@@ -59,7 +59,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
             return;
         }
 
-        const actions = getValues('actions') || [];
+        const actions = (getValues('actions') as ICreateProposalFormData['actions'] | undefined) ?? [];
         const processedActions = await publishProposalDialogUtils.prepareActions({ actions, prepareActions });
 
         const { network } = daoUtils.parseDaoId(daoId);
@@ -79,7 +79,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
         const { network } = daoUtils.parseDaoId(daoId);
         const { tenderlySupport } = networkDefinitions[network];
 
-        const actions = getValues('actions') || [];
+        const actions = (getValues('actions') as ICreateProposalFormData['actions'] | undefined) ?? [];
         const dropdownItems = [
             { label: t(`${labelBase}.simulate`), onClick: handleSimulateActions },
             { label: t(`${labelBase}.skipSimulation`), formId: createProposalWizardId },

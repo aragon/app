@@ -1,5 +1,5 @@
 import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
-import { IProposalActionWithdrawToken, ProposalActionType } from '@/modules/governance/api/governanceService';
+import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { useDao, useDaoPermissions } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -56,7 +56,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         fields: actions,
         append,
         remove,
-        move,
     } = useFieldArray({
         control,
         name: 'actions',
@@ -189,33 +188,27 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             <ProposalActions.Root expandedActions={expandedActions} onExpandedActionsChange={setExpandedActions}>
                 <ProposalActions.Container emptyStateDescription="">
                     {actions.map((field, index) => {
-                        // The `field` object from `useFieldArray` can be stale during re-renders.
-                        // To get the most up-to-date data, we read it directly from the form state.
-                        const allActions = getValues('actions');
+                        const allActions = getValues('actions') as IProposalActionData[] | undefined;
                         const currentActionData = allActions?.[index];
 
-                        // If data for the current index doesn't exist, render nothing to prevent crashes.
-                        // This can happen momentarily during a fast `remove` operation.
                         if (!currentActionData) {
                             return null;
                         }
-
-                        // Combine the stable `id` from the field array with the fresh data from the form state.
-                        const freshAction = { ...currentActionData, id: field.id };
-
-                        // The `ProposalActions.Item` component unconditionally calls `BigInt(action.value)`.
-                        if (freshAction.value == null) {
-                            freshAction.value = '0';
-                        }
-
-                        // The custom `TransferAssetAction` component uses `action.amount`. We use a type
-                        // assertion to ensure TypeScript knows this property exists for this action type.
+                        const actionValue = currentActionData.value as string | undefined;
+                        const freshAction: IProposalActionData = {
+                            ...currentActionData,
+                            id: field.id,
+                            value: actionValue ?? '0',
+                        };
                         if (
-                            (freshAction.type === ProposalActionType.TRANSFER ||
-                                freshAction.type === actionComposerUtils.transferActionLocked) &&
-                            (freshAction as unknown as IProposalActionWithdrawToken).amount == null
+                            freshAction.type === ProposalActionType.TRANSFER ||
+                            freshAction.type === actionComposerUtils.transferActionLocked
                         ) {
-                            (freshAction as unknown as IProposalActionWithdrawToken).amount = '0';
+                            // Cast to include the amount property used by TransferAssetAction
+                            const actionWithAmount = freshAction as IProposalActionData & { amount?: string };
+                            Object.assign(freshAction, {
+                                amount: actionWithAmount.amount ?? '0',
+                            });
                         }
 
                         return (

@@ -108,8 +108,8 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
 
     useEffect(() => {
         // Get current inputData to preserve function and stateMutability
-        const currentAction = getValues(`actions.${index}`);
-        const currentInputData = currentAction?.inputData || {};
+        const currentAction = getValues(`actions.${index.toString()}`) as IProposalActionData | undefined;
+        const currentInputData = currentAction?.inputData ?? {};
 
         const newContractParameters = [
             { name: '_to', type: 'address', value: receiverAddress },
