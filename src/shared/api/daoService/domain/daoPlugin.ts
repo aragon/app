@@ -26,7 +26,7 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
     /**
      * Subdomain of the plugin.
      */
-    subdomain: string;
+    subdomain?: string;
     /**
      * Plugin interface type. Used as a plugin type identifier.
      */

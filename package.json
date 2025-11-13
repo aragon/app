@@ -23,7 +23,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@aragon/gov-ui-kit": "^1.23.1",
+    "@aragon/gov-ui-kit": "^1.24.0",
     "@floating-ui/react": "^0.27.16",
     "@number-flow/react": "^0.5.10",
     "@radix-ui/react-dialog": "1.1.15",
@@ -41,6 +41,7 @@
     "deepmerge-ts": "^7.1.5",
     "framer-motion": "^12.23.22",
     "isomorphic-dompurify": "2.30.1",
+    "jsdom": "^27.1.0",
     "luxon": "^3.7.2",
     "next": "^15.5.4",
     "nextjs-toploader": "^3.9.17",
