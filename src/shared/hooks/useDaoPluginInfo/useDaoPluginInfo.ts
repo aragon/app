@@ -46,7 +46,7 @@ export const useDaoPluginInfo = (params: IUseDaoPluginInfoParams): IDefinitionSe
     const { id: chainId } = networkDefinitions[dao.network];
     const pluginCreationLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
 
-    const name = daoUtils.parsePluginSubdomain(plugin.meta.subdomain);
+    const name = daoUtils.getPluginName(plugin.meta);
     const pluginLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address, chainId });
 
     return [

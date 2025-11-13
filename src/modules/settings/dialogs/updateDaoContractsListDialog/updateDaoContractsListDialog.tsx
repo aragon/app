@@ -70,7 +70,7 @@ export const UpdateDaoContractsListDialog: React.FC<IUpdateDaoContractsListDialo
                         <UpdateDaoContractsCard
                             key={plugin.address}
                             name={daoUtils.getPluginName(plugin)}
-                            smartContractName={daoUtils.parsePluginSubdomain(plugin.subdomain)}
+                            smartContractName={daoUtils.getPluginName(plugin)}
                             address={plugin.address}
                             currentVersion={plugin}
                             newVersion={
