@@ -10,7 +10,7 @@ import {
     type IProposalActionsItemDropdownItem,
     type ProposalActionComponent,
 } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
@@ -50,12 +50,15 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const { t } = useTranslations();
     const [expandedActions, setExpandedActions] = useState<string[]>([]);
     const [, forceUpdate] = useState({});
+    const previousActionsLengthRef = useRef<number>(0);
+    const isSwappingRef = useRef<boolean>(false);
     const { control, getValues, setValue } = useFormContext<ICreateProposalFormData>();
 
     const {
         fields: actions,
         append,
         remove,
+        swap,
     } = useFieldArray({
         control,
         name: 'actions',
@@ -81,19 +84,84 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         }
     }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
+    // Initialize expanded actions with all existing action IDs on mount only
+    const hasInitialized = useRef(false);
+    useEffect(() => {
+        if (!hasInitialized.current && actions.length > 0) {
+            console.log('=== Initializing expanded actions ===');
+            console.log(
+                'actions (fields):',
+                actions.map((field) => ({ fieldId: field.id })),
+            );
+            const formActions = getValues('actions') as IProposalActionData[] | undefined;
+            console.log(
+                'form actions data:',
+                formActions?.map((action) => ({ type: action.type, actionId: action.id })),
+            );
+
+            const actionIds = actions.map((action) => action.id).filter((id): id is string => id != null);
+            console.log('actionIds to expand:', actionIds);
+            setExpandedActions(actionIds);
+            hasInitialized.current = true;
+        }
+    }, [actions, getValues]);
+
+    // Watch for new actions being added and expand them automatically
+    useEffect(() => {
+        const currentLength = actions.length;
+        const previousLength = previousActionsLengthRef.current;
+
+        // Only process if actions were added (not removed or moved)
+        if (currentLength > previousLength && previousLength > 0) {
+            console.log('=== Actions added detected in useEffect ===');
+            console.log('Previous length:', previousLength, 'Current length:', currentLength);
+
+            // Get the newly added field IDs
+            const newFieldIds = actions.slice(previousLength).map((field) => field.id);
+            console.log('New field IDs to expand:', newFieldIds);
+
+            setExpandedActions((prev) => {
+                // Only add IDs that aren't already in the list to prevent duplicates
+                const newIds = newFieldIds.filter((id) => !prev.includes(id));
+                const updated = [...prev, ...newIds];
+                console.log('Expanding actions from', prev, 'to', updated);
+                return updated;
+            });
+        }
+
+        // Update the ref for next time
+        previousActionsLengthRef.current = currentLength;
+    }, [actions]);
+
     const allowedActions = allowedActionsData?.pages.flatMap((page) => page.data);
     const daoPermissions = daoPermissionsData?.pages.flatMap((page) => page.data);
 
     /**
      * Handles moving an action up or down by manually swapping the data in the form state.
-     * This approach avoids the known issues with react-hook-form's useFieldArray.move()
-     * when dealing with deeply nested complex objects.
+     * We use manual swap instead of useFieldArray.swap() because swap() creates empty slots
+     * with complex nested objects.
      */
     const handleMoveAction = useCallback(
         (index: number, newIndex: number) => {
+            console.log('=== handleMoveAction called ===');
+            console.log('Moving from index', index, 'to', newIndex);
+
             if (newIndex < 0 || newIndex >= actions.length) {
                 return;
             }
+
+            console.log(
+                'Field IDs before swap:',
+                actions.map((f) => f.id),
+            );
+            console.log('expandedActions before swap:', expandedActions);
+
+            // Prevent the length-watching useEffect from triggering during move
+            // by keeping the ref in sync (since length doesn't change during swap)
+            previousActionsLengthRef.current = actions.length;
+
+            // Capture the currently expanded actions before swap
+            const currentlyExpanded = [...expandedActions];
 
             // Get the current actions array from form state
             const currentActions = getValues('actions');
@@ -107,16 +175,22 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             actionsCopy[newIndex] = temp;
 
             // Update the entire actions array at once
+            // Note: This will cause a re-render, but field IDs remain the same
             setValue('actions', actionsCopy, {
                 shouldValidate: false,
                 shouldDirty: true,
                 shouldTouch: false,
             });
 
-            // Force a re-render to ensure components re-register their fields with the new indices
-            forceUpdate({});
+            // Force re-expansion after the accordion collapses due to the data swap
+            setTimeout(() => {
+                console.log('Re-expanding after swap to:', currentlyExpanded);
+                setExpandedActions(currentlyExpanded);
+            }, 50);
+
+            console.log('Swap completed');
         },
-        [actions.length, getValues, setValue, forceUpdate],
+        [actions, expandedActions, getValues, setValue],
     );
 
     const handleRemoveAction = (action: IProposalActionData, index: number) => {
@@ -136,10 +210,17 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     };
 
     const handleAddAction = (newActions: IProposalActionData[]) => {
-        // Expand all added actions containing an id
-        const actionIds = newActions.map((action) => action.id).filter((id): id is string => id != null);
-        setExpandedActions(actionIds);
+        console.log('=== handleAddAction called ===');
+        console.log(
+            'newActions passed in:',
+            newActions.map((a) => ({ type: a.type, actionId: a.id })),
+        );
+        console.log(
+            'actions (fields) before append:',
+            actions.map((f) => ({ fieldId: f.id })),
+        );
 
+        // Append the new actions - the useEffect watching actions will handle expansion
         append(newActions);
     };
 
@@ -183,15 +264,28 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     // Don't render action composer while it waits for allowed actions to be fetched
     const showActionComposer = !hasConditionalPermissions || allowedActions != null;
 
+    const handleExpandedActionsChange = useCallback((newExpanded: string[]) => {
+        console.log('expandedActions changing to', newExpanded);
+        setExpandedActions(newExpanded);
+    }, []);
+
+    console.log('=== Rendering with expandedActions:', expandedActions);
+
     return (
         <div className="flex flex-col gap-y-10">
-            <ProposalActions.Root expandedActions={expandedActions} onExpandedActionsChange={setExpandedActions}>
+            <ProposalActions.Root
+                expandedActions={expandedActions}
+                onExpandedActionsChange={handleExpandedActionsChange}
+            >
                 <ProposalActions.Container emptyStateDescription="">
                     {actions.map((field, index) => {
                         const allActions = getValues('actions') as IProposalActionData[] | undefined;
                         const currentActionData = allActions?.[index];
 
                         if (!currentActionData) {
+                            console.error('Missing action data at index', index, 'field.id:', field.id);
+                            console.error('allActions:', allActions);
+                            console.error('actions.length:', actions.length);
                             return null;
                         }
                         const actionValue = currentActionData.value as string | undefined;
