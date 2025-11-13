@@ -10,7 +10,7 @@ import {
     type IProposalActionsItemDropdownItem,
     type ProposalActionComponent,
 } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
@@ -48,10 +48,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const hasConditionalPermissions = processPlugin.conditionAddress != null;
 
     const { t } = useTranslations();
-    const [expandedActions, setExpandedActions] = useState<string[]>([]);
-    const [, forceUpdate] = useState({});
-    const previousActionsLengthRef = useRef<number>(0);
-    const isSwappingRef = useRef<boolean>(false);
+    const [highlightedActionIndex, setHighlightedActionIndex] = useState<number | null>(null);
     const { control, getValues, setValue } = useFormContext<ICreateProposalFormData>();
 
     const {
@@ -84,55 +81,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         }
     }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-    // Initialize expanded actions with all existing action IDs on mount only
-    const hasInitialized = useRef(false);
-    useEffect(() => {
-        if (!hasInitialized.current && actions.length > 0) {
-            console.log('=== Initializing expanded actions ===');
-            console.log(
-                'actions (fields):',
-                actions.map((field) => ({ fieldId: field.id })),
-            );
-            const formActions = getValues('actions') as IProposalActionData[] | undefined;
-            console.log(
-                'form actions data:',
-                formActions?.map((action) => ({ type: action.type, actionId: action.id })),
-            );
-
-            const actionIds = actions.map((action) => action.id).filter((id): id is string => id != null);
-            console.log('actionIds to expand:', actionIds);
-            setExpandedActions(actionIds);
-            hasInitialized.current = true;
-        }
-    }, [actions, getValues]);
-
-    // Watch for new actions being added and expand them automatically
-    useEffect(() => {
-        const currentLength = actions.length;
-        const previousLength = previousActionsLengthRef.current;
-
-        // Only process if actions were added (not removed or moved)
-        if (currentLength > previousLength && previousLength > 0) {
-            console.log('=== Actions added detected in useEffect ===');
-            console.log('Previous length:', previousLength, 'Current length:', currentLength);
-
-            // Get the newly added field IDs
-            const newFieldIds = actions.slice(previousLength).map((field) => field.id);
-            console.log('New field IDs to expand:', newFieldIds);
-
-            setExpandedActions((prev) => {
-                // Only add IDs that aren't already in the list to prevent duplicates
-                const newIds = newFieldIds.filter((id) => !prev.includes(id));
-                const updated = [...prev, ...newIds];
-                console.log('Expanding actions from', prev, 'to', updated);
-                return updated;
-            });
-        }
-
-        // Update the ref for next time
-        previousActionsLengthRef.current = currentLength;
-    }, [actions]);
-
     const allowedActions = allowedActionsData?.pages.flatMap((page) => page.data);
     const daoPermissions = daoPermissionsData?.pages.flatMap((page) => page.data);
 
@@ -143,25 +91,9 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
      */
     const handleMoveAction = useCallback(
         (index: number, newIndex: number) => {
-            console.log('=== handleMoveAction called ===');
-            console.log('Moving from index', index, 'to', newIndex);
-
             if (newIndex < 0 || newIndex >= actions.length) {
                 return;
             }
-
-            console.log(
-                'Field IDs before swap:',
-                actions.map((f) => f.id),
-            );
-            console.log('expandedActions before swap:', expandedActions);
-
-            // Prevent the length-watching useEffect from triggering during move
-            // by keeping the ref in sync (since length doesn't change during swap)
-            previousActionsLengthRef.current = actions.length;
-
-            // Capture the currently expanded actions before swap
-            const currentlyExpanded = [...expandedActions];
 
             // Get the current actions array from form state
             const currentActions = getValues('actions');
@@ -175,52 +107,30 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             actionsCopy[newIndex] = temp;
 
             // Update the entire actions array at once
-            // Note: This will cause a re-render, but field IDs remain the same
             setValue('actions', actionsCopy, {
                 shouldValidate: false,
                 shouldDirty: true,
                 shouldTouch: false,
             });
 
-            // Force re-expansion after the accordion collapses due to the data swap
-            setTimeout(() => {
-                console.log('Re-expanding after swap to:', currentlyExpanded);
-                setExpandedActions(currentlyExpanded);
-            }, 50);
+            // Highlight the moved item at its new position
+            console.log('Setting highlightedActionIndex to:', newIndex);
+            setHighlightedActionIndex(newIndex);
 
-            console.log('Swap completed');
+            // Clear highlight after animation completes (700ms * 2 = 1400ms for 0 → 1 → 0)
+            setTimeout(() => {
+                setHighlightedActionIndex(null);
+            }, 1400);
         },
-        [actions, expandedActions, getValues, setValue],
+        [actions, getValues, setValue],
     );
 
     const handleRemoveAction = (action: IProposalActionData, index: number) => {
         remove(index);
-
-        setExpandedActions((actionIds) => {
-            // Expand the last remaining actions when only two actions are left, otherwise exclude the removed action ID
-            const defaultNewIds = actionIds.filter((id) => id !== action.id);
-
-            if (actions.length === 2) {
-                const remainingActionId = actions[Math.abs(index - 1)]?.id;
-                return remainingActionId ? [remainingActionId] : [];
-            }
-
-            return defaultNewIds;
-        });
     };
 
     const handleAddAction = (newActions: IProposalActionData[]) => {
-        console.log('=== handleAddAction called ===');
-        console.log(
-            'newActions passed in:',
-            newActions.map((a) => ({ type: a.type, actionId: a.id })),
-        );
-        console.log(
-            'actions (fields) before append:',
-            actions.map((f) => ({ fieldId: f.id })),
-        );
-
-        // Append the new actions - the useEffect watching actions will handle expansion
+        // Append the new actions - gov-ui-kit will handle expansion in editMode
         append(newActions);
     };
 
@@ -264,19 +174,9 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     // Don't render action composer while it waits for allowed actions to be fetched
     const showActionComposer = !hasConditionalPermissions || allowedActions != null;
 
-    const handleExpandedActionsChange = useCallback((newExpanded: string[]) => {
-        console.log('expandedActions changing to', newExpanded);
-        setExpandedActions(newExpanded);
-    }, []);
-
-    console.log('=== Rendering with expandedActions:', expandedActions);
-
     return (
         <div className="flex flex-col gap-y-10">
-            <ProposalActions.Root
-                expandedActions={expandedActions}
-                onExpandedActionsChange={handleExpandedActionsChange}
-            >
+            <ProposalActions.Root editMode={true}>
                 <ProposalActions.Container emptyStateDescription="">
                     {actions.map((field, index) => {
                         const allActions = getValues('actions') as IProposalActionData[] | undefined;
@@ -305,6 +205,11 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                             });
                         }
 
+                        const isHighlighted = highlightedActionIndex === index;
+                        if (isHighlighted) {
+                            console.log('Rendering highlighted item at index:', index);
+                        }
+
                         return (
                             <ProposalActions.Item<IProposalActionData>
                                 key={field.id}
@@ -313,7 +218,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                                 value={field.id}
                                 CustomComponent={customActionComponents[freshAction.type]}
                                 dropdownItems={getActionDropdownItems(index)}
-                                editMode={true}
+                                highlight={isHighlighted}
                                 formPrefix={`actions.${index.toString()}`}
                                 chainId={networkDefinitions[dao!.network].id}
                             />
