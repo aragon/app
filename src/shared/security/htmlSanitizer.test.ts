@@ -21,28 +21,16 @@ describe('htmlSanitizer', () => {
         const out = sanitizeHtmlRich(input);
         expect(out).toContain('<p>');
         expect(out).toContain('<strong>world</strong>');
-        expect(out).toContain('<img');
-        expect(out).toContain('src="https://example.com/img.jpg"');
         expect(out).not.toContain('onerror');
+        expect(out).not.toContain('<img');
     });
 
     test('sanitizeHtmlRich removes script tags', () => {
         const input = '<p>text</p><script>alert(1)</script><img src="https://example.com/img.jpg">';
         const out = sanitizeHtmlRich(input);
         expect(out).toContain('<p>text</p>');
-        expect(out).toContain('<img');
         expect(out).not.toContain('<script');
         expect(out).not.toContain('alert(1)');
-    });
-
-    test('sanitizeHtmlRich removes unsafe img src URLs', () => {
-        const safe = '<img src="https://example.com/img.jpg" alt="test">';
-        const unsafe = '<img src="javascript:alert(1)" alt="test">';
-        const dataUrl = '<img src="data:image/png;base64,iVBORw0KGgo=" alt="test">';
-
-        expect(sanitizeHtmlRich(safe)).toContain('src="https://example.com/img.jpg"');
-        expect(sanitizeHtmlRich(unsafe)).not.toContain('src="javascript:');
-        expect(sanitizeHtmlRich(dataUrl)).toContain('data:image/png');
     });
 
     test('sanitizeHtmlRich neutralizes unsafe anchor href and sets rel on target', () => {

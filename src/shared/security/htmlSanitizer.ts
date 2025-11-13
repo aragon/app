@@ -112,7 +112,6 @@ const RICH_ALLOWED_TAGS = [
     'br',
     'hr',
     'span',
-    'img',
 ];
 
 const RICH_ALLOWED_ATTR = ['href', 'rel', 'class', 'title', 'target', 'src', 'alt'];
