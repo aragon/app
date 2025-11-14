@@ -13,6 +13,7 @@ export const MultisigSetupMembership: React.FC<IMultisigSetupMembershipProps> = 
 
     const watchMembersField = useWatch<Record<string, IMultisigSetupMembershipForm['members']>>({
         name: `${formPrefix}.members`,
+        defaultValue: [],
     });
 
     return (
