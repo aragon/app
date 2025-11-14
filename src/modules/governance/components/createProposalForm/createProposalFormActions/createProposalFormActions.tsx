@@ -49,6 +49,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const { t } = useTranslations();
     const [highlightedActionIndex, setHighlightedActionIndex] = useState<number | null>(null);
+    const [highlightTrigger, setHighlightTrigger] = useState(0);
     const { control, getValues, setValue } = useFormContext<ICreateProposalFormData>();
 
     const {
@@ -85,9 +86,12 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const daoPermissions = daoPermissionsData?.pages.flatMap((page) => page.data);
 
     /**
-     * Handles moving an action up or down by manually swapping the data in the form state.
-     * We use manual swap instead of useFieldArray.swap() because swap() creates empty slots
+     * Moves an action up or down by manually swapping positions in the form state.
+     * Uses structuredClone instead of useFieldArray.move() to prevent data loss
      * with complex nested objects.
+     *
+     * @param index - Current position of the action
+     * @param newIndex - Target position for the action
      */
     const handleMoveAction = useCallback(
         (index: number, newIndex: number) => {
@@ -95,32 +99,21 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 return;
             }
 
-            // Get the current actions array from form state
             const currentActions = getValues('actions');
-
-            // Create a deep copy to avoid mutation
             const actionsCopy = structuredClone(currentActions);
 
-            // Manually swap the actions
             const temp = actionsCopy[index];
             actionsCopy[index] = actionsCopy[newIndex];
             actionsCopy[newIndex] = temp;
 
-            // Update the entire actions array at once
             setValue('actions', actionsCopy, {
                 shouldValidate: false,
                 shouldDirty: true,
                 shouldTouch: false,
             });
 
-            // Highlight the moved item at its new position
-            console.log('Setting highlightedActionIndex to:', newIndex);
             setHighlightedActionIndex(newIndex);
-
-            // Clear highlight after animation completes (700ms * 2 = 1400ms for 0 → 1 → 0)
-            setTimeout(() => {
-                setHighlightedActionIndex(null);
-            }, 1400);
+            setHighlightTrigger((prev) => prev + 1);
         },
         [actions, getValues, setValue],
     );
@@ -130,7 +123,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     };
 
     const handleAddAction = (newActions: IProposalActionData[]) => {
-        // Append the new actions - gov-ui-kit will handle expansion in editMode
         append(newActions);
     };
 
@@ -171,7 +163,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         ...permissionActionComponents,
     };
 
-    // Don't render action composer while it waits for allowed actions to be fetched
     const showActionComposer = !hasConditionalPermissions || allowedActions != null;
 
     return (
@@ -183,9 +174,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                         const currentActionData = allActions?.[index];
 
                         if (!currentActionData) {
-                            console.error('Missing action data at index', index, 'field.id:', field.id);
-                            console.error('allActions:', allActions);
-                            console.error('actions.length:', actions.length);
                             return null;
                         }
                         const actionValue = currentActionData.value as string | undefined;
@@ -198,16 +186,10 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                             freshAction.type === ProposalActionType.TRANSFER ||
                             freshAction.type === actionComposerUtils.transferActionLocked
                         ) {
-                            // Cast to include the amount property used by TransferAssetAction
                             const actionWithAmount = freshAction as IProposalActionData & { amount?: string };
                             Object.assign(freshAction, {
                                 amount: actionWithAmount.amount ?? '0',
                             });
-                        }
-
-                        const isHighlighted = highlightedActionIndex === index;
-                        if (isHighlighted) {
-                            console.log('Rendering highlighted item at index:', index);
                         }
 
                         return (
@@ -218,7 +200,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                                 value={field.id}
                                 CustomComponent={customActionComponents[freshAction.type]}
                                 dropdownItems={getActionDropdownItems(index)}
-                                highlight={isHighlighted}
+                                highlight={highlightedActionIndex === index ? highlightTrigger : 0}
                                 formPrefix={`actions.${index.toString()}`}
                                 chainId={networkDefinitions[dao!.network].id}
                             />
