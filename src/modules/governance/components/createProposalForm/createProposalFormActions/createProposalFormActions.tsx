@@ -165,43 +165,21 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         <div className="flex flex-col gap-y-10">
             <ProposalActions.Root editMode={true}>
                 <ProposalActions.Container emptyStateDescription="">
-                    {actions.map((field, index) => {
-                        const allActions = getValues('actions') as IProposalActionData[] | undefined;
-                        const currentActionData = allActions?.[index];
-
-                        if (!currentActionData) {
-                            return null;
-                        }
-                        const actionValue = currentActionData.value as string | undefined;
-                        const freshAction: IProposalActionData = {
-                            ...currentActionData,
-                            id: field.id,
-                            value: actionValue ?? '0',
-                        };
-                        if (
-                            freshAction.type === ProposalActionType.TRANSFER ||
-                            freshAction.type === actionComposerUtils.transferActionLocked
-                        ) {
-                            const actionWithAmount = freshAction as IProposalActionData & { amount?: string };
-                            Object.assign(freshAction, {
-                                amount: actionWithAmount.amount ?? '0',
-                            });
-                        }
-
-                        return (
-                            <ProposalActions.Item<IProposalActionData>
-                                key={field.id}
-                                action={freshAction}
-                                actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(freshAction)}
-                                value={field.id}
-                                CustomComponent={customActionComponents[freshAction.type]}
-                                dropdownItems={getActionDropdownItems(index)}
-                                highlight={highlightedActionIndex === index ? highlightTrigger : 0}
-                                formPrefix={`actions.${index.toString()}`}
-                                chainId={networkDefinitions[dao!.network].id}
-                            />
-                        );
-                    })}
+                    {actions.map((action, index) => (
+                        <ProposalActions.Item<IProposalActionData>
+                            key={action.id}
+                            action={action as IProposalActionData}
+                            actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(
+                                action as IProposalActionData,
+                            )}
+                            value={action.id}
+                            CustomComponent={customActionComponents[action.type]}
+                            dropdownItems={getActionDropdownItems(index)}
+                            highlight={highlightedActionIndex === index ? highlightTrigger : 0}
+                            formPrefix={`actions.${index.toString()}`}
+                            chainId={networkDefinitions[dao!.network].id}
+                        />
+                    ))}
                 </ProposalActions.Container>
             </ProposalActions.Root>
             {showActionComposer ? (
