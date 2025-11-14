@@ -56,7 +56,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         fields: actions,
         append,
         remove,
-        swap,
     } = useFieldArray({
         control,
         name: 'actions',
@@ -86,12 +85,10 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const daoPermissions = daoPermissionsData?.pages.flatMap((page) => page.data);
 
     /**
-     * Moves an action up or down by manually swapping positions in the form state.
-     * Uses structuredClone instead of useFieldArray.move() to prevent data loss
-     * with complex nested objects.
-     *
-     * @param index - Current position of the action
-     * @param newIndex - Target position for the action
+     * Note: We don't use useFieldArray.swap() or .move() because they create empty slots
+     * when dealing with complex nested objects, causing data loss and crashes. Instead,
+     * we use structuredClone to create a deep copy, manually swap elements, and update
+     * the entire array at once.
      */
     const handleMoveAction = useCallback(
         (index: number, newIndex: number) => {

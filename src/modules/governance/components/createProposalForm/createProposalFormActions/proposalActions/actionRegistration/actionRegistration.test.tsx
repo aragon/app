@@ -9,7 +9,7 @@ describe('ActionRegistration HOC', () => {
         <div data-testid="test-component">Action {index}</div>
     );
 
-    const createTestComponent = (index: number = 0) => {
+    const createTestComponent = (index = 0) => {
         const WrappedComponent = ActionRegistration(TestComponent);
 
         const mockAction: IProposalActionData = {
@@ -62,25 +62,35 @@ describe('ActionRegistration HOC', () => {
     it('registers hidden fields for action properties', () => {
         const { container } = render(createTestComponent(0));
 
+        // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
         expect(container.querySelector('input[name="actions.[0].type"]')).toBeInTheDocument();
+        // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
         expect(container.querySelector('input[name="actions.[0].to"]')).toBeInTheDocument();
+        // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
         expect(container.querySelector('input[name="actions.[0].from"]')).toBeInTheDocument();
+        // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
         expect(container.querySelector('input[name="actions.[0].daoId"]')).toBeInTheDocument();
+        // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
         expect(container.querySelector('input[name="actions.[0].data"]')).toBeInTheDocument();
+        // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
         expect(container.querySelector('input[name="actions.[0].value"]')).toBeInTheDocument();
     });
 
     it('registers hidden fields for inputData properties', () => {
         const { container } = render(createTestComponent(0));
 
+        // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
         expect(container.querySelector('input[name="actions.[0].inputData.function"]')).toBeInTheDocument();
+        // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
         expect(container.querySelector('input[name="actions.[0].inputData.contract"]')).toBeInTheDocument();
     });
 
     it('handles different index values correctly', () => {
         const { container } = render(createTestComponent(2));
 
+        // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
         expect(container.querySelector('input[name="actions.[2].type"]')).toBeInTheDocument();
+        // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
         expect(container.querySelector('input[name="actions.[2].to"]')).toBeInTheDocument();
     });
 
