@@ -184,6 +184,17 @@
         "disconnect": "Disconnect"
       }
     },
+    "capitalFlow": {
+      "createPolicyDetailsDialog": {
+        "actionLabel": "Get started",
+        "description": "Create a capital flow policy to manage fund distribution and allocation.",
+        "steps": {
+          "describe": "Describe your policy",
+          "network": "Select chain"
+        },
+        "title": "Create new policy"
+      }
+    },
     "createDao": {
       "createDaoDetailsDialog": {
         "actionLabel": "Get started",
