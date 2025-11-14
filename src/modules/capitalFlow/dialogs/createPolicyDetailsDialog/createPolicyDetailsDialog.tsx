@@ -1,30 +1,33 @@
-import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { type IWizardDetailsDialogStep, WizardDetailsDialog } from '@/shared/components/wizardDetailsDialog';
-import { useRouter } from 'next/navigation';
+import { invariant } from '@aragon/gov-ui-kit';
 
-export interface ICreatePolicyDetailsDialogProps extends IDialogComponentProps {}
+export interface ICreatePolicyDetailsDialogParams {
+    /**
+     * Callback function to be called when the get started action is clicked.
+     */
+    onActionClick?: () => void;
+}
+
+export interface ICreatePolicyDetailsDialogProps extends IDialogComponentProps<ICreatePolicyDetailsDialogParams> {}
 
 export const CreatePolicyDetailsDialog: React.FC<ICreatePolicyDetailsDialogProps> = (props) => {
-    const { id } = props.location;
+    const { id, params } = props.location;
+
+    invariant(params != null, 'CreatePolicyDetailsDialog: required parameters must be set.');
+    const { onActionClick } = params;
 
     const { t } = useTranslations();
 
-    const router = useRouter();
-
-    const { check: checkWalletConnection, result: isConnected } = useConnectedWalletGuard({
-        onSuccess: () => router.push('/create/policy'),
-    });
-
     const steps: IWizardDetailsDialogStep[] = [
         {
-            label: t('app.capitalFlow.createPolicyDetailsDialog.steps.network'),
-            icon: 'CHAIN',
+            label: t('app.capitalFlow.createPolicyDetailsDialog.steps.describe'),
+            icon: 'LABELS',
         },
         {
-            label: t('app.capitalFlow.createPolicyDetailsDialog.steps.describe'),
-            icon: 'DATABASE',
+            label: t('app.capitalFlow.createPolicyDetailsDialog.steps.configure'),
+            icon: 'SETTINGS',
         },
     ];
 
@@ -34,8 +37,8 @@ export const CreatePolicyDetailsDialog: React.FC<ICreatePolicyDetailsDialogProps
             description={t('app.capitalFlow.createPolicyDetailsDialog.description')}
             steps={steps}
             actionLabel={t('app.capitalFlow.createPolicyDetailsDialog.actionLabel')}
-            onActionClick={!isConnected ? checkWalletConnection : undefined}
-            wizardLink={isConnected ? '/create/policy' : undefined}
+            onActionClick={onActionClick}
+            wizardLink={undefined}
             dialogId={id}
         />
     );

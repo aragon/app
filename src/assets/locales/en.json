@@ -189,10 +189,24 @@
         "actionLabel": "Get started",
         "description": "Create a capital flow policy to manage fund distribution and allocation.",
         "steps": {
-          "describe": "Describe your policy",
-          "network": "Select chain"
+          "configure": "Configure policy",
+          "describe": "Describe your policy"
         },
         "title": "Create new policy"
+      },
+      "createPolicyPage": {
+        "finalStep": "Publish policy",
+        "steps": {
+          "METADATA": {
+            "description": "Name and define your policy so that members understand what the automation does when executed.",
+            "name": "Describe your policy",
+            "title": "Describe your policy"
+          }
+        },
+        "submitLabel": "Publish policy"
+      },
+      "layoutWizardCreatePolicy": {
+        "name": "Create policy"
       }
     },
     "createDao": {
@@ -2304,6 +2318,8 @@
           "versionInfoTitle": "Contracts"
         },
         "main": {
+          "automationAction": "Policy",
+          "automationInfoTitle": "Automation",
           "governanceAction": "Process",
           "governanceInfoTitle": "Governance",
           "settingsInfoTitle": "DAO",

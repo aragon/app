@@ -16,6 +16,7 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 import { IconType } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
+import { CapitalFlowDialogId } from '../../../capitalFlow/constants/capitalFlowDialogId';
 import { CreateDaoDialogId } from '../../../createDao/constants/createDaoDialogId';
 import type { ICreateProcessDetailsDialogParams } from '../../../createDao/dialogs/createProcessDetailsDialog';
 import { DaoSettingsInfo } from '../../components/daoSettingsInfo';
@@ -50,35 +51,39 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
         daoId,
     });
 
-    const handlePermissionGuardSuccess = (plugin: IDaoPlugin) =>
+    ////////////////
+    // NEW PROCESS
+    ////////////////
+
+    const handleNewProcessPermissionGuardSuccess = (plugin: IDaoPlugin) =>
         router.push(daoUtils.getDaoUrl(dao, `create/${plugin.address}/process`)!);
 
-    const handlePluginSelected = (plugin: IDaoPlugin) => {
+    const handleNewProcessPluginSelected = (plugin: IDaoPlugin) => {
         createProposalGuard({
             plugin,
-            onSuccess: () => handlePermissionGuardSuccess(plugin),
+            onSuccess: () => handleNewProcessPermissionGuardSuccess(plugin),
             // on error, go back to the plugin selection
-            onError: handleConfirmProcessCreation,
+            onError: handleNewProcessCreationConfirm,
         });
     };
 
-    const handleConfirmProcessCreation = () => {
+    const handleNewProcessCreationConfirm = () => {
         // Select a plugin (a process to use to create a new process). If there is only 1 plugin, skip selection step.
         if (processPlugins.length === 1) {
-            handlePluginSelected(processPlugins[0].meta);
+            handleNewProcessPluginSelected(processPlugins[0].meta);
             return;
         }
 
         const params: ISelectPluginDialogParams = {
             daoId,
-            onPluginSelected: handlePluginSelected,
+            onPluginSelected: handleNewProcessPluginSelected,
             variant: 'process',
         };
         open(GovernanceDialogId.SELECT_PLUGIN, { params });
     };
 
     const handleAddProcess = () => {
-        const params: ICreateProcessDetailsDialogParams = { onActionClick: handleConfirmProcessCreation };
+        const params: ICreateProcessDetailsDialogParams = { onActionClick: handleNewProcessCreationConfirm };
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
 
@@ -88,6 +93,50 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
         onClick: handleAddProcess,
         label: t('app.settings.daoSettingsPage.main.governanceAction'),
         iconLeft: IconType.PLUS,
+        variant: 'secondary',
+    };
+
+    //////////////
+    // NEW POLICY
+    //////////////
+
+    const handleNewPolicyPermissionGuardSuccess = (plugin: IDaoPlugin) =>
+        router.push(daoUtils.getDaoUrl(dao, `create/${plugin.address}/policy`)!);
+
+    const handleNewPolicyPluginSelected = (plugin: IDaoPlugin) => {
+        createProposalGuard({
+            plugin,
+            onSuccess: () => handleNewPolicyPermissionGuardSuccess(plugin),
+            // on error, go back to the plugin selection
+            onError: handleNewPolicyCreationConfirm,
+        });
+    };
+
+    const handleNewPolicyCreationConfirm = () => {
+        // Select a plugin (a process to use to create a new process). If there is only 1 plugin, skip selection step.
+        if (processPlugins.length === 1) {
+            handleNewPolicyPluginSelected(processPlugins[0].meta);
+            return;
+        }
+
+        const params: ISelectPluginDialogParams = {
+            daoId,
+            onPluginSelected: handleNewPolicyPluginSelected,
+            variant: 'process',
+        };
+        open(GovernanceDialogId.SELECT_PLUGIN, { params });
+    };
+
+    const handleAddPolicy = () => {
+        const params: ICreateProcessDetailsDialogParams = { onActionClick: handleNewPolicyCreationConfirm };
+        open(CapitalFlowDialogId.CREATE_POLICY_DETAILS, { params });
+    };
+
+    const addPolicyAction = {
+        onClick: handleAddPolicy,
+        label: t('app.settings.daoSettingsPage.main.automationAction'),
+        iconLeft: IconType.PLUS,
+        variant: 'secondary',
     };
 
     if (!dao) {
@@ -123,6 +172,12 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                         ))}
                     </Page.MainSection>
                 )}
+                <Page.MainSection
+                    title={t('app.settings.daoSettingsPage.main.automationInfoTitle')}
+                    action={addPolicyAction}
+                >
+                    <p>Automation content</p>
+                </Page.MainSection>
             </Page.Main>
             <Page.Aside>
                 <Page.AsideCard title={t('app.settings.daoSettingsPage.aside.versionInfoTitle')}>

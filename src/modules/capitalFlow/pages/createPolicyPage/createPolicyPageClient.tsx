@@ -1,33 +1,38 @@
 'use client';
 
-import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useMemo } from 'react';
+import { useProposalPermissionCheckGuard } from '../../../governance/hooks/useProposalPermissionCheckGuard';
 import { CreatePolicyWizardStep, createPolicyWizardSteps } from './createPolicyPageDefinitions';
 
-export interface ICreatePolicyPageClientProps {}
+export interface ICreatePolicyPageClientProps {
+    /**
+     * ID of the current DAO.
+     */
+    daoId: string;
+    /**
+     * Plugin address used to create a proposal for adding a new policy.
+     */
+    pluginAddress: string;
+}
 
-export const CreatePolicyPageClient: React.FC<ICreatePolicyPageClientProps> = () => {
-    const props = {};
+export const CreatePolicyPageClient: React.FC<ICreatePolicyPageClientProps> = (props) => {
+    const { daoId, pluginAddress } = props;
+
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { check: checkWalletConnection } = useConnectedWalletGuard();
+    useProposalPermissionCheckGuard({ daoId, pluginAddress, redirectTab: 'settings' });
 
-    const handleFormSubmit = (values: any) => {
-        // TODO: Implement form submission logic
-        checkWalletConnection({
-            onSuccess: () => {
-                // TODO: Open appropriate dialog
-                console.log('Form submitted:', values);
-            },
-        });
-    };
+    const handleFormSubmit = () => {};
 
-    const [networkStep, metadataStep] = createPolicyWizardSteps;
+    // const handleFormSubmit = (values: ICreateProcessFormData) => {
+    //     const dialogParams: IPrepareProcessDialogParams = { daoId, values, pluginAddress };
+    //     open(CreateDaoDialogId.PREPARE_PROCESS, { params: dialogParams });
+    // };
 
     const processedSteps = useMemo(
         () =>
@@ -37,6 +42,8 @@ export const CreatePolicyPageClient: React.FC<ICreatePolicyPageClientProps> = ()
             })),
         [t],
     );
+
+    const [networkStep, metadataStep] = processedSteps;
 
     return (
         <Page.Main fullWidth={true}>
