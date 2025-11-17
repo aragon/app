@@ -163,7 +163,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     return (
         <div className="flex flex-col gap-y-10">
-            <ProposalActions.Root editMode={true}>
+            <ProposalActions.Root>
                 <ProposalActions.Container emptyStateDescription="">
                     {actions.map((action, index) => (
                         <ProposalActions.Item<IProposalActionData>
@@ -175,9 +175,9 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                             value={action.id}
                             CustomComponent={customActionComponents[action.type]}
                             dropdownItems={getActionDropdownItems(index)}
-                            highlight={highlightedActionIndex === index ? highlightTrigger : 0}
                             formPrefix={`actions.${index.toString()}`}
                             chainId={networkDefinitions[dao!.network].id}
+                            editMode={true}
                         />
                     ))}
                 </ProposalActions.Container>
