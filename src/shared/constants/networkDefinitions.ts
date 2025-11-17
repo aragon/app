@@ -1,5 +1,5 @@
 import { Network } from '@/shared/api/daoService';
-import { Chain, Hex } from 'viem';
+import type { Chain, Hex } from 'viem';
 import {
     arbitrum,
     avalanche,
