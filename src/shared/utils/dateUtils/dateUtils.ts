@@ -38,9 +38,23 @@ class DateUtils {
     durationToSeconds = (duration: IDateDuration) => Duration.fromObject(duration).as('seconds');
 
     parseFixedDate = ({ date, time }: IDateFixed): DateTime => {
-        const { hour, minute } = DateTime.fromISO(time);
+        const parsedTime = DateTime.fromISO(time);
 
-        return DateTime.fromISO(date).set({ hour, minute });
+        // Guard: return invalid DateTime instead of crashing when time format is invalid
+        if (!parsedTime.isValid) {
+            return DateTime.invalid(`Invalid time format: "${time}"`);
+        }
+
+        const parsedDate = DateTime.fromISO(date);
+
+        // Guard: return invalid DateTime for invalid dates
+        if (!parsedDate.isValid) {
+            return DateTime.invalid(`Invalid date format: "${date}"`);
+        }
+
+        // Safe to destructure - both are valid
+        const { hour, minute } = parsedTime;
+        return parsedDate.set({ hour, minute });
     };
 
     dateToFixedDate = (date: DateTime): IDateFixed | null => {
