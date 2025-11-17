@@ -9,7 +9,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
-import { AddressInput, addressUtils, Dialog, ensUtils, invariant, type ICompositeAddress } from '@aragon/gov-ui-kit';
+import { AddressInput, addressUtils, Dialog, invariant, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSmartContractAbi, type IGetAbiUrlParams, type ISmartContractAbi } from '../../api/smartContractService';
@@ -75,7 +75,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
                 if (!addressInput) {
                     return false;
                 }
-                return addressUtils.isAddress(addressInput, { strict: false }) || ensUtils.isEnsName(addressInput);
+                return addressUtils.isAddress(addressInput, { strict: true });
             },
         },
         control,
@@ -155,7 +155,6 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
                         onChange={setAddressInput}
                         onAccept={onSmartContractChange}
                         chainId={chainId}
-                        enforceChecksum={false}
                         {...smartContractField}
                     />
                     {smartContractValue?.address != null && (
