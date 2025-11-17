@@ -41,7 +41,7 @@ jobs:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
           op-vault: "kv_app_infra"
       - name: Checkout actions
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v5.0.1
         with:
           fetch-depth: 1
           sparse-checkout: |
