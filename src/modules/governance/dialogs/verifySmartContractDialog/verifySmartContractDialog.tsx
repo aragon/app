@@ -71,7 +71,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
         label: t('app.governance.verifySmartContractDialog.smartContractLabel'),
         rules: {
             required: true,
-            validate: (value) => addressUtils.isAddress(value, { strict: false }),
+            validate: (value) => addressUtils.isAddress(value, { strict: true }),
         },
         control,
     });
