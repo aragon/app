@@ -10,7 +10,7 @@ import {
     type IProposalActionsItemDropdownItem,
     type ProposalActionComponent,
 } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
@@ -47,8 +47,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const hasConditionalPermissions = processPlugin.conditionAddress != null;
 
     const { t } = useTranslations();
-    const [highlightedActionIndex, setHighlightedActionIndex] = useState<number | null>(null);
-    const [highlightTrigger, setHighlightTrigger] = useState(0);
+
     const { control, getValues, setValue } = useFormContext<ICreateProposalFormData>();
 
     const {
@@ -107,9 +106,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 shouldDirty: true,
                 shouldTouch: false,
             });
-
-            setHighlightedActionIndex(newIndex);
-            setHighlightTrigger((prev) => prev + 1);
         },
         [actions, getValues, setValue],
     );
