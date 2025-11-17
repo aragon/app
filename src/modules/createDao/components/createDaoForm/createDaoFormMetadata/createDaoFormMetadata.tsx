@@ -39,10 +39,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
 
     // Watch network field to decide whether or not to show ENS field
     const networkFieldName = fieldPrefix ? `${fieldPrefix}.network` : 'network';
-    const networkValue = useWatch<Record<string, ICreateDaoFormData['network']>>({
-        name: networkFieldName,
-        defaultValue: undefined,
-    });
+    const networkValue = useWatch<Record<string, ICreateDaoFormData['network']>>({ name: networkFieldName });
     const isEthMainnet = networkValue === Network.ETHEREUM_MAINNET;
 
     const validateEnsField = async (value?: string) => {
@@ -89,10 +86,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
 
     // Watch the avatar field to properly update the InputFileAvatar component when its value changes
     const avatarFieldName = fieldPrefix ? `${fieldPrefix}.avatar` : 'avatar';
-    const avatarValue = useWatch<Record<string, ICreateDaoFormData['avatar']>>({
-        name: avatarFieldName,
-        defaultValue: undefined,
-    });
+    const avatarValue = useWatch<Record<string, ICreateDaoFormData['avatar']>>({ name: avatarFieldName });
 
     const descriptionField = useFormField<ICreateDaoFormData, 'description'>('description', {
         label: t('app.createDao.createDaoForm.metadata.description.label'),
@@ -134,7 +128,6 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
                 maxLength={descriptionMaxLength}
                 isOptional={true}
                 {...descriptionField}
-                value={(descriptionField.value as string | null | undefined) ?? ''}
             />
             <ResourcesInput
                 name="resources"

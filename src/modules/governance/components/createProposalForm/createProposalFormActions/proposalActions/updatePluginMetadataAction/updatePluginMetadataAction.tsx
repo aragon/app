@@ -20,9 +20,8 @@ const setMetadataAbi = {
 export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionProps> = (props) => {
     const { index, action } = props;
 
-    const meta = action.meta as { isProcess?: boolean; isSubPlugin?: boolean } | undefined;
-    const isProcess = meta?.isProcess ?? false;
-    const isSubPlugin = meta?.isSubPlugin ?? false;
+    const { meta } = action;
+    const { isProcess, isSubPlugin } = meta;
 
     const { mutateAsync: pinJsonAsync } = usePinJson();
     const { addPrepareAction } = useCreateProposalFormContext<IUpdatePluginMetadataAction>();

@@ -106,17 +106,10 @@ class ProposalActionUtils {
         }
 
         const { function: actionFunction, parameters, stateMutability } = inputData;
-
-        // Parameters might be undefined at runtime despite type definitions
-        const actionParameters = parameters as typeof parameters | undefined;
-        if (!actionParameters) {
-            return undefined;
-        }
-
         const functionSelector = toFunctionSelector({
             type: 'function',
             name: actionFunction,
-            inputs: actionParameters,
+            inputs: parameters,
             outputs: [],
             stateMutability: stateMutability as AbiStateMutability,
         });

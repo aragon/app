@@ -25,10 +25,7 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const assetValue = useWatch<Record<string, IAssetInputFormData['asset']>>({
-        name: `${fieldPrefix!}.asset`,
-        defaultValue: undefined,
-    });
+    const assetValue = useWatch<Record<string, IAssetInputFormData['asset']>>({ name: `${fieldPrefix!}.asset` });
 
     const {
         onChange: onReceiverChange,

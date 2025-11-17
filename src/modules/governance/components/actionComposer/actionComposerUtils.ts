@@ -426,7 +426,7 @@ class ActionComposerUtils {
         type: token != null ? this.transferActionLocked : ProposalActionType.TRANSFER,
         from: '',
         to: token ?? zeroAddress,
-        data: '0x',
+        data: '',
         value: '0',
         inputData: { function: 'transfer', contract: 'Ether', parameters: [] },
     });

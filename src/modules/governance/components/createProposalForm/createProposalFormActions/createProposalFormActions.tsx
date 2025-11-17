@@ -6,12 +6,12 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     IconType,
-    ProposalActions,
     type IProposalActionsItemDropdownItem,
     type ProposalActionComponent,
+    ProposalActions,
 } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect, useState } from 'react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { useFieldArray, useWatch } from 'react-hook-form';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
 import type { ICreateProposalFormData, IProposalActionData } from '../createProposalFormDefinitions';
@@ -30,12 +30,12 @@ export interface ICreateProposalFormActionsProps {
     pluginAddress: string;
 }
 
-const coreCustomActionComponents: Record<string, ProposalActionComponent<IProposalActionData>> = {
+const coreCustomActionComponents = {
     [ProposalActionType.TRANSFER]: TransferAssetAction,
     [actionComposerUtils.transferActionLocked]: TransferAssetAction,
     [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction,
     [ProposalActionType.METADATA_PLUGIN_UPDATE]: UpdatePluginMetadataAction,
-};
+} as unknown as Record<string, ProposalActionComponent<IProposalActionData>>;
 
 export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = (props) => {
     const { daoId, pluginAddress } = props;
@@ -47,18 +47,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const hasConditionalPermissions = processPlugin.conditionAddress != null;
 
     const { t } = useTranslations();
-    const [highlightedActionIndex, setHighlightedActionIndex] = useState<number | null>(null);
-    const [highlightTrigger, setHighlightTrigger] = useState(0);
-    const { control, getValues, setValue } = useFormContext<ICreateProposalFormData>();
-
-    const {
-        fields: actions,
-        append,
-        remove,
-    } = useFieldArray({
-        control,
-        name: 'actions',
-    });
+    const [expandedActions, setExpandedActions] = useState<string[]>([]);
 
     const { data: allowedActionsData } = useAllowedActions(
         { urlParams: { network: dao!.network, pluginAddress }, queryParams: { pageSize: 50 } },
@@ -83,43 +72,46 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const allowedActions = allowedActionsData?.pages.flatMap((page) => page.data);
     const daoPermissions = daoPermissionsData?.pages.flatMap((page) => page.data);
 
-    /**
-     * Note: We don't use useFieldArray.swap() or .move() because they create empty slots
-     * when dealing with complex nested objects, causing data loss and crashes. Instead,
-     * we use structuredClone to create a deep copy, manually swap elements, and update
-     * the entire array at once.
-     */
-    const handleMoveAction = useCallback(
-        (index: number, newIndex: number) => {
-            if (newIndex < 0 || newIndex >= actions.length) {
-                return;
-            }
+    const {
+        append: addAction,
+        remove: removeAction,
+        move: moveAction,
+        fields: actions,
+    } = useFieldArray<ICreateProposalFormData, 'actions'>({
+        name: 'actions',
+    });
 
-            const currentActions = getValues('actions');
-            const actionsCopy = structuredClone(currentActions);
+    // Needed to control the entire field array (see Controlled Field Array on useFieldArray)
+    const watchFieldArray = useWatch<Record<string, ICreateProposalFormData['actions']>>({ name: 'actions' });
+    const controlledActions = actions.map((field, index) => ({ ...field, ...watchFieldArray[index] }));
 
-            const temp = actionsCopy[index];
-            actionsCopy[index] = actionsCopy[newIndex];
-            actionsCopy[newIndex] = temp;
+    // When moving actions up or down, the value field of the decoded parameters does not get unregistered, causing
+    // actions to have redundant parameters (coming from the action before/after) with a value but no type or name.
+    const processedActions = controlledActions.map(({ inputData, ...field }) => ({
+        ...field,
+        inputData: inputData
+            ? { ...inputData, parameters: inputData.parameters.filter(({ type }) => (type as unknown) != null) }
+            : null,
+    }));
 
-            setValue('actions', actionsCopy, {
-                shouldValidate: false,
-                shouldDirty: true,
-                shouldTouch: false,
-            });
-
-            setHighlightedActionIndex(newIndex);
-            setHighlightTrigger((prev) => prev + 1);
-        },
-        [actions, getValues, setValue],
-    );
+    const handleMoveAction = (index: number, newIndex: number) => moveAction(index, newIndex);
 
     const handleRemoveAction = (action: IProposalActionData, index: number) => {
-        remove(index);
+        removeAction(index);
+        setExpandedActions((actionIds) => {
+            // Expand the last remaining actions when only two actions are left, otherwise exclude the removed action ID
+            const defaultNewIds = actionIds.filter((id) => id !== action.id);
+            const newExpandedActions =
+                controlledActions.length === 2 ? [controlledActions[Math.abs(index - 1)].id] : defaultNewIds;
+
+            return newExpandedActions;
+        });
     };
 
-    const handleAddAction = (newActions: IProposalActionData[]) => {
-        append(newActions);
+    const handleAddAction = (actions: IProposalActionData[]) => {
+        // Expand all added actions containing an id
+        setExpandedActions(actions.map((action) => action.id).filter((id) => id != null));
+        addAction(actions);
     };
 
     const getActionDropdownItems = (index: number) => {
@@ -128,13 +120,13 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 label: t('app.governance.createProposalForm.actions.editAction.up'),
                 icon: IconType.CHEVRON_UP,
                 onClick: (_, index) => handleMoveAction(index, index - 1),
-                hidden: actions.length < 2 || index === 0,
+                hidden: controlledActions.length < 2 || index === 0,
             },
             {
                 label: t('app.governance.createProposalForm.actions.editAction.down'),
                 icon: IconType.CHEVRON_DOWN,
                 onClick: (_, index) => handleMoveAction(index, index + 1),
-                hidden: actions.length < 2 || index === actions.length - 1,
+                hidden: controlledActions.length < 2 || index === controlledActions.length - 1,
             },
             {
                 label: t('app.governance.createProposalForm.actions.editAction.remove'),
@@ -159,23 +151,22 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         ...permissionActionComponents,
     };
 
+    // Don't render action composer while it waits for allowed actions to be fetched
     const showActionComposer = !hasConditionalPermissions || allowedActions != null;
 
     return (
         <div className="flex flex-col gap-y-10">
-            <ProposalActions.Root editMode={true}>
+            <ProposalActions.Root expandedActions={expandedActions} onExpandedActionsChange={setExpandedActions}>
                 <ProposalActions.Container emptyStateDescription="">
-                    {actions.map((action, index) => (
+                    {processedActions.map((action, index) => (
                         <ProposalActions.Item<IProposalActionData>
                             key={action.id}
-                            action={action as IProposalActionData}
-                            actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(
-                                action as IProposalActionData,
-                            )}
+                            action={action}
+                            actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(action)}
                             value={action.id}
                             CustomComponent={customActionComponents[action.type]}
                             dropdownItems={getActionDropdownItems(index)}
-                            highlight={highlightedActionIndex === index ? highlightTrigger : 0}
+                            editMode={true}
                             formPrefix={`actions.${index.toString()}`}
                             chainId={networkDefinitions[dao!.network].id}
                         />

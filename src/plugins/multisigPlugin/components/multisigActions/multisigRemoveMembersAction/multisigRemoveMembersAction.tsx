@@ -37,7 +37,6 @@ export const MultisigRemoveMembersAction: React.FC<IMultisigRemoveMembersActionP
 
     const watchFieldArray = useWatch<Record<string, IMultisigSetupMembershipForm['members']>>({
         name: membersFieldName,
-        defaultValue: [],
     });
     const controlledMembersField = useMemo(
         () => watchFieldArray.map((field, index) => ({ ...field, ...watchFieldArray[index] })),

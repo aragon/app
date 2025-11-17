@@ -1,7 +1,9 @@
 import type {
+    IProposalAction,
     IProposalActionUpdatePluginMetadata,
     IProposalActionUpdatePluginMetadataObject,
 } from '@/modules/governance/api/governanceService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
@@ -20,4 +22,5 @@ export interface IUpdatePluginMetadataAction extends Omit<IProposalActionUpdateP
     proposedMetadata: IUpdatePluginMetadataFormData;
 }
 
-export interface IUpdatePluginMetadataActionProps extends IProposalActionComponentProps<IProposalActionData> {}
+export interface IUpdatePluginMetadataActionProps
+    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin>> {}
