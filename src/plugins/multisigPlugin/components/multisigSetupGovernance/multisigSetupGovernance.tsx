@@ -62,7 +62,8 @@ export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = 
                     className="w-full"
                     onValueChange={handleRadioChange}
                     value={onlyListedFieldValue ? 'members' : 'any'}
-                    {...onlyListedField}
+                    label={onlyListedField.label}
+                    alert={onlyListedField.alert}
                 >
                     <RadioCard
                         label={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.members.label')}

@@ -44,7 +44,10 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
 
     const { fieldName, onRemoveMember } = useAddressesInputContext();
 
-    const membersField = useWatch<AddressListInputBaseForm>({ name: fieldName });
+    const membersField = useWatch<AddressListInputBaseForm>({
+        name: fieldName,
+        defaultValue: [],
+    });
 
     const canRemove = membersField.length > 1;
 

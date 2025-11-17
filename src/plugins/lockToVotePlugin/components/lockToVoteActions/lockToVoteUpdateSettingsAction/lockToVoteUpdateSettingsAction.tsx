@@ -81,6 +81,7 @@ export const LockToVoteUpdateSettingsAction: React.FC<ILockToVoteUpdateSettingsA
 
     const votingMode = useWatch<Record<string, ITokenSetupGovernanceForm['votingMode']>>({
         name: `${formPrefix}.votingMode`,
+        defaultValue: 0,
     });
 
     useEffect(() => {

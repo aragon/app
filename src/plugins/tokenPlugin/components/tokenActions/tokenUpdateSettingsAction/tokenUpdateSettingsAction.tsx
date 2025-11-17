@@ -77,6 +77,7 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
 
     const votingMode = useWatch<Record<string, ITokenSetupGovernanceForm['votingMode']>>({
         name: `${formPrefix}.votingMode`,
+        defaultValue: 0,
     });
 
     useEffect(() => {
