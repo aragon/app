@@ -194,9 +194,33 @@
         },
         "title": "Create new policy"
       },
+      "createPolicyForm": {
+        "metadata": {
+          "description": {
+            "helpText": "Describe your policies’ purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
+            "label": "Description"
+          },
+          "name": {
+            "helpText": "Give the policy a name that it will be recognized by.",
+            "label": "Name"
+          },
+          "policyKey": {
+            "helpText": "The key is part of the unique identifier for policy of this type. Something like EIP would lead to EIP-1 and increment for each policy.",
+            "label": "Key"
+          },
+          "resources": {
+            "helpText": "Add any additional external resources that help members understand the policy."
+          }
+        }
+      },
       "createPolicyPage": {
         "finalStep": "Publish policy",
         "steps": {
+          "CONFIGURE": {
+            "description": "Specify which policy you would like to use for this automation.",
+            "name": "Configure policy",
+            "title": "Configure policy"
+          },
           "METADATA": {
             "description": "Name and define your policy so that members understand what the automation does when executed.",
             "name": "Describe your policy",

@@ -6,6 +6,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useMemo } from 'react';
 import { useProposalPermissionCheckGuard } from '../../../governance/hooks/useProposalPermissionCheckGuard';
+import { CreatePolicyForm } from '../../components/createPolicyForm';
 import { CreatePolicyWizardStep, createPolicyWizardSteps } from './createPolicyPageDefinitions';
 
 export interface ICreatePolicyPageClientProps {
@@ -43,7 +44,7 @@ export const CreatePolicyPageClient: React.FC<ICreatePolicyPageClientProps> = (p
         [t],
     );
 
-    const [networkStep, metadataStep] = processedSteps;
+    const [metadataStep, configureStep] = processedSteps;
 
     return (
         <Page.Main fullWidth={true}>
@@ -54,24 +55,23 @@ export const CreatePolicyPageClient: React.FC<ICreatePolicyPageClientProps> = (p
                 onSubmit={handleFormSubmit}
             >
                 <WizardPage.Step
-                    title={t(`app.capitalFlow.createPolicyPage.steps.${CreatePolicyWizardStep.NETWORK}.title`)}
-                    description={t(
-                        `app.capitalFlow.createPolicyPage.steps.${CreatePolicyWizardStep.NETWORK}.description`,
-                    )}
-                    {...networkStep}
-                >
-                    {/* TODO: Add Network form component */}
-                    <div>Network Step Content</div>
-                </WizardPage.Step>
-                <WizardPage.Step
                     title={t(`app.capitalFlow.createPolicyPage.steps.${CreatePolicyWizardStep.METADATA}.title`)}
                     description={t(
                         `app.capitalFlow.createPolicyPage.steps.${CreatePolicyWizardStep.METADATA}.description`,
                     )}
                     {...metadataStep}
                 >
-                    {/* TODO: Add Metadata form component */}
-                    <div>Metadata Step Content</div>
+                    <CreatePolicyForm.Metadata />
+                </WizardPage.Step>
+                <WizardPage.Step
+                    title={t(`app.capitalFlow.createPolicyPage.steps.${CreatePolicyWizardStep.CONFIGURE}.title`)}
+                    description={t(
+                        `app.capitalFlow.createPolicyPage.steps.${CreatePolicyWizardStep.CONFIGURE}.description`,
+                    )}
+                    {...configureStep}
+                >
+                    {/* TODO: Add Network form component */}
+                    <div>Network Step Content</div>
                 </WizardPage.Step>
             </WizardPage.Container>
         </Page.Main>
