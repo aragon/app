@@ -53,6 +53,7 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
             validate: (address) => addressesListUtils.validateAddress(address, members, index),
         },
         fieldPrefix: formPrefix,
+        sanitizeOnBlur: false,
     });
 
     const tokenAmountField = useFormField<ITokenSetupMembershipMember, 'tokenAmount'>('tokenAmount', {

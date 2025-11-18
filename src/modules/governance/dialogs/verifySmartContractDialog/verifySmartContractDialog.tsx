@@ -9,7 +9,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
-import { AddressInput, addressUtils, Dialog, invariant, type IAddressInputResolvedValue } from '@aragon/gov-ui-kit';
+import { AddressInput, addressUtils, Dialog, invariant, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSmartContractAbi, type IGetAbiUrlParams, type ISmartContractAbi } from '../../api/smartContractService';
@@ -35,7 +35,7 @@ export interface IVerifySmartContractFormData {
     /**
      * Address to be verified.
      */
-    smartContract?: string;
+    smartContract?: ICompositeAddress;
     /**
      * ABI of the smart contract.
      */
@@ -58,7 +58,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
     const { handleSubmit, control } = useForm<IVerifySmartContractFormData>({
         mode: 'onTouched',
         // set default values for the form only if the initial value is provided, to avoid validation errors on load!
-        defaultValues: defaultAddressValue ? { smartContract: defaultAddressValue } : undefined,
+        defaultValues: defaultAddressValue ? { smartContract: { address: defaultAddressValue } } : undefined,
     });
 
     const [addressInput, setAddressInput] = useState<string | undefined>(initialValue);
@@ -69,22 +69,16 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
         ...smartContractField
     } = useFormField<IVerifySmartContractFormData, 'smartContract'>('smartContract', {
         label: t('app.governance.verifySmartContractDialog.smartContractLabel'),
-        rules: {
-            required: true,
-            validate: (value) => addressUtils.isAddress(value, { strict: true }),
-        },
+        rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
         control,
+        sanitizeOnBlur: false,
     });
-
-    const handleSmartContractChange = (value?: IAddressInputResolvedValue) => {
-        onSmartContractChange(value?.address);
-    };
 
     const { onChange: updateAbi, value: abiFieldValue } = useFormField<IVerifySmartContractFormData, 'abi'>('abi', {
         control,
     });
 
-    const abiParams = { network, address: smartContractValue };
+    const abiParams = { network, address: smartContractValue?.address };
     const { data: smartContractAbi, isLoading: isLoadingAbi } = useSmartContractAbi(
         { urlParams: abiParams as IGetAbiUrlParams },
         { enabled: smartContractValue != null },
@@ -115,7 +109,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
     const handleFormSubmit = (values: IVerifySmartContractFormData) => {
         const defaultAbi = {
             name: unverifiedContractName,
-            address: values.smartContract!,
+            address: values.smartContract!.address,
             network,
             implementationAddress: null,
             functions: [],
@@ -134,7 +128,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
     }, [updateAbi, smartContractAbi, abiFieldValue]);
 
     const contractName = smartContractAbi?.name ?? unverifiedContractName;
-    const buttonLabel = smartContractValue == null || isLoadingAbi ? 'verify' : 'add';
+    const buttonLabel = smartContractValue?.address == null || isLoadingAbi ? 'verify' : 'add';
 
     const transactionInfo: ITransactionInfo = {
         title: contractName,
@@ -152,11 +146,11 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
                         placeholder={t('app.finance.transferAssetForm.receiver.placeholder')}
                         value={addressInput}
                         onChange={setAddressInput}
-                        onAccept={handleSmartContractChange}
+                        onAccept={onSmartContractChange}
                         chainId={chainId}
                         {...smartContractField}
                     />
-                    {smartContractValue && (
+                    {smartContractValue?.address != null && (
                         <TransactionStatus.Container steps={verificationSteps} transactionInfo={transactionInfo}>
                             {verificationSteps.map((step) => (
                                 <TransactionStatus.Step key={step.id} {...step} />
