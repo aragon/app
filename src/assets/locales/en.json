@@ -242,6 +242,35 @@
       },
       "layoutWizardCreatePolicy": {
         "name": "Create policy"
+      },
+      "setupStrategyDialog": {
+        "a11y": {
+          "description": "Create a new strategy for your capital flow policy"
+        },
+        "select": {
+          "capitalDistributor": {
+            "description": "Automate distribution to participants",
+            "label": "Capital distributor"
+          },
+          "capitalRouter": {
+            "description": "Automate transfers between DAOs",
+            "label": "Capital router"
+          },
+          "defiAdapter": {
+            "description": "Automate DeFi transactions",
+            "label": "DeFi adapter"
+          },
+          "disabled": {
+            "onRequest": "On request",
+            "soon": "Soon"
+          },
+          "type": {
+            "helpText": "Select the policy type you want to set up and configure it below.",
+            "label": "Type"
+          }
+        },
+        "submit": "Next",
+        "title": "Create strategy"
       }
     },
     "createDao": {

@@ -4,6 +4,8 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { CardEmptyState, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useFormContext } from 'react-hook-form';
 import type { IRegisteredGauge } from '../../../../../actions/gaugeRegistrar/types/gaugeRegistrar';
+import { CapitalFlowDialogId } from '../../../constants/capitalFlowDialogId';
+import type { ISetupStrategyDialogParams } from '../../../dialogs/setupStrategyDialog';
 
 export interface ICreatePolicyFormConfigureProps {
     /**
@@ -35,13 +37,11 @@ export const CreatePolicyFormConfigure: React.FC<ICreatePolicyFormConfigureProps
     );
 
     const handleOpenGaugeSelectDialog = () => {
-        // const params: IGaugeRegistrarSelectGaugeDialogParams = {
-        //     dao: dao!,
-        //     pluginAddress: action.to,
-        //     onGaugeSelected: setSelectedGauge,
-        // };
-        //
-        // open(GaugeRegistrarDialogId.SELECT_GAUGE, { params });
+        const params: ISetupStrategyDialogParams = {
+            onSubmit: () => {},
+        };
+
+        open(CapitalFlowDialogId.SETUP_STRATEGY, { params });
     };
 
     return (
