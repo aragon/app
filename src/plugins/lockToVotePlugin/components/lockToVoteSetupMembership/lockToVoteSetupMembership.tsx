@@ -48,6 +48,7 @@ export const LockToVoteSetupMembership: React.FC<ILockToVoteSetupMembershipProps
             required: true,
             validate: (value) => addressUtils.isAddress(value),
         },
+        sanitizeOnBlur: false,
     });
 
     const {

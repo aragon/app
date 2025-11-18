@@ -17,6 +17,7 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
         trimOnBlur,
         alertValue: alertValueProp,
         sanitizeMode = 'singleline',
+        sanitizeOnBlur = true,
         ...otherOptions
     } = options ?? {};
 
@@ -29,6 +30,11 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
     });
 
     const handleBlur = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        if (!sanitizeOnBlur) {
+            field.onBlur();
+            return;
+        }
+
         const rawValue = event.target.value;
         const baseValue = trimOnBlur ? rawValue.trim() : rawValue;
         const processedValue =

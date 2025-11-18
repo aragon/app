@@ -64,6 +64,7 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
             validate: (member) =>
                 addressesListUtils.validateAddress(member.address, membersField, index, customValidator),
         },
+        sanitizeOnBlur: false,
     });
 
     const [addressInput, setAddressInput] = useState<string | undefined>(value.address);
