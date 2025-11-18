@@ -70,8 +70,7 @@ export const CreatePolicyPageClient: React.FC<ICreatePolicyPageClientProps> = (p
                     )}
                     {...configureStep}
                 >
-                    {/* TODO: Add Network form component */}
-                    <div>Network Step Content</div>
+                    <CreatePolicyForm.Configure />
                 </WizardPage.Step>
             </WizardPage.Container>
         </Page.Main>

@@ -195,6 +195,17 @@
         "title": "Create new policy"
       },
       "createPolicyForm": {
+        "configure": {
+          "strategy": {
+            "emptyCard": {
+              "action": "Create strategy",
+              "description": "Define a strategy for publishing the new policy.",
+              "heading": "No strategy defined"
+            },
+            "helpText": "Create a new strategy to automate token distribution.",
+            "label": "Strategy"
+          }
+        },
         "metadata": {
           "description": {
             "helpText": "Describe your policies’ purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
