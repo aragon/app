@@ -10,6 +10,10 @@ export interface ISetupStrategyDialogParams extends ISetupStrategyDialogStepsPro
      * Callback called on submit.
      */
     onSubmit: (values: ISetupStrategyForm) => void;
+    /**
+     * ID of the DAO.
+     */
+    daoId: string;
 }
 
 export interface ISetupStrategyDialogProps extends IDialogComponentProps<ISetupStrategyDialogParams> {}
@@ -18,7 +22,7 @@ export const SetupStrategyDialog: React.FC<ISetupStrategyDialogProps> = (props) 
     const { location } = props;
 
     invariant(location.params != null, 'SetupStrategyDialog: required parameters must be set.');
-    const { onSubmit, initialValues } = location.params;
+    const { onSubmit, initialValues, daoId } = location.params;
 
     const { t } = useTranslations();
 
@@ -30,7 +34,7 @@ export const SetupStrategyDialog: React.FC<ISetupStrategyDialogProps> = (props) 
             defaultValues={initialValues}
             submitLabel={t('app.capitalFlow.setupStrategyDialog.submit')}
         >
-            <SetupStrategyDialogSteps initialValues={initialValues} />
+            <SetupStrategyDialogSteps initialValues={initialValues} daoId={daoId} />
         </WizardDialog.Container>
     );
 };

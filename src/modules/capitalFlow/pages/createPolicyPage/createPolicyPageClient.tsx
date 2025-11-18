@@ -70,7 +70,7 @@ export const CreatePolicyPageClient: React.FC<ICreatePolicyPageClientProps> = (p
                     )}
                     {...configureStep}
                 >
-                    <CreatePolicyForm.Configure />
+                    <CreatePolicyForm.Configure daoId={daoId} />
                 </WizardPage.Step>
             </WizardPage.Container>
         </Page.Main>

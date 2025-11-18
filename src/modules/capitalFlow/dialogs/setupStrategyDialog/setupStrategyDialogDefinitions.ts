@@ -9,4 +9,8 @@ export interface ISetupStrategyForm {
      * Type of the strategy to setup.
      */
     type: StrategyType;
+    /**
+     * ID of the source vault (DAO) from which assets will be routed.
+     */
+    sourceVault: string;
 }

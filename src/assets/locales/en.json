@@ -269,6 +269,14 @@
             "label": "Type"
           }
         },
+        "sourceVault": {
+          "helpText": "This is the source vault from which the assets will be routed. Only DAOs with ROOT permission are eligible.",
+          "label": "Source vault",
+          "tags": {
+            "mainDao": "MainDAO",
+            "subDao": "SubDAO"
+          }
+        },
         "submit": "Next",
         "title": "Create strategy"
       }

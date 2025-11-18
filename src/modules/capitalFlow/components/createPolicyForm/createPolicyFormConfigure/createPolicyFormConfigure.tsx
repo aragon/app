@@ -12,10 +12,14 @@ export interface ICreatePolicyFormConfigureProps {
      * Prefix to prepend to all the metadata form fields.
      */
     fieldPrefix?: string;
+    /**
+     * ID of the DAO.
+     */
+    daoId: string;
 }
 
 export const CreatePolicyFormConfigure: React.FC<ICreatePolicyFormConfigureProps> = (props) => {
-    const { fieldPrefix } = props;
+    const { fieldPrefix, daoId } = props;
     const strategyFieldName = `${fieldPrefix}.strategy`;
 
     const { t } = useTranslations();
@@ -38,6 +42,7 @@ export const CreatePolicyFormConfigure: React.FC<ICreatePolicyFormConfigureProps
 
     const handleOpenGaugeSelectDialog = () => {
         const params: ISetupStrategyDialogParams = {
+            daoId,
             onSubmit: () => {},
         };
 
