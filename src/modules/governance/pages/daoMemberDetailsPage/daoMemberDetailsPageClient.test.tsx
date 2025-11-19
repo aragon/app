@@ -1,6 +1,7 @@
 import { DaoList } from '@/modules/explore/components/daoList';
 import * as efpService from '@/modules/governance/api/efpService';
 import * as daoService from '@/shared/api/daoService';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import {
     generateDao,
     generateDaoPlugin,
@@ -74,7 +75,9 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
 
         return (
             <GukModulesProvider>
-                <DaoMemberDetailsPageClient {...completeProps} />
+                <FeatureFlagsProvider>
+                    <DaoMemberDetailsPageClient {...completeProps} />
+                </FeatureFlagsProvider>
             </GukModulesProvider>
         );
     };

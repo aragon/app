@@ -1,5 +1,10 @@
 import { HttpService } from '@/shared/api/httpService';
-import type { IFeaturedDao, ISanctionedAddressesResult, IWhitelistedAddresses } from './domain';
+import type {
+    ICmsFeatureFlagsResponse,
+    IFeaturedDao,
+    ISanctionedAddressesResult,
+    IWhitelistedAddresses,
+} from './domain';
 
 class CmsService extends HttpService {
     constructor() {
@@ -10,6 +15,7 @@ class CmsService extends HttpService {
         featuredDaos: '/main/featured-daos.json',
         whitelistedAddresses: '/main/whitelisted-addresses.json',
         sanctionedAddresses: '/main/sanctioned-addresses.json',
+        featureFlags: '/main/feature-flags.json',
     };
 
     getFeaturedDaos = async (): Promise<IFeaturedDao[]> => {
@@ -26,6 +32,12 @@ class CmsService extends HttpService {
 
     getSanctionedAddresses = async (): Promise<ISanctionedAddressesResult> => {
         const result = await this.request<ISanctionedAddressesResult>(this.urls.sanctionedAddresses);
+
+        return result;
+    };
+
+    getFeatureFlags = async (): Promise<ICmsFeatureFlagsResponse> => {
+        const result = await this.request<ICmsFeatureFlagsResponse>(this.urls.featureFlags);
 
         return result;
     };
