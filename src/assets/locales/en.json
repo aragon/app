@@ -247,6 +247,17 @@
         "a11y": {
           "description": "Create a new strategy for your capital flow policy"
         },
+        "distribution": {
+          "helpText": "Choose the token for this policy and specify the amount per dispatch.",
+          "label": "Token",
+          "recipients": {
+            "addButton": "Recipients",
+            "counter": "{{current}}/{{max}}",
+            "distributeEvenly": "Distribute evenly",
+            "helpText": "Specify the recipients and the distribution ratio of tokens for each dispatch.",
+            "label": "Recipients"
+          }
+        },
         "select": {
           "capitalDistributor": {
             "description": "Automate distribution to participants",
