@@ -41,7 +41,11 @@ export const GaugeVoterVoteDialogFooter: React.FC<IGaugeVoterVoteDialogFooterPro
                             {totalVotingPower} {tokenSymbol}
                         </span>
                     </div>
-                    <div className="flex items-center gap-x-1 text-lg">
+                    <div
+                        className={`flex items-center gap-x-1 text-lg ${
+                            totalPercentageUsed !== 100 ? 'text-critical-600' : ''
+                        }`}
+                    >
                         {totalPercentageUsed}%
                         <span className="text-base text-neutral-500">
                             {' '}
