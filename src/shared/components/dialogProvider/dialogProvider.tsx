@@ -20,29 +20,63 @@ export const DialogContext = createContext<IDialogContext | null>(null);
 export const DialogProvider: React.FC<IDialogProviderProps> = (props) => {
     const { children } = props;
 
-    const [location, setLocation] = useState<IDialogLocation>();
+    const [locations, setLocations] = useState<IDialogLocation[]>([]);
 
     const updateOptions = useCallback((options?: Partial<IDialogLocationOptions>) => {
-        setLocation((currentLocation) => (currentLocation != null ? { ...currentLocation, ...options } : undefined));
+        setLocations((currentLocations) => {
+            if (currentLocations.length === 0) {
+                return currentLocations;
+            }
+            const updatedLocations = [...currentLocations];
+            const lastIndex = updatedLocations.length - 1;
+            updatedLocations[lastIndex] = { ...updatedLocations[lastIndex], ...options };
+            return updatedLocations;
+        });
     }, []);
 
     const open = useCallback(
         <TParams extends DialogComponentProps = DialogComponentProps>(
             id: string,
             options?: IDialogLocationOptions<TParams>,
-        ) => setLocation({ id, ...options }),
+        ) => {
+            const { stack = false, ...restOptions } = options ?? {};
+            setLocations((currentLocations) => {
+                // If stack is true, add to stack; otherwise replace all dialogs
+                if (stack) {
+                    return [...currentLocations, { id, ...restOptions }];
+                }
+                return [{ id, ...restOptions }];
+            });
+        },
         [],
     );
 
-    const close = useCallback(
-        (id?: string) =>
-            setLocation((currentLocation) => (id != null && currentLocation?.id != id ? currentLocation : undefined)),
-        [],
-    );
+    const close = useCallback((id?: string) => {
+        setLocations((currentLocations) => {
+            if (currentLocations.length === 0) {
+                return currentLocations;
+            }
+
+            // If no ID provided, close all dialogs (backward compatibility)
+            if (id == null) {
+                return [];
+            }
+
+            // If ID provided, close that specific dialog
+            const index = currentLocations.findIndex((loc) => loc.id === id);
+            if (index === -1) {
+                return currentLocations;
+            }
+
+            return [...currentLocations.slice(0, index), ...currentLocations.slice(index + 1)];
+        });
+    }, []);
+
+    const location = locations.length > 0 ? locations[locations.length - 1] : undefined;
 
     const contextValues = useMemo(
-        () => ({ open, close, location, updateOptions }),
-        [open, close, updateOptions, location],
+        () => ({ open, close, location, locations, updateOptions }),
+        [open, close, updateOptions, location, locations],
     );
 
     return <DialogContext.Provider value={contextValues}>{children}</DialogContext.Provider>;
