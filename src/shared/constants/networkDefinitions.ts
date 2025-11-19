@@ -188,7 +188,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.KATANA_MAINNET]: {
         ...katana,
         name: 'Katana',
-        logo: 'https://aragon.org/favicon-96x96.png',
+        logo: 'https://assets.coingecko.com/asset_platforms/images/32239/large/katana.jpg',
         order: 7,
         protocolVersion: latestProtocolVersion,
         beta: false,
