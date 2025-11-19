@@ -4,13 +4,8 @@ import { useDao, useDaoPermissions } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import {
-    IconType,
-    ProposalActions,
-    type IProposalActionsItemDropdownItem,
-    type ProposalActionComponent,
-} from '@aragon/gov-ui-kit';
-import { useCallback, useEffect, useState } from 'react';
+import { ProposalActions, type IProposalActionsArrayControls, type ProposalActionComponent } from '@aragon/gov-ui-kit';
+import { useCallback, useEffect } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
@@ -47,8 +42,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const hasConditionalPermissions = processPlugin.conditionAddress != null;
 
     const { t } = useTranslations();
-    const [highlightedActionIndex, setHighlightedActionIndex] = useState<number | null>(null);
-    const [highlightTrigger, setHighlightTrigger] = useState(0);
     const { control, getValues, setValue } = useFormContext<ICreateProposalFormData>();
 
     const {
@@ -107,9 +100,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 shouldDirty: true,
                 shouldTouch: false,
             });
-
-            setHighlightedActionIndex(newIndex);
-            setHighlightTrigger((prev) => prev + 1);
         },
         [actions, getValues, setValue],
     );
@@ -122,29 +112,24 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         append(newActions);
     };
 
-    const getActionDropdownItems = (index: number) => {
-        const dropdownItems: Array<IProposalActionsItemDropdownItem<IProposalActionData> & { hidden: boolean }> = [
-            {
+    const getMovementControls = (index: number): IProposalActionsArrayControls<IProposalActionData> => {
+        return {
+            moveUp: {
                 label: t('app.governance.createProposalForm.actions.editAction.up'),
-                icon: IconType.CHEVRON_UP,
                 onClick: (_, index) => handleMoveAction(index, index - 1),
-                hidden: actions.length < 2 || index === 0,
+                disabled: actions.length < 2 || index === 0,
             },
-            {
+            moveDown: {
                 label: t('app.governance.createProposalForm.actions.editAction.down'),
-                icon: IconType.CHEVRON_DOWN,
                 onClick: (_, index) => handleMoveAction(index, index + 1),
-                hidden: actions.length < 2 || index === actions.length - 1,
+                disabled: actions.length < 2 || index === actions.length - 1,
             },
-            {
+            remove: {
                 label: t('app.governance.createProposalForm.actions.editAction.remove'),
-                icon: IconType.CLOSE,
                 onClick: handleRemoveAction,
-                hidden: false,
+                disabled: false,
             },
-        ];
-
-        return dropdownItems.filter((item) => !item.hidden);
+        };
     };
 
     const { pluginComponents } = actionComposerUtils.getDaoPluginActions(dao);
@@ -174,8 +159,8 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                             )}
                             value={action.id}
                             CustomComponent={customActionComponents[action.type]}
-                            dropdownItems={getActionDropdownItems(index)}
-                            highlight={highlightedActionIndex === index ? highlightTrigger : 0}
+                            movementControls={getMovementControls(index)}
+                            actionCount={actions.length}
                             formPrefix={`actions.${index.toString()}`}
                             chainId={networkDefinitions[dao!.network].id}
                             editMode={true}
