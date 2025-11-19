@@ -21,7 +21,7 @@ export interface IGaugeRegistrarRegisterGaugeActionCreateProps
 export const GaugeRegistrarRegisterGaugeActionCreate: React.FC<IGaugeRegistrarRegisterGaugeActionCreateProps> = (
     props,
 ) => {
-    const { index } = props;
+    const { index, chainId } = props;
 
     const { mutateAsync: pinJsonAsync } = usePinJson();
     const { mutateAsync: pinFileAsync } = usePinFile();
@@ -73,5 +73,5 @@ export const GaugeRegistrarRegisterGaugeActionCreate: React.FC<IGaugeRegistrarRe
         addPrepareAction(GaugeRegistrarActionType.REGISTER_GAUGE, prepareAction);
     }, [addPrepareAction, prepareAction]);
 
-    return <GaugeRegistrarRegisterGaugeActionCreateForm fieldPrefix={`${fieldName}.gaugeDetails`} />;
+    return <GaugeRegistrarRegisterGaugeActionCreateForm fieldPrefix={`${fieldName}.gaugeDetails`} chainId={chainId} />;
 };
