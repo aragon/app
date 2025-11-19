@@ -44,6 +44,7 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
                     t('app.createDao.setupBodyDialog.externalAddress.addressTypeCheck.validation'),
             },
         },
+        sanitizeOnBlur: false,
     });
 
     const { data: isSafe, isLoading: isSafeCheckLoading } = useIsSafeContract({

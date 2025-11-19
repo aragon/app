@@ -25,7 +25,10 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const assetValue = useWatch<Record<string, IAssetInputFormData['asset']>>({ name: `${fieldPrefix!}.asset` });
+    const assetValue = useWatch<Record<string, IAssetInputFormData['asset']>>({
+        name: `${fieldPrefix!}.asset`,
+        defaultValue: undefined,
+    });
 
     const {
         onChange: onReceiverChange,
@@ -35,6 +38,7 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
         label: t('app.finance.transferAssetForm.receiver.label'),
         rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
         fieldPrefix,
+        sanitizeOnBlur: false,
     });
 
     const [receiverInput, setReceiverInput] = useState<string | undefined>(value?.address);
