@@ -3,44 +3,40 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
-import { useFieldArray, useWatch } from 'react-hook-form';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import type { ISetupStrategyForm } from '../setupStrategyDialogDefinitions';
 import { SetupStrategyDialogDistributionRecipientItem } from './setupStrategyDialogDistributionRecipientItem';
 
 export interface ISetupStrategyDialogDistributionProps {}
 
-const MAX_RECIPIENTS = 15;
+const maxRecipients = 15;
 
 export const SetupStrategyDialogDistribution: React.FC<ISetupStrategyDialogDistributionProps> = (props) => {
     const { t } = useTranslations();
 
     const daoId = useWatch<ISetupStrategyForm, 'sourceVault'>({ name: 'sourceVault' });
-    console.log('daoId', daoId);
     const { network, address } = daoUtils.parseDaoId(daoId ?? '');
 
     const {
         fields: recipients,
         append: addRecipient,
         remove: removeRecipient,
+        update: updateRecipient,
     } = useFieldArray<ISetupStrategyForm, 'distribution.recipients'>({
-        name: 'distribution.recipients',
-    });
-
-    const watchRecipients = useWatch<ISetupStrategyForm, 'distribution.recipients'>({
         name: 'distribution.recipients',
     });
 
     const watchAsset = useWatch<ISetupStrategyForm>({ name: 'distribution.asset' });
 
     const totalRatio = useMemo(
-        () => watchRecipients?.reduce((sum, recipient) => sum + (recipient?.ratio || 0), 0) || 0,
-        [watchRecipients],
+        () => recipients?.reduce((sum, recipient) => sum + (recipient?.ratio || 0), 0) || 0,
+        [recipients],
     );
 
     const fetchAssetsParams = { queryParams: { address, network } };
 
     const handleAddRecipient = () => {
-        if (recipients.length < MAX_RECIPIENTS) {
+        if (recipients.length < maxRecipients) {
             addRecipient({ address: '', ratio: 0 });
         }
     };
@@ -49,19 +45,16 @@ export const SetupStrategyDialogDistribution: React.FC<ISetupStrategyDialogDistr
         const evenRatio = Math.floor(100 / recipients.length);
         const remainder = 100 - evenRatio * recipients.length;
 
-        // We can't use update from useFieldArray as it doesn't properly trigger validation
-        // So we need to manipulate through form setValue which is handled in the item component
-        watchRecipients?.forEach((_, index) => {
+        recipients?.forEach((recipient, index) => {
             const newRatio = index === 0 ? evenRatio + remainder : evenRatio;
-            // This will be handled by each item's internal state management
-            watchRecipients[index] = { ...watchRecipients[index], ratio: newRatio };
+            updateRecipient(index, { ...recipient, ratio: newRatio });
         });
     };
 
-    const canAddMore = recipients.length < MAX_RECIPIENTS;
+    const canAddMore = recipients.length < maxRecipients;
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex w-full flex-col gap-6">
             <div className="flex flex-col gap-2">
                 <h3 className="text-lg leading-tight font-normal text-neutral-800">
                     {t('app.capitalFlow.setupStrategyDialog.distribution.label')}
@@ -74,18 +67,10 @@ export const SetupStrategyDialogDistribution: React.FC<ISetupStrategyDialogDistr
             <AssetInput fetchAssetsParams={fetchAssetsParams} fieldPrefix="distribution" />
 
             <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-2">
-                    <h3 className="text-lg leading-tight font-normal text-neutral-800">
-                        {t('app.capitalFlow.setupStrategyDialog.distribution.recipients.label')}
-                    </h3>
-                    <p className="text-base leading-normal font-normal text-neutral-500">
-                        {t('app.capitalFlow.setupStrategyDialog.distribution.recipients.helpText')}
-                    </p>
-                </div>
-
                 <InputContainer
                     id="recipients"
                     label={t('app.capitalFlow.setupStrategyDialog.distribution.recipients.label')}
+                    helpText={t('app.capitalFlow.setupStrategyDialog.distribution.recipients.helpText')}
                     useCustomWrapper={true}
                     className="gap-3 md:gap-2"
                     alert={
@@ -113,7 +98,7 @@ export const SetupStrategyDialogDistribution: React.FC<ISetupStrategyDialogDistr
                     <span className="text-sm leading-tight font-normal text-neutral-500">
                         {t('app.capitalFlow.setupStrategyDialog.distribution.recipients.counter', {
                             current: recipients.length,
-                            max: MAX_RECIPIENTS,
+                            max: maxRecipients,
                         })}
                     </span>
 

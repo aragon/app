@@ -54,7 +54,7 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<
         value: addressValue,
         ...addressField
     } = useFormField<IRecipient, 'address'>('address', {
-        label: t('app.capitalFlow.setupStrategyDialog.distribution.recipients.label'),
+        // label: t('app.capitalFlow.setupStrategyDialog.distribution.recipients.address'),
         rules: {
             required: true,
             validate: (value) => addressUtils.isAddress(value),
@@ -90,35 +90,32 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<
     );
 
     return (
-        <Card className="shadow-neutral-sm flex flex-col gap-4 border border-neutral-100 p-4 md:flex-row md:items-center md:justify-between md:gap-2">
-            <AddressInput
-                value={addressInput}
-                onChange={setAddressInput}
-                onAccept={handleAddressAccept}
-                placeholder={t('app.shared.addressesInput.item.input.placeholder')}
-                chainId={chainId}
-                className="flex-1"
-                {...addressField}
-            />
+        <Card className="shadow-neutral-sm flex flex-col gap-4 border border-neutral-100 p-4 md:flex-row md:items-start md:gap-3">
+            <div className="flex-1">
+                <AddressInput
+                    value={addressInput}
+                    onChange={setAddressInput}
+                    onAccept={handleAddressAccept}
+                    placeholder={t('app.shared.addressesInput.item.input.placeholder')}
+                    chainId={chainId}
+                    {...addressField}
+                />
+            </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex-1">
                 <InputNumber
                     min={0}
                     max={100}
                     suffix="%"
                     value={ratioField.value?.toString() ?? '0'}
-                    className="w-full md:max-w-40"
                     onChange={(value) => ratioField.onChange(Number(value))}
                     alert={ratioField.alert}
+                    // label={t('app.capitalFlow.setupStrategyDialog.distribution.recipients.ratio')}
                 />
+            </div>
 
-                <Button
-                    iconLeft={IconType.CLOSE}
-                    onClick={onRemove}
-                    variant="tertiary"
-                    size="sm"
-                    disabled={!canRemove}
-                />
+            <div className="flex h-full items-start pt-1">
+                <Button iconLeft={IconType.CLOSE} onClick={onRemove} variant="tertiary" size="md" />
             </div>
         </Card>
     );

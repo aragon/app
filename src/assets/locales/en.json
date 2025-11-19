@@ -252,10 +252,12 @@
           "label": "Token",
           "recipients": {
             "addButton": "Recipients",
+            "address": "Address",
             "counter": "{{current}}/{{max}}",
             "distributeEvenly": "Distribute evenly",
             "helpText": "Specify the recipients and the distribution ratio of tokens for each dispatch.",
-            "label": "Recipients"
+            "label": "Recipients",
+            "ratio": "Ratio"
           }
         },
         "select": {

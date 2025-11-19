@@ -7,7 +7,7 @@ export const capitalFlowDialogsDefinitions: Record<CapitalFlowDialogId, IDialogC
     [CapitalFlowDialogId.CREATE_POLICY_DETAILS]: { Component: CreatePolicyDetailsDialog, size: 'lg' },
     [CapitalFlowDialogId.SETUP_STRATEGY]: {
         Component: SetupStrategyDialog,
-        size: 'lg',
+        size: 'xl',
         hiddenDescription: 'app.capitalFlow.setupStrategyDialog.a11y.description',
     },
 };
