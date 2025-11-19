@@ -30,7 +30,7 @@ jobs:
           ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
 
       - name: Checkout actions
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v5.0.1
         with:
           fetch-depth: 1
           sparse-checkout: |

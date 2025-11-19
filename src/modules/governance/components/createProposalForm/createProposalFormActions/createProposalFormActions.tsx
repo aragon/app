@@ -178,6 +178,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                             highlight={highlightedActionIndex === index ? highlightTrigger : 0}
                             formPrefix={`actions.${index.toString()}`}
                             chainId={networkDefinitions[dao!.network].id}
+                            editMode={true}
                         />
                     ))}
                 </ProposalActions.Container>

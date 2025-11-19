@@ -58,6 +58,7 @@ export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (pro
         label: t('app.plugins.token.tokenMintTokensAction.address.label'),
         rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
         fieldPrefix: fieldName,
+        sanitizeOnBlur: false,
     });
 
     const [receiverInput, setReceiverInput] = useState<string | undefined>(receiver?.address);

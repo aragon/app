@@ -38,6 +38,7 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
         label: t('app.finance.transferAssetForm.receiver.label'),
         rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
         fieldPrefix,
+        sanitizeOnBlur: false,
     });
 
     const [receiverInput, setReceiverInput] = useState<string | undefined>(value?.address);

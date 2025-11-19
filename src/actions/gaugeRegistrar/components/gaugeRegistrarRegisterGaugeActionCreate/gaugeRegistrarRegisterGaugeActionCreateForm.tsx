@@ -110,6 +110,7 @@ export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
         label: t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.qiToken.label'),
         rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
         fieldPrefix,
+        sanitizeOnBlur: false,
     });
 
     const [qiTokenAddressInput, setQiTokenAddressInput] = useState<string | undefined>(qiTokenAddress?.address);
@@ -138,6 +139,7 @@ export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
         label: t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.rewardController.label'),
         rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
         fieldPrefix,
+        sanitizeOnBlur: false,
     });
 
     const [rewardControllerAddressInput, setRewardControllerAddressInput] = useState<string | undefined>(
