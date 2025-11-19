@@ -3,7 +3,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import { useFieldArray, useWatch } from 'react-hook-form';
 import type { ISetupStrategyForm } from '../setupStrategyDialogDefinitions';
 import { SetupStrategyDialogDistributionRecipientItem } from './setupStrategyDialogDistributionRecipientItem';
 
@@ -15,7 +15,7 @@ export const SetupStrategyDialogDistribution: React.FC<ISetupStrategyDialogDistr
     const { t } = useTranslations();
 
     const daoId = useWatch<ISetupStrategyForm, 'sourceVault'>({ name: 'sourceVault' });
-    const { network, address } = daoUtils.parseDaoId(daoId ?? '');
+    const { network, address } = daoUtils.parseDaoId(daoId);
 
     const {
         fields: recipients,
@@ -96,10 +96,7 @@ export const SetupStrategyDialogDistribution: React.FC<ISetupStrategyDialogDistr
 
                 <div className="flex items-center justify-between">
                     <span className="text-sm leading-tight font-normal text-neutral-500">
-                        {t('app.capitalFlow.setupStrategyDialog.distribution.recipients.counter', {
-                            current: recipients.length,
-                            max: maxRecipients,
-                        })}
+                        {recipients.length}/{maxRecipients}
                     </span>
 
                     <Button

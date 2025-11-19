@@ -200,6 +200,24 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         ? formatterUtils.formatNumber(amountValue, { format: NumberFormat.FIAT_TOTAL_SHORT })
         : `$0.00`;
 
+    const renderAssetButton = () =>
+        disableAssetField ? (
+            <AssetInputToken token={assetField.value?.token} className="cursor-default px-2" />
+        ) : (
+            <Button
+                variant="tertiary"
+                size="sm"
+                onClick={handleOpenDialog}
+                onMouseDown={handleSelectMouseDown}
+                iconRight={IconType.CHEVRON_DOWN}
+                className="shrink-0"
+            >
+                <AssetInputToken token={assetField.value?.token} />
+            </Button>
+        );
+
+    return <div>{renderAssetButton()}</div>;
+
     return (
         <div className="flex flex-col gap-y-3">
             <InputContainer
@@ -208,21 +226,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                 label={hideAmountLabel ? undefined : amountLabel}
                 {...amountField}
             >
-                {!disableAssetField && (
-                    <Button
-                        variant="tertiary"
-                        size="sm"
-                        onClick={handleOpenDialog}
-                        onMouseDown={handleSelectMouseDown}
-                        iconRight={IconType.CHEVRON_DOWN}
-                        className="shrink-0"
-                    >
-                        <AssetInputToken token={assetField.value?.token} />
-                    </Button>
-                )}
-                {disableAssetField && (
-                    <AssetInputToken token={assetField.value?.token} className="cursor-default px-2" />
-                )}
+                {renderAssetButton()}
                 <input
                     type="number"
                     placeholder="0"
