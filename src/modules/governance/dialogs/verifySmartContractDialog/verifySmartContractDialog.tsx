@@ -71,6 +71,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
         label: t('app.governance.verifySmartContractDialog.smartContractLabel'),
         rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
         control,
+        sanitizeOnBlur: false,
     });
 
     const { onChange: updateAbi, value: abiFieldValue } = useFormField<IVerifySmartContractFormData, 'abi'>('abi', {

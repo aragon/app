@@ -60,6 +60,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
             required: true,
             validate: (value) => addressUtils.isAddress(value),
         },
+        sanitizeOnBlur: false,
     });
 
     const { isError, isLoading, data } = useGovernanceToken({
