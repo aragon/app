@@ -41,6 +41,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
 
     const { t } = useTranslations();
     const { switchChain, status: switchChainStatus } = useSwitchChain();
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     const { updateOptions } = useDialogContext();
 
     // Make the onSuccess property stable to only trigger it once on transaction success
