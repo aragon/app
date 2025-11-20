@@ -18,6 +18,11 @@ export interface IDialogLocationOptions<TParams extends DialogComponentProps = D
      * Callback triggered instead of the default close function.
      */
     onClose?: () => void;
+    /**
+     * If true, adds the dialog to the stack. If false (default), replaces all dialogs with this one.
+     * Set to true for nested dialogs that should preserve parent dialog state.
+     */
+    stack?: boolean;
 }
 
 export interface IDialogLocation<TParams extends DialogComponentProps = DialogComponentProps>
@@ -30,15 +35,36 @@ export interface IDialogLocation<TParams extends DialogComponentProps = DialogCo
 
 export interface IDialogContext {
     /**
-     * Definitions for the current active dialog.
+     * Stack of currently open dialogs. The last item is the topmost (active) dialog.
+     */
+    locations: IDialogLocation[];
+    /**
+     * The currently active (topmost) dialog location.
      */
     location?: IDialogLocation;
     /**
      * Opens the specified dialog.
+     * @param id - The dialog ID to open
+     * @param options - Dialog options
+     * @example
+     * // Replace all dialogs (default behavior)
+     * open('MY_DIALOG', { params: { data } });
+     *
+     * @example
+     * // Add to stack, preserving parent dialog state
+     * open('CHILD_DIALOG', { params: { data }, stack: true });
      */
     open: (id: string, options?: IDialogLocationOptions) => void;
     /**
-     * Closes the current active dialog if there's one.
+     * Closes dialogs.
+     * @param id - Optional dialog ID to close. If not provided, closes all dialogs.
+     * @example
+     * // Close all dialogs
+     * close();
+     *
+     * @example
+     * // Close a specific dialog (removes it from stack)
+     * close('SPECIFIC_DIALOG_ID');
      */
     close: (id?: string) => void;
     /**
