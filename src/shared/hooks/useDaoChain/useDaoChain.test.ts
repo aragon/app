@@ -7,14 +7,20 @@ import { ChainEntityType } from '@aragon/gov-ui-kit';
 import { renderHook } from '@testing-library/react';
 import { useDaoChain } from './useDaoChain';
 
+type BuildEntityUrlParams = Parameters<ReturnType<typeof GovUiKit.useBlockExplorer>['buildEntityUrl']>[0];
+
 describe('useDaoChain hook', () => {
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const useBlockExplorerSpy = jest.spyOn(GovUiKit, 'useBlockExplorer');
 
+    const mockChainEntityUrl = jest.fn(({ type, id }: BuildEntityUrlParams) => {
+        return `https://etherscan.io/${type}/${id ?? ''}`;
+    });
+
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         useBlockExplorerSpy.mockReturnValue({
-            buildEntityUrl: jest.fn((params) => `https://etherscan.io/${params.type}/${params.id}`),
+            buildEntityUrl: mockChainEntityUrl,
             getBlockExplorer: jest.fn(),
         } as ReturnType<typeof GovUiKit.useBlockExplorer>);
     });
@@ -22,6 +28,7 @@ describe('useDaoChain hook', () => {
     afterEach(() => {
         useDaoSpy.mockReset();
         useBlockExplorerSpy.mockReset();
+        mockChainEntityUrl.mockClear();
     });
 
     describe('with daoId', () => {
@@ -99,9 +106,8 @@ describe('useDaoChain hook', () => {
 
     describe('buildEntityUrl', () => {
         it('returns a function that builds explorer URLs', () => {
-            const buildEntityUrl = jest.fn((params) => `https://etherscan.io/${params.type}/${params.id}`);
             useBlockExplorerSpy.mockReturnValue({
-                buildEntityUrl,
+                buildEntityUrl: mockChainEntityUrl,
                 getBlockExplorer: jest.fn(),
             } as ReturnType<typeof GovUiKit.useBlockExplorer>);
 
@@ -112,7 +118,7 @@ describe('useDaoChain hook', () => {
                 id: '0x1234567890123456789012345678901234567890',
             });
 
-            expect(buildEntityUrl).toHaveBeenCalledWith({
+            expect(mockChainEntityUrl).toHaveBeenCalledWith({
                 type: ChainEntityType.ADDRESS,
                 id: '0x1234567890123456789012345678901234567890',
             });
