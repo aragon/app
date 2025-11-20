@@ -1,5 +1,5 @@
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
-import { useWatch } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { type ISetupStrategyForm, RouterType } from './setupStrategyDialogDefinitions';
 import { SetupStrategyDialogDistributionFixed } from './setupStrategyDialogDistributionFixed';
 import { SetupStrategyDialogDistributionStream } from './setupStrategyDialogDistributionStream';
@@ -32,7 +32,8 @@ export const SetupStrategyDialogSteps: React.FC<ISetupStrategyDialogStepsProps> 
 
     const [selectStep, sourceVaultStep, routerTypeStep, distributionFixedStep, distributionStreamStep] =
         setupStrategySteps;
-
+    const { getValues, formState } = useFormContext();
+    console.log('getValues', getValues(), formState);
     return (
         <>
             <WizardDialog.Step {...selectStep} hidden={initialValues != null}>

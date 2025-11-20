@@ -68,6 +68,10 @@ export interface IAssetInputProps {
      */
     hideAmountLabel?: boolean;
     /**
+     * Hides the amount filed when set to true. Show only asset selector.
+     */
+    hideAmount?: boolean;
+    /**
      * Minimum value for the amount field.
      */
     minAmount?: number;
@@ -87,6 +91,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         disableAssetField,
         hideMax,
         hideAmountLabel,
+        hideAmount,
         minAmount,
         percentageSelection,
     } = props;
@@ -109,12 +114,14 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         ...amountField
     } = useFormField<IAssetInputFormData, 'amount'>('amount', {
         label: t('app.finance.transferAssetForm.amount.label'),
-        rules: {
-            required: true,
-            max: assetField.value?.amount,
-            min: minAmount,
-            validate: (value) => parseFloat(value ?? '') > 0,
-        },
+        rules: hideAmount
+            ? undefined
+            : {
+                  required: true,
+                  max: assetField.value?.amount,
+                  min: minAmount,
+                  validate: (value) => parseFloat(value ?? '') > 0,
+              },
         fieldPrefix,
     });
 
@@ -216,9 +223,9 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
             </Button>
         );
 
-    return <div>{renderAssetButton()}</div>;
-
-    return (
+    return hideAmount ? (
+        <div>{renderAssetButton()}</div>
+    ) : (
         <div className="flex flex-col gap-y-3">
             <InputContainer
                 id={inputId}

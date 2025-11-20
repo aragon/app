@@ -16,10 +16,6 @@ import type { IRecipientRelative } from '../setupStrategyDialogDefinitions';
 
 export interface ISetupStrategyDialogDistributionRecipientItemProps {
     /**
-     * Index of the recipient in the array.
-     */
-    index: number;
-    /**
      * Total ratio currently allocated.
      */
     totalRatio: number;
@@ -35,19 +31,21 @@ export interface ISetupStrategyDialogDistributionRecipientItemProps {
      * ID of the DAO for network context.
      */
     daoId?: string;
+    /**
+     * Field prefix of the recipient in the array.
+     */
+    fieldPrefix: string;
 }
 
 export const SetupStrategyDialogDistributionRecipientItem: React.FC<
     ISetupStrategyDialogDistributionRecipientItemProps
 > = (props) => {
-    const { index, totalRatio, onRemove, canRemove, daoId } = props;
+    const { totalRatio, onRemove, canRemove, daoId, fieldPrefix } = props;
 
     const { t } = useTranslations();
 
     const { network } = daoUtils.parseDaoId(daoId ?? '');
     const { id: chainId } = networkDefinitions[network];
-
-    const fieldPrefix = `distribution.recipients.[${index}]`;
 
     const {
         onChange: onAddressChange,
@@ -79,7 +77,7 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<
         defaultValue: 0,
         fieldPrefix,
     });
-
+    console.log('ratioField', ratioField);
     const [addressInput, setAddressInput] = useState<string | undefined>(addressValue);
 
     const handleAddressAccept = useCallback(
