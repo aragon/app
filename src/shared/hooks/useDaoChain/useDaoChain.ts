@@ -11,13 +11,15 @@ export const useDaoChain = (params: IUseDaoChainParams): IUseDaoChainReturn => {
     const { data: dao, isLoading } = useDao({ urlParams: { id: daoId ?? '' } }, { enabled: shouldFetchDao });
 
     const resolvedNetwork = network ?? dao?.network;
-    const chainId = providedChainId ?? (resolvedNetwork != null ? networkDefinitions[resolvedNetwork].id : undefined);
+    const networkDefinition = resolvedNetwork != null ? networkDefinitions[resolvedNetwork] : undefined;
+    const chainId = providedChainId ?? networkDefinition?.id;
 
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     return {
         chainId,
         network: resolvedNetwork,
+        networkDefinition,
         buildEntityUrl,
         isLoading: shouldFetchDao ? isLoading : false,
     };

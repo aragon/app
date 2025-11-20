@@ -1,4 +1,5 @@
 import type { Network } from '@/shared/api/daoService';
+import type { INetworkDefinition } from '@/shared/constants/networkDefinitions';
 import type { ChainEntityType } from '@aragon/gov-ui-kit';
 
 export interface IUseDaoChainParams {
@@ -25,6 +26,10 @@ export interface IUseDaoChainReturn {
      * Network for the DAO.
      */
     network: Network | undefined;
+    /**
+     * The network definition for the DAO's network.
+     */
+    networkDefinition: INetworkDefinition | undefined;
     /**
      * Build block explorer URLs for the chain.
      */

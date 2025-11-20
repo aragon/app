@@ -2,8 +2,8 @@
 
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { ChainEntityType, DateFormat, formatterUtils, useBlockExplorer } from '@aragon/gov-ui-kit';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { ChainEntityType, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
 import type { ILockToVotePlugin } from '../../types';
 import { useLockToVoteData } from '../useLockToVoteData';
 
@@ -23,14 +23,12 @@ export const useLockToVotePermissionCheckVoteSubmission = (
 
     const { token } = plugin.settings;
     const { blockTimestamp, network, transactionHash } = proposal!;
-    const { id: chainId } = networkDefinitions[network];
 
     const { balance, lockedAmount, isLoading } = useLockToVoteData({ plugin, daoId });
+    const { buildEntityUrl } = useDaoChain({ network });
 
     const creationDate = blockTimestamp * 1000;
     const formattedCreationDate = formatterUtils.formatDate(creationDate, { format: DateFormat.YEAR_MONTH_DAY });
-
-    const { buildEntityUrl } = useBlockExplorer({ chainId });
     const proposalCreationUrl = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
 
     const settings = [

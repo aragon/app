@@ -1,7 +1,6 @@
 import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
-import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { sanitizePlainText } from '@/shared/security';
 import { Button, IconType, InputContainer, InputText } from '@aragon/gov-ui-kit';
@@ -32,8 +31,7 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const chainId = dao ? networkDefinitions[dao.network].id : undefined;
+    const { chainId } = useDaoChain({ daoId });
 
     const tokenFormPrefix = `${formPrefix}.token`;
 

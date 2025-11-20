@@ -2,8 +2,8 @@ import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@
 import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { ChainEntityType, DateFormat, formatterUtils, useBlockExplorer } from '@aragon/gov-ui-kit';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { ChainEntityType, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 
@@ -32,10 +32,11 @@ export const useMultisigPermissionCheckVoteSubmission = (
     const { t } = useTranslations();
 
     const { blockTimestamp, network, transactionHash, proposalIndex, pluginAddress } = proposal!;
+    const { chainId, buildEntityUrl } = useDaoChain({ network });
 
     const { data: hasPermission, isLoading } = useReadContract({
         address: pluginAddress as Hex,
-        chainId: networkDefinitions[network].id,
+        chainId: chainId,
         abi: multisigAbi,
         functionName: 'canApprove',
         args: [BigInt(proposalIndex), address as Hex],
@@ -46,8 +47,6 @@ export const useMultisigPermissionCheckVoteSubmission = (
         format: DateFormat.YEAR_MONTH_DAY,
     });
 
-    const { id: chainId } = networkDefinitions[network];
-    const { buildEntityUrl } = useBlockExplorer({ chainId });
     const proposalCreationUrl = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
 
     const settings = [
