@@ -1,5 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 
 export interface IGaugeVoterVoteDialogFooterProps {
     /**
@@ -42,9 +43,9 @@ export const GaugeVoterVoteDialogFooter: React.FC<IGaugeVoterVoteDialogFooterPro
                         </span>
                     </div>
                     <div
-                        className={`flex items-center gap-x-1 text-lg ${
-                            totalPercentageUsed !== 100 ? 'text-critical-600' : ''
-                        }`}
+                        className={classNames('flex items-center gap-x-1 text-lg', {
+                            'text-critical-600': totalPercentageUsed !== 100,
+                        })}
                     >
                         {totalPercentageUsed}%
                         <span className="text-base text-neutral-500">
