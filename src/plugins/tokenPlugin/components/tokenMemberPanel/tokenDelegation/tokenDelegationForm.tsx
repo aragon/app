@@ -74,6 +74,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
         label: t('app.plugins.token.tokenDelegationForm.delegate.label'),
         rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
         control,
+        sanitizeOnBlur: false,
     });
 
     const handleSelectionChange = (value: string) => {

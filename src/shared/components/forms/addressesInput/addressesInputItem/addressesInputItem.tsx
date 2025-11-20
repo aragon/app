@@ -44,7 +44,10 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
 
     const { fieldName, onRemoveMember } = useAddressesInputContext();
 
-    const membersField = useWatch<AddressListInputBaseForm>({ name: fieldName });
+    const membersField = useWatch<AddressListInputBaseForm>({
+        name: fieldName,
+        defaultValue: [],
+    });
 
     const canRemove = membersField.length > 1;
 
@@ -61,6 +64,7 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
             validate: (member) =>
                 addressesListUtils.validateAddress(member.address, membersField, index, customValidator),
         },
+        sanitizeOnBlur: false,
     });
 
     const [addressInput, setAddressInput] = useState<string | undefined>(value.address);

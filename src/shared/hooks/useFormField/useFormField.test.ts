@@ -130,4 +130,21 @@ describe('useFormField hook', () => {
         expect(onChange).toHaveBeenCalledWith('line1\n\tline2\nline3');
         expect(onBlur).toHaveBeenCalled();
     });
+
+    it('skips sanitization when sanitizeOnBlur is false', () => {
+        const onChange = jest.fn();
+        const onBlur = jest.fn();
+        const field = { onChange, onBlur } as unknown as ReactHookForm.UseControllerReturn['field'];
+        useControllerSpy.mockReturnValue({ field, fieldState: {} } as unknown as ReactHookForm.UseControllerReturn);
+
+        const { result } = renderHook(() =>
+            useFormField<ReactHookForm.FieldValues, string>('field', { sanitizeOnBlur: false, trimOnBlur: true }),
+        );
+
+        (result.current.onBlur as unknown as (e: { target: { value: string } }) => void)({
+            target: { value: '  should not change value  ' },
+        });
+        expect(onChange).not.toHaveBeenCalled();
+        expect(onBlur).toHaveBeenCalled();
+    });
 });

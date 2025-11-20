@@ -25,7 +25,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
     return (
         <div className="flex flex-col gap-2">
             <RadioGroup
-                className="flex gap-4 md:!flex-row"
+                className="flex gap-4 md:flex-row!"
                 helpText={helpText}
                 onValueChange={inputModeField.onChange}
                 {...inputModeField}

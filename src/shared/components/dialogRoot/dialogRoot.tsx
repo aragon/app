@@ -8,7 +8,7 @@ export interface IDialogRootProps extends IGukDialogRootProps {
     /**
      * Dialogs of the application.
      */
-    dialogs: Record<string, IDialogComponentDefinitions>;
+    dialogs: Partial<Record<string, IDialogComponentDefinitions>>;
 }
 
 export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
@@ -23,9 +23,9 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
         <>
             {locations.map((location, index) => {
                 const isTopmost = index === locations.length - 1;
-                const activeDialog = dialogs[location.id];
+                const dialogDefinition = dialogs[location.id];
 
-                if (!activeDialog) {
+                if (dialogDefinition == null) {
                     return null;
                 }
 
@@ -33,10 +33,10 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
                     Component: ActiveDialogComponent,
                     hiddenTitle,
                     hiddenDescription,
-                    ...activeDialogProps
-                } = activeDialog;
+                    ...otherDialogProps
+                } = dialogDefinition;
 
-                const isAlertDialog = 'variant' in activeDialogProps;
+                const isAlertDialog = 'variant' in otherDialogProps;
                 const { disableOutsideClick, onClose } = location;
 
                 const handleInteractOutside = (event: Event) => {
@@ -64,14 +64,13 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
 
                 return (
                     <DialogWrapper
-                        key={`${location.id}-${index}`}
-                        {...props}
+                        key={`${location.id}-${String(index)}`}
                         open={true}
                         onOpenChange={onOpenChange}
                         onInteractOutside={handleInteractOutside}
                         hiddenTitle={processedHiddenTitle}
                         hiddenDescription={processedHiddenDescription}
-                        {...activeDialogProps}
+                        {...otherDialogProps}
                     >
                         <div style={{ display: isTopmost ? 'contents' : 'none' }}>
                             <ActiveDialogComponent location={location} />
