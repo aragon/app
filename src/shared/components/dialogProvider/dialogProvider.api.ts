@@ -68,7 +68,7 @@ export interface IDialogContext {
     /**
      * Updates the options for the current active dialog.
      *
-     * @deprecated This method was mostly used to fix rough edges previous modal approach had. With the new approach there is no state reusing between modals. To be refactored.
+     * @deprecated This method was mostly used to fix rough edges previous modal approach had. With the new approach there is no state reusing between modals. TODO: APP-358.
      */
     updateOptions: (options: Partial<IDialogLocationOptions>) => void;
 }
