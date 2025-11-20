@@ -6,13 +6,20 @@ import { StrategyType, type ISetupStrategyForm } from '../setupStrategyDialogDef
 export const SetupStrategyDialogSelect: React.FC = () => {
     const { t } = useTranslations();
 
-    const strategyTypeField = useFormField<ISetupStrategyForm, 'type'>('type', {
-        label: t('app.capitalFlow.setupStrategyDialog.select.type.label'),
-        defaultValue: StrategyType.CAPITAL_ROUTER,
-    });
+    const { onChange: onStrategyTypeFieldChange, ...strategyTypeField } = useFormField<ISetupStrategyForm, 'type'>(
+        'type',
+        {
+            label: t('app.capitalFlow.setupStrategyDialog.select.type.label'),
+            defaultValue: StrategyType.CAPITAL_ROUTER,
+        },
+    );
 
     return (
-        <RadioGroup helpText={t('app.capitalFlow.setupStrategyDialog.select.type.helpText')} {...strategyTypeField}>
+        <RadioGroup
+            onValueChange={onStrategyTypeFieldChange}
+            helpText={t('app.capitalFlow.setupStrategyDialog.select.type.helpText')}
+            {...strategyTypeField}
+        >
             <RadioCard
                 label={t('app.capitalFlow.setupStrategyDialog.select.capitalRouter.label')}
                 description={t('app.capitalFlow.setupStrategyDialog.select.capitalRouter.description')}

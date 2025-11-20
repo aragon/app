@@ -7,11 +7,11 @@ import { useFieldArray, useWatch } from 'react-hook-form';
 import type { ISetupStrategyForm } from '../setupStrategyDialogDefinitions';
 import { SetupStrategyDialogDistributionRecipientItem } from './setupStrategyDialogDistributionRecipientItem';
 
-export interface ISetupStrategyDialogDistributionProps {}
+export interface ISetupStrategyDialogDistributionStreamProps {}
 
 const maxRecipients = 15;
 
-export const SetupStrategyDialogDistribution: React.FC<ISetupStrategyDialogDistributionProps> = (props) => {
+export const SetupStrategyDialogDistributionStream: React.FC<ISetupStrategyDialogDistributionStreamProps> = (props) => {
     const { t } = useTranslations();
 
     const daoId = useWatch<ISetupStrategyForm, 'sourceVault'>({ name: 'sourceVault' });
@@ -22,14 +22,14 @@ export const SetupStrategyDialogDistribution: React.FC<ISetupStrategyDialogDistr
         append: addRecipient,
         remove: removeRecipient,
         update: updateRecipient,
-    } = useFieldArray<ISetupStrategyForm, 'distribution.recipients'>({
-        name: 'distribution.recipients',
+    } = useFieldArray<ISetupStrategyForm, 'distributionStream.recipients'>({
+        name: 'distributionStream.recipients',
     });
 
-    const watchAsset = useWatch<ISetupStrategyForm>({ name: 'distribution.asset' });
+    const watchAsset = useWatch<ISetupStrategyForm>({ name: 'distributionStream.asset' });
 
     const totalRatio = useMemo(
-        () => recipients?.reduce((sum, recipient) => sum + (recipient?.ratio || 0), 0) || 0,
+        () => recipients?.reduce((sum, recipient) => sum + (recipient?.amount || 0), 0) || 0,
         [recipients],
     );
 
@@ -37,7 +37,7 @@ export const SetupStrategyDialogDistribution: React.FC<ISetupStrategyDialogDistr
 
     const handleAddRecipient = () => {
         if (recipients.length < maxRecipients) {
-            addRecipient({ address: '', ratio: 0 });
+            addRecipient({ address: '', amount: 0 });
         }
     };
 
@@ -47,7 +47,7 @@ export const SetupStrategyDialogDistribution: React.FC<ISetupStrategyDialogDistr
 
         recipients?.forEach((recipient, index) => {
             const newRatio = index === 0 ? evenRatio + remainder : evenRatio;
-            updateRecipient(index, { ...recipient, ratio: newRatio });
+            updateRecipient(index, { ...recipient, amount: newRatio });
         });
     };
 
@@ -55,6 +55,7 @@ export const SetupStrategyDialogDistribution: React.FC<ISetupStrategyDialogDistr
 
     return (
         <div className="flex w-full flex-col gap-6">
+            <h1>STREAM</h1>
             <div className="flex flex-col gap-2">
                 <h3 className="text-lg leading-tight font-normal text-neutral-800">
                     {t('app.capitalFlow.setupStrategyDialog.distribution.label')}

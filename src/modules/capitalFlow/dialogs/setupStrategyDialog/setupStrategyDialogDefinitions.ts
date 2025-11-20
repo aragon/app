@@ -60,7 +60,12 @@ export interface IDistributionFixedForm extends IDistributionFormBase {
     recipients: IRecipientRelative[];
 }
 
-export interface IDistributionStreamForm extends IDistributionFormBase {}
+export interface IDistributionStreamForm extends IDistributionFormBase {
+    /**
+     * List of recipients with their distribution amounts.
+     */
+    recipients: IRecipientAbsolute[];
+}
 
 export interface IRecipientRelative extends ICompositeAddress {
     /**
