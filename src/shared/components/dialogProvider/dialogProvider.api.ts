@@ -19,7 +19,9 @@ export interface IDialogLocationOptions<TParams extends DialogComponentProps = D
      */
     onClose?: () => void;
     /**
-     * If true, adds the dialog to the stack. If false (default), replaces all dialogs with this one.
+     * If true, adds the dialog onto the stack. If false (default), replaces
+     * existing dialogs with the new one (as in the previous approach with 1 dialog).
+     *
      * Set to true for nested dialogs that should preserve parent dialog state.
      */
     stack?: boolean;
@@ -36,16 +38,12 @@ export interface IDialogLocation<TParams extends DialogComponentProps = DialogCo
 export interface IDialogContext {
     /**
      * Stack of currently open dialogs. The last item is the topmost (active) dialog.
+     * Only active dialog is visible.
      */
     locations: IDialogLocation[];
     /**
-     * The currently active (topmost) dialog location.
-     */
-    location?: IDialogLocation;
-    /**
      * Opens the specified dialog.
-     * @param id - The dialog ID to open
-     * @param options - Dialog options
+     *
      * @example
      * // Replace all dialogs (default behavior)
      * open('MY_DIALOG', { params: { data } });
@@ -57,9 +55,9 @@ export interface IDialogContext {
     open: (id: string, options?: IDialogLocationOptions) => void;
     /**
      * Closes dialogs.
-     * @param id - Optional dialog ID to close. If not provided, closes all dialogs.
+     *
      * @example
-     * // Close all dialogs
+     * // Close all dialogs on stack
      * close();
      *
      * @example
@@ -69,6 +67,8 @@ export interface IDialogContext {
     close: (id?: string) => void;
     /**
      * Updates the options for the current active dialog.
+     *
+     * @deprecated This method was mostly used to fix rough edges previous modal approach had. With the new approach there is no state reusing between modals. To be refactored.
      */
     updateOptions: (options: Partial<IDialogLocationOptions>) => void;
 }

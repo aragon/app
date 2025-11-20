@@ -27,9 +27,11 @@ export const DialogProvider: React.FC<IDialogProviderProps> = (props) => {
             if (currentLocations.length === 0) {
                 return currentLocations;
             }
+
             const updatedLocations = [...currentLocations];
             const lastIndex = updatedLocations.length - 1;
             updatedLocations[lastIndex] = { ...updatedLocations[lastIndex], ...options };
+
             return updatedLocations;
         });
     }, []);
@@ -40,13 +42,10 @@ export const DialogProvider: React.FC<IDialogProviderProps> = (props) => {
             options?: IDialogLocationOptions<TParams>,
         ) => {
             const { stack = false, ...restOptions } = options ?? {};
-            setLocations((currentLocations) => {
-                // If stack is true, add to stack; otherwise replace all dialogs
-                if (stack) {
-                    return [...currentLocations, { id, ...restOptions }];
-                }
-                return [{ id, ...restOptions }];
-            });
+
+            setLocations((currentLocations) =>
+                stack ? [...currentLocations, { id, ...restOptions }] : [{ id, ...restOptions }],
+            );
         },
         [],
     );
@@ -72,11 +71,9 @@ export const DialogProvider: React.FC<IDialogProviderProps> = (props) => {
         });
     }, []);
 
-    const location = locations.length > 0 ? locations[locations.length - 1] : undefined;
-
     const contextValues = useMemo(
-        () => ({ open, close, location, locations, updateOptions }),
-        [open, close, updateOptions, location, locations],
+        () => ({ open, close, locations, updateOptions }),
+        [open, close, updateOptions, locations],
     );
 
     return <DialogContext.Provider value={contextValues}>{children}</DialogContext.Provider>;
