@@ -7,61 +7,91 @@ export enum StrategyType {
     DEFI_ADAPTER = 'DEFI_ADAPTER',
 }
 
-export interface IRecipient extends ICompositeAddress {
-    /**
-     * Distribution ratio (0-100) for this recipient.
-     */
-    ratio: number;
+export enum RouterType {
+    FIXED = 'FIXED',
+    STREAM = 'STREAM',
 }
 
-export interface IDistributionForm {
+export interface ISetupStrategyFormBase {
     /**
-     * The asset to distribute.
-     */
-    asset?: IAsset;
-    /**
-     * The amount per dispatch.
-     */
-    amount?: string;
-    /**
-     * List of recipients with their distribution ratios.
-     */
-    recipients: IRecipient[];
-}
-
-export interface IRecipient extends ICompositeAddress {
-    /**
-     * Distribution ratio (0-100) for this recipient.
-     */
-    ratio: number;
-}
-
-export interface IDistributionForm {
-    /**
-     * The asset to distribute.
-     */
-    asset?: IAsset;
-    /**
-     * The amount per dispatch.
-     */
-    amount?: string;
-    /**
-     * List of recipients with their distribution ratios.
-     */
-    recipients: IRecipient[];
-}
-
-export interface ISetupStrategyForm {
-    /**
-     * Type of the strategy to setup.
+     * Type of the strategy to set up.
      */
     type: StrategyType;
     /**
      * ID of the source vault (DAO) from which assets will be routed.
      */
     sourceVault: string;
-    /**
-     * Distribution configuration.
-     */
-    distribution: IDistributionForm;
 }
+
+/////////////////////////////////
+//// ROUTER
+/////////////////////////////////
+
+export interface ISetupStrategyFormRouter extends ISetupStrategyFormBase {
+    /**
+     * Capital router type of policy.
+     */
+    type: StrategyType.CAPITAL_ROUTER;
+    /**
+     *  Type of the router: fixed, stream, swap, ...
+     */
+    routerType: RouterType;
+    /**
+     * Distribution configuration for FIXED router type.
+     */
+    distributionFixed: IDistributionFixedForm;
+    /**
+     * Distribution configuration for STREAM router type.
+     */
+    distributionStream: IDistributionStreamForm;
+}
+
+export interface IDistributionFormBase {
+    /**
+     * The asset to distribute.
+     */
+    asset?: IAsset;
+}
+
+export interface IDistributionFixedForm extends IDistributionFormBase {
+    /**
+     * List of recipients with their distribution ratios.
+     */
+    recipients: IRecipientRelative[];
+}
+
+export interface IDistributionStreamForm extends IDistributionFormBase {}
+
+export interface IRecipientRelative extends ICompositeAddress {
+    /**
+     * Distribution ratio (0-100) for this recipient.
+     */
+    ratio: number;
+}
+
+export interface IRecipientAbsolute extends ICompositeAddress {
+    /**
+     * Distribution value - amount of tokens.
+     */
+    amount: number;
+}
+
+////////////////////////
+// DEFI ADAPTER
+////////////////////////
+
+export interface ISetupStrategyFormDeFiAdapter extends ISetupStrategyFormBase {
+    /**
+     * Capital router type of policy.
+     */
+    type: StrategyType.DEFI_ADAPTER;
+    /**
+     *  TODO
+     */
+    defiType: string;
+}
+
+/**
+ * Policy/strategy setup form type.
+ */
+export type ISetupStrategyForm = ISetupStrategyFormRouter | ISetupStrategyFormDeFiAdapter;

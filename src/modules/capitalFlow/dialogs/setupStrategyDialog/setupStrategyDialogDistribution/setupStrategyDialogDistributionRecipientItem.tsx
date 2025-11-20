@@ -12,7 +12,7 @@ import {
     type IAddressInputResolvedValue,
 } from '@aragon/gov-ui-kit';
 import { useCallback, useState } from 'react';
-import type { IRecipient } from '../setupStrategyDialogDefinitions';
+import type { IRecipientRelative } from '../setupStrategyDialogDefinitions';
 
 export interface ISetupStrategyDialogDistributionRecipientItemProps {
     /**
@@ -53,7 +53,7 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<
         onChange: onAddressChange,
         value: addressValue,
         ...addressField
-    } = useFormField<IRecipient, 'address'>('address', {
+    } = useFormField<IRecipientRelative, 'address'>('address', {
         // label: t('app.capitalFlow.setupStrategyDialog.distribution.recipients.address'),
         rules: {
             required: true,
@@ -62,7 +62,7 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<
         fieldPrefix,
     });
 
-    const ratioField = useFormField<IRecipient, 'ratio'>('ratio', {
+    const ratioField = useFormField<IRecipientRelative, 'ratio'>('ratio', {
         rules: {
             required: true,
             min: 0,
