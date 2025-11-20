@@ -62,12 +62,7 @@ export const DialogProvider: React.FC<IDialogProviderProps> = (props) => {
             }
 
             // If ID provided, close that specific dialog
-            const index = currentLocations.findIndex((loc) => loc.id === id);
-            if (index === -1) {
-                return currentLocations;
-            }
-
-            return [...currentLocations.slice(0, index), ...currentLocations.slice(index + 1)];
+            return currentLocations.filter((location) => location.id !== id);
         });
     }, []);
 
