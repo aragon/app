@@ -259,6 +259,18 @@
             "ratio": "Ratio"
           }
         },
+        "routerType": {
+          "fixed": {
+            "description": "Transfer an available asset to recipients in a relative manner.",
+            "label": "Fixed ratio"
+          },
+          "helpText": "Select the policy type you want to set up and configure it below.",
+          "label": "Policy strategy",
+          "stream": {
+            "description": "Transfer a fixed quantity of an available asset over time to recipients.",
+            "label": "Stream"
+          }
+        },
         "select": {
           "capitalDistributor": {
             "description": "Automate distribution to participants",
