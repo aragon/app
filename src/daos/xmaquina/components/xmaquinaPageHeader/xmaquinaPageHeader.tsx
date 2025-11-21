@@ -1,6 +1,7 @@
 'use client';
 
 import type { IDao } from '@/shared/api/daoService';
+import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import classNames from 'classnames';
@@ -56,10 +57,10 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
                     priority={true}
                     style={{ objectFit: 'contain', objectPosition: 'top right' }}
                 />
-                <div className="mb-12 flex max-w-[720px] flex-col gap-1.5 text-center md:mb-16 md:gap-3 md:text-left">
+                <div className="mb-12 flex max-w-[720px] flex-col gap-1.5 md:mb-16 md:gap-3">
                     <p className="text-3xl leading-tight text-white md:text-5xl">
                         {t('app.daos.xmaquina.xmaquinaPageHeader.welcome')}{' '}
-                        {ensName && <span className="text-[#00FF00]">{ensName}</span>}
+                        {ensName && <span className="text-[#1ED612]">{ensName}</span>}
                         <br />
                         {t('app.daos.xmaquina.xmaquinaPageHeader.to')}
                     </p>
@@ -67,8 +68,8 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
                         {t('app.daos.xmaquina.xmaquinaPageHeader.info')}
                     </p>
                 </div>
-                <div className="relative flex w-full flex-col gap-px md:flex-row md:items-stretch">
-                    {/* Left edge divider */}
+                {/* Static row for desktop view */}
+                <div className="relative hidden w-full flex-col gap-px md:flex md:flex-row md:items-stretch">
                     <div className="absolute top-0 left-0 hidden h-[400%] w-px -translate-y-1/2 bg-white/10 md:block" />
 
                     {actions.map((action, index) => (
@@ -81,7 +82,6 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
                                 href={action.href}
                                 isExternal={action.isExternal}
                             />
-                            {/* Divider between items */}
                             {index < actions.length - 1 && (
                                 <div
                                     className="absolute hidden h-[400%] w-px -translate-y-1/2 bg-white/10 md:block"
@@ -90,11 +90,29 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
                             )}
                         </>
                     ))}
-
-                    {/* Right edge divider */}
                     <div className="absolute top-0 right-0 hidden h-[400%] w-px -translate-y-1/2 bg-white/10 md:block" />
                 </div>
             </Container>
+            {/* Draggable carousel for mobile view */}
+            <div className="relative block md:hidden">
+                <div className="absolute top-0 left-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 left-[calc(33.33%+16px)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 left-[calc(66.67%+16px)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 right-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
+
+                <Carousel speed={40} speedOnHoverFactor={0.2} animationDelay={2} gap={16} isDraggable={true}>
+                    {actions.map((action) => (
+                        <XmaquinaActionItem
+                            key={action.title}
+                            title={action.title}
+                            description={action.description}
+                            icon={action.icon}
+                            href={action.href}
+                            isExternal={action.isExternal}
+                        />
+                    ))}
+                </Carousel>
+            </div>
         </header>
     );
 };

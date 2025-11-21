@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import type { Route } from 'next';
 import Link from 'next/link';
 import type { ComponentProps } from 'react';
+import { useState } from 'react';
 import { XmaquinaActionImage } from './xmaquinaActionImage';
 import { XmaquinaActionText } from './xmaquinaActionText';
 
@@ -30,19 +31,25 @@ export interface IXmaquinaActionItemProps extends ComponentProps<'a'> {
 
 export const XmaquinaActionItem: React.FC<IXmaquinaActionItemProps> = (props) => {
     const { title, description, icon, href, isExternal, className } = props;
+    const [isHovered, setIsHovered] = useState(false);
 
     return (
         <Link
             href={href}
             target={isExternal ? '_blank' : '_self'}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
             className={classNames(
-                'relative flex h-40 shrink-0 grow basis-0 items-center bg-black p-4 transition-all md:p-6',
+                'group relative flex h-40 w-[calc(100vw-32px)] shrink-0 items-start justify-between overflow-hidden bg-black p-4 transition-all md:w-auto md:grow md:basis-0 md:items-center md:p-6',
+                'before:absolute before:top-[calc(50%+408px)] before:left-1/2 before:size-[640px] before:-translate-x-1/2 before:-translate-y-1/2',
+                'before:rounded-full before:bg-[#1ED612] before:transition-[top] before:duration-500 before:ease-out',
+                'hover:before:top-1/2',
                 className,
             )}
         >
-            <XmaquinaActionText title={title} description={description} />
+            <XmaquinaActionText title={title} description={description} isHovered={isHovered} />
 
-            <XmaquinaActionImage icon={icon} alt={title} />
+            <XmaquinaActionImage icon={icon} alt={title} isHovered={isHovered} />
         </Link>
     );
 };
