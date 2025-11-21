@@ -2,4 +2,5 @@
 '@aragon/app': patch
 ---
 
-Fixed several instances of AddressInput that linked to the wrong block explorer.
+Centralize block explorer links and network context with useDaoChain hook, fixes several instances AddressInput that
+linked to the wrong block explorer
