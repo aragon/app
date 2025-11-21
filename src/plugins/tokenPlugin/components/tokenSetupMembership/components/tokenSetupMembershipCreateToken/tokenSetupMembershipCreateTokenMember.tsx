@@ -34,9 +34,13 @@ export interface ITokenSetupMembershipCreateTokenMemberProps {
      * All members in the list for duplicate checking.
      */
     members: ITokenSetupMembershipForm['members'];
+    /**
+     * Chain id used to contextualize explorer links.
+     */
+    chainId?: number;
 }
 export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembershipCreateTokenMemberProps> = (props) => {
-    const { formPrefix, onRemove, initialValue, index, members } = props;
+    const { formPrefix, onRemove, initialValue, index, members, chainId } = props;
 
     const { t } = useTranslations();
 
@@ -77,6 +81,7 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
                     onChange={setMemberInput}
                     onAccept={handleAddressAccept}
                     className="basis-[65%]"
+                    chainId={chainId}
                     {...memberField}
                 />
                 <InputNumber className="basis-1/3" min={0} {...tokenAmountField} />

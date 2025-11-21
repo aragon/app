@@ -9,18 +9,11 @@ import type {
 } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
-import {
-    ChainEntityType,
-    DefinitionList,
-    formatterUtils,
-    NumberFormat,
-    Tag,
-    useBlockExplorer,
-} from '@aragon/gov-ui-kit';
+import { ChainEntityType, DefinitionList, formatterUtils, NumberFormat, Tag } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { DaoLockToVoteVotingMode } from '../../types';
 import type { ILockToVoteSetupGovernanceForm } from '../lockToVoteSetupGovernance/lockToVoteSetupGovernance.api';
@@ -58,6 +51,7 @@ export const LockToVoteProcessBodyField = (props: ILockToVoteProcessBodyFieldPro
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
     const { t } = useTranslations();
+    const { buildEntityUrl } = useDaoChain({ network: dao?.network });
 
     const { membership, governance } = body;
 
@@ -94,8 +88,6 @@ export const LockToVoteProcessBodyField = (props: ILockToVoteProcessBodyFieldPro
     );
 
     const numberOfMembers = readOnly ? memberList?.pages[0].metadata.totalRecords : membership.members.length;
-
-    const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[dao!.network].id });
 
     const readOnlyTokenProps = {
         link: { href: buildEntityUrl({ type: ChainEntityType.TOKEN, id: tokenAddress }) },

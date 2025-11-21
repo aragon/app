@@ -24,6 +24,10 @@ export interface IGaugeRegistrarRegisterGaugeActionCreateFormProps {
      * Prefix to prepend to all the form fields.
      */
     fieldPrefix: string;
+    /**
+     * Chain id used for contextual block explorer links.
+     */
+    chainId?: number;
 }
 
 export interface IGaugeRegistrarRegisterGaugeFormData {
@@ -65,7 +69,7 @@ const maxAvatarDimension = 1024;
 export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
     IGaugeRegistrarRegisterGaugeActionCreateFormProps
 > = (props) => {
-    const { fieldPrefix } = props;
+    const { fieldPrefix, chainId } = props;
     const { t } = useTranslations();
 
     const { value: nameValue, ...nameFieldRest } = useFormField<IGaugeRegistrarRegisterGaugeFormData, 'name'>('name', {
@@ -185,6 +189,7 @@ export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
                 value={qiTokenAddressInput}
                 onChange={setQiTokenAddressInput}
                 onAccept={onQiTokenAddressChange}
+                chainId={chainId}
                 {...qiTokenAddressField}
             />
             <RadioGroup
@@ -221,6 +226,7 @@ export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
                 value={rewardControllerAddressInput}
                 onChange={setRewardControllerAddressInput}
                 onAccept={onRewardControllerAddressChange}
+                chainId={chainId}
                 {...rewardControllerAddressField}
             />
             <GaugeRegistrarActiveVotingAlert />

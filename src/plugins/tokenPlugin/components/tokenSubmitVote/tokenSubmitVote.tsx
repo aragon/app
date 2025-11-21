@@ -7,9 +7,9 @@ import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissio
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { Button, Card, ChainEntityType, IconType, useBlockExplorer, type VoteIndicator } from '@aragon/gov-ui-kit';
+import { Button, Card, ChainEntityType, IconType, type VoteIndicator } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useState } from 'react';
 import { DaoTokenVotingMode, VoteOption, type ITokenProposal, type ITokenVote } from '../../types';
 import { TokenVotingOptions } from './components/tokenVotingOptions';
@@ -45,8 +45,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
     const latestVote = useUserVote<ITokenVote>({ proposal, network });
     const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress, includeSubPlugins: true })![0];
 
-    const { id: chainId } = networkDefinitions[network];
-    const { buildEntityUrl } = useBlockExplorer({ chainId });
+    const { buildEntityUrl } = useDaoChain({ network });
     const latestVoteTxHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: latestVote?.transactionHash });
 
     const [showOptions, setShowOptions] = useState(false);

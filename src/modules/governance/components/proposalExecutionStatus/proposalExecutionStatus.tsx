@@ -1,16 +1,9 @@
 import type { IExecuteDialogParams } from '@/modules/governance/dialogs/executeDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import {
-    Button,
-    ChainEntityType,
-    type IButtonProps,
-    IconType,
-    ProposalStatus,
-    useBlockExplorer,
-} from '@aragon/gov-ui-kit';
+import { Button, ChainEntityType, type IButtonProps, IconType, ProposalStatus } from '@aragon/gov-ui-kit';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -31,11 +24,10 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
     const { daoId, proposal } = props;
 
     const { t } = useTranslations();
-    const { buildEntityUrl } = useBlockExplorer();
     const { open } = useDialogContext();
 
     const { network, pluginInterfaceType, executed } = proposal;
-    const { id: chainId } = networkDefinitions[network];
+    const { buildEntityUrl } = useDaoChain({ network });
 
     const proposalStatus = useSlotSingleFunction<IProposal, ProposalStatus>({
         params: proposal,
@@ -46,7 +38,6 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
     const executedBlockLink = buildEntityUrl({
         type: ChainEntityType.TRANSACTION,
         id: executed.transactionHash,
-        chainId,
     });
 
     const openTransactionDialog = () => {

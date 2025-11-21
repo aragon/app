@@ -1,13 +1,12 @@
 'use client';
 
-import { useDao } from '@/shared/api/daoService';
 import {
     type ITransactionInfo,
     type ITransactionStatusStepMeta,
     TransactionStatus,
 } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { AddressInput, addressUtils } from '@aragon/gov-ui-kit';
@@ -25,9 +24,7 @@ export const LockToVoteSetupMembership: React.FC<ILockToVoteSetupMembershipProps
     const tokenFormPrefix = `${formPrefix}.token`;
     const { setValue } = useFormContext();
 
-    const useDaoParams = { id: daoId };
-    const { data: dao } = useDao({ urlParams: useDaoParams });
-    const chainId = dao ? networkDefinitions[dao.network].id : undefined;
+    const { chainId } = useDaoChain({ daoId });
 
     useFormField<ILockToVoteSetupMembershipForm['token'], 'name'>('name', {
         defaultValue: '',

@@ -2,6 +2,7 @@ import { type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     Button,
@@ -9,7 +10,6 @@ import {
     DefinitionList,
     IconType,
     addressUtils,
-    useBlockExplorer,
     type IDefinitionListContainerProps,
 } from '@aragon/gov-ui-kit';
 
@@ -26,7 +26,7 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
 
     const { t } = useTranslations();
 
-    const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[network].id });
+    const { buildEntityUrl } = useDaoChain({ network });
     const daoAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address });
 
     const daoEns = daoUtils.getDaoEns(dao);

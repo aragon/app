@@ -1,7 +1,7 @@
 import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { addressUtils, ChainEntityType, DefinitionList, Tag, useBlockExplorer } from '@aragon/gov-ui-kit';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { addressUtils, ChainEntityType, DefinitionList, Tag } from '@aragon/gov-ui-kit';
 import type { IGauge } from '../../../api/gaugeVoterService/domain';
 
 export interface IGaugeVoterGaugeDetailsDialogContentProps {
@@ -24,7 +24,7 @@ export const GaugeVoterGaugeDetailsDialogContent: React.FC<IGaugeVoterGaugeDetai
 
     const { t } = useTranslations();
 
-    const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[network].id });
+    const { buildEntityUrl } = useDaoChain({ network });
     const gaugeAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: gauge.address });
 
     const hasVoted = userVotes > 0;

@@ -7,7 +7,7 @@ import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { SafeDocumentParser } from '@/shared/components/SafeDocumentParser';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -24,7 +24,6 @@ import {
     ProposalStatus,
     proposalStatusToTagVariant,
     Tag,
-    useBlockExplorer,
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
@@ -58,7 +57,6 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const { daoId, proposalSlug } = props;
 
     const { t } = useTranslations();
-    const { buildEntityUrl } = useBlockExplorer();
     const { copy } = useGukModulesContext();
     const queryClient = useQueryClient();
 
@@ -68,7 +66,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     const daoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoParams });
-    const { tenderlySupport } = dao ? networkDefinitions[dao.network] : {};
+
+    const { networkDefinition, buildEntityUrl, chainId } = useDaoChain({ network: proposal?.network });
+    const { tenderlySupport } = networkDefinition ?? {};
 
     const proposalStatus = useSlotSingleFunction<IProposal, ProposalStatus>({
         params: proposal!,
@@ -135,9 +135,8 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     const creatorName = creator.ens ?? addressUtils.truncateAddress(creator.address);
 
-    const { id: chainId } = networkDefinitions[proposal.network];
-    const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: creator.address, chainId });
-    const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
+    const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: creator.address });
+    const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
 
     const statusTag = {
         label: copy.proposalDataListItemStatus.statusLabel[proposalStatus],

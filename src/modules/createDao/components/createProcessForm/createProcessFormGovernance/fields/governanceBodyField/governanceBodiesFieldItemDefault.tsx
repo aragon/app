@@ -1,8 +1,8 @@
 import { type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { addressUtils, ChainEntityType, DefinitionList, useBlockExplorer } from '@aragon/gov-ui-kit';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { addressUtils, ChainEntityType, DefinitionList } from '@aragon/gov-ui-kit';
 import type { Hash } from 'viem';
 import { useEnsName } from 'wagmi';
 import { BodyType } from '../../../../../types/enum';
@@ -23,8 +23,8 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
     const { body, daoId } = props;
 
     const { t } = useTranslations();
-    const { buildEntityUrl } = useBlockExplorer();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const { buildEntityUrl } = useDaoChain({ network: dao?.network });
 
     const { data: ensName } = useEnsName({
         address: body.type !== BodyType.NEW ? (body.address as Hash) : undefined,
@@ -34,8 +34,7 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
         return null;
     }
 
-    const chainId = dao ? networkDefinitions[dao.network].id : undefined;
-    const bodyAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: body.address, chainId });
+    const bodyAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: body.address });
 
     return (
         <DefinitionList.Container>

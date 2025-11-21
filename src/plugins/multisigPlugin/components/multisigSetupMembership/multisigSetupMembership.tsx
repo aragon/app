@@ -1,5 +1,6 @@
 'use client';
 
+import { useDao } from '@/shared/api/daoService';
 import { AddressesInput } from '@/shared/components/forms/addressesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useWatch } from 'react-hook-form';
@@ -7,9 +8,11 @@ import { MultisigSetupMembershipItem } from './components/multisigSetupMembershi
 import type { IMultisigSetupMembershipForm, IMultisigSetupMembershipProps } from './multisigSetupMembership.api';
 
 export const MultisigSetupMembership: React.FC<IMultisigSetupMembershipProps> = (props) => {
-    const { formPrefix, disabled, onAddClick, pluginAddress, hideLabel, network } = props;
+    const { formPrefix, disabled, onAddClick, pluginAddress, hideLabel, network, daoId } = props;
 
     const { t } = useTranslations();
+    const { data: dao } = useDao({ urlParams: { id: daoId ?? '' } }, { enabled: daoId != null });
+    const membershipNetwork = network ?? dao?.network;
 
     const watchMembersField = useWatch<Record<string, IMultisigSetupMembershipForm['members']>>({
         name: `${formPrefix}.members`,
@@ -30,7 +33,7 @@ export const MultisigSetupMembership: React.FC<IMultisigSetupMembershipProps> = 
                     disabled={disabled}
                     member={watchMembersField[index]}
                     pluginAddress={pluginAddress}
-                    network={network}
+                    network={membershipNetwork}
                 />
             ))}
         </AddressesInput.Container>

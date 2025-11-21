@@ -5,18 +5,11 @@ import { BodyType } from '@/modules/createDao/types/enum';
 import { useMemberList } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
-import {
-    ChainEntityType,
-    DefinitionList,
-    formatterUtils,
-    NumberFormat,
-    Tag,
-    useBlockExplorer,
-} from '@aragon/gov-ui-kit';
+import { ChainEntityType, DefinitionList, formatterUtils, NumberFormat, Tag } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { DaoTokenVotingMode } from '../../types';
 import type { ITokenSetupGovernanceForm } from '../tokenSetupGovernance';
@@ -82,7 +75,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
 
     const numberOfMembers = isExisting ? memberList?.pages[0].metadata.totalRecords : membership.members.length;
 
-    const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[dao!.network].id });
+    const { buildEntityUrl } = useDaoChain({ network: dao?.network });
 
     const existingTokenProps = {
         link: { href: buildEntityUrl({ type: ChainEntityType.TOKEN, id: tokenAddress }) },

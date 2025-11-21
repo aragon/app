@@ -1,9 +1,9 @@
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { addressUtils, ChainEntityType, DefinitionList, useBlockExplorer } from '@aragon/gov-ui-kit';
+import { addressUtils, ChainEntityType, DefinitionList } from '@aragon/gov-ui-kit';
 
 export interface IDaoVersionInfoProps {
     /**
@@ -16,10 +16,9 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
     const { dao } = props;
     const { t } = useTranslations();
 
-    const { id: chainId } = networkDefinitions[dao.network];
-    const { buildEntityUrl } = useBlockExplorer();
+    const { buildEntityUrl } = useDaoChain({ network: dao.network });
 
-    const daoLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address, chainId });
+    const daoLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address });
     const processPlugins = useDaoPlugins({ daoId: dao.id, includeSubPlugins: true });
 
     return (
@@ -37,7 +36,7 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
                     key={plugin.uniqueId}
                     term={daoUtils.getPluginName(plugin.meta)}
                     copyValue={plugin.meta.address}
-                    link={{ href: buildEntityUrl({ type: ChainEntityType.ADDRESS, id: plugin.meta.address, chainId }) }}
+                    link={{ href: buildEntityUrl({ type: ChainEntityType.ADDRESS, id: plugin.meta.address }) }}
                     description={t('app.settings.daoVersionInfo.governanceValue', {
                         name: daoUtils.getPluginName(plugin.meta),
                         release: plugin.meta.release,
