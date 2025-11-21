@@ -1,5 +1,31 @@
 # @aragon/app
 
+## 1.15.0
+
+### Minor Changes
+
+- [#862](https://github.com/aragon/app/pull/862) [`ce4766f`](https://github.com/aragon/app/commit/ce4766f7c9f7e81a1a7def74acc1f8907f15ff60) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Overhaul state management of proposal actions composition for crash-free handling
+
+- [#850](https://github.com/aragon/app/pull/850) [`7a1725d`](https://github.com/aragon/app/commit/7a1725d9ea242e3b69f9760e867b3277f0205e96) Thanks [@cristianizzo](https://github.com/cristianizzo)! - Add redirect functionality for DAO members page when no body plugin exists.
+
+- [#793](https://github.com/aragon/app/pull/793) [`c69cca6`](https://github.com/aragon/app/commit/c69cca6547376f3d3f01ed7a3272a0391a7eb5ca) Thanks [@milosh86](https://github.com/milosh86)! - Implement GaugeRegistrar contract basic views
+
+- [#852](https://github.com/aragon/app/pull/852) [`3829bdb`](https://github.com/aragon/app/commit/3829bdbf5c57771b10ecfbccfb667fa585ee5fac) Thanks [@evanaronson](https://github.com/evanaronson)! - Hide Tenderly simulation if the proposal is in a terminal status
+
+- [#793](https://github.com/aragon/app/pull/793) [`c69cca6`](https://github.com/aragon/app/commit/c69cca6547376f3d3f01ed7a3272a0391a7eb5ca) Thanks [@milosh86](https://github.com/milosh86)! - Implement gauges page
+
+- [#854](https://github.com/aragon/app/pull/854) [`e07a6e3`](https://github.com/aragon/app/commit/e07a6e3dd0177d8667383a6702ad84dbec4ce070) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Enhance security by adding input sanitization and CSP report endpoint
+
+### Patch Changes
+
+- [#861](https://github.com/aragon/app/pull/861) [`de5adb3`](https://github.com/aragon/app/commit/de5adb36b7e21d9497ecd970a7b15a314aa085ff) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Bump @aragon/gov-ui-kit to version 1.24.0 with proper ENS handling
+
+- [#851](https://github.com/aragon/app/pull/851) [`f0520b6`](https://github.com/aragon/app/commit/f0520b6ce5073af11817ff9f6dd2e8c83a7e71af) Thanks [@harryburger](https://github.com/harryburger)! - Prevent unnecessary trailing API call on Tenderly simulations
+
+- [#858](https://github.com/aragon/app/pull/858) [`d040dd7`](https://github.com/aragon/app/commit/d040dd76d0ac31b586c4afc4102d54577cc70d55) Thanks [@harryburger](https://github.com/harryburger)! - Improve plugin name fallback chain to use slug or interfaceType when subdomain is unavailable
+
+- [#856](https://github.com/aragon/app/pull/856) [`29bab64`](https://github.com/aragon/app/commit/29bab645e1814c262e38aaa3d9bc80abe5f65bb5) Thanks [@evanaronson](https://github.com/evanaronson)! - Simplify default OSx updates proposal copy.
+
 ## 1.14.0
 
 ### Minor Changes
