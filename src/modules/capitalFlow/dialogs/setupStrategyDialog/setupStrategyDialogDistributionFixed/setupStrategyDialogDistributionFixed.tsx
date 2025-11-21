@@ -59,12 +59,12 @@ export const SetupStrategyDialogDistributionFixed: React.FC<ISetupStrategyDialog
 
     return (
         <div className="flex w-full flex-col gap-6">
-            <div className="flex flex-col gap-2">
-                <h3 className="text-lg leading-tight font-normal text-neutral-800">
-                    {t('app.capitalFlow.setupStrategyDialog.distribution.label')}
-                </h3>
-                <p className="text-base leading-normal font-normal text-neutral-500">
-                    {t('app.capitalFlow.setupStrategyDialog.distribution.helpText')}
+            <div className="flex flex-col gap-0.5 md:gap-1">
+                <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
+                    {t('app.capitalFlow.setupStrategyDialog.distributionFixed.token.label')}
+                </p>
+                <p className="text-sm leading-normal font-normal text-neutral-500 md:text-base">
+                    {t('app.capitalFlow.setupStrategyDialog.distributionFixed.token.helpText')}
                 </p>
             </div>
 
@@ -73,8 +73,8 @@ export const SetupStrategyDialogDistributionFixed: React.FC<ISetupStrategyDialog
             <div className="flex flex-col gap-4">
                 <InputContainer
                     id="recipients"
-                    label={t('app.capitalFlow.setupStrategyDialog.distribution.recipients.label')}
-                    helpText={t('app.capitalFlow.setupStrategyDialog.distribution.recipients.helpText')}
+                    label={t('app.capitalFlow.setupStrategyDialog.distributionFixed.recipients.label')}
+                    helpText={t('app.capitalFlow.setupStrategyDialog.distributionFixed.recipients.helpText')}
                     useCustomWrapper={true}
                     className="gap-3 md:gap-2"
                     alert={
@@ -109,7 +109,7 @@ export const SetupStrategyDialogDistributionFixed: React.FC<ISetupStrategyDialog
                         onClick={handleDistributeEvenly}
                         disabled={recipientsField.length === 0}
                     >
-                        {t('app.capitalFlow.setupStrategyDialog.distribution.recipients.distributeEvenly')}
+                        {t('app.capitalFlow.setupStrategyDialog.distributionFixed.recipients.distributeEvenly')}
                     </Button>
                 </div>
 
@@ -121,7 +121,7 @@ export const SetupStrategyDialogDistributionFixed: React.FC<ISetupStrategyDialog
                     onClick={handleAddRecipient}
                     disabled={!canAddMore}
                 >
-                    {t('app.capitalFlow.setupStrategyDialog.distribution.recipients.addButton')}
+                    {t('app.capitalFlow.setupStrategyDialog.distributionFixed.recipients.addButton')}
                 </Button>
             </div>
         </div>

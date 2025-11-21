@@ -60,11 +60,21 @@ export interface IDistributionFixedForm extends IDistributionFormBase {
     recipients: IRecipientRelative[];
 }
 
+export enum StreamingEpochPeriod {
+    HOUR = 'HOUR',
+    DAY = 'DAY',
+    WEEK = 'WEEK',
+}
+
 export interface IDistributionStreamForm extends IDistributionFormBase {
     /**
      * List of recipients with their distribution amounts.
      */
     recipients: IRecipientAbsolute[];
+    /**
+     * Epoch duration.
+     */
+    epochPeriod: StreamingEpochPeriod;
 }
 
 export interface IRecipientRelative extends ICompositeAddress {

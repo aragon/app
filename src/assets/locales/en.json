@@ -247,9 +247,7 @@
         "a11y": {
           "description": "Create a new strategy for your capital flow policy"
         },
-        "distribution": {
-          "helpText": "Choose the token for this policy and specify the amount per dispatch.",
-          "label": "Token",
+        "distributionFixed": {
           "recipients": {
             "addButton": "Recipients",
             "address": "Address",
@@ -257,6 +255,30 @@
             "helpText": "Specify the recipients and the distribution ratio of tokens for each dispatch.",
             "label": "Recipients",
             "ratio": "Ratio"
+          },
+          "token": {
+            "helpText": "Choose the token for this policy and specify the amount per dispatch.",
+            "label": "Token"
+          }
+        },
+        "distributionStream": {
+          "epochPeriod": {
+            "day": "Per day",
+            "helpText": "Choose the timing to set up the distribution of tokens over time. This means determining how many tokens will be allocated to recipients at specific intervals.",
+            "hour": "Per hour",
+            "label": "Streamed amount per time",
+            "week": "Per week"
+          },
+          "recipients": {
+            "addButton": "Recipients",
+            "address": "Address",
+            "distributeEvenly": "Distribute evenly",
+            "helpText": "Specify the recipients and the distribution ratio of tokens for each dispatch.",
+            "label": "Recipients"
+          },
+          "token": {
+            "helpText": "Choose the token for this policy.",
+            "label": "Token"
           }
         },
         "routerType": {

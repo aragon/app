@@ -33,19 +33,17 @@ export const SetupStrategyDialogSourceVault: React.FC<ISetupStrategyDialogSource
     }
 
     return (
-        <>
-            <RadioGroup helpText={t('app.capitalFlow.setupStrategyDialog.sourceVault.helpText')} {...sourceVaultField}>
-                <RadioCard
-                    label={dao.name}
-                    description={dao.ens ?? addressUtils.truncateAddress(address)}
-                    value={daoId}
-                    avatar={daoAvatar}
-                    tag={{
-                        variant: 'neutral',
-                        label: t('app.capitalFlow.setupStrategyDialog.sourceVault.tags.mainDao'),
-                    }}
-                />
-            </RadioGroup>
-        </>
+        <RadioGroup helpText={t('app.capitalFlow.setupStrategyDialog.sourceVault.helpText')} {...sourceVaultField}>
+            <RadioCard
+                label={dao.name}
+                description={dao.ens ?? addressUtils.truncateAddress(address)}
+                value={daoId}
+                avatar={daoAvatar}
+                tag={{
+                    variant: 'neutral',
+                    label: t('app.capitalFlow.setupStrategyDialog.sourceVault.tags.mainDao'),
+                }}
+            />
+        </RadioGroup>
     );
 };
