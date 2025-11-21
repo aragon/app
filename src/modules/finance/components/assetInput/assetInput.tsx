@@ -179,9 +179,9 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         const params: IAssetSelectionDialogParams = {
             initialParams: fetchAssetsParams,
             onAssetClick: handleAssetChange,
-            close,
+            close: () => close(FinanceDialogId.ASSET_SELECTION),
         };
-        open(FinanceDialogId.ASSET_SELECTION, { params });
+        open(FinanceDialogId.ASSET_SELECTION, { params, stack: true });
     };
 
     const handleMaxAmount = (e: MouseEvent<HTMLButtonElement>) => {

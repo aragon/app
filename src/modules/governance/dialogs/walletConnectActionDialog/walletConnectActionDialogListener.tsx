@@ -28,6 +28,7 @@ export const WalletConnectActionDialogListener: React.FC<IWalletConnectActionDia
     const { appMetadata, actions, onAddActionsClick, onClose } = props;
 
     const { t } = useTranslations();
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     const { updateOptions } = useDialogContext();
 
     const { name, icons, url } = appMetadata;

@@ -28,6 +28,7 @@ export const WizardDialogContainer = <TFormData extends FieldValues = FieldValue
     const { title, description, formId, initialSteps, submitLabel, onSubmit, children, defaultValues, ...formProps } =
         props;
 
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     const { close, updateOptions } = useDialogContext();
 
     useEffect(() => {
