@@ -1,0 +1,1 @@
+export { XmaquinaPageHeader } from './xmaquinaPageHeader';
