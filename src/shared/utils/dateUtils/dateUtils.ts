@@ -40,19 +40,16 @@ class DateUtils {
     parseFixedDate = ({ date, time }: IDateFixed): DateTime => {
         const parsedTime = DateTime.fromISO(time);
 
-        // Guard: return invalid DateTime instead of crashing when time format is invalid
         if (!parsedTime.isValid) {
             return DateTime.invalid(`Invalid time format: "${time}"`);
         }
 
         const parsedDate = DateTime.fromISO(date);
 
-        // Guard: return invalid DateTime for invalid dates
         if (!parsedDate.isValid) {
             return DateTime.invalid(`Invalid date format: "${date}"`);
         }
 
-        // Safe to destructure - both are valid
         const { hour, minute } = parsedTime;
         return parsedDate.set({ hour, minute });
     };
