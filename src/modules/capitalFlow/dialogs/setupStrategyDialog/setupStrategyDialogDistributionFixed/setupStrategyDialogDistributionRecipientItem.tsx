@@ -11,7 +11,7 @@ import {
     InputNumber,
     type IAddressInputResolvedValue,
 } from '@aragon/gov-ui-kit';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import type { IRecipientRelative } from '../setupStrategyDialogDefinitions';
 
 export interface ISetupStrategyDialogDistributionRecipientItemProps {
@@ -58,6 +58,7 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<
             validate: (value) => addressUtils.isAddress(value),
         },
         fieldPrefix,
+        sanitizeOnBlur: false,
     });
 
     const ratioField = useFormField<IRecipientRelative, 'ratio'>('ratio', {
@@ -77,15 +78,12 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<
         defaultValue: 0,
         fieldPrefix,
     });
-    console.log('ratioField', ratioField);
+
     const [addressInput, setAddressInput] = useState<string | undefined>(addressValue);
 
-    const handleAddressAccept = useCallback(
-        (value?: IAddressInputResolvedValue) => {
-            onAddressChange(value?.address ?? '');
-        },
-        [onAddressChange],
-    );
+    const handleAddressAccept = (value?: IAddressInputResolvedValue) => {
+        onAddressChange(value?.address ?? '');
+    };
 
     return (
         <Card className="shadow-neutral-sm flex flex-col gap-4 border border-neutral-100 p-4 md:flex-row md:items-start md:gap-3">

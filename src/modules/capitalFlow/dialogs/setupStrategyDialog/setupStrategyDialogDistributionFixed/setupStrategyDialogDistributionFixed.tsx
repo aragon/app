@@ -3,7 +3,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
-import { useFieldArray, useWatch } from 'react-hook-form';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import type { ISetupStrategyForm, ISetupStrategyFormRouter } from '../setupStrategyDialogDefinitions';
 import { SetupStrategyDialogDistributionRecipientItem } from './setupStrategyDialogDistributionRecipientItem';
 
@@ -18,6 +18,7 @@ export const SetupStrategyDialogDistributionFixed: React.FC<ISetupStrategyDialog
     const { network, address } = daoUtils.parseDaoId(daoId);
     const recipientsFieldName = 'distributionFixed.recipients' as const;
 
+    const { getValues } = useFormContext();
     const {
         fields: recipientsField,
         append: addRecipient,
@@ -27,40 +28,34 @@ export const SetupStrategyDialogDistributionFixed: React.FC<ISetupStrategyDialog
         name: recipientsFieldName,
     });
 
-    const watchRecipientsField = useWatch<ISetupStrategyFormRouter, typeof recipientsFieldName>({
-        name: recipientsFieldName,
-    });
-    const controlledRecipientsField = recipientsField.map((field, index) => ({
-        ...field,
-        ...watchRecipientsField[index],
-    }));
-    console.log('watchRecipientsFieldwatchRecipientsField', watchRecipientsField, controlledRecipientsField);
     const watchAsset = useWatch<ISetupStrategyForm>({ name: 'distributionFixed.asset' });
 
     const totalRatio = useMemo(
-        () => controlledRecipientsField?.reduce((sum, recipient) => sum + (recipient?.ratio || 0), 0) || 0,
-        [controlledRecipientsField],
+        () => recipientsField?.reduce((sum, recipient) => sum + (recipient?.ratio || 0), 0) || 0,
+        [recipientsField],
     );
 
     const fetchAssetsParams = { queryParams: { address, network } };
 
     const handleAddRecipient = () => {
-        if (controlledRecipientsField.length < maxRecipients) {
+        if (recipientsField.length < maxRecipients) {
             addRecipient({ address: '', ratio: 0 });
         }
     };
 
     const handleDistributeEvenly = () => {
-        const evenRatio = Math.floor(100 / controlledRecipientsField.length);
-        const remainder = 100 - evenRatio * controlledRecipientsField.length;
+        const evenRatio = Math.floor(100 / recipientsField.length);
+        const remainder = 100 - evenRatio * recipientsField.length;
+        // We need to use getValues() here because 'address' changes from nested component are not reflected in recipientsField until rerender
+        const recipientsValues = getValues(recipientsFieldName);
 
-        controlledRecipientsField.forEach((recipient, index) => {
+        recipientsField.forEach((recipient, index) => {
             const newRatio = index === 0 ? evenRatio + remainder : evenRatio;
-            updateRecipient(index, { ...recipient, ratio: newRatio });
+            updateRecipient(index, { ...recipientsValues[index], ratio: newRatio });
         });
     };
 
-    const canAddMore = controlledRecipientsField.length < maxRecipients;
+    const canAddMore = recipientsField.length < maxRecipients;
 
     return (
         <div className="flex w-full flex-col gap-6">
@@ -83,7 +78,7 @@ export const SetupStrategyDialogDistributionFixed: React.FC<ISetupStrategyDialog
                     useCustomWrapper={true}
                     className="gap-3 md:gap-2"
                     alert={
-                        totalRatio !== 100 && controlledRecipientsField.length > 0
+                        totalRatio !== 100 && recipientsField.length > 0
                             ? {
                                   message: `${totalRatio}%`,
                                   variant: totalRatio > 100 ? 'critical' : 'warning',
@@ -91,13 +86,13 @@ export const SetupStrategyDialogDistributionFixed: React.FC<ISetupStrategyDialog
                             : undefined
                     }
                 >
-                    {controlledRecipientsField.map((field, index) => (
+                    {recipientsField.map((field, index) => (
                         <SetupStrategyDialogDistributionRecipientItem
                             key={field.id}
                             fieldPrefix={`${recipientsFieldName}.[${index}]`}
                             totalRatio={totalRatio}
                             onRemove={() => removeRecipient(index)}
-                            canRemove={controlledRecipientsField.length > 1}
+                            canRemove={recipientsField.length > 1}
                             daoId={daoId}
                         />
                     ))}
@@ -105,14 +100,14 @@ export const SetupStrategyDialogDistributionFixed: React.FC<ISetupStrategyDialog
 
                 <div className="flex items-center justify-between">
                     <span className="text-sm leading-tight font-normal text-neutral-500">
-                        {controlledRecipientsField.length}/{maxRecipients}
+                        {recipientsField.length}/{maxRecipients}
                     </span>
 
                     <Button
                         variant="tertiary"
                         size="sm"
                         onClick={handleDistributeEvenly}
-                        disabled={controlledRecipientsField.length === 0}
+                        disabled={recipientsField.length === 0}
                     >
                         {t('app.capitalFlow.setupStrategyDialog.distribution.recipients.distributeEvenly')}
                     </Button>

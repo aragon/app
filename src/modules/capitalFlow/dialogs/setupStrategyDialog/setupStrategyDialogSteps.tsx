@@ -33,7 +33,7 @@ export const SetupStrategyDialogSteps: React.FC<ISetupStrategyDialogStepsProps> 
     const [selectStep, sourceVaultStep, routerTypeStep, distributionFixedStep, distributionStreamStep] =
         setupStrategySteps;
     const { getValues, formState } = useFormContext();
-    console.log('getValues', getValues(), formState);
+
     return (
         <>
             <WizardDialog.Step {...selectStep} hidden={initialValues != null}>

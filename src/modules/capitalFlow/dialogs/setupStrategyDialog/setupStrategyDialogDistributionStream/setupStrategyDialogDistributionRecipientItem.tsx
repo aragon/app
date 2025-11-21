@@ -60,6 +60,7 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<
             validate: (value) => addressUtils.isAddress(value),
         },
         fieldPrefix,
+        sanitizeOnBlur: false,
     });
 
     const ratioField = useFormField<IRecipientRelative, 'ratio'>('ratio', {
