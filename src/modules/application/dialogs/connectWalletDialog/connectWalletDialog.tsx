@@ -23,7 +23,6 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
     const { params, id } = props.location;
     const { onSuccess, onError } = params ?? {};
 
-    // eslint-disable-next-line @typescript-eslint/no-deprecated
     const { close, updateOptions } = useDialogContext();
     const { open: openWeb3Modal } = useAppKit();
     const { open: isAppKitModalOpen } = useAppKitState();
