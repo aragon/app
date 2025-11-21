@@ -112,7 +112,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         append(newActions);
     };
 
-    const getMovementControls = (index: number): IProposalActionsArrayControls<IProposalActionData> => {
+    const getArrayControls = (index: number): IProposalActionsArrayControls<IProposalActionData> => {
         return {
             moveUp: {
                 label: t('app.governance.createProposalForm.actions.editAction.up'),
@@ -159,7 +159,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                             )}
                             value={action.id}
                             CustomComponent={customActionComponents[action.type]}
-                            movementControls={getMovementControls(index)}
+                            arrayControls={getArrayControls(index)}
                             actionCount={actions.length}
                             formPrefix={`actions.${index.toString()}`}
                             chainId={networkDefinitions[dao!.network].id}
