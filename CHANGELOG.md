@@ -1,5 +1,11 @@
 # @aragon/app
 
+## 1.15.1
+
+### Patch Changes
+
+- [#877](https://github.com/aragon/app/pull/877) [`6830ec5`](https://github.com/aragon/app/commit/6830ec5efb2a1248df0263ce8c01430f70713270) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix number input behavior on blur
+
 ## 1.15.0
 
 ### Minor Changes
