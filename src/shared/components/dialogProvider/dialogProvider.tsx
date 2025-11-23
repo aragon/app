@@ -20,55 +20,29 @@ export const DialogContext = createContext<IDialogContext | null>(null);
 export const DialogProvider: React.FC<IDialogProviderProps> = (props) => {
     const { children } = props;
 
-    const [locations, setLocations] = useState<IDialogLocation[]>([]);
+    const [location, setLocation] = useState<IDialogLocation>();
 
     const updateOptions = useCallback((options?: Partial<IDialogLocationOptions>) => {
-        setLocations((currentLocations) => {
-            if (currentLocations.length === 0) {
-                return currentLocations;
-            }
-
-            const updatedLocations = [...currentLocations];
-            const lastIndex = updatedLocations.length - 1;
-            updatedLocations[lastIndex] = { ...updatedLocations[lastIndex], ...options };
-
-            return updatedLocations;
-        });
+        setLocation((currentLocation) => (currentLocation != null ? { ...currentLocation, ...options } : undefined));
     }, []);
 
     const open = useCallback(
         <TParams extends DialogComponentProps = DialogComponentProps>(
             id: string,
             options?: IDialogLocationOptions<TParams>,
-        ) => {
-            const { stack = false, ...restOptions } = options ?? {};
-
-            setLocations((currentLocations) =>
-                stack ? [...currentLocations, { id, ...restOptions }] : [{ id, ...restOptions }],
-            );
-        },
+        ) => setLocation({ id, ...options }),
         [],
     );
 
-    const close = useCallback((id?: string) => {
-        setLocations((currentLocations) => {
-            if (currentLocations.length === 0) {
-                return currentLocations;
-            }
-
-            // If no ID provided, close all dialogs (backward compatibility)
-            if (id == null) {
-                return [];
-            }
-
-            // If ID provided, close that specific dialog
-            return currentLocations.filter((location) => location.id !== id);
-        });
-    }, []);
+    const close = useCallback(
+        (id?: string) =>
+            setLocation((currentLocation) => (id != null && currentLocation?.id != id ? currentLocation : undefined)),
+        [],
+    );
 
     const contextValues = useMemo(
-        () => ({ open, close, locations, updateOptions }),
-        [open, close, updateOptions, locations],
+        () => ({ open, close, location, updateOptions }),
+        [open, close, updateOptions, location],
     );
 
     return <DialogContext.Provider value={contextValues}>{children}</DialogContext.Provider>;

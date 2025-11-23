@@ -17,7 +17,7 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
         trimOnBlur,
         alertValue: alertValueProp,
         sanitizeMode = 'singleline',
-        sanitizeOnBlur = true,
+        sanitizeOnBlur = false,
         ...otherOptions
     } = options ?? {};
 

@@ -2,6 +2,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { sanitizePlainText } from '@/shared/security';
 import type { IDateFixed } from '@/shared/utils/dateUtils';
 import { dateUtils } from '@/shared/utils/dateUtils/dateUtils';
+import { timeUtils } from '@/shared/utils/timeUtils/timeUtils';
 import { Card, InputDate, InputText, InputTime } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
@@ -33,7 +34,9 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
     });
 
     const handleFixedDateTimeChange = (type: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = { ...fixedDateField.value, [type]: sanitizePlainText(event.target.value) };
+        const sanitizedValue = sanitizePlainText(event.target.value);
+        const normalizedValue = type === 'time' ? timeUtils.normalizeTimeValue(sanitizedValue) : sanitizedValue;
+        const newValue = { ...fixedDateField.value, [type]: normalizedValue };
         setValue(field, newValue, { shouldValidate: false });
     };
 
