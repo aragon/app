@@ -147,10 +147,15 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const showActionComposer = !hasConditionalPermissions || allowedActions != null;
 
     const expandedActions = actions.map((action) => action.id);
+    const noOpActionsChange = useCallback(() => undefined, []);
 
     return (
         <div className="flex flex-col gap-y-10">
-            <ProposalActions.Root editMode={true} expandedActions={expandedActions} onExpandedActionsChange={() => {}}>
+            <ProposalActions.Root
+                editMode={true}
+                expandedActions={expandedActions}
+                onExpandedActionsChange={noOpActionsChange}
+            >
                 <ProposalActions.Container emptyStateDescription="">
                     {actions.map((action, index) => (
                         <ProposalActions.Item<IProposalActionData>
