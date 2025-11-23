@@ -116,12 +116,12 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         return {
             moveUp: {
                 label: t('app.governance.createProposalForm.actions.editAction.up'),
-                onClick: (index, _) => handleMoveAction(index, index - 1),
+                onClick: (index) => handleMoveAction(index, index - 1),
                 disabled: actions.length < 2 || index === 0,
             },
             moveDown: {
                 label: t('app.governance.createProposalForm.actions.editAction.down'),
-                onClick: (index, _) => handleMoveAction(index, index + 1),
+                onClick: (index) => handleMoveAction(index, index + 1),
                 disabled: actions.length < 2 || index === actions.length - 1,
             },
             remove: {
