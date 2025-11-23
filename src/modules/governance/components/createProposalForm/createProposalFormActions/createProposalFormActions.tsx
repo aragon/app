@@ -104,7 +104,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         [actions, getValues, setValue],
     );
 
-    const handleRemoveAction = (action: IProposalActionData, index: number) => {
+    const handleRemoveAction = (index: number) => {
         remove(index);
     };
 
@@ -116,12 +116,12 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         return {
             moveUp: {
                 label: t('app.governance.createProposalForm.actions.editAction.up'),
-                onClick: (_, index) => handleMoveAction(index, index - 1),
+                onClick: (index, _) => handleMoveAction(index, index - 1),
                 disabled: actions.length < 2 || index === 0,
             },
             moveDown: {
                 label: t('app.governance.createProposalForm.actions.editAction.down'),
-                onClick: (_, index) => handleMoveAction(index, index + 1),
+                onClick: (index, _) => handleMoveAction(index, index + 1),
                 disabled: actions.length < 2 || index === actions.length - 1,
             },
             remove: {
@@ -146,9 +146,11 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const showActionComposer = !hasConditionalPermissions || allowedActions != null;
 
+    const expandedActions = actions.map((action) => action.id);
+
     return (
         <div className="flex flex-col gap-y-10">
-            <ProposalActions.Root editMode={true}>
+            <ProposalActions.Root editMode={true} expandedActions={expandedActions} onExpandedActionsChange={() => {}}>
                 <ProposalActions.Container emptyStateDescription="">
                     {actions.map((action, index) => (
                         <ProposalActions.Item<IProposalActionData>
