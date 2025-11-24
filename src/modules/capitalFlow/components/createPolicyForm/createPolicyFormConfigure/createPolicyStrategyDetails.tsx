@@ -185,25 +185,25 @@ export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsP
                         </DefinitionList.Item>
                     </>
                 )}
+                <div className="flex w-full justify-between pt-4">
+                    <Button variant="secondary" size="md" onClick={onEdit}>
+                        {t('app.capitalFlow.createPolicyForm.configure.strategy.details.edit')}
+                    </Button>
+                    <Dropdown.Container
+                        constrainContentWidth={false}
+                        size="md"
+                        customTrigger={
+                            <Button className="w-fit" variant="tertiary" size="md" iconRight={IconType.DOTS_VERTICAL}>
+                                {t('app.capitalFlow.createPolicyForm.configure.strategy.details.more')}
+                            </Button>
+                        }
+                    >
+                        <Dropdown.Item onClick={onRemove}>
+                            {t('app.capitalFlow.createPolicyForm.configure.strategy.details.remove')}
+                        </Dropdown.Item>
+                    </Dropdown.Container>
+                </div>
             </DefinitionList.Container>
-            <div className="flex w-full justify-between">
-                <Button variant="secondary" size="md" onClick={onEdit}>
-                    {t('app.capitalFlow.createPolicyForm.configure.strategy.details.edit')}
-                </Button>
-                <Dropdown.Container
-                    constrainContentWidth={false}
-                    size="md"
-                    customTrigger={
-                        <Button className="w-fit" variant="tertiary" size="md" iconRight={IconType.DOTS_VERTICAL}>
-                            {t('app.capitalFlow.createPolicyForm.configure.strategy.details.more')}
-                        </Button>
-                    }
-                >
-                    <Dropdown.Item onClick={onRemove}>
-                        {t('app.capitalFlow.createPolicyForm.configure.strategy.details.remove')}
-                    </Dropdown.Item>
-                </Dropdown.Container>
-            </div>
         </>
     );
 };
