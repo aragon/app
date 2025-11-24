@@ -10,9 +10,9 @@ import { TokenVotingOptions } from '@/plugins/tokenPlugin/components/tokenSubmit
 import { VoteOption, type ITokenVote } from '@/plugins/tokenPlugin/types';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { Button, Card, ChainEntityType, IconType, useBlockExplorer, type VoteIndicator } from '@aragon/gov-ui-kit';
+import { Button, Card, ChainEntityType, IconType, type VoteIndicator } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useState } from 'react';
 import { LockToVotePluginDialogId } from '../../constants/lockToVotePluginDialogId';
 import type { ILockToVoteSubmitVoteFeedbackDialogParams } from '../../dialogs/lockToVoteSubmitVoteFeedbackDialog';
@@ -49,8 +49,7 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (props
     const plugins = useDaoPlugins({ daoId, pluginAddress, includeSubPlugins: true })!;
     const plugin = plugins[0].meta as ILockToVotePlugin;
 
-    const { id: chainId } = networkDefinitions[network];
-    const { buildEntityUrl } = useBlockExplorer({ chainId });
+    const { buildEntityUrl } = useDaoChain({ network });
     const latestVoteTxHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: latestVote?.transactionHash });
 
     const { balance, allowance, approveTokens } = useLockToVoteData({ plugin, daoId });

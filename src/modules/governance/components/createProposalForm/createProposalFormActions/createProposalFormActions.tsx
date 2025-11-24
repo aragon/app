@@ -2,7 +2,7 @@ import { useAllowedActions } from '@/modules/governance/api/executeSelectorsServ
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { useDao, useDaoPermissions } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     IconType,
@@ -47,6 +47,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const hasConditionalPermissions = processPlugin.conditionAddress != null;
 
     const { t } = useTranslations();
+    const { chainId } = useDaoChain({ daoId });
 
     const { control, getValues, setValue } = useFormContext<ICreateProposalFormData>();
 
@@ -172,7 +173,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                             CustomComponent={customActionComponents[action.type]}
                             dropdownItems={getActionDropdownItems(index)}
                             formPrefix={`actions.${index.toString()}`}
-                            chainId={networkDefinitions[dao!.network].id}
+                            chainId={chainId}
                             editMode={true}
                         />
                     ))}

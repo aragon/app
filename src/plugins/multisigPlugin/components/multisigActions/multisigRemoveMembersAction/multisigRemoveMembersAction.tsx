@@ -78,6 +78,7 @@ export const MultisigRemoveMembersAction: React.FC<IMultisigRemoveMembersActionP
             disabled={true}
             onAddClick={handleAddClick}
             hideLabel={true}
+            daoId={action.daoId}
         />
     );
 };

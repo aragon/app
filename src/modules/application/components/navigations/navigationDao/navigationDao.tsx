@@ -5,17 +5,9 @@ import { type IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Navigation, type INavigationContainerProps } from '@/shared/components/navigation';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import {
-    addressUtils,
-    ChainEntityType,
-    Clipboard,
-    DaoAvatar,
-    Link,
-    useBlockExplorer,
-    Wallet,
-} from '@aragon/gov-ui-kit';
+import { addressUtils, ChainEntityType, Clipboard, DaoAvatar, Link, Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
@@ -38,7 +30,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const { address, isConnected } = useAccount();
     const { open } = useDialogContext();
 
-    const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[dao.network].id });
+    const { buildEntityUrl } = useDaoChain({ network: dao.network });
     const addressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address });
 
     const handleWalletClick = () => {

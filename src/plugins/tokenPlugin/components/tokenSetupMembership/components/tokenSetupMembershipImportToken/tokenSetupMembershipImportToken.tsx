@@ -1,12 +1,11 @@
 import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
-import { useDao } from '@/shared/api/daoService';
 import {
     type ITransactionInfo,
     type ITransactionStatusStepMeta,
     TransactionStatus,
 } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { AddressInput, addressUtils, Link } from '@aragon/gov-ui-kit';
@@ -37,9 +36,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
     const tokenFormPrefix = `${formPrefix}.token`;
     const { setValue } = useFormContext();
 
-    const useDaoParams = { id: daoId };
-    const { data: dao } = useDao({ urlParams: useDaoParams });
-    const chainId = dao ? networkDefinitions[dao.network].id : undefined;
+    const { chainId } = useDaoChain({ daoId });
 
     useFormField<ITokenSetupMembershipForm['token'], 'name'>('name', {
         defaultValue: '',

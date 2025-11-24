@@ -1,8 +1,8 @@
 import { Network } from '@/shared/api/daoService';
 import { useTransactionStatus } from '@/shared/api/transactionService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { ChainEntityType, Dialog, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { ChainEntityType, Dialog, IconType } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useAccount, useSendTransaction, useSwitchChain, useWaitForTransactionReceipt } from 'wagmi';
@@ -48,8 +48,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     const onSuccessRef = useRef(onSuccess);
 
     const { chainId, address } = useAccount();
-    const { id: requiredChainId } = networkDefinitions[network];
-    const { buildEntityUrl } = useBlockExplorer({ chainId });
+    const { chainId: requiredChainId, buildEntityUrl } = useDaoChain({ network });
 
     const handleTransactionError = useCallback(
         (stepId?: string) => (error: unknown, context?: Record<string, unknown>) =>
@@ -99,7 +98,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     }, [transaction, sendTransaction, handleTransactionError]);
 
     const handleSwitchNetwork = useCallback(
-        () => switchChain({ chainId: requiredChainId }, { onSuccess: handleSendTransaction }),
+        () => switchChain({ chainId: requiredChainId! }, { onSuccess: handleSendTransaction }),
         [switchChain, requiredChainId, handleSendTransaction],
     );
 
