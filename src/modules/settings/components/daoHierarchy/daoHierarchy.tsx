@@ -33,7 +33,7 @@ const DaoInfo: React.FC<{ dao: IDao | ISubDaoSummary }> = ({ dao }) => {
 
     // Helper to get ENS for both IDao and ISubDaoSummary
     const getDaoEns = (dao: IDao | ISubDaoSummary): string | undefined => {
-        if ('ens' in dao && dao.ens != null && dao.ens !== '') {
+        if (dao.ens) {
             return dao.ens;
         }
         return undefined;

@@ -58,20 +58,20 @@ interface IBuildFilterPluginsParams {
 /**
  * Normalizes raw plugins from the backend into filter-ready items:
  * - applies SubDAO feature-flag behaviour (aggregate vs single DAO),
- * - optionally dedupes by (daoAddress, slug) when aggregating,
+ * - optionally groups plugins by (daoAddress, slug) when aggregating,
  * - builds `IFilterComponentPlugin` items and group tab when needed.
  */
 const buildFilterPlugins = (params: IBuildFilterPluginsParams): Array<IFilterComponentPlugin<IDaoPlugin>> => {
     const { plugins, rootDaoAddress, subDaosCount, includeGroupFilter, isSubDaoEnabled } = params;
 
     const hasSubDaos = subDaosCount > 0;
-    const shouldDedupeByDaoAndSlug = isSubDaoEnabled && hasSubDaos;
+    const shouldGroupByDaoAndSlug = isSubDaoEnabled && hasSubDaos;
 
     const allPlugins = plugins ?? [];
 
     // When SubDAO feature is disabled, only use plugins installed on the current DAO
     // (ignore SubDAO plugins returned by the API).
-    const basePlugins = isSubDaoEnabled
+    const filteredPlugins = isSubDaoEnabled
         ? allPlugins
         : allPlugins.filter((plugin) => {
               const daoAddress = plugin.daoAddress ?? rootDaoAddress;
@@ -84,11 +84,13 @@ const buildFilterPlugins = (params: IBuildFilterPluginsParams): Array<IFilterCom
               return daoAddress === rootDaoAddress;
           });
 
-    const dedupedPlugins =
-        !shouldDedupeByDaoAndSlug || basePlugins.length === 0
-            ? basePlugins
+    // When aggregating plugins from multiple DAOs, pick one plugin per (daoAddress, slug) combination
+    // to avoid showing duplicate plugin types from different DAOs in the same hierarchy.
+    const groupedPlugins =
+        !shouldGroupByDaoAndSlug || filteredPlugins.length === 0
+            ? filteredPlugins
             : Array.from(
-                  basePlugins.reduce((map, plugin) => {
+                  filteredPlugins.reduce((map, plugin) => {
                       const daoAddress = plugin.daoAddress ?? rootDaoAddress ?? '';
                       const key = `${daoAddress}-${plugin.slug}`;
 
@@ -100,7 +102,7 @@ const buildFilterPlugins = (params: IBuildFilterPluginsParams): Array<IFilterCom
                   }, new Map<string, IDaoPlugin>()),
               ).map(([, plugin]) => plugin);
 
-    const processedPlugins: Array<IFilterComponentPlugin<IDaoPlugin>> = dedupedPlugins.map((plugin) => ({
+    const processedPlugins: Array<IFilterComponentPlugin<IDaoPlugin>> = groupedPlugins.map((plugin) => ({
         id: plugin.interfaceType,
         uniqueId: `${plugin.address}-${plugin.slug}`,
         label: daoUtils.getPluginName(plugin),

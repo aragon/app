@@ -1,7 +1,7 @@
 import { Page } from '@/shared/components/page';
+import { featureFlags } from '@/shared/featureFlags';
 import type { IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { featureFlags } from '@/shared/utils/featureFlags';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import { DaoSettingsPageClient } from './daoSettingsPageClient';
 
