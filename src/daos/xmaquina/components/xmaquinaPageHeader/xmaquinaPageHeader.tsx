@@ -73,7 +73,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
                     <div className="absolute top-0 left-0 hidden h-[400%] w-px -translate-y-1/2 bg-white/10 md:block" />
                     {actions.map((action, index) => (
                         <>
-                            <XmaquinaActionItem {...action} />
+                            <XmaquinaActionItem key={action.title} {...action} />
                             {index < actions.length - 1 && (
                                 <div
                                     className="bg-neutral-0/10 absolute hidden h-[420%] w-px -translate-y-1/2 md:block"
@@ -96,7 +96,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
 
                 <Carousel speed={40} speedOnHoverFactor={0.2} animationDelay={2} gap={1} isDraggable={true}>
                     {actions.map((action) => (
-                        <XmaquinaActionItem {...action} />
+                        <XmaquinaActionItem key={action.title} {...action} />
                     ))}
                 </Carousel>
             </div>
