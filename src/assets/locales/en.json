@@ -203,7 +203,20 @@
               "heading": "No strategy defined"
             },
             "helpText": "Create a new strategy to automate token distribution.",
-            "label": "Strategy"
+            "label": "Strategy",
+            "details": {
+              "asset": "Token",
+              "edit": "Edit strategy",
+              "more": "More",
+              "notSet": "Not set yet",
+              "recipients": "Recipients",
+              "recipientsEmpty": "Recipients will appear here once added.",
+              "remove": "Remove",
+              "routerType": "Policy strategy",
+              "sourceVault": "Source vault",
+              "strategyType": "Strategy type",
+              "streamCadence": "Stream cadence"
+            }
           }
         },
         "metadata": {
