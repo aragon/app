@@ -232,6 +232,27 @@
             "name": "Configure policy",
             "title": "Configure policy"
           },
+          "INTERVAL": {
+            "continuous": {
+              "description": "Dispatch every time",
+              "label": "Continuous"
+            },
+            "cooldown": {
+              "description": "Dispatch after a set period",
+              "duration": {
+                "error": "Cooldown duration must be greater than 0",
+                "label": "Cooldown duration"
+              },
+              "label": "Cooldown"
+            },
+            "description": "Specify the frequency at which a dispatch can be executed. Once executed, the dispatch can only be executed again after the defined period.",
+            "interval": {
+              "helpText": "Specify the frequency at which a dispatch can be executed. Once executed, the dispatch can only be executed again after the defined period.",
+              "label": "Configure interval"
+            },
+            "name": "Configure interval",
+            "title": "Configure interval"
+          },
           "METADATA": {
             "description": "Name and define your policy so that members understand what the automation does when executed.",
             "name": "Describe your policy",

@@ -44,7 +44,7 @@ export const CreatePolicyPageClient: React.FC<ICreatePolicyPageClientProps> = (p
         [t],
     );
 
-    const [metadataStep, configureStep] = processedSteps;
+    const [metadataStep, configureStep, intervalStep] = processedSteps;
 
     return (
         <Page.Main fullWidth={true}>
@@ -71,6 +71,15 @@ export const CreatePolicyPageClient: React.FC<ICreatePolicyPageClientProps> = (p
                     {...configureStep}
                 >
                     <CreatePolicyForm.Configure daoId={daoId} />
+                </WizardPage.Step>
+                <WizardPage.Step
+                    title={t(`app.capitalFlow.createPolicyPage.steps.${CreatePolicyWizardStep.INTERVAL}.title`)}
+                    description={t(
+                        `app.capitalFlow.createPolicyPage.steps.${CreatePolicyWizardStep.INTERVAL}.description`,
+                    )}
+                    {...intervalStep}
+                >
+                    <CreatePolicyForm.Interval />
                 </WizardPage.Step>
             </WizardPage.Container>
         </Page.Main>
