@@ -2228,6 +2228,10 @@
       }
     },
     "settings": {
+      "daoHierarchy": {
+        "mainDaoLabel": "Main DAO",
+        "subDaoLabel": "SubDAO"
+      },
       "daoPluginInfo": {
         "bodyName": "Body name",
         "processKey": "Process key",
