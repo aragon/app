@@ -5,9 +5,9 @@ import { type ISppProposal, type ISppStage } from '@/plugins/sppPlugin/types';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
-import { Button, ChainEntityType, IconType, ProposalStatus, useBlockExplorer } from '@aragon/gov-ui-kit';
+import { Button, ChainEntityType, IconType, ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 
 export interface ISppStageStatusProps {
@@ -31,8 +31,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { id: chainId } = networkDefinitions[proposal.network];
-    const { buildEntityUrl } = useBlockExplorer({ chainId });
+    const { buildEntityUrl } = useDaoChain({ network: proposal.network });
 
     const openAdvanceStageDialog = () => {
         const params: ISppAdvanceStageDialogParams = { daoId, proposal };

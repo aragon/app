@@ -1,7 +1,7 @@
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService/domain';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins/useDaoPlugins';
 import {
     Avatar,
@@ -11,7 +11,6 @@ import {
     formatterUtils,
     IconType,
     NumberFormat,
-    useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { CampaignStatus, type ICampaign } from '../../api/capitalDistributorService';
@@ -51,7 +50,7 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
     const value = Number(parsedAmount) * Number(token.priceUsd);
     const formattedValue = formatterUtils.formatNumber(value, { format: NumberFormat.FIAT_TOTAL_SHORT });
 
-    const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[network].id });
+    const { buildEntityUrl } = useDaoChain({ network });
     const addressLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: claims[0]?.transactionHash });
 
     const handleOpenDialog = () => {

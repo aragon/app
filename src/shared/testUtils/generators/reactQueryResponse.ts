@@ -75,6 +75,22 @@ export const generateReactQueryResultError = <TData, TError>(
     status: 'error',
 });
 
+export const generateReactQueryResultLoading = <TData, TError>(
+    result?: Partial<QueryObserverBaseResult<TData, TError>>,
+): QueryObserverBaseResult<TData, TError> => ({
+    ...generateReactQueryResultBase(result),
+    data: undefined,
+    error: null,
+    isError: false,
+    isPending: true,
+    isLoading: true,
+    isLoadingError: false,
+    isRefetchError: false,
+    isSuccess: false,
+    isPlaceholderData: false,
+    status: 'pending',
+});
+
 const generateReactQueryInfiniteResultBase = <TData, TError>(
     result?: Partial<InfiniteQueryObserverBaseResult<TData, TError>>,
 ): InfiniteQueryObserverBaseResult<TData, TError> => ({
