@@ -244,8 +244,8 @@ const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsProps> =
     };
 
     return (
-        <div className="bg-neutral-0 flex flex-col gap-4 rounded-2xl border border-neutral-100 px-6 py-5">
-            <DefinitionList.Container className="gap-4">
+        <>
+            <DefinitionList.Container className="bg-neutral-0 rounded-xl border border-neutral-100 px-6 py-4">
                 <DefinitionList.Item
                     term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.strategyType')}
                 >
@@ -308,6 +308,6 @@ const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsProps> =
                     </Dropdown.Item>
                 </Dropdown.Container>
             </div>
-        </div>
+        </>
     );
 };
