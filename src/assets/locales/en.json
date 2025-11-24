@@ -240,7 +240,8 @@
             "cooldown": {
               "description": "Dispatch after a set period",
               "duration": {
-                "error": "Cooldown duration must be greater than 0"
+                "error": "Cooldown duration must be greater than 0",
+                "label": "Cooldown duration"
               },
               "label": "Cooldown"
             },
