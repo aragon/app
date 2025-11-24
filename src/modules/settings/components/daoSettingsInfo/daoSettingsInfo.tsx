@@ -1,18 +1,10 @@
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import {
-    Card,
-    ChainEntityType,
-    Collapsible,
-    DaoAvatar,
-    DefinitionList,
-    Link,
-    Tag,
-    useBlockExplorer,
-} from '@aragon/gov-ui-kit';
+import { Card, ChainEntityType, Collapsible, DaoAvatar, DefinitionList, Link, Tag } from '@aragon/gov-ui-kit';
 
 export interface IDaoSettingsInfoProps {
     /**
@@ -27,8 +19,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
 
     const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
 
-    const { id: chainId } = networkDefinitions[dao.network];
-    const { buildEntityUrl } = useBlockExplorer({ chainId });
+    const { buildEntityUrl } = useDaoChain({ network: dao.network });
 
     return (
         <Card className="p-6">
