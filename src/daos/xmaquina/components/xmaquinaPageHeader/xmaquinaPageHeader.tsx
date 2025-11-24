@@ -57,35 +57,29 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
                     priority={true}
                     style={{ objectFit: 'contain', objectPosition: 'top right' }}
                 />
-                <div className="mb-12 flex max-w-[720px] flex-col gap-1.5 md:mb-16 md:gap-3">
-                    <p className="text-3xl leading-tight text-white md:text-5xl">
+                <div className="mb-12 flex max-w-180 flex-col gap-1.5 md:mb-16 md:gap-3">
+                    <p className="text-neutral-0 text-3xl leading-tight md:text-5xl">
                         {t('app.daos.xmaquina.xmaquinaPageHeader.welcome')}{' '}
                         {ensName && <span className="text-[#1ED612]">{ensName}</span>}
                         <br />
                         {t('app.daos.xmaquina.xmaquinaPageHeader.to')}
                     </p>
-                    <p className="text-lg text-neutral-300 md:text-xl">
+                    <p className="text-lg text-neutral-300 md:text-2xl">
                         {t('app.daos.xmaquina.xmaquinaPageHeader.info')}
                     </p>
                 </div>
                 {/* Static row for desktop view */}
-                <div className="relative hidden w-full flex-col gap-px md:flex md:flex-row md:items-stretch">
+                <div className="relative hidden flex-col gap-px md:flex md:flex-row md:items-stretch">
                     <div className="absolute top-0 left-0 hidden h-[400%] w-px -translate-y-1/2 bg-white/10 md:block" />
-
                     {actions.map((action, index) => (
                         <>
-                            <XmaquinaActionItem
-                                key={action.title}
-                                title={action.title}
-                                description={action.description}
-                                icon={action.icon}
-                                href={action.href}
-                                isExternal={action.isExternal}
-                            />
+                            <XmaquinaActionItem {...action} />
                             {index < actions.length - 1 && (
                                 <div
-                                    className="absolute hidden h-[400%] w-px -translate-y-1/2 bg-white/10 md:block"
-                                    style={{ left: `${((index + 1) / 3) * 100}%` }}
+                                    className="bg-neutral-0/10 absolute hidden h-[420%] w-px -translate-y-1/2 md:block"
+                                    style={{
+                                        left: `${((index + 1) / 3) * 100}%`,
+                                    }}
                                 />
                             )}
                         </>
@@ -100,7 +94,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
                 <div className="absolute top-0 left-[calc(66.67%+16px)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
                 <div className="absolute top-0 right-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
 
-                <Carousel speed={40} speedOnHoverFactor={0.2} animationDelay={2} gap={16} isDraggable={true}>
+                <Carousel speed={40} speedOnHoverFactor={0.2} animationDelay={2} gap={1} isDraggable={true}>
                     {actions.map((action) => (
                         <XmaquinaActionItem
                             key={action.title}
