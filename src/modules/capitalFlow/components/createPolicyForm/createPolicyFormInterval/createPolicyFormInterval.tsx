@@ -27,13 +27,11 @@ export const CreatePolicyFormInterval: React.FC<ICreatePolicyFormIntervalProps> 
     const { onChange: onIntervalTypeChange, ...intervalTypeField } = useFormField<Record<string, any>, any>(
         intervalTypeFieldName,
         {
-            label: t('app.capitalFlow.createPolicyPage.steps.INTERVAL.interval.label'),
             defaultValue: PolicyDispatchIntervalType.CONTINUOUS,
         },
     );
 
     const cooldownDurationField = useFormField<Record<string, any>, any>(cooldownDurationFieldName, {
-        label: t('app.capitalFlow.createPolicyPage.steps.INTERVAL.cooldown.duration.label'),
         defaultValue: dateUtils.durationToSeconds(defaultCooldownDuration),
         rules: {
             validate: (value) => {
@@ -70,11 +68,7 @@ export const CreatePolicyFormInterval: React.FC<ICreatePolicyFormIntervalProps> 
 
     return (
         <div className="flex w-full flex-col gap-10">
-            <RadioGroup
-                onValueChange={onIntervalTypeChange}
-                helpText={t('app.capitalFlow.createPolicyPage.steps.INTERVAL.interval.helpText')}
-                {...intervalTypeField}
-            >
+            <RadioGroup onValueChange={onIntervalTypeChange} {...intervalTypeField}>
                 <RadioCard
                     label={t('app.capitalFlow.createPolicyPage.steps.INTERVAL.continuous.label')}
                     description={t('app.capitalFlow.createPolicyPage.steps.INTERVAL.continuous.description')}

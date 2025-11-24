@@ -240,16 +240,11 @@
             "cooldown": {
               "description": "Dispatch after a set period",
               "duration": {
-                "error": "Cooldown duration must be greater than 0",
-                "label": "Cooldown duration"
+                "error": "Cooldown duration must be greater than 0"
               },
               "label": "Cooldown"
             },
             "description": "Specify the frequency at which a dispatch can be executed. Once executed, the dispatch can only be executed again after the defined period.",
-            "interval": {
-              "helpText": "Specify the frequency at which a dispatch can be executed. Once executed, the dispatch can only be executed again after the defined period.",
-              "label": "Configure interval"
-            },
             "name": "Configure interval",
             "title": "Configure interval"
           },
