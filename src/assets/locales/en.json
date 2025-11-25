@@ -197,13 +197,6 @@
       "createPolicyForm": {
         "configure": {
           "strategy": {
-            "emptyCard": {
-              "action": "Create strategy",
-              "description": "Define a strategy for publishing the new policy.",
-              "heading": "No strategy defined"
-            },
-            "helpText": "Create a new strategy to automate token distribution.",
-            "label": "Strategy",
             "details": {
               "asset": "Token",
               "edit": "Edit strategy",
@@ -216,7 +209,14 @@
               "sourceVault": "Source vault",
               "strategyType": "Strategy type",
               "streamCadence": "Stream cadence"
-            }
+            },
+            "emptyCard": {
+              "action": "Create strategy",
+              "description": "Define a strategy for publishing the new policy.",
+              "heading": "No strategy defined"
+            },
+            "helpText": "Create a new strategy to automate token distribution.",
+            "label": "Strategy"
           }
         },
         "metadata": {
@@ -272,6 +272,38 @@
       },
       "layoutWizardCreatePolicy": {
         "name": "Create policy"
+      },
+      "preparePolicyDialog": {
+        "button": {
+          "submit": "Prepare installation"
+        },
+        "description": "To publish your capital flow policy, confirm the two onchain transactions in your wallet.",
+        "step": {
+          "PIN_METADATA": {
+            "errorLabel": "Unable to pin data on IPFS",
+            "label": "Pin data on IPFS"
+          }
+        },
+        "title": "Publish capital flow policy",
+        "transactionInfoTitle": "Prepare installation"
+      },
+      "publishPolicyDialog": {
+        "admin": {
+          "button": {
+            "submit": "Finalize installation"
+          },
+          "description": "To publish your capital flow policy, confirm the two onchain transactions in your wallet.",
+          "title": "Publish capital flow policy",
+          "transactionInfoTitle": "Finalize installation"
+        },
+        "default": {
+          "button": {
+            "submit": "Propose policy"
+          },
+          "description": "To publish your capital flow policy, confirm the two onchain transactions in your wallet.",
+          "title": "Publish capital flow policy",
+          "transactionInfoTitle": "Propose policy"
+        }
       },
       "setupStrategyDialog": {
         "a11y": {

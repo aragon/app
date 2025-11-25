@@ -1,5 +1,6 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { CreatePolicyDetailsDialog } from '../dialogs/createPolicyDetailsDialog';
+import { PreparePolicyDialog } from '../dialogs/preparePolicyDialog';
 import { SetupStrategyDialog } from '../dialogs/setupStrategyDialog';
 import { CapitalFlowDialogId } from './capitalFlowDialogId';
 
@@ -10,4 +11,5 @@ export const capitalFlowDialogsDefinitions: Record<CapitalFlowDialogId, IDialogC
         size: 'xl',
         hiddenDescription: 'app.capitalFlow.setupStrategyDialog.a11y.description',
     },
+    [CapitalFlowDialogId.PREPARE_POLICY]: { Component: PreparePolicyDialog },
 };

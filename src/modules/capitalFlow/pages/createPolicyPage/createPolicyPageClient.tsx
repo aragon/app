@@ -6,7 +6,9 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useMemo } from 'react';
 import { useProposalPermissionCheckGuard } from '../../../governance/hooks/useProposalPermissionCheckGuard';
-import { CreatePolicyForm } from '../../components/createPolicyForm';
+import { type ICreatePolicyFormData, CreatePolicyForm } from '../../components/createPolicyForm';
+import { CapitalFlowDialogId } from '../../constants/capitalFlowDialogId';
+import type { IPreparePolicyDialogParams } from '../../dialogs/preparePolicyDialog';
 import { CreatePolicyWizardStep, createPolicyWizardSteps } from './createPolicyPageDefinitions';
 
 export interface ICreatePolicyPageClientProps {
@@ -28,12 +30,10 @@ export const CreatePolicyPageClient: React.FC<ICreatePolicyPageClientProps> = (p
 
     useProposalPermissionCheckGuard({ daoId, pluginAddress, redirectTab: 'settings' });
 
-    const handleFormSubmit = () => {};
-
-    // const handleFormSubmit = (values: ICreateProcessFormData) => {
-    //     const dialogParams: IPrepareProcessDialogParams = { daoId, values, pluginAddress };
-    //     open(CreateDaoDialogId.PREPARE_PROCESS, { params: dialogParams });
-    // };
+    const handleFormSubmit = (values: ICreatePolicyFormData) => {
+        const dialogParams: IPreparePolicyDialogParams = { daoId, values, pluginAddress };
+        open(CapitalFlowDialogId.PREPARE_POLICY, { params: dialogParams });
+    };
 
     const processedSteps = useMemo(
         () =>
