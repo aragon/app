@@ -70,8 +70,7 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (props) 
                     ))}
                 </div>
             </Container>
-            {/* Draggable unbounded carousel for mobile view */}
-            <div className="hidden md:block lg:hidden">
+            <div className="hidden md:absolute md:bottom-0 lg:hidden">
                 <Carousel speed={40} speedOnHoverFactor={0.2} animationDelay={2} gap={16}>
                     {actions.map((action) => (
                         <BoundlessActionItem
@@ -84,7 +83,8 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (props) 
                     ))}
                 </Carousel>
             </div>
-            <div className="block md:hidden">
+            {/* Draggable unbounded carousel for mobile view */}
+            <div className="absolute bottom-0 md:hidden">
                 <Carousel speed={40} speedOnHoverFactor={0.2} animationDelay={2} gap={16} isDraggable={true}>
                     {actions.map((action) => (
                         <BoundlessActionItem

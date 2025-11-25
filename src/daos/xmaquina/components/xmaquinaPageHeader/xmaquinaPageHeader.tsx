@@ -65,25 +65,34 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
                     alt="XMAQUINA Robot"
                     width={435}
                     height={421}
-                    className="absolute right-[8%] bottom-0 -z-20 hidden md:block"
+                    className="absolute right-[8%] bottom-0 -z-20 hidden lg:block"
                     priority={true}
                     style={{ objectFit: 'contain', objectPosition: 'top right' }}
                 />
 
                 {/* Static row for desktop view */}
-                <div className="border-l-neutral-0/10 hidden h-full grow flex-col gap-px border-l md:flex md:flex-1 md:flex-row">
+                <div className="border-l-neutral-0/10 hidden h-full grow gap-px border-l lg:flex">
                     {actions.map((action) => (
                         <XmaquinaActionItem key={action.title} {...action} />
                     ))}
                 </div>
             </Container>
-            {/* Draggable carousel for mobile view */}
-            <div className="relative block md:hidden">
+            <div className="hidden md:block lg:hidden">
                 <div className="absolute top-0 left-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
                 <div className="absolute top-0 left-[calc(33.33%+16px)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
                 <div className="absolute top-0 left-[calc(66.67%+16px)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
                 <div className="absolute top-0 right-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
-
+                <Carousel speed={40} speedOnHoverFactor={0.2} animationDelay={2} gap={1}>
+                    {actions.map((action) => (
+                        <XmaquinaActionItem key={action.title} {...action} />
+                    ))}
+                </Carousel>
+            </div>
+            <div className="block md:hidden">
+                <div className="absolute top-0 left-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 left-[calc(33.33%+16px)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 left-[calc(66.67%+16px)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 right-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
                 <Carousel speed={40} speedOnHoverFactor={0.2} animationDelay={2} gap={1} isDraggable={true}>
                     {actions.map((action) => (
                         <XmaquinaActionItem key={action.title} {...action} />
