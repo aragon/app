@@ -71,7 +71,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
                 />
 
                 {/* Static row for desktop view */}
-                <div className="border-l-neutral-0/10 hidden h-full grow gap-px border-l lg:flex">
+                <div className="border-l-neutral-0/10 hidden h-full grow border-l lg:flex">
                     {actions.map((action) => (
                         <XmaquinaActionItem key={action.title} {...action} />
                     ))}
@@ -79,8 +79,8 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
             </Container>
             <div className="hidden md:block lg:hidden">
                 <div className="absolute top-0 left-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
-                <div className="absolute top-0 left-[calc(33.33%+16px)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
-                <div className="absolute top-0 left-[calc(66.67%+16px)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 left-[calc(33.33%)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 right-[calc(33.33%)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
                 <div className="absolute top-0 right-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
                 <Carousel speed={40} speedOnHoverFactor={0.2} animationDelay={2} gap={1}>
                     {actions.map((action) => (
@@ -90,8 +90,8 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
             </div>
             <div className="block md:hidden">
                 <div className="absolute top-0 left-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
-                <div className="absolute top-0 left-[calc(33.33%+16px)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
-                <div className="absolute top-0 left-[calc(66.67%+16px)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 left-[calc(33.33%)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 right-[calc(33.33%)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
                 <div className="absolute top-0 right-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
                 <Carousel speed={40} speedOnHoverFactor={0.2} animationDelay={2} gap={1} isDraggable={true}>
                     {actions.map((action) => (
