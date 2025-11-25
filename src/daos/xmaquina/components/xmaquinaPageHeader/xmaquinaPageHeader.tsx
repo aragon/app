@@ -1,5 +1,6 @@
 'use client';
 
+import { twkEverett } from '@/daos/xmaquina/assets/fonts/twkEverett';
 import type { IDao } from '@/shared/api/daoService';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
@@ -33,10 +34,10 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
     return (
         <header
             className={classNames(
-                'relative flex h-fit flex-col justify-between overflow-hidden pt-6 pb-0 md:pt-16 md:pb-0',
+                'relative flex flex-col justify-between overflow-hidden md:h-114',
+                twkEverett.className,
                 className,
             )}
-            style={{ fontFamily: 'TWK Everett, sans-serif' }}
             {...otherProps}
         >
             <Image
@@ -47,7 +48,18 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
                 priority={true}
             />
 
-            <Container className="relative flex w-full flex-col">
+            <Container className="relative flex w-full grow flex-col">
+                <div className="top-6 flex w-fit max-w-180 flex-col gap-1.5 pt-6 pb-6 md:absolute md:top-8 md:w-180 md:gap-3">
+                    <p className="text-neutral-0 text-3xl leading-tight md:text-5xl">
+                        {t('app.daos.xmaquina.xmaquinaPageHeader.welcome')}{' '}
+                        {ensName && <span className="text-[#1ED612]">{ensName}</span>}
+                        <br />
+                        {t('app.daos.xmaquina.xmaquinaPageHeader.to')}
+                    </p>
+                    <p className="text-base text-neutral-300 md:text-2xl">
+                        {t('app.daos.xmaquina.xmaquinaPageHeader.info')}
+                    </p>
+                </div>
                 <Image
                     src={DroidImage}
                     alt="XMAQUINA Robot"
@@ -57,34 +69,12 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
                     priority={true}
                     style={{ objectFit: 'contain', objectPosition: 'top right' }}
                 />
-                <div className="mb-12 flex max-w-180 flex-col gap-1.5 md:mb-16 md:gap-3">
-                    <p className="text-neutral-0 text-3xl leading-tight md:text-5xl">
-                        {t('app.daos.xmaquina.xmaquinaPageHeader.welcome')}{' '}
-                        {ensName && <span className="text-[#1ED612]">{ensName}</span>}
-                        <br />
-                        {t('app.daos.xmaquina.xmaquinaPageHeader.to')}
-                    </p>
-                    <p className="text-lg text-neutral-300 md:text-2xl">
-                        {t('app.daos.xmaquina.xmaquinaPageHeader.info')}
-                    </p>
-                </div>
+
                 {/* Static row for desktop view */}
-                <div className="relative hidden flex-col gap-px md:flex md:flex-row md:items-stretch">
-                    <div className="absolute top-0 left-0 hidden h-[400%] w-px -translate-y-1/2 bg-white/10 md:block" />
+                <div className="border-l-neutral-0/10 hidden h-full grow flex-col gap-px border-l md:flex md:flex-1 md:flex-row">
                     {actions.map((action, index) => (
-                        <>
-                            <XmaquinaActionItem key={action.title} {...action} />
-                            {index < actions.length - 1 && (
-                                <div
-                                    className="bg-neutral-0/10 absolute hidden h-[420%] w-px -translate-y-1/2 md:block"
-                                    style={{
-                                        left: `${(((index + 1) / 3) * 100).toString()}%`,
-                                    }}
-                                />
-                            )}
-                        </>
+                        <XmaquinaActionItem key={action.title} {...action} />
                     ))}
-                    <div className="absolute top-0 right-0 hidden h-[400%] w-px -translate-y-1/2 bg-white/10 md:block" />
                 </div>
             </Container>
             {/* Draggable carousel for mobile view */}
