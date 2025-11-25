@@ -23,7 +23,7 @@ export const XmaquinaActionText: React.FC<IXmaquinaActionTextProps> = (props) =>
     return (
         <>
             {/* Static for small screens */}
-            <div className="relative z-10 flex flex-col items-start gap-1 pr-4 md:hidden md:pr-0">
+            <div className="relative z-10 flex flex-col items-start gap-1 self-start pr-4 md:hidden md:pr-0">
                 <p className="text-2xl leading-tight font-medium text-white">{t(title)}</p>
                 <p className="text-lg leading-tight text-neutral-400 transition-colors duration-500 group-hover:text-black">
                     {t(description)}
