@@ -1,7 +1,7 @@
 import type { ICmsFeatureFlagsResponse } from '@/modules/explore/api/cmsService';
 import { cmsService } from '@/modules/explore/api/cmsService';
-import type { FeatureFlagEnvironment, FeatureFlagOverrides, IFeatureFlagsProvider } from './featureFlags.api';
-import { parseFeatureFlagOverridesFromCookie } from './featureFlags.cookies';
+import type { FeatureFlagEnvironment, FeatureFlagOverrides, IFeatureFlagsProvider } from '../featureFlags.api';
+import { parseFeatureFlagOverridesFromCookie } from '../utils/cookieOverrides';
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
     value != null && typeof value === 'object' && !Array.isArray(value);

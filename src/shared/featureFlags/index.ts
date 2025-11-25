@@ -5,4 +5,4 @@ export type {
     FeatureFlagOverrides,
     FeatureFlagSnapshot,
 } from './featureFlags.api';
-export { getEnvironment } from './featureFlags.config';
+export { getEnvironment } from './utils/getEnvironment';

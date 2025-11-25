@@ -6,7 +6,7 @@ A feature flag system that allows controlling feature visibility across differen
 
 The feature flags system supports three levels of configuration:
 
-1. **Code defaults** - Defined in `featureFlags.config.ts`
+1. **Code defaults** - Defined in `featureFlags.constants.ts`
 2. **CMS overrides** - Managed via GitHub CMS (`feature-flags.json`)
 3. **Local overrides** - Set via browser cookies (for debugging)
 
@@ -21,7 +21,7 @@ Local override (cookie) > CMS override > Environment-specific (code) > Default (
 ### Server-side
 
 ```typescript
-import { featureFlags } from '@/shared/utils/featureFlags';
+import { featureFlags } from '@/shared/featureFlags';
 
 // Check if a feature is enabled
 const isSubDaoEnabled = await featureFlags.isEnabled('subDao');
@@ -50,7 +50,7 @@ function MyComponent() {
 
 ### 1. Define the flag in code
 
-Add the flag definition to `featureFlags.config.ts`:
+Add the flag definition to `featureFlags.constants.ts`:
 
 ```typescript
 export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
@@ -211,17 +211,17 @@ export class GithubCmsFeatureFlagsProvider implements IFeatureFlagsProvider {
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    Feature Flags                         │
-│                                                          │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
-│  │ Code Defaults│  │ CMS Overrides │  │ Local Cookie │ │
-│  │ (config.ts)  │  │ (GitHub CMS)  │  │  Overrides   │ │
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘ │
-│         │                 │                  │          │
-│         └─────────────────┼──────────────────┘          │
+│                    Feature Flags                        │
+│                                                         │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │
+│  │ Code Defaults│  │ CMS Overrides│  │ Local Cookie │   │
+│  │ (constants)  │  │ (GitHub CMS) │  │  Overrides   │   │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘   │
+│         │                 │                 │           │
+│         └─────────────────┼─────────────────┘           │
 │                           │                             │
 │                  ┌────────▼────────┐                    │
-│                  │  Resolution      │                    │
+│                  │  Resolution     │                    │
 │                  │  (Priority)     │                    │
 │                  └────────┬────────┘                    │
 │                           │                             │
@@ -235,13 +235,16 @@ export class GithubCmsFeatureFlagsProvider implements IFeatureFlagsProvider {
 
 ```
 featureFlags/
-├── README.md                    # This file
-├── index.ts                     # Public exports
-├── featureFlags.api.ts          # Type definitions
-├── featureFlags.config.ts        # Flag definitions
-├── featureFlags.ts              # Main service class
-├── featureFlags.cookies.ts      # Cookie parsing/serialization
-└── featureFlags.githubProvider.ts # GitHub CMS provider
+├── README.md                        # This file
+├── index.ts                         # Public exports
+├── featureFlags.api.ts              # Type definitions
+├── featureFlags.constants.ts        # Flag definitions and shared constants
+├── featureFlags.ts                  # Main service class
+├── utils/
+│   ├── getEnvironment.ts            # Environment resolver
+│   └── cookieOverrides.ts           # Cookie parsing/serialization
+└── providers/
+    └── githubProvider.ts            # GitHub CMS provider implementation
 ```
 
 ## Examples
@@ -266,7 +269,7 @@ function Dashboard() {
 ### Example 2: Server-side Feature Gate
 
 ```typescript
-import { featureFlags } from '@/shared/utils/featureFlags';
+import { featureFlags } from '@/shared/featureFlags';
 
 export async function getServerSideProps() {
     const isSubDaoEnabled = await featureFlags.isEnabled('subDao');
@@ -282,7 +285,7 @@ export async function getServerSideProps() {
 ### Example 3: Environment-specific Behavior
 
 ```typescript
-// In featureFlags.config.ts
+// In featureFlags.constants.ts
 {
   key: 'experimentalFeature',
   defaultValue: false,
@@ -307,7 +310,7 @@ export async function getServerSideProps() {
 
 ### Flag not working?
 
-1. Check if the flag is defined in `featureFlags.config.ts`
+1. Check if the flag is defined in `featureFlags.constants.ts`
 2. Verify the key is added to `FeatureFlagKey` type
 3. Check CMS file format and environment values
 4. Clear browser cookies if using local overrides

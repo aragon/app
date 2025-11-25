@@ -24,7 +24,7 @@ export type FeatureFlagKey = 'debugPanel' | 'subDao';
  * }
  *
  * @remarks
- * - Feature flags are defined in `featureFlags.config.ts`
+ * - Feature flags are defined in `featureFlags.constants.ts`
  * - CMS can override these values via `feature-flags.json`
  * - Local overrides can be set via cookies (for debugging)
  * - The final value is resolved in this order: local override > CMS override > environment-specific > default

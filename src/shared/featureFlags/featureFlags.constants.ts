@@ -1,18 +1,6 @@
-import { FEATURE_FLAG_ENVIRONMENTS, type FeatureFlagDefinition, type FeatureFlagEnvironment } from './featureFlags.api';
+import type { FeatureFlagDefinition } from './featureFlags.api';
 
-const resolveEnvironment = (): FeatureFlagEnvironment => {
-    const rawEnv = process.env.NEXT_PUBLIC_ENV;
-
-    if (rawEnv != null && FEATURE_FLAG_ENVIRONMENTS.includes(rawEnv as FeatureFlagEnvironment)) {
-        return rawEnv as FeatureFlagEnvironment;
-    }
-
-    // Fail-safe: treat unknown/missing environment as production to avoid
-    // accidentally enabling flags in non-explicit environments.
-    return 'production';
-};
-
-const CURRENT_ENV = resolveEnvironment();
+export const FEATURE_FLAGS_OVERRIDES_COOKIE_NAME = 'aragon.featureFlags.overrides';
 
 /**
  * Feature flags definitions.
@@ -64,5 +52,3 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         },
     },
 ];
-
-export const getEnvironment = (): FeatureFlagEnvironment => CURRENT_ENV;

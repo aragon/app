@@ -5,7 +5,7 @@ import { fetchInterceptorUtils } from '@/modules/application/utils/fetchIntercep
 import { sanctionedAddressesOptions } from '@/modules/explore/api/cmsService';
 import { whitelistedAddressesOptions } from '@/modules/explore/api/cmsService/queries/useWhitelistedAddresses';
 import { translations } from '@/shared/constants/translations';
-import { featureFlags } from '@/shared/utils/featureFlags/featureFlags';
+import { featureFlags } from '@/shared/featureFlags';
 import { dehydrate, QueryClient } from '@tanstack/react-query';
 import { headers } from 'next/headers';
 import NextTopLoader from 'nextjs-toploader';

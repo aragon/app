@@ -2,11 +2,11 @@
 
 import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react';
 
-import type { FeatureFlagKey, FeatureFlagOverrides, FeatureFlagSnapshot } from '@/shared/utils/featureFlags';
+import type { FeatureFlagKey, FeatureFlagOverrides, FeatureFlagSnapshot } from '@/shared/featureFlags';
 import {
     parseFeatureFlagOverridesFromCookie,
     serializeFeatureFlagOverridesToCookie,
-} from '@/shared/utils/featureFlags/featureFlags.cookies';
+} from '@/shared/featureFlags/utils/cookieOverrides';
 
 export interface IFeatureFlagsContextValue {
     /**

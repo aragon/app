@@ -1,7 +1,5 @@
-import type { FeatureFlagKey, FeatureFlagOverrides } from './featureFlags.api';
-import { FEATURE_FLAG_DEFINITIONS } from './featureFlags.config';
-
-export const FEATURE_FLAGS_OVERRIDES_COOKIE_NAME = 'aragon.featureFlags.overrides';
+import type { FeatureFlagKey, FeatureFlagOverrides } from '../featureFlags.api';
+import { FEATURE_FLAG_DEFINITIONS, FEATURE_FLAGS_OVERRIDES_COOKIE_NAME } from '../featureFlags.constants';
 
 export const parseFeatureFlagOverridesFromCookie = (cookieSource?: string | null): FeatureFlagOverrides => {
     if (!cookieSource) {

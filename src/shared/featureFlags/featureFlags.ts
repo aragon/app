@@ -7,8 +7,9 @@ import type {
     FeatureFlagSnapshot,
     IFeatureFlagsProvider,
 } from './featureFlags.api';
-import { FEATURE_FLAG_DEFINITIONS, getEnvironment } from './featureFlags.config';
-import { GithubCmsFeatureFlagsProvider } from './featureFlags.githubProvider';
+import { FEATURE_FLAG_DEFINITIONS } from './featureFlags.constants';
+import { GithubCmsFeatureFlagsProvider } from './providers/githubProvider';
+import { getEnvironment } from './utils/getEnvironment';
 
 const getStaticDefaultValue = (definition: FeatureFlagDefinition, env: FeatureFlagEnvironment): boolean => {
     const envValue = definition.environments?.[env];

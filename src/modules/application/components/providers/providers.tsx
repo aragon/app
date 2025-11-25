@@ -10,7 +10,7 @@ import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import { Image } from '@/shared/components/image';
 import { Link } from '@/shared/components/link';
 import { TranslationsProvider } from '@/shared/components/translationsProvider';
-import type { FeatureFlagSnapshot } from '@/shared/utils/featureFlags';
+import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import type { Translations } from '@/shared/utils/translationsUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { type DehydratedState, HydrationBoundary, QueryClientProvider } from '@tanstack/react-query';
