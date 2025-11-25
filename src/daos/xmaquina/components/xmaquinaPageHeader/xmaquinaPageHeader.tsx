@@ -72,7 +72,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
 
                 {/* Static row for desktop view */}
                 <div className="border-l-neutral-0/10 hidden h-full grow flex-col gap-px border-l md:flex md:flex-1 md:flex-row">
-                    {actions.map((action, index) => (
+                    {actions.map((action) => (
                         <XmaquinaActionItem key={action.title} {...action} />
                     ))}
                 </div>
