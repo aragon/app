@@ -1,13 +1,7 @@
-import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
-import type { IDao } from '@/shared/api/daoService';
 import { transactionUtils, type ITransactionRequest } from '@/shared/utils/transactionUtils';
 import type { Hex } from 'viem';
 import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
-import type {
-    IBuildPolicyProposalActionsParams,
-    IBuildTransactionParams,
-    IPreparePolicyMetadata,
-} from './preparePolicyDialogUtils.api';
+import type { IBuildPolicyProposalActionsParams, IBuildTransactionParams } from './preparePolicyDialogUtils.api';
 
 class PreparePolicyDialogUtils {
     private publishPolicyProposalMetadata = {

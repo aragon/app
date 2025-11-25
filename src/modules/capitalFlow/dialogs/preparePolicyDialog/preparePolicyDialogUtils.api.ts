@@ -3,9 +3,9 @@ import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
 
 export interface IPreparePolicyMetadata {
     /**
-     * Metadata CID for the policy.
+     * Metadata CID for the policy plugin.
      */
-    policy: string;
+    plugin: string;
 }
 
 export interface IBuildTransactionParams {

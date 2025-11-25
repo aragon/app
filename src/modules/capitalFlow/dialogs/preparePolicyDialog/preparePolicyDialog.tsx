@@ -88,7 +88,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
 
             const { IpfsHash: policyMetadataHash } = await pinJson({ body: policyMetadataBody }, params);
 
-            const metadata: IPreparePolicyMetadata = { policy: policyMetadataHash };
+            const metadata: IPreparePolicyMetadata = { plugin: policyMetadataHash };
 
             setPolicyMetadata(metadata);
             nextStep();
@@ -96,7 +96,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
         [pinJson, nextStep, values],
     );
 
-    const handlePreparePolicySuccess = (txReceipt: TransactionReceipt) => {
+    const handlePrepareInstallationSuccess = (txReceipt: TransactionReceipt) => {
         invariant(dao != null, 'PreparePolicyDialog: DAO cannot be fetched');
 
         // TODO: Extract deployment data from transaction receipt
@@ -146,7 +146,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
             title={t('app.capitalFlow.preparePolicyDialog.title')}
             description={t('app.capitalFlow.preparePolicyDialog.description')}
             submitLabel={t('app.capitalFlow.preparePolicyDialog.button.submit')}
-            onSuccess={handlePreparePolicySuccess}
+            onSuccess={handlePrepareInstallationSuccess}
             transactionInfo={{
                 title: t('app.capitalFlow.preparePolicyDialog.transactionInfoTitle'),
                 current: 1,
