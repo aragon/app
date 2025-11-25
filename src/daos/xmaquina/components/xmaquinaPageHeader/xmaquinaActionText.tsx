@@ -24,8 +24,8 @@ export const XmaquinaActionText: React.FC<IXmaquinaActionTextProps> = (props) =>
         <>
             {/* Static for small screens */}
             <div className="relative z-10 flex flex-col items-start gap-1 self-start pr-4 md:hidden md:pr-0">
-                <p className="text-2xl leading-tight font-medium text-white">{t(title)}</p>
-                <p className="text-lg leading-tight text-neutral-400 transition-colors duration-500 group-hover:text-black">
+                <p className="text-xl leading-tight font-medium text-white md:text-2xl">{t(title)}</p>
+                <p className="text-base leading-tight text-neutral-400 transition-colors duration-500 group-hover:text-black md:text-lg">
                     {t(description)}
                 </p>
             </div>

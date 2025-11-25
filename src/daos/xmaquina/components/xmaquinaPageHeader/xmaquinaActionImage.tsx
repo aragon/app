@@ -22,9 +22,8 @@ export const XmaquinaActionImage: React.FC<IXmaquinaActionImageProps> = (props) 
         <Image
             src={icon}
             alt={alt}
-            width={96}
-            height={96}
-            className="relative z-10 shrink-0 transition-[filter] duration-500 group-hover:brightness-0"
+            sizes="(min-width: 768px) 96px, 72px"
+            className="relative z-10 size-20 shrink-0 transition-[filter] duration-500 group-hover:brightness-0 md:size-24"
         />
     );
 };
