@@ -25,7 +25,7 @@ export const tokenPlugin: IPluginInfo = {
         [Network.CORN_MAINNET]: '0x67C579fC2676a496DCE7dAB9695D323219d339EB',
         [Network.CHILIZ_MAINNET]: '0x62c82a443692A1bE4D0421b1E4678F0dff8F3c1B',
         [Network.AVAX_MAINNET]: '0xf56e330a183cABaC0b082b1a318F2c7ba66fe4d6',
-        [Network.KATANA_MAINNET]: '0x666c9b0B0C13498c05028Ded2BcF702e84B8d357',
+        [Network.KATANA_MAINNET]: '0xBAFF9A7c3Bf3e791B3E601fFe5A05C7759f30E5b',
     },
     setup: {
         nameKey: 'app.plugins.token.meta.setup.name',

@@ -194,11 +194,11 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         beta: false,
         tenderlySupport: true,
         addresses: {
-            dao: '0x149aaef5Ffda32D6AC2cE127d04ff0Cf51b4A4AD',
-            daoFactory: '0x05cB00f812dc6a235D8146Eed0D42B24DaE2a311',
-            pluginSetupProcessor: '0x52b85D1292FcEA67beeBC92d85b2394CAFEA66d7',
-            globalExecutor: '0x7432045E71368d66f91fdcC3E67a799347FA4167',
-            conditionFactory: '0x5B30039D497EdA801B1ABC993a44B35689b27656',
+            dao: '0xb8Be55076350164C62aE0CFB69560B0f0A9B8a33',
+            daoFactory: '0xd59D2bEF6465cC71efEc40afd2D72901470Dd835',
+            pluginSetupProcessor: '0xfD4dBD760e253b7ee0CE81d47946DAdd2531F1fC',
+            globalExecutor: '0x7b73F551167AbFE2585a6baE6def948489c1855C',
+            conditionFactory: '0xE22884A20f9aCECB5174Cb55F6AA36600C13E87a',
         },
     },
     [Network.ZKSYNC_MAINNET]: {
