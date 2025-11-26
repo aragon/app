@@ -2,7 +2,9 @@
 
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { type IPluginFilterComponentProps, PluginFilterComponent } from '@/shared/components/pluginFilterComponent';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
+import { pluginGroupFilter } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type { ReactNode } from 'react';
@@ -34,21 +36,29 @@ export const assetListFilterParam = 'subdao';
 export const AssetListContainer: React.FC<IAssetListContainerProps> = (props) => {
     const { initialParams, daoId, value, onValueChange, ...otherProps } = props;
 
+    const { t } = useTranslations();
     const { activePlugin, setActivePlugin, plugins } = useDaoPluginFilterUrlParam({
         daoId,
         type: PluginType.BODY,
         includeSubPlugins: true,
+        includeGroupFilter: true,
         name: assetListFilterParam,
         enableUrlUpdate: onValueChange == null,
     });
 
     const processedPlugins = plugins?.map((plugin) => {
+        const { id, label, meta } = plugin;
+
+        const isGroupTab = id === pluginGroupFilter.id;
+        const processedLabel = isGroupTab ? t('app.finance.assetList.groupTab') : label;
+
+        const address = isGroupTab ? undefined : meta.address;
         const pluginInitialParams = {
             ...initialParams,
-            queryParams: { ...initialParams.queryParams, address: plugin.meta.address },
+            queryParams: { ...initialParams.queryParams, address },
         };
 
-        return { ...plugin, props: { initialParams: pluginInitialParams, plugin: plugin.meta } };
+        return { ...plugin, label: processedLabel, props: { initialParams: pluginInitialParams, plugin: meta } };
     });
 
     return (

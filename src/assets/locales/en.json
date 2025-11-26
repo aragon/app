@@ -728,7 +728,13 @@
           "description": "There was an error loading the assets. Try again later.",
           "heading": "Error loading assets"
         },
+        "groupTab": "All assets",
         "searchPlaceholder": "Search assets..."
+      },
+      "assetListStats": {
+        "bodies": "Bodies",
+        "note": "Aggregate treasury data across all SubDAOs coming soon.",
+        "subDaos": "SubDAOs"
       },
       "assetSelectionDialog": {
         "a11y": {
@@ -741,7 +747,8 @@
           "details": {
             "chain": "Chain",
             "title": "Details"
-          }
+          },
+          "treasury": "Treasury"
         },
         "main": {
           "title": "Assets"
@@ -765,6 +772,11 @@
         "title": "Vault",
         "vaultAddress": "Vault address",
         "vaultEns": "Vault ENS"
+      },
+      "subDaoInfo": {
+        "chain": "Chain",
+        "description": "Description",
+        "pluginAddress": "Plugin address"
       },
       "transactionList": {
         "emptyState": {

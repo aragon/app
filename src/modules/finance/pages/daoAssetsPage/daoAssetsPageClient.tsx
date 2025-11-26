@@ -1,5 +1,6 @@
 'use client';
 
+import { AssetListStats } from '@/modules/finance/components/assetListStats';
 import { SubDaoInfo } from '@/modules/finance/components/subDaoInfo';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
@@ -33,10 +34,14 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
         daoId: id,
         type: PluginType.BODY,
         includeSubPlugins: true,
+        includeGroupFilter: true,
         name: assetListFilterParam,
     });
 
     invariant(activePlugin != null, 'DaoAssetsPageClient: no valid plugin found.');
+
+    const allAssetsSelected = activePlugin.uniqueId === 'all';
+    const asideCardTitle = allAssetsSelected ? t('app.finance.daoAssetsPage.aside.treasury') : activePlugin.label;
 
     return (
         <>
@@ -48,7 +53,14 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
                     value={activePlugin}
                 />
             </Page.Main>
-            <Page.Aside>{dao && <SubDaoInfo plugin={activePlugin.meta} network={dao.network} daoId={id} />}</Page.Aside>
+            <Page.Aside>
+                <Page.AsideCard title={asideCardTitle}>
+                    {dao && allAssetsSelected && <AssetListStats dao={dao} />}
+                    {dao && !allAssetsSelected && (
+                        <SubDaoInfo plugin={activePlugin.meta} network={dao.network} daoId={id} />
+                    )}
+                </Page.AsideCard>
+            </Page.Aside>
         </>
     );
 };
