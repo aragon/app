@@ -10,7 +10,6 @@ export const AssetListStats: React.FC<IAssetListStatsProps> = (props) => {
     const { t } = useTranslations();
 
     // TODO: Calculate aggregate stats across all SubDAOs
-    // For now, showing basic counts
     const subDaoCount = dao?.plugins?.filter((p) => p.isSubPlugin).length ?? 0;
     const bodyCount = dao?.plugins?.filter((p) => p.isBody).length ?? 0;
 
