@@ -1,4 +1,4 @@
-import { AssetList, type IAssetListProps } from '@/modules/finance/components/assetList';
+import { AssetList, type IAssetListDefaultProps } from '@/modules/finance/components/assetList';
 import * as useAssetListData from '@/modules/finance/hooks/useAssetListData/useAssetListData';
 import { generateAsset, generateToken } from '@/modules/finance/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
@@ -23,15 +23,15 @@ describe('<AssetList /> component', () => {
         useAssetListDataSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<IAssetListProps>) => {
-        const completeProps: IAssetListProps = {
+    const createTestComponent = (props?: Partial<IAssetListDefaultProps>) => {
+        const completeProps: IAssetListDefaultProps = {
             initialParams: { queryParams: {} },
             ...props,
         };
 
         return (
             <GukModulesProvider>
-                <AssetList {...completeProps} />
+                <AssetList.Default {...completeProps} />
             </GukModulesProvider>
         );
     };
