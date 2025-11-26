@@ -1,6 +1,6 @@
 export {
     SetupStrategyDialogDistributionStream,
-    type ISetupStrategyDialogDistributionProps,
+    type ISetupStrategyDialogDistributionStreamProps,
 } from './setupStrategyDialogDistributionStream';
 export {
     SetupStrategyDialogDistributionStreamRecipientItem,

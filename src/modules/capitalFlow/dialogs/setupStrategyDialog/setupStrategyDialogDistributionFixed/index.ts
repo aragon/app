@@ -1,6 +1,6 @@
 export {
     SetupStrategyDialogDistributionFixed,
-    type ISetupStrategyDialogDistributionProps,
+    type ISetupStrategyDialogDistributionFixedProps,
 } from './setupStrategyDialogDistributionFixed';
 export {
     SetupStrategyDialogDistributionRecipientItem,
