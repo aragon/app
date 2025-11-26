@@ -50,7 +50,6 @@ export const pluginGroupFilter: IFilterComponentPlugin<IDaoPlugin> = {
 interface IBuildFilterPluginsParams {
     plugins?: IDaoPlugin[];
     rootDaoAddress?: string;
-    subDaosCount: number;
     includeGroupFilter?: boolean;
     isSubDaoEnabled: boolean;
 }
@@ -62,10 +61,7 @@ interface IBuildFilterPluginsParams {
  * - builds `IFilterComponentPlugin` items and group tab when needed.
  */
 const buildFilterPlugins = (params: IBuildFilterPluginsParams): Array<IFilterComponentPlugin<IDaoPlugin>> => {
-    const { plugins, rootDaoAddress, subDaosCount, includeGroupFilter, isSubDaoEnabled } = params;
-
-    const hasSubDaos = subDaosCount > 0;
-    const shouldGroupByDaoAndSlug = isSubDaoEnabled && hasSubDaos;
+    const { plugins, rootDaoAddress, includeGroupFilter, isSubDaoEnabled } = params;
 
     const allPlugins = plugins ?? [];
 
@@ -84,25 +80,7 @@ const buildFilterPlugins = (params: IBuildFilterPluginsParams): Array<IFilterCom
               return daoAddress === rootDaoAddress;
           });
 
-    // When aggregating plugins from multiple DAOs, pick one plugin per (daoAddress, slug) combination
-    // to avoid showing duplicate plugin types from different DAOs in the same hierarchy.
-    const groupedPlugins =
-        !shouldGroupByDaoAndSlug || filteredPlugins.length === 0
-            ? filteredPlugins
-            : Array.from(
-                  filteredPlugins.reduce((map, plugin) => {
-                      const daoAddress = plugin.daoAddress ?? rootDaoAddress ?? '';
-                      const key = `${daoAddress}-${plugin.slug}`;
-
-                      if (!map.has(key)) {
-                          map.set(key, plugin);
-                      }
-
-                      return map;
-                  }, new Map<string, IDaoPlugin>()),
-              ).map(([, plugin]) => plugin);
-
-    const processedPlugins: Array<IFilterComponentPlugin<IDaoPlugin>> = groupedPlugins.map((plugin) => ({
+    const processedPlugins: Array<IFilterComponentPlugin<IDaoPlugin>> = filteredPlugins.map((plugin) => ({
         id: plugin.interfaceType,
         uniqueId: `${plugin.address}-${plugin.slug}`,
         label: daoUtils.getPluginName(plugin),
@@ -134,7 +112,6 @@ export const useDaoPlugins = (params: IUseDaoPluginsParams): Array<IFilterCompon
     const processedPlugins = buildFilterPlugins({
         plugins,
         rootDaoAddress: dao?.address,
-        subDaosCount: dao?.subDaos?.length ?? 0,
         includeGroupFilter,
         isSubDaoEnabled,
     });

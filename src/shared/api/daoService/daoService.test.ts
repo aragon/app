@@ -5,15 +5,15 @@ import type { Network } from './domain';
 
 describe('dao service', () => {
     const requestSpy = jest.spyOn(daoService, 'request');
-    const getDaoPluginsByDaoSpy = jest.spyOn(pluginsService, 'getDaoPluginsByDao');
+    const getPluginsByDaoSpy = jest.spyOn(pluginsService, 'getPluginsByDao');
 
     beforeEach(() => {
-        getDaoPluginsByDaoSpy.mockResolvedValue([]);
+        getPluginsByDaoSpy.mockResolvedValue([]);
     });
 
     afterEach(() => {
         requestSpy.mockReset();
-        getDaoPluginsByDaoSpy.mockReset();
+        getPluginsByDaoSpy.mockReset();
     });
 
     it('getDao fetches the specified DAO', async () => {

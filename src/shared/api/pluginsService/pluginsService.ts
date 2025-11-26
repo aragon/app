@@ -1,13 +1,13 @@
 import { AragonBackendService } from '../aragonBackendService';
 import type { IDaoPlugin } from '../daoService';
-import type { IGetDaoPluginsByDaoParams } from './pluginsService.api';
+import type { IGetPluginsByDaoParams } from './pluginsService.api';
 
 class PluginsService extends AragonBackendService {
     private urls = {
         pluginsByDao: '/v2/plugins/by-dao/:network/:address/details',
     };
 
-    getDaoPluginsByDao = async (params: IGetDaoPluginsByDaoParams): Promise<IDaoPlugin[]> => {
+    getPluginsByDao = async (params: IGetPluginsByDaoParams): Promise<IDaoPlugin[]> => {
         const result = await this.request<IDaoPlugin[]>(this.urls.pluginsByDao, params);
 
         return result;

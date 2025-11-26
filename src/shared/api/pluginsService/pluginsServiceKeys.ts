@@ -1,7 +1,7 @@
-import type { IGetDaoPluginsByDaoParams } from './pluginsService.api';
+import type { IGetPluginsByDaoParams } from './pluginsService.api';
 
 export const pluginsServiceKeys = {
-    all: ['plugins'] as const,
-    daoPluginsByDao: (params: IGetDaoPluginsByDaoParams) =>
-        [...pluginsServiceKeys.all, 'daoPluginsByDao', params.urlParams] as const,
+    allPlugins: ['plugins'] as const,
+    pluginsByDao: (params: IGetPluginsByDaoParams) =>
+        [...pluginsServiceKeys.allPlugins, 'pluginsByDao', params.urlParams] as const,
 };

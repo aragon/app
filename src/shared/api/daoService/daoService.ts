@@ -20,6 +20,7 @@ class DaoService extends AragonBackendService {
     /**
      * Parse a DAO id (e.g. "polygon-mainnet-0x...") into network and address.
      * This is a local helper to avoid importing daoUtils and creating cycles.
+     * Refactor this in https://linear.app/aragon/issue/APP-364
      */
     private parseDaoId = (daoId: string): { network: Network; address: string } => {
         const lastDash = daoId.lastIndexOf('-');
@@ -40,7 +41,7 @@ class DaoService extends AragonBackendService {
         }
 
         const { network, address } = this.parseDaoId(dao.id);
-        const plugins = await pluginsService.getDaoPluginsByDao({ urlParams: { network, address } });
+        const plugins = await pluginsService.getPluginsByDao({ urlParams: { network, address } });
 
         return { ...dao, plugins };
     };

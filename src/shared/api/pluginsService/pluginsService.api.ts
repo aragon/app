@@ -1,7 +1,7 @@
 import type { Network } from '../daoService';
 import type { IRequestUrlParams } from '../httpService';
 
-export interface IGetDaoPluginsByDaoUrlParams {
+export interface IGetPluginsByDaoUrlParams {
     /**
      * Network of the DAO.
      */
@@ -12,4 +12,4 @@ export interface IGetDaoPluginsByDaoUrlParams {
     address: string;
 }
 
-export interface IGetDaoPluginsByDaoParams extends IRequestUrlParams<IGetDaoPluginsByDaoUrlParams> {}
+export interface IGetPluginsByDaoParams extends IRequestUrlParams<IGetPluginsByDaoUrlParams> {}
