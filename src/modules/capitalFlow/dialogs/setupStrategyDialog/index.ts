@@ -5,4 +5,4 @@ export const SetupStrategyDialog = dynamic(() =>
 );
 
 export { type ISetupStrategyDialogParams, type ISetupStrategyDialogProps } from './setupStrategyDialog';
-export { StrategyType, type ISetupStrategyForm } from './setupStrategyDialogDefinitions';
+export { RouterType, StrategyType, type ISetupStrategyForm } from './setupStrategyDialogDefinitions';

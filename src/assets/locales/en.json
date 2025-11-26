@@ -281,7 +281,7 @@
         "step": {
           "DEPLOY_SOURCE_AND_MODEL": {
             "errorLabel": "Unable to deploy source and model contracts",
-            "label": "Deploy source and model contrats"
+            "label": "Deploy source and model contracts"
           },
           "PIN_METADATA": {
             "errorLabel": "Unable to pin data on IPFS",

@@ -15,9 +15,11 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
-import type { TransactionReceipt } from 'viem';
-import { useAccount } from 'wagmi';
+import { decodeEventLog, encodeFunctionData, type Hex, type TransactionReceipt } from 'viem';
+import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
+import { capitalFlowAddresses } from '../../constants/capitalFlowAddresses';
+import { RouterType, StrategyType } from '../../dialogs/setupStrategyDialog';
 import { preparePolicyDialogUtils } from './preparePolicyDialogUtils';
 import type {
     IBuildPolicyProposalActionsParams,
@@ -25,6 +27,7 @@ import type {
     IPreparePolicyMetadata,
     IPrepareSourceAndModelContracts,
 } from './preparePolicyDialogUtils.api';
+import { routerModelFactoryAbi } from './routerModelFactoryAbi';
 
 export enum PreparePolicyStep {
     PIN_METADATA = 'PIN_METADATA',
@@ -60,6 +63,8 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     const { t } = useTranslations();
     const { status, mutateAsync: pinJson } = usePinJson();
     const { open } = useDialogContext();
+    const { data: walletClient } = useWalletClient();
+    const publicClient = usePublicClient();
 
     const [policyMetadata, setPolicyMetadata] = useState<IPreparePolicyMetadata>();
     const [sourceAndModelContracts, setSourceAndModelContracts] = useState<IPrepareSourceAndModelContracts>();
@@ -101,16 +106,91 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
 
     const handleDeploySourceAndModelContracts = useCallback(
         async (params: ITransactionDialogActionParams) => {
-            const policyMetadataBody = preparePolicyDialogUtils.preparePolicyMetadata(values);
+            invariant(dao != null, 'PreparePolicyDialog: DAO not loaded');
+            invariant(walletClient != null, 'PreparePolicyDialog: Wallet client not available');
+            invariant(publicClient != null, 'PreparePolicyDialog: Public client not available');
+            invariant(
+                values.strategy.type === StrategyType.CAPITAL_ROUTER,
+                'PreparePolicyDialog: Only router strategy supported',
+            );
 
-            const { IpfsHash: policyMetadataHash } = await pinJson({ body: policyMetadataBody }, params);
+            const factoryAddress = capitalFlowAddresses[dao.network].routerModelFactory;
+            const strategy = values.strategy;
 
-            const metadata: IPreparePolicyMetadata = { plugin: policyMetadataHash };
+            let deployCallData: Hex;
 
-            setPolicyMetadata(metadata);
+            // Build the appropriate deploy call based on router type
+            if (strategy.routerType === RouterType.FIXED) {
+                const { recipients } = strategy.distributionFixed;
+                const recipientAddresses = recipients.map((r) => r.address as Hex);
+                const RATIO_BASE = 1_000_000;
+                const ratios = recipients.map((r) => Math.round((r.ratio / 100) * RATIO_BASE)); // Convert percentage to ratio base
+                deployCallData = encodeFunctionData({
+                    abi: routerModelFactoryAbi,
+                    functionName: 'deployRatioModel',
+                    args: [recipientAddresses, ratios],
+                });
+            } else if (strategy.routerType === RouterType.STREAM) {
+                const { recipients } = strategy.distributionStream;
+                const brackets = recipients.map((r) => ({
+                    recipient: r.address as Hex,
+                    amount: BigInt(r.amount),
+                }));
+
+                deployCallData = encodeFunctionData({
+                    abi: routerModelFactoryAbi,
+                    functionName: 'deployBracketsModel',
+                    args: [brackets],
+                });
+            } else {
+                throw new Error(`Unsupported router type: ${strategy.routerType}`);
+            }
+
+            // Send transaction
+            const txHash = await walletClient.sendTransaction({
+                to: factoryAddress,
+                data: deployCallData,
+                chain: walletClient.chain,
+                account: address,
+            });
+            console.log('txHash', txHash);
+            // Wait for transaction receipt
+            const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+            console.log('receipt', receipt);
+            // Extract deployed model address from event logs
+            const eventName = strategy.routerType === RouterType.FIXED ? 'RatioModelDeployed' : 'BracketsModelDeployed';
+
+            const log = receipt.logs.find((log) => {
+                try {
+                    const decoded = decodeEventLog({
+                        abi: routerModelFactoryAbi,
+                        data: log.data,
+                        topics: log.topics,
+                    });
+                    console.log('decoded', decoded);
+                    return decoded.eventName === eventName;
+                } catch {
+                    return false;
+                }
+            });
+
+            invariant(log != null, 'PreparePolicyDialog: Model deployment event not found in logs');
+
+            const decodedLog = decodeEventLog({
+                abi: routerModelFactoryAbi,
+                data: log.data,
+                topics: log.topics,
+            });
+
+            const modelAddress = (decodedLog.args as { newContract: Hex }).newContract;
+
+            // TODO: Deploy source contract similarly
+            const sourceAddress = '0x0000000000000000000000000000000000000000' as Hex;
+
+            setSourceAndModelContracts({ model: modelAddress, source: sourceAddress });
             nextStep();
         },
-        [pinJson, nextStep, values],
+        [dao, walletClient, publicClient, values, address, nextStep],
     );
 
     const handlePrepareInstallationSuccess = (txReceipt: TransactionReceipt) => {
@@ -161,13 +241,20 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
                 meta: {
                     label: t(`${deploySourceAndModelNamespace}.label`),
                     errorLabel: t(`${deploySourceAndModelNamespace}.errorLabel`),
-                    state: status,
-                    action: handlePinJson,
+                    state: 'idle',
+                    action: handleDeploySourceAndModelContracts,
                     auto: true,
                 },
             },
         ],
-        [status, handlePinJson, pinMetadataNamespace, t],
+        [
+            status,
+            handlePinJson,
+            handleDeploySourceAndModelContracts,
+            pinMetadataNamespace,
+            deploySourceAndModelNamespace,
+            t,
+        ],
     );
 
     return (
