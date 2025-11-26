@@ -1,6 +1,6 @@
 import type { IAsset } from '@/modules/finance/api/financeService';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { AssetDataListItemStructure, ChainEntityType, useBlockExplorer } from '@aragon/gov-ui-kit';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { AssetDataListItemStructure, ChainEntityType } from '@aragon/gov-ui-kit';
 
 export interface IAssetListItemProps {
     /**
@@ -17,10 +17,9 @@ export const AssetListItem: React.FC<IAssetListItemProps> = (props) => {
     const { asset, onAssetClick } = props;
     const { token, amount } = asset;
 
-    const { buildEntityUrl } = useBlockExplorer();
+    const { buildEntityUrl } = useDaoChain({ network: token.network });
 
-    const { id: chainId } = networkDefinitions[token.network];
-    const entityUrl = buildEntityUrl({ type: ChainEntityType.TOKEN, id: token.address, chainId });
+    const entityUrl = buildEntityUrl({ type: ChainEntityType.TOKEN, id: token.address });
 
     const processedEntityUrl = onAssetClick != null ? undefined : entityUrl;
     const processedTarget = onAssetClick != null ? undefined : '_blank';

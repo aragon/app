@@ -622,6 +622,27 @@
           "to": "to Boundless Governance",
           "welcome": "Welcome"
         }
+      },
+      "xmaquina": {
+        "xmaquinaPageHeader": {
+          "actions": {
+            "claim": {
+              "description": "your stake in robotics",
+              "title": "Get DEUS"
+            },
+            "govern": {
+              "description": "the DAO together",
+              "title": "Govern"
+            },
+            "stake": {
+              "description": "to participate",
+              "title": "Stake"
+            }
+          },
+          "info": "The XMAQUINA DAO is dedicated to democratizing access to Robotics Capital Markets.",
+          "to": "to XMAQUINA Governance",
+          "welcome": "Welcome"
+        }
       }
     },
     "dashboard": {
@@ -2228,6 +2249,10 @@
       }
     },
     "settings": {
+      "daoHierarchy": {
+        "mainDaoLabel": "Main DAO",
+        "subDaoLabel": "SubDAO"
+      },
       "daoPluginInfo": {
         "bodyName": "Body name",
         "processKey": "Process key",

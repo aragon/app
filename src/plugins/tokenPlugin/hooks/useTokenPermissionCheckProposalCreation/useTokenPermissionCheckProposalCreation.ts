@@ -54,10 +54,7 @@ export const useTokenPermissionCheckProposalCreation = (
     );
 
     // Read wrapped token balance directly from blockchain
-    const { balance: userBalance } = useWrappedTokenBalance({
-        userAddress: address,
-        token,
-    });
+    const { balance: userBalance } = useWrappedTokenBalance({ userAddress: address, token });
 
     const userVotingPower = BigInt(member?.votingPower ?? '0');
 

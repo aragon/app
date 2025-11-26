@@ -2,4 +2,4 @@
 '@aragon/app': minor
 ---
 
-Implement gauges page
+Add Feature Flags system

@@ -2,14 +2,9 @@ import { useAllowedActions } from '@/modules/governance/api/executeSelectorsServ
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { useDao, useDaoPermissions } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import {
-    IconType,
-    ProposalActions,
-    type IProposalActionsItemDropdownItem,
-    type ProposalActionComponent,
-} from '@aragon/gov-ui-kit';
+import { ProposalActions, type IProposalActionsArrayControls, type ProposalActionComponent } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
@@ -47,6 +42,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const hasConditionalPermissions = processPlugin.conditionAddress != null;
 
     const { t } = useTranslations();
+    const { chainId } = useDaoChain({ daoId });
 
     const { control, getValues, setValue } = useFormContext<ICreateProposalFormData>();
 
@@ -110,7 +106,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         [actions, getValues, setValue],
     );
 
-    const handleRemoveAction = (action: IProposalActionData, index: number) => {
+    const handleRemoveAction = (index: number) => {
         remove(index);
     };
 
@@ -118,29 +114,24 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         append(newActions);
     };
 
-    const getActionDropdownItems = (index: number) => {
-        const dropdownItems: Array<IProposalActionsItemDropdownItem<IProposalActionData> & { hidden: boolean }> = [
-            {
+    const getArrayControls = (index: number): IProposalActionsArrayControls<IProposalActionData> => {
+        return {
+            moveUp: {
                 label: t('app.governance.createProposalForm.actions.editAction.up'),
-                icon: IconType.CHEVRON_UP,
-                onClick: (_, index) => handleMoveAction(index, index - 1),
-                hidden: actions.length < 2 || index === 0,
+                onClick: (index) => handleMoveAction(index, index - 1),
+                disabled: actions.length < 2 || index === 0,
             },
-            {
+            moveDown: {
                 label: t('app.governance.createProposalForm.actions.editAction.down'),
-                icon: IconType.CHEVRON_DOWN,
-                onClick: (_, index) => handleMoveAction(index, index + 1),
-                hidden: actions.length < 2 || index === actions.length - 1,
+                onClick: (index) => handleMoveAction(index, index + 1),
+                disabled: actions.length < 2 || index === actions.length - 1,
             },
-            {
+            remove: {
                 label: t('app.governance.createProposalForm.actions.editAction.remove'),
-                icon: IconType.CLOSE,
                 onClick: handleRemoveAction,
-                hidden: false,
+                disabled: false,
             },
-        ];
-
-        return dropdownItems.filter((item) => !item.hidden);
+        };
     };
 
     const { pluginComponents } = actionComposerUtils.getDaoPluginActions(dao);
@@ -157,9 +148,16 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const showActionComposer = !hasConditionalPermissions || allowedActions != null;
 
+    const expandedActions = actions.map((action) => action.id);
+    const noOpActionsChange = useCallback(() => undefined, []);
+
     return (
         <div className="flex flex-col gap-y-10">
-            <ProposalActions.Root>
+            <ProposalActions.Root
+                editMode={true}
+                expandedActions={expandedActions}
+                onExpandedActionsChange={noOpActionsChange}
+            >
                 <ProposalActions.Container emptyStateDescription="">
                     {actions.map((action, index) => (
                         <ProposalActions.Item<IProposalActionData>
@@ -170,9 +168,10 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                             )}
                             value={action.id}
                             CustomComponent={customActionComponents[action.type]}
-                            dropdownItems={getActionDropdownItems(index)}
+                            arrayControls={getArrayControls(index)}
+                            actionCount={actions.length}
                             formPrefix={`actions.${index.toString()}`}
-                            chainId={networkDefinitions[dao!.network].id}
+                            chainId={chainId}
                             editMode={true}
                         />
                     ))}

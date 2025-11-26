@@ -62,7 +62,7 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
                 </RadioGroup>
             </InputContainer>
             {tokenType === 'imported' && <TokenSetupMembershipImportToken formPrefix={formPrefix} daoId={daoId} />}
-            {tokenType === 'new' && <TokenSetupMembershipCreateToken formPrefix={formPrefix} />}
+            {tokenType === 'new' && <TokenSetupMembershipCreateToken formPrefix={formPrefix} daoId={daoId} />}
         </div>
     );
 };

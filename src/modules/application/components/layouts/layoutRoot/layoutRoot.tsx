@@ -5,6 +5,7 @@ import { fetchInterceptorUtils } from '@/modules/application/utils/fetchIntercep
 import { sanctionedAddressesOptions } from '@/modules/explore/api/cmsService';
 import { whitelistedAddressesOptions } from '@/modules/explore/api/cmsService/queries/useWhitelistedAddresses';
 import { translations } from '@/shared/constants/translations';
+import { featureFlags } from '@/shared/featureFlags';
 import { dehydrate, QueryClient } from '@tanstack/react-query';
 import { headers } from 'next/headers';
 import NextTopLoader from 'nextjs-toploader';
@@ -36,6 +37,9 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const requestHeaders = await headers();
     const wagmiInitialState = cookieToInitialState(wagmiConfig, requestHeaders.get('cookie'));
 
+    const featureFlagsSnapshot = await featureFlags.getSnapshot();
+    const isDebugPanelEnabled = await featureFlags.isEnabled('debugPanel');
+
     const queryClient = new QueryClient();
     await queryClient.prefetchQuery(sanctionedAddressesOptions());
     await queryClient.prefetchQuery(whitelistedAddressesOptions());
@@ -55,10 +59,11 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
                     translations={translationAssets}
                     wagmiInitialState={wagmiInitialState}
                     dehydratedState={dehydratedState}
+                    featureFlagsSnapshot={featureFlagsSnapshot}
                 >
                     <ErrorBoundary>
                         <div className="flex grow flex-col">{children}</div>
-                        {process.env.NEXT_PUBLIC_FEATURE_DEBUG === 'true' && <DebugPanel />}
+                        {isDebugPanelEnabled && <DebugPanel />}
                     </ErrorBoundary>
                     <Footer />
                 </Providers>

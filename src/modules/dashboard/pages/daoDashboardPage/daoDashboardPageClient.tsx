@@ -9,7 +9,7 @@ import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -22,7 +22,6 @@ import {
     Link,
     addressUtils,
     formatterUtils,
-    useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { DashboardDefaultHeader } from '../../components/dashboardDefaultHeader';
 import { DashboardDaoSlotId } from '../../constants/moduleDaoSlots';
@@ -49,7 +48,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const useDaoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: useDaoParams });
 
-    const { buildEntityUrl } = useBlockExplorer();
+    const { buildEntityUrl, networkDefinition } = useDaoChain({ network: dao?.network });
 
     const daoEns = daoUtils.getDaoEns(dao);
     const truncatedAddress = addressUtils.truncateAddress(dao?.address);
@@ -89,12 +88,11 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
         format: DateFormat.YEAR_MONTH,
     });
 
-    const { id: chainId } = networkDefinitions[dao.network];
-    const daoAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address, chainId });
-    const daoCreationLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: dao.transactionHash, chainId });
+    const daoAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address });
+    const daoCreationLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: dao.transactionHash });
 
-    const membersPageUrl = `${daoUrl}/members?${daoMembersPageFilterParam}=${membersPlugin?.meta.slug ?? ''}`;
-    const proposalsPageUrl = `${daoUrl}/proposals?${daoProposalsPageFilterParam}=${proposalsPlugin?.meta.slug ?? ''}`;
+    const membersPageUrl = `${daoUrl}/members?${daoMembersPageFilterParam}=${membersPlugin?.uniqueId ?? ''}`;
+    const proposalsPageUrl = `${daoUrl}/proposals?${daoProposalsPageFilterParam}=${proposalsPlugin?.uniqueId ?? ''}`;
 
     return (
         <>
@@ -164,7 +162,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                     <Page.AsideCard title={t('app.dashboard.daoDashboardPage.aside.details.title')}>
                         <DefinitionList.Container>
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.chain')}>
-                                <p className="text-neutral-500">{networkDefinitions[dao.network].name}</p>
+                                <p className="text-neutral-500">{networkDefinition?.name}</p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 term={t('app.dashboard.daoDashboardPage.aside.details.address')}
