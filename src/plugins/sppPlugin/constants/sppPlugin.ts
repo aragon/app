@@ -24,5 +24,6 @@ export const sppPlugin: IPluginInfo = {
         [Network.CORN_MAINNET]: '0xcb20C04b91001acB05f2A439F7a90F6411406e7E',
         [Network.CHILIZ_MAINNET]: '0x48CEBbc661FafCFC274Ce2034a04d459ba774E3D',
         [Network.AVAX_MAINNET]: '0xBC029618BcEEfde830F845F7f03d79fc132cDD60',
+        [Network.KATANA_MAINNET]: '0x90fA4993849f2b0063BEc161e28f1183E6a3d054',
     },
 };
