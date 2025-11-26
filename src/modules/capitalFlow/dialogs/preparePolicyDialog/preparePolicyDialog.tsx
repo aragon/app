@@ -8,7 +8,7 @@ import {
     type ITransactionDialogStep,
     type ITransactionDialogStepMeta,
     TransactionDialog,
-    type TransactionDialogStep,
+    TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
@@ -31,7 +31,6 @@ import { routerModelFactoryAbi } from './routerModelFactoryAbi';
 
 export enum PreparePolicyStep {
     PIN_METADATA = 'PIN_METADATA',
-    DEPLOY_SOURCE_AND_MODEL = 'DEPLOY_SOURCE_AND_MODEL',
 }
 
 export interface IPreparePolicyDialogParams {
@@ -75,12 +74,98 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
 
     const isAdmin = plugin.meta.interfaceType === PluginInterfaceType.ADMIN;
 
-    const stepper = useStepper<ITransactionDialogStepMeta, PreparePolicyStep | TransactionDialogStep>({
+    const deploymentStepper = useStepper<ITransactionDialogStepMeta, PreparePolicyStep | TransactionDialogStep>({
         initialActiveStep: PreparePolicyStep.PIN_METADATA,
     });
-    const { nextStep } = stepper;
+    const installationStepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
+        initialActiveStep: TransactionDialogStep.PREPARE,
+    });
+    const { nextStep } = deploymentStepper;
 
-    const handlePrepareTransaction = async () => {
+    const handleDeploySourceAndModelTransaction = async () => {
+        invariant(dao != null, 'PreparePolicyDialog: DAO not loaded');
+        invariant(walletClient != null, 'PreparePolicyDialog: Wallet client not available');
+        invariant(publicClient != null, 'PreparePolicyDialog: Public client not available');
+        invariant(
+            values.strategy.type === StrategyType.CAPITAL_ROUTER,
+            'PreparePolicyDialog: Only router strategy supported',
+        );
+
+        const factoryAddress = capitalFlowAddresses[dao.network].routerModelFactory;
+        const strategy = values.strategy;
+
+        let deployCallData: Hex;
+
+        // Build the appropriate deploy call based on router type
+        if (strategy.routerType === RouterType.FIXED) {
+            const { recipients } = strategy.distributionFixed;
+            const recipientAddresses = recipients.map((r) => r.address as Hex);
+            const RATIO_BASE = 1_000_000;
+            const ratios = recipients.map((r) => Math.round((r.ratio / 100) * RATIO_BASE));
+            deployCallData = encodeFunctionData({
+                abi: routerModelFactoryAbi,
+                functionName: 'deployRatioModel',
+                args: [recipientAddresses, ratios],
+            });
+        } else if (strategy.routerType === RouterType.STREAM) {
+            const { recipients } = strategy.distributionStream;
+            const brackets = recipients.map((r) => ({
+                recipient: r.address as Hex,
+                amount: BigInt(r.amount),
+            }));
+
+            deployCallData = encodeFunctionData({
+                abi: routerModelFactoryAbi,
+                functionName: 'deployBracketsModel',
+                args: [brackets],
+            });
+        } else {
+            throw new Error(`Unsupported router type: ${strategy.routerType}`);
+        }
+
+        return { to: factoryAddress, data: deployCallData, value: BigInt(0) };
+    };
+
+    const handleDeploySourceAndModelSuccess = async (txReceipt: TransactionReceipt) => {
+        invariant(dao != null, 'PreparePolicyDialog: DAO not loaded');
+        invariant(
+            values.strategy.type === StrategyType.CAPITAL_ROUTER,
+            'PreparePolicyDialog: Only router strategy supported',
+        );
+
+        const strategy = values.strategy;
+        const eventName = strategy.routerType === RouterType.FIXED ? 'RatioModelDeployed' : 'BracketsModelDeployed';
+
+        const log = txReceipt.logs.find((log) => {
+            try {
+                const decoded = decodeEventLog({
+                    abi: routerModelFactoryAbi,
+                    data: log.data,
+                    topics: log.topics,
+                });
+                return decoded.eventName === eventName;
+            } catch {
+                return false;
+            }
+        });
+
+        invariant(log != null, 'PreparePolicyDialog: Model deployment event not found in logs');
+
+        const decodedLog = decodeEventLog({
+            abi: routerModelFactoryAbi,
+            data: log.data,
+            topics: log.topics,
+        });
+
+        const modelAddress = (decodedLog.args as { newContract: Hex }).newContract;
+
+        // TODO: Deploy source contract similarly
+        const sourceAddress = '0x0000000000000000000000000000000000000000' as Hex;
+
+        setSourceAndModelContracts({ model: modelAddress, source: sourceAddress });
+    };
+
+    const handlePrepareInstallationTransaction = async () => {
         invariant(policyMetadata != null, 'PreparePolicyDialog: metadata not pinned');
         invariant(dao != null, 'PreparePolicyDialog: DAO cannot be fetched');
 
@@ -104,95 +189,6 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
         [pinJson, nextStep, values],
     );
 
-    const handleDeploySourceAndModelContracts = useCallback(
-        async (params: ITransactionDialogActionParams) => {
-            invariant(dao != null, 'PreparePolicyDialog: DAO not loaded');
-            invariant(walletClient != null, 'PreparePolicyDialog: Wallet client not available');
-            invariant(publicClient != null, 'PreparePolicyDialog: Public client not available');
-            invariant(
-                values.strategy.type === StrategyType.CAPITAL_ROUTER,
-                'PreparePolicyDialog: Only router strategy supported',
-            );
-
-            const factoryAddress = capitalFlowAddresses[dao.network].routerModelFactory;
-            const strategy = values.strategy;
-
-            let deployCallData: Hex;
-
-            // Build the appropriate deploy call based on router type
-            if (strategy.routerType === RouterType.FIXED) {
-                const { recipients } = strategy.distributionFixed;
-                const recipientAddresses = recipients.map((r) => r.address as Hex);
-                const RATIO_BASE = 1_000_000;
-                const ratios = recipients.map((r) => Math.round((r.ratio / 100) * RATIO_BASE)); // Convert percentage to ratio base
-                deployCallData = encodeFunctionData({
-                    abi: routerModelFactoryAbi,
-                    functionName: 'deployRatioModel',
-                    args: [recipientAddresses, ratios],
-                });
-            } else if (strategy.routerType === RouterType.STREAM) {
-                const { recipients } = strategy.distributionStream;
-                const brackets = recipients.map((r) => ({
-                    recipient: r.address as Hex,
-                    amount: BigInt(r.amount),
-                }));
-
-                deployCallData = encodeFunctionData({
-                    abi: routerModelFactoryAbi,
-                    functionName: 'deployBracketsModel',
-                    args: [brackets],
-                });
-            } else {
-                throw new Error(`Unsupported router type: ${strategy.routerType}`);
-            }
-
-            // Send transaction
-            const txHash = await walletClient.sendTransaction({
-                to: factoryAddress,
-                data: deployCallData,
-                chain: walletClient.chain,
-                account: address,
-            });
-            console.log('txHash', txHash);
-            // Wait for transaction receipt
-            const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
-            console.log('receipt', receipt);
-            // Extract deployed model address from event logs
-            const eventName = strategy.routerType === RouterType.FIXED ? 'RatioModelDeployed' : 'BracketsModelDeployed';
-
-            const log = receipt.logs.find((log) => {
-                try {
-                    const decoded = decodeEventLog({
-                        abi: routerModelFactoryAbi,
-                        data: log.data,
-                        topics: log.topics,
-                    });
-                    console.log('decoded', decoded);
-                    return decoded.eventName === eventName;
-                } catch {
-                    return false;
-                }
-            });
-
-            invariant(log != null, 'PreparePolicyDialog: Model deployment event not found in logs');
-
-            const decodedLog = decodeEventLog({
-                abi: routerModelFactoryAbi,
-                data: log.data,
-                topics: log.topics,
-            });
-
-            const modelAddress = (decodedLog.args as { newContract: Hex }).newContract;
-
-            // TODO: Deploy source contract similarly
-            const sourceAddress = '0x0000000000000000000000000000000000000000' as Hex;
-
-            setSourceAndModelContracts({ model: modelAddress, source: sourceAddress });
-            nextStep();
-        },
-        [dao, walletClient, publicClient, values, address, nextStep],
-    );
-
     const handlePrepareInstallationSuccess = (txReceipt: TransactionReceipt) => {
         invariant(dao != null, 'PreparePolicyDialog: DAO cannot be fetched');
 
@@ -209,7 +205,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
         const proposalMetadata = preparePolicyDialogUtils.preparePublishPolicyProposalMetadata();
         const translationNamespace = `app.capitalFlow.publishPolicyDialog.${isAdmin ? 'admin' : 'default'}`;
 
-        const txInfo = { title: t(`${translationNamespace}.transactionInfoTitle`), current: 2, total: 2 };
+        const txInfo = { title: t(`${translationNamespace}.transactionInfoTitle`), current: 3, total: 3 };
         const params: IPublishProposalDialogParams = {
             proposal: { ...proposalMetadata, resources: [], actions: proposalActions },
             daoId,
@@ -221,7 +217,6 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     };
 
     const pinMetadataNamespace = `app.capitalFlow.preparePolicyDialog.step.${PreparePolicyStep.PIN_METADATA}`;
-    const deploySourceAndModelNamespace = `app.capitalFlow.preparePolicyDialog.step.${PreparePolicyStep.DEPLOY_SOURCE_AND_MODEL}`;
     const customSteps: Array<ITransactionDialogStep<PreparePolicyStep>> = useMemo(
         () => [
             {
@@ -235,42 +230,47 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
                     auto: true,
                 },
             },
-            {
-                id: PreparePolicyStep.DEPLOY_SOURCE_AND_MODEL,
-                order: 1,
-                meta: {
-                    label: t(`${deploySourceAndModelNamespace}.label`),
-                    errorLabel: t(`${deploySourceAndModelNamespace}.errorLabel`),
-                    state: 'idle',
-                    action: handleDeploySourceAndModelContracts,
-                    auto: true,
-                },
-            },
         ],
-        [
-            status,
-            handlePinJson,
-            handleDeploySourceAndModelContracts,
-            pinMetadataNamespace,
-            deploySourceAndModelNamespace,
-            t,
-        ],
+        [status, handlePinJson, pinMetadataNamespace, t],
     );
 
+    // Render first dialog: pin metadata and deploy source/model contracts
+    if (sourceAndModelContracts == null) {
+        return (
+            <TransactionDialog<PreparePolicyStep>
+                key="mode-source-deploy"
+                title={t('app.capitalFlow.preparePolicyDialog.title')}
+                description={t('app.capitalFlow.preparePolicyDialog.description')}
+                submitLabel={t('app.capitalFlow.preparePolicyDialog.button.submit')}
+                onSuccess={handleDeploySourceAndModelSuccess}
+                transactionInfo={{
+                    title: t('app.capitalFlow.preparePolicyDialog.transactionInfoTitleDeploy'),
+                    current: 1,
+                    total: 3,
+                }}
+                stepper={deploymentStepper}
+                customSteps={customSteps}
+                prepareTransaction={handleDeploySourceAndModelTransaction}
+                network={dao?.network}
+            />
+        );
+    }
+
+    // Render second dialog: prepare plugin installation
     return (
-        <TransactionDialog<PreparePolicyStep>
+        <TransactionDialog
+            key="plugin-install"
             title={t('app.capitalFlow.preparePolicyDialog.title')}
             description={t('app.capitalFlow.preparePolicyDialog.description')}
             submitLabel={t('app.capitalFlow.preparePolicyDialog.button.submit')}
             onSuccess={handlePrepareInstallationSuccess}
             transactionInfo={{
-                title: t('app.capitalFlow.preparePolicyDialog.transactionInfoTitle'),
-                current: 1,
-                total: 2,
+                title: t('app.capitalFlow.preparePolicyDialog.transactionInfoTitleInstall'),
+                current: 2,
+                total: 3,
             }}
-            stepper={stepper}
-            customSteps={customSteps}
-            prepareTransaction={handlePrepareTransaction}
+            stepper={installationStepper}
+            prepareTransaction={handlePrepareInstallationTransaction}
             network={dao?.network}
         />
     );
