@@ -1,12 +1,19 @@
 import { generateDao, generateDaoPermission } from '@/shared/testUtils';
+import { pluginsService } from '../pluginsService';
 import { daoService } from './daoService';
 import type { Network } from './domain';
 
 describe('dao service', () => {
     const requestSpy = jest.spyOn(daoService, 'request');
+    const getPluginsByDaoSpy = jest.spyOn(pluginsService, 'getPluginsByDao');
+
+    beforeEach(() => {
+        getPluginsByDaoSpy.mockResolvedValue([]);
+    });
 
     afterEach(() => {
         requestSpy.mockReset();
+        getPluginsByDaoSpy.mockReset();
     });
 
     it('getDao fetches the specified DAO', async () => {

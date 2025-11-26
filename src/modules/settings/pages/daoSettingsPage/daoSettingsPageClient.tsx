@@ -18,6 +18,7 @@ import { IconType } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { CreateDaoDialogId } from '../../../createDao/constants/createDaoDialogId';
 import type { ICreateProcessDetailsDialogParams } from '../../../createDao/dialogs/createProcessDetailsDialog';
+import { DaoHierarchy } from '../../components/daoHierarchy';
 import { DaoSettingsInfo } from '../../components/daoSettingsInfo';
 import { DaoVersionInfo } from '../../components/daoVersionInfo';
 import { UpdateDaoContracts } from '../../components/updateDaoContracts';
@@ -28,10 +29,14 @@ export interface IDaoSettingsPageClientProps {
      * ID of the Dao
      */
     daoId: string;
+    /**
+     * Whether SubDAO feature is enabled.
+     */
+    isSubDaoEnabled?: boolean;
 }
 
 export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (props) => {
-    const { daoId } = props;
+    const { daoId, isSubDaoEnabled } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -39,9 +44,9 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
 
     const daoParams = { urlParams: { id: daoId } };
     const { data: dao } = useDao(daoParams);
+    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
-    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
 
     const { check: createProposalGuard } = usePermissionCheckGuard({
         permissionNamespace: 'proposal',
@@ -104,7 +109,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                     searchParamName="settingsPanel"
                 />
                 <Page.MainSection title={t('app.settings.daoSettingsPage.main.settingsInfoTitle')}>
-                    <DaoSettingsInfo dao={dao} />
+                    {isSubDaoEnabled ? <DaoHierarchy dao={dao} currentDaoId={daoId} /> : <DaoSettingsInfo dao={dao} />}
                 </Page.MainSection>
                 {hasSupportedPlugins && (
                     <Page.MainSection
