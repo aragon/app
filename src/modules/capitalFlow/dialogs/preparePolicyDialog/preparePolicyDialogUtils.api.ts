@@ -1,4 +1,5 @@
 import type { IDao } from '@/shared/api/daoService';
+import type { Hex } from 'viem';
 import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
 
 export interface IPreparePolicyMetadata {
@@ -6,6 +7,17 @@ export interface IPreparePolicyMetadata {
      * Metadata CID for the policy plugin.
      */
     plugin: string;
+}
+
+export interface IPrepareSourceAndModelContracts {
+    /**
+     * Model contract address.
+     */
+    model: Hex;
+    /**
+     * Source contract address.
+     */
+    source: Hex;
 }
 
 export interface IBuildTransactionParams {

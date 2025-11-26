@@ -279,6 +279,10 @@
         },
         "description": "To publish your capital flow policy, confirm the two onchain transactions in your wallet.",
         "step": {
+          "DEPLOY_SOURCE_AND_MODEL": {
+            "errorLabel": "Unable to deploy source and model contracts",
+            "label": "Deploy source and model contrats"
+          },
           "PIN_METADATA": {
             "errorLabel": "Unable to pin data on IPFS",
             "label": "Pin data on IPFS"

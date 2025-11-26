@@ -10,24 +10,18 @@ class PreparePolicyDialogUtils {
     };
 
     preparePolicyMetadata = (values: ICreatePolicyFormData) => {
-        const { name, description, policyKey, resources } = values;
+        const { name, description, policyKey, resources: links } = values;
 
         return {
             name,
             description,
             policyKey,
-            resources,
+            links,
         };
     };
 
     buildPreparePolicyTransaction = async (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
         const { values, policyMetadata, dao } = params;
-
-        // TODO: Implement the actual transaction building logic
-        // This should:
-        // 1. Deploy the strategy contract (router/distributor/defi adapter)
-        // 2. Configure the strategy with the provided settings
-        // 3. Register the policy with the DAO
 
         // Placeholder implementation
         const transactions: Array<{ to: Hex; value: bigint; data: Hex }> = [];
@@ -63,6 +57,9 @@ class PreparePolicyDialogUtils {
     preparePublishPolicyProposalMetadata = () => {
         return this.publishPolicyProposalMetadata;
     };
+
+    private buildSourceAndModelDeployActionData = (params: IBuildTransactionParams) => {};
+    private buildPrepareInstallPluginActionData = (params: IBuildTransactionParams) => {};
 }
 
 export const preparePolicyDialogUtils = new PreparePolicyDialogUtils();

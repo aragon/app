@@ -23,10 +23,12 @@ import type {
     IBuildPolicyProposalActionsParams,
     IBuildTransactionParams,
     IPreparePolicyMetadata,
+    IPrepareSourceAndModelContracts,
 } from './preparePolicyDialogUtils.api';
 
 export enum PreparePolicyStep {
     PIN_METADATA = 'PIN_METADATA',
+    DEPLOY_SOURCE_AND_MODEL = 'DEPLOY_SOURCE_AND_MODEL',
 }
 
 export interface IPreparePolicyDialogParams {
@@ -60,6 +62,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     const { open } = useDialogContext();
 
     const [policyMetadata, setPolicyMetadata] = useState<IPreparePolicyMetadata>();
+    const [sourceAndModelContracts, setSourceAndModelContracts] = useState<IPrepareSourceAndModelContracts>();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const [plugin] = useDaoPlugins({ daoId, pluginAddress }) ?? [];
@@ -83,6 +86,20 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     };
 
     const handlePinJson = useCallback(
+        async (params: ITransactionDialogActionParams) => {
+            const policyMetadataBody = preparePolicyDialogUtils.preparePolicyMetadata(values);
+
+            const { IpfsHash: policyMetadataHash } = await pinJson({ body: policyMetadataBody }, params);
+
+            const metadata: IPreparePolicyMetadata = { plugin: policyMetadataHash };
+
+            setPolicyMetadata(metadata);
+            nextStep();
+        },
+        [pinJson, nextStep, values],
+    );
+
+    const handleDeploySourceAndModelContracts = useCallback(
         async (params: ITransactionDialogActionParams) => {
             const policyMetadataBody = preparePolicyDialogUtils.preparePolicyMetadata(values);
 
@@ -124,6 +141,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     };
 
     const pinMetadataNamespace = `app.capitalFlow.preparePolicyDialog.step.${PreparePolicyStep.PIN_METADATA}`;
+    const deploySourceAndModelNamespace = `app.capitalFlow.preparePolicyDialog.step.${PreparePolicyStep.DEPLOY_SOURCE_AND_MODEL}`;
     const customSteps: Array<ITransactionDialogStep<PreparePolicyStep>> = useMemo(
         () => [
             {
@@ -132,6 +150,17 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
                 meta: {
                     label: t(`${pinMetadataNamespace}.label`),
                     errorLabel: t(`${pinMetadataNamespace}.errorLabel`),
+                    state: status,
+                    action: handlePinJson,
+                    auto: true,
+                },
+            },
+            {
+                id: PreparePolicyStep.DEPLOY_SOURCE_AND_MODEL,
+                order: 1,
+                meta: {
+                    label: t(`${deploySourceAndModelNamespace}.label`),
+                    errorLabel: t(`${deploySourceAndModelNamespace}.errorLabel`),
                     state: status,
                     action: handlePinJson,
                     auto: true,
