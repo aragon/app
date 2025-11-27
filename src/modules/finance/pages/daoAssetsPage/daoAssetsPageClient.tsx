@@ -1,11 +1,11 @@
 'use client';
 
-import { FinanceDetailsList } from '@/modules/finance/components/financeDetailsList';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IGetAssetListParams } from '../../api/financeService';
 import { AssetList } from '../../components/assetList';
+import { FinanceDetailsList } from '../../components/financeDetailsList';
 
 export interface IDaoAssetsPageClientProps {
     /**
