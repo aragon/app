@@ -39,7 +39,7 @@ export const AssetSelectionDialog: React.FC<IAssetSelectionDialogProps> = (props
         <>
             <Dialog.Header title={t('app.finance.assetSelectionDialog.title')} onClose={close} />
             <Dialog.Content className="flex flex-col gap-6 py-7">
-                <AssetList initialParams={initialParams} onAssetClick={handleSelectAsset} hasSearch={true} />
+                <AssetList.Default initialParams={initialParams} onAssetClick={handleSelectAsset} hasSearch={true} />
             </Dialog.Content>
         </>
     );
