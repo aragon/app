@@ -158,4 +158,4 @@ export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
         claimerPluginRepo: '0x0000000000000000000000000000000000000000',
         burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
     },
-};
+} as const;

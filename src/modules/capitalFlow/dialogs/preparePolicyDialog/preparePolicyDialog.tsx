@@ -19,7 +19,7 @@ import { decodeEventLog, encodeFunctionData, type Hex, type TransactionReceipt }
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
 import { capitalFlowAddresses } from '../../constants/capitalFlowAddresses';
-import { RouterType, StrategyType } from '../../dialogs/setupStrategyDialog';
+import { RouterType, StrategyType } from '../setupStrategyDialog';
 import { preparePolicyDialogUtils } from './preparePolicyDialogUtils';
 import type {
     IBuildPolicyProposalActionsParams,
@@ -234,11 +234,14 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
         [status, handlePinJson, pinMetadataNamespace, t],
     );
 
-    // Render first dialog: pin metadata and deploy source/model contracts
+    // We have 2 instances of TransactionDialog:
+    // - the first one to pin metadata and deploy source/model contracts, and
+    // - the second one to call prepareInstallation on plugin setup contract.
+    // - after that we open publish proposal dialog as the third step, as usual.
     if (sourceAndModelContracts == null) {
         return (
             <TransactionDialog<PreparePolicyStep>
-                key="mode-source-deploy"
+                key="model-and-source-deploy"
                 title={t('app.capitalFlow.preparePolicyDialog.title')}
                 description={t('app.capitalFlow.preparePolicyDialog.description')}
                 submitLabel={t('app.capitalFlow.preparePolicyDialog.button.submit')}
@@ -256,7 +259,6 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
         );
     }
 
-    // Render second dialog: prepare plugin installation
     return (
         <TransactionDialog
             key="plugin-install"
