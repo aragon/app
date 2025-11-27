@@ -1,4 +1,4 @@
-const omniSourceFactoryAbi = [
+export const omniSourceFactoryAbi = [
     {
         type: 'function',
         name: 'deployStreamBalanceSource',

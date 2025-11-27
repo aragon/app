@@ -15,10 +15,11 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
-import { decodeEventLog, type Hex, type TransactionReceipt } from 'viem';
+import { type Hex, parseEventLogs, type TransactionReceipt } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
-import { RouterType, StrategyType } from '../setupStrategyDialog';
+import { StrategyType } from '../setupStrategyDialog';
+import { omniSourceFactoryAbi } from './omniSourceFactoryAbi';
 import { preparePolicyDialogUtils } from './preparePolicyDialogUtils';
 import type {
     IBuildPolicyProposalActionsParams,
@@ -27,6 +28,7 @@ import type {
     IPrepareSourceAndModelContracts,
 } from './preparePolicyDialogUtils.api';
 import { routerModelFactoryAbi } from './routerModelFactoryAbi';
+import { routerSourceFactoryAbi } from './routerSourceFactoryAbi';
 
 export enum PreparePolicyStep {
     PIN_METADATA = 'PIN_METADATA',
@@ -105,35 +107,25 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
             'PreparePolicyDialog: Only router strategy supported',
         );
 
-        const strategy = values.strategy;
-        const eventName = strategy.routerType === RouterType.FIXED ? 'RatioModelDeployed' : 'BracketsModelDeployed';
-        console.log('txReceipt', txReceipt);
-        const log = txReceipt.logs.find((log) => {
-            try {
-                const decoded = decodeEventLog({
-                    abi: routerModelFactoryAbi,
-                    data: log.data,
-                    topics: log.topics,
-                });
-                console.log('decoded', decoded);
-                return decoded.eventName === eventName;
-            } catch {
-                return false;
-            }
+        const combinedModelAbi = [...routerModelFactoryAbi] as const;
+        const modelLogs = parseEventLogs({
+            abi: combinedModelAbi,
+            logs: txReceipt.logs,
+            strict: false,
         });
 
-        invariant(log != null, 'PreparePolicyDialog: Model deployment event not found in logs');
+        invariant(modelLogs.length > 0, 'PreparePolicyDialog: Model deployment event not found in logs');
+        const modelAddress = modelLogs[0].args.newContract as Hex;
 
-        const decodedLog = decodeEventLog({
-            abi: routerModelFactoryAbi,
-            data: log.data,
-            topics: log.topics,
+        const combinedSourceAbi = [...routerSourceFactoryAbi, ...omniSourceFactoryAbi] as const;
+        const sourceLogs = parseEventLogs({
+            abi: combinedSourceAbi,
+            logs: txReceipt.logs,
+            strict: false,
         });
 
-        const modelAddress = (decodedLog.args as { newContract: Hex }).newContract;
-
-        // TODO: Deploy source contract similarly
-        const sourceAddress = '0x0000000000000000000000000000000000000000' as Hex;
+        invariant(sourceLogs.length > 0, 'PreparePolicyDialog: Source deployment event not found in logs');
+        const sourceAddress = sourceLogs[0].args.newContract as Hex;
 
         setSourceAndModelContracts({ model: modelAddress, source: sourceAddress });
     };
