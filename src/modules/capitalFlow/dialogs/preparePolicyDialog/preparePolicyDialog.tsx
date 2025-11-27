@@ -16,9 +16,8 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
 import { type Hex, parseEventLogs, type TransactionReceipt } from 'viem';
-import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
+import { useAccount } from 'wagmi';
 import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
-import { StrategyType } from '../setupStrategyDialog';
 import { omniSourceFactoryAbi } from './omniSourceFactoryAbi';
 import { preparePolicyDialogUtils } from './preparePolicyDialogUtils';
 import type {
@@ -63,8 +62,6 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     const { t } = useTranslations();
     const { status, mutateAsync: pinJson } = usePinJson();
     const { open } = useDialogContext();
-    const { data: walletClient } = useWalletClient();
-    const publicClient = usePublicClient();
 
     const [policyMetadata, setPolicyMetadata] = useState<IPreparePolicyMetadata>();
     const [sourceAndModelContracts, setSourceAndModelContracts] = useState<IPrepareSourceAndModelContracts>();
@@ -85,12 +82,6 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
 
     const handleDeploySourceAndModelTransaction = async () => {
         invariant(dao != null, 'PreparePolicyDialog: DAO not loaded');
-        invariant(walletClient != null, 'PreparePolicyDialog: Wallet client not available');
-        invariant(publicClient != null, 'PreparePolicyDialog: Public client not available');
-        invariant(
-            values.strategy.type === StrategyType.CAPITAL_ROUTER,
-            'PreparePolicyDialog: Only router strategy supported',
-        );
 
         const transaction = preparePolicyDialogUtils.buildDeploySourceAndModelTransaction({
             values,
@@ -101,12 +92,6 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     };
 
     const handleDeploySourceAndModelSuccess = async (txReceipt: TransactionReceipt) => {
-        invariant(dao != null, 'PreparePolicyDialog: DAO not loaded');
-        invariant(
-            values.strategy.type === StrategyType.CAPITAL_ROUTER,
-            'PreparePolicyDialog: Only router strategy supported',
-        );
-
         const combinedModelAbi = [...routerModelFactoryAbi] as const;
         const modelLogs = parseEventLogs({
             abi: combinedModelAbi,
@@ -132,7 +117,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
 
     const handlePrepareInstallationTransaction = async () => {
         invariant(policyMetadata != null, 'PreparePolicyDialog: metadata not pinned');
-        invariant(dao != null, 'PreparePolicyDialog: DAO cannot be fetched');
+        invariant(dao != null, 'PreparePolicyDialog: DAO not loaded');
 
         const params: IBuildTransactionParams = { values, policyMetadata, dao };
         const transaction = await preparePolicyDialogUtils.buildPreparePolicyTransaction(params);
