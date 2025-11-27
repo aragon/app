@@ -1,6 +1,6 @@
 import { transactionListOptions } from '@/modules/finance/api/financeService/queries/useTransactionList/useTransactionList';
 import { daoOptions, Network } from '@/shared/api/daoService';
-import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
@@ -27,7 +27,7 @@ describe('<DaoTransactionsPage /> component', () => {
     const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
 
     beforeEach(() => {
-        fetchQuerySpy.mockResolvedValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        fetchQuerySpy.mockResolvedValue(generateDao());
         prefetchInfiniteQuerySpy.mockImplementation(jest.fn());
         resolveDaoIdSpy.mockResolvedValue('test-dao-id');
     });
