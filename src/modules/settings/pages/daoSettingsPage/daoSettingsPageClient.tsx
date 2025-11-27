@@ -16,6 +16,7 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 import { IconType } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
+import { useFeatureFlags } from '../../../../shared/components/featureFlagsProvider';
 import { CapitalFlowDialogId } from '../../../capitalFlow/constants/capitalFlowDialogId';
 import { CreateDaoDialogId } from '../../../createDao/constants/createDaoDialogId';
 import type { ICreateProcessDetailsDialogParams } from '../../../createDao/dialogs/createProcessDetailsDialog';
@@ -144,6 +145,8 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
         variant: 'secondary',
     };
 
+    const { isEnabled } = useFeatureFlags();
+
     if (!dao) {
         return null;
     }
@@ -177,12 +180,14 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                         ))}
                     </Page.MainSection>
                 )}
-                <Page.MainSection
-                    title={t('app.settings.daoSettingsPage.main.automationInfoTitle')}
-                    action={addPolicyAction}
-                >
-                    <p>Automation content</p>
-                </Page.MainSection>
+                {isSubDaoEnabled && (
+                    <Page.MainSection
+                        title={t('app.settings.daoSettingsPage.main.automationInfoTitle')}
+                        action={addPolicyAction}
+                    >
+                        <p>Automation content</p>
+                    </Page.MainSection>
+                )}
             </Page.Main>
             <Page.Aside>
                 <Page.AsideCard title={t('app.settings.daoSettingsPage.aside.versionInfoTitle')}>

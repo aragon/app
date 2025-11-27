@@ -33,7 +33,7 @@ export const CreatePolicyFormInterval: React.FC<ICreatePolicyFormIntervalProps> 
 
     return (
         <div className="flex w-full flex-col gap-10">
-            <RadioGroup onValueChange={onIntervalTypeChange} {...intervalTypeField}>
+            <RadioGroup onValueChange={onIntervalTypeChange} {...intervalTypeField} className="flex gap-4 md:flex-row">
                 <RadioCard
                     label={t('app.capitalFlow.createPolicyPage.steps.INTERVAL.continuous.label')}
                     description={t('app.capitalFlow.createPolicyPage.steps.INTERVAL.continuous.description')}
