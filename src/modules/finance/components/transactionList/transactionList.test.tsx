@@ -1,10 +1,10 @@
 import { generateToken, generateTransaction } from '@/modules/finance/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import { TransactionList, type ITransactionListDefaultProps } from '.';
 import * as useTransactionListData from '../../hooks/useTransactionListData';
-import { TransactionList, type ITransactionListProps } from './transactionList';
 
-describe('<TransactionList /> component', () => {
+describe('<TransactionList.Default /> component', () => {
     const useTransactionListDataSpy = jest.spyOn(useTransactionListData, 'useTransactionListData');
 
     beforeEach(() => {
@@ -15,15 +15,15 @@ describe('<TransactionList /> component', () => {
         useTransactionListDataSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<ITransactionListProps>) => {
-        const completeProps: ITransactionListProps = {
+    const createTestComponent = (props?: Partial<ITransactionListDefaultProps>) => {
+        const completeProps: ITransactionListDefaultProps = {
             initialParams: { queryParams: {} },
             ...props,
         };
 
         return (
             <GukModulesProvider>
-                <TransactionList {...completeProps} />
+                <TransactionList.Default {...completeProps} />
             </GukModulesProvider>
         );
     };
