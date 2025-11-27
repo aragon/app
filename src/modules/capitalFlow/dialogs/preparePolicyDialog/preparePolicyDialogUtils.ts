@@ -11,6 +11,7 @@ import { StreamingEpochPeriod } from '../setupStrategyDialog/setupStrategyDialog
 import { omniSourceFactoryAbi } from './omniSourceFactoryAbi';
 import type { IBuildPolicyProposalActionsParams, IBuildTransactionParams } from './preparePolicyDialogUtils.api';
 import { routerModelFactoryAbi } from './routerModelFactoryAbi';
+import { routerPluginSetupAbi } from './routerPluginSetupAbi';
 import { routerSourceFactoryAbi } from './routerSourceFactoryAbi';
 
 const epochPeriodToSeconds = {
@@ -144,15 +145,12 @@ class PreparePolicyDialogUtils {
         // Determine if this is a streaming source based on router type
         const isStreamingSource = strategy.routerType === RouterType.STREAM;
 
-        // Encode installation params using the plugin setup ABI
-        const installationParams = encodeAbiParameters(
-            [
-                { name: '_routerSource', type: 'address' },
-                { name: '_isStreamingSource', type: 'bool' },
-                { name: '_routerModel', type: 'address' },
-            ],
-            [source, isStreamingSource, model],
-        );
+        // Encode installation params using the RouterPluginSetup's encodeInstallationParams function
+        const installationParams = encodeFunctionData({
+            abi: routerPluginSetupAbi,
+            functionName: 'encodeInstallationParams',
+            args: [source, isStreamingSource, model],
+        });
 
         // Build prepareInstallation call on PluginSetupProcessor
         const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
