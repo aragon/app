@@ -1,5 +1,6 @@
 import { actionsDialogsDefinitions } from '@/actions';
 import { applicationDialogsDefinitions } from '@/modules/application/constants/applicationDialogsDefinitions';
+import { capitalFlowDialogsDefinitions } from '@/modules/capitalFlow/constants/capitalFlowDialogsDefinitions';
 import { createDaoDialogsDefinitions } from '@/modules/createDao/constants/createDaoDialogsDefinitions';
 import { financeDialogsDefinitions } from '@/modules/finance/constants/financeDialogsDefinitions';
 import { governanceDialogsDefinitions } from '@/modules/governance/constants/governanceDialogsDefinitions';
@@ -14,5 +15,6 @@ export const providersDialogs: Record<string, IDialogComponentDefinitions> = {
     ...createDaoDialogsDefinitions,
     ...pluginDialogsDefinitions,
     ...settingsDialogDefinitions,
+    ...capitalFlowDialogsDefinitions,
     ...actionsDialogsDefinitions,
 };

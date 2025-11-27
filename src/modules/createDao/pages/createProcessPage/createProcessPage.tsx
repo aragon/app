@@ -1,5 +1,5 @@
 import { Page } from '@/shared/components/page';
-import { daoUtils } from '../../../../shared/utils/daoUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import type { ICreateProcessPageParams } from '../../types';
 import { CreateProcessPageClient } from './createProcessPageClient';
 
