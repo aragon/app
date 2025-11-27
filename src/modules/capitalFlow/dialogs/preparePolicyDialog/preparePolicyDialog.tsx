@@ -15,10 +15,9 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
-import { decodeEventLog, encodeFunctionData, type Hex, type TransactionReceipt } from 'viem';
+import { decodeEventLog, type Hex, type TransactionReceipt } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
-import { capitalFlowAddresses } from '../../constants/capitalFlowAddresses';
 import { RouterType, StrategyType } from '../setupStrategyDialog';
 import { preparePolicyDialogUtils } from './preparePolicyDialogUtils';
 import type {
@@ -91,39 +90,12 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
             'PreparePolicyDialog: Only router strategy supported',
         );
 
-        const factoryAddress = capitalFlowAddresses[dao.network].routerModelFactory;
-        const strategy = values.strategy;
+        const transaction = preparePolicyDialogUtils.buildDeploySourceAndModelTransaction({
+            values,
+            dao,
+        });
 
-        let deployCallData: Hex;
-
-        // Build the appropriate deploy call based on router type
-        if (strategy.routerType === RouterType.FIXED) {
-            const { recipients } = strategy.distributionFixed;
-            const recipientAddresses = recipients.map((r) => r.address as Hex);
-            const RATIO_BASE = 1_000_000;
-            const ratios = recipients.map((r) => Math.round((r.ratio / 100) * RATIO_BASE));
-            deployCallData = encodeFunctionData({
-                abi: routerModelFactoryAbi,
-                functionName: 'deployRatioModel',
-                args: [recipientAddresses, ratios],
-            });
-        } else if (strategy.routerType === RouterType.STREAM) {
-            const { recipients } = strategy.distributionStream;
-            const brackets = recipients.map((r) => ({
-                recipient: r.address as Hex,
-                amount: BigInt(r.amount),
-            }));
-
-            deployCallData = encodeFunctionData({
-                abi: routerModelFactoryAbi,
-                functionName: 'deployBracketsModel',
-                args: [brackets],
-            });
-        } else {
-            throw new Error(`Unsupported router type: ${strategy.routerType}`);
-        }
-
-        return { to: factoryAddress, data: deployCallData, value: BigInt(0) };
+        return transaction;
     };
 
     const handleDeploySourceAndModelSuccess = async (txReceipt: TransactionReceipt) => {
@@ -135,7 +107,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
 
         const strategy = values.strategy;
         const eventName = strategy.routerType === RouterType.FIXED ? 'RatioModelDeployed' : 'BracketsModelDeployed';
-
+        console.log('txReceipt', txReceipt);
         const log = txReceipt.logs.find((log) => {
             try {
                 const decoded = decodeEventLog({
@@ -143,6 +115,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
                     data: log.data,
                     topics: log.topics,
                 });
+                console.log('decoded', decoded);
                 return decoded.eventName === eventName;
             } catch {
                 return false;

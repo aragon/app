@@ -28,7 +28,7 @@ export interface IBuildTransactionParams {
     /**
      * Metadata structure for the policy.
      */
-    policyMetadata: IPreparePolicyMetadata;
+    policyMetadata?: IPreparePolicyMetadata;
     /**
      * DAO to deploy the policy to.
      */

@@ -1,5 +1,6 @@
 import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
 import { encodeFunctionData, type Hex, zeroAddress } from 'viem';
+import { daoUtils } from '../../../../shared/utils/daoUtils';
 import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
 import { capitalFlowAddresses } from '../../constants/capitalFlowAddresses';
 import { RouterType, StrategyType } from '../setupStrategyDialog';
@@ -26,6 +27,7 @@ class PreparePolicyDialogUtils {
         const { routerModelFactory, routerSourceFactory, omniSourceFactory } = capitalFlowAddresses[dao.network];
         const { strategy } = values;
         const { sourceVault } = strategy;
+        const { address: sourceDaoAddress } = daoUtils.parseDaoId(sourceVault);
 
         if (strategy.type !== StrategyType.CAPITAL_ROUTER) {
             throw new Error(`Unsupported strategy type: ${strategy.type}`);
@@ -47,7 +49,7 @@ class PreparePolicyDialogUtils {
             const deploySourceCallData = encodeFunctionData({
                 abi: routerSourceFactoryAbi,
                 functionName: 'deployDrainBalanceSource',
-                args: [sourceVault as Hex, asset?.token ? (asset.token.address as Hex) : zeroAddress],
+                args: [sourceDaoAddress as Hex, asset?.token ? (asset.token.address as Hex) : zeroAddress],
             });
 
             deployModelTransaction = {
@@ -63,7 +65,7 @@ class PreparePolicyDialogUtils {
         } else if (strategy.routerType === RouterType.STREAM) {
             const { recipients, asset, epochPeriod } = strategy.distributionStream;
             const recipientAddresses = recipients.map((r) => r.address as Hex);
-            
+
             // Calculate total amount and ratios
             const totalAmount = recipients.reduce((sum, r) => sum + Number(r.amount), 0);
             const RATIO_BASE = 1_000_000;
@@ -84,7 +86,7 @@ class PreparePolicyDialogUtils {
                 abi: omniSourceFactoryAbi,
                 functionName: 'deployStreamBalanceSource',
                 args: [
-                    sourceVault as Hex,
+                    sourceDaoAddress as Hex,
                     asset?.token ? (asset.token.address as Hex) : zeroAddress,
                     amountPerEpoch,
                     BigInt(0),
