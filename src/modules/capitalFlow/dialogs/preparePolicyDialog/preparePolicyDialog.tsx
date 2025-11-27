@@ -146,14 +146,10 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
 
         const setupData = pluginTransactionUtils.getPluginInstallationSetupData(txReceipt);
 
-        console.log('setupDatasetupDatasetupDatasetupData', setupData);
-        // TODO: Extract deployment data from transaction receipt
-        const deploymentData = {};
-
         const proposalActionParams: IBuildPolicyProposalActionsParams = {
             values,
             dao,
-            deploymentData,
+            setupData,
         };
         const proposalActions = preparePolicyDialogUtils.buildPublishPolicyProposalActions(proposalActionParams);
 

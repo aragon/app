@@ -1,8 +1,11 @@
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import {
+    type IBuildApplyPluginsInstallationActionsParams,
+    pluginTransactionUtils,
+} from '@/shared/utils/pluginTransactionUtils';
 import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
 import { invariant } from '@aragon/gov-ui-kit';
-import { encodeAbiParameters, encodeFunctionData, type Hex, zeroAddress } from 'viem';
+import { encodeFunctionData, type Hex, zeroAddress } from 'viem';
 import { daoUtils } from '../../../../shared/utils/daoUtils';
 import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
 import { capitalFlowAddresses } from '../../constants/capitalFlowAddresses';
@@ -169,18 +172,19 @@ class PreparePolicyDialogUtils {
     };
 
     buildPublishPolicyProposalActions = (params: IBuildPolicyProposalActionsParams): ITransactionRequest[] => {
-        const { values, dao, deploymentData } = params;
+        const { values, dao, setupData } = params;
 
-        // TODO: Build the actual proposal actions
-        // This should create actions to:
-        // 1. Grant necessary permissions to the deployed strategy
-        // 2. Configure policy parameters
-        // 3. Activate the policy
+        const processorSetupActions: ITransactionRequest[] = [];
 
-        // Placeholder implementation
-        const actions: ITransactionRequest[] = [];
+        const buildActionsParams: IBuildApplyPluginsInstallationActionsParams = {
+            dao,
+            setupData,
+            actions: processorSetupActions,
+            executeConditionAddress: undefined,
+        };
+        const proposalActions = pluginTransactionUtils.buildApplyPluginsInstallationActions(buildActionsParams);
 
-        return actions;
+        return proposalActions;
     };
 
     preparePublishPolicyProposalMetadata = () => {

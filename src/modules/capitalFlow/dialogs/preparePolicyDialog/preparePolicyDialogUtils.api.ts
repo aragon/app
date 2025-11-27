@@ -1,5 +1,6 @@
 import type { IDao } from '@/shared/api/daoService';
 import type { Hex } from 'viem';
+import type { IPluginInstallationSetupData } from '../../../../shared/utils/pluginTransactionUtils';
 import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
 
 export interface IPreparePolicyMetadata {
@@ -49,7 +50,7 @@ export interface IBuildPolicyProposalActionsParams {
      */
     dao: IDao;
     /**
-     * Transaction receipt from the policy deployment.
+     * Address list of the plugins to be installed.
      */
-    deploymentData: any; // TODO: Define proper type based on deployment response
+    setupData: IPluginInstallationSetupData[];
 }
