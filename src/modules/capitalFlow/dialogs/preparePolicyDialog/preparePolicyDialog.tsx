@@ -17,6 +17,7 @@ import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
 import { type Hex, parseEventLogs, type TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
+import { pluginTransactionUtils } from '../../../../shared/utils/pluginTransactionUtils';
 import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
 import { omniSourceFactoryAbi } from './omniSourceFactoryAbi';
 import { preparePolicyDialogUtils } from './preparePolicyDialogUtils';
@@ -118,9 +119,10 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     const handlePrepareInstallationTransaction = async () => {
         invariant(policyMetadata != null, 'PreparePolicyDialog: metadata not pinned');
         invariant(dao != null, 'PreparePolicyDialog: DAO not loaded');
+        invariant(sourceAndModelContracts != null, 'PreparePolicyDialog: source and model contracts not deployed');
 
-        const params: IBuildTransactionParams = { values, policyMetadata, dao };
-        const transaction = await preparePolicyDialogUtils.buildPreparePolicyTransaction(params);
+        const params: IBuildTransactionParams = { values, policyMetadata, dao, sourceAndModelContracts };
+        const transaction = await preparePolicyDialogUtils.buildPolicyPrepareInstallationTransaction(params);
 
         return transaction;
     };
@@ -142,6 +144,9 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     const handlePrepareInstallationSuccess = (txReceipt: TransactionReceipt) => {
         invariant(dao != null, 'PreparePolicyDialog: DAO cannot be fetched');
 
+        const setupData = pluginTransactionUtils.getPluginInstallationSetupData(txReceipt);
+
+        console.log('setupDatasetupDatasetupDatasetupData', setupData);
         // TODO: Extract deployment data from transaction receipt
         const deploymentData = {};
 

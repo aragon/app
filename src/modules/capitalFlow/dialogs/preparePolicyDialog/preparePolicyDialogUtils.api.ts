@@ -22,6 +22,10 @@ export interface IPrepareSourceAndModelContracts {
 
 export interface IBuildTransactionParams {
     /**
+     * DAO to deploy the policy to.
+     */
+    dao: IDao;
+    /**
      * Values of the create-policy form.
      */
     values: ICreatePolicyFormData;
@@ -30,9 +34,9 @@ export interface IBuildTransactionParams {
      */
     policyMetadata?: IPreparePolicyMetadata;
     /**
-     * DAO to deploy the policy to.
+     * Deployed source and model contract addresses.
      */
-    dao: IDao;
+    sourceAndModelContracts?: IPrepareSourceAndModelContracts;
 }
 
 export interface IBuildPolicyProposalActionsParams {

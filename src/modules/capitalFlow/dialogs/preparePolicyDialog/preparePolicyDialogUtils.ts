@@ -1,10 +1,14 @@
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
-import { encodeFunctionData, type Hex, zeroAddress } from 'viem';
+import { invariant } from '@aragon/gov-ui-kit';
+import { encodeAbiParameters, encodeFunctionData, type Hex, zeroAddress } from 'viem';
 import { daoUtils } from '../../../../shared/utils/daoUtils';
 import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
 import { capitalFlowAddresses } from '../../constants/capitalFlowAddresses';
 import { RouterType, StrategyType } from '../setupStrategyDialog';
 import { StreamingEpochPeriod } from '../setupStrategyDialog/setupStrategyDialogDefinitions';
+import { omniSourceFactoryAbi } from './omniSourceFactoryAbi';
 import type { IBuildPolicyProposalActionsParams, IBuildTransactionParams } from './preparePolicyDialogUtils.api';
 import { routerModelFactoryAbi } from './routerModelFactoryAbi';
 import { routerSourceFactoryAbi } from './routerSourceFactoryAbi';
@@ -29,9 +33,7 @@ class PreparePolicyDialogUtils {
         const { sourceVault } = strategy;
         const { address: sourceDaoAddress } = daoUtils.parseDaoId(sourceVault);
 
-        if (strategy.type !== StrategyType.CAPITAL_ROUTER) {
-            throw new Error(`Unsupported strategy type: ${strategy.type}`);
-        }
+        invariant(strategy.type === StrategyType.CAPITAL_ROUTER, `Unsupported strategy type: ${strategy.type}`);
 
         let deployModelTransaction: ITransactionRequest;
         let deploySourceTransaction: ITransactionRequest;
@@ -127,23 +129,45 @@ class PreparePolicyDialogUtils {
         };
     };
 
-    buildPreparePolicyTransaction = async (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
-        const { values, policyMetadata, dao } = params;
+    buildPolicyPrepareInstallationTransaction = async (
+        params: IBuildTransactionParams,
+    ): Promise<ITransactionRequest> => {
+        const { values, sourceAndModelContracts, dao } = params;
+        const { strategy } = values;
 
-        // Placeholder implementation
-        const transactions: Array<{ to: Hex; value: bigint; data: Hex }> = [];
+        invariant(sourceAndModelContracts != null, 'PreparePolicyDialogUtils: source and model contracts are required');
+        invariant(strategy.type === StrategyType.CAPITAL_ROUTER, `Unsupported strategy type: ${strategy.type}`);
 
-        // Example: Deploy strategy contract
-        // const strategyDeployData = this.buildDeployStrategyData(values.strategy);
-        // transactions.push({
-        //     to: strategyFactoryAddress as Hex,
-        //     value: BigInt(0),
-        //     data: strategyDeployData as Hex,
-        // });
+        const { model, source } = sourceAndModelContracts;
+        const { routerPluginRepo } = capitalFlowAddresses[dao.network];
 
-        const encodedTransaction = transactionUtils.encodeTransactionRequests(transactions, dao.network);
+        // Determine if this is a streaming source based on router type
+        const isStreamingSource = strategy.routerType === RouterType.STREAM;
 
-        return encodedTransaction;
+        // Encode installation params using the plugin setup ABI
+        const installationParams = encodeAbiParameters(
+            [
+                { name: '_routerSource', type: 'address' },
+                { name: '_isStreamingSource', type: 'bool' },
+                { name: '_routerModel', type: 'address' },
+            ],
+            [source, isStreamingSource, model],
+        );
+
+        // Build prepareInstallation call on PluginSetupProcessor
+        const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
+        const prepareInstallationData = pluginTransactionUtils.buildPrepareInstallationData(
+            routerPluginRepo,
+            { release: 1, build: 1 },
+            installationParams,
+            dao.address as Hex,
+        );
+
+        return {
+            to: pluginSetupProcessor,
+            data: prepareInstallationData,
+            value: BigInt(0),
+        };
     };
 
     buildPublishPolicyProposalActions = (params: IBuildPolicyProposalActionsParams): ITransactionRequest[] => {
