@@ -3,15 +3,8 @@
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import {
-    addressUtils,
-    ChainEntityType,
-    DefinitionList,
-    formatterUtils,
-    NumberFormat,
-    useBlockExplorer,
-} from '@aragon/gov-ui-kit';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { addressUtils, ChainEntityType, DefinitionList, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useMemberList } from '../../../../modules/governance/api/governanceService';
 import { daoUtils } from '../../../../shared/utils/daoUtils';
@@ -40,8 +33,7 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
 
     const distribution = memberList?.pages[0]?.metadata.totalRecords ?? '';
 
-    const { id: chainId } = networkDefinitions[plugin.settings.token.network];
-    const { buildEntityUrl } = useBlockExplorer({ chainId });
+    const { buildEntityUrl } = useDaoChain({ network: plugin.settings.token.network });
 
     const { token } = plugin.settings;
     const parsedTotalSupply = token.totalSupply && formatUnits(BigInt(token.totalSupply), token.decimals);

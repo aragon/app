@@ -1,5 +1,6 @@
 import * as daoService from '@/shared/api/daoService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -33,11 +34,25 @@ describe('useDaoPlugins hook', () => {
         const dao = generateDao({ id: 'test', plugins });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         getDaoPluginsSpy.mockReturnValue(plugins);
-        const { result } = renderHook(() => useDaoPlugins({ daoId: dao.id }));
+        const { result } = renderHook(() => useDaoPlugins({ daoId: dao.id }), {
+            wrapper: FeatureFlagsProvider,
+        });
 
         expect(result.current).toEqual([
-            { id: 'multisig', uniqueId: plugins[0].slug, label: 'Multisig', meta: plugins[0], props: {} },
-            { id: 'tokenVoting', uniqueId: plugins[1].slug, label: 'Token Voting', meta: plugins[1], props: {} },
+            {
+                id: 'multisig',
+                uniqueId: `${plugins[0].address}-${plugins[0].slug}`,
+                label: 'Multisig',
+                meta: plugins[0],
+                props: {},
+            },
+            {
+                id: 'tokenVoting',
+                uniqueId: `${plugins[1].address}-${plugins[1].slug}`,
+                label: 'Token Voting',
+                meta: plugins[1],
+                props: {},
+            },
         ]);
     });
 
@@ -49,7 +64,9 @@ describe('useDaoPlugins hook', () => {
         });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
 
-        renderHook(() => useDaoPlugins({ daoId: dao.id, type, pluginAddress }));
+        renderHook(() => useDaoPlugins({ daoId: dao.id, type, pluginAddress }), {
+            wrapper: FeatureFlagsProvider,
+        });
         expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, { type, pluginAddress });
     });
 
@@ -60,7 +77,9 @@ describe('useDaoPlugins hook', () => {
         });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
 
-        renderHook(() => useDaoPlugins({ daoId: dao.id, hasExecute }));
+        renderHook(() => useDaoPlugins({ daoId: dao.id, hasExecute }), {
+            wrapper: FeatureFlagsProvider,
+        });
         expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, { hasExecute });
     });
 });

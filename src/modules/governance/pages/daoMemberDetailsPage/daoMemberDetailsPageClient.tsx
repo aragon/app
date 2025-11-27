@@ -7,7 +7,7 @@ import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import {
@@ -17,7 +17,6 @@ import {
     DefinitionList,
     formatterUtils,
     MemberAvatar,
-    useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { useBlock } from 'wagmi';
 import EfpLogo from '../../../../assets/images/efp-logo.svg';
@@ -47,7 +46,6 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const { address, daoId } = props;
 
     const { t } = useTranslations();
-    const { buildEntityUrl } = useBlockExplorer();
 
     const efpParams = { urlParams: { address } };
     const { data: efpStats } = useEfpStats(efpParams);
@@ -69,7 +67,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
 
     const { lastActivity, firstActivity } = member?.metrics ?? {};
 
-    const chainId = dao ? networkDefinitions[dao.network].id : undefined;
+    const { chainId, buildEntityUrl } = useDaoChain({ daoId });
 
     const firstBlockNumber = firstActivity != null ? BigInt(firstActivity) : undefined;
     const lastBlockNumber = lastActivity != null ? BigInt(lastActivity) : undefined;
@@ -116,7 +114,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const truncatedAddress = addressUtils.truncateAddress(address);
     const memberName = ens ?? truncatedAddress;
 
-    const addressUrl = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address, chainId });
+    const addressUrl = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address });
 
     const pageBreadcrumbs = [
         {

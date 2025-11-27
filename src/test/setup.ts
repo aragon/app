@@ -28,3 +28,7 @@ global.ResizeObserver = jest
 // Allow spying on library functions
 jest.mock('react-hook-form', () => ({ __esModule: true, ...jest.requireActual<object>('react-hook-form') }));
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<object>('viem') }));
+jest.mock('next/font/local', () => ({
+    __esModule: true,
+    default: () => ({ className: '' }),
+}));

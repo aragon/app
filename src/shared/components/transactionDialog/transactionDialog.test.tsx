@@ -8,7 +8,6 @@ import { Dialog, GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import * as ReactQuery from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import type { WaitForTransactionReceiptErrorType } from 'viem';
-import { polygon } from 'viem/chains';
 import * as Wagmi from 'wagmi';
 import { TransactionDialog } from './transactionDialog';
 import {
@@ -279,14 +278,14 @@ describe('<TransactionDialog /> component', () => {
 
     it('displays the link to the block explorer for the confirmation step on transaction success', () => {
         const transactionHash = '0x1234';
-        useAccountSpy.mockReturnValue({ chainId: polygon.id } as unknown as Wagmi.UseAccountReturnType);
+        const network = Network.POLYGON_MAINNET;
         useSendTransactionSpy.mockReturnValue({
             data: transactionHash,
         } as unknown as Wagmi.UseSendTransactionReturnType);
         render(createTestComponent());
         const updateSteps = jest.fn() as jest.Mock<void, Array<Array<IStepperStep<ITransactionDialogStepMeta>>>>;
         const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
-        render(createTestComponent({ stepper }));
+        render(createTestComponent({ stepper, network }));
         const confirmStep = updateSteps.mock.calls[0][0][2];
         expect(confirmStep.meta.addon).toEqual({
             label: expect.stringMatching(/CONFIRM.addon/) as unknown,

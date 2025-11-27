@@ -8,6 +8,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Heading } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Image from 'next/image';
+import { Suspense } from 'react';
 import doItYourselfIcon from '../../../../assets/images/doItYourselfIcon.svg';
 import enterpriseServiceIcon from '../../../../assets/images/enterpriseServiceIcon.svg';
 import NetBackground from '../../../../assets/images/net_bg.svg';
@@ -82,7 +83,9 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
             <Container className="py-10 pb-16 md:px-6 md:py-20">
                 <main className="flex flex-col gap-10 md:gap-20">
                     <ExploreSection title={t('app.explore.exploreDaosPage.section.daos')}>
-                        <ExploreDaos initialParams={initialParams} />
+                        <Suspense fallback={null}>
+                            <ExploreDaos initialParams={initialParams} />
+                        </Suspense>
                     </ExploreSection>
                     <ExploreSection title={t('app.explore.exploreDaosPage.section.cta')}>
                         <div className="flex flex-col items-start gap-4 self-stretch md:flex-row md:gap-4 lg:gap-8">

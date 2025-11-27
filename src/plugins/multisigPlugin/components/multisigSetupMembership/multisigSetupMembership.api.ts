@@ -20,6 +20,10 @@ export interface IMultisigSetupMembershipProps extends IPluginSetupMembershipPar
      */
     network?: Network;
     /**
+     * ID of the DAO, used to derive the chain when the plugin network is not provided.
+     */
+    daoId?: string;
+    /**
      * Hides the field label and help-text when set to true.
      */
     hideLabel?: boolean;
