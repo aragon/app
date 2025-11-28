@@ -28,15 +28,15 @@
     "@number-flow/react": "^0.5.10",
     "@radix-ui/react-dialog": "1.1.15",
     "@radix-ui/react-toggle-group": "1.1.11",
-    "@reown/appkit": "^1.8.12",
-    "@reown/appkit-adapter-wagmi": "^1.8.12",
-    "@reown/walletkit": "^1.2.11",
-    "@sentry/core": "10.22.0",
-    "@sentry/nextjs": "^10.22.0",
+    "@reown/appkit": "^1.8.14",
+    "@reown/appkit-adapter-wagmi": "^1.8.14",
+    "@reown/walletkit": "^1.4.1",
+    "@sentry/core": "10.26.0",
+    "@sentry/nextjs": "^10.26.0",
     "@tanstack/react-query": "^5.90.2",
     "@tanstack/react-query-devtools": "^5.90.2",
-    "@walletconnect/core": "^2.21.10",
-    "@walletconnect/utils": "^2.21.10",
+    "@walletconnect/core": "^2.23.0",
+    "@walletconnect/utils": "^2.23.0",
     "classnames": "^2.5.1",
     "deepmerge-ts": "^7.1.5",
     "framer-motion": "^12.23.22",
@@ -52,7 +52,7 @@
     "recharts": "^3.2.1",
     "server-only": "^0.0.1",
     "viem": "^2.38.0",
-    "wagmi": "^2.18.1"
+    "wagmi": "^2.19.5"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.1",
@@ -70,9 +70,9 @@
     "@types/node": "^24.7.0",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.1",
-    "@walletconnect/types": "2.22.4",
+    "@walletconnect/types": "^2.23.0",
     "cross-env": "^10.1.0",
-    "eslint": "^9.38.0",
+    "eslint": "^9.39.1",
     "eslint-config-next": "^15.5.4",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
@@ -94,7 +94,7 @@
     "ts-jest": "^29.4.4",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.2",
-    "vercel": "^48.1.6",
+    "vercel": "^48.10.7",
     "webpack": "^5.96.1"
   },
   "repository": {
@@ -114,12 +114,19 @@
   "engines": {
     "node": ">=22.0.0"
   },
-  "packageManager": "pnpm@10.20.0+sha512.cf9998222162dd85864d0a8102e7892e7ba4ceadebbf5a31f9c2fce48dfce317a9c53b9f6464d1ef9042cba2e02ae02a9f7c143a2b438cd93c91840f0192b9dd",
+  "packageManager": "pnpm@10.24.0+sha512.01ff8ae71b4419903b65c60fb2dc9d34cf8bb6e06d03bde112ef38f7a34d6904c424ba66bea5cdcf12890230bf39f9580473140ed9c946fef328b6e5238a345a",
   "pnpm": {
     "overrides": {
-      "@reown/appkit": "^1.8.10",
+      "@reown/appkit": "^1.8.14",
       "jsdom": "26.1.0",
       "parse5": "7.1.2"
+    },
+    "packageExtensions": {
+      "@solana/codecs-strings@*": {
+        "dependencies": {
+          "fastestsmallesttextencoderdecoder": "^1.0.22"
+        }
+      }
     }
   }
 }
