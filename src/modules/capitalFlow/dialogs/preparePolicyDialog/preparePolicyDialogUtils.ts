@@ -31,6 +31,11 @@ class PreparePolicyDialogUtils {
         summary: 'This proposal deploys a new capital flow policy to the DAO',
     };
 
+    normalizeRatios = (values: number[]): number[] => {
+        const total = values.reduce((sum, value) => sum + value, 0);
+        return values.map((value) => Math.round((value / total) * ratioBase));
+    };
+
     buildDeploySourceAndModelTransaction = async (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
         const { values, dao } = params;
 
@@ -182,11 +187,6 @@ class PreparePolicyDialogUtils {
 
     preparePublishPolicyProposalMetadata = () => {
         return this.publishPolicyProposalMetadata;
-    };
-
-    private normalizeRatios = (values: number[]): number[] => {
-        const total = values.reduce((sum, value) => sum + value, 0);
-        return values.map((value) => Math.round((value / total) * ratioBase));
     };
 }
 
