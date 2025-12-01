@@ -1,6 +1,5 @@
 import type { IDaoPolicy } from '@/shared/api/daoService';
 import { DataList, type IDataListItemProps } from '@aragon/gov-ui-kit';
-import classNames from 'classnames';
 import { useTranslations } from '../translationsProvider';
 
 export type IPolicyDataListItemProps = IDataListItemProps & {
@@ -8,14 +7,10 @@ export type IPolicyDataListItemProps = IDataListItemProps & {
      * Policy to display the details for.
      */
     policy: IDaoPolicy;
-    /**
-     * Renders the policy as active when set to true.
-     */
-    isActive?: boolean;
 };
 
 export const PolicyDataListItem: React.FC<IPolicyDataListItemProps> = (props) => {
-    const { policy, isActive, className, ...otherProps } = props;
+    const { policy, className, ...otherProps } = props;
 
     const { t } = useTranslations();
 
@@ -26,13 +21,7 @@ export const PolicyDataListItem: React.FC<IPolicyDataListItemProps> = (props) =>
             : t('app.shared.policyDataListItem.defaultDescription');
 
     return (
-        <DataList.Item
-            key={policy.address}
-            className={classNames('px-4 py-3 md:p-6', {
-                'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary': isActive,
-            })}
-            {...otherProps}
-        >
+        <DataList.Item key={policy.address} className="px-4 py-3 md:p-6" {...otherProps}>
             <div className="flex flex-col gap-y-1">
                 <div className="flex gap-2 text-lg leading-tight font-normal">
                     <p className="truncate text-neutral-800">{name}</p>

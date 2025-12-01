@@ -168,7 +168,7 @@ interface IPolicyAddressGaugeRatioModel extends IPolicyModelBase {
      */
     type: PolicyStrategyModelType.GAUGE_RATIO;
     /**
-     * Address of th eGaugeVoter contract.
+     * Address of the GaugeVoter contract.
      */
     gaugeVoterAddress: string;
 }
