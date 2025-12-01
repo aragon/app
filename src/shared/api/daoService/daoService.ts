@@ -1,6 +1,11 @@
 import { AragonBackendService, type IPaginatedResponse } from '../aragonBackendService';
 import { pluginsService } from '../pluginsService';
-import type { IGetDaoByEnsParams, IGetDaoParams, IGetDaoPermissionsParams, IGetDaoPoliciesParams } from './daoService.api';
+import type {
+    IGetDaoByEnsParams,
+    IGetDaoParams,
+    IGetDaoPermissionsParams,
+    IGetDaoPoliciesParams,
+} from './daoService.api';
 import type { IDao, IDaoPermission, IDaoPolicy, Network } from './domain';
 
 /**
@@ -65,8 +70,8 @@ class DaoService extends AragonBackendService {
         return result;
     };
 
-    getDaoPolicies = async (params: IGetDaoPoliciesParams): Promise<IPaginatedResponse<IDaoPolicy>> => {
-        const result = await this.request<IPaginatedResponse<IDaoPolicy>>(this.urls.daoPolicies, params);
+    getDaoPolicies = async (params: IGetDaoPoliciesParams): Promise<IDaoPolicy[]> => {
+        const result = await this.request<IDaoPolicy[]>(this.urls.daoPolicies, params);
 
         return result;
     };
