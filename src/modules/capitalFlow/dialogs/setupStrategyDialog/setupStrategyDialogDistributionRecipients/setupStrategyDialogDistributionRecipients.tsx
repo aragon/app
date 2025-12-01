@@ -1,15 +1,15 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
-import { useEffect, useMemo } from 'react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
-import type { IRecipientRelative } from '../setupStrategyDialogDefinitions';
+import { useEffect } from 'react';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import type { ISetupStrategyForm } from '../setupStrategyDialogDefinitions';
 import { SetupStrategyDialogDistributionRecipientItem } from '../setupStrategyDialogDistributionFixed';
 
 export interface ISetupStrategyDialogDistributionRecipientsProps {
     /**
      * Field name for the recipients array in the form (e.g., 'distributionFixed.recipients').
      */
-    recipientsFieldName: string;
+    recipientsFieldName: 'distributionFixed.recipients' | 'distributionStream.recipients';
     /**
      * ID of the DAO for network context.
      */
@@ -25,7 +25,7 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
 
     const { t } = useTranslations();
 
-    const { getValues } = useFormContext();
+    const { getValues } = useFormContext<ISetupStrategyForm>();
     const {
         fields: recipientsField,
         append: addRecipient,
@@ -39,23 +39,21 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
         },
     });
 
-    // Initialize with one empty recipient if the array is empty
+    const recipients = useWatch<ISetupStrategyForm, typeof recipientsFieldName>({
+        name: recipientsFieldName,
+        defaultValue: [],
+    });
+
     useEffect(() => {
+        // get fresh values
         const recipientsValues = getValues(recipientsFieldName);
 
         if (recipientsValues.length === 0) {
             addRecipient({ address: '', ratio: 0 });
         }
-    }, [addRecipient, recipientsField.length]);
+    }, [addRecipient, recipients]);
 
-    const totalRatio = useMemo(
-        () =>
-            recipientsField?.reduce(
-                (sum, recipient) => sum + ((recipient as unknown as IRecipientRelative)?.ratio || 0),
-                0,
-            ) || 0,
-        [recipientsField],
-    );
+    const totalRatio = recipients.reduce((sum, recipient) => sum + recipient.ratio, 0);
 
     const handleAddRecipient = () => {
         if (recipientsField.length < maxRecipients) {
