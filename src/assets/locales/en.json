@@ -2695,6 +2695,9 @@
       "processDataListItem": {
         "defaultDescription": "No description"
       },
+      "policyDataListItem": {
+        "defaultDescription": "No description"
+      },
       "resourcesInput": {
         "add": "Add",
         "item": {

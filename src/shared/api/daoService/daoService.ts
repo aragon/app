@@ -71,9 +71,54 @@ class DaoService extends AragonBackendService {
     };
 
     getDaoPolicies = async (params: IGetDaoPoliciesParams): Promise<IDaoPolicy[]> => {
-        const result = await this.request<IDaoPolicy[]>(this.urls.daoPolicies, params);
+        // TODO: Remove mock data when backend is ready
+        return [
+            {
+                name: 'Capital router #1',
+                description: 'This is a short description, about the gauge system',
+                policyKey: 'CR1',
+                address: '0x1234567890123456789012345678901234567890',
+                interfaceType: 'ROUTER' as const,
+                strategy: {
+                    type: 'ROUTER' as const,
+                },
+                release: '1',
+                build: '1',
+                blockTimestamp: 1700000000,
+                transactionHash: '0xaabbccddaabbccddaabbccddaabbccddaabbccddaabbccddaabbccddaabbccdd',
+            },
+            {
+                name: 'Capital distributor #1',
+                description: 'Interface proposal are the main proposal to change any smart contracts related to the DAO\'s products.',
+                policyKey: 'CD1',
+                address: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+                interfaceType: 'CLAIMER' as const,
+                strategy: {
+                    type: 'CLAIMER' as const,
+                },
+                release: '1',
+                build: '2',
+                blockTimestamp: 1700100000,
+                transactionHash: '0x1122334411223344112233441122334411223344112233441122334411223344',
+            },
+            {
+                name: 'DeFi Adapter #1',
+                description: 'No description',
+                policyKey: 'DFA1',
+                address: '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+                interfaceType: 'ROUTER' as const,
+                strategy: {
+                    type: 'ROUTER' as const,
+                },
+                release: '1',
+                build: '1',
+                blockTimestamp: 1700200000,
+                transactionHash: '0x3344556633445566334455663344556633445566334455663344556633445566',
+            },
+        ];
 
-        return result;
+        // const result = await this.request<IDaoPolicy[]>(this.urls.daoPolicies, params);
+        // return result;
     };
 }
 
