@@ -1,12 +1,12 @@
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     type IBuildApplyPluginsInstallationActionsParams,
     pluginTransactionUtils,
 } from '@/shared/utils/pluginTransactionUtils';
 import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
 import { invariant } from '@aragon/gov-ui-kit';
-import { encodeFunctionData, type Hex, zeroAddress } from 'viem';
-import { daoUtils } from '../../../../shared/utils/daoUtils';
+import { encodeAbiParameters, encodeFunctionData, type Hex, zeroAddress } from 'viem';
 import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
 import { capitalFlowAddresses } from '../../constants/capitalFlowAddresses';
 import { RouterType, StrategyType } from '../setupStrategyDialog';
@@ -145,17 +145,10 @@ class PreparePolicyDialogUtils {
         const { model, source } = sourceAndModelContracts;
         const { routerPluginRepo } = capitalFlowAddresses[dao.network];
 
-        // Determine if this is a streaming source based on router type
         const isStreamingSource = strategy.routerType === RouterType.STREAM;
 
-        // Encode installation params using the RouterPluginSetup's encodeInstallationParams function
-        const installationParams = encodeFunctionData({
-            abi: routerPluginSetupAbi,
-            functionName: 'encodeInstallationParams',
-            args: [source, isStreamingSource, model],
-        });
+        const installationParams = encodeAbiParameters(routerPluginSetupAbi, [source, isStreamingSource, model]);
 
-        // Build prepareInstallation call on PluginSetupProcessor
         const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
         const prepareInstallationData = pluginTransactionUtils.buildPrepareInstallationData(
             routerPluginRepo,
