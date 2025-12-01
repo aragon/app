@@ -183,9 +183,6 @@ class PreparePolicyDialogUtils {
     preparePublishPolicyProposalMetadata = () => {
         return this.publishPolicyProposalMetadata;
     };
-
-    private buildSourceAndModelDeployActionData = (params: IBuildTransactionParams) => {};
-    private buildPrepareInstallPluginActionData = (params: IBuildTransactionParams) => {};
 }
 
 export const preparePolicyDialogUtils = new PreparePolicyDialogUtils();
