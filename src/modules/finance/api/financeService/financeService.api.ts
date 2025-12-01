@@ -4,13 +4,11 @@ import type { IRequestQueryParams } from '@/shared/api/httpService';
 
 export interface IGetAssetListQueryParams extends IPaginatedRequest {
     /**
-     * Address to fetch assets.
+     * DAO ID to fetch assets (format: {network}-{address}).
+     * When querying the parent DAO, returns aggregated data for parent + all SubDAOs.
+     * When querying a specific SubDAO, returns data only for that SubDAO.
      */
-    address?: string;
-    /**
-     * Network of the address to fetch assets.
-     */
-    network?: Network;
+    daoId?: string;
 }
 
 export interface IGetAssetListParams extends IRequestQueryParams<IGetAssetListQueryParams> {}

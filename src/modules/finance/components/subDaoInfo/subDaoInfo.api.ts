@@ -1,13 +1,13 @@
-import type { IDaoPlugin, Network } from '@/shared/api/daoService';
+import type { ISubDaoSummary, Network } from '@/shared/api/daoService';
 import type { IDefinitionListContainerProps } from '@aragon/gov-ui-kit';
 
 export interface ISubDaoInfoProps extends IDefinitionListContainerProps {
     /**
-     * Plugin (SubDAO) to display info for.
+     * SubDAO to display info for.
      */
-    plugin: IDaoPlugin;
+    plugin: ISubDaoSummary;
     /**
-     * Network of the DAO.
+     * Network of the parent DAO.
      */
     network: Network;
     /**

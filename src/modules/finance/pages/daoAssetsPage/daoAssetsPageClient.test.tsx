@@ -1,11 +1,6 @@
 import * as daoService from '@/shared/api/daoService';
-import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import {
-    generateDao,
-    generateDaoPlugin,
-    generateFilterComponentPlugin,
-    generateReactQueryResultSuccess,
-} from '@/shared/testUtils';
+import * as useFilterUrlParam from '@/shared/hooks/useFilterUrlParam';
+import { generateDao, generateReactQueryResultSuccess, generateSubDao } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { DaoAssetsPageClient, type IDaoAssetsPageClientProps } from './daoAssetsPageClient';
 
@@ -29,18 +24,16 @@ jest.mock('@/modules/finance/components/subDaoInfo', () => ({
 
 describe('<DaoAssetsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
-    const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
+    const useFilterUrlParamSpy = jest.spyOn(useFilterUrlParam, 'useFilterUrlParam');
 
     beforeEach(() => {
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
-        useDaoPluginsSpy.mockReturnValue([
-            generateFilterComponentPlugin({ uniqueId: 'all', meta: generateDaoPlugin() }),
-        ]);
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao({ subDaos: [] }) }));
+        useFilterUrlParamSpy.mockReturnValue(['all', jest.fn()]);
     });
 
     afterEach(() => {
         useDaoSpy.mockReset();
-        useDaoPluginsSpy.mockReset();
+        useFilterUrlParamSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoAssetsPageClientProps>) => {
@@ -59,22 +52,34 @@ describe('<DaoAssetsPageClient /> component', () => {
         expect(useDaoSpy).toHaveBeenCalledWith({ urlParams: { id } });
     });
 
-    it('renders the page title, Asset List, Asset List Stats, and Finance Details List when "All" tab is selected', () => {
-        useDaoPluginsSpy.mockReturnValue([
-            generateFilterComponentPlugin({ uniqueId: 'all', meta: generateDaoPlugin() }),
-        ]);
+    it('renders FinanceDetailsList only when DAO has no SubDAOs', () => {
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao({ subDaos: [] }) }));
+        render(createTestComponent());
+
+        expect(screen.getByText(/daoAssetsPage.main.title/)).toBeInTheDocument();
+        expect(screen.getByTestId('asset-list')).toBeInTheDocument();
+        expect(screen.getByTestId('finance-details-list')).toBeInTheDocument();
+        expect(screen.queryByTestId('asset-list-stats')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('subdao-info')).not.toBeInTheDocument();
+    });
+
+    it('renders Asset List Stats and Finance Details List when "All" tab is selected and DAO has SubDAOs', () => {
+        const subDaos = [generateSubDao({ address: '0x123' }), generateSubDao({ address: '0x456' })];
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao({ subDaos }) }));
+        useFilterUrlParamSpy.mockReturnValue(['all', jest.fn()]);
         render(createTestComponent());
 
         expect(screen.getByText(/daoAssetsPage.main.title/)).toBeInTheDocument();
         expect(screen.getByTestId('asset-list')).toBeInTheDocument();
         expect(screen.getByTestId('asset-list-stats')).toBeInTheDocument();
         expect(screen.getByTestId('finance-details-list')).toBeInTheDocument();
+        expect(screen.queryByTestId('subdao-info')).not.toBeInTheDocument();
     });
 
-    it('renders the page title, Asset List, and SubDao Info when a specific SubDAO tab is selected', () => {
-        useDaoPluginsSpy.mockReturnValue([
-            generateFilterComponentPlugin({ uniqueId: 'subdao-123', meta: generateDaoPlugin() }),
-        ]);
+    it('renders SubDao Info when a specific SubDAO tab is selected', () => {
+        const subDaos = [generateSubDao({ address: '0x123' }), generateSubDao({ address: '0x456' })];
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao({ subDaos }) }));
+        useFilterUrlParamSpy.mockReturnValue(['polygon-mainnet-0x123', jest.fn()]);
         render(createTestComponent());
 
         expect(screen.getByText(/daoAssetsPage.main.title/)).toBeInTheDocument();

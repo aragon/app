@@ -79,7 +79,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
 
     const memberListParams = { queryParams: { daoId, pageSize: dashboardMembersCount } };
     const assetListParams = {
-        queryParams: { address: dao.address, network: dao.network, pageSize: dashboardAssetsCount },
+        queryParams: { daoId: dao.id, pageSize: dashboardAssetsCount },
     };
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
