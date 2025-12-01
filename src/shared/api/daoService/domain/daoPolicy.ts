@@ -17,7 +17,7 @@ export interface IDaoPolicy {
     /**
      * Key of the policy used for identification purposes.
      */
-    processKey?: string;
+    policyKey?: string;
     /**
      * Address of the policy plugin.
      */
@@ -69,24 +69,24 @@ export interface IDaoPolicy {
     metadataIpfs?: string;
 }
 
-enum PolicyInterfaceType {
+export enum PolicyInterfaceType {
     ROUTER = 'ROUTER',
     CLAIMER = 'CLAIMER',
 }
 
-enum PolicyStrategyType {
+export enum PolicyStrategyType {
     ROUTER = 'ROUTER',
     BURN_ROUTER = 'BURN_ROUTER',
     CLAIMER = 'CLAIMER',
     MULTI_DISPATCH = 'MULTI_DISPATCH',
 }
 
-enum PolicyStrategyModelType {
+export enum PolicyStrategyModelType {
     RATIO = 'RATIO',
     GAUGE_RATIO = 'GAUGE_RATIO',
 }
 
-enum PolicyStrategySourceType {
+export enum PolicyStrategySourceType {
     DRAIN = 'DRAIN',
     STREAM_BALANCE = 'STREAM_BALANCE',
 }

@@ -39,3 +39,19 @@ export interface IGetDaoPermissionsQueryParams extends IPaginatedRequest {}
 
 export interface IGetDaoPermissionsParams
     extends IRequestUrlQueryParams<IGetDaoPermissionsUrlParams, IGetDaoPermissionsQueryParams> {}
+
+export interface IGetDaoPoliciesUrlParams {
+    /**
+     * Network of the DAO.
+     */
+    network: Network;
+    /**
+     * Address of the DAO to fetch permissions for.
+     */
+    daoAddress: string;
+}
+
+export interface IGetDaoPoliciesQueryParams extends IPaginatedRequest {}
+
+export interface IGetDaoPoliciesParams
+    extends IRequestUrlQueryParams<IGetDaoPoliciesUrlParams, IGetDaoPoliciesQueryParams> {}
