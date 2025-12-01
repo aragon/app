@@ -8,7 +8,33 @@ export const useAssetListData = (params: IGetAssetListParams) => {
 
     const { data: assetListData, status, fetchStatus, isFetchingNextPage, fetchNextPage } = useAssetList(params);
 
-    const assetList = assetListData?.pages.flatMap((page) => page.data);
+    const assetList = assetListData?.pages
+        .flatMap((page) => page.data)
+        .map((asset) => {
+            const amount = asset.amount ?? '0';
+            const hasAmount = asset.amount != null && Number(amount) > 0;
+            const hasAmountUsd = asset.amountUsd != null && Number(asset.amountUsd) > 0;
+            const price = asset.token.priceUsd;
+            let derivedPrice = price;
+
+            if ((!price || Number(price) === 0) && hasAmountUsd && hasAmount) {
+                const perToken = Number(asset.amountUsd) / Number(amount);
+                if (perToken > 0) {
+                    derivedPrice = perToken.toString();
+                }
+            }
+
+            return {
+                ...asset,
+                amount,
+                token: {
+                    ...asset.token,
+                    name: asset.token.name || 'Unknown',
+                    symbol: asset.token.symbol || 'UNKNOWN',
+                    priceUsd: derivedPrice ?? asset.token.priceUsd ?? '0',
+                },
+            };
+        });
     const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
 
     const pageSize = params.queryParams.pageSize ?? assetListData?.pages[0].metadata.pageSize;

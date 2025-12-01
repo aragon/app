@@ -1,6 +1,12 @@
 import * as daoService from '@/shared/api/daoService';
-import * as useFilterUrlParam from '@/shared/hooks/useFilterUrlParam';
-import { generateDao, generateReactQueryResultSuccess, generateSubDao } from '@/shared/testUtils';
+import * as useDaoPluginFilterUrlParam from '@/shared/hooks/useDaoPluginFilterUrlParam';
+import {
+    generateDao,
+    generateDaoPlugin,
+    generateFilterComponentPlugin,
+    generateReactQueryResultSuccess,
+    generateSubDao,
+} from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { DaoAssetsPageClient, type IDaoAssetsPageClientProps } from './daoAssetsPageClient';
 
@@ -24,16 +30,27 @@ jest.mock('@/modules/finance/components/subDaoInfo', () => ({
 
 describe('<DaoAssetsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
-    const useFilterUrlParamSpy = jest.spyOn(useFilterUrlParam, 'useFilterUrlParam');
+    const useDaoPluginFilterUrlParamSpy = jest.spyOn(useDaoPluginFilterUrlParam, 'useDaoPluginFilterUrlParam');
+
+    const allAssetsPlugin = generateFilterComponentPlugin({
+        id: 'all',
+        uniqueId: 'all',
+        label: 'All assets',
+        meta: generateDaoPlugin({ isBody: true }),
+    });
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao({ subDaos: [] }) }));
-        useFilterUrlParamSpy.mockReturnValue(['all', jest.fn()]);
+        useDaoPluginFilterUrlParamSpy.mockReturnValue({
+            activePlugin: allAssetsPlugin,
+            setActivePlugin: jest.fn(),
+            plugins: [allAssetsPlugin],
+        });
     });
 
     afterEach(() => {
         useDaoSpy.mockReset();
-        useFilterUrlParamSpy.mockReset();
+        useDaoPluginFilterUrlParamSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoAssetsPageClientProps>) => {
@@ -66,7 +83,11 @@ describe('<DaoAssetsPageClient /> component', () => {
     it('renders Asset List Stats and Finance Details List when "All" tab is selected and DAO has SubDAOs', () => {
         const subDaos = [generateSubDao({ address: '0x123' }), generateSubDao({ address: '0x456' })];
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao({ subDaos }) }));
-        useFilterUrlParamSpy.mockReturnValue(['all', jest.fn()]);
+        useDaoPluginFilterUrlParamSpy.mockReturnValue({
+            activePlugin: allAssetsPlugin,
+            setActivePlugin: jest.fn(),
+            plugins: [allAssetsPlugin],
+        });
         render(createTestComponent());
 
         expect(screen.getByText(/daoAssetsPage.main.title/)).toBeInTheDocument();
@@ -79,7 +100,17 @@ describe('<DaoAssetsPageClient /> component', () => {
     it('renders SubDao Info when a specific SubDAO tab is selected', () => {
         const subDaos = [generateSubDao({ address: '0x123' }), generateSubDao({ address: '0x456' })];
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao({ subDaos }) }));
-        useFilterUrlParamSpy.mockReturnValue(['polygon-mainnet-0x123', jest.fn()]);
+        const selectedPlugin = generateFilterComponentPlugin({
+            id: 'plugin',
+            uniqueId: 'plugin-1',
+            label: 'Treasury',
+            meta: generateDaoPlugin({ address: '0x123', daoAddress: '0x123', isBody: true }),
+        });
+        useDaoPluginFilterUrlParamSpy.mockReturnValueOnce({
+            activePlugin: selectedPlugin,
+            setActivePlugin: jest.fn(),
+            plugins: [selectedPlugin],
+        });
         render(createTestComponent());
 
         expect(screen.getByText(/daoAssetsPage.main.title/)).toBeInTheDocument();

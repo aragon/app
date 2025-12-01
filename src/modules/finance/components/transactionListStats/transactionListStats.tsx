@@ -9,13 +9,13 @@ export const TransactionListStats: React.FC<ITransactionListStatsProps> = (props
 
     const { t } = useTranslations();
 
-    const subDaoCount = dao.plugins.filter((plugin) => plugin.isSubPlugin).length;
-    const bodyCount = dao.plugins.filter((plugin) => plugin.isBody).length;
+    const subDaoCount = dao.subDaos?.length ?? 0;
+    const daoCount = 1 + subDaoCount;
 
     return (
         <DefinitionList.Container {...otherProps}>
-            <DefinitionList.Item term={t('app.finance.transactionListStats.bodies')}>
-                <p className="text-neutral-500">{bodyCount}</p>
+            <DefinitionList.Item term={t('app.finance.transactionListStats.daos')}>
+                <p className="text-neutral-500">{daoCount}</p>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.finance.transactionListStats.subDaos')}>
                 <p className="text-neutral-500">{subDaoCount}</p>

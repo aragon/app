@@ -1,16 +1,25 @@
 'use client';
 
-import { useDao, type ISubDaoSummary } from '@/shared/api/daoService';
-import { PluginFilterComponent, type IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
+import type { IDaoPlugin } from '@/shared/api/daoService';
+import { useDao } from '@/shared/api/daoService';
+import {
+    type IFilterComponentPlugin,
+    type IPluginFilterComponentProps,
+    PluginFilterComponent,
+} from '@/shared/components/pluginFilterComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
+import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
+import { pluginGroupFilter } from '@/shared/hooks/useDaoPlugins';
+import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
+import { subDaoDisplayUtils } from '@/shared/utils/subDaoDisplayUtils';
 import type { ReactNode } from 'react';
-import { useMemo } from 'react';
 import type { IGetAssetListParams } from '../../api/financeService';
 import { AssetListDefault } from './assetListDefault';
 
-export interface IAssetListContainerProps {
+export interface IAssetListContainerProps
+    extends Pick<IPluginFilterComponentProps<IDaoPlugin>, 'value' | 'onValueChange'> {
+    value?: IFilterComponentPlugin<IDaoPlugin>;
     /**
      * Initial parameters to use for fetching the asset list.
      */
@@ -27,14 +36,6 @@ export interface IAssetListContainerProps {
      * Children of the component.
      */
     children?: ReactNode;
-    /**
-     * External value control for the active SubDAO.
-     */
-    value?: IFilterComponentPlugin<ISubDaoSummary>;
-    /**
-     * Callback when the active SubDAO changes.
-     */
-    onValueChange?: (value: IFilterComponentPlugin<ISubDaoSummary>) => void;
 }
 
 export const assetListFilterParam = 'subdao';
@@ -45,79 +46,60 @@ export const AssetListContainer: React.FC<IAssetListContainerProps> = (props) =>
     const { t } = useTranslations();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    // Create filter items based on SubDAOs
-    const filters = useMemo(() => {
-        if (!dao?.subDaos || dao.subDaos.length === 0) {
-            return [];
-        }
-
-        // Create "All" filter + one filter per SubDAO
-        // Note: For "All" tab, use parent DAO's daoId to get aggregated parent + SubDAO data
-        const allFilter: IFilterComponentPlugin<ISubDaoSummary> = {
-            id: 'all',
-            uniqueId: 'all',
-            label: t('app.finance.assetList.groupTab'),
-            meta: {} as ISubDaoSummary,
-            props: {
-                initialParams: {
-                    ...initialParams,
-                    queryParams: {
-                        ...initialParams.queryParams,
-                        daoId: dao.id,
-                    },
-                },
-            },
-        };
-
-        const subDaoFilters: IFilterComponentPlugin<ISubDaoSummary>[] = dao.subDaos.map((subDao) => ({
-            id: subDao.address,
-            uniqueId: `${subDao.network}-${subDao.address}`,
-            label: subDao.name,
-            meta: subDao,
-            props: {
-                initialParams: {
-                    ...initialParams,
-                    queryParams: {
-                        ...initialParams.queryParams,
-                        daoId: subDao.id,
-                    },
-                },
-            },
-        }));
-
-        return [allFilter, ...subDaoFilters];
-    }, [dao, initialParams, t]);
-
-    const validValues = filters.map((f) => f.uniqueId);
-    const [activeFilterId, setActiveFilterId] = useFilterUrlParam({
+    const { activePlugin, setActivePlugin, plugins } = useDaoPluginFilterUrlParam({
+        daoId,
+        type: PluginType.BODY,
+        includeSubPlugins: true,
+        includeGroupFilter: true,
         name: assetListFilterParam,
-        fallbackValue: filters[0]?.uniqueId,
-        validValues,
         enableUrlUpdate: onValueChange == null,
     });
 
-    const activeFilter = filters.find((f) => f.uniqueId === activeFilterId) ?? filters[0];
+    const seenDaoAddresses = new Set<string>();
+    const processedPlugins = plugins?.reduce<IFilterComponentPlugin<IDaoPlugin>[]>((acc, plugin) => {
+        const isGroupTab = plugin.id === pluginGroupFilter.id;
+        const baseQueryParams = { ...initialParams.queryParams };
+        const pluginDaoAddress = subDaoDisplayUtils.getPluginDaoAddress(plugin.meta);
+        const pluginDaoId = isGroupTab
+            ? daoId
+            : `${dao?.network ?? ''}-${plugin.meta.daoAddress ?? plugin.meta.address}`;
+        const pluginQueryParams = { ...baseQueryParams, daoId: pluginDaoId, address: undefined };
+        const pluginInitialParams = { ...initialParams, queryParams: pluginQueryParams };
 
-    // If no SubDAOs, render AssetListDefault directly without tabs
-    if (!dao?.subDaos || dao.subDaos.length === 0) {
-        return (
-            <AssetListDefault
-                initialParams={{
-                    ...initialParams,
-                    queryParams: { ...initialParams.queryParams, daoId: dao?.id },
-                }}
-                {...otherProps}
-            />
-        );
-    }
+        const isDuplicateSubDao = !isGroupTab && pluginDaoAddress !== '' && seenDaoAddresses.has(pluginDaoAddress);
+        if (isDuplicateSubDao) {
+            return acc;
+        }
+
+        if (!isGroupTab && pluginDaoAddress !== '') {
+            seenDaoAddresses.add(pluginDaoAddress);
+        }
+
+        const label = isGroupTab
+            ? t('app.finance.assetList.groupTab')
+            : subDaoDisplayUtils.getPluginDisplayName({
+                  dao,
+                  plugin: plugin.meta,
+                  groupLabel: t('app.finance.assetList.groupTab'),
+                  fallbackLabel: plugin.label ?? dao?.name ?? t('app.finance.assetList.groupTab'),
+              });
+
+        acc.push({ ...plugin, label, props: { initialParams: pluginInitialParams, plugin: plugin.meta } });
+        return acc;
+    }, []);
+
+    const resolvedValue = value ?? activePlugin;
+    const resolvedValueWithLabel =
+        processedPlugins?.find((plugin) => plugin.uniqueId === resolvedValue?.uniqueId) ?? resolvedValue;
+    const resolvedOnValueChange = onValueChange ?? setActivePlugin;
 
     return (
         <PluginFilterComponent
             slotId="FINANCE_ASSET_LIST"
-            plugins={filters}
+            plugins={processedPlugins}
             Fallback={AssetListDefault}
-            value={value ?? activeFilter}
-            onValueChange={onValueChange ?? ((filter) => setActiveFilterId(filter.uniqueId))}
+            value={resolvedValueWithLabel}
+            onValueChange={resolvedOnValueChange}
             searchParamName={assetListFilterParam}
             {...otherProps}
         />

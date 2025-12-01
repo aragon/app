@@ -1,4 +1,4 @@
-import { AssetListContainer } from './assetListContainer';
+import { AssetListContainer, assetListFilterParam } from './assetListContainer';
 import { AssetListDefault } from './assetListDefault';
 
 export const AssetList = {
@@ -8,3 +8,4 @@ export const AssetList = {
 
 export type { IAssetListContainerProps } from './assetListContainer';
 export type { IAssetListDefaultProps } from './assetListDefault';
+export { assetListFilterParam };

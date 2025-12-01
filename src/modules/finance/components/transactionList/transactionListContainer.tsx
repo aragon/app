@@ -1,6 +1,7 @@
 'use client';
 
 import type { IDaoPlugin } from '@/shared/api/daoService';
+import { useDao } from '@/shared/api/daoService';
 import {
     type IFilterComponentPlugin,
     type IPluginFilterComponentProps,
@@ -11,6 +12,7 @@ import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrl
 import { pluginGroupFilter } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
+import { subDaoDisplayUtils } from '@/shared/utils/subDaoDisplayUtils';
 import type { ReactNode } from 'react';
 import type { IGetTransactionListParams } from '../../api/financeService';
 import { TransactionListDefault } from './transactionListDefault';
@@ -42,6 +44,7 @@ export const TransactionListContainer: React.FC<ITransactionListContainerProps> 
     const { initialParams, daoId, value, onValueChange, ...otherProps } = props;
 
     const { t } = useTranslations();
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const { activePlugin, setActivePlugin, plugins } = useDaoPluginFilterUrlParam({
         daoId,
@@ -52,18 +55,43 @@ export const TransactionListContainer: React.FC<ITransactionListContainerProps> 
         enableUrlUpdate: onValueChange == null,
     });
 
-    const processedPlugins = plugins?.map((plugin) => {
-        const isGroupTab = plugin.id === pluginGroupFilter.id;
-        const baseQueryParams = initialParams.queryParams;
-        const pluginQueryParams = isGroupTab ? baseQueryParams : { ...baseQueryParams, address: plugin.meta.address };
-        const pluginInitialParams = { ...initialParams, queryParams: pluginQueryParams };
+    const seenDaoAddresses = new Set<string>();
+    const processedPlugins = plugins
+        ?.map((plugin) => {
+            const isGroupTab = plugin.id === pluginGroupFilter.id;
+            const baseQueryParams = { ...initialParams.queryParams };
+            const pluginDaoId = isGroupTab
+                ? daoId
+                : `${dao?.network ?? ''}-${plugin.meta.daoAddress ?? plugin.meta.address}`;
+            const pluginQueryParams = { ...baseQueryParams, daoId: pluginDaoId, address: undefined };
+            const pluginInitialParams = { ...initialParams, queryParams: pluginQueryParams };
 
-        const label = isGroupTab ? t('app.finance.transactionList.groupTab') : plugin.label;
+            const pluginDaoAddress = (plugin.meta.daoAddress ?? dao?.address ?? '').toLowerCase();
+            const isDuplicateSubDao = !isGroupTab && pluginDaoAddress !== '' && seenDaoAddresses.has(pluginDaoAddress);
+            if (isDuplicateSubDao) {
+                return null;
+            }
 
-        return { ...plugin, label, props: { initialParams: pluginInitialParams, plugin: plugin.meta } };
-    });
+            if (!isGroupTab && pluginDaoAddress !== '') {
+                seenDaoAddresses.add(pluginDaoAddress);
+            }
+
+            const label = isGroupTab
+                ? t('app.finance.transactionList.groupTab')
+                : subDaoDisplayUtils.getPluginDisplayName({
+                      dao,
+                      plugin: plugin.meta,
+                      groupLabel: t('app.finance.transactionList.groupTab'),
+                      fallbackLabel: plugin.label,
+                  });
+
+            return { ...plugin, label, props: { initialParams: pluginInitialParams, plugin: plugin.meta } };
+        })
+        .filter((plugin): plugin is IFilterComponentPlugin<IDaoPlugin> => plugin != null);
 
     const resolvedValue = value ?? activePlugin;
+    const resolvedValueWithLabel =
+        processedPlugins?.find((plugin) => plugin.uniqueId === resolvedValue?.uniqueId) ?? resolvedValue;
     const resolvedOnValueChange = onValueChange ?? setActivePlugin;
 
     return (
@@ -71,7 +99,7 @@ export const TransactionListContainer: React.FC<ITransactionListContainerProps> 
             slotId="FINANCE_TRANSACTION_LIST"
             plugins={processedPlugins}
             Fallback={TransactionListDefault}
-            value={resolvedValue}
+            value={resolvedValueWithLabel}
             onValueChange={resolvedOnValueChange}
             searchParamName={transactionListFilterParam}
             {...otherProps}

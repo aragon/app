@@ -753,9 +753,11 @@
         "searchPlaceholder": "Search assets..."
       },
       "assetListStats": {
-        "bodies": "Bodies",
+        "daos": "DAOs",
         "note": "Aggregate treasury data across all SubDAOs coming soon.",
-        "subDaos": "SubDAOs"
+        "subDaos": "SubDAOs",
+        "tokens": "Tokens",
+        "totalValueUsd": "Total value (USD)"
       },
       "assetSelectionDialog": {
         "a11y": {
@@ -814,7 +816,7 @@
       },
       "transactionListStats": {
         "aggregateNote": "Aggregate stats across SubDAOs coming soon.",
-        "bodies": "Bodies",
+        "daos": "DAOs",
         "note": "Note",
         "subDaos": "SubDAOs"
       },

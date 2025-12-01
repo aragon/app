@@ -8,6 +8,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
 import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
+import { subDaoDisplayUtils } from '@/shared/utils/subDaoDisplayUtils';
 import { invariant } from '@aragon/gov-ui-kit';
 import type { IGetTransactionListParams } from '../../api/financeService';
 import { TransactionList, transactionListFilterParam } from '../../components/transactionList';
@@ -41,9 +42,15 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
     invariant(activePlugin != null, 'DaoTransactionsPageClient: no valid plugin found.');
 
     const allTransactionsSelected = activePlugin.uniqueId === 'all';
-    const asideCardTitle = allTransactionsSelected
-        ? t('app.finance.daoTransactionsPage.aside.treasury')
-        : activePlugin.label;
+    const matchingSubDao = subDaoDisplayUtils.getMatchingSubDao({ dao, plugin: activePlugin.meta });
+    const isParentSelected = subDaoDisplayUtils.isParentPlugin({ dao, plugin: activePlugin.meta });
+
+    const asideCardTitle = subDaoDisplayUtils.getPluginDisplayName({
+        dao,
+        plugin: activePlugin.meta,
+        groupLabel: t('app.finance.daoTransactionsPage.aside.treasury'),
+        fallbackLabel: activePlugin.label,
+    });
 
     return (
         <Page.Content>
