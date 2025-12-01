@@ -32,28 +32,13 @@ class PreparePolicyDialogUtils {
     };
 
     normalizeRatios = (values: number[]): number[] => {
-        // Validate input
-        if (values.length === 0) {
-            throw new Error('Cannot normalize ratios: empty array');
-        }
-
         const total = values.reduce((sum, value) => sum + value, 0);
-
-        if (total === 0) {
-            throw new Error('Cannot normalize ratios: sum of values is zero');
-        }
-
-        // Check for invalid values
-        if (values.some((value) => value < 0)) {
-            throw new Error('Cannot normalize ratios: negative values not allowed');
-        }
-
-        // Calculate ratios with proper rounding
         const ratios = values.map((value) => Math.floor((value / total) * ratioBase));
         const currentSum = ratios.reduce((sum, ratio) => sum + ratio, 0);
 
         // Distribute the remainder to ensure exact RATIO_BASE sum
         const remainder = ratioBase - currentSum;
+
         if (remainder !== 0) {
             // Find the index with the largest fractional part to add the remainder
             const fractionalParts = values.map((value, index) => ({
@@ -68,8 +53,8 @@ class PreparePolicyDialogUtils {
             }
         }
 
-        // Final validation: ensure sum equals RATIO_BASE
         const finalSum = ratios.reduce((sum, ratio) => sum + ratio, 0);
+
         if (finalSum !== ratioBase) {
             throw new Error(`Invalid ratios: sum is ${finalSum}, expected ${ratioBase}`);
         }
