@@ -23,6 +23,8 @@ const epochPeriodToSeconds = {
     [StreamingEpochPeriod.WEEK]: 7 * 24 * 60 * 60,
 };
 
+const ratioBase = 1_000_000;
+
 class PreparePolicyDialogUtils {
     private publishPolicyProposalMetadata = {
         title: 'Deploy Capital Flow Policy',
@@ -45,8 +47,7 @@ class PreparePolicyDialogUtils {
         if (strategy.routerType === RouterType.FIXED) {
             const { recipients, asset } = strategy.distributionFixed;
             const recipientAddresses = recipients.map((r) => r.address as Hex);
-            const RATIO_BASE = 1_000_000;
-            const ratios = recipients.map((r) => Math.round((r.ratio / 100) * RATIO_BASE));
+            const ratios = this.normalizeRatios(recipients.map((r) => r.ratio / 100));
             const deployModelCallData = encodeFunctionData({
                 abi: routerModelFactoryAbi,
                 functionName: 'deployRatioModel',
@@ -74,8 +75,7 @@ class PreparePolicyDialogUtils {
 
             // Calculate total amount and ratios
             const totalAmount = recipients.reduce((sum, r) => sum + Number(r.amount), 0);
-            const RATIO_BASE = 1_000_000;
-            const ratios = recipients.map((r) => Math.round((Number(r.amount) / totalAmount) * RATIO_BASE));
+            const ratios = this.normalizeRatios(recipients.map((r) => Number(r.amount)));
 
             const deployModelCallData = encodeFunctionData({
                 abi: routerModelFactoryAbi,
@@ -182,6 +182,11 @@ class PreparePolicyDialogUtils {
 
     preparePublishPolicyProposalMetadata = () => {
         return this.publishPolicyProposalMetadata;
+    };
+
+    private normalizeRatios = (values: number[]): number[] => {
+        const total = values.reduce((sum, value) => sum + value, 0);
+        return values.map((value) => Math.round((value / total) * ratioBase));
     };
 }
 
