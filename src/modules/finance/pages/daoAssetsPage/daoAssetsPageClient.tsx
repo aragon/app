@@ -1,6 +1,7 @@
 'use client';
 
 import { AssetListStats } from '@/modules/finance/components/assetListStats';
+import { FinanceDetailsList } from '@/modules/finance/components/financeDetailsList';
 import { SubDaoInfo } from '@/modules/finance/components/subDaoInfo';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
@@ -54,12 +55,19 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
                 />
             </Page.Main>
             <Page.Aside>
-                <Page.AsideCard title={asideCardTitle}>
-                    {dao && allAssetsSelected && <AssetListStats dao={dao} />}
-                    {dao && !allAssetsSelected && (
+                {dao && allAssetsSelected && (
+                    <>
+                        <Page.AsideCard title={asideCardTitle}>
+                            <AssetListStats dao={dao} />
+                        </Page.AsideCard>
+                        <FinanceDetailsList dao={dao} />
+                    </>
+                )}
+                {dao && !allAssetsSelected && (
+                    <Page.AsideCard title={asideCardTitle}>
                         <SubDaoInfo plugin={activePlugin.meta} network={dao.network} daoId={id} />
-                    )}
-                </Page.AsideCard>
+                    </Page.AsideCard>
+                )}
             </Page.Aside>
         </>
     );
