@@ -67,6 +67,7 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<
             min: 0,
             max: 100,
             validate: (value) => {
+                debugger;
                 const numValue = Number(value);
                 if (numValue === 0) return true;
                 // Calculate what total would be without this recipient's current value

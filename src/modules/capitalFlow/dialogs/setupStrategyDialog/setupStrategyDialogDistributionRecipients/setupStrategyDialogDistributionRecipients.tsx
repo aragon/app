@@ -1,6 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import type { IRecipientRelative } from '../setupStrategyDialogDefinitions';
 import { SetupStrategyDialogDistributionRecipientItem } from '../setupStrategyDialogDistributionFixed';
@@ -33,7 +33,20 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
         update: updateRecipient,
     } = useFieldArray({
         name: recipientsFieldName,
+        rules: {
+            required: true,
+            minLength: 1,
+        },
     });
+
+    // Initialize with one empty recipient if the array is empty
+    useEffect(() => {
+        const recipientsValues = getValues(recipientsFieldName);
+
+        if (recipientsValues.length === 0) {
+            addRecipient({ address: '', ratio: 0 });
+        }
+    }, [addRecipient, recipientsField.length]);
 
     const totalRatio = useMemo(
         () =>
@@ -50,6 +63,12 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
         }
     };
 
+    const handleRemoveRecipient = (index: number) => {
+        if (recipientsField.length > 1) {
+            removeRecipient(index);
+        }
+    };
+
     const handleDistributeEvenly = () => {
         const evenRatio = Math.floor(100 / recipientsField.length);
         const remainder = 100 - evenRatio * recipientsField.length;
@@ -63,6 +82,7 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
     };
 
     const canAddMore = recipientsField.length < maxRecipients;
+    const canRemove = recipientsField.length > 1;
 
     return (
         <div className="flex flex-col gap-4">
@@ -86,8 +106,8 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
                         key={field.id}
                         fieldPrefix={`${recipientsFieldName}.[${index}]`}
                         totalRatio={totalRatio}
-                        onRemove={() => removeRecipient(index)}
-                        canRemove={recipientsField.length > 1}
+                        onRemove={() => handleRemoveRecipient(index)}
+                        canRemove={canRemove}
                         daoId={daoId}
                     />
                 ))}
