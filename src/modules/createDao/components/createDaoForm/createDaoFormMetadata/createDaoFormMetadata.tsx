@@ -3,6 +3,7 @@ import { Network } from '@/shared/api/daoService';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { sanitizePlainText } from '@/shared/security';
 import { InputFileAvatar, InputText, TextArea } from '@aragon/gov-ui-kit';
 import { useWatch } from 'react-hook-form';
 import { mainnet } from 'viem/chains';
@@ -38,7 +39,10 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
 
     // Watch network field to decide whether or not to show ENS field
     const networkFieldName = fieldPrefix ? `${fieldPrefix}.network` : 'network';
-    const networkValue = useWatch<Record<string, ICreateDaoFormData['network']>>({ name: networkFieldName });
+    const networkValue = useWatch<Record<string, ICreateDaoFormData['network']>>({
+        name: networkFieldName,
+        defaultValue: undefined,
+    });
     const isEthMainnet = networkValue === Network.ETHEREUM_MAINNET;
 
     const validateEnsField = async (value?: string) => {
@@ -85,13 +89,17 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
 
     // Watch the avatar field to properly update the InputFileAvatar component when its value changes
     const avatarFieldName = fieldPrefix ? `${fieldPrefix}.avatar` : 'avatar';
-    const avatarValue = useWatch<Record<string, ICreateDaoFormData['avatar']>>({ name: avatarFieldName });
+    const avatarValue = useWatch<Record<string, ICreateDaoFormData['avatar']>>({
+        name: avatarFieldName,
+        defaultValue: undefined,
+    });
 
     const descriptionField = useFormField<ICreateDaoFormData, 'description'>('description', {
         label: t('app.createDao.createDaoForm.metadata.description.label'),
         fieldPrefix,
         rules: { maxLength: descriptionMaxLength },
         trimOnBlur: true,
+        sanitizeMode: 'multiline',
         defaultValue: '',
     });
 
@@ -102,7 +110,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
                 <InputText
                     value={ensValue}
                     onChange={(e) => {
-                        onChangeEnsField(e.target.value.toLowerCase());
+                        onChangeEnsField(sanitizePlainText(e.target.value).toLowerCase());
                     }}
                     helpText={t('app.createDao.createDaoForm.metadata.ens.helpText')}
                     addon=".dao.eth"
@@ -126,6 +134,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
                 maxLength={descriptionMaxLength}
                 isOptional={true}
                 {...descriptionField}
+                value={(descriptionField.value as string | null | undefined) ?? ''}
             />
             <ResourcesInput
                 name="resources"

@@ -34,6 +34,7 @@ export const MultisigAddMembersAction: React.FC<IMultisigAddMembersActionProps> 
 
     const watchMembersField = useWatch<Record<string, IMultisigSetupMembershipForm['members']>>({
         name: membersFieldName,
+        defaultValue: [],
     });
     const controlledMembersField = useMemo(
         () => watchMembersField.map((field, index) => ({ ...field, ...watchMembersField[index] })),
@@ -58,6 +59,7 @@ export const MultisigAddMembersAction: React.FC<IMultisigAddMembersActionProps> 
             formPrefix={actionFieldName}
             pluginAddress={action.to}
             network={network}
+            daoId={action.daoId}
             hideLabel={true}
         />
     );

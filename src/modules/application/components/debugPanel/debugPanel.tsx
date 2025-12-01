@@ -1,6 +1,7 @@
 'use client';
 
 import { useDebugContext } from '@/shared/components/debugProvider/debugProvider';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, Heading, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
@@ -14,6 +15,7 @@ export const DebugPanel: React.FC<IDebugPanelProps> = () => {
 
     const { controls, registerControl } = useDebugContext();
     const { t } = useTranslations();
+    const { snapshot: featureFlagsSnapshot, setOverride } = useFeatureFlags();
 
     const panelRef = useRef<HTMLDivElement>(null);
 
@@ -28,7 +30,27 @@ export const DebugPanel: React.FC<IDebugPanelProps> = () => {
             value: process.env.NEXT_PUBLIC_FEATURE_ENABLE_ALL_PLUGINS,
             group: 'Governance designer',
         });
-    }, [registerControl]);
+
+        featureFlagsSnapshot.forEach((flag) => {
+            // Don't show debugPanel flag in the debug panel itself
+            if (flag.key === 'debugPanel') {
+                return;
+            }
+
+            registerControl({
+                name: `featureFlag:${flag.key}`,
+                type: 'boolean',
+                label: flag.name,
+                value: flag.enabled,
+                group: 'Feature flags',
+                onChange: (value) => {
+                    if (typeof value === 'boolean') {
+                        setOverride(flag.key, value);
+                    }
+                },
+            });
+        });
+    }, [featureFlagsSnapshot, registerControl, setOverride]);
 
     useEffect(() => {
         const handleMouseDown = (event: MouseEvent) => {

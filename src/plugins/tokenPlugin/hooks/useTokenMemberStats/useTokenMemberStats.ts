@@ -23,10 +23,7 @@ export const useTokenMemberStats = (params: IUseTokenMemberStatsParams): IPageHe
     const { token } = plugin.settings;
 
     // Read wrapped token balance directly from blockchain
-    const { balance: tokenBalance } = useWrappedTokenBalance({
-        userAddress: address,
-        token,
-    });
+    const { balance: tokenBalance } = useWrappedTokenBalance({ userAddress: address, token });
 
     if (!isTokenMember(member)) {
         return [];

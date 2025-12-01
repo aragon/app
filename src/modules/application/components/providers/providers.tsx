@@ -1,13 +1,16 @@
 'use client';
 
+import { initActionViewRegistry } from '@/actions';
 import { initPluginRegistry } from '@/initPluginRegistry';
 import { BlockNavigationContextProvider } from '@/shared/components/blockNavigationContext';
 import { DebugContextProvider } from '@/shared/components/debugProvider/debugProvider';
 import { DialogProvider } from '@/shared/components/dialogProvider';
 import { DialogRoot } from '@/shared/components/dialogRoot';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import { Image } from '@/shared/components/image';
 import { Link } from '@/shared/components/link';
 import { TranslationsProvider } from '@/shared/components/translationsProvider';
+import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import type { Translations } from '@/shared/utils/translationsUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { type DehydratedState, HydrationBoundary, QueryClientProvider } from '@tanstack/react-query';
@@ -36,18 +39,23 @@ export interface IProvidersProps {
      * Children of the component.
      */
     children?: ReactNode;
+    /**
+     * Initial feature flags snapshot resolved on the server.
+     */
+    featureFlagsSnapshot?: FeatureFlagSnapshot[];
 }
 
 const coreProviderValues = { Link: Link, Img: Image };
 
 export const Providers: React.FC<IProvidersProps> = (props) => {
-    const { translations, wagmiInitialState, dehydratedState, children } = props;
+    const { translations, wagmiInitialState, dehydratedState, children, featureFlagsSnapshot } = props;
 
     const queryClient = queryClientUtils.getQueryClient();
 
     // Initialise plugin registry and intercept fetch requests (if enabled) for client-side components
     initPluginRegistry();
     fetchInterceptorUtils.intercept();
+    initActionViewRegistry();
 
     return (
         <DebugContextProvider>
@@ -61,11 +69,13 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
                                 queryClient={queryClient}
                                 coreProviderValues={coreProviderValues}
                             >
-                                <DialogProvider>
-                                    {children}
-                                    <DialogRoot dialogs={providersDialogs} />
-                                    <ReactQueryDevtools />
-                                </DialogProvider>
+                                <FeatureFlagsProvider initialSnapshot={featureFlagsSnapshot}>
+                                    <DialogProvider>
+                                        {children}
+                                        <DialogRoot dialogs={providersDialogs} />
+                                        <ReactQueryDevtools />
+                                    </DialogProvider>
+                                </FeatureFlagsProvider>
                             </GukModulesProvider>
                         </BlockNavigationContextProvider>
                     </TranslationsProvider>

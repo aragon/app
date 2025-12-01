@@ -35,6 +35,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
     const { slotId, onSuccess, onError, permissionNamespace, plugin, ...otherParams } = params;
 
     const { t } = useTranslations();
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     const { close, updateOptions } = useDialogContext();
 
     const checkPermissions = useSlotSingleFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
@@ -73,8 +74,8 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
 
     return (
         <>
-            <Dialog.Header title={title} />
-            <Dialog.Content description={description} className="pb-3">
+            <Dialog.Header title={title} description={description} />
+            <Dialog.Content className="pb-3">
                 <PermissionsDefinitionList isLoading={isLoading} settings={settings} />
             </Dialog.Content>
             <Dialog.Footer primaryAction={footerAction} />

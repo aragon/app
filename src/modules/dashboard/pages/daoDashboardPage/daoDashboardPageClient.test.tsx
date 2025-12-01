@@ -1,5 +1,6 @@
 import * as daoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     generateDao,
@@ -58,7 +59,9 @@ describe('<DaoDashboardPageClient /> component', () => {
 
         return (
             <GukModulesProvider>
-                <DaoDashboardPageClient {...completeProps} />
+                <FeatureFlagsProvider>
+                    <DaoDashboardPageClient {...completeProps} />
+                </FeatureFlagsProvider>
             </GukModulesProvider>
         );
     };

@@ -18,6 +18,13 @@ export interface IDialogLocationOptions<TParams extends DialogComponentProps = D
      * Callback triggered instead of the default close function.
      */
     onClose?: () => void;
+    /**
+     * If true, adds the dialog onto the stack. If false (default), replaces
+     * existing dialogs with the new one (as in the previous approach with 1 dialog).
+     *
+     * Set to true for nested dialogs that should preserve parent dialog state.
+     */
+    stack?: boolean;
 }
 
 export interface IDialogLocation<TParams extends DialogComponentProps = DialogComponentProps>
@@ -30,19 +37,38 @@ export interface IDialogLocation<TParams extends DialogComponentProps = DialogCo
 
 export interface IDialogContext {
     /**
-     * Definitions for the current active dialog.
+     * Stack of currently open dialogs. The last item is the topmost (active) dialog.
+     * Only active dialog is visible.
      */
-    location?: IDialogLocation;
+    locations: IDialogLocation[];
     /**
      * Opens the specified dialog.
+     *
+     * @example
+     * // Replace all dialogs (default behavior)
+     * open('MY_DIALOG', { params: { data } });
+     *
+     * @example
+     * // Add to stack, preserving parent dialog state
+     * open('CHILD_DIALOG', { params: { data }, stack: true });
      */
     open: (id: string, options?: IDialogLocationOptions) => void;
     /**
-     * Closes the current active dialog if there's one.
+     * Closes dialogs.
+     *
+     * @example
+     * // Close all dialogs on stack
+     * close();
+     *
+     * @example
+     * // Close a specific dialog (removes it from stack)
+     * close('SPECIFIC_DIALOG_ID');
      */
     close: (id?: string) => void;
     /**
      * Updates the options for the current active dialog.
+     *
+     * @deprecated This method was mostly used to fix rough edges previous modal approach had. With the new approach there is no state reusing between modals. TODO: APP-358.
      */
     updateOptions: (options: Partial<IDialogLocationOptions>) => void;
 }

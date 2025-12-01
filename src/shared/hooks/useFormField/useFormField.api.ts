@@ -41,6 +41,19 @@ export interface IUseFormFieldOptions<TFieldValues extends FieldValues, TName ex
      * Value to be forwarded to the translation function when definining custom error messages.
      */
     alertValue?: ITFuncOptions;
+    /**
+     * Sanitization mode for this field.
+     * - 'singleline' (default): strips control chars, trims. Use for inputs.
+     * - 'multiline': preserves tabs/newlines, strips other control chars, trims.
+     * - 'none': do not sanitize (only trim if trimOnBlur is true).
+     */
+    sanitizeMode?: 'singleline' | 'multiline' | 'none';
+    /**
+     * When false, skip sanitizing and pushing the blur event value back into the field.
+     * Useful for non-primitive values controlled by custom inputs (e.g., composite addresses).
+     * @default true
+     */
+    sanitizeOnBlur?: boolean;
 }
 
 export type IUseFormFieldReturn<

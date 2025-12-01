@@ -12,13 +12,24 @@ class NavigationDaoUtils {
         const baseUrl = daoUtils.getDaoUrl(dao)!;
 
         const defaultLinks = this.getDefaultLinks(dao, baseUrl, context);
-        const pluginLinks = this.getPluginLinks(dao, baseUrl, context);
+        const { left, right } = this.getPluginLinks(dao, baseUrl, context);
 
-        return defaultLinks.concat(pluginLinks);
+        const allLinks = [...left, ...defaultLinks, ...right];
+
+        // Deduplicate links by URL to avoid duplicate navigation items, e.g. multiple "gauge" plugins are possible
+        const seen = new Set<string>();
+        return allLinks.filter((link) => {
+            if (seen.has(link.link)) {
+                return false;
+            }
+            seen.add(link.link);
+            return true;
+        });
     };
 
     private getDefaultLinks = (dao: IDao, baseUrl: string, context: NavigationDaoContext): INavigationLink[] => {
         const isSupported = daoUtils.hasSupportedPlugins(dao);
+        const hasBodyPlugin = daoUtils.hasPluginBody(dao);
 
         const isPageContext = context === 'page';
         const isDialogContext = context === 'dialog';
@@ -41,7 +52,7 @@ class NavigationDaoUtils {
                 label: 'app.application.navigationDao.link.members',
                 link: `${baseUrl}/members`,
                 icon: IconType.APP_MEMBERS,
-                hidden: !isSupported,
+                hidden: !isSupported || !hasBodyPlugin,
                 lgHidden: isDialogContext,
             },
             {
@@ -65,13 +76,20 @@ class NavigationDaoUtils {
         ];
     };
 
-    private getPluginLinks = (dao: IDao, baseUrl: string, context: NavigationDaoContext): INavigationLink[] => {
-        const pluginLinks = dao.plugins.reduce<INavigationLink[]>((current, plugin) => {
-            const pluginInfo = pluginRegistryUtils.getPlugin(plugin.interfaceType) as IPluginInfo | undefined;
-            const pluginPages = pluginInfo?.pages?.(baseUrl, context) ?? [];
+    private getPluginLinks = (dao: IDao, baseUrl: string, context: NavigationDaoContext) => {
+        const pluginLinks = dao.plugins.reduce<{ left: INavigationLink[]; right: INavigationLink[] }>(
+            (current, plugin) => {
+                const pluginInfo = pluginRegistryUtils.getPlugin(plugin.interfaceType) as IPluginInfo | undefined;
+                const pluginPagesLeft = pluginInfo?.pageLinksLeft?.(baseUrl, context) ?? [];
+                const pluginPagesRight = pluginInfo?.pageLinksRight?.(baseUrl, context) ?? [];
 
-            return current.concat(pluginPages);
-        }, []);
+                return {
+                    left: current.left.concat(pluginPagesLeft),
+                    right: current.right.concat(pluginPagesRight),
+                };
+            },
+            { left: [], right: [] },
+        );
 
         return pluginLinks;
     };

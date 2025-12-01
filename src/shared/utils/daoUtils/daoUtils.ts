@@ -51,6 +51,10 @@ export interface IDaoAvailableUpdates {
 }
 
 class DaoUtils {
+    hasPluginBody = (dao?: IDao): boolean => {
+        return dao?.plugins.some((p) => p.isBody) ?? false;
+    };
+
     hasSupportedPlugins = (dao?: IDao): boolean => {
         const pluginIds = dao?.plugins.map(({ interfaceType }) => interfaceType);
 
@@ -64,7 +68,11 @@ class DaoUtils {
             return plugin.name;
         }
 
-        return this.parsePluginSubdomain(plugin.subdomain);
+        if (plugin.subdomain) {
+            return this.parsePluginSubdomain(plugin.subdomain);
+        }
+
+        return this.parsePluginInterfaceType(plugin.interfaceType);
     };
 
     getDaoPlugins = (dao?: IDao, params?: IGetDaoPluginsParams) => {
@@ -81,10 +89,33 @@ class DaoUtils {
         );
     };
 
+    /**
+     * Parses the plugin subdomain to a human readable string.
+     * @example
+     * parsePluginSubdomain('token-voting') -> 'Token Voting'
+     * parsePluginSubdomain('lock-to-vote-plugin') -> 'Lock to Vote Plugin'
+     * @param subdomain - The subdomain to parse.
+     * @returns The parsed subdomain in Title Case.
+     */
     parsePluginSubdomain = (subdomain: string): string => {
         const parts = subdomain.split('-');
 
         return parts.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+    };
+
+    /**
+     * Parses the plugin interface type to a human readable string.
+     * @example
+     * parsePluginInterfaceType('tokenVoting') -> 'Token Voting'
+     * parsePluginInterfaceType('multisig') -> 'Multisig'
+     * parsePluginInterfaceType('lockToVote') -> 'Lock to Vote'
+     * @param interfaceType - The interface type to parse.
+     * @returns The parsed interface type in Title Case.
+     */
+    parsePluginInterfaceType = (interfaceType: string): string => {
+        const parts = interfaceType.split(/(?=[A-Z])/);
+
+        return parts.map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()).join(' ');
     };
 
     hasAvailableUpdates = (dao?: IDao): IDaoAvailableUpdates => {

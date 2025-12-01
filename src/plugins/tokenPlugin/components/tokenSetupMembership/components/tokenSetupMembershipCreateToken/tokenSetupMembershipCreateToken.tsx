@@ -1,6 +1,8 @@
 import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { sanitizePlainText } from '@/shared/security';
 import { Button, IconType, InputContainer, InputText } from '@aragon/gov-ui-kit';
 import { type ChangeEvent, useEffect } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
@@ -13,6 +15,10 @@ export interface ITokenSetupMembershipCreateTokenProps {
      * Prefix to be appended to all form fields.
      */
     formPrefix: string;
+    /**
+     * ID of the DAO.
+     */
+    daoId: string;
 }
 
 const nameMaxLength = 40;
@@ -21,10 +27,11 @@ const symbolMaxLength = 12;
 const symbolRegex = /^[A-Z][A-Z0-9]*$/;
 
 export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCreateTokenProps> = (props) => {
-    const { formPrefix } = props;
+    const { formPrefix, daoId } = props;
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
+    const { chainId } = useDaoChain({ daoId });
 
     const tokenFormPrefix = `${formPrefix}.token`;
 
@@ -62,7 +69,7 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
     );
 
     const handleSymbolChange = (event: ChangeEvent<HTMLInputElement>) => {
-        onSymbolChange(event.target.value.toUpperCase());
+        onSymbolChange(sanitizePlainText(event.target.value).toUpperCase());
     };
 
     const membersFieldName = `${formPrefix}.members`;
@@ -115,6 +122,7 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
                         initialValue={member.address}
                         index={index}
                         members={controlledMembersField}
+                        chainId={chainId}
                         onRemove={membersField.length > 1 ? () => removeMember(index) : undefined}
                     />
                 ))}

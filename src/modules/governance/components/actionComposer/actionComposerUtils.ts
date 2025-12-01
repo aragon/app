@@ -1,6 +1,7 @@
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { actionViewRegistry, type ActionViewCreateComponent } from '@/shared/utils/actionViewRegistry';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
@@ -21,6 +22,7 @@ import {
     type IGetAllowedActionBaseParams,
     type IGetAllowedActionItemsParams,
     type IGetCustomActionParams,
+    type IGetDaoActionsParams,
     type IGetNativeActionGroupsParams,
     type IGetNativeActionItemsParams,
 } from './actionComposerUtils.api';
@@ -31,6 +33,16 @@ class ActionComposerUtils {
     transferActionLocked = 'TransferActionLocked';
 
     private transferSelector = '0xa9059cbb';
+
+    getDaoActions = ({ dao, permissions, t }: IGetDaoActionsParams) => {
+        const pluginActions = this.getDaoPluginActions(dao);
+        const permissionActions = this.getDaoPermissionActions({ permissions, t });
+
+        return {
+            items: [...pluginActions.pluginItems, ...permissionActions.items],
+            groups: [...pluginActions.pluginGroups, ...permissionActions.groups],
+        };
+    };
 
     getDaoPluginActions = (dao?: IDao) => {
         const { plugins = [] } = dao ?? {};
@@ -48,6 +60,39 @@ class ActionComposerUtils {
         const pluginComponents = pluginActions.reduce((acc, data) => ({ ...acc, ...data?.components }), {});
 
         return { pluginItems, pluginGroups, pluginComponents };
+    };
+
+    getDaoPermissionActions = ({ permissions, t }: Omit<IGetDaoActionsParams, 'dao'>) => {
+        if (!permissions) {
+            return {
+                items: [],
+                groups: [],
+                components: {},
+            };
+        }
+
+        const result = permissions.reduce(
+            (acc, cur) => {
+                const { items, group, components } = actionViewRegistry.getActionsForPermissionId(
+                    cur.permissionId,
+                    cur.whereAddress,
+                    t,
+                );
+                return {
+                    items: [...acc.items, ...items],
+                    groups: group ? [...acc.groups, group] : acc.groups,
+                    components: { ...acc.components, ...components },
+                };
+            },
+
+            {
+                items: [] as IActionComposerInputItem[],
+                groups: [] as IAutocompleteInputGroup[],
+                components: {} as Record<string, ActionViewCreateComponent>,
+            }, // Removed the extra closing brace
+        );
+
+        return result;
     };
 
     getAllowedActionGroups = ({ t, dao, allowedActions }: IGetAllowedActionBaseParams): IAutocompleteInputGroup[] => {
@@ -323,7 +368,7 @@ class ActionComposerUtils {
             proposedMetadata: existingMetadata,
             inputData: {
                 function: 'setMetadata',
-                contract: plugin.subdomain,
+                contract: plugin.interfaceType,
                 parameters: [
                     { name: '_metadata', type: 'bytes', notice: 'The IPFS hash of the new metadata object', value: '' },
                 ],
@@ -381,7 +426,7 @@ class ActionComposerUtils {
         type: token != null ? this.transferActionLocked : ProposalActionType.TRANSFER,
         from: '',
         to: token ?? zeroAddress,
-        data: '',
+        data: '0x',
         value: '0',
         inputData: { function: 'transfer', contract: 'Ether', parameters: [] },
     });

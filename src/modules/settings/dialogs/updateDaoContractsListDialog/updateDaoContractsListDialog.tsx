@@ -47,8 +47,12 @@ export const UpdateDaoContractsListDialog: React.FC<IUpdateDaoContractsListDialo
 
     return (
         <>
-            <Dialog.Header onClose={close} title={t('app.settings.updateDaoContractsListDialog.title')} />
-            <Dialog.Content description={t('app.settings.updateDaoContractsListDialog.description')}>
+            <Dialog.Header
+                onClose={close}
+                title={t('app.settings.updateDaoContractsListDialog.title')}
+                description={t('app.settings.updateDaoContractsListDialog.description')}
+            />
+            <Dialog.Content>
                 <div className="flex flex-col gap-3 pb-6">
                     {hasOsxUpdate && (
                         <UpdateDaoContractsCard
@@ -66,7 +70,7 @@ export const UpdateDaoContractsListDialog: React.FC<IUpdateDaoContractsListDialo
                         <UpdateDaoContractsCard
                             key={plugin.address}
                             name={daoUtils.getPluginName(plugin)}
-                            smartContractName={daoUtils.parsePluginSubdomain(plugin.subdomain)}
+                            smartContractName={daoUtils.getPluginName(plugin)}
                             address={plugin.address}
                             currentVersion={plugin}
                             newVersion={

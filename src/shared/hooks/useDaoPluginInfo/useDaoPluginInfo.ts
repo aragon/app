@@ -1,15 +1,8 @@
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import {
-    addressUtils,
-    ChainEntityType,
-    DateFormat,
-    formatterUtils,
-    type IDefinitionSetting,
-    useBlockExplorer,
-} from '@aragon/gov-ui-kit';
+import { addressUtils, ChainEntityType, DateFormat, formatterUtils, type IDefinitionSetting } from '@aragon/gov-ui-kit';
+import { useDaoChain } from '../useDaoChain';
 import { useDaoPlugins } from '../useDaoPlugins';
 
 export interface IUseDaoPluginInfoParams {
@@ -31,10 +24,11 @@ export const useDaoPluginInfo = (params: IUseDaoPluginInfoParams): IDefinitionSe
     const { daoId, address, settings = [] } = params;
 
     const { t } = useTranslations();
-    const { buildEntityUrl } = useBlockExplorer();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const plugin = useDaoPlugins({ daoId, pluginAddress: address, includeSubPlugins: true })?.[0];
+
+    const { buildEntityUrl } = useDaoChain({ network: dao?.network });
 
     if (dao == null || plugin == null) {
         return settings;
@@ -43,11 +37,10 @@ export const useDaoPluginInfo = (params: IUseDaoPluginInfoParams): IDefinitionSe
     const { blockTimestamp, transactionHash, release, build } = plugin.meta;
     const pluginLaunchedAt = formatterUtils.formatDate(blockTimestamp * 1000, { format: DateFormat.YEAR_MONTH })!;
 
-    const { id: chainId } = networkDefinitions[dao.network];
-    const pluginCreationLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
+    const pluginCreationLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
 
-    const name = daoUtils.parsePluginSubdomain(plugin.meta.subdomain);
-    const pluginLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address, chainId });
+    const name = daoUtils.getPluginName(plugin.meta);
+    const pluginLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address });
 
     return [
         {

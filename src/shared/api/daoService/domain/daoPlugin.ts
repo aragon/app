@@ -24,9 +24,14 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
      */
     address: string;
     /**
+     * Address of the DAO this plugin is installed on (when available from the backend).
+     * For legacy APIs this may be undefined.
+     */
+    daoAddress?: string;
+    /**
      * Subdomain of the plugin.
      */
-    subdomain: string;
+    subdomain?: string;
     /**
      * Plugin interface type. Used as a plugin type identifier.
      */

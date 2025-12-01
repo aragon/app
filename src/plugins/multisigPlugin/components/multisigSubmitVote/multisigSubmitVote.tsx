@@ -8,9 +8,9 @@ import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import type { ISubmitVoteProps } from '@/modules/governance/types';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { Button, ChainEntityType, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
+import { Button, ChainEntityType, IconType } from '@aragon/gov-ui-kit';
 import type { IMultisigProposal, IMultisigVote } from '../../types';
 
 export interface IMultisigSubmitVoteProps extends ISubmitVoteProps<IMultisigProposal> {}
@@ -25,8 +25,7 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
     const userVote = useUserVote<IMultisigVote>({ proposal, network });
     const voted = userVote != null;
 
-    const { id: chainId } = networkDefinitions[network];
-    const { buildEntityUrl } = useBlockExplorer({ chainId });
+    const { buildEntityUrl } = useDaoChain({ network });
     const voteTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: userVote?.transactionHash });
 
     const openTransactionDialog = () => {
