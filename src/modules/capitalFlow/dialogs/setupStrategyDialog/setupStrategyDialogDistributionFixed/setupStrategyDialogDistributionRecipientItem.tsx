@@ -66,15 +66,6 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<
             required: true,
             min: 0,
             max: 100,
-            validate: (value) => {
-                debugger;
-                const numValue = Number(value);
-                if (numValue === 0) return true;
-                // Calculate what total would be without this recipient's current value
-                const otherRecipientsRatio = totalRatio - numValue;
-                // Check if adding this value would exceed 100
-                return otherRecipientsRatio + numValue <= 100;
-            },
         },
         defaultValue: 0,
         fieldPrefix,
