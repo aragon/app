@@ -78,7 +78,8 @@ class PreparePolicyDialogUtils {
         if (strategy.routerType === RouterType.FIXED) {
             const { recipients, asset } = strategy.distributionFixed;
             const recipientAddresses = recipients.map((r) => r.address as Hex);
-            const ratios = this.normalizeRatios(recipients.map((r) => r.ratio / 100));
+            const ratios = this.normalizeRatios(recipients.map((r) => r.ratio));
+
             const deployModelCallData = encodeFunctionData({
                 abi: routerModelFactoryAbi,
                 functionName: 'deployRatioModel',
@@ -104,9 +105,17 @@ class PreparePolicyDialogUtils {
             const { recipients, asset, epochPeriod } = strategy.distributionStream;
             const recipientAddresses = recipients.map((r) => r.address as Hex);
 
+            const decimals = asset?.token?.decimals ?? 18;
+            // If there is no amount in the vault, then use the max number which would make the source to always take
+            // everything there is in the vault.
+            // const totalAmountInVault = asset?.amount
+            //     ? Math.floor(Number(asset.amount) * Math.pow(10, decimals))
+            //     : Number.MAX_VALUE;
+
+            // const totalAmountInVault = Number.MAX_VALUE;
+
             // Calculate total amount and ratios
-            const totalAmount = recipients.reduce((sum, r) => sum + Number(r.amount), 0);
-            const ratios = this.normalizeRatios(recipients.map((r) => Number(r.amount)));
+            const ratios = this.normalizeRatios(recipients.map((r) => Number(r.ratio)));
 
             const deployModelCallData = encodeFunctionData({
                 abi: routerModelFactoryAbi,
@@ -114,9 +123,8 @@ class PreparePolicyDialogUtils {
                 args: [recipientAddresses, ratios],
             });
 
-            // Calculate amount per epoch based on token decimals or ETH
-            const decimals = asset?.token?.decimals ?? 18;
-            const amountPerEpoch = BigInt(Math.floor(totalAmount * Math.pow(10, decimals)));
+            // Maximum safe uint256 value (still effectively unlimited for token amounts)
+            const amountPerEpoch = 2n ** 255n - 1n;
             const epochLengthInSeconds = epochPeriodToSeconds[epochPeriod];
 
             const deploySourceCallData = encodeFunctionData({

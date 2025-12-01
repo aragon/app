@@ -3,10 +3,11 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { Button, IconType, InputContainer, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
+import { useMemo } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import type { ISetupStrategyForm, ISetupStrategyFormRouter } from '../setupStrategyDialogDefinitions';
 import { StreamingEpochPeriod } from '../setupStrategyDialogDefinitions';
-import { SetupStrategyDialogDistributionStreamRecipientItem } from './setupStrategyDialogDistributionStreamRecipientItem';
+import { SetupStrategyDialogDistributionRecipientItem } from '../setupStrategyDialogDistributionFixed';
 
 export interface ISetupStrategyDialogDistributionStreamProps {}
 
@@ -31,6 +32,11 @@ export const SetupStrategyDialogDistributionStream: React.FC<ISetupStrategyDialo
 
     const watchAsset = useWatch<ISetupStrategyForm, 'distributionStream.asset'>({ name: 'distributionStream.asset' });
 
+    const totalRatio = useMemo(
+        () => recipientsField?.reduce((sum, recipient) => sum + (recipient?.ratio || 0), 0) || 0,
+        [recipientsField],
+    );
+
     const epochPeriodField = useFormField<ISetupStrategyFormRouter, 'distributionStream.epochPeriod'>(
         'distributionStream.epochPeriod',
         {
@@ -43,18 +49,19 @@ export const SetupStrategyDialogDistributionStream: React.FC<ISetupStrategyDialo
 
     const handleAddRecipient = () => {
         if (recipientsField.length < maxRecipients) {
-            addRecipient({ address: '', amount: 0 });
+            addRecipient({ address: '', ratio: 0 });
         }
     };
 
     const handleDistributeEvenly = () => {
-        // For streaming, distribute evenly with default amount of 1 per recipient
-        // This could be enhanced to work with the selected asset's balance if available
+        const evenRatio = Math.floor(100 / recipientsField.length);
+        const remainder = 100 - evenRatio * recipientsField.length;
         // We need to use getValues() here because 'address' changes from nested component are not reflected in recipientsField until rerender
         const recipientsValues = getValues(recipientsFieldName);
 
         recipientsField.forEach((recipient, index) => {
-            updateRecipient(index, { ...recipientsValues[index], amount: 1 });
+            const newRatio = index === 0 ? evenRatio + remainder : evenRatio;
+            updateRecipient(index, { ...recipientsValues[index], ratio: newRatio });
         });
     };
 
@@ -109,13 +116,13 @@ export const SetupStrategyDialogDistributionStream: React.FC<ISetupStrategyDialo
                     className="gap-3 md:gap-2"
                 >
                     {recipientsField.map((field, index) => (
-                        <SetupStrategyDialogDistributionStreamRecipientItem
+                        <SetupStrategyDialogDistributionRecipientItem
                             key={field.id}
                             fieldPrefix={`${recipientsFieldName}.[${index}]`}
+                            totalRatio={totalRatio}
                             onRemove={() => removeRecipient(index)}
                             canRemove={recipientsField.length > 1}
                             daoId={daoId}
-                            asset={watchAsset}
                         />
                     ))}
                 </InputContainer>
