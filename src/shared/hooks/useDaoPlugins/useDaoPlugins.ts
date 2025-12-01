@@ -1,4 +1,5 @@
 import { type IDaoPlugin, type PluginInterfaceType, useDao } from '@/shared/api/daoService';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import type { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -46,10 +47,57 @@ export const pluginGroupFilter: IFilterComponentPlugin<IDaoPlugin> = {
     props: {},
 };
 
+interface IBuildFilterPluginsParams {
+    plugins?: IDaoPlugin[];
+    rootDaoAddress?: string;
+    includeGroupFilter?: boolean;
+    isSubDaoEnabled: boolean;
+}
+
+/**
+ * Normalizes raw plugins from the backend into filter-ready items:
+ * - applies SubDAO feature-flag behaviour (aggregate vs single DAO),
+ * - optionally groups plugins by (daoAddress, slug) when aggregating,
+ * - builds `IFilterComponentPlugin` items and group tab when needed.
+ */
+const buildFilterPlugins = (params: IBuildFilterPluginsParams): Array<IFilterComponentPlugin<IDaoPlugin>> => {
+    const { plugins, rootDaoAddress, includeGroupFilter, isSubDaoEnabled } = params;
+
+    const allPlugins = plugins ?? [];
+
+    // When SubDAO feature is disabled, only use plugins installed on the current DAO
+    // (ignore SubDAO plugins returned by the API).
+    const filteredPlugins = isSubDaoEnabled
+        ? allPlugins
+        : allPlugins.filter((plugin) => {
+              const daoAddress = plugin.daoAddress ?? rootDaoAddress;
+
+              // Legacy behaviour: when daoAddress is unknown, keep the plugin.
+              if (daoAddress == null) {
+                  return true;
+              }
+
+              return daoAddress === rootDaoAddress;
+          });
+
+    const processedPlugins: Array<IFilterComponentPlugin<IDaoPlugin>> = filteredPlugins.map((plugin) => ({
+        id: plugin.interfaceType,
+        uniqueId: `${plugin.address}-${plugin.slug}`,
+        label: daoUtils.getPluginName(plugin),
+        meta: plugin,
+        props: {},
+    }));
+
+    const addGroupFilter = includeGroupFilter && processedPlugins.length > 1;
+
+    return addGroupFilter ? [pluginGroupFilter].concat(processedPlugins) : processedPlugins;
+};
+
 export const useDaoPlugins = (params: IUseDaoPluginsParams): Array<IFilterComponentPlugin<IDaoPlugin>> | undefined => {
     const { daoId, type, pluginAddress, includeSubPlugins, includeGroupFilter, interfaceType, slug, hasExecute } =
         params;
 
+    const { isEnabled } = useFeatureFlags();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const plugins = daoUtils.getDaoPlugins(dao, {
         type,
@@ -60,15 +108,13 @@ export const useDaoPlugins = (params: IUseDaoPluginsParams): Array<IFilterCompon
         hasExecute,
     });
 
-    const processedPlugins = plugins?.map((plugin) => ({
-        id: plugin.interfaceType,
-        uniqueId: plugin.slug,
-        label: daoUtils.getPluginName(plugin),
-        meta: plugin,
-        props: {},
-    }));
+    const isSubDaoEnabled = isEnabled('subDao');
+    const processedPlugins = buildFilterPlugins({
+        plugins,
+        rootDaoAddress: dao?.address,
+        includeGroupFilter,
+        isSubDaoEnabled,
+    });
 
-    const addGroupFilter = includeGroupFilter && processedPlugins != null && processedPlugins.length > 1;
-
-    return addGroupFilter ? [pluginGroupFilter].concat(processedPlugins) : processedPlugins;
+    return processedPlugins;
 };

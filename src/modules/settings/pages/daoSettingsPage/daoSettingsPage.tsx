@@ -1,4 +1,5 @@
 import { Page } from '@/shared/components/page';
+import { featureFlags } from '@/shared/featureFlags';
 import type { IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
@@ -21,11 +22,12 @@ export const DaoSettingsPage: React.FC<IDaoSettingsPageProps> = async (props) =>
     }
 
     const daoId = await daoUtils.resolveDaoId(daoPageParams);
+    const isSubDaoEnabled = await featureFlags.isEnabled('subDao');
 
     return (
         <Page.Container>
             <Page.Content>
-                <DaoSettingsPageClient daoId={daoId} />
+                <DaoSettingsPageClient daoId={daoId} isSubDaoEnabled={isSubDaoEnabled} />
             </Page.Content>
         </Page.Container>
     );

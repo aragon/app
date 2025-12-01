@@ -18,6 +18,12 @@ jest.mock('@/shared/components/dialogProvider', () => ({
 
 jest.mock('@/shared/components/dialogRoot', () => ({ DialogRoot: () => <div data-testid="dialog-root-mock" /> }));
 
+jest.mock('@/shared/components/featureFlagsProvider', () => ({
+    FeatureFlagsProvider: (props: { children: ReactNode }) => (
+        <div data-testid="feature-flags-provider-mock">{props.children}</div>
+    ),
+}));
+
 jest.mock('@aragon/gov-ui-kit', () => ({
     ...jest.requireActual<typeof GovUiKit>('@aragon/gov-ui-kit'),
     GukModulesProvider: (props: { children: ReactNode }) => (
@@ -65,5 +71,10 @@ describe('<Providers /> component', () => {
         render(createTestComponent());
         expect(screen.getByTestId('dialog-provider-mock')).toBeInTheDocument();
         expect(screen.getByTestId('dialog-root-mock')).toBeInTheDocument();
+    });
+
+    it('renders the FeatureFlagsProvider with children', () => {
+        render(createTestComponent());
+        expect(screen.getByTestId('feature-flags-provider-mock')).toBeInTheDocument();
     });
 });
