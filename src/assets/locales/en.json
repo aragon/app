@@ -315,18 +315,16 @@
           "description": "Create a new strategy for your capital flow policy"
         },
         "distributionFixed": {
-          "recipients": {
-            "addButton": "Recipients",
-            "address": "Address",
-            "distributeEvenly": "Distribute evenly",
-            "helpText": "Specify the recipients and the distribution ratio of tokens for each dispatch.",
-            "label": "Recipients",
-            "ratio": "Ratio"
-          },
           "token": {
             "helpText": "Choose the token for this policy and specify the amount per dispatch.",
             "label": "Token"
           }
+        },
+        "distributionRecipients": {
+          "addButton": "Recipients",
+          "distributeEvenly": "Distribute evenly",
+          "helpText": "Specify the recipients and the distribution ratio of tokens for each dispatch.",
+          "label": "Recipients"
         },
         "distributionStream": {
           "epochPeriod": {
@@ -335,13 +333,6 @@
             "hour": "Per hour",
             "label": "Streamed amount per time",
             "week": "Per week"
-          },
-          "recipients": {
-            "addButton": "Recipients",
-            "address": "Address",
-            "distributeEvenly": "Distribute evenly",
-            "helpText": "Specify the recipients and the distribution ratio of tokens for each dispatch.",
-            "label": "Recipients"
           },
           "token": {
             "helpText": "Choose the token for this policy.",
