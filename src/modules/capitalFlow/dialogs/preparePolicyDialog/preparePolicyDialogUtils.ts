@@ -124,7 +124,7 @@ class PreparePolicyDialogUtils {
             });
 
             // Maximum safe uint256 value (still effectively unlimited for token amounts)
-            const amountPerEpoch = 2n ** 255n - 1n;
+            const amountPerEpoch = BigInt(2) ** BigInt(255) - BigInt(1);
             const epochLengthInSeconds = epochPeriodToSeconds[epochPeriod];
 
             const deploySourceCallData = encodeFunctionData({
@@ -145,7 +145,7 @@ class PreparePolicyDialogUtils {
                 value: BigInt(0),
             };
             deploySourceTransaction = {
-                to: routerSourceFactory,
+                to: omniSourceFactory,
                 data: deploySourceCallData,
                 value: BigInt(0),
             };
