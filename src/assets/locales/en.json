@@ -780,7 +780,8 @@
           "details": {
             "chain": "Chain",
             "title": "Details"
-          }
+          },
+          "treasury": "Treasury"
         },
         "main": {
           "title": "Transactions"
@@ -808,7 +809,19 @@
         "errorState": {
           "description": "There was an error loading the transactions. Try again later.",
           "heading": "Error loading transactions"
-        }
+        },
+        "groupTab": "All transactions"
+      },
+      "transactionListStats": {
+        "aggregateNote": "Aggregate stats across SubDAOs coming soon.",
+        "bodies": "Bodies",
+        "note": "Note",
+        "subDaos": "SubDAOs"
+      },
+      "transactionSubDaoInfo": {
+        "chain": "Chain",
+        "description": "Description",
+        "pluginAddress": "Plugin address"
       },
       "transferAssetForm": {
         "amount": {

@@ -1,6 +1,6 @@
 import { transactionListOptions } from '@/modules/finance/api/financeService/queries/useTransactionList/useTransactionList';
 import { daoOptions, Network } from '@/shared/api/daoService';
-import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
@@ -27,7 +27,7 @@ describe('<DaoTransactionsPage /> component', () => {
     const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
 
     beforeEach(() => {
-        fetchQuerySpy.mockResolvedValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        fetchQuerySpy.mockResolvedValue(generateDao());
         prefetchInfiniteQuerySpy.mockImplementation(jest.fn());
         resolveDaoIdSpy.mockResolvedValue('test-dao-id');
     });
@@ -57,9 +57,11 @@ describe('<DaoTransactionsPage /> component', () => {
     it('prefetches the DAO and its transaction list', async () => {
         const daoAddress = '0x12345';
         const expectedDaoId = 'test-dao-id';
+        const pluginAddress = '0xplugin';
         const dao = generateDao({
             id: expectedDaoId,
             address: daoAddress,
+            plugins: [generateDaoPlugin({ address: pluginAddress, isBody: true })],
         });
         fetchQuerySpy.mockResolvedValue(dao);
         resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
@@ -69,7 +71,7 @@ describe('<DaoTransactionsPage /> component', () => {
             daoOptions({ urlParams: { id: expectedDaoId } }).queryKey,
         );
 
-        const expectedParams = { address: dao.address, network: dao.network, pageSize: daoTransactionsCount };
+        const expectedParams = { network: dao.network, pageSize: daoTransactionsCount, address: pluginAddress };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
             transactionListOptions({ queryParams: expectedParams }).queryKey,
         );
