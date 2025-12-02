@@ -6,7 +6,7 @@ import { DateFormat, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import type { ITransactionListStatsProps } from './transactionListStats.api';
 
 export const TransactionListStats: React.FC<ITransactionListStatsProps> = (props) => {
-    const { dao, totalTransactions, lastActivityTimestamp, ...otherProps } = props;
+    const { dao, totalTransactions, lastActivityTimestamp } = props;
 
     const { t } = useTranslations();
 

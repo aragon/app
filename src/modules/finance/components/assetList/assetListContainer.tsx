@@ -55,27 +55,21 @@ export const AssetListContainer: React.FC<IAssetListContainerProps> = (props) =>
         enableUrlUpdate: onValueChange == null,
     });
 
-    const seenDaoAddresses = new Set<string>();
-    const processedPlugins = plugins?.reduce<Array<IFilterComponentPlugin<IDaoPlugin>>>((acc, plugin) => {
+    const deduplicatedPlugins = subDaoDisplayUtils.deduplicatePluginsByDaoAddress({
+        plugins: plugins ?? [],
+        isGroupFilter: (plugin) => plugin.id === pluginGroupFilter.id,
+    });
+
+    const processedPlugins = deduplicatedPlugins.map<IFilterComponentPlugin<IDaoPlugin>>((plugin) => {
         const isGroupTab = plugin.id === pluginGroupFilter.id;
         const isParentTab = subDaoDisplayUtils.isParentPlugin({ dao, plugin: plugin.meta });
         const baseQueryParams = { ...initialParams.queryParams };
-        const pluginDaoAddress = subDaoDisplayUtils.getPluginDaoAddress(plugin.meta);
         const pluginDaoId = isGroupTab
             ? daoId
             : `${dao?.network ?? ''}-${plugin.meta.daoAddress ?? plugin.meta.address}`;
         const onlyParent = isParentTab ? true : undefined;
         const pluginQueryParams = { ...baseQueryParams, daoId: pluginDaoId, address: undefined, onlyParent };
         const pluginInitialParams = { ...initialParams, queryParams: pluginQueryParams };
-
-        const isDuplicateSubDao = !isGroupTab && pluginDaoAddress !== '' && seenDaoAddresses.has(pluginDaoAddress);
-        if (isDuplicateSubDao) {
-            return acc;
-        }
-
-        if (!isGroupTab && pluginDaoAddress !== '') {
-            seenDaoAddresses.add(pluginDaoAddress);
-        }
 
         const label = isGroupTab
             ? t('app.finance.assetList.groupTab')
@@ -86,13 +80,12 @@ export const AssetListContainer: React.FC<IAssetListContainerProps> = (props) =>
                   fallbackLabel: plugin.label,
               });
 
-        acc.push({ ...plugin, label, props: { initialParams: pluginInitialParams, plugin: plugin.meta } });
-        return acc;
-    }, []);
+        return { ...plugin, label, props: { initialParams: pluginInitialParams, plugin: plugin.meta } };
+    });
 
     const resolvedValue = value ?? activePlugin;
     const resolvedValueWithLabel =
-        processedPlugins?.find((plugin) => plugin.uniqueId === resolvedValue?.uniqueId) ?? resolvedValue;
+        processedPlugins.find((plugin) => plugin.uniqueId === resolvedValue?.uniqueId) ?? resolvedValue;
     const resolvedOnValueChange = onValueChange ?? setActivePlugin;
 
     return (

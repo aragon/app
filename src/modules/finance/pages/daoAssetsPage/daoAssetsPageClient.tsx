@@ -115,7 +115,7 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
                         <DaoInfoAside
                             plugin={activePlugin.meta}
                             network={dao.network}
-                            daoId={selectedDaoId ?? id}
+                            daoId={selectedDaoId}
                             dao={dao}
                             subDao={matchingSubDao}
                             stats={assetStats}

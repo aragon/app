@@ -52,7 +52,7 @@ export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
             </DefinitionList.Container>
             <div className="flex flex-col gap-3">
                 {links.map((link) => (
-                    <Link key={link.url} href={link.url} isExternal showUrl>
+                    <Link key={link.url} href={link.url} isExternal={true} showUrl={true}>
                         {link.name}
                     </Link>
                 ))}

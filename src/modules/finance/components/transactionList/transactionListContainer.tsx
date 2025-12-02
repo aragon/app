@@ -55,10 +55,12 @@ export const TransactionListContainer: React.FC<ITransactionListContainerProps> 
         enableUrlUpdate: onValueChange == null,
     });
 
-    const seenDaoAddresses = new Set<string>();
-    const basePlugins = plugins ?? [];
+    const deduplicatedPlugins = subDaoDisplayUtils.deduplicatePluginsByDaoAddress({
+        plugins: plugins ?? [],
+        isGroupFilter: (plugin) => plugin.id === pluginGroupFilter.id,
+    });
 
-    const processedPlugins = basePlugins.reduce<Array<IFilterComponentPlugin<IDaoPlugin>>>((acc, plugin) => {
+    const processedPlugins = deduplicatedPlugins.map<IFilterComponentPlugin<IDaoPlugin>>((plugin) => {
         const isGroupTab = plugin.id === pluginGroupFilter.id;
         const isParentTab = subDaoDisplayUtils.isParentPlugin({ dao, plugin: plugin.meta });
         const baseQueryParams = { ...initialParams.queryParams };
@@ -69,16 +71,6 @@ export const TransactionListContainer: React.FC<ITransactionListContainerProps> 
         const pluginQueryParams = { ...baseQueryParams, daoId: pluginDaoId, address: undefined, onlyParent };
         const pluginInitialParams = { ...initialParams, queryParams: pluginQueryParams };
 
-        const pluginDaoAddress = (plugin.meta.daoAddress ?? dao?.address ?? '').toLowerCase();
-        const isDuplicateSubDao = !isGroupTab && pluginDaoAddress !== '' && seenDaoAddresses.has(pluginDaoAddress);
-        if (isDuplicateSubDao) {
-            return acc;
-        }
-
-        if (!isGroupTab && pluginDaoAddress !== '') {
-            seenDaoAddresses.add(pluginDaoAddress);
-        }
-
         const label = isGroupTab
             ? t('app.finance.transactionList.groupTab')
             : subDaoDisplayUtils.getPluginDisplayName({
@@ -88,9 +80,8 @@ export const TransactionListContainer: React.FC<ITransactionListContainerProps> 
                   fallbackLabel: plugin.label,
               });
 
-        acc.push({ ...plugin, label, props: { initialParams: pluginInitialParams, plugin: plugin.meta } });
-        return acc;
-    }, []);
+        return { ...plugin, label, props: { initialParams: pluginInitialParams, plugin: plugin.meta } };
+    });
 
     let pluginsToUse = processedPlugins;
 

@@ -25,7 +25,7 @@ export interface ITransferAssetFormProps extends Pick<IAssetInputProps, 'disable
 }
 
 export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
-    const { sender: _sender, daoId, network, fieldPrefix, disableAssetField } = props;
+    const { daoId, network, fieldPrefix, disableAssetField } = props;
 
     const { t } = useTranslations();
 

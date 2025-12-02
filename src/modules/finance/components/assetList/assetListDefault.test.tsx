@@ -4,7 +4,7 @@ import { generateAsset, generateToken } from '@/modules/finance/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 
-describe('<AssetList /> component', () => {
+describe('<AssetListDefault /> component', () => {
     const useAssetListDataSpy = jest.spyOn(useAssetListData, 'useAssetListData');
 
     beforeEach(() => {
