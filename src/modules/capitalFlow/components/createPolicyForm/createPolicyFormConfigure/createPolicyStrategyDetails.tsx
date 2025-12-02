@@ -1,19 +1,19 @@
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, Button, DefinitionList, Dropdown, IconType } from '@aragon/gov-ui-kit';
-import { useMemo } from 'react';
-import {
-    RouterType,
-    StrategyType,
-    type ISetupStrategyForm,
-} from '../../../dialogs/setupStrategyDialog/setupStrategyDialogDefinitions';
+import { type ISetupStrategyForm, RouterType, StrategyType } from '../../../dialogs/setupStrategyDialog';
 
 export interface ICreatePolicyStrategyDetailsProps {
     strategy: ISetupStrategyForm;
     onEdit: () => void;
     onRemove: () => void;
 }
+
+const routerTypeToDistributionField = {
+    [RouterType.FIXED]: 'distributionFixed',
+    [RouterType.STREAM]: 'distributionStream',
+    [RouterType.GAUGE]: 'distributionGauge',
+} as const;
 
 export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsProps> = (props) => {
     const { strategy, onEdit, onRemove } = props;
@@ -24,37 +24,28 @@ export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsP
         { enabled: Boolean(strategy.sourceVault) },
     );
 
+    if (strategy.type !== StrategyType.CAPITAL_ROUTER || !sourceVaultDao) {
+        return null;
+    }
+
     const notSetLabel = t('app.capitalFlow.createPolicyForm.configure.strategy.details.notSet');
     const recipientsEmptyLabel = t('app.capitalFlow.createPolicyForm.configure.strategy.details.recipientsEmpty');
 
-    const routerTypeLabel =
-        strategy.type === StrategyType.CAPITAL_ROUTER
-            ? t(`app.capitalFlow.setupStrategyDialog.routerType.${strategy.routerType}.label`)
-            : undefined;
-    const routerTypeDescription =
-        strategy.type === StrategyType.CAPITAL_ROUTER
-            ? t(`app.capitalFlow.setupStrategyDialog.routerType.${strategy.routerType}.description`)
-            : undefined;
+    const routerTypeLabel = t(`app.capitalFlow.setupStrategyDialog.routerType.${strategy.routerType}.label`);
+    const routerTypeDescription = t(
+        `app.capitalFlow.setupStrategyDialog.routerType.${strategy.routerType}.description`,
+    );
 
-    const routerAsset =
-        strategy.type === StrategyType.CAPITAL_ROUTER
-            ? strategy.routerType === RouterType.FIXED
-                ? strategy.distributionFixed.asset
-                : strategy.distributionStream.asset
-            : undefined;
+    const routerAsset = strategy[routerTypeToDistributionField[strategy.routerType]].asset;
 
-    const sourceVaultFallbackAddress = useMemo(() => {
-        const { address } = daoUtils.parseDaoId(strategy.sourceVault);
-        return addressUtils.truncateAddress(address);
-    }, [strategy.sourceVault]);
-
-    const sourceVaultLabel = sourceVaultDao?.name ?? strategy.sourceVault;
-    const sourceVaultDescription = sourceVaultDao?.ens ?? sourceVaultDao?.address ?? sourceVaultFallbackAddress;
+    const sourceVaultLabel = sourceVaultDao.name ?? strategy.sourceVault;
+    const sourceVaultDescription = sourceVaultDao.ens ?? addressUtils.truncateAddress(sourceVaultDao.address);
 
     const renderRecipients = () => {
-        if (strategy.type !== StrategyType.CAPITAL_ROUTER) {
-            return <span className="text-sm text-neutral-500">{recipientsEmptyLabel}</span>;
+        if (strategy.routerType === RouterType.GAUGE) {
+            return 'NA';
         }
+
         const recipients =
             strategy.routerType === RouterType.FIXED
                 ? strategy.distributionFixed.recipients
@@ -80,13 +71,9 @@ export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsP
                 </DefinitionList.Item>
                 <DefinitionList.Item
                     term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.sourceVault')}
+                    description={sourceVaultDescription}
                 >
-                    <div className="flex flex-col">
-                        <span className="text-base text-neutral-800">{sourceVaultLabel}</span>
-                        {sourceVaultDescription && (
-                            <span className="text-sm text-neutral-500">{sourceVaultDescription}</span>
-                        )}
-                    </div>
+                    {sourceVaultLabel}
                 </DefinitionList.Item>
                 {strategy.type === StrategyType.CAPITAL_ROUTER && (
                     <>
