@@ -7,7 +7,7 @@ import { SetupStrategyDialogDistributionRecipients } from '../setupStrategyDialo
 
 export interface ISetupStrategyDialogDistributionFixedProps {}
 
-export const SetupStrategyDialogDistributionFixed: React.FC<ISetupStrategyDialogDistributionFixedProps> = (props) => {
+export const SetupStrategyDialogDistributionFixed: React.FC<ISetupStrategyDialogDistributionFixedProps> = () => {
     const { t } = useTranslations();
 
     const daoId = useWatch<ISetupStrategyForm, 'sourceVault'>({ name: 'sourceVault' });

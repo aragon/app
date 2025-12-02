@@ -18,7 +18,7 @@ export const SetupStrategyDialogSourceVault: React.FC<ISetupStrategyDialogSource
 
     const { t } = useTranslations();
 
-    const { network, address } = daoUtils.parseDaoId(daoId);
+    const { address } = daoUtils.parseDaoId(daoId);
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const sourceVaultField = useFormField<ISetupStrategyForm, 'sourceVault'>('sourceVault', {

@@ -3,7 +3,7 @@ import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import type { ISetupStrategyForm } from '../setupStrategyDialogDefinitions';
-import { SetupStrategyDialogDistributionRecipientItem } from '../setupStrategyDialogDistributionFixed';
+import { SetupStrategyDialogDistributionRecipientItem } from './setupStrategyDialogDistributionRecipientItem';
 
 export interface ISetupStrategyDialogDistributionRecipientsProps {
     /**
@@ -51,7 +51,7 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
         if (recipientsValues.length === 0) {
             addRecipient({ address: '', ratio: 0 });
         }
-    }, [addRecipient, recipients]);
+    }, [addRecipient, recipients, getValues, recipientsFieldName]);
 
     const totalRatio = recipients.reduce((sum, recipient) => sum + recipient.ratio, 0);
 
@@ -93,7 +93,7 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
                 alert={
                     totalRatio !== 100 && recipientsField.length > 0
                         ? {
-                              message: `${totalRatio}%`,
+                              message: `${totalRatio.toString()}%`,
                               variant: totalRatio > 100 ? 'critical' : 'warning',
                           }
                         : undefined
@@ -102,8 +102,7 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
                 {recipientsField.map((field, index) => (
                     <SetupStrategyDialogDistributionRecipientItem
                         key={field.id}
-                        fieldPrefix={`${recipientsFieldName}.[${index}]`}
-                        totalRatio={totalRatio}
+                        fieldPrefix={`${recipientsFieldName}.[${index.toString()}]`}
                         onRemove={() => handleRemoveRecipient(index)}
                         canRemove={canRemove}
                         daoId={daoId}

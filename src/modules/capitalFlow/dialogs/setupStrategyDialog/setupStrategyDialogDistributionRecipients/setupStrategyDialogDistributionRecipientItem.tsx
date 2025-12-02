@@ -1,7 +1,3 @@
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { useFormField } from '@/shared/hooks/useFormField';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     AddressInput,
     addressUtils,
@@ -12,13 +8,13 @@ import {
     type IAddressInputResolvedValue,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
+import { useTranslations } from '../../../../../shared/components/translationsProvider';
+import { networkDefinitions } from '../../../../../shared/constants/networkDefinitions';
+import { useFormField } from '../../../../../shared/hooks/useFormField';
+import { daoUtils } from '../../../../../shared/utils/daoUtils';
 import type { IRecipientRelative } from '../setupStrategyDialogDefinitions';
 
 export interface ISetupStrategyDialogDistributionRecipientItemProps {
-    /**
-     * Total ratio currently allocated.
-     */
-    totalRatio: number;
     /**
      * Callback for removing this recipient.
      */
@@ -40,7 +36,7 @@ export interface ISetupStrategyDialogDistributionRecipientItemProps {
 export const SetupStrategyDialogDistributionRecipientItem: React.FC<
     ISetupStrategyDialogDistributionRecipientItemProps
 > = (props) => {
-    const { totalRatio, onRemove, canRemove, daoId, fieldPrefix } = props;
+    const { onRemove, daoId, fieldPrefix, canRemove } = props;
 
     const { t } = useTranslations();
 
@@ -95,7 +91,7 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<
                     min={0}
                     max={100}
                     suffix="%"
-                    value={ratioField.value?.toString() ?? '0'}
+                    value={ratioField.value.toString()}
                     onChange={(value) => ratioField.onChange(Number(value))}
                     alert={ratioField.alert}
                     // label={t('app.capitalFlow.setupStrategyDialog.distribution.recipients.ratio')}
@@ -103,7 +99,13 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<
             </div>
 
             <div className="flex h-full items-start pt-1">
-                <Button iconLeft={IconType.CLOSE} onClick={onRemove} variant="tertiary" size="md" />
+                <Button
+                    iconLeft={IconType.CLOSE}
+                    onClick={onRemove}
+                    variant="tertiary"
+                    size="md"
+                    disabled={!canRemove}
+                />
             </div>
         </Card>
     );

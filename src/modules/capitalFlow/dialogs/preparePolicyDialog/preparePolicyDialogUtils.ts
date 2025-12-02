@@ -193,7 +193,7 @@ class PreparePolicyDialogUtils {
 
             return Promise.resolve(deploySourceTransaction);
         } else {
-            throw new Error(`Unsupported router type: ${strategy.routerType}`);
+            throw new Error(`Unsupported router type: ${strategy.routerType as string}`);
         }
 
         const encodedTransaction = transactionUtils.encodeTransactionRequests(
@@ -215,9 +215,7 @@ class PreparePolicyDialogUtils {
         };
     };
 
-    buildPolicyPrepareInstallationTransaction = async (
-        params: IBuildTransactionParams,
-    ): Promise<ITransactionRequest> => {
+    buildPolicyPrepareInstallationTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
         const { values, sourceAndModelContracts, dao } = params;
         const { strategy } = values;
 
@@ -242,11 +240,11 @@ class PreparePolicyDialogUtils {
             dao.address as Hex,
         );
 
-        return {
+        return Promise.resolve({
             to: pluginSetupProcessor,
             data: prepareInstallationData,
             value: BigInt(0),
-        };
+        });
     };
 
     buildPublishPolicyProposalActions = (params: IBuildPolicyProposalActionsParams): ITransactionRequest[] => {

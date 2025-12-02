@@ -93,7 +93,7 @@ export const SetupStrategyDialogDistributionStreamRecipientItem: React.FC<
                 <InputNumber
                     min={0}
                     suffix={asset?.token.symbol}
-                    value={amountField.value?.toString() ?? '0'}
+                    value={amountField.value.toString() ?? '0'}
                     onChange={(value) => amountField.onChange(Number(value))}
                     alert={amountField.alert}
                 />
