@@ -81,24 +81,24 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
     );
 
     const selectedTotalTransactions = selectedTransactionsMetadata?.pages[0]?.metadata?.totalRecords;
-    const daoStats: Array<{ label: string; value: string | number }> =
-        asideMetrics != null
-            ? ([
-                  {
-                      label: t('app.finance.transactionSubDaoInfo.value'),
-                      value:
-                          formatterUtils.formatNumber(asideMetrics.tvlUSD, { format: NumberFormat.FIAT_TOTAL_SHORT }) ??
-                          asideMetrics.tvlUSD,
-                  },
-                  selectedTotalTransactions != null && {
-                      label: t('app.finance.transactionSubDaoInfo.transactions'),
-                      value:
-                          formatterUtils.formatNumber(selectedTotalTransactions, {
-                              format: NumberFormat.GENERIC_SHORT,
-                          }) ?? selectedTotalTransactions,
-                  },
-              ].filter(Boolean) as Array<{ label: string; value: string | number }>)
-            : [];
+    const daoStats: Array<{ label: string; value: string | number }> = [
+        {
+            label: t('app.finance.transactionSubDaoInfo.value'),
+            value: asideMetrics
+                ? (formatterUtils.formatNumber(asideMetrics.tvlUSD, { format: NumberFormat.FIAT_TOTAL_SHORT }) ??
+                  asideMetrics.tvlUSD)
+                : '-',
+        },
+        {
+            label: t('app.finance.transactionSubDaoInfo.transactions'),
+            value:
+                selectedTotalTransactions != null
+                    ? (formatterUtils.formatNumber(selectedTotalTransactions, {
+                          format: NumberFormat.GENERIC_SHORT,
+                      }) ?? selectedTotalTransactions)
+                    : '-',
+        },
+    ];
 
     return (
         <Page.Content>

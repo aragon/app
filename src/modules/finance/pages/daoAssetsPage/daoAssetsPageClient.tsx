@@ -80,23 +80,23 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
     });
 
     const asideMetrics = selectedDao?.metrics;
-    const assetStats: Array<{ label: string; value: string | number }> =
-        asideMetrics != null
-            ? ([
-                  {
-                      label: t('app.finance.assetListStats.totalValueUsd'),
-                      value:
-                          formatterUtils.formatNumber(asideMetrics.tvlUSD, { format: NumberFormat.FIAT_TOTAL_SHORT }) ??
-                          asideMetrics.tvlUSD,
-                  },
-                  selectedAssetCount != null && {
-                      label: t('app.finance.assetListStats.tokens'),
-                      value:
-                          formatterUtils.formatNumber(selectedAssetCount, { format: NumberFormat.GENERIC_SHORT }) ??
-                          selectedAssetCount,
-                  },
-              ].filter(Boolean) as Array<{ label: string; value: string | number }>)
-            : [];
+    const assetStats: Array<{ label: string; value: string | number }> = [
+        {
+            label: t('app.finance.assetListStats.totalValueUsd'),
+            value: asideMetrics
+                ? (formatterUtils.formatNumber(asideMetrics.tvlUSD, { format: NumberFormat.FIAT_TOTAL_SHORT }) ??
+                  asideMetrics.tvlUSD)
+                : '-',
+        },
+        {
+            label: t('app.finance.assetListStats.tokens'),
+            value:
+                selectedAssetCount != null
+                    ? (formatterUtils.formatNumber(selectedAssetCount, { format: NumberFormat.GENERIC_SHORT }) ??
+                      selectedAssetCount)
+                    : '-',
+        },
+    ];
 
     return (
         <Page.Content>
