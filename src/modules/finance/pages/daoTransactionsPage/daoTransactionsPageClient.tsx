@@ -9,7 +9,7 @@ import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrl
 import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
 import { subDaoDisplayUtils } from '@/shared/utils/subDaoDisplayUtils';
-import { formatterUtils, invariant, NumberFormat } from '@aragon/gov-ui-kit';
+import { DateFormat, formatterUtils, invariant, NumberFormat } from '@aragon/gov-ui-kit';
 import type { IGetTransactionListParams } from '../../api/financeService';
 import { TransactionList, transactionListFilterParam } from '../../components/transactionList';
 import { TransactionListStats } from '../../components/transactionListStats';
@@ -51,14 +51,15 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
     });
 
     const matchingSubDao = subDaoDisplayUtils.getMatchingSubDao({ dao, plugin: activePlugin.meta });
+    const isParentSelected = subDaoDisplayUtils.isParentPlugin({ dao, plugin: activePlugin.meta });
+    const selectedDao = !allTransactionsSelected ? (isParentSelected ? dao : (matchingSubDao ?? dao)) : dao;
+    const selectedDaoId = selectedDao?.id ?? dao?.id ?? id;
 
     const { data: allTransactionsMetadata } = useTransactionList(
         {
             queryParams: {
                 ...initialParams.queryParams,
                 daoId: id,
-                address: undefined,
-                pageSize: 1,
             },
         },
         { enabled: allTransactionsSelected },
@@ -66,37 +67,40 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
 
     const totalTransactions = allTransactionsMetadata?.pages[0]?.metadata?.totalRecords;
     const lastActivityTimestamp = allTransactionsMetadata?.pages[0]?.data?.[0]?.blockTimestamp;
-    const selectedDaoId = matchingSubDao?.id ?? dao?.id;
-    const asideMetrics = matchingSubDao?.metrics ?? dao?.metrics;
 
     const { data: selectedTransactionsMetadata } = useTransactionList(
         {
             queryParams: {
                 ...initialParams.queryParams,
                 daoId: selectedDaoId,
-                pageSize: 1,
+                onlyParent: isParentSelected,
             },
         },
         { enabled: !allTransactionsSelected },
     );
 
     const selectedTotalTransactions = selectedTransactionsMetadata?.pages[0]?.metadata?.totalRecords;
+    const selectedLastActivityTimestamp = selectedTransactionsMetadata?.pages[0]?.data?.[0]?.blockTimestamp;
+
+    const formattedTransactionsCount =
+        selectedTotalTransactions != null
+            ? (formatterUtils.formatNumber(selectedTotalTransactions, {
+                  format: NumberFormat.GENERIC_SHORT,
+              }) ?? '-')
+            : '-';
+    const formattedSelectedLastActivity =
+        selectedLastActivityTimestamp != null
+            ? (formatterUtils.formatDate(selectedLastActivityTimestamp * 1000, { format: DateFormat.RELATIVE }) ?? '-')
+            : '-';
+
     const daoStats: Array<{ label: string; value: string | number }> = [
         {
-            label: t('app.finance.transactionSubDaoInfo.value'),
-            value: asideMetrics
-                ? (formatterUtils.formatNumber(asideMetrics.tvlUSD, { format: NumberFormat.FIAT_TOTAL_SHORT }) ??
-                  asideMetrics.tvlUSD)
-                : '-',
+            label: t('app.finance.transactionSubDaoInfo.transactions'),
+            value: formattedTransactionsCount,
         },
         {
-            label: t('app.finance.transactionSubDaoInfo.transactions'),
-            value:
-                selectedTotalTransactions != null
-                    ? (formatterUtils.formatNumber(selectedTotalTransactions, {
-                          format: NumberFormat.GENERIC_SHORT,
-                      }) ?? selectedTotalTransactions)
-                    : '-',
+            label: t('app.finance.transactionListStats.lastActivity'),
+            value: formattedSelectedLastActivity,
         },
     ];
 

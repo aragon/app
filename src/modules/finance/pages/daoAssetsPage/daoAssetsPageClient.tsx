@@ -65,6 +65,7 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
             queryParams: {
                 ...initialParams.queryParams,
                 daoId: selectedDaoId,
+                onlyParent: isParentSelected,
             },
         },
         { enabled: !allAssetsSelected || !hasSubDaos },
