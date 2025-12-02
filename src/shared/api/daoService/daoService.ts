@@ -1,3 +1,4 @@
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { AragonBackendService, type IPaginatedResponse } from '../aragonBackendService';
 import { pluginsService } from '../pluginsService';
 import type { IGetDaoByEnsParams, IGetDaoParams, IGetDaoPermissionsParams } from './daoService.api';
@@ -40,10 +41,15 @@ class DaoService extends AragonBackendService {
             return dao as IDao;
         }
 
-        const { network, address } = this.parseDaoId(dao.id);
-        const plugins = await pluginsService.getPluginsByDao({ urlParams: { network, address } });
+        try {
+            const { network, address } = this.parseDaoId(dao.id);
+            const plugins = await pluginsService.getPluginsByDao({ urlParams: { network, address } });
 
-        return { ...dao, plugins };
+            return { ...dao, plugins };
+        } catch (error) {
+            monitoringUtils.logError(error);
+            return dao as IDao;
+        }
     };
 
     getDao = async (params: IGetDaoParams): Promise<IDao> => {

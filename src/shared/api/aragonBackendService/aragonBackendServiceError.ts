@@ -20,25 +20,25 @@ export class AragonBackendServiceError extends Error {
     }
 
     static fromResponse = async (response: Response): Promise<AragonBackendServiceError> => {
-        try {
-            const parsedData = await responseUtils.safeJsonParse(response);
+        const parsedData = await responseUtils.safeJsonParse(response);
 
-            const isIErrorResponse = (value: unknown): value is IErrorResponse =>
-                value != null &&
-                typeof value === 'object' &&
-                'code' in (value as Record<string, unknown>) &&
-                typeof (value as Record<string, unknown>).code === 'string' &&
-                'description' in (value as Record<string, unknown>) &&
-                typeof (value as Record<string, unknown>).description === 'string';
+        const isIErrorResponse = (value: unknown): value is IErrorResponse =>
+            value != null &&
+            typeof value === 'object' &&
+            'code' in (value as Record<string, unknown>) &&
+            typeof (value as Record<string, unknown>).code === 'string' &&
+            'description' in (value as Record<string, unknown>) &&
+            typeof (value as Record<string, unknown>).description === 'string';
 
-            if (isIErrorResponse(parsedData)) {
-                return new AragonBackendServiceError(parsedData.code, parsedData.description, response.status);
-            }
-
-            return new AragonBackendServiceError(this.parseErrorCode, this.parseErrorDescription, response.status);
-        } catch {
-            return new AragonBackendServiceError(this.parseErrorCode, this.parseErrorDescription, response.status);
+        if (isIErrorResponse(parsedData)) {
+            return new AragonBackendServiceError(parsedData.code, parsedData.description, response.status);
         }
+
+        return new AragonBackendServiceError(
+            this.parseErrorCode,
+            `${this.parseErrorDescription} (status=${response.status}, url=${response.url})`,
+            response.status,
+        );
     };
 
     static isNotFoundError = (error: unknown) =>
