@@ -9,6 +9,7 @@ export enum StrategyType {
 
 export enum RouterType {
     FIXED = 'FIXED',
+    GAUGE = 'GAUGE',
     STREAM = 'STREAM',
 }
 
@@ -44,6 +45,10 @@ export interface ISetupStrategyFormRouter extends ISetupStrategyFormBase {
      * Distribution configuration for STREAM router type.
      */
     distributionStream: IDistributionStreamForm;
+    /**
+     * Distribution configuration for GAUGE router type.
+     */
+    distributionGauge: IDistributionGaugeForm;
 }
 
 export interface IDistributionFormBase {
@@ -75,6 +80,10 @@ export interface IDistributionStreamForm extends IDistributionFormBase {
      * Epoch duration.
      */
     epochPeriod: StreamingEpochPeriod;
+}
+
+export interface IDistributionGaugeForm extends IDistributionFormBase {
+    gaugeVoterAddress: string;
 }
 
 export interface IRecipientRelative extends ICompositeAddress {

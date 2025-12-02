@@ -341,6 +341,10 @@
             "description": "Transfer an available asset to recipients in a relative manner.",
             "label": "Fixed ratio"
           },
+          "GAUGE": {
+            "description": "Route an asset to recipients proportionally according a gauge vote.",
+            "label": "Gauge ratio"
+          },
           "STREAM": {
             "description": "Transfer a fixed quantity of an available asset over time to recipients.",
             "label": "Stream"
