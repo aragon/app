@@ -317,6 +317,17 @@
             "label": "Token"
           }
         },
+        "distributionGauge": {
+          "gaugeVoterAddress": {
+            "helpText": "Specify the gauge plugin address for using it in this strategy.",
+            "label": "Gauge plugin",
+            "placeholder": "ENS or 0x…"
+          },
+          "token": {
+            "helpText": "Choose the token for this policy.",
+            "label": "Token"
+          }
+        },
         "distributionRecipients": {
           "addButton": "Recipients",
           "distributeEvenly": "Distribute evenly",

@@ -2,6 +2,7 @@ import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import { useWatch } from 'react-hook-form';
 import { type ISetupStrategyForm, RouterType } from './setupStrategyDialogDefinitions';
 import { SetupStrategyDialogDistributionFixed } from './setupStrategyDialogDistributionFixed';
+import { SetupStrategyDialogDistributionGauge } from './setupStrategyDialogDistributionGauge';
 import { SetupStrategyDialogDistributionStream } from './setupStrategyDialogDistributionStream';
 import { SetupStrategyDialogRouterType } from './setupStrategyDialogRouterType';
 import { SetupStrategyDialogSelect } from './setupStrategyDialogSelect';
@@ -24,14 +25,21 @@ const setupStrategySteps = [
     { id: 'routerType', order: 3, meta: { name: '' } },
     { id: 'distributionFixed', order: 4, meta: { name: '' } },
     { id: 'distributionStream', order: 4, meta: { name: '' } },
+    { id: 'distributionGauge', order: 4, meta: { name: '' } },
 ];
 
 export const SetupStrategyDialogSteps: React.FC<ISetupStrategyDialogStepsProps> = (props) => {
     const { initialValues, daoId } = props;
     const selectedRouterType = useWatch<ISetupStrategyForm, 'routerType'>({ name: 'routerType' });
 
-    const [selectStep, sourceVaultStep, routerTypeStep, distributionFixedStep, distributionStreamStep] =
-        setupStrategySteps;
+    const [
+        selectStep,
+        sourceVaultStep,
+        routerTypeStep,
+        distributionFixedStep,
+        distributionStreamStep,
+        distributionGauge,
+    ] = setupStrategySteps;
 
     return (
         <>
@@ -49,6 +57,9 @@ export const SetupStrategyDialogSteps: React.FC<ISetupStrategyDialogStepsProps> 
             </WizardDialog.Step>
             <WizardDialog.Step {...distributionStreamStep} hidden={selectedRouterType !== RouterType.STREAM}>
                 <SetupStrategyDialogDistributionStream />
+            </WizardDialog.Step>
+            <WizardDialog.Step {...distributionGauge} hidden={selectedRouterType !== RouterType.GAUGE}>
+                <SetupStrategyDialogDistributionGauge />
             </WizardDialog.Step>
         </>
     );
