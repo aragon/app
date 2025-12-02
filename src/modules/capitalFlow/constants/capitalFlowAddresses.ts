@@ -158,4 +158,17 @@ export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
         claimerPluginRepo: '0x0000000000000000000000000000000000000000',
         burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
     },
+    [Network.KATANA_MAINNET]: {
+        // model factories
+        routerModelFactory: '0x0000000000000000000000000000000000000000',
+        omniModelFactory: '0x0000000000000000000000000000000000000000',
+        // source factories
+        routerSourceFactory: '0x0000000000000000000000000000000000000000',
+        claimerSourceFactory: '0x0000000000000000000000000000000000000000',
+        omniSourceFactory: '0x0000000000000000000000000000000000000000',
+        // plugin repos
+        routerPluginRepo: '0x0000000000000000000000000000000000000000',
+        claimerPluginRepo: '0x0000000000000000000000000000000000000000',
+        burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+    },
 } as const;
