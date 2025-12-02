@@ -39,7 +39,7 @@ export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsP
 
     const routerAsset = strategy[routerTypeToDistributionField[strategy.routerType]].asset;
 
-    const sourceVaultLabel = sourceVaultDao.name ?? strategy.sourceVault;
+    const sourceVaultLabel = sourceVaultDao.name;
     const sourceVaultDescription = sourceVaultDao.ens ?? addressUtils.truncateAddress(sourceVaultDao.address);
 
     const renderRecipients = () => {
@@ -52,7 +52,7 @@ export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsP
                 ? strategy.distributionFixed.recipients
                 : strategy.distributionStream.recipients;
 
-        if (recipients == null || recipients.length === 0) {
+        if (recipients.length === 0) {
             return <span className="text-sm text-neutral-500">{recipientsEmptyLabel}</span>;
         }
 
@@ -76,20 +76,14 @@ export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsP
                 >
                     {sourceVaultLabel}
                 </DefinitionList.Item>
-                {strategy.type === StrategyType.CAPITAL_ROUTER && (
-                    <>
-                        <DefinitionList.Item
-                            term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.asset')}
-                        >
-                            {routerAsset?.token.symbol ?? routerAsset?.token.name ?? notSetLabel}
-                        </DefinitionList.Item>
-                        <DefinitionList.Item
-                            term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.recipientsTerm')}
-                        >
-                            {renderRecipients()}
-                        </DefinitionList.Item>
-                    </>
-                )}
+                <DefinitionList.Item term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.asset')}>
+                    {routerAsset?.token.symbol ?? routerAsset?.token.name ?? notSetLabel}
+                </DefinitionList.Item>
+                <DefinitionList.Item
+                    term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.recipientsTerm')}
+                >
+                    {renderRecipients()}
+                </DefinitionList.Item>
                 <div className="flex w-full justify-between pt-4">
                     <Button variant="secondary" size="md" onClick={onEdit}>
                         {t('app.capitalFlow.createPolicyForm.configure.strategy.details.edit')}

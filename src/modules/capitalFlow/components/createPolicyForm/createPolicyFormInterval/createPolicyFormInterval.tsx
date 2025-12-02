@@ -3,29 +3,22 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useWatch } from 'react-hook-form';
-import { PolicyDispatchIntervalType } from '../createPolicyFormDefinitions';
+import { type ICreatePolicyFormData, PolicyDispatchIntervalType } from '../createPolicyFormDefinitions';
 
-export interface ICreatePolicyFormIntervalProps {
-    /**
-     * Prefix to prepend to all the interval form fields.
-     */
-    fieldPrefix?: string;
-}
+export interface ICreatePolicyFormIntervalProps {}
 
-export const CreatePolicyFormInterval: React.FC<ICreatePolicyFormIntervalProps> = (props) => {
-    const { fieldPrefix } = props;
+export const CreatePolicyFormInterval: React.FC<ICreatePolicyFormIntervalProps> = () => {
     const { t } = useTranslations();
 
-    const intervalFieldName = fieldPrefix ? `${fieldPrefix}.dispatchInterval` : 'dispatchInterval';
-    const intervalTypeFieldName = `${intervalFieldName}.type` as any;
-    const cooldownDurationFieldName = `${intervalFieldName}.cooldownDuration` as any;
+    const intervalTypeFieldName = 'dispatchInterval.type';
+    const cooldownDurationFieldName = 'dispatchInterval.cooldownDuration';
 
-    const { onChange: onIntervalTypeChange, ...intervalTypeField } = useFormField<Record<string, any>, any>(
-        intervalTypeFieldName,
-        {
-            defaultValue: PolicyDispatchIntervalType.CONTINUOUS,
-        },
-    );
+    const { onChange: onIntervalTypeChange, ...intervalTypeField } = useFormField<
+        ICreatePolicyFormData,
+        typeof intervalTypeFieldName
+    >(intervalTypeFieldName, {
+        defaultValue: PolicyDispatchIntervalType.CONTINUOUS,
+    });
 
     const selectedIntervalType = useWatch({
         name: intervalTypeFieldName,

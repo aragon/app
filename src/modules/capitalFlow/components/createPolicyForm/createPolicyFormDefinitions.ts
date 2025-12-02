@@ -39,7 +39,7 @@ export interface ICreatePolicyFormData {
      * Policy strategy: router, distributor, DeFi adapter.
      * Only router available for now.
      */
-    strategy: ISetupStrategyForm;
+    strategy?: ISetupStrategyForm;
     /**
      * Dispatch interval configuration.
      */

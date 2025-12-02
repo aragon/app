@@ -57,7 +57,7 @@ class PreparePolicyDialogUtils {
         const finalSum = ratios.reduce((sum, ratio) => sum + ratio, 0);
 
         if (finalSum !== ratioBase) {
-            throw new Error(`Invalid ratios: sum is ${finalSum}, expected ${ratioBase}`);
+            throw new Error(`Invalid ratios: sum is ${finalSum.toString()}, expected ${ratioBase.toString()}`);
         }
 
         return ratios;
@@ -69,10 +69,18 @@ class PreparePolicyDialogUtils {
         const { routerModelFactory, routerSourceFactory, omniSourceFactory, omniModelFactory } =
             capitalFlowAddresses[dao.network];
         const { strategy } = values;
+        invariant(
+            strategy != null,
+            'PreparePolicyDialogUtils->buildDeploySourceAndModelTransaction: strategy is not defined',
+        );
+
         const { sourceVault } = strategy;
         const { address: sourceDaoAddress } = daoUtils.parseDaoId(sourceVault);
 
-        invariant(strategy.type === StrategyType.CAPITAL_ROUTER, `Unsupported strategy type: ${strategy.type}`);
+        invariant(
+            strategy.type === StrategyType.CAPITAL_ROUTER,
+            `PreparePolicyDialogUtils->buildDeploySourceAndModelTransaction: unsupported strategy type: ${strategy.type}`,
+        );
 
         let deployModelTransaction: ITransactionRequest;
         let deploySourceTransaction: ITransactionRequest;
@@ -131,7 +139,7 @@ class PreparePolicyDialogUtils {
             const { recipients, asset, epochPeriod } = strategy.distributionStream;
             const recipientAddresses = recipients.map((r) => r.address as Hex);
 
-            const decimals = asset?.token?.decimals ?? 18;
+            // const decimals = asset?.token.decimals ?? 18;
             // If there is no amount in the vault, then use the max number which would make the source to always take
             // everything there is in the vault.
             // const totalAmountInVault = asset?.amount
@@ -141,7 +149,7 @@ class PreparePolicyDialogUtils {
             // const totalAmountInVault = Number.MAX_VALUE;
 
             // Calculate total amount and ratios
-            const ratios = this.normalizeRatios(recipients.map((r) => Number(r.ratio)));
+            const ratios = this.normalizeRatios(recipients.map((r) => r.ratio));
 
             const deployModelCallData = encodeFunctionData({
                 abi: routerModelFactoryAbi,
@@ -175,10 +183,9 @@ class PreparePolicyDialogUtils {
                 data: deploySourceCallData,
                 value: BigInt(0),
             };
-        } else if (strategy.routerType === RouterType.BURN) {
+        } else {
+            // RouterType.BURN deploys only source, no model
             const { asset } = strategy.distributionBurn;
-
-            // Burn deploys only source, no model
 
             const deploySourceCallData = encodeFunctionData({
                 abi: routerSourceFactoryAbi,
@@ -192,8 +199,6 @@ class PreparePolicyDialogUtils {
             };
 
             return Promise.resolve(deploySourceTransaction);
-        } else {
-            throw new Error(`Unsupported router type: ${strategy.routerType as string}`);
         }
 
         const encodedTransaction = transactionUtils.encodeTransactionRequests(
@@ -219,8 +224,18 @@ class PreparePolicyDialogUtils {
         const { values, sourceAndModelContracts, dao } = params;
         const { strategy } = values;
 
-        invariant(sourceAndModelContracts != null, 'PreparePolicyDialogUtils: source and model contracts are required');
-        invariant(strategy.type === StrategyType.CAPITAL_ROUTER, `Unsupported strategy type: ${strategy.type}`);
+        invariant(
+            strategy != null,
+            'PreparePolicyDialogUtils->buildPolicyPrepareInstallationTransaction: strategy is not defined',
+        );
+        invariant(
+            sourceAndModelContracts != null,
+            'PreparePolicyDialogUtils->buildPolicyPrepareInstallationTransaction: source and model contracts are required',
+        );
+        invariant(
+            strategy.type === StrategyType.CAPITAL_ROUTER,
+            `PreparePolicyDialogUtils->buildPolicyPrepareInstallationTransaction: unsupported strategy type: ${strategy.type}`,
+        );
 
         const { model, source } = sourceAndModelContracts;
         const { routerPluginRepo, burnRouterPluginRepo } = capitalFlowAddresses[dao.network];

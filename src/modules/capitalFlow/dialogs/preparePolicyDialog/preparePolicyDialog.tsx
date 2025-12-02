@@ -94,7 +94,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
         return transaction;
     };
 
-    const handleDeploySourceAndModelSuccess = async (txReceipt: TransactionReceipt) => {
+    const handleDeploySourceAndModelSuccess = (txReceipt: TransactionReceipt) => {
         const combinedModelAbi = [...routerModelFactoryAbi, ...omniModelFactoryAbi] as const;
         const modelLogs = parseEventLogs({
             abi: combinedModelAbi,
@@ -102,6 +102,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
             strict: false,
         });
 
+        invariant(values.strategy != null, 'handleDeploySourceAndModelSuccess: strategy is not defined');
         const isBurn =
             values.strategy.type === StrategyType.CAPITAL_ROUTER && values.strategy.routerType === RouterType.BURN;
 
