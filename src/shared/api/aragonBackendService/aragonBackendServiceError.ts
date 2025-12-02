@@ -36,7 +36,7 @@ export class AragonBackendServiceError extends Error {
 
         return new AragonBackendServiceError(
             this.parseErrorCode,
-            `${this.parseErrorDescription} (status=${response.status}, url=${response.url})`,
+            `${this.parseErrorDescription} (status=${String(response.status)}, url=${response.url})`,
             response.status,
         );
     };
