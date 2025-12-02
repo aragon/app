@@ -13,6 +13,11 @@ export interface IGetAssetListQueryParams extends IPaginatedRequest {
      * When omitted, returns assets from parent DAO + all SubDAOs.
      */
     address?: string;
+    /**
+     * When true, returns only the parent DAO's assets (excludes SubDAOs).
+     * Used to differentiate between "All Assets" (parent + SubDAOs) and "Parent DAO" tab (parent only).
+     */
+    onlyParent?: boolean;
 }
 
 export interface IGetAssetListParams extends IRequestQueryParams<IGetAssetListQueryParams> {}
@@ -29,6 +34,11 @@ export interface IGetTransactionListQueryParams extends IPaginatedRequest {
      * When omitted, returns transactions from parent DAO + all SubDAOs.
      */
     address?: string;
+    /**
+     * When true, returns only the parent DAO's transactions (excludes SubDAOs).
+     * Used to differentiate between "All Transactions" (parent + SubDAOs) and "Parent DAO" tab (parent only).
+     */
+    onlyParent?: boolean;
 }
 
 export interface IGetTransactionListParams extends IRequestQueryParams<IGetTransactionListQueryParams> {}

@@ -1,4 +1,5 @@
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
+import { addressUtils } from '@aragon/gov-ui-kit';
 
 class SubDaoDisplayUtils {
     getPluginDaoAddress(plugin?: IDaoPlugin): string {
@@ -27,9 +28,9 @@ class SubDaoDisplayUtils {
     isParentPlugin(params: { dao?: IDao; plugin?: IDaoPlugin }): boolean {
         const { dao, plugin } = params;
         const pluginDaoAddress = this.getPluginDaoAddress(plugin);
-        const daoAddress = dao?.address?.toLowerCase() ?? '';
+        const daoAddress = dao?.address.toLowerCase() ?? '';
 
-        return pluginDaoAddress !== '' && pluginDaoAddress === daoAddress;
+        return addressUtils.isAddressEqual(pluginDaoAddress, daoAddress);
     }
 
     getMatchingSubDao(params: { dao?: IDao; plugin?: IDaoPlugin }) {
@@ -47,24 +48,32 @@ class SubDaoDisplayUtils {
     }): string {
         const { dao, plugin, groupLabel, fallbackLabel } = params;
 
-        if (plugin == null) {
-            return fallbackLabel ?? groupLabel;
-        }
+        const safeFallback = fallbackLabel && fallbackLabel !== '' ? fallbackLabel : undefined;
+        const pluginName = plugin?.name && plugin.name !== '' ? plugin.name : undefined;
 
-        if (plugin.id === 'all' || plugin.uniqueId === 'all' || plugin.label === groupLabel) {
-            return groupLabel;
+        if (this.isNoPlugin({ plugin })) {
+            return safeFallback ?? groupLabel;
         }
 
         if (this.isParentPlugin({ dao, plugin }) && dao?.name) {
             return dao.name;
         }
 
-        const matchingSubDao = this.getMatchingSubDao({ dao, plugin });
-        if (matchingSubDao?.name) {
-            return matchingSubDao.name;
+        // Try matching SubDAO name, then plugin name, then fallback/group label.
+        const matchingSubDaoName = this.getMatchingSubDaoName({ dao, plugin });
+        if (matchingSubDaoName) {
+            return matchingSubDaoName;
         }
 
-        return plugin.name ?? fallbackLabel ?? groupLabel;
+        return pluginName ?? safeFallback ?? groupLabel;
+    }
+
+    private isNoPlugin(params: { plugin?: IDaoPlugin }): boolean {
+        return params.plugin == null;
+    }
+
+    private getMatchingSubDaoName(params: { dao?: IDao; plugin?: IDaoPlugin }): string | undefined {
+        return this.getMatchingSubDao(params)?.name ?? undefined;
     }
 }
 

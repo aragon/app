@@ -1,9 +1,8 @@
-import { type IDao } from '@/shared/api/daoService';
+import type { IDao, ISubDaoSummary, Network } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     Button,
     ChainEntityType,
@@ -13,28 +12,52 @@ import {
     type IDefinitionListContainerProps,
 } from '@aragon/gov-ui-kit';
 
+export interface IFinanceDetailsEntity {
+    /**
+     * Address of the DAO or SubDAO.
+     */
+    address: string;
+    /**
+     * Network of the DAO or SubDAO.
+     */
+    network: Network;
+    /**
+     * ENS name of the DAO or SubDAO (e.g. `my-dao.dao.eth`).
+     */
+    ens?: string | null;
+    /**
+     * Description of the DAO or SubDAO.
+     */
+    description?: string | null;
+}
+
 export interface IFinanceDetailsListProps extends IDefinitionListContainerProps {
     /**
-     * DAO to display the details for.
+     * DAO or SubDAO to display the details for.
      */
-    dao?: IDao;
+    entity: IFinanceDetailsEntity | IDao | ISubDaoSummary;
+    /**
+     * Optional title for the card.
+     */
+    title?: string;
 }
 
 export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) => {
-    const { dao, ...otherProps } = props;
-    const { network, address } = dao!;
+    const { entity, title, ...otherProps } = props;
+    const { network, address, ens, description } = entity;
 
     const { t } = useTranslations();
 
     const { buildEntityUrl } = useDaoChain({ network });
     const daoAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address });
 
-    const daoEns = daoUtils.getDaoEns(dao);
+    const entityEns = ens != null && ens !== '' ? ens : undefined;
+    const descriptionText = description != null && description !== '' ? description : undefined;
 
     const octavLink = `https://pro.octav.fi/?addresses=${address}`;
 
     return (
-        <Page.AsideCard title={t('app.finance.financeDetailsList.title')}>
+        <Page.AsideCard title={title ?? t('app.finance.financeDetailsList.title')}>
             <DefinitionList.Container {...otherProps}>
                 <DefinitionList.Item term={t('app.finance.financeDetailsList.chain')}>
                     <p className="text-neutral-500">{networkDefinitions[network].name}</p>
@@ -46,13 +69,18 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
                 >
                     {addressUtils.truncateAddress(address)}
                 </DefinitionList.Item>
-                {daoEns && (
+                {entityEns && (
                     <DefinitionList.Item
                         term={t('app.finance.financeDetailsList.vaultEns')}
-                        copyValue={daoEns}
+                        copyValue={entityEns}
                         link={{ href: daoAddressLink }}
                     >
-                        {daoEns}
+                        {entityEns}
+                    </DefinitionList.Item>
+                )}
+                {descriptionText && (
+                    <DefinitionList.Item term={t('app.finance.subDaoInfo.description')}>
+                        {descriptionText}
                     </DefinitionList.Item>
                 )}
             </DefinitionList.Container>

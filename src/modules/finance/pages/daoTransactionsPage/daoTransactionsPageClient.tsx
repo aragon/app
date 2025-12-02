@@ -42,9 +42,6 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
     invariant(activePlugin != null, 'DaoTransactionsPageClient: no valid plugin found.');
 
     const allTransactionsSelected = activePlugin.uniqueId === 'all';
-    const matchingSubDao = subDaoDisplayUtils.getMatchingSubDao({ dao, plugin: activePlugin.meta });
-    const isParentSelected = subDaoDisplayUtils.isParentPlugin({ dao, plugin: activePlugin.meta });
-
     const asideCardTitle = subDaoDisplayUtils.getPluginDisplayName({
         dao,
         plugin: activePlugin.meta,

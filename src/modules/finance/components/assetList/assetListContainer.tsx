@@ -56,14 +56,16 @@ export const AssetListContainer: React.FC<IAssetListContainerProps> = (props) =>
     });
 
     const seenDaoAddresses = new Set<string>();
-    const processedPlugins = plugins?.reduce<IFilterComponentPlugin<IDaoPlugin>[]>((acc, plugin) => {
+    const processedPlugins = plugins?.reduce<Array<IFilterComponentPlugin<IDaoPlugin>>>((acc, plugin) => {
         const isGroupTab = plugin.id === pluginGroupFilter.id;
+        const isParentTab = subDaoDisplayUtils.isParentPlugin({ dao, plugin: plugin.meta });
         const baseQueryParams = { ...initialParams.queryParams };
         const pluginDaoAddress = subDaoDisplayUtils.getPluginDaoAddress(plugin.meta);
         const pluginDaoId = isGroupTab
             ? daoId
             : `${dao?.network ?? ''}-${plugin.meta.daoAddress ?? plugin.meta.address}`;
-        const pluginQueryParams = { ...baseQueryParams, daoId: pluginDaoId, address: undefined };
+        const onlyParent = isParentTab ? true : undefined;
+        const pluginQueryParams = { ...baseQueryParams, daoId: pluginDaoId, address: undefined, onlyParent };
         const pluginInitialParams = { ...initialParams, queryParams: pluginQueryParams };
 
         const isDuplicateSubDao = !isGroupTab && pluginDaoAddress !== '' && seenDaoAddresses.has(pluginDaoAddress);
@@ -81,7 +83,7 @@ export const AssetListContainer: React.FC<IAssetListContainerProps> = (props) =>
                   dao,
                   plugin: plugin.meta,
                   groupLabel: t('app.finance.assetList.groupTab'),
-                  fallbackLabel: plugin.label ?? dao?.name ?? t('app.finance.assetList.groupTab'),
+                  fallbackLabel: plugin.label,
               });
 
         acc.push({ ...plugin, label, props: { initialParams: pluginInitialParams, plugin: plugin.meta } });

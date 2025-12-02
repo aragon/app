@@ -756,7 +756,7 @@
         "daos": "DAOs",
         "note": "Aggregate treasury data across all SubDAOs coming soon.",
         "subDaos": "SubDAOs",
-        "tokens": "Tokens",
+        "tokens": "Unique tokens",
         "totalValueUsd": "Total value (USD)"
       },
       "assetSelectionDialog": {
@@ -771,7 +771,7 @@
             "chain": "Chain",
             "title": "Details"
           },
-          "treasury": "Treasury"
+          "summary": "Asset summary"
         },
         "main": {
           "title": "Assets"

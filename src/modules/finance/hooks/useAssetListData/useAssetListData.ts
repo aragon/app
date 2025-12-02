@@ -31,7 +31,7 @@ export const useAssetListData = (params: IGetAssetListParams) => {
                     ...asset.token,
                     name: asset.token.name || 'Unknown',
                     symbol: asset.token.symbol || 'UNKNOWN',
-                    priceUsd: derivedPrice ?? asset.token.priceUsd ?? '0',
+                    priceUsd: derivedPrice || asset.token.priceUsd || '0',
                 },
             };
         });

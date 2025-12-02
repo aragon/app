@@ -12,8 +12,8 @@ type IDaoApiResponse = Omit<IDao, 'plugins'> & {
 
 class DaoService extends AragonBackendService {
     private urls = {
-        dao: '/v2/daos/:id',
-        daoByEns: '/v2/daos/:network/ens/:ens',
+        dao: '/v3/daos/:id',
+        daoByEns: '/v3/daos/:network/ens/:ens',
         daoPermissions: '/v2/permissions/:network/:daoAddress',
     };
 

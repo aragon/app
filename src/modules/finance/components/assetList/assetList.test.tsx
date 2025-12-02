@@ -49,7 +49,7 @@ describe('<AssetList /> component', () => {
         ];
         useAssetListDataSpy.mockReturnValue({
             onLoadMore: jest.fn(),
-            assetList: assets,
+            assetList: assets.map((a) => ({ ...a, amount: a.amount ?? '0' })),
             state: 'idle' as const,
             pageSize: 10,
             itemsCount: 2,
@@ -66,7 +66,7 @@ describe('<AssetList /> component', () => {
     it('does not render the data-list pagination when hidePagination is set to true', () => {
         const hidePagination = true;
         useAssetListDataSpy.mockReturnValue({
-            assetList: [generateAsset()],
+            assetList: [{ ...generateAsset({ amount: '1' }), amount: '1' }],
             onLoadMore: jest.fn(),
             state: 'idle',
             pageSize: 10,

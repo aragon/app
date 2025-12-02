@@ -56,48 +56,101 @@ export const TransactionListContainer: React.FC<ITransactionListContainerProps> 
     });
 
     const seenDaoAddresses = new Set<string>();
-    const processedPlugins = plugins
-        ?.map((plugin) => {
-            const isGroupTab = plugin.id === pluginGroupFilter.id;
+    const basePlugins = plugins ?? [];
+
+    const processedPlugins = basePlugins.reduce<Array<IFilterComponentPlugin<IDaoPlugin>>>((acc, plugin) => {
+        const isGroupTab = plugin.id === pluginGroupFilter.id;
+        const isParentTab = subDaoDisplayUtils.isParentPlugin({ dao, plugin: plugin.meta });
+        const baseQueryParams = { ...initialParams.queryParams };
+        const pluginDaoId = isGroupTab
+            ? daoId
+            : `${dao?.network ?? ''}-${plugin.meta.daoAddress ?? plugin.meta.address}`;
+        const onlyParent = isParentTab ? true : undefined;
+        const pluginQueryParams = { ...baseQueryParams, daoId: pluginDaoId, address: undefined, onlyParent };
+        const pluginInitialParams = { ...initialParams, queryParams: pluginQueryParams };
+
+        const pluginDaoAddress = (plugin.meta.daoAddress ?? dao?.address ?? '').toLowerCase();
+        const isDuplicateSubDao = !isGroupTab && pluginDaoAddress !== '' && seenDaoAddresses.has(pluginDaoAddress);
+        if (isDuplicateSubDao) {
+            return acc;
+        }
+
+        if (!isGroupTab && pluginDaoAddress !== '') {
+            seenDaoAddresses.add(pluginDaoAddress);
+        }
+
+        const label = isGroupTab
+            ? t('app.finance.transactionList.groupTab')
+            : subDaoDisplayUtils.getPluginDisplayName({
+                  dao,
+                  plugin: plugin.meta,
+                  groupLabel: t('app.finance.transactionList.groupTab'),
+                  fallbackLabel: plugin.label,
+              });
+
+        acc.push({ ...plugin, label, props: { initialParams: pluginInitialParams, plugin: plugin.meta } });
+        return acc;
+    }, []);
+
+    let pluginsToUse = processedPlugins;
+
+    // Fallback when feature flags/filtering remove subDAO plugins but DAO has them available.
+    if (pluginsToUse.length <= 1 && dao?.plugins.length) {
+        const bodyPlugins = dao.plugins.filter((p) => p.isBody);
+
+        const mappedPlugins: Array<IFilterComponentPlugin<IDaoPlugin>> = bodyPlugins.map((p) => {
+            const isParentPlugin = subDaoDisplayUtils.isParentPlugin({ dao, plugin: p });
             const baseQueryParams = { ...initialParams.queryParams };
-            const pluginDaoId = isGroupTab
-                ? daoId
-                : `${dao?.network ?? ''}-${plugin.meta.daoAddress ?? plugin.meta.address}`;
-            const pluginQueryParams = { ...baseQueryParams, daoId: pluginDaoId, address: undefined };
+            const pluginDaoId = `${dao.network}-${p.daoAddress ?? p.address}`;
+            const onlyParent = isParentPlugin ? true : undefined;
+            const pluginQueryParams = { ...baseQueryParams, daoId: pluginDaoId, address: undefined, onlyParent };
             const pluginInitialParams = { ...initialParams, queryParams: pluginQueryParams };
+            const label = subDaoDisplayUtils.getPluginDisplayName({
+                dao,
+                plugin: p,
+                groupLabel: t('app.finance.transactionList.groupTab'),
+                fallbackLabel: p.name ?? t('app.finance.transactionList.groupTab'),
+            });
 
-            const pluginDaoAddress = (plugin.meta.daoAddress ?? dao?.address ?? '').toLowerCase();
-            const isDuplicateSubDao = !isGroupTab && pluginDaoAddress !== '' && seenDaoAddresses.has(pluginDaoAddress);
-            if (isDuplicateSubDao) {
-                return null;
-            }
+            return {
+                id: p.interfaceType,
+                uniqueId: `${p.address}-${p.slug}`,
+                label,
+                meta: p,
+                props: { initialParams: pluginInitialParams, plugin: p },
+            };
+        });
 
-            if (!isGroupTab && pluginDaoAddress !== '') {
-                seenDaoAddresses.add(pluginDaoAddress);
-            }
+        if (mappedPlugins.length > 1) {
+            const groupPlugin: IFilterComponentPlugin<IDaoPlugin> = {
+                id: pluginGroupFilter.id,
+                uniqueId: pluginGroupFilter.uniqueId,
+                label: t('app.finance.transactionList.groupTab'),
+                meta: pluginGroupFilter.meta,
+                props: {
+                    initialParams: {
+                        ...initialParams,
+                        queryParams: { ...initialParams.queryParams, daoId },
+                    },
+                    plugin: pluginGroupFilter.meta,
+                },
+            };
 
-            const label = isGroupTab
-                ? t('app.finance.transactionList.groupTab')
-                : subDaoDisplayUtils.getPluginDisplayName({
-                      dao,
-                      plugin: plugin.meta,
-                      groupLabel: t('app.finance.transactionList.groupTab'),
-                      fallbackLabel: plugin.label,
-                  });
-
-            return { ...plugin, label, props: { initialParams: pluginInitialParams, plugin: plugin.meta } };
-        })
-        .filter((plugin): plugin is IFilterComponentPlugin<IDaoPlugin> => plugin != null);
+            pluginsToUse = [groupPlugin, ...mappedPlugins];
+        } else {
+            pluginsToUse = mappedPlugins;
+        }
+    }
 
     const resolvedValue = value ?? activePlugin;
     const resolvedValueWithLabel =
-        processedPlugins?.find((plugin) => plugin.uniqueId === resolvedValue?.uniqueId) ?? resolvedValue;
+        pluginsToUse.find((plugin) => plugin.uniqueId === resolvedValue?.uniqueId) ?? resolvedValue;
     const resolvedOnValueChange = onValueChange ?? setActivePlugin;
 
     return (
         <PluginFilterComponent
             slotId="FINANCE_TRANSACTION_LIST"
-            plugins={processedPlugins}
+            plugins={pluginsToUse}
             Fallback={TransactionListDefault}
             value={resolvedValueWithLabel}
             onValueChange={resolvedOnValueChange}

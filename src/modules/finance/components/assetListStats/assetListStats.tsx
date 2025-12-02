@@ -5,13 +5,13 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IAssetListStatsProps } from './assetListStats.api';
 
 export const AssetListStats: React.FC<IAssetListStatsProps> = (props) => {
-    const { dao, tokenCount, totalValueUsd, ...otherProps } = props;
+    const { dao, tokenCount, totalValueUsd } = props;
 
     const { t } = useTranslations();
 
     const subDaoCount = dao.subDaos?.length ?? 0;
     const daoCount = 1 + subDaoCount;
-    const totalValue = totalValueUsd ?? dao.metrics?.tvlUSD ?? '—';
+    const totalValue = totalValueUsd ?? dao.metrics.tvlUSD;
     const tokens = tokenCount ?? '—';
 
     const stats = [
@@ -22,13 +22,10 @@ export const AssetListStats: React.FC<IAssetListStatsProps> = (props) => {
     ];
 
     return (
-        <div className="flex w-full flex-col gap-y-4" {...otherProps}>
-            <div className="grid w-full grid-cols-2 gap-3">
-                {stats.map((stat) => (
-                    <StatCard key={stat.label} value={stat.value} label={stat.label} />
-                ))}
-            </div>
-            <p className="text-sm text-neutral-500">{t('app.finance.assetListStats.note')}</p>
+        <div className="grid w-full grid-cols-2 gap-3">
+            {stats.map((stat) => (
+                <StatCard key={stat.label} value={stat.value} label={stat.label} />
+            ))}
         </div>
     );
 };

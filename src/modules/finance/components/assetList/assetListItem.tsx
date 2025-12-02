@@ -15,7 +15,7 @@ export interface IAssetListItemProps {
 
 export const AssetListItem: React.FC<IAssetListItemProps> = (props) => {
     const { asset, onAssetClick } = props;
-    const { token, amount, amountUsd } = asset;
+    const { token, amount } = asset;
 
     const { buildEntityUrl } = useDaoChain({ network: token.network });
 
@@ -24,7 +24,7 @@ export const AssetListItem: React.FC<IAssetListItemProps> = (props) => {
     const processedEntityUrl = onAssetClick != null ? undefined : entityUrl;
     const processedTarget = onAssetClick != null ? undefined : '_blank';
 
-    const hasPrice = token.priceUsd != null && Number(token.priceUsd) > 0;
+    const hasPrice = Number(token.priceUsd) > 0;
     const fiatPrice = hasPrice ? token.priceUsd : '0';
 
     return (
@@ -36,7 +36,6 @@ export const AssetListItem: React.FC<IAssetListItemProps> = (props) => {
             fiatPrice={fiatPrice}
             logoSrc={token.logo}
             hideValue={false}
-            fallbackValue="—"
             target={processedTarget}
             onClick={() => onAssetClick?.(asset)}
             href={processedEntityUrl}

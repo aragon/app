@@ -50,11 +50,6 @@ export const AssetListDefault: React.FC<IAssetListDefaultProps> = (props) => {
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, assetList } =
         useAssetListData(initialParams);
 
-    if (process.env.NODE_ENV !== 'production') {
-        // eslint-disable-next-line no-console
-        console.log('AssetListDefault: params', initialParams, 'itemsCount', itemsCount, 'sample', assetList?.[0]);
-    }
-
     const filteredAssets = useMemo(() => {
         if (!assetList) {
             return [];
@@ -91,8 +86,12 @@ export const AssetListDefault: React.FC<IAssetListDefaultProps> = (props) => {
                 errorState={errorState}
                 emptyState={emptyState}
             >
-                {filteredAssets.map((asset) => (
-                    <AssetListItem key={asset.token.address} asset={asset} onAssetClick={onAssetClick} />
+                {filteredAssets.map((asset, index) => (
+                    <AssetListItem
+                        key={`${asset.token.address}-${index.toString()}`}
+                        asset={asset}
+                        onAssetClick={onAssetClick}
+                    />
                 ))}
             </DataListContainer>
             {!hidePagination && !searchValue && <DataListPagination />}
