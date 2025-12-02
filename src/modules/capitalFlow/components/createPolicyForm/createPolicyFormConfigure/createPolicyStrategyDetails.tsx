@@ -13,6 +13,7 @@ const routerTypeToDistributionField = {
     [RouterType.FIXED]: 'distributionFixed',
     [RouterType.STREAM]: 'distributionStream',
     [RouterType.GAUGE]: 'distributionGauge',
+    [RouterType.BURN]: 'distributionBurn',
 } as const;
 
 export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsProps> = (props) => {
@@ -42,7 +43,7 @@ export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsP
     const sourceVaultDescription = sourceVaultDao.ens ?? addressUtils.truncateAddress(sourceVaultDao.address);
 
     const renderRecipients = () => {
-        if (strategy.routerType === RouterType.GAUGE) {
+        if (strategy.routerType === RouterType.GAUGE || strategy.routerType === RouterType.BURN) {
             return 'NA';
         }
 

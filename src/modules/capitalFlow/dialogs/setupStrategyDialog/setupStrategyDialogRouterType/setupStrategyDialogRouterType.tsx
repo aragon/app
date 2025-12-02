@@ -35,6 +35,11 @@ export const SetupStrategyDialogRouterType: React.FC = () => {
                 description={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.STREAM}.description`)}
                 value={RouterType.STREAM}
             />
+            <RadioCard
+                label={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.BURN}.label`)}
+                description={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.BURN}.description`)}
+                value={RouterType.BURN}
+            />
         </RadioGroup>
     );
 };

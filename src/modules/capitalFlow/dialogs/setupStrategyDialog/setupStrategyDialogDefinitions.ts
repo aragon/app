@@ -11,6 +11,7 @@ export enum RouterType {
     FIXED = 'FIXED',
     GAUGE = 'GAUGE',
     STREAM = 'STREAM',
+    BURN = 'BURN',
 }
 
 export interface ISetupStrategyFormBase {
@@ -49,6 +50,10 @@ export interface ISetupStrategyFormRouter extends ISetupStrategyFormBase {
      * Distribution configuration for GAUGE router type.
      */
     distributionGauge: IDistributionGaugeForm;
+    /**
+     * Distribution configuration for BURN router type.
+     */
+    distributionBurn: IDistributionBurnForm;
 }
 
 export interface IDistributionFormBase {
@@ -85,6 +90,8 @@ export interface IDistributionStreamForm extends IDistributionFormBase {
 export interface IDistributionGaugeForm extends IDistributionFormBase {
     gaugeVoterAddress: string;
 }
+
+export interface IDistributionBurnForm extends IDistributionFormBase {}
 
 export interface IRecipientRelative extends ICompositeAddress {
     /**

@@ -328,6 +328,12 @@
             "label": "Token"
           }
         },
+        "distributionBurn": {
+          "token": {
+            "helpText": "Choose the token to burn.",
+            "label": "Token"
+          }
+        },
         "distributionRecipients": {
           "addButton": "Recipients",
           "distributeEvenly": "Distribute evenly",
@@ -359,6 +365,10 @@
           "STREAM": {
             "description": "Transfer a fixed quantity of an available asset over time to recipients.",
             "label": "Stream"
+          },
+          "BURN": {
+            "description": "Route an asset to the zero address or call its burn function.",
+            "label": "Burn"
           },
           "helpText": "Select the policy type you want to set up and configure it below.",
           "label": "Policy strategy"
