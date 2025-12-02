@@ -19,6 +19,7 @@ import { type Hex, parseEventLogs, type TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
 import { pluginTransactionUtils } from '../../../../shared/utils/pluginTransactionUtils';
 import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
+import { omniModelFactoryAbi } from './omniModelFactoryAbi';
 import { omniSourceFactoryAbi } from './omniSourceFactoryAbi';
 import { preparePolicyDialogUtils } from './preparePolicyDialogUtils';
 import type {
@@ -93,7 +94,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     };
 
     const handleDeploySourceAndModelSuccess = async (txReceipt: TransactionReceipt) => {
-        const combinedModelAbi = [...routerModelFactoryAbi] as const;
+        const combinedModelAbi = [...routerModelFactoryAbi, ...omniModelFactoryAbi] as const;
         const modelLogs = parseEventLogs({
             abi: combinedModelAbi,
             logs: txReceipt.logs,

@@ -11,6 +11,7 @@ import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
 import { capitalFlowAddresses } from '../../constants/capitalFlowAddresses';
 import { RouterType, StrategyType } from '../setupStrategyDialog';
 import { StreamingEpochPeriod } from '../setupStrategyDialog/setupStrategyDialogDefinitions';
+import { omniModelFactoryAbi } from './omniModelFactoryAbi';
 import { omniSourceFactoryAbi } from './omniSourceFactoryAbi';
 import type { IBuildPolicyProposalActionsParams, IBuildTransactionParams } from './preparePolicyDialogUtils.api';
 import { routerModelFactoryAbi } from './routerModelFactoryAbi';
@@ -65,7 +66,8 @@ class PreparePolicyDialogUtils {
     buildDeploySourceAndModelTransaction = async (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
         const { values, dao } = params;
 
-        const { routerModelFactory, routerSourceFactory, omniSourceFactory } = capitalFlowAddresses[dao.network];
+        const { routerModelFactory, routerSourceFactory, omniSourceFactory, omniModelFactory } =
+            capitalFlowAddresses[dao.network];
         const { strategy } = values;
         const { sourceVault } = strategy;
         const { address: sourceDaoAddress } = daoUtils.parseDaoId(sourceVault);
@@ -93,6 +95,30 @@ class PreparePolicyDialogUtils {
 
             deployModelTransaction = {
                 to: routerModelFactory,
+                data: deployModelCallData,
+                value: BigInt(0),
+            };
+            deploySourceTransaction = {
+                to: routerSourceFactory,
+                data: deploySourceCallData,
+                value: BigInt(0),
+            };
+        } else if (strategy.routerType === RouterType.GAUGE) {
+            const { asset, gaugeVoterAddress } = strategy.distributionGauge;
+
+            const deployModelCallData = encodeFunctionData({
+                abi: omniModelFactoryAbi,
+                functionName: 'deployAddressGaugeRatioModel',
+                args: [gaugeVoterAddress as Hex],
+            });
+            const deploySourceCallData = encodeFunctionData({
+                abi: routerSourceFactoryAbi,
+                functionName: 'deployDrainBalanceSource',
+                args: [sourceDaoAddress as Hex, asset?.token ? (asset.token.address as Hex) : zeroAddress],
+            });
+
+            deployModelTransaction = {
+                to: omniModelFactory,
                 data: deployModelCallData,
                 value: BigInt(0),
             };
