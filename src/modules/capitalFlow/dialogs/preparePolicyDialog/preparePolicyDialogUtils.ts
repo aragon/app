@@ -15,7 +15,7 @@ import { omniModelFactoryAbi } from './omniModelFactoryAbi';
 import { omniSourceFactoryAbi } from './omniSourceFactoryAbi';
 import type { IBuildPolicyProposalActionsParams, IBuildTransactionParams } from './preparePolicyDialogUtils.api';
 import { routerModelFactoryAbi } from './routerModelFactoryAbi';
-import { routerPluginSetupAbi } from './routerPluginSetupAbi';
+import { burnRouterPluginSetupAbi, routerPluginSetupAbi } from './routerPluginSetupAbi';
 import { routerSourceFactoryAbi } from './routerSourceFactoryAbi';
 
 const epochPeriodToSeconds = {
@@ -175,6 +175,23 @@ class PreparePolicyDialogUtils {
                 data: deploySourceCallData,
                 value: BigInt(0),
             };
+        } else if (strategy.routerType === RouterType.BURN) {
+            const { asset } = strategy.distributionBurn;
+
+            // Burn deploys only source, no model
+
+            const deploySourceCallData = encodeFunctionData({
+                abi: routerSourceFactoryAbi,
+                functionName: 'deployDrainBalanceSource',
+                args: [sourceDaoAddress as Hex, asset?.token ? (asset.token.address as Hex) : zeroAddress],
+            });
+            const deploySourceTransaction = {
+                to: routerSourceFactory,
+                data: deploySourceCallData,
+                value: BigInt(0),
+            };
+
+            return Promise.resolve(deploySourceTransaction);
         } else {
             throw new Error(`Unsupported router type: ${strategy.routerType}`);
         }
@@ -208,15 +225,18 @@ class PreparePolicyDialogUtils {
         invariant(strategy.type === StrategyType.CAPITAL_ROUTER, `Unsupported strategy type: ${strategy.type}`);
 
         const { model, source } = sourceAndModelContracts;
-        const { routerPluginRepo } = capitalFlowAddresses[dao.network];
+        const { routerPluginRepo, burnRouterPluginRepo } = capitalFlowAddresses[dao.network];
 
         const isStreamingSource = strategy.routerType === RouterType.STREAM;
+        const isBurnRouter = strategy.routerType === RouterType.BURN;
 
-        const installationParams = encodeAbiParameters(routerPluginSetupAbi, [source, isStreamingSource, model]);
+        const installationParams = isBurnRouter
+            ? encodeAbiParameters(burnRouterPluginSetupAbi, [source, isStreamingSource])
+            : encodeAbiParameters(routerPluginSetupAbi, [source, isStreamingSource, model]);
 
         const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
         const prepareInstallationData = pluginTransactionUtils.buildPrepareInstallationData(
-            routerPluginRepo,
+            isBurnRouter ? burnRouterPluginRepo : routerPluginRepo,
             { release: 1, build: 1 },
             installationParams,
             dao.address as Hex,
@@ -230,7 +250,7 @@ class PreparePolicyDialogUtils {
     };
 
     buildPublishPolicyProposalActions = (params: IBuildPolicyProposalActionsParams): ITransactionRequest[] => {
-        const { values, dao, setupData } = params;
+        const { dao, setupData } = params;
 
         const processorSetupActions: ITransactionRequest[] = [];
 

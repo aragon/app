@@ -15,10 +15,11 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
-import { type Hex, parseEventLogs, type TransactionReceipt } from 'viem';
+import { type Hex, parseEventLogs, type TransactionReceipt, zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { pluginTransactionUtils } from '../../../../shared/utils/pluginTransactionUtils';
 import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
+import { RouterType, StrategyType } from '../setupStrategyDialog';
 import { omniModelFactoryAbi } from './omniModelFactoryAbi';
 import { omniSourceFactoryAbi } from './omniSourceFactoryAbi';
 import { preparePolicyDialogUtils } from './preparePolicyDialogUtils';
@@ -101,8 +102,15 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
             strict: false,
         });
 
-        invariant(modelLogs.length > 0, 'PreparePolicyDialog: Model deployment event not found in logs');
-        const modelAddress = modelLogs[0].args.newContract as Hex;
+        const isBurn =
+            values.strategy.type === StrategyType.CAPITAL_ROUTER && values.strategy.routerType === RouterType.BURN;
+
+        invariant(
+            // BURN does not deploy model
+            isBurn ? modelLogs.length === 0 : modelLogs.length > 0,
+            'PreparePolicyDialog: Unexpected state in model deployment event logs',
+        );
+        const modelAddress = isBurn ? zeroAddress : (modelLogs[0].args.newContract as Hex);
 
         const combinedSourceAbi = [...routerSourceFactoryAbi, ...omniSourceFactoryAbi] as const;
         const sourceLogs = parseEventLogs({
