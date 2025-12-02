@@ -41,9 +41,7 @@ export const DaoAssetsPage: React.FC<IDaoAssetsPageProps> = async (props) => {
 
     return (
         <Page.Container queryClient={queryClient}>
-            <Page.Content>
-                <DaoAssetsPageClient id={daoId} initialParams={assetsParams} />
-            </Page.Content>
+            <DaoAssetsPageClient id={daoId} initialParams={assetsParams} />
         </Page.Container>
     );
 };

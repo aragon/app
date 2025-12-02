@@ -42,14 +42,14 @@ describe('useAssetListData hook', () => {
 
     it('returns error state if fetching assets fails', () => {
         useAssetListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error('error') }));
-        const { result } = renderHook(() => useAssetListData({ queryParams: { address: '' } }));
+        const { result } = renderHook(() => useAssetListData({ queryParams: { daoId: 'test-dao' } }));
         expect(result.current.state).toEqual('error');
     });
 
     it('returns the pageSize set as hook parameter when data is loading', () => {
         useAssetListSpy.mockReturnValue(generateReactQueryInfiniteResultLoading());
         const pageSize = 2;
-        const { result } = renderHook(() => useAssetListData({ queryParams: { pageSize } }));
+        const { result } = renderHook(() => useAssetListData({ queryParams: { pageSize, daoId: 'test-dao' } }));
 
         expect(result.current.pageSize).toEqual(pageSize);
     });

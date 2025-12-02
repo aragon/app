@@ -783,7 +783,7 @@
             "chain": "Chain",
             "title": "Details"
           },
-          "treasury": "Treasury"
+          "summary": "Transaction summary"
         },
         "main": {
           "title": "Transactions"
@@ -815,15 +815,18 @@
         "groupTab": "All transactions"
       },
       "transactionListStats": {
-        "aggregateNote": "Aggregate stats across SubDAOs coming soon.",
         "daos": "DAOs",
-        "note": "Note",
-        "subDaos": "SubDAOs"
+        "lastActivity": "Last activity",
+        "subDaos": "SubDAOs",
+        "totalTransactions": "Total transactions"
       },
       "transactionSubDaoInfo": {
+        "address": "Address",
         "chain": "Chain",
         "description": "Description",
-        "pluginAddress": "Plugin address"
+        "links": "Resources",
+        "transactions": "Transactions",
+        "value": "Value"
       },
       "transferAssetForm": {
         "amount": {

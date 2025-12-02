@@ -1,5 +1,6 @@
+import * as financeService from '@/modules/finance/api/financeService';
+import { DaoInfoAside } from '@/modules/finance/components/daoInfoAside';
 import { TransactionListStats } from '@/modules/finance/components/transactionListStats';
-import { TransactionSubDaoInfo } from '@/modules/finance/components/transactionSubDaoInfo';
 import * as daoService from '@/shared/api/daoService';
 import * as useDaoPluginFilterUrlParam from '@/shared/hooks/useDaoPluginFilterUrlParam';
 import {
@@ -7,6 +8,7 @@ import {
     generateDaoPlugin,
     generateFilterComponentPlugin,
     generateReactQueryResultSuccess,
+    generateSubDao,
 } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { DaoTransactionsPageClient, type IDaoTransactionsPageClientProps } from './daoTransactionsPageClient';
@@ -23,13 +25,14 @@ jest.mock('@/modules/finance/components/transactionListStats', () => ({
     TransactionListStats: jest.fn(() => <div data-testid="transaction-list-stats" />),
 }));
 
-jest.mock('@/modules/finance/components/transactionSubDaoInfo', () => ({
-    TransactionSubDaoInfo: jest.fn(() => <div data-testid="transaction-subdao-info" />),
+jest.mock('@/modules/finance/components/daoInfoAside', () => ({
+    DaoInfoAside: jest.fn(() => <div data-testid="transaction-subdao-info" />),
 }));
 
 describe('<DaoTransactionsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useDaoPluginFilterUrlParamSpy = jest.spyOn(useDaoPluginFilterUrlParam, 'useDaoPluginFilterUrlParam');
+    const useTransactionListSpy = jest.spyOn(financeService, 'useTransactionList');
 
     const allTransactionsPlugin = generateFilterComponentPlugin({
         id: 'all',
@@ -45,6 +48,20 @@ describe('<DaoTransactionsPageClient /> component', () => {
             setActivePlugin: jest.fn(),
             plugins: [allTransactionsPlugin],
         });
+        useTransactionListSpy.mockReturnValue({
+            data: {
+                pages: [
+                    {
+                        metadata: { totalRecords: 42 },
+                        data: [{ blockTimestamp: 1_700_000_000 }],
+                    },
+                ],
+            },
+            status: 'success',
+            fetchStatus: 'idle',
+            isFetchingNextPage: false,
+            fetchNextPage: jest.fn(),
+        } as unknown as ReturnType<typeof financeService.useTransactionList>);
     });
 
     afterEach(() => {
@@ -77,7 +94,8 @@ describe('<DaoTransactionsPageClient /> component', () => {
     });
 
     it('renders SubDAO info when a specific plugin is selected', () => {
-        const dao = generateDao();
+        const subDao = generateSubDao({ address: '0xplug1' });
+        const dao = generateDao({ subDaos: [subDao] });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
 
         const plugin = generateFilterComponentPlugin({
@@ -96,11 +114,18 @@ describe('<DaoTransactionsPageClient /> component', () => {
 
         expect(screen.getByTestId('transaction-list-container')).toBeInTheDocument();
         expect(screen.getByTestId('transaction-subdao-info')).toBeInTheDocument();
-        const subDaoInfoMock = TransactionSubDaoInfo as jest.MockedFunction<typeof TransactionSubDaoInfo>;
+        const subDaoInfoMock = DaoInfoAside as jest.MockedFunction<typeof DaoInfoAside>;
         const subDaoInfoProps = subDaoInfoMock.mock.calls[0]?.[0];
 
         expect(subDaoInfoProps).toEqual(
-            expect.objectContaining({ plugin: plugin.meta, network: dao.network, daoId: 'test-id' }),
+            expect.objectContaining({
+                plugin: plugin.meta,
+                network: dao.network,
+                daoId: 'test-id',
+                subDao,
+                dao,
+                stats: expect.any(Array),
+            }),
         );
         expect(TransactionListStats).not.toHaveBeenCalled();
     });

@@ -15,13 +15,17 @@ export interface ITransferAssetFormProps extends Pick<IAssetInputProps, 'disable
      */
     sender: string;
     /**
+     * DAO ID to fetch the asset list for.
+     */
+    daoId: string;
+    /**
      * Network of the asset to be transferred.
      */
     network: Network;
 }
 
 export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
-    const { sender, network, fieldPrefix, disableAssetField } = props;
+    const { sender: _sender, daoId, network, fieldPrefix, disableAssetField } = props;
 
     const { t } = useTranslations();
 
@@ -43,7 +47,7 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
 
     const [receiverInput, setReceiverInput] = useState<string | undefined>(value?.address);
 
-    const fetchAssetsParams = { queryParams: { address: sender, network } };
+    const fetchAssetsParams = { queryParams: { daoId } };
     const { id: chainId } = networkDefinitions[network];
 
     return (

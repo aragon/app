@@ -25,7 +25,7 @@ describe('<AssetList /> component', () => {
 
     const createTestComponent = (props?: Partial<IAssetListDefaultProps>) => {
         const completeProps: IAssetListDefaultProps = {
-            initialParams: { queryParams: {} },
+            initialParams: { queryParams: { daoId: 'test-dao' } },
             ...props,
         };
 
