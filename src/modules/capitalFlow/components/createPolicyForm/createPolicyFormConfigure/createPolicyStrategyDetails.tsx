@@ -6,7 +6,6 @@ import { useMemo } from 'react';
 import {
     RouterType,
     StrategyType,
-    StreamingEpochPeriod,
     type ISetupStrategyForm,
 } from '../../../dialogs/setupStrategyDialog/setupStrategyDialogDefinitions';
 
@@ -15,23 +14,6 @@ export interface ICreatePolicyStrategyDetailsProps {
     onEdit: () => void;
     onRemove: () => void;
 }
-
-const strategyTypeLabelMap: Record<StrategyType, string> = {
-    [StrategyType.CAPITAL_ROUTER]: 'capitalRouter',
-    [StrategyType.CAPITAL_DISTRIBUTOR]: 'capitalDistributor',
-    [StrategyType.DEFI_ADAPTER]: 'defiAdapter',
-};
-
-const routerTypeLabelMap: Record<RouterType, string> = {
-    [RouterType.FIXED]: 'fixed',
-    [RouterType.STREAM]: 'stream',
-};
-
-const streamingPeriodLabelMap: Record<StreamingEpochPeriod, string> = {
-    [StreamingEpochPeriod.HOUR]: 'hour',
-    [StreamingEpochPeriod.DAY]: 'day',
-    [StreamingEpochPeriod.WEEK]: 'week',
-};
 
 export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsProps> = (props) => {
     const { strategy, onEdit, onRemove } = props;
@@ -45,14 +27,13 @@ export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsP
     const notSetLabel = t('app.capitalFlow.createPolicyForm.configure.strategy.details.notSet');
     const recipientsEmptyLabel = t('app.capitalFlow.createPolicyForm.configure.strategy.details.recipientsEmpty');
 
-    const strategyTypeKey = strategyTypeLabelMap[strategy.type];
-    const strategyTypeLabel = strategyTypeKey
-        ? t(`app.capitalFlow.setupStrategyDialog.select.${strategyTypeKey}.label`)
-        : strategy.type;
-
     const routerTypeLabel =
         strategy.type === StrategyType.CAPITAL_ROUTER
-            ? t(`app.capitalFlow.setupStrategyDialog.routerType.${routerTypeLabelMap[strategy.routerType]}.label`)
+            ? t(`app.capitalFlow.setupStrategyDialog.routerType.${strategy.routerType}.label`)
+            : undefined;
+    const routerTypeDescription =
+        strategy.type === StrategyType.CAPITAL_ROUTER
+            ? t(`app.capitalFlow.setupStrategyDialog.routerType.${strategy.routerType}.description`)
             : undefined;
 
     const routerAsset =
@@ -60,15 +41,6 @@ export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsP
             ? strategy.routerType === RouterType.FIXED
                 ? strategy.distributionFixed.asset
                 : strategy.distributionStream.asset
-            : undefined;
-
-    const streamCadenceLabel =
-        strategy.type === StrategyType.CAPITAL_ROUTER && strategy.routerType === RouterType.STREAM
-            ? t(
-                  `app.capitalFlow.setupStrategyDialog.distributionStream.epochPeriod.${
-                      streamingPeriodLabelMap[strategy.distributionStream.epochPeriod]
-                  }`,
-              )
             : undefined;
 
     const sourceVaultFallbackAddress = useMemo(() => {
@@ -83,69 +55,28 @@ export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsP
         if (strategy.type !== StrategyType.CAPITAL_ROUTER) {
             return <span className="text-sm text-neutral-500">{recipientsEmptyLabel}</span>;
         }
+        const recipients =
+            strategy.routerType === RouterType.FIXED
+                ? strategy.distributionFixed.recipients
+                : strategy.distributionStream.recipients;
 
-        if (strategy.routerType === RouterType.FIXED) {
-            const fixedRecipients = strategy.distributionFixed.recipients;
-
-            if (fixedRecipients == null || fixedRecipients.length === 0) {
-                return <span className="text-sm text-neutral-500">{recipientsEmptyLabel}</span>;
-            }
-
-            return (
-                <ul className="flex flex-col gap-2">
-                    {fixedRecipients.map((recipient, index) => {
-                        const recipientLabel = recipient.address
-                            ? addressUtils.truncateAddress(recipient.address)
-                            : notSetLabel;
-                        const valueLabel = recipient.ratio != null ? `${recipient.ratio}%` : notSetLabel;
-
-                        return (
-                            <li key={`${recipient.address ?? 'recipient'}-${index}`} className="flex flex-col">
-                                <span className="text-sm font-medium text-neutral-800">{recipientLabel}</span>
-                                <span className="text-sm text-neutral-500">{valueLabel}</span>
-                            </li>
-                        );
-                    })}
-                </ul>
-            );
-        }
-
-        const streamRecipients = strategy.distributionStream.recipients;
-
-        if (streamRecipients == null || streamRecipients.length === 0) {
+        if (recipients == null || recipients.length === 0) {
             return <span className="text-sm text-neutral-500">{recipientsEmptyLabel}</span>;
         }
 
-        return (
-            <ul className="flex flex-col gap-2">
-                {streamRecipients.map((recipient, index) => {
-                    const recipientLabel = recipient.address
-                        ? addressUtils.truncateAddress(recipient.address)
-                        : notSetLabel;
-                    const amountValue = recipient.amount ?? undefined;
-                    const amountText = amountValue != null ? `${amountValue}` : undefined;
-                    const valueLabel = amountText
-                        ? `${amountText}${routerAsset?.token.symbol ? ` ${routerAsset.token.symbol}` : ''}`
-                        : notSetLabel;
-
-                    return (
-                        <li key={`${recipient.address ?? 'recipient'}-${index}`} className="flex flex-col">
-                            <span className="text-sm font-medium text-neutral-800">{recipientLabel}</span>
-                            <span className="text-sm text-neutral-500">{valueLabel}</span>
-                        </li>
-                    );
-                })}
-            </ul>
-        );
+        return t('app.capitalFlow.createPolicyForm.configure.strategy.details.recipientsCount', {
+            count: recipients.length,
+        });
     };
 
     return (
         <>
             <DefinitionList.Container className="bg-neutral-0 rounded-xl border border-neutral-100 px-6 py-4">
                 <DefinitionList.Item
-                    term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.strategyType')}
+                    term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.strategyTerm')}
+                    description={routerTypeDescription}
                 >
-                    {strategyTypeLabel}
+                    {routerTypeLabel}
                 </DefinitionList.Item>
                 <DefinitionList.Item
                     term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.sourceVault')}
@@ -157,13 +88,6 @@ export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsP
                         )}
                     </div>
                 </DefinitionList.Item>
-                {routerTypeLabel && (
-                    <DefinitionList.Item
-                        term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.routerType')}
-                    >
-                        {routerTypeLabel}
-                    </DefinitionList.Item>
-                )}
                 {strategy.type === StrategyType.CAPITAL_ROUTER && (
                     <>
                         <DefinitionList.Item
@@ -171,15 +95,8 @@ export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsP
                         >
                             {routerAsset?.token.symbol ?? routerAsset?.token.name ?? notSetLabel}
                         </DefinitionList.Item>
-                        {strategy.routerType === RouterType.STREAM && (
-                            <DefinitionList.Item
-                                term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.streamCadence')}
-                            >
-                                {streamCadenceLabel ?? notSetLabel}
-                            </DefinitionList.Item>
-                        )}
                         <DefinitionList.Item
-                            term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.recipients')}
+                            term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.recipientsTerm')}
                         >
                             {renderRecipients()}
                         </DefinitionList.Item>

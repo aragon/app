@@ -202,12 +202,13 @@
               "edit": "Edit strategy",
               "more": "More",
               "notSet": "Not set yet",
-              "recipients": "Recipients",
+              "recipientsCount": "{{count}} recipients",
               "recipientsEmpty": "Recipients will appear here once added.",
+              "recipientsTerm": "Recipients",
               "remove": "Remove",
               "routerType": "Policy strategy",
               "sourceVault": "Source vault",
-              "strategyType": "Strategy type",
+              "strategyTerm": "Strategy",
               "streamCadence": "Stream cadence"
             },
             "emptyCard": {
@@ -279,10 +280,6 @@
         },
         "description": "To publish your capital flow policy, confirm the three onchain transactions in your wallet.",
         "step": {
-          "DEPLOY_SOURCE_AND_MODEL": {
-            "errorLabel": "Unable to deploy source and model contracts",
-            "label": "Deploy source and model contracts"
-          },
           "PIN_METADATA": {
             "errorLabel": "Unable to pin data on IPFS",
             "label": "Pin data on IPFS"
@@ -340,16 +337,16 @@
           }
         },
         "routerType": {
-          "fixed": {
+          "FIXED": {
             "description": "Transfer an available asset to recipients in a relative manner.",
             "label": "Fixed ratio"
           },
-          "helpText": "Select the policy type you want to set up and configure it below.",
-          "label": "Policy strategy",
-          "stream": {
+          "STREAM": {
             "description": "Transfer a fixed quantity of an available asset over time to recipients.",
             "label": "Stream"
-          }
+          },
+          "helpText": "Select the policy type you want to set up and configure it below.",
+          "label": "Policy strategy"
         },
         "select": {
           "capitalDistributor": {

@@ -21,13 +21,13 @@ export const SetupStrategyDialogRouterType: React.FC = () => {
             {...routerTypeField}
         >
             <RadioCard
-                label={t('app.capitalFlow.setupStrategyDialog.routerType.fixed.label')}
-                description={t('app.capitalFlow.setupStrategyDialog.routerType.fixed.description')}
+                label={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.FIXED}.label`)}
+                description={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.FIXED}.description`)}
                 value={RouterType.FIXED}
             />
             <RadioCard
-                label={t('app.capitalFlow.setupStrategyDialog.routerType.stream.label')}
-                description={t('app.capitalFlow.setupStrategyDialog.routerType.stream.description')}
+                label={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.STREAM}.label`)}
+                description={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.STREAM}.description`)}
                 value={RouterType.STREAM}
             />
         </RadioGroup>
