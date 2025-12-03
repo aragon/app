@@ -213,7 +213,7 @@ class PreparePolicyDialogUtils {
     };
 
     buildPolicyPrepareInstallationTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
-        // TODO: handle policyMetadata here when ready
+        // TODO: handle policyMetadata here when ready (APP-375)
         const { values, sourceAndModelContracts, dao } = params;
         const { strategy } = values;
 

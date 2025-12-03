@@ -186,7 +186,6 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                 )}
                 {isSubDaoEnabled && (
                     <Page.MainSection
-                        id="automation"
                         className="gap-3"
                         inset={false}
                         title={t('app.settings.daoSettingsPage.main.automationInfoTitle')}

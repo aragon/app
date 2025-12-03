@@ -105,7 +105,8 @@ interface IPolicySourceBase {
      */
     vaultAddress: string;
     /**
-     * ERC20 token consumed from the vault. No token means it's ETH.
+     * ERC20 token consumed from the vault.
+     * If no token data (undefined), it is assumed to be the native token.
      */
     token?: IToken;
 }
