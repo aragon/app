@@ -29,7 +29,7 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
 
     const { data: dao } = useDao({ urlParams: { id } });
 
-    const { activeOption, setActiveOption } = useDaoFilterUrlParam({
+    const { activeOption } = useDaoFilterUrlParam({
         daoId: id,
         includeAllOption: true,
         name: transactionListFilterParam,

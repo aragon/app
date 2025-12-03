@@ -1,13 +1,9 @@
 import * as financeService from '@/modules/finance/api/financeService';
 import * as daoService from '@/shared/api/daoService';
-import * as useDaoPluginFilterUrlParam from '@/shared/hooks/useDaoPluginFilterUrlParam';
-import {
-    generateDao,
-    generateDaoPlugin,
-    generateFilterComponentPlugin,
-    generateReactQueryResultSuccess,
-    generateSubDao,
-} from '@/shared/testUtils';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
+import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
+import * as useDaoFilterUrlParam from '@/shared/hooks/useDaoFilterUrlParam';
+import { generateDao, generateReactQueryResultSuccess, generateSubDao } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { DaoTransactionsPageClient, type IDaoTransactionsPageClientProps } from './daoTransactionsPageClient';
 
@@ -29,22 +25,52 @@ jest.mock('@/modules/finance/components/daoInfoAside', () => ({
 
 describe('<DaoTransactionsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
-    const useDaoPluginFilterUrlParamSpy = jest.spyOn(useDaoPluginFilterUrlParam, 'useDaoPluginFilterUrlParam');
+    const useDaoFilterUrlParamSpy = jest.spyOn(useDaoFilterUrlParam, 'useDaoFilterUrlParam');
     const useTransactionListSpy = jest.spyOn(financeService, 'useTransactionList');
 
-    const allTransactionsPlugin = generateFilterComponentPlugin({
-        id: 'all',
-        uniqueId: 'all',
-        label: 'All transactions',
-        meta: generateDaoPlugin(),
-    });
+    const featureFlagSnapshot: FeatureFlagSnapshot[] = [
+        {
+            key: 'debugPanel',
+            name: 'Debug panel',
+            description: '',
+            enabled: false,
+        },
+        {
+            key: 'subDao',
+            name: 'SubDAO support',
+            description: '',
+            enabled: true,
+        },
+    ];
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
-        useDaoPluginFilterUrlParamSpy.mockReturnValue({
-            activePlugin: allTransactionsPlugin,
-            setActivePlugin: jest.fn(),
-            plugins: [allTransactionsPlugin],
+        useDaoFilterUrlParamSpy.mockReturnValue({
+            activeOption: {
+                id: 'all',
+                label: 'All transactions',
+                daoId: 'test-id',
+                isAll: true,
+                isParent: false,
+            },
+            setActiveOption: jest.fn(),
+            options: [
+                {
+                    id: 'all',
+                    label: 'All transactions',
+                    daoId: 'test-id',
+                    isAll: true,
+                    isParent: false,
+                },
+                {
+                    id: 'test-id',
+                    label: 'Parent DAO',
+                    daoId: 'test-id',
+                    isAll: false,
+                    isParent: true,
+                    onlyParent: true,
+                },
+            ],
         });
         useTransactionListSpy.mockReturnValue({
             data: {
@@ -73,7 +99,11 @@ describe('<DaoTransactionsPageClient /> component', () => {
             ...props,
         };
 
-        return <DaoTransactionsPageClient {...completeProps} />;
+        return (
+            <FeatureFlagsProvider initialSnapshot={featureFlagSnapshot}>
+                <DaoTransactionsPageClient {...completeProps} />
+            </FeatureFlagsProvider>
+        );
     };
 
     it('fetches the DAO with the provided id prop', () => {
@@ -96,16 +126,26 @@ describe('<DaoTransactionsPageClient /> component', () => {
         const dao = generateDao({ subDaos: [subDao] });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
 
-        const plugin = generateFilterComponentPlugin({
-            id: 'plugin',
-            uniqueId: 'plugin-1',
-            label: 'Treasury',
-            meta: generateDaoPlugin({ address: '0xplug1', description: 'SubDAO treasury' }),
-        });
-        useDaoPluginFilterUrlParamSpy.mockReturnValueOnce({
-            activePlugin: plugin,
-            setActivePlugin: jest.fn(),
-            plugins: [plugin],
+        const option = {
+            id: subDao.id,
+            label: subDao.name,
+            daoId: subDao.id,
+            isAll: false,
+            isParent: false,
+        };
+        useDaoFilterUrlParamSpy.mockReturnValueOnce({
+            activeOption: option,
+            setActiveOption: jest.fn(),
+            options: [
+                {
+                    id: 'all',
+                    label: 'All transactions',
+                    daoId: 'test-id',
+                    isAll: true,
+                    isParent: false,
+                },
+                option,
+            ],
         });
 
         render(createTestComponent());

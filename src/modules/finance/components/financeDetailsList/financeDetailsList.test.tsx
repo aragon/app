@@ -10,7 +10,7 @@ import { FinanceDetailsList, type IFinanceDetailsListProps } from './financeDeta
 describe('<FinanceDetailsList /> component', () => {
     const createTestComponent = (props: Partial<IFinanceDetailsListProps>) => {
         const completeProps: IFinanceDetailsListProps = {
-            entity: generateDao(),
+            dao: generateDao(),
             ...props,
         };
 
@@ -28,11 +28,9 @@ describe('<FinanceDetailsList /> component', () => {
             network: Network.POLYGON_MAINNET,
             address: '0x1b765393c3E2f3d25c44eb9Cf6B864B3fD250cDB',
             ens: 'poly-dao.dao.eth',
-            description: 'Polygon DAO',
         });
 
-        render(createTestComponent({ entity: dao, title: 'Custom title' }));
-        expect(screen.getByText('Custom title')).toBeInTheDocument();
+        render(createTestComponent({ dao }));
         expect(screen.getByText(networkDefinitions[dao.network].name)).toBeInTheDocument();
 
         const daoAddressLink = screen.getByRole('link', { name: '0x1b76…0cDB' });
@@ -42,12 +40,11 @@ describe('<FinanceDetailsList /> component', () => {
         const daoEnsLink = screen.getByRole('link', { name: daoUtils.getDaoEns(dao) });
         expect(daoEnsLink).toBeInTheDocument();
         expect(daoEnsLink).toHaveAttribute('href', expect.stringMatching(dao.address));
-        expect(screen.getByText('Polygon DAO')).toBeInTheDocument();
     });
 
     it('does not render the DAO ens when missing', () => {
-        const dao = generateDao({ ens: null, description: '' });
-        render(createTestComponent({ entity: dao }));
+        const dao = generateDao({ ens: null });
+        render(createTestComponent({ dao }));
         expect(screen.queryByText(/financeDetailsList.vaultEns/)).not.toBeInTheDocument();
     });
 });

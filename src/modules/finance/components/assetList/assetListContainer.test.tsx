@@ -1,8 +1,9 @@
 import { AssetList } from '@/modules/finance/components/assetList';
 import * as daoService from '@/shared/api/daoService';
-import * as useDaoPluginFilterUrlParam from '@/shared/hooks/useDaoPluginFilterUrlParam/useDaoPluginFilterUrlParam';
-import { pluginGroupFilter } from '@/shared/hooks/useDaoPlugins';
-import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
+import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
+import * as useDaoFilterUrlParam from '@/shared/hooks/useDaoFilterUrlParam';
+import { generateDao } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 
@@ -21,7 +22,22 @@ jest.mock('@/shared/components/pluginFilterComponent', () => ({
 
 describe('<AssetList.Container /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
-    const useDaoPluginFilterUrlParamSpy = jest.spyOn(useDaoPluginFilterUrlParam, 'useDaoPluginFilterUrlParam');
+    const useDaoFilterUrlParamSpy = jest.spyOn(useDaoFilterUrlParam, 'useDaoFilterUrlParam');
+
+    const featureFlagSnapshot: FeatureFlagSnapshot[] = [
+        {
+            key: 'debugPanel',
+            name: 'Debug panel',
+            description: '',
+            enabled: false,
+        },
+        {
+            key: 'subDao',
+            name: 'SubDAO support',
+            description: '',
+            enabled: true,
+        },
+    ];
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue({
@@ -30,16 +46,30 @@ describe('<AssetList.Container /> component', () => {
             error: null,
         } as ReturnType<typeof daoService.useDao>);
 
-        useDaoPluginFilterUrlParamSpy.mockReturnValue({
-            activePlugin: undefined,
-            setActivePlugin: jest.fn(),
-            plugins: [
+        useDaoFilterUrlParamSpy.mockReturnValue({
+            activeOption: {
+                id: 'all',
+                label: 'All',
+                daoId: 'test-dao',
+                isAll: true,
+                isParent: false,
+            },
+            setActiveOption: jest.fn(),
+            options: [
                 {
-                    id: pluginGroupFilter.id,
-                    uniqueId: pluginGroupFilter.id,
+                    id: 'all',
                     label: 'All',
-                    meta: pluginGroupFilter as unknown as daoService.IDaoPlugin,
-                    props: {},
+                    daoId: 'test-dao',
+                    isAll: true,
+                    isParent: false,
+                },
+                {
+                    id: 'test-dao',
+                    label: 'Parent DAO',
+                    daoId: 'test-dao',
+                    isAll: false,
+                    isParent: true,
+                    onlyParent: true,
                 },
             ],
         });
@@ -47,7 +77,7 @@ describe('<AssetList.Container /> component', () => {
 
     afterEach(() => {
         useDaoSpy.mockReset();
-        useDaoPluginFilterUrlParamSpy.mockReset();
+        useDaoFilterUrlParamSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<React.ComponentProps<typeof AssetList.Container>>) => {
@@ -59,7 +89,9 @@ describe('<AssetList.Container /> component', () => {
 
         return (
             <GukModulesProvider>
-                <AssetList.Container {...completeProps} />
+                <FeatureFlagsProvider initialSnapshot={featureFlagSnapshot}>
+                    <AssetList.Container {...completeProps} />
+                </FeatureFlagsProvider>
             </GukModulesProvider>
         );
     };
@@ -67,54 +99,40 @@ describe('<AssetList.Container /> component', () => {
     it('renders the PluginFilterComponent with processed plugins', () => {
         render(createTestComponent());
         expect(screen.getByTestId('plugin-filter-component')).toBeInTheDocument();
-        expect(screen.getByText(/Plugins: 1/)).toBeInTheDocument();
+        expect(screen.getByText(/Plugins: 2/)).toBeInTheDocument();
     });
 
     it('processes plugins and removes duplicates based on DAO address', () => {
-        const bodyPlugin1 = generateDaoPlugin({
-            address: '0xPlugin1',
-            daoAddress: '0xSubDao1',
-        });
-        const bodyPlugin2 = generateDaoPlugin({
-            address: '0xPlugin2',
-            daoAddress: '0xSubDao1', // Same DAO address - should be deduplicated
-        });
-        const bodyPlugin3 = generateDaoPlugin({
-            address: '0xPlugin3',
-            daoAddress: '0xSubDao2',
-        });
-
-        useDaoPluginFilterUrlParamSpy.mockReturnValue({
-            activePlugin: undefined,
-            setActivePlugin: jest.fn(),
-            plugins: [
+        useDaoFilterUrlParamSpy.mockReturnValue({
+            activeOption: {
+                id: 'all',
+                label: 'All',
+                daoId: 'test-dao',
+                isAll: true,
+                isParent: false,
+            },
+            setActiveOption: jest.fn(),
+            options: [
                 {
-                    id: pluginGroupFilter.id,
-                    uniqueId: pluginGroupFilter.id,
+                    id: 'all',
                     label: 'All',
-                    meta: pluginGroupFilter as unknown as daoService.IDaoPlugin,
-                    props: {},
+                    daoId: 'test-dao',
+                    isAll: true,
+                    isParent: false,
                 },
                 {
-                    id: bodyPlugin1.address,
-                    uniqueId: `${bodyPlugin1.address}-1`,
-                    label: 'Plugin 1',
-                    meta: bodyPlugin1,
-                    props: {},
+                    id: 'subdao-1',
+                    label: 'SubDAO 1',
+                    daoId: 'subdao-1',
+                    isAll: false,
+                    isParent: false,
                 },
                 {
-                    id: bodyPlugin2.address,
-                    uniqueId: `${bodyPlugin2.address}-2`,
-                    label: 'Plugin 2',
-                    meta: bodyPlugin2,
-                    props: {},
-                },
-                {
-                    id: bodyPlugin3.address,
-                    uniqueId: `${bodyPlugin3.address}-3`,
-                    label: 'Plugin 3',
-                    meta: bodyPlugin3,
-                    props: {},
+                    id: 'subdao-2',
+                    label: 'SubDAO 2',
+                    daoId: 'subdao-2',
+                    isAll: false,
+                    isParent: false,
                 },
             ],
         });
@@ -126,16 +144,22 @@ describe('<AssetList.Container /> component', () => {
     });
 
     it('uses the group filter label for the "All" tab', () => {
-        useDaoPluginFilterUrlParamSpy.mockReturnValue({
-            activePlugin: undefined,
-            setActivePlugin: jest.fn(),
-            plugins: [
+        useDaoFilterUrlParamSpy.mockReturnValue({
+            activeOption: {
+                id: 'all',
+                label: 'All',
+                daoId: 'test-dao',
+                isAll: true,
+                isParent: false,
+            },
+            setActiveOption: jest.fn(),
+            options: [
                 {
-                    id: pluginGroupFilter.id,
-                    uniqueId: pluginGroupFilter.id,
+                    id: 'all',
                     label: 'All',
-                    meta: pluginGroupFilter as unknown as daoService.IDaoPlugin,
-                    props: {},
+                    daoId: 'test-dao',
+                    isAll: true,
+                    isParent: false,
                 },
             ],
         });
@@ -151,28 +175,29 @@ describe('<AssetList.Container /> component', () => {
     });
 
     it('passes correct query params for individual SubDAO tabs', () => {
-        const bodyPlugin = generateDaoPlugin({
-            address: '0xPlugin1',
-            daoAddress: '0xSubDao1',
-        });
-
-        useDaoPluginFilterUrlParamSpy.mockReturnValue({
-            activePlugin: undefined,
-            setActivePlugin: jest.fn(),
-            plugins: [
+        useDaoFilterUrlParamSpy.mockReturnValue({
+            activeOption: {
+                id: 'all',
+                label: 'All',
+                daoId: 'test-dao',
+                isAll: true,
+                isParent: false,
+            },
+            setActiveOption: jest.fn(),
+            options: [
                 {
-                    id: pluginGroupFilter.id,
-                    uniqueId: pluginGroupFilter.id,
+                    id: 'all',
                     label: 'All',
-                    meta: pluginGroupFilter as unknown as daoService.IDaoPlugin,
-                    props: {},
+                    daoId: 'test-dao',
+                    isAll: true,
+                    isParent: false,
                 },
                 {
-                    id: bodyPlugin.address,
-                    uniqueId: `${bodyPlugin.address}-1`,
+                    id: 'subdao-1',
                     label: 'SubDAO 1',
-                    meta: bodyPlugin,
-                    props: {},
+                    daoId: 'subdao-1',
+                    isAll: false,
+                    isParent: false,
                 },
             ],
         });

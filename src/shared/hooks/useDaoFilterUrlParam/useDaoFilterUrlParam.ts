@@ -1,5 +1,6 @@
 import { useDao } from '@/shared/api/daoService';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useCallback, useMemo } from 'react';
 import { useFilterUrlParam, type IUseFilterUrlParamParams } from '../useFilterUrlParam';
 
@@ -60,6 +61,8 @@ export interface IUseDaoFilterUrlParamReturn {
 export const useDaoFilterUrlParam = (params: IUseDaoFilterUrlParamParams): IUseDaoFilterUrlParamReturn => {
     const { daoId, includeAllOption = true, name, fallbackValue: fallbackValueProp, enableUrlUpdate = true } = params;
 
+    const { t } = useTranslations();
+
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const { isEnabled } = useFeatureFlags();
     const isSubDaoEnabled = isEnabled('subDao');
@@ -86,7 +89,7 @@ export const useDaoFilterUrlParam = (params: IUseDaoFilterUrlParamParams): IUseD
         // Add parent DAO
         result.push({
             id: dao.id,
-            label: dao.name ?? dao.id,
+            label: isSubDaoEnabled ? dao.name : t('app.finance.financeDetailsList.title'),
             daoId: dao.id,
             isAll: false,
             isParent: true,
@@ -98,7 +101,7 @@ export const useDaoFilterUrlParam = (params: IUseDaoFilterUrlParamParams): IUseD
             dao.subDaos.forEach((subDao) => {
                 result.push({
                     id: subDao.id,
-                    label: subDao.name ?? subDao.id,
+                    label: subDao.name,
                     daoId: subDao.id,
                     isAll: false,
                     isParent: false,
@@ -107,7 +110,7 @@ export const useDaoFilterUrlParam = (params: IUseDaoFilterUrlParamParams): IUseD
         }
 
         return result;
-    }, [dao, isSubDaoEnabled, includeAllOption]);
+    }, [dao, isSubDaoEnabled, includeAllOption, t]);
 
     const fallbackValue = fallbackValueProp ?? options?.[0]?.id;
     const validValues = options?.map((option) => option.id);

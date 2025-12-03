@@ -7,7 +7,9 @@ import type { IDaoFilterOption } from '@/shared/hooks/useDaoFilterUrlParam';
 import type { SlotId } from '@/shared/utils/pluginRegistryUtils';
 import type { ReactNode } from 'react';
 
-export interface IDaoFilterComponentProps<TParams extends { queryParams: Record<string, unknown> } = any> {
+export interface IDaoFilterComponentProps<
+    TParams extends { queryParams: Record<string, unknown> } = { queryParams: Record<string, unknown> },
+> {
     /**
      * Slot ID for plugin-based rendering.
      */
@@ -53,9 +55,9 @@ export interface IDaoFilterComponentProps<TParams extends { queryParams: Record<
 /**
  * Maps DAO filter options to the format expected by PluginFilterComponent.
  */
-export const mapDaoOptionsToFilterFormat = <TParams extends { queryParams: Record<string, unknown> }>(params: {
+export const mapDaoOptionsToFilterFormat = (params: {
     options?: IDaoFilterOption[];
-    initialParams: TParams;
+    initialParams: { queryParams: Record<string, unknown> };
     allOptionLabel: string;
 }): Array<IFilterComponentPlugin<IDaoFilterOption>> | undefined => {
     const { options, initialParams, allOptionLabel } = params;
@@ -83,7 +85,9 @@ export const mapDaoOptionsToFilterFormat = <TParams extends { queryParams: Recor
  * DAO-based filter component for assets/transactions/etc.
  * Wraps PluginFilterComponent with DAO-specific API.
  */
-export const DaoFilterComponent = <TParams extends { queryParams: Record<string, unknown> } = any>(
+export const DaoFilterComponent = <
+    TParams extends { queryParams: Record<string, unknown> } = { queryParams: Record<string, unknown> },
+>(
     props: IDaoFilterComponentProps<TParams>,
 ) => {
     const { options, value, onValueChange, initialParams, allOptionLabel, ...otherProps } = props;
