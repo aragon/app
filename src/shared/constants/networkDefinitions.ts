@@ -50,9 +50,18 @@ export interface INetworkDefinition extends Chain {
      */
     logo: string;
     /**
-     * URL of the private RPC endpoint to use.
+     * Configuration for the private RPC endpoint to use.
      */
-    privateRpc?: string;
+    privateRpcConfig?: {
+        /**
+         * RPC provider to use.
+         */
+        rpcProvider: RpcProvider;
+        /**
+         * URL of the private RPC endpoint to use.
+         */
+        rpcUrl: string;
+    };
     /**
      * Addresses for the network.
      */
@@ -79,6 +88,13 @@ export interface INetworkDefinition extends Chain {
     tenderlySupport: boolean;
 }
 
+export enum RpcProvider {
+    ALCHEMY = 'alchemy',
+    ANKR = 'ankr',
+    DRPC = 'drpc',
+    PEAQ = 'peaq',
+}
+
 const latestProtocolVersion: IContractVersionInfo = {
     release: 1,
     build: 4,
@@ -94,7 +110,10 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...mainnet,
         name: 'Ethereum',
         logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
-        privateRpc: 'https://eth-mainnet.g.alchemy.com/v2/',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.ALCHEMY,
+            rpcUrl: 'https://eth-mainnet.g.alchemy.com/v2/',
+        },
         order: 1,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
@@ -110,7 +129,10 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...polygon,
         name: 'Polygon',
         logo: 'https://assets.coingecko.com/coins/images/4713/large/polygon.png',
-        privateRpc: 'https://polygon-mainnet.g.alchemy.com/v2/',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.ALCHEMY,
+            rpcUrl: 'https://polygon-mainnet.g.alchemy.com/v2/',
+        },
         order: 2,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
@@ -126,7 +148,10 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...base,
         name: 'Base',
         logo: 'https://mirror-media.imgix.net/publication-images/cgqxxPdUFBDjgKna_dDir.png?h=250&w=250',
-        privateRpc: 'https://base-mainnet.g.alchemy.com/v2/',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.ALCHEMY,
+            rpcUrl: 'https://base-mainnet.g.alchemy.com/v2/',
+        },
         order: 3,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
@@ -142,7 +167,10 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...arbitrum,
         name: 'Arbitrum',
         logo: 'https://docs.arbitrum.io/img/logo.svg',
-        privateRpc: 'https://arb-mainnet.g.alchemy.com/v2/',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.ALCHEMY,
+            rpcUrl: 'https://arb-mainnet.g.alchemy.com/v2/',
+        },
         order: 4,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
@@ -158,7 +186,10 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...optimism,
         name: 'Optimism',
         logo: 'https://altcoinsbox.com/wp-content/uploads/2023/03/optimism-logo.svg',
-        privateRpc: 'https://opt-mainnet.g.alchemy.com/v2/',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.ALCHEMY,
+            rpcUrl: 'https://opt-mainnet.g.alchemy.com/v2/',
+        },
         order: 5,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
@@ -174,6 +205,10 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...avalanche,
         name: 'Avalanche',
         logo: 'https://assets.coingecko.com/coins/images/12559/standard/Avalanche_Circle_RedWhite_Trans.png',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.ALCHEMY,
+            rpcUrl: 'https://avax-mainnet.g.alchemy.com/v2/',
+        },
         order: 6,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
@@ -189,6 +224,10 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...katana,
         name: 'Katana',
         logo: 'https://assets.coingecko.com/asset_platforms/images/32239/large/katana.jpg',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.DRPC,
+            rpcUrl: 'https://lb.drpc.live/katana/',
+        },
         order: 7,
         protocolVersion: latestProtocolVersion,
         beta: false,
@@ -205,7 +244,10 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...zksync,
         name: 'zkSync',
         logo: 'https://assets.coingecko.com/coins/images/38043/large/ZKTokenBlack.png',
-        privateRpc: 'https://zksync-mainnet.g.alchemy.com/v2/',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.ALCHEMY,
+            rpcUrl: 'https://zksync-mainnet.g.alchemy.com/v2/',
+        },
         order: 8,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
@@ -221,6 +263,10 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...corn,
         name: 'Corn',
         logo: 'https://assets.coingecko.com/coins/images/54471/large/corn.jpg',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.ANKR,
+            rpcUrl: 'https://rpc.ankr.com/corn_maizenet/',
+        },
         order: 9,
         protocolVersion: latestProtocolVersion,
         beta: true,
@@ -237,6 +283,10 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...chiliz,
         name: 'Chiliz',
         logo: 'https://assets.coingecko.com/coins/images/8834/large/CHZ_Token_updated.png',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.ANKR,
+            rpcUrl: 'https://rpc.ankr.com/chiliz/',
+        },
         order: 10,
         protocolVersion: latestProtocolVersion,
         beta: true,
@@ -253,6 +303,10 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...peaq,
         name: 'Peaq',
         logo: 'https://assets.coingecko.com/coins/images/51415/large/peaq-token-brand-icon_%281%29.png',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.PEAQ,
+            rpcUrl: 'https://responsive-powerful-mansion.peaq-mainnet.quiknode.pro/',
+        },
         order: 11,
         protocolVersion: latestProtocolVersion,
         beta: true,
@@ -271,7 +325,10 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...sepolia,
         name: 'Ethereum Sepolia',
         logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
-        privateRpc: 'https://eth-sepolia.g.alchemy.com/v2/',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.ALCHEMY,
+            rpcUrl: 'https://eth-sepolia.g.alchemy.com/v2/',
+        },
         order: 0,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
@@ -287,7 +344,10 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...zksyncSepoliaTestnet,
         name: 'zkSync Sepolia',
         logo: 'https://assets.coingecko.com/coins/images/38043/large/ZKTokenBlack.png',
-        privateRpc: 'https://zksync-sepolia.g.alchemy.com/v2/',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.ALCHEMY,
+            rpcUrl: 'https://zksync-sepolia.g.alchemy.com/v2/',
+        },
         order: 12,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
