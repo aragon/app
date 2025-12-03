@@ -72,40 +72,6 @@ class SubDaoDisplayUtils {
         return params.plugin == null;
     }
 
-    /**
-     * Filters out duplicate plugins based on their DAO address.
-     * Returns a new array with only unique SubDAO addresses, preserving the first occurrence.
-     *
-     * @param plugins - Array of plugins with metadata to deduplicate
-     * @param isGroupFilter - Function to identify group filter plugins (which should never be filtered)
-     * @returns Array of plugins with duplicates removed
-     */
-    deduplicatePluginsByDaoAddress<T extends { meta: IDaoPlugin }>(params: {
-        plugins: T[];
-        isGroupFilter: (plugin: T) => boolean;
-    }): T[] {
-        const { plugins, isGroupFilter } = params;
-        const seenDaoAddresses = new Set<string>();
-
-        return plugins.filter((plugin) => {
-            if (isGroupFilter(plugin)) {
-                return true;
-            }
-
-            const pluginDaoAddress = this.getPluginDaoAddress(plugin.meta);
-            if (pluginDaoAddress === '') {
-                return true;
-            }
-
-            if (seenDaoAddresses.has(pluginDaoAddress)) {
-                return false;
-            }
-
-            seenDaoAddresses.add(pluginDaoAddress);
-            return true;
-        });
-    }
-
     private getMatchingSubDaoName(params: { dao?: IDao; plugin?: IDaoPlugin }): string | undefined {
         return this.getMatchingSubDao(params)?.name ?? undefined;
     }
