@@ -202,12 +202,13 @@
               "edit": "Edit strategy",
               "more": "More",
               "notSet": "Not set yet",
-              "recipients": "Recipients",
+              "recipientsCount": "{{count}} recipients",
               "recipientsEmpty": "Recipients will appear here once added.",
+              "recipientsTerm": "Recipients",
               "remove": "Remove",
               "routerType": "Policy strategy",
               "sourceVault": "Source vault",
-              "strategyType": "Strategy type",
+              "strategyTerm": "Strategy",
               "streamCadence": "Stream cadence"
             },
             "emptyCard": {
@@ -279,10 +280,6 @@
         },
         "description": "To publish your capital flow policy, confirm the three onchain transactions in your wallet.",
         "step": {
-          "DEPLOY_SOURCE_AND_MODEL": {
-            "errorLabel": "Unable to deploy source and model contracts",
-            "label": "Deploy source and model contracts"
-          },
           "PIN_METADATA": {
             "errorLabel": "Unable to pin data on IPFS",
             "label": "Pin data on IPFS"
@@ -314,19 +311,34 @@
         "a11y": {
           "description": "Create a new strategy for your capital flow policy"
         },
+        "distributionBurn": {
+          "token": {
+            "helpText": "Choose the token to burn.",
+            "label": "Token"
+          }
+        },
         "distributionFixed": {
-          "recipients": {
-            "addButton": "Recipients",
-            "address": "Address",
-            "distributeEvenly": "Distribute evenly",
-            "helpText": "Specify the recipients and the distribution ratio of tokens for each dispatch.",
-            "label": "Recipients",
-            "ratio": "Ratio"
-          },
           "token": {
             "helpText": "Choose the token for this policy and specify the amount per dispatch.",
             "label": "Token"
           }
+        },
+        "distributionGauge": {
+          "gaugeVoterAddress": {
+            "helpText": "Specify the gauge plugin address for using it in this strategy.",
+            "label": "Gauge plugin",
+            "placeholder": "ENS or 0x…"
+          },
+          "token": {
+            "helpText": "Choose the token for this policy.",
+            "label": "Token"
+          }
+        },
+        "distributionRecipients": {
+          "addButton": "Recipients",
+          "distributeEvenly": "Distribute evenly",
+          "helpText": "Specify the recipients and the distribution ratio of tokens for each dispatch.",
+          "label": "Recipients"
         },
         "distributionStream": {
           "epochPeriod": {
@@ -336,29 +348,30 @@
             "label": "Streamed amount per time",
             "week": "Per week"
           },
-          "recipients": {
-            "addButton": "Recipients",
-            "address": "Address",
-            "distributeEvenly": "Distribute evenly",
-            "helpText": "Specify the recipients and the distribution ratio of tokens for each dispatch.",
-            "label": "Recipients"
-          },
           "token": {
             "helpText": "Choose the token for this policy.",
             "label": "Token"
           }
         },
         "routerType": {
-          "fixed": {
+          "BURN": {
+            "description": "Route an asset to the zero address or call its burn function.",
+            "label": "Burn"
+          },
+          "FIXED": {
             "description": "Transfer an available asset to recipients in a relative manner.",
             "label": "Fixed ratio"
           },
-          "helpText": "Select the policy type you want to set up and configure it below.",
-          "label": "Policy strategy",
-          "stream": {
+          "GAUGE": {
+            "description": "Route an asset to recipients proportionally according a gauge vote.",
+            "label": "Gauge ratio"
+          },
+          "STREAM": {
             "description": "Transfer a fixed quantity of an available asset over time to recipients.",
             "label": "Stream"
-          }
+          },
+          "helpText": "Select the policy type you want to set up and configure it below.",
+          "label": "Policy strategy"
         },
         "select": {
           "capitalDistributor": {

@@ -2,18 +2,13 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { CardEmptyState, IconType, InputContainer } from '@aragon/gov-ui-kit';
-import { FieldPath, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { CapitalFlowDialogId } from '../../../constants/capitalFlowDialogId';
-import type { ISetupStrategyDialogParams } from '../../../dialogs/setupStrategyDialog';
-import type { ISetupStrategyForm } from '../../../dialogs/setupStrategyDialog/setupStrategyDialogDefinitions';
+import type { ISetupStrategyDialogParams, ISetupStrategyForm } from '../../../dialogs/setupStrategyDialog';
 import type { ICreatePolicyFormData } from '../createPolicyFormDefinitions';
 import { CreatePolicyStrategyDetails } from './createPolicyStrategyDetails';
 
 export interface ICreatePolicyFormConfigureProps {
-    /**
-     * Prefix to prepend to all the metadata form fields.
-     */
-    fieldPrefix?: string;
     /**
      * ID of the DAO.
      */
@@ -21,15 +16,15 @@ export interface ICreatePolicyFormConfigureProps {
 }
 
 export const CreatePolicyFormConfigure: React.FC<ICreatePolicyFormConfigureProps> = (props) => {
-    const { fieldPrefix, daoId } = props;
-    const strategyFieldName = fieldPrefix != null ? `${fieldPrefix}.strategy` : 'strategy';
+    const { daoId } = props;
+    const strategyFieldName = 'strategy' as const;
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
     const { setValue } = useFormContext<ICreatePolicyFormData>();
 
     const setSelectedStrategy = (strategy: ISetupStrategyForm) => {
-        setValue(strategyFieldName as FieldPath<ICreatePolicyFormData>, strategy, {
+        setValue(strategyFieldName, strategy, {
             shouldDirty: true,
             shouldTouch: true,
             shouldValidate: true,
@@ -41,7 +36,6 @@ export const CreatePolicyFormConfigure: React.FC<ICreatePolicyFormConfigureProps
         rules: {
             required: true,
         },
-        fieldPrefix,
     });
 
     const handleOpenStrategyDialog = () => {
@@ -58,7 +52,7 @@ export const CreatePolicyFormConfigure: React.FC<ICreatePolicyFormConfigureProps
     };
 
     const handleRemoveStrategy = () => {
-        setValue(strategyFieldName as FieldPath<ICreatePolicyFormData>, undefined, {
+        setValue(strategyFieldName, undefined, {
             shouldDirty: true,
             shouldTouch: true,
             shouldValidate: true,

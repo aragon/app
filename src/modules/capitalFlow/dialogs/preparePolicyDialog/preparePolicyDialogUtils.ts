@@ -11,10 +11,11 @@ import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
 import { capitalFlowAddresses } from '../../constants/capitalFlowAddresses';
 import { RouterType, StrategyType } from '../setupStrategyDialog';
 import { StreamingEpochPeriod } from '../setupStrategyDialog/setupStrategyDialogDefinitions';
+import { omniModelFactoryAbi } from './omniModelFactoryAbi';
 import { omniSourceFactoryAbi } from './omniSourceFactoryAbi';
 import type { IBuildPolicyProposalActionsParams, IBuildTransactionParams } from './preparePolicyDialogUtils.api';
 import { routerModelFactoryAbi } from './routerModelFactoryAbi';
-import { routerPluginSetupAbi } from './routerPluginSetupAbi';
+import { burnRouterPluginSetupAbi, routerPluginSetupAbi } from './routerPluginSetupAbi';
 import { routerSourceFactoryAbi } from './routerSourceFactoryAbi';
 
 const epochPeriodToSeconds = {
@@ -23,21 +24,63 @@ const epochPeriodToSeconds = {
     [StreamingEpochPeriod.WEEK]: 7 * 24 * 60 * 60,
 };
 
+const ratioBase = 1_000_000;
+
 class PreparePolicyDialogUtils {
     private publishPolicyProposalMetadata = {
         title: 'Deploy Capital Flow Policy',
         summary: 'This proposal deploys a new capital flow policy to the DAO',
     };
 
+    normalizeRatios = (values: number[]): number[] => {
+        const total = values.reduce((sum, value) => sum + value, 0);
+        const ratios = values.map((value) => Math.floor((value / total) * ratioBase));
+        const currentSum = ratios.reduce((sum, ratio) => sum + ratio, 0);
+
+        // Distribute the remainder to ensure exact RATIO_BASE sum
+        const remainder = ratioBase - currentSum;
+
+        if (remainder !== 0) {
+            // Find the index with the largest fractional part to add the remainder
+            const fractionalParts = values.map((value, index) => ({
+                index,
+                fractional: ((value / total) * ratioBase) % 1,
+            }));
+            fractionalParts.sort((a, b) => b.fractional - a.fractional);
+
+            // Add 1 to the largest fractional parts until remainder is distributed
+            for (let i = 0; i < remainder; i++) {
+                ratios[fractionalParts[i].index]++;
+            }
+        }
+
+        const finalSum = ratios.reduce((sum, ratio) => sum + ratio, 0);
+
+        if (finalSum !== ratioBase) {
+            throw new Error(`Invalid ratios: sum is ${finalSum.toString()}, expected ${ratioBase.toString()}`);
+        }
+
+        return ratios;
+    };
+
     buildDeploySourceAndModelTransaction = async (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
         const { values, dao } = params;
 
-        const { routerModelFactory, routerSourceFactory, omniSourceFactory } = capitalFlowAddresses[dao.network];
+        const { routerModelFactory, routerSourceFactory, omniSourceFactory, omniModelFactory } =
+            capitalFlowAddresses[dao.network];
         const { strategy } = values;
+        invariant(
+            strategy != null,
+            'PreparePolicyDialogUtils->buildDeploySourceAndModelTransaction: strategy is not defined',
+        );
+
         const { sourceVault } = strategy;
         const { address: sourceDaoAddress } = daoUtils.parseDaoId(sourceVault);
 
-        invariant(strategy.type === StrategyType.CAPITAL_ROUTER, `Unsupported strategy type: ${strategy.type}`);
+        invariant(
+            strategy.type === StrategyType.CAPITAL_ROUTER,
+            `PreparePolicyDialogUtils->buildDeploySourceAndModelTransaction: unsupported strategy type: ${strategy.type}`,
+        );
 
         let deployModelTransaction: ITransactionRequest;
         let deploySourceTransaction: ITransactionRequest;
@@ -45,8 +88,8 @@ class PreparePolicyDialogUtils {
         if (strategy.routerType === RouterType.FIXED) {
             const { recipients, asset } = strategy.distributionFixed;
             const recipientAddresses = recipients.map((r) => r.address as Hex);
-            const RATIO_BASE = 1_000_000;
-            const ratios = recipients.map((r) => Math.round((r.ratio / 100) * RATIO_BASE));
+            const ratios = this.normalizeRatios(recipients.map((r) => r.ratio));
+
             const deployModelCallData = encodeFunctionData({
                 abi: routerModelFactoryAbi,
                 functionName: 'deployRatioModel',
@@ -68,14 +111,45 @@ class PreparePolicyDialogUtils {
                 data: deploySourceCallData,
                 value: BigInt(0),
             };
+        } else if (strategy.routerType === RouterType.GAUGE) {
+            const { asset, gaugeVoterAddress } = strategy.distributionGauge;
+
+            const deployModelCallData = encodeFunctionData({
+                abi: omniModelFactoryAbi,
+                functionName: 'deployAddressGaugeRatioModel',
+                args: [gaugeVoterAddress as Hex],
+            });
+            const deploySourceCallData = encodeFunctionData({
+                abi: routerSourceFactoryAbi,
+                functionName: 'deployDrainBalanceSource',
+                args: [sourceDaoAddress as Hex, asset?.token ? (asset.token.address as Hex) : zeroAddress],
+            });
+
+            deployModelTransaction = {
+                to: omniModelFactory,
+                data: deployModelCallData,
+                value: BigInt(0),
+            };
+            deploySourceTransaction = {
+                to: routerSourceFactory,
+                data: deploySourceCallData,
+                value: BigInt(0),
+            };
         } else if (strategy.routerType === RouterType.STREAM) {
             const { recipients, asset, epochPeriod } = strategy.distributionStream;
             const recipientAddresses = recipients.map((r) => r.address as Hex);
 
+            // const decimals = asset?.token.decimals ?? 18;
+            // If there is no amount in the vault, then use the max number which would make the source to always take
+            // everything there is in the vault.
+            // const totalAmountInVault = asset?.amount
+            //     ? Math.floor(Number(asset.amount) * Math.pow(10, decimals))
+            //     : Number.MAX_VALUE;
+
+            // const totalAmountInVault = Number.MAX_VALUE;
+
             // Calculate total amount and ratios
-            const totalAmount = recipients.reduce((sum, r) => sum + Number(r.amount), 0);
-            const RATIO_BASE = 1_000_000;
-            const ratios = recipients.map((r) => Math.round((Number(r.amount) / totalAmount) * RATIO_BASE));
+            const ratios = this.normalizeRatios(recipients.map((r) => r.ratio));
 
             const deployModelCallData = encodeFunctionData({
                 abi: routerModelFactoryAbi,
@@ -83,9 +157,8 @@ class PreparePolicyDialogUtils {
                 args: [recipientAddresses, ratios],
             });
 
-            // Calculate amount per epoch based on token decimals or ETH
-            const decimals = asset?.token?.decimals ?? 18;
-            const amountPerEpoch = BigInt(Math.floor(totalAmount * Math.pow(10, decimals)));
+            // Maximum safe uint256 value (still effectively unlimited for token amounts)
+            const amountPerEpoch = BigInt(2) ** BigInt(255) - BigInt(1);
             const epochLengthInSeconds = epochPeriodToSeconds[epochPeriod];
 
             const deploySourceCallData = encodeFunctionData({
@@ -106,12 +179,26 @@ class PreparePolicyDialogUtils {
                 value: BigInt(0),
             };
             deploySourceTransaction = {
-                to: routerSourceFactory,
+                to: omniSourceFactory,
                 data: deploySourceCallData,
                 value: BigInt(0),
             };
         } else {
-            throw new Error(`Unsupported router type: ${strategy.routerType}`);
+            // RouterType.BURN deploys only source, no model
+            const { asset } = strategy.distributionBurn;
+
+            const deploySourceCallData = encodeFunctionData({
+                abi: routerSourceFactoryAbi,
+                functionName: 'deployDrainBalanceSource',
+                args: [sourceDaoAddress as Hex, asset?.token ? (asset.token.address as Hex) : zeroAddress],
+            });
+            const deploySourceTransaction = {
+                to: routerSourceFactory,
+                data: deploySourceCallData,
+                value: BigInt(0),
+            };
+
+            return Promise.resolve(deploySourceTransaction);
         }
 
         const encodedTransaction = transactionUtils.encodeTransactionRequests(
@@ -133,39 +220,50 @@ class PreparePolicyDialogUtils {
         };
     };
 
-    buildPolicyPrepareInstallationTransaction = async (
-        params: IBuildTransactionParams,
-    ): Promise<ITransactionRequest> => {
+    buildPolicyPrepareInstallationTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
         const { values, sourceAndModelContracts, dao } = params;
         const { strategy } = values;
 
-        invariant(sourceAndModelContracts != null, 'PreparePolicyDialogUtils: source and model contracts are required');
-        invariant(strategy.type === StrategyType.CAPITAL_ROUTER, `Unsupported strategy type: ${strategy.type}`);
+        invariant(
+            strategy != null,
+            'PreparePolicyDialogUtils->buildPolicyPrepareInstallationTransaction: strategy is not defined',
+        );
+        invariant(
+            sourceAndModelContracts != null,
+            'PreparePolicyDialogUtils->buildPolicyPrepareInstallationTransaction: source and model contracts are required',
+        );
+        invariant(
+            strategy.type === StrategyType.CAPITAL_ROUTER,
+            `PreparePolicyDialogUtils->buildPolicyPrepareInstallationTransaction: unsupported strategy type: ${strategy.type}`,
+        );
 
         const { model, source } = sourceAndModelContracts;
-        const { routerPluginRepo } = capitalFlowAddresses[dao.network];
+        const { routerPluginRepo, burnRouterPluginRepo } = capitalFlowAddresses[dao.network];
 
         const isStreamingSource = strategy.routerType === RouterType.STREAM;
+        const isBurnRouter = strategy.routerType === RouterType.BURN;
 
-        const installationParams = encodeAbiParameters(routerPluginSetupAbi, [source, isStreamingSource, model]);
+        const installationParams = isBurnRouter
+            ? encodeAbiParameters(burnRouterPluginSetupAbi, [source, isStreamingSource])
+            : encodeAbiParameters(routerPluginSetupAbi, [source, isStreamingSource, model]);
 
         const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
         const prepareInstallationData = pluginTransactionUtils.buildPrepareInstallationData(
-            routerPluginRepo,
+            isBurnRouter ? burnRouterPluginRepo : routerPluginRepo,
             { release: 1, build: 1 },
             installationParams,
             dao.address as Hex,
         );
 
-        return {
+        return Promise.resolve({
             to: pluginSetupProcessor,
             data: prepareInstallationData,
             value: BigInt(0),
-        };
+        });
     };
 
     buildPublishPolicyProposalActions = (params: IBuildPolicyProposalActionsParams): ITransactionRequest[] => {
-        const { values, dao, setupData } = params;
+        const { dao, setupData } = params;
 
         const processorSetupActions: ITransactionRequest[] = [];
 
@@ -183,9 +281,6 @@ class PreparePolicyDialogUtils {
     preparePublishPolicyProposalMetadata = () => {
         return this.publishPolicyProposalMetadata;
     };
-
-    private buildSourceAndModelDeployActionData = (params: IBuildTransactionParams) => {};
-    private buildPrepareInstallPluginActionData = (params: IBuildTransactionParams) => {};
 }
 
 export const preparePolicyDialogUtils = new PreparePolicyDialogUtils();

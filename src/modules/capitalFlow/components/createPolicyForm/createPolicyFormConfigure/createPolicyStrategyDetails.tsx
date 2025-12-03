@@ -1,14 +1,7 @@
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, Button, DefinitionList, Dropdown, IconType } from '@aragon/gov-ui-kit';
-import { useMemo } from 'react';
-import {
-    RouterType,
-    StrategyType,
-    StreamingEpochPeriod,
-    type ISetupStrategyForm,
-} from '../../../dialogs/setupStrategyDialog/setupStrategyDialogDefinitions';
+import { type ISetupStrategyForm, RouterType, StrategyType } from '../../../dialogs/setupStrategyDialog';
 
 export interface ICreatePolicyStrategyDetailsProps {
     strategy: ISetupStrategyForm;
@@ -16,22 +9,12 @@ export interface ICreatePolicyStrategyDetailsProps {
     onRemove: () => void;
 }
 
-const strategyTypeLabelMap: Record<StrategyType, string> = {
-    [StrategyType.CAPITAL_ROUTER]: 'capitalRouter',
-    [StrategyType.CAPITAL_DISTRIBUTOR]: 'capitalDistributor',
-    [StrategyType.DEFI_ADAPTER]: 'defiAdapter',
-};
-
-const routerTypeLabelMap: Record<RouterType, string> = {
-    [RouterType.FIXED]: 'fixed',
-    [RouterType.STREAM]: 'stream',
-};
-
-const streamingPeriodLabelMap: Record<StreamingEpochPeriod, string> = {
-    [StreamingEpochPeriod.HOUR]: 'hour',
-    [StreamingEpochPeriod.DAY]: 'day',
-    [StreamingEpochPeriod.WEEK]: 'week',
-};
+const routerTypeToDistributionField = {
+    [RouterType.FIXED]: 'distributionFixed',
+    [RouterType.STREAM]: 'distributionStream',
+    [RouterType.GAUGE]: 'distributionGauge',
+    [RouterType.BURN]: 'distributionBurn',
+} as const;
 
 export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsProps> = (props) => {
     const { strategy, onEdit, onRemove } = props;
@@ -42,149 +25,65 @@ export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsP
         { enabled: Boolean(strategy.sourceVault) },
     );
 
+    if (strategy.type !== StrategyType.CAPITAL_ROUTER || !sourceVaultDao) {
+        return null;
+    }
+
     const notSetLabel = t('app.capitalFlow.createPolicyForm.configure.strategy.details.notSet');
     const recipientsEmptyLabel = t('app.capitalFlow.createPolicyForm.configure.strategy.details.recipientsEmpty');
 
-    const strategyTypeKey = strategyTypeLabelMap[strategy.type];
-    const strategyTypeLabel = strategyTypeKey
-        ? t(`app.capitalFlow.setupStrategyDialog.select.${strategyTypeKey}.label`)
-        : strategy.type;
+    const routerTypeLabel = t(`app.capitalFlow.setupStrategyDialog.routerType.${strategy.routerType}.label`);
+    const routerTypeDescription = t(
+        `app.capitalFlow.setupStrategyDialog.routerType.${strategy.routerType}.description`,
+    );
 
-    const routerTypeLabel =
-        strategy.type === StrategyType.CAPITAL_ROUTER
-            ? t(`app.capitalFlow.setupStrategyDialog.routerType.${routerTypeLabelMap[strategy.routerType]}.label`)
-            : undefined;
+    const routerAsset = strategy[routerTypeToDistributionField[strategy.routerType]].asset;
 
-    const routerAsset =
-        strategy.type === StrategyType.CAPITAL_ROUTER
-            ? strategy.routerType === RouterType.FIXED
-                ? strategy.distributionFixed.asset
-                : strategy.distributionStream.asset
-            : undefined;
-
-    const streamCadenceLabel =
-        strategy.type === StrategyType.CAPITAL_ROUTER && strategy.routerType === RouterType.STREAM
-            ? t(
-                  `app.capitalFlow.setupStrategyDialog.distributionStream.epochPeriod.${
-                      streamingPeriodLabelMap[strategy.distributionStream.epochPeriod]
-                  }`,
-              )
-            : undefined;
-
-    const sourceVaultFallbackAddress = useMemo(() => {
-        const { address } = daoUtils.parseDaoId(strategy.sourceVault);
-        return addressUtils.truncateAddress(address);
-    }, [strategy.sourceVault]);
-
-    const sourceVaultLabel = sourceVaultDao?.name ?? strategy.sourceVault;
-    const sourceVaultDescription = sourceVaultDao?.ens ?? sourceVaultDao?.address ?? sourceVaultFallbackAddress;
+    const sourceVaultLabel = sourceVaultDao.name;
+    const sourceVaultDescription = sourceVaultDao.ens ?? addressUtils.truncateAddress(sourceVaultDao.address);
 
     const renderRecipients = () => {
-        if (strategy.type !== StrategyType.CAPITAL_ROUTER) {
+        if (strategy.routerType === RouterType.GAUGE || strategy.routerType === RouterType.BURN) {
+            return 'NA';
+        }
+
+        const recipients =
+            strategy.routerType === RouterType.FIXED
+                ? strategy.distributionFixed.recipients
+                : strategy.distributionStream.recipients;
+
+        if (recipients.length === 0) {
             return <span className="text-sm text-neutral-500">{recipientsEmptyLabel}</span>;
         }
 
-        if (strategy.routerType === RouterType.FIXED) {
-            const fixedRecipients = strategy.distributionFixed.recipients;
-
-            if (fixedRecipients == null || fixedRecipients.length === 0) {
-                return <span className="text-sm text-neutral-500">{recipientsEmptyLabel}</span>;
-            }
-
-            return (
-                <ul className="flex flex-col gap-2">
-                    {fixedRecipients.map((recipient, index) => {
-                        const recipientLabel = recipient.address
-                            ? addressUtils.truncateAddress(recipient.address)
-                            : notSetLabel;
-                        const valueLabel = recipient.ratio != null ? `${recipient.ratio}%` : notSetLabel;
-
-                        return (
-                            <li key={`${recipient.address ?? 'recipient'}-${index}`} className="flex flex-col">
-                                <span className="text-sm font-medium text-neutral-800">{recipientLabel}</span>
-                                <span className="text-sm text-neutral-500">{valueLabel}</span>
-                            </li>
-                        );
-                    })}
-                </ul>
-            );
-        }
-
-        const streamRecipients = strategy.distributionStream.recipients;
-
-        if (streamRecipients == null || streamRecipients.length === 0) {
-            return <span className="text-sm text-neutral-500">{recipientsEmptyLabel}</span>;
-        }
-
-        return (
-            <ul className="flex flex-col gap-2">
-                {streamRecipients.map((recipient, index) => {
-                    const recipientLabel = recipient.address
-                        ? addressUtils.truncateAddress(recipient.address)
-                        : notSetLabel;
-                    const amountValue = recipient.amount ?? undefined;
-                    const amountText = amountValue != null ? `${amountValue}` : undefined;
-                    const valueLabel = amountText
-                        ? `${amountText}${routerAsset?.token.symbol ? ` ${routerAsset.token.symbol}` : ''}`
-                        : notSetLabel;
-
-                    return (
-                        <li key={`${recipient.address ?? 'recipient'}-${index}`} className="flex flex-col">
-                            <span className="text-sm font-medium text-neutral-800">{recipientLabel}</span>
-                            <span className="text-sm text-neutral-500">{valueLabel}</span>
-                        </li>
-                    );
-                })}
-            </ul>
-        );
+        return t('app.capitalFlow.createPolicyForm.configure.strategy.details.recipientsCount', {
+            count: recipients.length,
+        });
     };
 
     return (
         <>
             <DefinitionList.Container className="bg-neutral-0 rounded-xl border border-neutral-100 px-6 py-4">
                 <DefinitionList.Item
-                    term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.strategyType')}
+                    term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.strategyTerm')}
+                    description={routerTypeDescription}
                 >
-                    {strategyTypeLabel}
+                    {routerTypeLabel}
                 </DefinitionList.Item>
                 <DefinitionList.Item
                     term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.sourceVault')}
+                    description={sourceVaultDescription}
                 >
-                    <div className="flex flex-col">
-                        <span className="text-base text-neutral-800">{sourceVaultLabel}</span>
-                        {sourceVaultDescription && (
-                            <span className="text-sm text-neutral-500">{sourceVaultDescription}</span>
-                        )}
-                    </div>
+                    {sourceVaultLabel}
                 </DefinitionList.Item>
-                {routerTypeLabel && (
-                    <DefinitionList.Item
-                        term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.routerType')}
-                    >
-                        {routerTypeLabel}
-                    </DefinitionList.Item>
-                )}
-                {strategy.type === StrategyType.CAPITAL_ROUTER && (
-                    <>
-                        <DefinitionList.Item
-                            term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.asset')}
-                        >
-                            {routerAsset?.token.symbol ?? routerAsset?.token.name ?? notSetLabel}
-                        </DefinitionList.Item>
-                        {strategy.routerType === RouterType.STREAM && (
-                            <DefinitionList.Item
-                                term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.streamCadence')}
-                            >
-                                {streamCadenceLabel ?? notSetLabel}
-                            </DefinitionList.Item>
-                        )}
-                        <DefinitionList.Item
-                            term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.recipients')}
-                        >
-                            {renderRecipients()}
-                        </DefinitionList.Item>
-                    </>
-                )}
+                <DefinitionList.Item term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.asset')}>
+                    {routerAsset?.token.symbol ?? routerAsset?.token.name ?? notSetLabel}
+                </DefinitionList.Item>
+                <DefinitionList.Item
+                    term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.recipientsTerm')}
+                >
+                    {renderRecipients()}
+                </DefinitionList.Item>
                 <div className="flex w-full justify-between pt-4">
                     <Button variant="secondary" size="md" onClick={onEdit}>
                         {t('app.capitalFlow.createPolicyForm.configure.strategy.details.edit')}
