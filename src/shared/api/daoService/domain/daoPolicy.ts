@@ -70,25 +70,25 @@ export interface IDaoPolicy {
 }
 
 export enum PolicyInterfaceType {
-    ROUTER = 'ROUTER',
-    CLAIMER = 'CLAIMER',
+    ROUTER = 'router',
+    CLAIMER = 'claimer',
 }
 
 export enum PolicyStrategyType {
-    ROUTER = 'ROUTER',
-    BURN_ROUTER = 'BURN_ROUTER',
-    CLAIMER = 'CLAIMER',
-    MULTI_DISPATCH = 'MULTI_DISPATCH',
+    ROUTER = 'router',
+    BURN_ROUTER = 'burnRouter',
+    CLAIMER = 'claimer',
+    MULTI_DISPATCH = 'multiDispatch',
 }
 
 export enum PolicyStrategyModelType {
-    RATIO = 'RATIO',
-    GAUGE_RATIO = 'GAUGE_RATIO',
+    RATIO = 'ratio',
+    GAUGE_RATIO = 'addressGauge',
 }
 
 export enum PolicyStrategySourceType {
-    DRAIN = 'DRAIN',
-    STREAM_BALANCE = 'STREAM_BALANCE',
+    DRAIN = 'drain',
+    STREAM_BALANCE = 'streamBalance',
 }
 
 interface IPolicySourceBase {
@@ -105,9 +105,9 @@ interface IPolicySourceBase {
      */
     vaultAddress: string;
     /**
-     * ERC20 token (or ETH) consumed from the vault.
+     * ERC20 token consumed from the vault. No token means it's ETH.
      */
-    token: IToken;
+    token?: IToken;
 }
 
 interface IPolicyDrainSource extends IPolicySourceBase {

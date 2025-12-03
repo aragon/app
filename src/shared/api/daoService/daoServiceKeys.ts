@@ -1,4 +1,9 @@
-import type { IGetDaoByEnsParams, IGetDaoParams, IGetDaoPermissionsParams, IGetDaoPoliciesParams } from './daoService.api';
+import type {
+    IGetDaoByEnsParams,
+    IGetDaoParams,
+    IGetDaoPermissionsParams,
+    IGetDaoPoliciesParams,
+} from './daoService.api';
 
 export enum DaoServiceKey {
     DAO = 'DAO',

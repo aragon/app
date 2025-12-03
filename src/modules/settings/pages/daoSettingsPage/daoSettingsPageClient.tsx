@@ -4,7 +4,7 @@ import { GovernanceDialogId } from '@/modules/governance/constants/governanceDia
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
-import { type IDaoPlugin, useDao, useDaoPolicies } from '@/shared/api/daoService';
+import { type IDaoPlugin, type Network, useDao, useDaoPolicies } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { PluginFilterComponent } from '@/shared/components/pluginFilterComponent';
@@ -46,10 +46,12 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
 
     const daoParams = { urlParams: { id: daoId } };
     const { data: dao } = useDao(daoParams);
+
     const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
+
     const { data: policies = [] } = useDaoPolicies(
-        { urlParams: { network: dao?.network!, daoAddress: dao?.address! } },
-        { enabled: !!dao },
+        { urlParams: { network: dao?.network as Network, daoAddress: dao?.address as string } },
+        { enabled: isSubDaoEnabled && dao != null },
     );
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
