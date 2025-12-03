@@ -50,9 +50,9 @@ export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
         claimerSourceFactory: '0x1134703E2a6713c1bC43DF35A08d82A8A1e59b11',
         omniSourceFactory: '0xEB9e27056cBfD6E1a22ee051a44787Cf2FBbe911',
         // plugin repos
-        routerPluginRepo: '0x56c3b53f3bA2dD907E67AdC7536480F81a886C35',
-        claimerPluginRepo: '0x71d769312A4eC1B6f418A88a6450BD39c58A1159',
-        burnRouterPluginRepo: '0x985323bA031F640B52EC0505b1E84D3279dc54a5',
+        routerPluginRepo: '0x1bd5970DCEB7168c65b1A226ED71Fb632c3Def47',
+        claimerPluginRepo: '0x70f636D481898E897FceDB182074eF61e05FbbD0',
+        burnRouterPluginRepo: '0x42718AB262073EFFB1AC6d538a4BD6717039d4b3',
     },
     [Network.POLYGON_MAINNET]: {
         // model factories
