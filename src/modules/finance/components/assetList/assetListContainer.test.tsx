@@ -187,17 +187,8 @@ describe('<AssetList.Container /> component', () => {
         expect(screen.getByTestId('test-children')).toBeInTheDocument();
     });
 
-    it('uses custom value and onValueChange when provided', () => {
-        const customValue = {
-            id: 'custom-plugin',
-            uniqueId: 'custom-unique-id',
-            label: 'Custom Plugin',
-            meta: generateDaoPlugin(),
-            props: {},
-        };
-        const onValueChange = jest.fn();
-
-        render(createTestComponent({ value: customValue, onValueChange }));
+    it('renders with default props', () => {
+        render(createTestComponent());
         expect(screen.getByTestId('plugin-filter-component')).toBeInTheDocument();
     });
 });

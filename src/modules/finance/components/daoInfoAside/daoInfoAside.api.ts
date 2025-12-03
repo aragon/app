@@ -1,14 +1,7 @@
-import type { IDao, IDaoPlugin, ISubDaoSummary, Network } from '@/shared/api/daoService';
+import type { IDao, ISubDaoSummary, Network } from '@/shared/api/daoService';
 import type { IDefinitionListContainerProps } from '@aragon/gov-ui-kit';
 
-/**
- * Props for rendering DAO and SubDAO info in the aside panel.
- */
 export interface IDaoInfoAsideProps extends Omit<IDefinitionListContainerProps, 'onCopy'> {
-    /**
-     * Active plugin metadata for resolving defaults like address/description.
-     */
-    plugin: IDaoPlugin;
     /**
      * Network used to build explorer links when DAO data is missing.
      */

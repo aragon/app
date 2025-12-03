@@ -5,10 +5,8 @@ import { DaoInfoAside } from '@/modules/finance/components/daoInfoAside';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
-import { PluginType } from '@/shared/types';
+import { useDaoFilterUrlParam } from '@/shared/hooks/useDaoFilterUrlParam';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
-import { subDaoDisplayUtils } from '@/shared/utils/subDaoDisplayUtils';
 import { DateFormat, formatterUtils, invariant, NumberFormat } from '@aragon/gov-ui-kit';
 import type { IGetTransactionListParams } from '../../api/financeService';
 import { TransactionList, transactionListFilterParam } from '../../components/transactionList';
@@ -29,31 +27,22 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
     const { id, initialParams } = props;
     const { t } = useTranslations();
 
-    const useDaoParams = { id };
-    const { data: dao } = useDao({ urlParams: useDaoParams });
+    const { data: dao } = useDao({ urlParams: { id } });
 
-    const { activePlugin, setActivePlugin } = useDaoPluginFilterUrlParam({
+    const { activeOption, setActiveOption } = useDaoFilterUrlParam({
         daoId: id,
-        type: PluginType.PROCESS,
-        includeSubPlugins: true,
-        includeGroupFilter: true,
+        includeAllOption: true,
         name: transactionListFilterParam,
     });
 
-    invariant(activePlugin != null, 'DaoTransactionsPageClient: no valid plugin found.');
+    invariant(activeOption != null, 'DaoTransactionsPageClient: no valid DAO filter option found.');
 
-    const allTransactionsSelected = activePlugin.uniqueId === 'all';
-    const asideCardTitle = subDaoDisplayUtils.getPluginDisplayName({
-        dao,
-        plugin: activePlugin.meta,
-        groupLabel: t('app.finance.daoTransactionsPage.aside.summary'),
-        fallbackLabel: activePlugin.label,
-    });
+    const allTransactionsSelected = activeOption.isAll;
+    const asideCardTitle = activeOption.isAll ? t('app.finance.daoTransactionsPage.aside.summary') : activeOption.label;
 
-    const matchingSubDao = subDaoDisplayUtils.getMatchingSubDao({ dao, plugin: activePlugin.meta });
-    const isParentSelected = subDaoDisplayUtils.isParentPlugin({ dao, plugin: activePlugin.meta });
-    const selectedDao = !allTransactionsSelected ? (isParentSelected ? dao : (matchingSubDao ?? dao)) : dao;
-    const selectedDaoId = selectedDao?.id ?? dao?.id ?? id;
+    // Get the selected DAO (parent or SubDAO)
+    const selectedDaoId = activeOption.daoId ?? id;
+    const matchingSubDao = dao?.subDaos?.find((subDao) => subDao.id === selectedDaoId);
 
     const { data: allTransactionsMetadata } = useTransactionList(
         {
@@ -73,7 +62,7 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
             queryParams: {
                 ...initialParams.queryParams,
                 daoId: selectedDaoId,
-                onlyParent: isParentSelected,
+                onlyParent: activeOption.onlyParent,
             },
         },
         { enabled: !allTransactionsSelected },
@@ -107,12 +96,7 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
     return (
         <Page.Content>
             <Page.Main title={t('app.finance.daoTransactionsPage.main.title')}>
-                <TransactionList.Container
-                    initialParams={initialParams}
-                    daoId={id}
-                    onValueChange={setActivePlugin}
-                    value={activePlugin}
-                />
+                <TransactionList.Container initialParams={initialParams} daoId={id} />
             </Page.Main>
             <Page.Aside>
                 <Page.AsideCard title={asideCardTitle}>
@@ -125,11 +109,10 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
                     )}
                     {dao && !allTransactionsSelected && (
                         <DaoInfoAside
-                            plugin={activePlugin.meta}
+                            daoId={selectedDaoId}
                             network={dao.network}
-                            daoId={id}
-                            subDao={matchingSubDao}
                             dao={dao}
+                            subDao={matchingSubDao}
                             stats={daoStats}
                         />
                     )}

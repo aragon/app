@@ -4,9 +4,7 @@ import { useAssetList } from '@/modules/finance/api/financeService';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
-import { PluginType } from '@/shared/types';
-import { subDaoDisplayUtils } from '@/shared/utils/subDaoDisplayUtils';
+import { useDaoFilterUrlParam } from '@/shared/hooks/useDaoFilterUrlParam';
 import { formatterUtils, invariant, NumberFormat } from '@aragon/gov-ui-kit';
 import type { IGetAssetListParams } from '../../api/financeService';
 import { AssetList, assetListFilterParam } from '../../components/assetList';
@@ -30,17 +28,15 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
 
     const { data: dao } = useDao({ urlParams: { id } });
 
-    const { activePlugin, setActivePlugin } = useDaoPluginFilterUrlParam({
+    const { activeOption, setActiveOption } = useDaoFilterUrlParam({
         daoId: id,
-        type: PluginType.BODY,
-        includeSubPlugins: true,
-        includeGroupFilter: true,
+        includeAllOption: true,
         name: assetListFilterParam,
     });
 
-    invariant(activePlugin != null, 'DaoAssetsPageClient: no valid plugin found.');
+    invariant(activeOption != null, 'DaoAssetsPageClient: no valid DAO filter option found.');
 
-    const allAssetsSelected = activePlugin.uniqueId === 'all';
+    const allAssetsSelected = activeOption.isAll;
     const { data: allAssetsMetadata } = useAssetList(
         {
             queryParams: {
@@ -53,10 +49,10 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
 
     const tokenCount = allAssetsMetadata?.pages[0]?.metadata?.totalRecords;
 
-    const matchingSubDao = subDaoDisplayUtils.getMatchingSubDao({ dao, plugin: activePlugin.meta });
-    const isParentSelected = subDaoDisplayUtils.isParentPlugin({ dao, plugin: activePlugin.meta });
-    const selectedDao = !allAssetsSelected ? (isParentSelected ? dao : (matchingSubDao ?? dao)) : dao;
-    const selectedDaoId = selectedDao?.id ?? dao?.id ?? id;
+    // Get the selected DAO (parent or SubDAO)
+    const selectedDaoId = activeOption.daoId ?? id;
+    const matchingSubDao = dao?.subDaos?.find((subDao) => subDao.id === selectedDaoId);
+    const selectedDao = activeOption.isParent ? dao : (matchingSubDao ?? dao);
 
     const hasSubDaos = (dao?.subDaos?.length ?? 0) > 0;
 
@@ -65,7 +61,7 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
             queryParams: {
                 ...initialParams.queryParams,
                 daoId: selectedDaoId,
-                onlyParent: isParentSelected,
+                onlyParent: activeOption.onlyParent,
             },
         },
         { enabled: !allAssetsSelected || !hasSubDaos },
@@ -73,12 +69,7 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
 
     const selectedAssetCount = selectedAssetsMetadata?.pages[0]?.metadata?.totalRecords;
 
-    const asideCardTitle = subDaoDisplayUtils.getPluginDisplayName({
-        dao,
-        plugin: activePlugin.meta,
-        groupLabel: t('app.finance.daoAssetsPage.aside.summary'),
-        fallbackLabel: activePlugin.label,
-    });
+    const asideCardTitle = activeOption.isAll ? t('app.finance.daoAssetsPage.aside.summary') : activeOption.label;
 
     const asideMetrics = selectedDao?.metrics;
     const assetStats: Array<{ label: string; value: string | number }> = [
@@ -102,21 +93,15 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
     return (
         <Page.Content>
             <Page.Main title={t('app.finance.daoAssetsPage.main.title')}>
-                <AssetList.Container
-                    initialParams={initialParams}
-                    daoId={id}
-                    onValueChange={setActivePlugin}
-                    value={activePlugin}
-                />
+                <AssetList.Container initialParams={initialParams} daoId={id} />
             </Page.Main>
             <Page.Aside>
                 <Page.AsideCard title={asideCardTitle}>
                     {dao && allAssetsSelected && <AssetListStats dao={dao} tokenCount={tokenCount} />}
                     {dao && !allAssetsSelected && (
                         <DaoInfoAside
-                            plugin={activePlugin.meta}
-                            network={dao.network}
                             daoId={selectedDaoId}
+                            network={dao.network}
                             dao={dao}
                             subDao={matchingSubDao}
                             stats={assetStats}

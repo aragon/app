@@ -8,14 +8,14 @@ import { addressUtils, ChainEntityType, Collapsible, DefinitionList, Link } from
 import type { IDaoInfoAsideProps } from './daoInfoAside.api';
 
 export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
-    const { plugin, network, daoId, subDao, dao, stats, ...otherProps } = props;
+    const { network, daoId, subDao, dao, stats, ...otherProps } = props;
 
     const { t } = useTranslations();
 
     const resolvedNetwork = subDao?.network ?? dao?.network ?? network;
-    const resolvedAddress = subDao?.address ?? dao?.address ?? plugin.address;
-    const description = (subDao?.description ?? dao?.description ?? plugin.description)?.trim();
-    const links = subDao?.links ?? dao?.links ?? plugin.links ?? [];
+    const resolvedAddress = subDao?.address ?? dao?.address ?? '';
+    const description = (subDao?.description ?? dao?.description)?.trim();
+    const links = subDao?.links ?? dao?.links ?? [];
 
     const { buildEntityUrl } = useDaoChain({ network: resolvedNetwork, daoId });
     const pluginAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: resolvedAddress });
