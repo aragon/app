@@ -24,6 +24,7 @@ const epochPeriodToSeconds = {
     [StreamingEpochPeriod.WEEK]: 7 * 24 * 60 * 60,
 };
 
+// Normalization ratio used in the contracts.
 const ratioBase = 1_000_000;
 
 class PreparePolicyDialogUtils {
@@ -138,15 +139,6 @@ class PreparePolicyDialogUtils {
         } else if (strategy.routerType === RouterType.STREAM) {
             const { recipients, asset, epochPeriod } = strategy.distributionStream;
             const recipientAddresses = recipients.map((r) => r.address as Hex);
-
-            // const decimals = asset?.token.decimals ?? 18;
-            // If there is no amount in the vault, then use the max number which would make the source to always take
-            // everything there is in the vault.
-            // const totalAmountInVault = asset?.amount
-            //     ? Math.floor(Number(asset.amount) * Math.pow(10, decimals))
-            //     : Number.MAX_VALUE;
-
-            // const totalAmountInVault = Number.MAX_VALUE;
 
             // Calculate total amount and ratios
             const ratios = this.normalizeRatios(recipients.map((r) => r.ratio));

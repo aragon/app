@@ -51,7 +51,7 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
         if (recipientsValues.length === 0) {
             addRecipient({ address: '', ratio: 0 });
         }
-    }, [addRecipient, recipients, getValues, recipientsFieldName]);
+    }, [addRecipient, getValues, recipientsFieldName]);
 
     const totalRatio = recipients.reduce((sum, recipient) => sum + recipient.ratio, 0);
 

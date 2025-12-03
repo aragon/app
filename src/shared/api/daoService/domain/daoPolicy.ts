@@ -138,7 +138,7 @@ interface IPolicyStreamBalanceSource extends IPolicySourceBase {
 
 interface IPolicyModelBase {
     /**
-     * Source type.
+     * Model type.
      */
     type: PolicyStrategyModelType;
     /**

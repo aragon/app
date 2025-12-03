@@ -5,7 +5,7 @@ import { CreatePolicyPageClient } from './createPolicyPageClient';
 
 export interface ICreatePolicyPageParams extends IDaoPageParams {
     /**
-     * Plugin address used to create a proposal for adding a new process.
+     * Plugin address used to create a proposal for adding a new policy.
      */
     pluginAddress: string;
 }

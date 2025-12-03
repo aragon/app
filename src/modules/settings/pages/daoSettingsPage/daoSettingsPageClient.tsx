@@ -118,7 +118,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     };
 
     const handleNewPolicyCreationConfirm = () => {
-        // Select a plugin (a process to use to create a new process). If there is only 1 plugin, skip selection step.
+        // Select a plugin (a process to use to create a new policy). If there is only 1 plugin, skip selection step.
         if (processPlugins.length === 1) {
             handleNewPolicyPluginSelected(processPlugins[0].meta);
             return;
