@@ -1,5 +1,5 @@
 import { Network } from '@/shared/api/daoService';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { networkDefinitions, RpcProvider } from '@/shared/constants/networkDefinitions';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { responseUtils } from '@/shared/utils/responseUtils';
 import { type NextRequest, NextResponse } from 'next/server';
@@ -18,15 +18,41 @@ export interface IRpcRequestOptions {
     params: Promise<IRpcRequestParams>;
 }
 
+// Configuration mapping RPC provider keys to their environment variable names
+const RPC_PROVIDER_ENV_VARS: Record<RpcProvider, string> = {
+    [RpcProvider.ALCHEMY]: 'NEXT_SECRET_RPC_KEY',
+    [RpcProvider.ANKR]: 'NEXT_SECRET_ANKR_RPC_KEY',
+    [RpcProvider.DRPC]: 'NEXT_SECRET_DRPC_RPC_KEY',
+    [RpcProvider.PEAQ]: 'NEXT_SECRET_PEAQ_RPC_KEY',
+};
+
 export class ProxyRpcUtils {
-    private rpcKey: string;
+    private rpcKeyByProvider: Partial<Record<RpcProvider, string>>;
 
     constructor() {
-        if (process.env.NEXT_SECRET_RPC_KEY == null && process.env.CI !== 'true') {
-            throw new Error('RpcRequestUtils: NEXT_SECRET_RPC_KEY not valid.');
+        const isCI = process.env.CI === 'true';
+
+        const providerKeys: Partial<Record<RpcProvider, string>> = {};
+        const missingKeys: RpcProvider[] = [];
+
+        for (const [provider, envVar] of Object.entries(RPC_PROVIDER_ENV_VARS) as Array<[RpcProvider, string]>) {
+            const key = process.env[envVar];
+            providerKeys[provider] = key;
+
+            if (!isCI && !key) {
+                missingKeys.push(provider);
+            }
         }
 
-        this.rpcKey = process.env.NEXT_SECRET_RPC_KEY!;
+        if (missingKeys.length > 0) {
+            const missingEnvVars = missingKeys.map((p) => RPC_PROVIDER_ENV_VARS[p]).join(', ');
+            throw new Error(
+                `ProxyRpcUtils: Missing RPC keys for providers: ${missingKeys.join(', ')}. ` +
+                    `Required env vars: ${missingEnvVars}`,
+            );
+        }
+
+        this.rpcKeyByProvider = providerKeys;
     }
 
     request = async (request: NextRequest, { params }: IRpcRequestOptions) => {
@@ -103,9 +129,33 @@ export class ProxyRpcUtils {
 
     private chainIdToRpcEndpoint = (chainId: string): string | undefined => {
         const network = this.chainIdToNetwork(chainId);
-        const { privateRpc, rpcUrls } = network ? networkDefinitions[network] : {};
 
-        return privateRpc ? `${privateRpc}${this.rpcKey}` : rpcUrls?.default.http[0];
+        if (!network) {
+            return undefined;
+        }
+
+        const { privateRpcConfig, rpcUrls } = networkDefinitions[network];
+
+        if (!privateRpcConfig) {
+            return rpcUrls.default.http[0];
+        }
+
+        const rpcKey = this.rpcKeyByProvider[privateRpcConfig.rpcProvider];
+
+        if (!rpcKey) {
+            monitoringUtils.logError(new Error(`RPC key not found for provider ${privateRpcConfig.rpcProvider}`), {
+                context: {
+                    chainId,
+                    network,
+                    rpcProvider: privateRpcConfig.rpcProvider,
+                    fallbackToPublicRpc: true,
+                },
+            });
+
+            return rpcUrls.default.http[0];
+        }
+
+        return `${privateRpcConfig.rpcUrl}${rpcKey}`;
     };
 
     private chainIdToNetwork = (chainId: string): Network | undefined =>
