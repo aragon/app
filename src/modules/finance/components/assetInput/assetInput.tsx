@@ -68,7 +68,7 @@ export interface IAssetInputProps {
      */
     hideAmountLabel?: boolean;
     /**
-     * Hides the amount filed when set to true. Show only asset selector.
+     * Hides the amount field when set to true. Show only asset selector.
      */
     hideAmount?: boolean;
     /**

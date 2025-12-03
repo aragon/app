@@ -78,7 +78,7 @@ export enum StreamingEpochPeriod {
 
 export interface IDistributionStreamForm extends IDistributionFormBase {
     /**
-     * List of recipients with their distribution amounts.
+     * List of recipients with their distribution ratios.
      */
     recipients: IRecipientRelative[];
     /**
