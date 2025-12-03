@@ -8,7 +8,6 @@ export enum Network {
     ZKSYNC_SEPOLIA = 'zksync-sepolia',
     PEAQ_MAINNET = 'peaq-mainnet',
     OPTIMISM_MAINNET = 'optimism-mainnet',
-    CORN_MAINNET = 'corn-mainnet',
     CHILIZ_MAINNET = 'chiliz-mainnet',
     AVAX_MAINNET = 'avax-mainnet',
     KATANA_MAINNET = 'katana-mainnet',
