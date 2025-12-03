@@ -15,8 +15,8 @@ jest.mock('@/modules/finance/components/transactionList', () => ({
     transactionListFilterParam: 'subdao',
 }));
 
-jest.mock('@/modules/finance/components/transactionListStats', () => ({
-    TransactionListStats: jest.fn(() => <div data-testid="transaction-list-stats" />),
+jest.mock('@/modules/finance/components/allAssetsStats', () => ({
+    AllAssetsStats: jest.fn(() => <div data-testid="all-assets-stats" />),
 }));
 
 jest.mock('@/modules/finance/components/daoInfoAside', () => ({
@@ -27,6 +27,7 @@ describe('<DaoTransactionsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useDaoFilterUrlParamSpy = jest.spyOn(useDaoFilterUrlParam, 'useDaoFilterUrlParam');
     const useTransactionListSpy = jest.spyOn(financeService, 'useTransactionList');
+    const useAssetListSpy = jest.spyOn(financeService, 'useAssetList');
 
     const featureFlagSnapshot: FeatureFlagSnapshot[] = [
         {
@@ -86,6 +87,15 @@ describe('<DaoTransactionsPageClient /> component', () => {
             isFetchingNextPage: false,
             fetchNextPage: jest.fn(),
         } as unknown as ReturnType<typeof financeService.useTransactionList>);
+        useAssetListSpy.mockReturnValue({
+            data: {
+                pages: [
+                    {
+                        metadata: { totalRecords: 12 },
+                    },
+                ],
+            },
+        } as unknown as ReturnType<typeof financeService.useAssetList>);
     });
 
     afterEach(() => {
@@ -117,7 +127,7 @@ describe('<DaoTransactionsPageClient /> component', () => {
 
         expect(screen.getByText(/daoTransactionsPage.main.title/)).toBeInTheDocument();
         expect(screen.getByTestId('transaction-list-container')).toBeInTheDocument();
-        expect(screen.getByTestId('transaction-list-stats')).toBeInTheDocument();
+        expect(screen.getByTestId('all-assets-stats')).toBeInTheDocument();
         expect(screen.queryByTestId('transaction-subdao-info')).not.toBeInTheDocument();
     });
 
@@ -152,6 +162,6 @@ describe('<DaoTransactionsPageClient /> component', () => {
 
         expect(screen.getByTestId('transaction-list-container')).toBeInTheDocument();
         expect(screen.getByTestId('transaction-subdao-info')).toBeInTheDocument();
-        expect(screen.queryByTestId('transaction-list-stats')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('all-assets-stats')).not.toBeInTheDocument();
     });
 });

@@ -7,8 +7,8 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoFilterUrlParam } from '@/shared/hooks/useDaoFilterUrlParam';
 import { formatterUtils, invariant, NumberFormat } from '@aragon/gov-ui-kit';
 import type { IGetAssetListParams } from '../../api/financeService';
+import { AllAssetsStats } from '../../components/allAssetsStats';
 import { AssetList, assetListFilterParam } from '../../components/assetList';
-import { AssetListStats } from '../../components/assetListStats';
 import { DaoInfoAside } from '../../components/daoInfoAside';
 
 export interface IDaoAssetsPageClientProps {
@@ -97,7 +97,9 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
             </Page.Main>
             <Page.Aside>
                 <Page.AsideCard title={asideCardTitle}>
-                    {dao && allAssetsSelected && <AssetListStats dao={dao} tokenCount={tokenCount} />}
+                    {dao && allAssetsSelected && (
+                        <AllAssetsStats dao={dao} totalValueUsd={dao.metrics.tvlUSD} totalAssets={tokenCount} />
+                    )}
                     {dao && !allAssetsSelected && (
                         <DaoInfoAside
                             daoId={selectedDaoId}

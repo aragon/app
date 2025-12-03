@@ -1,6 +1,7 @@
 'use client';
 
-import { useTransactionList } from '@/modules/finance/api/financeService';
+import { useAssetList, useTransactionList } from '@/modules/finance/api/financeService';
+import { AllAssetsStats } from '@/modules/finance/components/allAssetsStats';
 import { DaoInfoAside } from '@/modules/finance/components/daoInfoAside';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
@@ -10,7 +11,6 @@ import type { NestedOmit } from '@/shared/types/nestedOmit';
 import { DateFormat, formatterUtils, invariant, NumberFormat } from '@aragon/gov-ui-kit';
 import type { IGetTransactionListParams } from '../../api/financeService';
 import { TransactionList, transactionListFilterParam } from '../../components/transactionList';
-import { TransactionListStats } from '../../components/transactionListStats';
 
 export interface IDaoTransactionsPageClientProps {
     /**
@@ -44,18 +44,14 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
     const selectedDaoId = activeOption.daoId ?? id;
     const matchingSubDao = dao?.subDaos?.find((subDao) => subDao.id === selectedDaoId);
 
-    const { data: allTransactionsMetadata } = useTransactionList(
+    const { data: allAssetsMetadata } = useAssetList(
         {
             queryParams: {
-                ...initialParams.queryParams,
                 daoId: id,
             },
         },
         { enabled: allTransactionsSelected },
     );
-
-    const totalTransactions = allTransactionsMetadata?.pages[0]?.metadata?.totalRecords;
-    const lastActivityTimestamp = allTransactionsMetadata?.pages[0]?.data?.[0]?.blockTimestamp;
 
     const { data: selectedTransactionsMetadata } = useTransactionList(
         {
@@ -70,6 +66,7 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
 
     const selectedTotalTransactions = selectedTransactionsMetadata?.pages[0]?.metadata?.totalRecords;
     const selectedLastActivityTimestamp = selectedTransactionsMetadata?.pages[0]?.data?.[0]?.blockTimestamp;
+    const totalAssets = allAssetsMetadata?.pages[0]?.metadata?.totalRecords;
 
     const formattedTransactionsCount =
         selectedTotalTransactions != null
@@ -101,11 +98,7 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
             <Page.Aside>
                 <Page.AsideCard title={asideCardTitle}>
                     {dao && allTransactionsSelected && (
-                        <TransactionListStats
-                            dao={dao}
-                            totalTransactions={totalTransactions}
-                            lastActivityTimestamp={lastActivityTimestamp}
-                        />
+                        <AllAssetsStats dao={dao} totalValueUsd={dao.metrics.tvlUSD} totalAssets={totalAssets} />
                     )}
                     {dao && !allTransactionsSelected && (
                         <DaoInfoAside

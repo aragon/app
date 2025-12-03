@@ -13,8 +13,8 @@ jest.mock('@/modules/finance/components/assetList', () => ({
     },
 }));
 
-jest.mock('@/modules/finance/components/assetListStats', () => ({
-    AssetListStats: jest.fn(() => <div data-testid="asset-list-stats" />),
+jest.mock('@/modules/finance/components/allAssetsStats', () => ({
+    AllAssetsStats: jest.fn(() => <div data-testid="all-assets-stats" />),
 }));
 
 jest.mock('@/modules/finance/components/daoInfoAside', () => ({
@@ -105,17 +105,17 @@ describe('<DaoAssetsPageClient /> component', () => {
         expect(useDaoSpy).toHaveBeenCalledWith({ urlParams: { id } });
     });
 
-    it('renders AssetListStats when "All" tab is selected', () => {
+    it('renders AllAssetsStats when "All" tab is selected', () => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao({ subDaos: [] }) }));
         render(createTestComponent(), { wrapper: ReactQueryWrapper });
 
         expect(screen.getByText(/daoAssetsPage.main.title/)).toBeInTheDocument();
         expect(screen.getByTestId('asset-list')).toBeInTheDocument();
-        expect(screen.getByTestId('asset-list-stats')).toBeInTheDocument();
+        expect(screen.getByTestId('all-assets-stats')).toBeInTheDocument();
         expect(screen.queryByTestId('dao-info-aside')).not.toBeInTheDocument();
     });
 
-    it('renders Asset List Stats only when "All" tab is selected and DAO has SubDAOs', () => {
+    it('renders AllAssetsStats only when "All" tab is selected and DAO has SubDAOs', () => {
         const subDaos = [generateSubDao({ address: '0x123' }), generateSubDao({ address: '0x456' })];
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao({ subDaos }) }));
         useDaoFilterUrlParamSpy.mockReturnValue({
@@ -163,7 +163,7 @@ describe('<DaoAssetsPageClient /> component', () => {
 
         expect(screen.getByText(/daoAssetsPage.main.title/)).toBeInTheDocument();
         expect(screen.getByTestId('asset-list')).toBeInTheDocument();
-        expect(screen.getByTestId('asset-list-stats')).toBeInTheDocument();
+        expect(screen.getByTestId('all-assets-stats')).toBeInTheDocument();
         expect(screen.queryByTestId('finance-details-list')).not.toBeInTheDocument();
     });
 
@@ -196,6 +196,6 @@ describe('<DaoAssetsPageClient /> component', () => {
         expect(screen.getByText(/daoAssetsPage.main.title/)).toBeInTheDocument();
         expect(screen.getByTestId('asset-list')).toBeInTheDocument();
         expect(screen.getByTestId('dao-info-aside')).toBeInTheDocument();
-        expect(screen.queryByTestId('asset-list-stats')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('all-assets-stats')).not.toBeInTheDocument();
     });
 });

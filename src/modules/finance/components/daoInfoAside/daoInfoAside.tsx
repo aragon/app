@@ -5,7 +5,7 @@ import { StatCard } from '@/shared/components/statCard';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
-import { addressUtils, ChainEntityType, Collapsible, DefinitionList, Link } from '@aragon/gov-ui-kit';
+import { addressUtils, Button, ChainEntityType, Collapsible, DefinitionList, IconType, Link } from '@aragon/gov-ui-kit';
 import { FinanceDetailsList } from '../financeDetailsList';
 import type { IDaoInfoAsideProps } from './daoInfoAside.api';
 
@@ -25,6 +25,7 @@ export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
 
     const { buildEntityUrl } = useDaoChain({ network: resolvedNetwork, daoId });
     const pluginAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: resolvedAddress });
+    const resolvedOctavLink = resolvedAddress ? `https://pro.octav.fi/?addresses=${resolvedAddress}` : '';
 
     if (isSubDaoEnabled) {
         return (
@@ -57,6 +58,7 @@ export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
                         {addressUtils.truncateAddress(resolvedAddress)}
                     </DefinitionList.Item>
                 </DefinitionList.Container>
+
                 <div className="flex flex-col gap-3">
                     {links.map((link) => (
                         <Link key={link.url} href={link.url} isExternal={true} showUrl={true}>
@@ -64,6 +66,23 @@ export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
                         </Link>
                     ))}
                 </div>
+                {resolvedOctavLink && (
+                    <div className="flex flex-col items-center gap-y-3 pt-4">
+                        <Button
+                            className="w-full"
+                            variant="tertiary"
+                            size="md"
+                            href={resolvedOctavLink}
+                            target="_blank"
+                            iconRight={IconType.LINK_EXTERNAL}
+                        >
+                            {t('app.finance.financeDetailsList.octavLabel')}
+                        </Button>
+                        <p className="text-sm text-neutral-500">
+                            {t('app.finance.financeDetailsList.octavDescription')}
+                        </p>
+                    </div>
+                )}
             </>
         );
     }

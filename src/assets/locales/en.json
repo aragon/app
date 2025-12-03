@@ -771,7 +771,7 @@
             "chain": "Chain",
             "title": "Details"
           },
-          "summary": "Asset summary"
+          "summary": "All assets"
         },
         "main": {
           "title": "Assets"
@@ -783,7 +783,7 @@
             "chain": "Chain",
             "title": "Details"
           },
-          "summary": "Transaction summary"
+          "summary": "All assets"
         },
         "main": {
           "title": "Transactions"
