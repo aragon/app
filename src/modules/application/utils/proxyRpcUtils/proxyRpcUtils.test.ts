@@ -142,13 +142,13 @@ describe('proxyRpc utils', () => {
             const ankrKey = 'test-ankr-key';
             const testClass = createTestClass({ ankrKey });
 
-            // Find a network that uses ANKR (e.g., CORN_MAINNET)
-            const cornMainnet = networkDefinitions[Network.CORN_MAINNET];
-            const expectedUrl = `${cornMainnet.privateRpcConfig!.rpcUrl}${ankrKey}`;
+            // Find a network that uses ANKR (e.g., CHILIZ_MAINNET)
+            const chilizMainnet = networkDefinitions[Network.CHILIZ_MAINNET];
+            const expectedUrl = `${chilizMainnet.privateRpcConfig!.rpcUrl}${ankrKey}`;
 
-            // Need to find the chainId for CORN_MAINNET
-            const cornChainId = String(cornMainnet.id);
-            expect(testClass['chainIdToRpcEndpoint'](cornChainId)).toEqual(expectedUrl);
+            // Need to find the chainId for CHILIZ_MAINNET
+            const chilizChainId = String(chilizMainnet.id);
+            expect(testClass['chainIdToRpcEndpoint'](chilizChainId)).toEqual(expectedUrl);
         });
 
         it('returns the private rpc endpoint with drpc rpc key when configured', () => {
@@ -191,12 +191,12 @@ describe('proxyRpc utils', () => {
             process.env.CI = 'true';
             const testClass = createTestClass();
 
-            const cornMainnet = networkDefinitions[Network.CORN_MAINNET];
-            const cornChainId = String(cornMainnet.id);
+            const chilizMainnet = networkDefinitions[Network.CHILIZ_MAINNET];
+            const chilizChainId = String(chilizMainnet.id);
 
             // Should fallback to public RPC
-            const result = testClass['chainIdToRpcEndpoint'](cornChainId);
-            expect(result).toEqual(cornMainnet.rpcUrls.default.http[0]);
+            const result = testClass['chainIdToRpcEndpoint'](chilizChainId);
+            expect(result).toEqual(chilizMainnet.rpcUrls.default.http[0]);
             expect(logErrorSpy).toHaveBeenCalledWith(
                 expect.any(Error),
                 expect.objectContaining({
