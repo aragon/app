@@ -83,6 +83,23 @@
             "title": "Not found"
           }
         }
+      },
+      "gaugeVoter": {
+        "composer": {
+          "activateGaugeActionName": "Activate Gauge",
+          "contractName": "Gauge Voter",
+          "createGaugeActionName": "Create Gauge",
+          "deactivateGaugeActionName": "Deactivate Gauge",
+          "updateGaugeMetadataActionName": "Update Gauge Metadata"
+        },
+        "gaugeVoterSelectGaugeDialog": {
+          "cancel": "Cancel",
+          "description": "Select a gauge from the list.",
+          "emptyState": "No gauges available",
+          "entityLabel": "Gauge",
+          "submit": "Select gauge",
+          "title": "Select gauge"
+        }
       }
     },
     "application": {

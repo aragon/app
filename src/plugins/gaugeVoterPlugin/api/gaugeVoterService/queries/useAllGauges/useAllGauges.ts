@@ -22,8 +22,8 @@ export interface IUseAllGaugesParams {
  *
  * @example
  * ```tsx
- * const { gauges, totalCount, isLoading } = useAllGauges({
- *   params: {
+ * const { data, isLoading } = useAllGauges({
+ *   gaugeListParams: {
  *     urlParams: { pluginAddress: '0x...', network: 'polygon' },
  *     queryParams: { pageSize: 50 }
  *   }
