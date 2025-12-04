@@ -1,5 +1,33 @@
 # @aragon/app
 
+## 1.16.0
+
+### Minor Changes
+
+- [#878](https://github.com/aragon/app/pull/878) [`a9bcbea`](https://github.com/aragon/app/commit/a9bcbeac7af13697500cea7150c68a93c3aaa4e9) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Modules for SubDAO settings page
+
+- [#879](https://github.com/aragon/app/pull/879) [`189c10f`](https://github.com/aragon/app/commit/189c10f0f1327d19f468b03dd9167f16146f7394) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement custom DAO header for Xmaquina
+
+- [#891](https://github.com/aragon/app/pull/891) [`89c3605`](https://github.com/aragon/app/commit/89c3605aa0caaa1accc8756be5a3f0aa7aeaa3e9) Thanks [@evanaronson](https://github.com/evanaronson)! - Remove support for Corn
+
+- [#876](https://github.com/aragon/app/pull/876) [`ef7c0f7`](https://github.com/aragon/app/commit/ef7c0f7feb2dbef088e40a5eb90b79d4e3a46be9) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Extend current dialog architecture to support parent-child stacked dialogs where parent state is preserved
+
+- [#880](https://github.com/aragon/app/pull/880) [`44b91e4`](https://github.com/aragon/app/commit/44b91e47dc856204c9d673d0bcd8930b8f941e74) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Add Feature Flags system
+
+- [#874](https://github.com/aragon/app/pull/874) [`02f5684`](https://github.com/aragon/app/commit/02f5684aa2b8b8980927903f38907f43988f5499) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Integrate new changes to ProposalActionItem redesign
+
+- [#890](https://github.com/aragon/app/pull/890) [`d50b7c1`](https://github.com/aragon/app/commit/d50b7c15183062224765405cd02732afff9f9744) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Add multi-provider RPC support to all chains
+
+### Patch Changes
+
+- [#872](https://github.com/aragon/app/pull/872) [`3cd4e96`](https://github.com/aragon/app/commit/3cd4e96c81d1b238165f4832b1da497fc4da162a) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement TimeUtils for normalizing time input format
+
+- [#865](https://github.com/aragon/app/pull/865) [`18221ec`](https://github.com/aragon/app/commit/18221ecfcfa9eb9f82a903e4a9cf290cd622afba) Thanks [@evanaronson](https://github.com/evanaronson)! - Add Katana mainnet configuration, addresses, and plugin repository mappings
+
+- [#871](https://github.com/aragon/app/pull/871) [`04bb517`](https://github.com/aragon/app/commit/04bb51722805ab06a8477fda7fee51f5dd0b615b) Thanks [@evanaronson](https://github.com/evanaronson)! - Centralize block explorer links and network context with useDaoChain hook, fixes several instances AddressInput that linked to the wrong block explorer
+
+- [#887](https://github.com/aragon/app/pull/887) [`6ad03df`](https://github.com/aragon/app/commit/6ad03df68e38ce24fcaebedbf21e302356fb6705) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Improve handling for DAOs which have no installed plugins
+
 ## 1.15.1
 
 ### Patch Changes
