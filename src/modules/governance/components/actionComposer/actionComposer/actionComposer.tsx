@@ -156,7 +156,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
             } else if (result.errorKey) {
                 setUploadError(t(result.errorKey));
             }
-        } catch (err) {
+        } catch {
             setUploadError(t('app.governance.createProposalForm.actionsImportExport.errors.invalidJSON'));
         }
 

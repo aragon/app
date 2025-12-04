@@ -52,7 +52,7 @@ class ProposalActionsImportExportUtils {
      * @param actions - Array of proposal actions to download
      * @param filename - Name of the file to download (default: 'actions.json')
      */
-    downloadActionsAsJSON = (actions: IProposalAction[], filename: string = 'actions.json'): void => {
+    downloadActionsAsJSON = (actions: IProposalAction[], filename = 'actions.json'): void => {
         const exportedActions = this.exportActionsToJSON(actions);
         const jsonString = JSON.stringify(exportedActions, null, 2);
         const blob = new Blob([jsonString], { type: 'application/json' });
@@ -75,7 +75,7 @@ class ProposalActionsImportExportUtils {
      */
     validateAndParseActions = (jsonString: string): IImportActionsResult => {
         try {
-            const parsed = JSON.parse(jsonString);
+            const parsed: unknown = JSON.parse(jsonString);
 
             if (!Array.isArray(parsed)) {
                 return {
@@ -98,7 +98,7 @@ class ProposalActionsImportExportUtils {
                 success: true,
                 actions: parsed as IExportedAction[],
             };
-        } catch (error) {
+        } catch {
             return {
                 success: false,
                 errorKey: 'app.governance.createProposalForm.actionsImportExport.errors.invalidJSON',

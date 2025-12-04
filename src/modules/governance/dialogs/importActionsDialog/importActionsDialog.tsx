@@ -77,7 +77,7 @@ export const ImportActionsDialog: React.FC<IImportActionsDialogProps> = (props) 
             } else if (result.errorKey) {
                 setError(t(result.errorKey));
             }
-        } catch (err) {
+        } catch {
             setError(t('app.governance.createProposalForm.actionsImportExport.errors.invalidJSON'));
         } finally {
             setIsProcessing(false);
@@ -136,7 +136,7 @@ export const ImportActionsDialog: React.FC<IImportActionsDialogProps> = (props) 
                                     <p className="flex min-w-0 text-sm text-neutral-500">
                                         <span className="truncate">{selectedFile.name.replace(/\.[^.]+$/, '')}</span>
                                         <span className="shrink-0">
-                                            {selectedFile.name.match(/\.[^.]+$/)?.[0] || ''}
+                                            {/\.[^.]+$/.exec(selectedFile.name)?.[0] ?? ''}
                                         </span>
                                     </p>
                                 ) : (
