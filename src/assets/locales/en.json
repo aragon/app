@@ -317,6 +317,22 @@
             "label": "Token"
           }
         },
+        "distributionDexSwap": {
+          "cowSwapSettlementAddress": {
+            "helpText": "The address of the CoWSwap settlement contract.",
+            "label": "CoWSwap settlement address",
+            "placeholder": "ENS or 0x…"
+          },
+          "targetTokenAddress": {
+            "helpText": "The address of the token to swap to.",
+            "label": "Target token address",
+            "placeholder": "ENS or 0x…"
+          },
+          "token": {
+            "helpText": "Choose the token to swap from.",
+            "label": "Token"
+          }
+        },
         "distributionFixed": {
           "token": {
             "helpText": "Choose the token for this policy and specify the amount per dispatch.",
@@ -357,6 +373,10 @@
           "BURN": {
             "description": "Route an asset to the zero address or call its burn function.",
             "label": "Burn"
+          },
+          "DEX_SWAP": {
+            "description": "Swap an asset on CoW Swap.",
+            "label": "Dex swap"
           },
           "FIXED": {
             "description": "Transfer an available asset to recipients in a relative manner.",
