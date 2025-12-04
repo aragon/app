@@ -1,6 +1,7 @@
 'use client';
 
 import { ProposalExecutionStatus } from '@/modules/governance/components/proposalExecutionStatus';
+import { proposalActionsImportExportUtils } from '@/modules/governance/utils/proposalActionsImportExportUtils';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
@@ -14,6 +15,7 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     ActionSimulation,
     addressUtils,
+    Button,
     CardCollapsible,
     ChainEntityType,
     DateFormat,
@@ -216,9 +218,25 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                 })}
                             </ProposalActions.Container>
                             <ProposalActions.Footer>
-                                {normalizedProposalActions.length > 0 && (
-                                    <ProposalExecutionStatus daoId={daoId} proposal={proposal} />
-                                )}
+                                <div className="flex w-full items-center justify-between gap-4">
+                                    {normalizedProposalActions.length > 0 && (
+                                        <>
+                                            <ProposalExecutionStatus daoId={daoId} proposal={proposal} />
+                                            <Button
+                                                variant="tertiary"
+                                                size="md"
+                                                onClick={() =>
+                                                    proposalActionsImportExportUtils.downloadActionsAsJSON(
+                                                        actionData?.actions ?? [],
+                                                        `proposal-${proposalSlug}-actions.json`,
+                                                    )
+                                                }
+                                            >
+                                                {t('app.governance.daoProposalDetailsPage.main.actions.downloadAsJSON')}
+                                            </Button>
+                                        </>
+                                    )}
+                                </div>
                             </ProposalActions.Footer>
                         </ProposalActions.Root>
                     </Page.MainSection>

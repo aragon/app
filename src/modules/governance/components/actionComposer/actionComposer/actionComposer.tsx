@@ -11,8 +11,10 @@ import type { IAllowedAction } from '../../../api/executeSelectorsService';
 import { type IProposalAction } from '../../../api/governanceService';
 import type { ISmartContractAbi } from '../../../api/smartContractService';
 import { GovernanceDialogId } from '../../../constants/governanceDialogId';
+import type { IImportActionsDialogParams } from '../../../dialogs/importActionsDialog';
 import type { IVerifySmartContractDialogParams } from '../../../dialogs/verifySmartContractDialog';
 import type { IWalletConnectActionDialogParams } from '../../../dialogs/walletConnectActionDialog';
+import type { IExportedAction } from '../../../utils/proposalActionsImportExportUtils';
 import type { IProposalActionData } from '../../createProposalForm';
 import {
     ActionComposerInput,
@@ -108,6 +110,28 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         open(GovernanceDialogId.WALLET_CONNECT_ACTION, { params });
     };
 
+    const handleImportActions = (actions: IExportedAction[]) => {
+        const parsedActions = actions.map((action) => {
+            const actionId = crypto.randomUUID();
+            return {
+                to: action.to,
+                value: BigInt(action.value),
+                data: action.data,
+                id: actionId,
+                daoId,
+                meta: undefined,
+            } as unknown as IProposalActionData;
+        });
+        onAddAction(parsedActions);
+    };
+
+    const displayImportActionsDialog = () => {
+        const params: IImportActionsDialogParams = {
+            onImport: handleImportActions,
+        };
+        open(GovernanceDialogId.IMPORT_ACTIONS, { params });
+    };
+
     const handleItemSelected = (action: IActionComposerInputItem, inputValue: string) => {
         const { id, defaultValue, meta } = action;
 
@@ -138,6 +162,14 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                             {t('app.governance.actionComposer.addAction.walletConnect')}
                         </Button>
                     )}
+                    <Button
+                        variant="tertiary"
+                        size="md"
+                        iconLeft={IconType.WITHDRAW}
+                        onClick={displayImportActionsDialog}
+                    >
+                        {t('app.governance.createProposalForm.actionsImportExport.importButton')}
+                    </Button>
                 </div>
                 {allowedActions && (
                     // wrapper div needed here to tackle grow css prop in InputContainer inside Switch, which we cannot override
