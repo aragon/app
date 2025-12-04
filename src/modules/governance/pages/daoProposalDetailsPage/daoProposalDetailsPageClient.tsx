@@ -15,7 +15,6 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     ActionSimulation,
     addressUtils,
-    Button,
     CardCollapsible,
     ChainEntityType,
     DateFormat,
@@ -157,6 +156,17 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const simulationErrorContext = hasSimulationFailed ? 'simulationError' : 'lastSimulationError';
     const simulationError = t(`app.governance.daoProposalDetailsPage.main.actions.${simulationErrorContext}`);
 
+    const proposalActionsDropdownItems: IProposalActionsFooterDropdownItem[] = [
+        {
+            label: t('app.governance.daoProposalDetailsPage.main.actions.downloadAsJSON'),
+            onClick: () =>
+                proposalActionsImportExportUtils.downloadActionsAsJSON(
+                    actionData?.actions ?? [],
+                    `proposal-${proposalSlug}-actions.json`,
+                ),
+        },
+    ];
+
     return (
         <>
             <Page.Header breadcrumbs={pageBreadcrumbs} breadcrumbsTag={statusTag} title={title} description={summary} />
@@ -205,6 +215,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                             action={{ ...action, daoId } as IProposalActionData}
                                             actionFunctionSelector={fnSelector}
                                             chainId={chainId}
+                                            readOnly={true}
                                             CustomComponent={customActionView.componentDetails}
                                         />
                                     ) : (
@@ -213,30 +224,19 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                             action={action}
                                             actionFunctionSelector={fnSelector}
                                             chainId={chainId}
+                                            readOnly={true}
                                         />
                                     );
                                 })}
                             </ProposalActions.Container>
-                            <ProposalActions.Footer>
-                                <div className="flex w-full items-center justify-between gap-4">
-                                    {normalizedProposalActions.length > 0 && (
-                                        <>
-                                            <ProposalExecutionStatus daoId={daoId} proposal={proposal} />
-                                            <Button
-                                                variant="tertiary"
-                                                size="md"
-                                                onClick={() =>
-                                                    proposalActionsImportExportUtils.downloadActionsAsJSON(
-                                                        actionData?.actions ?? [],
-                                                        `proposal-${proposalSlug}-actions.json`,
-                                                    )
-                                                }
-                                            >
-                                                {t('app.governance.daoProposalDetailsPage.main.actions.downloadAsJSON')}
-                                            </Button>
-                                        </>
-                                    )}
-                                </div>
+                            <ProposalActions.Footer
+                                dropdownItems={
+                                    normalizedProposalActions.length > 0 ? proposalActionsDropdownItems : undefined
+                                }
+                            >
+                                {normalizedProposalActions.length > 0 && (
+                                    <ProposalExecutionStatus daoId={daoId} proposal={proposal} />
+                                )}
                             </ProposalActions.Footer>
                         </ProposalActions.Root>
                     </Page.MainSection>

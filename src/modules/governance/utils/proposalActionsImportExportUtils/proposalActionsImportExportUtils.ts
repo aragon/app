@@ -9,7 +9,7 @@ export interface IExportedAction {
     /**
      * ETH value to send (in wei).
      */
-    value: number;
+    value: number | string;
     /**
      * Encoded function call data (hex string).
      */
@@ -127,7 +127,14 @@ class ProposalActionsImportExportUtils {
             return 'app.governance.createProposalForm.actionsImportExport.errors.invalidAddress';
         }
 
-        if (typeof actionObj.value !== 'number' || actionObj.value < 0) {
+        const isNumber = typeof actionObj.value === 'number' && actionObj.value >= 0;
+        const isStringNumber =
+            typeof actionObj.value === 'string' &&
+            actionObj.value.length > 0 &&
+            // allow decimal or 0x-prefixed hex since BigInt supports both
+            /^(\d+|0x[0-9a-fA-F]+)$/.test(actionObj.value);
+
+        if (!isNumber && !isStringNumber) {
             return 'app.governance.createProposalForm.actionsImportExport.errors.invalidValue';
         }
 
