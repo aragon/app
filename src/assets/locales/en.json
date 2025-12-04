@@ -319,14 +319,14 @@
         },
         "distributionDexSwap": {
           "cowSwapSettlementAddress": {
-            "helpText": "The address of the CoWSwap settlement contract.",
-            "label": "CoWSwap settlement address",
-            "placeholder": "ENS or 0x…"
+            "helpText": "The address of the CoW Swap settlement contract.",
+            "label": "CoW Swap settlement address",
+            "placeholder": "0x…"
           },
           "targetTokenAddress": {
             "helpText": "The address of the token to swap to.",
             "label": "Target token address",
-            "placeholder": "ENS or 0x…"
+            "placeholder": "0x…"
           },
           "token": {
             "helpText": "Choose the token to swap from.",
