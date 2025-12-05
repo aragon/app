@@ -8,14 +8,12 @@ import {
     addressUtils,
     type ICompositeAddress,
     type IInputFileAvatarValue,
-    InputFileAvatar,
     InputText,
     RadioCard,
     RadioGroup,
     TextArea,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import { useWatch } from 'react-hook-form';
 import { GaugeIncentiveType } from '../../types/enum/gaugeIncentiveType';
 import { GaugeRegistrarActiveVotingAlert } from '../gaugeRegistrarActiveVotingAlert';
 
@@ -76,8 +74,6 @@ export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
         rules: { required: true, maxLength: nameMaxLength },
         trimOnBlur: true,
     });
-
-
 
     const { value: descriptionValue, ...descriptionFieldRest } = useFormField<
         IGaugeRegistrarRegisterGaugeFormData,

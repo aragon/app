@@ -26,8 +26,7 @@ export const AvatarInput: React.FC<IAvatarInputProps> = (props) => {
     const { value, ...avatarField } = useFormField<AvatarInputBaseForm, typeof fieldName>(fieldName, {
         label: t('app.shared.avatarInput.label'),
         rules: {
-            validate: (value) =>
-                value?.error ? `app.shared.avatarInput.error.${value.error}` : undefined,
+            validate: (value) => (value?.error ? `app.shared.avatarInput.error.${value.error}` : undefined),
         },
     });
 

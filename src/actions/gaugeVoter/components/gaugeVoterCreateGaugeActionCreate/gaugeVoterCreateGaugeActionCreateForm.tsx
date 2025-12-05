@@ -74,8 +74,6 @@ export const GaugeVoterCreateGaugeActionCreateForm: React.FC<IGaugeVoterCreateGa
         trimOnBlur: true,
     });
 
-
-
     const { value: descriptionValue, ...descriptionFieldRest } = useFormField<
         IGaugeVoterCreateGaugeFormData,
         'description'

@@ -77,8 +77,6 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
         rules: { maxLength: ensMaxLength, validate: validateEnsField },
     });
 
-
-
     const descriptionField = useFormField<ICreateDaoFormData, 'description'>('description', {
         label: t('app.createDao.createDaoForm.metadata.description.label'),
         fieldPrefix,
