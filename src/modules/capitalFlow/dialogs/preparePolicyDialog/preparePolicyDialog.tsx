@@ -66,6 +66,13 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     const { status, mutateAsync: pinJson } = usePinJson();
     const { open } = useDialogContext();
 
+    const isMultiDispatch = useMemo(
+        () =>
+            values.strategy?.type === StrategyType.CAPITAL_ROUTER &&
+            values.strategy.routerType === RouterType.MULTI_DISPATCH,
+        [values.strategy],
+    );
+
     const [policyMetadata, setPolicyMetadata] = useState<IPreparePolicyMetadata>();
     const [sourceAndModelContracts, setSourceAndModelContracts] = useState<IPrepareSourceAndModelContracts>();
 
@@ -78,7 +85,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     const deploymentStepper = useStepper<ITransactionDialogStepMeta, PreparePolicyStep | TransactionDialogStep>({
         initialActiveStep: PreparePolicyStep.PIN_METADATA,
     });
-    const installationStepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
+    const installationStepper = useStepper<ITransactionDialogStepMeta, PreparePolicyStep | TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
     const { nextStep } = deploymentStepper;
@@ -95,6 +102,14 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     };
 
     const handleDeploySourceAndModelSuccess = (txReceipt: TransactionReceipt) => {
+        invariant(values.strategy != null, 'handleDeploySourceAndModelSuccess: strategy is not defined');
+
+        // MULTI_DISPATCH doesn't deploy source or model contracts
+        if (isMultiDispatch) {
+            setSourceAndModelContracts({ model: zeroAddress, source: zeroAddress });
+            return;
+        }
+
         const combinedModelAbi = [...routerModelFactoryAbi, ...omniModelFactoryAbi] as const;
         const modelLogs = parseEventLogs({
             abi: combinedModelAbi,
@@ -102,7 +117,6 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
             strict: false,
         });
 
-        invariant(values.strategy != null, 'handleDeploySourceAndModelSuccess: strategy is not defined');
         const hasModel =
             values.strategy.type === StrategyType.CAPITAL_ROUTER &&
             ![RouterType.BURN, RouterType.DEX_SWAP].includes(values.strategy.routerType);
@@ -167,7 +181,11 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
         const proposalMetadata = preparePolicyDialogUtils.preparePublishPolicyProposalMetadata();
         const translationNamespace = `app.capitalFlow.publishPolicyDialog.${isAdmin ? 'admin' : 'default'}`;
 
-        const txInfo = { title: t(`${translationNamespace}.transactionInfoTitle`), current: 3, total: 3 };
+        const txInfo = {
+            title: t(`${translationNamespace}.transactionInfoTitle`),
+            current: isMultiDispatch ? 2 : 3,
+            total: isMultiDispatch ? 2 : 3,
+        };
         const params: IPublishProposalDialogParams = {
             proposal: { ...proposalMetadata, resources: [], actions: proposalActions },
             daoId,
@@ -200,6 +218,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     // - the first one to pin metadata and deploy source/model contracts, and
     // - the second one to call prepareInstallation on plugin setup contract.
     // - after that we open publish proposal dialog as the third step, as usual.
+    // Note: For MULTI_DISPATCH, the first dialog only pins metadata (no source/model deployment).
     if (sourceAndModelContracts == null) {
         return (
             <TransactionDialog<PreparePolicyStep>
@@ -211,7 +230,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
                 transactionInfo={{
                     title: t('app.capitalFlow.preparePolicyDialog.transactionInfoTitleDeploy'),
                     current: 1,
-                    total: 3,
+                    total: isMultiDispatch ? 2 : 3,
                 }}
                 stepper={deploymentStepper}
                 customSteps={customSteps}
@@ -231,7 +250,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
             transactionInfo={{
                 title: t('app.capitalFlow.preparePolicyDialog.transactionInfoTitleInstall'),
                 current: 2,
-                total: 3,
+                total: isMultiDispatch ? 2 : 3,
             }}
             stepper={installationStepper}
             prepareTransaction={handlePrepareInstallationTransaction}

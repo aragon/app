@@ -2,7 +2,7 @@ import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import { invariant } from '@aragon/gov-ui-kit';
-import { type ISetupStrategyForm } from './setupStrategyDialogDefinitions';
+import { RouterType, StrategyType, type ISetupStrategyForm } from './setupStrategyDialogDefinitions';
 import { SetupStrategyDialogSteps, type ISetupStrategyDialogStepsProps } from './setupStrategyDialogSteps';
 
 export interface ISetupStrategyDialogParams extends ISetupStrategyDialogStepsProps {
@@ -26,11 +26,31 @@ export const SetupStrategyDialog: React.FC<ISetupStrategyDialogProps> = (props) 
 
     const { t } = useTranslations();
 
+    const handleSubmit = (values: ISetupStrategyForm) => {
+        // Filter out empty router addresses for MULTI_DISPATCH
+        if (values.type === StrategyType.CAPITAL_ROUTER && values.routerType === RouterType.MULTI_DISPATCH) {
+            const filteredAddresses = values.distributionMultiDispatch.routerAddresses.filter(
+                (router) => router.address && router.address.trim() !== '',
+            );
+
+            const processedValues: ISetupStrategyForm = {
+                ...values,
+                distributionMultiDispatch: {
+                    routerAddresses: filteredAddresses,
+                },
+            };
+
+            onSubmit(processedValues);
+        } else {
+            onSubmit(values);
+        }
+    };
+
     return (
         <WizardDialog.Container
             title={t('app.capitalFlow.setupStrategyDialog.title')}
             formId="strategySetup"
-            onSubmit={onSubmit}
+            onSubmit={handleSubmit}
             defaultValues={initialValues}
             submitLabel={t('app.capitalFlow.setupStrategyDialog.submit')}
         >
