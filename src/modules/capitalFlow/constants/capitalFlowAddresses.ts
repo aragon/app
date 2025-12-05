@@ -56,7 +56,7 @@ export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
         routerPluginRepo: '0x1bd5970DCEB7168c65b1A226ED71Fb632c3Def47',
         claimerPluginRepo: '0x70f636D481898E897FceDB182074eF61e05FbbD0',
         burnRouterPluginRepo: '0x42718AB262073EFFB1AC6d538a4BD6717039d4b3',
-        cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000', // TODO: update once deployed
+        cowSwapRouterPluginRepo: '0x7B87891e796Ee908c2F6bC95e678A3e546E3099E',
     },
     [Network.POLYGON_MAINNET]: {
         // model factories
