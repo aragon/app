@@ -17,7 +17,7 @@ export interface IDaoPolicy {
     /**
      * Key of the policy used for identification purposes.
      */
-    processKey?: string;
+    policyKey?: string;
     /**
      * Address of the policy plugin.
      */
@@ -69,26 +69,26 @@ export interface IDaoPolicy {
     metadataIpfs?: string;
 }
 
-enum PolicyInterfaceType {
-    ROUTER = 'ROUTER',
-    CLAIMER = 'CLAIMER',
+export enum PolicyInterfaceType {
+    ROUTER = 'router',
+    CLAIMER = 'claimer',
 }
 
-enum PolicyStrategyType {
-    ROUTER = 'ROUTER',
-    BURN_ROUTER = 'BURN_ROUTER',
-    CLAIMER = 'CLAIMER',
-    MULTI_DISPATCH = 'MULTI_DISPATCH',
+export enum PolicyStrategyType {
+    ROUTER = 'router',
+    BURN_ROUTER = 'burnRouter',
+    CLAIMER = 'claimer',
+    MULTI_DISPATCH = 'multiDispatch',
 }
 
-enum PolicyStrategyModelType {
-    RATIO = 'RATIO',
-    GAUGE_RATIO = 'GAUGE_RATIO',
+export enum PolicyStrategyModelType {
+    RATIO = 'ratio',
+    GAUGE_RATIO = 'addressGauge',
 }
 
-enum PolicyStrategySourceType {
-    DRAIN = 'DRAIN',
-    STREAM_BALANCE = 'STREAM_BALANCE',
+export enum PolicyStrategySourceType {
+    DRAIN = 'drain',
+    STREAM_BALANCE = 'streamBalance',
 }
 
 interface IPolicySourceBase {
@@ -105,9 +105,10 @@ interface IPolicySourceBase {
      */
     vaultAddress: string;
     /**
-     * ERC20 token (or ETH) consumed from the vault.
+     * ERC20 token consumed from the vault.
+     * If no token data (undefined), it is assumed to be the native token.
      */
-    token: IToken;
+    token?: IToken;
 }
 
 interface IPolicyDrainSource extends IPolicySourceBase {
@@ -168,7 +169,7 @@ interface IPolicyAddressGaugeRatioModel extends IPolicyModelBase {
      */
     type: PolicyStrategyModelType.GAUGE_RATIO;
     /**
-     * Address of th eGaugeVoter contract.
+     * Address of the GaugeVoter contract.
      */
     gaugeVoterAddress: string;
 }

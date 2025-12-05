@@ -4,10 +4,11 @@ import { GovernanceDialogId } from '@/modules/governance/constants/governanceDia
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
-import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import { type IDaoPlugin, type Network, useDao, useDaoPolicies } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { PluginFilterComponent } from '@/shared/components/pluginFilterComponent';
+import { PolicyDataListItem } from '@/shared/components/policyDataListItem';
 import { ProcessDataListItem } from '@/shared/components/processDataListItem';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
@@ -45,7 +46,13 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
 
     const daoParams = { urlParams: { id: daoId } };
     const { data: dao } = useDao(daoParams);
+
     const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
+
+    const { data: policies = [] } = useDaoPolicies(
+        { urlParams: { network: dao?.network as Network, daoAddress: dao?.address as string } },
+        { enabled: isSubDaoEnabled && dao != null },
+    );
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
 
@@ -179,10 +186,14 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                 )}
                 {isSubDaoEnabled && (
                     <Page.MainSection
+                        className="gap-3"
+                        inset={false}
                         title={t('app.settings.daoSettingsPage.main.automationInfoTitle')}
                         action={addPolicyAction}
                     >
-                        <p>Automation content</p>
+                        {policies.map((policy) => (
+                            <PolicyDataListItem key={policy.address} policy={policy} />
+                        ))}
                     </Page.MainSection>
                 )}
             </Page.Main>
