@@ -94,7 +94,6 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<
                     value={ratioField.value.toString()}
                     onChange={(value) => ratioField.onChange(Number(value))}
                     alert={ratioField.alert}
-                    // label={t('app.capitalFlow.setupStrategyDialog.distribution.recipients.ratio')}
                 />
             </div>
 

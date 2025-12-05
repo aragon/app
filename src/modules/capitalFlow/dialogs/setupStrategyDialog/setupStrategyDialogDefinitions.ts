@@ -25,10 +25,6 @@ export interface ISetupStrategyFormBase {
     sourceVault: string;
 }
 
-/////////////////////////////////
-//// ROUTER
-/////////////////////////////////
-
 export interface ISetupStrategyFormRouter extends ISetupStrategyFormBase {
     /**
      * Capital router type of policy.
@@ -106,10 +102,6 @@ export interface IRecipientAbsolute extends ICompositeAddress {
      */
     amount: number;
 }
-
-////////////////////////
-// DEFI ADAPTER
-////////////////////////
 
 export interface ISetupStrategyFormDeFiAdapter extends ISetupStrategyFormBase {
     /**

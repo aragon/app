@@ -124,7 +124,7 @@ interface IPolicyStreamBalanceSource extends IPolicySourceBase {
      */
     type: PolicyStrategySourceType.STREAM_BALANCE;
     /**
-     * The rate at which tokens become usable (tokens / epoch)
+     * The rate at which tokens become usable (tokens / epoch).
      */
     amountPerEpoch: bigint;
     /**
