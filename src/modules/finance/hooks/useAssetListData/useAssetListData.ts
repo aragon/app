@@ -16,12 +16,14 @@ export const useAssetListData = (params: IGetAssetListParams) => {
             for (const asset of page.data) {
                 const amount = Number(asset.amount) || 0;
                 const amountUsd = Number(asset.amountUsd) || 0;
-                const price = Number(asset.token.priceUsd) || 0;
+                const originalPriceUsd = asset.token.priceUsd;
+                const price = Number(originalPriceUsd) || 0;
                 let finalPrice = price;
 
                 if (finalPrice === 0 && amount > 0 && amountUsd > 0) {
                     finalPrice = amountUsd / amount;
                 }
+                const priceUsd = finalPrice !== price ? String(finalPrice) : originalPriceUsd;
 
                 assetList.push({
                     ...asset,
@@ -30,7 +32,7 @@ export const useAssetListData = (params: IGetAssetListParams) => {
                         ...asset.token,
                         name: asset.token.name || 'Unknown',
                         symbol: asset.token.symbol || 'UNKNOWN',
-                        priceUsd: String(finalPrice),
+                        priceUsd,
                     },
                 });
             }
