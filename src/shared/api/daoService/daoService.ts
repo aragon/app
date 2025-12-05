@@ -1,8 +1,13 @@
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { AragonBackendService, type IPaginatedResponse } from '../aragonBackendService';
 import { pluginsService } from '../pluginsService';
-import type { IGetDaoByEnsParams, IGetDaoParams, IGetDaoPermissionsParams } from './daoService.api';
-import type { IDao, IDaoPermission, Network } from './domain';
+import type {
+    IGetDaoByEnsParams,
+    IGetDaoParams,
+    IGetDaoPermissionsParams,
+    IGetDaoPoliciesParams,
+} from './daoService.api';
+import type { IDao, IDaoPermission, IDaoPolicy, Network } from './domain';
 
 /**
  * DAO response from API where plugins may be missing or empty.
@@ -16,6 +21,7 @@ class DaoService extends AragonBackendService {
         dao: '/v2/daos/:id',
         daoByEns: '/v2/daos/:network/ens/:ens',
         daoPermissions: '/v2/permissions/:network/:daoAddress',
+        daoPolicies: '/v2/policies/:network/:daoAddress',
     };
 
     /**
@@ -67,6 +73,11 @@ class DaoService extends AragonBackendService {
     getDaoPermissions = async (params: IGetDaoPermissionsParams): Promise<IPaginatedResponse<IDaoPermission>> => {
         const result = await this.request<IPaginatedResponse<IDaoPermission>>(this.urls.daoPermissions, params);
 
+        return result;
+    };
+
+    getDaoPolicies = async (params: IGetDaoPoliciesParams): Promise<IDaoPolicy[]> => {
+        const result = await this.request<IDaoPolicy[]>(this.urls.daoPolicies, params);
         return result;
     };
 }
