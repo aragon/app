@@ -15,3 +15,5 @@ export const cowSwapRouterPluginSetupAbi = [
     { name: '_targetToken', type: 'address' },
     { name: '_cowSwapSettlement', type: 'address' },
 ] as const;
+
+export const multiDispatchPluginSetupAbi = [{ name: '_subrouters', type: 'address[]' }] as const;
