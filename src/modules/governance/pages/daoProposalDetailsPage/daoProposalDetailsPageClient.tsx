@@ -20,7 +20,7 @@ import {
     DateFormat,
     DefinitionList,
     formatterUtils,
-    IProposalActionsFooterDropdownItem,
+    type IProposalActionsFooterDropdownItem,
     Link,
     ProposalActions,
     ProposalStatus,
