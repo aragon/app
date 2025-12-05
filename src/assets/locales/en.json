@@ -1118,11 +1118,6 @@
           },
           "importButton": "Upload"
         },
-        "importActionsDialog": {
-          "a11y": {
-            "title": "Import actions dialog"
-          }
-        },
         "metadata": {
           "actions": {
             "helpText": "Actions are onchain transactions that can be executed if the proposal passes.",

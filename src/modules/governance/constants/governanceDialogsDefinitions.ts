@@ -1,7 +1,6 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { ExecuteCheckDialog } from '../dialogs/executeCheckDialog';
 import { ExecuteDialog } from '../dialogs/executeDialog';
-import { ImportActionsDialog } from '../dialogs/importActionsDialog';
 import { PermissionCheckDialog } from '../dialogs/permissionCheckDialog';
 import { PublishProposalDialog } from '../dialogs/publishProposalDialog';
 import { SelectPluginDialog } from '../dialogs/selectPluginDialog';
@@ -27,8 +26,4 @@ export const governanceDialogsDefinitions: Record<GovernanceDialogId, IDialogCom
     },
     [GovernanceDialogId.WALLET_CONNECT_ACTION]: { Component: WalletConnectActionDialog },
     [GovernanceDialogId.SIMULATE_ACTIONS]: { Component: SimulateActionsDialog, size: 'lg' },
-    [GovernanceDialogId.IMPORT_ACTIONS]: {
-        Component: ImportActionsDialog,
-        hiddenTitle: 'app.governance.importActionsDialog.a11y.title',
-    },
 };
