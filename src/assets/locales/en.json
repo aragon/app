@@ -2725,6 +2725,10 @@
           "readMore": "Read more"
         }
       },
+      "policyDataListItem": {
+        "defaultDescription": "No description",
+        "defaultName": "No name {{type}} policy"
+      },
       "processDataListItem": {
         "defaultDescription": "No description"
       },
