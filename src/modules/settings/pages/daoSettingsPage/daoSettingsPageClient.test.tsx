@@ -1,6 +1,7 @@
 import * as DaoService from '@/shared/api/daoService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { DialogProvider } from '@/shared/components/dialogProvider';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import * as UseDaoPluginsModule from '@/shared/hooks/useDaoPlugins';
 import {
     generateDao,

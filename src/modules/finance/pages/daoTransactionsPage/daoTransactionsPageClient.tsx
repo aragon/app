@@ -1,5 +1,6 @@
 'use client';
 
+import { DispatchPanel } from '@/modules/capitalFlow/components/dispatchPanel';
 import { FinanceDetailsList } from '@/modules/finance/components/financeDetailsList';
 import { TransactionList } from '@/modules/finance/components/transactionList';
 import { useDao } from '@/shared/api/daoService';
@@ -32,6 +33,7 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
             </Page.Main>
             <Page.Aside>
                 <FinanceDetailsList dao={dao} />
+                {dao && <DispatchPanel daoAddress={dao.address} network={dao.network} />}
             </Page.Aside>
         </Page.Content>
     );

@@ -11,6 +11,10 @@ jest.mock('@/modules/finance/components/transactionList/transactionList', () => 
     TransactionList: jest.fn(() => <div data-testid="finance-transactions-list" />),
 }));
 
+jest.mock('@/modules/capitalFlow/components/dispatchPanel/dispatchPanel', () => ({
+    DispatchPanel: jest.fn(() => null),
+}));
+
 describe('<DaoTransactionsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
 
