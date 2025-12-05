@@ -2,8 +2,13 @@ import { apiVersionUtils } from '@/shared/utils/apiVersionUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { AragonBackendService, type IPaginatedResponse } from '../aragonBackendService';
 import { pluginsService } from '../pluginsService';
-import type { IGetDaoByEnsParams, IGetDaoParams, IGetDaoPermissionsParams } from './daoService.api';
-import type { IDao, IDaoPermission, Network } from './domain';
+import type {
+    IGetDaoByEnsParams,
+    IGetDaoParams,
+    IGetDaoPermissionsParams,
+    IGetDaoPoliciesParams,
+} from './daoService.api';
+import type { IDao, IDaoPermission, IDaoPolicy, Network } from './domain';
 
 /**
  * DAO response from API where plugins may be missing or empty.
@@ -18,6 +23,7 @@ class DaoService extends AragonBackendService {
         dao: '/daos/:id',
         daoByEns: '/daos/:network/ens/:ens',
         daoPermissions: '/permissions/:network/:daoAddress',
+        daoPolicies: '/policies/:network/:daoAddress',
     };
 
     // Build URLs dynamically based on environment
@@ -28,6 +34,7 @@ class DaoService extends AragonBackendService {
             daoByEns: apiVersionUtils.buildVersionedUrl(this.basePaths.daoByEns),
             // Force v2 for permissions (not available in v3 yet)
             daoPermissions: apiVersionUtils.buildVersionedUrl(this.basePaths.daoPermissions, { forceVersion: 'v2' }),
+            daoPolicies: apiVersionUtils.buildVersionedUrl(this.basePaths.daoPolicies, { forceVersion: 'v2' }),
         };
     }
 
@@ -80,6 +87,11 @@ class DaoService extends AragonBackendService {
     getDaoPermissions = async (params: IGetDaoPermissionsParams): Promise<IPaginatedResponse<IDaoPermission>> => {
         const result = await this.request<IPaginatedResponse<IDaoPermission>>(this.urls.daoPermissions, params);
 
+        return result;
+    };
+
+    getDaoPolicies = async (params: IGetDaoPoliciesParams): Promise<IDaoPolicy[]> => {
+        const result = await this.request<IDaoPolicy[]>(this.urls.daoPolicies, params);
         return result;
     };
 }

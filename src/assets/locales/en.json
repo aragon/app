@@ -184,6 +184,229 @@
         "disconnect": "Disconnect"
       }
     },
+    "capitalFlow": {
+      "createPolicyDetailsDialog": {
+        "actionLabel": "Get started",
+        "description": "Create a capital flow policy to manage fund distribution and allocation.",
+        "steps": {
+          "configure": "Configure policy",
+          "describe": "Describe your policy"
+        },
+        "title": "Create new policy"
+      },
+      "createPolicyForm": {
+        "configure": {
+          "strategy": {
+            "details": {
+              "asset": "Token",
+              "edit": "Edit strategy",
+              "more": "More",
+              "notSet": "Not set yet",
+              "recipientsCount": "{{count}} recipients",
+              "recipientsEmpty": "Recipients will appear here once added.",
+              "recipientsTerm": "Recipients",
+              "remove": "Remove",
+              "routerType": "Policy strategy",
+              "sourceVault": "Source vault",
+              "strategyTerm": "Strategy",
+              "streamCadence": "Stream cadence"
+            },
+            "emptyCard": {
+              "action": "Create strategy",
+              "description": "Define a strategy for publishing the new policy.",
+              "heading": "No strategy defined"
+            },
+            "helpText": "Create a new strategy to automate token distribution.",
+            "label": "Strategy"
+          }
+        },
+        "metadata": {
+          "description": {
+            "helpText": "Describe your policies’ purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
+            "label": "Description"
+          },
+          "name": {
+            "helpText": "Give the policy a name that it will be recognized by.",
+            "label": "Name"
+          },
+          "policyKey": {
+            "helpText": "The key is part of the unique identifier for policy of this type. Something like EIP would lead to EIP-1 and increment for each policy.",
+            "label": "Key"
+          },
+          "resources": {
+            "helpText": "Add any additional external resources that help members understand the policy."
+          }
+        }
+      },
+      "createPolicyPage": {
+        "finalStep": "Publish policy",
+        "steps": {
+          "CONFIGURE": {
+            "description": "Specify which policy you would like to use for this automation.",
+            "name": "Configure policy",
+            "title": "Configure policy"
+          },
+          "INTERVAL": {
+            "continuous": {
+              "description": "Dispatch every time",
+              "label": "Continuous"
+            },
+            "cooldown": {
+              "description": "Dispatch after a set period",
+              "duration": {
+                "error": "Cooldown duration must be greater than 0",
+                "label": "Cooldown duration"
+              },
+              "label": "Cooldown"
+            },
+            "description": "Specify the frequency at which a dispatch can be executed. Once executed, the dispatch can only be executed again after the defined period.",
+            "name": "Configure interval",
+            "title": "Configure interval"
+          },
+          "METADATA": {
+            "description": "Name and define your policy so that members understand what the automation does when executed.",
+            "name": "Describe your policy",
+            "title": "Describe your policy"
+          }
+        },
+        "submitLabel": "Publish policy"
+      },
+      "layoutWizardCreatePolicy": {
+        "name": "Create policy"
+      },
+      "preparePolicyDialog": {
+        "button": {
+          "submit": "Prepare installation"
+        },
+        "description": "To publish your capital flow policy, confirm the three onchain transactions in your wallet.",
+        "step": {
+          "PIN_METADATA": {
+            "errorLabel": "Unable to pin data on IPFS",
+            "label": "Pin data on IPFS"
+          }
+        },
+        "title": "Publish capital flow policy",
+        "transactionInfoTitleDeploy": "Prepare installation pt1",
+        "transactionInfoTitleInstall": "Prepare installation pt2"
+      },
+      "publishPolicyDialog": {
+        "admin": {
+          "button": {
+            "submit": "Finalize installation"
+          },
+          "description": "To publish your capital flow policy, confirm the two onchain transactions in your wallet.",
+          "title": "Publish capital flow policy",
+          "transactionInfoTitle": "Finalize installation"
+        },
+        "default": {
+          "button": {
+            "submit": "Propose policy"
+          },
+          "description": "To publish your capital flow policy, confirm the two onchain transactions in your wallet.",
+          "title": "Publish capital flow policy",
+          "transactionInfoTitle": "Propose policy"
+        }
+      },
+      "setupStrategyDialog": {
+        "a11y": {
+          "description": "Create a new strategy for your capital flow policy"
+        },
+        "distributionBurn": {
+          "token": {
+            "helpText": "Choose the token to burn.",
+            "label": "Token"
+          }
+        },
+        "distributionFixed": {
+          "token": {
+            "helpText": "Choose the token for this policy and specify the amount per dispatch.",
+            "label": "Token"
+          }
+        },
+        "distributionGauge": {
+          "gaugeVoterAddress": {
+            "helpText": "Specify the gauge plugin address for using it in this strategy.",
+            "label": "Gauge plugin",
+            "placeholder": "ENS or 0x…"
+          },
+          "token": {
+            "helpText": "Choose the token for this policy.",
+            "label": "Token"
+          }
+        },
+        "distributionRecipients": {
+          "addButton": "Recipients",
+          "distributeEvenly": "Distribute evenly",
+          "helpText": "Specify the recipients and the distribution ratio of tokens for each dispatch.",
+          "label": "Recipients"
+        },
+        "distributionStream": {
+          "epochPeriod": {
+            "day": "Per day",
+            "helpText": "Choose the timing to set up the distribution of tokens over time. This means determining how many tokens will be allocated to recipients at specific intervals.",
+            "hour": "Per hour",
+            "label": "Streamed amount per time",
+            "week": "Per week"
+          },
+          "token": {
+            "helpText": "Choose the token for this policy.",
+            "label": "Token"
+          }
+        },
+        "routerType": {
+          "BURN": {
+            "description": "Route an asset to the zero address or call its burn function.",
+            "label": "Burn"
+          },
+          "FIXED": {
+            "description": "Transfer an available asset to recipients in a relative manner.",
+            "label": "Fixed ratio"
+          },
+          "GAUGE": {
+            "description": "Route an asset to recipients proportionally according a gauge vote.",
+            "label": "Gauge ratio"
+          },
+          "STREAM": {
+            "description": "Transfer a fixed quantity of an available asset over time to recipients.",
+            "label": "Stream"
+          },
+          "helpText": "Select the policy type you want to set up and configure it below.",
+          "label": "Policy strategy"
+        },
+        "select": {
+          "capitalDistributor": {
+            "description": "Automate distribution to participants",
+            "label": "Capital distributor"
+          },
+          "capitalRouter": {
+            "description": "Automate transfers between DAOs",
+            "label": "Capital router"
+          },
+          "defiAdapter": {
+            "description": "Automate DeFi transactions",
+            "label": "DeFi adapter"
+          },
+          "disabled": {
+            "onRequest": "On request",
+            "soon": "Soon"
+          },
+          "type": {
+            "helpText": "Select the policy type you want to set up and configure it below.",
+            "label": "Type"
+          }
+        },
+        "sourceVault": {
+          "helpText": "This is the source vault from which the assets will be routed. Only DAOs with ROOT permission are eligible.",
+          "label": "Source vault",
+          "tags": {
+            "mainDao": "MainDAO",
+            "subDao": "SubDAO"
+          }
+        },
+        "submit": "Next",
+        "title": "Create strategy"
+      }
+    },
     "createDao": {
       "createDaoDetailsDialog": {
         "actionLabel": "Get started",
@@ -2348,6 +2571,8 @@
           "versionInfoTitle": "Contracts"
         },
         "main": {
+          "automationAction": "Policy",
+          "automationInfoTitle": "Automation",
           "governanceAction": "Process",
           "governanceInfoTitle": "Governance",
           "settingsInfoTitle": "DAO",
@@ -2509,6 +2734,10 @@
           "readLess": "Read less",
           "readMore": "Read more"
         }
+      },
+      "policyDataListItem": {
+        "defaultDescription": "No description",
+        "defaultName": "No name {{type}} policy"
       },
       "processDataListItem": {
         "defaultDescription": "No description"
