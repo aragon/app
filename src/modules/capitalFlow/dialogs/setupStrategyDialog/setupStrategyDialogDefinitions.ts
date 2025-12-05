@@ -51,6 +51,10 @@ export interface ISetupStrategyFormRouter extends ISetupStrategyFormBase {
      * Distribution configuration for BURN router type.
      */
     distributionBurn: IDistributionBurnForm;
+    /**
+     * Distribution configuration for DEX_SWAP router type.
+     */
+    distributionDexSwap: IDistributionDexSwapForm;
 }
 
 export interface IDistributionFormBase {
