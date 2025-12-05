@@ -63,8 +63,6 @@ export interface IGaugeRegistrarRegisterGaugeFormData {
 
 const nameMaxLength = 128;
 const descriptionMaxLength = 480;
-const maxAvatarFileSize = 1 * 1024 * 1024; // 1 MB in bytes
-const maxAvatarDimension = 1024;
 
 export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
     IGaugeRegistrarRegisterGaugeActionCreateFormProps
@@ -79,22 +77,7 @@ export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
         trimOnBlur: true,
     });
 
-    const { value, ...avatarField } = useFormField<IGaugeRegistrarRegisterGaugeFormData, 'avatar'>('avatar', {
-        label: t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.avatar.label'),
-        fieldPrefix,
-        rules: {
-            validate: (value) =>
-                value?.error
-                    ? `app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.avatar.error.${value.error}`
-                    : undefined,
-        },
-    });
 
-    // Watch the avatar field to properly update the InputFileAvatar component when its value changes
-    const avatarFieldName = `${fieldPrefix}.avatar`;
-    const avatarValue = useWatch<Record<string, IGaugeRegistrarRegisterGaugeFormData['avatar']>>({
-        name: avatarFieldName,
-    });
 
     const { value: descriptionValue, ...descriptionFieldRest } = useFormField<
         IGaugeRegistrarRegisterGaugeFormData,
@@ -158,14 +141,7 @@ export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
                 helpText={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.name.helpText')}
                 {...nameFieldRest}
             />
-            <InputFileAvatar
-                value={avatarValue}
-                helpText={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.avatar.helpText')}
-                maxDimension={maxAvatarDimension}
-                maxFileSize={maxAvatarFileSize}
-                isOptional={true}
-                {...avatarField}
-            />
+            <AvatarInput name="avatar" fieldPrefix={fieldPrefix} />
             <TextArea
                 helpText={t(
                     'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.description.helpText',

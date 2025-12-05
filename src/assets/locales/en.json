@@ -12,18 +12,6 @@
           "title": "Execution will revert while gauge voting is active"
         },
         "gaugeRegistrarRegisterGaugeActionCreateForm": {
-          "avatar": {
-            "error": {
-              "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, or GIF).",
-              "file-too-large": "The file size exceeds the maximum allowed limit of 1 MB.",
-              "square-only": "The image must be square. Upload a square image.",
-              "too-many-files": "Only one file can be uploaded at a time.",
-              "unknown-file-error": "Unable to upload image",
-              "wrong-dimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
-            },
-            "helpText": "JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px.",
-            "label": "Logo"
-          },
           "description": {
             "helpText": "Describe the Gauge in a few sentences. This is listed on gauge detail page so contributors understand the gauge.",
             "label": "Description"
@@ -93,18 +81,6 @@
           "updateGaugeMetadataActionName": "Update Gauge Metadata"
         },
         "gaugeVoterCreateGaugeActionCreateForm": {
-          "avatar": {
-            "error": {
-              "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, or GIF).",
-              "file-too-large": "The file size exceeds the maximum allowed limit of 1 MB.",
-              "square-only": "The image must be square. Upload a square image.",
-              "too-many-files": "Only one file can be uploaded at a time.",
-              "unknown-file-error": "Unable to upload image",
-              "wrong-dimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
-            },
-            "helpText": "JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px.",
-            "label": "Logo"
-          },
           "description": {
             "helpText": "Describe the Gauge in a few sentences. This is listed on gauge detail page so contributors understand the gauge.",
             "label": "Description"
@@ -251,18 +227,6 @@
       },
       "createDaoForm": {
         "metadata": {
-          "avatar": {
-            "error": {
-              "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, or GIF).",
-              "file-too-large": "The file size exceeds the maximum allowed limit of 1 MB.",
-              "square-only": "The image must be square. Upload a square image.",
-              "too-many-files": "Only one file can be uploaded at a time.",
-              "unknown-file-error": "Unable to upload image",
-              "wrong-dimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
-            },
-            "helpText": "JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px.",
-            "label": "Logo"
-          },
           "description": {
             "helpText": "This is shown on the DAO's dashboard and the Explore page so visitors can easily find you.",
             "label": "Description"
@@ -2500,6 +2464,18 @@
         "menu": {
           "select": "Select"
         }
+      },
+      "avatarInput": {
+        "error": {
+          "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, or GIF).",
+          "file-too-large": "The file size exceeds the maximum allowed limit of 1 MB.",
+          "square-only": "The image must be square. Upload a square image.",
+          "too-many-files": "Only one file can be uploaded at a time.",
+          "unknown-file-error": "Unable to upload image",
+          "wrong-dimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
+        },
+        "helpText": "JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px.",
+        "label": "Logo"
       },
       "confirmWizardExit": {
         "message": "If you leave this process, you'll lose all the information you've entered so far."
