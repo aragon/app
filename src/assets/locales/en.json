@@ -92,6 +92,44 @@
           "deactivateGaugeActionName": "Deactivate Gauge",
           "updateGaugeMetadataActionName": "Update Gauge Metadata"
         },
+        "gaugeVoterCreateGaugeActionCreateForm": {
+          "avatar": {
+            "error": {
+              "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, or GIF).",
+              "file-too-large": "The file size exceeds the maximum allowed limit of 1 MB.",
+              "square-only": "The image must be square. Upload a square image.",
+              "too-many-files": "Only one file can be uploaded at a time.",
+              "unknown-file-error": "Unable to upload image",
+              "wrong-dimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
+            },
+            "helpText": "JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px.",
+            "label": "Logo"
+          },
+          "description": {
+            "helpText": "Describe the Gauge in a few sentences. This is listed on gauge detail page so contributors understand the gauge.",
+            "label": "Description"
+          },
+          "gaugeAddress": {
+            "helpText": "The address of the gauge contract to create.",
+            "label": "Gauge address",
+            "placeholder": "ENS or 0x…"
+          },
+          "name": {
+            "helpText": "Maximum of 128 characters.",
+            "label": "Name"
+          },
+          "resources": {
+            "helpText": "Links to the gauge website, social media profiles, or further external resources.",
+            "label": "Links"
+          }
+        },
+        "gaugeVoterCreateGaugeActionDetails": {
+          "avatarTerm": "Logo",
+          "descriptionTerm": "Description",
+          "gaugeAddressTerm": "Gauge address",
+          "nameTerm": "Name",
+          "resourcesTerm": "Links"
+        },
         "gaugeVoterSelectGaugeDialog": {
           "cancel": "Cancel",
           "description": "Select a gauge from the list.",
