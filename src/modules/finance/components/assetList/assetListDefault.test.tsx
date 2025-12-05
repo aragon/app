@@ -1,15 +1,15 @@
-import { AssetList, type IAssetListProps } from '@/modules/finance/components/assetList';
+import { AssetList, type IAssetListDefaultProps } from '@/modules/finance/components/assetList';
 import * as useAssetListData from '@/modules/finance/hooks/useAssetListData/useAssetListData';
 import { generateAsset, generateToken } from '@/modules/finance/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 
-describe('<AssetList /> component', () => {
+describe('<AssetListDefault /> component', () => {
     const useAssetListDataSpy = jest.spyOn(useAssetListData, 'useAssetListData');
 
     beforeEach(() => {
         useAssetListDataSpy.mockReturnValue({
-            assetList: undefined,
+            assetList: [],
             onLoadMore: jest.fn(),
             state: 'idle',
             pageSize: 10,
@@ -23,15 +23,15 @@ describe('<AssetList /> component', () => {
         useAssetListDataSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<IAssetListProps>) => {
-        const completeProps: IAssetListProps = {
-            initialParams: { queryParams: {} },
+    const createTestComponent = (props?: Partial<IAssetListDefaultProps>) => {
+        const completeProps: IAssetListDefaultProps = {
+            initialParams: { queryParams: { daoId: 'test-dao' } },
             ...props,
         };
 
         return (
             <GukModulesProvider>
-                <AssetList {...completeProps} />
+                <AssetList.Default {...completeProps} />
             </GukModulesProvider>
         );
     };
@@ -49,7 +49,7 @@ describe('<AssetList /> component', () => {
         ];
         useAssetListDataSpy.mockReturnValue({
             onLoadMore: jest.fn(),
-            assetList: assets,
+            assetList: assets.map((a) => ({ ...a, amount: a.amount ?? '0' })),
             state: 'idle' as const,
             pageSize: 10,
             itemsCount: 2,
@@ -66,7 +66,7 @@ describe('<AssetList /> component', () => {
     it('does not render the data-list pagination when hidePagination is set to true', () => {
         const hidePagination = true;
         useAssetListDataSpy.mockReturnValue({
-            assetList: [generateAsset()],
+            assetList: [{ ...generateAsset({ amount: '1' }), amount: '1' }],
             onLoadMore: jest.fn(),
             state: 'idle',
             pageSize: 10,

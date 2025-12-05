@@ -31,7 +31,7 @@ export const DaoTransactionsPage: React.FC<IDaoTransactionsPageProps> = async (p
     const useDaoParams = { id: daoId };
     const dao = await queryClient.fetchQuery(daoOptions({ urlParams: useDaoParams }));
 
-    const transactionsQueryParams = { address: dao.address, network: dao.network, pageSize: daoTransactionsCount };
+    const transactionsQueryParams = { daoId: dao.id, pageSize: daoTransactionsCount };
     const transactionsParams = { queryParams: transactionsQueryParams };
 
     await queryClient.prefetchInfiniteQuery(transactionListOptions(transactionsParams));

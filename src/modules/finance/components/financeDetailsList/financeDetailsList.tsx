@@ -1,5 +1,4 @@
 import { type IDao } from '@/shared/api/daoService';
-import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
@@ -34,7 +33,7 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
     const octavLink = `https://pro.octav.fi/?addresses=${address}`;
 
     return (
-        <Page.AsideCard title={t('app.finance.financeDetailsList.title')}>
+        <>
             <DefinitionList.Container {...otherProps}>
                 <DefinitionList.Item term={t('app.finance.financeDetailsList.chain')}>
                     <p className="text-neutral-500">{networkDefinitions[network].name}</p>
@@ -69,6 +68,6 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
                 </Button>
                 <p className="text-sm text-neutral-500">{t('app.finance.financeDetailsList.octavDescription')}</p>
             </div>
-        </Page.AsideCard>
+        </>
     );
 };

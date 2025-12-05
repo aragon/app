@@ -24,14 +24,18 @@ export const AssetListItem: React.FC<IAssetListItemProps> = (props) => {
     const processedEntityUrl = onAssetClick != null ? undefined : entityUrl;
     const processedTarget = onAssetClick != null ? undefined : '_blank';
 
+    const hasPrice = Number(token.priceUsd) > 0;
+    const fiatPrice = hasPrice ? token.priceUsd : '0';
+
     return (
         <AssetDataListItemStructure
             key={token.address}
-            name={token.name}
-            symbol={token.symbol}
-            amount={amount}
-            fiatPrice={token.priceUsd}
+            name={token.name || 'Unknown'}
+            symbol={token.symbol || 'UNKNOWN'}
+            amount={amount ?? '0'}
+            fiatPrice={fiatPrice}
             logoSrc={token.logo}
+            hideValue={false}
             target={processedTarget}
             onClick={() => onAssetClick?.(asset)}
             href={processedEntityUrl}

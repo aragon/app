@@ -1,5 +1,4 @@
 import { generateTransaction } from '@/modules/finance/testUtils';
-import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper, generatePaginatedResponse } from '@/shared/testUtils';
 import { renderHook, waitFor } from '@testing-library/react';
 import { financeService } from '../../financeService';
@@ -12,8 +11,8 @@ describe('useTransactionList query', () => {
         financeServiceSpy.mockReset();
     });
 
-    it('fetches the transactions for the specified address and network', async () => {
-        const params = { address: '0x123', network: Network.POLYGON_MAINNET };
+    it('fetches the transactions for the specified DAO', async () => {
+        const params = { daoId: 'polygon-mainnet-0x123' };
         const transactionsResult = generatePaginatedResponse({ data: [generateTransaction()] });
         financeServiceSpy.mockResolvedValue(transactionsResult);
         const { result } = renderHook(() => useTransactionList({ queryParams: params }), {
