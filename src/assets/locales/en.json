@@ -80,6 +80,19 @@
           "deactivateGaugeActionName": "Deactivate Gauge",
           "updateGaugeMetadataActionName": "Update Gauge Metadata"
         },
+        "gaugeVoterActivateGaugeActionCreate": {
+          "emptyCard": {
+            "action": "Select gauge",
+            "description": "Select an inactive gauge to activate.",
+            "heading": "Select gauge"
+          }
+        },
+        "gaugeVoterActivateGaugeActionDetails": {
+          "notFound": {
+            "description": "We couldn't find this gauge.",
+            "title": "Not found"
+          }
+        },
         "gaugeVoterCreateGaugeActionCreateForm": {
           "description": {
             "helpText": "Describe the Gauge in a few sentences. This is listed on gauge detail page so contributors understand the gauge.",
