@@ -9,7 +9,15 @@ export interface IGetDaoUrlParams {
     id: string;
 }
 
-export interface IGetDaoParams extends IRequestUrlParams<IGetDaoUrlParams> {}
+export interface IGetDaoQueryParams {
+    /**
+     * When true, returns only the parent DAO's metrics (excludes SubDAOs from aggregation).
+     * Used to differentiate between "All Assets" (parent + SubDAOs) and "Parent DAO" tab.
+     */
+    onlyParent?: boolean;
+}
+
+export interface IGetDaoParams extends IRequestUrlQueryParams<IGetDaoUrlParams, IGetDaoQueryParams> {}
 
 export interface IGetDaoByEnsUrlParams {
     /**

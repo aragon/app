@@ -5,11 +5,9 @@ import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoFilterUrlParam } from '@/shared/hooks/useDaoFilterUrlParam';
-import { formatterUtils, invariant, NumberFormat } from '@aragon/gov-ui-kit';
 import type { IGetAssetListParams } from '../../api/financeService';
-import { AllAssetsStats } from '../../components/allAssetsStats';
 import { AssetList, assetListFilterParam } from '../../components/assetList';
-import { DaoInfoAside } from '../../components/daoInfoAside';
+import { DaoFilterAsideCard } from '../../components/daoFilterAsideCard';
 
 export interface IDaoAssetsPageClientProps {
     /**
@@ -26,17 +24,22 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
     const { id, initialParams } = props;
     const { t } = useTranslations();
 
-    const { data: dao } = useDao({ urlParams: { id } });
-
     const { activeOption } = useDaoFilterUrlParam({
         daoId: id,
         includeAllOption: true,
         name: assetListFilterParam,
     });
 
-    invariant(activeOption != null, 'DaoAssetsPageClient: no valid DAO filter option found.');
+    const { data: dao } = useDao({
+        urlParams: { id },
+        queryParams: { onlyParent: activeOption?.onlyParent },
+    });
 
-    const allAssetsSelected = activeOption.isAll;
+    const allAssetsSelected = activeOption?.isAll ?? false;
+    const selectedDaoId = activeOption?.daoId ?? id;
+    const hasSubDaos = (dao?.subDaos?.length ?? 0) > 0;
+
+    // Fetch assets for "All" view
     const { data: allAssetsMetadata } = useAssetList(
         {
             queryParams: {
@@ -47,48 +50,21 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
         { enabled: allAssetsSelected },
     );
 
-    const tokenCount = allAssetsMetadata?.pages[0]?.metadata?.totalRecords;
-
-    // Get the selected DAO (parent or SubDAO)
-    const selectedDaoId = activeOption.daoId ?? id;
-    const matchingSubDao = dao?.subDaos?.find((subDao) => subDao.id === selectedDaoId);
-    const selectedDao = activeOption.isParent ? dao : (matchingSubDao ?? dao);
-
-    const hasSubDaos = (dao?.subDaos?.length ?? 0) > 0;
-
+    // Fetch assets for selected DAO view
     const { data: selectedAssetsMetadata } = useAssetList(
         {
             queryParams: {
                 ...initialParams.queryParams,
                 daoId: selectedDaoId,
-                onlyParent: activeOption.onlyParent,
+                onlyParent: activeOption?.onlyParent,
             },
         },
         { enabled: !allAssetsSelected || !hasSubDaos },
     );
 
-    const selectedAssetCount = selectedAssetsMetadata?.pages[0]?.metadata?.totalRecords;
-
-    const asideCardTitle = activeOption.isAll ? t('app.finance.daoAssetsPage.aside.summary') : activeOption.label;
-
-    const asideMetrics = selectedDao?.metrics;
-    const assetStats: Array<{ label: string; value: string | number }> = [
-        {
-            label: t('app.finance.assetListStats.totalValueUsd'),
-            value: asideMetrics
-                ? (formatterUtils.formatNumber(asideMetrics.tvlUSD, { format: NumberFormat.FIAT_TOTAL_SHORT }) ??
-                  asideMetrics.tvlUSD)
-                : '-',
-        },
-        {
-            label: t('app.finance.assetListStats.tokens'),
-            value:
-                selectedAssetCount != null
-                    ? (formatterUtils.formatNumber(selectedAssetCount, { format: NumberFormat.GENERIC_SHORT }) ??
-                      selectedAssetCount)
-                    : '-',
-        },
-    ];
+    if (dao == null) {
+        return null;
+    }
 
     return (
         <Page.Content>
@@ -96,20 +72,13 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
                 <AssetList.Container initialParams={initialParams} daoId={id} />
             </Page.Main>
             <Page.Aside>
-                <Page.AsideCard title={asideCardTitle}>
-                    {dao && allAssetsSelected && (
-                        <AllAssetsStats dao={dao} totalValueUsd={dao.metrics.tvlUSD} totalAssets={tokenCount} />
-                    )}
-                    {dao && !allAssetsSelected && (
-                        <DaoInfoAside
-                            daoId={selectedDaoId}
-                            network={dao.network}
-                            dao={dao}
-                            subDao={matchingSubDao}
-                            stats={assetStats}
-                        />
-                    )}
-                </Page.AsideCard>
+                <DaoFilterAsideCard
+                    dao={dao}
+                    filterParamName={assetListFilterParam}
+                    selectedMetadata={selectedAssetsMetadata?.pages[0]}
+                    allMetadata={allAssetsMetadata?.pages[0]}
+                    statsType="assets"
+                />
             </Page.Aside>
         </Page.Content>
     );
