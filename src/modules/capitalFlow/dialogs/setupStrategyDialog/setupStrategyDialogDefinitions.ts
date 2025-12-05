@@ -26,10 +26,6 @@ export interface ISetupStrategyFormBase {
     sourceVault: string;
 }
 
-/////////////////////////////////
-//// ROUTER
-/////////////////////////////////
-
 export interface ISetupStrategyFormRouter extends ISetupStrategyFormBase {
     /**
      * Capital router type of policy.
@@ -55,10 +51,6 @@ export interface ISetupStrategyFormRouter extends ISetupStrategyFormBase {
      * Distribution configuration for BURN router type.
      */
     distributionBurn: IDistributionBurnForm;
-    /**
-     * Distribution configuration for DEX_SWAP router type.
-     */
-    distributionDexSwap: IDistributionDexSwapForm;
 }
 
 export interface IDistributionFormBase {
@@ -116,10 +108,6 @@ export interface IRecipientAbsolute extends ICompositeAddress {
      */
     amount: number;
 }
-
-////////////////////////
-// DEFI ADAPTER
-////////////////////////
 
 export interface ISetupStrategyFormDeFiAdapter extends ISetupStrategyFormBase {
     /**

@@ -250,6 +250,7 @@ class PreparePolicyDialogUtils {
         const { routerPluginRepo, burnRouterPluginRepo, cowSwapRouterPluginRepo } = capitalFlowAddresses[dao.network];
 
         const isStreamingSource = strategy.routerType === RouterType.STREAM;
+        const isBurnRouter = strategy.routerType === RouterType.BURN;
 
         let installationParams, pluginRepo;
 
