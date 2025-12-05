@@ -51,9 +51,6 @@ export const AssetListDefault: React.FC<IAssetListDefaultProps> = (props) => {
         useAssetListData(initialParams);
 
     const filteredAssets = useMemo(() => {
-        if (!assetList) {
-            return [];
-        }
         if (!hasSearch || !searchValue) {
             return assetList;
         }

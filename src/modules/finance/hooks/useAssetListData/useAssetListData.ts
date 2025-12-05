@@ -8,33 +8,34 @@ export const useAssetListData = (params: IGetAssetListParams) => {
 
     const { data: assetListData, status, fetchStatus, isFetchingNextPage, fetchNextPage } = useAssetList(params);
 
-    const assetList = assetListData?.pages
-        .flatMap((page) => page.data)
-        .map((asset) => {
-            const amount = asset.amount ?? '0';
-            const hasAmount = asset.amount != null && Number(amount) > 0;
-            const hasAmountUsd = asset.amountUsd != null && Number(asset.amountUsd) > 0;
-            const price = asset.token.priceUsd;
-            let derivedPrice = price;
+    type Asset = NonNullable<typeof assetListData>['pages'][number]['data'][number];
+    const assetList: Asset[] = [];
 
-            if ((!price || Number(price) === 0) && hasAmountUsd && hasAmount) {
-                const perToken = Number(asset.amountUsd) / Number(amount);
-                if (perToken > 0) {
-                    derivedPrice = perToken.toString();
+    if (assetListData?.pages) {
+        for (const page of assetListData.pages) {
+            for (const asset of page.data) {
+                const amount = Number(asset.amount) || 0;
+                const amountUsd = Number(asset.amountUsd) || 0;
+                const price = Number(asset.token.priceUsd) || 0;
+                let finalPrice = price;
+
+                if (finalPrice === 0 && amount > 0 && amountUsd > 0) {
+                    finalPrice = amountUsd / amount;
                 }
-            }
 
-            return {
-                ...asset,
-                amount,
-                token: {
-                    ...asset.token,
-                    name: asset.token.name || 'Unknown',
-                    symbol: asset.token.symbol || 'UNKNOWN',
-                    priceUsd: derivedPrice || asset.token.priceUsd || '0',
-                },
-            };
-        });
+                assetList.push({
+                    ...asset,
+                    amount: String(amount),
+                    token: {
+                        ...asset.token,
+                        name: asset.token.name || 'Unknown',
+                        symbol: asset.token.symbol || 'UNKNOWN',
+                        priceUsd: String(finalPrice),
+                    },
+                });
+            }
+        }
+    }
     const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
 
     const pageSize = params.queryParams.pageSize ?? assetListData?.pages[0].metadata.pageSize;
