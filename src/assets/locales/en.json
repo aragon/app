@@ -106,6 +106,19 @@
           "nameTerm": "Name",
           "resourcesTerm": "Links"
         },
+        "gaugeVoterDeactivateGaugeActionCreate": {
+          "emptyCard": {
+            "action": "Select gauge",
+            "description": "Select an active gauge to deactivate.",
+            "heading": "Select gauge"
+          }
+        },
+        "gaugeVoterDeactivateGaugeActionDetails": {
+          "notFound": {
+            "description": "We couldn't find this gauge.",
+            "title": "Not found"
+          }
+        },
         "gaugeVoterSelectGaugeDialog": {
           "cancel": "Cancel",
           "description": "Select a gauge from the list.",
