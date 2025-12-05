@@ -1,5 +1,6 @@
 'use client';
 
+import { DispatchPanel } from '@/modules/capitalFlow/components/dispatchPanel';
 import { useAssetList, useTransactionList } from '@/modules/finance/api/financeService';
 import { DaoFilterAsideCard } from '@/modules/finance/components/daoFilterAsideCard';
 import { useDao } from '@/shared/api/daoService';
@@ -78,6 +79,7 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
                     allMetadata={allAssetsMetadata?.pages[0]}
                     statsType="transactions"
                 />
+                <DispatchPanel daoAddress={dao.address} network={dao.network} />
             </Page.Aside>
         </Page.Content>
     );
