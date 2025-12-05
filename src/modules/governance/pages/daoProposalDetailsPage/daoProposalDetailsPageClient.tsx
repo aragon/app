@@ -1,6 +1,7 @@
 'use client';
 
 import { ProposalExecutionStatus } from '@/modules/governance/components/proposalExecutionStatus';
+import { proposalActionsImportExportUtils } from '@/modules/governance/utils/proposalActionsImportExportUtils';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
@@ -19,6 +20,7 @@ import {
     DateFormat,
     DefinitionList,
     formatterUtils,
+    type IProposalActionsFooterDropdownItem,
     Link,
     ProposalActions,
     ProposalStatus,
@@ -155,6 +157,17 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const simulationErrorContext = hasSimulationFailed ? 'simulationError' : 'lastSimulationError';
     const simulationError = t(`app.governance.daoProposalDetailsPage.main.actions.${simulationErrorContext}`);
 
+    const proposalActionsDropdownItems: IProposalActionsFooterDropdownItem[] = [
+        {
+            label: t('app.governance.daoProposalDetailsPage.main.actions.downloadAsJSON'),
+            onClick: () =>
+                proposalActionsImportExportUtils.downloadActionsAsJSON(
+                    actionData?.actions ?? [],
+                    `proposal-${proposalSlug}-actions.json`,
+                ),
+        },
+    ];
+
     return (
         <>
             <Page.Header breadcrumbs={pageBreadcrumbs} breadcrumbsTag={statusTag} title={title} description={summary} />
@@ -203,6 +216,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                             action={{ ...action, daoId } as IProposalActionData}
                                             actionFunctionSelector={fnSelector}
                                             chainId={chainId}
+                                            readOnly={true}
                                             CustomComponent={customActionView.componentDetails}
                                         />
                                     ) : (
@@ -211,11 +225,16 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                             action={action}
                                             actionFunctionSelector={fnSelector}
                                             chainId={chainId}
+                                            readOnly={true}
                                         />
                                     );
                                 })}
                             </ProposalActions.Container>
-                            <ProposalActions.Footer>
+                            <ProposalActions.Footer
+                                dropdownItems={
+                                    normalizedProposalActions.length > 0 ? proposalActionsDropdownItems : undefined
+                                }
+                            >
                                 {normalizedProposalActions.length > 0 && (
                                     <ProposalExecutionStatus daoId={daoId} proposal={proposal} />
                                 )}
