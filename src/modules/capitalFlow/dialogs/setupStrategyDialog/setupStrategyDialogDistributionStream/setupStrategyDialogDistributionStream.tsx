@@ -1,7 +1,6 @@
 import { AssetInput } from '@/modules/finance/components/assetInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useWatch } from 'react-hook-form';
 import type { ISetupStrategyForm, ISetupStrategyFormRouter } from '../setupStrategyDialogDefinitions';
@@ -14,7 +13,6 @@ export const SetupStrategyDialogDistributionStream: React.FC<ISetupStrategyDialo
     const { t } = useTranslations();
 
     const daoId = useWatch<ISetupStrategyForm, 'sourceVault'>({ name: 'sourceVault' });
-    const { network, address } = daoUtils.parseDaoId(daoId);
 
     const epochPeriodField = useFormField<ISetupStrategyFormRouter, 'distributionStream.epochPeriod'>(
         'distributionStream.epochPeriod',
@@ -24,7 +22,7 @@ export const SetupStrategyDialogDistributionStream: React.FC<ISetupStrategyDialo
         },
     );
 
-    const fetchAssetsParams = { queryParams: { address, network } };
+    const fetchAssetsParams = { queryParams: { daoId } };
 
     return (
         <div className="flex w-full flex-col gap-6">

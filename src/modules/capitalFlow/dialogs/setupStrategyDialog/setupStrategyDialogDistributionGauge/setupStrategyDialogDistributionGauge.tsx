@@ -14,7 +14,7 @@ export const SetupStrategyDialogDistributionGauge: React.FC<ISetupStrategyDialog
     const { t } = useTranslations();
 
     const daoId = useWatch<ISetupStrategyForm, 'sourceVault'>({ name: 'sourceVault' });
-    const { network, address } = daoUtils.parseDaoId(daoId);
+    const { network } = daoUtils.parseDaoId(daoId);
 
     const {
         onChange: onGaugeVoterAddressChange,
@@ -34,7 +34,7 @@ export const SetupStrategyDialogDistributionGauge: React.FC<ISetupStrategyDialog
         onGaugeVoterAddressChange(value?.address ?? '');
     };
 
-    const fetchAssetsParams = { queryParams: { address, network } };
+    const fetchAssetsParams = { queryParams: { daoId } };
     const { id: chainId } = networkDefinitions[network];
 
     return (
