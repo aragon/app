@@ -9,7 +9,7 @@ describe('<AssetListDefault /> component', () => {
 
     beforeEach(() => {
         useAssetListDataSpy.mockReturnValue({
-            assetList: undefined,
+            assetList: [],
             onLoadMore: jest.fn(),
             state: 'idle',
             pageSize: 10,
