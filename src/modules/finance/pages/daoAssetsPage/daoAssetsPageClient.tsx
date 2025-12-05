@@ -74,7 +74,7 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
             <Page.Aside>
                 <DaoFilterAsideCard
                     dao={dao}
-                    filterParamName={assetListFilterParam}
+                    activeOption={activeOption}
                     selectedMetadata={selectedAssetsMetadata?.pages[0]}
                     allMetadata={allAssetsMetadata?.pages[0]}
                     statsType="assets"

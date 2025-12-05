@@ -73,7 +73,7 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
             <Page.Aside>
                 <DaoFilterAsideCard
                     dao={dao}
-                    filterParamName={transactionListFilterParam}
+                    activeOption={activeOption}
                     selectedMetadata={selectedTransactionsMetadata?.pages[0]}
                     allMetadata={allAssetsMetadata?.pages[0]}
                     statsType="transactions"

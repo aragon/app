@@ -119,7 +119,7 @@ describe('<DaoTransactionsPageClient /> component', () => {
     it('fetches the DAO with the provided id prop', () => {
         const id = 'new-test-id';
         render(createTestComponent({ id }));
-        expect(useDaoSpy).toHaveBeenCalledWith({ urlParams: { id } });
+        expect(useDaoSpy).toHaveBeenCalledWith(expect.objectContaining({ urlParams: { id } }));
     });
 
     it('renders the page title, Transactions list tabs and stats for all transactions', () => {
@@ -143,7 +143,7 @@ describe('<DaoTransactionsPageClient /> component', () => {
             isAll: false,
             isParent: false,
         };
-        useDaoFilterUrlParamSpy.mockReturnValueOnce({
+        useDaoFilterUrlParamSpy.mockReturnValue({
             activeOption: option,
             setActiveOption: jest.fn(),
             options: [

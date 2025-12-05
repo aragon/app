@@ -102,7 +102,7 @@ describe('<DaoAssetsPageClient /> component', () => {
     it('fetches the DAO with the provided id prop', () => {
         const id = 'new-test-id';
         render(createTestComponent({ id }), { wrapper: ReactQueryWrapper });
-        expect(useDaoSpy).toHaveBeenCalledWith({ urlParams: { id } });
+        expect(useDaoSpy).toHaveBeenCalledWith(expect.objectContaining({ urlParams: { id } }));
     });
 
     it('renders AllAssetsStats when "All" tab is selected', () => {
@@ -177,7 +177,7 @@ describe('<DaoAssetsPageClient /> component', () => {
             isAll: false,
             isParent: false,
         };
-        useDaoFilterUrlParamSpy.mockReturnValueOnce({
+        useDaoFilterUrlParamSpy.mockReturnValue({
             activeOption: selectedOption,
             setActiveOption: jest.fn(),
             options: [

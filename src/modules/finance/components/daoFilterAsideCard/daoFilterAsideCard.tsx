@@ -2,21 +2,14 @@
 
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoFilterUrlParam } from '@/shared/hooks/useDaoFilterUrlParam';
 import { DateFormat, formatterUtils, invariant, NumberFormat } from '@aragon/gov-ui-kit';
 import { AllAssetsStats } from '../allAssetsStats';
 import { DaoInfoAside } from '../daoInfoAside';
 import type { IDaoFilterAsideCardProps } from './daoFilterAsideCard.api';
 
 export const DaoFilterAsideCard: React.FC<IDaoFilterAsideCardProps> = (props) => {
-    const { dao, filterParamName, selectedMetadata, allMetadata, statsType } = props;
+    const { dao, activeOption, selectedMetadata, allMetadata, statsType } = props;
     const { t } = useTranslations();
-
-    const { activeOption } = useDaoFilterUrlParam({
-        daoId: dao.id,
-        includeAllOption: true,
-        name: filterParamName,
-    });
 
     invariant(activeOption != null, 'DaoFilterAsideCard: no valid DAO filter option found.');
 

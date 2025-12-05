@@ -17,7 +17,12 @@ export interface IGetDaoQueryParams {
     onlyParent?: boolean;
 }
 
-export interface IGetDaoParams extends IRequestUrlQueryParams<IGetDaoUrlParams, IGetDaoQueryParams> {}
+export interface IGetDaoParams extends IRequestUrlParams<IGetDaoUrlParams> {
+    /**
+     * Optional query parameters.
+     */
+    queryParams?: IGetDaoQueryParams;
+}
 
 export interface IGetDaoByEnsUrlParams {
     /**
