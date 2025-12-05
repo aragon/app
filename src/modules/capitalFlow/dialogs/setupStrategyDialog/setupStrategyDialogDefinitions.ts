@@ -12,6 +12,7 @@ export enum RouterType {
     GAUGE = 'GAUGE',
     STREAM = 'STREAM',
     BURN = 'BURN',
+    DEX_SWAP = 'DEX_SWAP',
 }
 
 export interface ISetupStrategyFormBase {
@@ -50,6 +51,10 @@ export interface ISetupStrategyFormRouter extends ISetupStrategyFormBase {
      * Distribution configuration for BURN router type.
      */
     distributionBurn: IDistributionBurnForm;
+    /**
+     * Distribution configuration for DEX_SWAP router type.
+     */
+    distributionDexSwap: IDistributionDexSwapForm;
 }
 
 export interface IDistributionFormBase {
@@ -88,6 +93,11 @@ export interface IDistributionGaugeForm extends IDistributionFormBase {
 }
 
 export interface IDistributionBurnForm extends IDistributionFormBase {}
+
+export interface IDistributionDexSwapForm extends IDistributionFormBase {
+    targetTokenAddress: string;
+    cowSwapSettlementAddress: string;
+}
 
 export interface IRecipientRelative extends ICompositeAddress {
     /**

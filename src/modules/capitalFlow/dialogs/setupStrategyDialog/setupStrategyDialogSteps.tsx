@@ -2,6 +2,7 @@ import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import { useWatch } from 'react-hook-form';
 import { type ISetupStrategyForm, RouterType } from './setupStrategyDialogDefinitions';
 import { SetupStrategyDialogDistributionBurn } from './setupStrategyDialogDistributionBurn';
+import { SetupStrategyDialogDistributionDexSwap } from './setupStrategyDialogDistributionDexSwap';
 import { SetupStrategyDialogDistributionFixed } from './setupStrategyDialogDistributionFixed';
 import { SetupStrategyDialogDistributionGauge } from './setupStrategyDialogDistributionGauge';
 import { SetupStrategyDialogDistributionStream } from './setupStrategyDialogDistributionStream';
@@ -28,6 +29,7 @@ const setupStrategySteps = [
     { id: 'distributionStream', order: 4, meta: { name: '' } },
     { id: 'distributionGauge', order: 4, meta: { name: '' } },
     { id: 'distributionBurn', order: 4, meta: { name: '' } },
+    { id: 'distributionDexSwap', order: 4, meta: { name: '' } },
 ];
 
 export const SetupStrategyDialogSteps: React.FC<ISetupStrategyDialogStepsProps> = (props) => {
@@ -42,6 +44,7 @@ export const SetupStrategyDialogSteps: React.FC<ISetupStrategyDialogStepsProps> 
         distributionStreamStep,
         distributionGauge,
         distributionBurn,
+        distributionDexSwap,
     ] = setupStrategySteps;
 
     return (
@@ -66,6 +69,9 @@ export const SetupStrategyDialogSteps: React.FC<ISetupStrategyDialogStepsProps> 
             </WizardDialog.Step>
             <WizardDialog.Step {...distributionBurn} hidden={selectedRouterType !== RouterType.BURN}>
                 <SetupStrategyDialogDistributionBurn />
+            </WizardDialog.Step>
+            <WizardDialog.Step {...distributionDexSwap} hidden={selectedRouterType !== RouterType.DEX_SWAP}>
+                <SetupStrategyDialogDistributionDexSwap />
             </WizardDialog.Step>
         </>
     );
