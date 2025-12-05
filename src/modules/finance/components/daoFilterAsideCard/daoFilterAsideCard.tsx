@@ -28,14 +28,25 @@ export const DaoFilterAsideCard: React.FC<IDaoFilterAsideCardProps> = (props) =>
     // Build stats for specific DAO view
     const specificStats = (() => {
         if (statsType === 'transactions') {
-            const totalTransactions = selectedMetadata?.metadata?.totalRecords;
-            const mostRecentTransaction = selectedMetadata?.data?.[0] as { blockTimestamp?: number } | undefined;
+            if (!selectedMetadata) {
+                return [
+                    {
+                        label: t('app.finance.transactionSubDaoInfo.transactions'),
+                        value: '-',
+                    },
+                    {
+                        label: t('app.finance.transactionListStats.lastActivity'),
+                        value: '-',
+                    },
+                ];
+            }
+
+            const totalTransactions = selectedMetadata.metadata.totalRecords;
+            const mostRecentTransaction = selectedMetadata.data[0] as { blockTimestamp?: number } | undefined;
             const lastActivityTimestamp = mostRecentTransaction?.blockTimestamp;
 
             const formattedTransactionsCount =
-                totalTransactions != null
-                    ? (formatterUtils.formatNumber(totalTransactions, { format: NumberFormat.GENERIC_SHORT }) ?? '-')
-                    : '-';
+                formatterUtils.formatNumber(totalTransactions, { format: NumberFormat.GENERIC_SHORT }) ?? '-';
             const formattedLastActivity =
                 lastActivityTimestamp != null
                     ? (formatterUtils.formatDate(lastActivityTimestamp * 1000, { format: DateFormat.RELATIVE }) ?? '-')
@@ -53,17 +64,16 @@ export const DaoFilterAsideCard: React.FC<IDaoFilterAsideCardProps> = (props) =>
             ];
         } else {
             // assets
-            const asideMetrics = selectedDao?.metrics;
-            const selectedAssetCount = selectedMetadata?.metadata?.totalRecords;
+            const asideMetrics = selectedDao.metrics;
+            const selectedAssetCount = selectedMetadata?.metadata.totalRecords;
 
             return [
                 {
                     label: t('app.finance.assetListStats.totalValueUsd'),
-                    value: asideMetrics
-                        ? (formatterUtils.formatNumber(asideMetrics.tvlUSD, {
-                              format: NumberFormat.FIAT_TOTAL_SHORT,
-                          }) ?? asideMetrics.tvlUSD)
-                        : '-',
+                    value:
+                        formatterUtils.formatNumber(asideMetrics.tvlUSD, {
+                            format: NumberFormat.FIAT_TOTAL_SHORT,
+                        }) ?? asideMetrics.tvlUSD,
                 },
                 {
                     label: t('app.finance.assetListStats.tokens'),
@@ -79,7 +89,7 @@ export const DaoFilterAsideCard: React.FC<IDaoFilterAsideCardProps> = (props) =>
     })();
 
     // Get totalAssets for "All" view
-    const totalAssets = allMetadata?.metadata?.totalRecords;
+    const totalAssets = allMetadata?.metadata.totalRecords;
 
     return (
         <Page.AsideCard title={asideCardTitle}>
