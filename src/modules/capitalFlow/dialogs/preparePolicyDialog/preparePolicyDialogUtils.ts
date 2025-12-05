@@ -258,7 +258,7 @@ class PreparePolicyDialogUtils {
                 installationParams = encodeAbiParameters(burnRouterPluginSetupAbi, [source, isStreamingSource]);
                 pluginRepo = burnRouterPluginRepo;
                 break;
-            case RouterType.DEX_SWAP:
+            case RouterType.DEX_SWAP: {
                 const { targetTokenAddress, cowSwapSettlementAddress } = strategy.distributionDexSwap;
                 installationParams = encodeAbiParameters(cowSwapRouterPluginSetupAbi, [
                     source,
@@ -268,6 +268,7 @@ class PreparePolicyDialogUtils {
                 ]);
                 pluginRepo = cowSwapRouterPluginRepo;
                 break;
+            }
             default:
                 installationParams = encodeAbiParameters(routerPluginSetupAbi, [source, isStreamingSource, model]);
                 pluginRepo = routerPluginRepo;
