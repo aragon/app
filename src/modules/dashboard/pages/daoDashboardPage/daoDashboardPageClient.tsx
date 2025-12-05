@@ -79,7 +79,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
 
     const memberListParams = { queryParams: { daoId, pageSize: dashboardMembersCount } };
     const assetListParams = {
-        queryParams: { address: dao.address, network: dao.network, pageSize: dashboardAssetsCount },
+        queryParams: { daoId: dao.id, pageSize: dashboardAssetsCount },
     };
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
@@ -145,7 +145,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                         </Page.MainSection>
                     )}
                     <Page.MainSection title={t('app.dashboard.daoDashboardPage.main.assets.title')}>
-                        <AssetList initialParams={assetListParams} hidePagination={true}>
+                        <AssetList.Default initialParams={assetListParams} hidePagination={true}>
                             <Button
                                 className="self-start"
                                 variant="tertiary"
@@ -155,7 +155,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             >
                                 {t('app.dashboard.daoDashboardPage.main.viewAll')}
                             </Button>
-                        </AssetList>
+                        </AssetList.Default>
                     </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>

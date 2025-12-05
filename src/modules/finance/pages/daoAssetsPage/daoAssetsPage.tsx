@@ -31,7 +31,10 @@ export const DaoAssetsPage: React.FC<IDaoAssetsPageProps> = async (props) => {
     const useDaoParams = { id: daoId };
     const dao = await queryClient.fetchQuery(daoOptions({ urlParams: useDaoParams }));
 
-    const assetsQueryParams = { address: dao.address, network: dao.network, pageSize: daoAssetsCount };
+    // Pass parent DAO's daoId - AssetListContainer will override it based on selected tab
+    // When "All" tab: uses parent daoId (returns parent + all SubDAOs)
+    // When specific SubDAO tab: uses that SubDAO's daoId
+    const assetsQueryParams = { daoId: dao.id, pageSize: daoAssetsCount };
     const assetsParams = { queryParams: assetsQueryParams };
 
     await queryClient.prefetchInfiniteQuery(assetListOptions(assetsParams));

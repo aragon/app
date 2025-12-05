@@ -17,4 +17,5 @@ export * from './reactQueryResponse';
 export * from './request';
 export * from './response';
 export * from './stepperResult';
+export * from './subDao';
 export * from './wizardContext';

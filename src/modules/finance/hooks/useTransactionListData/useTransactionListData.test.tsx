@@ -1,5 +1,4 @@
 import { generateTransaction } from '@/modules/finance/testUtils';
-import { Network } from '@/shared/api/daoService';
 import {
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
@@ -25,7 +24,7 @@ describe('useTransactionListData hook', () => {
             totalRecords: transactions.length,
         });
         const transactionsResponse = generatePaginatedResponse({ data: transactions, metadata: transactionsMetadata });
-        const params = { queryParams: { address: 'dao-test', network: Network.POLYGON_MAINNET } };
+        const params = { queryParams: { daoId: 'polygon-mainnet-0xdao' } };
         useTransactionListSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({ data: { pages: [transactionsResponse], pageParams: [] } }),
         );
@@ -43,7 +42,7 @@ describe('useTransactionListData hook', () => {
 
     it('returns error state of fetch transactions error', () => {
         useTransactionListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error('error') }));
-        const { result } = renderHook(() => useTransactionListData({ queryParams: { address: '' } }));
+        const { result } = renderHook(() => useTransactionListData({ queryParams: { daoId: 'polygon-mainnet-0x0' } }));
         expect(result.current.state).toEqual('error');
     });
 
