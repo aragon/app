@@ -1,5 +1,6 @@
 'use client';
 
+import { AvatarInput } from '@/shared/components/forms/avatarInput';
 import { type IResourcesInputResource, ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';

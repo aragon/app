@@ -139,6 +139,38 @@
           "entityLabel": "Gauge",
           "submit": "Select gauge",
           "title": "Select gauge"
+        },
+        "gaugeVoterUpdateGaugeMetadataActionCreate": {
+          "emptyCard": {
+            "action": "Select gauge",
+            "description": "Select a gauge to update its metadata.",
+            "heading": "Select gauge"
+          }
+        },
+        "gaugeVoterUpdateGaugeMetadataActionCreateForm": {
+          "description": {
+            "helpText": "Describe the Gauge in a few sentences. This is listed on gauge detail page so contributors understand the gauge.",
+            "label": "Description"
+          },
+          "name": {
+            "helpText": "Maximum of 128 characters.",
+            "label": "Name"
+          },
+          "resources": {
+            "helpText": "Links to the gauge website, social media profiles, or further external resources.",
+            "label": "Links"
+          }
+        },
+        "gaugeVoterUpdateGaugeMetadataActionDetails": {
+          "avatarTerm": "Logo",
+          "descriptionTerm": "Description",
+          "gaugeAddressTerm": "Gauge address",
+          "nameTerm": "Name",
+          "notFound": {
+            "description": "We couldn't find this gauge.",
+            "title": "Not found"
+          },
+          "resourcesTerm": "Links"
         }
       }
     },
