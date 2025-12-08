@@ -1,5 +1,5 @@
 import { type Network, useDaoPolicies } from '@/shared/api/daoService';
-import { PolicyInterfaceType, PolicyStrategyType } from '@/shared/api/daoService/domain/daoPolicy';
+import { PolicyInterfaceType } from '@/shared/api/daoService/domain/daoPolicy';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -19,18 +19,10 @@ export const DispatchPanel: React.FC<IDispatchPanelProps> = ({ daoAddress, netwo
     const { open } = useDialogContext();
     const { data: policies } = useDaoPolicies({ urlParams: { network, daoAddress } });
 
-    const routerPolicies = useMemo(() => {
-        return (
-            policies?.filter((policy) => {
-                return (
-                    policy.interfaceType === PolicyInterfaceType.ROUTER &&
-                    (policy.strategy.type === PolicyStrategyType.ROUTER ||
-                        policy.strategy.type === PolicyStrategyType.BURN_ROUTER ||
-                        policy.strategy.type === PolicyStrategyType.MULTI_DISPATCH)
-                );
-            }) ?? []
-        );
-    }, [policies]);
+    const routerPolicies = useMemo(
+        () => policies?.filter((policy) => policy.interfaceType === PolicyInterfaceType.ROUTER) ?? [],
+        [policies],
+    );
 
     if (routerPolicies.length === 0) {
         return null;
