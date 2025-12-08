@@ -1,7 +1,6 @@
 import { AssetInput } from '@/modules/finance/components/assetInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, InputText } from '@aragon/gov-ui-kit';
 import { useWatch } from 'react-hook-form';
 import type { ISetupStrategyForm } from '../setupStrategyDialogDefinitions';
@@ -12,9 +11,8 @@ export const SetupStrategyDialogDistributionDexSwap: React.FC<ISetupStrategyDial
     const { t } = useTranslations();
 
     const daoId = useWatch<ISetupStrategyForm, 'sourceVault'>({ name: 'sourceVault' });
-    const { network, address } = daoUtils.parseDaoId(daoId);
 
-    const fetchAssetsParams = { queryParams: { address, network } };
+    const fetchAssetsParams = { queryParams: { daoId } };
 
     const targetTokenAddressField = useFormField<ISetupStrategyForm, 'distributionDexSwap.targetTokenAddress'>(
         'distributionDexSwap.targetTokenAddress',
