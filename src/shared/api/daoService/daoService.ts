@@ -1,3 +1,4 @@
+import { apiVersionUtils } from '@/shared/utils/apiVersionUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { AragonBackendService, type IPaginatedResponse } from '../aragonBackendService';
 import { pluginsService } from '../pluginsService';
@@ -17,12 +18,25 @@ type IDaoApiResponse = Omit<IDao, 'plugins'> & {
 };
 
 class DaoService extends AragonBackendService {
-    private urls = {
-        dao: '/v2/daos/:id',
-        daoByEns: '/v2/daos/:network/ens/:ens',
-        daoPermissions: '/v2/permissions/:network/:daoAddress',
-        daoPolicies: '/v2/policies/:network/:daoAddress',
+    // Base paths without version prefix
+    private basePaths = {
+        dao: '/daos/:id',
+        daoByEns: '/daos/:network/ens/:ens',
+        daoPermissions: '/permissions/:network/:daoAddress',
+        daoPolicies: '/policies/:network/:daoAddress',
     };
+
+    // Build URLs dynamically based on environment
+    private get urls() {
+        return {
+            // Use environment version (v3 in dev/staging, v2 in production)
+            dao: apiVersionUtils.buildVersionedUrl(this.basePaths.dao),
+            daoByEns: apiVersionUtils.buildVersionedUrl(this.basePaths.daoByEns),
+            // Force v2 for permissions (not available in v3 yet)
+            daoPermissions: apiVersionUtils.buildVersionedUrl(this.basePaths.daoPermissions, { forceVersion: 'v2' }),
+            daoPolicies: apiVersionUtils.buildVersionedUrl(this.basePaths.daoPolicies, { forceVersion: 'v2' }),
+        };
+    }
 
     /**
      * Parse a DAO id (e.g. "polygon-mainnet-0x...") into network and address.

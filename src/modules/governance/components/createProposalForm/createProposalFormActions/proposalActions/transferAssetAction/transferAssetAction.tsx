@@ -128,6 +128,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
     return (
         <TransferAssetForm
             sender={dao!.address}
+            daoId={dao!.id}
             network={dao!.network}
             fieldPrefix={fieldName}
             disableAssetField={disableTokenSelection}

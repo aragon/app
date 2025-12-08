@@ -33,7 +33,9 @@ jest.mock('@/modules/governance/components/daoMemberList', () => ({
 }));
 
 jest.mock('@/modules/finance/components/assetList', () => ({
-    AssetList: (props: { children: ReactNode }) => <div data-testid="asset-list-mock">{props.children}</div>,
+    AssetList: {
+        Default: (props: { children: ReactNode }) => <div data-testid="asset-list-mock">{props.children}</div>,
+    },
 }));
 
 describe('<DaoDashboardPageClient /> component', () => {

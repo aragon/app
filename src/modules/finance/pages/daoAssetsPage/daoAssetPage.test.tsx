@@ -56,8 +56,8 @@ describe('<DaoAssetsPage /> component', () => {
 
     it('prefetches the DAO and its asset list', async () => {
         const daoAddress = '0x12345';
-        const dao = generateDao({ address: daoAddress });
         const expectedDaoId = 'test-dao-id';
+        const dao = generateDao({ address: daoAddress, id: expectedDaoId });
         resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
         fetchQuerySpy.mockResolvedValue(dao);
 
@@ -66,7 +66,7 @@ describe('<DaoAssetsPage /> component', () => {
             daoOptions({ urlParams: { id: expectedDaoId } }).queryKey,
         );
 
-        const expectedParams = { address: dao.address, network: dao.network, pageSize: daoAssetsCount };
+        const expectedParams = { daoId: expectedDaoId, pageSize: daoAssetsCount };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
             assetListOptions({ queryParams: expectedParams }).queryKey,
         );

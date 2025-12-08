@@ -2,6 +2,7 @@
 
 import type { IAsset, IGetAssetListParams } from '@/modules/finance/api/financeService';
 import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
+import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     AssetDataListItem,
@@ -10,16 +11,24 @@ import {
     DataListPagination,
     DataListRoot,
 } from '@aragon/gov-ui-kit';
-import { useMemo, useState, type ComponentProps } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { AssetListItem } from './assetListItem';
 
-export interface IAssetListProps extends ComponentProps<'div'> {
+export interface IAssetListDefaultProps<TSettings extends IPluginSettings = IPluginSettings> {
     /**
-     * Initial params to fetch the asset list.
+     * Initial parameters to use for fetching the asset list.
      */
     initialParams: IGetAssetListParams;
     /**
-     * Hides the pagination component when set to true.
+     * DAO plugin (SubDAO) to display assets for.
+     */
+    plugin?: IDaoPlugin<TSettings>;
+    /**
+     * Callback called on asset click. Replaces the default link to the block-explorer when set.
+     */
+    onAssetClick?: (asset: IAsset) => void;
+    /**
+     * Hides the pagination when set to true.
      */
     hidePagination?: boolean;
     /**
@@ -27,13 +36,13 @@ export interface IAssetListProps extends ComponentProps<'div'> {
      */
     hasSearch?: boolean;
     /**
-     * Callback called on token click. Replaces the default link to the token block-explorer page when set.
+     * Children of the component.
      */
-    onAssetClick?: (asset: IAsset) => void;
+    children?: ReactNode;
 }
 
-export const AssetList: React.FC<IAssetListProps> = (props) => {
-    const { initialParams, hidePagination, hasSearch, children, onAssetClick, ...otherProps } = props;
+export const AssetListDefault: React.FC<IAssetListDefaultProps> = (props) => {
+    const { initialParams, hidePagination, hasSearch, children, onAssetClick } = props;
     const [searchValue, setSearchValue] = useState<string>();
 
     const { t } = useTranslations();
@@ -42,9 +51,6 @@ export const AssetList: React.FC<IAssetListProps> = (props) => {
         useAssetListData(initialParams);
 
     const filteredAssets = useMemo(() => {
-        if (!assetList) {
-            return [];
-        }
         if (!hasSearch || !searchValue) {
             return assetList;
         }
@@ -64,7 +70,6 @@ export const AssetList: React.FC<IAssetListProps> = (props) => {
             state={state}
             pageSize={pageSize}
             itemsCount={itemsCount}
-            {...otherProps}
         >
             {hasSearch ? (
                 <DataListFilter
@@ -75,11 +80,15 @@ export const AssetList: React.FC<IAssetListProps> = (props) => {
             ) : null}
             <DataListContainer
                 SkeletonElement={AssetDataListItem.Skeleton}
-                emptyState={emptyState}
                 errorState={errorState}
+                emptyState={emptyState}
             >
-                {filteredAssets.map((asset) => (
-                    <AssetListItem key={asset.token.address} asset={asset} onAssetClick={onAssetClick} />
+                {filteredAssets.map((asset, index) => (
+                    <AssetListItem
+                        key={`${asset.token.address}-${index.toString()}`}
+                        asset={asset}
+                        onAssetClick={onAssetClick}
+                    />
                 ))}
             </DataListContainer>
             {!hidePagination && !searchValue && <DataListPagination />}

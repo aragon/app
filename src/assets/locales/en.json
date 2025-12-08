@@ -992,7 +992,15 @@
           "description": "There was an error loading the assets. Try again later.",
           "heading": "Error loading assets"
         },
+        "groupTab": "All assets",
         "searchPlaceholder": "Search assets..."
+      },
+      "assetListStats": {
+        "daos": "DAOs",
+        "note": "Aggregate treasury data across all SubDAOs coming soon.",
+        "subDaos": "SubDAOs",
+        "tokens": "Unique tokens",
+        "totalValueUsd": "Total value (USD)"
       },
       "assetSelectionDialog": {
         "a11y": {
@@ -1005,7 +1013,8 @@
           "details": {
             "chain": "Chain",
             "title": "Details"
-          }
+          },
+          "summary": "All assets"
         },
         "main": {
           "title": "Assets"
@@ -1016,7 +1025,8 @@
           "details": {
             "chain": "Chain",
             "title": "Details"
-          }
+          },
+          "summary": "All assets"
         },
         "main": {
           "title": "Transactions"
@@ -1030,6 +1040,11 @@
         "vaultAddress": "Vault address",
         "vaultEns": "Vault ENS"
       },
+      "subDaoInfo": {
+        "chain": "Chain",
+        "description": "Description",
+        "pluginAddress": "Plugin address"
+      },
       "transactionList": {
         "emptyState": {
           "description": "This will show the DAO's onchain actions when available.",
@@ -1039,7 +1054,22 @@
         "errorState": {
           "description": "There was an error loading the transactions. Try again later.",
           "heading": "Error loading transactions"
-        }
+        },
+        "groupTab": "All transactions"
+      },
+      "transactionListStats": {
+        "daos": "DAOs",
+        "lastActivity": "Last activity",
+        "subDaos": "SubDAOs",
+        "totalTransactions": "Total transactions"
+      },
+      "transactionSubDaoInfo": {
+        "address": "Address",
+        "chain": "Chain",
+        "description": "Description",
+        "links": "Resources",
+        "transactions": "Transactions",
+        "value": "Value"
       },
       "transferAssetForm": {
         "amount": {
