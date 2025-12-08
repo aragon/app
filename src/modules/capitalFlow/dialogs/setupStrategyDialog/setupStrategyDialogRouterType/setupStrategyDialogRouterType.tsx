@@ -47,7 +47,9 @@ export const SetupStrategyDialogRouterType: React.FC = () => {
             />
             <RadioCard
                 label={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.MULTI_DISPATCH}.label`)}
-                description={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.MULTI_DISPATCH}.description`)}
+                description={t(
+                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.MULTI_DISPATCH}.description`,
+                )}
                 value={RouterType.MULTI_DISPATCH}
             />
         </RadioGroup>

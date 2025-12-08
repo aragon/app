@@ -206,9 +206,9 @@
               "recipientsEmpty": "Recipients will appear here once added.",
               "recipientsTerm": "Recipients",
               "remove": "Remove",
-              "routerType": "Policy strategy",
-              "routerCountSingular": "{{count}} router",
               "routerCountPlural": "{{count}} routers",
+              "routerCountSingular": "{{count}} router",
+              "routerType": "Policy strategy",
               "sourceVault": "Source vault",
               "strategyTerm": "Strategy",
               "streamCadence": "Stream cadence"
@@ -362,7 +362,10 @@
           "moveUp": "Move router up",
           "placeholder": "ENS or 0x…",
           "positionCounter": "{{current}} of {{total}}",
-          "remove": "Remove router"
+          "remove": "Remove router",
+          "validation": {
+            "atLeastOneRequired": "At least one router address is required."
+          }
         },
         "distributionRecipients": {
           "addButton": "Recipients",

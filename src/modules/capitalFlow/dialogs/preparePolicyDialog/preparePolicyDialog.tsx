@@ -36,6 +36,15 @@ export enum PreparePolicyStep {
     PIN_METADATA = 'PIN_METADATA',
 }
 
+const withModelRouters: Record<RouterType, boolean> = {
+    [RouterType.FIXED]: true,
+    [RouterType.STREAM]: true,
+    [RouterType.GAUGE]: true,
+    [RouterType.BURN]: false,
+    [RouterType.DEX_SWAP]: false,
+    [RouterType.MULTI_DISPATCH]: false,
+};
+
 export interface IPreparePolicyDialogParams {
     /**
      * Values of the create-policy form.
@@ -85,7 +94,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     const deploymentStepper = useStepper<ITransactionDialogStepMeta, PreparePolicyStep | TransactionDialogStep>({
         initialActiveStep: PreparePolicyStep.PIN_METADATA,
     });
-    const installationStepper = useStepper<ITransactionDialogStepMeta, PreparePolicyStep | TransactionDialogStep>({
+    const installationStepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
     const { nextStep } = deploymentStepper;
@@ -93,7 +102,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     const handleDeploySourceAndModelTransaction = async () => {
         invariant(dao != null, 'PreparePolicyDialog: DAO not loaded');
 
-        const transaction = preparePolicyDialogUtils.buildDeploySourceAndModelTransaction({
+        const transaction = await preparePolicyDialogUtils.buildDeploySourceAndModelTransaction({
             values,
             dao,
         });
@@ -118,8 +127,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
         });
 
         const hasModel =
-            values.strategy.type === StrategyType.CAPITAL_ROUTER &&
-            ![RouterType.BURN, RouterType.DEX_SWAP].includes(values.strategy.routerType);
+            values.strategy.type === StrategyType.CAPITAL_ROUTER && withModelRouters[values.strategy.routerType];
 
         invariant(
             // BURN does not deploy model
@@ -183,8 +191,8 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
 
         const txInfo = {
             title: t(`${translationNamespace}.transactionInfoTitle`),
-            current: isMultiDispatch ? 2 : 3,
-            total: isMultiDispatch ? 2 : 3,
+            current: 3,
+            total: 3,
         };
         const params: IPublishProposalDialogParams = {
             proposal: { ...proposalMetadata, resources: [], actions: proposalActions },
@@ -230,7 +238,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
                 transactionInfo={{
                     title: t('app.capitalFlow.preparePolicyDialog.transactionInfoTitleDeploy'),
                     current: 1,
-                    total: isMultiDispatch ? 2 : 3,
+                    total: 3,
                 }}
                 stepper={deploymentStepper}
                 customSteps={customSteps}
@@ -250,7 +258,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
             transactionInfo={{
                 title: t('app.capitalFlow.preparePolicyDialog.transactionInfoTitleInstall'),
                 current: 2,
-                total: isMultiDispatch ? 2 : 3,
+                total: 3,
             }}
             stepper={installationStepper}
             prepareTransaction={handlePrepareInstallationTransaction}

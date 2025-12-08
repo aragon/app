@@ -47,27 +47,27 @@ export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsP
     const sourceVaultDescription = sourceVaultDao.ens ?? addressUtils.truncateAddress(sourceVaultDao.address);
 
     const renderRecipients = () => {
+        if (strategy.routerType === RouterType.MULTI_DISPATCH) {
+            // Filter out empty addresses
+            const validRouters = strategy.distributionMultiDispatch.routerAddresses.filter(
+                (router) => router.address && router.address.trim() !== '',
+            );
+            const routerCount = validRouters.length;
+            if (routerCount === 0) {
+                return <span className="text-sm text-neutral-500">{recipientsEmptyLabel}</span>;
+            }
+            const translationKey =
+                routerCount === 1
+                    ? 'app.capitalFlow.createPolicyForm.configure.strategy.details.routerCountSingular'
+                    : 'app.capitalFlow.createPolicyForm.configure.strategy.details.routerCountPlural';
+            return t(translationKey, { count: routerCount });
+        }
+
         if (
             strategy.routerType === RouterType.GAUGE ||
             strategy.routerType === RouterType.BURN ||
-            strategy.routerType === RouterType.DEX_SWAP ||
-            strategy.routerType === RouterType.MULTI_DISPATCH
+            strategy.routerType === RouterType.DEX_SWAP
         ) {
-            if (strategy.routerType === RouterType.MULTI_DISPATCH) {
-                // Filter out empty addresses
-                const validRouters = strategy.distributionMultiDispatch.routerAddresses.filter(
-                    (router) => router.address && router.address.trim() !== '',
-                );
-                const routerCount = validRouters.length;
-                if (routerCount === 0) {
-                    return <span className="text-sm text-neutral-500">{recipientsEmptyLabel}</span>;
-                }
-                const translationKey =
-                    routerCount === 1
-                        ? 'app.capitalFlow.createPolicyForm.configure.strategy.details.routerCountSingular'
-                        : 'app.capitalFlow.createPolicyForm.configure.strategy.details.routerCountPlural';
-                return t(translationKey, { count: routerCount });
-            }
             return 'NA';
         }
 

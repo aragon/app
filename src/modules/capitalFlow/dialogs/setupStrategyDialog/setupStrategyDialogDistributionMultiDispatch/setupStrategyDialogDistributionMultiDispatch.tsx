@@ -23,6 +23,17 @@ export const SetupStrategyDialogDistributionMultiDispatch: React.FC = () => {
     const { fields, append, remove, swap } = useFieldArray({
         control,
         name: 'distributionMultiDispatch.routerAddresses',
+        rules: {
+            validate: (value) => {
+                const validAddresses = value.filter((router) => router.address && router.address.trim() !== '');
+                if (validAddresses.length === 0) {
+                    return t(
+                        'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.validation.atLeastOneRequired',
+                    );
+                }
+                return true;
+            },
+        },
     });
 
     const daoId = useWatch<ISetupStrategyForm, 'sourceVault'>({ name: 'sourceVault' });
@@ -130,7 +141,7 @@ const RouterAddressInput: React.FC<IRouterAddressInputProps> = ({
 }) => {
     const { t } = useTranslations();
 
-    const fieldPrefix = `distributionMultiDispatch.routerAddresses.[${index.toString()}]`;
+    const fieldPrefix = `distributionMultiDispatch.routerAddresses[${index.toString()}]`;
 
     const {
         onChange: onAddressChange,
@@ -138,10 +149,9 @@ const RouterAddressInput: React.FC<IRouterAddressInputProps> = ({
         ...addressField
     } = useFormField<IAddress, 'address'>('address', {
         rules: {
-            validate: (val) => !val || addressUtils.isAddress(val) || 'Invalid address',
+            validate: (val) => addressUtils.isAddress(val),
         },
         fieldPrefix,
-        sanitizeOnBlur: false,
     });
 
     const [addressInput, setAddressInput] = useState<string | undefined>(addressValue);
