@@ -15,7 +15,7 @@ import { omniModelFactoryAbi } from './omniModelFactoryAbi';
 import { omniSourceFactoryAbi } from './omniSourceFactoryAbi';
 import type { IBuildPolicyProposalActionsParams, IBuildTransactionParams } from './preparePolicyDialogUtils.api';
 import { routerModelFactoryAbi } from './routerModelFactoryAbi';
-import { burnRouterPluginSetupAbi, routerPluginSetupAbi } from './routerPluginSetupAbi';
+import { burnRouterPluginSetupAbi, cowSwapRouterPluginSetupAbi, routerPluginSetupAbi } from './routerPluginSetupAbi';
 import { routerSourceFactoryAbi } from './routerSourceFactoryAbi';
 
 const epochPeriodToSeconds = {
@@ -175,9 +175,25 @@ class PreparePolicyDialogUtils {
                 data: deploySourceCallData,
                 value: BigInt(0),
             };
-        } else {
+        } else if (strategy.routerType === RouterType.BURN) {
             // RouterType.BURN deploys only source, no model
             const { asset } = strategy.distributionBurn;
+
+            const deploySourceCallData = encodeFunctionData({
+                abi: routerSourceFactoryAbi,
+                functionName: 'deployDrainBalanceSource',
+                args: [sourceDaoAddress as Hex, asset?.token ? (asset.token.address as Hex) : zeroAddress],
+            });
+            const deploySourceTransaction = {
+                to: routerSourceFactory,
+                data: deploySourceCallData,
+                value: BigInt(0),
+            };
+
+            return Promise.resolve(deploySourceTransaction);
+        } else {
+            // RouterType.DEX_SWAP deploys only source, no model
+            const { asset } = strategy.distributionDexSwap;
 
             const deploySourceCallData = encodeFunctionData({
                 abi: routerSourceFactoryAbi,
@@ -231,18 +247,37 @@ class PreparePolicyDialogUtils {
         );
 
         const { model, source } = sourceAndModelContracts;
-        const { routerPluginRepo, burnRouterPluginRepo } = capitalFlowAddresses[dao.network];
+        const { routerPluginRepo, burnRouterPluginRepo, cowSwapRouterPluginRepo } = capitalFlowAddresses[dao.network];
 
         const isStreamingSource = strategy.routerType === RouterType.STREAM;
-        const isBurnRouter = strategy.routerType === RouterType.BURN;
 
-        const installationParams = isBurnRouter
-            ? encodeAbiParameters(burnRouterPluginSetupAbi, [source, isStreamingSource])
-            : encodeAbiParameters(routerPluginSetupAbi, [source, isStreamingSource, model]);
+        let installationParams, pluginRepo;
+
+        switch (strategy.routerType) {
+            case RouterType.BURN:
+                installationParams = encodeAbiParameters(burnRouterPluginSetupAbi, [source, isStreamingSource]);
+                pluginRepo = burnRouterPluginRepo;
+                break;
+            case RouterType.DEX_SWAP: {
+                const { targetTokenAddress, cowSwapSettlementAddress } = strategy.distributionDexSwap;
+                installationParams = encodeAbiParameters(cowSwapRouterPluginSetupAbi, [
+                    source,
+                    isStreamingSource,
+                    targetTokenAddress as Hex,
+                    cowSwapSettlementAddress as Hex,
+                ]);
+                pluginRepo = cowSwapRouterPluginRepo;
+                break;
+            }
+            default:
+                installationParams = encodeAbiParameters(routerPluginSetupAbi, [source, isStreamingSource, model]);
+                pluginRepo = routerPluginRepo;
+                break;
+        }
 
         const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
         const prepareInstallationData = pluginTransactionUtils.buildPrepareInstallationData(
-            isBurnRouter ? burnRouterPluginRepo : routerPluginRepo,
+            pluginRepo,
             { release: 1, build: 1 },
             installationParams,
             dao.address as Hex,
