@@ -22,7 +22,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { encodeFunctionData, type Hex } from 'viem';
+import { encodeFunctionData } from 'viem';
 import { updateGaugeMetadataAbi } from '../../constants/addressGaugeVoterAbi';
 import { GaugeVoterDialogId } from '../../constants/gaugeVoterDialogId';
 import type { IGaugeVoterSelectGaugeDialogParams } from '../../dialogs/gaugeVoterSelectGaugeDialog';
@@ -103,7 +103,7 @@ export const GaugeVoterUpdateGaugeMetadataActionCreate: React.FC<IGaugeVoterUpda
             const data = encodeFunctionData({
                 abi: [updateGaugeMetadataAbi],
                 functionName: 'updateGaugeMetadata',
-                args: [action.gaugeToUpdate.address as Hex, ipfsHexResult],
+                args: [action.gaugeToUpdate.address, ipfsHexResult],
             });
 
             return data;

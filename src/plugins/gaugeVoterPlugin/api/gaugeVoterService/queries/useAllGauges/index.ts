@@ -1,1 +1,1 @@
-export * from './useAllGauges';
+export { useAllGauges, type IUseAllGaugesParams } from './useAllGauges';

@@ -47,7 +47,7 @@ export const GaugeVoterUpdateGaugeMetadataActionCreateForm: React.FC<
             fieldPrefix,
             rules: { required: true, maxLength: nameMaxLength },
             trimOnBlur: true,
-            defaultValue: gauge.name || '',
+            defaultValue: gauge.name ?? '',
         },
     );
 
@@ -59,7 +59,7 @@ export const GaugeVoterUpdateGaugeMetadataActionCreateForm: React.FC<
         fieldPrefix,
         rules: { required: true, maxLength: descriptionMaxLength },
         trimOnBlur: true,
-        defaultValue: gauge.description || '',
+        defaultValue: gauge.description ?? '',
     });
 
     return (

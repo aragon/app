@@ -76,7 +76,7 @@ export const GaugeVoterSelectGaugeDialog: React.FC<IGaugeVoterSelectGaugeDialogP
                             <GaugeVoterGaugeListItemSkeleton />
                         </DataList.Root>
                     )}
-                    {!isLoading && gauges != null && gauges.length > 0 && (
+                    {!isLoading && gauges.length > 0 && (
                         <DataList.Root
                             entityLabel={t('app.actions.gaugeVoter.gaugeVoterSelectGaugeDialog.entityLabel')}
                         >
@@ -90,7 +90,7 @@ export const GaugeVoterSelectGaugeDialog: React.FC<IGaugeVoterSelectGaugeDialogP
                             ))}
                         </DataList.Root>
                     )}
-                    {!isLoading && (gauges == null || gauges.length === 0) && (
+                    {!isLoading && gauges.length === 0 && (
                         <div className="flex items-center justify-center py-8 text-neutral-500">
                             {t('app.actions.gaugeVoter.gaugeVoterSelectGaugeDialog.emptyState')}
                         </div>

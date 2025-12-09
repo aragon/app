@@ -19,7 +19,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { encodeFunctionData, type Hex } from 'viem';
+import { encodeFunctionData } from 'viem';
 import { activateGaugeAbi } from '../../constants/addressGaugeVoterAbi';
 import { GaugeVoterDialogId } from '../../constants/gaugeVoterDialogId';
 import type { IGaugeVoterSelectGaugeDialogParams } from '../../dialogs/gaugeVoterSelectGaugeDialog';
@@ -78,7 +78,7 @@ export const GaugeVoterActivateGaugeActionCreate: React.FC<IGaugeVoterActivateGa
         const data = encodeFunctionData({
             abi: [activateGaugeAbi],
             functionName: 'activateGauge',
-            args: [action.gaugeToActivate.address as Hex],
+            args: [action.gaugeToActivate.address],
         });
 
         return Promise.resolve(data);
