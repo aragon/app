@@ -36,6 +36,15 @@ export enum PreparePolicyStep {
     PIN_METADATA = 'PIN_METADATA',
 }
 
+const withModelRouters: Record<RouterType, boolean> = {
+    [RouterType.FIXED]: true,
+    [RouterType.STREAM]: true,
+    [RouterType.GAUGE]: true,
+    [RouterType.BURN]: false,
+    [RouterType.DEX_SWAP]: false,
+    [RouterType.MULTI_DISPATCH]: false,
+};
+
 export interface IPreparePolicyDialogParams {
     /**
      * Values of the create-policy form.
@@ -66,6 +75,13 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     const { status, mutateAsync: pinJson } = usePinJson();
     const { open } = useDialogContext();
 
+    const isMultiDispatch = useMemo(
+        () =>
+            values.strategy?.type === StrategyType.CAPITAL_ROUTER &&
+            values.strategy.routerType === RouterType.MULTI_DISPATCH,
+        [values.strategy],
+    );
+
     const [policyMetadata, setPolicyMetadata] = useState<IPreparePolicyMetadata>();
     const [sourceAndModelContracts, setSourceAndModelContracts] = useState<IPrepareSourceAndModelContracts>();
 
@@ -86,7 +102,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     const handleDeploySourceAndModelTransaction = async () => {
         invariant(dao != null, 'PreparePolicyDialog: DAO not loaded');
 
-        const transaction = preparePolicyDialogUtils.buildDeploySourceAndModelTransaction({
+        const transaction = await preparePolicyDialogUtils.buildDeploySourceAndModelTransaction({
             values,
             dao,
         });
@@ -95,6 +111,14 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     };
 
     const handleDeploySourceAndModelSuccess = (txReceipt: TransactionReceipt) => {
+        invariant(values.strategy != null, 'handleDeploySourceAndModelSuccess: strategy is not defined');
+
+        // MULTI_DISPATCH doesn't deploy source or model contracts
+        if (isMultiDispatch) {
+            setSourceAndModelContracts({ model: zeroAddress, source: zeroAddress });
+            return;
+        }
+
         const combinedModelAbi = [...routerModelFactoryAbi, ...omniModelFactoryAbi] as const;
         const modelLogs = parseEventLogs({
             abi: combinedModelAbi,
@@ -102,10 +126,8 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
             strict: false,
         });
 
-        invariant(values.strategy != null, 'handleDeploySourceAndModelSuccess: strategy is not defined');
         const hasModel =
-            values.strategy.type === StrategyType.CAPITAL_ROUTER &&
-            ![RouterType.BURN, RouterType.DEX_SWAP].includes(values.strategy.routerType);
+            values.strategy.type === StrategyType.CAPITAL_ROUTER && withModelRouters[values.strategy.routerType];
 
         invariant(
             // BURN does not deploy model
@@ -167,7 +189,11 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
         const proposalMetadata = preparePolicyDialogUtils.preparePublishPolicyProposalMetadata();
         const translationNamespace = `app.capitalFlow.publishPolicyDialog.${isAdmin ? 'admin' : 'default'}`;
 
-        const txInfo = { title: t(`${translationNamespace}.transactionInfoTitle`), current: 3, total: 3 };
+        const txInfo = {
+            title: t(`${translationNamespace}.transactionInfoTitle`),
+            current: 3,
+            total: 3,
+        };
         const params: IPublishProposalDialogParams = {
             proposal: { ...proposalMetadata, resources: [], actions: proposalActions },
             daoId,
@@ -200,6 +226,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     // - the first one to pin metadata and deploy source/model contracts, and
     // - the second one to call prepareInstallation on plugin setup contract.
     // - after that we open publish proposal dialog as the third step, as usual.
+    // Note: For MULTI_DISPATCH, the first dialog only pins metadata (no source/model deployment).
     if (sourceAndModelContracts == null) {
         return (
             <TransactionDialog<PreparePolicyStep>

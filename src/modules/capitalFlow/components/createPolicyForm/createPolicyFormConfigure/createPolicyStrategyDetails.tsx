@@ -15,6 +15,7 @@ const routerTypeToDistributionField = {
     [RouterType.GAUGE]: 'distributionGauge',
     [RouterType.BURN]: 'distributionBurn',
     [RouterType.DEX_SWAP]: 'distributionDexSwap',
+    [RouterType.MULTI_DISPATCH]: 'distributionMultiDispatch',
 } as const;
 
 export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsProps> = (props) => {
@@ -38,12 +39,30 @@ export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsP
         `app.capitalFlow.setupStrategyDialog.routerType.${strategy.routerType}.description`,
     );
 
-    const routerAsset = strategy[routerTypeToDistributionField[strategy.routerType]].asset;
+    const distributionField = routerTypeToDistributionField[strategy.routerType];
+    const distribution = strategy[distributionField];
+    const routerAsset = 'asset' in distribution ? distribution.asset : undefined;
 
     const sourceVaultLabel = sourceVaultDao.name;
     const sourceVaultDescription = sourceVaultDao.ens ?? addressUtils.truncateAddress(sourceVaultDao.address);
 
     const renderRecipients = () => {
+        if (strategy.routerType === RouterType.MULTI_DISPATCH) {
+            // Filter out empty addresses
+            const validRouters = strategy.distributionMultiDispatch.routerAddresses.filter(
+                (router) => router.address && router.address.trim() !== '',
+            );
+            const routerCount = validRouters.length;
+            if (routerCount === 0) {
+                return <span className="text-sm text-neutral-500">{recipientsEmptyLabel}</span>;
+            }
+            const translationKey =
+                routerCount === 1
+                    ? 'app.capitalFlow.createPolicyForm.configure.strategy.details.routerCountSingular'
+                    : 'app.capitalFlow.createPolicyForm.configure.strategy.details.routerCountPlural';
+            return t(translationKey, { count: routerCount });
+        }
+
         if (
             strategy.routerType === RouterType.GAUGE ||
             strategy.routerType === RouterType.BURN ||
@@ -81,9 +100,11 @@ export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsP
                 >
                     {sourceVaultLabel}
                 </DefinitionList.Item>
-                <DefinitionList.Item term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.asset')}>
-                    {routerAsset?.token.symbol ?? routerAsset?.token.name ?? notSetLabel}
-                </DefinitionList.Item>
+                {strategy.routerType !== RouterType.MULTI_DISPATCH && (
+                    <DefinitionList.Item term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.asset')}>
+                        {routerAsset?.token.symbol ?? routerAsset?.token.name ?? notSetLabel}
+                    </DefinitionList.Item>
+                )}
                 <DefinitionList.Item
                     term={t('app.capitalFlow.createPolicyForm.configure.strategy.details.recipientsTerm')}
                 >

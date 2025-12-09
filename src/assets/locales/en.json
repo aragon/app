@@ -206,6 +206,8 @@
               "recipientsEmpty": "Recipients will appear here once added.",
               "recipientsTerm": "Recipients",
               "remove": "Remove",
+              "routerCountPlural": "{{count}} routers",
+              "routerCountSingular": "{{count}} router",
               "routerType": "Policy strategy",
               "sourceVault": "Source vault",
               "strategyTerm": "Strategy",
@@ -379,6 +381,21 @@
             "label": "Token"
           }
         },
+        "distributionMultiDispatch": {
+          "addRouter": "Router",
+          "addressLabel": "Address",
+          "counter": "{{current}}/{{max}}",
+          "helpText": "Add available routers and order them in your preferred sequence.",
+          "label": "Router",
+          "moveDown": "Move router down",
+          "moveUp": "Move router up",
+          "placeholder": "ENS or 0x…",
+          "positionCounter": "{{current}} of {{total}}",
+          "remove": "Remove router",
+          "validation": {
+            "atLeastOneRequired": "At least one router address is required."
+          }
+        },
         "distributionRecipients": {
           "addButton": "Recipients",
           "distributeEvenly": "Distribute evenly",
@@ -414,6 +431,10 @@
           "GAUGE": {
             "description": "Route an asset to recipients proportionally according a gauge vote.",
             "label": "Gauge ratio"
+          },
+          "MULTI_DISPATCH": {
+            "description": "Choose several routers to dispatch them sequentially.",
+            "label": "Multi dispatch"
           },
           "STREAM": {
             "description": "Transfer a fixed quantity of an available asset over time to recipients.",
