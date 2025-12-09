@@ -23,7 +23,7 @@ const RPC_PROVIDER_ENV_VARS: Record<RpcProvider, string> = {
     [RpcProvider.ALCHEMY]: 'NEXT_SECRET_RPC_KEY',
     [RpcProvider.ANKR]: 'NEXT_SECRET_ANKR_RPC_KEY',
     [RpcProvider.DRPC]: 'NEXT_SECRET_DRPC_RPC_KEY',
-    [RpcProvider.PEAQ]: 'NEXT_SECRET_PEAQ_RPC_KEY',
+    [RpcProvider.PEAQ]: 'NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY',
 };
 
 export class ProxyRpcUtils {

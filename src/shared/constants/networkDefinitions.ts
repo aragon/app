@@ -284,7 +284,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         logo: 'https://assets.coingecko.com/coins/images/51415/large/peaq-token-brand-icon_%281%29.png',
         privateRpcConfig: {
             rpcProvider: RpcProvider.PEAQ,
-            rpcUrl: 'https://responsive-powerful-mansion.peaq-mainnet.quiknode.pro/',
+            rpcUrl: 'https://wiser-dimensional-knowledge.peaq-mainnet.quiknode.pro/',
         },
         order: 10,
         protocolVersion: latestProtocolVersion,
