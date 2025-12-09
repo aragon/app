@@ -131,13 +131,6 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         onAddAction(parsedActions);
     };
 
-    // const displayImportActionsDialog = () => {
-    //     const params: IImportActionsDialogParams = {
-    //         onImport: handleImportActions,
-    //     };
-    //     open(GovernanceDialogId.IMPORT_ACTIONS, { params });
-    // };
-
     const handleDirectFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file) {
