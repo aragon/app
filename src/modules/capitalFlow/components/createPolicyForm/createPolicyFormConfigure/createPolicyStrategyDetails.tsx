@@ -47,8 +47,7 @@ export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsP
     const sourceVaultDescription = sourceVaultDao.ens ?? addressUtils.truncateAddress(sourceVaultDao.address);
 
     const renderRecipients = () => {
-        if (
-            strategy.routerType === RouterType.MULTI_DISPATCH) {
+        if (strategy.routerType === RouterType.MULTI_DISPATCH) {
             // Filter out empty addresses
             const validRouters = strategy.distributionMultiDispatch.routerAddresses.filter(
                 (router) => router.address && router.address.trim() !== '',
