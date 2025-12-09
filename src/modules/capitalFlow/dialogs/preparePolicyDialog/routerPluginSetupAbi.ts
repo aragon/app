@@ -17,3 +17,10 @@ export const cowSwapRouterPluginSetupAbi = [
 ] as const;
 
 export const multiDispatchPluginSetupAbi = [{ name: '_subrouters', type: 'address[]' }] as const;
+
+export const uniswapRouterPluginSetupAbi = [
+    { name: '_routerSource', type: 'address' },
+    { name: '_isStreamingSource', type: 'bool' },
+    { name: '_targetToken', type: 'address' },
+    { name: '_uniswapRouter', type: 'address' },
+] as const;

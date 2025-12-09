@@ -42,6 +42,7 @@ const withModelRouters: Record<RouterType, boolean> = {
     [RouterType.GAUGE]: true,
     [RouterType.BURN]: false,
     [RouterType.DEX_SWAP]: false,
+    [RouterType.UNISWAP]: false,
     [RouterType.MULTI_DISPATCH]: false,
 };
 

@@ -7,6 +7,7 @@ import { SetupStrategyDialogDistributionFixed } from './setupStrategyDialogDistr
 import { SetupStrategyDialogDistributionGauge } from './setupStrategyDialogDistributionGauge';
 import { SetupStrategyDialogDistributionMultiDispatch } from './setupStrategyDialogDistributionMultiDispatch';
 import { SetupStrategyDialogDistributionStream } from './setupStrategyDialogDistributionStream';
+import { SetupStrategyDialogDistributionUniswap } from './setupStrategyDialogDistributionUniswap/setupStrategyDialogDistributionUniswap';
 import { SetupStrategyDialogRouterType } from './setupStrategyDialogRouterType';
 import { SetupStrategyDialogSelect } from './setupStrategyDialogSelect';
 import { SetupStrategyDialogSourceVault } from './setupStrategyDialogSourceVault';
@@ -32,6 +33,7 @@ const setupStrategySteps = [
     { id: 'distributionBurn', order: 4, meta: { name: '' } },
     { id: 'distributionDexSwap', order: 4, meta: { name: '' } },
     { id: 'distributionMultiDispatch', order: 4, meta: { name: '' } },
+    { id: 'distributionUniswap', order: 4, meta: { name: '' } },
 ];
 
 export const SetupStrategyDialogSteps: React.FC<ISetupStrategyDialogStepsProps> = (props) => {
@@ -48,6 +50,7 @@ export const SetupStrategyDialogSteps: React.FC<ISetupStrategyDialogStepsProps> 
         distributionBurn,
         distributionDexSwap,
         distributionMultiDispatch,
+        distributionUniswap,
     ] = setupStrategySteps;
 
     return (
@@ -78,6 +81,9 @@ export const SetupStrategyDialogSteps: React.FC<ISetupStrategyDialogStepsProps> 
             </WizardDialog.Step>
             <WizardDialog.Step {...distributionMultiDispatch} hidden={selectedRouterType !== RouterType.MULTI_DISPATCH}>
                 <SetupStrategyDialogDistributionMultiDispatch />
+            </WizardDialog.Step>
+            <WizardDialog.Step {...distributionUniswap} hidden={selectedRouterType !== RouterType.UNISWAP}>
+                <SetupStrategyDialogDistributionUniswap />
             </WizardDialog.Step>
         </>
     );

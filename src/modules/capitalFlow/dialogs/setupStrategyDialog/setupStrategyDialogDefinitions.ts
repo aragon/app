@@ -14,6 +14,7 @@ export enum RouterType {
     BURN = 'BURN',
     DEX_SWAP = 'DEX_SWAP',
     MULTI_DISPATCH = 'MULTI_DISPATCH',
+    UNISWAP = 'UNISWAP',
 }
 
 export interface ISetupStrategyFormBase {
@@ -60,6 +61,10 @@ export interface ISetupStrategyFormRouter extends ISetupStrategyFormBase {
      * Distribution configuration for MULTI_DISPATCH router type.
      */
     distributionMultiDispatch: IDistributionMultiDispatchForm;
+    /**
+     * Distribution configuration for UNISWAP router type.
+     */
+    distributionUniswap: IDistributionUniswapForm;
 }
 
 export interface IDistributionFormBase {
@@ -109,6 +114,11 @@ export interface IDistributionMultiDispatchForm {
      * List of router addresses to dispatch.
      */
     routerAddresses: ICompositeAddress[];
+}
+
+export interface IDistributionUniswapForm extends IDistributionFormBase {
+    targetTokenAddress: string;
+    uniswapRouterAddress: string;
 }
 
 export interface IRecipientRelative extends ICompositeAddress {

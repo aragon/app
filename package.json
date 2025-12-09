@@ -40,6 +40,7 @@
     "classnames": "^2.5.1",
     "deepmerge-ts": "^7.1.5",
     "framer-motion": "^12.23.25",
+    "import-in-the-middle": "2.0.0",
     "isomorphic-dompurify": "2.33.0",
     "jsdom": "^27.1.0",
     "luxon": "^3.7.2",
@@ -50,6 +51,7 @@
     "react-hook-form": "^7.64.0",
     "react-use-measure": "^2.1.7",
     "recharts": "^3.5.1",
+    "require-in-the-middle": "8.0.1",
     "server-only": "^0.0.1",
     "viem": "^2.38.0",
     "wagmi": "^2.19.5"
