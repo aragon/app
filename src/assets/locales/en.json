@@ -273,6 +273,30 @@
         },
         "submitLabel": "Publish policy"
       },
+      "dispatchDialog": {
+        "backButton": "Back",
+        "contract": "Contract",
+        "description": "You can dispatch this policy by confirm the transactions using your connected wallet.",
+        "dispatchButton": "Dispatch",
+        "links": "Links",
+        "recipients": "To",
+        "recipientsCount": "{{count}} recipients",
+        "title": "Dispatch {{policyName}}",
+        "token": "Token"
+      },
+      "dispatchPanel": {
+        "description": "Execute eligible transactions that adhere to the organization's policies.",
+        "dispatchButton": "Dispatch",
+        "routingDescription": "Automatically routs assets from the treasury to one or more target addresses.",
+        "routingTitle": "Routing",
+        "title": "Automated transactions"
+      },
+      "dispatchTransactionDialog": {
+        "description": "To dispatch this router, confirm the onchain transaction in your wallet.",
+        "dispatchButton": "Dispatch",
+        "successButton": "Done",
+        "title": "Dispatch {{policyName}}"
+      },
       "layoutWizardCreatePolicy": {
         "name": "Create policy"
       },
@@ -308,6 +332,11 @@
           "title": "Publish capital flow policy",
           "transactionInfoTitle": "Propose policy"
         }
+      },
+      "routerSelectorDialog": {
+        "description": "Execute transactions for the routers below.",
+        "title": "Dispatch",
+        "unnamedPolicy": "Unnamed Policy"
       },
       "setupStrategyDialog": {
         "a11y": {
@@ -756,7 +785,6 @@
           "transactionInfoTitle": "Propose process"
         }
       },
-
       "setupBodyDialog": {
         "a11y": {
           "description": "Create a new voting body for your DAO"
