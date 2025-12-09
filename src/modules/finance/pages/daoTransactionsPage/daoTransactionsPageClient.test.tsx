@@ -23,6 +23,10 @@ jest.mock('@/modules/finance/components/daoInfoAside', () => ({
     DaoInfoAside: jest.fn(() => <div data-testid="transaction-subdao-info" />),
 }));
 
+jest.mock('@/modules/capitalFlow/components/dispatchPanel/dispatchPanel', () => ({
+    DispatchPanel: jest.fn(() => null),
+}));
+
 describe('<DaoTransactionsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useDaoFilterUrlParamSpy = jest.spyOn(useDaoFilterUrlParam, 'useDaoFilterUrlParam');
