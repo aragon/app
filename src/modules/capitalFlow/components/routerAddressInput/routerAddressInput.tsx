@@ -7,9 +7,9 @@ import {
     Card,
     IconType,
     type IAddressInputResolvedValue,
+    type ICompositeAddress,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import type { IAddress } from '../../dialogs/setupStrategyDialog/setupStrategyDialogDefinitions';
 
 interface IRouterAddressInputProps {
     /**
@@ -50,21 +50,8 @@ interface IRouterAddressInputProps {
     canMoveDown: boolean;
 }
 
-/**
- * A component for inputting and managing a single router address in a multi-dispatch configuration.
- * Provides address input with validation, remove functionality, and ordering controls (move up/down).
- */
-export const RouterAddressInput: React.FC<IRouterAddressInputProps> = ({
-    index,
-    total,
-    chainId,
-    onRemove,
-    canRemove,
-    onMoveUp,
-    onMoveDown,
-    canMoveUp,
-    canMoveDown,
-}) => {
+export const RouterAddressInput: React.FC<IRouterAddressInputProps> = (props) => {
+    const { index, total, chainId, onRemove, canRemove, onMoveUp, onMoveDown, canMoveUp, canMoveDown } = props;
     const { t } = useTranslations();
 
     const fieldPrefix = `distributionMultiDispatch.routerAddresses[${index.toString()}]`;
@@ -73,7 +60,7 @@ export const RouterAddressInput: React.FC<IRouterAddressInputProps> = ({
         onChange: onAddressChange,
         value: addressValue,
         ...addressField
-    } = useFormField<IAddress, 'address'>('address', {
+    } = useFormField<ICompositeAddress, 'address'>('address', {
         rules: {
             validate: (val) => addressUtils.isAddress(val),
         },
