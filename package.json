@@ -32,8 +32,8 @@
     "@reown/appkit-adapter-wagmi": "^1.8.14",
     "@reown/walletkit": "^1.4.1",
     "@sentry/core": "10.22.0",
-    "@sentry/nextjs": "^10.22.0",
-    "@tanstack/react-query": "^5.90.2",
+    "@sentry/nextjs": "^10.27.0",
+    "@tanstack/react-query": "^5.90.11",
     "@tanstack/react-query-devtools": "^5.91.1",
     "@walletconnect/core": "^2.23.0",
     "@walletconnect/utils": "^2.23.0",
@@ -52,7 +52,7 @@
     "recharts": "^3.5.1",
     "server-only": "^0.0.1",
     "viem": "^2.38.0",
-    "wagmi": "^2.18.1"
+    "wagmi": "^2.19.5"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.2",
@@ -91,10 +91,10 @@
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4.1.17",
     "tailwindcss-fluid-type": "^2.0.7",
-    "ts-jest": "^29.4.4",
+    "ts-jest": "^29.4.6",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.2",
-    "vercel": "^48.1.6",
+    "vercel": "^48.12.0",
     "webpack": "^5.103.0"
   },
   "repository": {
@@ -117,9 +117,17 @@
   "packageManager": "pnpm@10.23.0+sha512.21c4e5698002ade97e4efe8b8b4a89a8de3c85a37919f957e7a0f30f38fbc5bbdd05980ffe29179b2fb6e6e691242e098d945d1601772cad0fef5fb6411e2a4b",
   "pnpm": {
     "overrides": {
-      "@reown/appkit": "^1.8.10",
+      "@reown/appkit": "^1.8.14",
+      "@wagmi/connectors": "^6.2.0",
       "jsdom": "26.1.0",
       "parse5": "7.1.2"
+    },
+    "packageExtensions": {
+      "@solana/codecs-strings@*": {
+        "dependencies": {
+          "fastestsmallesttextencoderdecoder": "^1.0.22"
+        }
+      }
     }
   }
 }
