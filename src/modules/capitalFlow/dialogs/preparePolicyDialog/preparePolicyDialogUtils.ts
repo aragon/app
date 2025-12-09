@@ -268,9 +268,11 @@ class PreparePolicyDialogUtils {
     };
 
     buildPolicyPrepareInstallationTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
-        // TODO: handle policyMetadata here when ready (APP-375)
-        const { values, sourceAndModelContracts, dao } = params;
+        const { values, sourceAndModelContracts, dao, policyMetadata } = params;
         const { strategy } = values;
+
+        const pluginMetadata = policyMetadata?.plugin;
+        const pluginMetadataHex = pluginMetadata ? transactionUtils.stringToMetadataHex(pluginMetadata) : '0x';
 
         invariant(
             strategy != null,
@@ -300,7 +302,11 @@ class PreparePolicyDialogUtils {
 
         switch (strategy.routerType) {
             case RouterType.BURN:
-                installationParams = encodeAbiParameters(burnRouterPluginSetupAbi, [source, isStreamingSource]);
+                installationParams = encodeAbiParameters(burnRouterPluginSetupAbi, [
+                    source,
+                    isStreamingSource,
+                    pluginMetadataHex,
+                ]);
                 pluginRepo = burnRouterPluginRepo;
                 break;
             case RouterType.DEX_SWAP: {
@@ -310,6 +316,7 @@ class PreparePolicyDialogUtils {
                     isStreamingSource,
                     targetTokenAddress as Hex,
                     cowSwapSettlementAddress as Hex,
+                    pluginMetadataHex,
                 ]);
                 pluginRepo = cowSwapRouterPluginRepo;
                 break;
@@ -320,7 +327,7 @@ class PreparePolicyDialogUtils {
                 const addresses = routerAddresses
                     .filter((r) => r.address && r.address.trim() !== '')
                     .map((r) => r.address as Hex);
-                installationParams = encodeAbiParameters(multiDispatchPluginSetupAbi, [addresses]);
+                installationParams = encodeAbiParameters(multiDispatchPluginSetupAbi, [addresses, pluginMetadataHex]);
                 pluginRepo = multiDispatchRouterPluginRepo;
                 break;
             }
@@ -331,12 +338,18 @@ class PreparePolicyDialogUtils {
                     isStreamingSource,
                     targetTokenAddress as Hex,
                     uniswapRouterAddress as Hex,
+                    pluginMetadataHex,
                 ]);
                 pluginRepo = uniswapRouterPluginRepo;
                 break;
             }
             default:
-                installationParams = encodeAbiParameters(routerPluginSetupAbi, [source, isStreamingSource, model]);
+                installationParams = encodeAbiParameters(routerPluginSetupAbi, [
+                    source,
+                    isStreamingSource,
+                    model,
+                    pluginMetadataHex,
+                ]);
                 pluginRepo = routerPluginRepo;
                 break;
         }

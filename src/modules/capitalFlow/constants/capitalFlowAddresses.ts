@@ -59,12 +59,12 @@ export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
         claimerSourceFactory: '0x1134703E2a6713c1bC43DF35A08d82A8A1e59b11',
         omniSourceFactory: '0xEB9e27056cBfD6E1a22ee051a44787Cf2FBbe911',
         // plugin repos
-        routerPluginRepo: '0x1bd5970DCEB7168c65b1A226ED71Fb632c3Def47',
-        claimerPluginRepo: '0x70f636D481898E897FceDB182074eF61e05FbbD0',
-        burnRouterPluginRepo: '0x42718AB262073EFFB1AC6d538a4BD6717039d4b3',
-        cowSwapRouterPluginRepo: '0x7B87891e796Ee908c2F6bC95e678A3e546E3099E',
-        multiDispatchRouterPluginRepo: '0x96eEb45FA090378265e3A3645D48e190F9c165b5',
-        uniswapRouterPluginRepo: '0xBeF4222c9127515a9a9B73dca27bFb3A86bE1f1B',
+        routerPluginRepo: '0x4bC521AE26F41ee92A5D5D07B104fb467502a8Ee',
+        claimerPluginRepo: '0x237440E03441D0F0Ca6e8163595DA4bB8c1625A7',
+        burnRouterPluginRepo: '0x918C92BcA068112ee294c46Ea7F96daa1414e6b8',
+        cowSwapRouterPluginRepo: '0x4647f76D043513ab46AF300c0B42Ed7de6A42912',
+        multiDispatchRouterPluginRepo: '0xAa1dD29e1e093C59708EDd8090878fF4f4b1Aa41',
+        uniswapRouterPluginRepo: '0x73059fB7D743567B5699fe214c5D0CcDCb42d362',
     },
     [Network.POLYGON_MAINNET]: {
         // model factories
