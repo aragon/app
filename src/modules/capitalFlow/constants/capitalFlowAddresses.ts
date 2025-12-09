@@ -56,7 +56,7 @@ export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
         claimerSourceFactory: '0x1134703E2a6713c1bC43DF35A08d82A8A1e59b11',
         omniSourceFactory: '0xEB9e27056cBfD6E1a22ee051a44787Cf2FBbe911',
         // plugin repos
-        routerPluginRepo: '0x1bd5970DCEB7168c65b1A226ED71Fb632c3Def47',
+        routerPluginRepo: '0xb2dA3445C77251CfcA8C0EBcF8eeb3EdB63277DD',
         claimerPluginRepo: '0x70f636D481898E897FceDB182074eF61e05FbbD0',
         burnRouterPluginRepo: '0x42718AB262073EFFB1AC6d538a4BD6717039d4b3',
         cowSwapRouterPluginRepo: '0x7B87891e796Ee908c2F6bC95e678A3e546E3099E',
