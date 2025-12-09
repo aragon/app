@@ -108,11 +108,7 @@ export interface IDistributionMultiDispatchForm {
     /*
      * List of router addresses to dispatch.
      */
-    routerAddresses: IAddress[];
-}
-
-export interface IAddress {
-    address: string;
+    routerAddresses: ICompositeAddress[];
 }
 
 export interface IRecipientRelative extends ICompositeAddress {

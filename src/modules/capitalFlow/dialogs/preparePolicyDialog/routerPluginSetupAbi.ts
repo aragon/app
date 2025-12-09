@@ -23,3 +23,5 @@ export const multiDispatchPluginSetupAbi = [
     { name: '_subrouters', type: 'address[]' },
     { name: '_pluginMetadata', type: 'bytes' },
 ] as const;
+
+export const multiDispatchPluginSetupAbi = [{ name: '_subrouters', type: 'address[]' }] as const;
