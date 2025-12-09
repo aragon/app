@@ -103,15 +103,16 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
         });
 
         invariant(values.strategy != null, 'handleDeploySourceAndModelSuccess: strategy is not defined');
-        const isBurn =
-            values.strategy.type === StrategyType.CAPITAL_ROUTER && values.strategy.routerType === RouterType.BURN;
+        const hasModel =
+            values.strategy.type === StrategyType.CAPITAL_ROUTER &&
+            ![RouterType.BURN, RouterType.DEX_SWAP].includes(values.strategy.routerType);
 
         invariant(
             // BURN does not deploy model
-            isBurn ? modelLogs.length === 0 : modelLogs.length > 0,
+            hasModel ? modelLogs.length > 0 : modelLogs.length === 0,
             'PreparePolicyDialog: Unexpected state in model deployment event logs',
         );
-        const modelAddress = isBurn ? zeroAddress : (modelLogs[0].args.newContract as Hex);
+        const modelAddress = hasModel ? (modelLogs[0].args.newContract as Hex) : zeroAddress;
 
         const combinedSourceAbi = [...routerSourceFactoryAbi, ...omniSourceFactoryAbi] as const;
         const sourceLogs = parseEventLogs({
