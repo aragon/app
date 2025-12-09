@@ -16,6 +16,7 @@ const routerTypeToDistributionField = {
     [RouterType.BURN]: 'distributionBurn',
     [RouterType.DEX_SWAP]: 'distributionDexSwap',
     [RouterType.MULTI_DISPATCH]: 'distributionMultiDispatch',
+    [RouterType.UNISWAP]: 'distributionUniswap',
 } as const;
 
 export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsProps> = (props) => {
@@ -66,7 +67,8 @@ export const CreatePolicyStrategyDetails: React.FC<ICreatePolicyStrategyDetailsP
         if (
             strategy.routerType === RouterType.GAUGE ||
             strategy.routerType === RouterType.BURN ||
-            strategy.routerType === RouterType.DEX_SWAP
+            strategy.routerType === RouterType.DEX_SWAP ||
+            strategy.routerType === RouterType.UNISWAP
         ) {
             return 'NA';
         }

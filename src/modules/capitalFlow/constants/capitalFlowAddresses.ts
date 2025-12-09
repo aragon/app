@@ -16,6 +16,7 @@ export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
         burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
     },
     [Network.BASE_MAINNET]: {
         // model factories
@@ -31,6 +32,7 @@ export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
         burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
     },
     [Network.ETHEREUM_MAINNET]: {
         // model factories
@@ -46,6 +48,7 @@ export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
         burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
     },
     [Network.ETHEREUM_SEPOLIA]: {
         // model factories
@@ -76,6 +79,7 @@ export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
         burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
     },
     [Network.ZKSYNC_MAINNET]: {
         // model factories
@@ -91,6 +95,7 @@ export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
         burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
     },
     [Network.ZKSYNC_SEPOLIA]: {
         // model factories
@@ -106,6 +111,7 @@ export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
         burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
     },
     [Network.PEAQ_MAINNET]: {
         // model factories
@@ -121,6 +127,7 @@ export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
         burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
     },
     [Network.OPTIMISM_MAINNET]: {
         // model factories
@@ -136,6 +143,7 @@ export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
         burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
     },
     [Network.CHILIZ_MAINNET]: {
         // model factories
@@ -151,6 +159,7 @@ export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
         burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
     },
     [Network.AVAX_MAINNET]: {
         // model factories
@@ -166,6 +175,7 @@ export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
         burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
     },
     [Network.KATANA_MAINNET]: {
         // model factories
@@ -181,5 +191,6 @@ export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
         burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
         multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
     },
 } as const;
