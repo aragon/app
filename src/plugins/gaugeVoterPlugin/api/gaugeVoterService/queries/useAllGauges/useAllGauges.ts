@@ -1,3 +1,5 @@
+'use client';
+
 import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/domain';
 import type { IGetGaugeListParams } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/gaugeVoterService.api';
 import { useGaugeList } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/queries';
