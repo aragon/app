@@ -20,6 +20,7 @@ import {
     cowSwapRouterPluginSetupAbi,
     multiDispatchPluginSetupAbi,
     routerPluginSetupAbi,
+    uniswapRouterPluginSetupAbi,
 } from './routerPluginSetupAbi';
 import { routerSourceFactoryAbi } from './routerSourceFactoryAbi';
 
@@ -226,6 +227,22 @@ class PreparePolicyDialogUtils {
             };
 
             return Promise.resolve(deploySourceTransaction);
+        } else if (strategy.routerType === RouterType.UNISWAP) {
+            // RouterType.UNISWAP deploys only source, no model
+            const { asset } = strategy.distributionUniswap;
+
+            const deploySourceCallData = encodeFunctionData({
+                abi: routerSourceFactoryAbi,
+                functionName: 'deployDrainBalanceSource',
+                args: [sourceDaoAddress as Hex, asset?.token ? (asset.token.address as Hex) : zeroAddress],
+            });
+            const deploySourceTransaction = {
+                to: routerSourceFactory,
+                data: deploySourceCallData,
+                value: BigInt(0),
+            };
+
+            return Promise.resolve(deploySourceTransaction);
         } else {
             // RouterType.MULTI_DISPATCH deploys nothing (no source, no model)
             return Promise.resolve(this.buildNoOpTransaction());
@@ -269,8 +286,13 @@ class PreparePolicyDialogUtils {
         );
 
         const { model, source } = sourceAndModelContracts;
-        const { routerPluginRepo, burnRouterPluginRepo, cowSwapRouterPluginRepo, multiDispatchRouterPluginRepo } =
-            capitalFlowAddresses[dao.network];
+        const {
+            routerPluginRepo,
+            burnRouterPluginRepo,
+            cowSwapRouterPluginRepo,
+            multiDispatchRouterPluginRepo,
+            uniswapRouterPluginRepo,
+        } = capitalFlowAddresses[dao.network];
 
         const isStreamingSource = strategy.routerType === RouterType.STREAM;
 
@@ -300,6 +322,17 @@ class PreparePolicyDialogUtils {
                     .map((r) => r.address as Hex);
                 installationParams = encodeAbiParameters(multiDispatchPluginSetupAbi, [addresses]);
                 pluginRepo = multiDispatchRouterPluginRepo;
+                break;
+            }
+            case RouterType.UNISWAP: {
+                const { targetTokenAddress, uniswapRouterAddress } = strategy.distributionUniswap;
+                installationParams = encodeAbiParameters(uniswapRouterPluginSetupAbi, [
+                    source,
+                    isStreamingSource,
+                    targetTokenAddress as Hex,
+                    uniswapRouterAddress as Hex,
+                ]);
+                pluginRepo = uniswapRouterPluginRepo;
                 break;
             }
             default:
