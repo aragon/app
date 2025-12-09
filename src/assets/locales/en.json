@@ -74,11 +74,11 @@
       },
       "gaugeVoter": {
         "composer": {
-          "activateGaugeActionName": "Activate Gauge",
+          "activateGaugeActionName": "Activate gauge",
           "contractName": "Gauge Voter",
-          "createGaugeActionName": "Create Gauge",
-          "deactivateGaugeActionName": "Deactivate Gauge",
-          "updateGaugeMetadataActionName": "Update Gauge Metadata"
+          "createGaugeActionName": "Create gauge",
+          "deactivateGaugeActionName": "Deactivate gauge",
+          "updateGaugeMetadataActionName": "Update gauge metadata"
         },
         "gaugeVoterActivateGaugeActionCreate": {
           "emptyCard": {
