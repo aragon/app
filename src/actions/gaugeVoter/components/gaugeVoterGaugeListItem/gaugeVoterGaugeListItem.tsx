@@ -1,4 +1,4 @@
-import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/domain';
+import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { addressUtils, Avatar, Button, DataList, IconType, type IDataListItemProps } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';

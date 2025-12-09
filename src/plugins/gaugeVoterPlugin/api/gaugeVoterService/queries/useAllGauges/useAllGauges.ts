@@ -1,8 +1,7 @@
 'use client';
 
-import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/domain';
-import type { IGetGaugeListParams } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/gaugeVoterService.api';
-import { useGaugeList } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/queries';
+import type { IGauge, IGetGaugeListParams } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
+import { useGaugeList } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import type { IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import type { InfiniteQueryOptions } from '@/shared/types/queryOptions';
 import { useEffect, useMemo } from 'react';

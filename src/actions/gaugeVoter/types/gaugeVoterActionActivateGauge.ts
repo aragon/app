@@ -1,4 +1,4 @@
-import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/domain';
+import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import type { IProposalAction } from '@aragon/gov-ui-kit';
 import type { GaugeVoterActionType } from './enum/gaugeVoterActionType';
 

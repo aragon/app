@@ -14,7 +14,7 @@ import {
 import type { Address, Hex } from 'viem';
 import { useReadContract } from 'wagmi';
 
-import { useAllGauges } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/queries';
+import { useAllGauges } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { gaugeRegistrarAbi } from '../../constants/gaugeRegistrarAbi';

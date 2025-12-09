@@ -1,4 +1,4 @@
-import { useAllGauges } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/queries';
+import { useAllGauges } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import type { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { addressUtils } from '@aragon/gov-ui-kit';

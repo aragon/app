@@ -1,7 +1,7 @@
 'use client';
 
-import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/domain';
-import { useAllGauges } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/queries';
+import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
+import { useAllGauges } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import type { IDao } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';

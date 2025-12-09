@@ -5,7 +5,7 @@ import {
     type IProposalActionData,
     useCreateProposalFormContext,
 } from '@/modules/governance/components/createProposalForm';
-import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/domain/gauge';
+import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';

@@ -1,6 +1,6 @@
 'use client';
 
-import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/domain/gauge';
+import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import { AvatarInput } from '@/shared/components/forms/avatarInput';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';

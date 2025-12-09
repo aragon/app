@@ -1,7 +1,7 @@
 'use client';
 
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
-import { useAllGauges } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/queries';
+import { useAllGauges } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
