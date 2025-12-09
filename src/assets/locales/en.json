@@ -206,6 +206,8 @@
               "recipientsEmpty": "Recipients will appear here once added.",
               "recipientsTerm": "Recipients",
               "remove": "Remove",
+              "routerCountPlural": "{{count}} routers",
+              "routerCountSingular": "{{count}} router",
               "routerType": "Policy strategy",
               "sourceVault": "Source vault",
               "strategyTerm": "Strategy",
@@ -271,6 +273,30 @@
         },
         "submitLabel": "Publish policy"
       },
+      "dispatchDialog": {
+        "backButton": "Back",
+        "contract": "Contract",
+        "description": "You can dispatch this policy by confirm the transactions using your connected wallet.",
+        "dispatchButton": "Dispatch",
+        "links": "Links",
+        "recipients": "To",
+        "recipientsCount": "{{count}} recipients",
+        "title": "Dispatch {{policyName}}",
+        "token": "Token"
+      },
+      "dispatchPanel": {
+        "description": "Execute eligible transactions that adhere to the organization's policies.",
+        "dispatchButton": "Dispatch",
+        "routingDescription": "Automatically routs assets from the treasury to one or more target addresses.",
+        "routingTitle": "Routing",
+        "title": "Automated transactions"
+      },
+      "dispatchTransactionDialog": {
+        "description": "To dispatch this router, confirm the onchain transaction in your wallet.",
+        "dispatchButton": "Dispatch",
+        "successButton": "Done",
+        "title": "Dispatch {{policyName}}"
+      },
       "layoutWizardCreatePolicy": {
         "name": "Create policy"
       },
@@ -307,6 +333,11 @@
           "transactionInfoTitle": "Propose policy"
         }
       },
+      "routerSelectorDialog": {
+        "description": "Execute transactions for the routers below.",
+        "title": "Dispatch",
+        "unnamedPolicy": "Unnamed Policy"
+      },
       "setupStrategyDialog": {
         "a11y": {
           "description": "Create a new strategy for your capital flow policy"
@@ -314,6 +345,22 @@
         "distributionBurn": {
           "token": {
             "helpText": "Choose the token to burn.",
+            "label": "Token"
+          }
+        },
+        "distributionDexSwap": {
+          "cowSwapSettlementAddress": {
+            "helpText": "The address of the CoW Swap settlement contract.",
+            "label": "CoW Swap settlement address",
+            "placeholder": "0x…"
+          },
+          "targetTokenAddress": {
+            "helpText": "The address of the token to swap to.",
+            "label": "Target token address",
+            "placeholder": "0x…"
+          },
+          "token": {
+            "helpText": "Choose the token to swap from.",
             "label": "Token"
           }
         },
@@ -332,6 +379,21 @@
           "token": {
             "helpText": "Choose the token for this policy.",
             "label": "Token"
+          }
+        },
+        "distributionMultiDispatch": {
+          "addRouter": "Router",
+          "addressLabel": "Address",
+          "counter": "{{current}}/{{max}}",
+          "helpText": "Add available routers and order them in your preferred sequence.",
+          "label": "Router",
+          "moveDown": "Move router down",
+          "moveUp": "Move router up",
+          "placeholder": "ENS or 0x…",
+          "positionCounter": "{{current}} of {{total}}",
+          "remove": "Remove router",
+          "validation": {
+            "atLeastOneRequired": "At least one router address is required."
           }
         },
         "distributionRecipients": {
@@ -358,6 +420,10 @@
             "description": "Route an asset to the zero address or call its burn function.",
             "label": "Burn"
           },
+          "DEX_SWAP": {
+            "description": "Swap an asset on CoW Swap.",
+            "label": "Dex swap"
+          },
           "FIXED": {
             "description": "Transfer an available asset to recipients in a relative manner.",
             "label": "Fixed ratio"
@@ -365,6 +431,10 @@
           "GAUGE": {
             "description": "Route an asset to recipients proportionally according a gauge vote.",
             "label": "Gauge ratio"
+          },
+          "MULTI_DISPATCH": {
+            "description": "Choose several routers to dispatch them sequentially.",
+            "label": "Multi dispatch"
           },
           "STREAM": {
             "description": "Transfer a fixed quantity of an available asset over time to recipients.",

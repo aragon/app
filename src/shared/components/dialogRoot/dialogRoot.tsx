@@ -70,11 +70,10 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
                         onInteractOutside={handleInteractOutside}
                         hiddenTitle={processedHiddenTitle}
                         hiddenDescription={processedHiddenDescription}
+                        containerClassName={isTopmost ? undefined : 'hidden'}
                         {...otherDialogProps}
                     >
-                        <div style={{ display: isTopmost ? 'contents' : 'none' }}>
-                            <ActiveDialogComponent location={location} />
-                        </div>
+                        <ActiveDialogComponent location={location} />
                     </DialogWrapper>
                 );
             })}

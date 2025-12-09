@@ -207,13 +207,13 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         ? formatterUtils.formatNumber(amountValue, { format: NumberFormat.FIAT_TOTAL_SHORT })
         : `$0.00`;
 
-    const renderAssetButton = () =>
+    const renderAssetButton = (size: 'md' | 'sm' = 'sm') =>
         disableAssetField ? (
             <AssetInputToken token={assetField.value?.token} className="cursor-default px-2" />
         ) : (
             <Button
                 variant="tertiary"
-                size="sm"
+                size={size}
                 onClick={handleOpenDialog}
                 onMouseDown={handleSelectMouseDown}
                 iconRight={IconType.CHEVRON_DOWN}
@@ -224,7 +224,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         );
 
     return hideAmount ? (
-        <div>{renderAssetButton()}</div>
+        <div>{renderAssetButton('md')}</div>
     ) : (
         <div className="flex flex-col gap-y-3">
             <InputContainer

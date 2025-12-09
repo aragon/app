@@ -40,6 +40,18 @@ export const SetupStrategyDialogRouterType: React.FC = () => {
                 description={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.BURN}.description`)}
                 value={RouterType.BURN}
             />
+            <RadioCard
+                label={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.DEX_SWAP}.label`)}
+                description={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.DEX_SWAP}.description`)}
+                value={RouterType.DEX_SWAP}
+            />
+            <RadioCard
+                label={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.MULTI_DISPATCH}.label`)}
+                description={t(
+                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.MULTI_DISPATCH}.description`,
+                )}
+                value={RouterType.MULTI_DISPATCH}
+            />
         </RadioGroup>
     );
 };
