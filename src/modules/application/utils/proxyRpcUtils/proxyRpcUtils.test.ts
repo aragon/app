@@ -21,7 +21,7 @@ describe('proxyRpc utils', () => {
         process.env.NEXT_SECRET_RPC_KEY = 'test-alchemy-key';
         process.env.NEXT_SECRET_ANKR_RPC_KEY = 'test-ankr-key';
         process.env.NEXT_SECRET_DRPC_RPC_KEY = 'test-drpc-key';
-        process.env.NEXT_SECRET_PEAQ_RPC_KEY = 'test-peaq-key';
+        process.env.NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY = 'test-peaq-key';
         process.env.CI = 'false';
     });
 
@@ -47,7 +47,7 @@ describe('proxyRpc utils', () => {
             process.env.NEXT_SECRET_DRPC_RPC_KEY = options.drpcKey;
         }
         if (options?.peaqKey !== undefined) {
-            process.env.NEXT_SECRET_PEAQ_RPC_KEY = options.peaqKey;
+            process.env.NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY = options.peaqKey;
         }
         return new ProxyRpcUtils();
     };
@@ -78,9 +78,9 @@ describe('proxyRpc utils', () => {
 
         it('throws error when peaq rpc key is not defined on non CI context', () => {
             testLogger.suppressErrors();
-            delete process.env.NEXT_SECRET_PEAQ_RPC_KEY;
+            delete process.env.NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY;
             process.env.CI = 'false';
-            expect(() => new ProxyRpcUtils()).toThrow(/NEXT_SECRET_PEAQ_RPC_KEY/);
+            expect(() => new ProxyRpcUtils()).toThrow(/NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY/);
         });
 
         it('throws error when multiple rpc keys are not defined on non CI context', () => {
@@ -96,7 +96,7 @@ describe('proxyRpc utils', () => {
             delete process.env.NEXT_SECRET_RPC_KEY;
             delete process.env.NEXT_SECRET_ANKR_RPC_KEY;
             delete process.env.NEXT_SECRET_DRPC_RPC_KEY;
-            delete process.env.NEXT_SECRET_PEAQ_RPC_KEY;
+            delete process.env.NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY;
             process.env.CI = 'true';
             expect(() => new ProxyRpcUtils()).not.toThrow();
         });
