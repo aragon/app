@@ -1186,6 +1186,28 @@
           },
           "loading": "Loading actions data"
         },
+        "actionsImportExport": {
+          "downloadAsJSON": "Download as JSON",
+          "errors": {
+            "invalidAddress": "Invalid address format in action \"to\" field.",
+            "invalidData": "Invalid data format in action \"data\" field. Must be a hex string.",
+            "invalidFormat": "The uploaded data is incorrectly formatted. e.g. [{\"to\":\"\",\"value\": 0,\"data\": \"\"}]",
+            "invalidJSON": "The uploaded file is not a valid JSON.",
+            "invalidValue": "Invalid value in action \"value\" field. Must be a non-negative number."
+          },
+          "import": {
+            "accept": "Import actions",
+            "cancel": "Cancel",
+            "chooseFile": "Choose File",
+            "description": "Upload a JSON file containing actions to add to the proposal.",
+            "fileInputHelpText": "Must contain actions formatted: [{\"to\":\"\",\"value\": 0,\"data\": \"\"}]",
+            "fileInputLabel": "Select JSON file",
+            "noFileChosen": "No file chosen",
+            "successMessage": "Successfully imported {count} action(s)",
+            "title": "Import actions"
+          },
+          "importButton": "Upload"
+        },
         "metadata": {
           "actions": {
             "helpText": "Actions are onchain transactions that can be executed if the proposal passes.",
@@ -1317,6 +1339,9 @@
         },
         "main": {
           "actions": {
+            "collapseAll": "Collapse all",
+            "downloadAsJSON": "Download as JSON",
+            "expandAll": "Expand all",
             "header": "Actions",
             "lastSimulationError": "There was an error getting the last simulation data. Please try again later.",
             "simulationError": "There was an error simulating the actions. Please try again later."
