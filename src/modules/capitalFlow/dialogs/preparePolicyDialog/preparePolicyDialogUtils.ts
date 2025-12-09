@@ -338,6 +338,7 @@ class PreparePolicyDialogUtils {
                     isStreamingSource,
                     targetTokenAddress as Hex,
                     uniswapRouterAddress as Hex,
+                    pluginMetadataHex,
                 ]);
                 pluginRepo = uniswapRouterPluginRepo;
                 break;

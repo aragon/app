@@ -29,4 +29,5 @@ export const uniswapRouterPluginSetupAbi = [
     { name: '_isStreamingSource', type: 'bool' },
     { name: '_targetToken', type: 'address' },
     { name: '_uniswapRouter', type: 'address' },
+    { name: '_pluginMetadata', type: 'bytes' },
 ] as const;
