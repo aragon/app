@@ -1,13 +1,13 @@
 import type { IResource } from '@/shared/api/daoService';
 import type { IProposalAction } from '@aragon/gov-ui-kit';
-import type { IGaugeRegistrarRegisterGaugeFormData } from '../components/gaugeRegistrarRegisterGaugeActionCreate';
-import type { GaugeRegistrarActionType } from './enum/gaugeRegistrarActionType';
+import type { IGaugeVoterCreateGaugeFormData } from '../components/gaugeVoterCreateGaugeActionCreate';
+import type { GaugeVoterActionType } from './enum/gaugeVoterActionType';
 
-export interface IGaugeRegistrarActionRegisterGauge extends Omit<IProposalAction, 'type'> {
+export interface IGaugeVoterActionCreateGauge extends Omit<IProposalAction, 'type'> {
     /**
      * The type of the proposal action.
      */
-    type: GaugeRegistrarActionType.REGISTER_GAUGE;
+    type: GaugeVoterActionType.CREATE_GAUGE;
     /**
      * DAO id.
      */
@@ -15,7 +15,7 @@ export interface IGaugeRegistrarActionRegisterGauge extends Omit<IProposalAction
     /**
      * Gauge details collected from the action form in create phase.
      */
-    gaugeDetails?: IGaugeRegistrarRegisterGaugeFormData;
+    gaugeDetails?: IGaugeVoterCreateGaugeFormData;
     /**
      * Gauge metadata returned in decoded actions by backend.
      */

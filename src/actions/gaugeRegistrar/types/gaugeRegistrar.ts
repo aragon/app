@@ -1,4 +1,4 @@
-import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/domain';
+import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import type { GaugeIncentiveType } from './enum/gaugeIncentiveType';
 
 /**
