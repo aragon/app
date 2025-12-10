@@ -56,9 +56,12 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
 
     const handleContinue = () => {
         if (formId) {
-            document.getElementById(formId)?.requestSubmit();
-            // Defer close to allow form submission to process
-            setTimeout(() => close(), 0);
+            const form = document.getElementById(formId);
+            if (form instanceof HTMLFormElement) {
+                form.requestSubmit();
+                // Defer close to allow form submission to process
+                setTimeout(() => close(), 0);
+            }
         }
     };
 
