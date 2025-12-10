@@ -54,6 +54,14 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
     const error = isError ? t('app.governance.simulateActionsDialog.error') : undefined;
     const primaryLabel = t(`app.governance.simulateActionsDialog.action.${hasSimulationFailed ? 'error' : 'success'}`);
 
+    const handleContinue = () => {
+        if (formId) {
+            document.getElementById(formId)?.requestSubmit();
+            // Defer close to allow form submission to process
+            setTimeout(() => close(), 0);
+        }
+    };
+
     return (
         <>
             <Dialog.Header title={t(`app.governance.simulateActionsDialog.title`)} onClose={close} />
@@ -68,11 +76,9 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{
-                    type: 'submit',
-                    form: formId,
                     label: primaryLabel,
                     disabled: isPending,
-                    onClick: () => close(),
+                    onClick: handleContinue,
                 }}
                 secondaryAction={{
                     label: t('app.governance.simulateActionsDialog.action.cancel'),
