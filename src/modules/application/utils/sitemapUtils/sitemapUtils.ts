@@ -1,7 +1,8 @@
 import { daoExplorerService } from '@/modules/explore/api/daoExplorerService';
-import { Network, type IDao } from '@/shared/api/daoService';
+import { type IDao } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { metadataUtils } from '@/shared/utils/metadataUtils';
+import { networkUtils } from '@/shared/utils/networkUtils';
 import type { MetadataRoute } from 'next';
 
 class SitemapUtils {
@@ -9,7 +10,7 @@ class SitemapUtils {
 
     public generateSitemap = async (): Promise<MetadataRoute.Sitemap> => {
         const now = new Date();
-        const networks = Object.values(Network);
+        const networks = networkUtils.getMainnetNetworks();
 
         const daos = await daoExplorerService.getDaoList({
             queryParams: { pageSize: 50, networks },

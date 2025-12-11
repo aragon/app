@@ -5,6 +5,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import { networkUtils } from '@/shared/utils/networkUtils';
 import {
     DaoDataListItem,
     DataListContainer,
@@ -54,7 +55,14 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
     const [searchValueDebounced] = useDebouncedValue(searchValue, { delay: 500 });
 
     const defaultResult = useDaoList(
-        { ...initialParams, queryParams: { ...initialParams?.queryParams, search: searchValueDebounced } },
+        {
+            ...initialParams,
+            queryParams: {
+                ...initialParams?.queryParams,
+                networks: networkUtils.getMainnetNetworks(),
+                search: searchValueDebounced,
+            },
+        },
         { enabled: initialParams != null && memberParams == null },
     );
 
