@@ -6,7 +6,7 @@ export interface IGetDaoListQueryParams extends IPaginatedRequest, IOrderedReque
     /**
      * List of networks to filter the DAOs by.
      */
-    networks?: Network[];
+    networks: Network[];
 }
 
 export interface IGetDaoListParams extends IRequestQueryParams<IGetDaoListQueryParams> {}
