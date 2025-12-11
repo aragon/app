@@ -53,7 +53,7 @@ export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
     [Network.ETHEREUM_SEPOLIA]: {
         // model factories
         routerModelFactory: '0xDC092C9f4c5196De1ee7FeE3B8eea2A75a44f64d',
-        omniModelFactory: '0xcB3Ce8f3450BB65ebe5EAE0144ecE47814C1fA47',
+        omniModelFactory: '0xF2eac445a73a5433248dFeF97FB6053842A0C6d3',
         // source factories
         routerSourceFactory: '0x2C52582d49D530e8C0973c07f5c2A3e688697E0C',
         claimerSourceFactory: '0x1134703E2a6713c1bC43DF35A08d82A8A1e59b11',
