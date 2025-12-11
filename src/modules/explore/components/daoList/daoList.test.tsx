@@ -1,3 +1,4 @@
+import { Network } from '@/shared/api/daoService';
 import { generateDao, generatePaginatedResponse, generateReactQueryInfiniteResultSuccess } from '@/shared/testUtils';
 import { testLogger } from '@/test/utils';
 import { render, screen } from '@testing-library/react';
@@ -22,7 +23,7 @@ describe('<DaoList /> component', () => {
 
     const createTestComponent = (props?: Partial<IDaoListProps>) => {
         const completeProps: IDaoListProps = {
-            initialParams: { queryParams: {} },
+            initialParams: { queryParams: { networks: [Network.ETHEREUM_MAINNET] } },
             ...props,
         };
 
@@ -34,7 +35,7 @@ describe('<DaoList /> component', () => {
         const queryResult = generateReactQueryInfiniteResultSuccess({
             data: { pages: [generatePaginatedResponse({ data: daos })], pageParams: [] },
         });
-        const initialParams = { queryParams: { pageSize: 20 } };
+        const initialParams = { queryParams: { networks: [Network.ETHEREUM_MAINNET], pageSize: 20 } };
 
         useDaoListSpy.mockReturnValue(queryResult);
         render(createTestComponent({ initialParams, memberParams: undefined }));
@@ -54,7 +55,7 @@ describe('<DaoList /> component', () => {
         const queryResult = generateReactQueryInfiniteResultSuccess({
             data: { pages: [generatePaginatedResponse({ data: daos })], pageParams: [] },
         });
-        const initialParams = { queryParams: { pageSize: 20 } };
+        const initialParams = { queryParams: { networks: [Network.ETHEREUM_MAINNET], pageSize: 20 } };
         const memberParams = { urlParams: { address: 'testAddress' }, queryParams: {} };
 
         useDaoListByMemberAddressSpy.mockReturnValue(queryResult);
