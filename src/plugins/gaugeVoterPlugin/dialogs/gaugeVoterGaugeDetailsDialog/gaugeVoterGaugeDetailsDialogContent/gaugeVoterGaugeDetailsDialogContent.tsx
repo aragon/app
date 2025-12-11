@@ -47,7 +47,7 @@ export const GaugeVoterGaugeDetailsDialogContent: React.FC<IGaugeVoterGaugeDetai
                                 term={link.name}
                                 link={{ href: link.url, isExternal: true }}
                             >
-                                {link.url}
+                                {link.name}
                             </DefinitionList.Item>
                         ))}
                     </>
