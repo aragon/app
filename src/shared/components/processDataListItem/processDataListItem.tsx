@@ -1,8 +1,10 @@
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { subDaoDisplayUtils } from '@/shared/utils/subDaoDisplayUtils';
 import { DataList, type IDataListItemProps } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useTranslations } from '../translationsProvider';
+import { DaoBreadcrumbs, buildDaoBreadcrumbPath } from './daoBreadcrumbs';
 
 export type IProcessDataListItemProps = IDataListItemProps & {
     /**
@@ -13,14 +15,21 @@ export type IProcessDataListItemProps = IDataListItemProps & {
      * Renders the process as active when set to true.
      */
     isActive?: boolean;
+    /**
+     * Parent DAO used to show SubDAO breadcrumbs when applicable.
+     */
+    dao?: IDao;
 };
 
 export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (props) => {
-    const { process, isActive, className, ...otherProps } = props;
+    const { process, isActive, className, dao, ...otherProps } = props;
 
     const { t } = useTranslations();
 
     const { address, description, slug } = process;
+    const targetDaoAddress = subDaoDisplayUtils.getPluginDaoAddress(process);
+    const daoPath = buildDaoBreadcrumbPath({ rootDao: dao, targetAddress: targetDaoAddress });
+
     const processedDescription =
         description != null && description.length > 0
             ? description
@@ -42,6 +51,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (props) 
                 <p className="line-clamp-2 text-base leading-normal font-normal text-neutral-500">
                     {processedDescription}
                 </p>
+                <DaoBreadcrumbs path={daoPath} />
             </div>
         </DataList.Item>
     );

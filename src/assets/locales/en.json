@@ -2671,14 +2671,17 @@
         }
       },
       "daoSettingsInfo": {
+        "address": "Address",
+        "blockchain": "Blockchain",
         "chain": "Chain",
-        "ens": "ENS name",
-        "links": "Resources",
+        "ens": "ENS Name",
+        "links": "Links",
         "name": "Name",
         "notChangeable": "Not changeable",
         "readLess": "Read less",
         "readMore": "Read more",
-        "summary": "Description"
+        "summary": "Summary",
+        "type": "Type"
       },
       "daoSettingsPage": {
         "aside": {
@@ -2687,6 +2690,7 @@
         "main": {
           "automationAction": "Policy",
           "automationInfoTitle": "Automation",
+          "daoAction": "SubDAO",
           "governanceAction": "Process",
           "governanceInfoTitle": "Governance",
           "settingsInfoTitle": "DAO",
