@@ -1,7 +1,10 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { CreatePolicyDetailsDialog } from '../dialogs/createPolicyDetailsDialog';
-import { DispatchDialog } from '../dialogs/dispatchDialog';
-import { DispatchTransactionDialog } from '../dialogs/dispatchDialog/dispatchTransactionDialog';
+import {
+    DispatchDialog,
+    DispatchSimulationDialog,
+    DispatchTransactionDialog,
+} from '../dialogs/dispatchDialog';
 import { PreparePolicyDialog } from '../dialogs/preparePolicyDialog';
 import { RouterSelectorDialog } from '../dialogs/routerSelectorDialog';
 import { SetupStrategyDialog } from '../dialogs/setupStrategyDialog';
@@ -27,6 +30,10 @@ export const capitalFlowDialogsDefinitions: Record<
         size: 'lg',
     },
     [CapitalFlowDialogId.DISPATCH]: { Component: DispatchDialog, size: 'lg' },
+    [CapitalFlowDialogId.DISPATCH_SIMULATION]: {
+        Component: DispatchSimulationDialog,
+        size: 'lg',
+    },
     [CapitalFlowDialogId.DISPATCH_TRANSACTION]: {
         Component: DispatchTransactionDialog,
         size: 'lg',

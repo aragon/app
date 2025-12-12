@@ -1,3 +1,4 @@
+import type { IProcessedSimulation } from '@/modules/capitalFlow/utils/simulationTypes';
 import { apiVersionUtils } from '@/shared/utils/apiVersionUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import {
@@ -10,6 +11,7 @@ import type {
     IGetDaoParams,
     IGetDaoPermissionsParams,
     IGetDaoPoliciesParams,
+    ISimulateDispatchParams,
 } from './daoService.api';
 import type { IDao, IDaoPermission, IDaoPolicy, Network } from './domain';
 
@@ -27,6 +29,7 @@ class DaoService extends AragonBackendService {
         daoByEns: '/daos/:network/ens/:ens',
         daoPermissions: '/permissions/:network/:daoAddress',
         daoPolicies: '/policies/:network/:daoAddress',
+        simulateDispatch: '/simulations/:network/dispatch/:policyAddress',
     };
 
     // Build URLs dynamically based on environment
@@ -44,6 +47,11 @@ class DaoService extends AragonBackendService {
             ),
             daoPolicies: apiVersionUtils.buildVersionedUrl(
                 this.basePaths.daoPolicies,
+                { forceVersion: 'v2' },
+            ),
+            // Force v2 for dispatch simulation
+            simulateDispatch: apiVersionUtils.buildVersionedUrl(
+                this.basePaths.simulateDispatch,
                 { forceVersion: 'v2' },
             ),
         };
@@ -122,6 +130,21 @@ class DaoService extends AragonBackendService {
         const result = await this.request<IDaoPolicy[]>(
             this.urls.daoPolicies,
             params,
+        );
+        return result;
+    };
+
+    /**
+     * Simulate a dispatch operation and return processed summary
+     * with address mappings and grouped asset changes.
+     */
+    simulateDispatch = async (
+        params: ISimulateDispatchParams,
+    ): Promise<IProcessedSimulation> => {
+        const result = await this.request<IProcessedSimulation>(
+            this.urls.simulateDispatch,
+            params,
+            { method: 'POST' },
         );
         return result;
     };

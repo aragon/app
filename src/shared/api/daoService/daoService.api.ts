@@ -70,3 +70,40 @@ export interface IGetDaoPoliciesUrlParams {
 
 export interface IGetDaoPoliciesParams
     extends IRequestUrlParams<IGetDaoPoliciesUrlParams> {}
+
+// ============================================================================
+// Dispatch Simulation
+// ============================================================================
+
+export interface ISimulateDispatchUrlParams {
+    /**
+     * Network of the policy.
+     */
+    network: Network;
+    /**
+     * Address of the policy to simulate dispatch for.
+     */
+    policyAddress: string;
+}
+
+export interface ISimulateDispatchBody {
+    /**
+     * The wallet address initiating the dispatch.
+     */
+    from: string;
+    /**
+     * Optional encoded calldata, defaults to dispatch() selector.
+     */
+    data?: string;
+}
+
+export interface ISimulateDispatchParams {
+    /**
+     * URL parameters of the request.
+     */
+    urlParams: ISimulateDispatchUrlParams;
+    /**
+     * Body of the request.
+     */
+    body: ISimulateDispatchBody;
+}
