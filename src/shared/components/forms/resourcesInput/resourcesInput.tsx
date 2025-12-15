@@ -13,12 +13,13 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
     const fieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
 
     const { t } = useTranslations();
-    const { fields, append, remove } = useFieldArray<ResourcesInputBaseForm>({ name: fieldName });
+    const { fields, append, remove, replace } = useFieldArray<ResourcesInputBaseForm>({ name: fieldName });
 
     useEffect(() => {
-        if (defaultValue && fields?.length) {
-            append(defaultValue);
+        if (defaultValue) {
+            replace(defaultValue);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

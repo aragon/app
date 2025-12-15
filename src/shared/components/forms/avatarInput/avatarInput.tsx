@@ -1,7 +1,8 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { type IInputFileAvatarValue, InputFileAvatar } from '@aragon/gov-ui-kit';
-import { useWatch } from 'react-hook-form';
+import { useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import type { IAvatarInputProps } from './avatarInput.api';
 
 export type AvatarInputBaseForm = Record<string, IInputFileAvatarValue | undefined>;
@@ -21,8 +22,16 @@ export const AvatarInput: React.FC<IAvatarInputProps> = (props) => {
     } = props;
 
     const { t } = useTranslations();
+    const { setValue } = useFormContext();
 
     const fieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
+
+    useEffect(() => {
+        if (defaultValue) {
+            setValue(fieldName, defaultValue);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const { value, ...avatarField } = useFormField<AvatarInputBaseForm, typeof fieldName>(fieldName, {
         label: t('app.shared.avatarInput.label'),

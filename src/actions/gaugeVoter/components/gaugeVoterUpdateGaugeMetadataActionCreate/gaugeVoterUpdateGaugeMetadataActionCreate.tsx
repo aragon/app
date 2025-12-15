@@ -55,6 +55,11 @@ export const GaugeVoterUpdateGaugeMetadataActionCreate: React.FC<IGaugeVoterUpda
         setValue(selectedGaugeFieldName, gauge);
     };
 
+    const handleRemoveGauge = () => {
+        setSelectedGauge(undefined);
+        setValue(actionFieldName, {}); // Reset the state of previously selected gauge.
+    };
+
     const { value: selectedGauge, alert } = useFormField<Record<string, IGauge | undefined>, string>(
         selectedGaugeFieldName,
         {
@@ -125,7 +130,7 @@ export const GaugeVoterUpdateGaugeMetadataActionCreate: React.FC<IGaugeVoterUpda
             <GaugeVoterUpdateGaugeMetadataActionCreateForm
                 fieldPrefix={`${actionFieldName}.gaugeDetails`}
                 gauge={selectedGauge}
-                onRemoveGauge={() => setSelectedGauge(undefined)}
+                onRemoveGauge={handleRemoveGauge}
                 chainId={chainId}
             />
         );
