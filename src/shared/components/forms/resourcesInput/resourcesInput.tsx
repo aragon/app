@@ -1,5 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
+import { useEffect } from 'react';
 import { useFieldArray } from 'react-hook-form';
 import type { IResourcesInputProps, IResourcesInputResource } from './resourcesInput.api';
 import { ResourcesInputItem } from './resourcesInputItem';
@@ -7,12 +8,18 @@ import { ResourcesInputItem } from './resourcesInputItem';
 export type ResourcesInputBaseForm = Record<string, IResourcesInputResource[]>;
 
 export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
-    const { name, helpText, fieldPrefix } = props;
+    const { name, helpText, fieldPrefix, defaultValue } = props;
 
     const fieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
 
     const { t } = useTranslations();
     const { fields, append, remove } = useFieldArray<ResourcesInputBaseForm>({ name: fieldName });
+
+    useEffect(() => {
+        if (defaultValue && fields?.length) {
+            append(defaultValue);
+        }
+    }, []);
 
     return (
         <div className="flex flex-col gap-2 md:gap-3">

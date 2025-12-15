@@ -1,3 +1,5 @@
+import type { IResource } from '../../../api/daoService';
+
 export interface IResourcesInputProps {
     /**
      * The name of the field in the form.
@@ -11,6 +13,10 @@ export interface IResourcesInputProps {
      * The prefix of the field in the form.
      */
     fieldPrefix?: string;
+    /**
+     * Optional default value to init field with.
+     */
+    defaultValue?: IResource[];
 }
 
 export interface IResourcesInputResource {

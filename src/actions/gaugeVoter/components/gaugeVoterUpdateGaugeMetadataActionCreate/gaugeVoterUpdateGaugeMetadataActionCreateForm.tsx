@@ -5,6 +5,7 @@ import { AvatarInput } from '@/shared/components/forms/avatarInput';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { InputText, TextArea } from '@aragon/gov-ui-kit';
 import type { IGaugeVoterCreateGaugeFormData } from '../gaugeVoterCreateGaugeActionCreate';
 import { GaugeVoterGaugeListItem } from '../gaugeVoterGaugeListItem';
@@ -40,6 +41,9 @@ export const GaugeVoterUpdateGaugeMetadataActionCreateForm: React.FC<
     const { fieldPrefix, gauge, onRemoveGauge } = props;
     const { t } = useTranslations();
 
+    const { name, description, avatar, links: resources } = gauge;
+    const existingAvatar = { url: ipfsUtils.cidToSrc(avatar) };
+
     const { value: nameValue, ...nameFieldRest } = useFormField<IGaugeVoterUpdateGaugeMetadataFormData, 'name'>(
         'name',
         {
@@ -47,7 +51,7 @@ export const GaugeVoterUpdateGaugeMetadataActionCreateForm: React.FC<
             fieldPrefix,
             rules: { required: true, maxLength: nameMaxLength },
             trimOnBlur: true,
-            defaultValue: gauge.name ?? '',
+            defaultValue: name ?? '',
         },
     );
 
@@ -59,7 +63,7 @@ export const GaugeVoterUpdateGaugeMetadataActionCreateForm: React.FC<
         fieldPrefix,
         rules: { required: true, maxLength: descriptionMaxLength },
         trimOnBlur: true,
-        defaultValue: gauge.description ?? '',
+        defaultValue: description ?? '',
     });
 
     return (
@@ -71,7 +75,7 @@ export const GaugeVoterUpdateGaugeMetadataActionCreateForm: React.FC<
                 helpText={t('app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreateForm.name.helpText')}
                 {...nameFieldRest}
             />
-            <AvatarInput name="avatar" fieldPrefix={fieldPrefix} />
+            <AvatarInput name="avatar" fieldPrefix={fieldPrefix} defaultValue={existingAvatar} />
             <TextArea
                 helpText={t(
                     'app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreateForm.description.helpText',
@@ -84,6 +88,7 @@ export const GaugeVoterUpdateGaugeMetadataActionCreateForm: React.FC<
                 name="resources"
                 fieldPrefix={fieldPrefix}
                 helpText={t('app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreateForm.resources.helpText')}
+                defaultValue={resources}
             />
         </div>
     );

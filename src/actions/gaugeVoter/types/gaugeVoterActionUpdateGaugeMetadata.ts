@@ -1,6 +1,7 @@
 import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import type { IResource } from '@/shared/api/daoService';
 import type { IProposalAction } from '@aragon/gov-ui-kit';
+import type { IGaugeVoterCreateGaugeFormData } from '../components/gaugeVoterCreateGaugeActionCreate';
 import type { GaugeVoterActionType } from './enum/gaugeVoterActionType';
 
 export interface IGaugeVoterActionUpdateGaugeMetadata extends Omit<IProposalAction, 'type'> {
@@ -19,24 +20,7 @@ export interface IGaugeVoterActionUpdateGaugeMetadata extends Omit<IProposalActi
     /**
      * Updated gauge details collected from the action form in create phase.
      */
-    gaugeDetails?: {
-        /**
-         * Gauge name.
-         */
-        name: string;
-        /**
-         * Gauge description.
-         */
-        description: string;
-        /**
-         * Gauge avatar. File object for upload.
-         */
-        avatar?: { file: File };
-        /**
-         * Gauge related links.
-         */
-        resources?: IResource[];
-    };
+    gaugeDetails?: IGaugeVoterCreateGaugeFormData;
     /**
      * Gauge metadata returned in decoded actions by backend.
      */

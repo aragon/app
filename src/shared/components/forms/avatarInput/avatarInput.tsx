@@ -14,6 +14,7 @@ export const AvatarInput: React.FC<IAvatarInputProps> = (props) => {
         name,
         helpText,
         fieldPrefix,
+        defaultValue,
         maxFileSize = defaultMaxFileSize,
         maxDimension = defaultMaxDimension,
         isOptional = true,
@@ -28,6 +29,7 @@ export const AvatarInput: React.FC<IAvatarInputProps> = (props) => {
         rules: {
             validate: (value) => (value?.error ? `app.shared.avatarInput.error.${value.error}` : undefined),
         },
+        defaultValue,
     });
 
     // Watch the avatar field to properly update the InputFileAvatar component when its value changes

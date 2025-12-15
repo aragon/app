@@ -1,3 +1,5 @@
+import type { IInputFileAvatarValue } from '@aragon/gov-ui-kit';
+
 export interface IAvatarInputProps {
     /**
      * The name of the field in the form.
@@ -26,4 +28,8 @@ export interface IAvatarInputProps {
      * @default true
      */
     isOptional?: boolean;
+    /**
+     * Optional default value to init field with.
+     */
+    defaultValue?: IInputFileAvatarValue;
 }

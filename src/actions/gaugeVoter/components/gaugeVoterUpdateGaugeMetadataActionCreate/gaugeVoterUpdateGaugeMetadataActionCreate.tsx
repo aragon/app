@@ -88,11 +88,16 @@ export const GaugeVoterUpdateGaugeMetadataActionCreate: React.FC<IGaugeVoterUpda
 
             const { name, description, resources, avatar } = action.gaugeDetails;
             const proposedMetadata = { name, description, links: resources };
+
             let gaugeAvatar: string | undefined;
 
             if (avatar?.file != null) {
+                // Pin the avatar set on the form when the file property is set, meaning that the user changed the gauge avatar
                 const avatarResult = await pinFileAsync({ body: avatar.file });
                 gaugeAvatar = ipfsUtils.cidToUri(avatarResult.IpfsHash);
+            } else if (avatar?.url) {
+                // Set previous avatar URL if user did not change the gauge avatar and gauge already has an avatar
+                gaugeAvatar = ipfsUtils.srcToUri(avatar.url);
             }
 
             const metadata = gaugeAvatar ? { ...proposedMetadata, avatar: gaugeAvatar } : proposedMetadata;
