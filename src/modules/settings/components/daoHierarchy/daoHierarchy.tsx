@@ -28,7 +28,13 @@ export interface IDaoHierarchyProps {
 }
 
 interface IDaoInfoProps {
+    /**
+     * DAO or SubDAO object.
+     */
     dao: IDao | ISubDaoSummary;
+    /**
+     * Whether the DAO is the main DAO.
+     */
     isMainDao: boolean;
 }
 
@@ -134,7 +140,7 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
         return (
             <Accordion.Container isMulti={true} defaultValue={[dao.id]}>
                 <Accordion.Item value={dao.id}>
-                    <Accordion.ItemHeader className="!items-center">
+                    <Accordion.ItemHeader className="items-center">
                         <div className="flex w-full items-center gap-3">
                             <div className="flex min-w-0 flex-1 items-center gap-3">
                                 <DaoAvatar src={getDaoAvatar(dao)} name={dao.name} size="md" />
