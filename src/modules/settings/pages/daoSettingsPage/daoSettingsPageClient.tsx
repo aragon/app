@@ -179,6 +179,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                             <ProcessDataListItem
                                 key={process.uniqueId}
                                 process={process.meta}
+                                dao={dao}
                                 href={daoUtils.getDaoUrl(dao, `/settings/${process.meta.slug}`)}
                             />
                         ))}
