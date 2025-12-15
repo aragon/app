@@ -31,8 +31,8 @@
     "@reown/appkit": "^1.8.14",
     "@reown/appkit-adapter-wagmi": "^1.8.14",
     "@reown/walletkit": "^1.4.1",
-    "@sentry/core": "10.22.0",
-    "@sentry/nextjs": "^10.27.0",
+    "@sentry/core": "^10.29.0",
+    "@sentry/nextjs": "^10.29.0",
     "@tanstack/react-query": "^5.90.11",
     "@tanstack/react-query-devtools": "^5.91.1",
     "@walletconnect/core": "^2.23.0",
@@ -60,7 +60,7 @@
     "@changesets/changelog-github": "^0.5.2",
     "@changesets/cli": "^2.29.8",
     "@hookform/devtools": "^4.4.0",
-    "@next/bundle-analyzer": "^15.5.4",
+    "@next/bundle-analyzer": "^15.5.7",
     "@tailwindcss/postcss": "^4.1.17",
     "@tailwindcss/typography": "^0.5.19",
     "@testing-library/dom": "^10.4.1",
@@ -75,7 +75,7 @@
     "@walletconnect/types": "2.23.0",
     "cross-env": "^10.1.0",
     "eslint": "^9.39.1",
-    "eslint-config-next": "^15.5.4",
+    "eslint-config-next": "^15.5.7",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
@@ -96,7 +96,7 @@
     "ts-jest": "^29.4.6",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.2",
-    "vercel": "^48.12.0",
+    "vercel": "^48.12.1",
     "webpack": "^5.103.0"
   },
   "repository": {
@@ -116,7 +116,7 @@
   "engines": {
     "node": ">=22.0.0"
   },
-  "packageManager": "pnpm@10.23.0+sha512.21c4e5698002ade97e4efe8b8b4a89a8de3c85a37919f957e7a0f30f38fbc5bbdd05980ffe29179b2fb6e6e691242e098d945d1601772cad0fef5fb6411e2a4b",
+  "packageManager": "pnpm@10.26.0+sha512.3b3f6c725ebe712506c0ab1ad4133cf86b1f4b687effce62a9b38b4d72e3954242e643190fc51fa1642949c735f403debd44f5cb0edd657abe63a8b6a7e1e402",
   "pnpm": {
     "overrides": {
       "@reown/appkit": "^1.8.14",
