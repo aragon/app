@@ -1,3 +1,4 @@
+import { Network } from '@/shared/api/daoService';
 import { generateDao, generatePaginatedResponse } from '@/shared/testUtils';
 import { daoExplorerService } from './daoExplorerService';
 
@@ -10,7 +11,7 @@ describe('daoExplorer service', () => {
 
     it('getDaoList fetches a list of DAOs', async () => {
         const daos = [generateDao({ address: '0x123' }), generateDao({ address: '0x456' })];
-        const params = { queryParams: {} };
+        const params = { queryParams: { networks: [Network.ETHEREUM_MAINNET] } };
 
         requestSpy.mockResolvedValue(daos);
         const result = await daoExplorerService.getDaoList(params);

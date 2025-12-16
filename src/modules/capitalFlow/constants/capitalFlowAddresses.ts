@@ -1,0 +1,197 @@
+import { Network } from '@/shared/api/daoService';
+import type { Hex } from 'viem';
+
+export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
+    [Network.ARBITRUM_MAINNET]: {
+        // model factories
+        routerModelFactory: '0x0000000000000000000000000000000000000000',
+        omniModelFactory: '0x0000000000000000000000000000000000000000',
+        // source factories
+        routerSourceFactory: '0x0000000000000000000000000000000000000000',
+        claimerSourceFactory: '0x0000000000000000000000000000000000000000',
+        omniSourceFactory: '0x0000000000000000000000000000000000000000',
+        // plugin repos
+        routerPluginRepo: '0x0000000000000000000000000000000000000000',
+        claimerPluginRepo: '0x0000000000000000000000000000000000000000',
+        burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+    },
+    [Network.BASE_MAINNET]: {
+        // model factories
+        routerModelFactory: '0x0000000000000000000000000000000000000000',
+        omniModelFactory: '0x0000000000000000000000000000000000000000',
+        // source factories
+        routerSourceFactory: '0x0000000000000000000000000000000000000000',
+        claimerSourceFactory: '0x0000000000000000000000000000000000000000',
+        omniSourceFactory: '0x0000000000000000000000000000000000000000',
+        // plugin repos
+        routerPluginRepo: '0x0000000000000000000000000000000000000000',
+        claimerPluginRepo: '0x0000000000000000000000000000000000000000',
+        burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+    },
+    [Network.ETHEREUM_MAINNET]: {
+        // model factories
+        routerModelFactory: '0x0000000000000000000000000000000000000000',
+        omniModelFactory: '0x0000000000000000000000000000000000000000',
+        // source factories
+        routerSourceFactory: '0x0000000000000000000000000000000000000000',
+        claimerSourceFactory: '0x0000000000000000000000000000000000000000',
+        omniSourceFactory: '0x0000000000000000000000000000000000000000',
+        // plugin repos
+        routerPluginRepo: '0x0000000000000000000000000000000000000000',
+        claimerPluginRepo: '0x0000000000000000000000000000000000000000',
+        burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+    },
+    [Network.ETHEREUM_SEPOLIA]: {
+        // model factories
+        routerModelFactory: '0xDC092C9f4c5196De1ee7FeE3B8eea2A75a44f64d',
+        omniModelFactory: '0xF2eac445a73a5433248dFeF97FB6053842A0C6d3',
+        // source factories
+        routerSourceFactory: '0x2C52582d49D530e8C0973c07f5c2A3e688697E0C',
+        claimerSourceFactory: '0x1134703E2a6713c1bC43DF35A08d82A8A1e59b11',
+        omniSourceFactory: '0xEB9e27056cBfD6E1a22ee051a44787Cf2FBbe911',
+        // plugin repos
+        routerPluginRepo: '0x4bC521AE26F41ee92A5D5D07B104fb467502a8Ee',
+        claimerPluginRepo: '0x237440E03441D0F0Ca6e8163595DA4bB8c1625A7',
+        burnRouterPluginRepo: '0x918C92BcA068112ee294c46Ea7F96daa1414e6b8',
+        cowSwapRouterPluginRepo: '0x4647f76D043513ab46AF300c0B42Ed7de6A42912',
+        multiDispatchRouterPluginRepo: '0xAa1dD29e1e093C59708EDd8090878fF4f4b1Aa41',
+        uniswapRouterPluginRepo: '0x79EC0dc8416f49c0baFB23daB8aaD5C94BE02019',
+    },
+    [Network.POLYGON_MAINNET]: {
+        // model factories
+        routerModelFactory: '0x0000000000000000000000000000000000000000',
+        omniModelFactory: '0x0000000000000000000000000000000000000000',
+        // source factories
+        routerSourceFactory: '0x0000000000000000000000000000000000000000',
+        claimerSourceFactory: '0x0000000000000000000000000000000000000000',
+        omniSourceFactory: '0x0000000000000000000000000000000000000000',
+        // plugin repos
+        routerPluginRepo: '0x0000000000000000000000000000000000000000',
+        claimerPluginRepo: '0x0000000000000000000000000000000000000000',
+        burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+    },
+    [Network.ZKSYNC_MAINNET]: {
+        // model factories
+        routerModelFactory: '0x0000000000000000000000000000000000000000',
+        omniModelFactory: '0x0000000000000000000000000000000000000000',
+        // source factories
+        routerSourceFactory: '0x0000000000000000000000000000000000000000',
+        claimerSourceFactory: '0x0000000000000000000000000000000000000000',
+        omniSourceFactory: '0x0000000000000000000000000000000000000000',
+        // plugin repos
+        routerPluginRepo: '0x0000000000000000000000000000000000000000',
+        claimerPluginRepo: '0x0000000000000000000000000000000000000000',
+        burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+    },
+    [Network.ZKSYNC_SEPOLIA]: {
+        // model factories
+        routerModelFactory: '0x0000000000000000000000000000000000000000',
+        omniModelFactory: '0x0000000000000000000000000000000000000000',
+        // source factories
+        routerSourceFactory: '0x0000000000000000000000000000000000000000',
+        claimerSourceFactory: '0x0000000000000000000000000000000000000000',
+        omniSourceFactory: '0x0000000000000000000000000000000000000000',
+        // plugin repos
+        routerPluginRepo: '0x0000000000000000000000000000000000000000',
+        claimerPluginRepo: '0x0000000000000000000000000000000000000000',
+        burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+    },
+    [Network.PEAQ_MAINNET]: {
+        // model factories
+        routerModelFactory: '0x0000000000000000000000000000000000000000',
+        omniModelFactory: '0x0000000000000000000000000000000000000000',
+        // source factories
+        routerSourceFactory: '0x0000000000000000000000000000000000000000',
+        claimerSourceFactory: '0x0000000000000000000000000000000000000000',
+        omniSourceFactory: '0x0000000000000000000000000000000000000000',
+        // plugin repos
+        routerPluginRepo: '0x0000000000000000000000000000000000000000',
+        claimerPluginRepo: '0x0000000000000000000000000000000000000000',
+        burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+    },
+    [Network.OPTIMISM_MAINNET]: {
+        // model factories
+        routerModelFactory: '0x0000000000000000000000000000000000000000',
+        omniModelFactory: '0x0000000000000000000000000000000000000000',
+        // source factories
+        routerSourceFactory: '0x0000000000000000000000000000000000000000',
+        claimerSourceFactory: '0x0000000000000000000000000000000000000000',
+        omniSourceFactory: '0x0000000000000000000000000000000000000000',
+        // plugin repos
+        routerPluginRepo: '0x0000000000000000000000000000000000000000',
+        claimerPluginRepo: '0x0000000000000000000000000000000000000000',
+        burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+    },
+    [Network.CHILIZ_MAINNET]: {
+        // model factories
+        routerModelFactory: '0x0000000000000000000000000000000000000000',
+        omniModelFactory: '0x0000000000000000000000000000000000000000',
+        // source factories
+        routerSourceFactory: '0x0000000000000000000000000000000000000000',
+        claimerSourceFactory: '0x0000000000000000000000000000000000000000',
+        omniSourceFactory: '0x0000000000000000000000000000000000000000',
+        // plugin repos
+        routerPluginRepo: '0x0000000000000000000000000000000000000000',
+        claimerPluginRepo: '0x0000000000000000000000000000000000000000',
+        burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+    },
+    [Network.AVAX_MAINNET]: {
+        // model factories
+        routerModelFactory: '0x0000000000000000000000000000000000000000',
+        omniModelFactory: '0x0000000000000000000000000000000000000000',
+        // source factories
+        routerSourceFactory: '0x0000000000000000000000000000000000000000',
+        claimerSourceFactory: '0x0000000000000000000000000000000000000000',
+        omniSourceFactory: '0x0000000000000000000000000000000000000000',
+        // plugin repos
+        routerPluginRepo: '0x0000000000000000000000000000000000000000',
+        claimerPluginRepo: '0x0000000000000000000000000000000000000000',
+        burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+    },
+    [Network.KATANA_MAINNET]: {
+        // model factories
+        routerModelFactory: '0x0000000000000000000000000000000000000000',
+        omniModelFactory: '0x0000000000000000000000000000000000000000',
+        // source factories
+        routerSourceFactory: '0x0000000000000000000000000000000000000000',
+        claimerSourceFactory: '0x0000000000000000000000000000000000000000',
+        omniSourceFactory: '0x0000000000000000000000000000000000000000',
+        // plugin repos
+        routerPluginRepo: '0x0000000000000000000000000000000000000000',
+        claimerPluginRepo: '0x0000000000000000000000000000000000000000',
+        burnRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        cowSwapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        multiDispatchRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+        uniswapRouterPluginRepo: '0x0000000000000000000000000000000000000000',
+    },
+} as const;

@@ -1,3 +1,4 @@
+import { Network } from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import { generateDialogContext, generateReactQueryInfiniteResultSuccess } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
@@ -27,7 +28,7 @@ describe('<ExploreDaosPageClient /> component', () => {
 
     const createTestComponent = (props?: Partial<IExploreDaosPageClientProps>) => {
         const completeProps: IExploreDaosPageClientProps = {
-            initialParams: { queryParams: {} },
+            initialParams: { queryParams: { networks: [Network.ETHEREUM_MAINNET] } },
             ...props,
         };
 

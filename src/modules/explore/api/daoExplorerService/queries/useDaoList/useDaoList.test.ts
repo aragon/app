@@ -1,3 +1,4 @@
+import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper, generateDao, generatePaginatedResponse } from '@/shared/testUtils';
 import { renderHook, waitFor } from '@testing-library/react';
 import { daoExplorerService } from '../../daoExplorerService';
@@ -11,7 +12,7 @@ describe('useDaoList query', () => {
     });
 
     it('fetches a list of DAOs', async () => {
-        const params = {};
+        const params = { networks: [Network.ETHEREUM_MAINNET] };
         const daosResult = generatePaginatedResponse({ data: [generateDao()] });
         daoExplorerServiceSpy.mockResolvedValue(daosResult);
         const { result } = renderHook(() => useDaoList({ queryParams: params }), { wrapper: ReactQueryWrapper });

@@ -273,6 +273,319 @@
         "disconnect": "Disconnect"
       }
     },
+    "capitalFlow": {
+      "createPolicyDetailsDialog": {
+        "actionLabel": "Get started",
+        "description": "Create a capital flow policy to manage fund distribution and allocation.",
+        "steps": {
+          "configure": "Configure policy",
+          "describe": "Describe your policy"
+        },
+        "title": "Create new policy"
+      },
+      "createPolicyForm": {
+        "configure": {
+          "strategy": {
+            "details": {
+              "asset": "Token",
+              "edit": "Edit strategy",
+              "more": "More",
+              "notSet": "Not set yet",
+              "recipientsCount": "{{count}} recipients",
+              "recipientsEmpty": "Recipients will appear here once added.",
+              "recipientsTerm": "Recipients",
+              "remove": "Remove",
+              "routerCountPlural": "{{count}} routers",
+              "routerCountSingular": "{{count}} router",
+              "routerType": "Policy strategy",
+              "sourceVault": "Source vault",
+              "strategyTerm": "Strategy",
+              "streamCadence": "Stream cadence"
+            },
+            "emptyCard": {
+              "action": "Create strategy",
+              "description": "Define a strategy for publishing the new policy.",
+              "heading": "No strategy defined"
+            },
+            "helpText": "Create a new strategy to automate token distribution.",
+            "label": "Strategy"
+          }
+        },
+        "metadata": {
+          "description": {
+            "helpText": "Describe your policies’ purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
+            "label": "Description"
+          },
+          "name": {
+            "helpText": "Give the policy a name that it will be recognized by.",
+            "label": "Name"
+          },
+          "policyKey": {
+            "helpText": "The key is part of the unique identifier for policy of this type. Something like EIP would lead to EIP-1 and increment for each policy.",
+            "label": "Key"
+          },
+          "resources": {
+            "helpText": "Add any additional external resources that help members understand the policy."
+          }
+        }
+      },
+      "createPolicyPage": {
+        "finalStep": "Publish policy",
+        "steps": {
+          "CONFIGURE": {
+            "description": "Specify which policy you would like to use for this automation.",
+            "name": "Configure policy",
+            "title": "Configure policy"
+          },
+          "INTERVAL": {
+            "continuous": {
+              "description": "Dispatch every time",
+              "label": "Continuous"
+            },
+            "cooldown": {
+              "description": "Dispatch after a set period",
+              "duration": {
+                "error": "Cooldown duration must be greater than 0",
+                "label": "Cooldown duration"
+              },
+              "label": "Cooldown"
+            },
+            "description": "Specify the frequency at which a dispatch can be executed. Once executed, the dispatch can only be executed again after the defined period.",
+            "name": "Configure interval",
+            "title": "Configure interval"
+          },
+          "METADATA": {
+            "description": "Name and define your policy so that members understand what the automation does when executed.",
+            "name": "Describe your policy",
+            "title": "Describe your policy"
+          }
+        },
+        "submitLabel": "Publish policy"
+      },
+      "dispatchDialog": {
+        "backButton": "Back",
+        "contract": "Contract",
+        "description": "You can dispatch this policy by confirm the transactions using your connected wallet.",
+        "dispatchButton": "Dispatch",
+        "links": "Links",
+        "recipients": "To",
+        "recipientsCount": "{{count}} recipients",
+        "title": "Dispatch {{policyName}}",
+        "token": "Token"
+      },
+      "dispatchPanel": {
+        "description": "Execute eligible transactions that adhere to the organization's policies.",
+        "dispatchButton": "Dispatch",
+        "routingDescription": "Automatically routs assets from the treasury to one or more target addresses.",
+        "routingTitle": "Routing",
+        "title": "Automated transactions"
+      },
+      "dispatchTransactionDialog": {
+        "description": "To dispatch this router, confirm the onchain transaction in your wallet.",
+        "dispatchButton": "Dispatch",
+        "successButton": "Done",
+        "title": "Dispatch {{policyName}}"
+      },
+      "layoutWizardCreatePolicy": {
+        "name": "Create policy"
+      },
+      "preparePolicyDialog": {
+        "button": {
+          "submit": "Prepare installation"
+        },
+        "description": "To publish your capital flow policy, confirm the three onchain transactions in your wallet.",
+        "step": {
+          "PIN_METADATA": {
+            "errorLabel": "Unable to pin data on IPFS",
+            "label": "Pin data on IPFS"
+          }
+        },
+        "title": "Publish capital flow policy",
+        "transactionInfoTitleDeploy": "Prepare installation pt1",
+        "transactionInfoTitleInstall": "Prepare installation pt2"
+      },
+      "publishPolicyDialog": {
+        "admin": {
+          "button": {
+            "submit": "Finalize installation"
+          },
+          "description": "To publish your capital flow policy, confirm the two onchain transactions in your wallet.",
+          "title": "Publish capital flow policy",
+          "transactionInfoTitle": "Finalize installation"
+        },
+        "default": {
+          "button": {
+            "submit": "Propose policy"
+          },
+          "description": "To publish your capital flow policy, confirm the two onchain transactions in your wallet.",
+          "title": "Publish capital flow policy",
+          "transactionInfoTitle": "Propose policy"
+        }
+      },
+      "routerSelectorDialog": {
+        "description": "Execute transactions for the routers below.",
+        "title": "Dispatch",
+        "unnamedPolicy": "Unnamed Policy"
+      },
+      "setupStrategyDialog": {
+        "a11y": {
+          "description": "Create a new strategy for your capital flow policy"
+        },
+        "distributionBurn": {
+          "token": {
+            "helpText": "Choose the token to burn.",
+            "label": "Token"
+          }
+        },
+        "distributionDexSwap": {
+          "cowSwapSettlementAddress": {
+            "helpText": "The address of the CoW Swap settlement contract.",
+            "label": "CoW Swap settlement address",
+            "placeholder": "0x…"
+          },
+          "targetTokenAddress": {
+            "helpText": "The address of the token to swap to.",
+            "label": "Target token address",
+            "placeholder": "0x…"
+          },
+          "token": {
+            "helpText": "Choose the token to swap from.",
+            "label": "Token"
+          }
+        },
+        "distributionFixed": {
+          "token": {
+            "helpText": "Choose the token for this policy and specify the amount per dispatch.",
+            "label": "Token"
+          }
+        },
+        "distributionGauge": {
+          "gaugeVoterAddress": {
+            "helpText": "Specify the gauge plugin address for using it in this strategy.",
+            "label": "Gauge plugin",
+            "placeholder": "ENS or 0x…"
+          },
+          "token": {
+            "helpText": "Choose the token for this policy.",
+            "label": "Token"
+          }
+        },
+        "distributionMultiDispatch": {
+          "addRouter": "Router",
+          "addressLabel": "Address",
+          "counter": "{{current}}/{{max}}",
+          "helpText": "Add available routers and order them in your preferred sequence.",
+          "label": "Router",
+          "moveDown": "Move router down",
+          "moveUp": "Move router up",
+          "placeholder": "ENS or 0x…",
+          "positionCounter": "{{current}} of {{total}}",
+          "remove": "Remove router",
+          "validation": {
+            "atLeastOneRequired": "At least one router address is required."
+          }
+        },
+        "distributionRecipients": {
+          "addButton": "Recipients",
+          "distributeEvenly": "Distribute evenly",
+          "helpText": "Specify the recipients and the distribution ratio of tokens for each dispatch.",
+          "label": "Recipients"
+        },
+        "distributionStream": {
+          "epochPeriod": {
+            "day": "Per day",
+            "helpText": "Choose the timing to set up the distribution of tokens over time. This means determining how many tokens will be allocated to recipients at specific intervals.",
+            "hour": "Per hour",
+            "label": "Streamed amount per time",
+            "week": "Per week"
+          },
+          "token": {
+            "helpText": "Choose the token for this policy.",
+            "label": "Token"
+          }
+        },
+        "distributionUniswap": {
+          "targetTokenAddress": {
+            "helpText": "The address of the token to swap to.",
+            "label": "Target token address",
+            "placeholder": "0x…"
+          },
+          "token": {
+            "helpText": "Choose the token to swap from.",
+            "label": "Token"
+          },
+          "uniswapRouterAddress": {
+            "helpText": "The address of the Uniswap router contract.",
+            "label": "Uniswap router address",
+            "placeholder": "0x…"
+          }
+        },
+        "routerType": {
+          "BURN": {
+            "description": "Route an asset to the zero address or call its burn function.",
+            "label": "Burn"
+          },
+          "DEX_SWAP": {
+            "description": "Swap an asset on CoW Swap.",
+            "label": "Dex swap"
+          },
+          "FIXED": {
+            "description": "Transfer an available asset to recipients in a relative manner.",
+            "label": "Fixed ratio"
+          },
+          "GAUGE": {
+            "description": "Route an asset to recipients proportionally according a gauge vote.",
+            "label": "Gauge ratio"
+          },
+          "MULTI_DISPATCH": {
+            "description": "Choose several routers to dispatch them sequentially.",
+            "label": "Multi dispatch"
+          },
+          "STREAM": {
+            "description": "Transfer a fixed quantity of an available asset over time to recipients.",
+            "label": "Stream"
+          },
+          "UNISWAP": {
+            "description": "Swap an asset on Uniswap.",
+            "label": "Uniswap"
+          },
+          "helpText": "Select the policy type you want to set up and configure it below.",
+          "label": "Policy strategy"
+        },
+        "select": {
+          "capitalDistributor": {
+            "description": "Automate distribution to participants",
+            "label": "Capital distributor"
+          },
+          "capitalRouter": {
+            "description": "Automate transfers between DAOs",
+            "label": "Capital router"
+          },
+          "defiAdapter": {
+            "description": "Automate DeFi transactions",
+            "label": "DeFi adapter"
+          },
+          "disabled": {
+            "onRequest": "On request",
+            "soon": "Soon"
+          },
+          "type": {
+            "helpText": "Select the policy type you want to set up and configure it below.",
+            "label": "Type"
+          }
+        },
+        "sourceVault": {
+          "helpText": "This is the source vault from which the assets will be routed. Only DAOs with ROOT permission are eligible.",
+          "label": "Source vault",
+          "tags": {
+            "mainDao": "MainDAO",
+            "subDao": "SubDAO"
+          }
+        },
+        "submit": "Next",
+        "title": "Create strategy"
+      }
+    },
     "createDao": {
       "createDaoDetailsDialog": {
         "actionLabel": "Get started",
@@ -569,7 +882,6 @@
           "transactionInfoTitle": "Propose process"
         }
       },
-
       "setupBodyDialog": {
         "a11y": {
           "description": "Create a new voting body for your DAO"
@@ -826,7 +1138,15 @@
           "description": "There was an error loading the assets. Try again later.",
           "heading": "Error loading assets"
         },
+        "groupTab": "All assets",
         "searchPlaceholder": "Search assets..."
+      },
+      "assetListStats": {
+        "daos": "DAOs",
+        "note": "Aggregate treasury data across all SubDAOs coming soon.",
+        "subDaos": "SubDAOs",
+        "tokens": "Unique tokens",
+        "totalValueUsd": "Total value (USD)"
       },
       "assetSelectionDialog": {
         "a11y": {
@@ -839,7 +1159,8 @@
           "details": {
             "chain": "Chain",
             "title": "Details"
-          }
+          },
+          "summary": "All assets"
         },
         "main": {
           "title": "Assets"
@@ -850,7 +1171,8 @@
           "details": {
             "chain": "Chain",
             "title": "Details"
-          }
+          },
+          "summary": "All assets"
         },
         "main": {
           "title": "Transactions"
@@ -864,6 +1186,11 @@
         "vaultAddress": "Vault address",
         "vaultEns": "Vault ENS"
       },
+      "subDaoInfo": {
+        "chain": "Chain",
+        "description": "Description",
+        "pluginAddress": "Plugin address"
+      },
       "transactionList": {
         "emptyState": {
           "description": "This will show the DAO's onchain actions when available.",
@@ -873,7 +1200,22 @@
         "errorState": {
           "description": "There was an error loading the transactions. Try again later.",
           "heading": "Error loading transactions"
-        }
+        },
+        "groupTab": "All transactions"
+      },
+      "transactionListStats": {
+        "daos": "DAOs",
+        "lastActivity": "Last activity",
+        "subDaos": "SubDAOs",
+        "totalTransactions": "Total transactions"
+      },
+      "transactionSubDaoInfo": {
+        "address": "Address",
+        "chain": "Chain",
+        "description": "Description",
+        "links": "Resources",
+        "transactions": "Transactions",
+        "value": "Value"
       },
       "transferAssetForm": {
         "amount": {
@@ -920,6 +1262,28 @@
             "up": "Move up"
           },
           "loading": "Loading actions data"
+        },
+        "actionsImportExport": {
+          "downloadAsJSON": "Download as JSON",
+          "errors": {
+            "invalidAddress": "Invalid address format in action \"to\" field.",
+            "invalidData": "Invalid data format in action \"data\" field. Must be a hex string.",
+            "invalidFormat": "The uploaded data is incorrectly formatted. e.g. [{\"to\":\"\",\"value\": 0,\"data\": \"\"}]",
+            "invalidJSON": "The uploaded file is not a valid JSON.",
+            "invalidValue": "Invalid value in action \"value\" field. Must be a non-negative number."
+          },
+          "import": {
+            "accept": "Import actions",
+            "cancel": "Cancel",
+            "chooseFile": "Choose File",
+            "description": "Upload a JSON file containing actions to add to the proposal.",
+            "fileInputHelpText": "Must contain actions formatted: [{\"to\":\"\",\"value\": 0,\"data\": \"\"}]",
+            "fileInputLabel": "Select JSON file",
+            "noFileChosen": "No file chosen",
+            "successMessage": "Successfully imported {count} action(s)",
+            "title": "Import actions"
+          },
+          "importButton": "Upload"
         },
         "metadata": {
           "actions": {
@@ -1052,6 +1416,9 @@
         },
         "main": {
           "actions": {
+            "collapseAll": "Collapse all",
+            "downloadAsJSON": "Download as JSON",
+            "expandAll": "Expand all",
             "header": "Actions",
             "lastSimulationError": "There was an error getting the last simulation data. Please try again later.",
             "simulationError": "There was an error simulating the actions. Please try again later."
@@ -2381,20 +2748,26 @@
         }
       },
       "daoSettingsInfo": {
+        "address": "Address",
+        "blockchain": "Blockchain",
         "chain": "Chain",
-        "ens": "ENS name",
-        "links": "Resources",
+        "ens": "ENS Name",
+        "links": "Links",
         "name": "Name",
         "notChangeable": "Not changeable",
         "readLess": "Read less",
         "readMore": "Read more",
-        "summary": "Description"
+        "summary": "Summary",
+        "type": "Type"
       },
       "daoSettingsPage": {
         "aside": {
           "versionInfoTitle": "Contracts"
         },
         "main": {
+          "automationAction": "Policy",
+          "automationInfoTitle": "Automation",
+          "daoAction": "SubDAO",
           "governanceAction": "Process",
           "governanceInfoTitle": "Governance",
           "settingsInfoTitle": "DAO",
@@ -2568,6 +2941,10 @@
           "readLess": "Read less",
           "readMore": "Read more"
         }
+      },
+      "policyDataListItem": {
+        "defaultDescription": "No description",
+        "defaultName": "No name {{type}} policy"
       },
       "processDataListItem": {
         "defaultDescription": "No description"

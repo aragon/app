@@ -51,7 +51,7 @@ export interface IUseFormFieldOptions<TFieldValues extends FieldValues, TName ex
     /**
      * When false, skip sanitizing and pushing the blur event value back into the field.
      * Useful for non-primitive values controlled by custom inputs (e.g., composite addresses).
-     * @default true
+     * @default false
      */
     sanitizeOnBlur?: boolean;
 }

@@ -1,6 +1,5 @@
 import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
 import { generateAsset, generateToken } from '@/modules/finance/testUtils';
-import { Network } from '@/shared/api/daoService';
 import {
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
@@ -25,7 +24,7 @@ describe('useAssetListData hook', () => {
             totalRecords: balances.length,
         });
         const assetsResponse = generatePaginatedResponse({ data: balances, metadata: balancesMetadata });
-        const params = { queryParams: { daoAddress: 'dao-test', network: Network.POLYGON_MAINNET } };
+        const params = { queryParams: { daoId: 'polygon-mainnet-0xdao' } };
         useAssetListSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({ data: { pages: [assetsResponse], pageParams: [] } }),
         );
@@ -43,14 +42,14 @@ describe('useAssetListData hook', () => {
 
     it('returns error state if fetching assets fails', () => {
         useAssetListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error('error') }));
-        const { result } = renderHook(() => useAssetListData({ queryParams: { address: '' } }));
+        const { result } = renderHook(() => useAssetListData({ queryParams: { daoId: 'test-dao' } }));
         expect(result.current.state).toEqual('error');
     });
 
     it('returns the pageSize set as hook parameter when data is loading', () => {
         useAssetListSpy.mockReturnValue(generateReactQueryInfiniteResultLoading());
         const pageSize = 2;
-        const { result } = renderHook(() => useAssetListData({ queryParams: { pageSize } }));
+        const { result } = renderHook(() => useAssetListData({ queryParams: { pageSize, daoId: 'test-dao' } }));
 
         expect(result.current.pageSize).toEqual(pageSize);
     });

@@ -68,6 +68,10 @@ export interface IAssetInputProps {
      */
     hideAmountLabel?: boolean;
     /**
+     * Hides the amount field when set to true. Show only asset selector.
+     */
+    hideAmount?: boolean;
+    /**
      * Minimum value for the amount field.
      */
     minAmount?: number;
@@ -87,6 +91,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         disableAssetField,
         hideMax,
         hideAmountLabel,
+        hideAmount,
         minAmount,
         percentageSelection,
     } = props;
@@ -109,12 +114,14 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         ...amountField
     } = useFormField<IAssetInputFormData, 'amount'>('amount', {
         label: t('app.finance.transferAssetForm.amount.label'),
-        rules: {
-            required: true,
-            max: assetField.value?.amount,
-            min: minAmount,
-            validate: (value) => parseFloat(value ?? '') > 0,
-        },
+        rules: hideAmount
+            ? undefined
+            : {
+                  required: true,
+                  max: assetField.value?.amount,
+                  min: minAmount,
+                  validate: (value) => parseFloat(value ?? '') > 0,
+              },
         fieldPrefix,
     });
 
@@ -200,7 +207,25 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         ? formatterUtils.formatNumber(amountValue, { format: NumberFormat.FIAT_TOTAL_SHORT })
         : `$0.00`;
 
-    return (
+    const renderAssetButton = (size: 'md' | 'sm' = 'sm') =>
+        disableAssetField ? (
+            <AssetInputToken token={assetField.value?.token} className="cursor-default px-2" />
+        ) : (
+            <Button
+                variant="tertiary"
+                size={size}
+                onClick={handleOpenDialog}
+                onMouseDown={handleSelectMouseDown}
+                iconRight={IconType.CHEVRON_DOWN}
+                className="shrink-0"
+            >
+                <AssetInputToken token={assetField.value?.token} />
+            </Button>
+        );
+
+    return hideAmount ? (
+        <div>{renderAssetButton('md')}</div>
+    ) : (
         <div className="flex flex-col gap-y-3">
             <InputContainer
                 id={inputId}
@@ -208,21 +233,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                 label={hideAmountLabel ? undefined : amountLabel}
                 {...amountField}
             >
-                {!disableAssetField && (
-                    <Button
-                        variant="tertiary"
-                        size="sm"
-                        onClick={handleOpenDialog}
-                        onMouseDown={handleSelectMouseDown}
-                        iconRight={IconType.CHEVRON_DOWN}
-                        className="shrink-0"
-                    >
-                        <AssetInputToken token={assetField.value?.token} />
-                    </Button>
-                )}
-                {disableAssetField && (
-                    <AssetInputToken token={assetField.value?.token} className="cursor-default px-2" />
-                )}
+                {renderAssetButton()}
                 <input
                     type="number"
                     placeholder="0"
