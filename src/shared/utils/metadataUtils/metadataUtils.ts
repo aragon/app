@@ -47,20 +47,23 @@ class MetadataUtils {
             title: this.defaultTitle,
             description: this.defaultDescription,
             siteName: this.defaultSiteName,
-            images: [{ url: this.defaultImage, width: 1200, height: 630, alt: 'Aragon Logo' }],
+            images: [{ url: `${this.baseUrl}${this.defaultImage}`, width: 1200, height: 630, alt: 'Aragon Logo' }],
         },
         twitter: {
             card: 'summary_large_image',
             site: '@aragonproject',
             title: this.defaultTitle,
             description: this.defaultDescription,
-            images: [this.defaultImage],
+            images: [`${this.baseUrl}${this.defaultImage}`],
         },
     });
 
     buildMetadata = (params: IBuildMetadataParams): Metadata => {
         const { title, description, siteName = this.defaultSiteName, image, type = 'website' } = params;
-        const imageArray = image ? [image] : undefined;
+        // Ensure images are absolute URLs
+        const imageArray = image
+            ? [image.startsWith('http') ? image : `${this.baseUrl}${image}`]
+            : undefined;
 
         return {
             title,
