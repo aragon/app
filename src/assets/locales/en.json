@@ -115,7 +115,7 @@
         "gaugeVoterCreateGaugeActionDetails": {
           "avatarTerm": "Logo",
           "descriptionTerm": "Description",
-          "gaugeAddressTerm": "Gauge address",
+          "gaugeAddressTerm": "Address",
           "nameTerm": "Name",
           "resourcesTerm": "Links"
         },
@@ -164,7 +164,7 @@
         "gaugeVoterUpdateGaugeMetadataActionDetails": {
           "avatarTerm": "Logo",
           "descriptionTerm": "Description",
-          "gaugeAddressTerm": "Gauge address",
+          "gaugeAddressTerm": "Address",
           "nameTerm": "Name",
           "notFound": {
             "description": "We couldn't find this gauge.",
