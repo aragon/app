@@ -71,7 +71,12 @@ class ActionComposerUtils {
             };
         }
 
-        const result = permissions.reduce(
+        // Deduplicate permissions by permissionId
+        const uniquePermissions = Array.from(
+            new Map(permissions.map((permission) => [permission.permissionId, permission])).values(),
+        );
+
+        const result = uniquePermissions.reduce(
             (acc, cur) => {
                 const { items, group, components } = actionViewRegistry.getActionsForPermissionId(
                     cur.permissionId,
@@ -89,7 +94,7 @@ class ActionComposerUtils {
                 items: [] as IActionComposerInputItem[],
                 groups: [] as IAutocompleteInputGroup[],
                 components: {} as Record<string, ActionViewCreateComponent>,
-            }, // Removed the extra closing brace
+            },
         );
 
         return result;
