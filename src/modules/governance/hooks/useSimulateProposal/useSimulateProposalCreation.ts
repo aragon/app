@@ -1,6 +1,6 @@
+import { useAccount, useCall } from 'wagmi';
 import type { IDaoPlugin, Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { useAccount, useCall } from 'wagmi';
 import { publishProposalDialogUtils } from '../../dialogs/publishProposalDialog/publishProposalDialogUtils';
 
 export interface IUseSimulateProposalCreationParams {

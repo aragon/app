@@ -20,9 +20,7 @@ class MockTranslations {
 
         beforeEach(() => {
             if (this.shouldMockTranslations) {
-                useTranslationsSpy = jest
-                    .spyOn(TranslationsProvider, 'useTranslations')
-                    .mockReturnValue({ t: this.tMock });
+                useTranslationsSpy = jest.spyOn(TranslationsProvider, 'useTranslations').mockReturnValue({ t: this.tMock });
             }
         });
 

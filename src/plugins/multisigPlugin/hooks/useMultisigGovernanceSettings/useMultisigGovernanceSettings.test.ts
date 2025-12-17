@@ -1,12 +1,8 @@
+import { renderHook } from '@testing-library/react';
 import { generateMultisigPluginSettings } from '@/plugins/multisigPlugin/testUtils';
 import { multisigSettingsUtils } from '@/plugins/multisigPlugin/utils/multisigSettingsUtils';
-import {
-    generatePaginatedResponse,
-    generateReactQueryInfiniteResultSuccess,
-    ReactQueryWrapper,
-} from '@/shared/testUtils';
+import { generatePaginatedResponse, generateReactQueryInfiniteResultSuccess, ReactQueryWrapper } from '@/shared/testUtils';
 import { mockTranslations } from '@/test/utils';
-import { renderHook } from '@testing-library/react';
 import * as governanceService from '../../../../modules/governance/api/governanceService';
 import { useMultisigGovernanceSettings } from './useMultisigGovernanceSettings';
 
@@ -15,7 +11,12 @@ describe('useMultisigGovernanceSettings', () => {
     const parseSettingsSpy = jest.spyOn(multisigSettingsUtils, 'parseSettings');
 
     beforeEach(() => {
-        const defaultMemberResult = { data: { pages: [generatePaginatedResponse({ data: [] })], pageParams: [] } };
+        const defaultMemberResult = {
+            data: {
+                pages: [generatePaginatedResponse({ data: [] })],
+                pageParams: [],
+            },
+        };
         useMemberListSpy.mockReturnValue(generateReactQueryInfiniteResultSuccess(defaultMemberResult));
     });
 
@@ -30,14 +31,33 @@ describe('useMultisigGovernanceSettings', () => {
         const mockParsedSettings = [{ term: 'mockTerm', definition: 'mockDefinition' }];
         parseSettingsSpy.mockReturnValue(mockParsedSettings);
 
-        const membersMetadata = { totalRecords: membersCount, page: 0, pageSize: 20, totalPages: 2 };
+        const membersMetadata = {
+            totalRecords: membersCount,
+            page: 0,
+            pageSize: 20,
+            totalPages: 2,
+        };
         const membersResult = {
-            data: { pages: [generatePaginatedResponse({ data: [], metadata: membersMetadata })], pageParams: [] },
+            data: {
+                pages: [
+                    generatePaginatedResponse({
+                        data: [],
+                        metadata: membersMetadata,
+                    }),
+                ],
+                pageParams: [],
+            },
         };
         useMemberListSpy.mockReturnValue(generateReactQueryInfiniteResultSuccess(membersResult));
 
-        const params = { daoId: 'multisig-test-id', pluginAddress: '0x123', settings: mockSettings };
-        const { result } = renderHook(() => useMultisigGovernanceSettings(params), { wrapper: ReactQueryWrapper });
+        const params = {
+            daoId: 'multisig-test-id',
+            pluginAddress: '0x123',
+            settings: mockSettings,
+        };
+        const { result } = renderHook(() => useMultisigGovernanceSettings(params), {
+            wrapper: ReactQueryWrapper,
+        });
 
         expect(parseSettingsSpy).toHaveBeenCalledWith({
             settings: mockSettings,

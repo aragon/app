@@ -1,3 +1,7 @@
+import { AddressInput, addressUtils, Button, type IAddressInputResolvedValue, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
+import { useEffect, useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useAccount } from 'wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenDelegationDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenDelegationDialog';
@@ -7,22 +11,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useFormField } from '@/shared/hooks/useFormField';
-import {
-    AddressInput,
-    addressUtils,
-    Button,
-    RadioCard,
-    RadioGroup,
-    type IAddressInputResolvedValue,
-} from '@aragon/gov-ui-kit';
-import { useEffect, useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useAccount } from 'wagmi';
-import {
-    TokenDelegationSelection,
-    type ITokenDelegationFormData,
-    type ITokenDelegationFormProps,
-} from './tokenDelegationForm.api';
+import { type ITokenDelegationFormData, type ITokenDelegationFormProps, TokenDelegationSelection } from './tokenDelegationForm.api';
 
 export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) => {
     const { plugin, daoId } = props;
@@ -72,7 +61,10 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
         ...delegateField
     } = useFormField<ITokenDelegationFormData, 'delegate'>('delegate', {
         label: t('app.plugins.token.tokenDelegationForm.delegate.label'),
-        rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
+        rules: {
+            required: true,
+            validate: (value) => addressUtils.isAddress(value),
+        },
         control,
         sanitizeOnBlur: false,
     });
@@ -102,7 +94,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
 
     const isDelegateUnchanged = useMemo(
         () => addressUtils.isAddressEqual(delegate, currentDelegate ?? undefined),
-        [delegate, currentDelegate],
+        [delegate, currentDelegate]
     );
 
     // disable submit button if delegate address has not been changed, but also, disable while isMemberLoading to prevent
@@ -113,33 +105,33 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
             <RadioGroup onValueChange={handleSelectionChange} value={selectionValue} {...selectionField}>
                 <RadioCard
-                    value={TokenDelegationSelection.YOURSELF}
                     label={t('app.plugins.token.tokenDelegationForm.selection.option.self')}
+                    value={TokenDelegationSelection.YOURSELF}
                 />
                 <RadioCard
-                    value={TokenDelegationSelection.OTHER}
                     label={t('app.plugins.token.tokenDelegationForm.selection.option.other')}
+                    value={TokenDelegationSelection.OTHER}
                 />
             </RadioGroup>
             <AddressInput
+                chainId={chainId}
+                disabled={selectionValue === TokenDelegationSelection.YOURSELF}
                 helpText={t('app.plugins.token.tokenDelegationForm.delegate.helpText')}
+                onAccept={handleDelegateChange}
+                onChange={setDelegateInput}
                 placeholder={t('app.plugins.token.tokenDelegationForm.delegate.placeholder')}
                 value={delegateInput}
-                onChange={setDelegateInput}
-                onAccept={handleDelegateChange}
-                disabled={selectionValue === TokenDelegationSelection.YOURSELF}
-                chainId={chainId}
                 {...delegateField}
             />
             <div className="flex flex-col gap-3">
                 <Button
-                    type={isConnected ? 'submit' : undefined}
-                    onClick={isConnected ? undefined : () => walletGuard()}
                     disabled={isSubmitDisabled}
+                    onClick={isConnected ? undefined : () => walletGuard()}
+                    type={isConnected ? 'submit' : undefined}
                 >
                     {t('app.plugins.token.tokenDelegationForm.submit')}
                 </Button>
-                <p className="text-center text-sm leading-normal font-normal text-neutral-500">
+                <p className="text-center font-normal text-neutral-500 text-sm leading-normal">
                     {t('app.plugins.token.tokenDelegationForm.info')}
                 </p>
             </div>

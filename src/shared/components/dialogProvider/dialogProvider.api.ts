@@ -27,8 +27,7 @@ export interface IDialogLocationOptions<TParams extends DialogComponentProps = D
     stack?: boolean;
 }
 
-export interface IDialogLocation<TParams extends DialogComponentProps = DialogComponentProps>
-    extends IDialogLocationOptions<TParams> {
+export interface IDialogLocation<TParams extends DialogComponentProps = DialogComponentProps> extends IDialogLocationOptions<TParams> {
     /**
      * ID of the dialog.
      */

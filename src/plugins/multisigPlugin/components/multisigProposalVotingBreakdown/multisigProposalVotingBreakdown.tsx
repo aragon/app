@@ -24,10 +24,10 @@ export const MultisigProposalVotingBreakdown: React.FC<IMultisigProposalVotingBr
 
     return (
         <ProposalVoting.BreakdownMultisig
-            isVeto={isVeto}
             approvalsAmount={proposal.metrics.totalVotes}
-            minApprovals={proposal.settings.minApprovals}
+            isVeto={isVeto}
             membersCount={Number(proposal.settings.historicalMembersCount)}
+            minApprovals={proposal.settings.minApprovals}
         >
             {children}
         </ProposalVoting.BreakdownMultisig>

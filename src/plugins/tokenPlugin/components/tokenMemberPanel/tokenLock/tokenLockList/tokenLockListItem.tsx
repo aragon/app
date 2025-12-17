@@ -1,10 +1,3 @@
-import type { ITokenExitQueueWithdrawDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenExitQueueWithdrawDialog/tokenExitQueueWithdrawDialog.api';
-import { useTokenExitQueueFeeData } from '@/plugins/tokenPlugin/hooks/useTokenExitQueueFeeData';
-import { tokenExitQueueFeeUtils } from '@/plugins/tokenPlugin/utils/tokenExitQueueFeeUtils';
-import type { IDao } from '@/shared/api/daoService';
-import { useDialogContext } from '@/shared/components/dialogProvider';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     Avatar,
     Button,
@@ -19,14 +12,21 @@ import {
 } from '@aragon/gov-ui-kit';
 import NumberFlow from '@number-flow/react';
 import { DateTime } from 'luxon';
-import { formatUnits, zeroAddress, type Hex } from 'viem';
+import { formatUnits, type Hex, zeroAddress } from 'viem';
+import type { ITokenExitQueueWithdrawDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenExitQueueWithdrawDialog/tokenExitQueueWithdrawDialog.api';
+import { useTokenExitQueueFeeData } from '@/plugins/tokenPlugin/hooks/useTokenExitQueueFeeData';
+import { tokenExitQueueFeeUtils } from '@/plugins/tokenPlugin/utils/tokenExitQueueFeeUtils';
+import type { IDao } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type { IMemberLock } from '../../../../api/tokenService';
 import { TokenPluginDialogId } from '../../../../constants/tokenPluginDialogId';
 import type { ITokenApproveNftDialogParams } from '../../../../dialogs/tokenApproveNftDialog';
 import type { ITokenLockUnlockDialogParams } from '../../../../dialogs/tokenLockUnlockDialog';
 import type { ITokenPlugin } from '../../../../types';
 import { useCheckNftAllowance } from '../../hooks/useCheckNftAllowance';
-import { tokenLockUtils, type TokenLockStatus } from '../tokenLockUtils';
+import { type TokenLockStatus, tokenLockUtils } from '../tokenLockUtils';
 
 /**
  * Props for the TokenLockListItem component.
@@ -93,22 +93,21 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
             : null;
 
     const nowSeconds = DateTime.now().toSeconds();
-    const secondsUntilMinCooldown =
-        minCooldownTimestampPreCheck != null ? minCooldownTimestampPreCheck - nowSeconds : null;
+    const secondsUntilMinCooldown = minCooldownTimestampPreCheck != null ? minCooldownTimestampPreCheck - nowSeconds : null;
 
     const getRefetchInterval = () => {
         if (baseStatus !== 'cooldown') {
-            return undefined;
+            return;
         }
         if (secondsUntilMinCooldown == null) {
             return 10_000;
         }
 
         if (secondsUntilMinCooldown <= 30) {
-            return 1_000;
+            return 1000;
         }
         if (secondsUntilMinCooldown <= 120) {
-            return 5_000;
+            return 5000;
         }
         return 10_000;
     };
@@ -132,7 +131,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const minCooldownTimestamp =
         effectiveQueuedAt != null && effectiveMinCooldown != null ? effectiveQueuedAt + effectiveMinCooldown : null;
 
-    const status: TokenLockStatus = !lock.lockExit.status ? 'active' : canExit ? 'available' : 'cooldown';
+    const status: TokenLockStatus = lock.lockExit.status ? (canExit ? 'available' : 'cooldown') : 'active';
 
     const openViewLocksDialog = () => open(TokenPluginDialogId.VIEW_LOCKS, { params: { dao, plugin } });
 
@@ -144,7 +143,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const handleUnlock = () => {
         const dialogProps = {
             action: 'unlock' as const,
-            dao: dao,
+            dao,
             escrowContract: escrowAddress,
             network: dao.network,
             token,
@@ -164,8 +163,13 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                 translationNamespace: 'UNLOCK',
                 onClose: openViewLocksDialog,
                 onSuccess: () => {
-                    const unlockParams: ITokenLockUnlockDialogParams = { ...dialogProps, showTransactionInfo: true };
-                    open(TokenPluginDialogId.LOCK_UNLOCK, { params: unlockParams });
+                    const unlockParams: ITokenLockUnlockDialogParams = {
+                        ...dialogProps,
+                        showTransactionInfo: true,
+                    };
+                    open(TokenPluginDialogId.LOCK_UNLOCK, {
+                        params: unlockParams,
+                    });
                 },
                 transactionInfo: {
                     title: t('app.plugins.token.tokenLockList.item.approveTransactionInfoTitle', {
@@ -177,7 +181,10 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
             };
             open(TokenPluginDialogId.APPROVE_NFT, { params: approveParams });
         } else {
-            const unlockParams: ITokenLockUnlockDialogParams = { ...dialogProps, showTransactionInfo: false };
+            const unlockParams: ITokenLockUnlockDialogParams = {
+                ...dialogProps,
+                showTransactionInfo: false,
+            };
             open(TokenPluginDialogId.LOCK_UNLOCK, { params: unlockParams });
         }
     };
@@ -202,11 +209,13 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                 onBack: openViewLocksDialog,
                 onSuccess: handleActionSuccess,
             };
-            open(TokenPluginDialogId.EXIT_QUEUE_WITHDRAW_FEE, { params: dialogParams });
+            open(TokenPluginDialogId.EXIT_QUEUE_WITHDRAW_FEE, {
+                params: dialogParams,
+            });
         } else {
             const dialogParams: ITokenLockUnlockDialogParams = {
                 action: 'withdraw',
-                dao: dao,
+                dao,
                 escrowContract: escrowAddress,
                 token,
                 tokenId: BigInt(lock.tokenId),
@@ -221,7 +230,9 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
 
     const minLockTime = epochStartAt + (votingEscrow?.minLockTime ?? 0);
     const canUnlock = nowSeconds > minLockTime;
-    const formattedMinLock = formatterUtils.formatDate(minLockTime * 1000, { format: DateFormat.DURATION });
+    const formattedMinLock = formatterUtils.formatDate(minLockTime * 1000, {
+        format: DateFormat.DURATION,
+    });
 
     const parsedLockedAmount = formatUnits(BigInt(amount), token.decimals);
     const formattedLockedAmount = formatterUtils.formatNumber(parsedLockedAmount, {
@@ -230,46 +241,46 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
 
     const multiplier = tokenLockUtils.getMultiplier(lock, plugin.settings);
     const formattedMultiplier =
-        formatterUtils.formatNumber(multiplier.toString(), { format: NumberFormat.GENERIC_SHORT }) ?? '';
+        formatterUtils.formatNumber(multiplier.toString(), {
+            format: NumberFormat.GENERIC_SHORT,
+        }) ?? '';
 
     return (
         <DataList.Item className="flex flex-col gap-4 py-4 md:py-6">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 md:gap-4">
-                    <Avatar src={token.logo} size="md" className="shrink-0" />
+                    <Avatar className="shrink-0" size="md" src={token.logo} />
                     <Heading size="h4">ID: {lock.tokenId}</Heading>
                 </div>
 
-                <Tag
-                    label={t(`app.plugins.token.tokenLockList.item.statusLabel.${status}`)}
-                    variant={statusToVariant[status]}
-                />
+                <Tag label={t(`app.plugins.token.tokenLockList.item.statusLabel.${status}`)} variant={statusToVariant[status]} />
             </div>
             <hr className="border-neutral-100" />
-            <div className="grid grid-cols-3 gap-4 text-base leading-tight text-neutral-800 md:text-lg">
+            <div className="grid grid-cols-3 gap-4 text-base text-neutral-800 leading-tight md:text-lg">
                 <div className="flex flex-col">
-                    <div className="text-sm text-neutral-500 md:text-base">
-                        {t('app.plugins.token.tokenLockList.item.metrics.locked')}
-                    </div>
+                    <div className="text-neutral-500 text-sm md:text-base">{t('app.plugins.token.tokenLockList.item.metrics.locked')}</div>
                     <div className="truncate">{formattedLockedAmount}</div>
                 </div>
                 <div className="flex flex-col">
-                    <div className="text-sm text-neutral-500 md:text-base">
+                    <div className="text-neutral-500 text-sm md:text-base">
                         {t('app.plugins.token.tokenLockList.item.metrics.multiplier')}
                     </div>
                     <div className="truncate">{formattedMultiplier ? `${formattedMultiplier}x` : '-'}</div>
                 </div>
                 <div className="flex flex-col">
-                    <div className="text-sm text-neutral-500 md:text-base">
+                    <div className="text-neutral-500 text-sm md:text-base">
                         {t('app.plugins.token.tokenLockList.item.metrics.votingPower')}
                     </div>
                     {status === 'active' && (
                         <Rerender>
                             {() => (
                                 <NumberFlow
-                                    value={parseFloat(tokenLockUtils.getLockVotingPower(lock, plugin.settings))}
-                                    format={{ notation: 'compact', minimumFractionDigits: 4 }}
+                                    format={{
+                                        notation: 'compact',
+                                        minimumFractionDigits: 4,
+                                    }}
                                     trend={-1}
+                                    value={Number.parseFloat(tokenLockUtils.getLockVotingPower(lock, plugin.settings))}
                                 />
                             )}
                         </Rerender>
@@ -280,17 +291,13 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
             <div className="flex flex-col items-center gap-3 md:flex-row md:gap-4">
                 {status === 'active' && (
                     <>
-                        <Button
-                            className="w-full md:w-auto"
-                            variant="secondary"
-                            size="md"
-                            disabled={!canUnlock}
-                            onClick={handleUnlock}
-                        >
-                            {t(`app.plugins.token.tokenLockList.item.actions.unlock`, { symbol: token.symbol })}
+                        <Button className="w-full md:w-auto" disabled={!canUnlock} onClick={handleUnlock} size="md" variant="secondary">
+                            {t('app.plugins.token.tokenLockList.item.actions.unlock', {
+                                symbol: token.symbol,
+                            })}
                         </Button>
                         {!canUnlock && (
-                            <p className="text-sm leading-normal text-neutral-500">
+                            <p className="text-neutral-500 text-sm leading-normal">
                                 {formattedMinLock} {t('app.plugins.token.tokenLockList.item.minLockTimeLeftSuffix')}
                             </p>
                         )}
@@ -301,16 +308,18 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                     <>
                         <Button
                             className="w-full md:w-auto"
-                            variant="tertiary"
-                            size="md"
                             disabled={status === 'cooldown'}
                             onClick={status === 'cooldown' ? undefined : handleWithdraw}
+                            size="md"
+                            variant="tertiary"
                         >
-                            {t(`app.plugins.token.tokenLockList.item.actions.withdraw`, { symbol: token.symbol })}
+                            {t('app.plugins.token.tokenLockList.item.actions.withdraw', {
+                                symbol: token.symbol,
+                            })}
                         </Button>
 
                         {status === 'cooldown' && !isFeeDataLoading && (
-                            <Rerender intervalDuration={60000}>
+                            <Rerender intervalDuration={60_000}>
                                 {() => {
                                     const formattedMinCooldownDate =
                                         minCooldownTimestamp != null
@@ -320,9 +329,8 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                                             : undefined;
 
                                     return (
-                                        <p className="text-sm leading-normal text-neutral-500">
-                                            {formattedMinCooldownDate}{' '}
-                                            {t('app.plugins.token.tokenLockList.item.withdrawTimeLeftSuffix')}
+                                        <p className="text-neutral-500 text-sm leading-normal">
+                                            {formattedMinCooldownDate} {t('app.plugins.token.tokenLockList.item.withdrawTimeLeftSuffix')}
                                         </p>
                                     );
                                 }}

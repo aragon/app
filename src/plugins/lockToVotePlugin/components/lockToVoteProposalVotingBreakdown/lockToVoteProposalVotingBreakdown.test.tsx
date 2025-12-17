@@ -4,10 +4,7 @@ import { VoteOption } from '../../../tokenPlugin/types';
 import { generateLockToVotePluginSettings } from '../../testUtils/generators/lockToVotePluginSettings';
 import { generateLockToVotePluginSettingsToken } from '../../testUtils/generators/lockToVotePluginSettingsToken';
 import { generateLockToVoteProposal } from '../../testUtils/generators/lockToVoteProposal';
-import {
-    LockToVoteProposalVotingBreakdown,
-    type ILockToVoteProposalVotingBreakdownProps,
-} from './lockToVoteProposalVotingBreakdown';
+import { type ILockToVoteProposalVotingBreakdownProps, LockToVoteProposalVotingBreakdown } from './lockToVoteProposalVotingBreakdown';
 
 describe('<LockToVoteProposalVotingBreakdown /> component', () => {
     const createTestComponent = (props?: Partial<ILockToVoteProposalVotingBreakdownProps>) => {
@@ -32,15 +29,22 @@ describe('<LockToVoteProposalVotingBreakdown /> component', () => {
 
     it('correctly displays the breakdown of the token proposal', () => {
         const settings = generateLockToVotePluginSettings({
-            minParticipation: 200000,
-            supportThreshold: 500000,
-            token: generateLockToVotePluginSettingsToken({ decimals: 1, symbol: 'TTT', totalSupply: '1000000' }),
+            minParticipation: 200_000,
+            supportThreshold: 500_000,
+            token: generateLockToVotePluginSettingsToken({
+                decimals: 1,
+                symbol: 'TTT',
+                totalSupply: '1000000',
+            }),
         });
         const votesByOption = [
             { type: VoteOption.YES, totalVotingPower: '7500' },
             { type: VoteOption.NO, totalVotingPower: '2500' },
         ];
-        const proposal = generateLockToVoteProposal({ settings, metrics: { votesByOption } });
+        const proposal = generateLockToVoteProposal({
+            settings,
+            metrics: { votesByOption },
+        });
         render(createTestComponent({ proposal }));
         expect(screen.getByRole('tabpanel')).toBeInTheDocument();
 

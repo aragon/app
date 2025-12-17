@@ -1,8 +1,8 @@
 export { pluginTransactionUtils } from './pluginTransactionUtils';
 export type {
-    IBuildApplyPluginUninstallationActionParams,
     IBuildApplyPluginsInstallationActionsParams,
     IBuildApplyPluginsUpdateActionsParams,
+    IBuildApplyPluginUninstallationActionParams,
     IPluginInstallationSetupData,
     IPluginSetupData,
     IPluginSetupPermission,

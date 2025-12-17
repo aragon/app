@@ -1,11 +1,11 @@
 'use server';
 
+import { QueryClient } from '@tanstack/react-query';
+import type { Address } from 'viem';
 import type { IDaoPluginPageProps } from '@/modules/application/types';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { QueryClient } from '@tanstack/react-query';
-import type { Address } from 'viem';
 import type { IGetGaugeListParams } from '../../api/gaugeVoterService';
 import { gaugeListOptions } from '../../api/gaugeVoterService/queries';
 import type { IGaugeVoterPlugin } from '../../types';

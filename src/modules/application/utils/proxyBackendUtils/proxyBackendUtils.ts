@@ -1,8 +1,8 @@
-import { responseUtils } from '@/shared/utils/responseUtils';
 import { type NextRequest, NextResponse } from 'next/server';
+import { responseUtils } from '@/shared/utils/responseUtils';
 
 export class ProxyBackendUtils {
-    private proxyUrl = '/api/backend';
+    private readonly proxyUrl = '/api/backend';
 
     request = async (request: NextRequest) => {
         const url = this.buildBackendUrl(request);
@@ -12,7 +12,10 @@ export class ProxyBackendUtils {
 
         // Forward no-content responses as-is without a body
         if (result.status === 204 || result.status === 205 || result.status === 304) {
-            return new NextResponse(null, { status: result.status, headers: result.headers });
+            return new NextResponse(null, {
+                status: result.status,
+                headers: result.headers,
+            });
         }
 
         const contentType = result.headers.get('content-type') ?? '';
@@ -21,24 +24,33 @@ export class ProxyBackendUtils {
         if (contentType.includes('application/json')) {
             const parsedResult = await responseUtils.safeJsonParseForResponse(result);
             if (parsedResult == null) {
-                return new NextResponse(null, { status: result.status, headers: result.headers });
+                return new NextResponse(null, {
+                    status: result.status,
+                    headers: result.headers,
+                });
             }
-            return NextResponse.json(parsedResult, { status: result.status, headers: result.headers });
+            return NextResponse.json(parsedResult, {
+                status: result.status,
+                headers: result.headers,
+            });
         }
 
         // Non-JSON responses: stream back as text
         const bodyText = await result.text().catch(() => '');
-        return new NextResponse(bodyText, { status: result.status, headers: result.headers });
+        return new NextResponse(bodyText, {
+            status: result.status,
+            headers: result.headers,
+        });
     };
 
-    private buildBackendUrl = (request: NextRequest): string => {
+    private readonly buildBackendUrl = (request: NextRequest): string => {
         const [, relativeUrl] = request.nextUrl.href.split(this.proxyUrl);
         const url = `${process.env.ARAGON_BACKEND_URL!}${relativeUrl}`;
 
         return url;
     };
 
-    private buildRequestOptions = async (request: NextRequest): Promise<RequestInit> => {
+    private readonly buildRequestOptions = async (request: NextRequest): Promise<RequestInit> => {
         const { method, headers } = request;
         const body = method.toUpperCase() === 'POST' ? await request.text() : undefined;
 

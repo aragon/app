@@ -1,5 +1,5 @@
-import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import type { IDefinitionSetting } from '@aragon/gov-ui-kit';
+import type { TranslationFunction } from '@/shared/components/translationsProvider';
 
 export interface IAdminSettingsParseParams {
     /**

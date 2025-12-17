@@ -1,7 +1,7 @@
+import * as Viem from 'viem';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import * as Viem from 'viem';
 import { ProposalActionType } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import {
@@ -45,22 +45,38 @@ describe('publishProposalDialog utils', () => {
             const slotFunction = jest.fn(() => transactionData);
             getSlotFunctionSpy.mockReturnValue(slotFunction);
 
-            const actionBaseValues = { data: '0x123456', to: '0x000', value: '4' };
+            const actionBaseValues = {
+                data: '0x123456',
+                to: '0x000',
+                value: '4',
+            };
             const proposalAction = generateProposalActionUpdateMetadata(actionBaseValues);
             const proposal = generateCreateProposalFormData({
                 actions: [{ ...proposalAction, daoId: 'test', meta: undefined }],
             });
             const metadataCid = 'test-cid';
-            const plugin = generateDaoPlugin({ address: '0x123', interfaceType: PluginInterfaceType.MULTISIG });
+            const plugin = generateDaoPlugin({
+                address: '0x123',
+                interfaceType: PluginInterfaceType.MULTISIG,
+            });
 
-            const transaction = publishProposalDialogUtils.buildTransaction({ proposal, metadataCid, plugin });
+            const transaction = publishProposalDialogUtils.buildTransaction({
+                proposal,
+                metadataCid,
+                plugin,
+            });
 
             expect(getSlotFunctionSpy).toHaveBeenCalledWith({
                 pluginId: plugin.interfaceType,
                 slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
             });
             expect(slotFunction).toHaveBeenCalledWith({
-                actions: [{ ...actionBaseValues, value: BigInt(actionBaseValues.value) }],
+                actions: [
+                    {
+                        ...actionBaseValues,
+                        value: BigInt(actionBaseValues.value),
+                    },
+                ],
                 metadata: '0x697066733a2f2f746573742d636964',
                 proposal,
                 plugin,
@@ -73,9 +89,13 @@ describe('publishProposalDialog utils', () => {
 
     describe('prepareActions', () => {
         it('calls the prepareAction function related to the action when set', async () => {
-            const updateMetadataAction = generateProposalActionUpdateMetadata({ data: 'default-data' });
+            const updateMetadataAction = generateProposalActionUpdateMetadata({
+                data: 'default-data',
+            });
             const updateMetadataActionData = 'data-with-ipfs-cid';
-            const transferAction = generateProposalActionWithdrawToken({ data: '0x123' });
+            const transferAction = generateProposalActionWithdrawToken({
+                data: '0x123',
+            });
             const transferActionData = 'transfer-async-data';
             const actions = [
                 { ...updateMetadataAction, daoId: 'test', meta: undefined },
@@ -86,7 +106,10 @@ describe('publishProposalDialog utils', () => {
                 [ProposalActionType.TRANSFER]: () => Promise.resolve(transferActionData),
             };
 
-            const result = await publishProposalDialogUtils.prepareActions({ actions, prepareActions });
+            const result = await publishProposalDialogUtils.prepareActions({
+                actions,
+                prepareActions,
+            });
 
             expect(result).toEqual([
                 { ...actions[0], data: updateMetadataActionData },
@@ -95,14 +118,20 @@ describe('publishProposalDialog utils', () => {
         });
 
         it('defaults to the action data when no prepare function is found for the aciton', async () => {
-            const transferAction = generateProposalActionWithdrawToken({ data: '0x123' });
-            const updateAction = generateProposalActionUpdateMetadata({ data: '0x456' });
+            const transferAction = generateProposalActionWithdrawToken({
+                data: '0x123',
+            });
+            const updateAction = generateProposalActionUpdateMetadata({
+                data: '0x456',
+            });
             const actions = [
                 { ...transferAction, daoId: 'test', meta: undefined },
                 { ...updateAction, daoId: 'test', meta: undefined },
             ];
 
-            const result = await publishProposalDialogUtils.prepareActions({ actions });
+            const result = await publishProposalDialogUtils.prepareActions({
+                actions,
+            });
             expect(result).toEqual(actions);
         });
     });
@@ -111,7 +140,7 @@ describe('publishProposalDialog utils', () => {
         it('correctly maps a proposal action to a transaction request', () => {
             const actionBaseData = { to: '0x123', value: '10', data: '0x1234' };
             const action = generateProposalActionWithdrawToken(actionBaseData);
-            expect(publishProposalDialogUtils['actionToTransactionRequest'](action)).toEqual({
+            expect(publishProposalDialogUtils.actionToTransactionRequest(action)).toEqual({
                 ...actionBaseData,
                 value: BigInt(actionBaseData.value),
             });

@@ -1,8 +1,4 @@
-import type {
-    IAutocompleteInputGroup,
-    IAutocompleteInputItem,
-    IAutocompleteInputProps,
-} from '@/shared/components/forms/autocompleteInput';
+import type { IAutocompleteInputGroup, IAutocompleteInputItem, IAutocompleteInputProps } from '@/shared/components/forms/autocompleteInput';
 import type { IAllowedAction } from '../../../api/executeSelectorsService';
 import type { IProposalAction } from '../../../api/governanceService';
 import type { ISmartContractAbi } from '../../../api/smartContractService';

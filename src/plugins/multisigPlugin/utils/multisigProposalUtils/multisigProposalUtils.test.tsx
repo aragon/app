@@ -1,6 +1,6 @@
-import { timeUtils } from '@/test/utils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import { timeUtils } from '@/test/utils';
 import { generateMultisigPluginSettings, generateMultisigProposal } from '../../testUtils';
 import { multisigProposalUtils } from './multisigProposalUtils';
 
@@ -17,7 +17,9 @@ describe('multisigProposal utils', () => {
         });
 
         it('returns executed status when proposal has been executed', () => {
-            const proposal = generateMultisigProposal({ executed: { status: true } });
+            const proposal = generateMultisigProposal({
+                executed: { status: true },
+            });
             expect(multisigProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTED);
         });
 
@@ -33,7 +35,11 @@ describe('multisigProposal utils', () => {
             const now = '2024-10-20T09:49:56.868Z';
             const startDate = DateTime.fromISO('2024-10-15T09:49:56.868Z').toMillis() / 1000;
             const endDate = DateTime.fromISO('2024-10-25T09:49:56.868Z').toMillis() / 1000;
-            const proposal = generateMultisigProposal({ startDate, endDate, hasActions: true });
+            const proposal = generateMultisigProposal({
+                startDate,
+                endDate,
+                hasActions: true,
+            });
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
             expect(multisigProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTABLE);
@@ -52,7 +58,11 @@ describe('multisigProposal utils', () => {
             const now = '2024-10-20T09:49:56.868Z';
             const startDate = DateTime.fromISO('2024-10-08T09:49:56.868Z').toMillis() / 1000;
             const endDate = DateTime.fromISO('2024-10-12T09:49:56.868Z').toMillis() / 1000;
-            const proposal = generateMultisigProposal({ startDate, endDate, hasActions: false });
+            const proposal = generateMultisigProposal({
+                startDate,
+                endDate,
+                hasActions: false,
+            });
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
             expect(multisigProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.ACCEPTED);
@@ -62,7 +72,11 @@ describe('multisigProposal utils', () => {
             const now = '2024-10-20T09:49:56.868Z';
             const startDate = DateTime.fromISO('2024-10-08T09:49:56.868Z').toMillis() / 1000;
             const endDate = DateTime.fromISO('2024-10-12T09:49:56.868Z').toMillis() / 1000;
-            const proposal = generateMultisigProposal({ startDate, endDate, hasActions: true });
+            const proposal = generateMultisigProposal({
+                startDate,
+                endDate,
+                hasActions: true,
+            });
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
             expect(multisigProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXPIRED);
@@ -81,21 +95,27 @@ describe('multisigProposal utils', () => {
 
     describe('isApprovalReached', () => {
         it('returns true when number of voters is greater than min approvals', () => {
-            const settings = generateMultisigPluginSettings({ minApprovals: 3 });
+            const settings = generateMultisigPluginSettings({
+                minApprovals: 3,
+            });
             const metrics = { totalVotes: 5 };
             const proposal = generateMultisigProposal({ settings, metrics });
             expect(multisigProposalUtils.isApprovalReached(proposal)).toBeTruthy();
         });
 
         it('returns true when number of voters is equal to min approvals', () => {
-            const settings = generateMultisigPluginSettings({ minApprovals: 1 });
+            const settings = generateMultisigPluginSettings({
+                minApprovals: 1,
+            });
             const metrics = { totalVotes: 1 };
             const proposal = generateMultisigProposal({ settings, metrics });
             expect(multisigProposalUtils.isApprovalReached(proposal)).toBeTruthy();
         });
 
         it('returns false when number of voters is less than min approvals', () => {
-            const settings = generateMultisigPluginSettings({ minApprovals: 4 });
+            const settings = generateMultisigPluginSettings({
+                minApprovals: 4,
+            });
             const metrics = { totalVotes: 2 };
             const proposal = generateMultisigProposal({ settings, metrics });
             expect(multisigProposalUtils.isApprovalReached(proposal)).toBeFalsy();

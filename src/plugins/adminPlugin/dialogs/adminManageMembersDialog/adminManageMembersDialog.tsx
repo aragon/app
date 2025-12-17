@@ -1,18 +1,18 @@
 'use client';
 
+import { addressUtils, Dialog, type ICompositeAddress, invariant } from '@aragon/gov-ui-kit';
+import { useEffect, useMemo } from 'react';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import type { Hex } from 'viem';
 import { useMemberList } from '@/modules/governance/api/governanceService';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
-import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { AddressesInput } from '@/shared/components/forms/addressesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { addressUtils, Dialog, invariant, type ICompositeAddress } from '@aragon/gov-ui-kit';
-import { useEffect, useMemo } from 'react';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import type { Hex } from 'viem';
 import { adminManageMembersDialogUtils } from './adminManageMembersDialogUtils';
 
 export interface IAdminManageMembersDialogParams {
@@ -77,7 +77,7 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
         }
 
         return !initialMembers.every((initialAddress) =>
-            newMembers.some((newAddress) => addressUtils.isAddressEqual(initialAddress, newAddress)),
+            newMembers.some((newAddress) => addressUtils.isAddressEqual(initialAddress, newAddress))
         );
     }, [watchMembersField, currentAdmins]);
 
@@ -110,19 +110,15 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
     return (
         <FormProvider {...formMethods}>
             <Dialog.Header
+                description={t('app.plugins.admin.adminManageMembers.dialog.description')}
                 onClose={close}
                 title={t('app.plugins.admin.adminManageMembers.dialog.title')}
-                description={t('app.plugins.admin.adminManageMembers.dialog.description')}
             />
             <Dialog.Content>
-                <form
-                    className="flex w-full flex-col gap-3 pb-6 md:gap-2"
-                    onSubmit={handleSubmit(handleSubmitAddresses)}
-                    id={formId}
-                >
-                    <AddressesInput.Container name="members" allowEmptyList={true}>
+                <form className="flex w-full flex-col gap-3 pb-6 md:gap-2" id={formId} onSubmit={handleSubmit(handleSubmitAddresses)}>
+                    <AddressesInput.Container allowEmptyList={true} name="members">
                         {watchMembersField.map((field, index) => (
-                            <AddressesInput.Item key={index} index={index} chainId={chainId} />
+                            <AddressesInput.Item chainId={chainId} index={index} key={field.id ?? index} />
                         ))}
                     </AddressesInput.Container>
                 </form>

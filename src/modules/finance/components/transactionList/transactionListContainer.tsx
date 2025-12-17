@@ -1,10 +1,10 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { DaoFilterComponent } from '@/shared/components/daoFilterComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoFilterUrlParam } from '@/shared/hooks/useDaoFilterUrlParam';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
-import type { ReactNode } from 'react';
 import type { IGetTransactionListParams } from '../../api/financeService';
 import { TransactionListDefault } from './transactionListDefault';
 
@@ -42,14 +42,14 @@ export const TransactionListContainer: React.FC<ITransactionListContainerProps> 
 
     return (
         <DaoFilterComponent
-            slotId="FINANCE_TRANSACTION_LIST"
-            options={options}
-            value={activeOption}
-            onValueChange={setActiveOption}
-            initialParams={initialParams}
             allOptionLabel={t('app.finance.transactionList.groupTab')}
             Fallback={TransactionListDefault}
+            initialParams={initialParams}
+            onValueChange={setActiveOption}
+            options={options}
             searchParamName={transactionListFilterParam}
+            slotId="FINANCE_TRANSACTION_LIST"
+            value={activeOption}
             {...otherProps}
         />
     );

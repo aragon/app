@@ -1,16 +1,9 @@
-import { type IDao } from '@/shared/api/daoService';
+import { addressUtils, Button, ChainEntityType, DefinitionList, IconType, type IDefinitionListContainerProps } from '@aragon/gov-ui-kit';
+import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import {
-    Button,
-    ChainEntityType,
-    DefinitionList,
-    IconType,
-    addressUtils,
-    type IDefinitionListContainerProps,
-} from '@aragon/gov-ui-kit';
 
 export interface IFinanceDetailsListProps extends IDefinitionListContainerProps {
     /**
@@ -26,7 +19,10 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
     const { t } = useTranslations();
 
     const { buildEntityUrl } = useDaoChain({ network });
-    const daoAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address });
+    const daoAddressLink = buildEntityUrl({
+        type: ChainEntityType.ADDRESS,
+        id: address,
+    });
 
     const daoEns = daoUtils.getDaoEns(dao);
 
@@ -39,34 +35,27 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
                     <p className="text-neutral-500">{networkDefinitions[network].name}</p>
                 </DefinitionList.Item>
                 <DefinitionList.Item
-                    term={t('app.finance.financeDetailsList.vaultAddress')}
                     copyValue={address}
                     link={{ href: daoAddressLink }}
+                    term={t('app.finance.financeDetailsList.vaultAddress')}
                 >
                     {addressUtils.truncateAddress(address)}
                 </DefinitionList.Item>
                 {daoEns && (
                     <DefinitionList.Item
-                        term={t('app.finance.financeDetailsList.vaultEns')}
                         copyValue={daoEns}
                         link={{ href: daoAddressLink }}
+                        term={t('app.finance.financeDetailsList.vaultEns')}
                     >
                         {daoEns}
                     </DefinitionList.Item>
                 )}
             </DefinitionList.Container>
             <div className="flex flex-col items-center gap-y-3">
-                <Button
-                    className="w-full"
-                    variant="tertiary"
-                    size="md"
-                    href={octavLink}
-                    target="_blank"
-                    iconRight={IconType.LINK_EXTERNAL}
-                >
+                <Button className="w-full" href={octavLink} iconRight={IconType.LINK_EXTERNAL} size="md" target="_blank" variant="tertiary">
                     {t('app.finance.financeDetailsList.octavLabel')}
                 </Button>
-                <p className="text-sm text-neutral-500">{t('app.finance.financeDetailsList.octavDescription')}</p>
+                <p className="text-neutral-500 text-sm">{t('app.finance.financeDetailsList.octavDescription')}</p>
             </div>
         </>
     );

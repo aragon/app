@@ -42,7 +42,7 @@ describe('monitoring utils', () => {
             { env: 'unknown', result: false },
         ])('returns $result for $env environment', ({ env, result }) => {
             process.env.NEXT_PUBLIC_ENV = env;
-            expect(monitoringUtils['isEnabled']()).toEqual(result);
+            expect(monitoringUtils.isEnabled()).toEqual(result);
         });
     });
 });

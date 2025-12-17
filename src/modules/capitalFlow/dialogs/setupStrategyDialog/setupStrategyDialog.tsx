@@ -1,9 +1,9 @@
+import { invariant } from '@aragon/gov-ui-kit';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
-import { invariant } from '@aragon/gov-ui-kit';
-import { type ISetupStrategyForm } from './setupStrategyDialogDefinitions';
-import { SetupStrategyDialogSteps, type ISetupStrategyDialogStepsProps } from './setupStrategyDialogSteps';
+import type { ISetupStrategyForm } from './setupStrategyDialogDefinitions';
+import { type ISetupStrategyDialogStepsProps, SetupStrategyDialogSteps } from './setupStrategyDialogSteps';
 
 export interface ISetupStrategyDialogParams extends ISetupStrategyDialogStepsProps {
     /**
@@ -28,13 +28,13 @@ export const SetupStrategyDialog: React.FC<ISetupStrategyDialogProps> = (props) 
 
     return (
         <WizardDialog.Container
-            title={t('app.capitalFlow.setupStrategyDialog.title')}
+            defaultValues={initialValues}
             formId="strategySetup"
             onSubmit={onSubmit}
-            defaultValues={initialValues}
             submitLabel={t('app.capitalFlow.setupStrategyDialog.submit')}
+            title={t('app.capitalFlow.setupStrategyDialog.title')}
         >
-            <SetupStrategyDialogSteps initialValues={initialValues} daoId={daoId} />
+            <SetupStrategyDialogSteps daoId={daoId} initialValues={initialValues} />
         </WizardDialog.Container>
     );
 };

@@ -1,19 +1,14 @@
-import { zeroAddress, type Hex } from 'viem';
+import { type Hex, zeroAddress } from 'viem';
 import { useReadContract } from 'wagmi';
 import { votingEscrowAbi } from '../../utils/tokenExitQueueTransactionUtils/votingEscrowAbi';
-import type {
-    IUseTokenVotingEscrowTokenIdParams,
-    IUseTokenVotingEscrowTokenIdReturn,
-} from './useTokenVotingEscrowTokenId.api';
+import type { IUseTokenVotingEscrowTokenIdParams, IUseTokenVotingEscrowTokenIdReturn } from './useTokenVotingEscrowTokenId.api';
 
 /**
  * Hook to retrieve the tokenId for a user's lock in the VotingEscrow contract.
  * VotingEscrow implements ERC-721 where each lock is represented as an NFT.
  * This hook assumes each user has at most one tokenId (index 0).
  */
-export const useTokenVotingEscrowTokenId = (
-    params: IUseTokenVotingEscrowTokenIdParams,
-): IUseTokenVotingEscrowTokenIdReturn => {
+export const useTokenVotingEscrowTokenId = (params: IUseTokenVotingEscrowTokenIdParams): IUseTokenVotingEscrowTokenIdReturn => {
     const { escrowAddress, userAddress, chainId, enabled = true } = params;
     const normalizedUserAddress: Hex = userAddress ?? zeroAddress;
 

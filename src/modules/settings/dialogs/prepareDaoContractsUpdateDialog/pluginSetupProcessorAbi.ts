@@ -13,8 +13,16 @@ export const pluginSetupProcessorAbi = [
                         internalType: 'struct PluginRepo.Tag',
                         type: 'tuple',
                         components: [
-                            { name: 'release', internalType: 'uint8', type: 'uint8' },
-                            { name: 'build', internalType: 'uint16', type: 'uint16' },
+                            {
+                                name: 'release',
+                                internalType: 'uint8',
+                                type: 'uint8',
+                            },
+                            {
+                                name: 'build',
+                                internalType: 'uint16',
+                                type: 'uint16',
+                            },
                         ],
                     },
                     {
@@ -22,8 +30,16 @@ export const pluginSetupProcessorAbi = [
                         internalType: 'struct PluginRepo.Tag',
                         type: 'tuple',
                         components: [
-                            { name: 'release', internalType: 'uint8', type: 'uint8' },
-                            { name: 'build', internalType: 'uint16', type: 'uint16' },
+                            {
+                                name: 'release',
+                                internalType: 'uint8',
+                                type: 'uint8',
+                            },
+                            {
+                                name: 'build',
+                                internalType: 'uint16',
+                                type: 'uint16',
+                            },
                         ],
                     },
                     {
@@ -36,13 +52,21 @@ export const pluginSetupProcessorAbi = [
                         internalType: 'struct IPluginSetup.SetupPayload',
                         type: 'tuple',
                         components: [
-                            { name: 'plugin', internalType: 'address', type: 'address' },
+                            {
+                                name: 'plugin',
+                                internalType: 'address',
+                                type: 'address',
+                            },
                             {
                                 name: 'currentHelpers',
                                 internalType: 'address[]',
                                 type: 'address[]',
                             },
-                            { name: 'data', internalType: 'bytes', type: 'bytes' },
+                            {
+                                name: 'data',
+                                internalType: 'bytes',
+                                type: 'bytes',
+                            },
                         ],
                     },
                 ],
@@ -56,7 +80,11 @@ export const pluginSetupProcessorAbi = [
                 internalType: 'struct IPluginSetup.PreparedSetupData',
                 type: 'tuple',
                 components: [
-                    { name: 'helpers', internalType: 'address[]', type: 'address[]' },
+                    {
+                        name: 'helpers',
+                        internalType: 'address[]',
+                        type: 'address[]',
+                    },
                     {
                         name: 'permissions',
                         internalType: 'struct PermissionLib.MultiTargetPermission[]',
@@ -67,10 +95,26 @@ export const pluginSetupProcessorAbi = [
                                 internalType: 'enum PermissionLib.Operation',
                                 type: 'uint8',
                             },
-                            { name: 'where', internalType: 'address', type: 'address' },
-                            { name: 'who', internalType: 'address', type: 'address' },
-                            { name: 'condition', internalType: 'address', type: 'address' },
-                            { name: 'permissionId', internalType: 'bytes32', type: 'bytes32' },
+                            {
+                                name: 'where',
+                                internalType: 'address',
+                                type: 'address',
+                            },
+                            {
+                                name: 'who',
+                                internalType: 'address',
+                                type: 'address',
+                            },
+                            {
+                                name: 'condition',
+                                internalType: 'address',
+                                type: 'address',
+                            },
+                            {
+                                name: 'permissionId',
+                                internalType: 'bytes32',
+                                type: 'bytes32',
+                            },
                         ],
                     },
                 ],

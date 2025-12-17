@@ -1,24 +1,17 @@
 'use client';
 
+import { addressUtils, ChainEntityType, DateFormat, DefinitionList, formatterUtils, MemberAvatar } from '@aragon/gov-ui-kit';
+import { useBlock } from 'wagmi';
 import { DaoList } from '@/modules/explore/components/daoList';
 import { useEfpStats } from '@/modules/governance/api/efpService';
 import { EfpCard } from '@/modules/governance/components/efpCard';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
-import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
+import type { IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { networkUtils } from '@/shared/utils/networkUtils';
-import {
-    addressUtils,
-    ChainEntityType,
-    DateFormat,
-    DefinitionList,
-    formatterUtils,
-    MemberAvatar,
-} from '@aragon/gov-ui-kit';
-import { useBlock } from 'wagmi';
 import EfpLogo from '../../../../assets/images/efp-logo.svg';
 import { daoUtils } from '../../../../shared/utils/daoUtils';
 import { useMember } from '../../api/governanceService';
@@ -42,6 +35,38 @@ const memberProposalsCount = 3;
 const memberVotesCount = 5;
 const memberDaosCount = 3;
 
+const buildMemberStats = (
+    pluginStats: IPageHeaderStat[] | undefined,
+    formattedLatestActivity: string | undefined,
+    t: ReturnType<typeof useTranslations>['t']
+) => {
+    const [value, unit] = formattedLatestActivity?.split(' ') ?? [undefined, undefined];
+    const suffix = unit ? t('app.governance.daoMemberDetailsPage.header.stat.latestActivityUnit', { unit }) : undefined;
+
+    return [
+        ...(pluginStats ?? []),
+        {
+            label: t('app.governance.daoMemberDetailsPage.header.stat.latestActivity'),
+            value: value ?? '-',
+            suffix,
+        },
+    ];
+};
+
+const formatMemberActivity = (firstBlock?: { timestamp?: bigint }, lastBlock?: { timestamp?: bigint }) => {
+    const parsedFirstActivity = firstBlock?.timestamp != null ? Number(firstBlock.timestamp) * 1000 : undefined;
+    const parsedLatestActivity = lastBlock?.timestamp != null ? Number(lastBlock.timestamp) * 1000 : undefined;
+
+    return {
+        formattedFirstActivity: formatterUtils.formatDate(parsedFirstActivity, {
+            format: DateFormat.YEAR_MONTH_DAY,
+        }),
+        formattedLatestActivity: formatterUtils.formatDate(parsedLatestActivity, {
+            format: DateFormat.DURATION,
+        }),
+    };
+};
+
 export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientProps> = (props) => {
     const { address, daoId } = props;
 
@@ -54,11 +79,14 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
     const memberUrlParams = { address };
-    const memberQueryParams = { daoId, pluginAddress: dao!.plugins[0].address };
-    const memberParams = { urlParams: memberUrlParams, queryParams: memberQueryParams };
+    const pluginAddress = dao?.plugins[0]?.address;
+    const memberParams = {
+        urlParams: memberUrlParams,
+        queryParams: pluginAddress ? { daoId, pluginAddress } : undefined,
+    };
     const { data: member } = useMember(memberParams);
 
-    const memberStatsParams = { daoId, address, plugin: dao!.plugins[0] };
+    const memberStatsParams = dao?.plugins[0] ? { daoId, address, plugin: dao.plugins[0] } : undefined;
     const pluginStats = useSlotSingleFunction<IUsePluginMemberStatsParams, IPageHeaderStat[]>({
         params: memberStatsParams,
         slotId: GovernanceSlotId.GOVERNANCE_MEMBER_STATS,
@@ -83,28 +111,9 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         query: { enabled: !!lastBlockNumber },
     });
 
-    const parsedFirstActivity = firstBlock?.timestamp != null ? Number(firstBlock.timestamp) * 1000 : undefined;
-    const parsedLatestActivity = lastBlock?.timestamp != null ? Number(lastBlock.timestamp) * 1000 : undefined;
+    const { formattedFirstActivity, formattedLatestActivity } = formatMemberActivity(firstBlock, lastBlock);
 
-    const formattedFirstActivity = formatterUtils.formatDate(parsedFirstActivity, {
-        format: DateFormat.YEAR_MONTH_DAY,
-    });
-    const formattedLatestActivity = formatterUtils.formatDate(parsedLatestActivity, {
-        format: DateFormat.DURATION,
-    });
-
-    const [value, unit] = formattedLatestActivity?.split(' ') ?? [undefined, undefined];
-
-    const suffixLabel = t('app.governance.daoMemberDetailsPage.header.stat.latestActivityUnit', { unit: unit });
-
-    const stats = [
-        ...(pluginStats ?? []),
-        {
-            label: t('app.governance.daoMemberDetailsPage.header.stat.latestActivity'),
-            value: value ?? '-',
-            suffix: unit ? suffixLabel : undefined,
-        },
-    ];
+    const stats = buildMemberStats(pluginStats, formattedLatestActivity, t);
 
     if (member == null || dao == null) {
         return null;
@@ -114,7 +123,10 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const truncatedAddress = addressUtils.truncateAddress(address);
     const memberName = ens ?? truncatedAddress;
 
-    const addressUrl = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address });
+    const addressUrl = buildEntityUrl({
+        type: ChainEntityType.ADDRESS,
+        id: address,
+    });
 
     const pageBreadcrumbs = [
         {
@@ -125,11 +137,22 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     ];
 
     const proposalsByMemberParams = {
-        queryParams: { daoId, creatorAddress: address, pageSize: memberProposalsCount, sort: 'blockTimestamp' },
+        queryParams: {
+            daoId,
+            creatorAddress: address,
+            pageSize: memberProposalsCount,
+            sort: 'blockTimestamp',
+        },
     };
 
     const votesByMemberParams = {
-        queryParams: { daoId, address, includeInfo: true, pageSize: memberVotesCount, network: dao.network },
+        queryParams: {
+            daoId,
+            address,
+            includeInfo: true,
+            pageSize: memberVotesCount,
+            network: dao.network,
+        },
     };
 
     const daosByMemberParams = {
@@ -145,55 +168,50 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     return (
         <>
             <Page.Header
+                avatar={<MemberAvatar address={address} ensName={ens ?? undefined} size="2xl" />}
                 breadcrumbs={pageBreadcrumbs}
                 stats={stats}
                 title={memberName}
-                avatar={<MemberAvatar size="2xl" ensName={ens ?? undefined} address={address} />}
             />
             <Page.Content>
                 <Page.Main>
                     <Page.MainSection title={t('app.governance.daoMemberDetailsPage.main.votingActivity.title')}>
-                        <VoteList initialParams={votesByMemberParams} daoId={daoId} />
+                        <VoteList daoId={daoId} initialParams={votesByMemberParams} />
                     </Page.MainSection>
                     <Page.MainSection title={t('app.governance.daoMemberDetailsPage.main.proposalCreation.title')}>
                         <DaoProposalList initialParams={proposalsByMemberParams} />
                     </Page.MainSection>
                     <Page.MainSection title={t('app.governance.daoMemberDetailsPage.main.daoMemberships.title')}>
-                        <DaoList memberParams={daosByMemberParams} layoutClassNames="grid grid-cols-1" />
+                        <DaoList layoutClassNames="grid grid-cols-1" memberParams={daosByMemberParams} />
                     </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>
                     <Page.AsideCard title={t('app.governance.daoMemberDetailsPage.aside.details.title')}>
                         <DefinitionList.Container>
                             <DefinitionList.Item
-                                term={t('app.governance.daoMemberDetailsPage.aside.details.address')}
                                 copyValue={address}
                                 link={{ href: addressUrl }}
+                                term={t('app.governance.daoMemberDetailsPage.aside.details.address')}
                             >
                                 {truncatedAddress}
                             </DefinitionList.Item>
                             {ens && addressUrl && (
                                 <DefinitionList.Item
-                                    term={t('app.governance.daoMemberDetailsPage.aside.details.ens')}
                                     copyValue={ens}
                                     link={{ href: addressUrl }}
+                                    term={t('app.governance.daoMemberDetailsPage.aside.details.ens')}
                                 >
                                     {ens}
                                 </DefinitionList.Item>
                             )}
-                            <DefinitionList.Item
-                                term={t('app.governance.daoMemberDetailsPage.aside.details.firstActivity')}
-                            >
+                            <DefinitionList.Item term={t('app.governance.daoMemberDetailsPage.aside.details.firstActivity')}>
                                 {formattedFirstActivity ?? '-'}
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Page.AsideCard>
                     {efpStats && (
-                        <Page.AsideCard
-                            title={t('app.governance.daoMemberDetailsPage.aside.efpCard.title')}
-                            icon={EfpLogo as string}
-                        >
-                            <EfpCard efpStats={efpStats} address={address} />
+                        <Page.AsideCard icon={EfpLogo as string} title={t('app.governance.daoMemberDetailsPage.aside.efpCard.title')}>
+                            <EfpCard address={address} efpStats={efpStats} />
                         </Page.AsideCard>
                     )}
                 </Page.Aside>

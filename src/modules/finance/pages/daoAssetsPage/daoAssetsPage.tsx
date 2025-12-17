@@ -1,9 +1,9 @@
+import { QueryClient } from '@tanstack/react-query';
 import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
-import { type IDaoPageParams } from '@/shared/types';
+import type { IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
-import { QueryClient } from '@tanstack/react-query';
 import { assetListOptions } from '../../api/financeService';
 import { DaoAssetsPageClient } from './daoAssetsPageClient';
 

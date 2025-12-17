@@ -28,7 +28,7 @@ describe('governanceMetadata utils', () => {
             });
             const dao = generateDao({ avatar: 'cid123' });
             const ipfsUrl = `https://ipfs.com/ipfs/${dao.avatar!}`;
-            const expectedDaoId = `test-dao-id`;
+            const expectedDaoId = 'test-dao-id';
 
             getProposalBySlugSpy.mockResolvedValue(proposal);
             getDaoSpy.mockResolvedValue(dao);
@@ -48,7 +48,9 @@ describe('governanceMetadata utils', () => {
                 queryParams: { daoId: expectedDaoId },
             });
 
-            expect(getDaoSpy).toHaveBeenCalledWith({ urlParams: { id: expectedDaoId } });
+            expect(getDaoSpy).toHaveBeenCalledWith({
+                urlParams: { id: expectedDaoId },
+            });
             expect(cidToSrcSpy).toHaveBeenCalledWith(dao.avatar);
 
             const expectedTitle = `${proposalSlug}: ${proposal.title}`;

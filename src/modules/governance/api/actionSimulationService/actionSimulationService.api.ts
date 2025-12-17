@@ -34,8 +34,7 @@ export interface ISimulateActionsBody {
     actions: ISimulateActionsItem[];
 }
 
-export interface ISimulateActionsParams
-    extends IRequestUrlBodyParams<ISimulateActionsUrlParams, ISimulateActionsBody> {}
+export interface ISimulateActionsParams extends IRequestUrlBodyParams<ISimulateActionsUrlParams, ISimulateActionsBody> {}
 
 export interface ISimulateProposalUrlParams {
     /**

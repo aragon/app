@@ -1,15 +1,15 @@
 'use server';
 
+import { QueryClient } from '@tanstack/react-query';
+import { headers as nextHeaders } from 'next/headers';
+import { cookieToInitialState } from 'wagmi';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import type { IDaoPluginPageProps } from '@/modules/application/types';
 import { daoOptions, PluginInterfaceType } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
-import { QueryClient } from '@tanstack/react-query';
-import { headers as nextHeaders } from 'next/headers';
-import { cookieToInitialState } from 'wagmi';
-import { campaignListOptions, CampaignStatus } from '../../api/capitalDistributorService';
+import { CampaignStatus, campaignListOptions } from '../../api/capitalDistributorService';
 import type { ICapitalDistributorPlugin } from '../../types';
 import { CapitalDistributorRewardsPageClient } from './capitalDistributorRewardsPageClient';
 
@@ -23,7 +23,7 @@ const getConnectedAccount = (cookieHeader: string | null): string | undefined =>
         return connections.get(current)?.accounts[0];
     }
 
-    return undefined;
+    return;
 };
 
 const campaignsPerPage = 5;
@@ -40,7 +40,9 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
     const userAddress = getConnectedAccount(cookieHeader);
 
     const interfaceType = PluginInterfaceType.CAPITAL_DISTRIBUTOR;
-    const plugin: ICapitalDistributorPlugin = daoUtils.getDaoPlugins(dao, { interfaceType })![0];
+    const plugin: ICapitalDistributorPlugin = daoUtils.getDaoPlugins(dao, {
+        interfaceType,
+    })![0];
 
     const defaultQueryParams = {
         pluginAddress: plugin.address,
@@ -50,16 +52,25 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
         sort: 'campaignId',
         status: CampaignStatus.CLAIMABLE,
     };
-    const initialParams = { queryParams: { ...defaultQueryParams, userAddress: userAddress as string } };
+    const initialParams = {
+        queryParams: {
+            ...defaultQueryParams,
+            userAddress: userAddress as string,
+        },
+    };
 
     queryClient.setQueryData(daoOptions({ urlParams: { id: dao.id } }).queryKey, dao);
 
     if (countryCode != null && plugin.blockedCountries?.includes(countryCode)) {
-        const context = { pluginAddress: plugin.address, userAddress, country: countryCode };
+        const context = {
+            pluginAddress: plugin.address,
+            userAddress,
+            country: countryCode,
+        };
         const errorNamespace = 'app.plugins.capitalDistributor.capitalDistributorRewardsPage.error.restricted';
         monitoringUtils.logMessage('Capital Distributor: Claim error (geolocation)', { level: 'warning', context });
 
-        return <Page.Error titleKey={`${errorNamespace}.title`} descriptionKey={`${errorNamespace}.description`} />;
+        return <Page.Error descriptionKey={`${errorNamespace}.description`} titleKey={`${errorNamespace}.title`} />;
     }
 
     if (userAddress) {

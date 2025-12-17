@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { PageHeaderStat, type IPageHeaderStatProps } from './pageHeaderStat';
+import { type IPageHeaderStatProps, PageHeaderStat } from './pageHeaderStat';
 
 describe('<PageHeaderStat /> component', () => {
     const createTestComponent = (props?: Partial<IPageHeaderStatProps>) => {
@@ -33,7 +33,7 @@ describe('<PageHeaderStat /> component', () => {
     });
 
     it('defaults the value to 0 when null', () => {
-        const value = null;
+        const value: number | null = null;
         render(createTestComponent({ value }));
         expect(screen.getByText('0')).toBeInTheDocument();
     });

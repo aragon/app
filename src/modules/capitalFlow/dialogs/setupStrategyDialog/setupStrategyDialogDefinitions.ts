@@ -1,5 +1,5 @@
-import type { IAsset } from '@/modules/finance/api/financeService';
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
+import type { IAsset } from '@/modules/finance/api/financeService';
 
 export enum StrategyType {
     CAPITAL_ROUTER = 'CAPITAL_ROUTER',

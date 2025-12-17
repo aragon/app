@@ -1,6 +1,6 @@
-import { FormWrapper } from '@/shared/testUtils';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { FormWrapper } from '@/shared/testUtils';
 import { AdvancedDateInputDuration, type IAdvancedDateInputDurationProps } from './advancedDateInputDuration';
 
 describe('<AdvancedDateInputDuration /> component', () => {
@@ -24,7 +24,14 @@ describe('<AdvancedDateInputDuration /> component', () => {
         const minDuration = { days: 0, hours: 1, minutes: 0 };
         const validateMinDuration = true;
 
-        render(createTestComponent({ label, infoText, minDuration, validateMinDuration }));
+        render(
+            createTestComponent({
+                label,
+                infoText,
+                minDuration,
+                validateMinDuration,
+            })
+        );
 
         const minutesInput = screen.getByLabelText(/shared.advancedDateInput.duration.minutes/);
         const hoursInput = screen.getByLabelText(/shared.advancedDateInput.duration.hours/);
@@ -40,9 +47,7 @@ describe('<AdvancedDateInputDuration /> component', () => {
         await userEvent.type(minutesInput, '30');
         await userEvent.tab();
 
-        await waitFor(() =>
-            expect(alert).toHaveTextContent(/advancedDateInput.duration.error.minDuration \(value=1 hour\)/),
-        );
+        await waitFor(() => expect(alert).toHaveTextContent(/advancedDateInput.duration.error.minDuration \(value=1 hour\)/));
 
         // Set a valid duration
         await userEvent.clear(hoursInput);

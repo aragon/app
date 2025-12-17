@@ -1,19 +1,15 @@
 'use client';
 
-import type { IToken } from '@/modules/finance/api/financeService';
-import type { Network } from '@/shared/api/daoService';
-import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
-import {
-    TransactionDialog,
-    TransactionDialogStep,
-    type ITransactionDialogStepMeta,
-} from '@/shared/components/transactionDialog';
-import type { ITransactionInfo } from '@/shared/components/transactionStatus';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useStepper } from '@/shared/hooks/useStepper';
 import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
+import type { IToken } from '@/modules/finance/api/financeService';
+import type { Network } from '@/shared/api/daoService';
+import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { type ITransactionDialogStepMeta, TransactionDialog, TransactionDialogStep } from '@/shared/components/transactionDialog';
+import type { ITransactionInfo } from '@/shared/components/transactionStatus';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useStepper } from '@/shared/hooks/useStepper';
 import { tokenApproveTokensDialogUtils } from './tokenApproveTokensDialogUtils';
 
 export interface ITokenApproveTokensDialogParams {
@@ -63,27 +59,31 @@ export const TokenApproveTokensDialog: React.FC<ITokenApproveTokensDialogProps> 
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
     const handlePrepareTransaction = () =>
-        tokenApproveTokensDialogUtils.buildApproveTransaction({ token: token.address, amount, spender });
+        tokenApproveTokensDialogUtils.buildApproveTransaction({
+            token: token.address,
+            amount,
+            spender,
+        });
 
     const parsedAmount = formatUnits(amount, token.decimals);
 
     return (
         <TransactionDialog
-            title={t(`app.plugins.token.tokenApproveTokensDialog.${translationNamespace}.title`)}
             description={t(`app.plugins.token.tokenApproveTokensDialog.${translationNamespace}.description`)}
-            submitLabel={t(`app.plugins.token.tokenApproveTokensDialog.${translationNamespace}.submit`)}
-            stepper={stepper}
-            prepareTransaction={handlePrepareTransaction}
             network={network}
             onSuccess={onSuccess}
+            prepareTransaction={handlePrepareTransaction}
+            stepper={stepper}
+            submitLabel={t(`app.plugins.token.tokenApproveTokensDialog.${translationNamespace}.submit`)}
+            title={t(`app.plugins.token.tokenApproveTokensDialog.${translationNamespace}.title`)}
             transactionInfo={transactionInfo}
         >
             <AssetDataListItem.Structure
+                amount={parsedAmount}
+                hideValue={true}
                 logoSrc={token.logo}
                 name={token.name}
-                amount={parsedAmount}
                 symbol={token.symbol}
-                hideValue={true}
             />
         </TransactionDialog>
     );

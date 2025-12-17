@@ -62,15 +62,26 @@ export const useAutocompleteProps = (params: IUseAutocompletePropsParams) => {
     const role = useRole(context, { role: 'listbox' });
     const dismiss = useDismiss(context);
 
-    const listNavParams = { listRef, activeIndex, onNavigate: setActiveIndex, virtual: true, loop: true };
+    const listNavParams = {
+        listRef,
+        activeIndex,
+        onNavigate: setActiveIndex,
+        virtual: true,
+        loop: true,
+    };
     const listNav = useListNavigation(context, listNavParams);
 
     const { getReferenceProps, getFloatingProps, getItemProps } = useInteractions([role, dismiss, listNav]);
 
-    const floatingMenuProps = getFloatingProps({ ref: refs.setFloating, style: floatingStyles });
+    const floatingMenuProps = getFloatingProps({
+        ref: refs.setFloating,
+        style: floatingStyles,
+    });
 
     const combinedInputRefs = mergeRefs([refs.setReference, inputRef]);
-    const inputProps: ComponentProps<'input'> = getReferenceProps({ ref: combinedInputRefs });
+    const inputProps: ComponentProps<'input'> = getReferenceProps({
+        ref: combinedInputRefs,
+    });
 
     const getMenuItemProps = (itemIndex: number, props: HTMLProps<HTMLElement>) => {
         const updateListRef = (node: HTMLElement | null) => {

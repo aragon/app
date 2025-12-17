@@ -1,10 +1,10 @@
-import { useFormField } from '@/shared/hooks/useFormField';
-import { dateUtils, type IDateDuration } from '@/shared/utils/dateUtils';
 import { Card, InputNumber } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { Duration } from 'luxon';
 import type { ComponentProps } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useFormField } from '@/shared/hooks/useFormField';
+import { dateUtils, type IDateDuration } from '@/shared/utils/dateUtils';
 import { useTranslations } from '../../translationsProvider';
 import type { IAdvancedDateInputBaseProps } from './advancedDateInput.api';
 import { AdvancedDateInputInfoText } from './advancedDateInputInfoText';
@@ -46,9 +46,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
     };
 
     const processedDefaultValue = defaultValue ?? minDuration ?? { days: 0, hours: 0, minutes: 0 };
-    const formattedDefaultValue = useSecondsFormat
-        ? dateUtils.durationToSeconds(processedDefaultValue)
-        : processedDefaultValue;
+    const formattedDefaultValue = useSecondsFormat ? dateUtils.durationToSeconds(processedDefaultValue) : processedDefaultValue;
 
     const alertValue = Duration.fromObject(minDuration ?? {})
         .rescale()
@@ -61,13 +59,11 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
     });
 
     const currentDurationObject =
-        typeof durationField.value === 'object'
-            ? durationField.value
-            : dateUtils.secondsToDuration(durationField.value);
+        typeof durationField.value === 'object' ? durationField.value : dateUtils.secondsToDuration(durationField.value);
 
     const handleDurationChange = (type: string) => (value: string) => {
-        const parsedValue = parseInt(value, 10);
-        const numericValue = isNaN(parsedValue) ? 0 : parsedValue;
+        const parsedValue = Number.parseInt(value, 10);
+        const numericValue = Number.isNaN(parsedValue) ? 0 : parsedValue;
         const newValue = { ...currentDurationObject, [type]: numericValue };
         const processedNewValue = useSecondsFormat ? dateUtils.durationToSeconds(newValue) : newValue;
         setValue(field, processedNewValue, { shouldValidate: false });
@@ -76,42 +72,42 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
     const handleInputBlur = () => trigger(field);
 
     return (
-        <Card className={classNames('shadow-neutral-sm flex flex-col gap-4 p-6', className)} {...otherProps}>
+        <Card className={classNames('flex flex-col gap-4 p-6 shadow-neutral-sm', className)} {...otherProps}>
             <div className="flex flex-col justify-between gap-4 md:flex-row">
                 <InputNumber
+                    className="w-full md:w-1/3"
                     label={t('app.shared.advancedDateInput.duration.minutes')}
-                    min={0}
                     max={59}
-                    className="w-full md:w-1/3"
-                    placeholder="0 min"
-                    value={currentDurationObject.minutes}
-                    onChange={handleDurationChange('minutes')}
-                    onBlur={handleInputBlur}
-                    suffix="min"
-                />
-                <InputNumber
-                    label={t('app.shared.advancedDateInput.duration.hours')}
                     min={0}
-                    max={23}
-                    className="w-full md:w-1/3"
-                    placeholder="0 h"
-                    value={currentDurationObject.hours}
-                    onChange={handleDurationChange('hours')}
                     onBlur={handleInputBlur}
-                    suffix="h"
+                    onChange={handleDurationChange('minutes')}
+                    placeholder="0 min"
+                    suffix="min"
+                    value={currentDurationObject.minutes}
                 />
                 <InputNumber
+                    className="w-full md:w-1/3"
+                    label={t('app.shared.advancedDateInput.duration.hours')}
+                    max={23}
+                    min={0}
+                    onBlur={handleInputBlur}
+                    onChange={handleDurationChange('hours')}
+                    placeholder="0 h"
+                    suffix="h"
+                    value={currentDurationObject.hours}
+                />
+                <InputNumber
+                    className="w-full md:w-1/3"
                     label={t('app.shared.advancedDateInput.duration.days')}
                     min={0}
-                    className="w-full md:w-1/3"
-                    placeholder="0 d"
-                    value={currentDurationObject.days}
-                    onChange={handleDurationChange('days')}
                     onBlur={handleInputBlur}
+                    onChange={handleDurationChange('days')}
+                    placeholder="0 d"
                     suffix="d"
+                    value={currentDurationObject.days}
                 />
             </div>
-            <AdvancedDateInputInfoText field={durationField} infoText={infoText} infoDisplay={infoDisplay} />
+            <AdvancedDateInputInfoText field={durationField} infoDisplay={infoDisplay} infoText={infoText} />
         </Card>
     );
 };

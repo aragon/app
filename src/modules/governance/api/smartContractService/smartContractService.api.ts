@@ -40,5 +40,4 @@ export interface IDecodeTransactionBodyParams {
     from: string;
 }
 
-export interface IDecodeTransactionParams
-    extends IRequestUrlBodyParams<IDecodeTransactionUrlParams, IDecodeTransactionBodyParams> {}
+export interface IDecodeTransactionParams extends IRequestUrlBodyParams<IDecodeTransactionUrlParams, IDecodeTransactionBodyParams> {}

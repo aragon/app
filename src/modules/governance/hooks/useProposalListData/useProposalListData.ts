@@ -1,6 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
-import { useProposalList, type IGetProposalListParams, type IProposal } from '../../api/governanceService';
+import { type IGetProposalListParams, type IProposal, useProposalList } from '../../api/governanceService';
 
 export const useProposalListData = <TProposal extends IProposal = IProposal>(params: IGetProposalListParams) => {
     const { t } = useTranslations();
@@ -29,5 +29,13 @@ export const useProposalListData = <TProposal extends IProposal = IProposal>(par
         description: t('app.governance.daoProposalList.empty.description'),
     };
 
-    return { proposalList, onLoadMore: fetchNextPage, state, pageSize, itemsCount, emptyState, errorState };
+    return {
+        proposalList,
+        onLoadMore: fetchNextPage,
+        state,
+        pageSize,
+        itemsCount,
+        emptyState,
+        errorState,
+    };
 };

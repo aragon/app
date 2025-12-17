@@ -1,14 +1,14 @@
-import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
+import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import type { IBuildActionsArrayParams } from './adminManageMembersDialogUtils.api';
 
 class AdminManageMembersDialogUtils {
-    private permissionIds = {
+    private readonly permissionIds = {
         EXECUTE_PROPOSAL_PERMISSION: 'EXECUTE_PROPOSAL_PERMISSION',
     };
 
-    private proposalMetadata = {
+    private readonly proposalMetadata = {
         title: 'Update admins',
         summary: 'One or more changes have been made to who has permission to execute proposals via the admin plugin.',
     };
@@ -19,11 +19,11 @@ class AdminManageMembersDialogUtils {
         const { currentAdmins, updatedAdmins, pluginAddress, daoAddress } = params;
 
         const adminsToAdd = updatedAdmins.filter(
-            (admin) => !currentAdmins.some((member) => addressUtils.isAddressEqual(member.address, admin.address)),
+            (admin) => !currentAdmins.some((member) => addressUtils.isAddressEqual(member.address, admin.address))
         );
 
         const adminsToRemove = currentAdmins.filter(
-            (admin) => !updatedAdmins.some((member) => addressUtils.isAddressEqual(member.address, admin.address)),
+            (admin) => !updatedAdmins.some((member) => addressUtils.isAddressEqual(member.address, admin.address))
         );
 
         const grantActions = adminsToAdd.map((admin) => {

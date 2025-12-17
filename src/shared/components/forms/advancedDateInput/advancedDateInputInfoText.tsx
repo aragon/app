@@ -1,6 +1,6 @@
+import { AlertCard, AlertInline } from '@aragon/gov-ui-kit';
 import type { IUseFormFieldReturn } from '@/shared/hooks/useFormField';
 import type { IDateDuration, IDateFixed } from '@/shared/utils/dateUtils';
-import { AlertCard, AlertInline } from '@aragon/gov-ui-kit';
 import type { IAdvancedDateInputBaseProps } from './advancedDateInput.api';
 
 export interface IAdvancedDateInputInfoTextProps extends Pick<IAdvancedDateInputBaseProps, 'infoText' | 'infoDisplay'> {

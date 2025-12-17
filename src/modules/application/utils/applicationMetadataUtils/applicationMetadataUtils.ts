@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { daoService } from '@/shared/api/daoService';
 import type { IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -5,7 +6,6 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { metadataUtils } from '@/shared/utils/metadataUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
-import type { Metadata } from 'next';
 
 export interface IGenerateDaoMetadataParams {
     /**
@@ -41,7 +41,12 @@ class ApplicationMetadataUtils {
             const description = dao.description;
             const siteName = `${dao.name} | Governed on Aragon`;
 
-            return metadataUtils.buildMetadata({ title, description, siteName, image });
+            return metadataUtils.buildMetadata({
+                title,
+                description,
+                siteName,
+                image,
+            });
         } catch (error: unknown) {
             monitoringUtils.logError(error);
 

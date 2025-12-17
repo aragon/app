@@ -1,6 +1,6 @@
+import { useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { useBlockExplorer } from '@aragon/gov-ui-kit';
 import type { IUseDaoChainParams, IUseDaoChainReturn } from './useDaoChain.api';
 
 export const useDaoChain = (params: IUseDaoChainParams): IUseDaoChainReturn => {

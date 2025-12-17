@@ -1,9 +1,9 @@
 'use client';
 
-import type { Network } from '@/shared/api/daoService';
-import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
+import type { Network } from '@/shared/api/daoService';
+import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
 import { GaugeVoterGaugeDetailsDialogContent } from './gaugeVoterGaugeDetailsDialogContent';
 import { GaugeVoterGaugeDetailsDialogFooter } from './gaugeVoterGaugeDetailsDialogFooter';
@@ -40,8 +40,7 @@ export interface IGaugeVoterGaugeDetailsDialogParams {
     }>;
 }
 
-export interface IGaugeVoterGaugeDetailsDialogProps
-    extends IDialogComponentProps<IGaugeVoterGaugeDetailsDialogParams> {}
+export interface IGaugeVoterGaugeDetailsDialogProps extends IDialogComponentProps<IGaugeVoterGaugeDetailsDialogParams> {}
 
 export const GaugeVoterGaugeDetailsDialog: React.FC<IGaugeVoterGaugeDetailsDialogProps> = (props) => {
     const { location } = props;
@@ -74,16 +73,16 @@ export const GaugeVoterGaugeDetailsDialog: React.FC<IGaugeVoterGaugeDetailsDialo
 
     return (
         <>
-            <Dialog.Header title={gauge.name ?? 'Gauge'} onClose={close} description={gauge.description ?? undefined} />
+            <Dialog.Header description={gauge.description ?? undefined} onClose={close} title={gauge.name ?? 'Gauge'} />
             <Dialog.Content className="pb-3">
                 <GaugeVoterGaugeDetailsDialogContent gauge={gauge} network={network} userVotes={userVotes} />
             </Dialog.Content>
             <GaugeVoterGaugeDetailsDialogFooter
-                onPrevious={handlePrevious}
-                onNext={handleNext}
-                disablePrevious={isFirstGauge}
-                disableNext={isLastGauge}
                 currentGaugeNumber={currentIndex + 1}
+                disableNext={isLastGauge}
+                disablePrevious={isFirstGauge}
+                onNext={handleNext}
+                onPrevious={handlePrevious}
                 totalGauges={gauges.length}
             />
         </>

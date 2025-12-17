@@ -1,6 +1,6 @@
-import { Network } from '@/shared/api/daoService';
 import { renderHook } from '@testing-library/react';
 import * as wagmi from 'wagmi';
+import { Network } from '@/shared/api/daoService';
 import { generateTokenPluginSettingsToken } from '../../testUtils';
 import { useWrappedTokenBalance } from './useWrappedTokenBalance';
 
@@ -21,12 +21,14 @@ describe('useWrappedTokenBalance hook', () => {
             isLoading: false,
         } as unknown as wagmi.UseReadContractReturnType);
 
-        const token = generateTokenPluginSettingsToken({ network: Network.ETHEREUM_MAINNET });
+        const token = generateTokenPluginSettingsToken({
+            network: Network.ETHEREUM_MAINNET,
+        });
         const { result } = renderHook(() =>
             useWrappedTokenBalance({
                 userAddress: '0x1234567890123456789012345678901234567890',
                 token,
-            }),
+            })
         );
 
         expect(result.current.balance).toBe(mockBalance);
@@ -42,12 +44,14 @@ describe('useWrappedTokenBalance hook', () => {
             isLoading: false,
         } as unknown as wagmi.UseReadContractReturnType);
 
-        const token = generateTokenPluginSettingsToken({ network: Network.ETHEREUM_MAINNET });
+        const token = generateTokenPluginSettingsToken({
+            network: Network.ETHEREUM_MAINNET,
+        });
         const { result } = renderHook(() =>
             useWrappedTokenBalance({
                 userAddress: '0x1234567890123456789012345678901234567890',
                 token,
-            }),
+            })
         );
 
         expect(result.current.balance).toBe(BigInt(0));
@@ -62,18 +66,20 @@ describe('useWrappedTokenBalance hook', () => {
             isLoading: false,
         } as unknown as wagmi.UseReadContractReturnType);
 
-        const token = generateTokenPluginSettingsToken({ network: Network.ETHEREUM_MAINNET });
+        const token = generateTokenPluginSettingsToken({
+            network: Network.ETHEREUM_MAINNET,
+        });
         renderHook(() =>
             useWrappedTokenBalance({
                 userAddress: undefined,
                 token,
-            }),
+            })
         );
 
         expect(useReadContractSpy).toHaveBeenCalledWith(
             expect.objectContaining({
                 query: { enabled: false },
-            }),
+            })
         );
     });
 
@@ -95,7 +101,7 @@ describe('useWrappedTokenBalance hook', () => {
             useWrappedTokenBalance({
                 userAddress: '0xUserAddress',
                 token,
-            }),
+            })
         );
 
         expect(useReadContractSpy).toHaveBeenCalledWith(
@@ -104,7 +110,7 @@ describe('useWrappedTokenBalance hook', () => {
                 functionName: 'balanceOf',
                 args: ['0xUserAddress'],
                 chainId: 1, // Ethereum Mainnet
-            }),
+            })
         );
     });
 
@@ -125,13 +131,13 @@ describe('useWrappedTokenBalance hook', () => {
             useWrappedTokenBalance({
                 userAddress: '0xUserAddress',
                 token,
-            }),
+            })
         );
 
         expect(useReadContractSpy).toHaveBeenCalledWith(
             expect.objectContaining({
-                chainId: 11155111, // Sepolia
-            }),
+                chainId: 11_155_111, // Sepolia
+            })
         );
     });
 
@@ -150,7 +156,7 @@ describe('useWrappedTokenBalance hook', () => {
             useWrappedTokenBalance({
                 userAddress: '0xUserAddress',
                 token,
-            }),
+            })
         );
 
         const callArgs = useReadContractSpy.mock.calls[0][0];

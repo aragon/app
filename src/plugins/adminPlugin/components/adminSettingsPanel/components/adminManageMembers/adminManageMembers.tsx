@@ -1,3 +1,4 @@
+import { Button } from '@aragon/gov-ui-kit';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { AdminPluginDialogId } from '@/plugins/adminPlugin/constants/adminPluginDialogId';
@@ -6,7 +7,6 @@ import { PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { Button } from '@aragon/gov-ui-kit';
 
 export interface IAdminMangeMembersProps {
     /**
@@ -21,7 +21,10 @@ export const AdminManageMembers: React.FC<IAdminMangeMembersProps> = (props) => 
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const [adminPlugin] = useDaoPlugins({ daoId, interfaceType: PluginInterfaceType.ADMIN })!;
+    const [adminPlugin] = useDaoPlugins({
+        daoId,
+        interfaceType: PluginInterfaceType.ADMIN,
+    })!;
 
     const openManageMembersDialog = () => {
         const params: IAdminManageMembersDialogParams = {

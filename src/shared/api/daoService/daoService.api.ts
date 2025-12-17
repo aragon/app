@@ -50,8 +50,7 @@ export interface IGetDaoPermissionsUrlParams {
 
 export interface IGetDaoPermissionsQueryParams extends IPaginatedRequest {}
 
-export interface IGetDaoPermissionsParams
-    extends IRequestUrlQueryParams<IGetDaoPermissionsUrlParams, IGetDaoPermissionsQueryParams> {}
+export interface IGetDaoPermissionsParams extends IRequestUrlQueryParams<IGetDaoPermissionsUrlParams, IGetDaoPermissionsQueryParams> {}
 
 export interface IGetDaoPoliciesUrlParams {
     /**

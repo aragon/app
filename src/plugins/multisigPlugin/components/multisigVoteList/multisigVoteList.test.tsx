@@ -1,29 +1,21 @@
+import { addressUtils, GukModulesProvider, type VoteIndicator } from '@aragon/gov-ui-kit';
+import { render, screen, within } from '@testing-library/react';
 import type { IVote } from '@/modules/governance/api/governanceService';
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
 import { generateProposal } from '@/modules/governance/testUtils';
 import * as daoService from '@/shared/api/daoService';
 import { generateAddressInfo, generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { addressUtils, GukModulesProvider, type VoteIndicator } from '@aragon/gov-ui-kit';
-import { render, screen, within } from '@testing-library/react';
 import { generateMultisigVote } from '../../testUtils';
 import { type IMultisigVoteListProps, MultisigVoteList } from './multisigVoteList';
 
 jest.mock('../../../../modules/governance/components/voteList', () => ({
-    VoteProposalListItem: ({
-        daoId,
-        vote,
-        voteIndicator,
-    }: {
-        vote: IVote;
-        daoId: string;
-        voteIndicator: VoteIndicator;
-    }) => {
+    VoteProposalListItem: ({ daoId, vote, voteIndicator }: { vote: IVote; daoId: string; voteIndicator: VoteIndicator }) => {
         const slug = `MULTISIG-${vote.proposal!.incrementalId.toString()}`;
         const href = `/test/${daoId}/proposals/${slug}`;
 
         return (
-            <a href={href} data-testid="vote-proposal-list-item-mock">
+            <a data-testid="vote-proposal-list-item-mock" href={href}>
                 <span data-testid="proposal-title">{vote.proposal!.title}</span>
                 <span data-testid="vote-indicator">{voteIndicator.toLowerCase()}</span>
             </a>
@@ -48,7 +40,12 @@ describe('<MultisigVoteList /> component', () => {
 
     const createTestComponent = (props?: Partial<IMultisigVoteListProps>) => {
         const completeProps: IMultisigVoteListProps = {
-            initialParams: { queryParams: { pluginAddress: '0x123', network: daoService.Network.ETHEREUM_SEPOLIA } },
+            initialParams: {
+                queryParams: {
+                    pluginAddress: '0x123',
+                    network: daoService.Network.ETHEREUM_SEPOLIA,
+                },
+            },
             daoId: 'test-id',
             ...props,
         };
@@ -64,11 +61,15 @@ describe('<MultisigVoteList /> component', () => {
         const votes = [
             generateMultisigVote({
                 transactionHash: '0x123',
-                member: generateAddressInfo({ address: '0x00C51Fad10462780e488B54D413aD92B28b88204' }),
+                member: generateAddressInfo({
+                    address: '0x00C51Fad10462780e488B54D413aD92B28b88204',
+                }),
             }),
             generateMultisigVote({
                 transactionHash: '0x456',
-                member: generateAddressInfo({ address: '0xF6ad40D5D477ade0C640eaD49944bdD0AA1fBF05' }),
+                member: generateAddressInfo({
+                    address: '0xF6ad40D5D477ade0C640eaD49944bdD0AA1fBF05',
+                }),
             }),
         ];
 
@@ -105,13 +106,19 @@ describe('<MultisigVoteList /> component', () => {
         const votes = [
             generateMultisigVote({
                 transactionHash: '0x123',
-                proposal: generateProposal({ title: 'Test Proposal 1', incrementalId: 4 }),
-                blockTimestamp: 1234567890,
+                proposal: generateProposal({
+                    title: 'Test Proposal 1',
+                    incrementalId: 4,
+                }),
+                blockTimestamp: 1_234_567_890,
             }),
             generateMultisigVote({
                 transactionHash: '0x456',
-                proposal: generateProposal({ title: 'Test Proposal 2', incrementalId: 5 }),
-                blockTimestamp: 1234567890,
+                proposal: generateProposal({
+                    title: 'Test Proposal 2',
+                    incrementalId: 5,
+                }),
+                blockTimestamp: 1_234_567_890,
             }),
         ];
 
@@ -135,7 +142,7 @@ describe('<MultisigVoteList /> component', () => {
                         network: daoService.Network.ETHEREUM_SEPOLIA,
                     },
                 },
-            }),
+            })
         );
 
         const links = screen.getAllByTestId('vote-proposal-list-item-mock');

@@ -1,6 +1,6 @@
+import { useEffect } from 'react';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useEffect } from 'react';
 
 export const useConfirmWizardExit = (isFormDirty: boolean) => {
     const { setIsBlocked } = useBlockNavigationContext();
@@ -14,6 +14,7 @@ export const useConfirmWizardExit = (isFormDirty: boolean) => {
         };
 
         const handlePopState = () => {
+            // biome-ignore lint/suspicious/noAlert: native confirm ensures navigation is blocked without extra UI
             const confirmLeave = window.confirm(t('app.shared.confirmWizardExit.message'));
 
             if (confirmLeave) {

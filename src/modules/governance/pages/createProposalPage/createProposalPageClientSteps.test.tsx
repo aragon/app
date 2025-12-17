@@ -1,15 +1,12 @@
+import { render, screen } from '@testing-library/react';
+import * as ReactHookForm from 'react-hook-form';
 import * as DialogProvider from '@/shared/components/dialogProvider';
 import type { IWizardPageStepProps } from '@/shared/components/wizards/wizardPage';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateDialogContext, generateFilterComponentPlugin, generateFormContext } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { render, screen } from '@testing-library/react';
-import * as ReactHookForm from 'react-hook-form';
 import * as CreateProposalProvider from '../../components/createProposalForm/createProposalFormProvider';
-import {
-    CreateProposalPageClientSteps,
-    type ICreateProposalPageClientStepsProps,
-} from './createProposalPageClientSteps';
+import { CreateProposalPageClientSteps, type ICreateProposalPageClientStepsProps } from './createProposalPageClientSteps';
 import { CreateProposalWizardStep, createProposalWizardSteps } from './createProposalPageDefinitions';
 
 jest.mock('../../components/createProposalForm', () => ({
@@ -23,7 +20,7 @@ jest.mock('../../components/createProposalForm', () => ({
 jest.mock('@/shared/components/wizards/wizardPage', () => ({
     WizardPage: {
         Step: ({ title, description, children, hidden, id }: IWizardPageStepProps) => (
-            <div data-testid={id} data-hidden={hidden} data-title={title} data-description={description}>
+            <div data-description={description} data-hidden={hidden} data-testid={id} data-title={title}>
                 {children}
             </div>
         ),

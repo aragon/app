@@ -1,17 +1,17 @@
-import { transactionListOptions } from '@/modules/finance/api/financeService/queries/useTransactionList/useTransactionList';
-import { daoOptions, Network } from '@/shared/api/daoService';
-import { generateDao } from '@/shared/testUtils';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { daoTransactionsCount, DaoTransactionsPage, type IDaoTransactionsPageProps } from './daoTransactionsPage';
+import { transactionListOptions } from '@/modules/finance/api/financeService/queries/useTransactionList/useTransactionList';
+import { daoOptions, Network } from '@/shared/api/daoService';
+import { generateDao } from '@/shared/testUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { DaoTransactionsPage, daoTransactionsCount, type IDaoTransactionsPageProps } from './daoTransactionsPage';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
-        <div data-testid="hydration-mock" data-state={JSON.stringify(props.state)}>
+        <div data-state={JSON.stringify(props.state)} data-testid="hydration-mock">
             {props.children}
         </div>
     ),
@@ -40,7 +40,10 @@ describe('<DaoTransactionsPage /> component', () => {
 
     const createTestComponent = async (props?: Partial<IDaoTransactionsPageProps>) => {
         const completeProps: IDaoTransactionsPageProps = {
-            params: Promise.resolve({ addressOrEns: 'test.dao.eth', network: Network.ETHEREUM_MAINNET }),
+            params: Promise.resolve({
+                addressOrEns: 'test.dao.eth',
+                network: Network.ETHEREUM_MAINNET,
+            }),
             ...props,
         };
 
@@ -61,13 +64,14 @@ describe('<DaoTransactionsPage /> component', () => {
         resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
 
         render(await createTestComponent());
-        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
-            daoOptions({ urlParams: { id: expectedDaoId } }).queryKey,
-        );
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: { id: expectedDaoId } }).queryKey);
 
-        const expectedParams = { daoId: dao.id, pageSize: daoTransactionsCount };
+        const expectedParams = {
+            daoId: dao.id,
+            pageSize: daoTransactionsCount,
+        };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
-            transactionListOptions({ queryParams: expectedParams }).queryKey,
+            transactionListOptions({ queryParams: expectedParams }).queryKey
         );
     });
 });

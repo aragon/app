@@ -1,10 +1,10 @@
+import { QueryClient } from '@tanstack/react-query';
 import { transactionListOptions } from '@/modules/finance/api/financeService/queries/useTransactionList/useTransactionList';
 import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
-import { type IDaoPageParams } from '@/shared/types';
+import type { IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
-import { QueryClient } from '@tanstack/react-query';
 import { DaoTransactionsPageClient } from './daoTransactionsPageClient';
 
 export interface IDaoTransactionsPageProps {
@@ -31,7 +31,10 @@ export const DaoTransactionsPage: React.FC<IDaoTransactionsPageProps> = async (p
     const useDaoParams = { id: daoId };
     const dao = await queryClient.fetchQuery(daoOptions({ urlParams: useDaoParams }));
 
-    const transactionsQueryParams = { daoId: dao.id, pageSize: daoTransactionsCount };
+    const transactionsQueryParams = {
+        daoId: dao.id,
+        pageSize: daoTransactionsCount,
+    };
     const transactionsParams = { queryParams: transactionsQueryParams };
 
     await queryClient.prefetchInfiniteQuery(transactionListOptions(transactionsParams));

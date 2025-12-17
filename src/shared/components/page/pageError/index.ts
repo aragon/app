@@ -1,1 +1,1 @@
-export { PageError, type IPageErrorProps } from './pageError';
+export { type IPageErrorProps, PageError } from './pageError';

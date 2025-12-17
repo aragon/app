@@ -1,8 +1,8 @@
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, Card, Dropdown, IconType, InputText } from '@aragon/gov-ui-kit';
 import type React from 'react';
 import { useWatch } from 'react-hook-form';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 import { type ICreateProcessFormStage, ProcessStageType } from '../../../createProcessFormDefinitions';
 import { GovernanceStageBodiesField } from '../governanceStageBodiesField';
 import { GovernanceStageSettingsField } from '../governanceStageSettingsField';
@@ -61,9 +61,7 @@ export const GovernanceStagesFieldItem: React.FC<IGovernanceStagesFieldItemProps
     const bodiesLabelContext = isOptimisticStage ? 'veto' : 'normal';
 
     const stageNameText =
-        stageNameField.value !== ''
-            ? stageNameField.value
-            : t('app.createDao.createProcessForm.governance.stageField.title');
+        stageNameField.value !== '' ? stageNameField.value : t('app.createDao.createProcessForm.governance.stageField.title');
     const stageNumberText = t('app.createDao.createProcessForm.governance.stageField.number', {
         stageNumber: index + 1,
     });
@@ -72,7 +70,7 @@ export const GovernanceStagesFieldItem: React.FC<IGovernanceStagesFieldItemProps
         <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
             <div className="flex flex-col gap-6">
                 <div className="flex items-center justify-between">
-                    <p className="text-xl text-neutral-800">{stageNameText}</p>
+                    <p className="text-neutral-800 text-xl">{stageNameText}</p>
                     <p className="text-neutral-400">{stageNumberText}</p>
                 </div>
                 {!readOnly && (
@@ -83,22 +81,17 @@ export const GovernanceStagesFieldItem: React.FC<IGovernanceStagesFieldItemProps
                     />
                 )}
             </div>
-            <GovernanceStageBodiesField
-                formPrefix={formPrefix}
-                daoId={daoId}
-                labelContext={bodiesLabelContext}
-                readOnly={readOnly}
-            />
+            <GovernanceStageBodiesField daoId={daoId} formPrefix={formPrefix} labelContext={bodiesLabelContext} readOnly={readOnly} />
             <GovernanceStageSettingsField formPrefix={formPrefix} readOnly={readOnly} />
             {stagesCount > 1 && !readOnly && (
                 <Dropdown.Container
                     constrainContentWidth={false}
-                    size="md"
                     customTrigger={
-                        <Button variant="tertiary" size="md" iconRight={IconType.DOTS_VERTICAL} className="self-end">
+                        <Button className="self-end" iconRight={IconType.DOTS_VERTICAL} size="md" variant="tertiary">
                             {t('app.createDao.createProcessForm.governance.stageField.action.more')}
                         </Button>
                     }
+                    size="md"
                 >
                     <Dropdown.Item onClick={onDelete}>
                         {t('app.createDao.createProcessForm.governance.stageField.action.remove')}

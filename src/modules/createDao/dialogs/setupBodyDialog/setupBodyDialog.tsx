@@ -1,14 +1,14 @@
+import { addressUtils, invariant } from '@aragon/gov-ui-kit';
+import { useMemo } from 'react';
+import { useAccount } from 'wagmi';
 import { daoProcessDetailsClientUtils } from '@/modules/settings/pages/daoProcessDetailsPage';
 import { useDao } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
-import { addressUtils, invariant } from '@aragon/gov-ui-kit';
-import { useMemo } from 'react';
-import { useAccount } from 'wagmi';
 import { BodyType } from '../../types/enum';
-import { type ISetupBodyForm } from './setupBodyDialogDefinitions';
-import { SetupBodyDialogSteps, type ISetupBodyDialogStepsProps } from './setupBodyDialogSteps';
+import type { ISetupBodyForm } from './setupBodyDialogDefinitions';
+import { type ISetupBodyDialogStepsProps, SetupBodyDialogSteps } from './setupBodyDialogSteps';
 
 export interface ISetupBodyDialogParams extends ISetupBodyDialogStepsProps {
     /**
@@ -35,17 +35,24 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
             return initialValues;
         }
 
-        return { ...initialValues, membership: { ...initialValues?.membership, members: [{ address }] } };
+        return {
+            ...initialValues,
+            membership: {
+                ...initialValues?.membership,
+                members: [{ address }],
+            },
+        };
     }, [initialValues, address]);
 
     const handleSubmit = (values: ISetupBodyForm) => {
         if (values.type === BodyType.EXTERNAL) {
-            const existingPlugin = dao?.plugins.find((plugin) =>
-                addressUtils.isAddressEqual(plugin.address, values.address),
-            );
+            const existingPlugin = dao?.plugins.find((plugin) => addressUtils.isAddressEqual(plugin.address, values.address));
 
             const processedValues = existingPlugin
-                ? daoProcessDetailsClientUtils.bodyToFormData({ plugin: existingPlugin, membership: { members: [] } })
+                ? daoProcessDetailsClientUtils.bodyToFormData({
+                      plugin: existingPlugin,
+                      membership: { members: [] },
+                  })
                 : values;
 
             onSubmit(processedValues);
@@ -56,13 +63,13 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
 
     return (
         <WizardDialog.Container
-            title={t('app.createDao.setupBodyDialog.title')}
+            defaultValues={processedInitialValues}
             formId="bodySetup"
             onSubmit={handleSubmit}
-            defaultValues={processedInitialValues}
             submitLabel={t('app.createDao.setupBodyDialog.submit')}
+            title={t('app.createDao.setupBodyDialog.title')}
         >
-            <SetupBodyDialogSteps initialValues={initialValues} daoId={daoId} isSubPlugin={isSubPlugin} />
+            <SetupBodyDialogSteps daoId={daoId} initialValues={initialValues} isSubPlugin={isSubPlugin} />
         </WizardDialog.Container>
     );
 };

@@ -1,10 +1,10 @@
-import { TransactionType } from '@/shared/api/transactionService';
-import { generateDialogContext } from '@/shared/testUtils';
-import { testLogger } from '@/test/utils';
 import { IconType } from '@aragon/gov-ui-kit';
 import { act, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { TransactionReceipt } from 'viem';
+import { TransactionType } from '@/shared/api/transactionService';
+import { generateDialogContext } from '@/shared/testUtils';
+import { testLogger } from '@/test/utils';
 import * as useDialogContext from '../dialogProvider';
 import { type ITransactionDialogStep, TransactionDialogStep } from './transactionDialog.api';
 import { type ITransactionDialogFooterProps, TransactionDialogFooter } from './transactionDialogFooter';
@@ -31,7 +31,9 @@ describe('<TransactionDialogFooter /> component', () => {
         const submitLabel = 'next-step';
         render(createTestComponent({ submitLabel }));
         expect(screen.getByRole('button', { name: submitLabel })).toBeInTheDocument();
-        const cancelButton = screen.getByRole('button', { name: /transactionDialog.footer.cancel/ });
+        const cancelButton = screen.getByRole('button', {
+            name: /transactionDialog.footer.cancel/,
+        });
         expect(cancelButton).toBeInTheDocument();
         expect(cancelButton).not.toBeDisabled();
     });
@@ -41,7 +43,11 @@ describe('<TransactionDialogFooter /> component', () => {
         const onCancelClick = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
         render(createTestComponent({ onCancelClick }));
-        await userEvent.click(screen.getByRole('button', { name: /transactionDialog.footer.cancel/ }));
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /transactionDialog.footer.cancel/,
+            })
+        );
         expect(close).toHaveBeenCalled();
         expect(onCancelClick).toHaveBeenCalled();
     });
@@ -52,7 +58,11 @@ describe('<TransactionDialogFooter /> component', () => {
             meta: { state: 'pending' },
         } as ITransactionDialogStep;
         render(createTestComponent({ activeStep }));
-        expect(screen.getByRole('button', { name: /transactionDialog.footer.cancel/ })).toBeDisabled();
+        expect(
+            screen.getByRole('button', {
+                name: /transactionDialog.footer.cancel/,
+            })
+        ).toBeDisabled();
     });
 
     it('disables the cancel button when the active step is confirm and its state is success', () => {
@@ -61,22 +71,29 @@ describe('<TransactionDialogFooter /> component', () => {
             meta: { state: 'success' },
         } as ITransactionDialogStep;
         render(createTestComponent({ activeStep }));
-        expect(screen.getByRole('button', { name: /transactionDialog.footer.cancel/ })).toBeDisabled();
+        expect(
+            screen.getByRole('button', {
+                name: /transactionDialog.footer.cancel/,
+            })
+        ).toBeDisabled();
     });
 
-    it.each([{ state: 'idle' }, { state: 'pending' }, { state: 'error' }])(
-        'renders the custom approve label when active step is approve and state is $state',
-        ({ state }) => {
-            const activeStep = {
-                id: TransactionDialogStep.APPROVE,
-                meta: { state },
-            } as ITransactionDialogStep;
-            render(createTestComponent({ activeStep }));
-            expect(
-                screen.getByRole('button', { name: new RegExp(`transactionDialog.footer.approve.${state}`) }),
-            ).toBeInTheDocument();
-        },
-    );
+    it.each([
+        { state: 'idle' },
+        { state: 'pending' },
+        { state: 'error' },
+    ])('renders the custom approve label when active step is approve and state is $state', ({ state }) => {
+        const activeStep = {
+            id: TransactionDialogStep.APPROVE,
+            meta: { state },
+        } as ITransactionDialogStep;
+        render(createTestComponent({ activeStep }));
+        expect(
+            screen.getByRole('button', {
+                name: new RegExp(`transactionDialog.footer.approve.${state}`),
+            })
+        ).toBeInTheDocument();
+    });
 
     it('renders default retry label and icon when step is not approve and state is error', () => {
         const activeStep = {
@@ -84,7 +101,11 @@ describe('<TransactionDialogFooter /> component', () => {
             meta: { state: 'error' },
         } as ITransactionDialogStep;
         render(createTestComponent({ activeStep }));
-        expect(screen.getByRole('button', { name: /transactionDialog.footer.retry/ })).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', {
+                name: /transactionDialog.footer.retry/,
+            })
+        ).toBeInTheDocument();
         expect(screen.getByTestId(IconType.RELOAD)).toBeInTheDocument();
     });
 
@@ -122,7 +143,10 @@ describe('<TransactionDialogFooter /> component', () => {
     });
 
     it('renders the success link label on transaction success', () => {
-        const successLink = { label: 'View proposal', href: '/proposal/my-proposal' };
+        const successLink = {
+            label: 'View proposal',
+            href: '/proposal/my-proposal',
+        };
         const activeStep = {
             id: TransactionDialogStep.CONFIRM,
             meta: { state: 'success' },
@@ -155,14 +179,21 @@ describe('<TransactionDialogFooter /> component', () => {
             meta: { state: 'success' },
         } as ITransactionDialogStep;
 
-        render(createTestComponent({ proposalSlug, successLink, activeStep, transactionType }));
+        render(
+            createTestComponent({
+                proposalSlug,
+                successLink,
+                activeStep,
+                transactionType,
+            })
+        );
 
         expect(screen.getByRole('link').getAttribute('href')).toEqual(href({ slug: proposalSlug }));
     });
 
     it('closes the dialog on success link click', async () => {
         testLogger.suppressErrors(); // suppress navigation not implemented error
-        const href = () => `/custom-link`;
+        const href = () => '/custom-link';
         const successLink = { label: 'View proposal', href };
         const close = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
@@ -190,13 +221,21 @@ describe('<TransactionDialogFooter /> component', () => {
             render(createTestComponent({ activeStep }));
 
             // Cancel button is the default button
-            expect(screen.getByRole('button', { name: /transactionDialog.footer.cancel/ })).toBeInTheDocument();
+            expect(
+                screen.getByRole('button', {
+                    name: /transactionDialog.footer.cancel/,
+                })
+            ).toBeInTheDocument();
 
             // simulate 8 seconds passing
-            act(() => jest.advanceTimersByTime(14000));
+            act(() => jest.advanceTimersByTime(14_000));
 
             // Cancel button should now be Proceed anyway
-            expect(screen.getByRole('link', { name: /transactionDialog.footer.proceedAnyway/ })).toBeInTheDocument();
+            expect(
+                screen.getByRole('link', {
+                    name: /transactionDialog.footer.proceedAnyway/,
+                })
+            ).toBeInTheDocument();
         });
 
         it('the proceed anyway button has the correct fallback href', () => {
@@ -213,11 +252,19 @@ describe('<TransactionDialogFooter /> component', () => {
                 meta: { state: 'pending' },
             } as ITransactionDialogStep;
 
-            render(createTestComponent({ activeStep, transactionType, indexingFallbackUrl }));
+            render(
+                createTestComponent({
+                    activeStep,
+                    transactionType,
+                    indexingFallbackUrl,
+                })
+            );
 
-            act(() => jest.advanceTimersByTime(14000));
+            act(() => jest.advanceTimersByTime(14_000));
 
-            const proceedButton = screen.getByRole('link', { name: /transactionDialog.footer.proceedAnyway/ });
+            const proceedButton = screen.getByRole('link', {
+                name: /transactionDialog.footer.proceedAnyway/,
+            });
             expect(proceedButton).toHaveAttribute('href', indexingFallbackUrl);
         });
     });

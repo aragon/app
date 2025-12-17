@@ -1,13 +1,13 @@
+import { createContext, useContext } from 'react';
 import type {
     IProposalCreateAction,
     PrepareProposalActionFunction,
     PrepareProposalActionMap,
 } from '@/modules/governance/dialogs/publishProposalDialog';
-import { createContext, useContext } from 'react';
 
 type AddPrepareActionFunction<TAction extends IProposalCreateAction = IProposalCreateAction> = (
     actionType: string,
-    prepareAction: PrepareProposalActionFunction<TAction>,
+    prepareAction: PrepareProposalActionFunction<TAction>
 ) => void;
 
 export interface ICreateProposalFormContext<TAction extends IProposalCreateAction = IProposalCreateAction> {
@@ -32,9 +32,7 @@ export const useCreateProposalFormContext = <
     const values = useContext(createProposalFormContext);
 
     if (values == null) {
-        throw new Error(
-            'useCreateProposalFormContext: hook must be used inside a CreateProposalFormProvider to work properly.',
-        );
+        throw new Error('useCreateProposalFormContext: hook must be used inside a CreateProposalFormProvider to work properly.');
     }
 
     return {

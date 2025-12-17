@@ -1,14 +1,14 @@
+import { Button, ChainEntityType, IconType, ProposalStatus } from '@aragon/gov-ui-kit';
+import { DateTime } from 'luxon';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { SppPluginDialogId } from '@/plugins/sppPlugin/constants/sppPluginDialogId';
-import { type ISppAdvanceStageDialogParams } from '@/plugins/sppPlugin/dialogs/sppAdvanceStageDialog';
-import { type ISppProposal, type ISppStage } from '@/plugins/sppPlugin/types';
+import type { ISppAdvanceStageDialogParams } from '@/plugins/sppPlugin/dialogs/sppAdvanceStageDialog';
+import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
-import { Button, ChainEntityType, IconType, ProposalStatus } from '@aragon/gov-ui-kit';
-import { DateTime } from 'luxon';
 
 export interface ISppStageStatusProps {
     /**
@@ -82,11 +82,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     // Stage cannot be advanced anymore, display expired info text.
     if (stageStatus === ProposalStatus.EXPIRED) {
-        return (
-            <span className="text-right text-neutral-500">
-                {t(`app.plugins.spp.sppStageStatus.expired${advanceTimeContext}`)}
-            </span>
-        );
+        return <span className="text-right text-neutral-500">{t(`app.plugins.spp.sppStageStatus.expired${advanceTimeContext}`)}</span>;
     }
 
     if (!displayAdvanceButton) {

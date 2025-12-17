@@ -94,8 +94,7 @@ const buildFilterPlugins = (params: IBuildFilterPluginsParams): Array<IFilterCom
 };
 
 export const useDaoPlugins = (params: IUseDaoPluginsParams): Array<IFilterComponentPlugin<IDaoPlugin>> | undefined => {
-    const { daoId, type, pluginAddress, includeSubPlugins, includeGroupFilter, interfaceType, slug, hasExecute } =
-        params;
+    const { daoId, type, pluginAddress, includeSubPlugins, includeGroupFilter, interfaceType, slug, hasExecute } = params;
 
     const { isEnabled } = useFeatureFlags();
     const { data: dao } = useDao({ urlParams: { id: daoId } });

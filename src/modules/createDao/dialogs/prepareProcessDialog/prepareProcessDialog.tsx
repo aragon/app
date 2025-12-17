@@ -1,3 +1,7 @@
+import { invariant } from '@aragon/gov-ui-kit';
+import { useCallback, useMemo, useState } from 'react';
+import type { TransactionReceipt } from 'viem';
+import { useAccount } from 'wagmi';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
@@ -14,17 +18,9 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
-import { invariant } from '@aragon/gov-ui-kit';
-import { useCallback, useMemo, useState } from 'react';
-import type { TransactionReceipt } from 'viem';
-import { useAccount } from 'wagmi';
 import type { ICreateProcessFormData } from '../../components/createProcessForm';
 import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
-import type {
-    IBuildProcessProposalActionsParams,
-    IBuildTransactionParams,
-    IPrepareProcessMetadata,
-} from './prepareProcessDialogUtils.api';
+import type { IBuildProcessProposalActionsParams, IBuildTransactionParams, IPrepareProcessMetadata } from './prepareProcessDialogUtils.api';
 
 export enum PrepareProcessStep {
     PIN_METADATA = 'PIN_METADATA',
@@ -77,7 +73,11 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
         invariant(processMetadata != null, 'PrepareProcessDialog: metadata not pinned');
         invariant(dao != null, 'PrepareProcessDialog: DAO cannot be fetched');
 
-        const params: IBuildTransactionParams = { values, processMetadata, dao };
+        const params: IBuildTransactionParams = {
+            values,
+            processMetadata,
+            dao,
+        };
         const transaction = await prepareProcessDialogUtils.buildPrepareProcessTransaction(params);
 
         return transaction;
@@ -90,7 +90,9 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
             const pinMetadataPromises = pluginsMetadata.map((body) => pinJson({ body }, params));
             const pluginMetadata = (await Promise.all(pinMetadataPromises)).map(({ IpfsHash }) => IpfsHash);
 
-            const metadata: IPrepareProcessMetadata = { plugins: pluginMetadata };
+            const metadata: IPrepareProcessMetadata = {
+                plugins: pluginMetadata,
+            };
 
             if (processorMetadata) {
                 const { IpfsHash: processorMetadataHash } = await pinJson({ body: processorMetadata }, params);
@@ -100,7 +102,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
             setProcessMetadata(metadata);
             nextStep();
         },
-        [pinJson, nextStep, values],
+        [pinJson, nextStep, values]
     );
 
     const handlePrepareInstallationSuccess = (txReceipt: TransactionReceipt) => {
@@ -122,9 +124,17 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
         const proposalMetadata = prepareProcessDialogUtils.preparePublishProcessProposalMetadata();
         const translationNamespace = `app.createDao.publishProcessDialog.${isAdmin ? 'admin' : 'default'}`;
 
-        const txInfo = { title: t(`${translationNamespace}.transactionInfoTitle`), current: 2, total: 2 };
+        const txInfo = {
+            title: t(`${translationNamespace}.transactionInfoTitle`),
+            current: 2,
+            total: 2,
+        };
         const params: IPublishProposalDialogParams = {
-            proposal: { ...proposalMetadata, resources: [], actions: proposalActions },
+            proposal: {
+                ...proposalMetadata,
+                resources: [],
+                actions: proposalActions,
+            },
             daoId,
             plugin: plugin.meta,
             translationNamespace,
@@ -148,24 +158,24 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
                 },
             },
         ],
-        [status, handlePinJson, pinMetadataNamespace, t],
+        [status, handlePinJson, pinMetadataNamespace, t]
     );
 
     return (
         <TransactionDialog<PrepareProcessStep>
-            title={t('app.createDao.prepareProcessDialog.title')}
+            customSteps={customSteps}
             description={t('app.createDao.prepareProcessDialog.description')}
-            submitLabel={t('app.createDao.prepareProcessDialog.button.submit')}
+            network={dao?.network}
             onSuccess={handlePrepareInstallationSuccess}
+            prepareTransaction={handlePrepareTransaction}
+            stepper={stepper}
+            submitLabel={t('app.createDao.prepareProcessDialog.button.submit')}
+            title={t('app.createDao.prepareProcessDialog.title')}
             transactionInfo={{
                 title: t('app.createDao.prepareProcessDialog.transactionInfoTitle'),
                 current: 1,
                 total: 2,
             }}
-            stepper={stepper}
-            customSteps={customSteps}
-            prepareTransaction={handlePrepareTransaction}
-            network={dao?.network}
         />
     );
 };

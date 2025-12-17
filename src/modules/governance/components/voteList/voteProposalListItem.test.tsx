@@ -1,9 +1,9 @@
+import { DateFormat, formatterUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
 import { generateProposal, generateVote } from '@/modules/governance/testUtils';
 import * as daoService from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { DateFormat, formatterUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
 import { proposalUtils } from '../../utils/proposalUtils';
 import { type IVoteProposalListItemProps, VoteProposalListItem } from './voteProposalListItem';
 
@@ -40,7 +40,10 @@ describe('<VoteProposalListItem /> component', () => {
 
     it('renders the parent proposal info when parent proposal is defined', () => {
         const parentProposal = generateProposal({ title: 'Parent Proposal' });
-        const vote = generateVote({ parentProposal, proposal: generateProposal() });
+        const vote = generateVote({
+            parentProposal,
+            proposal: generateProposal(),
+        });
         const dao = generateDao();
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent({ vote }));
@@ -59,10 +62,15 @@ describe('<VoteProposalListItem /> component', () => {
     });
 
     it('correctly renders the vote timestamp', () => {
-        const blockTimestamp = 1672531200;
-        const vote = generateVote({ blockTimestamp, proposal: generateProposal() });
+        const blockTimestamp = 1_672_531_200;
+        const vote = generateVote({
+            blockTimestamp,
+            proposal: generateProposal(),
+        });
         render(createTestComponent({ vote }));
-        const expectedDate = formatterUtils.formatDate(blockTimestamp * 1000, { format: DateFormat.DURATION });
+        const expectedDate = formatterUtils.formatDate(blockTimestamp * 1000, {
+            format: DateFormat.DURATION,
+        });
         expect(screen.getByText(`${expectedDate!} ago`)).toBeInTheDocument();
     });
 

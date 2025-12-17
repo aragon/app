@@ -1,11 +1,11 @@
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
 import {
     generateDaoPlugin,
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
     generateReactQueryInfiniteResultSuccess,
 } from '@/shared/testUtils';
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
 import * as governanceService from '../../../../modules/governance/api/governanceService';
 import { generateMember } from '../../../../modules/governance/testUtils';
 import { AdminMemberInfo, type IAdminMemberInfoProps } from './adminMemberInfo';
@@ -33,9 +33,17 @@ describe('<AdminMemberInfo /> component', () => {
 
     it('renders the correct member info for the admin plugin', () => {
         const members = [generateMember({ address: '0x123' }), generateMember({ address: '0x456' })];
-        const membersMetadata = generatePaginatedResponseMetadata({ pageSize: 20, totalRecords: members.length });
-        const membersResponse = generatePaginatedResponse({ data: members, metadata: membersMetadata });
-        const result = generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } });
+        const membersMetadata = generatePaginatedResponseMetadata({
+            pageSize: 20,
+            totalRecords: members.length,
+        });
+        const membersResponse = generatePaginatedResponse({
+            data: members,
+            metadata: membersMetadata,
+        });
+        const result = generateReactQueryInfiniteResultSuccess({
+            data: { pages: [membersResponse], pageParams: [] },
+        });
 
         useMemberListSpy.mockReturnValue(result);
         render(createTestComponent());

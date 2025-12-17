@@ -1,11 +1,12 @@
 'use client';
 
+import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import {
     type ICreateProcessFormDataAdvanced,
     ProcessStageType,
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
-import { type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import type { ISetupStageSettingsForm } from '@/modules/createDao/dialogs/setupStageSettingsDialog';
 import { BodyType } from '@/modules/createDao/types/enum';
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
@@ -17,7 +18,6 @@ import { dateUtils } from '@/shared/utils/dateUtils';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { type IPluginInstallationSetupData, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
-import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import { sppPlugin } from '../../constants/sppPlugin';
 import { SppProposalType } from '../../types';
 import { sppPluginAbi, sppPluginSetupAbi } from './sppPluginAbi';
@@ -26,11 +26,11 @@ export interface ICreateSppProposalFormData extends IProposalCreate, ICreateProp
 
 class SppTransactionUtils {
     // When stage expiration is not defined, we set a default max-advance to 100 years
-    private defaultMaxAdvance = BigInt(dateUtils.durationToSeconds({ days: 36525, hours: 0, minutes: 0 }));
+    private readonly defaultMaxAdvance = BigInt(dateUtils.durationToSeconds({ days: 36_525, hours: 0, minutes: 0 }));
 
     // A special address for encoding permissions
     // See https://github.com/aragon/osx/blob/main/packages/contracts/src/core/permission/PermissionManager.sol#L23
-    private anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';
+    private readonly anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';
 
     buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateSppProposalFormData>): Hex => {
         const { metadata, actions, proposal } = params;
@@ -38,7 +38,11 @@ class SppTransactionUtils {
         const startDate = createProposalUtils.parseStartDate(proposal);
 
         const functionArgs = [metadata, actions, BigInt(0), startDate, [[]]];
-        const data = encodeFunctionData({ abi: sppPluginAbi, functionName: 'createProposal', args: functionArgs });
+        const data = encodeFunctionData({
+            abi: sppPluginAbi,
+            functionName: 'createProposal',
+            args: functionArgs,
+        });
 
         return data;
     };
@@ -55,7 +59,7 @@ class SppTransactionUtils {
             repositoryAddress,
             sppPlugin.installVersion,
             pluginSettingsData,
-            daoAddress as Hex,
+            daoAddress as Hex
         );
 
         return transactionData;
@@ -65,7 +69,7 @@ class SppTransactionUtils {
         values: ICreateProcessFormDataAdvanced,
         setupData: IPluginInstallationSetupData[],
         dao: IDao,
-        safeConditionAddresses: Hex[],
+        safeConditionAddresses: Hex[]
     ): ITransactionRequest[] => {
         const daoAddress = dao.address as Hex;
 
@@ -74,15 +78,10 @@ class SppTransactionUtils {
         const [sppSetupData, ...pluginSetupData] = setupData;
 
         const updateStages = this.buildUpdateStagesTransaction(values.stages, sppAddress, pluginAddresses);
-        const updateCreateProposalRules = this.buildUpdateRulesTransaction(
-            values,
-            sppSetupData,
-            pluginSetupData,
-            safeConditionAddresses,
-        );
+        const updateCreateProposalRules = this.buildUpdateRulesTransaction(values, sppSetupData, pluginSetupData, safeConditionAddresses);
 
         const updateNewPluginPermissions = pluginAddresses.map((bodyAddress) =>
-            this.buildBodyPermissionActions(bodyAddress, daoAddress, sppAddress),
+            this.buildBodyPermissionActions(bodyAddress, daoAddress, sppAddress)
         );
 
         const updateExistingPluginPermissions = values.stages
@@ -104,7 +103,7 @@ class SppTransactionUtils {
         return [proposalCreationConditionAddress] as Hex[];
     };
 
-    private buildBodyPermissionActions = (body: Hex, dao: Hex, spp: Hex): ITransactionRequest[] => {
+    private readonly buildBodyPermissionActions = (body: Hex, dao: Hex, spp: Hex): ITransactionRequest[] => {
         // No address should be able to create proposals directly on sub-plugins
         const revokePluginCreateProposalAction = permissionTransactionUtils.buildRevokePermissionTransaction({
             where: body,
@@ -126,7 +125,7 @@ class SppTransactionUtils {
         return [revokePluginCreateProposalAction, grantSppCreateProposalAction, revokeExecutePermission];
     };
 
-    private buildGrantSppProposalCreationAction = (body: Hex, dao: Hex, spp: Hex) => {
+    private readonly buildGrantSppProposalCreationAction = (body: Hex, dao: Hex, spp: Hex) => {
         // Allow SPP to create proposals on sub-plugins
         const action = permissionTransactionUtils.buildGrantPermissionTransaction({
             where: body,
@@ -138,18 +137,18 @@ class SppTransactionUtils {
         return action;
     };
 
-    private buildUpdateRulesTransaction = (
+    private readonly buildUpdateRulesTransaction = (
         values: ICreateProcessFormDataAdvanced,
         sppSetupData: IPluginInstallationSetupData,
         pluginSetupData: IPluginInstallationSetupData[],
-        safeConditionAddresses: Hex[],
+        safeConditionAddresses: Hex[]
     ): ITransactionRequest | undefined => {
         const { stages, proposalCreationMode } = values;
 
         const sppRuleConditionContract = sppSetupData.preparedSetupData.helpers[0];
 
         if (proposalCreationMode === ProposalCreationMode.ANY_WALLET) {
-            return undefined;
+            return;
         }
 
         const bodies = stages.flatMap((stage) => stage.bodies);
@@ -160,12 +159,15 @@ class SppTransactionUtils {
             .map((body) => body.proposalCreationConditionAddress)
             .filter((address) => address != null);
 
-        const newConditionAddresses = bodies
+        const newConditionAddresses: string[] = [];
+        bodies
             .filter((body) => body.type === BodyType.NEW)
-            .reduce<string[]>((current, body, index) => {
+            .forEach((body, index) => {
                 const conditionAddress = pluginSetupData[index].preparedSetupData.helpers[0];
-                return body.canCreateProposal ? [...current, conditionAddress] : current;
-            }, []);
+                if (body.canCreateProposal) {
+                    newConditionAddresses.push(conditionAddress);
+                }
+            });
 
         const conditionAddresses = [...existingConditionAddresses, ...newConditionAddresses, ...safeConditionAddresses];
         const conditionRules = permissionTransactionUtils.buildRuleConditions(conditionAddresses, []);
@@ -176,13 +178,17 @@ class SppTransactionUtils {
             args: [conditionRules],
         });
 
-        return { to: sppRuleConditionContract, data: transactionData, value: BigInt(0) };
+        return {
+            to: sppRuleConditionContract,
+            data: transactionData,
+            value: BigInt(0),
+        };
     };
 
-    private buildUpdateStagesTransaction = (
+    private readonly buildUpdateStagesTransaction = (
         stages: ICreateProcessFormDataAdvanced['stages'],
         sppAddress: Hex,
-        bodyAddresses: Hex[],
+        bodyAddresses: Hex[]
     ): ITransactionRequest => {
         const processedBodyAddresses = [...bodyAddresses];
         const processedStages = stages.map((stage) => {
@@ -201,7 +207,13 @@ class SppTransactionUtils {
                 isManual: body.type === BodyType.EXTERNAL,
             }));
 
-            return { bodies: processedBodies, ...stageApprovals, ...stageTiming, cancelable: false, editable: false };
+            return {
+                bodies: processedBodies,
+                ...stageApprovals,
+                ...stageTiming,
+                cancelable: false,
+                editable: false,
+            };
         });
 
         const transactionData = encodeFunctionData({
@@ -213,11 +225,7 @@ class SppTransactionUtils {
         return { to: sppAddress, data: transactionData, value: BigInt(0) };
     };
 
-    private processStageApprovals = (
-        requiredApprovals: number,
-        stageType: ProcessStageType,
-        bodies: ISetupBodyForm[],
-    ) => {
+    private readonly processStageApprovals = (requiredApprovals: number, stageType: ProcessStageType, bodies: ISetupBodyForm[]) => {
         // Stages with no bodies (timelock stages) do not require approvals
         const approvalThreshold = bodies.length > 0 && stageType === ProcessStageType.NORMAL ? requiredApprovals : 0;
         const vetoThreshold = bodies.length > 0 && stageType === ProcessStageType.OPTIMISTIC ? requiredApprovals : 0;
@@ -225,7 +233,7 @@ class SppTransactionUtils {
         return { approvalThreshold, vetoThreshold };
     };
 
-    private processStageTiming = (settings: ISetupStageSettingsForm, bodies: ISetupBodyForm[]) => {
+    private readonly processStageTiming = (settings: ISetupStageSettingsForm, bodies: ISetupBodyForm[]) => {
         const { votingPeriod, stageExpiration, earlyStageAdvance } = settings;
 
         const voteDuration = BigInt(dateUtils.durationToSeconds(votingPeriod));

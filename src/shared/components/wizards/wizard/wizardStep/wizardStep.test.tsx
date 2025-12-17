@@ -1,5 +1,5 @@
-import { generateStepperResult } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
+import { generateStepperResult } from '@/shared/testUtils';
 import { type IWizardContext, WizardProvider } from '../wizardProvider';
 import { type IWizardStepProps, WizardStep } from './wizardStep';
 

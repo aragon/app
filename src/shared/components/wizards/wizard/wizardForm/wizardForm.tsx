@@ -1,9 +1,8 @@
 import type { ComponentProps, FormEvent } from 'react';
-import { useFormContext, type FieldValues } from 'react-hook-form';
+import { type FieldValues, useFormContext } from 'react-hook-form';
 import { useWizardContext } from '../wizardProvider';
 
-export interface IWizardFormProps<TFormData extends FieldValues = FieldValues>
-    extends Omit<ComponentProps<'form'>, 'onSubmit'> {
+export interface IWizardFormProps<TFormData extends FieldValues = FieldValues> extends Omit<ComponentProps<'form'>, 'onSubmit'> {
     /**
      * Callback called at the end of the wizard with the form data when the form is valid.
      */

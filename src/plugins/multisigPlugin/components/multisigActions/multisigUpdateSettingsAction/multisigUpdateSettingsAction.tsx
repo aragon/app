@@ -1,13 +1,13 @@
-import { useMemberList, type IProposalAction } from '@/modules/governance/api/governanceService';
-import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
-import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
-import type { IDaoPlugin } from '@/shared/api/daoService';
-import { useFormField } from '@/shared/hooks/useFormField';
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
-import { MultisigSetupGovernance, type IMultisigSetupGovernanceForm } from '../../multisigSetupGovernance';
+import { type IProposalAction, useMemberList } from '@/modules/governance/api/governanceService';
+import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
+import type { IDaoPlugin } from '@/shared/api/daoService';
+import { useFormField } from '@/shared/hooks/useFormField';
+import { type IMultisigSetupGovernanceForm, MultisigSetupGovernance } from '../../multisigSetupGovernance';
 
 export interface IMultisigUpdateSettingsActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<IMultisigPluginSettings>>> {}
@@ -21,7 +21,11 @@ const updateMultisigSettingsAbi = {
             type: 'tuple',
             components: [
                 { name: 'onlyListed', internalType: 'bool', type: 'bool' },
-                { name: 'minApprovals', internalType: 'uint16', type: 'uint16' },
+                {
+                    name: 'minApprovals',
+                    internalType: 'uint16',
+                    type: 'uint16',
+                },
             ],
         },
     ],
@@ -56,8 +60,14 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
     const membersCount = memberList?.pages[0].metadata.totalRecords ?? 1;
 
     useEffect(() => {
-        const updateSettingsParams = { onlyListed: onlyListedFieldValue, minApprovals: minApprovalsFieldValue };
-        const newData = encodeFunctionData({ abi: [updateMultisigSettingsAbi], args: [updateSettingsParams] });
+        const updateSettingsParams = {
+            onlyListed: onlyListedFieldValue,
+            minApprovals: minApprovalsFieldValue,
+        };
+        const newData = encodeFunctionData({
+            abi: [updateMultisigSettingsAbi],
+            args: [updateSettingsParams],
+        });
 
         setValue(`${actionFieldName}.data`, newData);
         setValue(`${actionFieldName}.inputData.parameters[0].value`, [onlyListedFieldValue, minApprovalsFieldValue]);

@@ -1,7 +1,7 @@
 import { IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as NextNavigation from 'next/navigation';
-import { NavigationLinksItem, type INavigationLinksItemProps } from './navigationLinksItem';
+import { type INavigationLinksItemProps, NavigationLinksItem } from './navigationLinksItem';
 
 describe('<NavigationLinksItem /> component', () => {
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');

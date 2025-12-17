@@ -1,14 +1,9 @@
+import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
 import * as daoService from '@/shared/api/daoService';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
-import {
-    generateDao,
-    generateDaoPlugin,
-    generateFilterComponentPlugin,
-    generateReactQueryResultSuccess,
-} from '@/shared/testUtils';
-import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
+import { generateDao, generateDaoPlugin, generateFilterComponentPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { generateProposal } from '../../testUtils';
 import { DaoProposalListDefaultItem, type IDaoProposalListDefaultItemProps } from './daoProposalListDefaultItem';
 
@@ -44,7 +39,10 @@ describe('<DaoProposalListDefaultItem /> component', () => {
     };
 
     it('renders the proposal info', () => {
-        const proposal = generateProposal({ title: 'my-proposal', summary: 'proposal-summary' });
+        const proposal = generateProposal({
+            title: 'my-proposal',
+            summary: 'proposal-summary',
+        });
         render(createTestComponent({ proposal }));
         expect(screen.getByText(proposal.title)).toBeInTheDocument();
         expect(screen.getByText(proposal.summary)).toBeInTheDocument();

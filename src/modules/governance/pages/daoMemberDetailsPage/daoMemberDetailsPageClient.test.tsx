@@ -1,34 +1,22 @@
-import { DaoList } from '@/modules/explore/components/daoList';
-import * as efpService from '@/modules/governance/api/efpService';
-import * as daoService from '@/shared/api/daoService';
-import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
-import {
-    generateDao,
-    generateDaoPlugin,
-    generateReactQueryResultError,
-    generateReactQueryResultSuccess,
-} from '@/shared/testUtils';
-import { networkUtils } from '@/shared/utils/networkUtils';
-import { timeUtils } from '@/test/utils';
-import {
-    addressUtils,
-    clipboardUtils,
-    DateFormat,
-    formatterUtils,
-    GukModulesProvider,
-    IconType,
-} from '@aragon/gov-ui-kit';
+import { addressUtils, clipboardUtils, DateFormat, formatterUtils, GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import type * as ReactQuery from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as wagmi from 'wagmi';
+import { DaoList } from '@/modules/explore/components/daoList';
+import * as efpService from '@/modules/governance/api/efpService';
+import * as daoService from '@/shared/api/daoService';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
+import { generateDao, generateDaoPlugin, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { networkUtils } from '@/shared/utils/networkUtils';
+import { timeUtils } from '@/test/utils';
 import * as governanceService from '../../api/governanceService';
 import { generateMember, generateMemberMetrics } from '../../testUtils';
 import { DaoMemberDetailsPageClient, type IDaoMemberDetailsPageClientProps } from './daoMemberDetailsPageClient';
 
 jest.mock('@aragon/gov-ui-kit', () => ({
     ...jest.requireActual<typeof ReactQuery>('@aragon/gov-ui-kit'),
-    MemberAvatar: (props: { src: string }) => <div data-testid="avatar-mock" data-src={props.src} />,
+    MemberAvatar: (props: { src: string }) => <div data-src={props.src} data-testid="avatar-mock" />,
 }));
 
 jest.mock('@/modules/explore/components/daoList', () => ({
@@ -48,11 +36,15 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: generateDao({ plugins: [generateDaoPlugin()] }) }),
+            generateReactQueryResultSuccess({
+                data: generateDao({ plugins: [generateDaoPlugin()] }),
+            })
         );
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember() }));
         useEfpStatsSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: { followers_count: 1, following_count: 2 } }),
+            generateReactQueryResultSuccess({
+                data: { followers_count: 1, following_count: 2 },
+            })
         );
         useBlockSpy.mockReturnValue({} as wagmi.UseBlockReturnType);
     });
@@ -83,7 +75,10 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     };
 
     it('fetches and renders the member ens and avatar', () => {
-        const dao = generateDao({ address: 'dao-id', plugins: [generateDaoPlugin({ address: 'plugin-address' })] });
+        const dao = generateDao({
+            address: 'dao-id',
+            plugins: [generateDaoPlugin({ address: 'plugin-address' })],
+        });
         const address = '0x1234567890123456789012345678901234567890';
         const ens = 'member.eth';
         const member = generateMember({ ens, address });
@@ -95,7 +90,10 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
 
         expect(useMemberSpy).toHaveBeenCalledWith({
             urlParams: { address },
-            queryParams: { daoId: dao.id, pluginAddress: dao.plugins[0].address },
+            queryParams: {
+                daoId: dao.id,
+                pluginAddress: dao.plugins[0].address,
+            },
         });
         const ensHeading = screen.getByRole('heading', { level: 1, name: ens });
         expect(ensHeading).toBeInTheDocument();
@@ -105,7 +103,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     });
 
     it('returns empty container on member fetch error', () => {
-        useMemberSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
+        useMemberSpy.mockReturnValue(generateReactQueryResultError({ error: new Error('member fetch error') }));
         const { container } = render(createTestComponent());
         expect(container).toBeEmptyDOMElement();
     });
@@ -134,7 +132,9 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         expect(screen.getByText(/daoMemberDetailsPage.aside.details.title/)).toBeInTheDocument();
 
         expect(screen.getByText(/daoMemberDetailsPage.aside.details.address/)).toBeInTheDocument();
-        const memberAddressLink = screen.getByRole('link', { name: addressUtils.truncateAddress(member.address) });
+        const memberAddressLink = screen.getByRole('link', {
+            name: addressUtils.truncateAddress(member.address),
+        });
 
         expect(memberAddressLink).toBeInTheDocument();
         expect(memberAddressLink).toHaveAttribute('href', expect.stringMatching(member.address));
@@ -153,7 +153,10 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     });
 
     it('passes the correct params to the DaoList component', () => {
-        const dao = generateDao({ address: 'dao-id', plugins: [generateDaoPlugin({ address: 'plugin-address' })] });
+        const dao = generateDao({
+            address: 'dao-id',
+            plugins: [generateDaoPlugin({ address: 'plugin-address' })],
+        });
         const address = '0x1234567890123456789012345678901234567890';
         const member = generateMember({ ens: 'member.eth', address });
         const pageSize = 3;
@@ -176,15 +179,22 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     });
 
     it('renders fallback of `-` when lastActivity is null', () => {
-        const metrics = generateMemberMetrics({ firstActivity: 1723472877, lastActivity: null });
+        const metrics = generateMemberMetrics({
+            firstActivity: 1_723_472_877,
+            lastActivity: null,
+        });
         useBlockSpy
             .mockReturnValueOnce({
-                data: { timestamp: 3204230420 },
+                data: { timestamp: 3_204_230_420 },
             } as unknown as wagmi.UseBlockReturnType)
             .mockReturnValueOnce({
                 data: { timestamp: null },
             } as unknown as wagmi.UseBlockReturnType);
-        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateMember({ metrics }),
+            })
+        );
 
         render(createTestComponent());
         expect(screen.getByText('-')).toBeInTheDocument();
@@ -192,22 +202,27 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
 
     it('renders the correct last activity date', () => {
         timeUtils.setTime('2025-08-10T09:30:00');
-        const metrics = generateMemberMetrics({ lastActivity: 1754559000 });
+        const metrics = generateMemberMetrics({ lastActivity: 1_754_559_000 });
         useBlockSpy.mockReturnValue({
             data: { timestamp: metrics.lastActivity },
         } as unknown as wagmi.UseBlockReturnType);
-        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateMember({ metrics }),
+            })
+        );
 
         render(createTestComponent());
 
         expect(screen.getByText('3')).toBeInTheDocument();
-        expect(
-            screen.getByText(/daoMemberDetailsPage.header.stat.latestActivityUnit \(unit=days\)/),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/daoMemberDetailsPage.header.stat.latestActivityUnit \(unit=days\)/)).toBeInTheDocument();
     });
 
     it('renders fallback of `-` when firstActivity is null', () => {
-        const metrics = generateMemberMetrics({ firstActivity: null, lastActivity: 1723472877 });
+        const metrics = generateMemberMetrics({
+            firstActivity: null,
+            lastActivity: 1_723_472_877,
+        });
         useBlockSpy
             .mockReturnValueOnce({
                 data: { timestamp: null },
@@ -215,18 +230,26 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             .mockReturnValueOnce({
                 data: { timestamp: metrics.lastActivity },
             } as unknown as wagmi.UseBlockReturnType);
-        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateMember({ metrics }),
+            })
+        );
 
         render(createTestComponent());
         expect(screen.getByText('-')).toBeInTheDocument();
     });
 
     it('renders the correct first activity date', () => {
-        const metrics = generateMemberMetrics({ firstActivity: 1723472877 });
+        const metrics = generateMemberMetrics({ firstActivity: 1_723_472_877 });
         useBlockSpy.mockReturnValue({
             data: { timestamp: metrics.firstActivity },
         } as unknown as wagmi.UseBlockReturnType);
-        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateMember({ metrics }),
+            })
+        );
 
         render(createTestComponent());
 

@@ -1,5 +1,5 @@
 export {
-    proposalActionsImportExportUtils,
     type IExportedAction,
     type IImportActionsResult,
+    proposalActionsImportExportUtils,
 } from './proposalActionsImportExportUtils';

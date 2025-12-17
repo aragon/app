@@ -15,7 +15,9 @@ describe('daoProcessDetailsClient Utils', () => {
                     isBody: true,
                     isProcess: true,
                     settings: generateTokenPluginSettings({
-                        token: generateTokenPluginSettingsToken({ address: '0xToken' }),
+                        token: generateTokenPluginSettingsToken({
+                            address: '0xToken',
+                        }),
                     }),
                 });
 
@@ -97,7 +99,9 @@ describe('daoProcessDetailsClient Utils', () => {
                     name: 'Hydrated',
                     subdomain: 'token-voting',
                     settings: generateTokenPluginSettings({
-                        token: generateTokenPluginSettingsToken({ address: '0xHydratedToken' }),
+                        token: generateTokenPluginSettingsToken({
+                            address: '0xHydratedToken',
+                        }),
                     }),
                 });
 

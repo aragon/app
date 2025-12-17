@@ -1,10 +1,10 @@
+import { useCallback, useEffect } from 'react';
+import { encodeFunctionData } from 'viem';
 import { CreateProcessForm } from '@/modules/createDao/components/createProcessForm';
 import { ProposalActionType } from '@/modules/governance/api/governanceService/domain';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
-import { useCallback, useEffect } from 'react';
-import { encodeFunctionData } from 'viem';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 import { useCreateProposalFormContext } from '../../../createProposalFormProvider';
 import type { IUpdatePluginMetadataAction, IUpdatePluginMetadataActionProps } from './updatePluginMetadataAction.api';
@@ -37,7 +37,12 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
             const { proposedMetadata, existingMetadata } = action;
             const { name, description, resources, processKey } = proposedMetadata;
 
-            const pluginMetadata = { ...existingMetadata, name, description, links: resources };
+            const pluginMetadata = {
+                ...existingMetadata,
+                name,
+                description,
+                links: resources,
+            };
 
             if (displayProcessKey) {
                 pluginMetadata.processKey = processKey;
@@ -45,11 +50,14 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
 
             const ipfsResult = await pinJsonAsync({ body: pluginMetadata });
             const hexResult = transactionUtils.stringToMetadataHex(ipfsResult.IpfsHash);
-            const data = encodeFunctionData({ abi: [setMetadataAbi], args: [hexResult] });
+            const data = encodeFunctionData({
+                abi: [setMetadataAbi],
+                args: [hexResult],
+            });
 
             return data;
         },
-        [pinJsonAsync, displayProcessKey],
+        [pinJsonAsync, displayProcessKey]
     );
 
     useEffect(() => {

@@ -1,3 +1,5 @@
+import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import * as usePermissionCheckGuard from '@/modules/governance/hooks/usePermissionCheckGuard';
 import * as daoService from '@/shared/api/daoService';
 import * as DialogProvider from '@/shared/components/dialogProvider';
@@ -9,8 +11,6 @@ import {
     generateFilterComponentPlugin,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
-import { render, screen } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { CreateProposalPageClient, type ICreateProposalPageClientProps } from './createProposalPageClient';
 
@@ -30,7 +30,10 @@ describe('<CreateProposalPageClient /> component', () => {
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
-        usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: false });
+        usePermissionCheckGuardSpy.mockReturnValue({
+            check: jest.fn(),
+            result: false,
+        });
         useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin()]);
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
     });
@@ -65,7 +68,10 @@ describe('<CreateProposalPageClient /> component', () => {
         const open = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
         const plugins = [
-            generateFilterComponentPlugin({ id: 'multisig', meta: generateDaoPlugin({ address: pluginAddress }) }),
+            generateFilterComponentPlugin({
+                id: 'multisig',
+                meta: generateDaoPlugin({ address: pluginAddress }),
+            }),
         ];
         useDaoPluginsSpy.mockReturnValue(plugins);
         render(createTestComponent({ daoId, pluginAddress }));
@@ -79,6 +85,8 @@ describe('<CreateProposalPageClient /> component', () => {
             plugin: plugins[0].meta,
             prepareActions: {},
         };
-        expect(open).toHaveBeenCalledWith(GovernanceDialogId.PUBLISH_PROPOSAL, { params: expectedParams });
+        expect(open).toHaveBeenCalledWith(GovernanceDialogId.PUBLISH_PROPOSAL, {
+            params: expectedParams,
+        });
     });
 });

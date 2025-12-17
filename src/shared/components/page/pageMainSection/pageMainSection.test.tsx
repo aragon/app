@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { PageMainSection, type IPageMainSectionProps } from './pageMainSection';
+import { type IPageMainSectionProps, PageMainSection } from './pageMainSection';
 
 describe('<PageMainSection /> component', () => {
     const createTestComponent = (props?: Partial<IPageMainSectionProps>) => {

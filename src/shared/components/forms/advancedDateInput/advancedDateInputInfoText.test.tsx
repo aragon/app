@@ -1,7 +1,7 @@
-import type { IUseFormFieldReturn } from '@/shared/hooks/useFormField';
-import type { IDateFixed } from '@/shared/utils/dateUtils';
 import { IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import type { IUseFormFieldReturn } from '@/shared/hooks/useFormField';
+import type { IDateFixed } from '@/shared/utils/dateUtils';
 import { AdvancedDateInputInfoText, type IAdvancedDateInputInfoTextProps } from './advancedDateInputInfoText';
 
 describe('<AdvancedDateInputInfoText /> component', () => {
@@ -45,10 +45,10 @@ describe('<AdvancedDateInputInfoText /> component', () => {
 
     it('renders the field alert with a critical variant when field is not valid', () => {
         const infoText = 'hidden-info';
-        const field = { alert: { message: 'invalid-field' }, label: 'field' } as unknown as IUseFormFieldReturn<
-            Record<string, IDateFixed>,
-            string
-        >;
+        const field = {
+            alert: { message: 'invalid-field' },
+            label: 'field',
+        } as unknown as IUseFormFieldReturn<Record<string, IDateFixed>, string>;
         render(createTestComponent({ infoText, field }));
         expect(screen.queryByText(infoText)).not.toBeInTheDocument();
         expect(screen.getByText(field.alert!.message)).toBeInTheDocument();

@@ -1,10 +1,10 @@
+import { InputText, Switch, TextArea, TextAreaRichText } from '@aragon/gov-ui-kit';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { InputText, Switch, TextArea, TextAreaRichText } from '@aragon/gov-ui-kit';
 import type { ICreateProposalFormData } from '../createProposalFormDefinitions';
 
-export interface ICreateProposalFormMetadataProps {}
+export type ICreateProposalFormMetadataProps = Record<string, never>;
 
 export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataProps> = () => {
     const { t } = useTranslations();
@@ -24,17 +24,14 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
         sanitizeMode: 'multiline',
     });
 
-    const { ref: bodyRef, ...bodyField } = useFormField<ICreateProposalFormData, 'body'>('body', {
+    const { ...bodyField } = useFormField<ICreateProposalFormData, 'body'>('body', {
         label: t('app.governance.createProposalForm.metadata.body.title'),
     });
 
-    const { ref: addActionsRef, ...addActionsField } = useFormField<ICreateProposalFormData, 'addActions'>(
-        'addActions',
-        {
-            label: t('app.governance.createProposalForm.metadata.actions.title'),
-            defaultValue: true,
-        },
-    );
+    const { ...addActionsField } = useFormField<ICreateProposalFormData, 'addActions'>('addActions', {
+        label: t('app.governance.createProposalForm.metadata.actions.title'),
+        defaultValue: true,
+    });
 
     return (
         <div className="flex flex-col gap-10">
@@ -46,20 +43,17 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
                 {...summaryField}
             />
             <TextAreaRichText
-                isOptional={true}
-                immediatelyRender={false}
                 helpText={t('app.governance.createProposalForm.metadata.body.helpText')}
+                immediatelyRender={false}
+                isOptional={true}
                 {...bodyField}
             />
-            <ResourcesInput
-                name="resources"
-                helpText={t('app.governance.createProposalForm.metadata.resources.helpText')}
-            />
+            <ResourcesInput helpText={t('app.governance.createProposalForm.metadata.resources.helpText')} name="resources" />
             <Switch
+                checked={addActionsField.value}
                 helpText={t('app.governance.createProposalForm.metadata.actions.helpText')}
                 inlineLabel={t('app.governance.createProposalForm.metadata.actions.label')}
                 onCheckedChanged={addActionsField.onChange}
-                checked={addActionsField.value}
                 {...addActionsField}
             />
         </div>

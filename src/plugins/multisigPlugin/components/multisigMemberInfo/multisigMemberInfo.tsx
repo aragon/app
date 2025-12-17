@@ -1,8 +1,8 @@
 'use client';
 
+import { DefinitionList } from '@aragon/gov-ui-kit';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { DefinitionList } from '@aragon/gov-ui-kit';
 import { useMemberList } from '../../../../modules/governance/api/governanceService';
 import { daoUtils } from '../../../../shared/utils/daoUtils';
 import type { IMultisigPluginSettings } from '../../types';
@@ -36,14 +36,16 @@ export const MultisigMemberInfo: React.FC<IMultisigMemberInfoProps> = (props) =>
                 <p className="text-neutral-500">{t('app.plugins.multisig.multisigMembersInfo.multisigMembers')}</p>
             </DefinitionList.Item>
             <DefinitionList.Item
-                term={t('app.plugins.multisig.multisigMembersInfo.membersLabel')}
+                description={t('app.plugins.multisig.multisigMembersInfo.linkDescription')}
                 link={{
                     href: membersLink,
                     isExternal: false,
                 }}
-                description={t('app.plugins.multisig.multisigMembersInfo.linkDescription')}
+                term={t('app.plugins.multisig.multisigMembersInfo.membersLabel')}
             >
-                {t('app.plugins.multisig.multisigMembersInfo.membersCount', { count: memberCount })}
+                {t('app.plugins.multisig.multisigMembersInfo.membersCount', {
+                    count: memberCount,
+                })}
             </DefinitionList.Item>
         </DefinitionList.Container>
     );

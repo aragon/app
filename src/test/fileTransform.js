@@ -1,9 +1,9 @@
-const path = require('path');
+const path = require('node:path');
 
-const transform = (src, filePath) => {
+const transform = (filePath) => {
     const fileName = path.basename(filePath);
 
-    // Simply exports unsupported Jest assets as a string containining their file name.
+    // Simply exports unsupported Jest assets as a string containing their file name.
     // (see https://jestjs.io/docs/code-transformation#transforming-images-to-their-path)
     if (path.extname(filePath) !== '.svg') {
         return { code: `module.exports = "${fileName}";` };

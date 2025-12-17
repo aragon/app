@@ -1,9 +1,9 @@
+import { deepmerge } from 'deepmerge-ts';
 import { backendApiMocks } from '@/backendApiMocks';
 import { responseUtils } from '@/shared/utils/responseUtils';
-import { deepmerge } from 'deepmerge-ts';
 
 class FetchInterceptorUtils {
-    private originalFetch = global.fetch.bind(global);
+    private readonly originalFetch = global.fetch.bind(global);
 
     intercept = () => {
         if (process.env.NEXT_PUBLIC_USE_MOCKS === 'true') {
@@ -11,7 +11,7 @@ class FetchInterceptorUtils {
         }
     };
 
-    private mockDataInterceptor = async (...args: Parameters<typeof this.originalFetch>): Promise<Response> => {
+    private readonly mockDataInterceptor = async (...args: Parameters<typeof this.originalFetch>): Promise<Response> => {
         const [url, request] = args;
 
         const mock = backendApiMocks.find((mock) => mock.url.test(url as string));

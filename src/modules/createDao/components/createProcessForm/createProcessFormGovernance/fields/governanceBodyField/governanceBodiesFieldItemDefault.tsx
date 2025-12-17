@@ -1,10 +1,10 @@
-import { type ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
-import { useDao } from '@/shared/api/daoService';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { addressUtils, ChainEntityType, DefinitionList } from '@aragon/gov-ui-kit';
 import type { Hash } from 'viem';
 import { useEnsName } from 'wagmi';
+import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { useDao } from '@/shared/api/daoService';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { BodyType } from '../../../../../types/enum';
 import { createProcessFormUtils } from '../../../createProcessFormUtils';
 
@@ -34,21 +34,24 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
         return null;
     }
 
-    const bodyAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: body.address });
+    const bodyAddressLink = buildEntityUrl({
+        type: ChainEntityType.ADDRESS,
+        id: body.address,
+    });
 
     return (
         <DefinitionList.Container>
             {ensName != null && (
                 <DefinitionList.Item
-                    term={t('app.createDao.createProcessForm.governance.bodyField.default.ens')}
                     link={{ href: bodyAddressLink }}
+                    term={t('app.createDao.createProcessForm.governance.bodyField.default.ens')}
                 >
                     {ensName}
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item
-                term={t('app.createDao.createProcessForm.governance.bodyField.default.address')}
                 link={{ href: bodyAddressLink }}
+                term={t('app.createDao.createProcessForm.governance.bodyField.default.address')}
             >
                 {addressUtils.truncateAddress(body.address)}
             </DefinitionList.Item>

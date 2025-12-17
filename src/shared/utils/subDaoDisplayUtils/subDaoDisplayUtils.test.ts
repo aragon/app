@@ -8,17 +8,17 @@ const fallbackLabel = 'Fallback';
 describe('subDaoDisplayUtils', () => {
     describe('getPluginDaoAddress', () => {
         it('returns lowercased daoAddress when present', () => {
-            const plugin = generateDaoPlugin({ daoAddress: '0x1111111111111111111111111111111111111111' });
-            expect(subDaoDisplayUtils.getPluginDaoAddress(plugin)).toEqual(
-                '0x1111111111111111111111111111111111111111',
-            );
+            const plugin = generateDaoPlugin({
+                daoAddress: '0x1111111111111111111111111111111111111111',
+            });
+            expect(subDaoDisplayUtils.getPluginDaoAddress(plugin)).toEqual('0x1111111111111111111111111111111111111111');
         });
 
         it('falls back to address when daoAddress is missing', () => {
-            const plugin = generateDaoPlugin({ address: '0x2222222222222222222222222222222222222222' });
-            expect(subDaoDisplayUtils.getPluginDaoAddress(plugin)).toEqual(
-                '0x2222222222222222222222222222222222222222',
-            );
+            const plugin = generateDaoPlugin({
+                address: '0x2222222222222222222222222222222222222222',
+            });
+            expect(subDaoDisplayUtils.getPluginDaoAddress(plugin)).toEqual('0x2222222222222222222222222222222222222222');
         });
     });
 
@@ -51,7 +51,9 @@ describe('subDaoDisplayUtils', () => {
         it('returns undefined when no match', () => {
             const otherAddress = '0x4444444444444444444444444444444444444444';
             const missingAddress = '0x5555555555555555555555555555555555555555';
-            const dao = generateDao({ subDaos: [generateSubDao({ address: otherAddress })] });
+            const dao = generateDao({
+                subDaos: [generateSubDao({ address: otherAddress })],
+            });
             const plugin = generateDaoPlugin({ daoAddress: missingAddress });
             expect(subDaoDisplayUtils.getMatchingSubDao({ dao, plugin })).toBeUndefined();
         });
@@ -60,11 +62,19 @@ describe('subDaoDisplayUtils', () => {
     describe('getPluginDisplayName', () => {
         it('returns parent DAO name when parent plugin is selected', () => {
             const parentAddress = '0x1111111111111111111111111111111111111111';
-            const dao = generateDao({ name: 'Parent DAO', address: parentAddress });
+            const dao = generateDao({
+                name: 'Parent DAO',
+                address: parentAddress,
+            });
             const plugin = generateDaoPlugin({ daoAddress: parentAddress });
-            expect(subDaoDisplayUtils.getPluginDisplayName({ dao, plugin, groupLabel, fallbackLabel })).toBe(
-                'Parent DAO',
-            );
+            expect(
+                subDaoDisplayUtils.getPluginDisplayName({
+                    dao,
+                    plugin,
+                    groupLabel,
+                    fallbackLabel,
+                })
+            ).toBe('Parent DAO');
         });
 
         it('returns matching subDAO name when a subDAO plugin is selected', () => {
@@ -76,9 +86,14 @@ describe('subDaoDisplayUtils', () => {
             });
             const dao = generateDao({ subDaos: [subDao] });
             const plugin = generateDaoPlugin({ daoAddress: subDaoAddress });
-            expect(subDaoDisplayUtils.getPluginDisplayName({ dao, plugin, groupLabel, fallbackLabel })).toBe(
-                'Child DAO',
-            );
+            expect(
+                subDaoDisplayUtils.getPluginDisplayName({
+                    dao,
+                    plugin,
+                    groupLabel,
+                    fallbackLabel,
+                })
+            ).toBe('Child DAO');
         });
 
         it('falls back to fallbackLabel when no matches are found', () => {
@@ -87,9 +102,14 @@ describe('subDaoDisplayUtils', () => {
                 address: '0x6666666666666666666666666666666666666666',
                 name: undefined,
             });
-            expect(subDaoDisplayUtils.getPluginDisplayName({ dao, plugin, groupLabel, fallbackLabel })).toBe(
-                fallbackLabel,
-            );
+            expect(
+                subDaoDisplayUtils.getPluginDisplayName({
+                    dao,
+                    plugin,
+                    groupLabel,
+                    fallbackLabel,
+                })
+            ).toBe(fallbackLabel);
         });
     });
 });

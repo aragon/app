@@ -52,16 +52,13 @@ interface AnchorNode {
     removeAttribute(name: string): void;
 }
 
-const isAnchorNode = (node: unknown): node is AnchorNode => {
-    return (
-        typeof node === 'object' &&
-        node !== null &&
-        'tagName' in node &&
-        'getAttribute' in node &&
-        'setAttribute' in node &&
-        'removeAttribute' in node
-    );
-};
+const isAnchorNode = (node: unknown): node is AnchorNode =>
+    typeof node === 'object' &&
+    node !== null &&
+    'tagName' in node &&
+    'getAttribute' in node &&
+    'setAttribute' in node &&
+    'removeAttribute' in node;
 
 try {
     // Hook is a no-op on servers without DOM-like nodes, but isomorphic-dompurify provides compatible shims
@@ -96,32 +93,14 @@ try {
     // ignore hook errors in non-DOM environments
 }
 
-const RICH_ALLOWED_TAGS = [
-    'p',
-    'b',
-    'strong',
-    'em',
-    'i',
-    'ul',
-    'ol',
-    'li',
-    'a',
-    'code',
-    'pre',
-    'blockquote',
-    'br',
-    'hr',
-    'span',
-];
+const RICH_ALLOWED_TAGS = ['p', 'b', 'strong', 'em', 'i', 'ul', 'ol', 'li', 'a', 'code', 'pre', 'blockquote', 'br', 'hr', 'span'];
 
 const RICH_ALLOWED_ATTR = ['href', 'rel', 'class', 'title', 'target', 'src', 'alt'];
 
-export const sanitizeHtmlStrict = (html: string): string => {
-    return DOMPurify.sanitize(html, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
-};
+export const sanitizeHtmlStrict = (html: string): string => DOMPurify.sanitize(html, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
 
-export const sanitizeHtmlRich = (html: string): string => {
-    return DOMPurify.sanitize(html, {
+export const sanitizeHtmlRich = (html: string): string =>
+    DOMPurify.sanitize(html, {
         ALLOWED_TAGS: RICH_ALLOWED_TAGS,
         ALLOWED_ATTR: RICH_ALLOWED_ATTR,
         ALLOW_DATA_ATTR: false,
@@ -129,4 +108,3 @@ export const sanitizeHtmlRich = (html: string): string => {
         FORBID_ATTR: ['style', 'on*'],
         ADD_ATTR: ['target'],
     });
-};

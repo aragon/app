@@ -1,7 +1,7 @@
-import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateDao, generateDaoPlugin, generateFilterComponentPlugin } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
+import { generateDao, generateDaoPlugin, generateFilterComponentPlugin } from '@/shared/testUtils';
 import { DaoVersionInfo, type IDaoVersionInfoProps } from './daoVersionInfo';
 
 describe('<DaoVersionInfo /> component', () => {
@@ -31,36 +31,37 @@ describe('<DaoVersionInfo /> component', () => {
     it('renders the correct terms', () => {
         const dao = generateDao();
 
-        render(createTestComponent({ dao: dao }));
+        render(createTestComponent({ dao }));
 
         expect(screen.getByText(/daoVersionInfo.osLabel/)).toBeInTheDocument();
     });
 
     it('renders the correct values', () => {
-        const plugin = generateDaoPlugin({ release: '1', build: '3', subdomain: 'multisig' });
+        const plugin = generateDaoPlugin({
+            release: '1',
+            build: '3',
+            subdomain: 'multisig',
+        });
         const dao = generateDao({ plugins: [plugin], version: '1.3.0' });
 
         useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin({ meta: plugin })]);
 
-        render(createTestComponent({ dao: dao }));
+        render(createTestComponent({ dao }));
 
         expect(screen.getByText(/daoVersionInfo.osValue \(version=1.3.0\)/)).toBeInTheDocument();
-        expect(
-            screen.getByText(/daoVersionInfo.governanceValue \(name=Multisig,release=1,build=3\)/),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/daoVersionInfo.governanceValue \(name=Multisig,release=1,build=3\)/)).toBeInTheDocument();
     });
 
     it('renders the correct governance link', () => {
-        const plugin = generateDaoPlugin({ address: '0x899d49F22E105C2Be505FC6c19C36ABa285D437c' });
+        const plugin = generateDaoPlugin({
+            address: '0x899d49F22E105C2Be505FC6c19C36ABa285D437c',
+        });
         const dao = generateDao({ plugins: [plugin] });
 
         useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin({ meta: plugin })]);
-        render(createTestComponent({ dao: dao }));
+        render(createTestComponent({ dao }));
 
         const linkElement = screen.getByRole('link', { name: '0x899d…437c' });
-        expect(linkElement).toHaveAttribute(
-            'href',
-            'https://etherscan.io/address/0x899d49F22E105C2Be505FC6c19C36ABa285D437c',
-        );
+        expect(linkElement).toHaveAttribute('href', 'https://etherscan.io/address/0x899d49F22E105C2Be505FC6c19C36ABa285D437c');
     });
 });

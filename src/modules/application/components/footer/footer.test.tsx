@@ -1,5 +1,5 @@
-import * as useApplicationVersion from '@/shared/hooks/useApplicationVersion';
 import { render, screen } from '@testing-library/react';
+import * as useApplicationVersion from '@/shared/hooks/useApplicationVersion';
 import { Footer, type IFooterProps } from './footer';
 import { footerLinks } from './footerLinks';
 
@@ -41,7 +41,9 @@ describe('<Footer /> component', () => {
         expect(screen.getAllByRole('link')).toHaveLength(footerLinks.length);
         footerLinks.forEach((link) => {
             const linkName = new RegExp(`footer.link.${link.label}`);
-            const linkElement = screen.getByRole<HTMLAnchorElement>('link', { name: linkName });
+            const linkElement = screen.getByRole<HTMLAnchorElement>('link', {
+                name: linkName,
+            });
             expect(linkElement).toBeInTheDocument();
             expect(linkElement.href).toMatch(link.link);
         });

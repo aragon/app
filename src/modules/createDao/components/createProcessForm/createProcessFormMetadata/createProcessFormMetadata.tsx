@@ -1,9 +1,9 @@
+import { InputText, TextArea } from '@aragon/gov-ui-kit';
+import type { ChangeEvent } from 'react';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { sanitizePlainText } from '@/shared/security';
-import { InputText, TextArea } from '@aragon/gov-ui-kit';
-import type { ChangeEvent } from 'react';
 import type { ICreateProcessFormData } from '../createProcessFormDefinitions';
 
 export interface ICreateProcessFormMetadataProps {
@@ -42,16 +42,17 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
         defaultValue: '',
     });
 
-    const { onChange: onProcessKeyChange, ...processKeyField } = useFormField<ICreateProcessFormData, 'processKey'>(
-        'processKey',
-        {
-            label: t('app.createDao.createProcessForm.metadata.processKey.label'),
-            fieldPrefix,
-            rules: { required: displayProcessKey, pattern: /^[A-Z]+$/, maxLength: processKeyMaxLength },
-            trimOnBlur: true,
-            defaultValue: '',
+    const { onChange: onProcessKeyChange, ...processKeyField } = useFormField<ICreateProcessFormData, 'processKey'>('processKey', {
+        label: t('app.createDao.createProcessForm.metadata.processKey.label'),
+        fieldPrefix,
+        rules: {
+            required: displayProcessKey,
+            pattern: /^[A-Z]+$/,
+            maxLength: processKeyMaxLength,
         },
-    );
+        trimOnBlur: true,
+        defaultValue: '',
+    });
 
     const summaryField = useFormField<ICreateProcessFormData, 'description'>('description', {
         label: t('app.createDao.createProcessForm.metadata.description.label'),
@@ -80,14 +81,14 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
             )}
             <TextArea
                 helpText={t('app.createDao.createProcessForm.metadata.description.helpText', { type: typeLabel })}
-                maxLength={summaryMaxLength}
                 isOptional={true}
+                maxLength={summaryMaxLength}
                 {...summaryField}
             />
             <ResourcesInput
-                name="resources"
-                helpText={t('app.createDao.createProcessForm.metadata.resources.helpText', { type: typeLabel })}
                 fieldPrefix={fieldPrefix}
+                helpText={t('app.createDao.createProcessForm.metadata.resources.helpText', { type: typeLabel })}
+                name="resources"
             />
         </div>
     );

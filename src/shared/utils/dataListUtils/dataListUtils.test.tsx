@@ -12,22 +12,34 @@ describe('dataList utils', () => {
         });
 
         it('returns error state on query error', () => {
-            const state = dataListUtils.queryToDataListState({ status: 'error', fetchStatus: 'idle' });
+            const state = dataListUtils.queryToDataListState({
+                status: 'error',
+                fetchStatus: 'idle',
+            });
             expect(state).toEqual('error');
         });
 
         it('returns loading state when fetching data without cached data', () => {
-            const state = dataListUtils.queryToDataListState({ status: 'pending', fetchStatus: 'fetching' });
+            const state = dataListUtils.queryToDataListState({
+                status: 'pending',
+                fetchStatus: 'fetching',
+            });
             expect(state).toEqual('initialLoading');
         });
 
         it('returns loading state on query success and query is fetching data', () => {
-            const state = dataListUtils.queryToDataListState({ status: 'success', fetchStatus: 'fetching' });
+            const state = dataListUtils.queryToDataListState({
+                status: 'success',
+                fetchStatus: 'fetching',
+            });
             expect(state).toEqual('loading');
         });
 
         it('returns idle state on query success and query is not fetching data', () => {
-            const state = dataListUtils.queryToDataListState({ status: 'success', fetchStatus: 'idle' });
+            const state = dataListUtils.queryToDataListState({
+                status: 'success',
+                fetchStatus: 'idle',
+            });
             expect(state).toEqual('idle');
         });
 

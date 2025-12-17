@@ -1,5 +1,5 @@
-import type { IUseTokenParams } from '@/shared/hooks/useToken';
 import { useReadContract } from 'wagmi';
+import type { IUseTokenParams } from '@/shared/hooks/useToken';
 
 export const erc20DelegatesAbi = [
     {

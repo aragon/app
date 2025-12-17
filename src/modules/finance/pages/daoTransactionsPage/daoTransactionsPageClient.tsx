@@ -47,7 +47,7 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
                 daoId: id,
             },
         },
-        { enabled: allTransactionsSelected },
+        { enabled: allTransactionsSelected }
     );
 
     // Fetch transactions for selected DAO view
@@ -59,7 +59,7 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
                 onlyParent: activeOption?.onlyParent,
             },
         },
-        { enabled: !allTransactionsSelected },
+        { enabled: !allTransactionsSelected }
     );
 
     if (dao == null) {
@@ -69,14 +69,14 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
     return (
         <Page.Content>
             <Page.Main title={t('app.finance.daoTransactionsPage.main.title')}>
-                <TransactionList.Container initialParams={initialParams} daoId={id} />
+                <TransactionList.Container daoId={id} initialParams={initialParams} />
             </Page.Main>
             <Page.Aside>
                 <DaoFilterAsideCard
-                    dao={dao}
                     activeOption={activeOption}
-                    selectedMetadata={selectedTransactionsMetadata?.pages[0]}
                     allMetadata={allAssetsMetadata?.pages[0]}
+                    dao={dao}
+                    selectedMetadata={selectedTransactionsMetadata?.pages[0]}
                     statsType="transactions"
                 />
                 <DispatchPanel daoAddress={dao.address} network={dao.network} />

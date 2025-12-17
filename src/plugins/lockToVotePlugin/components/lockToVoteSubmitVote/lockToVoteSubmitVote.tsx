@@ -1,5 +1,7 @@
 'use client';
 
+import { Button, Card, ChainEntityType, IconType, type VoteIndicator } from '@aragon/gov-ui-kit';
+import { useCallback, useEffect, useState } from 'react';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { IVoteDialogOption, IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
@@ -7,13 +9,11 @@ import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissio
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import type { ISubmitVoteProps } from '@/modules/governance/types';
 import { TokenVotingOptions } from '@/plugins/tokenPlugin/components/tokenSubmitVote/components/tokenVotingOptions';
-import { VoteOption, type ITokenVote } from '@/plugins/tokenPlugin/types';
+import { type ITokenVote, VoteOption } from '@/plugins/tokenPlugin/types';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { Button, Card, ChainEntityType, IconType, type VoteIndicator } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect, useState } from 'react';
 import { LockToVotePluginDialogId } from '../../constants/lockToVotePluginDialogId';
 import type { ILockToVoteSubmitVoteFeedbackDialogParams } from '../../dialogs/lockToVoteSubmitVoteFeedbackDialog';
 import { useLockToVoteData } from '../../hooks/useLockToVoteData';
@@ -46,13 +46,23 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (props
     const { open } = useDialogContext();
 
     const latestVote = useUserVote<ITokenVote>({ proposal, network });
-    const plugins = useDaoPlugins({ daoId, pluginAddress, includeSubPlugins: true })!;
+    const plugins = useDaoPlugins({
+        daoId,
+        pluginAddress,
+        includeSubPlugins: true,
+    })!;
     const plugin = plugins[0].meta as ILockToVotePlugin;
 
     const { buildEntityUrl } = useDaoChain({ network });
-    const latestVoteTxHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: latestVote?.transactionHash });
+    const latestVoteTxHref = buildEntityUrl({
+        type: ChainEntityType.TRANSACTION,
+        id: latestVote?.transactionHash,
+    });
 
-    const { balance, allowance, approveTokens } = useLockToVoteData({ plugin, daoId });
+    const { balance, allowance, approveTokens } = useLockToVoteData({
+        plugin,
+        daoId,
+    });
 
     const [showOptions, setShowOptions] = useState(false);
     const [selectedOption, setSelectedOption] = useState<string | undefined>(latestVote?.voteOption.toString());
@@ -64,7 +74,12 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (props
         const voteDescription = t(`app.plugins.lockToVote.lockToVoteSubmitVote.${isVeto ? 'veto' : 'approve'}`);
         const labelDescription = voteLabel === 'abstain' ? undefined : voteDescription;
 
-        const vote = { value: Number(option), lockAmount, label: voteLabel, labelDescription };
+        const vote = {
+            value: Number(option),
+            lockAmount,
+            label: voteLabel,
+            labelDescription,
+        };
         const params: IVoteDialogParams<number, ILockToVoteOptionVoteDialog> = {
             daoId,
             proposal,
@@ -127,64 +142,59 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (props
         if (!canSubmitVote) {
             setShowOptions(false);
         }
-    }, [canSubmitVote, setShowOptions]);
+    }, [canSubmitVote]);
 
     return (
         <div className="flex flex-col gap-4">
             {!showOptions && latestVote == null && (
-                <Button className="w-fit" size="md" onClick={handleVoteClick}>
+                <Button className="w-fit" onClick={handleVoteClick} size="md">
                     {t('app.plugins.lockToVote.lockToVoteSubmitVote.buttons.vote')}
                 </Button>
             )}
             {!showOptions && latestVote != null && (
                 <div className="flex w-full flex-col items-center gap-4 md:flex-row">
                     <Button
+                        className="w-full md:w-fit"
                         href={latestVoteTxHref}
+                        iconLeft={IconType.CHECKMARK}
+                        size="md"
                         target="_blank"
                         variant="secondary"
-                        iconLeft={IconType.CHECKMARK}
-                        className="w-full md:w-fit"
-                        size="md"
                     >
                         {t('app.plugins.lockToVote.lockToVoteSubmitVote.buttons.submitted')}
                     </Button>
                     {/* In lock to vote we always show the update button. If vote replacement is enabled, then the user can
                     change their vote. Otherwise, they can only update their voting power on the existing choice. */}
-                    <Button
-                        variant="tertiary"
-                        className="w-full md:w-fit"
-                        size="md"
-                        onClick={() => setShowOptions(true)}
-                    >
-                        {t(`app.plugins.lockToVote.lockToVoteSubmitVote.buttons.update.vote`)}
+                    <Button className="w-full md:w-fit" onClick={() => setShowOptions(true)} size="md" variant="tertiary">
+                        {t('app.plugins.lockToVote.lockToVoteSubmitVote.buttons.update.vote')}
                     </Button>
                 </div>
             )}
             {showOptions && (
-                <Card className="shadow-neutral-sm border border-neutral-100 p-6">
+                <Card className="border border-neutral-100 p-6 shadow-neutral-sm">
                     <TokenVotingOptions
-                        value={selectedOption}
-                        onChange={setSelectedOption}
-                        isVeto={isVeto}
-                        // disabled if voted and not in replacement mode, only update is allowed
                         disableOptions={latestVote != null && !isVoteReplacement}
+                        isVeto={isVeto}
+                        onChange={setSelectedOption}
+                        // disabled if voted and not in replacement mode, only update is allowed
+                        value={selectedOption}
                     />
                 </Card>
             )}
             {showOptions && (
                 <div className="flex w-full flex-col items-center gap-y-3 md:flex-row md:gap-x-4">
                     <Button
-                        onClick={handleSubmitVoteClick}
-                        disabled={!selectedOption}
-                        size="md"
                         className="w-full md:w-fit"
+                        disabled={!selectedOption}
+                        onClick={handleSubmitVoteClick}
+                        size="md"
                         variant="primary"
                     >
                         {latestVote
-                            ? t(`app.plugins.lockToVote.lockToVoteSubmitVote.buttons.update.submit`)
+                            ? t('app.plugins.lockToVote.lockToVoteSubmitVote.buttons.update.submit')
                             : t('app.plugins.lockToVote.lockToVoteSubmitVote.buttons.submit')}
                     </Button>
-                    <Button size="md" variant="tertiary" className="w-full md:w-fit" onClick={resetVoteOptions}>
+                    <Button className="w-full md:w-fit" onClick={resetVoteOptions} size="md" variant="tertiary">
                         {t('app.plugins.lockToVote.lockToVoteSubmitVote.buttons.cancel')}
                     </Button>
                 </div>

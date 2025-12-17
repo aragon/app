@@ -1,6 +1,6 @@
+import type { Route } from 'next';
 import { LayoutWizard } from '@/modules/application/components/layouts/layoutWizard';
 import type { IDaoPageParams } from '@/shared/types';
-import { type Route } from 'next';
 
 export interface ILayoutWizardCreateProcessProps {
     /**

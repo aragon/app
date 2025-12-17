@@ -1,7 +1,7 @@
-import { generateFilterComponentPlugin } from '@/shared/testUtils/';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { generateFilterComponentPlugin } from '@/shared/testUtils/';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { PluginFilterComponent } from './pluginFilterComponent';
 import type { IPluginFilterComponentProps } from './pluginFilterComponent.api';
 
@@ -49,8 +49,16 @@ describe('<PluginFilterComponent /> component', () => {
 
     it('renders the same fallback inside filters when having multiple unsupported plugins', () => {
         const plugins = [
-            generateFilterComponentPlugin({ id: 'one', uniqueId: '1', label: 'one' }),
-            generateFilterComponentPlugin({ id: 'two', uniqueId: '2', label: 'two' }),
+            generateFilterComponentPlugin({
+                id: 'one',
+                uniqueId: '1',
+                label: 'one',
+            }),
+            generateFilterComponentPlugin({
+                id: 'two',
+                uniqueId: '2',
+                label: 'two',
+            }),
         ];
         const registeredComponent = undefined;
         const Fallback = () => <div data-testid="fallback-mock" />;
@@ -64,13 +72,21 @@ describe('<PluginFilterComponent /> component', () => {
 
     it('renders all the slot components as filters when having multiple slot components registered', () => {
         const plugins = [
-            generateFilterComponentPlugin({ id: 'token', uniqueId: '1', label: 'Token' }),
-            generateFilterComponentPlugin({ id: 'multisig', uniqueId: '2', label: 'Multisig' }),
+            generateFilterComponentPlugin({
+                id: 'token',
+                uniqueId: '1',
+                label: 'Token',
+            }),
+            generateFilterComponentPlugin({
+                id: 'multisig',
+                uniqueId: '2',
+                label: 'Multisig',
+            }),
         ];
         const tokenComponent = () => <div data-testid="token-component" />;
         const multisigComponent = () => <div data-testid="multisig-component" />;
         getSlotComponentSpy.mockImplementation((params: { pluginId: string }) =>
-            params.pluginId === 'token' ? tokenComponent : multisigComponent,
+            params.pluginId === 'token' ? tokenComponent : multisigComponent
         );
         render(createTestComponent({ plugins }));
         expect(screen.getByRole('group')).toBeInTheDocument();
@@ -82,8 +98,16 @@ describe('<PluginFilterComponent /> component', () => {
     it('updates the active tab and calls the onValueChange property on tab click', async () => {
         const onValueChange = jest.fn();
         const plugins = [
-            generateFilterComponentPlugin({ id: '1', uniqueId: '1', label: 'plugin1' }),
-            generateFilterComponentPlugin({ id: '2', uniqueId: '2', label: 'plugin2' }),
+            generateFilterComponentPlugin({
+                id: '1',
+                uniqueId: '1',
+                label: 'plugin1',
+            }),
+            generateFilterComponentPlugin({
+                id: '2',
+                uniqueId: '2',
+                label: 'plugin2',
+            }),
         ];
         getSlotComponentSpy.mockImplementation((params: { pluginId: string }) => () => `component-${params.pluginId}`);
         render(createTestComponent({ plugins, onValueChange }));

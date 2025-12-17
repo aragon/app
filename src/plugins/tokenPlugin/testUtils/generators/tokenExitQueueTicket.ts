@@ -34,9 +34,7 @@ export const generateTokenExitQueueTicket = (ticket?: Partial<ITokenExitQueueTic
  * @param ticket - Optional partial ticket to override defaults.
  * @returns A complete ITokenExitQueueTicket object with tiered fees.
  */
-export const generateTokenExitQueueTicketWithTieredFees = (
-    ticket?: Partial<ITokenExitQueueTicket>,
-): ITokenExitQueueTicket => {
+export const generateTokenExitQueueTicketWithTieredFees = (ticket?: Partial<ITokenExitQueueTicket>): ITokenExitQueueTicket => {
     const tenDaysInSeconds = 10 * 24 * 60 * 60;
     const oneDayInSeconds = 24 * 60 * 60;
     const fiveDaysInSeconds = 5 * 24 * 60 * 60;
@@ -59,9 +57,7 @@ export const generateTokenExitQueueTicketWithTieredFees = (
  * @param ticket - Optional partial ticket to override defaults.
  * @returns A complete ITokenExitQueueTicket object with fixed fee.
  */
-export const generateTokenExitQueueTicketWithFixedFee = (
-    ticket?: Partial<ITokenExitQueueTicket>,
-): ITokenExitQueueTicket => {
+export const generateTokenExitQueueTicketWithFixedFee = (ticket?: Partial<ITokenExitQueueTicket>): ITokenExitQueueTicket => {
     const fiveDaysInSeconds = 5 * 24 * 60 * 60;
     const now = Math.floor(Date.now() / 1000);
 

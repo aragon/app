@@ -1,8 +1,8 @@
+import { AvatarIcon, type AvatarIconVariant, IconType, ProposalVotingTab, Tabs } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { AvatarIcon, type AvatarIconVariant, IconType, ProposalVotingTab, Tabs } from '@aragon/gov-ui-kit';
-import classNames from 'classnames';
 
 export interface ISppVotingTerminalBodyBreakdownDefaultProps {
     /**
@@ -37,16 +37,21 @@ export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalB
 
     const { t } = useTranslations();
 
-    const { status, label, style } = sppProposalUtils.getBodyResultStatus({ proposal, body, stage, canVote });
+    const { status, label, style } = sppProposalUtils.getBodyResultStatus({
+        proposal,
+        body,
+        stage,
+        canVote,
+    });
     const statusIcon = statusToIcon[status];
 
     return (
         <Tabs.Content value={ProposalVotingTab.BREAKDOWN}>
             <div
                 className={classNames(
-                    'bg-neutral-0 shadow-neutral-sm rounded-xl border border-neutral-100 px-4 py-3 md:px-6 md:py-5',
+                    'rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 shadow-neutral-sm md:px-6 md:py-5',
                     'flex w-full min-w-fit flex-row justify-between gap-2',
-                    style,
+                    style
                 )}
             >
                 {t(label)}

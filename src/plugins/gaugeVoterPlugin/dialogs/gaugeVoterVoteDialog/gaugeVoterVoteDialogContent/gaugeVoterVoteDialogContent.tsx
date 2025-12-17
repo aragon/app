@@ -54,18 +54,18 @@ export const GaugeVoterVoteDialogContent: React.FC<IGaugeVoterVoteDialogContentP
         <div className="flex flex-col gap-4">
             {voteAllocations.map((allocation) => (
                 <GaugeVoterVoteDialogItem
-                    key={allocation.gauge.address}
-                    gaugeAddress={allocation.gauge.address}
-                    gaugeName={allocation.gauge.name}
-                    gaugeAvatar={allocation.gauge.avatar}
-                    percentage={allocation.percentage}
                     existingVotes={allocation.existingVotes}
                     formattedExistingVotes={allocation.formattedExistingVotes}
-                    totalVotingPower={totalVotingPower}
-                    tokenSymbol={tokenSymbol}
+                    gaugeAddress={allocation.gauge.address}
+                    gaugeAvatar={allocation.gauge.avatar}
+                    gaugeName={allocation.gauge.name}
                     hasModified={hasModified}
-                    onUpdatePercentage={onUpdatePercentage}
+                    key={allocation.gauge.address}
                     onRemove={onRemoveGauge}
+                    onUpdatePercentage={onUpdatePercentage}
+                    percentage={allocation.percentage}
+                    tokenSymbol={tokenSymbol}
+                    totalVotingPower={totalVotingPower}
                 />
             ))}
         </div>

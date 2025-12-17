@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { NavigationContainer, type INavigationContainerProps } from './navigationContainer';
+import { type INavigationContainerProps, NavigationContainer } from './navigationContainer';
 
 describe('<Navigation.Container /> component', () => {
     const createTestComponent = (props?: Partial<INavigationContainerProps>) => {

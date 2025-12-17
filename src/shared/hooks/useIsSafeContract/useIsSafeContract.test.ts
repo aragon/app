@@ -1,8 +1,8 @@
+import { renderHook, waitFor } from '@testing-library/react';
 import { smartContractService } from '@/modules/governance/api/smartContractService';
 import { generateSmartContractAbi } from '@/modules/governance/testUtils';
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
-import { renderHook, waitFor } from '@testing-library/react';
 import { useIsSafeContract } from '.';
 
 describe('useIsSafeContract hook', () => {
@@ -44,7 +44,7 @@ describe('useIsSafeContract hook', () => {
                     name: contractName,
                     address: validAddress,
                     network,
-                }),
+                })
             );
 
             const { result } = renderHook(() => useIsSafeContract({ address: validAddress, network }), {
@@ -63,7 +63,7 @@ describe('useIsSafeContract hook', () => {
                 name: 'SomeOtherContract',
                 address: validAddress,
                 network,
-            }),
+            })
         );
 
         const { result } = renderHook(() => useIsSafeContract({ address: validAddress, network }), {
@@ -81,7 +81,7 @@ describe('useIsSafeContract hook', () => {
                 name: 'safeproxy',
                 address: validAddress,
                 network,
-            }),
+            })
         );
 
         const { result } = renderHook(() => useIsSafeContract({ address: validAddress, network }), {

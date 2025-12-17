@@ -1,3 +1,5 @@
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
 import * as governanceService from '@/modules/governance/api/governanceService';
 import { generateMember } from '@/modules/governance/testUtils';
 import * as daoService from '@/shared/api/daoService';
@@ -10,8 +12,6 @@ import {
     generateReactQueryInfiniteResultSuccess,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
 import { generateMultisigPluginSettings } from '../../testUtils';
 import { type IMultisigMemberInfoProps, MultisigMemberInfo } from './multisigMemberInfo';
 
@@ -30,7 +30,9 @@ describe('<MultisigMemberInfo /> component', () => {
     const createTestComponent = (props?: Partial<IMultisigMemberInfoProps>) => {
         const completeProps: IMultisigMemberInfoProps = {
             daoId: 'test-id',
-            plugin: generateDaoPlugin({ settings: generateMultisigPluginSettings() }),
+            plugin: generateDaoPlugin({
+                settings: generateMultisigPluginSettings(),
+            }),
             ...props,
         };
 
@@ -48,19 +50,20 @@ describe('<MultisigMemberInfo /> component', () => {
     });
 
     it('displays the correct number of members', () => {
-        const members = [
-            generateMember({ address: '0x123' }),
-            generateMember({ address: '0x123' }),
-            generateMember({ address: '0x123' }),
-        ];
+        const members = [generateMember({ address: '0x123' }), generateMember({ address: '0x123' }), generateMember({ address: '0x123' })];
         const membersMetadata = generatePaginatedResponseMetadata({
             pageSize: 20,
             totalRecords: members.length,
         });
-        const membersResponse = generatePaginatedResponse({ data: members, metadata: membersMetadata });
+        const membersResponse = generatePaginatedResponse({
+            data: members,
+            metadata: membersMetadata,
+        });
 
         useMemberListSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
+            generateReactQueryInfiniteResultSuccess({
+                data: { pages: [membersResponse], pageParams: [] },
+            })
         );
 
         render(createTestComponent());
@@ -74,15 +77,22 @@ describe('<MultisigMemberInfo /> component', () => {
             pageSize: 20,
             totalRecords: members.length,
         });
-        const membersResponse = generatePaginatedResponse({ data: members, metadata: membersMetadata });
+        const membersResponse = generatePaginatedResponse({
+            data: members,
+            metadata: membersMetadata,
+        });
 
         useMemberListSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
+            generateReactQueryInfiniteResultSuccess({
+                data: { pages: [membersResponse], pageParams: [] },
+            })
         );
         const daoNetwork = Network.ETHEREUM_MAINNET;
         const daoAddress = '0x12345';
         useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }),
+            generateReactQueryResultSuccess({
+                data: generateDao({ address: daoAddress, network: daoNetwork }),
+            })
         );
 
         render(createTestComponent({ daoId: 'dao-with-links' }));

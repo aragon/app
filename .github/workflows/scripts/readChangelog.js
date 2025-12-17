@@ -1,10 +1,10 @@
-var fs = require('fs');
+const fs = require('node:fs');
 
-module.exports = async ({ core }) => {
+module.exports = ({ core }) => {
     const { version, path } = process.env;
 
     // Check if version and path are provided
-    if (!version || !path) {
+    if (!(version && path)) {
         core.setFailed('Missing required environment variables: version or path');
         return;
     }
@@ -18,11 +18,12 @@ module.exports = async ({ core }) => {
     try {
         core.info(`Reading changes in version ${version}.`);
 
-        const changelog = fs.readFileSync(path, { encoding: 'utf8', flag: 'r' });
+        const changelog = fs.readFileSync(path, {
+            encoding: 'utf8',
+            flag: 'r',
+        });
 
-        const versionChanges = changelog
-            .split(/(?=## \d+\.\d+\.\d+)/g)
-            .find((changes) => changes.startsWith(`## ${version}`));
+        const versionChanges = changelog.split(/(?=## \d+\.\d+\.\d+)/g).find((changes) => changes.startsWith(`## ${version}`));
 
         if (!versionChanges) {
             core.warning(`No changes found for version ${version} in the changelog.`);

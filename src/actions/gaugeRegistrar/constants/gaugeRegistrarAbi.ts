@@ -42,10 +42,22 @@ export const getAllRegisteredGaugeDetailsAbi = {
     outputs: [
         {
             components: [
-                { internalType: 'address', name: 'gaugeAddress', type: 'address' },
+                {
+                    internalType: 'address',
+                    name: 'gaugeAddress',
+                    type: 'address',
+                },
                 { internalType: 'address', name: 'qiToken', type: 'address' },
-                { internalType: 'enum IGaugeRegistrar.Incentive', name: 'incentive', type: 'uint8' },
-                { internalType: 'address', name: 'rewardController', type: 'address' },
+                {
+                    internalType: 'enum IGaugeRegistrar.Incentive',
+                    name: 'incentive',
+                    type: 'uint8',
+                },
+                {
+                    internalType: 'address',
+                    name: 'rewardController',
+                    type: 'address',
+                },
             ],
             internalType: 'struct IGaugeRegistrar.RegisteredGauge[]',
             name: '',
@@ -55,9 +67,4 @@ export const getAllRegisteredGaugeDetailsAbi = {
     stateMutability: 'view',
 } as const;
 
-export const gaugeRegistrarAbi = [
-    registerGaugeAbi,
-    unregisterGaugeAbi,
-    getGaugeAddressAbi,
-    getAllRegisteredGaugeDetailsAbi,
-];
+export const gaugeRegistrarAbi = [registerGaugeAbi, unregisterGaugeAbi, getGaugeAddressAbi, getAllRegisteredGaugeDetailsAbi];

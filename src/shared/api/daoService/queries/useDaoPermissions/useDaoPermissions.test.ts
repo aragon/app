@@ -1,5 +1,5 @@
-import { ReactQueryWrapper, generateDaoPermission, generatePaginatedResponse } from '@/shared/testUtils';
 import { renderHook, waitFor } from '@testing-library/react';
+import { generateDaoPermission, generatePaginatedResponse, ReactQueryWrapper } from '@/shared/testUtils';
 import { daoService } from '../../daoService';
 import { Network } from '../../domain';
 import { useDaoPermissions } from './useDaoPermissions';
@@ -13,11 +13,16 @@ describe('useDaoPermissions query', () => {
 
     it('fetches the DAO permissions for the specified network and DAO address', async () => {
         const params = {
-            urlParams: { network: Network.ETHEREUM_MAINNET, daoAddress: '0xDaoAddress' },
+            urlParams: {
+                network: Network.ETHEREUM_MAINNET,
+                daoAddress: '0xDaoAddress',
+            },
             queryParams: { page: 1, pageSize: 10 },
         };
         const permissions = [generateDaoPermission(), generateDaoPermission({ permissionId: '0xOtherId' })];
-        const paginatedResponse = generatePaginatedResponse({ data: permissions });
+        const paginatedResponse = generatePaginatedResponse({
+            data: permissions,
+        });
         getDaoPermissionsSpy.mockResolvedValue(paginatedResponse);
         const { result } = renderHook(() => useDaoPermissions(params), {
             wrapper: ReactQueryWrapper,

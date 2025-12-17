@@ -1,18 +1,14 @@
-import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
-import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
-import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
-import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
-import {
-    TransactionDialog,
-    TransactionDialogStep,
-    type ITransactionDialogStepMeta,
-} from '@/shared/components/transactionDialog';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useStepper } from '@/shared/hooks/useStepper';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import type { TransactionReceipt } from 'viem';
+import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
+import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import { type ITransactionDialogStepMeta, TransactionDialog, TransactionDialogStep } from '@/shared/components/transactionDialog';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useStepper } from '@/shared/hooks/useStepper';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { prepareDaoContractsUpdateDialogUtils } from './prepareDaoContractsUpdateDialogUtils';
 
 export interface IPrepareDaoContractsUpdateDialogParams {
@@ -26,8 +22,7 @@ export interface IPrepareDaoContractsUpdateDialogParams {
     plugin: IDaoPlugin;
 }
 
-export interface IPrepareDaoContractsUpdateProps
-    extends IDialogComponentProps<IPrepareDaoContractsUpdateDialogParams> {}
+export interface IPrepareDaoContractsUpdateProps extends IDialogComponentProps<IPrepareDaoContractsUpdateDialogParams> {}
 
 export const PrepareDaoContractsUpdateDialog: React.FC<IPrepareDaoContractsUpdateProps> = (props) => {
     const { location } = props;
@@ -45,19 +40,33 @@ export const PrepareDaoContractsUpdateDialog: React.FC<IPrepareDaoContractsUpdat
     invariant(dao != null, 'PrepareDaoContractsUpdateDialog: DAO must be defined.');
 
     const initialActiveStep = hasPluginsUpdate ? TransactionDialogStep.PREPARE : undefined;
-    const stepper = useStepper<ITransactionDialogStepMeta>({ initialActiveStep });
+    const stepper = useStepper<ITransactionDialogStepMeta>({
+        initialActiveStep,
+    });
 
     const handlePrepareTransaction = () =>
-        prepareDaoContractsUpdateDialogUtils.buildPrepareUpdatePluginsTransaction({ dao, plugins: pluginsUpdate });
+        prepareDaoContractsUpdateDialogUtils.buildPrepareUpdatePluginsTransaction({
+            dao,
+            plugins: pluginsUpdate,
+        });
 
     const handlePublishUpdateProposal = useCallback(
         (prepareUpdateReceipt?: TransactionReceipt) => {
-            const getProposalParams = { dao, plugins: pluginsUpdate, osxUpdate: hasOsxUpdate, prepareUpdateReceipt };
+            const getProposalParams = {
+                dao,
+                plugins: pluginsUpdate,
+                osxUpdate: hasOsxUpdate,
+                prepareUpdateReceipt,
+            };
             const proposal = prepareDaoContractsUpdateDialogUtils.getApplyUpdateProposal(getProposalParams);
 
             const translationNamespace = 'app.settings.publishDaoContractsUpdateDialog';
             const transactionInfo = hasPluginsUpdate
-                ? { title: t(`${translationNamespace}.transactionInfoTitle`), current: 2, total: 2 }
+                ? {
+                      title: t(`${translationNamespace}.transactionInfoTitle`),
+                      current: 2,
+                      total: 2,
+                  }
                 : undefined;
 
             const dialogParams: IPublishProposalDialogParams = {
@@ -69,7 +78,7 @@ export const PrepareDaoContractsUpdateDialog: React.FC<IPrepareDaoContractsUpdat
             };
             open(GovernanceDialogId.PUBLISH_PROPOSAL, { params: dialogParams });
         },
-        [t, plugin, dao, daoId, hasPluginsUpdate, pluginsUpdate, hasOsxUpdate, open],
+        [t, plugin, dao, daoId, hasPluginsUpdate, pluginsUpdate, hasOsxUpdate, open]
     );
 
     // Open the publish-proposal dialog directly if DAO does not have available plugins updates.
@@ -83,14 +92,18 @@ export const PrepareDaoContractsUpdateDialog: React.FC<IPrepareDaoContractsUpdat
 
     return (
         <TransactionDialog
-            title={t('app.settings.prepareDaoContractsUpdateDialog.title')}
             description={t('app.settings.prepareDaoContractsUpdateDialog.description')}
-            submitLabel={t('app.settings.prepareDaoContractsUpdateDialog.button.submit')}
-            onSuccess={handlePublishUpdateProposal}
-            transactionInfo={{ title: transactionInfoTitle, current: 1, total: 2 }}
-            stepper={stepper}
-            prepareTransaction={handlePrepareTransaction}
             network={dao.network}
+            onSuccess={handlePublishUpdateProposal}
+            prepareTransaction={handlePrepareTransaction}
+            stepper={stepper}
+            submitLabel={t('app.settings.prepareDaoContractsUpdateDialog.button.submit')}
+            title={t('app.settings.prepareDaoContractsUpdateDialog.title')}
+            transactionInfo={{
+                title: transactionInfoTitle,
+                current: 1,
+                total: 2,
+            }}
         />
     );
 };

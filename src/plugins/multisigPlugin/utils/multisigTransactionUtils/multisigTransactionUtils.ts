@@ -1,3 +1,4 @@
+import { encodeAbiParameters, encodeFunctionData, type Hex, zeroHash } from 'viem';
 import type { IBuildPreparePluginInstallDataParams } from '@/modules/createDao/types';
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
@@ -5,7 +6,6 @@ import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/
 import type { IBuildPreparePluginUpdateDataParams, IGetUninstallHelpersParams } from '@/modules/settings/types';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
-import { encodeAbiParameters, encodeFunctionData, zeroHash, type Hex } from 'viem';
 import type { IMultisigSetupGovernanceForm } from '../../components/multisigSetupGovernance';
 import { multisigPlugin } from '../../constants/multisigPlugin';
 import type { IMultisigPluginSettings } from '../../types';
@@ -15,9 +15,7 @@ import { multisigPluginAbi, multisigPluginPrepareUpdateAbi, multisigPluginSetupA
 export interface ICreateMultisigProposalFormData extends IProposalCreate, Partial<ICreateProposalEndDateForm> {}
 
 class MultisigTransactionUtils {
-    buildCreateProposalData = (
-        params: IBuildCreateProposalDataParams<ICreateMultisigProposalFormData, IMultisigPluginSettings>,
-    ): Hex => {
+    buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateMultisigProposalFormData, IMultisigPluginSettings>): Hex => {
         const { metadata, actions, proposal } = params;
 
         // Handle proposals without time settings in the following way:
@@ -25,12 +23,14 @@ class MultisigTransactionUtils {
         //   - endDate set to 7 days from now
         const startDate = createProposalUtils.parseStartDate(proposal);
         const endDate =
-            proposal.endTimeMode != null
-                ? createProposalUtils.parseEndDate(proposal)
-                : createProposalUtils.createDefaultEndDate();
+            proposal.endTimeMode != null ? createProposalUtils.parseEndDate(proposal) : createProposalUtils.createDefaultEndDate();
 
         const functionArgs = [metadata, actions, BigInt(0), false, false, startDate, endDate];
-        const data = encodeFunctionData({ abi: multisigPluginAbi, functionName: 'createProposal', args: functionArgs });
+        const data = encodeFunctionData({
+            abi: multisigPluginAbi,
+            functionName: 'createProposal',
+            args: functionArgs,
+        });
 
         return data;
     };
@@ -39,7 +39,11 @@ class MultisigTransactionUtils {
         const { proposalIndex } = params;
 
         const functionArgs = [proposalIndex, false];
-        const data = encodeFunctionData({ abi: multisigPluginAbi, functionName: 'approve', args: functionArgs });
+        const data = encodeFunctionData({
+            abi: multisigPluginAbi,
+            functionName: 'approve',
+            args: functionArgs,
+        });
 
         return data;
     };
@@ -55,18 +59,13 @@ class MultisigTransactionUtils {
         const multisigTarget = pluginTransactionUtils.getPluginTargetConfig(dao, stageVotingPeriod != null);
         const pluginSettings = { onlyListed, minApprovals };
 
-        const pluginSettingsData = encodeAbiParameters(multisigPluginSetupAbi, [
-            memberAddresses,
-            pluginSettings,
-            multisigTarget,
-            metadata,
-        ]);
+        const pluginSettingsData = encodeAbiParameters(multisigPluginSetupAbi, [memberAddresses, pluginSettings, multisigTarget, metadata]);
 
         const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
             repositoryAddress,
             multisigPlugin.installVersion,
             pluginSettingsData,
-            dao.address as Hex,
+            dao.address as Hex
         );
 
         return transactionData;

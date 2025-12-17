@@ -1,5 +1,5 @@
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { DefinitionList, StateSkeletonBar } from '@aragon/gov-ui-kit';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IPermissionCheckGuardResult } from '../../types';
 
 export interface IPermissionsDefinitionListProps extends Pick<IPermissionCheckGuardResult, 'isLoading' | 'settings'> {}
@@ -12,8 +12,8 @@ export const PermissionsDefinitionList: React.FC<IPermissionsDefinitionListProps
     if (isLoading) {
         return (
             <div className="flex flex-col gap-y-2">
-                <StateSkeletonBar width="40%" size="lg" />
-                <StateSkeletonBar width="65%" size="lg" />
+                <StateSkeletonBar size="lg" width="40%" />
+                <StateSkeletonBar size="lg" width="65%" />
             </div>
         );
     }
@@ -22,26 +22,27 @@ export const PermissionsDefinitionList: React.FC<IPermissionsDefinitionListProps
 
     return (
         <div>
-            {settings.map((settingsGroup, groupIndex) => (
-                <div key={groupIndex} className="flex flex-col gap-y-1">
-                    <DefinitionList.Container>
-                        {settingsGroup.map(({ term, definition, link }, settingIndex) => (
-                            <DefinitionList.Item key={settingIndex} term={term} link={link}>
-                                {definition}
-                            </DefinitionList.Item>
-                        ))}
-                    </DefinitionList.Container>
-                    {hasSettingsGroups && groupIndex < settings.length - 1 && (
-                        <div className="my-2 flex items-center">
-                            <div className="grow border-t border-neutral-100" />
-                            <span className="mx-2 text-neutral-500">
-                                {t('app.governance.permissionCheckDialog.or')}
-                            </span>
-                            <div className="grow border-t border-neutral-100" />
-                        </div>
-                    )}
-                </div>
-            ))}
+            {settings.map((settingsGroup, groupIndex) => {
+                const groupKey = settingsGroup.map(({ term }) => term).join('-') || groupIndex.toString();
+                return (
+                    <div className="flex flex-col gap-y-1" key={groupKey}>
+                        <DefinitionList.Container>
+                            {settingsGroup.map(({ term, definition, link }) => (
+                                <DefinitionList.Item key={`${groupKey}-${term}`} link={link} term={term}>
+                                    {definition}
+                                </DefinitionList.Item>
+                            ))}
+                        </DefinitionList.Container>
+                        {hasSettingsGroups && groupIndex < settings.length - 1 && (
+                            <div className="my-2 flex items-center">
+                                <div className="grow border-neutral-100 border-t" />
+                                <span className="mx-2 text-neutral-500">{t('app.governance.permissionCheckDialog.or')}</span>
+                                <div className="grow border-neutral-100 border-t" />
+                            </div>
+                        )}
+                    </div>
+                );
+            })}
         </div>
     );
 };

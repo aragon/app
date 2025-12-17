@@ -1,17 +1,17 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
-import { useMemo } from 'react';
 import { CreateDaoForm, type ICreateDaoFormData } from '../../components/createDaoForm';
 import { CreateDaoDialogId } from '../../constants/createDaoDialogId';
 import type { IPublishDaoDialogParams } from '../../dialogs/publishDaoDialog';
 import { CreateDaoWizardStep, createDaoWizardSteps } from './createDaoPageDefinitions';
 
-export interface ICreateDaoPageClientProps {}
+export type ICreateDaoPageClientProps = Record<string, never>;
 
 export const CreateDaoPageClient: React.FC<ICreateDaoPageClientProps> = () => {
     const { t } = useTranslations();
@@ -34,28 +34,28 @@ export const CreateDaoPageClient: React.FC<ICreateDaoPageClientProps> = () => {
                 ...step,
                 meta: { ...step.meta, name: t(step.meta.name) },
             })),
-        [t],
+        [t]
     );
 
     return (
         <Page.Main fullWidth={true}>
             <WizardPage.Container
                 finalStep={t('app.createDao.createDaoPage.finalStep')}
-                submitLabel={t('app.createDao.createDaoPage.submitLabel')}
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
+                submitLabel={t('app.createDao.createDaoPage.submitLabel')}
             >
                 <CreateDaoForm.Debug />
                 <WizardPage.Step
-                    title={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.NETWORK}.title`)}
                     description={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.NETWORK}.description`)}
+                    title={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.NETWORK}.title`)}
                     {...networkStep}
                 >
                     <CreateDaoForm.Network />
                 </WizardPage.Step>
                 <WizardPage.Step
-                    title={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.METADATA}.title`)}
                     description={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.METADATA}.description`)}
+                    title={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.METADATA}.title`)}
                     {...metadataStep}
                 >
                     <CreateDaoForm.Metadata />

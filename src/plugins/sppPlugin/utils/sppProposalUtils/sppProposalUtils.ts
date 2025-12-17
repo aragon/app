@@ -1,5 +1,5 @@
-import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
+import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import { type ISppProposal, type ISppStage, SppProposalType } from '../../types';
 import { sppStageUtils } from '../sppStageUtils';
 
@@ -27,7 +27,7 @@ class SppProposalUtils {
         const { executed, settings, startDate, hasActions } = proposal;
         const { stages } = settings;
 
-        const lastStage = stages[stages.length - 1];
+        const lastStage = stages.at(-1);
 
         const isExecuted = executed.status;
         const isVetoed = this.hasAnyStageStatus(proposal, ProposalStatus.VETOED);
@@ -36,11 +36,11 @@ class SppProposalUtils {
         const hasExpiredStages = this.hasAnyStageStatus(proposal, ProposalStatus.EXPIRED);
 
         // Set end date to 0 to mark SPP proposals as "ended" when one or more stages are unreached
-        const endDate = !hasUnreachedStages ? sppStageUtils.getStageEndDate(proposal, lastStage)?.toSeconds() : 0;
+        const endDate = hasUnreachedStages ? 0 : sppStageUtils.getStageEndDate(proposal, lastStage)?.toSeconds();
         const executionExpiryDate = sppStageUtils.getStageMaxAdvance(proposal, lastStage)?.toSeconds();
 
         const hasAdvanceableStages = stages.some(
-            (stage) => !sppStageUtils.isLastStage(proposal, stage) && sppStageUtils.canStageAdvance(proposal, stage),
+            (stage) => !sppStageUtils.isLastStage(proposal, stage) && sppStageUtils.canStageAdvance(proposal, stage)
         );
 
         const paramsMet = this.areAllStagesAccepted(proposal);
@@ -66,9 +66,7 @@ class SppProposalUtils {
     getCurrentStage = (proposal: ISppProposal): ISppStage => proposal.settings.stages[proposal.stageIndex];
 
     areAllStagesAccepted = (proposal: ISppProposal): boolean =>
-        proposal.settings.stages.every(
-            (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalStatus.ACCEPTED,
-        );
+        proposal.settings.stages.every((stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalStatus.ACCEPTED);
 
     getBodyResultStatus = (params: IGetBodyStatusLabelDataParams) => {
         const { proposal, body, stage, canVote } = params;
@@ -83,8 +81,7 @@ class SppProposalUtils {
         const labelSuffix = `${labelContext}.${isVeto ? 'veto' : 'approve'}`;
 
         const label = `app.plugins.spp.sppVotingTerminalBodyBreakdownDefault.${labelSuffix}`;
-        const style =
-            status === 'neutral' ? 'text-neutral-500' : status === 'success' ? 'text-success-800' : 'text-critical-800';
+        const style = status === 'neutral' ? 'text-neutral-500' : status === 'success' ? 'text-success-800' : 'text-critical-800';
 
         return { status, label, style };
     };

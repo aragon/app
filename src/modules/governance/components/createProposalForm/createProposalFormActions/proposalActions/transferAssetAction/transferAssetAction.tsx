@@ -1,3 +1,8 @@
+import { addressUtils, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
+import { useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { encodeFunctionData, erc20Abi, formatUnits, type Hex, parseUnits, zeroAddress } from 'viem';
+import { useReadContract } from 'wagmi';
 import type { IAsset } from '@/modules/finance/api/financeService';
 import { type ITransferAssetFormData, TransferAssetForm } from '@/modules/finance/components/transferAssetForm';
 import { actionComposerUtils } from '@/modules/governance/components/actionComposer';
@@ -5,11 +10,6 @@ import { useDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { useToken } from '@/shared/hooks/useToken';
-import { addressUtils, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { encodeFunctionData, erc20Abi, formatUnits, type Hex, parseUnits, zeroAddress } from 'viem';
-import { useReadContract } from 'wagmi';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 
 export interface ITransferAssetActionProps extends IProposalActionComponentProps<IProposalActionData> {}
@@ -38,7 +38,11 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
     // is transferActionLocked to correctly initialize the form data and disable the token selection.
     const disableTokenSelection = action.type === actionComposerUtils.transferActionLocked;
     const { id: chainId } = networkDefinitions[dao!.network];
-    const { data: token } = useToken({ address: action.to as Hex, chainId, enabled: disableTokenSelection });
+    const { data: token } = useToken({
+        address: action.to as Hex,
+        chainId,
+        enabled: disableTokenSelection,
+    });
     const { data: balance } = useReadContract({
         abi: erc20Abi,
         address: action.to as Hex,
@@ -74,7 +78,13 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
             return;
         }
 
-        const tokenAsset = { ...token, address: tokenAddress, network: dao!.network, logo: '', priceUsd: '0' };
+        const tokenAsset = {
+            ...token,
+            address: tokenAddress,
+            network: dao!.network,
+            logo: '',
+            priceUsd: '0',
+        };
         const tokenBalance = formatUnits(balance, tokenDecimals);
         const asset: IAsset = { token: tokenAsset, amount: tokenBalance };
 
@@ -83,7 +93,12 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
 
     useEffect(() => {
         const transferParams = [receiverAddress, weiAmount];
-        const newData = isNativeToken ? '0x' : encodeFunctionData({ abi: [erc20TransferAbi], args: transferParams });
+        const newData = isNativeToken
+            ? '0x'
+            : encodeFunctionData({
+                  abi: [erc20TransferAbi],
+                  args: transferParams,
+              });
 
         setValue(`${fieldName}.data`, newData);
     }, [isNativeToken, receiverAddress, weiAmount, fieldName, setValue]);
@@ -127,11 +142,11 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
 
     return (
         <TransferAssetForm
-            sender={dao!.address}
             daoId={dao!.id}
-            network={dao!.network}
-            fieldPrefix={fieldName}
             disableAssetField={disableTokenSelection}
+            fieldPrefix={fieldName}
+            network={dao!.network}
+            sender={dao!.address}
         />
     );
 };

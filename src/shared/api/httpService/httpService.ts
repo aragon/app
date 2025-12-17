@@ -2,9 +2,9 @@ import { responseUtils } from '@/shared/utils/responseUtils';
 import type { HttpServiceErrorHandler, IRequestOptions, IRequestParams } from './httpService.api';
 
 export class HttpService {
-    private baseUrl: string;
-    private errorHandler?: HttpServiceErrorHandler;
-    private apiKey?: string;
+    private readonly baseUrl: string;
+    private readonly errorHandler?: HttpServiceErrorHandler;
+    private readonly apiKey?: string;
 
     constructor(baseUrl: string, errorHandler?: HttpServiceErrorHandler, apiKey?: string) {
         this.baseUrl = baseUrl;
@@ -15,13 +15,17 @@ export class HttpService {
     request = async <TData, TUrlParams = unknown, TQueryParams = unknown, TBody = unknown>(
         url: string,
         params: IRequestParams<TUrlParams, TQueryParams, TBody> = {},
-        options?: IRequestOptions,
+        options?: IRequestOptions
     ): Promise<TData> => {
         const completeUrl = this.buildUrl(url, params);
         const processedOptions = this.buildOptions(options, params.body);
         const parsedBody = this.parseBody(params.body);
 
-        const response = await fetch(completeUrl, { cache: 'no-store', body: parsedBody, ...processedOptions });
+        const response = await fetch(completeUrl, {
+            cache: 'no-store',
+            body: parsedBody,
+            ...processedOptions,
+        });
 
         if (!response.ok) {
             const defaultError = new Error(response.statusText);
@@ -34,9 +38,9 @@ export class HttpService {
         return result as TData;
     };
 
-    private buildUrl = <TUrlParams, TQueryParams, TBody>(
+    private readonly buildUrl = <TUrlParams, TQueryParams, TBody>(
         url: string,
-        params: IRequestParams<TUrlParams, TQueryParams, TBody> = {},
+        params: IRequestParams<TUrlParams, TQueryParams, TBody> = {}
     ): string => {
         const { urlParams, queryParams } = params;
         const parsedUrl = this.replaceUrlParams(url, { ...urlParams });
@@ -46,7 +50,7 @@ export class HttpService {
         return parsedParams != null ? `${fullUrl}?${parsedParams.toString()}` : fullUrl;
     };
 
-    private buildOptions = (options?: IRequestOptions, body?: unknown) => {
+    private readonly buildOptions = (options?: IRequestOptions, body?: unknown) => {
         const { method, headers, ...otherOptions } = options ?? {};
 
         const processedHeaders = new Headers(headers);
@@ -62,30 +66,27 @@ export class HttpService {
         return { method, headers: processedHeaders, ...otherOptions };
     };
 
-    private parseBody = (body?: unknown) => {
+    private readonly parseBody = (body?: unknown) => {
         if (body == null) {
-            return undefined;
+            return;
         }
 
         return body instanceof FormData ? body : JSON.stringify(body);
     };
 
-    private replaceUrlParams = (url: string, params?: Record<string, string>): string => {
+    private readonly replaceUrlParams = (url: string, params?: Record<string, string>): string => {
         if (params == null) {
             return url;
         }
 
-        const parsedUrl = Object.keys(params).reduce(
-            (current, key) => current.replace(`:${key}`, encodeURIComponent(params[key])),
-            url,
-        );
+        const parsedUrl = Object.keys(params).reduce((current, key) => current.replace(`:${key}`, encodeURIComponent(params[key])), url);
 
         return parsedUrl;
     };
 
-    private parseQueryParams = (params?: Record<string, unknown>): URLSearchParams | undefined => {
+    private readonly parseQueryParams = (params?: Record<string, unknown>): URLSearchParams | undefined => {
         if (params == null || Object.keys(params).length === 0) {
-            return undefined;
+            return;
         }
 
         const parsedParams = new URLSearchParams();
@@ -93,12 +94,7 @@ export class HttpService {
         Object.keys(params).forEach((key) => {
             const value = params[key];
 
-            if (
-                typeof value === 'boolean' ||
-                typeof value === 'string' ||
-                typeof value === 'number' ||
-                Array.isArray(value)
-            ) {
+            if (typeof value === 'boolean' || typeof value === 'string' || typeof value === 'number' || Array.isArray(value)) {
                 parsedParams.append(key, value.toString());
             } else if (typeof value === 'object') {
                 parsedParams.append(key, JSON.stringify(value));

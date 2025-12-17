@@ -1,17 +1,17 @@
-import type { Network } from '@/shared/api/daoService';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import type { Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { featuredDaosOptions } from '../../api/cmsService';
 import { daoListOptions } from '../../api/daoExplorerService';
-import { ExploreDaosPage, type IExploreDaosPageProps } from './exploreDaosPage';
+import { ExploreDaosPage } from './exploreDaosPage';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
-        <div data-testid="hydration-mock" data-state={JSON.stringify(props.state)}>
+        <div data-state={JSON.stringify(props.state)} data-testid="hydration-mock">
             {props.children}
         </div>
     ),
@@ -35,8 +35,8 @@ describe('<ExploreDaosPage /> component', () => {
         prefetchQuerySpy.mockReset();
     });
 
-    const createTestComponent = async (props?: Partial<IExploreDaosPageProps>) => {
-        const completeProps: IExploreDaosPageProps = { ...props };
+    const createTestComponent = async (props?: React.FC) => {
+        const completeProps = { ...props };
         const Component = await ExploreDaosPage(completeProps);
 
         return Component;
@@ -46,7 +46,14 @@ describe('<ExploreDaosPage /> component', () => {
         const networks = (Object.keys(networkDefinitions) as Network[]).filter((n) => !networkDefinitions[n].testnet);
         render(await createTestComponent());
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
-            daoListOptions({ queryParams: { pageSize: 10, page: 1, sort: 'metrics.tvlUSD', networks } }).queryKey,
+            daoListOptions({
+                queryParams: {
+                    pageSize: 10,
+                    page: 1,
+                    sort: 'metrics.tvlUSD',
+                    networks,
+                },
+            }).queryKey
         );
     });
 

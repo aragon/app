@@ -1,8 +1,8 @@
-import { timeUtils } from '@/test/utils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import { timeUtils } from '@/test/utils';
 import { generateTokenPluginSettings, generateTokenPluginSettingsToken, generateTokenProposal } from '../../testUtils';
-import { DaoTokenVotingMode, VoteOption, type ITokenProposal, type ITokenProposalOptionVotes } from '../../types';
+import { DaoTokenVotingMode, type ITokenProposal, type ITokenProposalOptionVotes, VoteOption } from '../../types';
 import { tokenProposalUtils } from './tokenProposalUtils';
 
 describe('tokenProposal utils', () => {
@@ -16,7 +16,9 @@ describe('tokenProposal utils', () => {
         it('returns executed status when proposal has been executed', () => {
             const proposal = generateTokenProposal({
                 executed: { status: true },
-                settings: generateTokenPluginSettings({ historicalTotalSupply: '0' }),
+                settings: generateTokenPluginSettings({
+                    historicalTotalSupply: '0',
+                }),
             });
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTED);
         });
@@ -33,8 +35,15 @@ describe('tokenProposal utils', () => {
             const now = '2022-02-01T07:55:55.868Z';
             const startDate = DateTime.fromISO('2022-01-10T08:00:00.000Z').toSeconds();
             const endDate = DateTime.fromISO('2022-02-10T08:00:00.000Z').toSeconds();
-            const settings = generateTokenPluginSettings({ votingMode: DaoTokenVotingMode.EARLY_EXECUTION });
-            const proposal = generateTokenProposal({ startDate, endDate, settings, hasActions: true });
+            const settings = generateTokenPluginSettings({
+                votingMode: DaoTokenVotingMode.EARLY_EXECUTION,
+            });
+            const proposal = generateTokenProposal({
+                startDate,
+                endDate,
+                settings,
+                hasActions: true,
+            });
             timeUtils.setTime(now);
             isApprovalReachedSpy.mockReturnValueOnce(false).mockReturnValueOnce(true);
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTABLE);
@@ -44,7 +53,11 @@ describe('tokenProposal utils', () => {
             const now = '2022-02-10T08:00:00.868Z';
             const startDate = DateTime.fromISO('2022-02-05T08:00:00.000Z').toSeconds();
             const endDate = DateTime.fromISO('2022-02-08T08:00:00.000Z').toSeconds();
-            const proposal = generateTokenProposal({ startDate, endDate, hasActions: true });
+            const proposal = generateTokenProposal({
+                startDate,
+                endDate,
+                hasActions: true,
+            });
             timeUtils.setTime(now);
             isApprovalReachedSpy.mockReturnValue(true);
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTABLE);
@@ -54,8 +67,15 @@ describe('tokenProposal utils', () => {
             const now = '2022-01-15T07:55:55.868Z';
             const startDate = DateTime.fromISO('2022-01-10T08:00:00.000Z').toSeconds();
             const endDate = DateTime.fromISO('2022-01-10T08:00:00.000Z').toSeconds();
-            const settings = generateTokenPluginSettings({ votingMode: DaoTokenVotingMode.EARLY_EXECUTION });
-            const proposal = generateTokenProposal({ startDate, endDate, settings, hasActions: true });
+            const settings = generateTokenPluginSettings({
+                votingMode: DaoTokenVotingMode.EARLY_EXECUTION,
+            });
+            const proposal = generateTokenProposal({
+                startDate,
+                endDate,
+                settings,
+                hasActions: true,
+            });
             timeUtils.setTime(now);
             isApprovalReachedSpy.mockReturnValueOnce(true).mockReturnValueOnce(false);
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTABLE);
@@ -74,7 +94,11 @@ describe('tokenProposal utils', () => {
             const now = '2024-10-20T09:49:56.868Z';
             const startDate = DateTime.fromISO('2024-10-08T09:49:56.868Z').toSeconds();
             const endDate = DateTime.fromISO('2024-10-12T09:49:56.868Z').toSeconds();
-            const proposal = generateTokenProposal({ startDate, endDate, hasActions: false });
+            const proposal = generateTokenProposal({
+                startDate,
+                endDate,
+                hasActions: false,
+            });
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.ACCEPTED);
@@ -108,8 +132,14 @@ describe('tokenProposal utils', () => {
             const endDate = DateTime.fromISO('2025-01-30T10:00:00.000Z').toSeconds();
 
             isApprovalReachedSpy.mockReturnValue(true);
-            const settings = generateTokenPluginSettings({ votingMode: DaoTokenVotingMode.STANDARD });
-            const proposal = generateTokenProposal({ startDate, endDate, settings });
+            const settings = generateTokenPluginSettings({
+                votingMode: DaoTokenVotingMode.STANDARD,
+            });
+            const proposal = generateTokenProposal({
+                startDate,
+                endDate,
+                settings,
+            });
             timeUtils.setTime(now);
             expect(tokenProposalUtils.hasSucceeded(proposal)).toBe(true);
         });
@@ -120,8 +150,14 @@ describe('tokenProposal utils', () => {
             const endDate = DateTime.fromISO('2025-01-30T10:00:00.000Z').toSeconds();
 
             isApprovalReachedSpy.mockReturnValue(false);
-            const settings = generateTokenPluginSettings({ votingMode: DaoTokenVotingMode.EARLY_EXECUTION });
-            const proposal = generateTokenProposal({ startDate, endDate, settings });
+            const settings = generateTokenPluginSettings({
+                votingMode: DaoTokenVotingMode.EARLY_EXECUTION,
+            });
+            const proposal = generateTokenProposal({
+                startDate,
+                endDate,
+                settings,
+            });
             timeUtils.setTime(now);
             expect(tokenProposalUtils.hasSucceeded(proposal)).toBe(false);
         });
@@ -208,7 +244,10 @@ describe('tokenProposal utils', () => {
         });
 
         it('returns true when total votes is greater than min participation required', () => {
-            const settings = generateTokenPluginSettings({ minParticipation: 150000, historicalTotalSupply: '1000' }); // 15%
+            const settings = generateTokenPluginSettings({
+                minParticipation: 150_000,
+                historicalTotalSupply: '1000',
+            }); // 15%
             const totalVotes = BigInt('200'); // 20% of total-supply
             const proposal = generateTokenProposal({ settings });
             getTotalVotesSpy.mockReturnValue(totalVotes);
@@ -216,7 +255,10 @@ describe('tokenProposal utils', () => {
         });
 
         it('returns true when total votes is equal to min participation required', () => {
-            const settings = generateTokenPluginSettings({ minParticipation: 500000, historicalTotalSupply: '1000' }); // 50%
+            const settings = generateTokenPluginSettings({
+                minParticipation: 500_000,
+                historicalTotalSupply: '1000',
+            }); // 50%
             const totalVotes = BigInt('500'); // 50% of total-supply
             const proposal = generateTokenProposal({ settings });
             getTotalVotesSpy.mockReturnValue(totalVotes);
@@ -224,7 +266,10 @@ describe('tokenProposal utils', () => {
         });
 
         it('returns false when total votes is less than min participation required', () => {
-            const settings = generateTokenPluginSettings({ minParticipation: 300000, historicalTotalSupply: '1000' }); // 30%
+            const settings = generateTokenPluginSettings({
+                minParticipation: 300_000,
+                historicalTotalSupply: '1000',
+            }); // 30%
             const totalVotes = BigInt('290'); // 29% of total-supply
             const proposal = generateTokenProposal({ settings });
             getTotalVotesSpy.mockReturnValue(totalVotes);
@@ -232,13 +277,18 @@ describe('tokenProposal utils', () => {
         });
 
         it('returns false when total supply is set to zero', () => {
-            const settings = generateTokenPluginSettings({ historicalTotalSupply: '0' });
+            const settings = generateTokenPluginSettings({
+                historicalTotalSupply: '0',
+            });
             const proposal = generateTokenProposal({ settings });
             expect(tokenProposalUtils.isMinParticipationReached(proposal)).toBeFalsy();
         });
 
         it('supports decimal values for the min-participation setting', () => {
-            const settings = generateTokenPluginSettings({ minParticipation: 5000, historicalTotalSupply: '1000' }); // 0.5%
+            const settings = generateTokenPluginSettings({
+                minParticipation: 5000,
+                historicalTotalSupply: '1000',
+            }); // 0.5%
             const proposal = generateTokenProposal({ settings });
             getTotalVotesSpy.mockReturnValueOnce(BigInt('5')); // 0.5% of total-supply
             expect(tokenProposalUtils.isMinParticipationReached(proposal)).toBeTruthy();
@@ -249,59 +299,91 @@ describe('tokenProposal utils', () => {
 
     describe('isSupportReached', () => {
         it('returns true when the amount of yes votes is greater than the support required', () => {
-            const settings = generateTokenPluginSettings({ supportThreshold: 500000, historicalTotalSupply: '0' }); // 50%
+            const settings = generateTokenPluginSettings({
+                supportThreshold: 500_000,
+                historicalTotalSupply: '0',
+            }); // 50%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '510' }, // 51%
                 { type: VoteOption.NO, totalVotingPower: '490' }, // 49%
                 { type: VoteOption.ABSTAIN, totalVotingPower: '290' },
             ];
-            const proposal = generateTokenProposal({ settings, metrics: { votesByOption } });
+            const proposal = generateTokenProposal({
+                settings,
+                metrics: { votesByOption },
+            });
             expect(tokenProposalUtils.isSupportReached(proposal)).toBeTruthy();
         });
 
         it('returns false when the amount of yes votes is equal to the support required', () => {
-            const settings = generateTokenPluginSettings({ supportThreshold: 600000, historicalTotalSupply: '0' }); // 60%
+            const settings = generateTokenPluginSettings({
+                supportThreshold: 600_000,
+                historicalTotalSupply: '0',
+            }); // 60%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '600' }, // 60%
                 { type: VoteOption.NO, totalVotingPower: '400' }, // 40%
             ];
-            const proposal = generateTokenProposal({ settings, metrics: { votesByOption } });
+            const proposal = generateTokenProposal({
+                settings,
+                metrics: { votesByOption },
+            });
             expect(tokenProposalUtils.isSupportReached(proposal)).toBeFalsy();
         });
 
         it('returns false when the amount of yes votes is less than the support required', () => {
-            const settings = generateTokenPluginSettings({ supportThreshold: 400000, historicalTotalSupply: '0' }); // 40%
+            const settings = generateTokenPluginSettings({
+                supportThreshold: 400_000,
+                historicalTotalSupply: '0',
+            }); // 40%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '380' }, // 38%
                 { type: VoteOption.NO, totalVotingPower: '620' }, // 62%
             ];
-            const proposal = generateTokenProposal({ settings, metrics: { votesByOption } });
+            const proposal = generateTokenProposal({
+                settings,
+                metrics: { votesByOption },
+            });
             expect(tokenProposalUtils.isSupportReached(proposal)).toBeFalsy();
         });
 
         it('returns false when no one voted yet', () => {
-            const settings = generateTokenPluginSettings({ historicalTotalSupply: '0' });
+            const settings = generateTokenPluginSettings({
+                historicalTotalSupply: '0',
+            });
             expect(tokenProposalUtils.isSupportReached(generateTokenProposal({ settings }))).toBeFalsy();
         });
 
         it('returns true when early param is true and yes votes match the support needed in worst voting scenario', () => {
-            const settings = generateTokenPluginSettings({ supportThreshold: 510000, historicalTotalSupply: '1000' }); // 51%
+            const settings = generateTokenPluginSettings({
+                supportThreshold: 510_000,
+                historicalTotalSupply: '1000',
+            }); // 51%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '520' }, // 52% and 38% worst case
                 { type: VoteOption.ABSTAIN, totalVotingPower: '100' },
             ];
-            const proposal = generateTokenProposal({ settings, metrics: { votesByOption } });
+            const proposal = generateTokenProposal({
+                settings,
+                metrics: { votesByOption },
+            });
             expect(tokenProposalUtils.isSupportReached(proposal, true)).toBeTruthy();
         });
 
         it('returns false when early param is true and yes votes do not match the support needed in worst voting scenario', () => {
-            const settings = generateTokenPluginSettings({ supportThreshold: 550000, historicalTotalSupply: '1000' }); // 55%
+            const settings = generateTokenPluginSettings({
+                supportThreshold: 550_000,
+                historicalTotalSupply: '1000',
+            }); // 55%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '400' }, // 40% and 45% worst case
                 { type: VoteOption.NO, totalVotingPower: '100' },
                 { type: VoteOption.ABSTAIN, totalVotingPower: '50' },
             ];
-            const proposal = generateTokenProposal({ settings, metrics: { votesByOption } });
+            const proposal = generateTokenProposal({
+                settings,
+                metrics: { votesByOption },
+            });
             expect(tokenProposalUtils.isSupportReached(proposal, true)).toBeFalsy();
         });
     });
@@ -313,13 +395,17 @@ describe('tokenProposal utils', () => {
                 { type: VoteOption.NO, totalVotingPower: '7100' },
                 { type: VoteOption.ABSTAIN, totalVotingPower: '122' },
             ];
-            const proposal = generateTokenProposal({ metrics: { votesByOption } });
+            const proposal = generateTokenProposal({
+                metrics: { votesByOption },
+            });
             expect(tokenProposalUtils.getTotalVotes(proposal)).toEqual(BigInt('7732'));
         });
 
         it('returns zero when no one has voted yet', () => {
             const votesByOption: ITokenProposalOptionVotes[] = [];
-            const proposal = generateTokenProposal({ metrics: { votesByOption } });
+            const proposal = generateTokenProposal({
+                metrics: { votesByOption },
+            });
             expect(tokenProposalUtils.getTotalVotes(proposal)).toEqual(BigInt('0'));
         });
 
@@ -329,7 +415,9 @@ describe('tokenProposal utils', () => {
                 { type: VoteOption.NO, totalVotingPower: '40' },
                 { type: VoteOption.ABSTAIN, totalVotingPower: '80' },
             ];
-            const proposal = generateTokenProposal({ metrics: { votesByOption } });
+            const proposal = generateTokenProposal({
+                metrics: { votesByOption },
+            });
             expect(tokenProposalUtils.getTotalVotes(proposal, true)).toEqual(BigInt('55'));
         });
     });
@@ -356,11 +444,19 @@ describe('tokenProposal utils', () => {
     describe('getOptionVotingPower', () => {
         it('returns the correctly formatted voting power when the option exists', () => {
             const votesByOption: ITokenProposalOptionVotes[] = [
-                { type: VoteOption.YES, totalVotingPower: '1000000000000000000' },
-                { type: VoteOption.NO, totalVotingPower: '2000000000000000000' },
+                {
+                    type: VoteOption.YES,
+                    totalVotingPower: '1000000000000000000',
+                },
+                {
+                    type: VoteOption.NO,
+                    totalVotingPower: '2000000000000000000',
+                },
             ];
             const proposal: ITokenProposal = generateTokenProposal({
-                settings: generateTokenPluginSettings({ token: generateTokenPluginSettingsToken({ decimals: 18 }) }),
+                settings: generateTokenPluginSettings({
+                    token: generateTokenPluginSettingsToken({ decimals: 18 }),
+                }),
                 metrics: { votesByOption },
             });
 
@@ -373,10 +469,15 @@ describe('tokenProposal utils', () => {
 
         it('returns 0 when the option does not exist', () => {
             const votesByOption: ITokenProposalOptionVotes[] = [
-                { type: VoteOption.YES, totalVotingPower: '1000000000000000000' },
+                {
+                    type: VoteOption.YES,
+                    totalVotingPower: '1000000000000000000',
+                },
             ];
             const proposal: ITokenProposal = generateTokenProposal({
-                settings: generateTokenPluginSettings({ token: generateTokenPluginSettingsToken({ decimals: 18 }) }),
+                settings: generateTokenPluginSettings({
+                    token: generateTokenPluginSettingsToken({ decimals: 18 }),
+                }),
                 metrics: { votesByOption },
             });
 
@@ -391,7 +492,9 @@ describe('tokenProposal utils', () => {
                 { type: VoteOption.NO, totalVotingPower: '2500000' },
             ];
             const proposal: ITokenProposal = generateTokenProposal({
-                settings: generateTokenPluginSettings({ token: generateTokenPluginSettingsToken({ decimals: 6 }) }),
+                settings: generateTokenPluginSettings({
+                    token: generateTokenPluginSettingsToken({ decimals: 6 }),
+                }),
                 metrics: { votesByOption },
             });
 
@@ -404,7 +507,9 @@ describe('tokenProposal utils', () => {
 
         it('returns 0 when votesByOption is empty', () => {
             const proposal: ITokenProposal = generateTokenProposal({
-                settings: generateTokenPluginSettings({ token: generateTokenPluginSettingsToken({ decimals: 18 }) }),
+                settings: generateTokenPluginSettings({
+                    token: generateTokenPluginSettingsToken({ decimals: 18 }),
+                }),
                 metrics: { votesByOption: [] },
             });
 

@@ -1,14 +1,7 @@
+import { encodeAbiParameters, encodeFunctionData, type Hex, keccak256, parseEventLogs, type TransactionReceipt } from 'viem';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type { IPluginInfo } from '@/shared/types';
-import {
-    encodeAbiParameters,
-    encodeFunctionData,
-    keccak256,
-    parseEventLogs,
-    type Hex,
-    type TransactionReceipt,
-} from 'viem';
 import { permissionTransactionUtils } from '../permissionTransactionUtils';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 import type { ITransactionRequest } from '../transactionUtils';
@@ -27,7 +20,7 @@ import type {
 class PluginTransactionUtils {
     // Specifies the type of operation to perform
     // See https://github.com/aragon/osx-commons/blob/main/contracts/src/plugin/IPlugin.sol#L18
-    private targetOperation = {
+    private readonly targetOperation = {
         call: 0,
         delegateCall: 1,
     };
@@ -35,7 +28,11 @@ class PluginTransactionUtils {
     getPluginInstallationSetupData = (receipt: TransactionReceipt): IPluginInstallationSetupData[] => {
         const { logs } = receipt;
         const eventName = 'InstallationPrepared';
-        const installationPreparedLogs = parseEventLogs({ abi: pluginSetupProcessorAbi, eventName, logs });
+        const installationPreparedLogs = parseEventLogs({
+            abi: pluginSetupProcessorAbi,
+            eventName,
+            logs,
+        });
 
         return installationPreparedLogs.map(({ args }) => ({
             pluginAddress: args.plugin,
@@ -48,7 +45,11 @@ class PluginTransactionUtils {
     getPluginUpdateSetupData = (receipt: TransactionReceipt): IPluginUpdateSetupData[] => {
         const { logs } = receipt;
         const eventName = 'UpdatePrepared';
-        const installationPreparedLogs = parseEventLogs({ abi: pluginSetupProcessorAbi, eventName, logs });
+        const installationPreparedLogs = parseEventLogs({
+            abi: pluginSetupProcessorAbi,
+            eventName,
+            logs,
+        });
 
         return installationPreparedLogs.map(({ args }) => ({
             pluginSetupRepo: args.pluginSetupRepo,
@@ -61,10 +62,19 @@ class PluginTransactionUtils {
     getPluginUninstallSetupData = (receipt: TransactionReceipt): IPluginUninstallSetupData => {
         const { logs } = receipt;
         const eventName = 'UninstallationPrepared';
-        const uninstallationPreparedLog = parseEventLogs({ abi: pluginSetupProcessorAbi, eventName, logs })[0];
+        const uninstallationPreparedLog = parseEventLogs({
+            abi: pluginSetupProcessorAbi,
+            eventName,
+            logs,
+        })[0];
         const { pluginSetupRepo, versionTag, permissions, setupPayload } = uninstallationPreparedLog.args;
 
-        return { pluginAddress: setupPayload.plugin, pluginSetupRepo, versionTag, permissions };
+        return {
+            pluginAddress: setupPayload.plugin,
+            pluginSetupRepo,
+            versionTag,
+            permissions,
+        };
     };
 
     buildPrepareInstallationData = (pluginAddress: Hex, versionTag: IPluginSetupVersionTag, data: Hex, dao: Hex) => {
@@ -82,8 +92,15 @@ class PluginTransactionUtils {
         const versionTag = versionComparatorUtils.normaliseComparatorInput(plugin)!;
         const pluginDefinitions = pluginRegistryUtils.getPlugin(plugin.interfaceType)! as IPluginInfo;
 
-        const pluginSetupRef = { pluginSetupRepo: pluginDefinitions.repositoryAddresses[dao.network], versionTag };
-        const setupPayload = { plugin: plugin.address as Hex, currentHelpers: helpers, data };
+        const pluginSetupRef = {
+            pluginSetupRepo: pluginDefinitions.repositoryAddresses[dao.network],
+            versionTag,
+        };
+        const setupPayload = {
+            plugin: plugin.address as Hex,
+            currentHelpers: helpers,
+            data,
+        };
 
         const transactionData = encodeFunctionData({
             abi: pluginSetupProcessorAbi,
@@ -103,9 +120,7 @@ class PluginTransactionUtils {
         return { target, operation };
     };
 
-    buildApplyPluginsInstallationActions = (
-        params: IBuildApplyPluginsInstallationActionsParams,
-    ): ITransactionRequest[] => {
+    buildApplyPluginsInstallationActions = (params: IBuildApplyPluginsInstallationActionsParams): ITransactionRequest[] => {
         const { dao, setupData, actions = [], executeConditionAddress } = params;
         const daoAddress = dao.address as Hex;
 
@@ -132,18 +147,10 @@ class PluginTransactionUtils {
 
         const applyInstallationActions = setupData.map((data) => this.setupInstallationDataToAction(data, dao));
 
-        return [
-            grantRootTx,
-            ...applyInstallationActions,
-            ...actions,
-            revokeRootTx,
-            ...executeWithConditionTransactions,
-        ];
+        return [grantRootTx, ...applyInstallationActions, ...actions, revokeRootTx, ...executeWithConditionTransactions];
     };
 
-    buildApplyPluginUninstallationAction = (
-        params: IBuildApplyPluginUninstallationActionParams,
-    ): ITransactionRequest[] => {
+    buildApplyPluginUninstallationAction = (params: IBuildApplyPluginUninstallationActionParams): ITransactionRequest[] => {
         const { dao, setupData } = params;
         const { pluginSetupRepo, versionTag, permissions, pluginAddress } = setupData;
 
@@ -164,7 +171,11 @@ class PluginTransactionUtils {
             args: [dao.address as Hex, { plugin: pluginAddress, pluginSetupRef, permissions }],
         });
 
-        const uninstallAction = { to: pluginSetupProcessor, data: uninstallData, value: BigInt(0) };
+        const uninstallAction = {
+            to: pluginSetupProcessor,
+            data: uninstallData,
+            value: BigInt(0),
+        };
 
         return [grantRootTx, uninstallAction, revokeRootTx];
     };
@@ -175,9 +186,9 @@ class PluginTransactionUtils {
 
         const requiresRootPermission = setupData.some((data) => data.preparedSetupData.permissions.length > 0);
 
-        const applyUpdateTransactions = plugins
-            .map((plugin, index) => this.buildApplyPluginUpdateAction(dao, plugin, setupData[index]))
-            .flat();
+        const applyUpdateTransactions = plugins.flatMap((plugin, index) =>
+            this.buildApplyPluginUpdateAction(dao, plugin, setupData[index])
+        );
 
         if (requiresRootPermission) {
             // Grant ROOT_PERMISSION to the PSP contract if some plugin update requires permissions to be granted or revoked
@@ -195,7 +206,7 @@ class PluginTransactionUtils {
         return applyUpdateTransactions;
     };
 
-    private buildApplyPluginUpdateAction = (dao: IDao, plugin: IDaoPlugin, setupData: IPluginUpdateSetupData) => {
+    private readonly buildApplyPluginUpdateAction = (dao: IDao, plugin: IDaoPlugin, setupData: IPluginUpdateSetupData) => {
         const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
         const daoAddress = dao.address as Hex;
 
@@ -212,7 +223,7 @@ class PluginTransactionUtils {
         return [grantUpgradeTx, applyUpdateTransaction, revokeUpgradeTx];
     };
 
-    private setupUpdateDataToAction = (dao: IDao, plugin: IDaoPlugin, setupData: IPluginUpdateSetupData) => {
+    private readonly setupUpdateDataToAction = (dao: IDao, plugin: IDaoPlugin, setupData: IPluginUpdateSetupData) => {
         const { pluginSetupRepo, versionTag, initData, preparedSetupData } = setupData;
         const { permissions, helpers } = preparedSetupData;
 
@@ -225,14 +236,24 @@ class PluginTransactionUtils {
             functionName: 'applyUpdate',
             args: [
                 dao.address as Hex,
-                { plugin: plugin.address as Hex, pluginSetupRef, initData, permissions, helpersHash },
+                {
+                    plugin: plugin.address as Hex,
+                    pluginSetupRef,
+                    initData,
+                    permissions,
+                    helpersHash,
+                },
             ],
         });
 
-        return { to: pluginSetupProcessor, data: transactionData, value: BigInt(0) };
+        return {
+            to: pluginSetupProcessor,
+            data: transactionData,
+            value: BigInt(0),
+        };
     };
 
-    private setupInstallationDataToAction = (setupData: IPluginInstallationSetupData, dao: IDao) => {
+    private readonly setupInstallationDataToAction = (setupData: IPluginInstallationSetupData, dao: IDao) => {
         const { pluginSetupRepo, versionTag, pluginAddress, preparedSetupData } = setupData;
         const { permissions, helpers } = preparedSetupData;
 
@@ -243,14 +264,25 @@ class PluginTransactionUtils {
         const transactionData = encodeFunctionData({
             abi: pluginSetupProcessorAbi,
             functionName: 'applyInstallation',
-            args: [dao.address as Hex, { pluginSetupRef, plugin: pluginAddress, permissions, helpersHash }],
+            args: [
+                dao.address as Hex,
+                {
+                    pluginSetupRef,
+                    plugin: pluginAddress,
+                    permissions,
+                    helpersHash,
+                },
+            ],
         });
 
-        return { to: pluginSetupProcessor, data: transactionData, value: BigInt(0) };
+        return {
+            to: pluginSetupProcessor,
+            data: transactionData,
+            value: BigInt(0),
+        };
     };
 
-    private hashHelpers = (helpers: readonly Hex[]): Hex =>
-        keccak256(encodeAbiParameters([{ type: 'address[]' }], [helpers]));
+    private readonly hashHelpers = (helpers: readonly Hex[]): Hex => keccak256(encodeAbiParameters([{ type: 'address[]' }], [helpers]));
 }
 
 export const pluginTransactionUtils = new PluginTransactionUtils();

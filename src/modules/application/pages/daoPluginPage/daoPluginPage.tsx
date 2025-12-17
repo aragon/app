@@ -1,9 +1,9 @@
+import { QueryClient } from '@tanstack/react-query';
 import { daoOptions, type IDao } from '@/shared/api/daoService';
 import type { IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import { type PluginComponent, pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { QueryClient } from '@tanstack/react-query';
 import { NotFoundDao } from '../../components/notFound/notFoundDao';
 import { ApplicationSlotId } from '../../constants/moduleSlots';
 
@@ -28,7 +28,10 @@ export interface IDaoPluginPageProps {
 const getPagePluginComponent = async (dao: IDao, segments: string[], retry?: boolean) => {
     const slotId = pluginRegistryUtils.getPageSlotId(ApplicationSlotId.APPLICATION_PLUGIN_PAGE, segments);
     const [Component] = dao.plugins.reduce<Array<PluginComponent | undefined>>((current, { interfaceType }) => {
-        const pluginComponent = pluginRegistryUtils.getSlotComponent({ slotId, pluginId: interfaceType });
+        const pluginComponent = pluginRegistryUtils.getSlotComponent({
+            slotId,
+            pluginId: interfaceType,
+        });
 
         return current.concat(pluginComponent ?? []);
     }, []);
@@ -58,7 +61,7 @@ export const DaoPluginPage: React.FC<IDaoPluginPageProps> = async (props) => {
     const Component = await getPagePluginComponent(dao, segments, process.env.NEXT_PUBLIC_ENV === 'local');
 
     if (Component != null) {
-        return <Component params={params} dao={dao} />;
+        return <Component dao={dao} params={params} />;
     }
 
     return <NotFoundDao params={params} />;

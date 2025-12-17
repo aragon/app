@@ -36,13 +36,13 @@ export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdow
     return (
         <ProposalVoting.BreakdownToken
             isVeto={isVeto}
-            totalYes={yesVotes}
-            totalNo={noVotes}
-            totalAbstain={abstainVotes}
             minParticipation={tokenSettingsUtils.ratioToPercentage(minParticipation)}
             supportThreshold={tokenSettingsUtils.ratioToPercentage(supportThreshold)}
             tokenSymbol={symbol}
             tokenTotalSupply={formatUnits(BigInt(historicalTotalSupply!), decimals)}
+            totalAbstain={abstainVotes}
+            totalNo={noVotes}
+            totalYes={yesVotes}
         >
             {children}
         </ProposalVoting.BreakdownToken>

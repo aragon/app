@@ -1,13 +1,15 @@
-import { generateWizardContext } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { generateWizardContext } from '@/shared/testUtils';
 import * as Wizard from '../../wizard';
 import { type IWizardPageStepProps, WizardPageStep } from './wizardPageStep';
 
 jest.mock('../../wizard', () => ({
     useWizardContext: jest.fn(),
     useWizardFooter: jest.fn(),
-    Wizard: { Step: (props: Wizard.IWizardStepProps) => <div>{props.children}</div> },
+    Wizard: {
+        Step: (props: Wizard.IWizardStepProps) => <div>{props.children}</div>,
+    },
 }));
 
 describe('<WizardPageStep /> component', () => {
@@ -60,9 +62,13 @@ describe('<WizardPageStep /> component', () => {
         const hasPrevious = true;
         const onPreviousClick = jest.fn();
         useWizardContextSpy.mockReturnValue(generateWizardContext({ hasPrevious }));
-        useWizardFooterSpy.mockReturnValue({ onPreviousClick } as unknown as Wizard.IUseWizardFooterReturn);
+        useWizardFooterSpy.mockReturnValue({
+            onPreviousClick,
+        } as unknown as Wizard.IUseWizardFooterReturn);
         render(createTestComponent());
-        const button = screen.getByRole('button', { name: /wizardPage.step.back/ });
+        const button = screen.getByRole('button', {
+            name: /wizardPage.step.back/,
+        });
         expect(button).toBeInTheDocument();
         expect(button.classList).not.toContain('invisible');
         await userEvent.click(button);
@@ -78,16 +84,22 @@ describe('<WizardPageStep /> component', () => {
 
     it('renders a submit button to submit the values of the current step', () => {
         const submitLabel = 'Save';
-        useWizardFooterSpy.mockReturnValue({ submitLabel } as Wizard.IUseWizardFooterReturn);
+        useWizardFooterSpy.mockReturnValue({
+            submitLabel,
+        } as Wizard.IUseWizardFooterReturn);
         render(createTestComponent());
-        const button = screen.getByRole<HTMLButtonElement>('button', { name: submitLabel });
+        const button = screen.getByRole<HTMLButtonElement>('button', {
+            name: submitLabel,
+        });
         expect(button).toBeInTheDocument();
         expect(button.type).toEqual('submit');
     });
 
     it('renders a submit help text when provided', () => {
         const submitHelpText = 'Some useful help text';
-        useWizardFooterSpy.mockReturnValue({ submitHelpText } as Wizard.IUseWizardFooterReturn);
+        useWizardFooterSpy.mockReturnValue({
+            submitHelpText,
+        } as Wizard.IUseWizardFooterReturn);
         render(createTestComponent());
         expect(screen.getByText(submitHelpText)).toBeInTheDocument();
     });

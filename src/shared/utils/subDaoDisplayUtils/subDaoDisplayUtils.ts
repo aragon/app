@@ -1,5 +1,5 @@
-import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { addressUtils } from '@aragon/gov-ui-kit';
+import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 
 class SubDaoDisplayUtils {
     getPluginDaoAddress(plugin?: IDaoPlugin): string {
@@ -40,12 +40,7 @@ class SubDaoDisplayUtils {
         return dao?.subDaos?.find((subDao) => subDao.address.toLowerCase() === targetAddress);
     }
 
-    getPluginDisplayName(params: {
-        dao?: IDao;
-        plugin?: IDaoPlugin;
-        groupLabel: string;
-        fallbackLabel?: string;
-    }): string {
+    getPluginDisplayName(params: { dao?: IDao; plugin?: IDaoPlugin; groupLabel: string; fallbackLabel?: string }): string {
         const { dao, plugin, groupLabel, fallbackLabel } = params;
 
         const safeFallback = fallbackLabel && fallbackLabel !== '' ? fallbackLabel : undefined;

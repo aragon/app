@@ -1,19 +1,15 @@
-import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
-import {
-    type ITransactionInfo,
-    type ITransactionStatusStepMeta,
-    TransactionStatus,
-} from '@/shared/components/transactionStatus';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoChain } from '@/shared/hooks/useDaoChain';
-import { useFormField } from '@/shared/hooks/useFormField';
-import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { AddressInput, addressUtils, Link } from '@aragon/gov-ui-kit';
 import { AlertCard } from '@aragon/gov-ui-kit-original';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import type { Hex } from 'viem';
 import { mainnet } from 'viem/chains';
+import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
+import { type ITransactionInfo, type ITransactionStatusStepMeta, TransactionStatus } from '@/shared/components/transactionStatus';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { useFormField } from '@/shared/hooks/useFormField';
+import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { useGovernanceToken } from '../../hooks/useGovernanceToken';
 
 type StepState = ITransactionStatusStepMeta['state'];
@@ -102,15 +98,33 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
     const getStepLabel = (step: string) => t(`app.plugins.token.tokenSetupMembership.importToken.step.${step}`);
 
     const steps: Array<IStepperStep<ITransactionStatusStepMeta>> = [
-        { id: 'erc20', order: 0, meta: { label: getStepLabel('erc20'), state: erc20StepState } },
-        { id: 'governance', order: 0, meta: { label: getStepLabel('governance'), state: governanceStepState } },
-        { id: 'delegation', order: 0, meta: { label: getStepLabel('delegation'), state: delegationStepState } },
+        {
+            id: 'erc20',
+            order: 0,
+            meta: { label: getStepLabel('erc20'), state: erc20StepState },
+        },
+        {
+            id: 'governance',
+            order: 0,
+            meta: {
+                label: getStepLabel('governance'),
+                state: governanceStepState,
+            },
+        },
+        {
+            id: 'delegation',
+            order: 0,
+            meta: {
+                label: getStepLabel('delegation'),
+                state: delegationStepState,
+            },
+        },
     ];
 
     const isTokenCheckCardVisible = !!importTokenAddress;
 
     const displayAlert = isError || isGovernanceCompatible === false;
-    const alertContext = isError ? `notErc20Compatible` : `notGovernanceCompatible`;
+    const alertContext = isError ? 'notErc20Compatible' : 'notGovernanceCompatible';
     const alertNamespace = `app.plugins.token.tokenSetupMembership.importToken.alert.${alertContext}`;
 
     const transactionInfo: ITransactionInfo = {
@@ -121,13 +135,13 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
         <>
             <div className="flex flex-col gap-2 md:gap-3">
                 <AddressInput
-                    helpText={t('app.plugins.token.tokenSetupMembership.importToken.helpText')}
-                    // Setting address to undefined could trigger some bug from the library in certain cases, so we use an empty string instead!
-                    onAccept={(value) => onImportTokenAddressChange(value?.address ?? '')}
-                    value={tokenAddressInput}
-                    chainId={chainId}
-                    onChange={setTokenAddressInput}
                     alert={alert}
+                    // Setting address to undefined could trigger some bug from the library in certain cases, so we use an empty string instead!
+                    chainId={chainId}
+                    helpText={t('app.plugins.token.tokenSetupMembership.importToken.helpText')}
+                    onAccept={(value) => onImportTokenAddressChange(value?.address ?? '')}
+                    onChange={setTokenAddressInput}
+                    value={tokenAddressInput}
                     {...importTokenAddressField}
                 />
                 {isTokenCheckCardVisible && (
@@ -140,8 +154,8 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
             </div>
             {displayAlert && (
                 <AlertCard
-                    variant={alertContext === 'notErc20Compatible' ? 'critical' : 'warning'}
                     message={t(`${alertNamespace}.message`)}
+                    variant={alertContext === 'notErc20Compatible' ? 'critical' : 'warning'}
                 >
                     <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-6">

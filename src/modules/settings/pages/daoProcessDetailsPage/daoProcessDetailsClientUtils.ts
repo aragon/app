@@ -1,21 +1,21 @@
 'use client';
 
+import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 import {
     GovernanceType,
+    type ICreateProcessFormData,
+    type ICreateProcessFormDataAdvanced,
     ProcessPermission,
     ProcessStageType,
     ProposalCreationMode,
-    type ICreateProcessFormData,
-    type ICreateProcessFormDataAdvanced,
 } from '@/modules/createDao/components/createProcessForm';
 import type { ISetupBodyFormExisting, ISetupBodyFormMembership } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { BodyType } from '@/modules/createDao/types/enum';
 import type { ISppPluginSettings, ISppStagePlugin } from '@/plugins/sppPlugin/types';
-import { PluginInterfaceType, type IDaoPlugin, type IPluginSettings } from '@/shared/api/daoService';
+import { type IDaoPlugin, type IPluginSettings, PluginInterfaceType } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 import { SettingsSlotId } from '../../constants/moduleSlots';
 import type { IPluginToFormDataParams } from '../../types';
 
@@ -32,7 +32,10 @@ export class DaoProcessDetailsClientUtils {
         };
 
         if (plugin.isBody && plugin.isProcess) {
-            const body = this.bodyToFormData({ plugin, membership: { members: [] } });
+            const body = this.bodyToFormData({
+                plugin,
+                membership: { members: [] },
+            });
 
             return { governanceType: GovernanceType.BASIC, body, ...base };
         }
@@ -43,7 +46,7 @@ export class DaoProcessDetailsClientUtils {
     };
 
     bodyToFormDataDefault = <TSettings extends IPluginSettings, TMembership extends ISetupBodyFormMembership>(
-        params: IPluginToFormDataParams<TSettings, TMembership>,
+        params: IPluginToFormDataParams<TSettings, TMembership>
     ): ISetupBodyFormExisting<TSettings, ICompositeAddress, TMembership> => {
         const { plugin, membership } = params;
 
@@ -65,7 +68,7 @@ export class DaoProcessDetailsClientUtils {
     };
 
     bodyToFormData = <TSettings extends IPluginSettings, TMembership extends ISetupBodyFormMembership>(
-        params: IPluginToFormDataParams<TSettings, TMembership>,
+        params: IPluginToFormDataParams<TSettings, TMembership>
     ): ISetupBodyFormExisting<TSettings, ICompositeAddress, TMembership> => {
         const { plugin } = params;
 
@@ -80,16 +83,16 @@ export class DaoProcessDetailsClientUtils {
         return pluginFunction != null ? pluginFunction(params) : this.bodyToFormDataDefault(params);
     };
 
-    private sppSettingsToFormData = (
+    private readonly sppSettingsToFormData = (
         settings: ISppPluginSettings,
-        allPlugins: IDaoPlugin[],
+        allPlugins: IDaoPlugin[]
     ): ICreateProcessFormDataAdvanced['stages'] =>
         settings.stages.map((stage) => {
             const bodies = stage.plugins.map((plugin) =>
                 this.bodyToFormData({
                     plugin: this.sppBodyToFormData(plugin, allPlugins),
                     membership: { members: [] },
-                }),
+                })
             );
 
             return {
@@ -102,18 +105,13 @@ export class DaoProcessDetailsClientUtils {
                     earlyStageAdvance: stage.minAdvance === 0,
                     requiredApprovals: stage.approvalThreshold > 0 ? stage.approvalThreshold : stage.vetoThreshold,
                     stageExpiration:
-                        stage.maxAdvance !== 3155760000
-                            ? dateUtils.secondsToDuration(stage.maxAdvance - stage.voteDuration)
-                            : undefined,
+                        stage.maxAdvance !== 3_155_760_000 ? dateUtils.secondsToDuration(stage.maxAdvance - stage.voteDuration) : undefined,
                 },
                 bodies,
             };
         });
 
-    private sppBodyToFormData<T extends IPluginSettings>(
-        stagePlugin: ISppStagePlugin,
-        allPlugins: IDaoPlugin[],
-    ): IDaoPlugin<T> {
+    private sppBodyToFormData<T extends IPluginSettings>(stagePlugin: ISppStagePlugin, allPlugins: IDaoPlugin[]): IDaoPlugin<T> {
         const plugin = allPlugins.find(({ address }) => address === stagePlugin.address) as IDaoPlugin<T> | undefined;
 
         return {

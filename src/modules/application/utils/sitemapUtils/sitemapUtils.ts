@@ -1,14 +1,14 @@
+import type { MetadataRoute } from 'next';
 import { daoExplorerService } from '@/modules/explore/api/daoExplorerService';
-import { type IDao } from '@/shared/api/daoService';
+import type { IDao } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { metadataUtils } from '@/shared/utils/metadataUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
-import type { MetadataRoute } from 'next';
 
 class SitemapUtils {
-    private daoPageRoutes = ['assets', 'dashboard', 'members', 'proposals', 'settings', 'transactions'];
+    private readonly daoPageRoutes = ['assets', 'dashboard', 'members', 'proposals', 'settings', 'transactions'];
 
-    public generateSitemap = async (): Promise<MetadataRoute.Sitemap> => {
+    generateSitemap = async (): Promise<MetadataRoute.Sitemap> => {
         const now = new Date();
         const networks = networkUtils.getMainnetNetworks();
 
@@ -21,16 +21,15 @@ class SitemapUtils {
         return this.prependBaseUrl([...this.buildStaticPages(now), ...daoPages]);
     };
 
-    private buildDaoPages = (dao: IDao, lastModified: Date): MetadataRoute.Sitemap => {
-        return this.daoPageRoutes.map((daoPageRoute) => ({
+    private readonly buildDaoPages = (dao: IDao, lastModified: Date): MetadataRoute.Sitemap =>
+        this.daoPageRoutes.map((daoPageRoute) => ({
             url: daoUtils.getDaoUrl(dao, daoPageRoute)!,
             changeFrequency: 'daily',
             priority: 0.8,
             lastModified,
         }));
-    };
 
-    private buildStaticPages = (lastModified: Date): MetadataRoute.Sitemap => [
+    private readonly buildStaticPages = (lastModified: Date): MetadataRoute.Sitemap => [
         {
             url: '/',
             lastModified,
@@ -45,8 +44,11 @@ class SitemapUtils {
         },
     ];
 
-    private prependBaseUrl = (sitemap: MetadataRoute.Sitemap): MetadataRoute.Sitemap =>
-        sitemap.map((site) => ({ ...site, url: `${metadataUtils.baseUrl}${site.url}` }));
+    private readonly prependBaseUrl = (sitemap: MetadataRoute.Sitemap): MetadataRoute.Sitemap =>
+        sitemap.map((site) => ({
+            ...site,
+            url: `${metadataUtils.baseUrl}${site.url}`,
+        }));
 }
 
 export const sitemapUtils = new SitemapUtils();

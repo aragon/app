@@ -1,1 +1,1 @@
-export { PageContent, type IPageContentProps } from './pageContent';
+export { type IPageContentProps, PageContent } from './pageContent';

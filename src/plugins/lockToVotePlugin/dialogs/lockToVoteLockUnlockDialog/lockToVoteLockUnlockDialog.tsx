@@ -1,19 +1,15 @@
 'use client';
 
-import type { IToken } from '@/modules/finance/api/financeService';
-import type { Network } from '@/shared/api/daoService';
-import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
-import {
-    TransactionDialog,
-    TransactionDialogStep,
-    type ITransactionDialogStepMeta,
-} from '@/shared/components/transactionDialog';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useStepper } from '@/shared/hooks/useStepper';
 import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
+import type { IToken } from '@/modules/finance/api/financeService';
+import type { Network } from '@/shared/api/daoService';
+import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { type ITransactionDialogStepMeta, TransactionDialog, TransactionDialogStep } from '@/shared/components/transactionDialog';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useStepper } from '@/shared/hooks/useStepper';
 import { lockToVoteLockUnlockDialogUtils } from './lockToVoteLockUnlockDialogUtils';
 
 export interface ILockToVoteLockUnlockDialogParams {
@@ -84,25 +80,25 @@ export const LockToVoteLockUnlockDialog: React.FC<ILockToVoteLockUnlockDialogPro
 
     return (
         <TransactionDialog
-            title={t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.title`)}
             description={t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.description`)}
-            submitLabel={t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.submit`)}
-            stepper={stepper}
-            prepareTransaction={handlePrepareTransaction}
             network={network}
             onSuccess={onSuccess}
+            prepareTransaction={handlePrepareTransaction}
+            stepper={stepper}
+            submitLabel={t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.submit`)}
             successLink={{
                 label: t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.success`),
                 onClick: () => router.refresh(),
             }}
+            title={t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.title`)}
             transactionInfo={transactionInfo}
         >
             <AssetDataListItem.Structure
+                amount={parsedAmount}
+                hideValue={true}
                 logoSrc={token.logo}
                 name={token.name}
-                amount={parsedAmount}
                 symbol={token.symbol}
-                hideValue={true}
             />
         </TransactionDialog>
     );

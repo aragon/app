@@ -1,6 +1,6 @@
-import type { IUseTokenParams } from '@/shared/hooks/useToken';
 import type { Hash } from 'viem';
 import { useReadContracts } from 'wagmi';
+import type { IUseTokenParams } from '@/shared/hooks/useToken';
 
 // Address used for testing vote functions
 const testAddress = '0x0000000000000000000000000000000000000001' as Hash;
@@ -42,9 +42,27 @@ export const useGovernanceTokenVotesCheck = (params: IUseGovernanceTokenVotesChe
         allowFailure: true,
         query: { enabled },
         contracts: [
-            { chainId, address, abi: erc20VotesAbi, functionName: 'getPastTotalSupply', args: [BigInt(0)] },
-            { chainId, address, abi: erc20VotesAbi, functionName: 'getVotes', args: [testAddress] },
-            { chainId, address, abi: erc20VotesAbi, functionName: 'getPastVotes', args: [testAddress, BigInt(0)] },
+            {
+                chainId,
+                address,
+                abi: erc20VotesAbi,
+                functionName: 'getPastTotalSupply',
+                args: [BigInt(0)],
+            },
+            {
+                chainId,
+                address,
+                abi: erc20VotesAbi,
+                functionName: 'getVotes',
+                args: [testAddress],
+            },
+            {
+                chainId,
+                address,
+                abi: erc20VotesAbi,
+                functionName: 'getPastVotes',
+                args: [testAddress, BigInt(0)],
+            },
         ],
     });
 

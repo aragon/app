@@ -1,7 +1,7 @@
+import type { Hex } from 'viem';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
-import { type Hex } from 'viem';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
 import type { IProposalCreate, IProposalCreateAction, PrepareProposalActionMap } from './publishProposalDialog.api';
@@ -51,9 +51,18 @@ class PublishProposalDialogUtils {
         })!;
 
         const parsedActions = actions.map(this.actionToTransactionRequest);
-        const buildDataParams: IBuildCreateProposalDataParams = { actions: parsedActions, metadata, proposal, plugin };
+        const buildDataParams: IBuildCreateProposalDataParams = {
+            actions: parsedActions,
+            metadata,
+            proposal,
+            plugin,
+        };
         const transactionData = buildDataFunction(buildDataParams);
-        const transaction = { to: plugin.address as Hex, data: transactionData, value: BigInt(0) };
+        const transaction = {
+            to: plugin.address as Hex,
+            data: transactionData,
+            value: BigInt(0),
+        };
 
         return transaction;
     };
@@ -78,7 +87,7 @@ class PublishProposalDialogUtils {
         return processedActions;
     };
 
-    private actionToTransactionRequest = (action: IProposalCreateAction): ITransactionRequest => {
+    private readonly actionToTransactionRequest = (action: IProposalCreateAction): ITransactionRequest => {
         const { to, value, data } = action;
 
         return { to: to as Hex, value: BigInt(value), data: data as Hex };

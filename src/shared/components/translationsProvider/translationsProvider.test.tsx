@@ -1,8 +1,8 @@
-import type { Translations } from '@/shared/utils/translationsUtils';
-import { testLogger } from '@/test/utils';
 import { render, renderHook, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { TranslationsProvider, useTranslations, type ITranslationsProviderProps } from './translationsProvider';
+import type { Translations } from '@/shared/utils/translationsUtils';
+import { testLogger } from '@/test/utils';
+import { type ITranslationsProviderProps, TranslationsProvider, useTranslations } from './translationsProvider';
 
 describe('<TranslationsProvider /> component', () => {
     const createTestComponent = (props?: Partial<ITranslationsProviderProps>) => {
@@ -16,7 +16,9 @@ describe('<TranslationsProvider /> component', () => {
 
     const createHookWrapper = (context?: Translations) =>
         function hookWrapper(props: { children: ReactNode }) {
-            const completeContext: Translations = { ...context } as Translations;
+            const completeContext: Translations = {
+                ...context,
+            } as Translations;
 
             return <TranslationsProvider translations={completeContext}>{props.children}</TranslationsProvider>;
         };
@@ -35,7 +37,9 @@ describe('<TranslationsProvider /> component', () => {
 
         it('returns the context values', () => {
             const translations = { key: 'value' } as unknown as Translations;
-            const { result } = renderHook(() => useTranslations(), { wrapper: createHookWrapper(translations) });
+            const { result } = renderHook(() => useTranslations(), {
+                wrapper: createHookWrapper(translations),
+            });
             expect(result.current.t('key')).toEqual('value');
         });
     });

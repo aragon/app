@@ -11,9 +11,7 @@ export const generatePluginSetupData = (data?: Partial<IPluginSetupData>): IPlug
     ...data,
 });
 
-export const generatePluginInstallationSetupData = (
-    data?: Partial<IPluginInstallationSetupData>,
-): IPluginInstallationSetupData => ({
+export const generatePluginInstallationSetupData = (data?: Partial<IPluginInstallationSetupData>): IPluginInstallationSetupData => ({
     ...generatePluginSetupData(),
     pluginAddress: '0x',
     preparedSetupData: { permissions: [], helpers: [] },
@@ -27,9 +25,7 @@ export const generatePluginUpdateSetupData = (data?: Partial<IPluginUpdateSetupD
     ...data,
 });
 
-export const generatePluginUninstallSetupData = (
-    data?: Partial<IPluginUninstallSetupData>,
-): IPluginUninstallSetupData => ({
+export const generatePluginUninstallSetupData = (data?: Partial<IPluginUninstallSetupData>): IPluginUninstallSetupData => ({
     ...generatePluginSetupData(),
     pluginAddress: '0x',
     permissions: [],

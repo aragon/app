@@ -1,20 +1,11 @@
-import { useDialogContext } from '@/shared/components/dialogProvider';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useFormField } from '@/shared/hooks/useFormField';
-import {
-    addressUtils,
-    Button,
-    formatterUtils,
-    IconType,
-    InputContainer,
-    NumberFormat,
-    Toggle,
-    ToggleGroup,
-} from '@aragon/gov-ui-kit';
+import { addressUtils, Button, formatterUtils, IconType, InputContainer, NumberFormat, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { type ChangeEvent, type MouseEvent, useCallback, useEffect, useId, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { formatUnits } from 'viem';
+import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 import type { IAsset } from '../../api/financeService';
 import { FinanceDialogId } from '../../constants/financeDialogId';
 import type { IAssetSelectionDialogParams } from '../../dialogs/assetSelectionDialog';
@@ -106,7 +97,10 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     const isPercentageSelectionEnabled = percentageSelection != null;
     const { totalBalance, tokenDecimals } = percentageSelection ?? {};
 
-    const assetField = useFormField<IAssetInputFormData, 'asset'>('asset', { rules: { required: true }, fieldPrefix });
+    const assetField = useFormField<IAssetInputFormData, 'asset'>('asset', {
+        rules: { required: true },
+        fieldPrefix,
+    });
 
     const {
         label: amountLabel,
@@ -120,7 +114,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                   required: true,
                   max: assetField.value?.amount,
                   min: minAmount,
-                  validate: (value) => parseFloat(value ?? '') > 0,
+                  validate: (value) => Number.parseFloat(value ?? '') > 0,
               },
         fieldPrefix,
     });
@@ -145,7 +139,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
             const parsedValue = formatUnits(processedValue, tokenDecimals);
             onAmountFieldChange(parsedValue);
         },
-        [totalBalance, tokenDecimals, onAmountFieldChange],
+        [totalBalance, tokenDecimals, onAmountFieldChange]
     );
 
     const handlePercentageChange = useCallback(
@@ -157,7 +151,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
             updateAmountField(value);
             setPercentageValue(value);
         },
-        [updateAmountField],
+        [updateAmountField]
     );
 
     // Update amount field and percentage value to 100% on user balance change
@@ -199,25 +193,27 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     const inputClassName = classNames(
         'size-full rounded-xl bg-transparent px-4 py-3 caret-neutral-500 outline-none [appearance:textfield]', // base styles
         ' placeholder:text-base placeholder:font-normal placeholder:leading-tight placeholder:text-neutral-300', // placeholder styles
-        '[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none', // remove incr/decr buttons for number type
+        '[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none' // remove incr/decr buttons for number type
     );
 
     const amountValue = Number(amountField.value) * Number(assetField.value?.token.priceUsd);
     const formattedAmountValue = assetField.value?.token
-        ? formatterUtils.formatNumber(amountValue, { format: NumberFormat.FIAT_TOTAL_SHORT })
-        : `$0.00`;
+        ? formatterUtils.formatNumber(amountValue, {
+              format: NumberFormat.FIAT_TOTAL_SHORT,
+          })
+        : '$0.00';
 
     const renderAssetButton = (size: 'md' | 'sm' = 'sm') =>
         disableAssetField ? (
-            <AssetInputToken token={assetField.value?.token} className="cursor-default px-2" />
+            <AssetInputToken className="cursor-default px-2" token={assetField.value?.token} />
         ) : (
             <Button
-                variant="tertiary"
-                size={size}
+                className="shrink-0"
+                iconRight={IconType.CHEVRON_DOWN}
                 onClick={handleOpenDialog}
                 onMouseDown={handleSelectMouseDown}
-                iconRight={IconType.CHEVRON_DOWN}
-                className="shrink-0"
+                size={size}
+                variant="tertiary"
             >
                 <AssetInputToken token={assetField.value?.token} />
             </Button>
@@ -229,40 +225,31 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         <div className="flex flex-col gap-y-3">
             <InputContainer
                 id={inputId}
-                wrapperClassName="pl-1.5 pr-4 items-center"
                 label={hideAmountLabel ? undefined : amountLabel}
+                wrapperClassName="pl-1.5 pr-4 items-center"
                 {...amountField}
             >
                 {renderAssetButton()}
                 <input
-                    type="number"
-                    placeholder="0"
                     className={inputClassName}
-                    value={amountField.value ?? ''}
-                    onChange={handleAmountFieldChange}
                     disabled={!assetField.value}
+                    onChange={handleAmountFieldChange}
+                    placeholder="0"
+                    type="number"
+                    value={amountField.value ?? ''}
                 />
                 <p>{formattedAmountValue}</p>
             </InputContainer>
             {isPercentageSelectionEnabled && (
-                <ToggleGroup
-                    isMultiSelect={false}
-                    value={percentageValue}
-                    onChange={handlePercentageChange}
-                    variant="space-between"
-                >
+                <ToggleGroup isMultiSelect={false} onChange={handlePercentageChange} value={percentageValue} variant="space-between">
                     {valuePercentages.map((value) => (
-                        <Toggle key={value} value={value} label={t(`app.finance.assetInput.percentage.${value}`)} />
+                        <Toggle key={value} label={t(`app.finance.assetInput.percentage.${value}`)} value={value} />
                     ))}
                 </ToggleGroup>
             )}
             {assetField.value?.amount && !hideMax && (
                 <div className="flex items-center gap-x-1 self-end pr-4">
-                    <button
-                        type="button"
-                        className="text-primary-400 hover:text-primary-600 cursor-pointer"
-                        onClick={handleMaxAmount}
-                    >
+                    <button className="cursor-pointer text-primary-400 hover:text-primary-600" onClick={handleMaxAmount} type="button">
                         {t('app.finance.assetInput.maxButtonLabel')}
                     </button>
                     <span className="text-neutral-500">

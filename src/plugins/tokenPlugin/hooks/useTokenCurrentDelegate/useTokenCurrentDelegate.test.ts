@@ -1,6 +1,6 @@
-import { Network } from '@/shared/api/daoService';
 import { renderHook } from '@testing-library/react';
 import * as wagmi from 'wagmi';
+import { Network } from '@/shared/api/daoService';
 import { useTokenCurrentDelegate } from './useTokenCurrentDelegate';
 
 describe('useTokenCurrentDelegate hook', () => {
@@ -23,7 +23,7 @@ describe('useTokenCurrentDelegate hook', () => {
                 tokenAddress: '0x123',
                 userAddress: '0x456',
                 network: Network.ETHEREUM_MAINNET,
-            }),
+            })
         );
 
         expect(result.current.data).toBe(mockDelegate);
@@ -41,7 +41,7 @@ describe('useTokenCurrentDelegate hook', () => {
                 tokenAddress: '0x123',
                 userAddress: '0x456',
                 network: Network.ETHEREUM_MAINNET,
-            }),
+            })
         );
 
         expect(result.current.data).toBe(undefined);
@@ -58,13 +58,13 @@ describe('useTokenCurrentDelegate hook', () => {
             useTokenCurrentDelegate({
                 userAddress: '0x456',
                 network: Network.ETHEREUM_MAINNET,
-            }),
+            })
         );
 
         expect(useReadContractSpy).toHaveBeenCalledWith(
             expect.objectContaining({
                 query: { enabled: false },
-            }),
+            })
         );
     });
 
@@ -79,13 +79,13 @@ describe('useTokenCurrentDelegate hook', () => {
             useTokenCurrentDelegate({
                 tokenAddress: '0x123',
                 network: Network.ETHEREUM_MAINNET,
-            }),
+            })
         );
 
         expect(useReadContractSpy).toHaveBeenCalledWith(
             expect.objectContaining({
                 query: { enabled: false },
-            }),
+            })
         );
     });
 });

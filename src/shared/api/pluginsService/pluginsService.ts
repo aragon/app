@@ -3,7 +3,7 @@ import type { IDaoPlugin } from '../daoService';
 import type { IGetPluginsByDaoParams } from './pluginsService.api';
 
 class PluginsService extends AragonBackendService {
-    private urls = {
+    private readonly urls = {
         pluginsByDao: '/v2/plugins/by-dao/:network/:address/details',
     };
 

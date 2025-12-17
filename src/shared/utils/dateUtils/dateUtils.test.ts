@@ -7,9 +7,15 @@ describe('dateUtils', () => {
             { seconds: 0, result: {} },
             { seconds: 60, result: { minutes: 1 } },
             { seconds: 3600, result: { hours: 1 } },
-            { seconds: 86400, result: { days: 1 } },
-            { seconds: 2 * 86400 + 3 * 3600 + 45 * 60, result: { days: 2, hours: 3, minutes: 45 } },
-            { seconds: 100 * 86400 + 23 * 3600 + 59 * 60, result: { days: 100, hours: 23, minutes: 59 } },
+            { seconds: 86_400, result: { days: 1 } },
+            {
+                seconds: 2 * 86_400 + 3 * 3600 + 45 * 60,
+                result: { days: 2, hours: 3, minutes: 45 },
+            },
+            {
+                seconds: 100 * 86_400 + 23 * 3600 + 59 * 60,
+                result: { days: 100, hours: 23, minutes: 59 },
+            },
         ])('correctly converts $seconds seconds', ({ seconds, result }) => {
             const expectedResult = { days: 0, hours: 0, minutes: 0, ...result };
             expect(dateUtils.secondsToDuration(seconds)).toEqual(expectedResult);
@@ -19,22 +25,22 @@ describe('dateUtils', () => {
     describe('durationToSeconds', () => {
         it.each([
             { days: 0, hours: 0, minutes: 0, result: 0 },
-            { days: 1, hours: 0, minutes: 0, result: 86400 },
+            { days: 1, hours: 0, minutes: 0, result: 86_400 },
             { days: 0, hours: 1, minutes: 0, result: 3600 },
             { days: 0, hours: 0, minutes: 1, result: 60 },
-            { days: 10, hours: 2, minutes: 55, result: 874500 },
-        ])(
-            'correctly converts $days days, $hours hours, $minutes minutes to $result seconds',
-            ({ days, hours, minutes, result }) => {
-                const duration = { days, hours, minutes };
-                expect(dateUtils.durationToSeconds(duration)).toEqual(result);
-            },
-        );
+            { days: 10, hours: 2, minutes: 55, result: 874_500 },
+        ])('correctly converts $days days, $hours hours, $minutes minutes to $result seconds', ({ days, hours, minutes, result }) => {
+            const duration = { days, hours, minutes };
+            expect(dateUtils.durationToSeconds(duration)).toEqual(result);
+        });
     });
 
     describe('parseFixedDate', () => {
         it('parses valid date and time correctly', () => {
-            const result = dateUtils.parseFixedDate({ date: '2024-09-06', time: '14:30' });
+            const result = dateUtils.parseFixedDate({
+                date: '2024-09-06',
+                time: '14:30',
+            });
             expect(result.toISO()).toBe('2024-09-06T14:30:00.000+00:00');
         });
     });
@@ -55,7 +61,9 @@ describe('dateUtils', () => {
 
     describe('validateDuration', () => {
         it('returns true when no minDuration is provided', () => {
-            const result = dateUtils.validateDuration({ value: { days: 0, hours: 2, minutes: 0 } });
+            const result = dateUtils.validateDuration({
+                value: { days: 0, hours: 2, minutes: 0 },
+            });
             expect(result).toBe(true);
         });
 
@@ -85,8 +93,14 @@ describe('dateUtils', () => {
 
         it('supports validation of value when set in seconds format', () => {
             const value = 120;
-            const valid = dateUtils.validateDuration({ value, minDuration: { days: 0, hours: 0, minutes: 1 } });
-            const invalid = dateUtils.validateDuration({ value, minDuration: { days: 0, hours: 0, minutes: 3 } });
+            const valid = dateUtils.validateDuration({
+                value,
+                minDuration: { days: 0, hours: 0, minutes: 1 },
+            });
+            const invalid = dateUtils.validateDuration({
+                value,
+                minDuration: { days: 0, hours: 0, minutes: 3 },
+            });
             expect(valid).toBeTruthy();
             expect(invalid).toBeFalsy();
         });
@@ -96,8 +110,18 @@ describe('dateUtils', () => {
         const minTime = DateTime.fromISO('2024-09-06T10:00:00.000Z');
 
         it('returns false for empty date or time', () => {
-            expect(dateUtils.validateFixedTime({ value: { date: '', time: '10:00' }, minTime })).toBe(false);
-            expect(dateUtils.validateFixedTime({ value: { date: '2024-09-06', time: '' }, minTime })).toBe(false);
+            expect(
+                dateUtils.validateFixedTime({
+                    value: { date: '', time: '10:00' },
+                    minTime,
+                })
+            ).toBe(false);
+            expect(
+                dateUtils.validateFixedTime({
+                    value: { date: '2024-09-06', time: '' },
+                    minTime,
+                })
+            ).toBe(false);
         });
 
         it('returns true when value is after minTime', () => {
@@ -143,11 +167,26 @@ describe('dateUtils', () => {
         });
 
         it.each([
-            { durationOne: { days: 1, hours: 10, minutes: 3 }, durationTwo: { days: 1, hours: 10, minutes: 2 } },
-            { durationOne: { days: 1, hours: 10, minutes: 3 }, durationTwo: { days: 1, hours: 0, minutes: 3 } },
-            { durationOne: { days: 1, hours: 10, minutes: 3 }, durationTwo: { days: 10, hours: 10, minutes: 3 } },
-            { durationOne: { days: 1, hours: 10, minutes: 3 }, durationTwo: undefined },
-            { durationOne: undefined, durationTwo: { days: 1, hours: 10, minutes: 3 } },
+            {
+                durationOne: { days: 1, hours: 10, minutes: 3 },
+                durationTwo: { days: 1, hours: 10, minutes: 2 },
+            },
+            {
+                durationOne: { days: 1, hours: 10, minutes: 3 },
+                durationTwo: { days: 1, hours: 0, minutes: 3 },
+            },
+            {
+                durationOne: { days: 1, hours: 10, minutes: 3 },
+                durationTwo: { days: 10, hours: 10, minutes: 3 },
+            },
+            {
+                durationOne: { days: 1, hours: 10, minutes: 3 },
+                durationTwo: undefined,
+            },
+            {
+                durationOne: undefined,
+                durationTwo: { days: 1, hours: 10, minutes: 3 },
+            },
         ])('returns false when time durations are not equal', ({ durationOne, durationTwo }) => {
             expect(dateUtils.compareDuration(durationOne, durationTwo)).toBeFalsy();
         });

@@ -5,12 +5,12 @@ describe('ipfs utils', () => {
         it('coverts a cid with the ipfs:// format into a src', () => {
             const cid = 'abc123';
             const processedCid = `ipfs://${cid}`;
-            expect(ipfsUtils.cidToSrc(processedCid)).toContain(`${ipfsUtils['ipfsGateway']}/ipfs/${cid}`);
+            expect(ipfsUtils.cidToSrc(processedCid)).toContain(`${ipfsUtils.ipfsGateway}/ipfs/${cid}`);
         });
 
         it('coverts a simple ipfs cid into a src', () => {
             const cid = 'qrt855';
-            expect(ipfsUtils.cidToSrc(cid)).toContain(`${ipfsUtils['ipfsGateway']}/ipfs/${cid}`);
+            expect(ipfsUtils.cidToSrc(cid)).toContain(`${ipfsUtils.ipfsGateway}/ipfs/${cid}`);
         });
 
         it('returns undefined when cid is null or undefined', () => {

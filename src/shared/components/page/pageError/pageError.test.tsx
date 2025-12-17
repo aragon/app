@@ -1,5 +1,5 @@
-import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { render, screen } from '@testing-library/react';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { type IPageErrorProps, PageError } from './pageError';
 
 describe('<Page.Error /> component', () => {
@@ -25,7 +25,9 @@ describe('<Page.Error /> component', () => {
         expect(screen.getByText(/errorFeedback.description/)).toBeInTheDocument();
         expect(screen.getByText(/errorFeedback.link.report/)).toBeInTheDocument();
 
-        const customLink = screen.getByRole('link', { name: `${errorNamespace}.action` });
+        const customLink = screen.getByRole('link', {
+            name: `${errorNamespace}.action`,
+        });
         expect(customLink).toBeInTheDocument();
         expect(customLink.getAttribute('href')).toEqual(actionLink);
     });
@@ -39,7 +41,9 @@ describe('<Page.Error /> component', () => {
         expect(screen.getByText(`${errorNamespace}.notFound.title`)).toBeInTheDocument();
         expect(screen.getByText(`${errorNamespace}.notFound.description`)).toBeInTheDocument();
 
-        const customLink = screen.getByRole('link', { name: `${errorNamespace}.action` });
+        const customLink = screen.getByRole('link', {
+            name: `${errorNamespace}.action`,
+        });
         expect(customLink).toBeInTheDocument();
         expect(customLink.getAttribute('href')).toEqual(actionLink);
 

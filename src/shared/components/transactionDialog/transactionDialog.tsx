@@ -1,22 +1,18 @@
-import { Network } from '@/shared/api/daoService';
-import { useTransactionStatus } from '@/shared/api/transactionService';
-import { useDialogContext } from '@/shared/components/dialogProvider';
-import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { ChainEntityType, Dialog, IconType } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useAccount, useSendTransaction, useSwitchChain, useWaitForTransactionReceipt } from 'wagmi';
-import {
-    TransactionStatus,
-    type ITransactionStatusStepMetaAddon,
-    type TransactionStatusState,
-} from '../transactionStatus';
+import { Network } from '@/shared/api/daoService';
+import { useTransactionStatus } from '@/shared/api/transactionService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { type ITransactionStatusStepMetaAddon, TransactionStatus, type TransactionStatusState } from '../transactionStatus';
 import { useTranslations } from '../translationsProvider';
-import { TransactionDialogStep, type ITransactionDialogProps } from './transactionDialog.api';
+import { type ITransactionDialogProps, TransactionDialogStep } from './transactionDialog.api';
 import { TransactionDialogFooter } from './transactionDialogFooter';
 import { transactionDialogUtils } from './transactionDialogUtils';
 
-const indexingStepInterval = 1_000;
+const indexingStepInterval = 1000;
 
 export const TransactionDialog = <TCustomStepId extends string>(props: ITransactionDialogProps<TCustomStepId>) => {
     const {
@@ -48,12 +44,18 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     const onSuccessRef = useRef(onSuccess);
 
     const { chainId, address } = useAccount();
-    const { chainId: requiredChainId, buildEntityUrl } = useDaoChain({ network });
+    const { chainId: requiredChainId, buildEntityUrl } = useDaoChain({
+        network,
+    });
 
     const handleTransactionError = useCallback(
         (stepId?: string) => (error: unknown, context?: Record<string, unknown>) =>
-            transactionDialogUtils.monitorTransactionError(error, { stepId, from: address, ...context }),
-        [address],
+            transactionDialogUtils.monitorTransactionError(error, {
+                stepId,
+                from: address,
+                ...context,
+            }),
+        [address]
     );
 
     const {
@@ -81,10 +83,13 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
 
     // Using the `!` operator here as this hook is only enabled when the transactionHash and transactionType are defined
     const indexingUrlParams = { network, transactionHash: transactionHash! };
-    const indexingParams = { urlParams: indexingUrlParams, queryParams: { type: transactionType! } };
+    const indexingParams = {
+        urlParams: indexingUrlParams,
+        queryParams: { type: transactionType! },
+    };
     const { data: transactionStatus } = useTransactionStatus(indexingParams, {
         enabled: waitTxStatus === 'success' && isIndexing,
-        refetchInterval: ({ state }) => (!state.data?.isProcessed ? indexingStepInterval : false),
+        refetchInterval: ({ state }) => (state.data?.isProcessed ? false : indexingStepInterval),
     });
 
     const handleSendTransaction = useCallback(() => {
@@ -99,7 +104,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
 
     const handleSwitchNetwork = useCallback(
         () => switchChain({ chainId: requiredChainId! }, { onSuccess: handleSendTransaction }),
-        [switchChain, requiredChainId, handleSendTransaction],
+        [switchChain, requiredChainId, handleSendTransaction]
     );
 
     const handleRetryTransaction = useCallback(() => {
@@ -117,11 +122,16 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                 // noOp needed as react query will refetch the transaction status
             },
         }),
-        [prepareTransactionMutate, approveStepAction, handleRetryTransaction],
+        [prepareTransactionMutate, approveStepAction, handleRetryTransaction]
     );
 
     const approveStepStatus = chainId === requiredChainId ? approveTransactionStatus : switchChainStatus;
-    const indexingStepStatus = transactionStatus?.isProcessed ? 'success' : isIndexing ? 'pending' : 'idle';
+    let indexingStepStatus: TransactionStatusState = 'idle';
+    if (transactionStatus?.isProcessed) {
+        indexingStepStatus = 'success';
+    } else if (isIndexing) {
+        indexingStepStatus = 'pending';
+    }
     const transactionStepStates: Record<TransactionDialogStep, TransactionStatusState> = useMemo(
         () => ({
             [TransactionDialogStep.PREPARE]: prepareTransactionStatus,
@@ -129,7 +139,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
             [TransactionDialogStep.CONFIRM]: transactionDialogUtils.queryToStepState(waitTxStatus, waitTxFetchStatus),
             [TransactionDialogStep.INDEXING]: indexingStepStatus,
         }),
-        [prepareTransactionStatus, approveStepStatus, waitTxStatus, waitTxFetchStatus, indexingStepStatus],
+        [prepareTransactionStatus, approveStepStatus, waitTxStatus, waitTxFetchStatus, indexingStepStatus]
     );
 
     const transactionStepAddon: Record<TransactionDialogStep, ITransactionStatusStepMetaAddon | undefined> = useMemo(
@@ -143,20 +153,21 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                 transactionHash != null
                     ? {
                           label: t(`app.shared.transactionDialog.step.${TransactionDialogStep.CONFIRM}.addon`),
-                          href: buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash }),
+                          href: buildEntityUrl({
+                              type: ChainEntityType.TRANSACTION,
+                              id: transactionHash,
+                          }),
                       }
                     : undefined,
             [TransactionDialogStep.INDEXING]: undefined,
         }),
-        [t, buildEntityUrl, transactionHash],
+        [t, buildEntityUrl, transactionHash]
     );
 
     const transactionSteps = useMemo(() => {
         const stepKeys = Object.keys(TransactionDialogStep) as TransactionDialogStep[];
 
-        const filteredSteps = transactionType
-            ? stepKeys
-            : stepKeys.filter((step) => step !== TransactionDialogStep.INDEXING);
+        const filteredSteps = transactionType ? stepKeys : stepKeys.filter((step) => step !== TransactionDialogStep.INDEXING);
 
         return filteredSteps.map((stepId, index) => ({
             id: stepId,
@@ -188,14 +199,13 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         return () => clearTimeout(timeout);
     }, [activeStepInfo, handleTransactionError]);
 
-    useEffect(
-        () => updateSteps([...(customSteps ?? []), ...transactionSteps]),
-        [customSteps, transactionSteps, updateSteps],
-    );
+    useEffect(() => updateSteps([...(customSteps ?? []), ...transactionSteps]), [customSteps, transactionSteps, updateSteps]);
 
     useEffect(() => {
         if (waitTxError) {
-            handleTransactionError(TransactionDialogStep.CONFIRM)(waitTxError, { transaction });
+            handleTransactionError(TransactionDialogStep.CONFIRM)(waitTxError, {
+                transaction,
+            });
         }
     }, [waitTxError, transaction, handleTransactionError]);
 
@@ -208,7 +218,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
 
     return (
         <>
-            <Dialog.Header title={title} description={description} />
+            <Dialog.Header description={description} title={title} />
             <Dialog.Content>
                 <div className="flex flex-col gap-6 pb-3 md:pb-4">
                     {children}
@@ -220,15 +230,15 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                 </div>
             </Dialog.Content>
             <TransactionDialogFooter
+                activeStep={activeStepInfo}
+                indexingFallbackUrl={indexingFallbackUrl}
+                onCancelClick={onCancelClick}
+                onError={handleTransactionError(activeStepInfo?.id)}
+                proposalSlug={transactionStatus?.slug}
                 submitLabel={submitLabel}
                 successLink={successLink}
-                txReceipt={txReceipt}
-                activeStep={activeStepInfo}
-                onError={handleTransactionError(activeStepInfo?.id)}
-                onCancelClick={onCancelClick}
                 transactionType={transactionType}
-                proposalSlug={transactionStatus?.slug}
-                indexingFallbackUrl={indexingFallbackUrl}
+                txReceipt={txReceipt}
             />
         </>
     );

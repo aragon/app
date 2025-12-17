@@ -1,3 +1,8 @@
+import { Button, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
+import { useEffect, useMemo } from 'react';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { formatUnits, parseUnits } from 'viem';
+import { useAccount } from 'wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import type { IToken } from '@/modules/finance/api/financeService';
 import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
@@ -6,14 +11,9 @@ import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dial
 import type { ITokenWrapUnwrapDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenWrapUnwrapDialog';
 import { useWrappedTokenBalance } from '@/plugins/tokenPlugin/hooks/useWrappedTokenBalance';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
-import { useEffect, useMemo } from 'react';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { formatUnits, parseUnits } from 'viem';
-import { useAccount } from 'wagmi';
 import { useCheckTokenAllowance } from '../hooks/useCheckTokenAllowance';
 
 export interface ITokenWrapFormProps {
@@ -52,7 +52,10 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         balance: unwrappedBalance,
         status: unwrappedBalanceStatus,
         invalidateQueries,
-    } = useCheckTokenAllowance({ spender: token.address, token: underlyingToken });
+    } = useCheckTokenAllowance({
+        spender: token.address,
+        token: underlyingToken,
+    });
 
     // Read wrapped token balance directly from blockchain
     const { balance: wrappedBalance, refetch: refetchWrappedBalance } = useWrappedTokenBalance({
@@ -61,15 +64,18 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     });
 
     const parsedUnwrappedAmount = formatUnits(unwrappedBalance?.value ?? BigInt(0), decimals);
-    const userAsset = useMemo(
-        () => ({ token: underlyingToken, amount: parsedUnwrappedAmount }),
-        [underlyingToken, parsedUnwrappedAmount],
-    );
+    const userAsset = useMemo(() => ({ token: underlyingToken, amount: parsedUnwrappedAmount }), [underlyingToken, parsedUnwrappedAmount]);
 
-    const formValues = useForm<ITokenWrapFormData>({ mode: 'onSubmit', defaultValues: { asset: userAsset } });
+    const formValues = useForm<ITokenWrapFormData>({
+        mode: 'onSubmit',
+        defaultValues: { asset: userAsset },
+    });
     const { control, setValue, handleSubmit } = formValues;
 
-    const wrapAmount = useWatch<ITokenWrapFormData, 'amount'>({ control, name: 'amount' });
+    const wrapAmount = useWatch<ITokenWrapFormData, 'amount'>({
+        control,
+        name: 'amount',
+    });
     const wrapAmountWei = parseUnits(wrapAmount ?? '0', token.decimals);
 
     const needsApproval = isConnected && (allowance == null || allowance < wrapAmountWei);
@@ -145,14 +151,16 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     return (
         <FormProvider {...formValues}>
             <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
-                <p className="text-base leading-normal font-normal text-neutral-500">
-                    {t('app.plugins.token.tokenWrapForm.info', { underlyingSymbol: underlyingToken.symbol })}
+                <p className="font-normal text-base text-neutral-500 leading-normal">
+                    {t('app.plugins.token.tokenWrapForm.info', {
+                        underlyingSymbol: underlyingToken.symbol,
+                    })}
                 </p>
                 <div className="flex flex-col gap-3">
                     <AssetInput
                         disableAssetField={true}
-                        hideMax={true}
                         hideAmountLabel={true}
+                        hideMax={true}
                         percentageSelection={{
                             totalBalance: unwrappedBalance?.value,
                             tokenDecimals: decimals,
@@ -161,29 +169,25 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                 </div>
                 <div className="flex flex-col gap-3">
                     <Button
-                        type={isConnected ? 'submit' : undefined}
-                        onClick={isConnected ? undefined : () => walletGuard()}
                         disabled={disableSubmit}
-                        variant="primary"
+                        onClick={isConnected ? undefined : () => walletGuard()}
                         size="lg"
+                        type={isConnected ? 'submit' : undefined}
+                        variant="primary"
                     >
                         {t(`app.plugins.token.tokenWrapForm.submit.${submitLabel}`, {
                             underlyingSymbol: underlyingToken.symbol,
                         })}
                     </Button>
                     {wrappedBalance > 0 && (
-                        <Button
-                            variant="secondary"
-                            size="lg"
-                            onClick={() => handleWrapUnwrapTokens('unwrap', wrappedBalance)}
-                        >
+                        <Button onClick={() => handleWrapUnwrapTokens('unwrap', wrappedBalance)} size="lg" variant="secondary">
                             {t('app.plugins.token.tokenWrapForm.submit.unwrap', {
                                 amount: formattedWrappedAmount,
                                 symbol,
                             })}
                         </Button>
                     )}
-                    <p className="text-center text-sm leading-normal font-normal text-neutral-500">
+                    <p className="text-center font-normal text-neutral-500 text-sm leading-normal">
                         {t('app.plugins.token.tokenWrapForm.footerInfo')}
                     </p>
                 </div>

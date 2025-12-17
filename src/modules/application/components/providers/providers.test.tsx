@@ -1,8 +1,8 @@
-import { type Translations } from '@/shared/utils/translationsUtils';
 import type * as GovUiKit from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { Providers, type IProvidersProps } from './providers';
+import type { Translations } from '@/shared/utils/translationsUtils';
+import { type IProvidersProps, Providers } from './providers';
 
 jest.mock('@/shared/components/translationsProvider', () => ({
     TranslationsProvider: (props: { translations: Translations; children: ReactNode }) => (
@@ -16,26 +16,22 @@ jest.mock('@/shared/components/dialogProvider', () => ({
     DialogProvider: (props: { children: ReactNode }) => <div data-testid="dialog-provider-mock">{props.children}</div>,
 }));
 
-jest.mock('@/shared/components/dialogRoot', () => ({ DialogRoot: () => <div data-testid="dialog-root-mock" /> }));
+jest.mock('@/shared/components/dialogRoot', () => ({
+    DialogRoot: () => <div data-testid="dialog-root-mock" />,
+}));
 
 jest.mock('@/shared/components/featureFlagsProvider', () => ({
-    FeatureFlagsProvider: (props: { children: ReactNode }) => (
-        <div data-testid="feature-flags-provider-mock">{props.children}</div>
-    ),
+    FeatureFlagsProvider: (props: { children: ReactNode }) => <div data-testid="feature-flags-provider-mock">{props.children}</div>,
 }));
 
 jest.mock('@aragon/gov-ui-kit', () => ({
     ...jest.requireActual<typeof GovUiKit>('@aragon/gov-ui-kit'),
-    GukModulesProvider: (props: { children: ReactNode }) => (
-        <div data-testid="guk-modules-context">{props.children}</div>
-    ),
+    GukModulesProvider: (props: { children: ReactNode }) => <div data-testid="guk-modules-context">{props.children}</div>,
 }));
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof GovUiKit>('@tanstack/react-query'),
-    HydrationBoundary: (props: { children: ReactNode }) => (
-        <div data-testid="hydration-boundary-test">{props.children}</div>
-    ),
+    HydrationBoundary: (props: { children: ReactNode }) => <div data-testid="hydration-boundary-test">{props.children}</div>,
 }));
 
 describe('<Providers /> component', () => {

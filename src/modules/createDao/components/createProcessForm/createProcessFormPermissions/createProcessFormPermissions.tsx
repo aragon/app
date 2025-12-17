@@ -1,3 +1,5 @@
+import { CardEmptyState, InputContainer, invariant, RadioCard, RadioGroup, SmartContractFunctionDataListItem } from '@aragon/gov-ui-kit';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 import {
     type ICreateProcessFormData,
     ProcessPermission,
@@ -8,15 +10,6 @@ import type { IProposalActionData } from '@/modules/governance/components/create
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import {
-    CardEmptyState,
-    InputContainer,
-    invariant,
-    RadioCard,
-    RadioGroup,
-    SmartContractFunctionDataListItem,
-} from '@aragon/gov-ui-kit';
-import { useFieldArray, useFormContext } from 'react-hook-form';
 
 export interface ICreateProcessFormPermissionsProps {
     /**
@@ -54,7 +47,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         invariant(!hasInvalidActions, 'CreateProcessFormPermissions: actions with invalid inputData found in list.');
 
         const hasDuplicateActions = actions.some(
-            (action, index) => actions.findIndex((current) => compareActionSelectors(action, current)) !== index,
+            (action, index) => actions.findIndex((current) => compareActionSelectors(action, current)) !== index
         );
 
         if (hasDuplicateActions) {
@@ -81,31 +74,31 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     return (
         <div className="flex flex-col gap-6">
             <RadioGroup
-                className="flex gap-4 md:!flex-row"
+                className="md:!flex-row flex gap-4"
+                helpText={t('app.createDao.createProcessForm.permissions.permissionField.helpText')}
                 onValueChange={onProcessPermissionChange}
                 value={processPermission}
-                helpText={t('app.createDao.createProcessForm.permissions.permissionField.helpText')}
                 {...processPermissionField}
             >
                 <RadioCard
                     className="min-w-0"
-                    label={t('app.createDao.createProcessForm.permissions.permissionField.anyLabel')}
                     description={t('app.createDao.createProcessForm.permissions.permissionField.anyDescription')}
+                    label={t('app.createDao.createProcessForm.permissions.permissionField.anyLabel')}
                     value={ANY}
                 />
                 <RadioCard
                     className="min-w-0"
-                    label={t('app.createDao.createProcessForm.permissions.permissionField.specificLabel')}
                     description={t('app.createDao.createProcessForm.permissions.permissionField.specificDescription')}
+                    label={t('app.createDao.createProcessForm.permissions.permissionField.specificLabel')}
                     value={SELECTED}
                 />
             </RadioGroup>
             {processPermission === ANY && (
                 <CardEmptyState
-                    heading={t('app.createDao.createProcessForm.permissions.anyEmptyState.heading')}
                     description={t('app.createDao.createProcessForm.permissions.anyEmptyState.description')}
-                    objectIllustration={{ object: 'SETTINGS' }}
+                    heading={t('app.createDao.createProcessForm.permissions.anyEmptyState.heading')}
                     isStacked={false}
+                    objectIllustration={{ object: 'SETTINGS' }}
                 />
             )}
             {processPermission === SELECTED && (
@@ -113,28 +106,28 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                     {permissionSelectors.length === 0 ? (
                         <CardEmptyState
                             heading={t('app.createDao.createProcessForm.permissions.specificEmptyState.heading')}
-                            objectIllustration={{ object: 'SETTINGS' }}
                             isStacked={false}
+                            objectIllustration={{ object: 'SETTINGS' }}
                         />
                     ) : (
-                        <InputContainer alert={fieldAlert} useCustomWrapper={true} className="w-full" id="selectors">
+                        <InputContainer alert={fieldAlert} className="w-full" id="selectors" useCustomWrapper={true}>
                             {permissionSelectors.map((action, index) => (
                                 <SmartContractFunctionDataListItem.Structure
-                                    key={action.id}
                                     contractAddress={action.to}
-                                    onRemove={() => removePermissionSelector(index)}
-                                    functionName={action.inputData?.function}
                                     contractName={action.inputData?.contract}
+                                    functionName={action.inputData?.function}
                                     functionSelector={proposalActionUtils.actionToFunctionSelector(action)}
+                                    key={action.id}
+                                    onRemove={() => removePermissionSelector(index)}
                                 />
                             ))}
                         </InputContainer>
                     )}
                     <ActionComposer
                         daoId={daoId}
-                        onAddAction={addPermissionSelector}
-                        hideWalletConnect={true}
                         excludeActionTypes={[ProposalActionType.TRANSFER, ActionItemId.RAW_CALLDATA]}
+                        hideWalletConnect={true}
+                        onAddAction={addPermissionSelector}
                     />
                 </>
             )}

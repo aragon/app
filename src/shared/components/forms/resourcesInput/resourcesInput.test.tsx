@@ -1,13 +1,17 @@
-import { FormWrapper } from '@/shared/testUtils';
 import { IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { FormWrapper } from '@/shared/testUtils';
 import { ResourcesInput } from './resourcesInput';
 import type { IResourcesInputProps } from './resourcesInput.api';
 
 describe('<ResourcesInput /> component', () => {
     const createTestComponent = (props?: Partial<IResourcesInputProps>) => {
-        const completeProps: IResourcesInputProps = { name: 'resources', helpText: 'helpful text', ...props };
+        const completeProps: IResourcesInputProps = {
+            name: 'resources',
+            helpText: 'helpful text',
+            ...props,
+        };
         return (
             <FormWrapper>
                 <ResourcesInput {...completeProps} />
@@ -30,7 +34,9 @@ describe('<ResourcesInput /> component', () => {
     it('adds a new resource when "Add" button is clicked', async () => {
         render(createTestComponent());
 
-        const addButton = screen.getByRole('button', { name: /shared.resourcesInput.add/ });
+        const addButton = screen.getByRole('button', {
+            name: /shared.resourcesInput.add/,
+        });
         await userEvent.click(addButton);
 
         const linkInputs = screen.getAllByPlaceholderText(/item.linkInput.placeholder/);
@@ -41,7 +47,9 @@ describe('<ResourcesInput /> component', () => {
     it('adds multiple resources and removes one', async () => {
         render(createTestComponent());
 
-        const addButton = screen.getByRole('button', { name: /shared.resourcesInput.add/ });
+        const addButton = screen.getByRole('button', {
+            name: /shared.resourcesInput.add/,
+        });
 
         // Add two resources
         await userEvent.click(addButton);

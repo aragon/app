@@ -3,7 +3,7 @@ import type { ITransactionStatus } from './domain';
 import type { IGetTransactionStatusParams } from './transactionService.api';
 
 class TransactionService extends AragonBackendService {
-    private urls = {
+    private readonly urls = {
         status: '/v2/transactions/:network/:transactionHash/status',
     };
 

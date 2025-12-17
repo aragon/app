@@ -1,16 +1,18 @@
-import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import type { UseQueryReturnType } from 'wagmi/query';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import type { TransactionStatusState } from '../transactionStatus';
 
 export class TransactionDialogUtils {
-    private ignoreErrors = [
+    private readonly ignoreErrors = [
         'User rejected the request', // Error caused by user rejecting the transaction on their wallet
     ];
 
-    queryToStepState = (
-        status: UseQueryReturnType['status'],
-        fetchStatus: UseQueryReturnType['fetchStatus'],
-    ): TransactionStatusState => (status === 'pending' ? (fetchStatus === 'fetching' ? 'pending' : 'idle') : status);
+    queryToStepState = (status: UseQueryReturnType['status'], fetchStatus: UseQueryReturnType['fetchStatus']): TransactionStatusState => {
+        if (status === 'pending') {
+            return fetchStatus === 'fetching' ? 'pending' : 'idle';
+        }
+        return status;
+    };
 
     monitorTransactionError = (error: unknown, context?: Record<string, unknown>) => {
         if (this.shouldIgnoreError(error)) {
@@ -20,7 +22,7 @@ export class TransactionDialogUtils {
         monitoringUtils.logError(error, { context });
     };
 
-    private shouldIgnoreError = (error: unknown) =>
+    private readonly shouldIgnoreError = (error: unknown) =>
         error instanceof Error && this.ignoreErrors.some((ignoreError) => error.message.includes(ignoreError));
 }
 

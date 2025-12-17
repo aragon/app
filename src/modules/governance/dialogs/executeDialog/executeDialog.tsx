@@ -1,17 +1,13 @@
-import { useDao } from '@/shared/api/daoService';
-import { TransactionType } from '@/shared/api/transactionService';
-import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
-import {
-    type ITransactionDialogStepMeta,
-    TransactionDialog,
-    TransactionDialogStep,
-} from '@/shared/components/transactionDialog';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useStepper } from '@/shared/hooks/useStepper';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { DataList, invariant, ProposalDataListItem, type ProposalStatus } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
+import { useDao } from '@/shared/api/daoService';
+import { TransactionType } from '@/shared/api/transactionService';
+import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { type ITransactionDialogStepMeta, TransactionDialog, TransactionDialogStep } from '@/shared/components/transactionDialog';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useStepper } from '@/shared/hooks/useStepper';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import type { IProposal } from '../../api/governanceService';
 import { proposalUtils } from '../../utils/proposalUtils';
 import { executeDialogUtils } from './executeDialogUtils';
@@ -60,26 +56,26 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
 
     return (
         <TransactionDialog
-            title={t('app.governance.executeDialog.title')}
             description={t('app.governance.executeDialog.description')}
+            indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
+            network={network}
+            prepareTransaction={handlePrepareTransaction}
+            stepper={stepper}
             submitLabel={t('app.governance.executeDialog.buttons.submit')}
             successLink={{
                 label: t('app.governance.executeDialog.buttons.success'),
                 onClick: () => router.refresh(),
             }}
-            stepper={stepper}
-            prepareTransaction={handlePrepareTransaction}
-            network={network}
+            title={t('app.governance.executeDialog.title')}
             transactionType={TransactionType.PROPOSAL_EXECUTE}
-            indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
         >
             <DataList.Root entityLabel="">
                 <ProposalDataListItem.Structure
-                    title={title}
-                    summary={summary}
+                    id={slug}
                     publisher={{ address: creator.address }}
                     status={status}
-                    id={slug}
+                    summary={summary}
+                    title={title}
                 />
             </DataList.Root>
         </TransactionDialog>

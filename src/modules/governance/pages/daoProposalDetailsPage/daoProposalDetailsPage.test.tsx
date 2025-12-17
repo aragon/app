@@ -1,16 +1,16 @@
-import { Network } from '@/shared/api/daoService';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import { Network } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { proposalActionsOptions, proposalBySlugOptions } from '../../api/governanceService';
 import { DaoProposalDetailsPage, type IDaoProposalDetailsPageProps } from './daoProposalDetailsPage';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
-        <div data-testid="hydration-mock" data-state={JSON.stringify(props.state)}>
+        <div data-state={JSON.stringify(props.state)} data-testid="hydration-mock">
             {props.children}
         </div>
     ),
@@ -53,7 +53,11 @@ describe('<DaoProposalDetailsPage /> component', () => {
         const daoEns = 'test.dao.eth';
         const daoAddress = '0x12345';
         const daoNetwork = Network.ETHEREUM_MAINNET;
-        const params = { addressOrEns: daoEns, network: daoNetwork, proposalSlug: 'test-proposal-id' };
+        const params = {
+            addressOrEns: daoEns,
+            network: daoNetwork,
+            proposalSlug: 'test-proposal-id',
+        };
         const expectedDaoId = `${daoNetwork}-${daoAddress}`;
         const proposalParams = {
             urlParams: { slug: params.proposalSlug },
@@ -73,14 +77,17 @@ describe('<DaoProposalDetailsPage /> component', () => {
             network: Network.ETHEREUM_MAINNET,
         };
 
-        fetchQuerySpy.mockResolvedValueOnce({ id: params.proposalSlug, hasActions: true });
+        fetchQuerySpy.mockResolvedValueOnce({
+            id: params.proposalSlug,
+            hasActions: true,
+        });
         fetchQuerySpy.mockResolvedValueOnce([]);
 
         render(await createTestComponent({ params: Promise.resolve(params) }));
 
         expect(fetchQuerySpy).toHaveBeenCalledTimes(2);
         expect(fetchQuerySpy.mock.calls[1][0].queryKey).toEqual(
-            proposalActionsOptions({ urlParams: { id: params.proposalSlug } }).queryKey,
+            proposalActionsOptions({ urlParams: { id: params.proposalSlug } }).queryKey
         );
     });
 
@@ -94,11 +101,17 @@ describe('<DaoProposalDetailsPage /> component', () => {
     it('renders error with a link to proposal list page on fetch proposal error', async () => {
         const daoEns = 'test.dao.eth';
         const daoNetwork = Network.ETHEREUM_MAINNET;
-        const params = { addressOrEns: daoEns, network: daoNetwork, proposalSlug: '' };
+        const params = {
+            addressOrEns: daoEns,
+            network: daoNetwork,
+            proposalSlug: '',
+        };
         fetchQuerySpy.mockRejectedValue('error');
 
         render(await createTestComponent({ params: Promise.resolve(params) }));
-        const errorLink = screen.getByRole('link', { name: /daoProposalDetailsPage.error.action/ });
+        const errorLink = screen.getByRole('link', {
+            name: /daoProposalDetailsPage.error.action/,
+        });
         expect(errorLink).toBeInTheDocument();
         expect(errorLink.getAttribute('href')).toEqual(`/dao/${daoNetwork}/${daoEns}/proposals`);
     });

@@ -11,11 +11,21 @@ export const conditionFactoryAbi = [
                 internalType: 'struct ExecuteSelectorCondition.SelectorTarget[]',
                 components: [
                     { name: 'where', type: 'address', internalType: 'address' },
-                    { name: 'selectors', type: 'bytes4[]', internalType: 'bytes4[]' },
+                    {
+                        name: 'selectors',
+                        type: 'bytes4[]',
+                        internalType: 'bytes4[]',
+                    },
                 ],
             },
         ],
-        outputs: [{ name: '', type: 'address', internalType: 'contract ExecuteSelectorCondition' }],
+        outputs: [
+            {
+                name: '',
+                type: 'address',
+                internalType: 'contract ExecuteSelectorCondition',
+            },
+        ],
     },
     {
         type: 'function',

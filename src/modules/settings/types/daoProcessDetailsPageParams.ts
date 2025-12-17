@@ -1,4 +1,4 @@
-import { type IDaoPageParams } from '@/shared/types';
+import type { IDaoPageParams } from '@/shared/types';
 
 export interface IDaoProcessDetailsPageParams extends IDaoPageParams {
     /**

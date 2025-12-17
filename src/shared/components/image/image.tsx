@@ -33,5 +33,5 @@ export const Image: React.FC<IImageProps> = (props) => {
         return null;
     }
 
-    return <NextImage src={src} fill={fill} alt={alt} sizes={processedSizes} {...otherProps} />;
+    return <NextImage alt={alt} fill={fill} sizes={processedSizes} src={src} {...otherProps} />;
 };

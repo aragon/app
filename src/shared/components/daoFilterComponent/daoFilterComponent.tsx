@@ -1,14 +1,16 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { PluginFilterComponent } from '@/shared/components/pluginFilterComponent';
 import type { IPluginSingleComponentProps } from '@/shared/components/pluginSingleComponent';
 import type { IDaoFilterOption } from '@/shared/hooks/useDaoFilterUrlParam';
 import type { SlotId } from '@/shared/utils/pluginRegistryUtils';
-import type { ReactNode } from 'react';
 
 export interface IDaoFilterComponentProps<
-    TParams extends { queryParams: Record<string, unknown> } = { queryParams: Record<string, unknown> },
+    TParams extends { queryParams: Record<string, unknown> } = {
+        queryParams: Record<string, unknown>;
+    },
 > {
     /**
      * Slot ID for plugin-based rendering.
@@ -76,7 +78,10 @@ export const mapDaoOptionsToFilterFormat = (params: {
             uniqueId: option.id,
             label,
             meta: option,
-            props: { initialParams: { ...initialParams, queryParams }, daoOption: option },
+            props: {
+                initialParams: { ...initialParams, queryParams },
+                daoOption: option,
+            },
         };
     });
 };
@@ -86,13 +91,19 @@ export const mapDaoOptionsToFilterFormat = (params: {
  * Wraps PluginFilterComponent with DAO-specific API.
  */
 export const DaoFilterComponent = <
-    TParams extends { queryParams: Record<string, unknown> } = { queryParams: Record<string, unknown> },
+    TParams extends { queryParams: Record<string, unknown> } = {
+        queryParams: Record<string, unknown>;
+    },
 >(
-    props: IDaoFilterComponentProps<TParams>,
+    props: IDaoFilterComponentProps<TParams>
 ) => {
     const { options, value, onValueChange, initialParams, allOptionLabel, ...otherProps } = props;
 
-    const processedOptions = mapDaoOptionsToFilterFormat({ options, initialParams, allOptionLabel });
+    const processedOptions = mapDaoOptionsToFilterFormat({
+        options,
+        initialParams,
+        allOptionLabel,
+    });
 
     const resolvedValue = processedOptions?.find((opt) => opt.uniqueId === value?.id) ?? processedOptions?.[0];
 
@@ -100,12 +111,5 @@ export const DaoFilterComponent = <
         onValueChange?.(filterOption.meta);
     };
 
-    return (
-        <PluginFilterComponent
-            plugins={processedOptions}
-            value={resolvedValue}
-            onValueChange={handleValueChange}
-            {...otherProps}
-        />
-    );
+    return <PluginFilterComponent onValueChange={handleValueChange} plugins={processedOptions} value={resolvedValue} {...otherProps} />;
 };

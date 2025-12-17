@@ -1,5 +1,5 @@
-import { sanitizeHtmlRich, sanitizeHtmlStrict } from '@/shared/security';
 import type { FC, HTMLAttributes } from 'react';
+import { sanitizeHtmlRich, sanitizeHtmlStrict } from '@/shared/security';
 
 export interface ISafeHtmlProps extends HTMLAttributes<HTMLDivElement> {
     /**

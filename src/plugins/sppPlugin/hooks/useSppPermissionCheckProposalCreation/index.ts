@@ -1,4 +1,4 @@
 export {
-    useSppPermissionCheckProposalCreation,
     type IUseSppPermissionCheckProposalCreationParams,
+    useSppPermissionCheckProposalCreation,
 } from './useSppPermissionCheckProposalCreation';

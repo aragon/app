@@ -1,6 +1,6 @@
+import type { Hex } from 'viem';
 import { Network } from '@/shared/api/daoService';
 import { generatePaginatedResponse } from '@/shared/testUtils';
-import type { Hex } from 'viem';
 import { generateGauge } from '../../testUtils/generators';
 import { gaugeVoterService } from './gaugeVoterService';
 
@@ -13,8 +13,12 @@ describe('gaugeVoter service', () => {
 
     it('getGaugeList fetches a paginated list of gauges for the provided plugin', async () => {
         const gaugesList = [
-            generateGauge({ address: '0x1234567890123456789012345678901234567890' }),
-            generateGauge({ address: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' }),
+            generateGauge({
+                address: '0x1234567890123456789012345678901234567890',
+            }),
+            generateGauge({
+                address: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+            }),
         ];
         const gaugesListResponse = generatePaginatedResponse({
             data: gaugesList,

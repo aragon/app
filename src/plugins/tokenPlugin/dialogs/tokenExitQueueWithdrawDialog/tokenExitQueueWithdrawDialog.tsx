@@ -1,9 +1,9 @@
 'use client';
 
-import { useDialogContext } from '@/shared/components/dialogProvider';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
+import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { TokenExitQueueFeeChart } from '../../components/tokenExitQueue/tokenExistQueueFeeChart';
 import { TokenExitQueueFeeCalculation } from '../../components/tokenExitQueue/tokenExitQueueFeeCalculation';
 import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
@@ -67,32 +67,39 @@ export const TokenExitQueueWithdrawDialog: React.FC<ITokenExitQueueWithdrawDialo
             onSuccess,
         };
 
-        open(TokenPluginDialogId.EXIT_QUEUE_WITHDRAW_TRANSACTION, { params: txDialogParams });
+        open(TokenPluginDialogId.EXIT_QUEUE_WITHDRAW_TRANSACTION, {
+            params: txDialogParams,
+        });
     };
 
     return (
         <>
             <Dialog.Header
-                title={t('app.plugins.tokenExitQueue.withdrawDialog.title', { symbol: token.symbol })}
                 onClose={close}
+                title={t('app.plugins.tokenExitQueue.withdrawDialog.title', {
+                    symbol: token.symbol,
+                })}
             />
             <Dialog.Content className="flex flex-col gap-6 pt-4">
-                {shouldShowChart && <TokenExitQueueFeeChart ticket={ticket} currentTime={currentTime} />}
+                {shouldShowChart && <TokenExitQueueFeeChart currentTime={currentTime} ticket={ticket} />}
 
                 <TokenExitQueueFeeCalculation
-                    lockedAmount={lockedAmount}
                     feeAmount={feeAmount}
-                    token={token}
                     helpText={shouldShowChart ? t('app.plugins.tokenExitQueue.withdrawDialog.helpText') : undefined}
+                    lockedAmount={lockedAmount}
+                    token={token}
                 />
             </Dialog.Content>
             <Dialog.Footer
-                variant="wizard"
-                secondaryAction={{ label: t('app.plugins.tokenExitQueue.withdrawDialog.back'), onClick: handleBack }}
                 primaryAction={{
                     label: t('app.plugins.tokenExitQueue.withdrawDialog.submit'),
                     onClick: handleWithdraw,
                 }}
+                secondaryAction={{
+                    label: t('app.plugins.tokenExitQueue.withdrawDialog.back'),
+                    onClick: handleBack,
+                }}
+                variant="wizard"
             />
         </>
     );

@@ -1,8 +1,8 @@
+import { addressUtils } from '@aragon/gov-ui-kit';
 import { daoService, Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { type IPluginInfo, PluginType } from '@/shared/types';
-import { addressUtils } from '@aragon/gov-ui-kit';
 import { ipfsUtils } from '../ipfsUtils';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 import { daoUtils } from './daoUtils';
@@ -28,15 +28,14 @@ describe('dao utils', () => {
         it('returns true when dao has supported plugins', () => {
             listContainsRegisteredPluginsSpy.mockReturnValue(true);
             const daoPlugins = [
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.UNKNOWN }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.UNKNOWN,
+                }),
                 generateDaoPlugin({ interfaceType: PluginInterfaceType.SPP }),
             ];
             const dao = generateDao({ plugins: daoPlugins });
             expect(daoUtils.hasSupportedPlugins(dao)).toBeTruthy();
-            expect(listContainsRegisteredPluginsSpy).toHaveBeenCalledWith([
-                PluginInterfaceType.UNKNOWN,
-                PluginInterfaceType.SPP,
-            ]);
+            expect(listContainsRegisteredPluginsSpy).toHaveBeenCalledWith([PluginInterfaceType.UNKNOWN, PluginInterfaceType.SPP]);
         });
 
         it('returns false when dao does not have supported plugins', () => {
@@ -86,15 +85,27 @@ describe('dao utils', () => {
         it('uses subdomain over interfaceType when both are present', () => {
             const subdomain = 'multisig-plugin';
             const interfaceType = PluginInterfaceType.MULTISIG;
-            const plugin = generateDaoPlugin({ subdomain, interfaceType, name: undefined });
+            const plugin = generateDaoPlugin({
+                subdomain,
+                interfaceType,
+                name: undefined,
+            });
             expect(daoUtils.getPluginName(plugin)).toEqual('Multisig Plugin');
         });
 
         it('formats subdomain and interfaceType with the same format (spaces)', () => {
             const subdomain = 'token-voting';
             const interfaceType = PluginInterfaceType.TOKEN_VOTING;
-            const pluginWithSubdomain = generateDaoPlugin({ subdomain, interfaceType, name: undefined });
-            const pluginWithoutSubdomain = generateDaoPlugin({ subdomain: undefined, interfaceType, name: undefined });
+            const pluginWithSubdomain = generateDaoPlugin({
+                subdomain,
+                interfaceType,
+                name: undefined,
+            });
+            const pluginWithoutSubdomain = generateDaoPlugin({
+                subdomain: undefined,
+                interfaceType,
+                name: undefined,
+            });
 
             expect(daoUtils.getPluginName(pluginWithSubdomain)).toEqual('Token Voting');
             expect(daoUtils.getPluginName(pluginWithoutSubdomain)).toEqual('Token Voting');
@@ -122,25 +133,41 @@ describe('dao utils', () => {
 
         it('falls back to interfaceType when subdomain is null', () => {
             const interfaceType = PluginInterfaceType.TOKEN_VOTING;
-            const plugin = generateDaoPlugin({ subdomain: undefined, interfaceType, name: undefined });
+            const plugin = generateDaoPlugin({
+                subdomain: undefined,
+                interfaceType,
+                name: undefined,
+            });
             expect(daoUtils.getPluginName(plugin)).toEqual('Token Voting');
         });
 
         it('falls back to interfaceType when subdomain is undefined', () => {
             const interfaceType = PluginInterfaceType.MULTISIG;
-            const plugin = generateDaoPlugin({ subdomain: undefined, interfaceType, name: undefined });
+            const plugin = generateDaoPlugin({
+                subdomain: undefined,
+                interfaceType,
+                name: undefined,
+            });
             expect(daoUtils.getPluginName(plugin)).toEqual('Multisig');
         });
 
         it('formats camelCase interfaceType with multiple words correctly', () => {
             const interfaceType = PluginInterfaceType.CAPITAL_DISTRIBUTOR;
-            const plugin = generateDaoPlugin({ subdomain: undefined, interfaceType, name: undefined });
+            const plugin = generateDaoPlugin({
+                subdomain: undefined,
+                interfaceType,
+                name: undefined,
+            });
             expect(daoUtils.getPluginName(plugin)).toEqual('Capital Distributor');
         });
 
         it('formats camelCase interfaceType with three words correctly', () => {
             const interfaceType = PluginInterfaceType.LOCK_TO_VOTE;
-            const plugin = generateDaoPlugin({ subdomain: undefined, interfaceType, name: undefined });
+            const plugin = generateDaoPlugin({
+                subdomain: undefined,
+                interfaceType,
+                name: undefined,
+            });
             expect(daoUtils.getPluginName(plugin)).toEqual('Lock To Vote');
         });
     });
@@ -162,9 +189,18 @@ describe('dao utils', () => {
 
         it('only returns body plugins when plugin type is set to body', () => {
             const plugins = [
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.SPP, isBody: false }),
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG, isBody: true }),
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.TOKEN_VOTING, isBody: true }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.SPP,
+                    isBody: false,
+                }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                    isBody: true,
+                }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.TOKEN_VOTING,
+                    isBody: true,
+                }),
             ];
             const dao = generateDao({ plugins });
             const type = PluginType.BODY;
@@ -173,8 +209,16 @@ describe('dao utils', () => {
 
         it('only returns process plugins that are not sub-plugins when plugin type is set to process', () => {
             const plugins = [
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.SPP, isProcess: true, isSubPlugin: false }),
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG, isProcess: true, isSubPlugin: false }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.SPP,
+                    isProcess: true,
+                    isSubPlugin: false,
+                }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                    isProcess: true,
+                    isSubPlugin: false,
+                }),
                 generateDaoPlugin({
                     interfaceType: PluginInterfaceType.TOKEN_VOTING,
                     isProcess: true,
@@ -188,9 +232,21 @@ describe('dao utils', () => {
 
         it('includes sub-plugins when includeSubPlugins is true', () => {
             const plugins = [
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.SPP, isProcess: true, isSubPlugin: false }),
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG, isProcess: true, isSubPlugin: false }),
-                generateDaoPlugin({ subdomain: 'sub-plugin', isProcess: true, isSubPlugin: true }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.SPP,
+                    isProcess: true,
+                    isSubPlugin: false,
+                }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                    isProcess: true,
+                    isSubPlugin: false,
+                }),
+                generateDaoPlugin({
+                    subdomain: 'sub-plugin',
+                    isProcess: true,
+                    isSubPlugin: true,
+                }),
             ];
             const dao = generateDao({ plugins });
             expect(daoUtils.getDaoPlugins(dao, { includeSubPlugins: true })).toEqual(plugins);
@@ -198,9 +254,21 @@ describe('dao utils', () => {
 
         it('excludes sub-plugins when includeSubPlugins is false', () => {
             const plugins = [
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.SPP, isProcess: true, isSubPlugin: false }),
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG, isProcess: true, isSubPlugin: false }),
-                generateDaoPlugin({ subdomain: 'sub-plugin', isProcess: true, isSubPlugin: true }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.SPP,
+                    isProcess: true,
+                    isSubPlugin: false,
+                }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                    isProcess: true,
+                    isSubPlugin: false,
+                }),
+                generateDaoPlugin({
+                    subdomain: 'sub-plugin',
+                    isProcess: true,
+                    isSubPlugin: true,
+                }),
             ];
             const dao = generateDao({ plugins });
             expect(daoUtils.getDaoPlugins(dao, { includeSubPlugins: false })).toEqual([plugins[0], plugins[1]]);
@@ -208,30 +276,48 @@ describe('dao utils', () => {
 
         it('correctly filters by type and includes sub-plugins when specified', () => {
             const plugins = [
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.SPP, isProcess: true, isSubPlugin: false }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.SPP,
+                    isProcess: true,
+                    isSubPlugin: false,
+                }),
                 generateDaoPlugin({
                     interfaceType: PluginInterfaceType.TOKEN_VOTING,
                     isBody: true,
                     isSubPlugin: false,
                 }),
-                generateDaoPlugin({ subdomain: 'sub-process', isProcess: true, isSubPlugin: true }),
-                generateDaoPlugin({ subdomain: 'sub-body', isBody: true, isSubPlugin: true }),
+                generateDaoPlugin({
+                    subdomain: 'sub-process',
+                    isProcess: true,
+                    isSubPlugin: true,
+                }),
+                generateDaoPlugin({
+                    subdomain: 'sub-body',
+                    isBody: true,
+                    isSubPlugin: true,
+                }),
             ];
             const dao = generateDao({ plugins });
-            expect(daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS, includeSubPlugins: true })).toEqual([
-                plugins[0],
-                plugins[2],
-            ]);
-            expect(daoUtils.getDaoPlugins(dao, { type: PluginType.BODY, includeSubPlugins: true })).toEqual([
-                plugins[1],
-                plugins[3],
-            ]);
+            expect(
+                daoUtils.getDaoPlugins(dao, {
+                    type: PluginType.PROCESS,
+                    includeSubPlugins: true,
+                })
+            ).toEqual([plugins[0], plugins[2]]);
+            expect(
+                daoUtils.getDaoPlugins(dao, {
+                    type: PluginType.BODY,
+                    includeSubPlugins: true,
+                })
+            ).toEqual([plugins[1], plugins[3]]);
         });
 
         it('only returns the plugin with the specified interface type', () => {
             const plugins = [
                 generateDaoPlugin({ interfaceType: PluginInterfaceType.ADMIN }),
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                }),
                 generateDaoPlugin({ interfaceType: PluginInterfaceType.SPP }),
             ];
             const dao = generateDao({ plugins });
@@ -242,7 +328,9 @@ describe('dao utils', () => {
         it('returns an empty array when no plugin matches the specified interface type', () => {
             const plugins = [
                 generateDaoPlugin({ interfaceType: PluginInterfaceType.ADMIN }),
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                }),
             ];
             const dao = generateDao({ plugins });
             const interfaceType = PluginInterfaceType.UNKNOWN;
@@ -251,9 +339,18 @@ describe('dao utils', () => {
 
         it('returns all plugins with the specified interface type when multiple plugins share the same type', () => {
             const plugins = [
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG, address: '0x1' }),
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG, address: '0x2' }),
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.ADMIN, address: '0x3' }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                    address: '0x1',
+                }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                    address: '0x2',
+                }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.ADMIN,
+                    address: '0x3',
+                }),
             ];
             const dao = generateDao({ plugins });
             const interfaceType = PluginInterfaceType.MULTISIG;
@@ -262,8 +359,13 @@ describe('dao utils', () => {
 
         it('returns all plugins with full execute permissions when hasExecute is true', () => {
             const plugins = [
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG }),
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.TOKEN_VOTING, conditionAddress: '0x456' }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.TOKEN_VOTING,
+                    conditionAddress: '0x456',
+                }),
             ];
             const dao = generateDao({ plugins });
             expect(daoUtils.getDaoPlugins(dao, { hasExecute: true })).toEqual([plugins[0]]);
@@ -272,8 +374,14 @@ describe('dao utils', () => {
         it('returns all plugins when hasExecute is false', () => {
             const plugins = [
                 generateDaoPlugin({ interfaceType: PluginInterfaceType.ADMIN }),
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG, conditionAddress: '0x123' }),
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.TOKEN_VOTING, conditionAddress: '0x456' }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                    conditionAddress: '0x123',
+                }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.TOKEN_VOTING,
+                    conditionAddress: '0x456',
+                }),
             ];
             const dao = generateDao({ plugins });
             expect(daoUtils.getDaoPlugins(dao, { hasExecute: false })).toEqual(plugins);
@@ -282,7 +390,10 @@ describe('dao utils', () => {
         it('returns all plugins when hasExecute is not specified', () => {
             const plugins = [
                 generateDaoPlugin({ interfaceType: PluginInterfaceType.ADMIN }),
-                generateDaoPlugin({ interfaceType: PluginInterfaceType.MULTISIG, conditionAddress: '0x123' }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                    conditionAddress: '0x123',
+                }),
             ];
             const dao = generateDao({ plugins });
             expect(daoUtils.getDaoPlugins(dao)).toEqual(plugins);
@@ -325,7 +436,10 @@ describe('dao utils', () => {
 
     describe('hasAvailableOsxUpdate', () => {
         it('returns true when dao protocol version is lower than the version installed for new DAOs', () => {
-            const dao = generateDao({ version: '1.5.0', network: Network.ETHEREUM_MAINNET });
+            const dao = generateDao({
+                version: '1.5.0',
+                network: Network.ETHEREUM_MAINNET,
+            });
             const original = networkDefinitions[dao.network].protocolVersion;
             networkDefinitions[dao.network].protocolVersion.release = 1;
             networkDefinitions[dao.network].protocolVersion.build = 6;
@@ -334,7 +448,10 @@ describe('dao utils', () => {
         });
 
         it('returns false when dao protocol version is equal to the version installed for new DAOs', () => {
-            const dao = generateDao({ version: '2.1.0', network: Network.ETHEREUM_MAINNET });
+            const dao = generateDao({
+                version: '2.1.0',
+                network: Network.ETHEREUM_MAINNET,
+            });
             const original = networkDefinitions[dao.network].protocolVersion;
             networkDefinitions[dao.network].protocolVersion.release = 2;
             networkDefinitions[dao.network].protocolVersion.build = 1;
@@ -469,7 +586,9 @@ describe('dao utils', () => {
 
             const result = await daoUtils.resolveDaoId(params);
 
-            expect(getDaoByEnsSpy).toHaveBeenCalledWith({ urlParams: { network, ens: addressOrEns } });
+            expect(getDaoByEnsSpy).toHaveBeenCalledWith({
+                urlParams: { network, ens: addressOrEns },
+            });
             expect(result).toEqual(expectedDaoId);
         });
     });
@@ -477,7 +596,10 @@ describe('dao utils', () => {
     describe('parseDaoId', () => {
         it('correctly parses a daoId with network and address', () => {
             const daoId = 'ethereum-mainnet-0x12345';
-            const expectedResult = { network: Network.ETHEREUM_MAINNET, address: '0x12345' };
+            const expectedResult = {
+                network: Network.ETHEREUM_MAINNET,
+                address: '0x12345',
+            };
             expect(daoUtils.parseDaoId(daoId)).toEqual(expectedResult);
         });
     });
@@ -494,7 +616,10 @@ describe('dao utils', () => {
         it('returns the correct base URL for a DAO without ENS', () => {
             const daoAddress = '0x12345';
             const daoNetwork = Network.ETHEREUM_MAINNET;
-            const dao = generateDao({ address: daoAddress, network: daoNetwork });
+            const dao = generateDao({
+                address: daoAddress,
+                network: daoNetwork,
+            });
             const expectedUrl = `/dao/${daoNetwork}/${daoAddress}`;
             expect(daoUtils.getDaoUrl(dao)).toEqual(expectedUrl);
         });
@@ -502,7 +627,10 @@ describe('dao utils', () => {
         it('appends the provided path to the base URL', () => {
             const daoAddress = '0x12345';
             const daoNetwork = Network.ETHEREUM_MAINNET;
-            const dao = generateDao({ address: daoAddress, network: daoNetwork });
+            const dao = generateDao({
+                address: daoAddress,
+                network: daoNetwork,
+            });
             const path = 'some/path';
             const expectedUrl = `/dao/${daoNetwork}/${daoAddress}/${path}`;
             expect(daoUtils.getDaoUrl(dao, path)).toEqual(expectedUrl);

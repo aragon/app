@@ -1,8 +1,8 @@
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
 import * as useProposalListData from '@/modules/governance/hooks/useProposalListData';
 import * as useDao from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
 import type { IProposal } from '../../api/governanceService';
 import { generateProposal } from '../../testUtils';
 import { proposalUtils } from '../../utils/proposalUtils';
@@ -41,7 +41,9 @@ describe('<DaoProposalListDefault /> component', () => {
 
     const createTestComponent = (props?: Partial<IDaoProposalListDefaultProps>) => {
         const completeProps: IDaoProposalListDefaultProps = {
-            initialParams: { queryParams: { daoId: 'dao-id', pluginAddress: '0x123' } },
+            initialParams: {
+                queryParams: { daoId: 'dao-id', pluginAddress: '0x123' },
+            },
             plugin: generateDaoPlugin(),
             ...props,
         };
@@ -54,11 +56,10 @@ describe('<DaoProposalListDefault /> component', () => {
     };
 
     it('fetches and renders the token proposal list', () => {
-        const initialParams = { queryParams: { daoId: 'dao-test', pluginAddress: '0x123' } };
-        const proposals = [
-            generateProposal({ title: 'First', id: '1' }),
-            generateProposal({ title: 'Second', id: '2' }),
-        ];
+        const initialParams = {
+            queryParams: { daoId: 'dao-test', pluginAddress: '0x123' },
+        };
+        const proposals = [generateProposal({ title: 'First', id: '1' }), generateProposal({ title: 'Second', id: '2' })];
         useProposalListDataSpy.mockReturnValue({
             proposalList: proposals,
             onLoadMore: jest.fn(),

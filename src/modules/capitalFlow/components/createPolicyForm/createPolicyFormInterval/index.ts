@@ -1,1 +1,4 @@
-export { CreatePolicyFormInterval, type ICreatePolicyFormIntervalProps } from './createPolicyFormInterval';
+export {
+    CreatePolicyFormInterval,
+    type ICreatePolicyFormIntervalProps,
+} from './createPolicyFormInterval';

@@ -1,14 +1,14 @@
 'use client';
 
+import { Dialog, EmptyState, invariant } from '@aragon/gov-ui-kit';
+import { useRouter } from 'next/navigation';
+import { useCallback } from 'react';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { Dialog, EmptyState, invariant } from '@aragon/gov-ui-kit';
-import { useRouter } from 'next/navigation';
-import { useCallback } from 'react';
 
 export interface IGovernanceProcessRequiredDialogParams {
     /**
@@ -25,8 +25,7 @@ export interface IGovernanceProcessRequiredDialogParams {
     title: string;
 }
 
-export interface IGovernanceProcessRequiredDialogProps
-    extends IDialogComponentProps<IGovernanceProcessRequiredDialogParams> {}
+export interface IGovernanceProcessRequiredDialogProps extends IDialogComponentProps<IGovernanceProcessRequiredDialogParams> {}
 
 export const GovernanceProcessRequiredDialog: React.FC<IGovernanceProcessRequiredDialogProps> = (props) => {
     const { location } = props;
@@ -64,12 +63,12 @@ export const GovernanceProcessRequiredDialog: React.FC<IGovernanceProcessRequire
 
     return (
         <>
-            <Dialog.Header title={title} onClose={() => close()} />
+            <Dialog.Header onClose={() => close()} title={title} />
             <Dialog.Content className="flex flex-col items-center gap-4">
                 <EmptyState
-                    objectIllustration={{ object: 'USERS' }}
-                    heading={t('app.settings.governanceProcessRequiredDialog.feedback.title')}
                     description={t('app.settings.governanceProcessRequiredDialog.feedback.description')}
+                    heading={t('app.settings.governanceProcessRequiredDialog.feedback.title')}
+                    objectIllustration={{ object: 'USERS' }}
                     primaryButton={{
                         label: t('app.settings.governanceProcessRequiredDialog.feedback.action'),
                         href: canCreateProcess ? createProcessUrl : undefined,

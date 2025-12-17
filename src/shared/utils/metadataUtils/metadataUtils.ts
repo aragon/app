@@ -26,15 +26,15 @@ export interface IBuildMetadataParams {
 }
 
 class MetadataUtils {
-    public baseUrl = 'https://app.aragon.org';
+    baseUrl = 'https://app.aragon.org';
 
-    private defaultTitle = 'Governed on Aragon';
-    private defaultDescription =
+    private readonly defaultTitle = 'Governed on Aragon';
+    private readonly defaultDescription =
         'Explore the organizations using our modular governance stack to secure their onchain governance.';
-    private defaultImage = '/og-share-large.png';
-    private defaultSiteName = 'Aragon';
+    private readonly defaultImage = '/og-share-large.png';
+    private readonly defaultSiteName = 'Aragon';
 
-    private authors = [{ name: this.defaultSiteName, url: this.baseUrl }];
+    private readonly authors = [{ name: this.defaultSiteName, url: this.baseUrl }];
 
     getDefaultMetadata = (): Metadata => ({
         title: this.defaultTitle,
@@ -47,7 +47,14 @@ class MetadataUtils {
             title: this.defaultTitle,
             description: this.defaultDescription,
             siteName: this.defaultSiteName,
-            images: [{ url: this.defaultImage, width: 1200, height: 630, alt: 'Aragon Logo' }],
+            images: [
+                {
+                    url: this.defaultImage,
+                    width: 1200,
+                    height: 630,
+                    alt: 'Aragon Logo',
+                },
+            ],
         },
         twitter: {
             card: 'summary_large_image',
@@ -65,8 +72,20 @@ class MetadataUtils {
         return {
             title,
             description,
-            openGraph: { title, description, siteName, type, images: imageArray },
-            twitter: { card: 'summary', site: '@aragonproject', title, description, images: imageArray },
+            openGraph: {
+                title,
+                description,
+                siteName,
+                type,
+                images: imageArray,
+            },
+            twitter: {
+                card: 'summary',
+                site: '@aragonproject',
+                title,
+                description,
+                images: imageArray,
+            },
         };
     };
 }

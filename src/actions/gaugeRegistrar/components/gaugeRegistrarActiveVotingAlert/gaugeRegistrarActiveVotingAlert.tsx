@@ -1,5 +1,5 @@
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { AlertCard } from '@aragon/gov-ui-kit';
+import { useTranslations } from '@/shared/components/translationsProvider';
 
 export const GaugeRegistrarActiveVotingAlert = () => {
     const { t } = useTranslations();

@@ -1,6 +1,6 @@
+import { render, screen } from '@testing-library/react';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { testLogger } from '@/test/utils';
-import { render, screen } from '@testing-library/react';
 import { GlobalError, type IGlobalErrorProps } from './globalError';
 
 describe('<GlobalError /> component', () => {
@@ -17,7 +17,7 @@ describe('<GlobalError /> component', () => {
 
     const createTestComponent = (props?: Partial<IGlobalErrorProps>) => {
         const completeProps: IGlobalErrorProps = {
-            error: new Error(),
+            error: new Error('primary-test-error'),
             ...props,
         };
 
@@ -30,7 +30,7 @@ describe('<GlobalError /> component', () => {
     });
 
     it('logs the error to the monitoring service', () => {
-        const error = new Error('test-error');
+        const error = new Error('new-test-error');
         render(createTestComponent({ error }));
         expect(logErrorSpy).toHaveBeenCalledWith(error);
     });

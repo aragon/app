@@ -1,8 +1,8 @@
 'use client';
 
+import { useEffect } from 'react';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
-import { useEffect } from 'react';
 import { ErrorFeedback, type IErrorFeedbackProps } from '../../errorFeedback';
 import { useTranslations } from '../../translationsProvider';
 
@@ -41,11 +41,11 @@ export const PageError: React.FC<IPageErrorProps> = (props) => {
 
     return (
         <ErrorFeedback
-            titleKey={processedTitle}
             descriptionKey={processedDescription}
-            primaryButton={primaryButton}
-            illustration={isNotFoundError ? 'NOT_FOUND' : undefined}
             hideReportButton={isNotFoundError}
+            illustration={isNotFoundError ? 'NOT_FOUND' : undefined}
+            primaryButton={primaryButton}
+            titleKey={processedTitle}
         />
     );
 };

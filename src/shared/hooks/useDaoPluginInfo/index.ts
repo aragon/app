@@ -1,1 +1,4 @@
-export { useDaoPluginInfo, type IUseDaoPluginInfoParams } from './useDaoPluginInfo';
+export {
+    type IUseDaoPluginInfoParams,
+    useDaoPluginInfo,
+} from './useDaoPluginInfo';

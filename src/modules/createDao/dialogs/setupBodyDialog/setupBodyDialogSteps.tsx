@@ -1,6 +1,6 @@
+import { useWatch } from 'react-hook-form';
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { useWatch } from 'react-hook-form';
 import type { ISetupBodyForm } from './setupBodyDialogDefinitions';
 import { SetupBodyDialogGovernance } from './setupBodyDialogGovernance';
 import { SetupBodyDialogMembership } from './setupBodyDialogMembership';

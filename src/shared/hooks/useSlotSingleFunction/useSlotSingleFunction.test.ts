@@ -1,5 +1,5 @@
-import { type PluginFunction, pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { renderHook } from '@testing-library/react';
+import { type PluginFunction, pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { useSlotSingleFunction } from './useSlotSingleFunction';
 
 describe('useSlotSingleFunction hook', () => {
@@ -37,7 +37,12 @@ describe('useSlotSingleFunction hook', () => {
         getSlotFunctionSpy.mockReturnValue(undefined);
 
         const { result } = renderHook(() =>
-            useSlotSingleFunction({ slotId, pluginId, params, fallback: fallbackFunction }),
+            useSlotSingleFunction({
+                slotId,
+                pluginId,
+                params,
+                fallback: fallbackFunction,
+            })
         );
 
         expect(result.current).toEqual(fallbackFunction(params));

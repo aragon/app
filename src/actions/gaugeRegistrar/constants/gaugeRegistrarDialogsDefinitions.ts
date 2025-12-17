@@ -3,5 +3,7 @@ import { GaugeRegistrarSelectGaugeDialog } from '../dialogs/gaugeRegistrarSelect
 import { GaugeRegistrarDialogId } from './gaugeRegistrarDialogId';
 
 export const gaugeRegistrarDialogsDefinitions: Record<GaugeRegistrarDialogId, IDialogComponentDefinitions> = {
-    [GaugeRegistrarDialogId.SELECT_GAUGE]: { Component: GaugeRegistrarSelectGaugeDialog },
+    [GaugeRegistrarDialogId.SELECT_GAUGE]: {
+        Component: GaugeRegistrarSelectGaugeDialog,
+    },
 };

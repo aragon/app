@@ -1,13 +1,13 @@
+import { Dialog, invariant } from '@aragon/gov-ui-kit';
+import { useCallback, useEffect } from 'react';
+import { type Hex, keccak256, toBytes } from 'viem';
+import { useAccount, useReadContract } from 'wagmi';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
-import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { Dialog, invariant } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect } from 'react';
-import { keccak256, toBytes, type Hex } from 'viem';
-import { useAccount, useReadContract } from 'wagmi';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { daoAbi } from './daoAbi';
@@ -70,7 +70,9 @@ export const ExecuteCheckDialog: React.FC<IExecuteCheckDialogProps> = (props) =>
         functionName: 'hasPermission',
         args: [pluginAddress as Hex, address as Hex, executeProposalPermissionId, '0x'],
         chainId,
-        query: { enabled: address != null && hasExecuteProposalPermissionGuard },
+        query: {
+            enabled: address != null && hasExecuteProposalPermissionGuard,
+        },
     });
 
     const hasPermission = data === true;
@@ -100,19 +102,20 @@ export const ExecuteCheckDialog: React.FC<IExecuteCheckDialogProps> = (props) =>
         }
     }, [address, dao.address, error, pluginAddress]);
 
-    const title = isLoading
-        ? t('app.governance.executeCheckDialog.loading')
-        : t('app.governance.executeCheckDialog.title');
+    const title = isLoading ? t('app.governance.executeCheckDialog.loading') : t('app.governance.executeCheckDialog.title');
     const description = isLoading ? undefined : t('app.governance.executeCheckDialog.description');
 
     const footerAction = isLoading
         ? undefined
-        : { label: t('app.governance.executeCheckDialog.action'), onClick: handleDialogClose };
+        : {
+              label: t('app.governance.executeCheckDialog.action'),
+              onClick: handleDialogClose,
+          };
 
     return (
         <>
             <Dialog.Header title={title} />
-            <Dialog.Content description={description} className="pb-3" />
+            <Dialog.Content className="pb-3" description={description} />
             <Dialog.Footer primaryAction={footerAction} />
         </>
     );

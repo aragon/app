@@ -1,19 +1,15 @@
-import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
-import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
-import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
-import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
-import {
-    type ITransactionDialogStepMeta,
-    TransactionDialog,
-    TransactionDialogStep,
-} from '@/shared/components/transactionDialog';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useStepper } from '@/shared/hooks/useStepper';
-import { type IPluginUninstallSetupData, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useRef } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
+import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
+import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import { type ITransactionDialogStepMeta, TransactionDialog, TransactionDialogStep } from '@/shared/components/transactionDialog';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useStepper } from '@/shared/hooks/useStepper';
+import { type IPluginUninstallSetupData, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { IUninstallPluginAlertDialogParams } from '../uninstallPluginAlertDialog';
 import { preparePluginUninstallationDialogUtils } from './preparePluginUninstallationDialogUtils';
 
@@ -24,8 +20,7 @@ export interface IPreparePluginUninstallationDialogParams extends IUninstallPlug
     proposalPlugin: IDaoPlugin;
 }
 
-export interface IPreparePluginUninstallationDialogProps
-    extends IDialogComponentProps<IPreparePluginUninstallationDialogParams> {}
+export interface IPreparePluginUninstallationDialogProps extends IDialogComponentProps<IPreparePluginUninstallationDialogParams> {}
 
 export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstallationDialogProps> = (props) => {
     const { location } = props;
@@ -48,10 +43,7 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
     const handlePrepareTransaction = async () => {
         invariant(dao != null, 'PreparePluginUninstallationDialog: DAO not found.');
 
-        const transaction = await preparePluginUninstallationDialogUtils.buildPrepareUninstallationTransaction(
-            dao,
-            uninstallPlugin,
-        );
+        const transaction = await preparePluginUninstallationDialogUtils.buildPrepareUninstallationTransaction(dao, uninstallPlugin);
 
         return transaction;
     };
@@ -65,17 +57,28 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
         (setupData: IPluginUninstallSetupData) => {
             invariant(dao != null, 'PreparePluginUninstallationDialog: DAO not found.');
 
-            const proposalActions = pluginTransactionUtils.buildApplyPluginUninstallationAction({ dao, setupData });
+            const proposalActions = pluginTransactionUtils.buildApplyPluginUninstallationAction({
+                dao,
+                setupData,
+            });
 
             const proposalMetadata = preparePluginUninstallationDialogUtils.prepareApplyUninstallationProposalMetadata(
                 uninstallPlugin,
-                proposalPlugin,
+                proposalPlugin
             );
             const translationNamespace = 'app.settings.preparePluginUninstallationDialog.publishUninstallProposal';
 
-            const txInfo = { title: t(`${translationNamespace}.transactionInfoTitle`), current: 2, total: 2 };
+            const txInfo = {
+                title: t(`${translationNamespace}.transactionInfoTitle`),
+                current: 2,
+                total: 2,
+            };
             const params: IPublishProposalDialogParams = {
-                proposal: { ...proposalMetadata, resources: [], actions: proposalActions },
+                proposal: {
+                    ...proposalMetadata,
+                    resources: [],
+                    actions: proposalActions,
+                },
                 daoId,
                 plugin: proposalPlugin,
                 translationNamespace,
@@ -85,7 +88,7 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
             open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
             hasProposalDialogBeenOpened.current = true;
         },
-        [dao, daoId, open, proposalPlugin, t, uninstallPlugin],
+        [dao, daoId, open, proposalPlugin, t, uninstallPlugin]
     );
 
     useEffect(() => {
@@ -110,18 +113,18 @@ export const PreparePluginUninstallationDialog: React.FC<IPreparePluginUninstall
 
     return (
         <TransactionDialog
-            title={t('app.settings.preparePluginUninstallationDialog.title')}
             description={t('app.settings.preparePluginUninstallationDialog.description')}
-            submitLabel={t('app.settings.preparePluginUninstallationDialog.button.submit')}
+            network={dao?.network}
             onSuccess={handlePrepareUninstallationSuccess}
+            prepareTransaction={handlePrepareTransaction}
+            stepper={stepper}
+            submitLabel={t('app.settings.preparePluginUninstallationDialog.button.submit')}
+            title={t('app.settings.preparePluginUninstallationDialog.title')}
             transactionInfo={{
                 title: t('app.settings.preparePluginUninstallationDialog.transactionInfoTitle'),
                 current: 1,
                 total: 2,
             }}
-            stepper={stepper}
-            prepareTransaction={handlePrepareTransaction}
-            network={dao?.network}
         />
     );
 };

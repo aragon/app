@@ -1,1 +1,4 @@
-export { canCreateProposalOptions, useCanCreateProposal } from './useCanCreateProposal';
+export {
+    canCreateProposalOptions,
+    useCanCreateProposal,
+} from './useCanCreateProposal';

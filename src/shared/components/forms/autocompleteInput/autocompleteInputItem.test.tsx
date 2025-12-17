@@ -25,7 +25,12 @@ describe('<AutocompleteInputItem /> component', () => {
 
     it('renders the info on the right side when provided', () => {
         const info = 'Test info';
-        const item = { id: '1', name: 'option-with-desc', icon: IconType.SETTINGS, info };
+        const item = {
+            id: '1',
+            name: 'option-with-desc',
+            icon: IconType.SETTINGS,
+            info,
+        };
         render(createTestComponent({ item }));
         expect(screen.getByText(info)).toBeInTheDocument();
     });

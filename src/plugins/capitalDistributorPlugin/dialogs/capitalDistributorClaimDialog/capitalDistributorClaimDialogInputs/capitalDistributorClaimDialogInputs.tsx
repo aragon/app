@@ -1,11 +1,11 @@
+import { addressUtils, InputText } from '@aragon/gov-ui-kit';
+import { useAccount } from 'wagmi';
 import { useSanctionedAddresses } from '@/modules/explore/api/cmsService';
 import type { ICapitalDistributorPlugin } from '@/plugins/capitalDistributorPlugin/types';
 import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
-import { addressUtils, InputText } from '@aragon/gov-ui-kit';
-import { useAccount } from 'wagmi';
 import type { ICapitalDistributorClaimDialogForm } from '../capitalDistributorClaimDialogDefinitions';
 
 export interface ICapitalDistributorClaimDialogInputsProps {
@@ -32,13 +32,18 @@ export const CapitalDistributorClaimDialogInputs: React.FC<ICapitalDistributorCl
             return false;
         }
 
-        const isSanctionedAddress = sanctionedAddresses?.[network]?.some((address) =>
-            addressUtils.isAddressEqual(address, value),
-        );
+        const isSanctionedAddress = sanctionedAddresses?.[network]?.some((address) => addressUtils.isAddressEqual(address, value));
 
         if (plugin.enableOfacCheck && isSanctionedAddress) {
-            const context = { pluginAddress: plugin.address, userAddress: address, recipient: value };
-            monitoringUtils.logMessage('Capital Distributor: Claim error (OFAC)', { level: 'warning', context });
+            const context = {
+                pluginAddress: plugin.address,
+                userAddress: address,
+                recipient: value,
+            };
+            monitoringUtils.logMessage('Capital Distributor: Claim error (OFAC)', {
+                level: 'warning',
+                context,
+            });
 
             return 'app.plugins.capitalDistributor.capitalDistributorClaimDialog.inputs.recipient.error.ofac';
         }

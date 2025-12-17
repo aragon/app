@@ -1,1 +1,1 @@
-export { SetupStageDurationField, type ISetupStageDurationFieldProps } from './setupStageDurationField';
+export { type ISetupStageDurationFieldProps, SetupStageDurationField } from './setupStageDurationField';

@@ -1,5 +1,5 @@
-import { mockTranslations } from '@/test/utils';
 import { renderHook } from '@testing-library/react';
+import { mockTranslations } from '@/test/utils';
 import { adminSettingsUtils } from '../../utils/adminSettingsUtils';
 import { useAdminGovernanceSettings } from './useAdminGovernanceSettings';
 
@@ -16,7 +16,9 @@ describe('useAdminGovernanceSettings hook', () => {
 
         const { result } = renderHook(() => useAdminGovernanceSettings());
 
-        expect(parseSettingsSpy).toHaveBeenCalledWith({ t: mockTranslations.tMock });
+        expect(parseSettingsSpy).toHaveBeenCalledWith({
+            t: mockTranslations.tMock,
+        });
         expect(result.current).toEqual(mockParsedSettings);
     });
 });

@@ -1,8 +1,11 @@
+import { DaoDataListItem, invariant } from '@aragon/gov-ui-kit';
+import { useCallback, useMemo } from 'react';
+import { useAccount } from 'wagmi';
 import type { IPinResult } from '@/shared/api/ipfsService/domain';
 import { usePinFile, usePinJson } from '@/shared/api/ipfsService/mutations';
 import { TransactionType } from '@/shared/api/transactionService';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
-import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
+import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
     type IBuildTransactionDialogSuccessLinkHref,
     type ITransactionDialogActionParams,
@@ -14,9 +17,6 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { DaoDataListItem, invariant } from '@aragon/gov-ui-kit';
-import { useCallback, useMemo } from 'react';
-import { useAccount } from 'wagmi';
 import type { ICreateDaoFormData } from '../../components/createDaoForm';
 import { publishDaoDialogUtils } from './publishDaoDialogUtils';
 
@@ -61,7 +61,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
             const daoMetadata = publishDaoDialogUtils.prepareMetadata(values, avatarCid);
             pinJson({ body: daoMetadata }, params);
         },
-        [pinJson, values],
+        [pinJson, values]
     );
 
     const handlePinFileSuccess = useCallback(
@@ -69,7 +69,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
             const avatarCid = fileResult.IpfsHash;
             handlePinData(params, avatarCid);
         },
-        [handlePinData],
+        [handlePinData]
     );
 
     const handlePinFile = useCallback(
@@ -77,10 +77,13 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
             invariant(values.avatar?.file != null, 'PublishDaoDialog: avatar.file must be defined.');
             pinFile(
                 { body: values.avatar.file },
-                { onSuccess: (fileResult) => handlePinFileSuccess(params, fileResult), ...params },
+                {
+                    onSuccess: (fileResult) => handlePinFileSuccess(params, fileResult),
+                    ...params,
+                }
             );
         },
-        [pinFile, values, handlePinFileSuccess],
+        [pinFile, values, handlePinFileSuccess]
     );
 
     const pinningStatus = useMemo(() => {
@@ -90,9 +93,11 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
 
         if (pinFileStatus === 'error' || pinJsonStatus === 'error') {
             return 'error';
-        } else if (pinFileStatus === 'pending' || pinJsonStatus === 'pending') {
+        }
+        if (pinFileStatus === 'pending' || pinJsonStatus === 'pending') {
             return 'pending';
-        } else if (pinFileStatus === 'success' && pinJsonStatus === 'success') {
+        }
+        if (pinFileStatus === 'success' && pinJsonStatus === 'success') {
             return 'success';
         }
 
@@ -103,7 +108,11 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         invariant(pinJsonData != null, 'PublishDaoDialog: metadata not pinned for prepare transaction step.');
         const { IpfsHash: metadataCid } = pinJsonData;
 
-        return publishDaoDialogUtils.buildTransaction({ values: values, metadataCid, connectedAddress: address });
+        return publishDaoDialogUtils.buildTransaction({
+            values,
+            metadataCid,
+            connectedAddress: address,
+        });
     };
 
     const getDaoLink = ({ receipt }: IBuildTransactionDialogSuccessLinkHref) => {
@@ -131,27 +140,25 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
                 },
             },
         ],
-        [t, metadataPinAction, pinningStatus],
+        [t, metadataPinAction, pinningStatus]
     );
 
     return (
         <TransactionDialog<PublishDaoStep>
-            title={t('app.createDao.publishDaoDialog.title')}
-            description={t('app.createDao.publishDaoDialog.description')}
-            submitLabel={t('app.createDao.publishDaoDialog.button.submit')}
-            successLink={{ label: t('app.createDao.publishDaoDialog.button.success'), href: getDaoLink }}
-            stepper={stepper}
             customSteps={customSteps}
-            prepareTransaction={handlePrepareTransaction}
+            description={t('app.createDao.publishDaoDialog.description')}
             network={network}
+            prepareTransaction={handlePrepareTransaction}
+            stepper={stepper}
+            submitLabel={t('app.createDao.publishDaoDialog.button.submit')}
+            successLink={{
+                label: t('app.createDao.publishDaoDialog.button.success'),
+                href: getDaoLink,
+            }}
+            title={t('app.createDao.publishDaoDialog.title')}
             transactionType={TransactionType.PLUGIN_CREATE}
         >
-            <DaoDataListItem.Structure
-                name={name}
-                logoSrc={avatar?.url}
-                description={description}
-                network={networkName}
-            />
+            <DaoDataListItem.Structure description={description} logoSrc={avatar?.url} name={name} network={networkName} />
         </TransactionDialog>
     );
 };

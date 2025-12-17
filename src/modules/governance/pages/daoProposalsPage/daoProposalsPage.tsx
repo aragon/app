@@ -1,9 +1,9 @@
+import { QueryClient } from '@tanstack/react-query';
 import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
-import { PluginType, type IDaoPageParams } from '@/shared/types';
+import { type IDaoPageParams, PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
-import { QueryClient } from '@tanstack/react-query';
 import { proposalListOptions } from '../../api/governanceService';
 import { DaoProposalsPageClient } from './daoProposalsPageClient';
 
@@ -35,7 +35,9 @@ export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (props) 
 
     // Set pluginAddress parameter to undefined when DAO has more than one plugin as the UI will display an "All proposals"
     // tab that is selected by default
-    const processPlugins = daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS })!;
+    const processPlugins = daoUtils.getDaoPlugins(dao, {
+        type: PluginType.PROCESS,
+    })!;
     const pluginAddress = processPlugins.length > 1 ? undefined : processPlugins[0].address;
 
     const proposalListQueryParams = {

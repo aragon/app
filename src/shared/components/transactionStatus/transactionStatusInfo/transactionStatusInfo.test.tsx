@@ -1,6 +1,6 @@
-import { testLogger } from '@/test/utils';
 import { render, screen } from '@testing-library/react';
-import { TransactionStatusInfo, type ITransactionStatusInfoProps } from './transactionStatusInfo';
+import { testLogger } from '@/test/utils';
+import { type ITransactionStatusInfoProps, TransactionStatusInfo } from './transactionStatusInfo';
 
 describe('<TransactionStatusInfo /> component', () => {
     const createTestComponent = (props?: Partial<ITransactionStatusInfoProps>) => {

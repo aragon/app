@@ -1,5 +1,7 @@
 'use client';
 
+import { IconType } from '@aragon/gov-ui-kit';
+import { useRouter } from 'next/navigation';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
@@ -15,8 +17,6 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
-import { IconType } from '@aragon/gov-ui-kit';
-import { useRouter } from 'next/navigation';
 import { CapitalFlowDialogId } from '../../../capitalFlow/constants/capitalFlowDialogId';
 import { CreateDaoDialogId } from '../../../createDao/constants/createDaoDialogId';
 import type { ICreateProcessDetailsDialogParams } from '../../../createDao/dialogs/createProcessDetailsDialog';
@@ -50,8 +50,13 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
 
     const { data: policies = [] } = useDaoPolicies(
-        { urlParams: { network: dao?.network as Network, daoAddress: dao?.address as string } },
-        { enabled: isSubDaoEnabled && dao != null },
+        {
+            urlParams: {
+                network: dao?.network as Network,
+                daoAddress: dao?.address as string,
+            },
+        },
+        { enabled: isSubDaoEnabled && dao != null }
     );
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
@@ -95,7 +100,9 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     };
 
     const handleAddProcess = () => {
-        const params: ICreateProcessDetailsDialogParams = { onActionClick: handleNewProcessCreationConfirm };
+        const params: ICreateProcessDetailsDialogParams = {
+            onActionClick: handleNewProcessCreationConfirm,
+        };
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
 
@@ -140,7 +147,9 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     };
 
     const handleAddPolicy = () => {
-        const params: ICreateProcessDetailsDialogParams = { onActionClick: handleNewPolicyCreationConfirm };
+        const params: ICreateProcessDetailsDialogParams = {
+            onActionClick: handleNewPolicyCreationConfirm,
+        };
         open(CapitalFlowDialogId.CREATE_POLICY_DETAILS, { params });
     };
 
@@ -159,37 +168,37 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
         <>
             <Page.Main title={t('app.settings.daoSettingsPage.main.title')}>
                 <PluginFilterComponent
-                    plugins={processPlugins}
-                    slotId={SettingsSlotId.SETTINGS_PANEL}
                     daoId={daoId}
+                    plugins={processPlugins}
                     searchParamName="settingsPanel"
+                    slotId={SettingsSlotId.SETTINGS_PANEL}
                 />
                 <Page.MainSection title={t('app.settings.daoSettingsPage.main.settingsInfoTitle')}>
-                    {isSubDaoEnabled ? <DaoHierarchy dao={dao} currentDaoId={daoId} /> : <DaoSettingsInfo dao={dao} />}
+                    {isSubDaoEnabled ? <DaoHierarchy currentDaoId={daoId} dao={dao} /> : <DaoSettingsInfo dao={dao} />}
                 </Page.MainSection>
                 {hasSupportedPlugins && (
                     <Page.MainSection
-                        id="governance"
+                        action={supportsAddProcess ? addProcessAction : undefined}
                         className="gap-3"
+                        id="governance"
                         inset={false}
                         title={t('app.settings.daoSettingsPage.main.governanceInfoTitle')}
-                        action={supportsAddProcess ? addProcessAction : undefined}
                     >
                         {processPlugins.map((process) => (
                             <ProcessDataListItem
+                                href={daoUtils.getDaoUrl(dao, `/settings/${process.meta.slug}`)}
                                 key={process.uniqueId}
                                 process={process.meta}
-                                href={daoUtils.getDaoUrl(dao, `/settings/${process.meta.slug}`)}
                             />
                         ))}
                     </Page.MainSection>
                 )}
                 {isSubDaoEnabled && (
                     <Page.MainSection
+                        action={addPolicyAction}
                         className="gap-3"
                         inset={false}
                         title={t('app.settings.daoSettingsPage.main.automationInfoTitle')}
-                        action={addPolicyAction}
                     >
                         {policies.map((policy) => (
                             <PolicyDataListItem key={policy.address} policy={policy} />

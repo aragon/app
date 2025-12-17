@@ -13,13 +13,13 @@ describe('pluginRegistry utils', () => {
             const firstPlugin = generatePlugin({ id: 'plugin-1' });
             const secondPlugin = generatePlugin({ id: 'plugin-2' });
             pluginRegistryUtils.registerPlugin(firstPlugin).registerPlugin(secondPlugin);
-            expect(pluginRegistryUtils['pluginRegistry'].plugins).toEqual([firstPlugin, secondPlugin]);
+            expect(pluginRegistryUtils.getPlugins()).toEqual([firstPlugin, secondPlugin]);
         });
 
         it('does not register the same plugin twice', () => {
             const plugin = generatePlugin({ id: 'plugin-1' });
             pluginRegistryUtils.registerPlugin(plugin).registerPlugin(plugin);
-            expect(pluginRegistryUtils['pluginRegistry'].plugins).toEqual([plugin]);
+            expect(pluginRegistryUtils.getPlugins()).toEqual([plugin]);
         });
 
         it('returns the class instance', () => {
@@ -53,15 +53,26 @@ describe('pluginRegistry utils', () => {
 
     describe('registerSlotComponent', () => {
         it('registers the specified slot component', () => {
-            const params = { slotId: 'slot-id', pluginId: 'plugin-id', component: () => null };
+            const params = {
+                slotId: 'slot-id',
+                pluginId: 'plugin-id',
+                component: () => null,
+            };
             pluginRegistryUtils.registerSlotComponent(params);
-            expect(pluginRegistryUtils.getSlotComponent({ slotId: params.slotId, pluginId: params.pluginId })).toEqual(
-                params.component,
-            );
+            expect(
+                pluginRegistryUtils.getSlotComponent({
+                    slotId: params.slotId,
+                    pluginId: params.pluginId,
+                })
+            ).toEqual(params.component);
         });
 
         it('returns the class instance', () => {
-            const params = { slotId: 's', pluginId: 'p', component: () => null };
+            const params = {
+                slotId: 's',
+                pluginId: 'p',
+                component: () => null,
+            };
             const result = pluginRegistryUtils.registerSlotComponent(params);
             expect(result).toEqual(pluginRegistryUtils);
         });
@@ -73,8 +84,16 @@ describe('pluginRegistry utils', () => {
             const secondComponent = () => 'second';
 
             pluginRegistryUtils
-                .registerSlotComponent({ slotId, pluginId, component: firstComponent })
-                .registerSlotComponent({ slotId, pluginId, component: secondComponent });
+                .registerSlotComponent({
+                    slotId,
+                    pluginId,
+                    component: firstComponent,
+                })
+                .registerSlotComponent({
+                    slotId,
+                    pluginId,
+                    component: secondComponent,
+                });
 
             expect(pluginRegistryUtils.getSlotComponent({ slotId, pluginId })).toEqual(secondComponent);
         });
@@ -85,8 +104,17 @@ describe('pluginRegistry utils', () => {
             const slotId = 'slot-id';
             const registeredPluginId = 'multisig';
             const unregisteredPluginId = 'tokenVoting';
-            pluginRegistryUtils.registerSlotComponent({ slotId, pluginId: registeredPluginId, component: () => null });
-            expect(pluginRegistryUtils.getSlotComponent({ slotId, pluginId: unregisteredPluginId })).toBeUndefined();
+            pluginRegistryUtils.registerSlotComponent({
+                slotId,
+                pluginId: registeredPluginId,
+                component: () => null,
+            });
+            expect(
+                pluginRegistryUtils.getSlotComponent({
+                    slotId,
+                    pluginId: unregisteredPluginId,
+                })
+            ).toBeUndefined();
         });
 
         it('returns undefined when no component is registered for the given slot id', () => {
@@ -95,22 +123,32 @@ describe('pluginRegistry utils', () => {
             const pluginId = 'token-voting';
             pluginRegistryUtils.registerSlotComponent({
                 slotId: registeredSlotId,
-                pluginId: pluginId,
+                pluginId,
                 component: () => null,
             });
             expect(
-                pluginRegistryUtils.getSlotComponent({ slotId: unregisteredSlotId, pluginId: pluginId }),
+                pluginRegistryUtils.getSlotComponent({
+                    slotId: unregisteredSlotId,
+                    pluginId,
+                })
             ).toBeUndefined();
         });
     });
 
     describe('registerSlotFunction', () => {
         it('registers the specified slot function', () => {
-            const params = { slotId: 'slot-id', pluginId: 'plugin-id', function: () => null };
+            const params = {
+                slotId: 'slot-id',
+                pluginId: 'plugin-id',
+                function: () => null,
+            };
             pluginRegistryUtils.registerSlotFunction(params);
-            expect(pluginRegistryUtils.getSlotFunction({ slotId: params.slotId, pluginId: params.pluginId })).toEqual(
-                params.function,
-            );
+            expect(
+                pluginRegistryUtils.getSlotFunction({
+                    slotId: params.slotId,
+                    pluginId: params.pluginId,
+                })
+            ).toEqual(params.function);
         });
 
         it('returns the class instance', () => {
@@ -126,8 +164,16 @@ describe('pluginRegistry utils', () => {
             const secondFunction = () => 'second';
 
             pluginRegistryUtils
-                .registerSlotFunction({ slotId, pluginId, function: firstFunction })
-                .registerSlotFunction({ slotId, pluginId, function: secondFunction });
+                .registerSlotFunction({
+                    slotId,
+                    pluginId,
+                    function: firstFunction,
+                })
+                .registerSlotFunction({
+                    slotId,
+                    pluginId,
+                    function: secondFunction,
+                });
 
             expect(pluginRegistryUtils.getSlotFunction({ slotId, pluginId })).toEqual(secondFunction);
         });
@@ -136,14 +182,26 @@ describe('pluginRegistry utils', () => {
     describe('getSlotFunctions', () => {
         it('returns all the functions registered for the giver slot', () => {
             const slotId = 'test-slot-id';
-            pluginRegistryUtils.registerSlotFunction({ slotId, pluginId: '1', function: () => '1' });
-            pluginRegistryUtils.registerSlotFunction({ slotId, pluginId: '2', function: () => '2' });
+            pluginRegistryUtils.registerSlotFunction({
+                slotId,
+                pluginId: '1',
+                function: () => '1',
+            });
+            pluginRegistryUtils.registerSlotFunction({
+                slotId,
+                pluginId: '2',
+                function: () => '2',
+            });
             expect(pluginRegistryUtils.getSlotFunctions(slotId)).toHaveLength(2);
         });
 
         it('returns empty array when no functions are registered for the given slot id', () => {
             const slotId = 'test-slot-id';
-            pluginRegistryUtils.registerSlotFunction({ slotId: 'another-slot', pluginId: '1', function: () => null });
+            pluginRegistryUtils.registerSlotFunction({
+                slotId: 'another-slot',
+                pluginId: '1',
+                function: () => null,
+            });
             expect(pluginRegistryUtils.getSlotFunctions(slotId)).toHaveLength(0);
         });
     });
@@ -153,8 +211,17 @@ describe('pluginRegistry utils', () => {
             const slotId = 'slot-id';
             const registeredPluginId = 'multisig';
             const unregisteredPluginId = 'tokenVoting';
-            pluginRegistryUtils.registerSlotFunction({ slotId, pluginId: registeredPluginId, function: () => null });
-            expect(pluginRegistryUtils.getSlotFunction({ slotId, pluginId: unregisteredPluginId })).toBeUndefined();
+            pluginRegistryUtils.registerSlotFunction({
+                slotId,
+                pluginId: registeredPluginId,
+                function: () => null,
+            });
+            expect(
+                pluginRegistryUtils.getSlotFunction({
+                    slotId,
+                    pluginId: unregisteredPluginId,
+                })
+            ).toBeUndefined();
         });
 
         it('returns undefined when no function is registered for the given slot id', () => {
@@ -163,11 +230,14 @@ describe('pluginRegistry utils', () => {
             const pluginId = 'token-voting';
             pluginRegistryUtils.registerSlotFunction({
                 slotId: registeredSlotId,
-                pluginId: pluginId,
+                pluginId,
                 function: () => null,
             });
             expect(
-                pluginRegistryUtils.getSlotFunction({ slotId: unregisteredSlotId, pluginId: pluginId }),
+                pluginRegistryUtils.getSlotFunction({
+                    slotId: unregisteredSlotId,
+                    pluginId,
+                })
             ).toBeUndefined();
         });
     });

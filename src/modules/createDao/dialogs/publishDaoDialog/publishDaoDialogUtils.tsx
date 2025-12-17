@@ -1,15 +1,8 @@
+import { encodeAbiParameters, encodeFunctionData, type Hex, parseEventLogs, type TransactionReceipt, zeroAddress } from 'viem';
 import { adminPlugin } from '@/plugins/adminPlugin/constants/adminPlugin';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { transactionUtils, type ITransactionRequest } from '@/shared/utils/transactionUtils';
-import {
-    encodeAbiParameters,
-    encodeFunctionData,
-    parseEventLogs,
-    zeroAddress,
-    type Hex,
-    type TransactionReceipt,
-} from 'viem';
+import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
 import type { ICreateDaoFormData } from '../../components/createDaoForm';
 import { adminPluginSetupAbi } from './adminPluginSetupAbi';
 import { daoFactoryAbi } from './daoFactoryAbi';
@@ -59,7 +52,11 @@ class PublishDaoDialogUtils {
             args: [daoSettings, pluginSettings],
         });
 
-        const transaction = { to: daoFactory, data: transactionData, value: BigInt(0) };
+        const transaction = {
+            to: daoFactory,
+            data: transactionData,
+            value: BigInt(0),
+        };
 
         return Promise.resolve(transaction);
     };
@@ -77,7 +74,7 @@ class PublishDaoDialogUtils {
         return daoAddress;
     };
 
-    private buildDaoSettingsParams = (metadataCid: string, ens?: string) => {
+    private readonly buildDaoSettingsParams = (metadataCid: string, ens?: string) => {
         const metadata = transactionUtils.stringToMetadataHex(metadataCid);
 
         const createDaoParams = {
@@ -90,7 +87,7 @@ class PublishDaoDialogUtils {
         return createDaoParams;
     };
 
-    private buildPluginSettingsParams = (adminPluginRepo: Hex, connectedAddress: string) => {
+    private readonly buildPluginSettingsParams = (adminPluginRepo: Hex, connectedAddress: string) => {
         const pluginSettingsData = encodeAbiParameters(adminPluginSetupAbi, [
             connectedAddress as Hex,
             { target: zeroAddress, operation: 0 },

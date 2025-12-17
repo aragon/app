@@ -1,10 +1,7 @@
+import { encodeAbiParameters, encodeFunctionData, type Hex, parseUnits, zeroHash } from 'viem';
 import type { IBuildPreparePluginInstallDataParams } from '@/modules/createDao/types';
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
-import type {
-    IBuildCreateProposalDataParams,
-    IBuildVoteDataOption,
-    IBuildVoteDataParams,
-} from '@/modules/governance/types';
+import type { IBuildCreateProposalDataParams, IBuildVoteDataOption, IBuildVoteDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import type { IGetUninstallHelpersParams } from '@/modules/settings/types';
 import type { ITokenSetupGovernanceForm } from '@/plugins/tokenPlugin/components/tokenSetupGovernance';
@@ -12,11 +9,7 @@ import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
-import { encodeAbiParameters, encodeFunctionData, parseUnits, zeroHash, type Hex } from 'viem';
-import type {
-    ILockToVoteSetupMembershipForm,
-    ILockToVoteSetupMembershipMember,
-} from '../../components/lockToVoteSetupMembership';
+import type { ILockToVoteSetupMembershipForm, ILockToVoteSetupMembershipMember } from '../../components/lockToVoteSetupMembership';
 import { lockToVotePlugin } from '../../constants/lockToVotePlugin';
 import type { ILockToVotePlugin } from '../../types';
 import { lockManagerAbi, lockToVoteAbi } from './lockToVoteAbi';
@@ -40,7 +33,7 @@ export interface IPrepareTokenInstallDataParams
     > {}
 
 class LockToVoteTransactionUtils {
-    private anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';
+    private readonly anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';
 
     buildPrepareInstallData = (params: IPrepareTokenInstallDataParams) => {
         const { body, metadata, dao, stageVotingPeriod } = params;
@@ -66,15 +59,13 @@ class LockToVoteTransactionUtils {
             repositoryAddress,
             lockToVotePlugin.installVersion,
             pluginSettingsData,
-            dao.address as Hex,
+            dao.address as Hex
         );
 
         return transactionData;
     };
 
-    buildCreateProposalData = (
-        params: IBuildCreateProposalDataParams<ICreateLockToVoteProposalFormData, ITokenPluginSettings>,
-    ): Hex => {
+    buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateLockToVoteProposalFormData, ITokenPluginSettings>): Hex => {
         const { metadata, actions, proposal } = params;
 
         const startDate = createProposalUtils.parseStartDate(proposal);
@@ -106,7 +97,7 @@ class LockToVoteTransactionUtils {
         return [proposalCreationConditionAddress, lockManagerAddress, this.anyAddress, this.anyAddress] as Hex[];
     };
 
-    private buildInstallDataVotingSettings = (params: IPrepareTokenInstallDataParams) => {
+    private readonly buildInstallDataVotingSettings = (params: IPrepareTokenInstallDataParams) => {
         const { body, stageVotingPeriod } = params;
 
         const { votingMode, supportThreshold, minParticipation, minProposerVotingPower, minDuration } = body.governance;
@@ -129,7 +120,7 @@ class LockToVoteTransactionUtils {
         return votingSettings;
     };
 
-    private buildLockAndVoteData = (params: IBuildVoteDataParams<number, ILockToVoteOption>): Hex => {
+    private readonly buildLockAndVoteData = (params: IBuildVoteDataParams<number, ILockToVoteOption>): Hex => {
         const { proposalIndex, vote } = params;
 
         const data = encodeFunctionData({
@@ -141,7 +132,7 @@ class LockToVoteTransactionUtils {
         return data;
     };
 
-    private buildVoteDataDefault = (params: IBuildVoteDataParams<number, ILockToVoteOption>): Hex => {
+    private readonly buildVoteDataDefault = (params: IBuildVoteDataParams<number, ILockToVoteOption>): Hex => {
         const { proposalIndex, vote } = params;
 
         const data = encodeFunctionData({

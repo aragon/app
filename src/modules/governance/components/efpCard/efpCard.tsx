@@ -34,16 +34,16 @@ export const EfpCard: React.FC<IEfpCardProps> = (props) => {
             </DefinitionList.Container>
             <div className="flex flex-col gap-3">
                 <Button
-                    href={efpProfileUrl}
-                    target="_blank"
                     className="w-full"
-                    variant="tertiary"
+                    href={efpProfileUrl}
                     iconRight={IconType.LINK_EXTERNAL}
                     size="md"
+                    target="_blank"
+                    variant="tertiary"
                 >
                     {t('app.governance.efpCard.cta')}
                 </Button>
-                <p className="text-center text-sm text-neutral-500">{t('app.governance.efpCard.info')}</p>
+                <p className="text-center text-neutral-500 text-sm">{t('app.governance.efpCard.info')}</p>
             </div>
         </div>
     );

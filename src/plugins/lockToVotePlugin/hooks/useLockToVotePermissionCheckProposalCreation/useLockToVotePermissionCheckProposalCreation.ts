@@ -1,18 +1,17 @@
 'use client';
 
+import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
+import { formatUnits, type Hex } from 'viem';
+import { useAccount, useReadContract } from 'wagmi';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
-import { formatUnits, type Hex } from 'viem';
-import { useAccount, useReadContract } from 'wagmi';
 import type { ILockToVotePlugin } from '../../types';
 import { useLockToVoteData } from '../useLockToVoteData';
 
-export interface ILockToVotePermissionCheckProposalCreationParams
-    extends IPermissionCheckGuardParams<ILockToVotePlugin> {}
+export interface ILockToVotePermissionCheckProposalCreationParams extends IPermissionCheckGuardParams<ILockToVotePlugin> {}
 
 const proposalCreationConditionAbi = [
     {
@@ -25,7 +24,7 @@ const proposalCreationConditionAbi = [
 ] as const;
 
 export const useLockToVotePermissionCheckProposalCreation = (
-    params: ILockToVotePermissionCheckProposalCreationParams,
+    params: ILockToVotePermissionCheckProposalCreationParams
 ): IPermissionCheckGuardResult => {
     const { plugin, daoId, useConnectedUserInfo = true } = params;
     const { address } = useAccount();

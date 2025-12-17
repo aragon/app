@@ -1,7 +1,7 @@
-import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
-import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import type { ProposalStatus } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
+import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
+import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import { type ITokenProposalOptionVotes, VoteOption } from '../../../tokenPlugin/types';
 import type { ILockToVoteProposal } from '../../types';
 
@@ -59,8 +59,7 @@ class LockToVoteProposalUtils {
         }
 
         const totalVotes = this.getTotalVotes(proposal);
-        const minVotingPower =
-            (parsedTotalSupply * parsedMinParticipation) / BigInt(tokenSettingsUtils.percentageToRatio(100));
+        const minVotingPower = (parsedTotalSupply * parsedMinParticipation) / BigInt(tokenSettingsUtils.percentageToRatio(100));
 
         return totalVotes >= minVotingPower;
     };
@@ -75,10 +74,7 @@ class LockToVoteProposalUtils {
         // Keeps mental model more closely aligned with token plugin implementation
         const noVotesComparator = noVotesCurrent;
 
-        return (
-            (tokenSettingsUtils.ratioBase - BigInt(supportThreshold)) * yesVotes >
-            BigInt(supportThreshold) * noVotesComparator
-        );
+        return (tokenSettingsUtils.ratioBase - BigInt(supportThreshold)) * yesVotes > BigInt(supportThreshold) * noVotesComparator;
     };
 
     getTotalVotes = (proposal: ILockToVoteProposal, excludeAbstain?: boolean): bigint => {

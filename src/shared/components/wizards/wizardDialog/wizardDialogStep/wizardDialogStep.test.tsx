@@ -3,7 +3,9 @@ import type { IWizardStepProps } from '../../wizard';
 import { type IWizardDialogStepProps, WizardDialogStep } from './wizardDialogStep';
 
 jest.mock('../../wizard', () => ({
-    Wizard: { Step: (props: IWizardStepProps) => <div data-testid="wizard-step">{props.children}</div> },
+    Wizard: {
+        Step: (props: IWizardStepProps) => <div data-testid="wizard-step">{props.children}</div>,
+    },
 }));
 
 describe('<WizardDialogStep /> component', () => {

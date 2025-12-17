@@ -1,9 +1,9 @@
+import { useCallback, useRef } from 'react';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { useCallback, useRef } from 'react';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { IPermissionCheckDialogParams } from '../../dialogs/permissionCheckDialog';
 
@@ -44,7 +44,7 @@ export const usePermissionCheckGuard = (params: IUsePermissionCheckGuardParams) 
             };
             open(GovernanceDialogId.PERMISSION_CHECK, { params: dialogParams });
         },
-        [slotId, onError, onSuccess, permissionNamespace, daoId, proposal, plugin, open],
+        [slotId, onError, onSuccess, permissionNamespace, daoId, proposal, plugin, open]
     );
 
     const { check: checkWalletConnected, result: isConnected } = useConnectedWalletGuard({
@@ -65,7 +65,7 @@ export const usePermissionCheckGuard = (params: IUsePermissionCheckGuardParams) 
                 });
             }
         },
-        [isConnected, params.onError, checkUserPermission, checkWalletConnected],
+        [isConnected, params.onError, checkUserPermission, checkWalletConnected]
     );
 
     return { check: checkFunction, result: isConnected && hasPermission };

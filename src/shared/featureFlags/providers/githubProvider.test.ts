@@ -16,9 +16,7 @@ jest.mock('../utils/cookieOverrides', () => ({
 
 describe('GithubCmsFeatureFlagsProvider', () => {
     const mockedCmsService = cmsService as jest.Mocked<typeof cmsService>;
-    const parseOverridesMock = parseFeatureFlagOverridesFromCookie as jest.MockedFunction<
-        typeof parseFeatureFlagOverridesFromCookie
-    >;
+    const parseOverridesMock = parseFeatureFlagOverridesFromCookie as jest.MockedFunction<typeof parseFeatureFlagOverridesFromCookie>;
 
     afterEach(() => {
         jest.resetAllMocks();

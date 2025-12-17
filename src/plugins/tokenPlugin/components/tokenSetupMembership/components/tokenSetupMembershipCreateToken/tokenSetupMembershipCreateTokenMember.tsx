@@ -1,16 +1,9 @@
+import { AddressInput, Button, Dropdown, type IAddressInputResolvedValue, IconType, InputNumber } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
+import { useCallback, useState } from 'react';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { addressesListUtils } from '@/shared/utils/addressesListUtils';
-import {
-    AddressInput,
-    Button,
-    Dropdown,
-    type IAddressInputResolvedValue,
-    IconType,
-    InputNumber,
-} from '@aragon/gov-ui-kit';
-import classNames from 'classnames';
-import { useCallback, useState } from 'react';
 import type { ITokenSetupMembershipForm, ITokenSetupMembershipMember } from '../../tokenSetupMembership.api';
 
 export interface ITokenSetupMembershipCreateTokenMemberProps {
@@ -62,26 +55,27 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
 
     const tokenAmountField = useFormField<ITokenSetupMembershipMember, 'tokenAmount'>('tokenAmount', {
         label: t('app.plugins.token.tokenSetupMembership.createToken.member.tokens.label'),
-        rules: { required: true, validate: (value) => Number(value) > 0, min: 0 },
+        rules: {
+            required: true,
+            validate: (value) => Number(value) > 0,
+            min: 0,
+        },
         defaultValue: 1,
         fieldPrefix: formPrefix,
     });
 
-    const handleAddressAccept = useCallback(
-        (value?: IAddressInputResolvedValue) => onMemberChange(value?.address ?? ''),
-        [onMemberChange],
-    );
+    const handleAddressAccept = useCallback((value?: IAddressInputResolvedValue) => onMemberChange(value?.address ?? ''), [onMemberChange]);
 
     return (
         <div className="flex items-end gap-x-4 rounded-xl border border-neutral-100 p-6">
             <div className="flex w-full flex-col gap-4 md:flex-row">
                 <AddressInput
+                    chainId={chainId}
+                    className="basis-[65%]"
+                    onAccept={handleAddressAccept}
+                    onChange={setMemberInput}
                     placeholder={t('app.plugins.token.tokenSetupMembership.createToken.member.address.placeholder')}
                     value={memberInput}
-                    onChange={setMemberInput}
-                    onAccept={handleAddressAccept}
-                    className="basis-[65%]"
-                    chainId={chainId}
                     {...memberField}
                 />
                 <InputNumber className="basis-1/3" min={0} {...tokenAmountField} />
@@ -90,14 +84,12 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
                 <Dropdown.Container
                     customTrigger={
                         <Button
-                            variant="tertiary"
-                            iconLeft={IconType.DOTS_VERTICAL}
                             className={classNames(
                                 'shrink-0',
-                                memberField.alert?.message || tokenAmountField.alert?.message
-                                    ? 'md:self-center'
-                                    : 'md:self-end',
+                                memberField.alert?.message || tokenAmountField.alert?.message ? 'md:self-center' : 'md:self-end'
                             )}
+                            iconLeft={IconType.DOTS_VERTICAL}
+                            variant="tertiary"
                         />
                     }
                 >

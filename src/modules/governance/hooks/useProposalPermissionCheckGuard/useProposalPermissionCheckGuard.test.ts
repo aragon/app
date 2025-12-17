@@ -1,15 +1,10 @@
-import * as daoService from '@/shared/api/daoService';
-import { Network } from '@/shared/api/daoService';
-import * as UseDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import {
-    generateDao,
-    generateDaoPlugin,
-    generateFilterComponentPlugin,
-    generateReactQueryResultSuccess,
-} from '@/shared/testUtils';
 import { renderHook } from '@testing-library/react';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import * as NextNavigation from 'next/navigation';
+import * as daoService from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
+import * as UseDaoPlugins from '@/shared/hooks/useDaoPlugins';
+import { generateDao, generateDaoPlugin, generateFilterComponentPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import * as UsePermissionCheckGuard from '../usePermissionCheckGuard';
 import { useProposalPermissionCheckGuard } from './useProposalPermissionCheckGuard';
 
@@ -50,7 +45,12 @@ describe('useProposalPermissionCheckGuard hook', () => {
             check: checkCreateProposalGuard,
         });
 
-        renderHook(() => useProposalPermissionCheckGuard({ daoId: 'dao-id', pluginAddress: 'plugin-address' }));
+        renderHook(() =>
+            useProposalPermissionCheckGuard({
+                daoId: 'dao-id',
+                pluginAddress: 'plugin-address',
+            })
+        );
         expect(checkCreateProposalGuard).not.toHaveBeenCalled();
     });
 
@@ -59,18 +59,29 @@ describe('useProposalPermissionCheckGuard hook', () => {
         const daoNetwork = Network.ETHEREUM_MAINNET;
         const daoAddress = '0x12345';
         useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }),
+            generateReactQueryResultSuccess({
+                data: generateDao({ address: daoAddress, network: daoNetwork }),
+            })
         );
         const pluginAddress = 'plugin-address';
         const redirectTab = 'settings';
         const checkCreateProposalGuard = jest.fn();
 
         useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin({ meta: generateDaoPlugin() })]);
-        usePermissionCheckGuardSpy.mockReturnValue({ result: false, check: checkCreateProposalGuard });
+        usePermissionCheckGuardSpy.mockReturnValue({
+            result: false,
+            check: checkCreateProposalGuard,
+        });
         const mockRouter = { push: jest.fn() };
         useRouterSpy.mockReturnValue(mockRouter as unknown as AppRouterInstance);
 
-        renderHook(() => useProposalPermissionCheckGuard({ daoId, pluginAddress, redirectTab }));
+        renderHook(() =>
+            useProposalPermissionCheckGuard({
+                daoId,
+                pluginAddress,
+                redirectTab,
+            })
+        );
 
         // simulate failed permission check
         usePermissionCheckGuardSpy.mock.calls[0][0].onError!();

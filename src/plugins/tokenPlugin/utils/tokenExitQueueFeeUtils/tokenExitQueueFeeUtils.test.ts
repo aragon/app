@@ -58,11 +58,36 @@ describe('TokenExitQueueFeeUtils', () => {
         };
 
         it('returns same fee at any time', () => {
-            expect(tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 0, ticket: fixedTicket })).toBe(50);
-            expect(tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 100, ticket: fixedTicket })).toBe(50);
-            expect(tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 150, ticket: fixedTicket })).toBe(50);
-            expect(tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 200, ticket: fixedTicket })).toBe(50);
-            expect(tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 1000, ticket: fixedTicket })).toBe(50);
+            expect(
+                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 0,
+                    ticket: fixedTicket,
+                })
+            ).toBe(50);
+            expect(
+                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 100,
+                    ticket: fixedTicket,
+                })
+            ).toBe(50);
+            expect(
+                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 150,
+                    ticket: fixedTicket,
+                })
+            ).toBe(50);
+            expect(
+                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 200,
+                    ticket: fixedTicket,
+                })
+            ).toBe(50);
+            expect(
+                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 1000,
+                    ticket: fixedTicket,
+                })
+            ).toBe(50);
         });
     });
 
@@ -78,15 +103,45 @@ describe('TokenExitQueueFeeUtils', () => {
         };
 
         it('returns max fee before cooldown', () => {
-            expect(tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 0, ticket: tieredTicket })).toBe(50);
-            expect(tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 50, ticket: tieredTicket })).toBe(50);
-            expect(tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 199, ticket: tieredTicket })).toBe(50);
+            expect(
+                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 0,
+                    ticket: tieredTicket,
+                })
+            ).toBe(50);
+            expect(
+                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 50,
+                    ticket: tieredTicket,
+                })
+            ).toBe(50);
+            expect(
+                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 199,
+                    ticket: tieredTicket,
+                })
+            ).toBe(50);
         });
 
         it('returns min fee at and after cooldown', () => {
-            expect(tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 200, ticket: tieredTicket })).toBe(10);
-            expect(tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 300, ticket: tieredTicket })).toBe(10);
-            expect(tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 1000, ticket: tieredTicket })).toBe(10);
+            expect(
+                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 200,
+                    ticket: tieredTicket,
+                })
+            ).toBe(10);
+            expect(
+                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 300,
+                    ticket: tieredTicket,
+                })
+            ).toBe(10);
+            expect(
+                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 1000,
+                    ticket: tieredTicket,
+                })
+            ).toBe(10);
         });
     });
 
@@ -106,29 +161,68 @@ describe('TokenExitQueueFeeUtils', () => {
         };
 
         it('returns max fee before and at minCooldown', () => {
-            expect(tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 0, ticket: dynamicTicket })).toBe(50);
-            expect(tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 50, ticket: dynamicTicket })).toBe(50);
-            expect(tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 100, ticket: dynamicTicket })).toBe(50);
+            expect(
+                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 0,
+                    ticket: dynamicTicket,
+                })
+            ).toBe(50);
+            expect(
+                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 50,
+                    ticket: dynamicTicket,
+                })
+            ).toBe(50);
+            expect(
+                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 100,
+                    ticket: dynamicTicket,
+                })
+            ).toBe(50);
         });
 
         it('decays linearly between minCooldown and cooldown', () => {
             // At 125 (25 seconds into decay): 50% - (25 * 0.4%) = 50% - 10% = 40%
-            const feeAt125 = tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 125, ticket: dynamicTicket });
+            const feeAt125 = tokenExitQueueFeeUtils.calculateFeeAtTime({
+                timeElapsed: 125,
+                ticket: dynamicTicket,
+            });
             expect(feeAt125).toBeCloseTo(40, 1);
 
             // At 150 (50 seconds into decay): 50% - (50 * 0.4%) = 50% - 20% = 30%
-            const feeAt150 = tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 150, ticket: dynamicTicket });
+            const feeAt150 = tokenExitQueueFeeUtils.calculateFeeAtTime({
+                timeElapsed: 150,
+                ticket: dynamicTicket,
+            });
             expect(feeAt150).toBeCloseTo(30, 1);
 
             // At 175 (75 seconds into decay): 50% - (75 * 0.4%) = 50% - 30% = 20%
-            const feeAt175 = tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 175, ticket: dynamicTicket });
+            const feeAt175 = tokenExitQueueFeeUtils.calculateFeeAtTime({
+                timeElapsed: 175,
+                ticket: dynamicTicket,
+            });
             expect(feeAt175).toBeCloseTo(20, 1);
         });
 
         it('returns min fee at and after cooldown', () => {
-            expect(tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 200, ticket: dynamicTicket })).toBe(10);
-            expect(tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 300, ticket: dynamicTicket })).toBe(10);
-            expect(tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: 1000, ticket: dynamicTicket })).toBe(10);
+            expect(
+                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 200,
+                    ticket: dynamicTicket,
+                })
+            ).toBe(10);
+            expect(
+                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 300,
+                    ticket: dynamicTicket,
+                })
+            ).toBe(10);
+            expect(
+                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 1000,
+                    ticket: dynamicTicket,
+                })
+            ).toBe(10);
         });
 
         it('handles boundary at minCooldown correctly (should be max fee)', () => {
@@ -153,23 +247,48 @@ describe('TokenExitQueueFeeUtils', () => {
 
     describe('shouldShowFeeDialog', () => {
         it('returns false when both fees are zero', () => {
-            expect(tokenExitQueueFeeUtils.shouldShowFeeDialog({ feePercent: 0, minFeePercent: 0 })).toBe(false);
+            expect(
+                tokenExitQueueFeeUtils.shouldShowFeeDialog({
+                    feePercent: 0,
+                    minFeePercent: 0,
+                })
+            ).toBe(false);
         });
 
         it('returns false when both fees are null', () => {
-            expect(tokenExitQueueFeeUtils.shouldShowFeeDialog({ feePercent: null, minFeePercent: null })).toBe(false);
+            expect(
+                tokenExitQueueFeeUtils.shouldShowFeeDialog({
+                    feePercent: null,
+                    minFeePercent: null,
+                })
+            ).toBe(false);
         });
 
         it('returns true when feePercent is greater than zero', () => {
-            expect(tokenExitQueueFeeUtils.shouldShowFeeDialog({ feePercent: 100, minFeePercent: 0 })).toBe(true);
+            expect(
+                tokenExitQueueFeeUtils.shouldShowFeeDialog({
+                    feePercent: 100,
+                    minFeePercent: 0,
+                })
+            ).toBe(true);
         });
 
         it('returns true when minFeePercent is greater than zero', () => {
-            expect(tokenExitQueueFeeUtils.shouldShowFeeDialog({ feePercent: 0, minFeePercent: 100 })).toBe(true);
+            expect(
+                tokenExitQueueFeeUtils.shouldShowFeeDialog({
+                    feePercent: 0,
+                    minFeePercent: 100,
+                })
+            ).toBe(true);
         });
 
         it('returns true when both fees are greater than zero', () => {
-            expect(tokenExitQueueFeeUtils.shouldShowFeeDialog({ feePercent: 5000, minFeePercent: 1000 })).toBe(true);
+            expect(
+                tokenExitQueueFeeUtils.shouldShowFeeDialog({
+                    feePercent: 5000,
+                    minFeePercent: 1000,
+                })
+            ).toBe(true);
         });
     });
 
@@ -231,7 +350,7 @@ describe('TokenExitQueueFeeUtils', () => {
         });
 
         it('formats 10000 basis points as 100%', () => {
-            expect(tokenExitQueueFeeUtils.formatFeePercent(10000)).toBe('100%');
+            expect(tokenExitQueueFeeUtils.formatFeePercent(10_000)).toBe('100%');
         });
 
         it('formats small percentages with 2 decimals', () => {
@@ -324,7 +443,7 @@ describe('TokenExitQueueFeeUtils', () => {
             expect(points[0]?.elapsedSeconds).toBe(0);
 
             // Last point should be at cooldown
-            expect(points[points.length - 1]?.elapsedSeconds).toBe(200);
+            expect(points.at(-1)?.elapsedSeconds).toBe(200);
 
             // Points should show decreasing fee over time
             for (let i = 0; i < points.length - 1; i++) {

@@ -1,1 +1,4 @@
-export { DaoProcessDetailsInfo, type IDaoProcessDetailsInfoProps } from './daoProcessDetailsInfo';
+export {
+    DaoProcessDetailsInfo,
+    type IDaoProcessDetailsInfoProps,
+} from './daoProcessDetailsInfo';

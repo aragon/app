@@ -1,8 +1,8 @@
+import { useCallback } from 'react';
+import type { Hex } from 'viem';
+import { useAccount, useSimulateContract } from 'wagmi';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { useCallback } from 'react';
-import { type Hex } from 'viem';
-import { useAccount, useSimulateContract } from 'wagmi';
 import { LockToVotePluginDialogId } from '../../constants/lockToVotePluginDialogId';
 import type { ILockToVotePlugin } from '../../types';
 

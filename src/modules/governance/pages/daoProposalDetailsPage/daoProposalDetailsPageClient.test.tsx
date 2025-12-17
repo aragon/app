@@ -1,3 +1,8 @@
+import { clipboardUtils, GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
+import type * as ReactQuery from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
+import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {
     DaoProposalDetailsPageClient,
     type IDaoProposalDetailsPageClientProps,
@@ -6,17 +11,7 @@ import { generateProposal, generateSimulationResult } from '@/modules/governance
 import * as DaoService from '@/shared/api/daoService';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
-import {
-    generateAddressInfo,
-    generateDao,
-    generateReactQueryResultError,
-    generateReactQueryResultSuccess,
-} from '@/shared/testUtils';
-import { clipboardUtils, GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
-import type * as ReactQuery from '@tanstack/react-query';
-import { useQueryClient } from '@tanstack/react-query';
-import { render, screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { generateAddressInfo, generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import * as actionSimulationService from '../../api/actionSimulationService';
 import * as governanceService from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -51,10 +46,16 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     beforeEach(() => {
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateProposal() }));
         useProposalActionsSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: { decoding: false, actions: [], rawActions: [] } }),
+            generateReactQueryResultSuccess({
+                data: { decoding: false, actions: [], rawActions: [] },
+            })
         );
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
-        useLastSimulationSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateSimulationResult() }));
+        useLastSimulationSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateSimulationResult(),
+            })
+        );
         (useQueryClient as jest.Mock).mockReturnValue(mockQueryClient);
     });
 
@@ -83,7 +84,11 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     };
 
     it('fetches and renders the proposal title and summary', () => {
-        const proposal = generateProposal({ id: 'test-id', title: 'test-title', summary: 'my-summary' });
+        const proposal = generateProposal({
+            id: 'test-id',
+            title: 'test-title',
+            summary: 'my-summary',
+        });
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
         render(createTestComponent({ proposalSlug: proposal.id }));
 
@@ -96,9 +101,16 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     });
 
     it('renders the proposal page breadcrumbs', () => {
-        const proposal = generateProposal({ proposalIndex: 'incremental-index', incrementalId: 3 });
+        const proposal = generateProposal({
+            proposalIndex: 'incremental-index',
+            incrementalId: 3,
+        });
         const proposalSlug = 'ADMIN-10';
-        const dao = generateDao({ id: 'test-id', address: '0x123', network: Network.ETHEREUM_MAINNET });
+        const dao = generateDao({
+            id: 'test-id',
+            address: '0x123',
+            network: Network.ETHEREUM_MAINNET,
+        });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
 
@@ -107,7 +119,9 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         const breadcrumbsContainer = screen.getByRole('navigation');
         expect(breadcrumbsContainer).toBeInTheDocument();
 
-        const proposalsLink = screen.getByRole('link', { name: /daoProposalDetailsPage.header.breadcrumb.proposals/ });
+        const proposalsLink = screen.getByRole('link', {
+            name: /daoProposalDetailsPage.header.breadcrumb.proposals/,
+        });
         expect(proposalsLink).toBeInTheDocument();
         expect(proposalsLink.getAttribute('href')).toEqual(`/dao/${dao.network}/${dao.address}/proposals`);
         expect(within(breadcrumbsContainer).getByText(proposalSlug)).toBeInTheDocument();
@@ -115,7 +129,9 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
     it('uses the plugin-specific function to process and render the proposal status', () => {
         const status = ProposalStatus.REJECTED;
-        const proposal = generateProposal({ pluginInterfaceType: PluginInterfaceType.MULTISIG });
+        const proposal = generateProposal({
+            pluginInterfaceType: PluginInterfaceType.MULTISIG,
+        });
         useSlotSingleFunctionSpy.mockReturnValue(status);
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
         render(createTestComponent());
@@ -130,14 +146,16 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     });
 
     it('returns empty container on proposal fetch error', () => {
-        useProposalSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
-        useProposalActionsSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
+        useProposalSpy.mockReturnValue(generateReactQueryResultError({ error: new Error('proposal fetch error') }));
+        useProposalActionsSpy.mockReturnValue(generateReactQueryResultError({ error: new Error('proposal actions fetch error') }));
         const { container } = render(createTestComponent());
         expect(container).toBeEmptyDOMElement();
     });
 
     it('renders the proposal description when defined on a collapsible component', () => {
-        const proposal = generateProposal({ description: 'proposal-description' });
+        const proposal = generateProposal({
+            description: 'proposal-description',
+        });
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
         render(createTestComponent());
 
@@ -150,7 +168,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         const proposalSlug = 'TEST-SLUG-1';
         const proposal = generateProposal({
             proposalIndex: '123',
-            blockTimestamp: 1690367967,
+            blockTimestamp: 1_690_367_967,
             creator: generateAddressInfo({ address: '0x123' }),
             network: Network.ETHEREUM_SEPOLIA,
             transactionHash: '0x4654',
@@ -170,12 +188,16 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         expect(within(detailsContainer).getByText(proposalSlug)).toBeInTheDocument();
 
         expect(screen.getByText(/daoProposalDetailsPage.aside.details.published/)).toBeInTheDocument();
-        const creationBlockLink = screen.getByRole('link', { name: 'July 26, 2023' });
+        const creationBlockLink = screen.getByRole('link', {
+            name: 'July 26, 2023',
+        });
         expect(creationBlockLink).toBeInTheDocument();
         expect(creationBlockLink.getAttribute('href')).toEqual('https://sepolia.etherscan.io/tx/0x4654');
 
         expect(screen.getByText(/daoProposalDetailsPage.aside.details.creator/)).toBeInTheDocument();
-        const creatorLink = screen.getByRole('link', { name: proposal.creator.address });
+        const creatorLink = screen.getByRole('link', {
+            name: proposal.creator.address,
+        });
         expect(creatorLink).toBeInTheDocument();
         expect(creatorLink.getAttribute('href')).toEqual('https://sepolia.etherscan.io/address/0x123');
     });
@@ -192,7 +214,9 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         expect(screen.getByText(/daoProposalDetailsPage.aside.links.title/)).toBeInTheDocument();
 
         resources.forEach((resource) => {
-            const link = screen.getByRole('link', { name: new RegExp(resource.name) });
+            const link = screen.getByRole('link', {
+                name: new RegExp(resource.name),
+            });
             expect(link).toBeInTheDocument();
             expect(screen.getByText(resource.url)).toBeInTheDocument();
             expect(link.getAttribute('href')).toEqual(resource.url);
@@ -230,7 +254,10 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         });
 
         it('does not fetch simulation when hasSimulation is false', () => {
-            const proposal = generateProposal({ hasActions: true, hasSimulation: false });
+            const proposal = generateProposal({
+                hasActions: true,
+                hasSimulation: false,
+            });
             const dao = generateDao({ network: Network.ETHEREUM_MAINNET });
             useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
             useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
@@ -238,14 +265,14 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
             render(createTestComponent());
 
-            expect(useLastSimulationSpy).toHaveBeenCalledWith(
-                { urlParams: { proposalId: proposal.id } },
-                { enabled: false },
-            );
+            expect(useLastSimulationSpy).toHaveBeenCalledWith({ urlParams: { proposalId: proposal.id } }, { enabled: false });
         });
 
         it('fetches simulation when hasSimulation is true', () => {
-            const proposal = generateProposal({ hasActions: true, hasSimulation: true });
+            const proposal = generateProposal({
+                hasActions: true,
+                hasSimulation: true,
+            });
             const dao = generateDao({ network: Network.ETHEREUM_MAINNET });
             useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
             useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
@@ -253,22 +280,23 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
             render(createTestComponent());
 
-            expect(useLastSimulationSpy).toHaveBeenCalledWith(
-                { urlParams: { proposalId: proposal.id } },
-                { enabled: true },
-            );
+            expect(useLastSimulationSpy).toHaveBeenCalledWith({ urlParams: { proposalId: proposal.id } }, { enabled: true });
         });
 
         it('invalidates proposal query after successful simulation', async () => {
             const mutateFn = jest.fn(
                 (
                     _params: unknown,
-                    options?: { onSuccess?: () => void; onError?: () => void; onSettled?: () => void },
+                    options?: {
+                        onSuccess?: () => void;
+                        onError?: () => void;
+                        onSettled?: () => void;
+                    }
                 ) => {
                     if (options?.onSuccess) {
                         options.onSuccess();
                     }
-                },
+                }
             );
 
             useSimulateProposalSpy.mockReturnValue({
@@ -279,15 +307,25 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
                 typeof actionSimulationService.useSimulateProposal
             >);
 
-            const proposal = generateProposal({ id: 'test-proposal', hasActions: true });
+            const proposal = generateProposal({
+                id: 'test-proposal',
+                hasActions: true,
+            });
             const dao = generateDao({ network: Network.ETHEREUM_MAINNET });
             useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
             useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
             useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.ACTIVE);
 
-            render(createTestComponent({ daoId: 'test-dao', proposalSlug: 'test-slug' }));
+            render(
+                createTestComponent({
+                    daoId: 'test-dao',
+                    proposalSlug: 'test-slug',
+                })
+            );
 
-            const simulateButton = screen.getByRole('button', { name: /simulate/i });
+            const simulateButton = screen.getByRole('button', {
+                name: /simulate/i,
+            });
             await userEvent.click(simulateButton);
 
             expect(mutateFn).toHaveBeenCalled();
@@ -300,8 +338,12 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
                 queryParams: { daoId: 'test-dao' },
             });
 
-            expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: simulationQueryKey });
-            expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: proposalQueryKey });
+            expect(mockInvalidateQueries).toHaveBeenCalledWith({
+                queryKey: simulationQueryKey,
+            });
+            expect(mockInvalidateQueries).toHaveBeenCalledWith({
+                queryKey: proposalQueryKey,
+            });
         });
     });
 });

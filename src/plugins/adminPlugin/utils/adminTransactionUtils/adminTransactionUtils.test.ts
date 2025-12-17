@@ -1,8 +1,8 @@
+import * as Viem from 'viem';
 import { generateProposalCreate } from '@/modules/governance/testUtils';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDaoPlugin, generatePluginSettings } from '@/shared/testUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
-import * as Viem from 'viem';
 import { adminPluginAbi } from './adminPluginAbi';
 import { adminTransactionUtils } from './adminTransactionUtils';
 
@@ -26,7 +26,12 @@ describe('adminTransaction utils', () => {
             });
             encodeFunctionDataSpy.mockReturnValueOnce(transactionData);
 
-            const result = adminTransactionUtils.buildCreateProposalData({ metadata, actions, proposal, plugin });
+            const result = adminTransactionUtils.buildCreateProposalData({
+                metadata,
+                actions,
+                proposal,
+                plugin,
+            });
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: adminPluginAbi,
                 functionName: 'createProposal',

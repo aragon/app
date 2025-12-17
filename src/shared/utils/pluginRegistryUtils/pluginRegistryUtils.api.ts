@@ -7,15 +7,13 @@ export type SlotId = string;
 export type PluginId = string;
 
 // Plugin component registered for a specific SlotId
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type PluginComponent<TComponentProps = any> = ComponentType<TComponentProps>;
+export type PluginComponent<TComponentProps = unknown> = ComponentType<TComponentProps>;
 
 // Record of slot components
 export type SlotComponents = Record<SlotId, Record<PluginId, PluginComponent | undefined> | undefined>;
 
 // Plugin function registered for a specific SlotId
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type PluginFunction<TParams = any, TResult = any> = (params: TParams) => TResult;
+export type PluginFunction<TParams = unknown, TResult = unknown> = (params: TParams) => TResult;
 
 // Record of slot functions
 export type SlotFunctions = Record<SlotId, Record<PluginId, PluginFunction | undefined> | undefined>;

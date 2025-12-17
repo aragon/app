@@ -1,15 +1,9 @@
+import { DataListContainer, DataListPagination, DataListRoot, invariant, ProposalDataListItem } from '@aragon/gov-ui-kit';
+import { useAccount } from 'wagmi';
 import type { ITokenPlugin } from '@/plugins/tokenPlugin/types';
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
-import {
-    DataListContainer,
-    DataListPagination,
-    DataListRoot,
-    invariant,
-    ProposalDataListItem,
-} from '@aragon/gov-ui-kit';
-import { useAccount } from 'wagmi';
 import { useMemberLocks } from '../../../../api/tokenService';
 import { TokenLockListItem } from './tokenLockListItem';
 
@@ -37,7 +31,11 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
 
     const { escrowAddress } = votingEscrowAddresses;
 
-    const memberLocksQueryParams = { network: dao.network, escrowAddress, onlyActive: true };
+    const memberLocksQueryParams = {
+        network: dao.network,
+        escrowAddress,
+        onlyActive: true,
+    };
     const {
         data,
         status,
@@ -46,11 +44,18 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
         fetchNextPage,
         refetch: refetchMemberLocks,
     } = useMemberLocks(
-        { urlParams: { address: address! }, queryParams: memberLocksQueryParams },
-        { enabled: address != null },
+        {
+            urlParams: { address: address! },
+            queryParams: memberLocksQueryParams,
+        },
+        { enabled: address != null }
     );
 
-    const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
+    const state = dataListUtils.queryToDataListState({
+        status,
+        fetchStatus,
+        isFetchingNextPage,
+    });
     const locksList = data?.pages.flatMap((page) => page.data);
 
     const pageSize = data?.pages[0].metadata.pageSize;
@@ -69,23 +74,19 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
     return (
         <DataListRoot
             entityLabel={t('app.plugins.token.tokenLockList.entity')}
-            onLoadMore={fetchNextPage}
-            state={state}
-            pageSize={pageSize}
             itemsCount={itemsCount}
+            onLoadMore={fetchNextPage}
+            pageSize={pageSize}
+            state={state}
         >
-            <DataListContainer
-                SkeletonElement={ProposalDataListItem.Skeleton}
-                errorState={errorState}
-                emptyState={emptyState}
-            >
+            <DataListContainer emptyState={emptyState} errorState={errorState} SkeletonElement={ProposalDataListItem.Skeleton}>
                 {locksList?.map((lock) => (
                     <TokenLockListItem
+                        dao={dao}
                         key={lock.id}
                         lock={lock}
-                        plugin={plugin}
-                        dao={dao}
                         onRefreshNeeded={() => void refetchMemberLocks()}
+                        plugin={plugin}
                     />
                 ))}
             </DataListContainer>

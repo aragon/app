@@ -1,8 +1,8 @@
-import { generateToken, generateTransaction } from '@/modules/finance/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { TransactionList, type ITransactionListDefaultProps } from '.';
+import { generateToken, generateTransaction } from '@/modules/finance/testUtils';
 import * as useTransactionListData from '../../hooks/useTransactionListData';
+import { type ITransactionListDefaultProps, TransactionList } from '.';
 
 describe('<TransactionList.Default /> component', () => {
     const useTransactionListDataSpy = jest.spyOn(useTransactionListData, 'useTransactionListData');
@@ -30,8 +30,16 @@ describe('<TransactionList.Default /> component', () => {
 
     it('renders the transaction list with multiple items when data is available', () => {
         const transactions = [
-            generateTransaction({ token: generateToken({ symbol: 'ABC' }), value: '100', transactionHash: '0x1' }),
-            generateTransaction({ token: generateToken({ symbol: 'DEF' }), value: '200', transactionHash: '0x2' }),
+            generateTransaction({
+                token: generateToken({ symbol: 'ABC' }),
+                value: '100',
+                transactionHash: '0x1',
+            }),
+            generateTransaction({
+                token: generateToken({ symbol: 'DEF' }),
+                value: '200',
+                transactionHash: '0x2',
+            }),
         ];
         useTransactionListDataSpy.mockReturnValue({
             onLoadMore: jest.fn(),

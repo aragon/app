@@ -1,1 +1,1 @@
-export { WizardRoot, type IWizardRootProps } from './wizardRoot';
+export { type IWizardRootProps, WizardRoot } from './wizardRoot';

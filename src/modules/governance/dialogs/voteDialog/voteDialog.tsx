@@ -1,17 +1,13 @@
-import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
-import { TransactionType } from '@/shared/api/transactionService';
-import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
-import {
-    type ITransactionDialogStepMeta,
-    TransactionDialog,
-    TransactionDialogStep,
-} from '@/shared/components/transactionDialog';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useStepper } from '@/shared/hooks/useStepper';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { invariant, type VoteIndicator, VoteProposalDataListItemStructure } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import { TransactionType } from '@/shared/api/transactionService';
+import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { type ITransactionDialogStepMeta, TransactionDialog, TransactionDialogStep } from '@/shared/components/transactionDialog';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useStepper } from '@/shared/hooks/useStepper';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import type { IProposal } from '../../api/governanceService';
 import type { IBuildVoteDataOption } from '../../types';
 import { proposalUtils } from '../../utils/proposalUtils';
@@ -87,15 +83,18 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
 
     return (
         <TransactionDialog
-            title={t('app.governance.voteDialog.title')}
             description={t('app.governance.voteDialog.description')}
-            submitLabel={t('app.governance.voteDialog.button.submit')}
-            successLink={{ label: t('app.governance.voteDialog.button.success'), onClick: () => router.refresh() }}
-            stepper={stepper}
-            prepareTransaction={handlePrepareTransaction}
-            network={proposal.network}
-            transactionType={TransactionType.PROPOSAL_VOTE}
             indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
+            network={proposal.network}
+            prepareTransaction={handlePrepareTransaction}
+            stepper={stepper}
+            submitLabel={t('app.governance.voteDialog.button.submit')}
+            successLink={{
+                label: t('app.governance.voteDialog.button.success'),
+                onClick: () => router.refresh(),
+            }}
+            title={t('app.governance.voteDialog.title')}
+            transactionType={TransactionType.PROPOSAL_VOTE}
         >
             <VoteProposalDataListItemStructure
                 isVeto={isVeto}

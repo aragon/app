@@ -3,17 +3,17 @@ import type { TranslationFunction } from '../../components/translationsProvider'
 import type { IActionGroupDescriptor, IActionViewDescriptor } from './actionViewRegistry.api';
 
 export class ActionViewRegistry {
-    private views: IActionViewDescriptor[] = [];
-    private groups: IActionGroupDescriptor[] = [];
+    private readonly views: IActionViewDescriptor[] = [];
+    private readonly groups: IActionGroupDescriptor[] = [];
 
     register = (descriptor: IActionViewDescriptor): this => {
         if (this.views.find((view) => view.actionType === descriptor.actionType)) {
             return this;
         }
 
-        if (!descriptor.functionSelector && !descriptor.permissionId) {
+        if (!(descriptor.functionSelector || descriptor.permissionId)) {
             throw new Error(
-                `ActionViewRegistry: action view "${descriptor.actionType}" must provide at least one matching criterion: functionSelector or permissionId`,
+                `ActionViewRegistry: action view "${descriptor.actionType}" must provide at least one matching criterion: functionSelector or permissionId`
             );
         }
 
@@ -30,24 +30,24 @@ export class ActionViewRegistry {
 
     getViewBySelector = (selector?: Hex): IActionViewDescriptor | undefined => {
         if (!selector) {
-            return undefined;
+            return;
         }
 
         return this.views.find((view) => view.functionSelector === selector);
     };
 
-    getViewsByPermissionId = (permissionId: string): IActionViewDescriptor[] => {
-        return this.views.filter((view) => view.permissionId === permissionId);
-    };
+    getViewsByPermissionId = (permissionId: string): IActionViewDescriptor[] =>
+        this.views.filter((view) => view.permissionId === permissionId);
 
     getActionsForPermissionId = (permissionId: string, contractAddress: string, t: TranslationFunction) => {
         const groupDescriptor = this.groups.find((group) => group.permissionId === permissionId);
         const group = groupDescriptor ? groupDescriptor.getGroup({ contractAddress, t }) : undefined;
         const views = this.getViewsByPermissionId(permissionId);
         const items = views.map((view) => view.getItem({ contractAddress, t }));
-        const components = views.reduce((acc, cur) => {
-            return { ...acc, [cur.actionType]: cur.componentCreate };
-        }, {});
+        const components: Record<string, IActionViewDescriptor['componentCreate']> = {};
+        for (const view of views) {
+            components[view.actionType] = view.componentCreate;
+        }
 
         return { group, items, components };
     };

@@ -1,8 +1,8 @@
+import { Dialog, invariant } from '@aragon/gov-ui-kit';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider/dialogProvider.api';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
-import { Dialog, invariant } from '@aragon/gov-ui-kit';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { ProcessStageType } from '../../components/createProcessForm';
 import { SetupStageApprovalsField } from './fields/setupStageApprovalsField';
 import { SetupStageDurationField } from './fields/setupStageDurationField';
@@ -39,10 +39,16 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (pro
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
-    const formMethods = useForm<ISetupStageSettingsForm>({ mode: 'onTouched', defaultValues });
+    const formMethods = useForm<ISetupStageSettingsForm>({
+        mode: 'onTouched',
+        defaultValues,
+    });
     const { handleSubmit, control } = formMethods;
 
-    const stageType = useWatch<ISetupStageSettingsForm, 'type'>({ name: 'type', control });
+    const stageType = useWatch<ISetupStageSettingsForm, 'type'>({
+        name: 'type',
+        control,
+    });
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
 
@@ -55,9 +61,9 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (pro
         <FormProvider {...formMethods}>
             <Dialog.Header title={t('app.createDao.setupStageSettingsDialog.title')} />
             <Dialog.Content>
-                <form className="flex flex-col gap-6 py-4" onSubmit={handleSubmit(onFormSubmit)} id={formId}>
+                <form className="flex flex-col gap-6 py-4" id={formId} onSubmit={handleSubmit(onFormSubmit)}>
                     {bodyCount > 0 && <SetupStageTypeField />}
-                    {bodyCount > 0 && <SetupStageApprovalsField stageType={stageType} bodyCount={bodyCount} />}
+                    {bodyCount > 0 && <SetupStageApprovalsField bodyCount={bodyCount} stageType={stageType} />}
                     <SetupStageDurationField bodyCount={bodyCount} />
                     {!isOptimisticStage && bodyCount > 0 && <SetupStageEarlyAdvanceField />}
                     <SetupStageExpirationField defaultExpirationValue={defaultValues.stageExpiration} />

@@ -1,8 +1,5 @@
 'use client';
 
-import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
-import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     addressUtils,
     DataList,
@@ -13,8 +10,10 @@ import {
 } from '@aragon/gov-ui-kit';
 import type { Address, Hex } from 'viem';
 import { useReadContract } from 'wagmi';
-
+import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { gaugeRegistrarAbi } from '../../constants/gaugeRegistrarAbi';
 import { useAllGauges } from '../../hooks';
@@ -25,8 +24,12 @@ export interface IGaugeRegistrarUnregisterGaugeActionDetailsProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
 
 const parseUnregisterGaugeInputData = (
-    params: IProposalActionInputDataParameter[],
-): { qiTokenAddress: string; incentiveType: number; rewardControllerAddress: string } => {
+    params: IProposalActionInputDataParameter[]
+): {
+    qiTokenAddress: string;
+    incentiveType: number;
+    rewardControllerAddress: string;
+} => {
     const [qiTokenAddress, incentiveType, rewardControllerAddress] = params.map((param) => param.value);
 
     return {
@@ -36,19 +39,18 @@ const parseUnregisterGaugeInputData = (
     };
 };
 
-export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<IGaugeRegistrarUnregisterGaugeActionDetailsProps> = (
-    props,
-) => {
+export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<IGaugeRegistrarUnregisterGaugeActionDetailsProps> = (props) => {
     const { action } = props;
     const pluginAddress = action.to;
     const { data: dao } = useDao({ urlParams: { id: action.daoId } });
     const [gaugeVoterPlugin] =
-        useDaoPlugins({ daoId: action.daoId, interfaceType: PluginInterfaceType.GAUGE_VOTER }) ?? [];
+        useDaoPlugins({
+            daoId: action.daoId,
+            interfaceType: PluginInterfaceType.GAUGE_VOTER,
+        }) ?? [];
     const { t } = useTranslations();
 
-    const { qiTokenAddress, incentiveType, rewardControllerAddress } = parseUnregisterGaugeInputData(
-        action.inputData?.parameters ?? [],
-    );
+    const { qiTokenAddress, incentiveType, rewardControllerAddress } = parseUnregisterGaugeInputData(action.inputData?.parameters ?? []);
 
     const { id: chainId } = networkDefinitions[dao!.network];
 
@@ -74,20 +76,16 @@ export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<IGaugeRegistra
         return <GaugeRegistrarGaugeListItemSkeleton />;
     }
 
-    const gaugeToRemove = gaugeAddress
-        ? allGauges.find((gauge) => addressUtils.isAddressEqual(gauge.address, gaugeAddress))
-        : undefined;
+    const gaugeToRemove = gaugeAddress ? allGauges.find((gauge) => addressUtils.isAddressEqual(gauge.address, gaugeAddress)) : undefined;
 
     if (!gaugeToRemove) {
         return (
             <DataList.Item>
                 <EmptyState
+                    description={t('app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionDetails.notFound.description')}
                     heading={t('app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionDetails.notFound.title')}
-                    description={t(
-                        'app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionDetails.notFound.description',
-                    )}
-                    objectIllustration={{ object: 'MAGNIFYING_GLASS' }}
                     isStacked={false}
+                    objectIllustration={{ object: 'MAGNIFYING_GLASS' }}
                 />
             </DataList.Item>
         );

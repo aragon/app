@@ -2,9 +2,9 @@
  * @jest-environment node
  */
 
-import { generateNextRequest, generateResponse } from '@/shared/testUtils';
 import type { NextURL } from 'next/dist/server/web/next-url';
 import { type NextRequest, NextResponse } from 'next/server';
+import { generateNextRequest, generateResponse } from '@/shared/testUtils';
 import { ProxyBackendUtils, proxyBackendUtils } from './proxyBackendUtils';
 
 describe('proxyBackend utils', () => {
@@ -47,7 +47,10 @@ describe('proxyBackend utils', () => {
         });
 
         it('forwards 204 responses without a body', async () => {
-            const fetchReturn = generateResponse({ status: 204, headers: new Headers() });
+            const fetchReturn = generateResponse({
+                status: 204,
+                headers: new Headers(),
+            });
             fetchSpy.mockResolvedValue(fetchReturn);
 
             const result = await proxyBackendUtils.request(generateNextRequest({ url: 'http://test.com' }));
@@ -69,11 +72,13 @@ describe('proxyBackend utils', () => {
         it('returns the URL of the backend service', () => {
             const href = 'http://dev.aragon.app/api/backend/dao/0x1234?network=mainnet';
             process.env.ARAGON_BACKEND_URL = 'https://test-backend.com';
-            const testClass = new ProxyBackendUtils();
-            const request = generateNextRequest({ nextUrl: { href } as NextURL });
-            expect(testClass['buildBackendUrl'](request)).toEqual(
-                'https://test-backend.com/dao/0x1234?network=mainnet',
-            );
+            const testClass = new ProxyBackendUtils() as unknown as {
+                buildBackendUrl: (request: NextRequest) => string;
+            };
+            const request = generateNextRequest({
+                nextUrl: { href } as NextURL,
+            });
+            expect(testClass.buildBackendUrl(request)).toEqual('https://test-backend.com/dao/0x1234?network=mainnet');
         });
     });
 });

@@ -1,13 +1,13 @@
-import { type IProposalAction } from '@/modules/governance/api/governanceService';
+import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
+import { useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { encodeFunctionData, parseUnits } from 'viem';
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { encodeFunctionData, parseUnits } from 'viem';
 import { type ITokenSetupGovernanceForm, TokenSetupGovernance } from '../../tokenSetupGovernance';
 
 export interface ITokenUpdateSettingsActionProps
@@ -26,8 +26,16 @@ const updateTokenSettingsAbi = {
                     internalType: 'enum MajorityVotingBase.VotingMode',
                     type: 'uint8',
                 },
-                { name: 'supportThreshold', internalType: 'uint32', type: 'uint32' },
-                { name: 'minParticipation', internalType: 'uint32', type: 'uint32' },
+                {
+                    name: 'supportThreshold',
+                    internalType: 'uint32',
+                    type: 'uint32',
+                },
+                {
+                    name: 'minParticipation',
+                    internalType: 'uint32',
+                    type: 'uint32',
+                },
                 { name: 'minDuration', internalType: 'uint64', type: 'uint64' },
                 {
                     name: 'minProposerVotingPower',
@@ -89,29 +97,23 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
             minProposerVotingPower: parseUnits(minVotingPowerValue, decimals),
         };
 
-        const newData = encodeFunctionData({ abi: [updateTokenSettingsAbi], args: [updateSettingsParams] });
+        const newData = encodeFunctionData({
+            abi: [updateTokenSettingsAbi],
+            args: [updateSettingsParams],
+        });
         const paramValues = Object.values(updateSettingsParams).map((value) => value.toString());
 
         setValue(`${actionFieldName}.data`, newData);
         setValue(`${actionFieldName}.inputData.parameters[0].value`, paramValues);
-    }, [
-        actionFieldName,
-        minParticipation,
-        minVotingPowerValue,
-        setValue,
-        supportThreshold,
-        votingMode,
-        decimals,
-        minDuration,
-    ]);
+    }, [actionFieldName, minParticipation, minVotingPowerValue, setValue, supportThreshold, votingMode, decimals, minDuration]);
 
     const membershipSettings = { token: action.meta.settings.token };
 
     return (
         <TokenSetupGovernance
             formPrefix={`${actionFieldName}.proposedSettings`}
-            membershipSettings={membershipSettings}
             isSubPlugin={action.meta.isSubPlugin}
+            membershipSettings={membershipSettings}
             showProposalCreationSettings={!action.meta.isSubPlugin}
         />
     );

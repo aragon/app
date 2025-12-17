@@ -1,0 +1,63 @@
+{
+    "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+    "extends": [
+        "ultracite/core",
+        "ultracite/next"
+    ],
+    "formatter": {
+        "enabled": true,
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineWidth": 140
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "single"
+        },
+        "globals": [
+            "jest",
+            "describe",
+            "it",
+            "test",
+            "expect",
+            "beforeEach",
+            "afterEach",
+            "beforeAll",
+            "afterAll"
+        ]
+    },
+    "linter": {
+        "rules": {
+            "nursery": {
+                "noImportCycles": "warn",
+                "noEqualsToNull": "off",
+                "noEmptySource": "off",
+                "noShadow": "off",
+                "noLeakedRender": "off"
+            },
+            "style": {
+                "useFilenamingConvention": "off",
+                "useNodejsImportProtocol": "off",
+                "noEnum": "off",
+                "noNonNullAssertion": "off",
+                "useConsistentTypeDefinitions": "off",
+                "noExportedImports": "off",
+                "useConsistentArrayType": "off"
+            },
+            "performance": {
+                "noBarrelFile": "off",
+                "noNamespaceImport": "off",
+                "useTopLevelRegex": "off"
+            },
+            "suspicious": {
+                "noDoubleEquals": "off",
+                "noEmptyInterface": "off",
+                "noBitwiseOperators": "off"
+            },
+            "complexity": {
+                "noVoid": "off",
+                "noForEach": "off"
+            }
+        }
+    }
+}

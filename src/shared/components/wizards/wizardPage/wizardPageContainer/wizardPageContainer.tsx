@@ -12,26 +12,15 @@ export interface IWizardPageContainerProps<TFormData extends FieldValues = Field
     finalStep?: string;
 }
 
-export const WizardPageContainer = <TFormData extends FieldValues = FieldValues>(
-    props: IWizardPageContainerProps<TFormData>,
-) => {
-    const {
-        submitLabel,
-        submitHelpText,
-        initialSteps,
-        defaultValues,
-        finalStep,
-        children,
-        className,
-        ...wizardFormProps
-    } = props;
+export const WizardPageContainer = <TFormData extends FieldValues = FieldValues>(props: IWizardPageContainerProps<TFormData>) => {
+    const { submitLabel, submitHelpText, initialSteps, defaultValues, finalStep, children, className, ...wizardFormProps } = props;
 
     return (
         <Wizard.Root
-            submitLabel={submitLabel}
-            submitHelpText={submitHelpText}
-            initialSteps={initialSteps}
             defaultValues={defaultValues}
+            initialSteps={initialSteps}
+            submitHelpText={submitHelpText}
+            submitLabel={submitLabel}
             useDevTool={true}
         >
             <Wizard.Form className={classNames('flex h-full flex-col gap-4 md:gap-6', className)} {...wizardFormProps}>

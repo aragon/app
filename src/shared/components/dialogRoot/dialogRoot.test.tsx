@@ -1,7 +1,7 @@
-import { generateDialogContext } from '@/shared/testUtils';
-import { testLogger } from '@/test/utils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { generateDialogContext } from '@/shared/testUtils';
+import { testLogger } from '@/test/utils';
 import * as useDialogContext from '../dialogProvider';
 import { DialogRoot, type IDialogRootProps } from './dialogRoot';
 
@@ -47,7 +47,13 @@ describe('<DialogRoot /> component', () => {
         const dialogId = 'connect-wallet';
         const hiddenTitle = 'test-title';
         const hiddenDescription = 'test-description';
-        const dialogs = { [dialogId]: { Component: () => 'test', hiddenTitle, hiddenDescription } };
+        const dialogs = {
+            [dialogId]: {
+                Component: () => 'test',
+                hiddenTitle,
+                hiddenDescription,
+            },
+        };
         const locations = [{ id: dialogId }];
         useDialogContextSpy.mockReturnValue(generateDialogContext({ locations }));
         render(createTestComponent({ dialogs }));

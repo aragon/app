@@ -1,10 +1,10 @@
+import { Card, ChainEntityType, Collapsible, DaoAvatar, DefinitionList, Link, Tag } from '@aragon/gov-ui-kit';
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { Card, ChainEntityType, Collapsible, DaoAvatar, DefinitionList, Link, Tag } from '@aragon/gov-ui-kit';
 
 export interface IDaoSettingsInfoProps {
     /**
@@ -27,33 +27,36 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                 <DefinitionList.Item term={t('app.settings.daoSettingsInfo.name')}>
                     <div className="flex items-center gap-2">
                         <p className="text-neutral-500">{dao.name}</p>
-                        <DaoAvatar src={daoAvatar} name={dao.name} size="md" />
+                        <DaoAvatar name={dao.name} size="md" src={daoAvatar} />
                     </div>
                 </DefinitionList.Item>
                 <DefinitionList.Item term={t('app.settings.daoSettingsInfo.chain')}>
                     <div className="flex items-center justify-between gap-2">
                         <p className="text-neutral-500">{networkDefinitions[dao.network].name}</p>
-                        <Tag label={t('app.settings.daoSettingsInfo.notChangeable')} className="shrink-0" />
+                        <Tag className="shrink-0" label={t('app.settings.daoSettingsInfo.notChangeable')} />
                     </div>
                 </DefinitionList.Item>
                 {dao.ens && (
                     <DefinitionList.Item term={t('app.settings.daoSettingsInfo.ens')}>
                         <div className="flex items-center justify-between gap-2">
                             <Link
-                                href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address })}
+                                href={buildEntityUrl({
+                                    type: ChainEntityType.ADDRESS,
+                                    id: dao.address,
+                                })}
                                 isExternal={true}
                             >
                                 {daoUtils.getDaoEns(dao)}
                             </Link>
-                            <Tag label={t('app.settings.daoSettingsInfo.notChangeable')} className="shrink-0" />
+                            <Tag className="shrink-0" label={t('app.settings.daoSettingsInfo.notChangeable')} />
                         </div>
                     </DefinitionList.Item>
                 )}
                 <DefinitionList.Item term={t('app.settings.daoSettingsInfo.summary')}>
                     <Collapsible
-                        collapsedLines={4}
                         buttonLabelClosed={t('app.settings.daoSettingsInfo.readMore')}
                         buttonLabelOpened={t('app.settings.daoSettingsInfo.readLess')}
+                        collapsedLines={4}
                     >
                         <p className="text-neutral-500">{dao.description}</p>
                     </Collapsible>
@@ -62,7 +65,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                     <DefinitionList.Item term={t('app.settings.daoSettingsInfo.links')}>
                         <div className="flex flex-col gap-3">
                             {dao.links.map((link) => (
-                                <Link key={link.url} href={link.url} isExternal={true} showUrl={true}>
+                                <Link href={link.url} isExternal={true} key={link.url} showUrl={true}>
                                     {link.name}
                                 </Link>
                             ))}

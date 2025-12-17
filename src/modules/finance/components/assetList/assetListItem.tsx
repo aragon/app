@@ -1,6 +1,6 @@
+import { AssetDataListItemStructure, ChainEntityType } from '@aragon/gov-ui-kit';
 import type { IAsset } from '@/modules/finance/api/financeService';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
-import { AssetDataListItemStructure, ChainEntityType } from '@aragon/gov-ui-kit';
 
 export interface IAssetListItemProps {
     /**
@@ -19,7 +19,10 @@ export const AssetListItem: React.FC<IAssetListItemProps> = (props) => {
 
     const { buildEntityUrl } = useDaoChain({ network: token.network });
 
-    const entityUrl = buildEntityUrl({ type: ChainEntityType.TOKEN, id: token.address });
+    const entityUrl = buildEntityUrl({
+        type: ChainEntityType.TOKEN,
+        id: token.address,
+    });
 
     const processedEntityUrl = onAssetClick != null ? undefined : entityUrl;
     const processedTarget = onAssetClick != null ? undefined : '_blank';
@@ -29,16 +32,16 @@ export const AssetListItem: React.FC<IAssetListItemProps> = (props) => {
 
     return (
         <AssetDataListItemStructure
-            key={token.address}
-            name={token.name || 'Unknown'}
-            symbol={token.symbol || 'UNKNOWN'}
             amount={amount ?? '0'}
             fiatPrice={fiatPrice}
-            logoSrc={token.logo}
             hideValue={false}
-            target={processedTarget}
-            onClick={() => onAssetClick?.(asset)}
             href={processedEntityUrl}
+            key={token.address}
+            logoSrc={token.logo}
+            name={token.name || 'Unknown'}
+            onClick={() => onAssetClick?.(asset)}
+            symbol={token.symbol || 'UNKNOWN'}
+            target={processedTarget}
         />
     );
 };

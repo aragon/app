@@ -46,7 +46,11 @@ export const multisigPluginAbi = [
                     { name: 'data', internalType: 'bytes', type: 'bytes' },
                 ],
             },
-            { name: '_allowFailureMap', internalType: 'uint256', type: 'uint256' },
+            {
+                name: '_allowFailureMap',
+                internalType: 'uint256',
+                type: 'uint256',
+            },
             { name: '_approveProposal', internalType: 'bool', type: 'bool' },
             { name: '_tryExecution', internalType: 'bool', type: 'bool' },
             { name: '_startDate', internalType: 'uint64', type: 'uint64' },

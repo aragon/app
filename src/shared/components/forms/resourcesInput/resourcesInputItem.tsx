@@ -1,6 +1,6 @@
+import { Button, Card, Dropdown, IconType, InputText } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Button, Card, Dropdown, IconType, InputText } from '@aragon/gov-ui-kit';
 
 export interface IResourcesInputItemProps {
     /**
@@ -51,19 +51,17 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (props) =>
     });
 
     return (
-        <Card className="shadow-neutral-sm flex flex-col gap-3 border border-neutral-100 p-6 md:flex-row md:gap-2">
+        <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
             <InputText maxLength={40} {...nameField} />
 
             <InputText placeholder={t('app.shared.resourcesInput.item.linkInput.placeholder')} {...urlField} />
             <div className="mt-0 md:mt-9">
                 <Dropdown.Container
                     constrainContentWidth={false}
+                    customTrigger={<Button iconLeft={IconType.DOTS_VERTICAL} size="lg" variant="tertiary" />}
                     size="md"
-                    customTrigger={<Button variant="tertiary" size="lg" iconLeft={IconType.DOTS_VERTICAL} />}
                 >
-                    <Dropdown.Item onClick={() => remove(index)}>
-                        {t('app.shared.resourcesInput.item.removeResource')}
-                    </Dropdown.Item>
+                    <Dropdown.Item onClick={() => remove(index)}>{t('app.shared.resourcesInput.item.removeResource')}</Dropdown.Item>
                 </Dropdown.Container>
             </div>
         </Card>

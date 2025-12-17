@@ -1,7 +1,7 @@
+import { renderHook } from '@testing-library/react';
 import * as governanceService from '@/modules/governance/api/governanceService';
 import { generateMember } from '@/modules/governance/testUtils';
 import { generateDaoPlugin, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { renderHook } from '@testing-library/react';
 import {
     generateTokenMember,
     generateTokenMemberMetrics,
@@ -17,7 +17,10 @@ describe('useTokenMemberStats hook', () => {
 
     beforeEach(() => {
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateTokenMember() }));
-        useWrappedTokenBalanceSpy.mockReturnValue({ balance: BigInt(0), refetch: jest.fn() });
+        useWrappedTokenBalanceSpy.mockReturnValue({
+            balance: BigInt(0),
+            refetch: jest.fn(),
+        });
     });
 
     afterEach(() => {
@@ -37,10 +40,15 @@ describe('useTokenMemberStats hook', () => {
 
         const member = generateTokenMember({
             votingPower: '47928374987234',
-            metrics: generateTokenMemberMetrics({ delegateReceivedCount: 47928374 }),
+            metrics: generateTokenMemberMetrics({
+                delegateReceivedCount: 47_928_374,
+            }),
         });
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
-        useWrappedTokenBalanceSpy.mockReturnValue({ balance: BigInt('123456123456'), refetch: jest.fn() });
+        useWrappedTokenBalanceSpy.mockReturnValue({
+            balance: BigInt('123456123456'),
+            refetch: jest.fn(),
+        });
 
         const { result } = renderHook(() => useTokenMemberStats(memberStatsParams));
         const [votingPower, tokenBalance] = result.current;
@@ -56,7 +64,11 @@ describe('useTokenMemberStats hook', () => {
         const member = generateMember();
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
         const { result } = renderHook(() =>
-            useTokenMemberStats({ address: '0x123', daoId: '1', plugin: generateDaoPlugin() }),
+            useTokenMemberStats({
+                address: '0x123',
+                daoId: '1',
+                plugin: generateDaoPlugin(),
+            })
         );
         expect(result.current).toEqual([]);
     });
@@ -64,7 +76,11 @@ describe('useTokenMemberStats hook', () => {
     it('returns empty list when member is null', () => {
         useMemberSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
         const { result } = renderHook(() =>
-            useTokenMemberStats({ address: '0x123', daoId: '1', plugin: generateDaoPlugin() }),
+            useTokenMemberStats({
+                address: '0x123',
+                daoId: '1',
+                plugin: generateDaoPlugin(),
+            })
         );
         expect(result.current).toEqual([]);
     });

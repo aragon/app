@@ -33,7 +33,7 @@ describe('useTokenExitQueueTokenId hook', () => {
                 escrowAddress: '0x123' as Hex,
                 userAddress: '0xabc' as Hex,
                 chainId: 1,
-            }),
+            })
         );
 
         await waitFor(() => {
@@ -54,7 +54,7 @@ describe('useTokenExitQueueTokenId hook', () => {
                 escrowAddress: '0x123' as Hex,
                 userAddress: '0xabc' as Hex,
                 chainId: 1,
-            }),
+            })
         );
 
         await waitFor(() => {
@@ -72,7 +72,7 @@ describe('useTokenExitQueueTokenId hook', () => {
                 userAddress: '0xabc' as Hex,
                 chainId: 1,
                 enabled: false,
-            }),
+            })
         );
 
         const firstCallArgs = useReadContractSpy.mock.calls[0]?.[0];
@@ -81,7 +81,12 @@ describe('useTokenExitQueueTokenId hook', () => {
 
     it('handles loading state correctly', () => {
         useReadContractSpy
-            .mockReturnValueOnce(createUseReadContractResult({ data: undefined, isLoading: true }))
+            .mockReturnValueOnce(
+                createUseReadContractResult({
+                    data: undefined,
+                    isLoading: true,
+                })
+            )
             .mockReturnValueOnce(createUseReadContractResult({ data: undefined }));
 
         const { result } = renderHook(() =>
@@ -89,7 +94,7 @@ describe('useTokenExitQueueTokenId hook', () => {
                 escrowAddress: '0x123' as Hex,
                 userAddress: '0xabc' as Hex,
                 chainId: 1,
-            }),
+            })
         );
 
         expect(result.current.isLoading).toBe(true);

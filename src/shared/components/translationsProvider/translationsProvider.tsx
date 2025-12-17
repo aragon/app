@@ -1,7 +1,7 @@
 'use client';
 
-import { translationUtils, type ITFuncOptions, type Translations } from '@/shared/utils/translationsUtils';
-import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react';
+import { createContext, type ReactNode, useContext, useEffect, useMemo } from 'react';
+import { type ITFuncOptions, type Translations, translationUtils } from '@/shared/utils/translationsUtils';
 import { useDebugContext } from '../debugProvider';
 
 export interface ITranslationContext {
@@ -29,16 +29,19 @@ export interface ITranslationsProviderProps {
 export const TranslationsProvider: React.FC<ITranslationsProviderProps> = (props) => {
     const { translations, children } = props;
 
-    const { values, registerControl } = useDebugContext<{ displayKeys: boolean }>();
+    const { values, registerControl } = useDebugContext<{
+        displayKeys: boolean;
+    }>();
     const { displayKeys } = values;
 
-    const contextValues = useMemo(
-        () => ({ t: translationUtils.t(translations, displayKeys) }),
-        [translations, displayKeys],
-    );
+    const contextValues = useMemo(() => ({ t: translationUtils.t(translations, displayKeys) }), [translations, displayKeys]);
 
     useEffect(() => {
-        registerControl({ name: 'displayKeys', type: 'boolean', label: 'Show translation keys' });
+        registerControl({
+            name: 'displayKeys',
+            type: 'boolean',
+            label: 'Show translation keys',
+        });
     }, [registerControl]);
 
     return <translationsContext.Provider value={contextValues}>{children}</translationsContext.Provider>;

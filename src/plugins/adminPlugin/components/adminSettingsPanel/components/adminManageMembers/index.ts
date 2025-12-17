@@ -1,1 +1,4 @@
-export { AdminManageMembers, type IAdminMangeMembersProps } from './adminManageMembers';
+export {
+    AdminManageMembers,
+    type IAdminMangeMembersProps,
+} from './adminManageMembers';

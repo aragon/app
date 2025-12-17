@@ -1,12 +1,12 @@
+import { useEffect } from 'react';
+import type { Hex } from 'viem';
+import { useAccount, useReadContract } from 'wagmi';
 import { useCheckTokenAllowance } from '@/plugins/tokenPlugin/components/tokenMemberPanel/hooks/useCheckTokenAllowance';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useEffect } from 'react';
-import { type Hex } from 'viem';
-import { useAccount, useReadContract } from 'wagmi';
 import { networkDefinitions } from '../../../../shared/constants/networkDefinitions';
 import { LockToVotePluginDialogId } from '../../constants/lockToVotePluginDialogId';
 import type { ILockToVoteLockUnlockDialogParams } from '../../dialogs/lockToVoteLockUnlockDialog';
@@ -114,7 +114,7 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
         if (onBalanceUpdated && balanceStatus === 'success' && balance?.value != null) {
             onBalanceUpdated(balance.value);
         }
-    }, [balanceStatus, balance?.value, token, onBalanceUpdated]);
+    }, [balanceStatus, balance?.value, onBalanceUpdated]);
 
     const refetchData = () => {
         invalidateQueries();

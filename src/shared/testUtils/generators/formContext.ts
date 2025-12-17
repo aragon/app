@@ -1,7 +1,7 @@
 import type { Control, FormState, UseFormReturn } from 'react-hook-form';
 
 export const generateFormContextState = <TFormValues extends object = object>(
-    state?: Partial<FormState<TFormValues>>,
+    state?: Partial<FormState<TFormValues>>
 ): FormState<TFormValues> => ({
     isDirty: false,
     isLoading: false,

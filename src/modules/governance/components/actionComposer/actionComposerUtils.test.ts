@@ -1,6 +1,6 @@
+import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { generateDao } from '@/shared/testUtils';
 import { mockTranslations } from '@/test/utils';
-import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { ProposalActionType } from '../../api/governanceService';
 import { generateSmartContractAbi } from '../../testUtils';
 import type { IActionComposerInputItem } from './actionComposerInput';
@@ -58,9 +58,15 @@ describe('actionComposerUtils', () => {
                 { id: '0xN2', name: 'Native2', info: 'info2' },
             ];
             const abisWithOverlap = [
-                generateSmartContractAbi({ address: '0xN1', name: 'CustomOverlap' }),
+                generateSmartContractAbi({
+                    address: '0xN1',
+                    name: 'CustomOverlap',
+                }),
                 generateSmartContractAbi({ address: '0xC3', name: 'Custom3' }),
-                generateSmartContractAbi({ address: '0xDAO', name: 'CustomDao' }),
+                generateSmartContractAbi({
+                    address: '0xDAO',
+                    name: 'CustomDao',
+                }),
             ];
             const result = actionComposerUtils.getActionGroups({
                 t: mockTranslations.tMock,
@@ -194,7 +200,11 @@ describe('actionComposerUtils', () => {
                     icon: IconType.SETTINGS,
                     groupId: '0xN1',
                     defaultValue: {
-                        inputData: { function: 'native-1', contract: 'Test', parameters: [] },
+                        inputData: {
+                            function: 'native-1',
+                            contract: 'Test',
+                            parameters: [],
+                        },
                     },
                 },
                 {
@@ -203,7 +213,11 @@ describe('actionComposerUtils', () => {
                     icon: IconType.HOME,
                     groupId: '0xN1',
                     defaultValue: {
-                        inputData: { function: 'native-2', contract: 'Test', parameters: [] },
+                        inputData: {
+                            function: 'native-2',
+                            contract: 'Test',
+                            parameters: [],
+                        },
                     },
                 },
             ] as unknown as IActionComposerInputItem[];

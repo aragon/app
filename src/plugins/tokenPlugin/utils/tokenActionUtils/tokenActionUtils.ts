@@ -1,10 +1,3 @@
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import { actionComposerUtils } from '@/modules/governance/components/actionComposer';
-import type { IActionComposerPluginData } from '@/modules/governance/types';
-import type { IDaoPlugin } from '@/shared/api/daoService';
-import type { TranslationFunction } from '@/shared/components/translationsProvider';
-import { daoUtils } from '@/shared/utils/daoUtils';
-import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 import {
     addressUtils,
     ProposalActionType as GukProposalActionType,
@@ -13,13 +6,20 @@ import {
     type IProposalActionTokenMint as IGukProposalActionTokenMint,
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import { actionComposerUtils } from '@/modules/governance/components/actionComposer';
+import type { IActionComposerPluginData } from '@/modules/governance/types';
+import type { IDaoPlugin } from '@/shared/api/daoService';
+import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 import { TokenMintTokensAction } from '../../components/tokenActions/tokenMintTokensAction';
 import { TokenUpdateSettingsAction } from '../../components/tokenActions/tokenUpdateSettingsAction';
 import {
-    TokenProposalActionType,
     type ITokenActionChangeSettings,
     type ITokenActionTokenMint,
     type ITokenPluginSettings,
+    TokenProposalActionType,
 } from '../../types';
 import type { ITokenProposalAction } from '../../types/tokenProposalAction';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
@@ -66,7 +66,7 @@ class TokenActionUtils {
             groups: [
                 {
                     id: tokenAddress,
-                    name: name,
+                    name,
                     info: addressUtils.truncateAddress(tokenAddress),
                     indexData: [tokenAddress],
                 },
@@ -110,9 +110,8 @@ class TokenActionUtils {
     isChangeSettingsAction = (action: IProposalAction | ITokenProposalAction): action is ITokenActionChangeSettings =>
         action.type === TokenProposalActionType.UPDATE_VOTE_SETTINGS;
 
-    isTokenMintAction = (action: IProposalAction | ITokenProposalAction): action is ITokenActionTokenMint => {
-        return action.type === TokenProposalActionType.MINT;
-    };
+    isTokenMintAction = (action: IProposalAction | ITokenProposalAction): action is ITokenActionTokenMint =>
+        action.type === TokenProposalActionType.MINT;
 
     normalizeTokenMintAction = (action: ITokenActionTokenMint): IGukProposalActionTokenMint => {
         const { token, receivers, ...otherValues } = action;
@@ -135,10 +134,19 @@ class TokenActionUtils {
         const { type, proposedSettings, existingSettings, ...otherValues } = action;
 
         const completeExistingSettings = { ...existingSettings, token };
-        const completeProposedSettings = { ...completeExistingSettings, ...proposedSettings };
+        const completeProposedSettings = {
+            ...completeExistingSettings,
+            ...proposedSettings,
+        };
 
-        const parsedExistingSettings = tokenSettingsUtils.parseSettings({ settings: completeExistingSettings, t });
-        const parsedProposedSettings = tokenSettingsUtils.parseSettings({ settings: completeProposedSettings, t });
+        const parsedExistingSettings = tokenSettingsUtils.parseSettings({
+            settings: completeExistingSettings,
+            t,
+        });
+        const parsedProposedSettings = tokenSettingsUtils.parseSettings({
+            settings: completeProposedSettings,
+            t,
+        });
 
         return {
             ...otherValues,

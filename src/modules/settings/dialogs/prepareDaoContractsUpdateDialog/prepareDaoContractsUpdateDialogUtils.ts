@@ -1,3 +1,5 @@
+import { invariant } from '@aragon/gov-ui-kit';
+import { encodeFunctionData, type Hex, zeroHash } from 'viem';
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -5,10 +7,8 @@ import type { IPluginInfo } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
-import { transactionUtils, type ITransactionRequest } from '@/shared/utils/transactionUtils';
+import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
 import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
-import { invariant } from '@aragon/gov-ui-kit';
-import { encodeFunctionData, zeroHash, type Hex } from 'viem';
 import { settingsService } from '../../api/settingsService';
 import { SettingsSlotId } from '../../constants/moduleSlots';
 import type { IBuildPreparePluginUpdateDataParams } from '../../types';
@@ -20,17 +20,21 @@ import type {
 } from './prepareDaoContractsUpdateDialogUtils.api';
 
 class PrepareDaoContractsUpdateDialogUtils {
-    buildPrepareUpdatePluginsTransaction = async (
-        params: IBuildPrepareUpdatePluginsTransactionParams,
-    ): Promise<ITransactionRequest> => {
+    buildPrepareUpdatePluginsTransaction = async (params: IBuildPrepareUpdatePluginsTransactionParams): Promise<ITransactionRequest> => {
         const { dao, plugins } = params;
         const pluginUpdateDataPromises = plugins.map((plugin) => this.buildPrepareUpdateTransaction(dao, plugin));
         const pluginUpdateData = await Promise.all(pluginUpdateDataPromises);
 
         const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
 
-        const transactionParams = { to: pluginSetupProcessor, value: BigInt(0) };
-        const pluginUpdateTransactions = pluginUpdateData.map((data) => ({ ...transactionParams, data }));
+        const transactionParams = {
+            to: pluginSetupProcessor,
+            value: BigInt(0),
+        };
+        const pluginUpdateTransactions = pluginUpdateData.map((data) => ({
+            ...transactionParams,
+            data,
+        }));
         const transaction = transactionUtils.encodeTransactionRequests(pluginUpdateTransactions, dao.network);
 
         return transaction;
@@ -43,7 +47,7 @@ class PrepareDaoContractsUpdateDialogUtils {
         return { ...metadata, actions, resources: [] };
     };
 
-    private buildPrepareUpdateTransaction = async (dao: IDao, plugin: IDaoPlugin) => {
+    private readonly buildPrepareUpdateTransaction = async (dao: IDao, plugin: IDaoPlugin) => {
         const pluginInfo = pluginRegistryUtils.getPlugin(plugin.interfaceType) as IPluginInfo;
 
         const currentVersionTag = versionComparatorUtils.normaliseComparatorInput(plugin)!;
@@ -54,17 +58,30 @@ class PrepareDaoContractsUpdateDialogUtils {
         const data = encodeFunctionData({
             abi: pluginSetupProcessorAbi,
             functionName: 'prepareUpdate',
-            args: [dao.address as Hex, { currentVersionTag, newVersionTag, pluginSetupRepo, setupPayload }],
+            args: [
+                dao.address as Hex,
+                {
+                    currentVersionTag,
+                    newVersionTag,
+                    pluginSetupRepo,
+                    setupPayload,
+                },
+            ],
         });
 
         return data;
     };
 
-    private buildPluginSetupPayload = async (dao: IDao, plugin: IDaoPlugin) => {
+    private readonly buildPluginSetupPayload = async (dao: IDao, plugin: IDaoPlugin) => {
         const { address, interfaceType } = plugin;
 
-        const setupDataParams = { pluginAddress: address, network: dao.network };
-        const { preparedSetupData } = await settingsService.getPluginInstallationData({ queryParams: setupDataParams });
+        const setupDataParams = {
+            pluginAddress: address,
+            network: dao.network,
+        };
+        const { preparedSetupData } = await settingsService.getPluginInstallationData({
+            queryParams: setupDataParams,
+        });
         const updateDataBuilder = pluginRegistryUtils.getSlotFunction<IBuildPreparePluginUpdateDataParams, Hex>({
             slotId: SettingsSlotId.SETTINGS_BUILD_PREPARE_PLUGIN_UPDATE_DATA,
             pluginId: interfaceType,
@@ -73,10 +90,14 @@ class PrepareDaoContractsUpdateDialogUtils {
         invariant(updateDataBuilder != null, 'PrepareDaoContractsUpdateDialogUtils: builder function does not exist.');
         const initializeData = updateDataBuilder({ dao, plugin });
 
-        return { plugin: address as Hex, currentHelpers: preparedSetupData.helpers as Hex[], data: initializeData };
+        return {
+            plugin: address as Hex,
+            currentHelpers: preparedSetupData.helpers as Hex[],
+            data: initializeData,
+        };
     };
 
-    private buildApplyUpdateTransactions = (params: IGetApplyUpdateProposalParams): ITransactionRequest[] => {
+    private readonly buildApplyUpdateTransactions = (params: IGetApplyUpdateProposalParams): ITransactionRequest[] => {
         const { dao, plugins, prepareUpdateReceipt, osxUpdate } = params;
         const transactions: ITransactionRequest[] = [];
 
@@ -87,14 +108,18 @@ class PrepareDaoContractsUpdateDialogUtils {
 
         if (prepareUpdateReceipt) {
             const setupData = pluginTransactionUtils.getPluginUpdateSetupData(prepareUpdateReceipt);
-            const updateActions = pluginTransactionUtils.buildApplyPluginsUpdateActions({ dao, plugins, setupData });
+            const updateActions = pluginTransactionUtils.buildApplyPluginsUpdateActions({
+                dao,
+                plugins,
+                setupData,
+            });
             transactions.push(...updateActions);
         }
 
         return transactions;
     };
 
-    private buildOsxUpdateAction = (dao: IDao) => {
+    private readonly buildOsxUpdateAction = (dao: IDao) => {
         const { network, address, version } = dao;
         const { dao: daoBaseAddress } = networkDefinitions[network].addresses;
 
@@ -116,8 +141,8 @@ class PrepareDaoContractsUpdateDialogUtils {
         return { to: address as Hex, data: transactionData, value: BigInt(0) };
     };
 
-    private buildApplyUpdateMetadata = (
-        params: IGetApplyUpdateProposalParams,
+    private readonly buildApplyUpdateMetadata = (
+        params: IGetApplyUpdateProposalParams
     ): Pick<IProposalCreate, 'title' | 'summary' | 'body'> => {
         const summary = this.getApplyUpdateSummaryMetadata();
         const body = this.getApplyUpdateBodyMetadata(params);
@@ -125,10 +150,10 @@ class PrepareDaoContractsUpdateDialogUtils {
         return { title: 'Aragon contract upgrade', summary, body };
     };
 
-    private getApplyUpdateSummaryMetadata = () =>
-        `This proposal is for a smart contract upgrade. The title, summary, and description text are automatically generated by Aragon.`;
+    private readonly getApplyUpdateSummaryMetadata = () =>
+        'This proposal is for a smart contract upgrade. The title, summary, and description text are automatically generated by Aragon.';
 
-    private getApplyUpdateBodyMetadata = (params: IGetApplyUpdateProposalParams): string => {
+    private readonly getApplyUpdateBodyMetadata = (params: IGetApplyUpdateProposalParams): string => {
         const { dao, plugins, osxUpdate } = params;
         const osxUpdateEntry = osxUpdate ? this.getOsxUpdateDetails(dao) : '';
         const pluginsUpdateEntry = plugins.map((plugin) => this.getPluginUpdateDetails(plugin)).join(' ');
@@ -145,7 +170,7 @@ class PrepareDaoContractsUpdateDialogUtils {
             .join('');
     };
 
-    private getOsxUpdateDetails = (dao: IDao) => {
+    private readonly getOsxUpdateDetails = (dao: IDao) => {
         const { release, build, patch, releaseNotes, description } = networkDefinitions[dao.network].protocolVersion;
         const updatedVersion = `${release.toString()}.${build.toString()}.${patch!.toString()}`;
         const { version: currentVersion } = dao;
@@ -163,11 +188,9 @@ class PrepareDaoContractsUpdateDialogUtils {
         `;
     };
 
-    private getPluginUpdateDetails = (plugin: IDaoPlugin) => {
+    private readonly getPluginUpdateDetails = (plugin: IDaoPlugin) => {
         const { interfaceType, release: currentRelease, build: currentBuild } = plugin;
-        const { release, build, description, releaseNotes } = (
-            pluginRegistryUtils.getPlugin(interfaceType) as IPluginInfo
-        ).installVersion;
+        const { release, build, description, releaseNotes } = (pluginRegistryUtils.getPlugin(interfaceType) as IPluginInfo).installVersion;
 
         const pluginName = daoUtils.getPluginName(plugin);
         const updatedVersion = `${pluginName} ${release.toString()}.${build.toString()}`;

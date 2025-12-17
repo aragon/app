@@ -1,1 +1,5 @@
-export { SetupBodyDialogSelect, externalPluginId, type ISetupBodyDialogSelectProps } from './setupBodyDialogSelect';
+export {
+    externalPluginId,
+    type ISetupBodyDialogSelectProps,
+    SetupBodyDialogSelect,
+} from './setupBodyDialogSelect';

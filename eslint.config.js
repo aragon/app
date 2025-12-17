@@ -9,6 +9,7 @@ const reactPlugin = require('eslint-plugin-react');
 const reactHooksPlugin = require('eslint-plugin-react-hooks');
 const testingLibraryPlugin = require('eslint-plugin-testing-library');
 const nextPlugin = require('@next/eslint-plugin-next');
+const biomeConfig = require('eslint-config-biome');
 
 const tsConfig = require('./tsconfig.json');
 
@@ -23,6 +24,7 @@ const config = tsEslint.config(
     ...tsEslint.configs.recommendedTypeChecked,
     ...tsEslint.configs.strictTypeChecked,
     ...tsEslint.configs.stylisticTypeChecked,
+    biomeConfig,
     {
         languageOptions: {
             globals: {
@@ -89,7 +91,9 @@ const config = tsEslint.config(
             '@typescript-eslint/consistent-type-exports': ['warn', { fixMixedExportsWithInlineTypeSpecifier: true }],
             '@typescript-eslint/non-nullable-type-assertion-style': 'off',
             '@typescript-eslint/triple-slash-reference': 'off',
-            'import/no-cycle': 'warn',
+            '@typescript-eslint/consistent-type-definitions': ['warn', 'interface'],
+            // Disabled: Using Biome's noImportCycles instead (much faster)
+            'import/no-cycle': 'off',
             'react/prop-types': 'off',
             'react/jsx-boolean-value': ['warn', 'always'],
             'react/self-closing-comp': 'warn',
@@ -115,7 +119,7 @@ const config = tsEslint.config(
             ...testingLibraryPlugin.configs['flat/react'].rules,
             '@typescript-eslint/unbound-method': 'off',
         },
-    },
+    }
 );
 
 module.exports = config;

@@ -15,5 +15,4 @@ export interface IGetAllowedActionsUrlParams {
     pluginAddress: string;
 }
 
-export interface IGetAllowedActionsParams
-    extends IRequestUrlQueryParams<IGetAllowedActionsUrlParams, IGetAllowedActionsQueryParams> {}
+export interface IGetAllowedActionsParams extends IRequestUrlQueryParams<IGetAllowedActionsUrlParams, IGetAllowedActionsQueryParams> {}

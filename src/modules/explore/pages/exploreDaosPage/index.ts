@@ -1,1 +1,1 @@
-export { ExploreDaosPage, type IExploreDaosPageProps } from './exploreDaosPage';
+export { ExploreDaosPage } from './exploreDaosPage';

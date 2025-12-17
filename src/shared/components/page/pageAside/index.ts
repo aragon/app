@@ -1,1 +1,1 @@
-export { PageAside, type IPageAsideProps } from './pageAside';
+export { type IPageAsideProps, PageAside } from './pageAside';

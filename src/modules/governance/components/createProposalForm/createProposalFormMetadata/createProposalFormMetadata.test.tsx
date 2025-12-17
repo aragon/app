@@ -1,6 +1,6 @@
-import { FormWrapper } from '@/shared/testUtils';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { FormWrapper } from '@/shared/testUtils';
 import { CreateProposalFormMetadata, type ICreateProposalFormMetadataProps } from './createProposalFormMetadata';
 
 describe('<CreateProposalFormMetadata /> component', () => {
@@ -17,23 +17,37 @@ describe('<CreateProposalFormMetadata /> component', () => {
     it('renders all form fields', () => {
         render(createTestComponent());
 
-        expect(screen.getByRole('textbox', { name: /createProposalForm.metadata.title.title/ })).toBeInTheDocument();
+        expect(
+            screen.getByRole('textbox', {
+                name: /createProposalForm.metadata.title.title/,
+            })
+        ).toBeInTheDocument();
 
-        expect(screen.getByRole('textbox', { name: /createProposalForm.metadata.summary.title/ })).toBeInTheDocument();
+        expect(
+            screen.getByRole('textbox', {
+                name: /createProposalForm.metadata.summary.title/,
+            })
+        ).toBeInTheDocument();
         expect(screen.getByText(/createProposalForm.metadata.summary.helpText/)).toBeInTheDocument();
 
         expect(screen.getByText(/createProposalForm.metadata.body.title/)).toBeInTheDocument();
 
         expect(screen.getByText(/shared.resourcesInput.title/)).toBeInTheDocument();
 
-        expect(screen.getByRole('switch', { name: /createProposalForm.metadata.actions.label/ })).toBeInTheDocument();
+        expect(
+            screen.getByRole('switch', {
+                name: /createProposalForm.metadata.actions.label/,
+            })
+        ).toBeInTheDocument();
         expect(screen.getByText(/createProposalForm.metadata.actions.helpText/)).toBeInTheDocument();
     });
 
     it('allows input in title field', async () => {
         render(createTestComponent());
 
-        const titleInput = screen.getByRole('textbox', { name: /createProposalForm.metadata.title.title/ });
+        const titleInput = screen.getByRole('textbox', {
+            name: /createProposalForm.metadata.title.title/,
+        });
         await userEvent.type(titleInput, 'Test Proposal');
 
         expect(titleInput).toHaveValue('Test Proposal');

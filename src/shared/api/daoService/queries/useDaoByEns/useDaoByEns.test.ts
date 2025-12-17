@@ -1,5 +1,5 @@
-import { generateDao, ReactQueryWrapper } from '@/shared/testUtils';
 import { renderHook, waitFor } from '@testing-library/react';
+import { generateDao, ReactQueryWrapper } from '@/shared/testUtils';
 import { daoService } from '../../daoService';
 import type { IGetDaoByEnsUrlParams } from '../../daoService.api';
 import { Network } from '../../domain';
@@ -13,10 +13,15 @@ describe('useDaoByEns query', () => {
     });
 
     it('fetches the specified DAO by ENS', async () => {
-        const params: IGetDaoByEnsUrlParams = { ens: 'test.dao.eth', network: Network.ETHEREUM_MAINNET };
+        const params: IGetDaoByEnsUrlParams = {
+            ens: 'test.dao.eth',
+            network: Network.ETHEREUM_MAINNET,
+        };
         const dao = generateDao();
         getDaoByEnsSpy.mockResolvedValue(dao);
-        const { result } = renderHook(() => useDaoByEns({ urlParams: params }), { wrapper: ReactQueryWrapper });
+        const { result } = renderHook(() => useDaoByEns({ urlParams: params }), {
+            wrapper: ReactQueryWrapper,
+        });
         await waitFor(() => expect(result.current.data).toEqual(dao));
     });
 });

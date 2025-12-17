@@ -1,5 +1,5 @@
-import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { encodeFunctionData, type Hex } from 'viem';
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import type { ISppProposal, SppProposalType } from '../../types';
 import { sppReportProposalResultAbi } from './sppReportProposalResultAbi';
 
@@ -23,7 +23,11 @@ class SppReportProposalResultDialogUtils {
             functionName: 'reportProposalResult',
             args: [proposal.proposalIndex, proposal.stageIndex, resultType, false],
         });
-        const transaction = { to: proposal.pluginAddress as Hex, data: transactionData, value: BigInt(0) };
+        const transaction = {
+            to: proposal.pluginAddress as Hex,
+            data: transactionData,
+            value: BigInt(0),
+        };
 
         return Promise.resolve(transaction);
     };

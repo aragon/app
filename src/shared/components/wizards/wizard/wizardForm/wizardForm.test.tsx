@@ -1,8 +1,8 @@
-import { generateFormContext, generateWizardContext } from '@/shared/testUtils';
 import { Button } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as ReactHookForm from 'react-hook-form';
+import { generateFormContext, generateWizardContext } from '@/shared/testUtils';
 import * as WizardProvider from '../wizardProvider';
 import { type IWizardFormProps, WizardForm } from './wizardForm';
 

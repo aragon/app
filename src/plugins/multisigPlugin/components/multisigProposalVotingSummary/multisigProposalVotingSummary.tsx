@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, invariant, NumberFormat, Progress, ProposalStatus } from '@aragon/gov-ui-kit';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IMultisigProposal } from '../../types';
 import { multisigProposalUtils } from '../../utils/multisigProposalUtils';
 
@@ -29,8 +29,27 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
 
     const { t } = useTranslations();
 
+    const renderInactiveStatus = (isApprovalReached: boolean) => {
+        const approvalText = isApprovalReached ? 'approved' : 'notApproved';
+        const vetoText = isApprovalReached ? 'vetoed' : 'notVetoed';
+        const statusText = isVeto ? vetoText : approvalText;
+
+        let statusClass = 'text-neutral-500';
+        if (isApprovalReached && isVeto) {
+            statusClass = 'text-critical-800';
+        } else if (isApprovalReached) {
+            statusClass = 'text-success-800';
+        }
+
+        return (
+            <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
+                {name} <span className={statusClass}>{t(`app.plugins.multisig.multisigProposalVotingSummary.${statusText}`)}</span>
+            </p>
+        );
+    };
+
     if (!proposal) {
-        return <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">{name}</p>;
+        return <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">{name}</p>;
     }
 
     const { settings, metrics } = proposal;
@@ -48,35 +67,19 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
     const formattedApprovalsAmount = formatterUtils.formatNumber(approvalsAmount, {
         format: NumberFormat.GENERIC_SHORT,
     });
-    const formattedMembersCount = formatterUtils.formatNumber(membersCount, { format: NumberFormat.GENERIC_SHORT })!;
+    const formattedMembersCount = formatterUtils.formatNumber(membersCount, {
+        format: NumberFormat.GENERIC_SHORT,
+    })!;
 
     const isApprovalReached = multisigProposalUtils.isApprovalReached(proposal);
 
     if (status !== ProposalStatus.ACTIVE || isExecuted) {
-        const approvalText = isApprovalReached ? 'approved' : 'notApproved';
-        const vetoText = isApprovalReached ? 'vetoed' : 'notVetoed';
-        const statusText = isVeto ? vetoText : approvalText;
-
-        const statusClass =
-            isApprovalReached && isVeto
-                ? 'text-critical-800'
-                : isApprovalReached
-                  ? 'text-success-800'
-                  : 'text-neutral-500';
-
-        return (
-            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
-                {name}{' '}
-                <span className={statusClass}>
-                    {t(`app.plugins.multisig.multisigProposalVotingSummary.${statusText}`)}
-                </span>
-            </p>
-        );
+        return renderInactiveStatus(isApprovalReached);
     }
 
     return (
         <div className="flex w-full flex-col gap-3">
-            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
+            <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
                 {name}{' '}
                 <span className="text-neutral-500">
                     {isVeto
@@ -85,11 +88,11 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
                 </span>
             </p>
             <Progress
-                variant={isApprovalReached ? 'primary' : 'neutral'}
-                value={currentApprovalsPercentage}
                 thresholdIndicator={minApprovalPercentage}
+                value={currentApprovalsPercentage}
+                variant={isApprovalReached ? 'primary' : 'neutral'}
             />
-            <p className="text-sm leading-tight font-normal text-neutral-800 md:text-base">
+            <p className="font-normal text-neutral-800 text-sm leading-tight md:text-base">
                 {formattedApprovalsAmount}{' '}
                 <span className="text-neutral-500">
                     {t('app.plugins.multisig.multisigProposalVotingSummary.memberCount', {

@@ -1,14 +1,13 @@
+import { QueryClient } from '@tanstack/react-query';
 import { Page } from '@/shared/components/page';
 import { networkUtils } from '@/shared/utils/networkUtils';
-import { QueryClient } from '@tanstack/react-query';
 import { featuredDaosOptions } from '../../api/cmsService';
 import { daoListOptions } from '../../api/daoExplorerService';
 import { ExploreDaosPageClient } from './exploreDaosPageClient';
-export interface IExploreDaosPageProps {}
 
 const daosPerPage = 10;
 
-export const ExploreDaosPage: React.FC<IExploreDaosPageProps> = async () => {
+export const ExploreDaosPage: React.FC = async () => {
     const queryClient = new QueryClient();
 
     const daoListQueryParams = {

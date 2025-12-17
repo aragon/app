@@ -3,8 +3,7 @@ import { cmsService } from '@/modules/explore/api/cmsService';
 import type { FeatureFlagEnvironment, FeatureFlagOverrides, IFeatureFlagsProvider } from '../featureFlags.api';
 import { parseFeatureFlagOverridesFromCookie } from '../utils/cookieOverrides';
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-    value != null && typeof value === 'object' && !Array.isArray(value);
+const isRecord = (value: unknown): value is Record<string, unknown> => value != null && typeof value === 'object' && !Array.isArray(value);
 
 const getEnvironmentValue = (value: unknown, env: FeatureFlagEnvironment): boolean | undefined => {
     if (typeof value === 'boolean') {
@@ -18,7 +17,7 @@ const getEnvironmentValue = (value: unknown, env: FeatureFlagEnvironment): boole
         return typeof envValue === 'boolean' ? envValue : undefined;
     }
 
-    return undefined;
+    return;
 };
 
 const loadCmsOverrides = async (environment: FeatureFlagEnvironment): Promise<FeatureFlagOverrides> => {

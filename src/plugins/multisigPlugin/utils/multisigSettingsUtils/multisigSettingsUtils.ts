@@ -1,6 +1,6 @@
-import { type IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
-import { type TranslationFunction } from '@/shared/components/translationsProvider';
 import type { IDefinitionSetting } from '@aragon/gov-ui-kit';
+import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
+import type { TranslationFunction } from '@/shared/components/translationsProvider';
 
 export interface IMultisigSettingsParseParams {
     /**
@@ -30,9 +30,7 @@ class MultisigSettingsUtils {
 
         return [
             {
-                term: t(
-                    `app.plugins.multisig.multisigGovernanceSettings.${isVeto ? 'minimumVeto' : 'minimumApproval'}`,
-                ),
+                term: t(`app.plugins.multisig.multisigGovernanceSettings.${isVeto ? 'minimumVeto' : 'minimumApproval'}`),
                 definition: t('app.plugins.multisig.multisigGovernanceSettings.approvals', {
                     min: minApprovals,
                     max: processedMembersCount,

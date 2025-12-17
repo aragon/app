@@ -1,18 +1,20 @@
+const TIME_PATTERN = /^(\d{1,2}):(\d{2})(?:\s*([ap])\.?m\.?)?$/i;
+
 class TimeUtils {
     normalizeTimeValue = (value: string): string => {
         if (value.length === 0) {
             return '';
         }
 
-        const timeMatch = this.timePattern.exec(value);
+        const timeMatch = TIME_PATTERN.exec(value);
 
         if (!timeMatch) {
             return value;
         }
 
         const [, hourRaw, minuteRaw, periodRaw] = timeMatch;
-        let hours = parseInt(hourRaw, 10);
-        let minutes = parseInt(minuteRaw, 10);
+        let hours = Number.parseInt(hourRaw, 10);
+        let minutes = Number.parseInt(minuteRaw, 10);
         const period = periodRaw ? periodRaw.toLowerCase() : undefined;
 
         if (period === 'p' && hours < 12) {
@@ -30,8 +32,6 @@ class TimeUtils {
 
         return `${normalizedHours}:${normalizedMinutes}`;
     };
-
-    private timePattern = /^(\d{1,2}):(\d{2})(?:\s*([ap])\.?m\.?)?$/i;
 }
 
 export const timeUtils = new TimeUtils();

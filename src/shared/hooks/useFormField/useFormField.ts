@@ -1,12 +1,12 @@
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { sanitizePlainText, sanitizePlainTextMultiline } from '@/shared/security';
 import { useMemo } from 'react';
 import { type FieldPath, type FieldValues, type Noop, useController } from 'react-hook-form';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { sanitizePlainText, sanitizePlainTextMultiline } from '@/shared/security';
 import type { IUseFormFieldOptions, IUseFormFieldReturn } from './useFormField.api';
 
 export const useFormField = <TFieldValues extends FieldValues = never, TName extends FieldPath<TFieldValues> = never>(
     name: TName,
-    options?: IUseFormFieldOptions<TFieldValues, TName>,
+    options?: IUseFormFieldOptions<TFieldValues, TName>
 ): IUseFormFieldReturn<TFieldValues, TName> => {
     const { t } = useTranslations();
 
@@ -25,7 +25,7 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
 
     const { field, fieldState } = useController<TFieldValues, TName>({
         name: processedFieldName as TName,
-        rules: rules,
+        rules,
         ...otherOptions,
     });
 
@@ -37,12 +37,12 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
 
         const rawValue = event.target.value;
         const baseValue = trimOnBlur ? rawValue.trim() : rawValue;
-        const processedValue =
-            sanitizeMode === 'none'
-                ? baseValue
-                : sanitizeMode === 'multiline'
-                  ? sanitizePlainTextMultiline(baseValue)
-                  : sanitizePlainText(baseValue);
+        let processedValue = baseValue;
+        if (sanitizeMode === 'multiline') {
+            processedValue = sanitizePlainTextMultiline(baseValue);
+        } else if (sanitizeMode !== 'none') {
+            processedValue = sanitizePlainText(baseValue);
+        }
         field.onChange(processedValue);
         field.onBlur();
     };
@@ -53,20 +53,16 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
 
     const alert = useMemo(() => {
         if (error?.type == null && error?.message == null) {
-            return undefined;
+            return;
         }
 
         const alertMessageKey = `app.shared.formField.error.${error.type}`;
         const alertValue =
-            error.type === 'min'
-                ? (rules?.min as number | undefined)?.toString()
-                : (rules?.max as number | undefined)?.toString();
+            error.type === 'min' ? (rules?.min as number | undefined)?.toString() : (rules?.max as number | undefined)?.toString();
         const alertMessageParams = { name: label ?? name, value: alertValue };
 
         const alertMessage =
-            error.message != null && error.message.length > 0
-                ? t(error.message, alertValueProp)
-                : t(alertMessageKey, alertMessageParams);
+            error.message != null && error.message.length > 0 ? t(error.message, alertValueProp) : t(alertMessageKey, alertMessageParams);
 
         return { message: alertMessage, variant: 'critical' as const };
     }, [error, rules, label, alertValueProp, t, name]);

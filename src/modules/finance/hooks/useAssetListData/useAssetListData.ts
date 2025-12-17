@@ -3,42 +3,43 @@ import { type IGetAssetListParams, useAssetList } from '@/modules/finance/api/fi
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 
+type AssetListData = NonNullable<ReturnType<typeof useAssetList>['data']>;
+
+const normalizeAsset = (asset: AssetListData['pages'][number]['data'][number]) => {
+    const amount = Number(asset.amount) || 0;
+    const amountUsd = Number(asset.amountUsd) || 0;
+    const originalPriceUsd = asset.token.priceUsd;
+    const price = Number(originalPriceUsd) || 0;
+    let finalPrice = price;
+
+    if (finalPrice === 0 && amount > 0 && amountUsd > 0) {
+        finalPrice = amountUsd / amount;
+    }
+    const priceUsd = finalPrice !== price ? String(finalPrice) : originalPriceUsd;
+
+    return {
+        ...asset,
+        amount: String(amount),
+        token: {
+            ...asset.token,
+            name: asset.token.name || 'Unknown',
+            symbol: asset.token.symbol || 'UNKNOWN',
+            priceUsd,
+        },
+    };
+};
+
 export const useAssetListData = (params: IGetAssetListParams) => {
     const { t } = useTranslations();
 
     const { data: assetListData, status, fetchStatus, isFetchingNextPage, fetchNextPage } = useAssetList(params);
 
-    type Asset = NonNullable<typeof assetListData>['pages'][number]['data'][number];
-    const assetList: Asset[] = [];
-
-    if (assetListData?.pages) {
-        for (const page of assetListData.pages) {
-            for (const asset of page.data) {
-                const amount = Number(asset.amount) || 0;
-                const amountUsd = Number(asset.amountUsd) || 0;
-                const originalPriceUsd = asset.token.priceUsd;
-                const price = Number(originalPriceUsd) || 0;
-                let finalPrice = price;
-
-                if (finalPrice === 0 && amount > 0 && amountUsd > 0) {
-                    finalPrice = amountUsd / amount;
-                }
-                const priceUsd = finalPrice !== price ? String(finalPrice) : originalPriceUsd;
-
-                assetList.push({
-                    ...asset,
-                    amount: String(amount),
-                    token: {
-                        ...asset.token,
-                        name: asset.token.name || 'Unknown',
-                        symbol: asset.token.symbol || 'UNKNOWN',
-                        priceUsd,
-                    },
-                });
-            }
-        }
-    }
-    const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
+    const assetList = assetListData?.pages.flatMap((page) => page.data.map(normalizeAsset)) ?? [];
+    const state = dataListUtils.queryToDataListState({
+        status,
+        fetchStatus,
+        isFetchingNextPage,
+    });
 
     const pageSize = params.queryParams.pageSize ?? assetListData?.pages[0].metadata.pageSize;
     const itemsCount = assetListData?.pages[0].metadata.totalRecords;

@@ -1,17 +1,16 @@
+import { addressUtils, invariant } from '@aragon/gov-ui-kit';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { useSimulateProposalCreation } from '@/modules/governance/hooks/useSimulateProposal';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { addressUtils, invariant } from '@aragon/gov-ui-kit';
 import type { ISppPluginSettings } from '../../types';
 
-export interface IUseSppPermissionCheckProposalCreationParams
-    extends IPermissionCheckGuardParams<IDaoPlugin<ISppPluginSettings>> {}
+export interface IUseSppPermissionCheckProposalCreationParams extends IPermissionCheckGuardParams<IDaoPlugin<ISppPluginSettings>> {}
 
 export const useSppPermissionCheckProposalCreation = (
-    params: IUseSppPermissionCheckProposalCreationParams,
+    params: IUseSppPermissionCheckProposalCreationParams
 ): IPermissionCheckGuardResult => {
     const { daoId, plugin, useConnectedUserInfo = true } = params;
 
@@ -35,7 +34,7 @@ export const useSppPermissionCheckProposalCreation = (
         pluginRegistryUtils.getSlotFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
             pluginId: plugin.interfaceType,
-        })?.({ plugin, daoId, useConnectedUserInfo }),
+        })?.({ plugin, daoId, useConnectedUserInfo })
     );
 
     // GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION is now used only to get settings in the SPP case (we still miss settings for Safe bodies, though).
@@ -44,9 +43,7 @@ export const useSppPermissionCheckProposalCreation = (
     const isLoading = isSimulationLoading || pluginProposalCreationGuardResults.some((result) => result?.isLoading);
 
     // Individual settings are returned as a nested array, so we need to flatten them
-    const settings = pluginProposalCreationGuardResults.flatMap((result) =>
-        result?.isRestricted ? result.settings : [],
-    );
+    const settings = pluginProposalCreationGuardResults.flatMap((result) => (result?.isRestricted ? result.settings : []));
 
     return {
         hasPermission: permissionGranted,

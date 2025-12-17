@@ -1,5 +1,5 @@
-import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import type { UseQueryReturnType } from 'wagmi/query';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { transactionDialogUtils } from './transactionDialogUtils';
 
 describe('transactionDialog utils', () => {
@@ -12,30 +12,26 @@ describe('transactionDialog utils', () => {
             expect(transactionDialogUtils.queryToStepState('pending', 'idle')).toEqual('idle');
         });
 
-        it.each([{ queryStatus: 'success' }, { queryStatus: 'error' }])(
-            'returns $queryStatus when query status is $queryStatus',
-            ({ queryStatus }) => {
-                const result = transactionDialogUtils.queryToStepState(
-                    queryStatus as UseQueryReturnType['status'],
-                    'idle',
-                );
-                expect(result).toEqual(queryStatus);
-            },
-        );
+        it.each([{ queryStatus: 'success' }, { queryStatus: 'error' }])('returns $queryStatus when query status is $queryStatus', ({
+            queryStatus,
+        }) => {
+            const result = transactionDialogUtils.queryToStepState(queryStatus as UseQueryReturnType['status'], 'idle');
+            expect(result).toEqual(queryStatus);
+        });
     });
 
     describe('shouldIgnoreError', () => {
         it('returns false when error is not an instance of Error class', () => {
-            expect(transactionDialogUtils['shouldIgnoreError']('test')).toBeFalsy();
+            expect(transactionDialogUtils.shouldIgnoreError('test')).toBeFalsy();
         });
 
         it('returns false when error does not match any of the ignore error list', () => {
-            expect(transactionDialogUtils['shouldIgnoreError']('unknown-error')).toBeFalsy();
+            expect(transactionDialogUtils.shouldIgnoreError('unknown-error')).toBeFalsy();
         });
 
         it('returns true when error matches one of the ignore error list', () => {
             const error = new Error('User rejected the request. stack: "Error: [...]');
-            expect(transactionDialogUtils['shouldIgnoreError'](error)).toBeTruthy();
+            expect(transactionDialogUtils.shouldIgnoreError(error)).toBeTruthy();
         });
     });
 

@@ -1,10 +1,10 @@
-import type { TransactionType } from '@/shared/api/transactionService';
 import { DialogFooter, IconType } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import type { TransactionReceipt } from 'viem';
+import type { TransactionType } from '@/shared/api/transactionService';
 import { useBlockNavigationContext } from '../blockNavigationContext';
 import { useDialogContext } from '../dialogProvider';
-import { type TransactionStatusState } from '../transactionStatus';
+import type { TransactionStatusState } from '../transactionStatus';
 import { useTranslations } from '../translationsProvider';
 import {
     type IBuildTransactionDialogSuccessLinkHref,
@@ -64,7 +64,7 @@ const stepStateSubmitLabel: Partial<Record<TransactionDialogStep, Partial<Record
 
 const buildSuccessLink = (
     successHref: TransactionDialogSuccessLinkHref,
-    params: IBuildTransactionDialogSuccessLinkHref,
+    params: IBuildTransactionDialogSuccessLinkHref
 ): string | undefined => {
     if (typeof successHref === 'string') {
         return successHref;
@@ -73,22 +73,68 @@ const buildSuccessLink = (
     return successHref(params);
 };
 
-const indexingStepTimeout = 14000;
+const indexingStepTimeout = 14_000;
 
-export const TransactionDialogFooter = <TCustomStepId extends string = string>(
-    props: ITransactionDialogFooterProps<TCustomStepId>,
+const getDefaultSubmitLabel = (
+    params: {
+        isErrorState: boolean;
+        displaySuccessLink: boolean;
+        successLabel: string;
+        submitLabel: string;
+    },
+    t: ReturnType<typeof useTranslations>['t']
 ) => {
-    const {
-        submitLabel,
-        successLink,
-        txReceipt,
-        activeStep,
-        onError,
-        onCancelClick,
-        transactionType,
-        indexingFallbackUrl,
-        proposalSlug,
-    } = props;
+    const { isErrorState, displaySuccessLink, successLabel, submitLabel } = params;
+    if (isErrorState) {
+        return t('app.shared.transactionDialog.footer.retry');
+    }
+    if (displaySuccessLink) {
+        return successLabel;
+    }
+    return submitLabel;
+};
+
+const getSecondaryAction = (
+    params: {
+        t: ReturnType<typeof useTranslations>['t'];
+        showProceedAnyway: boolean;
+        isSuccessState: boolean;
+        isCancelDisabled: boolean;
+        onCancelClick?: () => void;
+        setIsBlocked: (blocked: boolean) => void;
+        indexingFallbackUrl?: string;
+    },
+    close: () => void
+) => {
+    const { t, showProceedAnyway, isSuccessState, isCancelDisabled, onCancelClick, setIsBlocked, indexingFallbackUrl } = params;
+
+    const cancelButtonLabel = showProceedAnyway
+        ? t('app.shared.transactionDialog.footer.proceedAnyway')
+        : t('app.shared.transactionDialog.footer.cancel');
+
+    const getFallbackUrl = () => {
+        setIsBlocked(false);
+        return indexingFallbackUrl ?? '/';
+    };
+
+    const handleCancelClick = () => {
+        close();
+        if (!showProceedAnyway) {
+            onCancelClick?.();
+        }
+    };
+
+    return {
+        label: cancelButtonLabel,
+        onClick: handleCancelClick,
+        href: showProceedAnyway ? getFallbackUrl() : undefined,
+        disabled: showProceedAnyway ? isSuccessState : isCancelDisabled,
+    };
+};
+
+export const TransactionDialogFooter = <TCustomStepId extends string = string>(props: ITransactionDialogFooterProps<TCustomStepId>) => {
+    const { submitLabel, successLink, txReceipt, activeStep, onError, onCancelClick, transactionType, indexingFallbackUrl, proposalSlug } =
+        props;
 
     // For two step transactions we move from first to second step automatically on success, so in those cases
     // we will not have a success link and just use the default label to satisfy the interface.
@@ -125,16 +171,11 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
 
     const displaySuccessLink = stepId === successStep && isSuccessState;
 
-    const isCancelDisabled =
-        (stepId === TransactionDialogStep.CONFIRM || stepId === TransactionDialogStep.INDEXING) &&
-        (isSuccessState || isPendingState);
+    const isConfirmOrIndexing = stepId === TransactionDialogStep.CONFIRM || stepId === TransactionDialogStep.INDEXING;
+    const isCancelDisabled = isConfirmOrIndexing && (isSuccessState || isPendingState);
 
     const customSubmitLabel = stepId != null && state != null ? stepStateSubmitLabel[stepId]?.[state] : undefined;
-    const defaultSubmitLabel = isErrorState
-        ? t('app.shared.transactionDialog.footer.retry')
-        : displaySuccessLink
-          ? successLabel
-          : submitLabel;
+    const defaultSubmitLabel = getDefaultSubmitLabel({ isErrorState, displaySuccessLink, successLabel, submitLabel }, t);
 
     const processedSubmitLabel = customSubmitLabel != null ? t(customSubmitLabel) : defaultSubmitLabel;
 
@@ -147,28 +188,13 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         }
     };
 
-    const handleCancelClick = () => {
-        close();
-        if (!showProceedAnyway) {
-            onCancelClick?.();
-        }
-    };
-
     const processedSuccessLink =
         displaySuccessLink && successHref
-            ? buildSuccessLink(successHref, { receipt: txReceipt!, slug: proposalSlug })
+            ? buildSuccessLink(successHref, {
+                  receipt: txReceipt!,
+                  slug: proposalSlug,
+              })
             : undefined;
-
-    // The cancel button becomes "Proceed anyway" during indexing after 8 seconds
-    // and navigates the user to a different page based on transaction type
-    const cancelButtonLabel = showProceedAnyway
-        ? t('app.shared.transactionDialog.footer.proceedAnyway')
-        : t('app.shared.transactionDialog.footer.cancel');
-
-    const getFallbackUrl = () => {
-        setIsBlocked(false);
-        return indexingFallbackUrl ?? '/';
-    };
 
     return (
         <DialogFooter
@@ -179,12 +205,10 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
                 isLoading: isPendingState,
                 href: processedSuccessLink,
             }}
-            secondaryAction={{
-                label: cancelButtonLabel,
-                onClick: handleCancelClick,
-                href: showProceedAnyway ? getFallbackUrl() : undefined,
-                disabled: showProceedAnyway ? isSuccessState : isCancelDisabled,
-            }}
+            secondaryAction={getSecondaryAction(
+                { t, showProceedAnyway, isSuccessState, isCancelDisabled, onCancelClick, setIsBlocked, indexingFallbackUrl },
+                close
+            )}
         />
     );
 };

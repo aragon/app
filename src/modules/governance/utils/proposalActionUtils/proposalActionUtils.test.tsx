@@ -1,3 +1,8 @@
+import {
+    ProposalActionType as GukProposalActionType,
+    type IProposalActionUpdateMetadata,
+    type IProposalActionWithdrawToken,
+} from '@aragon/gov-ui-kit';
 import { generateToken } from '@/modules/finance/testUtils';
 import {
     generateProposalAction,
@@ -8,11 +13,6 @@ import {
 import { generateDao } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import {
-    type IProposalActionUpdateMetadata,
-    type IProposalActionWithdrawToken,
-    ProposalActionType as GukProposalActionType,
-} from '@aragon/gov-ui-kit';
 import { ProposalActionType } from '../../api/governanceService';
 import { proposalActionUtils } from './proposalActionUtils';
 
@@ -73,16 +73,24 @@ describe('proposalActionUtils', () => {
         });
 
         it('uses the transfer-action normalization function when action is of transfer type', () => {
-            const action = generateProposalAction({ type: ProposalActionType.TRANSFER });
-            const normalizedAction = generateProposalAction({ type: 'normalized' });
+            const action = generateProposalAction({
+                type: ProposalActionType.TRANSFER,
+            });
+            const normalizedAction = generateProposalAction({
+                type: 'normalized',
+            });
             normalizeTransferActionSpy.mockReturnValue(normalizedAction as IProposalActionWithdrawToken);
             expect(proposalActionUtils.normalizeDefaultAction(action)).toEqual(normalizedAction);
             expect(normalizeTransferActionSpy).toHaveBeenCalledWith(action);
         });
 
         it('uses the update-metadata-action normalization function when action is of update-metadata type', () => {
-            const action = generateProposalAction({ type: ProposalActionType.METADATA_UPDATE });
-            const normalizedAction = generateProposalAction({ type: 'normalized' });
+            const action = generateProposalAction({
+                type: ProposalActionType.METADATA_UPDATE,
+            });
+            const normalizedAction = generateProposalAction({
+                type: 'normalized',
+            });
             normalizeUpdateMetaDataActionSpy.mockReturnValue(normalizedAction as IProposalActionUpdateMetadata);
             expect(proposalActionUtils.normalizeDefaultAction(action)).toEqual(normalizedAction);
             expect(normalizeUpdateMetaDataActionSpy).toHaveBeenCalledWith(action);
@@ -97,7 +105,10 @@ describe('proposalActionUtils', () => {
     describe('normalizeTransferAction', () => {
         it('correctly normalizes a transfer action', () => {
             const token = generateToken({ decimals: 18 });
-            const transferAction = generateProposalActionWithdrawToken({ amount: '1000000000000000', token });
+            const transferAction = generateProposalActionWithdrawToken({
+                amount: '1000000000000000',
+                token,
+            });
             const normalizedAction = proposalActionUtils.normalizeTransferAction(transferAction);
             expect(normalizedAction.type).toEqual(GukProposalActionType.WITHDRAW_TOKEN);
             expect(normalizedAction.amount).toEqual('0.001');
@@ -118,7 +129,11 @@ describe('proposalActionUtils', () => {
 
         it('correctly normalizes a update-dao-metadata action', () => {
             const action = generateProposalActionUpdateMetadata();
-            const normalizedMetadata = { name: 'test-name', description: 'test-description', links: [] };
+            const normalizedMetadata = {
+                name: 'test-name',
+                description: 'test-description',
+                links: [],
+            };
             normalizeActionMetadataSpy.mockReturnValue(normalizedMetadata);
             const normalizedAction = proposalActionUtils.normalizeUpdateMetaDataAction(action);
             expect(normalizedAction.type).toEqual(GukProposalActionType.UPDATE_METADATA);
@@ -128,7 +143,11 @@ describe('proposalActionUtils', () => {
 
         it('correctly normalizes a update-plugin-metadata action', () => {
             const action = generateProposalActionUpdatePluginMetadata();
-            const normalizedMetadata = { name: 'test-name', description: 'test-description', links: [] };
+            const normalizedMetadata = {
+                name: 'test-name',
+                description: 'test-description',
+                links: [],
+            };
             normalizeActionMetadataSpy.mockReturnValue(normalizedMetadata);
             const normalizedAction = proposalActionUtils.normalizeUpdateMetaDataAction(action);
             expect(normalizedAction.type).toEqual(GukProposalActionType.UPDATE_PLUGIN_METADATA);
@@ -178,7 +197,11 @@ describe('proposalActionUtils', () => {
         });
 
         it('correctly normalizes plugin metadata object', () => {
-            const metadata = { name: 'plugin-name', processKey: 'TEST', links: [] };
+            const metadata = {
+                name: 'plugin-name',
+                processKey: 'TEST',
+                links: [],
+            };
             const normalizedLinks = [{ label: 'test', href: 'href' }];
             normalizeActionMetadataLinksSpy.mockReturnValue(normalizedLinks);
             const normalizedMetadata = proposalActionUtils.normalizeActionMetadata(metadata);
@@ -208,34 +231,46 @@ describe('proposalActionUtils', () => {
 
     describe('isWithdrawTokenAction', () => {
         it('returns true when action is of transfer type', () => {
-            const action = generateProposalAction({ type: ProposalActionType.TRANSFER });
+            const action = generateProposalAction({
+                type: ProposalActionType.TRANSFER,
+            });
             expect(proposalActionUtils.isWithdrawTokenAction(action)).toBeTruthy();
         });
 
         it('returns true when action is of native transfer type', () => {
-            const action = generateProposalAction({ type: ProposalActionType.TRANSFER_NATIVE });
+            const action = generateProposalAction({
+                type: ProposalActionType.TRANSFER_NATIVE,
+            });
             expect(proposalActionUtils.isWithdrawTokenAction(action)).toBeTruthy();
         });
 
         it('returns false when action is not of transfer type', () => {
-            const action = generateProposalAction({ type: ProposalActionType.METADATA_UPDATE });
+            const action = generateProposalAction({
+                type: ProposalActionType.METADATA_UPDATE,
+            });
             expect(proposalActionUtils.isWithdrawTokenAction(action)).toBeFalsy();
         });
     });
 
     describe('isUpdateMetadataAction', () => {
         it('returns true when action is of update-dao-metadata type', () => {
-            const action = generateProposalAction({ type: ProposalActionType.METADATA_UPDATE });
+            const action = generateProposalAction({
+                type: ProposalActionType.METADATA_UPDATE,
+            });
             expect(proposalActionUtils.isUpdateMetadataAction(action)).toBeTruthy();
         });
 
         it('returns true when action is of update-plugin-metadata type', () => {
-            const action = generateProposalAction({ type: ProposalActionType.METADATA_PLUGIN_UPDATE });
+            const action = generateProposalAction({
+                type: ProposalActionType.METADATA_PLUGIN_UPDATE,
+            });
             expect(proposalActionUtils.isUpdateMetadataAction(action)).toBeTruthy();
         });
 
         it('returns false when action is not of update-metadata type', () => {
-            const action = generateProposalAction({ type: ProposalActionType.TRANSFER });
+            const action = generateProposalAction({
+                type: ProposalActionType.TRANSFER,
+            });
             expect(proposalActionUtils.isUpdateMetadataAction(action)).toBeFalsy();
         });
     });

@@ -82,8 +82,7 @@ export interface IGetMemberExistsQueryParams {
     network: Network;
 }
 
-export interface IGetMemberExistsParams
-    extends IRequestUrlQueryParams<IGetMemberExistsUrlParams, IGetMemberExistsQueryParams> {}
+export interface IGetMemberExistsParams extends IRequestUrlQueryParams<IGetMemberExistsUrlParams, IGetMemberExistsQueryParams> {}
 
 export interface IGetProposalBySlugUrlParams {
     /**
@@ -99,8 +98,7 @@ export interface IGetProposalBySlugQueryParams {
     daoId: string;
 }
 
-export interface IGetProposalBySlugParams
-    extends IRequestUrlQueryParams<IGetProposalBySlugUrlParams, IGetProposalBySlugQueryParams> {}
+export interface IGetProposalBySlugParams extends IRequestUrlQueryParams<IGetProposalBySlugUrlParams, IGetProposalBySlugQueryParams> {}
 
 export interface IGetCanCreateProposalQueryParams {
     /**

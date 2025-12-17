@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { Link, type ILinkProps } from './link';
+import { type ILinkProps, Link } from './link';
 
 describe('<Link /> component', () => {
     const createTestComponent = (props?: Partial<ILinkProps>) => {

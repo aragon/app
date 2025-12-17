@@ -1,9 +1,9 @@
-import { type IDaoPlugin, type IPluginSettings, PluginInterfaceType } from '@/shared/api/daoService';
 import { DateTime } from 'luxon';
+import { type IDaoPlugin, type IPluginSettings, PluginInterfaceType } from '@/shared/api/daoService';
 import { generatePluginSettings } from './pluginSettings';
 
 export const generateDaoPlugin = <TSettings extends IPluginSettings = IPluginSettings>(
-    daoPlugin?: Partial<IDaoPlugin<TSettings>>,
+    daoPlugin?: Partial<IDaoPlugin<TSettings>>
 ): IDaoPlugin<TSettings> => ({
     address: '0x123',
     subdomain: 'unknown',

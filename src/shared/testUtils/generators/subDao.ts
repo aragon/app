@@ -13,7 +13,7 @@ export const generateSubDao = (subDao?: Partial<ISubDaoSummary>): ISubDaoSummary
     avatar: null,
     metrics: generateDaoMetrics(),
     links: [],
-    blockTimestamp: 1234567890,
+    blockTimestamp: 1_234_567_890,
     transactionHash: '0xabc',
     ...subDao,
 });

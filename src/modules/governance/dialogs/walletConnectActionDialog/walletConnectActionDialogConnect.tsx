@@ -1,8 +1,8 @@
+import { Dialog, IconType, InputText } from '@aragon/gov-ui-kit';
+import { useForm } from 'react-hook-form';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Dialog, IconType, InputText } from '@aragon/gov-ui-kit';
-import { useForm } from 'react-hook-form';
 
 export interface IWalletConnectActionFormData {
     /**
@@ -30,7 +30,9 @@ export const WalletConnectActionDialogConnect: React.FC<IWalletConnectActionDial
     const { close } = useDialogContext();
     const { t } = useTranslations();
 
-    const { handleSubmit, control } = useForm<IWalletConnectActionFormData>({ mode: 'onTouched' });
+    const { handleSubmit, control } = useForm<IWalletConnectActionFormData>({
+        mode: 'onTouched',
+    });
 
     const uriField = useFormField<IWalletConnectActionFormData, 'uri'>('uri', {
         control,
@@ -43,15 +45,12 @@ export const WalletConnectActionDialogConnect: React.FC<IWalletConnectActionDial
     return (
         <>
             <Dialog.Header
-                title={t('app.governance.walletConnectActionDialog.connect.title')}
                 description={t('app.governance.walletConnectActionDialog.connect.description')}
+                title={t('app.governance.walletConnectActionDialog.connect.title')}
             />
             <Dialog.Content>
-                <form onSubmit={handleSubmit(onFormSubmit)} id={formId} className="py-2">
-                    <InputText
-                        placeholder={t('app.governance.walletConnectActionDialog.connect.uriField.placeholder')}
-                        {...uriField}
-                    />
+                <form className="py-2" id={formId} onSubmit={handleSubmit(onFormSubmit)}>
+                    <InputText placeholder={t('app.governance.walletConnectActionDialog.connect.uriField.placeholder')} {...uriField} />
                 </form>
             </Dialog.Content>
             <Dialog.Footer

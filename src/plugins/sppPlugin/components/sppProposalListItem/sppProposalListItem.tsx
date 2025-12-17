@@ -1,11 +1,11 @@
 'use client';
 
+import { ProposalDataListItem } from '@aragon/gov-ui-kit';
 import type { IDaoProposalListDefaultItemProps } from '@/modules/governance/components/daoProposalList';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { daoUtils } from '../../../../shared/utils/daoUtils';
-import { type ISppProposal } from '../../types';
+import type { ISppProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 
 export interface ISppProposalListItemProps extends IDaoProposalListDefaultItemProps<ISppProposal> {}
@@ -24,7 +24,9 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
 
     const proposalStatus = sppProposalUtils.getProposalStatus(proposal);
 
-    const defaultStageName = t('app.plugins.spp.sppProposalListItem.stage', { stageIndex: stageIndex + 1 });
+    const defaultStageName = t('app.plugins.spp.sppProposalListItem.stage', {
+        stageIndex: stageIndex + 1,
+    });
     const statusContext = settings.stages.length > 1 ? (currentStage.name ?? defaultStageName) : undefined;
 
     const proposalLink = daoUtils.getDaoUrl(dao, `proposals/${proposalSlug}`);
@@ -33,15 +35,19 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
     return (
         <ProposalDataListItem.Structure
             className="min-w-0"
-            id={proposalSlug}
-            key={id}
-            title={title}
-            summary={summary}
             date={proposalDate}
             href={proposalLink}
+            id={proposalSlug}
+            key={id}
+            publisher={{
+                address: creator.address,
+                name: creator.ens ?? undefined,
+                link: publisherLink,
+            }}
             status={proposalStatus}
             statusContext={statusContext}
-            publisher={{ address: creator.address, name: creator.ens ?? undefined, link: publisherLink }}
+            summary={summary}
+            title={title}
         />
     );
 };

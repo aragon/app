@@ -1,3 +1,4 @@
+import { renderHook } from '@testing-library/react';
 import { generateTransaction } from '@/modules/finance/testUtils';
 import {
     generatePaginatedResponse,
@@ -6,7 +7,6 @@ import {
     generateReactQueryInfiniteResultLoading,
     generateReactQueryInfiniteResultSuccess,
 } from '@/shared/testUtils';
-import { renderHook } from '@testing-library/react';
 import * as financeService from '../../api/financeService';
 import { useTransactionListData } from './useTransactionListData';
 
@@ -23,10 +23,15 @@ describe('useTransactionListData hook', () => {
             pageSize: 20,
             totalRecords: transactions.length,
         });
-        const transactionsResponse = generatePaginatedResponse({ data: transactions, metadata: transactionsMetadata });
+        const transactionsResponse = generatePaginatedResponse({
+            data: transactions,
+            metadata: transactionsMetadata,
+        });
         const params = { queryParams: { daoId: 'polygon-mainnet-0xdao' } };
         useTransactionListSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({ data: { pages: [transactionsResponse], pageParams: [] } }),
+            generateReactQueryInfiniteResultSuccess({
+                data: { pages: [transactionsResponse], pageParams: [] },
+            })
         );
         const { result } = renderHook(() => useTransactionListData(params));
 
@@ -42,7 +47,11 @@ describe('useTransactionListData hook', () => {
 
     it('returns error state of fetch transactions error', () => {
         useTransactionListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error('error') }));
-        const { result } = renderHook(() => useTransactionListData({ queryParams: { daoId: 'polygon-mainnet-0x0' } }));
+        const { result } = renderHook(() =>
+            useTransactionListData({
+                queryParams: { daoId: 'polygon-mainnet-0x0' },
+            })
+        );
         expect(result.current.state).toEqual('error');
     });
 

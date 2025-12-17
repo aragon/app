@@ -1,1 +1,4 @@
-export { sppTransactionUtils, type ICreateSppProposalFormData } from './sppTransactionUtils';
+export {
+    type ICreateSppProposalFormData,
+    sppTransactionUtils,
+} from './sppTransactionUtils';

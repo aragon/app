@@ -1,18 +1,8 @@
+import { Accordion, Card, ChainEntityType, Collapsible, DaoAvatar, DefinitionList, Link, Tag, useBlockExplorer } from '@aragon/gov-ui-kit';
 import type { IDao, ISubDaoSummary } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import {
-    Accordion,
-    Card,
-    ChainEntityType,
-    Collapsible,
-    DaoAvatar,
-    DefinitionList,
-    Link,
-    Tag,
-    useBlockExplorer,
-} from '@aragon/gov-ui-kit';
 
 export interface IDaoHierarchyProps {
     /**
@@ -36,7 +26,7 @@ const DaoInfo: React.FC<{ dao: IDao | ISubDaoSummary }> = ({ dao }) => {
         if (dao.ens) {
             return dao.ens;
         }
-        return undefined;
+        return;
     };
 
     return (
@@ -44,27 +34,28 @@ const DaoInfo: React.FC<{ dao: IDao | ISubDaoSummary }> = ({ dao }) => {
             <DefinitionList.Item term={t('app.settings.daoSettingsInfo.name')}>
                 <div className="flex items-center gap-2">
                     <p className="text-neutral-500">{dao.name}</p>
-                    <DaoAvatar src={daoAvatar} name={dao.name} size="md" />
+                    <DaoAvatar name={dao.name} size="md" src={daoAvatar} />
                 </div>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.settings.daoSettingsInfo.chain')}>
                 <div className="flex flex-col gap-1">
                     <p className="text-neutral-500">{networkDefinitions[dao.network].name}</p>
-                    <p className="text-sm leading-tight font-normal text-neutral-400">
-                        {t('app.settings.daoSettingsInfo.notChangeable')}
-                    </p>
+                    <p className="font-normal text-neutral-400 text-sm leading-tight">{t('app.settings.daoSettingsInfo.notChangeable')}</p>
                 </div>
             </DefinitionList.Item>
             {getDaoEns(dao) && (
                 <DefinitionList.Item term={t('app.settings.daoSettingsInfo.ens')}>
                     <div className="flex flex-col gap-1">
                         <Link
-                            href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address })}
+                            href={buildEntityUrl({
+                                type: ChainEntityType.ADDRESS,
+                                id: dao.address,
+                            })}
                             isExternal={true}
                         >
                             {getDaoEns(dao)}
                         </Link>
-                        <p className="text-sm leading-tight font-normal text-neutral-400">
+                        <p className="font-normal text-neutral-400 text-sm leading-tight">
                             {t('app.settings.daoSettingsInfo.notChangeable')}
                         </p>
                     </div>
@@ -72,9 +63,9 @@ const DaoInfo: React.FC<{ dao: IDao | ISubDaoSummary }> = ({ dao }) => {
             )}
             <DefinitionList.Item term={t('app.settings.daoSettingsInfo.summary')}>
                 <Collapsible
-                    collapsedLines={4}
                     buttonLabelClosed={t('app.settings.daoSettingsInfo.readMore')}
                     buttonLabelOpened={t('app.settings.daoSettingsInfo.readLess')}
+                    collapsedLines={4}
                 >
                     <p className="text-neutral-500">{dao.description}</p>
                 </Collapsible>
@@ -83,7 +74,7 @@ const DaoInfo: React.FC<{ dao: IDao | ISubDaoSummary }> = ({ dao }) => {
                 <DefinitionList.Item term={t('app.settings.daoSettingsInfo.links')}>
                     <div className="flex flex-col gap-3">
                         {dao.links.map((link) => (
-                            <Link key={link.url} href={link.url} isExternal={true} showUrl={true}>
+                            <Link href={link.url} isExternal={true} key={link.url} showUrl={true}>
                                 {link.name}
                             </Link>
                         ))}
@@ -104,7 +95,7 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
     // If viewing main DAO with SubDAOs, show accordion structure
     if (isViewingMainDao && hasSubDaos) {
         return (
-            <Accordion.Container isMulti={true} defaultValue={[dao.id]}>
+            <Accordion.Container defaultValue={[dao.id]} isMulti={true}>
                 <Accordion.Item value={dao.id}>
                     <Accordion.ItemHeader>
                         <div className="flex items-center gap-2">

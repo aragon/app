@@ -1,6 +1,6 @@
-import { useSmartContractAbi } from '@/modules/governance/api/smartContractService';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
+import { useSmartContractAbi } from '@/modules/governance/api/smartContractService';
 import type { Network } from '../../api/daoService';
 import type { QueryOptions } from '../../types';
 
@@ -34,7 +34,7 @@ export const useIsSafeContract = (params: IUseIsSafeContractParams, options?: Qu
         {
             enabled,
             retry: false,
-        },
+        }
     );
 
     const data = useMemo(() => {

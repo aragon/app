@@ -1,1 +1,4 @@
-export { daoListByMemberAddressOptions, useDaoListByMemberAddress } from './useDaoListByMemberAddress';
+export {
+    daoListByMemberAddressOptions,
+    useDaoListByMemberAddress,
+} from './useDaoListByMemberAddress';

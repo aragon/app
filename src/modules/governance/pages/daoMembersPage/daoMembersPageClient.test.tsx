@@ -1,6 +1,6 @@
+import { render, screen } from '@testing-library/react';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateDaoPlugin, generateFilterComponentPlugin } from '@/shared/testUtils';
-import { render, screen } from '@testing-library/react';
 import { DaoMembersPageClient, type IDaoMembersPageClientProps } from './daoMembersPageClient';
 
 jest.mock('../../components/daoMemberList', () => ({
@@ -24,7 +24,9 @@ describe('<DaoMembersPageClient /> component', () => {
 
     const createTestComponent = (props?: Partial<IDaoMembersPageClientProps>) => {
         const completeProps: IDaoMembersPageClientProps = {
-            initialParams: { queryParams: { daoId: 'test-id', pluginAddress: '0x123' } },
+            initialParams: {
+                queryParams: { daoId: 'test-id', pluginAddress: '0x123' },
+            },
             ...props,
         };
 

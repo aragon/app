@@ -12,15 +12,15 @@ class TranslationsUtils {
                 return key;
             }
 
-            const value = key
-                .split('.')
-                .reduce<string | object | undefined>((acc: string | object | undefined, key: string) => {
-                    if (acc != null && typeof acc === 'object' && key in acc) {
-                        return (acc as Record<string, string | object | undefined>)[key];
-                    }
-
-                    return undefined;
-                }, translations);
+            let value: string | object | undefined = translations;
+            for (const segment of key.split('.')) {
+                if (value != null && typeof value === 'object' && segment in value) {
+                    value = (value as Record<string, string | object | undefined>)[segment];
+                } else {
+                    value = undefined;
+                    break;
+                }
+            }
 
             if (typeof value === 'object' || value == null) {
                 // eslint-disable-next-line no-console
@@ -32,9 +32,8 @@ class TranslationsUtils {
             const valueKeys = Object.keys(options);
 
             return valueKeys.reduce<string>(
-                (acc: string, current: string) =>
-                    acc.replace(new RegExp(`{{${current}}}`, 'g'), options[current] as string),
-                value,
+                (acc: string, current: string) => acc.replace(new RegExp(`{{${current}}}`, 'g'), options[current] as string),
+                value
             );
         };
 }

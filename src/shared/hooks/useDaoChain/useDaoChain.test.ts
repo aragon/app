@@ -1,10 +1,10 @@
+import * as GovUiKit from '@aragon/gov-ui-kit';
+import { ChainEntityType } from '@aragon/gov-ui-kit';
+import { renderHook } from '@testing-library/react';
 import * as DaoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDao, generateReactQueryResultLoading, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import * as GovUiKit from '@aragon/gov-ui-kit';
-import { ChainEntityType } from '@aragon/gov-ui-kit';
-import { renderHook } from '@testing-library/react';
 import { useDaoChain } from './useDaoChain';
 
 type BuildEntityUrlParams = Parameters<ReturnType<typeof GovUiKit.useBlockExplorer>['buildEntityUrl']>[0];
@@ -13,9 +13,7 @@ describe('useDaoChain hook', () => {
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const useBlockExplorerSpy = jest.spyOn(GovUiKit, 'useBlockExplorer');
 
-    const mockChainEntityUrl = jest.fn(({ type, id }: BuildEntityUrlParams) => {
-        return `https://etherscan.io/${type}/${id ?? ''}`;
-    });
+    const mockChainEntityUrl = jest.fn(({ type, id }: BuildEntityUrlParams) => `https://etherscan.io/${type}/${id ?? ''}`);
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
@@ -69,10 +67,10 @@ describe('useDaoChain hook', () => {
 
     describe('with chainId', () => {
         it('uses provided chainId without fetching DAO', () => {
-            const { result } = renderHook(() => useDaoChain({ chainId: 42161 }));
+            const { result } = renderHook(() => useDaoChain({ chainId: 42_161 }));
 
             expect(useDaoSpy).toHaveBeenCalledWith({ urlParams: { id: '' } }, { enabled: false });
-            expect(result.current.chainId).toBe(42161);
+            expect(result.current.chainId).toBe(42_161);
             expect(result.current.isLoading).toBe(false);
         });
     });
@@ -81,12 +79,12 @@ describe('useDaoChain hook', () => {
         it('prioritizes chainId over network', () => {
             const { result } = renderHook(() =>
                 useDaoChain({
-                    chainId: 42161,
+                    chainId: 42_161,
                     network: Network.ETHEREUM_MAINNET,
-                }),
+                })
             );
 
-            expect(result.current.chainId).toBe(42161);
+            expect(result.current.chainId).toBe(42_161);
             expect(result.current.network).toBe(Network.ETHEREUM_MAINNET);
         });
 
@@ -95,7 +93,7 @@ describe('useDaoChain hook', () => {
                 useDaoChain({
                     daoId: 'dao-test',
                     network: Network.POLYGON_MAINNET,
-                }),
+                })
             );
 
             expect(useDaoSpy).toHaveBeenCalledWith({ urlParams: { id: 'dao-test' } }, { enabled: false });

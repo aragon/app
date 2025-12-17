@@ -1,8 +1,8 @@
-import { DaoTokenVotingMode, type ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import { type TranslationFunction } from '@/shared/components/translationsProvider';
-import { dateUtils } from '@/shared/utils/dateUtils';
 import { formatterUtils, type IDefinitionSetting, NumberFormat } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
+import { DaoTokenVotingMode, type ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
+import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { dateUtils } from '@/shared/utils/dateUtils';
 
 export interface IParseTokenSettingsParams {
     /**
@@ -40,15 +40,8 @@ class TokenSettingsUtils {
 
     parseSettings = (params: IParseTokenSettingsParams): IDefinitionSetting[] => {
         const { settings, isVeto, t } = params;
-        const {
-            supportThreshold,
-            minParticipation,
-            minDuration,
-            minProposerVotingPower,
-            votingMode,
-            token,
-            historicalTotalSupply,
-        } = settings;
+        const { supportThreshold, minParticipation, minDuration, minProposerVotingPower, votingMode, token, historicalTotalSupply } =
+            settings;
 
         const { symbol: tokenSymbol, totalSupply, decimals } = token;
 
@@ -97,7 +90,10 @@ class TokenSettingsUtils {
                     tokenSymbol,
                 }),
             },
-            { term: t('app.plugins.token.tokenGovernanceSettings.minimumDuration'), definition: formattedDuration },
+            {
+                term: t('app.plugins.token.tokenGovernanceSettings.minimumDuration'),
+                definition: formattedDuration,
+            },
             {
                 term: t('app.plugins.token.tokenGovernanceSettings.earlyExecution'),
                 definition:

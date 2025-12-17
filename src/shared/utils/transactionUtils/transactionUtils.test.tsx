@@ -1,6 +1,6 @@
+import * as viem from 'viem';
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import * as viem from 'viem';
 import { globalExecutorAbi } from './globalExecutorAbi';
 import { transactionUtils } from './transactionUtils';
 import type { ITransactionRequest } from './transactionUtils.api';
@@ -80,13 +80,24 @@ describe('transaction utils', () => {
             const expectedAddress = networkDefinitions[network].addresses.globalExecutor;
             encodeFunctionDataSpy.mockReturnValue(executorData);
 
-            const multicallTransaction = transactionUtils['buildExecutorTransaction'](actions, network);
+            const buildExecutorTransaction = (
+                transactionUtils as typeof transactionUtils & {
+                    // Accessing private method for targeted behavior test
+                    buildExecutorTransaction: (actions: ITransactionRequest[], network: Network) => ITransactionRequest;
+                }
+            ).buildExecutorTransaction;
+
+            const multicallTransaction = buildExecutorTransaction(actions, network);
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: globalExecutorAbi,
                 functionName: 'execute',
                 args: [viem.zeroHash, actions, BigInt(0)],
             });
-            expect(multicallTransaction).toEqual({ to: expectedAddress, data: executorData, value: BigInt(0) });
+            expect(multicallTransaction).toEqual({
+                to: expectedAddress,
+                data: executorData,
+                value: BigInt(0),
+            });
         });
     });
 });

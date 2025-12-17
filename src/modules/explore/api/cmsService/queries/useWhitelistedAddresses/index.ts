@@ -1,1 +1,4 @@
-export { useWhitelistedAddresses, whitelistedAddressesOptions } from './useWhitelistedAddresses';
+export {
+    useWhitelistedAddresses,
+    whitelistedAddressesOptions,
+} from './useWhitelistedAddresses';

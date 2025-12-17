@@ -1,4 +1,4 @@
 export {
-    useLockToVoteNormalizeActions,
     type IUseLockToVoteNormalizeActionsParams,
+    useLockToVoteNormalizeActions,
 } from './useLockToVoteNormalizeActions';

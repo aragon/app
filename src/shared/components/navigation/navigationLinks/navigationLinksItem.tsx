@@ -1,10 +1,10 @@
 'use client';
 
-import { Link, type ILinkProps } from '@/shared/components/link';
 import { Icon, type IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
+import { type ILinkProps, Link } from '@/shared/components/link';
 import type { NavigationLinksVariant } from './navigationLinks.api';
 
 export interface INavigationLinksItemProps extends ILinkProps {
@@ -41,17 +41,21 @@ export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (props) 
         { 'text-neutral-800': isActive },
         { 'gap-2': iconSide === 'left' },
         { 'justify-between flex-row-reverse': iconSide === 'right' },
-        className,
+        className
     );
 
-    const iconClassNames = classNames(
-        !isActive ? 'text-neutral-300' : variant === 'row' ? 'text-primary-400' : 'text-neutral-800',
-        'group-active:text-neutral-500',
-    );
+    let iconColorClass = 'text-neutral-300';
+    if (isActive && variant === 'row') {
+        iconColorClass = 'text-primary-400';
+    } else if (isActive) {
+        iconColorClass = 'text-neutral-800';
+    }
+
+    const iconClassNames = classNames(iconColorClass, 'group-active:text-neutral-500');
 
     return (
-        <Link href={href} aria-current={isActive ? 'page' : undefined} className={linkClassNames} {...otherProps}>
-            <Icon icon={icon} className={iconClassNames} />
+        <Link aria-current={isActive ? 'page' : undefined} className={linkClassNames} href={href} {...otherProps}>
+            <Icon className={iconClassNames} icon={icon} />
             {children}
         </Link>
     );

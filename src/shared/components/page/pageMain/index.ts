@@ -1,1 +1,1 @@
-export { PageMain, type IPageMainProps } from './pageMain';
+export { type IPageMainProps, PageMain } from './pageMain';

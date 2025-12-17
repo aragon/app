@@ -1,10 +1,10 @@
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
+import type { ReactNode } from 'react';
 import { daoOptions, type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import type { IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
-import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
-import type { ReactNode } from 'react';
 import { BannerDao } from '../../bannerDao';
 import { ErrorBoundary } from '../../errorBoundary';
 import { NavigationDao } from '../../navigations/navigationDao';
@@ -30,8 +30,8 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
     if (!networkUtils.isValidNetwork(daoPageParams.network)) {
         return (
             <Page.Error
-                titleKey="app.application.layoutDao.error.invalidNetwork.title"
                 descriptionKey="app.application.layoutDao.error.invalidNetwork.description"
+                titleKey="app.application.layoutDao.error.invalidNetwork.title"
             />
         );
     }

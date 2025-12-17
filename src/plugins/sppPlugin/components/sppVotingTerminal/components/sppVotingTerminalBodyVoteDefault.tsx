@@ -1,13 +1,13 @@
-import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
-import { SppPluginDialogId } from '@/plugins/sppPlugin/constants/sppPluginDialogId';
-import { type ISppReportProposalResultDialogParams } from '@/plugins/sppPlugin/dialogs/sppReportProposalResultDialog';
-import { type ISppProposal, type ISppStage } from '@/plugins/sppPlugin/types';
-import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
-import { useDialogContext } from '@/shared/components/dialogProvider';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, Button, IconType } from '@aragon/gov-ui-kit';
 import { useEffect, useRef } from 'react';
 import { useAccount } from 'wagmi';
+import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
+import { SppPluginDialogId } from '@/plugins/sppPlugin/constants/sppPluginDialogId';
+import type { ISppReportProposalResultDialogParams } from '@/plugins/sppPlugin/dialogs/sppReportProposalResultDialog';
+import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
+import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
+import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface ISppVotingTerminalBodyVoteDefaultProps {
     /**
@@ -48,7 +48,11 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
     const voted = sppStageUtils.getBodyResult(proposal, externalAddress, stage.stageIndex) != null;
 
     const openTransactionDialog = () => {
-        const params: ISppReportProposalResultDialogParams = { daoId, proposal, isVeto };
+        const params: ISppReportProposalResultDialogParams = {
+            daoId,
+            proposal,
+            isVeto,
+        };
         open(SppPluginDialogId.REPORT_PROPOSAL_RESULT, { params });
     };
 
@@ -60,23 +64,28 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
         openTransactionDialog();
     };
 
-    const voteLabel = voted ? (isVeto ? 'vetoed' : 'approved') : isVeto ? 'veto' : 'approve';
+    let voteLabel: 'vetoed' | 'approved' | 'veto' | 'approve' = 'approve';
+    if (voted) {
+        voteLabel = isVeto ? 'vetoed' : 'approved';
+    } else if (isVeto) {
+        voteLabel = 'veto';
+    }
 
     const handleVoteClick = () => checkWalletConnection({ onSuccess: checkPermissions });
 
     return (
         <div className="flex w-full flex-col gap-3">
             <Button
+                className="w-full md:w-fit"
+                iconLeft={voted ? IconType.CHECKMARK : undefined}
                 onClick={voted ? undefined : handleVoteClick}
                 size="md"
-                iconLeft={voted ? IconType.CHECKMARK : undefined}
                 variant={voted ? 'secondary' : 'primary'}
-                className="w-full md:w-fit"
             >
                 {t(`app.plugins.spp.sppVotingTerminalBodyVoteDefault.${voteLabel}`)}
             </Button>
             {!voted && (
-                <p className="text-center text-sm leading-normal font-normal text-neutral-500 md:text-left">
+                <p className="text-center font-normal text-neutral-500 text-sm leading-normal md:text-left">
                     {t('app.plugins.spp.sppVotingTerminalBodyVoteDefault.helpText')}
                 </p>
             )}

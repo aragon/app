@@ -1,10 +1,10 @@
 import { Settings } from 'luxon';
 
 class TimeUtils {
-    private originalNow = Settings.now;
+    private readonly originalNow = Settings.now;
     private customTime: string | undefined = undefined;
 
-    private customNow = () => {
+    private readonly customNow = () => {
         const now = this.customTime != null ? new Date(this.customTime) : new Date();
 
         return now.valueOf();

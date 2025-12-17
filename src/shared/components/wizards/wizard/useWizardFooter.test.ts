@@ -1,6 +1,6 @@
-import { generateFormContext, generateFormContextState, generateWizardContext } from '@/shared/testUtils';
 import { renderHook } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
+import { generateFormContext, generateFormContextState, generateWizardContext } from '@/shared/testUtils';
 import { useWizardFooter } from './useWizardFooter';
 import * as WizardProvider from './wizardProvider';
 
@@ -26,7 +26,10 @@ describe('useWizardFooter hook', () => {
     });
 
     it('returns required validation status when form has required errors', () => {
-        const errors = { fieldOne: { type: 'required' }, fieldTwo: { type: 'required' } };
+        const errors = {
+            fieldOne: { type: 'required' },
+            fieldTwo: { type: 'required' },
+        };
         const formState = generateFormContextState({ errors });
         useFormContextSpy.mockReturnValue(generateFormContext({ formState }));
         const { result } = renderHook(() => useWizardFooter());
@@ -42,7 +45,10 @@ describe('useWizardFooter hook', () => {
     });
 
     it('returns required-invalid validation status when form has both required and invalid errors', () => {
-        const errors = { fieldOne: { type: 'invalid' }, fieldTwo: { type: 'required' } };
+        const errors = {
+            fieldOne: { type: 'invalid' },
+            fieldTwo: { type: 'required' },
+        };
         const formState = generateFormContextState({ errors });
         useFormContextSpy.mockReturnValue(generateFormContext({ formState }));
         const { result } = renderHook(() => useWizardFooter());

@@ -1,9 +1,9 @@
 'use client';
 
+import { useWatch } from 'react-hook-form';
 import { useDao } from '@/shared/api/daoService';
 import { AddressesInput } from '@/shared/components/forms/addressesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useWatch } from 'react-hook-form';
 import { MultisigSetupMembershipItem } from './components/multisigSetupMembershipItem';
 import type { IMultisigSetupMembershipForm, IMultisigSetupMembershipProps } from './multisigSetupMembership.api';
 
@@ -21,19 +21,19 @@ export const MultisigSetupMembership: React.FC<IMultisigSetupMembershipProps> = 
 
     return (
         <AddressesInput.Container
+            helpText={hideLabel ? undefined : t('app.plugins.multisig.multisigSetupMembership.helpText')}
+            label={hideLabel ? undefined : t('app.plugins.multisig.multisigSetupMembership.label')}
             name={`${formPrefix}.members`}
             onAddClick={onAddClick}
-            label={!hideLabel ? t('app.plugins.multisig.multisigSetupMembership.label') : undefined}
-            helpText={!hideLabel ? t('app.plugins.multisig.multisigSetupMembership.helpText') : undefined}
         >
-            {watchMembersField.map((_, index) => (
+            {watchMembersField.map((memberField, index) => (
                 <MultisigSetupMembershipItem
-                    key={index}
-                    index={index}
                     disabled={disabled}
+                    index={index}
+                    key={memberField?.address ?? index}
                     member={watchMembersField[index]}
-                    pluginAddress={pluginAddress}
                     network={membershipNetwork}
+                    pluginAddress={pluginAddress}
                 />
             ))}
         </AddressesInput.Container>

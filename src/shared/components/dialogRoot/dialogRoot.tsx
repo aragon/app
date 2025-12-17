@@ -1,7 +1,7 @@
 'use client';
 
 import { Dialog, DialogAlert, type IDialogRootProps as IGukDialogRootProps } from '@aragon/gov-ui-kit';
-import { useDialogContext, type IDialogComponentDefinitions } from '../dialogProvider';
+import { type IDialogComponentDefinitions, useDialogContext } from '../dialogProvider';
 import { useTranslations } from '../translationsProvider';
 
 export interface IDialogRootProps extends IGukDialogRootProps {
@@ -29,12 +29,7 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
                     return null;
                 }
 
-                const {
-                    Component: ActiveDialogComponent,
-                    hiddenTitle,
-                    hiddenDescription,
-                    ...otherDialogProps
-                } = dialogDefinition;
+                const { Component: ActiveDialogComponent, hiddenTitle, hiddenDescription, ...otherDialogProps } = dialogDefinition;
 
                 const isAlertDialog = 'variant' in otherDialogProps;
                 const { disableOutsideClick, onClose } = location;
@@ -60,17 +55,17 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
 
                 const processedHiddenTitle = hiddenTitle ? t(hiddenTitle) : undefined;
                 const processedHiddenDescription = hiddenDescription ? t(hiddenDescription) : undefined;
-                const onOpenChange = !isAlertDialog ? handleOpenChange : undefined;
+                const onOpenChange = isAlertDialog ? undefined : handleOpenChange;
 
                 return (
                     <DialogWrapper
-                        key={`${location.id}-${String(index)}`}
-                        open={true}
-                        onOpenChange={onOpenChange}
-                        onInteractOutside={handleInteractOutside}
-                        hiddenTitle={processedHiddenTitle}
-                        hiddenDescription={processedHiddenDescription}
                         containerClassName={isTopmost ? undefined : 'hidden'}
+                        hiddenDescription={processedHiddenDescription}
+                        hiddenTitle={processedHiddenTitle}
+                        key={`${location.id}-${String(index)}`}
+                        onInteractOutside={handleInteractOutside}
+                        onOpenChange={onOpenChange}
+                        open={true}
                         {...otherDialogProps}
                     >
                         <ActiveDialogComponent location={location} />

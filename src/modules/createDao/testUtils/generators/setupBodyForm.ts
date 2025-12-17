@@ -1,9 +1,9 @@
-import {
-    type ISetupBodyForm,
-    type ISetupBodyFormBase,
-    type ISetupBodyFormExisting,
-    type ISetupBodyFormExternal,
-    type ISetupBodyFormNew,
+import type {
+    ISetupBodyForm,
+    ISetupBodyFormBase,
+    ISetupBodyFormExisting,
+    ISetupBodyFormExternal,
+    ISetupBodyFormNew,
 } from '../../dialogs/setupBodyDialog';
 import { BodyType } from '../../types/enum';
 

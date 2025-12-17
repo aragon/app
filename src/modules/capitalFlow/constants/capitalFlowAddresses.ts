@@ -1,5 +1,5 @@
-import { Network } from '@/shared/api/daoService';
 import type { Hex } from 'viem';
+import { Network } from '@/shared/api/daoService';
 
 export const capitalFlowAddresses: Record<Network, Record<string, Hex>> = {
     [Network.ARBITRUM_MAINNET]: {

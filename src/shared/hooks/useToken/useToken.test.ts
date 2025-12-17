@@ -10,7 +10,12 @@ describe('useToken hook', () => {
     });
 
     it('returns token data when successful', () => {
-        const token = { name: 'MockToken', symbol: 'MTK', decimals: 18, totalSupply: '100000000' };
+        const token = {
+            name: 'MockToken',
+            symbol: 'MTK',
+            decimals: 18,
+            totalSupply: '100000000',
+        };
 
         useReadContractsSpy.mockReturnValue({
             data: [token.name, token.symbol, token.decimals, token.totalSupply],

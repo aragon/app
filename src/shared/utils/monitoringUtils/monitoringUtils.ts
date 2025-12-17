@@ -44,7 +44,7 @@ class MonitoringUtils {
     serverActionWrapper = withServerActionInstrumentation;
 
     // Only enable error tracking for development, staging and production environments
-    private isEnabled = () => ['development', 'staging', 'production'].includes(process.env.NEXT_PUBLIC_ENV!);
+    private readonly isEnabled = () => ['development', 'staging', 'production'].includes(process.env.NEXT_PUBLIC_ENV!);
 }
 
 export const monitoringUtils = new MonitoringUtils();

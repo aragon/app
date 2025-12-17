@@ -16,7 +16,12 @@ describe('permissionTransaction utils', () => {
 
     describe('buildGrantPermissionTransaction', () => {
         it('returns a transaction for granting the specified permission', () => {
-            const grantParams = { where: '0x123', who: '0x456', what: 'what', to: '0x789' } as const;
+            const grantParams = {
+                where: '0x123',
+                who: '0x456',
+                what: 'what',
+                to: '0x789',
+            } as const;
             const permissionHash = '0x0000';
             const transactionData = '0x0001';
 
@@ -33,14 +38,23 @@ describe('permissionTransaction utils', () => {
                 args: [grantParams.where, grantParams.who, permissionHash],
             });
 
-            const expectedTransaction = { to: grantParams.to, data: transactionData, value: BigInt(0) };
+            const expectedTransaction = {
+                to: grantParams.to,
+                data: transactionData,
+                value: BigInt(0),
+            };
             expect(transaction).toEqual(expectedTransaction);
         });
     });
 
     describe('buildRevokePermissionTransaction', () => {
         it('returns a transaction for revoking the specified permission', () => {
-            const grantParams = { where: '0x123', who: '0x456', what: 'what', to: '0x789' } as const;
+            const grantParams = {
+                where: '0x123',
+                who: '0x456',
+                what: 'what',
+                to: '0x789',
+            } as const;
             const permissionHash = '0x0000';
             const transactionData = '0x0001';
 
@@ -57,14 +71,24 @@ describe('permissionTransaction utils', () => {
                 args: [grantParams.where, grantParams.who, permissionHash],
             });
 
-            const expectedTransaction = { to: grantParams.to, data: transactionData, value: BigInt(0) };
+            const expectedTransaction = {
+                to: grantParams.to,
+                data: transactionData,
+                value: BigInt(0),
+            };
             expect(transaction).toEqual(expectedTransaction);
         });
     });
 
     describe('buildGrantWithConditionTransaction', () => {
         it('returns a transaction for granting with the specified condition', () => {
-            const params = { where: '0x123', who: '0x456', what: 'what', to: '0x789', condition: '0xCOND' } as const;
+            const params = {
+                where: '0x123',
+                who: '0x456',
+                what: 'what',
+                to: '0x789',
+                condition: '0xCOND',
+            } as const;
             const permissionHash = '0xHash';
             const transactionData = '0xEncoded';
 
@@ -100,9 +124,22 @@ describe('permissionTransaction utils', () => {
         });
 
         it('returns the grant and revoke transactions for the given parameters', () => {
-            const params = { where: '0x1', who: '0x2', what: 'permission-x', to: '0x3' } as const;
-            const grantTransaction = { to: '0x1', data: '0xgrant', value: BigInt(0) } as const;
-            const revokeTransaction = { to: '0x1', data: '0xrevoke', value: BigInt(0) } as const;
+            const params = {
+                where: '0x1',
+                who: '0x2',
+                what: 'permission-x',
+                to: '0x3',
+            } as const;
+            const grantTransaction = {
+                to: '0x1',
+                data: '0xgrant',
+                value: BigInt(0),
+            } as const;
+            const revokeTransaction = {
+                to: '0x1',
+                data: '0xrevoke',
+                value: BigInt(0),
+            } as const;
             buildGrantTransactionSpy.mockReturnValue(grantTransaction);
             buildRevokeTransactionSpy.mockReturnValue(revokeTransaction);
             const result = permissionTransactionUtils.buildGrantRevokePermissionTransactions(params);
@@ -125,22 +162,49 @@ describe('permissionTransaction utils', () => {
 
             const result = permissionTransactionUtils.buildRuleConditions([conditionAddress], conditionRules);
             expect(result[0]).toEqual(conditionRules[0]);
-            expect(result[1]).toEqual({ id: 202, op: 1, permissionId: zeroHash, value: conditionAddress });
+            expect(result[1]).toEqual({
+                id: 202,
+                op: 1,
+                permissionId: zeroHash,
+                value: conditionAddress,
+            });
         });
 
         it('builds correct ruled conditions for one condition address', () => {
             const conditionAddress = '0x123';
             const result = permissionTransactionUtils.buildRuleConditions([conditionAddress], []);
-            expect(result).toEqual([{ id: 202, op: 1, permissionId: zeroHash, value: conditionAddress }]);
+            expect(result).toEqual([
+                {
+                    id: 202,
+                    op: 1,
+                    permissionId: zeroHash,
+                    value: conditionAddress,
+                },
+            ]);
         });
 
         it('builds correct ruled conditions for two condition addresses', () => {
             const conditionAddresses = ['0x123', '0x456'];
             const result = permissionTransactionUtils.buildRuleConditions([...conditionAddresses], []);
             expect(result).toEqual([
-                { id: 203, op: 10, permissionId: zeroHash, value: BigInt(8589934593) }, // OR operator on indexes 1 & 2
-                { id: 202, op: 1, permissionId: zeroHash, value: conditionAddresses[0] },
-                { id: 202, op: 1, permissionId: zeroHash, value: conditionAddresses[1] },
+                {
+                    id: 203,
+                    op: 10,
+                    permissionId: zeroHash,
+                    value: BigInt(8_589_934_593),
+                }, // OR operator on indexes 1 & 2
+                {
+                    id: 202,
+                    op: 1,
+                    permissionId: zeroHash,
+                    value: conditionAddresses[0],
+                },
+                {
+                    id: 202,
+                    op: 1,
+                    permissionId: zeroHash,
+                    value: conditionAddresses[1],
+                },
             ]);
         });
 
@@ -148,27 +212,52 @@ describe('permissionTransaction utils', () => {
             const conditionAddresses = ['0x123', '0x456', '0x789'];
             const result = permissionTransactionUtils.buildRuleConditions([...conditionAddresses], []);
             expect(result).toEqual([
-                { id: 203, op: 10, permissionId: zeroHash, value: BigInt(8589934593) }, // OR operator on indexes 1 & 2
-                { id: 203, op: 10, permissionId: zeroHash, value: BigInt(17179869187) }, // OR operator on indexes 3 & 4
-                { id: 202, op: 1, permissionId: zeroHash, value: conditionAddresses[0] },
-                { id: 202, op: 1, permissionId: zeroHash, value: conditionAddresses[1] },
-                { id: 202, op: 1, permissionId: zeroHash, value: conditionAddresses[2] },
+                {
+                    id: 203,
+                    op: 10,
+                    permissionId: zeroHash,
+                    value: BigInt(8_589_934_593),
+                }, // OR operator on indexes 1 & 2
+                {
+                    id: 203,
+                    op: 10,
+                    permissionId: zeroHash,
+                    value: BigInt(17_179_869_187),
+                }, // OR operator on indexes 3 & 4
+                {
+                    id: 202,
+                    op: 1,
+                    permissionId: zeroHash,
+                    value: conditionAddresses[0],
+                },
+                {
+                    id: 202,
+                    op: 1,
+                    permissionId: zeroHash,
+                    value: conditionAddresses[1],
+                },
+                {
+                    id: 202,
+                    op: 1,
+                    permissionId: zeroHash,
+                    value: conditionAddresses[2],
+                },
             ]);
         });
     });
 
     describe('encodeLogicalOperator', () => {
         it('encodes two indexes into a uint 240 value', () => {
-            expect(permissionTransactionUtils['encodeLogicalOperator'](0, 1)).toEqual(BigInt(4294967296));
-            expect(permissionTransactionUtils['encodeLogicalOperator'](1, 2)).toEqual(BigInt(8589934593));
-            expect(permissionTransactionUtils['encodeLogicalOperator'](10, 11)).toEqual(BigInt(47244640266));
+            expect(permissionTransactionUtils.encodeLogicalOperator(0, 1)).toEqual(BigInt(4_294_967_296));
+            expect(permissionTransactionUtils.encodeLogicalOperator(1, 2)).toEqual(BigInt(8_589_934_593));
+            expect(permissionTransactionUtils.encodeLogicalOperator(10, 11)).toEqual(BigInt(47_244_640_266));
         });
     });
 
     describe('addressToCondition', () => {
         it('builds a ruled condition from a condition address', () => {
             const address = '0x111';
-            const result = permissionTransactionUtils['addressToCondition'](address);
+            const result = permissionTransactionUtils.addressToCondition(address);
             expect(result.id).toEqual(202);
             expect(result.op).toEqual(1);
             expect(result.permissionId).toEqual(zeroHash);

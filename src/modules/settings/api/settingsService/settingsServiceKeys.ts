@@ -6,9 +6,6 @@ export enum SettingsServiceKey {
 }
 
 export const settingsServiceKeys = {
-    pluginInstallationData: (params: IGetPluginInstallationDataParams) => [
-        SettingsServiceKey.PLUGIN_INSTALLATION_DATA,
-        params,
-    ],
+    pluginInstallationData: (params: IGetPluginInstallationDataParams) => [SettingsServiceKey.PLUGIN_INSTALLATION_DATA, params],
     lastPluginEventLog: (params: IGetLastPluginEventLogParams) => [SettingsServiceKey.LAST_PLUGIN_EVENT_LOG, params],
 };

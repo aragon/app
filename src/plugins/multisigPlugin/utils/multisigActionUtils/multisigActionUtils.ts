@@ -1,10 +1,3 @@
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import { actionComposerUtils } from '@/modules/governance/components/actionComposer';
-import type { IActionComposerPluginData } from '@/modules/governance/types';
-import type { IDaoPlugin } from '@/shared/api/daoService';
-import type { TranslationFunction } from '@/shared/components/translationsProvider';
-import { daoUtils } from '@/shared/utils/daoUtils';
-import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 import {
     addressUtils,
     ProposalActionType as GukProposalActionType,
@@ -12,17 +5,24 @@ import {
     type IProposalActionChangeMembers as IGukProposalActionChangeMembers,
     type IProposalActionChangeSettings as IGukProposalActionChangeSettings,
 } from '@aragon/gov-ui-kit';
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import { actionComposerUtils } from '@/modules/governance/components/actionComposer';
+import type { IActionComposerPluginData } from '@/modules/governance/types';
+import type { IDaoPlugin } from '@/shared/api/daoService';
+import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 import { MultisigAddMembersAction } from '../../components/multisigActions/multisigAddMembersAction';
 import { MultisigRemoveMembersAction } from '../../components/multisigActions/multisigRemoveMembersAction';
 import { MultisigUpdateSettingsAction } from '../../components/multisigActions/multisigUpdateSettingsAction';
 import {
-    MultisigProposalActionType,
     type IMultisigActionChangeMembers,
     type IMultisigActionChangeSettings,
     type IMultisigPluginSettings,
     type IMultisigProposalAction,
+    MultisigProposalActionType,
 } from '../../types';
-import { multisigSettingsUtils, type IMultisigSettingsParseParams } from '../multisigSettingsUtils';
+import { type IMultisigSettingsParseParams, multisigSettingsUtils } from '../multisigSettingsUtils';
 import { defaultAddMembers, defaultRemoveMembers, defaultUpdateSettings } from './multisigActionDefinitions';
 
 export interface IGetMultisigActionsProps {
@@ -72,18 +72,14 @@ class MultisigActionUtils {
                 },
                 {
                     id: `${address}-${MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS}`,
-                    name: t(
-                        `app.plugins.multisig.multisigActions.${MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS}`,
-                    ),
+                    name: t(`app.plugins.multisig.multisigActions.${MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS}`),
                     icon: IconType.MINUS,
                     groupId: address,
                     defaultValue: { ...defaultRemoveMembers, to: address },
                 },
                 {
                     id: `${address}-${MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS}`,
-                    name: t(
-                        `app.plugins.multisig.multisigActions.${MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS}`,
-                    ),
+                    name: t(`app.plugins.multisig.multisigActions.${MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS}`),
                     icon: IconType.SETTINGS,
                     groupId: address,
                     defaultValue: defaultUpdateSettings(plugin),
@@ -103,15 +99,12 @@ class MultisigActionUtils {
         };
     };
 
-    isChangeMembersAction = (
-        action: IProposalAction | IMultisigProposalAction,
-    ): action is IMultisigActionChangeMembers =>
+    isChangeMembersAction = (action: IProposalAction | IMultisigProposalAction): action is IMultisigActionChangeMembers =>
         action.type === MultisigProposalActionType.MULTISIG_ADD_MEMBERS ||
         action.type === MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS;
 
-    isChangeSettingsAction = (
-        action: IProposalAction | IMultisigProposalAction,
-    ): action is IMultisigActionChangeSettings => action.type === MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS;
+    isChangeSettingsAction = (action: IProposalAction | IMultisigProposalAction): action is IMultisigActionChangeSettings =>
+        action.type === MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS;
 
     normalizeChangeMembersAction = (action: IMultisigActionChangeMembers): IGukProposalActionChangeMembers => {
         const { type, ...otherValues } = action;
@@ -123,7 +116,10 @@ class MultisigActionUtils {
         const { action, membersCount, t } = params;
         const { type, existingSettings, proposedSettings, ...otherValues } = action;
 
-        const completeProposedSettings = { ...existingSettings, ...proposedSettings };
+        const completeProposedSettings = {
+            ...existingSettings,
+            ...proposedSettings,
+        };
 
         const parsedExistingSettings = multisigSettingsUtils.parseSettings({
             membersCount,

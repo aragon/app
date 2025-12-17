@@ -1,17 +1,16 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { type IPluginFilterComponentProps, PluginFilterComponent } from '@/shared/components/pluginFilterComponent';
 import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
 import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
-import type { ReactNode } from 'react';
 import type { IGetMemberListParams } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DaoMemberListDefault } from './daoMemberListDefault';
 
-export interface IDaoMemberListContainerProps
-    extends Pick<IPluginFilterComponentProps<IDaoPlugin>, 'value' | 'onValueChange'> {
+export interface IDaoMemberListContainerProps extends Pick<IPluginFilterComponentProps<IDaoPlugin>, 'value' | 'onValueChange'> {
     /**
      * Initial parameters to use for fetching the member list.
      */
@@ -42,20 +41,26 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (p
     const processedPlugins = plugins?.map((plugin) => {
         const pluginInitialParams = {
             ...initialParams,
-            queryParams: { ...initialParams.queryParams, pluginAddress: plugin.meta.address },
+            queryParams: {
+                ...initialParams.queryParams,
+                pluginAddress: plugin.meta.address,
+            },
         };
 
-        return { ...plugin, props: { initialParams: pluginInitialParams, plugin: plugin.meta } };
+        return {
+            ...plugin,
+            props: { initialParams: pluginInitialParams, plugin: plugin.meta },
+        };
     });
 
     return (
         <PluginFilterComponent
-            slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST}
-            plugins={processedPlugins}
             Fallback={DaoMemberListDefault}
-            value={value ?? activePlugin}
             onValueChange={onValueChange ?? setActivePlugin}
+            plugins={processedPlugins}
             searchParamName={daoMemberListFilterParam}
+            slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST}
+            value={value ?? activePlugin}
             {...otherProps}
         />
     );

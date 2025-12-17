@@ -1,3 +1,4 @@
+import { renderHook } from '@testing-library/react';
 import {
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
@@ -5,7 +6,6 @@ import {
     generateReactQueryInfiniteResultLoading,
     generateReactQueryInfiniteResultSuccess,
 } from '@/shared/testUtils';
-import { renderHook } from '@testing-library/react';
 import * as governanceService from '../../api/governanceService';
 import { generateMember } from '../../testUtils';
 import { useMemberListData } from './useMemberListData';
@@ -19,11 +19,21 @@ describe('useMemberListData hook', () => {
 
     it('fetches and returns the data needed to display the member list', () => {
         const members = [generateMember({ address: '0x123' })];
-        const membersMetadata = generatePaginatedResponseMetadata({ pageSize: 20, totalRecords: members.length });
-        const membersResponse = generatePaginatedResponse({ data: members, metadata: membersMetadata });
-        const params = { queryParams: { daoId: 'dao-test', pluginAddress: '0x123' } };
+        const membersMetadata = generatePaginatedResponseMetadata({
+            pageSize: 20,
+            totalRecords: members.length,
+        });
+        const membersResponse = generatePaginatedResponse({
+            data: members,
+            metadata: membersMetadata,
+        });
+        const params = {
+            queryParams: { daoId: 'dao-test', pluginAddress: '0x123' },
+        };
         useMemberListSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
+            generateReactQueryInfiniteResultSuccess({
+                data: { pages: [membersResponse], pageParams: [] },
+            })
         );
         const { result } = renderHook(() => useMemberListData(params));
 
@@ -47,7 +57,9 @@ describe('useMemberListData hook', () => {
         useMemberListSpy.mockReturnValue(generateReactQueryInfiniteResultLoading());
         const pageSize = 6;
         const { result } = renderHook(() =>
-            useMemberListData({ queryParams: { daoId: '', pluginAddress: '', pageSize } }),
+            useMemberListData({
+                queryParams: { daoId: '', pluginAddress: '', pageSize },
+            })
         );
         expect(result.current.pageSize).toEqual(pageSize);
     });

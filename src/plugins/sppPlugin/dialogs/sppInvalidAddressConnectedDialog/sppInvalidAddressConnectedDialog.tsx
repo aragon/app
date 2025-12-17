@@ -1,13 +1,12 @@
 'use client';
 
+import { Dialog } from '@aragon/gov-ui-kit';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Dialog } from '@aragon/gov-ui-kit';
 
-export interface ISppInvalidAddressConnectedDialogParams {}
+export type ISppInvalidAddressConnectedDialogParams = {};
 
-export interface ISppInvalidAddressConnectedDialogProps
-    extends IDialogComponentProps<ISppInvalidAddressConnectedDialogParams> {}
+export interface ISppInvalidAddressConnectedDialogProps extends IDialogComponentProps<ISppInvalidAddressConnectedDialogParams> {}
 
 export const SppInvalidAddressConnectedDialog: React.FC<ISppInvalidAddressConnectedDialogProps> = () => {
     const { t } = useTranslations();
@@ -16,10 +15,7 @@ export const SppInvalidAddressConnectedDialog: React.FC<ISppInvalidAddressConnec
     return (
         <>
             <Dialog.Header title={t('app.plugins.spp.sppInvalidAddressConnectedDialog.title')} />
-            <Dialog.Content
-                description={t('app.plugins.spp.sppInvalidAddressConnectedDialog.description')}
-                className="pb-4 md:pb-6"
-            />
+            <Dialog.Content className="pb-4 md:pb-6" description={t('app.plugins.spp.sppInvalidAddressConnectedDialog.description')} />
             <Dialog.Footer
                 primaryAction={{
                     label: t('app.plugins.spp.sppInvalidAddressConnectedDialog.action'),

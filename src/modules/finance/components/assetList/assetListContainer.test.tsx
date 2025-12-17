@@ -1,11 +1,11 @@
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
 import { AssetList } from '@/modules/finance/components/assetList';
 import * as daoService from '@/shared/api/daoService';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import * as useDaoFilterUrlParam from '@/shared/hooks/useDaoFilterUrlParam';
 import { generateDao } from '@/shared/testUtils';
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
 
 jest.mock('@/modules/finance/components/assetList/assetListDefault', () => ({
     AssetListDefault: () => <div data-testid="asset-list-default">AssetListDefault Mock</div>,
@@ -41,7 +41,11 @@ describe('<AssetList.Container /> component', () => {
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue({
-            data: generateDao({ id: 'test-dao', address: '0x123', subDaos: [] }),
+            data: generateDao({
+                id: 'test-dao',
+                address: '0x123',
+                subDaos: [],
+            }),
             isLoading: false,
             error: null,
         } as ReturnType<typeof daoService.useDao>);

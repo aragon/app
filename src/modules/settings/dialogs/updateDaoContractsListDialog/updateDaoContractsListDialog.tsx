@@ -1,11 +1,11 @@
-import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
-import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { Dialog, invariant } from '@aragon/gov-ui-kit';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type { IPluginInfo } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { SettingsDialogId } from '../../constants/settingsDialogId';
 import type { IPrepareDaoContractsUpdateDialogParams } from '../prepareDaoContractsUpdateDialog';
 import { UpdateDaoContractsCard } from './updateDaoContractsCard';
@@ -21,8 +21,7 @@ export interface IUpdateDaoContractsListDialogParams {
     daoId: string;
 }
 
-export interface IUpdateDaoContractsListDialogProps
-    extends IDialogComponentProps<IUpdateDaoContractsListDialogParams> {}
+export interface IUpdateDaoContractsListDialogProps extends IDialogComponentProps<IUpdateDaoContractsListDialogParams> {}
 
 export const UpdateDaoContractsListDialog: React.FC<IUpdateDaoContractsListDialogProps> = (props) => {
     const { location } = props;
@@ -41,41 +40,40 @@ export const UpdateDaoContractsListDialog: React.FC<IUpdateDaoContractsListDialo
     const pluginUpdates = daoUtils.getAvailablePluginUpdates(dao);
 
     const handleConfimClick = () => {
-        const params: IPrepareDaoContractsUpdateDialogParams = { daoId, plugin };
+        const params: IPrepareDaoContractsUpdateDialogParams = {
+            daoId,
+            plugin,
+        };
         open(SettingsDialogId.PREPARE_DAO_CONTRACTS_UPDATE, { params });
     };
 
     return (
         <>
             <Dialog.Header
+                description={t('app.settings.updateDaoContractsListDialog.description')}
                 onClose={close}
                 title={t('app.settings.updateDaoContractsListDialog.title')}
-                description={t('app.settings.updateDaoContractsListDialog.description')}
             />
             <Dialog.Content>
                 <div className="flex flex-col gap-3 pb-6">
                     {hasOsxUpdate && (
                         <UpdateDaoContractsCard
-                            key="osx"
-                            name={t('app.settings.updateDaoContractsListDialog.osxUpdate.name')}
-                            smartContractName={t(
-                                'app.settings.updateDaoContractsListDialog.osxUpdate.smartContractName',
-                            )}
                             address={dao.address}
                             currentVersion={dao.version}
+                            key="osx"
+                            name={t('app.settings.updateDaoContractsListDialog.osxUpdate.name')}
                             newVersion={newProtocolVersion}
+                            smartContractName={t('app.settings.updateDaoContractsListDialog.osxUpdate.smartContractName')}
                         />
                     )}
                     {pluginUpdates.map((plugin) => (
                         <UpdateDaoContractsCard
-                            key={plugin.address}
-                            name={daoUtils.getPluginName(plugin)}
-                            smartContractName={daoUtils.getPluginName(plugin)}
                             address={plugin.address}
                             currentVersion={plugin}
-                            newVersion={
-                                (pluginRegistryUtils.getPlugin(plugin.interfaceType) as IPluginInfo).installVersion
-                            }
+                            key={plugin.address}
+                            name={daoUtils.getPluginName(plugin)}
+                            newVersion={(pluginRegistryUtils.getPlugin(plugin.interfaceType) as IPluginInfo).installVersion}
+                            smartContractName={daoUtils.getPluginName(plugin)}
                         />
                     ))}
                 </div>

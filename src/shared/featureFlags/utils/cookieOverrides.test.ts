@@ -5,7 +5,10 @@ import { parseFeatureFlagOverridesFromCookie, serializeFeatureFlagOverridesToCoo
 describe('feature flags cookies utils', () => {
     describe('serializeFeatureFlagOverridesToCookie', () => {
         it('serializes overrides object to cookie string', () => {
-            const overrides: FeatureFlagOverrides = { debugPanel: true, subDao: false };
+            const overrides: FeatureFlagOverrides = {
+                debugPanel: true,
+                subDao: false,
+            };
 
             const result = serializeFeatureFlagOverridesToCookie(overrides);
 

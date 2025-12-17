@@ -30,24 +30,19 @@ export const AutocompleteInputMenu = forwardRef<HTMLDivElement, IAutocompleteInp
         'flex flex-col gap-3 overflow-hidden border-x border-primary-400 bg-neutral-0 shadow-primary-lg outline-none',
         { 'rounded-b-xl border-b pt-1 md:pb-12': isBottomPlacement },
         { 'rounded-t-xl border-t pb-1 md:pt-12': !isBottomPlacement },
-        className,
+        className
     );
 
     const footerClassName = classNames(
         'absolute left-0 hidden w-full flex-row justify-between px-6 py-4 text-base font-normal leading-tight backdrop-blur-md md:flex',
         { 'bottom-0': isBottomPlacement },
-        { 'top-0': !isBottomPlacement },
+        { 'top-0': !isBottomPlacement }
     );
 
     return (
         <FloatingPortal>
             {isOpen && (
-                <FloatingFocusManager
-                    context={context}
-                    initialFocus={-1}
-                    visuallyHiddenDismiss={true}
-                    returnFocus={false}
-                >
+                <FloatingFocusManager context={context} initialFocus={-1} returnFocus={false} visuallyHiddenDismiss={true}>
                     <div className={menuClassName} ref={ref} {...otherProps}>
                         <div className="flex max-h-[268px] flex-col gap-3 overflow-auto px-3">{children}</div>
                         <div className={footerClassName}>

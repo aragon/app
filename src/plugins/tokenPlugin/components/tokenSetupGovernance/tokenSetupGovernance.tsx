@@ -1,9 +1,9 @@
 'use client';
 
+import { Card, InputContainer, Switch } from '@aragon/gov-ui-kit';
 import { AdvancedDateInputDuration } from '@/shared/components/forms/advancedDateInput/advancedDateInputDuration';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Card, InputContainer, Switch } from '@aragon/gov-ui-kit';
 import { DaoTokenVotingMode } from '../../types';
 import { MinParticipationField } from './fields/minParticipationField';
 import { ProposalCreationEligibilityField } from './fields/proposalCreationEligibilityField';
@@ -36,46 +36,44 @@ export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (props
             {!isSubPlugin && (
                 <InputContainer
                     className="flex flex-col gap-6"
-                    id="minDuration"
-                    useCustomWrapper={true}
                     helpText={t('app.plugins.token.tokenSetupGovernance.minDuration.helpText')}
+                    id="minDuration"
                     label={t('app.plugins.token.tokenSetupGovernance.minDuration.label')}
+                    useCustomWrapper={true}
                 >
-                    <Card className="shadow-neutral-sm flex flex-col gap-6 border border-neutral-100 p-6">
+                    <Card className="flex flex-col gap-6 border border-neutral-100 p-6 shadow-neutral-sm">
                         <AdvancedDateInputDuration
-                            field={`${formPrefix}.minDuration`}
-                            label={t('app.plugins.token.tokenSetupGovernance.minDuration.label')}
                             className="!p-0"
-                            minDuration={voteDurationMin}
                             defaultValue={voteDurationDefault}
+                            field={`${formPrefix}.minDuration`}
+                            infoText={t('app.plugins.token.tokenSetupGovernance.minDuration.alertInfo')}
+                            label={t('app.plugins.token.tokenSetupGovernance.minDuration.label')}
+                            minDuration={voteDurationMin}
                             useSecondsFormat={true}
                             validateMinDuration={true}
-                            infoText={t('app.plugins.token.tokenSetupGovernance.minDuration.alertInfo')}
                         />
                     </Card>
                 </InputContainer>
             )}
             {!isSubPlugin && (
                 <Switch
-                    label={t('app.plugins.token.tokenSetupGovernance.earlyExecution.label')}
-                    helpText={t('app.plugins.token.tokenSetupGovernance.earlyExecution.helpText')}
-                    inlineLabel={t('app.plugins.token.tokenSetupGovernance.earlyExecution.switch.label')}
-                    onCheckedChanged={handleEarlyExecutionToggle}
                     checked={votingModeField.value === DaoTokenVotingMode.EARLY_EXECUTION}
                     disabled={votingModeField.value === DaoTokenVotingMode.VOTE_REPLACEMENT}
+                    helpText={t('app.plugins.token.tokenSetupGovernance.earlyExecution.helpText')}
+                    inlineLabel={t('app.plugins.token.tokenSetupGovernance.earlyExecution.switch.label')}
+                    label={t('app.plugins.token.tokenSetupGovernance.earlyExecution.label')}
+                    onCheckedChanged={handleEarlyExecutionToggle}
                 />
             )}
             <Switch
+                checked={votingModeField.value === DaoTokenVotingMode.VOTE_REPLACEMENT}
+                disabled={votingModeField.value === DaoTokenVotingMode.EARLY_EXECUTION}
                 helpText={t('app.plugins.token.tokenSetupGovernance.voteChange.helpText')}
                 inlineLabel={t('app.plugins.token.tokenSetupGovernance.voteChange.switch.label')}
                 label={t('app.plugins.token.tokenSetupGovernance.voteChange.label')}
                 onCheckedChanged={handleVoteChangeToggle}
-                checked={votingModeField.value === DaoTokenVotingMode.VOTE_REPLACEMENT}
-                disabled={votingModeField.value === DaoTokenVotingMode.EARLY_EXECUTION}
             />
-            {showProposalCreationSettings && (
-                <ProposalCreationEligibilityField formPrefix={formPrefix} token={membershipSettings.token} />
-            )}
+            {showProposalCreationSettings && <ProposalCreationEligibilityField formPrefix={formPrefix} token={membershipSettings.token} />}
         </div>
     );
 };

@@ -1,3 +1,5 @@
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
 import * as DaoService from '@/shared/api/daoService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { DialogProvider } from '@/shared/components/dialogProvider';
@@ -11,9 +13,6 @@ import {
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
-
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
 import { DaoSettingsPageClient, type IDaoSettingsPageClientProps } from './daoSettingsPageClient';
 
 jest.mock('@/modules/settings/components/updateDaoContracts', () => ({
@@ -84,8 +83,14 @@ describe('<DaoSettingsPageClient /> component', () => {
 
     it('renders the governance processes of the DAO', () => {
         const plugins = [
-            generateFilterComponentPlugin({ uniqueId: '1', meta: generateDaoPlugin({ description: 'one' }) }),
-            generateFilterComponentPlugin({ uniqueId: '2', meta: generateDaoPlugin({ description: 'two' }) }),
+            generateFilterComponentPlugin({
+                uniqueId: '1',
+                meta: generateDaoPlugin({ description: 'one' }),
+            }),
+            generateFilterComponentPlugin({
+                uniqueId: '2',
+                meta: generateDaoPlugin({ description: 'two' }),
+            }),
         ];
         hasSupportedPluginsSpy.mockReturnValue(true);
         useDaoPluginsSpy.mockReturnValue(plugins);
@@ -102,7 +107,7 @@ describe('<DaoSettingsPageClient /> component', () => {
     });
 
     it('returns null when DAO cannot be fetched', () => {
-        useDaoSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
+        useDaoSpy.mockReturnValue(generateReactQueryResultError({ error: new Error('dao fetch error') }));
         render(createTestComponent());
         expect(screen.queryByText(/daoSettingsPage.main.title/)).not.toBeInTheDocument();
     });

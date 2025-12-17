@@ -1,7 +1,7 @@
-import { FormWrapper } from '@/shared/testUtils';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { DateTime } from 'luxon';
+import { FormWrapper } from '@/shared/testUtils';
 import { AdvancedDateInputFixed, type IAdvancedDateInputFixedProps } from './advancedDateInputFixed';
 
 describe('<AdvancedDateInputFixed /> component', () => {
@@ -35,7 +35,15 @@ describe('<AdvancedDateInputFixed /> component', () => {
         const label = 'End Time';
         const validateMinDuration = true;
 
-        render(createTestComponent({ label, infoText, minDuration, minTime, validateMinDuration }));
+        render(
+            createTestComponent({
+                label,
+                infoText,
+                minDuration,
+                minTime,
+                validateMinDuration,
+            })
+        );
 
         const dateInput = screen.getByLabelText(/advancedDateInput.fixed.date/);
         const timeInput = screen.getByLabelText(/advancedDateInput.fixed.time/);

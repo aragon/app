@@ -1,6 +1,6 @@
+import { Card, InputContainer } from '@aragon/gov-ui-kit';
 import { AdvancedDateInputDuration } from '@/shared/components/forms/advancedDateInput/advancedDateInputDuration';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Card, InputContainer } from '@aragon/gov-ui-kit';
 
 export interface ISetupStageDurationFieldProps {
     /**
@@ -16,25 +16,24 @@ export const SetupStageDurationField: React.FC<ISetupStageDurationFieldProps> = 
 
     const { t } = useTranslations();
 
-    const votingPeriodInfoText =
-        bodyCount > 0 ? t('app.createDao.setupStageSettingsDialog.fields.stageDurationField.infoText') : undefined;
+    const votingPeriodInfoText = bodyCount > 0 ? t('app.createDao.setupStageSettingsDialog.fields.stageDurationField.infoText') : undefined;
 
     return (
         <InputContainer
             className="flex flex-col"
+            helpText={t('app.createDao.setupStageSettingsDialog.fields.stageDurationField.helpText')}
             id="minDuration"
+            label={t('app.createDao.setupStageSettingsDialog.fields.stageDurationField.label')}
             useCustomWrapper={true}
-            helpText={t(`app.createDao.setupStageSettingsDialog.fields.stageDurationField.helpText`)}
-            label={t(`app.createDao.setupStageSettingsDialog.fields.stageDurationField.label`)}
         >
             <Card className="border border-neutral-100">
                 <AdvancedDateInputDuration
                     field="votingPeriod"
-                    label={t(`app.createDao.setupStageSettingsDialog.fields.stageDurationField.label`)}
                     infoDisplay="inline"
                     infoText={votingPeriodInfoText}
-                    validateMinDuration={true}
+                    label={t('app.createDao.setupStageSettingsDialog.fields.stageDurationField.label')}
                     minDuration={minVotingPeriod}
+                    validateMinDuration={true}
                 />
             </Card>
         </InputContainer>

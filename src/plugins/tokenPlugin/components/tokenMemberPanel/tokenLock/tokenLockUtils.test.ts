@@ -1,5 +1,5 @@
-import { Network } from '@/shared/api/daoService';
 import { DateTime } from 'luxon';
+import { Network } from '@/shared/api/daoService';
 import type { IMemberLock } from '../../../api/tokenService';
 import { DaoTokenVotingMode, type ITokenPluginSettings } from '../../../types';
 import { tokenLockUtils } from './tokenLockUtils';
@@ -26,11 +26,11 @@ describe('TokenLockUtils', () => {
         },
         votingEscrow: {
             slope: 1e15, // Slope for voting power calculation
-            maxTime: 31536000, // 1 year in seconds
+            maxTime: 31_536_000, // 1 year in seconds
             bias: 0,
             minDeposit: (1e18).toString(),
-            minLockTime: 86400, // 1 day
-            cooldown: 86400,
+            minLockTime: 86_400, // 1 day
+            cooldown: 86_400,
             feePercent: 5000,
             minFeePercent: 1000,
             minCooldown: 3600,
@@ -150,25 +150,21 @@ describe('TokenLockUtils', () => {
     describe('calculateVotingPower', () => {
         it('calculates voting power with only slope (no bias)', () => {
             const amount = '1000000000000000000'; // 1 token (18 decimals)
-            const time = 86400; // 1 day
+            const time = 86_400; // 1 day
 
             const votingPower = tokenLockUtils.calculateVotingPower(amount, time, mockSettings);
 
             // Formula: (amount * slope * time + amount * bias) / 1e18
             // (1e18 * 1e15 * 86400 + 1e18 * 0) / 1e18 = 86400
-            expect(parseFloat(votingPower)).toBeCloseTo(86.4, 1); // 86400 / 1000 = 86.4 (formatted with 18 decimals)
+            expect(Number.parseFloat(votingPower)).toBeCloseTo(86.4, 1); // 86400 / 1000 = 86.4 (formatted with 18 decimals)
         });
 
         it('caps time at maxTime', () => {
             const amount = '1000000000000000000'; // 1 token
-            const time = mockSettings.votingEscrow!.maxTime + 10000; // Exceeds maxTime
+            const time = mockSettings.votingEscrow!.maxTime + 10_000; // Exceeds maxTime
 
             const votingPower1 = tokenLockUtils.calculateVotingPower(amount, time, mockSettings);
-            const votingPower2 = tokenLockUtils.calculateVotingPower(
-                amount,
-                mockSettings.votingEscrow!.maxTime,
-                mockSettings,
-            );
+            const votingPower2 = tokenLockUtils.calculateVotingPower(amount, mockSettings.votingEscrow!.maxTime, mockSettings);
 
             // Should be capped at maxTime
             expect(votingPower1).toBe(votingPower2);
@@ -176,7 +172,7 @@ describe('TokenLockUtils', () => {
 
         it('returns zero for zero amount', () => {
             const amount = '0';
-            const time = 86400;
+            const time = 86_400;
 
             const votingPower = tokenLockUtils.calculateVotingPower(amount, time, mockSettings);
 
@@ -193,19 +189,19 @@ describe('TokenLockUtils', () => {
             };
 
             const amount = '1000000000000000000'; // 1 token
-            const time = 86400; // 1 day
+            const time = 86_400; // 1 day
 
             const votingPower = tokenLockUtils.calculateVotingPower(amount, time, settingsWithBias);
 
             // Formula: (1e18 * 1e15 * 86400 + 1e18 * 1e17) / 1e18
             // = (86400e15 + 100e15) / 1e18 = (86500e15) / 1e18 = 0.0865
-            expect(parseFloat(votingPower)).toBeGreaterThan(86.4); // Should be higher with bias
+            expect(Number.parseFloat(votingPower)).toBeGreaterThan(86.4); // Should be higher with bias
         });
     });
 
     describe('getLockVotingPower', () => {
         it('returns voting power for active lock', () => {
-            const epochStartAt = DateTime.now().toSeconds() - 86400; // 1 day ago
+            const epochStartAt = DateTime.now().toSeconds() - 86_400; // 1 day ago
             const lock: IMemberLock = {
                 id: '1',
                 tokenId: '1',
@@ -224,11 +220,11 @@ describe('TokenLockUtils', () => {
 
             const votingPower = tokenLockUtils.getLockVotingPower(lock, mockSettings);
 
-            expect(parseFloat(votingPower)).toBeGreaterThan(0);
+            expect(Number.parseFloat(votingPower)).toBeGreaterThan(0);
         });
 
         it('returns "0" for lock in cooldown status', () => {
-            const epochStartAt = DateTime.now().toSeconds() - 86400;
+            const epochStartAt = DateTime.now().toSeconds() - 86_400;
             const queuedAt = DateTime.now().toSeconds() - 50;
 
             const lock: IMemberLock = {
@@ -253,7 +249,7 @@ describe('TokenLockUtils', () => {
         });
 
         it('returns "0" for lock in available status', () => {
-            const epochStartAt = DateTime.now().toSeconds() - 86400;
+            const epochStartAt = DateTime.now().toSeconds() - 86_400;
             const queuedAt = DateTime.now().toSeconds() - 200;
 
             const lock: IMemberLock = {
@@ -280,7 +276,7 @@ describe('TokenLockUtils', () => {
 
     describe('getMultiplier', () => {
         it('calculates correct multiplier for active lock', () => {
-            const epochStartAt = DateTime.now().toSeconds() - 86400; // 1 day ago
+            const epochStartAt = DateTime.now().toSeconds() - 86_400; // 1 day ago
             const lock: IMemberLock = {
                 id: '1',
                 tokenId: '1',
@@ -305,7 +301,7 @@ describe('TokenLockUtils', () => {
         });
 
         it('returns 0 multiplier for lock not in active status', () => {
-            const epochStartAt = DateTime.now().toSeconds() - 86400;
+            const epochStartAt = DateTime.now().toSeconds() - 86_400;
             const queuedAt = DateTime.now().toSeconds() - 200;
 
             const lock: IMemberLock = {
@@ -334,7 +330,7 @@ describe('TokenLockUtils', () => {
                 id: '1',
                 tokenId: '1',
                 amount: '1000000000000000000',
-                epochStartAt: DateTime.now().toSeconds() - 86400, // 1 day
+                epochStartAt: DateTime.now().toSeconds() - 86_400, // 1 day
                 lockExit: {
                     status: false,
                     queuedAt: undefined,
@@ -348,7 +344,7 @@ describe('TokenLockUtils', () => {
 
             const lock7Days: IMemberLock = {
                 ...lock1Day,
-                epochStartAt: DateTime.now().toSeconds() - 604800, // 7 days
+                epochStartAt: DateTime.now().toSeconds() - 604_800, // 7 days
             };
 
             const multiplier1Day = tokenLockUtils.getMultiplier(lock1Day, mockSettings);
@@ -381,7 +377,7 @@ describe('TokenLockUtils', () => {
 
             // minLockTime = epochStartAt + minLockTime from settings
             // 1000 + 86400 = 87400
-            expect(minLockTime).toBe(87400);
+            expect(minLockTime).toBe(87_400);
         });
     });
 });

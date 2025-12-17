@@ -1,5 +1,5 @@
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { motion } from 'framer-motion';
+import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface IXmaquinaActionTextProps {
     /**
@@ -24,21 +24,21 @@ export const XmaquinaActionText: React.FC<IXmaquinaActionTextProps> = (props) =>
         <>
             {/* Static for small screens */}
             <div className="relative z-10 flex flex-col items-start gap-1 self-start pr-4 md:hidden md:pr-0">
-                <p className="text-xl leading-tight font-medium text-white md:text-2xl">{t(title)}</p>
-                <p className="text-base leading-tight text-neutral-400 transition-colors duration-500 group-hover:text-black md:text-lg">
+                <p className="font-medium text-white text-xl leading-tight md:text-2xl">{t(title)}</p>
+                <p className="text-base text-neutral-400 leading-tight transition-colors duration-500 group-hover:text-black md:text-lg">
                     {t(description)}
                 </p>
             </div>
 
             {/* Animated for md+ screens */}
             <motion.div
-                initial={{ y: 0 }}
                 animate={isHovered ? { y: -30 } : { y: 0 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 15 }}
                 className="relative z-10 hidden w-full flex-col items-start gap-1 md:flex"
+                initial={{ y: 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 15 }}
             >
-                <p className="text-2xl leading-tight font-medium text-white">{t(title)}</p>
-                <p className="text-lg leading-tight text-neutral-400 transition-colors duration-500 group-hover:text-black">
+                <p className="font-medium text-2xl text-white leading-tight">{t(title)}</p>
+                <p className="text-lg text-neutral-400 leading-tight transition-colors duration-500 group-hover:text-black">
                     {t(description)}
                 </p>
             </motion.div>

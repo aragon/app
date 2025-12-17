@@ -1,8 +1,13 @@
-import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { encodeFunctionData, type Hex } from 'viem';
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 
 const lockManagerAbi = [
-    { type: 'function', name: 'lock', inputs: [{ name: 'amount', type: 'uint256' }], outputs: [] },
+    {
+        type: 'function',
+        name: 'lock',
+        inputs: [{ name: 'amount', type: 'uint256' }],
+        outputs: [],
+    },
     { type: 'function', name: 'unlock', inputs: [], outputs: [] },
 ] as const;
 
@@ -14,7 +19,11 @@ class LockToVoteLockUnlockDialogUtils {
             args: [amount],
         });
 
-        const transaction = { to: lockManagerAddress as Hex, data: transactionData, value: BigInt(0) };
+        const transaction = {
+            to: lockManagerAddress as Hex,
+            data: transactionData,
+            value: BigInt(0),
+        };
 
         return Promise.resolve(transaction);
     };
@@ -26,7 +35,11 @@ class LockToVoteLockUnlockDialogUtils {
             args: [],
         });
 
-        const transaction = { to: lockManagerAddress as Hex, data: transactionData, value: BigInt(0) };
+        const transaction = {
+            to: lockManagerAddress as Hex,
+            data: transactionData,
+            value: BigInt(0),
+        };
 
         return Promise.resolve(transaction);
     };

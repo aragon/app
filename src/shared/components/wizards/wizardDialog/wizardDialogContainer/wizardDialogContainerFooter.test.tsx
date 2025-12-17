@@ -1,9 +1,9 @@
-import * as useDialogContext from '@/shared/components/dialogProvider';
-import { generateDialogContext, generateWizardContext } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import * as useDialogContext from '@/shared/components/dialogProvider';
+import { generateDialogContext, generateWizardContext } from '@/shared/testUtils';
 import * as Wizard from '../../wizard';
-import { WizardDialogContainerFooter, type IWizardDialogContainerFooterProps } from './wizardDialogContainerFooter';
+import { type IWizardDialogContainerFooterProps, WizardDialogContainerFooter } from './wizardDialogContainerFooter';
 
 describe('<WizardDialogContainerFooter /> component', () => {
     const useWizardContextSpy = jest.spyOn(Wizard, 'useWizardContext');
@@ -50,7 +50,9 @@ describe('<WizardDialogContainerFooter /> component', () => {
         useWizardContextSpy.mockReturnValue(generateWizardContext({ hasPrevious }));
         useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
         render(createTestComponent());
-        const closeButton = screen.getByRole('button', { name: /wizardDialog.container.close/ });
+        const closeButton = screen.getByRole('button', {
+            name: /wizardDialog.container.close/,
+        });
         expect(closeButton).toBeInTheDocument();
         await userEvent.click(closeButton);
         expect(close).toHaveBeenCalled();
@@ -60,9 +62,13 @@ describe('<WizardDialogContainerFooter /> component', () => {
         const onPreviousClick = jest.fn();
         const hasPrevious = true;
         useWizardContextSpy.mockReturnValue(generateWizardContext({ hasPrevious }));
-        useWizardFooterSpy.mockReturnValue({ onPreviousClick } as unknown as Wizard.IUseWizardFooterReturn);
+        useWizardFooterSpy.mockReturnValue({
+            onPreviousClick,
+        } as unknown as Wizard.IUseWizardFooterReturn);
         render(createTestComponent());
-        const backButton = screen.getByRole('button', { name: /wizardDialog.container.back/ });
+        const backButton = screen.getByRole('button', {
+            name: /wizardDialog.container.back/,
+        });
         expect(backButton).toBeInTheDocument();
         await userEvent.click(backButton);
         expect(onPreviousClick).toHaveBeenCalled();
@@ -72,6 +78,10 @@ describe('<WizardDialogContainerFooter /> component', () => {
         const hasPrevious = false;
         useWizardContextSpy.mockReturnValue(generateWizardContext({ hasPrevious }));
         render(createTestComponent());
-        expect(screen.queryByRole('button', { name: /wizardDialog.container.back/ })).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole('button', {
+                name: /wizardDialog.container.back/,
+            })
+        ).not.toBeInTheDocument();
     });
 });

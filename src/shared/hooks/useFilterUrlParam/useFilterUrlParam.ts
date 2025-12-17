@@ -31,7 +31,13 @@ export const defaultFilterParam = 'filter';
 // (See https://nextjs.org/docs/app/getting-started/linking-and-navigating#native-history-api)
 const updateSearchParams = (params: Record<string, string>, remove?: boolean) => {
     const newParams = new URLSearchParams(window.location.search);
-    Object.keys(params).forEach((key) => (remove ? newParams.delete(key) : newParams.set(key, params[key])));
+    Object.keys(params).forEach((key) => {
+        if (remove) {
+            newParams.delete(key);
+        } else {
+            newParams.set(key, params[key]);
+        }
+    });
     window.history.replaceState(null, '', `${window.location.pathname}?${newParams}`);
 };
 
@@ -57,7 +63,7 @@ export const useFilterUrlParam = (params: IUseFilterUrlParamParams): IUseFilterU
 
             setActiveFilter(tabId);
         },
-        [name, enableUrlUpdate],
+        [name, enableUrlUpdate]
     );
 
     // Update active tab on URL on fallbackValue change

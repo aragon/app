@@ -1,1 +1,4 @@
-export { UpdateDaoContracts, type IUpdateDaoContractsProps } from './updateDaoContracts';
+export {
+    type IUpdateDaoContractsProps,
+    UpdateDaoContracts,
+} from './updateDaoContracts';

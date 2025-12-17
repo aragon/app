@@ -1,6 +1,6 @@
 import { ApplicationSlotId } from '@/modules/application/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { capitalDistributorPlugin, CapitalDistributorPluginPages } from './constants/capitalDistributorPlugin';
+import { CapitalDistributorPluginPages, capitalDistributorPlugin } from './constants/capitalDistributorPlugin';
 import { CapitalDistributorRewardsPage } from './pages/capitalDistributorRewardsPage';
 
 export const initialiseCapitalDistributorPlugin = () => {
@@ -10,9 +10,7 @@ export const initialiseCapitalDistributorPlugin = () => {
 
         // Application module slots
         .registerSlotComponent({
-            slotId: pluginRegistryUtils.getPageSlotId(ApplicationSlotId.APPLICATION_PLUGIN_PAGE, [
-                CapitalDistributorPluginPages.REWARDS,
-            ]),
+            slotId: pluginRegistryUtils.getPageSlotId(ApplicationSlotId.APPLICATION_PLUGIN_PAGE, [CapitalDistributorPluginPages.REWARDS]),
             pluginId: capitalDistributorPlugin.id,
             component: CapitalDistributorRewardsPage,
         });

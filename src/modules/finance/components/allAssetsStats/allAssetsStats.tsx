@@ -1,9 +1,9 @@
 'use client';
 
+import { Button, formatterUtils, IconType, NumberFormat } from '@aragon/gov-ui-kit';
 import type { IDao } from '@/shared/api/daoService';
 import { StatCard } from '@/shared/components/statCard';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, formatterUtils, IconType, NumberFormat } from '@aragon/gov-ui-kit';
 
 export interface IAllAssetsStatsProps {
     /**
@@ -28,22 +28,20 @@ export interface IAllAssetsStatsProps {
     showOctavCta?: boolean;
 }
 
-export const AllAssetsStats: React.FC<IAllAssetsStatsProps> = ({
-    dao,
-    totalValueUsd,
-    totalAssets,
-    octavLink,
-    showOctavCta = true,
-}) => {
+export const AllAssetsStats: React.FC<IAllAssetsStatsProps> = ({ dao, totalValueUsd, totalAssets, octavLink, showOctavCta = true }) => {
     const { t } = useTranslations();
 
     const formattedTotalValue =
         totalValueUsd != null
-            ? (formatterUtils.formatNumber(totalValueUsd, { format: NumberFormat.FIAT_TOTAL_SHORT }) ?? '-')
+            ? (formatterUtils.formatNumber(totalValueUsd, {
+                  format: NumberFormat.FIAT_TOTAL_SHORT,
+              }) ?? '-')
             : '-';
     const formattedTotalAssets =
         totalAssets != null
-            ? (formatterUtils.formatNumber(totalAssets, { format: NumberFormat.GENERIC_SHORT }) ?? '-')
+            ? (formatterUtils.formatNumber(totalAssets, {
+                  format: NumberFormat.GENERIC_SHORT,
+              }) ?? '-')
             : '-';
 
     const stats = [
@@ -63,22 +61,22 @@ export const AllAssetsStats: React.FC<IAllAssetsStatsProps> = ({
         <div className="flex flex-col gap-6">
             <div className="grid w-full grid-cols-2 gap-3">
                 {stats.map((stat) => (
-                    <StatCard key={stat.label} value={stat.value} label={stat.label} />
+                    <StatCard key={stat.label} label={stat.label} value={stat.value} />
                 ))}
             </div>
             {showOctavCta && resolvedOctavLink && (
                 <div className="flex flex-col items-center gap-y-3">
                     <Button
                         className="w-full"
-                        variant="tertiary"
-                        size="md"
                         href={resolvedOctavLink}
-                        target="_blank"
                         iconRight={IconType.LINK_EXTERNAL}
+                        size="md"
+                        target="_blank"
+                        variant="tertiary"
                     >
                         {t('app.finance.financeDetailsList.octavLabel')}
                     </Button>
-                    <p className="text-sm text-neutral-500">{t('app.finance.financeDetailsList.octavDescription')}</p>
+                    <p className="text-neutral-500 text-sm">{t('app.finance.financeDetailsList.octavDescription')}</p>
                 </div>
             )}
         </div>

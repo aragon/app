@@ -1,7 +1,7 @@
-import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
 import { addressUtils, ProposalVoting, ProposalVotingTab } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import { useEnsName } from 'wagmi';
+import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
 import type { ISppProposal, ISppStage, ISppStagePlugin } from '../../../types';
 import { sppStageUtils } from '../../../utils/sppStageUtils';
 import { SppStageStatus } from './sppStageStatus';
@@ -43,21 +43,21 @@ export const SppVotingTerminalStageBodyContent: React.FC<ISppVotingTerminalStage
 
     return (
         <ProposalVoting.BodyContent
-            name={pluginName}
-            key={plugin.address}
-            status={status}
+            bodyBrand={isExternalPlugin ? brandedExternals[plugin.brandId] : undefined}
             bodyId={plugin.address}
             hideTabs={isExternalPlugin ? [ProposalVotingTab.VOTES] : undefined}
-            bodyBrand={isExternalPlugin ? brandedExternals[plugin.brandId] : undefined}
+            key={plugin.address}
+            name={pluginName}
+            status={status}
         >
             <SppVotingTerminalBodyContent
-                plugin={plugin}
                 daoId={daoId}
-                subProposal={sppStageUtils.getBodySubProposal(proposal, plugin.address, stage.stageIndex)}
+                plugin={plugin}
                 proposal={proposal}
                 stage={stage}
+                subProposal={sppStageUtils.getBodySubProposal(proposal, plugin.address, stage.stageIndex)}
             >
-                {displayStatus && <SppStageStatus proposal={proposal} stage={stage} daoId={daoId} />}
+                {displayStatus && <SppStageStatus daoId={daoId} proposal={proposal} stage={stage} />}
             </SppVotingTerminalBodyContent>
         </ProposalVoting.BodyContent>
     );

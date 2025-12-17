@@ -1,7 +1,7 @@
-import { Network } from '@/shared/api/daoService';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import { Network } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { DaoSettingsPage, type IDaoSettingsPageProps } from './daoSettingsPage';
 import { DaoSettingsPageClient } from './daoSettingsPageClient';
 
@@ -22,7 +22,10 @@ describe('<DaoSettingsPage /> component', () => {
 
     const createTestComponent = async (props?: Partial<IDaoSettingsPageProps>) => {
         const completeProps: IDaoSettingsPageProps = {
-            params: Promise.resolve({ addressOrEns: '0x123', network: Network.ETHEREUM_MAINNET }),
+            params: Promise.resolve({
+                addressOrEns: '0x123',
+                network: Network.ETHEREUM_MAINNET,
+            }),
             ...props,
         };
         const Component = await DaoSettingsPage(completeProps);

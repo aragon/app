@@ -41,7 +41,11 @@ describe('useFormField hook', () => {
         const fieldValues = { field: {}, fieldState };
         const label = 'Summary';
         useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
-        const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>('field-name', { label }));
+        const { result } = renderHook(() =>
+            useFormField<ReactHookForm.FieldValues, string>('field-name', {
+                label,
+            })
+        );
         expect(result.current.alert?.message).toMatch(/formField.error.required \(name=Summary/);
         expect(result.current.alert?.variant).toEqual('critical');
     });
@@ -70,7 +74,11 @@ describe('useFormField hook', () => {
         const expectedName = `${fieldPrefix}.${name}`;
         const fieldValues = { field: {}, fieldState: {} };
         useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
-        renderHook(() => useFormField<ReactHookForm.FieldValues, string>(name, { fieldPrefix }));
+        renderHook(() =>
+            useFormField<ReactHookForm.FieldValues, string>(name, {
+                fieldPrefix,
+            })
+        );
         expect(useControllerSpy).toHaveBeenCalledWith(expect.objectContaining({ name: expectedName }));
     });
 
@@ -81,7 +89,11 @@ describe('useFormField hook', () => {
         const fieldName = 'amount';
         useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
         const rules = { min: 10 };
-        const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>(fieldName, { rules }));
+        const { result } = renderHook(() =>
+            useFormField<ReactHookForm.FieldValues, string>(fieldName, {
+                rules,
+            })
+        );
         expect(result.current.alert?.message).toMatch(/formField.error.min \(name=amount,value=10\)/);
     });
 
@@ -92,7 +104,11 @@ describe('useFormField hook', () => {
         const fieldName = 'tokens';
         useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
         const rules = { max: 123 };
-        const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>(fieldName, { rules }));
+        const { result } = renderHook(() =>
+            useFormField<ReactHookForm.FieldValues, string>(fieldName, {
+                rules,
+            })
+        );
         expect(result.current.alert?.message).toMatch(/formField.error.max \(name=tokens,value=123\)/);
     });
 
@@ -100,14 +116,22 @@ describe('useFormField hook', () => {
     // can break inputs that rely on formatted display values (for example numeric inputs with suffixes).
     // Sanitization is still available via explicit `sanitizeOnBlur: true`, but we no longer guarantee
     // that every field sanitizes by default, so this spec is skipped.
-    it.skip('sanitizes input value on blur before forwarding onChange', () => {
+    it('sanitizes input value on blur before forwarding onChange', () => {
         const onChange = jest.fn();
         const onBlur = jest.fn();
-        const field = { onChange, onBlur } as unknown as ReactHookForm.UseControllerReturn['field'];
-        useControllerSpy.mockReturnValue({ field, fieldState: {} } as unknown as ReactHookForm.UseControllerReturn);
+        const field = {
+            onChange,
+            onBlur,
+        } as unknown as ReactHookForm.UseControllerReturn['field'];
+        useControllerSpy.mockReturnValue({
+            field,
+            fieldState: {},
+        } as unknown as ReactHookForm.UseControllerReturn);
 
         const { result } = renderHook(() =>
-            useFormField<ReactHookForm.FieldValues, string>('field', { trimOnBlur: true }),
+            useFormField<ReactHookForm.FieldValues, string>('field', {
+                trimOnBlur: true,
+            })
         );
 
         // call returned onBlur with a synthetic event carrying a value
@@ -121,14 +145,23 @@ describe('useFormField hook', () => {
     // NOTE: Same as above, multiline sanitization on blur is now an opt-in behavior.
     // Since the default no longer enforces sanitization, this expectation would be misleading,
     // therefore the test is skipped.
-    it.skip('supports multiline sanitize mode preserving newlines and tabs', () => {
+    it('supports multiline sanitize mode preserving newlines and tabs', () => {
         const onChange = jest.fn();
         const onBlur = jest.fn();
-        const field = { onChange, onBlur } as unknown as ReactHookForm.UseControllerReturn['field'];
-        useControllerSpy.mockReturnValue({ field, fieldState: {} } as unknown as ReactHookForm.UseControllerReturn);
+        const field = {
+            onChange,
+            onBlur,
+        } as unknown as ReactHookForm.UseControllerReturn['field'];
+        useControllerSpy.mockReturnValue({
+            field,
+            fieldState: {},
+        } as unknown as ReactHookForm.UseControllerReturn);
 
         const { result } = renderHook(() =>
-            useFormField<ReactHookForm.FieldValues, string>('field', { trimOnBlur: false, sanitizeMode: 'multiline' }),
+            useFormField<ReactHookForm.FieldValues, string>('field', {
+                trimOnBlur: false,
+                sanitizeMode: 'multiline',
+            })
         );
 
         (result.current.onBlur as unknown as (e: { target: { value: string } }) => void)({
@@ -141,11 +174,20 @@ describe('useFormField hook', () => {
     it('skips sanitization when sanitizeOnBlur is false', () => {
         const onChange = jest.fn();
         const onBlur = jest.fn();
-        const field = { onChange, onBlur } as unknown as ReactHookForm.UseControllerReturn['field'];
-        useControllerSpy.mockReturnValue({ field, fieldState: {} } as unknown as ReactHookForm.UseControllerReturn);
+        const field = {
+            onChange,
+            onBlur,
+        } as unknown as ReactHookForm.UseControllerReturn['field'];
+        useControllerSpy.mockReturnValue({
+            field,
+            fieldState: {},
+        } as unknown as ReactHookForm.UseControllerReturn);
 
         const { result } = renderHook(() =>
-            useFormField<ReactHookForm.FieldValues, string>('field', { sanitizeOnBlur: false, trimOnBlur: true }),
+            useFormField<ReactHookForm.FieldValues, string>('field', {
+                sanitizeOnBlur: false,
+                trimOnBlur: true,
+            })
         );
 
         (result.current.onBlur as unknown as (e: { target: { value: string } }) => void)({

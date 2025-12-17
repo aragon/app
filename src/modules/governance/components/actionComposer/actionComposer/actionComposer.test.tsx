@@ -1,8 +1,8 @@
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
 import * as daoService from '@/shared/api/daoService';
 import { DialogProvider } from '@/shared/components/dialogProvider';
 import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
 import type { IActionComposerProps } from './actionComposer';
 import { ActionComposer } from './actionComposer';
 

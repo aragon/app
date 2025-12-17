@@ -1,7 +1,7 @@
-import { Network } from '@/shared/api/daoService';
 import type * as ReactQuery from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import { Network } from '@/shared/api/daoService';
 import { CreateProposalPage, type ICreateProposalPageProps } from './createProposalPage';
 
 jest.mock('@tanstack/react-query', () => ({

@@ -1,8 +1,8 @@
-import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import { generateSppPluginSettings, generateSppProposal, generateSppStage } from '../../testUtils';
-import { type ISppProposal } from '../../types';
+import type { ISppProposal } from '../../types';
 import { sppStageUtils } from '../sppStageUtils/sppStageUtils';
 import { sppProposalUtils } from './sppProposalUtils';
 
@@ -24,7 +24,10 @@ describe('SppProposalUtils', () => {
     const generateProposalWithStage = (proposal?: Partial<ISppProposal>): ISppProposal => ({
         ...generateSppProposal({
             ...proposal,
-            settings: generateSppPluginSettings({ stages: [generateSppStage()], ...proposal?.settings }),
+            settings: generateSppPluginSettings({
+                stages: [generateSppStage()],
+                ...proposal?.settings,
+            }),
         }),
         ...proposal,
     });
@@ -45,7 +48,9 @@ describe('SppProposalUtils', () => {
 
         it('sets the isExecuted param to the proposal execution status', () => {
             const status = true;
-            const proposal = generateProposalWithStage({ executed: { status } });
+            const proposal = generateProposalWithStage({
+                executed: { status },
+            });
             sppProposalUtils.getProposalStatus(proposal);
             expect(getProposalStatusSpy).toHaveBeenCalledWith(expect.objectContaining({ isExecuted: status }));
         });
@@ -68,7 +73,9 @@ describe('SppProposalUtils', () => {
         it('sets the end date param to the end date of the last stage', () => {
             const endDate = 456;
             const lastStage = generateSppStage({ stageIndex: 1 });
-            const settings = generateSppPluginSettings({ stages: [generateSppStage(), lastStage] });
+            const settings = generateSppPluginSettings({
+                stages: [generateSppStage(), lastStage],
+            });
             const proposal = generateProposalWithStage({ settings });
             getStageEndDateSpy.mockReturnValue(DateTime.fromSeconds(endDate));
             sppProposalUtils.getProposalStatus(proposal);
@@ -84,9 +91,7 @@ describe('SppProposalUtils', () => {
             getStageMaxAdvanceSpy.mockReturnValue(DateTime.fromSeconds(maxAdvance));
             sppProposalUtils.getProposalStatus(proposal);
             expect(getStageMaxAdvanceSpy).toHaveBeenCalledWith(proposal, lastStage);
-            expect(getProposalStatusSpy).toHaveBeenCalledWith(
-                expect.objectContaining({ executionExpiryDate: maxAdvance }),
-            );
+            expect(getProposalStatusSpy).toHaveBeenCalledWith(expect.objectContaining({ executionExpiryDate: maxAdvance }));
         });
 
         it('sets the hasAdvanceableStages param to true if there are stages that can be advanced', () => {
@@ -120,8 +125,13 @@ describe('SppProposalUtils', () => {
         });
 
         it('sets the canExecuteEarly param to true if the last stage can be advanced early', () => {
-            const lastStage = generateSppStage({ stageIndex: 1, minAdvance: 0 });
-            const settings = generateSppPluginSettings({ stages: [generateSppStage(), lastStage] });
+            const lastStage = generateSppStage({
+                stageIndex: 1,
+                minAdvance: 0,
+            });
+            const settings = generateSppPluginSettings({
+                stages: [generateSppStage(), lastStage],
+            });
             const proposal = generateProposalWithStage({ settings });
             sppProposalUtils.getProposalStatus(proposal);
             expect(getProposalStatusSpy).toHaveBeenCalledWith(expect.objectContaining({ canExecuteEarly: true }));
@@ -152,7 +162,7 @@ describe('SppProposalUtils', () => {
             const proposal = generateSppProposal({ settings });
 
             getStageStatusSpy.mockImplementation((_, stage) =>
-                stage.stageIndex === 0 ? ProposalStatus.ACCEPTED : ProposalStatus.REJECTED,
+                stage.stageIndex === 0 ? ProposalStatus.ACCEPTED : ProposalStatus.REJECTED
             );
 
             expect(sppProposalUtils.areAllStagesAccepted(proposal)).toBeFalsy();

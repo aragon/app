@@ -1,6 +1,6 @@
+import { DataListContainer, DataListPagination, DataListRoot, type DataListState } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
-import { DataListContainer, DataListPagination, DataListRoot, type DataListState } from '@aragon/gov-ui-kit';
 import type { IGetGaugeListParams } from '../../api/gaugeVoterService';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
 import { useGaugeList } from '../../api/gaugeVoterService/queries';
@@ -93,7 +93,11 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
 
     const { data: gaugeListData, fetchNextPage, status, fetchStatus, isFetchingNextPage } = useGaugeList(initialParams);
 
-    const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
+    const state = dataListUtils.queryToDataListState({
+        status,
+        fetchStatus,
+        isFetchingNextPage,
+    });
 
     const shouldShowSkeleton = state === 'initialLoading' || !!isUserVotesLoading;
     const effectiveState: DataListState = shouldShowSkeleton ? 'initialLoading' : state;
@@ -116,35 +120,31 @@ export const GaugeVoterGaugeList: React.FC<IGaugeVoterGaugeListProps> = (props) 
     return (
         <DataListRoot
             entityLabel={t('app.plugins.gaugeVoter.gaugeVoterGaugeList.entity')}
-            onLoadMore={fetchNextPage}
-            state={effectiveState}
-            pageSize={pageSize}
             itemsCount={itemsCount}
+            onLoadMore={fetchNextPage}
+            pageSize={pageSize}
+            state={effectiveState}
         >
             <GaugeVoterGaugeListHeading />
-            <DataListContainer
-                errorState={errorState}
-                emptyState={emptyState}
-                SkeletonElement={GaugeVoterGaugeListItemSkeleton}
-            >
+            <DataListContainer emptyState={emptyState} errorState={errorState} SkeletonElement={GaugeVoterGaugeListItemSkeleton}>
                 {gaugeList.map((gauge) => {
                     const gaugeVoteData = gaugeVotes.find((v) => v.gaugeAddress === gauge.address);
 
                     return (
                         <GaugeVoterGaugeListItemStructure
-                            key={gauge.address}
+                            formattedTotalVotes={gaugeVoteData?.formattedTotalVotes ?? '0'}
+                            formattedUserVotes={gaugeVoteData?.formattedVotes ?? '0'}
                             gauge={gauge}
-                            isUserConnected={isUserConnected}
                             isSelected={selectedGauges?.includes(gauge.address) ?? false}
+                            isUserConnected={isUserConnected}
+                            isUserVotesLoading={isUserVotesLoading ?? false}
                             isVoted={votedGauges?.includes(gauge.address) ?? false}
+                            isVotingPeriod={isVotingPeriod}
+                            key={gauge.address}
                             onSelect={onSelect}
                             onViewDetails={onViewDetails}
-                            totalEpochVotingPower={totalEpochVotingPower}
-                            isVotingPeriod={isVotingPeriod}
                             tokenSymbol={tokenSymbol}
-                            isUserVotesLoading={isUserVotesLoading ?? false}
-                            formattedUserVotes={gaugeVoteData?.formattedVotes ?? '0'}
-                            formattedTotalVotes={gaugeVoteData?.formattedTotalVotes ?? '0'}
+                            totalEpochVotingPower={totalEpochVotingPower}
                             totalVotesValue={gaugeVoteData?.totalVotesValue ?? 0}
                         />
                     );

@@ -1,8 +1,8 @@
-import { Network } from '@/shared/api/daoService';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import { Network } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { DaoDashboardPage, type IDaoDashboardPageProps } from './daoDashboardPage';
 
 jest.mock('@tanstack/react-query', () => ({
@@ -27,7 +27,10 @@ describe('<DaoDashboardPage /> component', () => {
 
     const createTestComponent = async (props?: Partial<IDaoDashboardPageProps>) => {
         const completeProps: IDaoDashboardPageProps = {
-            params: Promise.resolve({ addressOrEns: 'test.dao.eth', network: Network.ETHEREUM_SEPOLIA }),
+            params: Promise.resolve({
+                addressOrEns: 'test.dao.eth',
+                network: Network.ETHEREUM_SEPOLIA,
+            }),
             ...props,
         };
 
