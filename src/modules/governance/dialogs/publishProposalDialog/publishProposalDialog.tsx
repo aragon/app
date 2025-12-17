@@ -1,7 +1,6 @@
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { TransactionType } from '@/shared/api/transactionService';
-import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import {
     type IBuildTransactionDialogSuccessLinkHref,
     type ITransactionDialogActionParams,
@@ -36,7 +35,6 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const { title, summary } = proposal;
 
     const { t } = useTranslations();
-    const { setIsBlocked } = useBlockNavigationContext();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
@@ -73,8 +71,6 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     // Handler function to disable the navigation block when the transaction is needed.
     // We can't simply just pass the href to the TransactionDialog
     const getProposalsLink = ({ slug }: IBuildTransactionDialogSuccessLinkHref) => {
-        setIsBlocked(false);
-
         return daoUtils.getDaoUrl(dao, `proposals/${slug!.toUpperCase()}`)!;
     };
 

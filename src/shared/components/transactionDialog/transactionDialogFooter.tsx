@@ -125,6 +125,15 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
 
     const displaySuccessLink = stepId === successStep && isSuccessState;
 
+    // When the dialog reaches a state where we intentionally allow the user to navigate away
+    // (e.g. success link shown, or "proceed anyway" offered), ensure navigation is unblocked
+    // before the user clicks a link (our Link wrapper otherwise prompts a confirm dialog).
+    useEffect(() => {
+        if (displaySuccessLink || showProceedAnyway) {
+            setIsBlocked(false);
+        }
+    }, [displaySuccessLink, showProceedAnyway, setIsBlocked]);
+
     const isCancelDisabled =
         (stepId === TransactionDialogStep.CONFIRM || stepId === TransactionDialogStep.INDEXING) &&
         (isSuccessState || isPendingState);
@@ -148,6 +157,11 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     };
 
     const handleCancelClick = () => {
+        // The cancel button becomes a "Proceed anyway" navigation action during indexing after a timeout.
+        // Only unblock navigation in that specific flow.
+        if (showProceedAnyway) {
+            setIsBlocked(false);
+        }
         close();
         if (!showProceedAnyway) {
             onCancelClick?.();
@@ -164,11 +178,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     const cancelButtonLabel = showProceedAnyway
         ? t('app.shared.transactionDialog.footer.proceedAnyway')
         : t('app.shared.transactionDialog.footer.cancel');
-
-    const getFallbackUrl = () => {
-        setIsBlocked(false);
-        return indexingFallbackUrl ?? '/';
-    };
+    const fallbackUrl = indexingFallbackUrl ?? '/';
 
     return (
         <DialogFooter
@@ -182,7 +192,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
             secondaryAction={{
                 label: cancelButtonLabel,
                 onClick: handleCancelClick,
-                href: showProceedAnyway ? getFallbackUrl() : undefined,
+                href: showProceedAnyway ? fallbackUrl : undefined,
                 disabled: showProceedAnyway ? isSuccessState : isCancelDisabled,
             }}
         />
