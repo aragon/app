@@ -2,6 +2,7 @@ import * as dialogProvider from '@/shared/components/dialogProvider';
 import { type IDialogLocation } from '@/shared/components/dialogProvider';
 import * as translationsProvider from '@/shared/components/translationsProvider';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { ISimulateActionsDialogParams } from './simulateActionsDialog';
 import { SimulateActionsDialog } from './simulateActionsDialog';
 
@@ -101,7 +102,7 @@ describe('<SimulateActionsDialog /> component', () => {
         fireEvent.click(screen.getByText('app.governance.simulateActionsDialog.action.success'));
 
         expect(requestSubmitMock).toHaveBeenCalledTimes(1);
-        expect(close).toHaveBeenCalledWith(location.id);
+        expect(close).toHaveBeenCalledWith(GovernanceDialogId.SIMULATE_ACTIONS);
         expect(close).not.toHaveBeenCalledWith();
     });
 
@@ -114,7 +115,7 @@ describe('<SimulateActionsDialog /> component', () => {
 
         fireEvent.click(screen.getByText('app.governance.simulateActionsDialog.action.success'));
 
-        expect(close).toHaveBeenCalledWith(location.id);
+        expect(close).toHaveBeenCalledWith(GovernanceDialogId.SIMULATE_ACTIONS);
         expect(close).not.toHaveBeenCalledWith();
     });
 });

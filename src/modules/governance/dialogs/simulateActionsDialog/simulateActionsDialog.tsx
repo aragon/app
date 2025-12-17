@@ -4,6 +4,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { ActionSimulation, Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useSimulateActions } from '../../api/actionSimulationService';
+import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { IProposalCreateAction } from '../publishProposalDialog';
 
 export interface ISimulateActionsDialogParams {
@@ -35,7 +36,6 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
-    const dialogId = location.id;
 
     const { mutate: simulateActions, isError, isPending, status, data } = useSimulateActions();
 
@@ -64,12 +64,15 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
                 form.requestSubmit();
             }
         }
-        close(dialogId);
+        close(GovernanceDialogId.SIMULATE_ACTIONS);
     };
 
     return (
         <>
-            <Dialog.Header title={t(`app.governance.simulateActionsDialog.title`)} onClose={() => close(dialogId)} />
+            <Dialog.Header
+                title={t(`app.governance.simulateActionsDialog.title`)}
+                onClose={() => close(GovernanceDialogId.SIMULATE_ACTIONS)}
+            />
             <Dialog.Content className="pt-2 pb-3">
                 <ActionSimulation
                     isEnabled={false}
@@ -87,7 +90,7 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
                 }}
                 secondaryAction={{
                     label: t('app.governance.simulateActionsDialog.action.cancel'),
-                    onClick: () => close(dialogId),
+                    onClick: () => close(GovernanceDialogId.SIMULATE_ACTIONS),
                 }}
             />
         </>
