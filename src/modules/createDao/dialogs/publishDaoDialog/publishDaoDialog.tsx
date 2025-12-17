@@ -1,7 +1,6 @@
 import type { IPinResult } from '@/shared/api/ipfsService/domain';
 import { usePinFile, usePinJson } from '@/shared/api/ipfsService/mutations';
 import { TransactionType } from '@/shared/api/transactionService';
-import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
     type IBuildTransactionDialogSuccessLinkHref,
@@ -46,7 +45,6 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
     const { name: networkName } = networkDefinitions[network];
 
     const { t } = useTranslations();
-    const { setIsBlocked } = useBlockNavigationContext();
 
     const stepper = useStepper<ITransactionDialogStepMeta, PublishDaoStep | TransactionDialogStep>({
         initialActiveStep: PublishDaoStep.PIN_METADATA,
@@ -107,8 +105,6 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
     };
 
     const getDaoLink = ({ receipt }: IBuildTransactionDialogSuccessLinkHref) => {
-        setIsBlocked(false);
-
         const daoAddress = publishDaoDialogUtils.getDaoAddress(receipt)!;
         const daoEnsName = ens !== '' ? `${ens}.dao.eth` : undefined;
 
