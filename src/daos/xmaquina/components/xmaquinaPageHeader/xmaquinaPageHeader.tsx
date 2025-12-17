@@ -30,7 +30,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
             className={classNames('relative flex flex-col justify-between overflow-hidden md:h-114', twkEverett.className, className)}
             {...otherProps}
         >
-            <Image alt="" className="-z-30 absolute inset-0 object-cover" fill={true} priority={true} src={BackgroundImage} />
+            <Image alt="" className="absolute inset-0 -z-30 object-cover" fill={true} priority={true} src={BackgroundImage} />
 
             <Container className="relative flex w-full grow flex-col">
                 <div className="top-6 flex w-fit max-w-180 flex-col gap-1.5 pt-6 pb-6 md:absolute md:top-8 md:w-180 md:gap-3">
@@ -43,7 +43,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
                 </div>
                 <Image
                     alt="XMAQUINA Robot"
-                    className="-z-20 absolute right-[8%] bottom-0 hidden lg:block"
+                    className="absolute right-[8%] bottom-0 -z-20 hidden lg:block"
                     height={421}
                     priority={true}
                     src={DroidImage}
@@ -62,10 +62,10 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
                 </div>
             </Container>
             <div className="hidden md:block lg:hidden">
-                <div className="-translate-y-1/2 absolute top-0 left-4 h-[400%] w-px bg-white/10" />
-                <div className="-translate-y-1/2 absolute top-0 left-[calc(33.33%)] h-[400%] w-px bg-white/10" />
-                <div className="-translate-y-1/2 absolute top-0 right-[calc(33.33%)] h-[400%] w-px bg-white/10" />
-                <div className="-translate-y-1/2 absolute top-0 right-4 h-[400%] w-px bg-white/10" />
+                <div className="absolute top-0 left-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 left-[calc(33.33%)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 right-[calc(33.33%)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 right-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
                 <Carousel animationDelay={2} gap={1} speed={40} speedOnHoverFactor={0.2}>
                     {actions.map((action) => (
                         <XmaquinaActionItem key={action.title} {...action} />
@@ -73,10 +73,10 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
                 </Carousel>
             </div>
             <div className="block md:hidden">
-                <div className="-translate-y-1/2 absolute top-0 left-4 h-[400%] w-px bg-white/10" />
-                <div className="-translate-y-1/2 absolute top-0 left-[calc(33.33%)] h-[400%] w-px bg-white/10" />
-                <div className="-translate-y-1/2 absolute top-0 right-[calc(33.33%)] h-[400%] w-px bg-white/10" />
-                <div className="-translate-y-1/2 absolute top-0 right-4 h-[400%] w-px bg-white/10" />
+                <div className="absolute top-0 left-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 left-[calc(33.33%)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 right-[calc(33.33%)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 right-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
                 <Carousel animationDelay={2} gap={1} isDraggable={true} speed={40} speedOnHoverFactor={0.2}>
                     {actions.map((action) => (
                         <XmaquinaActionItem key={action.title} {...action} />

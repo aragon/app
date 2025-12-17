@@ -46,7 +46,7 @@ export const BoundlessActionItem: React.FC<IBoundlessActionItemProps> = (props) 
             onMouseLeave={() => setIsHovered(false)}
             target={isExternal ? '_blank' : '_self'}
         >
-            <Image alt="" className="-z-20 absolute inset-0 object-cover" fill={true} src={BackgroundImage} />
+            <Image alt="" className="absolute inset-0 -z-20 object-cover" fill={true} src={BackgroundImage} />
             <div className="relative z-10 flex size-full flex-col justify-between transition-all duration-300 md:justify-center md:group-hover:justify-between">
                 <BoundlessActionText description={description} isHovered={isHovered} title={title} />
                 <BoundlessActionAvatarIcon isHovered={isHovered} />

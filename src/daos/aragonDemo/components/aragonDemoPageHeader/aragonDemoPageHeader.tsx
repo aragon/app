@@ -66,7 +66,7 @@ export const AragonDemoPageHeader: React.FC<IAragonDemoPageHeaderProps> = (props
 
     return (
         <header className={classNames('relative flex h-fit flex-col items-center justify-center md:h-[400px]', className)} {...otherProps}>
-            <Image alt="Aragon Demo Header" className="-z-10 absolute top-0 left-0 size-full object-cover" src={AragonDemoHeader} />
+            <Image alt="Aragon Demo Header" className="absolute top-0 left-0 -z-10 size-full object-cover" src={AragonDemoHeader} />
             <Container className="flex w-full flex-col gap-6 pt-10 pb-4 md:gap-y-10 md:py-16">
                 <div className="flex flex-col gap-y-2 md:gap-y-3">
                     <h1 className="font-normal text-3xl text-neutral-0 leading-tight md:text-5xl">{title}</h1>

@@ -26,7 +26,7 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (props) 
             className={classNames('relative flex h-fit flex-col gap-y-4 pt-6 pb-4 md:gap-y-12 md:pt-16 md:pb-10', className)}
             {...otherProps}
         >
-            <video autoPlay={true} className="-z-30 absolute inset-0 size-full object-cover" loop={true} muted={true} playsInline={true}>
+            <video autoPlay={true} className="absolute inset-0 -z-30 size-full object-cover" loop={true} muted={true} playsInline={true}>
                 <source src="/static/media/boundless-header-video.mp4" type="video/mp4" />
             </video>
             <Container className="flex w-full flex-col gap-y-12">
