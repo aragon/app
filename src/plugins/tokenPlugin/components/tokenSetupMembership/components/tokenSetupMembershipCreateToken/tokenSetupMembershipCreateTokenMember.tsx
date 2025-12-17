@@ -39,11 +39,7 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
 
     const [memberInput, setMemberInput] = useState<string | undefined>(initialValue);
 
-    const {
-        onChange: onMemberChange,
-        value: memberValue,
-        ...memberField
-    } = useFormField<ITokenSetupMembershipMember, 'address'>('address', {
+    const { onChange: onMemberChange, ...memberField } = useFormField<ITokenSetupMembershipMember, 'address'>('address', {
         label: t('app.plugins.token.tokenSetupMembership.createToken.member.address.label'),
         rules: {
             required: true,

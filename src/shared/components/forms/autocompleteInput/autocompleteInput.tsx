@@ -18,7 +18,7 @@ import { useAutocompleteProps } from './useAutocompleteProps';
 const ungroupedKey = '_ungrouped';
 
 export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInputProps>((props, ref) => {
-    const { items, groups, value, onChange, wrapperClassName, onFocus, onKeyDown, onOpenChange, selectItemLabel, ...otherProps } = props;
+    const { items, groups, onChange, wrapperClassName, onFocus, onKeyDown, onOpenChange, selectItemLabel, ...otherProps } = props;
 
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
@@ -86,7 +86,15 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
     const processedItems: IAutocompleteInputItemIndex[] = items
         .filter((item) => !item.hidden)
         .filter(filterItem)
-        .sort((itemOne, itemTwo) => (itemTwo.groupId ? (itemOne.groupId ? 0 : -1) : 1))
+        .sort((itemOne, itemTwo) => {
+            if (!itemTwo.groupId) {
+                return 1;
+            }
+            if (!itemOne.groupId) {
+                return -1;
+            }
+            return 0;
+        })
         .map((item, index) => ({ ...item, index }));
 
     const groupedItems = Object.groupBy(processedItems, (item) => item.groupId ?? ungroupedKey);

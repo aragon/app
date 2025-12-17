@@ -28,7 +28,7 @@ export const AutocompleteInputItem = forwardRef<HTMLDivElement, IAutocompleteInp
     );
 
     return (
-        <div aria-selected={isActive} className={itemClassName} id={id} ref={ref} role="option" {...otherProps}>
+        <div aria-selected={isActive} className={itemClassName} id={id} ref={ref} role="option" tabIndex={0} {...otherProps}>
             <span className="flex min-w-0 flex-row items-center gap-4">
                 <Icon className={classNames({ 'text-neutral-300': !isActive })} icon={icon} />
                 <p className="text-base">{name}</p>

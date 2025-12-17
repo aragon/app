@@ -65,12 +65,23 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
 
     const isApprovalReached = tokenProposalUtils.isApprovalReached(proposal);
 
-    if (status !== ProposalStatus.ACTIVE || isExecuted) {
+    const getInactiveStatusMeta = () => {
         const approvalText = isApprovalReached ? 'approved' : 'notApproved';
         const vetoText = isApprovalReached ? 'vetoed' : 'notVetoed';
         const statusText = isVeto ? vetoText : approvalText;
 
-        const statusClass = isApprovalReached && isVeto ? 'text-critical-800' : isApprovalReached ? 'text-success-800' : 'text-neutral-500';
+        let statusClass = 'text-neutral-500';
+        if (isApprovalReached && isVeto) {
+            statusClass = 'text-critical-800';
+        } else if (isApprovalReached) {
+            statusClass = 'text-success-800';
+        }
+
+        return { statusText, statusClass };
+    };
+
+    if (status !== ProposalStatus.ACTIVE || isExecuted) {
+        const { statusText, statusClass } = getInactiveStatusMeta();
 
         return (
             <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">

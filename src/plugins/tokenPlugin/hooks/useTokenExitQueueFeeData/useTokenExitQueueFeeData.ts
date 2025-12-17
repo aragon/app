@@ -90,26 +90,24 @@ export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams
         }
 
         const candidate = result as Record<string, unknown>;
+        const holder = typeof candidate.holder === 'string' && candidate.holder.startsWith('0x') ? candidate.holder : undefined;
+        const queuedAt = typeof candidate.queuedAt === 'number' ? candidate.queuedAt : undefined;
 
-        const holder = candidate.holder;
-        const queuedAt = candidate.queuedAt;
-
-        if (typeof holder !== 'string' || !holder.startsWith('0x')) {
+        if (holder == null || queuedAt == null) {
             return;
         }
 
-        if (typeof queuedAt !== 'number') {
-            return;
-        }
+        const pickNumber = (value: unknown) => (typeof value === 'number' ? value : undefined);
+        const slope = typeof candidate.slope === 'bigint' ? candidate.slope : undefined;
 
         return {
-            holder: holder as `0x${string}`,
+            holder,
             queuedAt,
-            minCooldown: typeof candidate.minCooldown === 'number' ? candidate.minCooldown : undefined,
-            cooldown: typeof candidate.cooldown === 'number' ? candidate.cooldown : undefined,
-            feePercent: typeof candidate.feePercent === 'number' ? candidate.feePercent : undefined,
-            minFeePercent: typeof candidate.minFeePercent === 'number' ? candidate.minFeePercent : undefined,
-            slope: typeof candidate.slope === 'bigint' ? candidate.slope : undefined,
+            minCooldown: pickNumber(candidate.minCooldown),
+            cooldown: pickNumber(candidate.cooldown),
+            feePercent: pickNumber(candidate.feePercent),
+            minFeePercent: pickNumber(candidate.minFeePercent),
+            slope,
         };
     };
 

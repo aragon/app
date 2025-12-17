@@ -4,7 +4,7 @@ import { Dialog } from '@aragon/gov-ui-kit';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 
-export type ISppInvalidAddressConnectedDialogParams = {};
+export type ISppInvalidAddressConnectedDialogParams = Record<string, never>;
 
 export interface ISppInvalidAddressConnectedDialogProps extends IDialogComponentProps<ISppInvalidAddressConnectedDialogParams> {}
 

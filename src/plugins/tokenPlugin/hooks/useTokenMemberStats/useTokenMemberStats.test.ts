@@ -74,7 +74,7 @@ describe('useTokenMemberStats hook', () => {
     });
 
     it('returns empty list when member is null', () => {
-        useMemberSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
+        useMemberSpy.mockReturnValue(generateReactQueryResultError({ error: new Error('member not found') }));
         const { result } = renderHook(() =>
             useTokenMemberStats({
                 address: '0x123',

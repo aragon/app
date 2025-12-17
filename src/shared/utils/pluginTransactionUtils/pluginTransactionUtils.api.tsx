@@ -60,6 +60,10 @@ export interface IPluginSetupData {
 
 export interface IPluginInstallationSetupData extends IPluginSetupData {
     /**
+     * Original address emitted in the log for the plugin contract.
+     */
+    plugin: Hex;
+    /**
      * The address of the plugin contract to be installed.
      */
     pluginAddress: Hex;

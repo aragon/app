@@ -55,7 +55,6 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
     const {
         value,
         onChange: onAddressChange,
-        label,
         ...addressField
     } = useFormField<Record<string, ICompositeAddress>, string>(memberFieldName, {
         label: t('app.shared.addressesInput.item.input.label'),

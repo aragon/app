@@ -35,6 +35,7 @@ class PluginTransactionUtils {
         });
 
         return installationPreparedLogs.map(({ args }) => ({
+            plugin: args.plugin,
             pluginAddress: args.plugin,
             pluginSetupRepo: args.pluginSetupRepo,
             versionTag: args.versionTag,

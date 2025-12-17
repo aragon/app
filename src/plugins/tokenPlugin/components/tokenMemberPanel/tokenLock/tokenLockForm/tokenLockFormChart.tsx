@@ -90,18 +90,20 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
         const magnitude = 10 ** Math.floor(Math.log10(value));
         const normalized = value / magnitude;
 
-        // Round to nearest 1, 2, 5, or 10
-        let rounded: number;
-        if (normalized <= 1) {
-            rounded = 1;
-        } else if (normalized <= 2) {
-            rounded = 2;
-        } else if (normalized <= 5) {
-            rounded = 5;
-        } else {
-            rounded = 10;
-        }
+        const pickRounded = () => {
+            if (normalized <= 1) {
+                return 1;
+            }
+            if (normalized <= 2) {
+                return 2;
+            }
+            if (normalized <= 5) {
+                return 5;
+            }
+            return 10;
+        };
 
+        let rounded = pickRounded();
         const result = rounded * magnitude;
 
         // For min values, round down to avoid cutting off data
@@ -130,7 +132,12 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
     const trillion = 1_000_000_000_000;
     const billion = 1_000_000_000;
     const million = 1_000_000;
-    const tickCount = domainRange >= trillion ? 6 : domainRange >= billion ? 5 : domainRange >= million ? 5 : 4;
+    let tickCount = 4;
+    if (domainRange >= trillion) {
+        tickCount = 6;
+    } else if (domainRange >= billion || domainRange >= million) {
+        tickCount = 5;
+    }
 
     // Generate evenly-spaced ticks for visual consistency
     const yAxisTicks = Array.from({ length: tickCount }, (_, i) => yDomainMin + (domainRange / (tickCount - 1)) * i);

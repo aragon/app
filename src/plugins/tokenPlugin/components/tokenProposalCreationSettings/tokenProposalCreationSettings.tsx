@@ -80,8 +80,8 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
         <CheckboxCard checked={checked} className="w-full" description={description} label={name} onCheckedChange={handleCheckedChange}>
             {
                 // Stop onClick event propagation to avoid unchecking the card when clicking on the number-input buttons
-                // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-                <object className="text-left" onClick={(event) => event.preventDefault()} type="unknown">
+                // biome-ignore lint/a11y/noStaticElementInteractions: container only prevents click bubbling to CheckboxCard
+                <div className="text-left" onClick={(event) => event.preventDefault()} role="presentation">
                     <InputNumber
                         disabled={type === BodyType.EXISTING}
                         helpText={t('app.plugins.token.tokenProposalCreationSettings.helpText')}
@@ -93,7 +93,7 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
                         value={minVotingPower}
                         {...minVotingPowerField}
                     />
-                </object>
+                </div>
             }
         </CheckboxCard>
     );

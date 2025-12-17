@@ -413,11 +413,15 @@ describe('TokenExitQueueFeeUtils', () => {
 
             // All points before cooldown should have max fee
             const beforeCooldown = points.filter((p) => p.elapsedSeconds < 200);
-            beforeCooldown.forEach((p) => expect(p.feePercent).toBe(50));
+            for (const point of beforeCooldown) {
+                expect(point.feePercent).toBe(50);
+            }
 
             // All points at/after cooldown should have min fee
             const afterCooldown = points.filter((p) => p.elapsedSeconds >= 200);
-            afterCooldown.forEach((p) => expect(p.feePercent).toBe(10));
+            for (const point of afterCooldown) {
+                expect(point.feePercent).toBe(10);
+            }
         });
 
         it('generates points for DYNAMIC mode with linear decay', () => {

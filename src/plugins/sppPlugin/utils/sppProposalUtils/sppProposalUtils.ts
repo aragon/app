@@ -75,13 +75,26 @@ class SppProposalUtils {
         const voted = resultType != null;
         const isVeto = sppStageUtils.isVeto(stage);
 
-        const status = voted ? (resultType === SppProposalType.VETO ? 'failure' : 'success') : 'neutral';
+        let status: 'neutral' | 'failure' | 'success' = 'neutral';
+        if (voted) {
+            status = resultType === SppProposalType.VETO ? 'failure' : 'success';
+        }
 
-        const labelContext = voted ? 'voted' : canVote ? 'vote' : 'expired';
+        let labelContext: 'voted' | 'vote' | 'expired' = 'expired';
+        if (voted) {
+            labelContext = 'voted';
+        } else if (canVote) {
+            labelContext = 'vote';
+        }
         const labelSuffix = `${labelContext}.${isVeto ? 'veto' : 'approve'}`;
 
         const label = `app.plugins.spp.sppVotingTerminalBodyBreakdownDefault.${labelSuffix}`;
-        const style = status === 'neutral' ? 'text-neutral-500' : status === 'success' ? 'text-success-800' : 'text-critical-800';
+        let style = 'text-neutral-500';
+        if (status === 'success') {
+            style = 'text-success-800';
+        } else if (status === 'failure') {
+            style = 'text-critical-800';
+        }
 
         return { status, label, style };
     };

@@ -86,14 +86,27 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
         }
     }, [isGovernanceCompatible, setValue, token, tokenFormPrefix]);
 
-    const getCompatibilityState = (isCompatible: boolean | undefined): StepState =>
-        isCompatible ? 'success' : isCompatible === undefined ? 'idle' : 'warning';
+    const getCompatibilityState = (isCompatible: boolean | undefined): StepState => {
+        if (isCompatible === undefined) {
+            return 'idle';
+        }
 
-    const [erc20StepState, governanceStepState, delegationStepState]: [StepState, StepState, StepState] = isLoading
-        ? ['pending', 'pending', 'pending']
-        : isError
-          ? ['error', 'error', 'error']
-          : ['success', getCompatibilityState(isGovernanceCompatible), getCompatibilityState(isDelegationCompatible)];
+        return isCompatible ? 'success' : 'warning';
+    };
+
+    let erc20StepState: StepState = 'success';
+    let governanceStepState: StepState = getCompatibilityState(isGovernanceCompatible);
+    let delegationStepState: StepState = getCompatibilityState(isDelegationCompatible);
+
+    if (isLoading) {
+        erc20StepState = 'pending';
+        governanceStepState = 'pending';
+        delegationStepState = 'pending';
+    } else if (isError) {
+        erc20StepState = 'error';
+        governanceStepState = 'error';
+        delegationStepState = 'error';
+    }
 
     const getStepLabel = (step: string) => t(`app.plugins.token.tokenSetupMembership.importToken.step.${step}`);
 

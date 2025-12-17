@@ -37,7 +37,7 @@ describe('<WizardDialogContainer /> component', () => {
 
         return (
             <Dialog.Root open={true}>
-                <WizardDialogContainer {...completeProps} />;
+                <WizardDialogContainer {...completeProps} />
             </Dialog.Root>
         );
     };

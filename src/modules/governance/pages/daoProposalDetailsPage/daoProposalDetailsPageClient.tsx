@@ -276,7 +276,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         normalizedProposalActions,
         proposalActionsDropdownItems,
         proposalStatus,
-    } = useProposalActionsSectionData(proposal, dao, proposalSlug, queryClient, t);
+    } = useProposalActionsSectionData({ proposal, dao, proposalSlug, queryClient, t });
 
     if (proposal == null || dao == null) {
         return null;

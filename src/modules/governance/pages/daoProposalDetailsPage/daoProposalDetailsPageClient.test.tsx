@@ -258,7 +258,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
                 hasActions: true,
                 hasSimulation: false,
             });
-            const dao = generateDao({ network: Network.ETHEREUM_MAINNET });
+            const dao = generateDao({ id: 'test-dao', network: Network.ETHEREUM_MAINNET });
             useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
             useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
             useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.ACTIVE);
@@ -273,7 +273,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
                 hasActions: true,
                 hasSimulation: true,
             });
-            const dao = generateDao({ network: Network.ETHEREUM_MAINNET });
+            const dao = generateDao({ id: 'test-dao', network: Network.ETHEREUM_MAINNET });
             useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
             useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
             useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.EXECUTED);
@@ -311,7 +311,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
                 id: 'test-proposal',
                 hasActions: true,
             });
-            const dao = generateDao({ network: Network.ETHEREUM_MAINNET });
+            const dao = generateDao({ id: 'test-dao', network: Network.ETHEREUM_MAINNET });
             useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
             useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
             useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.ACTIVE);

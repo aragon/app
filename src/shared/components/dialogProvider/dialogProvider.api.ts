@@ -2,8 +2,7 @@ import type { IDialogAlertRootProps, IDialogRootProps } from '@aragon/gov-ui-kit
 import type { ComponentType } from 'react';
 
 // Default properties type for dialog components.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type DialogComponentProps = any;
+export type DialogComponentProps = unknown;
 
 export interface IDialogLocationOptions<TParams extends DialogComponentProps = DialogComponentProps> {
     /**

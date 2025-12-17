@@ -57,7 +57,7 @@ export const FeatureFlagsProvider: React.FC<IFeatureFlagsProviderProps> = (props
 
     const isEnabled = useCallback((key: FeatureFlagKey): boolean => snapshot.some((flag) => flag.key === key && flag.enabled), [snapshot]);
 
-    const setOverride = (key: FeatureFlagKey, value: boolean | undefined): void => {
+    const setOverride = useCallback((key: FeatureFlagKey, value: boolean | undefined): void => {
         if (typeof document === 'undefined') {
             // Best-effort only on client; ignore when running in non-DOM environments.
             return;
@@ -74,6 +74,7 @@ export const FeatureFlagsProvider: React.FC<IFeatureFlagsProviderProps> = (props
                 updatedOverrides = { ...currentOverrides, [key]: value };
             }
 
+            // biome-ignore lint/suspicious/noDocumentCookie: cookie fallback is acceptable here
             document.cookie = serializeFeatureFlagOverridesToCookie(updatedOverrides);
         } catch {
             // Cookie persistence is best-effort; swallow errors.
@@ -94,7 +95,7 @@ export const FeatureFlagsProvider: React.FC<IFeatureFlagsProviderProps> = (props
                 };
             })
         );
-    };
+    }, []);
 
     const contextValue = useMemo<IFeatureFlagsContextValue>(
         () => ({

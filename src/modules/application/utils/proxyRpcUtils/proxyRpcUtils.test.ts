@@ -59,46 +59,46 @@ describe('proxyRpc utils', () => {
     describe('constructor', () => {
         it('throws error when alchemy rpc key is not defined on non CI context', () => {
             testLogger.suppressErrors();
-            process.env.NEXT_SECRET_RPC_KEY = undefined;
+            delete process.env.NEXT_SECRET_RPC_KEY;
             process.env.CI = 'false';
             expect(() => new ProxyRpcUtils()).toThrow(/NEXT_SECRET_RPC_KEY/);
         });
 
         it('throws error when ankr rpc key is not defined on non CI context', () => {
             testLogger.suppressErrors();
-            process.env.NEXT_SECRET_ANKR_RPC_KEY = undefined;
+            delete process.env.NEXT_SECRET_ANKR_RPC_KEY;
             process.env.CI = 'false';
             expect(() => new ProxyRpcUtils()).toThrow(/NEXT_SECRET_ANKR_RPC_KEY/);
         });
 
         it('throws error when drpc rpc key is not defined on non CI context', () => {
             testLogger.suppressErrors();
-            process.env.NEXT_SECRET_DRPC_RPC_KEY = undefined;
+            delete process.env.NEXT_SECRET_DRPC_RPC_KEY;
             process.env.CI = 'false';
             expect(() => new ProxyRpcUtils()).toThrow(/NEXT_SECRET_DRPC_RPC_KEY/);
         });
 
         it('throws error when peaq rpc key is not defined on non CI context', () => {
             testLogger.suppressErrors();
-            process.env.NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY = undefined;
+            delete process.env.NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY;
             process.env.CI = 'false';
             expect(() => new ProxyRpcUtils()).toThrow(/NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY/);
         });
 
         it('throws error when multiple rpc keys are not defined on non CI context', () => {
             testLogger.suppressErrors();
-            process.env.NEXT_SECRET_RPC_KEY = undefined;
-            process.env.NEXT_SECRET_ANKR_RPC_KEY = undefined;
+            delete process.env.NEXT_SECRET_RPC_KEY;
+            delete process.env.NEXT_SECRET_ANKR_RPC_KEY;
             process.env.CI = 'false';
             expect(() => new ProxyRpcUtils()).toThrow(/Missing RPC keys/);
         });
 
         it('does not throw error when rpc keys are not defined on CI context', () => {
             testLogger.suppressErrors();
-            process.env.NEXT_SECRET_RPC_KEY = undefined;
-            process.env.NEXT_SECRET_ANKR_RPC_KEY = undefined;
-            process.env.NEXT_SECRET_DRPC_RPC_KEY = undefined;
-            process.env.NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY = undefined;
+            delete process.env.NEXT_SECRET_RPC_KEY;
+            delete process.env.NEXT_SECRET_ANKR_RPC_KEY;
+            delete process.env.NEXT_SECRET_DRPC_RPC_KEY;
+            delete process.env.NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY;
             process.env.CI = 'true';
             expect(() => new ProxyRpcUtils()).not.toThrow();
         });

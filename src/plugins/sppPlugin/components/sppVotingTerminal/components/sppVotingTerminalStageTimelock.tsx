@@ -26,7 +26,13 @@ const getTimelockState = (proposal: ISppProposal, stage: ISppStage) => {
     const isActive = stageIndex === currentStageIndex && minAdvance && now < minAdvance;
     const isComplete = stageIndex < currentStageIndex || (minAdvance && now > minAdvance);
 
-    return isComplete ? 'complete' : isActive ? 'active' : 'pending';
+    if (isComplete) {
+        return 'complete';
+    }
+    if (isActive) {
+        return 'active';
+    }
+    return 'pending';
 };
 
 export const SppVotingTerminalStageTimelock: React.FC<ISppVotingTerminalStageTimelockProps> = (props) => {

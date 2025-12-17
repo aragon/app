@@ -23,6 +23,6 @@ export const SafeHtml: FC<ISafeHtmlProps> = (props) => {
     const { html, variant = 'strict', ...rest } = props;
     const sanitized = variant === 'rich' ? sanitizeHtmlRich(html) : sanitizeHtmlStrict(html);
 
-    // eslint-disable-next-line react/no-danger, no-restricted-syntax
+    // biome-ignore lint/security/noDangerouslySetInnerHtml: content is sanitized before rendering
     return <div {...rest} dangerouslySetInnerHTML={{ __html: sanitized }} />;
 };

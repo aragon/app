@@ -48,7 +48,12 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const visibleTabs = getTabsDefinitions(plugin.settings).filter((tab) => !tab.hidden);
 
     const { LOCK, WRAP, DELEGATE } = TokenMemberPanelTab;
-    const initialSelectedTab = votingEscrow ? LOCK : underlying != null ? WRAP : DELEGATE;
+    let initialSelectedTab = DELEGATE;
+    if (votingEscrow) {
+        initialSelectedTab = LOCK;
+    } else if (underlying != null) {
+        initialSelectedTab = WRAP;
+    }
     const [selectedTab, setSelectedTab] = useFilterUrlParam({
         name: tokenMemberPanelFilterParam,
         fallbackValue: initialSelectedTab,

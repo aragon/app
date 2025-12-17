@@ -8,7 +8,23 @@
         "enabled": true,
         "indentStyle": "space",
         "indentWidth": 4,
-        "lineWidth": 140
+        "lineWidth": 140,
+        "includes": [
+            "**",
+            "!*.json",
+            "!*.jsonc",
+            "!.changeset/**",
+            "!.zed/**",
+            "!src/app/manifest.json",
+            "!src/assets/locales/**"
+        ]
+    },
+    "json": {
+        "formatter": {
+            "indentStyle": "space",
+            "indentWidth": 4,
+            "expand": "always"
+        }
     },
     "javascript": {
         "formatter": {

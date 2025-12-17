@@ -13,6 +13,7 @@ export const generatePluginSetupData = (data?: Partial<IPluginSetupData>): IPlug
 
 export const generatePluginInstallationSetupData = (data?: Partial<IPluginInstallationSetupData>): IPluginInstallationSetupData => ({
     ...generatePluginSetupData(),
+    plugin: '0x',
     pluginAddress: '0x',
     preparedSetupData: { permissions: [], helpers: [] },
     ...data,

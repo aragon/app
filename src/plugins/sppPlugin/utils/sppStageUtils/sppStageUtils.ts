@@ -33,32 +33,20 @@ class SppStageUtils {
 
         const isExpired = !isSignalling && stageIndex === currentStage && maxAdvanceDate != null && now > maxAdvanceDate;
 
-        if (isVetoed) {
-            return ProposalStatus.VETOED;
-        }
+        const statusChecks: Array<[boolean, ProposalStatus]> = [
+            [isVetoed, ProposalStatus.VETOED],
+            [isUnreached, ProposalStatus.UNREACHED],
+            [isPending, ProposalStatus.PENDING],
+            [isActive, ProposalStatus.ACTIVE],
+            [isAdvanceable, ProposalStatus.ADVANCEABLE],
+            [!approvalReached, ProposalStatus.REJECTED],
+            [isExpired, ProposalStatus.EXPIRED],
+        ];
 
-        if (isUnreached) {
-            return ProposalStatus.UNREACHED;
-        }
-
-        if (isPending) {
-            return ProposalStatus.PENDING;
-        }
-
-        if (isActive) {
-            return ProposalStatus.ACTIVE;
-        }
-
-        if (isAdvanceable) {
-            return ProposalStatus.ADVANCEABLE;
-        }
-
-        if (!approvalReached) {
-            return ProposalStatus.REJECTED;
-        }
-
-        if (isExpired) {
-            return ProposalStatus.EXPIRED;
+        for (const [condition, status] of statusChecks) {
+            if (condition) {
+                return status;
+            }
         }
 
         return ProposalStatus.ACCEPTED;

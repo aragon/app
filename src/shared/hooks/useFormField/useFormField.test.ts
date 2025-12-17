@@ -131,6 +131,7 @@ describe('useFormField hook', () => {
         const { result } = renderHook(() =>
             useFormField<ReactHookForm.FieldValues, string>('field', {
                 trimOnBlur: true,
+                sanitizeOnBlur: true,
             })
         );
 
@@ -161,6 +162,7 @@ describe('useFormField hook', () => {
             useFormField<ReactHookForm.FieldValues, string>('field', {
                 trimOnBlur: false,
                 sanitizeMode: 'multiline',
+                sanitizeOnBlur: true,
             })
         );
 

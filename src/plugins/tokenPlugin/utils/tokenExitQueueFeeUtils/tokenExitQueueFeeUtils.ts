@@ -208,7 +208,14 @@ class TokenExitQueueFeeUtils {
      */
     formatFeePercent = (basisPoints: number): string => {
         const percent = (basisPoints / this.MAX_FEE_PERCENT) * 100;
-        return `${percent.toFixed(percent < 1 ? 2 : percent < 10 ? 1 : 0)}%`;
+        let decimals: 0 | 1 | 2 = 0;
+        if (percent < 1) {
+            decimals = 2;
+        } else if (percent < 10) {
+            decimals = 1;
+        }
+
+        return `${percent.toFixed(decimals)}%`;
     };
 }
 
