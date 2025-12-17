@@ -4,12 +4,12 @@ import { ApplicationDialogId } from '@/modules/application/constants/application
 import { AragonLogo } from '@/shared/components/aragonLogo';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Navigation } from '@/shared/components/navigation';
+import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
-import { useIsMounted } from '@/shared/hooks/useIsMounted';
 
 export const ExploreNav: React.FC = () => {
     const { address, isConnected } = useAccount();

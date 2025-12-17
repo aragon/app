@@ -8,6 +8,7 @@ import { SimulateActionsDialog } from './simulateActionsDialog';
 // In the app, dialogs are rendered inside DialogRoot which wraps them with <Dialog.Root />.
 // In unit tests we render the dialog component directly, so we mock Dialog.* primitives to avoid Radix context errors.
 jest.mock('@aragon/gov-ui-kit', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const actual = jest.requireActual('@aragon/gov-ui-kit');
 
     const Dialog = {
@@ -27,6 +28,7 @@ jest.mock('@aragon/gov-ui-kit', () => {
         ),
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return {
         ...actual,
         Dialog,
@@ -63,7 +65,6 @@ describe('<SimulateActionsDialog /> component', () => {
     afterEach(() => {
         useDialogContextMock.mockReset();
         useTranslationsMock.mockReset();
-        document.body.innerHTML = '';
     });
 
     const createLocation = (
@@ -88,16 +89,18 @@ describe('<SimulateActionsDialog /> component', () => {
         useDialogContextMock.mockReturnValue({ close });
 
         const formId = 'createProposalWizard';
-        document.body.innerHTML = `<form id="${formId}"></form>`;
-        const form = document.getElementById(formId) as HTMLFormElement;
-        (form as unknown as { requestSubmit: jest.Mock }).requestSubmit = jest.fn();
+        const form = document.createElement('form');
+        form.id = formId;
+        document.body.appendChild(form);
+        const requestSubmitMock = jest.fn();
+        form.requestSubmit = requestSubmitMock;
 
         const location = createLocation({ formId });
         renderComponent(location);
 
         fireEvent.click(screen.getByText('app.governance.simulateActionsDialog.action.success'));
 
-        expect((form as unknown as { requestSubmit: jest.Mock }).requestSubmit).toHaveBeenCalledTimes(1);
+        expect(requestSubmitMock).toHaveBeenCalledTimes(1);
         expect(close).toHaveBeenCalledWith(location.id);
         expect(close).not.toHaveBeenCalledWith();
     });
