@@ -4,7 +4,7 @@ import { useDao, useDaoPermissions } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { ProposalActions, type IProposalActionsArrayControls, type ProposalActionComponent } from '@aragon/gov-ui-kit';
+import { type IProposalActionsArrayControls, type ProposalActionComponent, ProposalActions } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
@@ -56,7 +56,10 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     });
 
     const { data: allowedActionsData } = useAllowedActions(
-        { urlParams: { network: dao!.network, pluginAddress }, queryParams: { pageSize: 50 } },
+        {
+            urlParams: { network: dao!.network, pluginAddress },
+            queryParams: { pageSize: 50 },
+        },
         { enabled: hasConditionalPermissions },
     );
     const {
@@ -113,6 +116,14 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const handleAddAction = (newActions: IProposalActionData[]) => {
         append(newActions);
     };
+
+    const handleGetCurrentActions = useCallback(() => {
+        return getValues('actions');
+    }, [getValues]);
+
+    const handleRemoveAllActions = useCallback(() => {
+        remove();
+    }, [remove]);
 
     const getArrayControls = (index: number): IProposalActionsArrayControls<IProposalActionData> => {
         return {
@@ -183,6 +194,8 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                     onAddAction={handleAddAction}
                     allowedActions={allowedActions}
                     daoPermissions={daoPermissions}
+                    getCurrentActions={handleGetCurrentActions}
+                    onRemoveAllActions={handleRemoveAllActions}
                 />
             ) : (
                 <p className="text-primary-400">{t('app.governance.createProposalForm.actions.loading')}</p>
