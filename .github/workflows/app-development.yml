@@ -44,10 +44,8 @@ jobs:
           name: nextjs-build
       - name: Check types
         run: pnpm type-check
-      - name: Check linter
-        run: pnpm lint
-      - name: Check prettier
-        run: pnpm prettify
+      - name: Check linter with formatter
+        run: pnpm lint:check
       - name: Run tests with coverage
         run: |
           set -eo pipefail
