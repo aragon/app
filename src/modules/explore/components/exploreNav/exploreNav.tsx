@@ -9,10 +9,13 @@ import { ApplicationDialogId } from '@/modules/application/constants/application
 import { AragonLogo } from '@/shared/components/aragonLogo';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Navigation } from '@/shared/components/navigation';
+import { useIsMounted } from '@/shared/hooks/useIsMounted';
 
 export const ExploreNav: React.FC = () => {
     const { address, isConnected } = useAccount();
-    const walletUser = address != null ? { address } : undefined;
+    const isMounted = useIsMounted();
+    const effectiveIsConnected = isMounted && isConnected;
+    const walletUser = isMounted && address != null ? { address } : undefined;
     const { open } = useDialogContext();
 
     const [isPostHero, setIsPostHero] = useState(false);
@@ -39,7 +42,7 @@ export const ExploreNav: React.FC = () => {
     }, []);
 
     const handleWalletClick = () => {
-        const dialog = isConnected ? ApplicationDialogId.USER : ApplicationDialogId.CONNECT_WALLET;
+        const dialog = effectiveIsConnected ? ApplicationDialogId.USER : ApplicationDialogId.CONNECT_WALLET;
         open(dialog);
     };
 

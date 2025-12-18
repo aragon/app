@@ -68,7 +68,8 @@
             "suspicious": {
                 "noDoubleEquals": "off",
                 "noEmptyInterface": "off",
-                "noBitwiseOperators": "off"
+                "noBitwiseOperators": "off",
+                "noAlert": "off"
             },
             "complexity": {
                 "noVoid": "off",

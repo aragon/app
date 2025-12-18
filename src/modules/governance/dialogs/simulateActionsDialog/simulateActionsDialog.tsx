@@ -4,6 +4,7 @@ import type { Network } from '@/shared/api/daoService';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSimulateActions } from '../../api/actionSimulationService';
+import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { IProposalCreateAction } from '../publishProposalDialog';
 
 export interface ISimulateActionsDialogParams {
@@ -59,19 +60,23 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
     const primaryLabel = t(`app.governance.simulateActionsDialog.action.${hasSimulationFailed ? 'error' : 'success'}`);
 
     const handleContinue = () => {
-        if (formId) {
+        // If the dialog is used as part of a wizard, trigger the wizard form submit.
+        // Important: close only this dialog (by id) to avoid accidentally closing dialogs opened by the submit handler.
+        if (formId != null) {
             const form = document.getElementById(formId);
             if (form instanceof HTMLFormElement) {
                 form.requestSubmit();
-                // Defer close to allow form submission to process
-                setTimeout(() => close(), 0);
             }
         }
+        close(GovernanceDialogId.SIMULATE_ACTIONS);
     };
 
     return (
         <>
-            <Dialog.Header onClose={close} title={t('app.governance.simulateActionsDialog.title')} />
+            <Dialog.Header
+                onClose={() => close(GovernanceDialogId.SIMULATE_ACTIONS)}
+                title={t('app.governance.simulateActionsDialog.title')}
+            />
             <Dialog.Content className="pt-2 pb-3">
                 <ActionSimulation
                     error={error}
@@ -89,7 +94,7 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
                 }}
                 secondaryAction={{
                     label: t('app.governance.simulateActionsDialog.action.cancel'),
-                    onClick: () => close(),
+                    onClick: () => close(GovernanceDialogId.SIMULATE_ACTIONS),
                 }}
             />
         </>

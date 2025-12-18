@@ -10,6 +10,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { type INavigationContainerProps, Navigation } from '@/shared/components/navigation';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { NavigationDaoHome } from './navigationDaoHome';
 import { navigationDaoUtils } from './navigationDaoUtils';
@@ -28,6 +29,8 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
 
     const { t } = useTranslations();
     const { address, isConnected } = useAccount();
+    const isMounted = useIsMounted();
+    const effectiveIsConnected = isMounted && isConnected;
     const { open } = useDialogContext();
 
     const { buildEntityUrl } = useDaoChain({ network: dao.network });
@@ -37,11 +40,11 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     });
 
     const handleWalletClick = () => {
-        const dialog = isConnected ? ApplicationDialogId.USER : ApplicationDialogId.CONNECT_WALLET;
+        const dialog = effectiveIsConnected ? ApplicationDialogId.USER : ApplicationDialogId.CONNECT_WALLET;
         open(dialog);
     };
 
-    const walletUser = address != null ? { address } : undefined;
+    const walletUser = isMounted && address != null ? { address } : undefined;
     const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
 
     return (

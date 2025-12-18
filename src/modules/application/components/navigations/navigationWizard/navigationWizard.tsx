@@ -10,6 +10,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Link } from '@/shared/components/link';
 import { type INavigationContainerProps, Navigation } from '@/shared/components/navigation';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import type { ITFuncOptions } from '@/shared/utils/translationsUtils';
 
@@ -32,15 +33,17 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     const { name, dao, exitPath } = props;
 
     const { address, isConnected } = useAccount();
+    const isMounted = useIsMounted();
+    const effectiveIsConnected = isMounted && isConnected;
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
     const handleWalletClick = () => {
-        const dialog = isConnected ? ApplicationDialogId.USER : ApplicationDialogId.CONNECT_WALLET;
+        const dialog = effectiveIsConnected ? ApplicationDialogId.USER : ApplicationDialogId.CONNECT_WALLET;
         open(dialog);
     };
 
-    const walletUser = address != null ? { address } : undefined;
+    const walletUser = isMounted && address != null ? { address } : undefined;
     const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
 
     const linkClassName = classNames(
