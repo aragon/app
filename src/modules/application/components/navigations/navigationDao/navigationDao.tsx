@@ -6,6 +6,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Navigation, type INavigationContainerProps } from '@/shared/components/navigation';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { addressUtils, ChainEntityType, Clipboard, DaoAvatar, Link, Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
@@ -28,17 +29,19 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
 
     const { t } = useTranslations();
     const { address, isConnected } = useAccount();
+    const isMounted = useIsMounted();
+    const effectiveIsConnected = isMounted && isConnected;
     const { open } = useDialogContext();
 
     const { buildEntityUrl } = useDaoChain({ network: dao.network });
     const addressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address });
 
     const handleWalletClick = () => {
-        const dialog = isConnected ? ApplicationDialogId.USER : ApplicationDialogId.CONNECT_WALLET;
+        const dialog = effectiveIsConnected ? ApplicationDialogId.USER : ApplicationDialogId.CONNECT_WALLET;
         open(dialog);
     };
 
-    const walletUser = address != null ? { address } : undefined;
+    const walletUser = isMounted && address != null ? { address } : undefined;
     const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
 
     return (
