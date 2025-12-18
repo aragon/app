@@ -10,21 +10,13 @@ import {
     EmptyState,
     type IProposalAction,
     type IProposalActionComponentProps,
-    type IProposalActionInputDataParameter,
 } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
+import { gaugeVoterActionParser } from '../../utils/gaugeVoterActionParser';
 import { GaugeVoterGaugeListItem, GaugeVoterGaugeListItemSkeleton } from '../gaugeVoterGaugeListItem';
 
 export interface IGaugeVoterActivateGaugeActionDetailsProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
-
-const parseActivateGaugeInputData = (params: IProposalActionInputDataParameter[]): { gaugeAddress: string } => {
-    const [gaugeAddress] = params.map((param) => param.value);
-
-    return {
-        gaugeAddress: typeof gaugeAddress === 'string' && addressUtils.isAddress(gaugeAddress) ? gaugeAddress : '',
-    };
-};
 
 export const GaugeVoterActivateGaugeActionDetails: React.FC<IGaugeVoterActivateGaugeActionDetailsProps> = (props) => {
     const { action } = props;
@@ -32,7 +24,7 @@ export const GaugeVoterActivateGaugeActionDetails: React.FC<IGaugeVoterActivateG
     const { data: dao } = useDao({ urlParams: { id: action.daoId } });
     const { t } = useTranslations();
 
-    const { gaugeAddress } = parseActivateGaugeInputData(action.inputData?.parameters ?? []);
+    const { gaugeAddress } = gaugeVoterActionParser.parseInputData(action.inputData?.parameters ?? []);
 
     const { data: allGauges, isLoading: isAllGaugesLoading } = useAllGauges({
         gaugeListParams: {

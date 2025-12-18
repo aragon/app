@@ -12,27 +12,19 @@ import {
     DefinitionList,
     type IProposalAction,
     type IProposalActionComponentProps,
-    type IProposalActionInputDataParameter,
     Link,
 } from '@aragon/gov-ui-kit';
 import type { IGaugeVoterActionCreateGauge } from '../../types/gaugeVoterActionCreateGauge';
+import { gaugeVoterActionParser } from '../../utils/gaugeVoterActionParser';
 
 export interface IGaugeVoterCreateGaugeActionDetailsProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
-
-const parseCreateGaugeInputData = (params: IProposalActionInputDataParameter[]): { gaugeAddress: string } => {
-    const [gaugeAddress] = params.map((param) => param.value);
-
-    return {
-        gaugeAddress: typeof gaugeAddress === 'string' && addressUtils.isAddress(gaugeAddress) ? gaugeAddress : '',
-    };
-};
 
 export const GaugeVoterCreateGaugeActionDetails: React.FC<IGaugeVoterCreateGaugeActionDetailsProps> = (props) => {
     const { action } = props;
 
     const { gaugeMetadata, daoId } = action as unknown as IGaugeVoterActionCreateGauge;
-    const { gaugeAddress } = parseCreateGaugeInputData(action.inputData?.parameters ?? []);
+    const { gaugeAddress } = gaugeVoterActionParser.parseInputData(action.inputData?.parameters ?? []);
     const { name, description, avatar, links } = gaugeMetadata ?? {};
     const avatarSrc = ipfsUtils.cidToSrc(avatar);
 
