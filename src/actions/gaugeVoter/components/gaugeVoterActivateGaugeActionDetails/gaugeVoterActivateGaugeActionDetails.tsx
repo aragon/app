@@ -22,7 +22,7 @@ const parseActivateGaugeInputData = (params: IProposalActionInputDataParameter[]
     const [gaugeAddress] = params.map((param) => param.value);
 
     return {
-        gaugeAddress: typeof gaugeAddress === 'string' ? gaugeAddress : '',
+        gaugeAddress: typeof gaugeAddress === 'string' && addressUtils.isAddress(gaugeAddress) ? gaugeAddress : '',
     };
 };
 
