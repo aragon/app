@@ -1,12 +1,7 @@
 'use client';
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
-import type {
-    DialogComponentProps,
-    IDialogContext,
-    IDialogLocation,
-    IDialogLocationOptions,
-} from './dialogProvider.api';
+import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react';
+import type { DialogComponentProps, IDialogContext, IDialogLocation, IDialogLocationOptions } from './dialogProvider.api';
 
 export interface IDialogProviderProps {
     /**
@@ -37,17 +32,12 @@ export const DialogProvider: React.FC<IDialogProviderProps> = (props) => {
     }, []);
 
     const open = useCallback(
-        <TParams extends DialogComponentProps = DialogComponentProps>(
-            id: string,
-            options?: IDialogLocationOptions<TParams>,
-        ) => {
+        <TParams extends DialogComponentProps = DialogComponentProps>(id: string, options?: IDialogLocationOptions<TParams>) => {
             const { stack = false, ...restOptions } = options ?? {};
 
-            setLocations((currentLocations) =>
-                stack ? [...currentLocations, { id, ...restOptions }] : [{ id, ...restOptions }],
-            );
+            setLocations((currentLocations) => (stack ? [...currentLocations, { id, ...restOptions }] : [{ id, ...restOptions }]));
         },
-        [],
+        []
     );
 
     const close = useCallback((id?: string) => {
@@ -66,10 +56,7 @@ export const DialogProvider: React.FC<IDialogProviderProps> = (props) => {
         });
     }, []);
 
-    const contextValues = useMemo(
-        () => ({ open, close, locations, updateOptions }),
-        [open, close, updateOptions, locations],
-    );
+    const contextValues = useMemo(() => ({ open, close, locations, updateOptions }), [open, close, updateOptions, locations]);
 
     return <DialogContext.Provider value={contextValues}>{children}</DialogContext.Provider>;
 };

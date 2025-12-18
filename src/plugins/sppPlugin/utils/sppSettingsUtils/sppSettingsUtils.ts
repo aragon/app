@@ -1,5 +1,5 @@
-import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { addressUtils, type IDefinitionSetting } from '@aragon/gov-ui-kit';
+import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import type { ISppPluginSettings } from '../../types';
 
 export interface ISppSettingsParseParams {
@@ -37,9 +37,7 @@ class SppSettingsUtils {
         const { settings, t } = params;
         const { stages } = settings;
 
-        return [
-            { term: t('app.plugins.spp.sppGovernanceSettings.numberOfStages'), definition: stages.length.toString() },
-        ];
+        return [{ term: t('app.plugins.spp.sppGovernanceSettings.numberOfStages'), definition: stages.length.toString() }];
     };
 
     parseDefaultSettings = (params: ISppSettingsParseDefaultParams): IDefinitionSetting[] => {

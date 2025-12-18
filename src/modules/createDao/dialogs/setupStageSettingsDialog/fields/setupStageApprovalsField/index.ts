@@ -1,1 +1,1 @@
-export { SetupStageApprovalsField, type ISetupStageApprovalsFieldProps } from './setupStageApprovalsField';
+export { type ISetupStageApprovalsFieldProps, SetupStageApprovalsField } from './setupStageApprovalsField';

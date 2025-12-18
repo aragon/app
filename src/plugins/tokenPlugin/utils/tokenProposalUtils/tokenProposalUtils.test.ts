@@ -1,8 +1,8 @@
-import { timeUtils } from '@/test/utils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import { timeUtils } from '@/test/utils';
 import { generateTokenPluginSettings, generateTokenPluginSettingsToken, generateTokenProposal } from '../../testUtils';
-import { DaoTokenVotingMode, VoteOption, type ITokenProposal, type ITokenProposalOptionVotes } from '../../types';
+import { DaoTokenVotingMode, type ITokenProposal, type ITokenProposalOptionVotes, VoteOption } from '../../types';
 import { tokenProposalUtils } from './tokenProposalUtils';
 
 describe('tokenProposal utils', () => {
@@ -208,7 +208,7 @@ describe('tokenProposal utils', () => {
         });
 
         it('returns true when total votes is greater than min participation required', () => {
-            const settings = generateTokenPluginSettings({ minParticipation: 150000, historicalTotalSupply: '1000' }); // 15%
+            const settings = generateTokenPluginSettings({ minParticipation: 150_000, historicalTotalSupply: '1000' }); // 15%
             const totalVotes = BigInt('200'); // 20% of total-supply
             const proposal = generateTokenProposal({ settings });
             getTotalVotesSpy.mockReturnValue(totalVotes);
@@ -216,7 +216,7 @@ describe('tokenProposal utils', () => {
         });
 
         it('returns true when total votes is equal to min participation required', () => {
-            const settings = generateTokenPluginSettings({ minParticipation: 500000, historicalTotalSupply: '1000' }); // 50%
+            const settings = generateTokenPluginSettings({ minParticipation: 500_000, historicalTotalSupply: '1000' }); // 50%
             const totalVotes = BigInt('500'); // 50% of total-supply
             const proposal = generateTokenProposal({ settings });
             getTotalVotesSpy.mockReturnValue(totalVotes);
@@ -224,7 +224,7 @@ describe('tokenProposal utils', () => {
         });
 
         it('returns false when total votes is less than min participation required', () => {
-            const settings = generateTokenPluginSettings({ minParticipation: 300000, historicalTotalSupply: '1000' }); // 30%
+            const settings = generateTokenPluginSettings({ minParticipation: 300_000, historicalTotalSupply: '1000' }); // 30%
             const totalVotes = BigInt('290'); // 29% of total-supply
             const proposal = generateTokenProposal({ settings });
             getTotalVotesSpy.mockReturnValue(totalVotes);
@@ -249,7 +249,7 @@ describe('tokenProposal utils', () => {
 
     describe('isSupportReached', () => {
         it('returns true when the amount of yes votes is greater than the support required', () => {
-            const settings = generateTokenPluginSettings({ supportThreshold: 500000, historicalTotalSupply: '0' }); // 50%
+            const settings = generateTokenPluginSettings({ supportThreshold: 500_000, historicalTotalSupply: '0' }); // 50%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '510' }, // 51%
                 { type: VoteOption.NO, totalVotingPower: '490' }, // 49%
@@ -260,7 +260,7 @@ describe('tokenProposal utils', () => {
         });
 
         it('returns false when the amount of yes votes is equal to the support required', () => {
-            const settings = generateTokenPluginSettings({ supportThreshold: 600000, historicalTotalSupply: '0' }); // 60%
+            const settings = generateTokenPluginSettings({ supportThreshold: 600_000, historicalTotalSupply: '0' }); // 60%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '600' }, // 60%
                 { type: VoteOption.NO, totalVotingPower: '400' }, // 40%
@@ -270,7 +270,7 @@ describe('tokenProposal utils', () => {
         });
 
         it('returns false when the amount of yes votes is less than the support required', () => {
-            const settings = generateTokenPluginSettings({ supportThreshold: 400000, historicalTotalSupply: '0' }); // 40%
+            const settings = generateTokenPluginSettings({ supportThreshold: 400_000, historicalTotalSupply: '0' }); // 40%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '380' }, // 38%
                 { type: VoteOption.NO, totalVotingPower: '620' }, // 62%
@@ -285,7 +285,7 @@ describe('tokenProposal utils', () => {
         });
 
         it('returns true when early param is true and yes votes match the support needed in worst voting scenario', () => {
-            const settings = generateTokenPluginSettings({ supportThreshold: 510000, historicalTotalSupply: '1000' }); // 51%
+            const settings = generateTokenPluginSettings({ supportThreshold: 510_000, historicalTotalSupply: '1000' }); // 51%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '520' }, // 52% and 38% worst case
                 { type: VoteOption.ABSTAIN, totalVotingPower: '100' },
@@ -295,7 +295,7 @@ describe('tokenProposal utils', () => {
         });
 
         it('returns false when early param is true and yes votes do not match the support needed in worst voting scenario', () => {
-            const settings = generateTokenPluginSettings({ supportThreshold: 550000, historicalTotalSupply: '1000' }); // 55%
+            const settings = generateTokenPluginSettings({ supportThreshold: 550_000, historicalTotalSupply: '1000' }); // 55%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '400' }, // 40% and 45% worst case
                 { type: VoteOption.NO, totalVotingPower: '100' },
@@ -372,9 +372,7 @@ describe('tokenProposal utils', () => {
         });
 
         it('returns 0 when the option does not exist', () => {
-            const votesByOption: ITokenProposalOptionVotes[] = [
-                { type: VoteOption.YES, totalVotingPower: '1000000000000000000' },
-            ];
+            const votesByOption: ITokenProposalOptionVotes[] = [{ type: VoteOption.YES, totalVotingPower: '1000000000000000000' }];
             const proposal: ITokenProposal = generateTokenProposal({
                 settings: generateTokenPluginSettings({ token: generateTokenPluginSettingsToken({ decimals: 18 }) }),
                 metrics: { votesByOption },

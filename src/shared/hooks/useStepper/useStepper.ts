@@ -1,23 +1,20 @@
-import { type IStepperStep, StepperUtils } from '@/shared/utils/stepperUtils';
 import { useCallback, useMemo, useState } from 'react';
+import { type IStepperStep, StepperUtils } from '@/shared/utils/stepperUtils';
 import type { IUseStepperParams, IUseStepperReturn } from './useStepper.api';
 
 export const useStepper = <TMeta, TStepId extends string = string>(
-    params?: IUseStepperParams<TMeta, TStepId>,
+    params?: IUseStepperParams<TMeta, TStepId>
 ): IUseStepperReturn<TMeta, TStepId> => {
     const { initialSteps, initialActiveStep } = params ?? {};
 
-    const stepperUtils = useMemo(
-        () => new StepperUtils(initialSteps, initialActiveStep),
-        [initialSteps, initialActiveStep],
-    );
+    const stepperUtils = useMemo(() => new StepperUtils(initialSteps, initialActiveStep), [initialSteps, initialActiveStep]);
 
-    const [steps, setSteps] = useState<Array<IStepperStep<TMeta, TStepId>>>(stepperUtils.getSteps());
+    const [steps, setSteps] = useState<IStepperStep<TMeta, TStepId>[]>(stepperUtils.getSteps());
     const [activeStep, setActiveStep] = useState<TStepId | undefined>(stepperUtils.getActiveStep());
 
     const syncActiveStep = useCallback(() => {
         const newActiveStep = stepperUtils.syncActiveStep();
-        setActiveStep((current) => (newActiveStep != current ? newActiveStep : current));
+        setActiveStep((current) => (newActiveStep !== current ? newActiveStep : current));
     }, [stepperUtils]);
 
     const registerStep = useCallback(
@@ -25,24 +22,18 @@ export const useStepper = <TMeta, TStepId extends string = string>(
             setSteps(stepperUtils.addStep(newStep));
             syncActiveStep();
         },
-        [stepperUtils, syncActiveStep],
+        [stepperUtils, syncActiveStep]
     );
 
     const unregisterStep = useCallback((stepId: TStepId) => setSteps(stepperUtils.removeStep(stepId)), [stepperUtils]);
 
-    const nextStep = useCallback(() => setActiveStep(stepperUtils.next()), [setActiveStep, stepperUtils]);
+    const nextStep = useCallback(() => setActiveStep(stepperUtils.next()), [stepperUtils]);
 
-    const previousStep = useCallback(() => setActiveStep(stepperUtils.previous()), [setActiveStep, stepperUtils]);
+    const previousStep = useCallback(() => setActiveStep(stepperUtils.previous()), [stepperUtils]);
 
-    const updateActiveStep = useCallback(
-        (stepId: TStepId) => setActiveStep(stepperUtils.setActiveStep(stepId)),
-        [stepperUtils],
-    );
+    const updateActiveStep = useCallback((stepId: TStepId) => setActiveStep(stepperUtils.setActiveStep(stepId)), [stepperUtils]);
 
-    const updateSteps = useCallback(
-        (steps: Array<IStepperStep<TMeta, TStepId>>) => setSteps(stepperUtils.setSteps(steps)),
-        [stepperUtils],
-    );
+    const updateSteps = useCallback((steps: IStepperStep<TMeta, TStepId>[]) => setSteps(stepperUtils.setSteps(steps)), [stepperUtils]);
 
     return {
         steps,

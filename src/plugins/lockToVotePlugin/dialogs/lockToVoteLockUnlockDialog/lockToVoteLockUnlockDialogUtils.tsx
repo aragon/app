@@ -1,5 +1,5 @@
-import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { encodeFunctionData, type Hex } from 'viem';
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 
 const lockManagerAbi = [
     { type: 'function', name: 'lock', inputs: [{ name: 'amount', type: 'uint256' }], outputs: [] },

@@ -1,8 +1,8 @@
 'use client';
 
+import { DateFormat, formatterUtils, invariant, NumberFormat } from '@aragon/gov-ui-kit';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { DateFormat, formatterUtils, invariant, NumberFormat } from '@aragon/gov-ui-kit';
 import { AllAssetsStats } from '../allAssetsStats';
 import { DaoInfoAside } from '../daoInfoAside';
 import type { IDaoFilterAsideCardProps } from './daoFilterAsideCard.api';
@@ -62,30 +62,29 @@ export const DaoFilterAsideCard: React.FC<IDaoFilterAsideCardProps> = (props) =>
                     value: formattedLastActivity,
                 },
             ];
-        } else {
-            // assets
-            const asideMetrics = selectedDao.metrics;
-            const selectedAssetCount = selectedMetadata?.metadata.totalRecords;
-
-            return [
-                {
-                    label: t('app.finance.assetListStats.totalValueUsd'),
-                    value:
-                        formatterUtils.formatNumber(asideMetrics.tvlUSD, {
-                            format: NumberFormat.FIAT_TOTAL_SHORT,
-                        }) ?? asideMetrics.tvlUSD,
-                },
-                {
-                    label: t('app.finance.assetListStats.tokens'),
-                    value:
-                        selectedAssetCount != null
-                            ? (formatterUtils.formatNumber(selectedAssetCount, {
-                                  format: NumberFormat.GENERIC_SHORT,
-                              }) ?? selectedAssetCount)
-                            : '-',
-                },
-            ];
         }
+        // assets
+        const asideMetrics = selectedDao.metrics;
+        const selectedAssetCount = selectedMetadata?.metadata.totalRecords;
+
+        return [
+            {
+                label: t('app.finance.assetListStats.totalValueUsd'),
+                value:
+                    formatterUtils.formatNumber(asideMetrics.tvlUSD, {
+                        format: NumberFormat.FIAT_TOTAL_SHORT,
+                    }) ?? asideMetrics.tvlUSD,
+            },
+            {
+                label: t('app.finance.assetListStats.tokens'),
+                value:
+                    selectedAssetCount != null
+                        ? (formatterUtils.formatNumber(selectedAssetCount, {
+                              format: NumberFormat.GENERIC_SHORT,
+                          }) ?? selectedAssetCount)
+                        : '-',
+            },
+        ];
     })();
 
     // Get totalAssets for "All" view
@@ -93,15 +92,9 @@ export const DaoFilterAsideCard: React.FC<IDaoFilterAsideCardProps> = (props) =>
 
     return (
         <Page.AsideCard title={asideCardTitle}>
-            {isAllSelected && <AllAssetsStats dao={dao} totalValueUsd={dao.metrics.tvlUSD} totalAssets={totalAssets} />}
+            {isAllSelected && <AllAssetsStats dao={dao} totalAssets={totalAssets} totalValueUsd={dao.metrics.tvlUSD} />}
             {!isAllSelected && (
-                <DaoInfoAside
-                    daoId={selectedDaoId}
-                    network={dao.network}
-                    dao={dao}
-                    subDao={matchingSubDao}
-                    stats={specificStats}
-                />
+                <DaoInfoAside dao={dao} daoId={selectedDaoId} network={dao.network} stats={specificStats} subDao={matchingSubDao} />
             )}
         </Page.AsideCard>
     );

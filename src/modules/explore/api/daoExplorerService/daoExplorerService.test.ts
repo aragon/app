@@ -16,7 +16,7 @@ describe('daoExplorer service', () => {
         requestSpy.mockResolvedValue(daos);
         const result = await daoExplorerService.getDaoList(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(daoExplorerService['urls'].daos, params);
+        expect(requestSpy).toHaveBeenCalledWith(daoExplorerService.urls.daos, params);
         expect(result).toEqual(daos);
     });
 
@@ -28,7 +28,7 @@ describe('daoExplorer service', () => {
         requestSpy.mockResolvedValue(daoListByMemberResponse);
         const result = await daoExplorerService.getDaoListByMemberAddress(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(daoExplorerService['urls'].daoListByMemberAddress, params);
+        expect(requestSpy).toHaveBeenCalledWith(daoExplorerService.urls.daoListByMemberAddress, params);
         expect(result).toEqual(daoListByMemberResponse);
     });
 });

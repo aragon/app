@@ -1,1 +1,1 @@
-export { LayoutWizardCreateProcess, type ILayoutWizardCreateProcessProps } from './layoutWizardCreateProcess';
+export { type ILayoutWizardCreateProcessProps, LayoutWizardCreateProcess } from './layoutWizardCreateProcess';

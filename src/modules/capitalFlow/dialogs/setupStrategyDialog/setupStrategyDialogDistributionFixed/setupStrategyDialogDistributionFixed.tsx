@@ -1,6 +1,6 @@
+import { useWatch } from 'react-hook-form';
 import { AssetInput } from '@/modules/finance/components/assetInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useWatch } from 'react-hook-form';
 import type { ISetupStrategyForm } from '../setupStrategyDialogDefinitions';
 import { SetupStrategyDialogDistributionRecipients } from '../setupStrategyDialogDistributionRecipients';
 
@@ -16,20 +16,17 @@ export const SetupStrategyDialogDistributionFixed: React.FC<ISetupStrategyDialog
     return (
         <div className="flex w-full flex-col gap-6">
             <div className="flex flex-col gap-0.5 md:gap-1">
-                <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
+                <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
                     {t('app.capitalFlow.setupStrategyDialog.distributionFixed.token.label')}
                 </p>
-                <p className="text-sm leading-normal font-normal text-neutral-500 md:text-base">
+                <p className="font-normal text-neutral-500 text-sm leading-normal md:text-base">
                     {t('app.capitalFlow.setupStrategyDialog.distributionFixed.token.helpText')}
                 </p>
             </div>
 
             <AssetInput fetchAssetsParams={fetchAssetsParams} fieldPrefix="distributionFixed" hideAmount={true} />
 
-            <SetupStrategyDialogDistributionRecipients
-                recipientsFieldName="distributionFixed.recipients"
-                daoId={daoId}
-            />
+            <SetupStrategyDialogDistributionRecipients daoId={daoId} recipientsFieldName="distributionFixed.recipients" />
         </div>
     );
 };

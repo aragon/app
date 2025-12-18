@@ -1,19 +1,11 @@
-import type { Network } from '@/shared/api/daoService';
-import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useState } from 'react';
+import type { Network } from '@/shared/api/daoService';
+import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import type { IProposalAction } from '../../api/governanceService';
 import { useDecodeTransaction } from '../../api/smartContractService';
-import {
-    useConnectApp,
-    useDisconnectApp,
-    walletConnectService,
-    type ISessionRequest,
-} from '../../api/walletConnectService';
-import {
-    WalletConnectActionDialogConnect,
-    type IWalletConnectActionFormData,
-} from './walletConnectActionDialogConnect';
+import { type ISessionRequest, useConnectApp, useDisconnectApp, walletConnectService } from '../../api/walletConnectService';
+import { type IWalletConnectActionFormData, WalletConnectActionDialogConnect } from './walletConnectActionDialogConnect';
 import { WalletConnectActionDialogListener } from './walletConnectActionDialogListener';
 import { walletConnectActionDialogUtils } from './walletConnectActionDialogUtils';
 
@@ -60,7 +52,7 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
                 setActions((current) => [...current, proposalAction]);
             }
         },
-        [decodeTransactionAsync, daoAddress, daoNetwork],
+        [decodeTransactionAsync, daoAddress, daoNetwork]
     );
 
     const handleCloseDialog = useCallback(() => {
@@ -101,8 +93,8 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
 
     return (
         <WalletConnectActionDialogListener
-            appMetadata={appSession.peer.metadata}
             actions={actions}
+            appMetadata={appSession.peer.metadata}
             onAddActionsClick={handleAddActions}
             onClose={handleCloseDialog}
         />

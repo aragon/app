@@ -2,9 +2,9 @@
  * @jest-environment node
  */
 
-import { generateNextRequest, generateResponse } from '@/shared/testUtils';
 import type { NextURL } from 'next/dist/server/web/next-url';
 import { type NextRequest, NextResponse } from 'next/server';
+import { generateNextRequest, generateResponse } from '@/shared/testUtils';
 import { ProxyBackendUtils, proxyBackendUtils } from './proxyBackendUtils';
 
 describe('proxyBackend utils', () => {
@@ -71,9 +71,7 @@ describe('proxyBackend utils', () => {
             process.env.ARAGON_BACKEND_URL = 'https://test-backend.com';
             const testClass = new ProxyBackendUtils();
             const request = generateNextRequest({ nextUrl: { href } as NextURL });
-            expect(testClass['buildBackendUrl'](request)).toEqual(
-                'https://test-backend.com/dao/0x1234?network=mainnet',
-            );
+            expect(testClass.buildBackendUrl(request)).toEqual('https://test-backend.com/dao/0x1234?network=mainnet');
         });
     });
 });

@@ -1,3 +1,5 @@
+import { type IDefinitionSetting, ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
+import type { ReactNode } from 'react';
 import { VoteList } from '@/modules/governance/components/voteList';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
@@ -9,8 +11,6 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { type IDefinitionSetting, ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
-import type { ReactNode } from 'react';
 import { SppVotingTerminalBodyBreakdownDefault } from './sppVotingTerminalBodyBreakdownDefault';
 import { SppVotingTerminalBodyVoteDefault } from './sppVotingTerminalBodyVoteDefault';
 
@@ -75,35 +75,33 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
     // Set parent name and description on sub-proposal to correctly display the proposal info on the vote dialog.
     const { title, description, incrementalId } = proposal;
     const processedSubProposal =
-        subProposal != null
-            ? { ...subProposal, title, description, incrementalId, pluginInterfaceType: plugin.interfaceType }
-            : undefined;
+        subProposal != null ? { ...subProposal, title, description, incrementalId, pluginInterfaceType: plugin.interfaceType } : undefined;
 
     return (
         <>
             {(processedSubProposal != null || isExternalBody) && (
                 <>
                     <PluginSingleComponent
-                        slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
+                        body={isExternalBody ? plugin.address : undefined}
+                        canVote={canVote}
+                        Fallback={SppVotingTerminalBodyBreakdownDefault}
+                        isVeto={isVeto}
                         pluginId={isExternalBody ? 'external' : plugin.interfaceType}
                         proposal={isExternalBody ? proposal : subProposal}
-                        body={isExternalBody ? plugin.address : undefined}
+                        slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
                         stage={stage}
-                        canVote={canVote}
-                        isVeto={isVeto}
-                        Fallback={SppVotingTerminalBodyBreakdownDefault}
                     >
                         <div className="flex flex-col gap-y-4 pt-6 md:pt-8">
                             {canVote && (
                                 <PluginSingleComponent
-                                    slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
+                                    daoId={daoId}
+                                    externalAddress={isExternalBody ? plugin.address : undefined}
+                                    Fallback={SppVotingTerminalBodyVoteDefault}
+                                    isVeto={isVeto}
                                     pluginId={isExternalBody ? 'external' : plugin.interfaceType}
                                     proposal={isExternalBody ? proposal : processedSubProposal}
-                                    externalAddress={isExternalBody ? plugin.address : undefined}
-                                    daoId={daoId}
+                                    slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
                                     stage={stage}
-                                    isVeto={isVeto}
-                                    Fallback={SppVotingTerminalBodyVoteDefault}
                                 />
                             )}
                             {children}
@@ -111,12 +109,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                     </PluginSingleComponent>
                     {processedSubProposal && (
                         <ProposalVoting.Votes>
-                            <VoteList
-                                initialParams={voteListParams}
-                                daoId={daoId}
-                                pluginAddress={plugin.address}
-                                isVeto={isVeto}
-                            />
+                            <VoteList daoId={daoId} initialParams={voteListParams} isVeto={isVeto} pluginAddress={plugin.address} />
                         </ProposalVoting.Votes>
                     )}
                 </>

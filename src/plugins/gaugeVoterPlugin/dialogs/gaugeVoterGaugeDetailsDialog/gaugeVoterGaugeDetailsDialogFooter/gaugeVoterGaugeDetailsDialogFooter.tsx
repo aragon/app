@@ -1,5 +1,5 @@
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button } from '@aragon/gov-ui-kit';
+import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface IGaugeVoterGaugeDetailsDialogFooterProps {
     /**
@@ -35,13 +35,13 @@ export const GaugeVoterGaugeDetailsDialogFooter: React.FC<IGaugeVoterGaugeDetail
 
     return (
         <div className="flex w-full grow items-center justify-between px-4 pb-4 md:px-6 md:pb-6">
-            <Button variant="tertiary" size="md" onClick={onPrevious} disabled={disablePrevious}>
+            <Button disabled={disablePrevious} onClick={onPrevious} size="md" variant="tertiary">
                 {t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.footer.previous')}
             </Button>
-            <span className="text-sm text-neutral-500">
+            <span className="text-neutral-500 text-sm">
                 {currentGaugeNumber} / {totalGauges}
             </span>
-            <Button variant="secondary" size="md" onClick={onNext} disabled={disableNext}>
+            <Button disabled={disableNext} onClick={onNext} size="md" variant="secondary">
                 {t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.footer.next')}
             </Button>
         </div>

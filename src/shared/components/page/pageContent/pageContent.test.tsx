@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { PageContent, type IPageContentProps } from './pageContent';
+import { type IPageContentProps, PageContent } from './pageContent';
 
 describe('<Page.Content /> component', () => {
     const createTestComponent = (props?: Partial<IPageContentProps>) => {

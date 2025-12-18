@@ -1,5 +1,7 @@
 'use client';
 
+import { CardEmptyState, IconType, Link } from '@aragon/gov-ui-kit';
+import { useAccount } from 'wagmi';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -7,9 +9,7 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { CardEmptyState, IconType, Link } from '@aragon/gov-ui-kit';
-import { useAccount } from 'wagmi';
-import { type IGetCampaignListParams } from '../../api/capitalDistributorService';
+import type { IGetCampaignListParams } from '../../api/capitalDistributorService';
 import { CapitalDistributorCampaignList } from '../../components/capitalDistributorCampaignList';
 import { CapitalDistributorRewardsStats } from '../../components/capitalDistributorRewardsStats';
 
@@ -47,22 +47,20 @@ export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRe
             <Page.Main title={t('app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.title')}>
                 {!address && (
                     <CardEmptyState
+                        description={t('app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.connect.description')}
                         heading={t('app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.connect.heading')}
-                        description={t(
-                            'app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.connect.description',
-                        )}
                         objectIllustration={{ object: 'WALLET' }}
                         primaryButton={connectAction}
                     />
                 )}
-                {address && <CapitalDistributorCampaignList initialParams={initialParams} dao={dao} />}
+                {address && <CapitalDistributorCampaignList dao={dao} initialParams={initialParams} />}
             </Page.Main>
             <Page.Aside>
                 <Page.AsideCard title={pluginName}>
                     {description && <p className="text-base text-gray-500">{description}</p>}
                     {address && <CapitalDistributorRewardsStats initialParams={initialParams} />}
                     {links?.map(({ url, name }) => (
-                        <Link key={url} href={url} isExternal={true} showUrl={true}>
+                        <Link href={url} isExternal={true} key={url} showUrl={true}>
                             {name}
                         </Link>
                     ))}

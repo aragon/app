@@ -1,21 +1,21 @@
 'use client';
 
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { type IWizardStepperStep } from '@/shared/components/wizards/wizard';
+import type { IWizardStepperStep } from '@/shared/components/wizards/wizard';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { useFormContext, useWatch } from 'react-hook-form';
 import { CreateProposalForm, type ICreateProposalFormData } from '../../components/createProposalForm';
 import { useCreateProposalFormContext } from '../../components/createProposalForm/createProposalFormProvider';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { publishProposalDialogUtils } from '../../dialogs/publishProposalDialog/publishProposalDialogUtils';
 import type { ISimulateActionsDialogParams } from '../../dialogs/simulateActionsDialog';
-import { createProposalWizardId, CreateProposalWizardStep } from './createProposalPageDefinitions';
+import { CreateProposalWizardStep, createProposalWizardId } from './createProposalPageDefinitions';
 
 export interface ICreateProposalPageClientStepsProps {
     /**
@@ -91,31 +91,25 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
     return (
         <>
             <WizardPage.Step
+                description={t(`app.governance.createProposalPage.steps.${CreateProposalWizardStep.METADATA}.description`)}
                 title={t(`app.governance.createProposalPage.steps.${CreateProposalWizardStep.METADATA}.title`)}
-                description={t(
-                    `app.governance.createProposalPage.steps.${CreateProposalWizardStep.METADATA}.description`,
-                )}
                 {...metadataStep}
             >
                 <CreateProposalForm.Metadata />
             </WizardPage.Step>
             <WizardPage.Step
-                title={t(`app.governance.createProposalPage.steps.${CreateProposalWizardStep.ACTIONS}.title`)}
-                description={t(
-                    `app.governance.createProposalPage.steps.${CreateProposalWizardStep.ACTIONS}.description`,
-                )}
+                description={t(`app.governance.createProposalPage.steps.${CreateProposalWizardStep.ACTIONS}.description`)}
                 hidden={addActions === false}
                 nextDropdownItems={getActionStepDropdownItems()}
+                title={t(`app.governance.createProposalPage.steps.${CreateProposalWizardStep.ACTIONS}.title`)}
                 {...actionsStep}
             >
                 <CreateProposalForm.Actions daoId={daoId} pluginAddress={pluginAddress} />
             </WizardPage.Step>
             <WizardPage.Step
-                title={t(`app.governance.createProposalPage.steps.${CreateProposalWizardStep.SETTINGS}.title`)}
-                description={t(
-                    `app.governance.createProposalPage.steps.${CreateProposalWizardStep.SETTINGS}.description`,
-                )}
+                description={t(`app.governance.createProposalPage.steps.${CreateProposalWizardStep.SETTINGS}.description`)}
                 hidden={hideSettingsStep}
+                title={t(`app.governance.createProposalPage.steps.${CreateProposalWizardStep.SETTINGS}.title`)}
                 {...settingsStep}
             >
                 <CreateProposalForm.Settings daoId={daoId} pluginAddress={pluginAddress} />

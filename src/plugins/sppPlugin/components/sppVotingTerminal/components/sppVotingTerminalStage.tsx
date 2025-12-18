@@ -1,9 +1,9 @@
+import { ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
+import { useCallback } from 'react';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
-import { ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
-import { useCallback } from 'react';
 import type { ISppProposal, ISppStage } from '../../../types';
 import { sppStageUtils } from '../../../utils/sppStageUtils';
 import { SppVotingTerminalBodySummaryFooter } from './sppVotingTerminalBodySummaryFooter';
@@ -58,56 +58,54 @@ export const SppVotingTerminalStage: React.FC<ISppVotingTerminalStageProps> = (p
 
     return (
         <ProposalVoting.Stage
-            name={stageName}
-            status={status}
-            startDate={processedStartDate}
+            bodyList={bodyList}
             endDate={processedEndDate}
             index={stage.stageIndex}
-            bodyList={bodyList}
-            minAdvance={minAdvance}
             maxAdvance={maxAdvance}
+            minAdvance={minAdvance}
+            name={stageName}
+            startDate={processedStartDate}
+            status={status}
         >
             <ProposalVoting.BodySummary>
                 <ProposalVoting.BodySummaryList>
                     {stage.plugins.map(({ address, ...plugin }) => (
                         <ProposalVoting.BodySummaryListItem
-                            key={address}
+                            bodyBrand={plugin.interfaceType === undefined ? brandedExternals[plugin.brandId] : undefined}
                             id={address}
-                            bodyBrand={
-                                plugin.interfaceType === undefined ? brandedExternals[plugin.brandId] : undefined
-                            }
+                            key={address}
                         >
                             {plugin.interfaceType != null && (
                                 <PluginSingleComponent
-                                    slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY}
+                                    isExecuted={proposal.executed.status}
+                                    isVeto={isVeto}
+                                    name={plugin.name}
                                     pluginId={plugin.interfaceType}
                                     proposal={sppStageUtils.getBodySubProposal(proposal, address, stage.stageIndex)}
-                                    name={plugin.name}
-                                    isVeto={isVeto}
-                                    isExecuted={proposal.executed.status}
+                                    slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY}
                                 />
                             )}
                             {plugin.interfaceType == null && (
                                 <SppVotingTerminalMultiBodySummaryDefault
-                                    proposal={proposal}
                                     body={address}
-                                    stage={stage}
                                     canVote={canVote}
+                                    proposal={proposal}
+                                    stage={stage}
                                 />
                             )}
                         </ProposalVoting.BodySummaryListItem>
                     ))}
                 </ProposalVoting.BodySummaryList>
-                {isTimelockStage && <SppVotingTerminalStageTimelock stage={stage} proposal={proposal} />}
-                <SppVotingTerminalBodySummaryFooter proposal={proposal} stage={stage} daoId={daoId} />
+                {isTimelockStage && <SppVotingTerminalStageTimelock proposal={proposal} stage={stage} />}
+                <SppVotingTerminalBodySummaryFooter daoId={daoId} proposal={proposal} stage={stage} />
             </ProposalVoting.BodySummary>
             {stage.plugins.map((plugin) => (
                 <SppVotingTerminalStageBodyContent
+                    daoId={daoId}
+                    displayStatus={isSingleBody}
                     key={plugin.address}
                     plugin={plugin}
-                    displayStatus={isSingleBody}
                     proposal={proposal}
-                    daoId={daoId}
                     stage={stage}
                 />
             ))}

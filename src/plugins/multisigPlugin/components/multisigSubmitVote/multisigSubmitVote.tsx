@@ -1,5 +1,6 @@
 'use client';
 
+import { Button, ChainEntityType, IconType } from '@aragon/gov-ui-kit';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
@@ -10,7 +11,6 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { Button, ChainEntityType, IconType } from '@aragon/gov-ui-kit';
 import type { IMultisigProposal, IMultisigVote } from '../../types';
 
 export interface IMultisigSubmitVoteProps extends ISubmitVoteProps<IMultisigProposal> {}
@@ -52,13 +52,13 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
     return (
         <div className="w-full">
             <Button
-                onClick={voted ? undefined : handleVoteClick}
-                href={voted ? voteTransactionHref : undefined}
-                target={voted ? '_blank' : undefined}
-                size="md"
-                iconLeft={voted ? IconType.CHECKMARK : undefined}
-                variant={voted ? 'secondary' : 'primary'}
                 className="w-full md:w-fit"
+                href={voted ? voteTransactionHref : undefined}
+                iconLeft={voted ? IconType.CHECKMARK : undefined}
+                onClick={voted ? undefined : handleVoteClick}
+                size="md"
+                target={voted ? '_blank' : undefined}
+                variant={voted ? 'secondary' : 'primary'}
             >
                 {t(`app.plugins.multisig.multisigSubmitVote.${voteLabel}`)}
             </Button>

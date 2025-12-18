@@ -36,6 +36,8 @@ class DataListUtils {
                 return 'initialLoading';
             case 'success':
                 return fetchStatus === 'fetching' ? 'loading' : dataListIdleState;
+            default:
+                return 'idle';
         }
     };
 }

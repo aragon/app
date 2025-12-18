@@ -231,7 +231,7 @@ describe('TokenExitQueueFeeUtils', () => {
         });
 
         it('formats 10000 basis points as 100%', () => {
-            expect(tokenExitQueueFeeUtils.formatFeePercent(10000)).toBe('100%');
+            expect(tokenExitQueueFeeUtils.formatFeePercent(10_000)).toBe('100%');
         });
 
         it('formats small percentages with 2 decimals', () => {
@@ -324,7 +324,7 @@ describe('TokenExitQueueFeeUtils', () => {
             expect(points[0]?.elapsedSeconds).toBe(0);
 
             // Last point should be at cooldown
-            expect(points[points.length - 1]?.elapsedSeconds).toBe(200);
+            expect(points.at(-1)?.elapsedSeconds).toBe(200);
 
             // Points should show decreasing fee over time
             for (let i = 0; i < points.length - 1; i++) {

@@ -2,12 +2,7 @@ import { apiVersionUtils } from '@/shared/utils/apiVersionUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { AragonBackendService, type IPaginatedResponse } from '../aragonBackendService';
 import { pluginsService } from '../pluginsService';
-import type {
-    IGetDaoByEnsParams,
-    IGetDaoParams,
-    IGetDaoPermissionsParams,
-    IGetDaoPoliciesParams,
-} from './daoService.api';
+import type { IGetDaoByEnsParams, IGetDaoParams, IGetDaoPermissionsParams, IGetDaoPoliciesParams } from './daoService.api';
 import type { IDao, IDaoPermission, IDaoPolicy, Network } from './domain';
 
 /**
@@ -19,7 +14,7 @@ type IDaoApiResponse = Omit<IDao, 'plugins'> & {
 
 class DaoService extends AragonBackendService {
     // Base paths without version prefix
-    private basePaths = {
+    private readonly basePaths = {
         dao: '/daos/:id',
         daoByEns: '/daos/:network/ens/:ens',
         daoPermissions: '/permissions/:network/:daoAddress',
@@ -43,7 +38,7 @@ class DaoService extends AragonBackendService {
      * This is a local helper to avoid importing daoUtils and creating cycles.
      * Refactor this in https://linear.app/aragon/issue/APP-364
      */
-    private parseDaoId = (daoId: string): { network: Network; address: string } => {
+    private readonly parseDaoId = (daoId: string): { network: Network; address: string } => {
         const lastDash = daoId.lastIndexOf('-');
         const network = daoId.substring(0, lastDash) as Network;
         const address = daoId.substring(lastDash + 1);
@@ -56,7 +51,7 @@ class DaoService extends AragonBackendService {
      * Old backends already include plugins on the DAO endpoint; new ones
      * require an extra call to the plugins-by-dao endpoint.
      */
-    private withPlugins = async (dao: IDaoApiResponse): Promise<IDao> => {
+    private readonly withPlugins = async (dao: IDaoApiResponse): Promise<IDao> => {
         if (dao.plugins != null && dao.plugins.length > 0) {
             return dao as IDao;
         }

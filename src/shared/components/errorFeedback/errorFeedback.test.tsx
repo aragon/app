@@ -24,10 +24,7 @@ describe('<ErrorFeedback /> component', () => {
         expect(exploreDaosButton).toHaveAttribute('href', '/');
 
         expect(reportIssueButton).toBeInTheDocument();
-        expect(reportIssueButton).toHaveAttribute(
-            'href',
-            'https://aragonassociation.atlassian.net/servicedesk/customer/portal/3',
-        );
+        expect(reportIssueButton).toHaveAttribute('href', 'https://aragonassociation.atlassian.net/servicedesk/customer/portal/3');
         expect(reportIssueButton).toHaveAttribute('target', '_blank');
     });
 

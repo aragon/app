@@ -1,19 +1,15 @@
 'use client';
 
+import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/gov-ui-kit';
+import { useRouter } from 'next/navigation';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
-import {
-    TransactionDialog,
-    TransactionDialogStep,
-    type ITransactionDialogStepMeta,
-} from '@/shared/components/transactionDialog';
+import { type ITransactionDialogStepMeta, TransactionDialog, TransactionDialogStep } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/gov-ui-kit';
-import { useRouter } from 'next/navigation';
 import type { ISppProposal } from '../../types';
 import { sppAdvanceStageDialogUtils } from './sppAdvanceStageDialogUtils';
 
@@ -52,26 +48,26 @@ export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (pro
 
     return (
         <TransactionDialog
-            title={t('app.plugins.spp.advanceStageDialog.title')}
             description={t('app.plugins.spp.advanceStageDialog.description')}
-            submitLabel={t('app.plugins.spp.advanceStageDialog.button.submit')}
-            stepper={stepper}
-            prepareTransaction={handlePrepareTransaction}
+            indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
             network={proposal.network}
+            prepareTransaction={handlePrepareTransaction}
+            stepper={stepper}
+            submitLabel={t('app.plugins.spp.advanceStageDialog.button.submit')}
             successLink={{
                 label: t('app.plugins.spp.advanceStageDialog.button.success'),
                 onClick: onSuccessClick,
             }}
+            title={t('app.plugins.spp.advanceStageDialog.title')}
             transactionType={TransactionType.PROPOSAL_ADVANCE_STAGE}
-            indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
         >
             <ProposalDataListItem.Structure
-                title={proposal.title}
-                summary={proposal.summary}
-                status={ProposalStatus.ACTIVE}
-                type="approvalThreshold"
-                publisher={{ address: creatorAddress, name: creatorEns ?? undefined }}
                 id={slug}
+                publisher={{ address: creatorAddress, name: creatorEns ?? undefined }}
+                status={ProposalStatus.ACTIVE}
+                summary={proposal.summary}
+                title={proposal.title}
+                type="approvalThreshold"
             />
         </TransactionDialog>
     );

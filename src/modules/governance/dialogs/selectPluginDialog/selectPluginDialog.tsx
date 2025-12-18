@@ -1,12 +1,12 @@
+import { Dialog, invariant } from '@aragon/gov-ui-kit';
+import { useState } from 'react';
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { ProcessDataListItem } from '@/shared/components/processDataListItem';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
-import { Dialog, invariant } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
 
 export interface ISelectPluginDialogParams {
     /**
@@ -41,14 +41,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
     const { location } = props;
 
     invariant(location.params != null, 'SelectPluginDialog: params must be set for the dialog to work correctly');
-    const {
-        daoId,
-        excludePluginIds,
-        onPluginSelected,
-        initialPlugin,
-        variant = 'proposal',
-        fullExecuteOnly,
-    } = location.params;
+    const { daoId, excludePluginIds, onPluginSelected, initialPlugin, variant = 'proposal', fullExecuteOnly } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
@@ -72,18 +65,18 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
     return (
         <>
             <Dialog.Header
-                title={t(`app.governance.selectPluginDialog.${variant}.title`)}
                 description={t(`app.governance.selectPluginDialog.${variant}.description`)}
                 onClose={close}
+                title={t(`app.governance.selectPluginDialog.${variant}.title`)}
             />
             <Dialog.Content>
                 <div className="flex flex-col gap-2 py-2">
                     {processedDaoPlugins.map((plugin) => (
                         <ProcessDataListItem
-                            key={plugin.uniqueId}
-                            process={plugin.meta}
                             isActive={plugin.uniqueId === selectedPlugin?.uniqueId}
+                            key={plugin.uniqueId}
                             onClick={() => setSelectedPlugin(plugin)}
+                            process={plugin.meta}
                         />
                     ))}
                 </div>

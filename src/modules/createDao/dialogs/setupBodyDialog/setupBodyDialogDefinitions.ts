@@ -1,5 +1,5 @@
-import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
+import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { BodyType } from '../../types/enum';
 
 export interface ISetupBodyFormBase {
@@ -69,10 +69,7 @@ export interface ISetupBodyFormExisting<
     TMember extends ICompositeAddress = ICompositeAddress,
     TMembership extends ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
 > extends ISetupBodyFormBase,
-        Pick<
-            ISetupBodyFormNew<TGovernance, TMember, TMembership>,
-            'description' | 'resources' | 'governance' | 'membership'
-        > {
+        Pick<ISetupBodyFormNew<TGovernance, TMember, TMembership>, 'description' | 'resources' | 'governance' | 'membership'> {
     /**
      * EXISTING body type.
      */

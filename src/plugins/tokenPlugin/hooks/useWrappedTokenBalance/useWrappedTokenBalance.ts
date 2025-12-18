@@ -1,8 +1,8 @@
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type { QueryObserverResult } from '@tanstack/react-query';
 import { erc20Abi, type Hex } from 'viem';
 import { useReadContract } from 'wagmi';
 import type { ReadContractErrorType } from 'wagmi/actions';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type { ITokenPluginSettingsToken } from '../../types';
 
 export interface IUseWrappedTokenBalanceParams {

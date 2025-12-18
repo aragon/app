@@ -1,1 +1,1 @@
-export { ProposalVotingTerminal, type IProposalVotingTerminalProps } from './proposalVotingTerminal';
+export { type IProposalVotingTerminalProps, ProposalVotingTerminal } from './proposalVotingTerminal';

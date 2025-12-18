@@ -1,3 +1,4 @@
+import * as Viem from 'viem';
 import { generateSetupBodyFormData, generateSetupBodyFormNew } from '@/modules/createDao/testUtils';
 import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
@@ -6,7 +7,6 @@ import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
-import * as Viem from 'viem';
 import { generateMultisigPluginSettings } from '../../testUtils';
 import { multisigPluginAbi, multisigPluginPrepareUpdateAbi, multisigPluginSetupAbi } from './multisigPluginAbi';
 import { multisigTransactionUtils } from './multisigTransactionUtils';
@@ -35,14 +35,14 @@ describe('multisigTransaction utils', () => {
     describe('buildCreateProposalData', () => {
         it('correctly encodes the create-proposal data from the given parameters', () => {
             const startDate = 0;
-            const endDate = 1728660603;
+            const endDate = 1_728_660_603;
             const proposal = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
             const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x0', value: BigInt(0) }];
             const plugin = generateDaoPlugin({
                 interfaceType: PluginInterfaceType.MULTISIG,
                 settings: generateMultisigPluginSettings(),
             });
-            const params = { metadata: '0x' as const, actions: actions, proposal, plugin };
+            const params = { metadata: '0x' as const, actions, proposal, plugin };
             parseStartDateSpy.mockReturnValue(startDate);
             parseEndDateSpy.mockReturnValue(endDate);
             createDefaultEndDateSpy.mockReturnValue(-1);
@@ -68,7 +68,7 @@ describe('multisigTransaction utils', () => {
                 interfaceType: PluginInterfaceType.MULTISIG,
                 settings: generateMultisigPluginSettings(),
             });
-            const params = { metadata: '0x' as const, actions: actions, proposal, plugin };
+            const params = { metadata: '0x' as const, actions, proposal, plugin };
             parseStartDateSpy.mockReturnValue(startDate);
             parseEndDateSpy.mockReturnValue(-1);
             createDefaultEndDateSpy.mockReturnValue(endDate);
@@ -132,9 +132,7 @@ describe('multisigTransaction utils', () => {
             encodeAbiParametersSpy.mockReturnValue(pluginSettingsData);
             buildPrepareInstallationDataSpy.mockReturnValue(transactionData);
 
-            const params = [{ metadata: '', body, dao }] as unknown as Parameters<
-                typeof multisigTransactionUtils.buildPrepareInstallData
-            >;
+            const params = [{ metadata: '', body, dao }] as unknown as Parameters<typeof multisigTransactionUtils.buildPrepareInstallData>;
 
             const result = multisigTransactionUtils.buildPrepareInstallData(...params);
 
@@ -142,7 +140,7 @@ describe('multisigTransaction utils', () => {
                 multisigPlugin.repositoryAddresses[dao.network],
                 multisigPlugin.installVersion,
                 pluginSettingsData,
-                dao.address,
+                dao.address
             );
 
             expect(result).toBe(transactionData);

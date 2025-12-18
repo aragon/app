@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import type { ComponentProps, ReactNode } from 'react';
 import { Container } from '../../container';
 import { useTranslations } from '../../translationsProvider';
-import { PageHeaderStat, type IPageHeaderStat } from './pageHeaderStat';
+import { type IPageHeaderStat, PageHeaderStat } from './pageHeaderStat';
 
 export interface IPageHeaderProps extends ComponentProps<'header'> {
     /**
@@ -33,16 +33,12 @@ export interface IPageHeaderProps extends ComponentProps<'header'> {
 }
 
 export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
-    const { title, description, stats, avatar, breadcrumbs, breadcrumbsTag, children, className, ...otherProps } =
-        props;
+    const { title, description, stats, avatar, breadcrumbs, breadcrumbsTag, children, className, ...otherProps } = props;
 
     const { t } = useTranslations();
 
     return (
-        <header
-            className={classNames('from-neutral-0 bg-gradient-to-b to-neutral-50 pt-6 md:pt-10', className)}
-            {...otherProps}
-        >
+        <header className={classNames('bg-gradient-to-b from-neutral-0 to-neutral-50 pt-6 md:pt-10', className)} {...otherProps}>
             <Container className="flex flex-col gap-6">
                 {breadcrumbs && <Breadcrumbs links={breadcrumbs} tag={breadcrumbsTag} />}
                 <div className="flex w-full min-w-0 flex-row gap-10 md:gap-16 lg:gap-10 xl:gap-16">
@@ -51,10 +47,10 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                             <Heading size="h1">{title}</Heading>
                             {description && (
                                 <Collapsible
-                                    collapsedLines={2}
                                     buttonLabelClosed={t('app.shared.page.header.readMore')}
                                     buttonLabelOpened={t('app.shared.page.header.readLess')}
                                     className="text-base text-neutral-500 md:text-lg"
+                                    collapsedLines={2}
                                 >
                                     {description}
                                 </Collapsible>

@@ -1,9 +1,9 @@
+import { QueryClient } from '@tanstack/react-query';
 import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
-import { PluginType, type IDaoPageParams } from '@/shared/types';
+import { type IDaoPageParams, PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
-import { QueryClient } from '@tanstack/react-query';
 import { proposalListOptions } from '../../api/governanceService';
 import { DaoProposalsPageClient } from './daoProposalsPageClient';
 

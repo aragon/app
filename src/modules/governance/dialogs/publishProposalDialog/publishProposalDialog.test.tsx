@@ -1,11 +1,11 @@
+import { GukModulesProvider, modulesCopy } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
+import { act, type ReactNode } from 'react';
+import * as Wagmi from 'wagmi';
 import * as DaoService from '@/shared/api/daoService';
 import * as usePinJson from '@/shared/api/ipfsService/mutations';
-import { type IDialogLocation } from '@/shared/components/dialogProvider';
-import {
-    type ITransactionDialogProps,
-    type ITransactionDialogStep,
-    TransactionDialog,
-} from '@/shared/components/transactionDialog';
+import type { IDialogLocation } from '@/shared/components/dialogProvider';
+import { type ITransactionDialogProps, type ITransactionDialogStep, TransactionDialog } from '@/shared/components/transactionDialog';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import {
     generateDao,
@@ -16,19 +16,13 @@ import {
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { testLogger, timeUtils } from '@/test/utils';
-import { GukModulesProvider, modulesCopy } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
-import { act, type ReactNode } from 'react';
-import * as Wagmi from 'wagmi';
 import { generateProposalCreate } from '../../testUtils';
 import { PublishProposalDialog, type PublishProposalStep } from './publishProposalDialog';
 import type { IPublishProposalDialogParams, IPublishProposalDialogProps } from './publishProposalDialog.api';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
 jest.mock('@/shared/components/transactionDialog', () => ({
-    TransactionDialog: jest.fn((props: { children: ReactNode }) => (
-        <div data-testid="transaction-dialog">{props.children}</div>
-    )),
+    TransactionDialog: jest.fn((props: { children: ReactNode }) => <div data-testid="transaction-dialog">{props.children}</div>),
 }));
 
 describe('<PublishProposalDialog /> component', () => {
@@ -56,9 +50,7 @@ describe('<PublishProposalDialog /> component', () => {
         (TransactionDialog as jest.Mock).mockClear();
     });
 
-    const generateDialogLocation = (
-        params?: Partial<IPublishProposalDialogParams>,
-    ): IDialogLocation<IPublishProposalDialogParams> => ({
+    const generateDialogLocation = (params?: Partial<IPublishProposalDialogParams>): IDialogLocation<IPublishProposalDialogParams> => ({
         id: 'test',
         params: {
             proposal: generateProposalCreate(),
@@ -102,7 +94,7 @@ describe('<PublishProposalDialog /> component', () => {
                 title: expect.stringMatching(/publishProposalDialog.title/) as unknown,
                 description: expect.stringMatching(/publishProposalDialog.description/) as unknown,
             }),
-            undefined,
+            undefined
         );
     });
 
@@ -141,9 +133,8 @@ describe('<PublishProposalDialog /> component', () => {
         const location = generateDialogLocation({ proposal });
         render(createTestComponent({ location }));
 
-        const { customSteps } = (
-            TransactionDialog as jest.Mock<ReactNode, Array<ITransactionDialogProps<PublishProposalStep>>>
-        ).mock.calls[0][0];
+        const { customSteps } = (TransactionDialog as jest.Mock<ReactNode, ITransactionDialogProps<PublishProposalStep>[]>).mock
+            .calls[0][0];
         const pinMetadataStep: ITransactionDialogStep<PublishProposalStep> = customSteps![0];
         expect(pinMetadataStep.meta.label).toMatch(/publishProposalDialog.step.PIN_METADATA.label/);
         expect(pinMetadataStep.meta.errorLabel).toMatch(/publishProposalDialog.step.PIN_METADATA.errorLabel/);
@@ -164,9 +155,8 @@ describe('<PublishProposalDialog /> component', () => {
         const location = generateDialogLocation({ proposal });
 
         render(createTestComponent({ location }));
-        const { prepareTransaction } = (
-            TransactionDialog as jest.Mock<ReactNode, Array<ITransactionDialogProps<PublishProposalStep>>>
-        ).mock.calls[0][0];
+        const { prepareTransaction } = (TransactionDialog as jest.Mock<ReactNode, ITransactionDialogProps<PublishProposalStep>[]>).mock
+            .calls[0][0];
         await act(() => prepareTransaction());
 
         expect(buildTransactionSpy).toHaveBeenCalledWith({

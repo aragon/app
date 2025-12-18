@@ -1,6 +1,6 @@
-import { sanitizeHtmlRich } from '@/shared/security';
 import { DocumentParser } from '@aragon/gov-ui-kit';
 import type { ComponentProps, FC } from 'react';
+import { sanitizeHtmlRich } from '@/shared/security';
 
 type DocumentParserProps = ComponentProps<typeof DocumentParser>;
 

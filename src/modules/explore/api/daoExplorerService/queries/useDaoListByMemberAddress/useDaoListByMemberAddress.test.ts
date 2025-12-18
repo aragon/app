@@ -1,5 +1,5 @@
-import { ReactQueryWrapper, generateDao, generatePaginatedResponse } from '@/shared/testUtils';
 import { renderHook, waitFor } from '@testing-library/react';
+import { generateDao, generatePaginatedResponse, ReactQueryWrapper } from '@/shared/testUtils';
 import { daoExplorerService } from '../../daoExplorerService';
 import { useDaoListByMemberAddress } from './useDaoListByMemberAddress';
 

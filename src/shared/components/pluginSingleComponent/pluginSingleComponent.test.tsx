@@ -1,6 +1,6 @@
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { render, screen } from '@testing-library/react';
-import { PluginSingleComponent, type IPluginSingleComponentProps } from './pluginSingleComponent';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { type IPluginSingleComponentProps, PluginSingleComponent } from './pluginSingleComponent';
 
 describe('<PluginSingleComponent /> component', () => {
     const getSlotComponentSpy = jest.spyOn(pluginRegistryUtils, 'getSlotComponent');

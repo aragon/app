@@ -1,21 +1,23 @@
-import * as useDialogContext from '@/shared/components/dialogProvider';
-import { generateDao, generateDialogContext } from '@/shared/testUtils';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import type * as GovUiKit from '@aragon/gov-ui-kit';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { type AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
+import * as useDialogContext from '@/shared/components/dialogProvider';
+import { generateDao, generateDialogContext } from '@/shared/testUtils';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { ApplicationDialogId } from '../../../constants/applicationDialogId';
-import { NavigationWizard, type INavigationWizardProps } from './navigationWizard';
+import { type INavigationWizardProps, NavigationWizard } from './navigationWizard';
 
 jest.mock('@aragon/gov-ui-kit', () => ({
     ...jest.requireActual<typeof GovUiKit>('@aragon/gov-ui-kit'),
-    DaoAvatar: (props: { src: string }) => <div data-testid="dao-avatar-mock" data-src={props.src} />,
+    DaoAvatar: (props: { src: string }) => <div data-src={props.src} data-testid="dao-avatar-mock" />,
     Wallet: (props: { user?: { address: string }; onClick: () => void }) => (
-        <button onClick={props.onClick}>{props.user ? props.user.address : 'connect-mock'}</button>
+        <button onClick={props.onClick} type="button">
+            {props.user ? props.user.address : 'connect-mock'}
+        </button>
     ),
 }));
 

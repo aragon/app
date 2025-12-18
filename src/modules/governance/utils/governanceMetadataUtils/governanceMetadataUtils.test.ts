@@ -28,7 +28,7 @@ describe('governanceMetadata utils', () => {
             });
             const dao = generateDao({ avatar: 'cid123' });
             const ipfsUrl = `https://ipfs.com/ipfs/${dao.avatar!}`;
-            const expectedDaoId = `test-dao-id`;
+            const expectedDaoId = 'test-dao-id';
 
             getProposalBySlugSpy.mockResolvedValue(proposal);
             getDaoSpy.mockResolvedValue(dao);

@@ -1,22 +1,24 @@
-import * as useDialogContext from '@/shared/components/dialogProvider';
-import type * as Navigation from '@/shared/components/navigation';
-import { generateDao, generateDaoPlugin, generateDialogContext } from '@/shared/testUtils';
-import { daoUtils } from '@/shared/utils/daoUtils';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { GukModulesProvider, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import type * as GovUiKit from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
+import * as useDialogContext from '@/shared/components/dialogProvider';
+import type * as Navigation from '@/shared/components/navigation';
+import { generateDao, generateDaoPlugin, generateDialogContext } from '@/shared/testUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { ApplicationDialogId } from '../../../constants/applicationDialogId';
-import { NavigationDao, type INavigationDaoProps } from './navigationDao';
+import { type INavigationDaoProps, NavigationDao } from './navigationDao';
 
 jest.mock('@aragon/gov-ui-kit', () => ({
     ...jest.requireActual<typeof GovUiKit>('@aragon/gov-ui-kit'),
-    DaoAvatar: (props: { src: string }) => <div data-testid="dao-avatar-mock" data-src={props.src} />,
+    DaoAvatar: (props: { src: string }) => <div data-src={props.src} data-testid="dao-avatar-mock" />,
     Wallet: (props: { user?: ICompositeAddress; onClick: () => void }) => (
-        <button onClick={props.onClick}>{props.user ? props.user.address : 'connect-mock'}</button>
+        <button onClick={props.onClick} type="button">
+            {props.user ? props.user.address : 'connect-mock'}
+        </button>
     ),
 }));
 
@@ -24,7 +26,7 @@ jest.mock('@/shared/components/navigation', () => ({
     Navigation: {
         ...jest.requireActual<typeof Navigation>('@/shared/components/navigation').Navigation,
         Trigger: (props: { onClick: () => void; className: string }) => (
-            <button data-testid="nav-trigger-mock" onClick={props.onClick} className={props.className} />
+            <button className={props.className} data-testid="nav-trigger-mock" onClick={props.onClick} type="button" />
         ),
     },
 }));

@@ -1,1 +1,1 @@
-export { useSppGovernanceSettings, type IUseSppGovernanceSettingsParams } from './useSppGovernanceSettings';
+export { type IUseSppGovernanceSettingsParams, useSppGovernanceSettings } from './useSppGovernanceSettings';

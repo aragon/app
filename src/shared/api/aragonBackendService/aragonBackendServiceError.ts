@@ -7,9 +7,9 @@ export class AragonBackendServiceError extends Error {
     static parseErrorCode = 'parseError';
     static parseErrorDescription = 'Error parsing response';
 
-    public readonly code: string;
-    public readonly description: string;
-    public readonly status: number;
+    readonly code: string;
+    readonly description: string;
+    readonly status: number;
 
     constructor(code: string, description: string, status: number) {
         super(description);
@@ -37,7 +37,7 @@ export class AragonBackendServiceError extends Error {
         return new AragonBackendServiceError(
             this.parseErrorCode,
             `${this.parseErrorDescription} (status=${String(response.status)}, url=${response.url})`,
-            response.status,
+            response.status
         );
     };
 

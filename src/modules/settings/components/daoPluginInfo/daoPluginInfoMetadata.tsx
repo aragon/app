@@ -1,5 +1,5 @@
-import type { IResource } from '@/shared/api/daoService';
 import { Link } from '@aragon/gov-ui-kit';
+import type { IResource } from '@/shared/api/daoService';
 
 export interface IDaoPluginInfoMetadataProps {
     /**

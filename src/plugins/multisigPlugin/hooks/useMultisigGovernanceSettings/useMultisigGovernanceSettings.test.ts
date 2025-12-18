@@ -1,12 +1,8 @@
+import { renderHook } from '@testing-library/react';
 import { generateMultisigPluginSettings } from '@/plugins/multisigPlugin/testUtils';
 import { multisigSettingsUtils } from '@/plugins/multisigPlugin/utils/multisigSettingsUtils';
-import {
-    generatePaginatedResponse,
-    generateReactQueryInfiniteResultSuccess,
-    ReactQueryWrapper,
-} from '@/shared/testUtils';
+import { generatePaginatedResponse, generateReactQueryInfiniteResultSuccess, ReactQueryWrapper } from '@/shared/testUtils';
 import { mockTranslations } from '@/test/utils';
-import { renderHook } from '@testing-library/react';
 import * as governanceService from '../../../../modules/governance/api/governanceService';
 import { useMultisigGovernanceSettings } from './useMultisigGovernanceSettings';
 

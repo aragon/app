@@ -11,20 +11,20 @@ import type {
 class PermissionTransactionUtils {
     // Identifiers of rule conditions
     // See https://github.com/aragon/osx-commons/blob/develop/contracts/src/permission/condition/extensions/RuledCondition.sol#L12
-    private ruleConditionId = {
+    private readonly ruleConditionId = {
         condition: 202,
         logicOperation: 203,
     };
 
     // Operations for conditions
     // See https://github.com/aragon/osx-commons/blob/develop/contracts/src/permission/condition/extensions/RuledCondition.sol#L43
-    private ruleConditionOperator = {
+    private readonly ruleConditionOperator = {
         eq: 1,
         or: 10,
     };
 
     // List of generic permission IDs
-    public permissionIds = {
+    permissionIds = {
         rootPermission: 'ROOT_PERMISSION',
         createProposalPermission: 'CREATE_PROPOSAL_PERMISSION',
         executePermission: 'EXECUTE_PERMISSION',
@@ -65,7 +65,7 @@ class PermissionTransactionUtils {
     };
 
     buildExecuteConditionTransactions = (
-        params: IBuildExecuteConditionTransactionsParams,
+        params: IBuildExecuteConditionTransactionsParams
     ): [ITransactionRequest, ITransactionRequest, ITransactionRequest] => {
         const { dao, plugin, executeCondition } = params;
 
@@ -94,9 +94,7 @@ class PermissionTransactionUtils {
         return [revokeExecuteTransaction, grantExecuteTransaction, grantTransaction];
     };
 
-    buildGrantRevokePermissionTransactions = (
-        params: IUpdatePermissionParams,
-    ): [ITransactionRequest, ITransactionRequest] => {
+    buildGrantRevokePermissionTransactions = (params: IUpdatePermissionParams): [ITransactionRequest, ITransactionRequest] => {
         const grantTransaction = this.buildGrantPermissionTransaction(params);
         const revokeTransaction = this.buildRevokePermissionTransaction(params);
 
@@ -128,10 +126,10 @@ class PermissionTransactionUtils {
 
     // Encodes two rules indexes into a uint240 value
     // See https://github.com/aragon/osx-commons/blob/develop/contracts/src/permission/condition/extensions/RuledCondition.sol#L315
-    private encodeLogicalOperator = (firstIndex: number, secondIndex: number) =>
+    private readonly encodeLogicalOperator = (firstIndex: number, secondIndex: number) =>
         BigInt(firstIndex) + (BigInt(secondIndex) << BigInt(32));
 
-    private addressToCondition = (address: string): IRuledCondition => ({
+    private readonly addressToCondition = (address: string): IRuledCondition => ({
         id: this.ruleConditionId.condition,
         op: this.ruleConditionOperator.eq,
         value: address,

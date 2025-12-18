@@ -1,1 +1,1 @@
-export { PageAsideCard, type IPageAsideCardProps } from './pageAsideCard';
+export { type IPageAsideCardProps, PageAsideCard } from './pageAsideCard';

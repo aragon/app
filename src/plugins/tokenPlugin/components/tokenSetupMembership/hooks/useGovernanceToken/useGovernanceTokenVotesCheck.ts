@@ -1,6 +1,6 @@
-import type { IUseTokenParams } from '@/shared/hooks/useToken';
 import type { Hash } from 'viem';
 import { useReadContracts } from 'wagmi';
+import type { IUseTokenParams } from '@/shared/hooks/useToken';
 
 // Address used for testing vote functions
 const testAddress = '0x0000000000000000000000000000000000000001' as Hash;

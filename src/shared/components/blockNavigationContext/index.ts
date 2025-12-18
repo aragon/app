@@ -1,6 +1,6 @@
 export {
     BlockNavigationContextProvider,
-    useBlockNavigationContext,
     type IBlockNavigationContext,
     type IBlockNavigationContextProviderProps,
+    useBlockNavigationContext,
 } from './blockNavigationContext';

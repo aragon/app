@@ -1,5 +1,5 @@
-import { testLogger } from '@/test/utils';
 import { act, render, renderHook, screen } from '@testing-library/react';
+import { testLogger } from '@/test/utils';
 import { DialogProvider, type IDialogProviderProps, useDialogContext } from './dialogProvider';
 
 describe('<DialogProvider /> component', () => {

@@ -1,1 +1,1 @@
-export { ProposalListStats, type IProposalListStatsProps } from './proposalListStats';
+export { type IProposalListStatsProps, ProposalListStats } from './proposalListStats';

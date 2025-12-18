@@ -1,7 +1,7 @@
-import { PluginContractName } from '@/shared/api/daoService/domain/enum';
-import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { keccak256, toBytes, toFunctionSelector } from 'viem';
+import { PluginContractName } from '@/shared/api/daoService/domain/enum';
+import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { GaugeRegistrarRegisterGaugeActionCreate } from './components/gaugeRegistrarRegisterGaugeActionCreate';
 import { GaugeRegistrarRegisterGaugeActionDetails } from './components/gaugeRegistrarRegisterGaugeActionDetails';
 import { GaugeRegistrarUnregisterGaugeActionCreate } from './components/gaugeRegistrarUnregisterGaugeActionCreate';

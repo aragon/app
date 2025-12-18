@@ -1,7 +1,7 @@
+import { useCallback } from 'react';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { useCallback } from 'react';
 import { useConnectedWalletGuard } from '../../../application/hooks/useConnectedWalletGuard';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { IExecuteCheckDialogParams } from '../../dialogs/executeCheckDialog';
@@ -47,7 +47,7 @@ export const useProposalExecuteGuard = (params: IUseProposalExecuteGuardParams) 
             };
             open(GovernanceDialogId.EXECUTE_CHECK, { params: dialogParams });
         },
-        [dao, onError, onSuccess, open, plugin],
+        [dao, onError, onSuccess, open, plugin]
     );
 
     const { check: checkWalletConnected, result: isConnected } = useConnectedWalletGuard({
@@ -68,7 +68,7 @@ export const useProposalExecuteGuard = (params: IUseProposalExecuteGuardParams) 
                 });
             }
         },
-        [isConnected, params.onError, checkUserPermission, checkWalletConnected],
+        [isConnected, params.onError, checkUserPermission, checkWalletConnected]
     );
 
     return { check };

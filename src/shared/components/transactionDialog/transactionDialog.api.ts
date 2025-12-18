@@ -1,10 +1,10 @@
+import type { ReactNode } from 'react';
+import type { TransactionReceipt } from 'viem';
 import type { Network } from '@/shared/api/daoService';
 import type { TransactionType } from '@/shared/api/transactionService';
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
-import type { ReactNode } from 'react';
-import type { TransactionReceipt } from 'viem';
 import type { ITransactionInfo, ITransactionStatusStepMeta } from '../transactionStatus';
 
 export interface IBuildTransactionDialogSuccessLinkHref {
@@ -85,7 +85,7 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
     /**
      * Custom steps needed for the transaction.
      */
-    customSteps?: Array<ITransactionDialogStep<TCustomStepId>>;
+    customSteps?: ITransactionDialogStep<TCustomStepId>[];
     /**
      * Information about the stepper in the current transaction dialog.
      */

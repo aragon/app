@@ -1,6 +1,6 @@
+import { useWatch } from 'react-hook-form';
 import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useWatch } from 'react-hook-form';
 import type { ITokenSetupGovernanceForm } from '../../tokenSetupGovernance.api';
 
 export interface ISupportThresholdFieldProps {
@@ -36,20 +36,20 @@ export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (pro
 
     return (
         <NumberProgressInput
-            fieldName={fieldName}
-            label={t('app.plugins.token.tokenSetupGovernance.supportThreshold.label')}
-            helpText={t('app.plugins.token.tokenSetupGovernance.supportThreshold.helpText')}
-            valueLabel={`> ${value.toString()} %`}
-            min={1}
-            total={99}
-            prefix=">"
-            suffix="%"
             alert={alert}
             defaultValue={defaultSupportThreshold}
+            fieldName={fieldName}
+            helpText={t('app.plugins.token.tokenSetupGovernance.supportThreshold.helpText')}
+            label={t('app.plugins.token.tokenSetupGovernance.supportThreshold.label')}
+            min={1}
+            prefix=">"
+            suffix="%"
             tags={[
                 { label: t('app.plugins.token.tokenSetupGovernance.supportThreshold.tag.yes'), variant: 'primary' },
                 { label: t('app.plugins.token.tokenSetupGovernance.supportThreshold.tag.no'), variant: 'neutral' },
             ]}
+            total={99}
+            valueLabel={`> ${value.toString()} %`}
         />
     );
 };

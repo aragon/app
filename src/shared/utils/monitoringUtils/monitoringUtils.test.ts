@@ -8,7 +8,6 @@ describe('monitoring utils', () => {
     });
 
     describe('getBaseConfig', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const isEnabledSpy = jest.spyOn(monitoringUtils as any, 'isEnabled');
 
         afterEach(() => {
@@ -42,7 +41,7 @@ describe('monitoring utils', () => {
             { env: 'unknown', result: false },
         ])('returns $result for $env environment', ({ env, result }) => {
             process.env.NEXT_PUBLIC_ENV = env;
-            expect(monitoringUtils['isEnabled']()).toEqual(result);
+            expect(monitoringUtils.isEnabled()).toEqual(result);
         });
     });
 });

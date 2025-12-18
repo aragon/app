@@ -1,5 +1,5 @@
-import { ReactQueryWrapper, generateDaoPermission, generatePaginatedResponse } from '@/shared/testUtils';
 import { renderHook, waitFor } from '@testing-library/react';
+import { generateDaoPermission, generatePaginatedResponse, ReactQueryWrapper } from '@/shared/testUtils';
 import { daoService } from '../../daoService';
 import { Network } from '../../domain';
 import { useDaoPermissions } from './useDaoPermissions';

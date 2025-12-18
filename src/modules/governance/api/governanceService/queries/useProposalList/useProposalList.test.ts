@@ -1,6 +1,6 @@
-import { generateProposal } from '@/modules/governance/testUtils';
-import { ReactQueryWrapper, generatePaginatedResponse } from '@/shared/testUtils';
 import { renderHook, waitFor } from '@testing-library/react';
+import { generateProposal } from '@/modules/governance/testUtils';
+import { generatePaginatedResponse, ReactQueryWrapper } from '@/shared/testUtils';
 import { governanceService } from '../../governanceService';
 import { useProposalList } from './useProposalList';
 

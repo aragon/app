@@ -1,6 +1,6 @@
+import { renderHook, waitFor } from '@testing-library/react';
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
-import { renderHook, waitFor } from '@testing-library/react';
 import { settingsService } from '../../settingsService';
 import { usePluginInstallationData } from './usePluginInstallationData';
 

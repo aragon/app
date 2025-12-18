@@ -37,21 +37,21 @@ export const BoundlessActionItem: React.FC<IBoundlessActionItemProps> = (props) 
 
     return (
         <Link
-            href={href}
-            target={isExternal ? '_blank' : '_self'}
             className={classNames(
                 'group relative flex h-40 w-80 items-center justify-between overflow-hidden rounded-lg p-4 transition-all md:w-[400px] md:p-6',
-                className,
+                className
             )}
+            href={href}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
+            target={isExternal ? '_blank' : '_self'}
         >
-            <Image src={BackgroundImage} alt="" fill={true} className="absolute inset-0 -z-20 object-cover" />
+            <Image alt="" className="absolute inset-0 -z-20 object-cover" fill={true} src={BackgroundImage} />
             <div className="relative z-10 flex size-full flex-col justify-between transition-all duration-300 md:justify-center md:group-hover:justify-between">
-                <BoundlessActionText title={title} description={description} isHovered={isHovered} />
+                <BoundlessActionText description={description} isHovered={isHovered} title={title} />
                 <BoundlessActionAvatarIcon isHovered={isHovered} />
             </div>
-            <BoundlessActionImage image={image} alt={title} isHovered={isHovered} />
+            <BoundlessActionImage alt={title} image={image} isHovered={isHovered} />
         </Link>
     );
 };

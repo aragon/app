@@ -1,13 +1,13 @@
-import { useFormField } from '@/shared/hooks/useFormField';
-import { sanitizePlainText } from '@/shared/security';
-import type { IDateFixed } from '@/shared/utils/dateUtils';
-import { dateUtils } from '@/shared/utils/dateUtils/dateUtils';
-import { timeUtils } from '@/shared/utils/timeUtils/timeUtils';
 import { Card, InputDate, InputText, InputTime } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import type { ComponentProps } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useFormField } from '@/shared/hooks/useFormField';
+import { sanitizePlainText } from '@/shared/security';
+import type { IDateFixed } from '@/shared/utils/dateUtils';
+import { dateUtils } from '@/shared/utils/dateUtils/dateUtils';
+import { timeUtils } from '@/shared/utils/timeUtils/timeUtils';
 import { useTranslations } from '../../translationsProvider';
 import type { IAdvancedDateInputBaseProps } from './advancedDateInput.api';
 import { AdvancedDateInputInfoText } from './advancedDateInputInfoText';
@@ -15,8 +15,7 @@ import { AdvancedDateInputInfoText } from './advancedDateInputInfoText';
 export interface IAdvancedDateInputFixedProps extends IAdvancedDateInputBaseProps, ComponentProps<'div'> {}
 
 export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (props) => {
-    const { field, label, infoText, minDuration, minTime, validateMinDuration, className, infoDisplay, ...otherProps } =
-        props;
+    const { field, label, infoText, minDuration, minTime, validateMinDuration, className, infoDisplay, ...otherProps } = props;
     const { t } = useTranslations();
 
     const { setValue, trigger } = useFormContext();
@@ -43,31 +42,31 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
     const handleInputBlur = () => trigger(field);
 
     return (
-        <Card className={classNames('shadow-neutral-sm flex flex-col gap-4 p-6', className)} {...otherProps}>
+        <Card className={classNames('flex flex-col gap-4 p-6 shadow-neutral-sm', className)} {...otherProps}>
             <div className="flex flex-col justify-between gap-4 md:flex-row">
                 <InputDate
+                    className="w-full md:w-1/3"
                     label={t('app.shared.advancedDateInput.fixed.date')}
                     min={DateTime.now().toFormat('yyyy-MM-dd')}
-                    className="w-full md:w-1/3"
-                    value={fixedDateField.value.date}
-                    onChange={handleFixedDateTimeChange('date')}
                     onBlur={handleInputBlur}
+                    onChange={handleFixedDateTimeChange('date')}
+                    value={fixedDateField.value.date}
                 />
                 <InputTime
-                    label={t('app.shared.advancedDateInput.fixed.time')}
                     className="w-full md:w-1/3"
-                    value={fixedDateField.value.time}
-                    onChange={handleFixedDateTimeChange('time')}
+                    label={t('app.shared.advancedDateInput.fixed.time')}
                     onBlur={handleInputBlur}
+                    onChange={handleFixedDateTimeChange('time')}
+                    value={fixedDateField.value.time}
                 />
                 <InputText
                     className="w-full md:w-1/3"
+                    disabled={true}
                     label={t('app.shared.advancedDateInput.timezone')}
                     placeholder="UTC +2"
-                    disabled={true}
                 />
             </div>
-            <AdvancedDateInputInfoText field={fixedDateField} infoText={infoText} infoDisplay={infoDisplay} />
+            <AdvancedDateInputInfoText field={fixedDateField} infoDisplay={infoDisplay} infoText={infoText} />
         </Card>
     );
 };

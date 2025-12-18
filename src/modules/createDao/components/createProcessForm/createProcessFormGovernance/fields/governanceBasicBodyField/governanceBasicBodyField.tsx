@@ -1,11 +1,11 @@
+import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
+import { useEffect } from 'react';
+import { useWatch } from 'react-hook-form';
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import type { ISetupBodyDialogParams, ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
-import { useWatch } from 'react-hook-form';
 import type { ICreateProcessFormData } from '../../../createProcessFormDefinitions';
 import { GovernanceBodyField } from '../governanceBodyField';
 
@@ -67,29 +67,29 @@ export const GovernanceBasicBodyField: React.FC<IGovernanceBasicBodyFieldProps> 
 
     return (
         <InputContainer
-            id="basicBody"
             helpText={t('app.createDao.createProcessForm.governance.basicBodyField.helpText')}
+            id="basicBody"
             useCustomWrapper={true}
             {...bodyField}
         >
             {body != null && (
                 <GovernanceBodyField
+                    body={body}
                     daoId={daoId}
                     fieldName="body"
-                    body={body}
-                    onEdit={openSetupDialog}
                     onDelete={handleDelete}
+                    onEdit={openSetupDialog}
                     readOnly={readOnly}
                 />
             )}
             {body == null && !readOnly && (
                 <Button
-                    size="md"
-                    variant="tertiary"
                     className="w-fit"
                     iconLeft={IconType.PLUS}
                     onClick={() => openSetupDialog()}
+                    size="md"
                     type="button"
+                    variant="tertiary"
                 >
                     {t('app.createDao.createProcessForm.governance.basicBodyField.action.add')}
                 </Button>

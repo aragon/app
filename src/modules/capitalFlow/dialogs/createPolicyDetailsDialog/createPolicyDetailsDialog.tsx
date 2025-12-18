@@ -1,7 +1,7 @@
+import { invariant } from '@aragon/gov-ui-kit';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { type IWizardDetailsDialogStep, WizardDetailsDialog } from '@/shared/components/wizardDetailsDialog';
-import { invariant } from '@aragon/gov-ui-kit';
 
 export interface ICreatePolicyDetailsDialogParams {
     /**
@@ -33,13 +33,13 @@ export const CreatePolicyDetailsDialog: React.FC<ICreatePolicyDetailsDialogProps
 
     return (
         <WizardDetailsDialog
-            title={t('app.capitalFlow.createPolicyDetailsDialog.title')}
-            description={t('app.capitalFlow.createPolicyDetailsDialog.description')}
-            steps={steps}
             actionLabel={t('app.capitalFlow.createPolicyDetailsDialog.actionLabel')}
-            onActionClick={onActionClick}
-            wizardLink={undefined}
+            description={t('app.capitalFlow.createPolicyDetailsDialog.description')}
             dialogId={id}
+            onActionClick={onActionClick}
+            steps={steps}
+            title={t('app.capitalFlow.createPolicyDetailsDialog.title')}
+            wizardLink={undefined}
         />
     );
 };

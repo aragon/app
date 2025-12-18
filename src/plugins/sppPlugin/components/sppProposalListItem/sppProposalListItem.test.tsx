@@ -1,6 +1,6 @@
-import { generateDao } from '@/shared/testUtils';
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import { generateDao } from '@/shared/testUtils';
 import { generateSppPluginSettings, generateSppProposal, generateSppStage } from '../../testUtils';
 import { sppProposalUtils } from '../../utils/sppProposalUtils';
 import { type ISppProposalListItemProps, SppProposalListItem } from './sppProposalListItem';

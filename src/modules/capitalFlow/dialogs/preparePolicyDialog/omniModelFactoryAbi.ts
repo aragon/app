@@ -16,17 +16,13 @@ export const omniModelFactoryAbi = [
     {
         type: 'event',
         name: 'AddressGaugeRatioModelDeployed',
-        inputs: [
-            { name: 'newContract', type: 'address', indexed: false, internalType: 'contract AddressGaugeRatioModel' },
-        ],
+        inputs: [{ name: 'newContract', type: 'address', indexed: false, internalType: 'contract AddressGaugeRatioModel' }],
         anonymous: false,
     },
     {
         type: 'event',
         name: 'TokenGaugeRatioModelDeployed',
-        inputs: [
-            { name: 'newContract', type: 'address', indexed: false, internalType: 'contract TokenGaugeRatioModel' },
-        ],
+        inputs: [{ name: 'newContract', type: 'address', indexed: false, internalType: 'contract TokenGaugeRatioModel' }],
         anonymous: false,
     },
 ] as const;

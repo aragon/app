@@ -3,7 +3,7 @@ import type { IMemberLock } from './domain';
 import type { IGetMemberLocksParams } from './tokenService.api';
 
 class TokenService extends AragonBackendService {
-    private urls = {
+    private readonly urls = {
         memberLocks: '/v2/members/:address/locks',
     };
 

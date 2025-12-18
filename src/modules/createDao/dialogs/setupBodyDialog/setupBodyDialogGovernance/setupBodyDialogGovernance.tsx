@@ -1,6 +1,6 @@
+import { useWatch } from 'react-hook-form';
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
-import { useWatch } from 'react-hook-form';
 import type { ISetupBodyForm, ISetupBodyFormNew } from '../setupBodyDialogDefinitions';
 
 export interface ISetupBodyDialogGovernanceProps {
@@ -19,12 +19,12 @@ export const SetupBodyDialogGovernance: React.FC<ISetupBodyDialogGovernanceProps
 
     return (
         <PluginSingleComponent
-            slotId={CreateDaoSlotId.CREATE_DAO_SETUP_GOVERNANCE}
-            pluginId={selectedPlugin}
             formPrefix="governance"
             isSubPlugin={isSubPlugin}
-            showProposalCreationSettings={false}
             membershipSettings={membershipSettings}
+            pluginId={selectedPlugin}
+            showProposalCreationSettings={false}
+            slotId={CreateDaoSlotId.CREATE_DAO_SETUP_GOVERNANCE}
         />
     );
 };

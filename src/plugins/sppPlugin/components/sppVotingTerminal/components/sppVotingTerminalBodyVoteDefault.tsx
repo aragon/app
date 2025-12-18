@@ -1,13 +1,13 @@
-import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
-import { SppPluginDialogId } from '@/plugins/sppPlugin/constants/sppPluginDialogId';
-import { type ISppReportProposalResultDialogParams } from '@/plugins/sppPlugin/dialogs/sppReportProposalResultDialog';
-import { type ISppProposal, type ISppStage } from '@/plugins/sppPlugin/types';
-import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
-import { useDialogContext } from '@/shared/components/dialogProvider';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, Button, IconType } from '@aragon/gov-ui-kit';
 import { useEffect, useRef } from 'react';
 import { useAccount } from 'wagmi';
+import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
+import { SppPluginDialogId } from '@/plugins/sppPlugin/constants/sppPluginDialogId';
+import type { ISppReportProposalResultDialogParams } from '@/plugins/sppPlugin/dialogs/sppReportProposalResultDialog';
+import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
+import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
+import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface ISppVotingTerminalBodyVoteDefaultProps {
     /**
@@ -67,16 +67,16 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
     return (
         <div className="flex w-full flex-col gap-3">
             <Button
+                className="w-full md:w-fit"
+                iconLeft={voted ? IconType.CHECKMARK : undefined}
                 onClick={voted ? undefined : handleVoteClick}
                 size="md"
-                iconLeft={voted ? IconType.CHECKMARK : undefined}
                 variant={voted ? 'secondary' : 'primary'}
-                className="w-full md:w-fit"
             >
                 {t(`app.plugins.spp.sppVotingTerminalBodyVoteDefault.${voteLabel}`)}
             </Button>
             {!voted && (
-                <p className="text-center text-sm leading-normal font-normal text-neutral-500 md:text-left">
+                <p className="text-center font-normal text-neutral-500 text-sm leading-normal md:text-left">
                     {t('app.plugins.spp.sppVotingTerminalBodyVoteDefault.helpText')}
                 </p>
             )}

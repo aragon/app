@@ -1,16 +1,15 @@
-import { useMember, type IMember } from '@/modules/governance/api/governanceService';
-import type { IUsePluginMemberStatsParams } from '@/modules/governance/types';
-import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
+import { type IMember, useMember } from '@/modules/governance/api/governanceService';
+import type { IUsePluginMemberStatsParams } from '@/modules/governance/types';
+import type { IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
 import { useWrappedTokenBalance } from '../useWrappedTokenBalance';
 
 export interface IUseTokenMemberStatsParams extends IUsePluginMemberStatsParams<ITokenPluginSettings> {}
 
-const isTokenMember = (member?: IMember): member is ITokenMember =>
-    member != null && 'votingPower' in member && member.votingPower != null;
+const isTokenMember = (member?: IMember): member is ITokenMember => member != null && 'votingPower' in member && member.votingPower != null;
 
 export const useTokenMemberStats = (params: IUseTokenMemberStatsParams): IPageHeaderStat[] => {
     const { address, daoId, plugin } = params;

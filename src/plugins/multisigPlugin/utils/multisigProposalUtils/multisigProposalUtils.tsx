@@ -1,6 +1,6 @@
+import type { ProposalStatus } from '@aragon/gov-ui-kit';
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
-import { type ProposalStatus } from '@aragon/gov-ui-kit';
-import { type IMultisigProposal } from '../../types';
+import type { IMultisigProposal } from '../../types';
 
 class MultisigProposalUtils {
     getProposalStatus = (proposal: IMultisigProposal): ProposalStatus => {

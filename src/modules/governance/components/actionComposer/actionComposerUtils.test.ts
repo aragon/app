@@ -1,6 +1,6 @@
+import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { generateDao } from '@/shared/testUtils';
 import { mockTranslations } from '@/test/utils';
-import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { ProposalActionType } from '../../api/governanceService';
 import { generateSmartContractAbi } from '../../testUtils';
 import type { IActionComposerInputItem } from './actionComposerInput';

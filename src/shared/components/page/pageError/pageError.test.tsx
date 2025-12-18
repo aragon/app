@@ -1,5 +1,5 @@
-import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { render, screen } from '@testing-library/react';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { type IPageErrorProps, PageError } from './pageError';
 
 describe('<Page.Error /> component', () => {

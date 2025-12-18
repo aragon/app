@@ -1,9 +1,9 @@
 'use client';
 
+import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { TokenLockList } from '../../components/tokenMemberPanel/tokenLock';
 import type { ITokenPluginSettings } from '../../types';
 
@@ -33,10 +33,10 @@ export const TokenLocksDialog: React.FC<ITokenLocksDialogProps> = (props) => {
 
     return (
         <>
-            <Dialog.Header title={t('app.plugins.token.tokenLocksDialog.title')} onClose={close} />
+            <Dialog.Header onClose={close} title={t('app.plugins.token.tokenLocksDialog.title')} />
             <Dialog.Content
-                description={t('app.plugins.token.tokenLocksDialog.description', { symbol: token.symbol })}
                 className="pb-4 md:pb-6"
+                description={t('app.plugins.token.tokenLocksDialog.description', { symbol: token.symbol })}
             >
                 <TokenLockList dao={dao} plugin={plugin} />
             </Dialog.Content>

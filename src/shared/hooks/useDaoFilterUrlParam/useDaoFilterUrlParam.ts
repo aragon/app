@@ -1,8 +1,8 @@
+import { useCallback, useMemo } from 'react';
 import { useDao } from '@/shared/api/daoService';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useCallback, useMemo } from 'react';
-import { useFilterUrlParam, type IUseFilterUrlParamParams } from '../useFilterUrlParam';
+import { type IUseFilterUrlParamParams, useFilterUrlParam } from '../useFilterUrlParam';
 
 export interface IDaoFilterOption {
     /**
@@ -69,7 +69,7 @@ export const useDaoFilterUrlParam = (params: IUseDaoFilterUrlParamParams): IUseD
 
     const options = useMemo<IDaoFilterOption[] | undefined>(() => {
         if (!dao) {
-            return undefined;
+            return;
         }
 
         const result: IDaoFilterOption[] = [];
@@ -116,10 +116,7 @@ export const useDaoFilterUrlParam = (params: IUseDaoFilterUrlParamParams): IUseD
     const validValues = options?.map((option) => option.id);
     const [activeFilter, setActiveFilter] = useFilterUrlParam({ name, fallbackValue, enableUrlUpdate, validValues });
 
-    const activeOption = useMemo(
-        () => options?.find((option) => option.id === activeFilter) ?? options?.[0],
-        [options, activeFilter],
-    );
+    const activeOption = useMemo(() => options?.find((option) => option.id === activeFilter) ?? options?.[0], [options, activeFilter]);
 
     const setActiveOption = useCallback((option: IDaoFilterOption) => setActiveFilter(option.id), [setActiveFilter]);
 

@@ -1,3 +1,4 @@
+import { Button } from '@aragon/gov-ui-kit';
 import { SettingsDialogId } from '@/modules/settings/constants/settingsDialogId';
 import type { IGovernanceProcessRequiredDialogParams } from '@/modules/settings/dialogs/governanceProcessRequiredDialog';
 import type { IUninstallPluginAlertDialogParams } from '@/modules/settings/dialogs/uninstallPluginAlertDialog';
@@ -6,7 +7,6 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
-import { Button } from '@aragon/gov-ui-kit';
 
 export interface IAdminUninstallPluginProps {
     /**
@@ -36,7 +36,7 @@ export const AdminUninstallPlugin: React.FC<IAdminUninstallPluginProps> = (props
     };
 
     return (
-        <Button size="md" variant="critical" onClick={() => handleOpenDialog()}>
+        <Button onClick={() => handleOpenDialog()} size="md" variant="critical">
             {t('app.plugins.admin.adminUninstallPlugin.label')}
         </Button>
     );

@@ -1,17 +1,17 @@
-import { daoService, Network } from '@/shared/api/daoService';
-import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import { daoService, Network } from '@/shared/api/daoService';
+import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { memberOptions } from '../../api/governanceService';
 import { DaoMemberDetailsPage, type IDaoMemberDetailsPageProps } from './daoMemberDetailsPage';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
-        <div data-testid="hydration-mock" data-state={JSON.stringify(props.state)}>
+        <div data-state={JSON.stringify(props.state)} data-testid="hydration-mock">
             {props.children}
         </div>
     ),

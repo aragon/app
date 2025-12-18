@@ -1,6 +1,6 @@
+import type { Hex } from 'viem';
 import { Network } from '@/shared/api/daoService';
 import { generatePaginatedResponse } from '@/shared/testUtils';
-import type { Hex } from 'viem';
 import { generateGauge } from '../../testUtils/generators';
 import { gaugeVoterService } from './gaugeVoterService';
 

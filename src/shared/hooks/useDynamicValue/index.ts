@@ -1,1 +1,1 @@
-export { useDynamicValue, type IUseDynamicValueParams } from './useDynamicValue';
+export { type IUseDynamicValueParams, useDynamicValue } from './useDynamicValue';

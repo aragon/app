@@ -1,10 +1,10 @@
-import * as useDialogContext from '@/shared/components/dialogProvider';
-import { generateDialogContext } from '@/shared/testUtils';
 import type * as GovUiKit from '@aragon/gov-ui-kit';
 import { addressUtils, clipboardUtils, GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as wagmi from 'wagmi';
+import * as useDialogContext from '@/shared/components/dialogProvider';
+import { generateDialogContext } from '@/shared/testUtils';
 import { type IUserDialogProps, UserDialog } from './userDialog';
 
 jest.mock('@aragon/gov-ui-kit', () => ({

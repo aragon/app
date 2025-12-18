@@ -20,9 +20,9 @@ export const CreateProposalFormSettings: React.FC<ICreateProposalFormSettingsPro
 
     return (
         <PluginSingleComponent
-            slotId={GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM}
-            pluginId={daoPlugin.id}
             plugin={daoPlugin.meta}
+            pluginId={daoPlugin.id}
+            slotId={GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM}
         />
     );
 };

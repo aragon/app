@@ -1,11 +1,11 @@
 'use client';
 
-import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
-import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { parseUnits } from 'viem';
+import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
+import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useLockToVoteData } from '../../hooks/useLockToVoteData';
 import type { ILockToVotePlugin } from '../../types';
 
@@ -24,8 +24,7 @@ export interface ILockToVoteLockBeforeVoteDialogParams {
     onVoteClick: (lockAmount?: bigint) => void;
 }
 
-export interface ILockToVoteLockBeforeVoteDialogProps
-    extends IDialogComponentProps<ILockToVoteLockBeforeVoteDialogParams> {}
+export interface ILockToVoteLockBeforeVoteDialogProps extends IDialogComponentProps<ILockToVoteLockBeforeVoteDialogParams> {}
 
 export const LockToVoteLockBeforeVoteDialog: React.FC<ILockToVoteLockBeforeVoteDialogProps> = (props) => {
     const { location } = props;
@@ -57,17 +56,15 @@ export const LockToVoteLockBeforeVoteDialog: React.FC<ILockToVoteLockBeforeVoteD
 
     return (
         <FormProvider {...formValues}>
-            <Dialog.Header title={t('app.plugins.lockToVote.lockToVoteLockBeforeVoteDialog.title')} onClose={close} />
+            <Dialog.Header onClose={close} title={t('app.plugins.lockToVote.lockToVoteLockBeforeVoteDialog.title')} />
             <Dialog.Content className="flex flex-col gap-4 pt-4 pb-6">
                 <AssetInput
                     disableAssetField={true}
-                    hideMax={true}
                     hideAmountLabel={true}
+                    hideMax={true}
                     percentageSelection={{ totalBalance: balance, tokenDecimals: token.decimals }}
                 />
-                <p className="text-sm font-normal text-neutral-500">
-                    {t('app.plugins.lockToVote.lockToVoteLockBeforeVoteDialog.info')}
-                </p>
+                <p className="font-normal text-neutral-500 text-sm">{t('app.plugins.lockToVote.lockToVoteLockBeforeVoteDialog.info')}</p>
             </Dialog.Content>
             <Dialog.Footer primaryAction={primaryAction} secondaryAction={secondaryAction} />
         </FormProvider>

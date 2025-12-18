@@ -1,5 +1,5 @@
-import * as useApplicationVersion from '@/shared/hooks/useApplicationVersion';
 import { render, screen } from '@testing-library/react';
+import * as useApplicationVersion from '@/shared/hooks/useApplicationVersion';
 import { Footer, type IFooterProps } from './footer';
 import { footerLinks } from './footerLinks';
 

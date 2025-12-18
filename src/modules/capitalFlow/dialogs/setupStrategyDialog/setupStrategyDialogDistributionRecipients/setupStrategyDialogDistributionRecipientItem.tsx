@@ -1,12 +1,4 @@
-import {
-    AddressInput,
-    addressUtils,
-    Button,
-    Card,
-    IconType,
-    InputNumber,
-    type IAddressInputResolvedValue,
-} from '@aragon/gov-ui-kit';
+import { AddressInput, addressUtils, Button, Card, type IAddressInputResolvedValue, IconType, InputNumber } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useTranslations } from '../../../../../shared/components/translationsProvider';
 import { networkDefinitions } from '../../../../../shared/constants/networkDefinitions';
@@ -33,9 +25,7 @@ export interface ISetupStrategyDialogDistributionRecipientItemProps {
     fieldPrefix: string;
 }
 
-export const SetupStrategyDialogDistributionRecipientItem: React.FC<
-    ISetupStrategyDialogDistributionRecipientItemProps
-> = (props) => {
+export const SetupStrategyDialogDistributionRecipientItem: React.FC<ISetupStrategyDialogDistributionRecipientItemProps> = (props) => {
     const { onRemove, daoId, fieldPrefix, canRemove } = props;
 
     const { t } = useTranslations();
@@ -74,37 +64,31 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<
     };
 
     return (
-        <Card className="shadow-neutral-sm flex flex-col gap-4 border border-neutral-100 p-4 md:flex-row md:items-start md:gap-3">
+        <Card className="flex flex-col gap-4 border border-neutral-100 p-4 shadow-neutral-sm md:flex-row md:items-start md:gap-3">
             <div className="flex-1">
                 <AddressInput
-                    value={addressInput}
-                    onChange={setAddressInput}
-                    onAccept={handleAddressAccept}
-                    placeholder={t('app.shared.addressesInput.item.input.placeholder')}
                     chainId={chainId}
+                    onAccept={handleAddressAccept}
+                    onChange={setAddressInput}
+                    placeholder={t('app.shared.addressesInput.item.input.placeholder')}
+                    value={addressInput}
                     {...addressField}
                 />
             </div>
 
             <div className="flex-1">
                 <InputNumber
-                    min={0}
+                    alert={ratioField.alert}
                     max={100}
+                    min={0}
+                    onChange={(value) => ratioField.onChange(Number(value))}
                     suffix="%"
                     value={ratioField.value.toString()}
-                    onChange={(value) => ratioField.onChange(Number(value))}
-                    alert={ratioField.alert}
                 />
             </div>
 
             <div className="flex h-full items-start pt-1">
-                <Button
-                    iconLeft={IconType.CLOSE}
-                    onClick={onRemove}
-                    variant="tertiary"
-                    size="md"
-                    disabled={!canRemove}
-                />
+                <Button disabled={!canRemove} iconLeft={IconType.CLOSE} onClick={onRemove} size="md" variant="tertiary" />
             </div>
         </Card>
     );

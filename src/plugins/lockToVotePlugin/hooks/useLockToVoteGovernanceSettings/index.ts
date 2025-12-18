@@ -1,4 +1,4 @@
 export {
-    useLockToVoteGovernanceSettings,
     type IUseLockToVoteGovernanceSettingsParams,
+    useLockToVoteGovernanceSettings,
 } from './useLockToVoteGovernanceSettings';

@@ -1,12 +1,12 @@
+import { addressUtils, type IDefinitionSetting, ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
+import type { Hex } from 'viem';
+import { useAccount, useEnsName } from 'wagmi';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { addressUtils, type IDefinitionSetting, ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
-import type { Hex } from 'viem';
-import { useAccount, useEnsName } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { VoteList } from '../voteList';
@@ -55,26 +55,26 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
     const pluginName = pluginEnsName ?? addressUtils.truncateAddress(proposal.pluginAddress);
 
     return (
-        <ProposalVoting.Container status={status} endDate={proposal.endDate * 1000}>
+        <ProposalVoting.Container endDate={proposal.endDate * 1000} status={status}>
             <ProposalVoting.BodyContent name={pluginName} status={status}>
                 <PluginSingleComponent
-                    slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
                     pluginId={proposal.pluginInterfaceType}
                     proposal={proposal}
+                    slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
                 >
                     {status === ProposalStatus.ACTIVE && (
                         <div className="pt-6 md:pt-8">
                             <PluginSingleComponent
-                                slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
+                                daoId={daoId}
                                 pluginId={proposal.pluginInterfaceType}
                                 proposal={proposal}
-                                daoId={daoId}
+                                slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
                             />
                         </div>
                     )}
                 </PluginSingleComponent>
                 <ProposalVoting.Votes>
-                    <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={proposal.pluginAddress} />
+                    <VoteList daoId={daoId} initialParams={voteListParams} pluginAddress={proposal.pluginAddress} />
                 </ProposalVoting.Votes>
                 <ProposalVoting.Details settings={proposalSettings} />
             </ProposalVoting.BodyContent>

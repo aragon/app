@@ -1,5 +1,5 @@
-import type { Network } from '@/shared/api/daoService';
 import { fromHex, isHex } from 'viem';
+import type { Network } from '@/shared/api/daoService';
 import type { IProposalAction } from '../../api/governanceService';
 import type { useDecodeTransaction } from '../../api/smartContractService';
 import type { ISessionRequest, ISessionRequestParams } from '../../api/walletConnectService';
@@ -36,7 +36,7 @@ class WalletConnectActionDialogUtils {
 
         // Only sendTransaction session requests are currently supported
         if (request.method !== 'eth_sendTransaction') {
-            return undefined;
+            return;
         }
 
         const rawAction = this.requestParamsToRawAction(request.params as ISessionRequestParams[typeof request.method]);
@@ -50,7 +50,7 @@ class WalletConnectActionDialogUtils {
         }
     };
 
-    private requestParamsToRawAction = (params: ISessionRequestParams['eth_sendTransaction']): IProposalAction => {
+    private readonly requestParamsToRawAction = (params: ISessionRequestParams['eth_sendTransaction']): IProposalAction => {
         const { from, to, data, value } = params[0];
         const parsedValue = this.parseRequestValue(value);
 
@@ -58,9 +58,9 @@ class WalletConnectActionDialogUtils {
     };
 
     // Request value might be set as hex instead of number
-    private parseRequestValue = (value = '0') => (isHex(value) ? fromHex(value, 'bigint').toString() : value);
+    private readonly parseRequestValue = (value = '0') => (isHex(value) ? fromHex(value, 'bigint').toString() : value);
 
-    private decodeRawAction = async (params: IDecodeRawActionParams) => {
+    private readonly decodeRawAction = async (params: IDecodeRawActionParams) => {
         const { daoNetwork, decodeTransactionAsync, rawAction } = params;
 
         const { type, inputData, to, ...body } = rawAction;

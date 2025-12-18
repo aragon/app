@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { PageMain, type IPageMainProps } from './pageMain';
+import { type IPageMainProps, PageMain } from './pageMain';
 
 describe('<Page.Main /> component', () => {
     const createTestComponent = (props?: Partial<IPageMainProps>) => {

@@ -1,7 +1,7 @@
-import { useDialogContext } from '@/shared/components/dialogProvider';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { Avatar, Dialog, Heading, IconType, Link, Spinner } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
+import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IProposalAction } from '../../api/governanceService';
 import type { IAppMetadata } from '../../api/walletConnectService';
 
@@ -55,18 +55,18 @@ export const WalletConnectActionDialogListener: React.FC<IWalletConnectActionDia
         <>
             <Dialog.Content className="flex flex-col gap-4 py-4 md:gap-6 md:pt-6">
                 <div className="flex flex-col gap-2 md:gap-3">
-                    <Avatar src={icons[0]} size="md" />
+                    <Avatar size="md" src={icons[0]} />
                     <Heading size="h3">{name}</Heading>
                     <div className="flex flex-row gap-3">
-                        <p className="text-primary-400 text-base leading-tight font-normal">
+                        <p className="font-normal text-base text-primary-400 leading-tight">
                             {t('app.governance.walletConnectActionDialog.listener.progress')}
                         </p>
-                        <Spinner variant="primary" size="md" />
+                        <Spinner size="md" variant="primary" />
                     </div>
                 </div>
                 <div className="h-[1px] w-full bg-neutral-100" />
                 <div className="flex flex-col gap-3 md:gap-4">
-                    <p className="leading-normal font-normal text-balance text-neutral-500">
+                    <p className="text-balance font-normal text-neutral-500 leading-normal">
                         <span>{t('app.governance.walletConnectActionDialog.listener.info_1')}</span>
                         <span className="text-primary-400">{name} </span>
                         <span>{t('app.governance.walletConnectActionDialog.listener.info_2')}</span>

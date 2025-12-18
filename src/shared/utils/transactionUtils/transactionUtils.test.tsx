@@ -1,6 +1,6 @@
+import * as viem from 'viem';
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import * as viem from 'viem';
 import { globalExecutorAbi } from './globalExecutorAbi';
 import { transactionUtils } from './transactionUtils';
 import type { ITransactionRequest } from './transactionUtils.api';
@@ -31,7 +31,6 @@ describe('transaction utils', () => {
     });
 
     describe('encodeTransactionRequests', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const buildExecutorTransactionSpy = jest.spyOn(transactionUtils as any, 'buildExecutorTransaction');
 
         afterEach(() => {
@@ -80,7 +79,7 @@ describe('transaction utils', () => {
             const expectedAddress = networkDefinitions[network].addresses.globalExecutor;
             encodeFunctionDataSpy.mockReturnValue(executorData);
 
-            const multicallTransaction = transactionUtils['buildExecutorTransaction'](actions, network);
+            const multicallTransaction = transactionUtils.buildExecutorTransaction(actions, network);
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: globalExecutorAbi,
                 functionName: 'execute',

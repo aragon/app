@@ -1,3 +1,5 @@
+import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import * as usePermissionCheckGuard from '@/modules/governance/hooks/usePermissionCheckGuard';
 import * as daoService from '@/shared/api/daoService';
 import * as DialogProvider from '@/shared/components/dialogProvider';
@@ -9,8 +11,6 @@ import {
     generateFilterComponentPlugin,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
-import { render, screen } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { CreateProposalPageClient, type ICreateProposalPageClientProps } from './createProposalPageClient';
 
@@ -64,9 +64,7 @@ describe('<CreateProposalPageClient /> component', () => {
         const pluginAddress = '0x472839';
         const open = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
-        const plugins = [
-            generateFilterComponentPlugin({ id: 'multisig', meta: generateDaoPlugin({ address: pluginAddress }) }),
-        ];
+        const plugins = [generateFilterComponentPlugin({ id: 'multisig', meta: generateDaoPlugin({ address: pluginAddress }) })];
         useDaoPluginsSpy.mockReturnValue(plugins);
         render(createTestComponent({ daoId, pluginAddress }));
         // Advance the wizard three times to trigger the submit function

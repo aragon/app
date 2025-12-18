@@ -1,8 +1,8 @@
+import { addressUtils } from '@aragon/gov-ui-kit';
 import { daoService, Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { type IPluginInfo, PluginType } from '@/shared/types';
-import { addressUtils } from '@aragon/gov-ui-kit';
 import { ipfsUtils } from '../ipfsUtils';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 import { daoUtils } from './daoUtils';
@@ -33,10 +33,7 @@ describe('dao utils', () => {
             ];
             const dao = generateDao({ plugins: daoPlugins });
             expect(daoUtils.hasSupportedPlugins(dao)).toBeTruthy();
-            expect(listContainsRegisteredPluginsSpy).toHaveBeenCalledWith([
-                PluginInterfaceType.UNKNOWN,
-                PluginInterfaceType.SPP,
-            ]);
+            expect(listContainsRegisteredPluginsSpy).toHaveBeenCalledWith([PluginInterfaceType.UNKNOWN, PluginInterfaceType.SPP]);
         });
 
         it('returns false when dao does not have supported plugins', () => {
@@ -218,14 +215,8 @@ describe('dao utils', () => {
                 generateDaoPlugin({ subdomain: 'sub-body', isBody: true, isSubPlugin: true }),
             ];
             const dao = generateDao({ plugins });
-            expect(daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS, includeSubPlugins: true })).toEqual([
-                plugins[0],
-                plugins[2],
-            ]);
-            expect(daoUtils.getDaoPlugins(dao, { type: PluginType.BODY, includeSubPlugins: true })).toEqual([
-                plugins[1],
-                plugins[3],
-            ]);
+            expect(daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS, includeSubPlugins: true })).toEqual([plugins[0], plugins[2]]);
+            expect(daoUtils.getDaoPlugins(dao, { type: PluginType.BODY, includeSubPlugins: true })).toEqual([plugins[1], plugins[3]]);
         });
 
         it('only returns the plugin with the specified interface type', () => {

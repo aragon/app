@@ -1,8 +1,8 @@
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import { type ISppProposal, type ISppStage, type ISppSubProposal } from '../../types';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
 
 class SppStageUtils {
     getStageStatus = (proposal: ISppProposal, stage: ISppStage): ProposalStatus => {
@@ -29,11 +29,9 @@ class SppStageUtils {
 
         const isActive = isOptimisticStage ? endsInFuture : endsInFuture && (!approvalReached || isSignalling);
 
-        const isAdvanceable =
-            stageIndex === currentStage && approvalReached && isWithinMaxAdvance && !isSignalling && !isLastStage;
+        const isAdvanceable = stageIndex === currentStage && approvalReached && isWithinMaxAdvance && !isSignalling && !isLastStage;
 
-        const isExpired =
-            !isSignalling && stageIndex === currentStage && maxAdvanceDate != null && now > maxAdvanceDate;
+        const isExpired = !isSignalling && stageIndex === currentStage && maxAdvanceDate != null && now > maxAdvanceDate;
 
         if (isVetoed) {
             return ProposalStatus.VETOED;
@@ -86,18 +84,15 @@ class SppStageUtils {
     };
 
     // Mark proposal as signaling when main-proposal has no actions and this is processing the status of the last stage
-    isSignalingProposal = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        return !proposal.hasActions && this.isLastStage(proposal, stage);
-    };
+    isSignalingProposal = (proposal: ISppProposal, stage: ISppStage): boolean => !proposal.hasActions && this.isLastStage(proposal, stage);
 
-    isStageUnreached = (proposal: ISppProposal, currentStageIndex: number): boolean => {
-        return proposal.settings.stages.slice(0, currentStageIndex).some((stage) => {
+    isStageUnreached = (proposal: ISppProposal, currentStageIndex: number): boolean =>
+        proposal.settings.stages.slice(0, currentStageIndex).some((stage) => {
             const status = this.getStageStatus(proposal, stage);
             const { VETOED, REJECTED, EXPIRED, UNREACHED } = ProposalStatus;
 
             return [VETOED, REJECTED, EXPIRED, UNREACHED].includes(status);
         });
-    };
 
     getStageStartDate = (proposal: ISppProposal, stage: ISppStage): DateTime | undefined => {
         const { startDate, stageIndex: currentStageIndex, lastStageTransition, subProposals } = proposal;
@@ -169,20 +164,17 @@ class SppStageUtils {
 
     getBodyResult = (proposal: ISppProposal, bodyAddress: string, stageIndex: number) =>
         proposal.results?.find(
-            ({ pluginAddress, stage }) =>
-                addressUtils.isAddressEqual(pluginAddress, bodyAddress) && stage === stageIndex,
+            ({ pluginAddress, stage }) => addressUtils.isAddressEqual(pluginAddress, bodyAddress) && stage === stageIndex
         );
 
     getBodySubProposal = (proposal: ISppProposal, body: string, stageIndex: number): ISppSubProposal | undefined =>
         proposal.subProposals.find(
-            (subProposal) =>
-                addressUtils.isAddressEqual(subProposal.pluginAddress, body) && subProposal.stageIndex === stageIndex,
+            (subProposal) => addressUtils.isAddressEqual(subProposal.pluginAddress, body) && subProposal.stageIndex === stageIndex
         );
 
     isVeto = (stage: ISppStage): boolean => stage.vetoThreshold > 0;
 
-    isLastStage = (proposal: ISppProposal, stage: ISppStage): boolean =>
-        proposal.settings.stages.length - 1 === stage.stageIndex;
+    isLastStage = (proposal: ISppProposal, stage: ISppStage): boolean => proposal.settings.stages.length - 1 === stage.stageIndex;
 }
 
 export const sppStageUtils = new SppStageUtils();

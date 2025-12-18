@@ -1,7 +1,7 @@
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { generateProposalAction } from '@/modules/governance/testUtils';
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
-import { act, renderHook, waitFor } from '@testing-library/react';
 import { smartContractService } from '../../smartContractService';
 import { useDecodeTransaction } from './useDecodeTransaction';
 

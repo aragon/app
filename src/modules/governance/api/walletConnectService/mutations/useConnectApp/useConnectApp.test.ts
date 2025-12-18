@@ -1,5 +1,5 @@
-import { ReactQueryWrapper } from '@/shared/testUtils';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { ReactQueryWrapper } from '@/shared/testUtils';
 import type { ISession } from '../../domain';
 import { walletConnectService } from '../../walletConnectService';
 import { useConnectApp } from './useConnectApp';

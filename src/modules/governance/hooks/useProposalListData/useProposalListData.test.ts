@@ -1,3 +1,4 @@
+import { renderHook } from '@testing-library/react';
 import {
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
@@ -5,7 +6,6 @@ import {
     generateReactQueryInfiniteResultLoading,
     generateReactQueryInfiniteResultSuccess,
 } from '@/shared/testUtils';
-import { renderHook } from '@testing-library/react';
 import * as governanceService from '../../api/governanceService';
 import { generateProposal } from '../../testUtils';
 import { useProposalListData } from './useProposalListData';

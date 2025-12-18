@@ -1,1 +1,1 @@
-export { useUserVote, type IUseUserVoteParams } from './useUserVote';
+export { type IUseUserVoteParams, useUserVote } from './useUserVote';

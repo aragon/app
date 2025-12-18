@@ -1,5 +1,5 @@
-import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import { useWatch } from 'react-hook-form';
+import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import { type ISetupStrategyForm, RouterType } from './setupStrategyDialogDefinitions';
 import { SetupStrategyDialogDistributionBurn } from './setupStrategyDialogDistributionBurn';
 import { SetupStrategyDialogDistributionDexSwap } from './setupStrategyDialogDistributionDexSwap';

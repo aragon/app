@@ -1,9 +1,9 @@
 'use client';
 
+import { addressUtils, ChainEntityType, DefinitionList } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
-import { ChainEntityType, DefinitionList, addressUtils } from '@aragon/gov-ui-kit';
 import type { ISubDaoInfoProps } from './subDaoInfo.api';
 
 export const SubDaoInfo: React.FC<ISubDaoInfoProps> = (props) => {
@@ -16,20 +16,16 @@ export const SubDaoInfo: React.FC<ISubDaoInfoProps> = (props) => {
 
     return (
         <DefinitionList.Container {...otherProps}>
-            <DefinitionList.Item term={t('app.finance.subDaoInfo.chain')}>
-                {networkDefinitions[network].name}
-            </DefinitionList.Item>
+            <DefinitionList.Item term={t('app.finance.subDaoInfo.chain')}>{networkDefinitions[network].name}</DefinitionList.Item>
             <DefinitionList.Item
-                term={t('app.finance.subDaoInfo.pluginAddress')}
                 copyValue={plugin.address}
                 link={{ href: pluginAddressLink }}
+                term={t('app.finance.subDaoInfo.pluginAddress')}
             >
                 {addressUtils.truncateAddress(plugin.address)}
             </DefinitionList.Item>
             {plugin.description && (
-                <DefinitionList.Item term={t('app.finance.subDaoInfo.description')}>
-                    {plugin.description}
-                </DefinitionList.Item>
+                <DefinitionList.Item term={t('app.finance.subDaoInfo.description')}>{plugin.description}</DefinitionList.Item>
             )}
         </DefinitionList.Container>
     );

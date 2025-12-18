@@ -1,5 +1,5 @@
-import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { Hex } from 'viem';
+import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { ITransactionRequest } from '../transactionUtils';
 
 export interface IPluginSetupPermission {

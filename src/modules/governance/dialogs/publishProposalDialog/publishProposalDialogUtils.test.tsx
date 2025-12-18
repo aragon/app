@@ -1,7 +1,7 @@
+import * as Viem from 'viem';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import * as Viem from 'viem';
 import { ProposalActionType } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import {
@@ -111,7 +111,7 @@ describe('publishProposalDialog utils', () => {
         it('correctly maps a proposal action to a transaction request', () => {
             const actionBaseData = { to: '0x123', value: '10', data: '0x1234' };
             const action = generateProposalActionWithdrawToken(actionBaseData);
-            expect(publishProposalDialogUtils['actionToTransactionRequest'](action)).toEqual({
+            expect(publishProposalDialogUtils.actionToTransactionRequest(action)).toEqual({
                 ...actionBaseData,
                 value: BigInt(actionBaseData.value),
             });

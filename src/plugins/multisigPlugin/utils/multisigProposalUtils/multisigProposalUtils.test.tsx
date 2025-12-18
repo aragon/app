@@ -1,6 +1,6 @@
-import { timeUtils } from '@/test/utils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import { timeUtils } from '@/test/utils';
 import { generateMultisigPluginSettings, generateMultisigProposal } from '../../testUtils';
 import { multisigProposalUtils } from './multisigProposalUtils';
 

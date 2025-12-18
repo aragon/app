@@ -1,7 +1,7 @@
+import { useAccount } from 'wagmi';
 import { useMemberExists } from '@/modules/governance/api/governanceService';
 import { type Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { useAccount } from 'wagmi';
 
 export interface IUseAdminStatusParams {
     /**

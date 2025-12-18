@@ -1,1 +1,1 @@
-export { WizardPageStep, type IWizardPageStepDropdownItem, type IWizardPageStepProps } from './wizardPageStep';
+export { type IWizardPageStepDropdownItem, type IWizardPageStepProps, WizardPageStep } from './wizardPageStep';

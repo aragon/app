@@ -1,14 +1,10 @@
-import {
-    generateTokenMember,
-    generateTokenPluginSettings,
-    generateTokenPluginSettingsToken,
-} from '@/plugins/tokenPlugin/testUtils';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
+import { generateTokenMember, generateTokenPluginSettings, generateTokenPluginSettingsToken } from '@/plugins/tokenPlugin/testUtils';
 import * as daoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
-import { TokenMemberListItem, type ITokenMemberListItemProps } from './tokenMemberListItem';
+import { type ITokenMemberListItemProps, TokenMemberListItem } from './tokenMemberListItem';
 
 describe('<TokenMemberListItem /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
@@ -54,8 +50,6 @@ describe('<TokenMemberListItem /> component', () => {
 
         render(createTestComponent({ member, plugin }));
         expect(screen.getByRole('heading', { name: /47.93M Voting Power/ })).toBeInTheDocument();
-        expect(screen.getByRole('link').getAttribute('href')).toEqual(
-            `/dao/${daoNetwork}/${daoAddress}/members/${member.address}`,
-        );
+        expect(screen.getByRole('link').getAttribute('href')).toEqual(`/dao/${daoNetwork}/${daoAddress}/members/${member.address}`);
     });
 });

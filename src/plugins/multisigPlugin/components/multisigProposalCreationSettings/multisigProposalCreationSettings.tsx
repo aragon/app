@@ -1,12 +1,12 @@
 'use client';
 
+import { CheckboxCard, type CheckboxState, invariant } from '@aragon/gov-ui-kit';
+import { useEffect } from 'react';
 import { ProposalCreationMode } from '@/modules/createDao/components/createProcessForm';
 import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import type { IPluginProposalCreationSettingsParams } from '@/modules/createDao/types';
 import { BodyType } from '@/modules/createDao/types/enum';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { CheckboxCard, invariant, type CheckboxState } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
 import type { IMultisigSetupGovernanceForm } from '../multisigSetupGovernance';
 
 export interface IMultisigProposalCreationSettingsProps extends IPluginProposalCreationSettingsParams {}
@@ -14,17 +14,14 @@ export interface IMultisigProposalCreationSettingsProps extends IPluginProposalC
 export const MultisigProposalCreationSettings: React.FC<IMultisigProposalCreationSettingsProps> = (props) => {
     const { body, formPrefix, mode, disableCheckbox } = props;
 
-    invariant(
-        body.type !== BodyType.EXTERNAL,
-        'MultisigProposalCreationSettings: External body type not expected here.',
-    );
+    invariant(body.type !== BodyType.EXTERNAL, 'MultisigProposalCreationSettings: External body type not expected here.');
 
     const { name = '', description } = body;
 
-    const { value: canCreateProposal, onChange: onCreateProposalChange } = useFormField<
-        ISetupBodyForm,
-        'canCreateProposal'
-    >('canCreateProposal', { fieldPrefix: formPrefix, defaultValue: true });
+    const { value: canCreateProposal, onChange: onCreateProposalChange } = useFormField<ISetupBodyForm, 'canCreateProposal'>(
+        'canCreateProposal',
+        { fieldPrefix: formPrefix, defaultValue: true }
+    );
 
     const { onChange: onOnlyListedChange } = useFormField<IMultisigSetupGovernanceForm, 'onlyListed'>('onlyListed', {
         fieldPrefix: `${formPrefix}.governance`,
@@ -45,12 +42,6 @@ export const MultisigProposalCreationSettings: React.FC<IMultisigProposalCreatio
     const checked = canCreateProposal;
 
     return (
-        <CheckboxCard
-            label={name}
-            description={description}
-            onCheckedChange={handleCheckedChange}
-            checked={checked}
-            className="w-full"
-        />
+        <CheckboxCard checked={checked} className="w-full" description={description} label={name} onCheckedChange={handleCheckedChange} />
     );
 };

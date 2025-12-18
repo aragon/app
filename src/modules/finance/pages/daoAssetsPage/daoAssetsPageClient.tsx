@@ -47,7 +47,7 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
                 daoId: id,
             },
         },
-        { enabled: allAssetsSelected },
+        { enabled: allAssetsSelected }
     );
 
     // Fetch assets for selected DAO view
@@ -59,7 +59,7 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
                 onlyParent: activeOption?.onlyParent,
             },
         },
-        { enabled: !allAssetsSelected || !hasSubDaos },
+        { enabled: !(allAssetsSelected && hasSubDaos) }
     );
 
     if (dao == null) {
@@ -69,14 +69,14 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
     return (
         <Page.Content>
             <Page.Main title={t('app.finance.daoAssetsPage.main.title')}>
-                <AssetList.Container initialParams={initialParams} daoId={id} />
+                <AssetList.Container daoId={id} initialParams={initialParams} />
             </Page.Main>
             <Page.Aside>
                 <DaoFilterAsideCard
-                    dao={dao}
                     activeOption={activeOption}
-                    selectedMetadata={selectedAssetsMetadata?.pages[0]}
                     allMetadata={allAssetsMetadata?.pages[0]}
+                    dao={dao}
+                    selectedMetadata={selectedAssetsMetadata?.pages[0]}
                     statsType="assets"
                 />
             </Page.Aside>

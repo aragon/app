@@ -1,9 +1,9 @@
-import * as useDialogContext from '@/shared/components/dialogProvider';
-import { generateDialogContext } from '@/shared/testUtils';
 import * as AppKit from '@reown/appkit/react';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as Wagmi from 'wagmi';
+import * as useDialogContext from '@/shared/components/dialogProvider';
+import { generateDialogContext } from '@/shared/testUtils';
 import { ConnectWalletDialog, type IConnectWalletDialogProps } from './connectWalletDialog';
 
 describe('<ConnectWalletDialog /> component', () => {

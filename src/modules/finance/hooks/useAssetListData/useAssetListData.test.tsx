@@ -1,3 +1,4 @@
+import { renderHook } from '@testing-library/react';
 import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
 import { generateAsset, generateToken } from '@/modules/finance/testUtils';
 import {
@@ -7,7 +8,6 @@ import {
     generateReactQueryInfiniteResultLoading,
     generateReactQueryInfiniteResultSuccess,
 } from '@/shared/testUtils';
-import { renderHook } from '@testing-library/react';
 import * as financeService from '../../api/financeService';
 
 describe('useAssetListData hook', () => {
@@ -25,9 +25,7 @@ describe('useAssetListData hook', () => {
         });
         const assetsResponse = generatePaginatedResponse({ data: balances, metadata: balancesMetadata });
         const params = { queryParams: { daoId: 'polygon-mainnet-0xdao' } };
-        useAssetListSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({ data: { pages: [assetsResponse], pageParams: [] } }),
-        );
+        useAssetListSpy.mockReturnValue(generateReactQueryInfiniteResultSuccess({ data: { pages: [assetsResponse], pageParams: [] } }));
         const { result } = renderHook(() => useAssetListData(params));
 
         expect(useAssetListSpy).toHaveBeenCalledWith(params);

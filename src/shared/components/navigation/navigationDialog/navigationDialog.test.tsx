@@ -1,12 +1,12 @@
-import { daoUtils } from '@/shared/utils/daoUtils';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { testLogger } from '@/test/utils';
 import { GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { Route } from 'next';
 import * as NextNavigation from 'next/navigation';
-import { NavigationDialog, type INavigationDialogProps } from './navigationDialog';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import { testLogger } from '@/test/utils';
+import { type INavigationDialogProps, NavigationDialog } from './navigationDialog';
 
 describe('<Navigation.Dialog /> component', () => {
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');

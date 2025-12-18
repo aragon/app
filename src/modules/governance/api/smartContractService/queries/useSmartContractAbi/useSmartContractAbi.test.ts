@@ -1,7 +1,7 @@
+import { renderHook, waitFor } from '@testing-library/react';
 import { generateSmartContractAbi } from '@/modules/governance/testUtils';
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
-import { renderHook, waitFor } from '@testing-library/react';
 import { smartContractService } from '../../smartContractService';
 import { useSmartContractAbi } from './useSmartContractAbi';
 

@@ -1,11 +1,7 @@
-import { type Hex } from 'viem';
+import type { Hex } from 'viem';
 import { useReadContracts } from 'wagmi';
 import { dynamicExitQueueAbi } from '../../utils/tokenExitQueueTransactionUtils/dynamicExitQueueAbi';
-import type {
-    ITicketData,
-    IUseTokenExitQueueFeeDataParams,
-    IUseTokenExitQueueFeeDataReturn,
-} from './useTokenExitQueueFeeData.api';
+import type { ITicketData, IUseTokenExitQueueFeeDataParams, IUseTokenExitQueueFeeDataReturn } from './useTokenExitQueueFeeData.api';
 
 export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams): IUseTokenExitQueueFeeDataReturn => {
     const { tokenId, lockManagerAddress, chainId, enabled = true, refetchInterval } = params;
@@ -90,7 +86,7 @@ export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams
 
     const parseTicketData = (result: unknown): ITicketData | undefined => {
         if (typeof result !== 'object' || result == null) {
-            return undefined;
+            return;
         }
 
         const candidate = result as Record<string, unknown>;
@@ -99,11 +95,11 @@ export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams
         const queuedAt = candidate.queuedAt;
 
         if (typeof holder !== 'string' || !holder.startsWith('0x')) {
-            return undefined;
+            return;
         }
 
         if (typeof queuedAt !== 'number') {
-            return undefined;
+            return;
         }
 
         return {

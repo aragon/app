@@ -1,3 +1,8 @@
+import {
+    ProposalActionType as GukProposalActionType,
+    type IProposalActionUpdateMetadata,
+    type IProposalActionWithdrawToken,
+} from '@aragon/gov-ui-kit';
 import { generateToken } from '@/modules/finance/testUtils';
 import {
     generateProposalAction,
@@ -8,11 +13,6 @@ import {
 import { generateDao } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import {
-    type IProposalActionUpdateMetadata,
-    type IProposalActionWithdrawToken,
-    ProposalActionType as GukProposalActionType,
-} from '@aragon/gov-ui-kit';
 import { ProposalActionType } from '../../api/governanceService';
 import { proposalActionUtils } from './proposalActionUtils';
 

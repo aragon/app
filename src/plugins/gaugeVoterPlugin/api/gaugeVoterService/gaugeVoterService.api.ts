@@ -1,7 +1,7 @@
+import type { Hex } from 'viem';
 import type { IPaginatedRequest } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
 import type { IRequestUrlQueryParams } from '@/shared/api/httpService';
-import type { Hex } from 'viem';
 
 export interface IGetGaugeListUrlParams {
     /**
@@ -41,5 +41,4 @@ export interface IGetEpochMetricsQueryParams {
     memberAddress?: Hex;
 }
 
-export interface IGetEpochMetricsParams
-    extends IRequestUrlQueryParams<IGetEpochMetricsUrlParams, IGetEpochMetricsQueryParams> {}
+export interface IGetEpochMetricsParams extends IRequestUrlQueryParams<IGetEpochMetricsUrlParams, IGetEpochMetricsQueryParams> {}

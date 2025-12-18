@@ -1,16 +1,16 @@
-import { Network } from '@/shared/api/daoService';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import { Network } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { proposalActionsOptions, proposalBySlugOptions } from '../../api/governanceService';
 import { DaoProposalDetailsPage, type IDaoProposalDetailsPageProps } from './daoProposalDetailsPage';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
-        <div data-testid="hydration-mock" data-state={JSON.stringify(props.state)}>
+        <div data-state={JSON.stringify(props.state)} data-testid="hydration-mock">
             {props.children}
         </div>
     ),
@@ -80,7 +80,7 @@ describe('<DaoProposalDetailsPage /> component', () => {
 
         expect(fetchQuerySpy).toHaveBeenCalledTimes(2);
         expect(fetchQuerySpy.mock.calls[1][0].queryKey).toEqual(
-            proposalActionsOptions({ urlParams: { id: params.proposalSlug } }).queryKey,
+            proposalActionsOptions({ urlParams: { id: params.proposalSlug } }).queryKey
         );
     });
 

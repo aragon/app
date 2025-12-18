@@ -3,14 +3,12 @@ import type { IPluginEventLog, IPluginInstallationData } from './domain';
 import type { IGetLastPluginEventLogParams, IGetPluginInstallationDataParams } from './settingsService.api';
 
 class SettingsService extends AragonBackendService {
-    private urls = {
+    private readonly urls = {
         pluginInstallationData: '/v2/plugins/installation-data',
         lastPluginEventLog: '/v2/plugins/logs/:pluginAddress/:network/:event',
     };
 
-    getPluginInstallationData = async ({
-        queryParams,
-    }: IGetPluginInstallationDataParams): Promise<IPluginInstallationData> => {
+    getPluginInstallationData = async ({ queryParams }: IGetPluginInstallationDataParams): Promise<IPluginInstallationData> => {
         const result = await this.request<IPluginInstallationData>(this.urls.pluginInstallationData, { queryParams });
 
         return result;

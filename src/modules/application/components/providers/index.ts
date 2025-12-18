@@ -1,1 +1,1 @@
-export { Providers, type IProvidersProps } from './providers';
+export { type IProvidersProps, Providers } from './providers';

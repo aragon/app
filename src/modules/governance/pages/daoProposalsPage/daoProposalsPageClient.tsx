@@ -1,5 +1,7 @@
 'use client';
 
+import { invariant } from '@aragon/gov-ui-kit';
+import { useRouter } from 'next/navigation';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
@@ -11,8 +13,6 @@ import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrl
 import { pluginGroupFilter } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { invariant } from '@aragon/gov-ui-kit';
-import { useRouter } from 'next/navigation';
 import type { IGetProposalListParams } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
 import { ProposalListStats } from '../../components/proposalListStats';
@@ -48,8 +48,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
 
     const buildProposalUrl = (plugin: IDaoPlugin) => daoUtils.getDaoUrl(dao, `create/${plugin.address}/proposal`)!;
 
-    const handlePermissionGuardSuccess = (plugin?: IDaoPlugin) =>
-        router.push(buildProposalUrl(plugin ?? activePlugin.meta));
+    const handlePermissionGuardSuccess = (plugin?: IDaoPlugin) => router.push(buildProposalUrl(plugin ?? activePlugin.meta));
 
     const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
         permissionNamespace: 'proposal',
@@ -83,20 +82,18 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     return (
         <>
             <Page.Main
-                title={t('app.governance.daoProposalsPage.main.title')}
                 action={{
                     label: t('app.governance.daoProposalsPage.main.action'),
                     ...actionProps,
                 }}
+                title={t('app.governance.daoProposalsPage.main.title')}
             >
-                <DaoProposalList initialParams={initialParams} value={activePlugin} onValueChange={setActivePlugin} />
+                <DaoProposalList initialParams={initialParams} onValueChange={setActivePlugin} value={activePlugin} />
             </Page.Main>
             <Page.Aside>
                 <Page.AsideCard title={asideCardTitle}>
-                    {allProposalsSelected && <ProposalListStats initialParams={initialParams} dao={dao!} />}
-                    {!allProposalsSelected && (
-                        <DaoPluginInfo plugin={activePlugin.meta} daoId={daoId} type={PluginType.PROCESS} />
-                    )}
+                    {allProposalsSelected && <ProposalListStats dao={dao!} initialParams={initialParams} />}
+                    {!allProposalsSelected && <DaoPluginInfo daoId={daoId} plugin={activePlugin.meta} type={PluginType.PROCESS} />}
                 </Page.AsideCard>
             </Page.Aside>
         </>

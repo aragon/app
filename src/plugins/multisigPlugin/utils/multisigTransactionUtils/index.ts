@@ -1,1 +1,1 @@
-export { multisigTransactionUtils, type ICreateMultisigProposalFormData } from './multisigTransactionUtils';
+export { type ICreateMultisigProposalFormData, multisigTransactionUtils } from './multisigTransactionUtils';

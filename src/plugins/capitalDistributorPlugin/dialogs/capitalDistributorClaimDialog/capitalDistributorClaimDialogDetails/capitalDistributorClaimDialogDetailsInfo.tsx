@@ -1,6 +1,6 @@
+import { Avatar } from '@aragon/gov-ui-kit';
 import type { IToken } from '@/modules/finance/api/financeService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Avatar } from '@aragon/gov-ui-kit';
 
 interface ICapitalDistributorDetailsInfo {
     /**
@@ -24,9 +24,7 @@ export interface ICapitalDistributorClaimDialogDetailsInfoProps {
     info: ICapitalDistributorDetailsInfo;
 }
 
-export const CapitalDistributorClaimDialogDetailsInfo: React.FC<ICapitalDistributorClaimDialogDetailsInfoProps> = (
-    props,
-) => {
+export const CapitalDistributorClaimDialogDetailsInfo: React.FC<ICapitalDistributorClaimDialogDetailsInfoProps> = (props) => {
     const { info } = props;
 
     const { t } = useTranslations();
@@ -35,12 +33,12 @@ export const CapitalDistributorClaimDialogDetailsInfo: React.FC<ICapitalDistribu
 
     return (
         <div className="flex grow basis-0 flex-col gap-1">
-            <p className="text-sm leading-tight font-normal text-neutral-500">
+            <p className="font-normal text-neutral-500 text-sm leading-tight">
                 {t(`app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.${label}`)}
             </p>
             <div className="flex flex-row gap-1.5">
-                {token && <Avatar src={token.logo} size="sm" />}
-                <p className="text-base leading-normal font-normal text-neutral-800 first-letter:uppercase">{value}</p>
+                {token && <Avatar size="sm" src={token.logo} />}
+                <p className="font-normal text-base text-neutral-800 leading-normal first-letter:uppercase">{value}</p>
             </div>
         </div>
     );

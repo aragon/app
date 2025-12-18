@@ -1,11 +1,9 @@
 'use client';
 
+import { Card, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
+import { FormProvider, useForm } from 'react-hook-form';
 import type { ICreateDaoFormData } from '@/modules/createDao/components/createDaoForm';
-import {
-    GovernanceBodyField,
-    GovernanceStagesField,
-    GovernanceType,
-} from '@/modules/createDao/components/createProcessForm';
+import { GovernanceBodyField, GovernanceStagesField, GovernanceType } from '@/modules/createDao/components/createProcessForm';
 import { PermissionsDefinitionList } from '@/modules/governance/components/permissionsDefinitionList';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
@@ -17,8 +15,6 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { Card, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
-import { FormProvider, useForm } from 'react-hook-form';
 import { DaoProcessAllowedActions } from '../../components/daoProccessAllowedActions';
 import { DaoProcessDetailsInfo } from '../../components/daoProcessDetailsInfo';
 import { daoProcessDetailsClientUtils } from './daoProcessDetailsClientUtils';
@@ -63,8 +59,7 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
         { label: slug.toUpperCase() },
     ];
 
-    const parsedLatestActivity =
-        proposalList?.[0]?.blockTimestamp != null ? proposalList[0].blockTimestamp * 1000 : undefined;
+    const parsedLatestActivity = proposalList?.[0]?.blockTimestamp != null ? proposalList[0].blockTimestamp * 1000 : undefined;
     const formattedLatestActivity = formatterUtils.formatDate(parsedLatestActivity, { format: DateFormat.RELATIVE });
 
     const [value, unit] = formattedLatestActivity?.split(' ') ?? [undefined, undefined];
@@ -90,23 +85,13 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
 
     return (
         <>
-            <Page.Header
-                breadcrumbs={pageBreadcrumbs}
-                title={plugin.name}
-                description={plugin.description}
-                stats={stats}
-            />
+            <Page.Header breadcrumbs={pageBreadcrumbs} description={plugin.description} stats={stats} title={plugin.name} />
             <Page.Content>
                 <Page.Main>
                     <Page.MainSection title={t('app.settings.daoProcessDetailsPage.section.governanceProcess')}>
                         <FormProvider {...formMethods}>
                             {pluginFormData.governanceType === GovernanceType.BASIC ? (
-                                <GovernanceBodyField
-                                    daoId={daoId}
-                                    body={pluginFormData.body}
-                                    fieldName="body"
-                                    readOnly={true}
-                                />
+                                <GovernanceBodyField body={pluginFormData.body} daoId={daoId} fieldName="body" readOnly={true} />
                             ) : (
                                 <GovernanceStagesField daoId={daoId} readOnly={true} />
                             )}
@@ -118,7 +103,7 @@ export const DaoProcessDetailsPageClient: React.FC<IDaoProcessDetailsPageClientP
                         </Card>
                     </Page.MainSection>
                     <Page.MainSection title={t('app.settings.daoProcessDetailsPage.section.actions')}>
-                        <DaoProcessAllowedActions plugin={plugin} network={dao!.network} />
+                        <DaoProcessAllowedActions network={dao!.network} plugin={plugin} />
                     </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>

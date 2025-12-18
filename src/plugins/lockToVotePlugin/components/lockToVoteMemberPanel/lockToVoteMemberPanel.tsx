@@ -25,7 +25,7 @@ export const LockToVoteMemberPanel: React.FC<ILockToVoteMemberPanelProps> = (pro
 
     return (
         <Page.AsideCard title={cardTitle}>
-            <LockToVoteLockForm plugin={plugin} daoId={daoId} />
+            <LockToVoteLockForm daoId={daoId} plugin={plugin} />
         </Page.AsideCard>
     );
 };

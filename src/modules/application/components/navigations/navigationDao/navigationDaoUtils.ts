@@ -1,9 +1,9 @@
+import { IconType } from '@aragon/gov-ui-kit';
 import type { IDao } from '@/shared/api/daoService';
 import type { INavigationLink } from '@/shared/components/navigation';
 import type { IPluginInfo } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { IconType } from '@aragon/gov-ui-kit';
 
 export type NavigationDaoContext = 'page' | 'dialog';
 
@@ -27,7 +27,7 @@ class NavigationDaoUtils {
         });
     };
 
-    private getDefaultLinks = (dao: IDao, baseUrl: string, context: NavigationDaoContext): INavigationLink[] => {
+    private readonly getDefaultLinks = (dao: IDao, baseUrl: string, context: NavigationDaoContext): INavigationLink[] => {
         const isSupported = daoUtils.hasSupportedPlugins(dao);
         const hasBodyPlugin = daoUtils.hasPluginBody(dao);
 
@@ -52,7 +52,7 @@ class NavigationDaoUtils {
                 label: 'app.application.navigationDao.link.members',
                 link: `${baseUrl}/members`,
                 icon: IconType.APP_MEMBERS,
-                hidden: !isSupported || !hasBodyPlugin,
+                hidden: !(isSupported && hasBodyPlugin),
                 lgHidden: isDialogContext,
             },
             {
@@ -76,7 +76,7 @@ class NavigationDaoUtils {
         ];
     };
 
-    private getPluginLinks = (dao: IDao, baseUrl: string, context: NavigationDaoContext) => {
+    private readonly getPluginLinks = (dao: IDao, baseUrl: string, context: NavigationDaoContext) => {
         const pluginLinks = dao.plugins.reduce<{ left: INavigationLink[]; right: INavigationLink[] }>(
             (current, plugin) => {
                 const pluginInfo = pluginRegistryUtils.getPlugin(plugin.interfaceType) as IPluginInfo | undefined;
@@ -88,7 +88,7 @@ class NavigationDaoUtils {
                     right: current.right.concat(pluginPagesRight),
                 };
             },
-            { left: [], right: [] },
+            { left: [], right: [] }
         );
 
         return pluginLinks;

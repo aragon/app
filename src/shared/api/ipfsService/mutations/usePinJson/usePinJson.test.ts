@@ -1,5 +1,5 @@
-import { ReactQueryWrapper } from '@/shared/testUtils';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { ReactQueryWrapper } from '@/shared/testUtils';
 import * as pinJsonAction from '../../actions';
 import { usePinJson } from './usePinJson';
 

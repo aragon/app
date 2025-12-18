@@ -9,10 +9,7 @@ export const PageContent: React.FC<IPageContentProps> = (props) => {
 
     return (
         <Container
-            className={classNames(
-                'flex flex-col gap-10 pt-8 pb-20 md:gap-16 md:pt-12 lg:flex-row lg:gap-10 xl:gap-16',
-                className,
-            )}
+            className={classNames('flex flex-col gap-10 pt-8 pb-20 md:gap-16 md:pt-12 lg:flex-row lg:gap-10 xl:gap-16', className)}
             {...otherProps}
         >
             {children}

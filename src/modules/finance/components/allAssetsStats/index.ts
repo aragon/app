@@ -1,2 +1,2 @@
-export { AllAssetsStats } from './allAssetsStats';
 export type { IAllAssetsStatsProps } from './allAssetsStats';
+export { AllAssetsStats } from './allAssetsStats';

@@ -1,8 +1,8 @@
+import { addressUtils, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import { useMemberExists } from '@/modules/governance/api/governanceService';
 import type { Network } from '@/shared/api/daoService';
 import { AddressesInput } from '@/shared/components/forms/addressesInput';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
-import { addressUtils, type ICompositeAddress } from '@aragon/gov-ui-kit';
 
 export interface IMultisigSetupMembershipItemProps {
     /**
@@ -47,7 +47,5 @@ export const MultisigSetupMembershipItem: React.FC<IMultisigSetupMembershipItemP
 
     const customValidator = () => (isMember ? 'app.plugins.multisig.multisigSetupMembership.item.alreadyMember' : true);
 
-    return (
-        <AddressesInput.Item index={index} disabled={disabled} customValidator={customValidator} chainId={chainId} />
-    );
+    return <AddressesInput.Item chainId={chainId} customValidator={customValidator} disabled={disabled} index={index} />;
 };

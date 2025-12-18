@@ -1,18 +1,18 @@
-import { daoOptions, Network } from '@/shared/api/daoService';
-import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
-import { PluginType } from '@/shared/types';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import { daoOptions, Network } from '@/shared/api/daoService';
+import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
+import { PluginType } from '@/shared/types';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { proposalListOptions } from '../../api/governanceService';
-import { daoProposalsCount, DaoProposalsPage, daoProposalsSort, type IDaoProposalsPageProps } from './daoProposalsPage';
+import { DaoProposalsPage, daoProposalsCount, daoProposalsSort, type IDaoProposalsPageProps } from './daoProposalsPage';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
-        <div data-testid="hydration-mock" data-state={JSON.stringify(props.state)}>
+        <div data-state={JSON.stringify(props.state)} data-testid="hydration-mock">
             {props.children}
         </div>
     ),
@@ -72,9 +72,7 @@ describe('<DaoProposalsPage /> component', () => {
             isSubProposal: false,
             onlyActive: false,
         };
-        expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
-            proposalListOptions({ queryParams: memberListParams }).queryKey,
-        );
+        expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(proposalListOptions({ queryParams: memberListParams }).queryKey);
     });
 
     it('renders the page client component', async () => {

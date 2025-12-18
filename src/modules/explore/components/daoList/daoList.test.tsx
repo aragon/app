@@ -1,7 +1,7 @@
+import { render, screen } from '@testing-library/react';
 import { Network } from '@/shared/api/daoService';
 import { generateDao, generatePaginatedResponse, generateReactQueryInfiniteResultSuccess } from '@/shared/testUtils';
 import { testLogger } from '@/test/utils';
-import { render, screen } from '@testing-library/react';
 import * as daoExplorerService from '../../api/daoExplorerService';
 import { DaoList, type IDaoListProps } from './daoList';
 
@@ -11,9 +11,7 @@ describe('<DaoList /> component', () => {
 
     beforeEach(() => {
         useDaoListSpy.mockReturnValue(generateReactQueryInfiniteResultSuccess({ data: { pages: [], pageParams: [] } }));
-        useDaoListByMemberAddressSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({ data: { pages: [], pageParams: [] } }),
-        );
+        useDaoListByMemberAddressSpy.mockReturnValue(generateReactQueryInfiniteResultSuccess({ data: { pages: [], pageParams: [] } }));
     });
 
     afterEach(() => {
@@ -41,10 +39,7 @@ describe('<DaoList /> component', () => {
         render(createTestComponent({ initialParams, memberParams: undefined }));
 
         expect(useDaoListSpy).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ enabled: true }));
-        expect(useDaoListByMemberAddressSpy).toHaveBeenCalledWith(
-            expect.anything(),
-            expect.objectContaining({ enabled: false }),
-        );
+        expect(useDaoListByMemberAddressSpy).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ enabled: false }));
         expect(screen.getAllByRole('link')).toHaveLength(daos.length);
         expect(screen.getByText(daos[0].name)).toBeInTheDocument();
         expect(screen.getByText(daos[1].name)).toBeInTheDocument();
@@ -62,10 +57,7 @@ describe('<DaoList /> component', () => {
         render(createTestComponent({ initialParams, memberParams }));
 
         expect(useDaoListSpy).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ enabled: false }));
-        expect(useDaoListByMemberAddressSpy).toHaveBeenCalledWith(
-            expect.anything(),
-            expect.objectContaining({ enabled: true }),
-        );
+        expect(useDaoListByMemberAddressSpy).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ enabled: true }));
         expect(screen.getAllByRole('link')).toHaveLength(daos.length);
         expect(screen.getByText(daos[0].name)).toBeInTheDocument();
         expect(screen.getByText(daos[1].name)).toBeInTheDocument();

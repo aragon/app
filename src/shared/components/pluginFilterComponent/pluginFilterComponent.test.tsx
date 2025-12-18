@@ -1,7 +1,7 @@
-import { generateFilterComponentPlugin } from '@/shared/testUtils/';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { generateFilterComponentPlugin } from '@/shared/testUtils/';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { PluginFilterComponent } from './pluginFilterComponent';
 import type { IPluginFilterComponentProps } from './pluginFilterComponent.api';
 
@@ -70,7 +70,7 @@ describe('<PluginFilterComponent /> component', () => {
         const tokenComponent = () => <div data-testid="token-component" />;
         const multisigComponent = () => <div data-testid="multisig-component" />;
         getSlotComponentSpy.mockImplementation((params: { pluginId: string }) =>
-            params.pluginId === 'token' ? tokenComponent : multisigComponent,
+            params.pluginId === 'token' ? tokenComponent : multisigComponent
         );
         render(createTestComponent({ plugins }));
         expect(screen.getByRole('group')).toBeInTheDocument();

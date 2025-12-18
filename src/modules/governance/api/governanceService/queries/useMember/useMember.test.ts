@@ -1,6 +1,6 @@
+import { renderHook, waitFor } from '@testing-library/react';
 import { generateMember } from '@/modules/governance/testUtils';
 import { ReactQueryWrapper } from '@/shared/testUtils';
-import { renderHook, waitFor } from '@testing-library/react';
 import { governanceService } from '../../governanceService';
 import { useMember } from './useMember';
 

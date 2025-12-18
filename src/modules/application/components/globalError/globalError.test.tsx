@@ -1,6 +1,6 @@
+import { render, screen } from '@testing-library/react';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { testLogger } from '@/test/utils';
-import { render, screen } from '@testing-library/react';
 import { GlobalError, type IGlobalErrorProps } from './globalError';
 
 describe('<GlobalError /> component', () => {

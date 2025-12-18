@@ -1,3 +1,8 @@
+import { addressUtils, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
+import { useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { encodeFunctionData, erc20Abi, formatUnits, type Hex, parseUnits, zeroAddress } from 'viem';
+import { useReadContract } from 'wagmi';
 import type { IAsset } from '@/modules/finance/api/financeService';
 import { type ITransferAssetFormData, TransferAssetForm } from '@/modules/finance/components/transferAssetForm';
 import { actionComposerUtils } from '@/modules/governance/components/actionComposer';
@@ -5,11 +10,6 @@ import { useDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { useToken } from '@/shared/hooks/useToken';
-import { addressUtils, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { encodeFunctionData, erc20Abi, formatUnits, type Hex, parseUnits, zeroAddress } from 'viem';
-import { useReadContract } from 'wagmi';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 
 export interface ITransferAssetActionProps extends IProposalActionComponentProps<IProposalActionData> {}
@@ -127,11 +127,11 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
 
     return (
         <TransferAssetForm
-            sender={dao!.address}
             daoId={dao!.id}
-            network={dao!.network}
-            fieldPrefix={fieldName}
             disableAssetField={disableTokenSelection}
+            fieldPrefix={fieldName}
+            network={dao!.network}
+            sender={dao!.address}
         />
     );
 };

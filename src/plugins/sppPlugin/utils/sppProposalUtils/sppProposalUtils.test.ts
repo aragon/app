@@ -1,8 +1,8 @@
-import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import { generateSppPluginSettings, generateSppProposal, generateSppStage } from '../../testUtils';
-import { type ISppProposal } from '../../types';
+import type { ISppProposal } from '../../types';
 import { sppStageUtils } from '../sppStageUtils/sppStageUtils';
 import { sppProposalUtils } from './sppProposalUtils';
 
@@ -84,9 +84,7 @@ describe('SppProposalUtils', () => {
             getStageMaxAdvanceSpy.mockReturnValue(DateTime.fromSeconds(maxAdvance));
             sppProposalUtils.getProposalStatus(proposal);
             expect(getStageMaxAdvanceSpy).toHaveBeenCalledWith(proposal, lastStage);
-            expect(getProposalStatusSpy).toHaveBeenCalledWith(
-                expect.objectContaining({ executionExpiryDate: maxAdvance }),
-            );
+            expect(getProposalStatusSpy).toHaveBeenCalledWith(expect.objectContaining({ executionExpiryDate: maxAdvance }));
         });
 
         it('sets the hasAdvanceableStages param to true if there are stages that can be advanced', () => {
@@ -152,7 +150,7 @@ describe('SppProposalUtils', () => {
             const proposal = generateSppProposal({ settings });
 
             getStageStatusSpy.mockImplementation((_, stage) =>
-                stage.stageIndex === 0 ? ProposalStatus.ACCEPTED : ProposalStatus.REJECTED,
+                stage.stageIndex === 0 ? ProposalStatus.ACCEPTED : ProposalStatus.REJECTED
             );
 
             expect(sppProposalUtils.areAllStagesAccepted(proposal)).toBeFalsy();

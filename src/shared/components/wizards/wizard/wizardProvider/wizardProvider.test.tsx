@@ -1,8 +1,8 @@
+import { render, renderHook, screen } from '@testing-library/react';
+import type { ProviderProps } from 'react';
 import { generateStepperResult } from '@/shared/testUtils';
 import { testLogger } from '@/test/utils';
-import { render, renderHook, screen } from '@testing-library/react';
-import { type ProviderProps } from 'react';
-import { type IWizardContext, WizardProvider, useWizardContext } from './wizardProvider';
+import { type IWizardContext, useWizardContext, WizardProvider } from './wizardProvider';
 
 describe('<WizardProvider /> component', () => {
     const createTestComponent = (props?: Partial<ProviderProps<IWizardContext>>) => {

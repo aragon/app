@@ -1,6 +1,6 @@
-import { FormWrapper } from '@/shared/testUtils';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { FormWrapper } from '@/shared/testUtils';
 import { CreateProposalFormMetadata, type ICreateProposalFormMetadataProps } from './createProposalFormMetadata';
 
 describe('<CreateProposalFormMetadata /> component', () => {

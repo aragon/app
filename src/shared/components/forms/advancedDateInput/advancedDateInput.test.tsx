@@ -1,9 +1,9 @@
-import { FormWrapper } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { DateTime } from 'luxon';
+import { FormWrapper } from '@/shared/testUtils';
 import { AdvancedDateInput } from './advancedDateInput';
-import { type IAdvancedDateInputProps } from './advancedDateInput.api';
+import type { IAdvancedDateInputProps } from './advancedDateInput.api';
 
 jest.mock('./advancedDateInputFixed', () => ({
     AdvancedDateInputFixed: () => <div data-testid="fixed-input-mock" />,

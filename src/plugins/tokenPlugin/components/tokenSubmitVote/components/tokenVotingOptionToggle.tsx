@@ -67,20 +67,16 @@ export const TokenVotingOptionToggle: React.FC<ITokenVotingOptionToggleProps> = 
         'hover:border-neutral-200 hover:shadow-neutral',
         'disabled:border-neutral-100 disabled:bg-neutral-100 disabled:text-neutral-300 disabled:cursor-default',
         variantToClassNames[variant],
-        className,
+        className
     );
 
     return (
         <RadixToggle className={toggleClasses} disabled={disabled} value={value} {...otherProps}>
-            <p className="text-sm leading-tight font-normal md:text-base">
+            <p className="font-normal text-sm leading-tight md:text-base">
                 {label}
                 {description && <span className="text-neutral-500">{description}</span>}
             </p>
-            <AvatarIcon
-                icon={variantToIcon[variant]}
-                variant={isSelected ? variantToIconVariant[variant] : 'neutral'}
-                size="sm"
-            />
+            <AvatarIcon icon={variantToIcon[variant]} size="sm" variant={isSelected ? variantToIconVariant[variant] : 'neutral'} />
         </RadixToggle>
     );
 };

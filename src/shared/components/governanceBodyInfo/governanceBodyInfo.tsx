@@ -1,6 +1,6 @@
+import { Avatar, addressUtils, invariant } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { addressUtils, Avatar, invariant } from '@aragon/gov-ui-kit';
 
 export interface IGovernanceBodyInfoProps {
     /**
@@ -38,7 +38,7 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (props) =>
 
     const truncatedAddress = addressUtils.truncateAddress(address);
 
-    const bodyName = name != null && name != '' ? name : truncatedAddress;
+    const bodyName = name != null && name !== '' ? name : truncatedAddress;
 
     const isPlugin = !!subdomain && !!release && !!build;
 
@@ -49,15 +49,15 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (props) =>
     return (
         <div className="flex w-full flex-col items-start gap-1">
             <div className="flex w-full items-center justify-between">
-                <p className="flex items-center gap-2 text-base leading-tight text-neutral-800 md:text-lg">
+                <p className="flex items-center gap-2 text-base text-neutral-800 leading-tight md:text-lg">
                     {bodyName}
-                    {logoSrc && <Avatar src={logoSrc} size="sm" />}
+                    {logoSrc && <Avatar size="sm" src={logoSrc} />}
                 </p>
-                {address && name != null && name != '' && (
-                    <p className="text-base leading-tight text-neutral-500 md:text-lg">{truncatedAddress}</p>
+                {address && name != null && name !== '' && (
+                    <p className="text-base text-neutral-500 leading-tight md:text-lg">{truncatedAddress}</p>
                 )}
             </div>
-            <p className="text-sm leading-tight text-neutral-500 md:text-base">{subtitle}</p>
+            <p className="text-neutral-500 text-sm leading-tight md:text-base">{subtitle}</p>
         </div>
     );
 };

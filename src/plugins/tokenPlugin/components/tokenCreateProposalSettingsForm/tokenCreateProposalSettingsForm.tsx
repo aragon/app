@@ -1,13 +1,13 @@
 'use client';
 
+import { DateTime } from 'luxon';
+import { useWatch } from 'react-hook-form';
 import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { AdvancedDateInput } from '@/shared/components/forms/advancedDateInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { dateUtils } from '@/shared/utils/dateUtils/dateUtils';
-import { DateTime } from 'luxon';
-import { useWatch } from 'react-hook-form';
 import type { ITokenPluginSettings } from '../../types';
 
 export interface ITokenCreateProposalSettingsFormProps {
@@ -36,21 +36,21 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
     return (
         <div className="flex flex-col gap-6 md:gap-12">
             <AdvancedDateInput
-                label={t('app.plugins.token.tokenCreateProposalSettingsForm.startTime.label')}
                 field="startTime"
+                label={t('app.plugins.token.tokenCreateProposalSettingsForm.startTime.label')}
                 minTime={DateTime.now()}
             />
             <AdvancedDateInput
-                label={t('app.plugins.token.tokenCreateProposalSettingsForm.endTime.label')}
                 field="endTime"
                 infoText={t('app.plugins.token.tokenCreateProposalSettingsForm.endTime.infoText', {
                     days,
                     hours,
                     minutes,
                 })}
-                useDuration={true}
+                label={t('app.plugins.token.tokenCreateProposalSettingsForm.endTime.label')}
                 minDuration={parsedMinDuration}
                 minTime={minEndTime}
+                useDuration={true}
                 validateMinDuration={true}
             />
         </div>

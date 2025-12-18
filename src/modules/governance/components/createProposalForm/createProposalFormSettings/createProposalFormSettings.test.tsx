@@ -1,12 +1,12 @@
+import { render, screen } from '@testing-library/react';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateDaoPlugin, generateFilterComponentPlugin } from '@/shared/testUtils';
-import { render, screen } from '@testing-library/react';
 import { CreateProposalFormSettings, type ICreateProposalFormSettingsProps } from './createProposalFormSettings';
 
 jest.mock('@/shared/components/pluginSingleComponent', () => ({
     PluginSingleComponent: (props: { slotId: string; pluginId: string }) => (
-        <div data-testid="plugin-component-mock" data-slotid={props.slotId} data-pluginids={props.pluginId} />
+        <div data-pluginids={props.pluginId} data-slotid={props.slotId} data-testid="plugin-component-mock" />
     ),
 }));
 
@@ -28,9 +28,7 @@ describe('<CreateProposalFormSettings /> component', () => {
     };
 
     it('renders a plugin component with the plugin id and the dao-create-proposal-settings-form slot', () => {
-        const plugins = [
-            generateFilterComponentPlugin({ id: 'multisig', meta: generateDaoPlugin({ address: '0x123' }) }),
-        ];
+        const plugins = [generateFilterComponentPlugin({ id: 'multisig', meta: generateDaoPlugin({ address: '0x123' }) })];
         useDaoPluginsSpy.mockReturnValue(plugins);
         render(createTestComponent());
         const pluginComponent = screen.getByTestId('plugin-component-mock');

@@ -1,9 +1,9 @@
+import { addressUtils, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { addressUtils, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import type { ISetupStrategyForm } from '../setupStrategyDialogDefinitions';
 
 export interface ISetupStrategyDialogSourceVaultProps {
@@ -35,14 +35,14 @@ export const SetupStrategyDialogSourceVault: React.FC<ISetupStrategyDialogSource
     return (
         <RadioGroup helpText={t('app.capitalFlow.setupStrategyDialog.sourceVault.helpText')} {...sourceVaultField}>
             <RadioCard
-                label={dao.name}
-                description={dao.ens ?? addressUtils.truncateAddress(address)}
-                value={daoId}
                 avatar={daoAvatar}
+                description={dao.ens ?? addressUtils.truncateAddress(address)}
+                label={dao.name}
                 tag={{
                     variant: 'neutral',
                     label: t('app.capitalFlow.setupStrategyDialog.sourceVault.tags.mainDao'),
                 }}
+                value={daoId}
             />
         </RadioGroup>
     );

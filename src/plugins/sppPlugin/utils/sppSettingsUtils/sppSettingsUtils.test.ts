@@ -33,9 +33,7 @@ describe('sppSettings utils', () => {
             const link = { href: url };
             const result = sppSettingsUtils.parseDefaultSettings({ address, name, url, t: mockTranslations.tMock });
 
-            expect(result).toEqual([
-                { term: 'app.plugins.spp.sppGovernanceSettings.default.address', definition: address, link },
-            ]);
+            expect(result).toEqual([{ term: 'app.plugins.spp.sppGovernanceSettings.default.address', definition: address, link }]);
         });
     });
 });

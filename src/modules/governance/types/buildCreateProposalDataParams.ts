@@ -1,6 +1,6 @@
+import type { Hex } from 'viem';
 import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
-import type { Hex } from 'viem';
 import type { IProposalCreate } from '../dialogs/publishProposalDialog';
 
 export interface IBuildCreateProposalDataParams<

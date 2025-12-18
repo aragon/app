@@ -1,10 +1,10 @@
 'use client';
 
+import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
+import { useWatch } from 'react-hook-form';
 import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
-import { useWatch } from 'react-hook-form';
 import type { IMultisigSetupGovernanceForm, IMultisigSetupGovernanceProps } from './multisigSetupGovernance.api';
 
 export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = (props) => {
@@ -45,34 +45,34 @@ export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = 
     return (
         <div className="flex w-full flex-col gap-y-6 md:gap-y-10">
             <NumberProgressInput
+                alert={minApprovalAlert}
                 fieldName={minApprovalsFieldName}
-                label={t('app.plugins.multisig.multisigSetupGovernance.minimumApproval.label')}
                 helpText={t('app.plugins.multisig.multisigSetupGovernance.minimumApproval.helpText')}
-                valueLabel={minApprovalsFieldValue.toString()}
-                total={membersCount}
+                label={t('app.plugins.multisig.multisigSetupGovernance.minimumApproval.label')}
                 min={1}
+                total={membersCount}
                 totalLabel={t('app.plugins.multisig.multisigSetupGovernance.minimumApproval.total', {
                     total: membersCount,
                 })}
-                alert={minApprovalAlert}
+                valueLabel={minApprovalsFieldValue.toString()}
             />
             {showProposalCreationSettings && (
                 <RadioGroup
-                    helpText={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.helpText')}
+                    alert={onlyListedField.alert}
                     className="w-full"
+                    helpText={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.helpText')}
+                    label={onlyListedField.label}
                     onValueChange={handleRadioChange}
                     value={onlyListedFieldValue ? 'members' : 'any'}
-                    label={onlyListedField.label}
-                    alert={onlyListedField.alert}
                 >
                     <RadioCard
-                        label={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.members.label')}
                         description={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.members.description')}
+                        label={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.members.label')}
                         value="members"
                     />
                     <RadioCard
-                        label={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.anyWallet.label')}
                         description={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.anyWallet.description')}
+                        label={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.anyWallet.label')}
                         value="any"
                     />
                 </RadioGroup>

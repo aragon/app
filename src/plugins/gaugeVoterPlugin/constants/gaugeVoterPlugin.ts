@@ -1,6 +1,6 @@
+import { IconType } from '@aragon/gov-ui-kit';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import type { IPluginInfo } from '@/shared/types';
-import { IconType } from '@aragon/gov-ui-kit';
 
 export enum GaugeVoterPluginPages {
     GAUGES = 'gauges',

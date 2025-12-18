@@ -1,6 +1,6 @@
-import { Container } from '@/shared/components/container';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
+import { Container } from '@/shared/components/container';
 
 export interface INavigationContainerProps extends ComponentProps<'nav'> {
     /**
@@ -13,10 +13,7 @@ export const NavigationContainer: React.FC<INavigationContainerProps> = (props) 
     const { className, containerClasses, children, ...otherProps } = props;
 
     return (
-        <nav
-            className={classNames('bg-neutral-0 sticky top-0 z-10 flex w-full border-b border-neutral-100', className)}
-            {...otherProps}
-        >
+        <nav className={classNames('sticky top-0 z-10 flex w-full border-neutral-100 border-b bg-neutral-0', className)} {...otherProps}>
             <Container className={classNames('w-full grow', containerClasses)}>{children}</Container>
         </nav>
     );

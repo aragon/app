@@ -1,3 +1,4 @@
+import { renderHook } from '@testing-library/react';
 import { Network } from '@/shared/api/daoService';
 import {
     generatePaginatedResponse,
@@ -6,7 +7,6 @@ import {
     generateReactQueryInfiniteResultLoading,
     generateReactQueryInfiniteResultSuccess,
 } from '@/shared/testUtils';
-import { renderHook } from '@testing-library/react';
 import * as governanceService from '../../api/governanceService';
 import { generateVote } from '../../testUtils';
 import { useVoteListData } from './useVoteListData';
@@ -26,9 +26,7 @@ describe('useVoteListData hook', () => {
             queryParams: { proposalId: 'my-proposal', pluginAddress: '0x123', network: Network.ETHEREUM_SEPOLIA },
         };
 
-        useVoteListSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({ data: { pages: [votesResponse], pageParams: [] } }),
-        );
+        useVoteListSpy.mockReturnValue(generateReactQueryInfiniteResultSuccess({ data: { pages: [votesResponse], pageParams: [] } }));
 
         const { result } = renderHook(() => useVoteListData(params));
 
@@ -46,7 +44,7 @@ describe('useVoteListData hook', () => {
         useVoteListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error('error') }));
 
         const { result } = renderHook(() =>
-            useVoteListData({ queryParams: { pluginAddress: '0x123', network: Network.ETHEREUM_SEPOLIA } }),
+            useVoteListData({ queryParams: { pluginAddress: '0x123', network: Network.ETHEREUM_SEPOLIA } })
         );
 
         expect(result.current.state).toEqual('error');
@@ -57,7 +55,7 @@ describe('useVoteListData hook', () => {
 
         const pageSize = 6;
         const { result } = renderHook(() =>
-            useVoteListData({ queryParams: { pageSize, pluginAddress: '0x123', network: Network.ETHEREUM_SEPOLIA } }),
+            useVoteListData({ queryParams: { pageSize, pluginAddress: '0x123', network: Network.ETHEREUM_SEPOLIA } })
         );
 
         expect(result.current.pageSize).toEqual(pageSize);

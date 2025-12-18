@@ -1,1 +1,1 @@
-export { SupportThresholdField, type ISupportThresholdFieldProps } from './supportThresholdField';
+export { type ISupportThresholdFieldProps, SupportThresholdField } from './supportThresholdField';

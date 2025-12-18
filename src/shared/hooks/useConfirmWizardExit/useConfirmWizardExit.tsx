@@ -1,6 +1,6 @@
+import { useEffect } from 'react';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useEffect } from 'react';
 
 export const useConfirmWizardExit = (isFormDirty: boolean) => {
     const { setIsBlocked } = useBlockNavigationContext();

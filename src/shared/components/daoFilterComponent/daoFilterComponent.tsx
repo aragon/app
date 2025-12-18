@@ -1,11 +1,11 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { PluginFilterComponent } from '@/shared/components/pluginFilterComponent';
 import type { IPluginSingleComponentProps } from '@/shared/components/pluginSingleComponent';
 import type { IDaoFilterOption } from '@/shared/hooks/useDaoFilterUrlParam';
 import type { SlotId } from '@/shared/utils/pluginRegistryUtils';
-import type { ReactNode } from 'react';
 
 export interface IDaoFilterComponentProps<
     TParams extends { queryParams: Record<string, unknown> } = { queryParams: Record<string, unknown> },
@@ -59,7 +59,7 @@ export const mapDaoOptionsToFilterFormat = (params: {
     options?: IDaoFilterOption[];
     initialParams: { queryParams: Record<string, unknown> };
     allOptionLabel: string;
-}): Array<IFilterComponentPlugin<IDaoFilterOption>> | undefined => {
+}): IFilterComponentPlugin<IDaoFilterOption>[] | undefined => {
     const { options, initialParams, allOptionLabel } = params;
 
     return options?.map((option) => {
@@ -85,10 +85,8 @@ export const mapDaoOptionsToFilterFormat = (params: {
  * DAO-based filter component for assets/transactions/etc.
  * Wraps PluginFilterComponent with DAO-specific API.
  */
-export const DaoFilterComponent = <
-    TParams extends { queryParams: Record<string, unknown> } = { queryParams: Record<string, unknown> },
->(
-    props: IDaoFilterComponentProps<TParams>,
+export const DaoFilterComponent = <TParams extends { queryParams: Record<string, unknown> } = { queryParams: Record<string, unknown> }>(
+    props: IDaoFilterComponentProps<TParams>
 ) => {
     const { options, value, onValueChange, initialParams, allOptionLabel, ...otherProps } = props;
 
@@ -100,12 +98,5 @@ export const DaoFilterComponent = <
         onValueChange?.(filterOption.meta);
     };
 
-    return (
-        <PluginFilterComponent
-            plugins={processedOptions}
-            value={resolvedValue}
-            onValueChange={handleValueChange}
-            {...otherProps}
-        />
-    );
+    return <PluginFilterComponent onValueChange={handleValueChange} plugins={processedOptions} value={resolvedValue} {...otherProps} />;
 };

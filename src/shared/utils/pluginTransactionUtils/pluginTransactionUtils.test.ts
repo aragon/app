@@ -1,3 +1,5 @@
+import type { Hex } from 'viem';
+import * as Viem from 'viem';
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
@@ -8,8 +10,6 @@ import {
     generatePluginUninstallSetupData,
     generatePluginUpdateSetupData,
 } from '@/shared/testUtils';
-import type { Hex } from 'viem';
-import * as Viem from 'viem';
 import { permissionTransactionUtils } from '../permissionTransactionUtils';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 import { pluginSetupProcessorAbi } from './abi/pluginSetupProcessorAbi';
@@ -106,12 +106,7 @@ describe('pluginTransaction utils', () => {
             const daoAddress = '0xDAOAddress';
 
             encodeFunctionDataSpy.mockReturnValue(transactionData);
-            const result = pluginTransactionUtils.buildPrepareInstallationData(
-                pluginSetupRepo,
-                versionTag,
-                data,
-                daoAddress,
-            );
+            const result = pluginTransactionUtils.buildPrepareInstallationData(pluginSetupRepo, versionTag, data, daoAddress);
 
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: pluginSetupProcessorAbi,
@@ -167,7 +162,6 @@ describe('pluginTransaction utils', () => {
     });
 
     describe('buildApplyPluginsInstallationActions', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const setupDataToActionsSpy = jest.spyOn(pluginTransactionUtils as any, 'setupInstallationDataToAction');
 
         afterEach(() => {
@@ -198,7 +192,6 @@ describe('pluginTransaction utils', () => {
     });
 
     describe('buildApplyPluginsUpdateActions', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const buildUpdateActionSpy = jest.spyOn(pluginTransactionUtils as any, 'buildApplyPluginUpdateAction');
 
         afterEach(() => {
@@ -255,7 +248,6 @@ describe('pluginTransaction utils', () => {
     });
 
     describe('buildApplyPluginUpdateAction', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const setupUpdateDataToActionSpy = jest.spyOn(pluginTransactionUtils as any, 'setupUpdateDataToAction');
 
         afterEach(() => {
@@ -277,7 +269,7 @@ describe('pluginTransaction utils', () => {
             const updateAction = { to: '0x1', data: '0xupdate', value: BigInt(0) } as const;
             grantRevokePermissionSpy.mockReturnValue([grantRevokeActions[0], grantRevokeActions[1]]);
             setupUpdateDataToActionSpy.mockReturnValue(updateAction);
-            const result = pluginTransactionUtils['buildApplyPluginUpdateAction'](dao, plugin, setupData);
+            const result = pluginTransactionUtils.buildApplyPluginUpdateAction(dao, plugin, setupData);
             expect(grantRevokePermissionSpy).toHaveBeenCalledWith({
                 where: plugin.address,
                 who: networkDefinitions[dao.network].addresses.pluginSetupProcessor,
@@ -314,7 +306,6 @@ describe('pluginTransaction utils', () => {
     });
 
     describe('setupUpdateDataToAction', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const hashHelpersSpy = jest.spyOn(pluginTransactionUtils as any, 'hashHelpers');
 
         afterEach(() => {
@@ -337,7 +328,7 @@ describe('pluginTransaction utils', () => {
             hashHelpersSpy.mockReturnValue(helpersHash);
             encodeFunctionDataSpy.mockReturnValueOnce(encodedTxData);
 
-            const result = pluginTransactionUtils['setupUpdateDataToAction'](dao, plugin, setupData);
+            const result = pluginTransactionUtils.setupUpdateDataToAction(dao, plugin, setupData);
             expect(hashHelpersSpy).toHaveBeenCalledWith(preparedSetupData.helpers);
 
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
@@ -361,7 +352,6 @@ describe('pluginTransaction utils', () => {
     });
 
     describe('setupInstallationDataToAction', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const hashHelpersSpy = jest.spyOn(pluginTransactionUtils as any, 'hashHelpers');
 
         afterEach(() => {
@@ -387,7 +377,7 @@ describe('pluginTransaction utils', () => {
             hashHelpersSpy.mockReturnValue(helpersHash);
             encodeFunctionDataSpy.mockReturnValueOnce(encodedTxData);
 
-            const result = pluginTransactionUtils['setupInstallationDataToAction'](setupData, dao);
+            const result = pluginTransactionUtils.setupInstallationDataToAction(setupData, dao);
             expect(hashHelpersSpy).toHaveBeenCalledWith(preparedSetupData.helpers);
 
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
@@ -419,7 +409,7 @@ describe('pluginTransaction utils', () => {
             encodeAbiParametersSpy.mockReturnValueOnce(encodedValue);
             keccak256Spy.mockReturnValueOnce(expectedHash);
 
-            const result = pluginTransactionUtils['hashHelpers'](helpers);
+            const result = pluginTransactionUtils.hashHelpers(helpers);
 
             expect(encodeAbiParametersSpy).toHaveBeenCalledWith([{ type: 'address[]' }], [helpers]);
             expect(keccak256Spy).toHaveBeenCalledWith(encodedValue);

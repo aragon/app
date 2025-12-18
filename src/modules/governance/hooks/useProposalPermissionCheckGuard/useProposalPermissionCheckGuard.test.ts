@@ -1,15 +1,10 @@
-import * as daoService from '@/shared/api/daoService';
-import { Network } from '@/shared/api/daoService';
-import * as UseDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import {
-    generateDao,
-    generateDaoPlugin,
-    generateFilterComponentPlugin,
-    generateReactQueryResultSuccess,
-} from '@/shared/testUtils';
 import { renderHook } from '@testing-library/react';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import * as NextNavigation from 'next/navigation';
+import * as daoService from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
+import * as UseDaoPlugins from '@/shared/hooks/useDaoPlugins';
+import { generateDao, generateDaoPlugin, generateFilterComponentPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import * as UsePermissionCheckGuard from '../usePermissionCheckGuard';
 import { useProposalPermissionCheckGuard } from './useProposalPermissionCheckGuard';
 
@@ -58,9 +53,7 @@ describe('useProposalPermissionCheckGuard hook', () => {
         const daoId = 'dao-id';
         const daoNetwork = Network.ETHEREUM_MAINNET;
         const daoAddress = '0x12345';
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }),
-        );
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }));
         const pluginAddress = 'plugin-address';
         const redirectTab = 'settings';
         const checkCreateProposalGuard = jest.fn();

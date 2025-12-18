@@ -1,7 +1,7 @@
-import { type TranslationFunction } from '@/shared/components/translationsProvider';
-import { dateUtils } from '@/shared/utils/dateUtils';
 import { formatterUtils, type IDefinitionSetting, NumberFormat } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
+import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { dateUtils } from '@/shared/utils/dateUtils';
 import { tokenSettingsUtils } from '../../../tokenPlugin/utils/tokenSettingsUtils';
 import { DaoLockToVoteVotingMode, type ILockToVotePluginSettings } from '../../types';
 
@@ -27,15 +27,8 @@ class LockToVoteSettingsUtils {
 
     parseSettings = (params: IParseLockToVoteSettingsParams): IDefinitionSetting[] => {
         const { settings, isVeto, t } = params;
-        const {
-            supportThreshold,
-            minParticipation,
-            minDuration,
-            minProposerVotingPower,
-            votingMode,
-            token,
-            historicalTotalSupply,
-        } = settings;
+        const { supportThreshold, minParticipation, minDuration, minProposerVotingPower, votingMode, token, historicalTotalSupply } =
+            settings;
 
         const { symbol: tokenSymbol, totalSupply, decimals } = token;
 
@@ -71,9 +64,7 @@ class LockToVoteSettingsUtils {
 
         return [
             {
-                term: t(
-                    `app.plugins.lockToVote.lockToVoteGovernanceSettings.${isVeto ? 'vetoThreshold' : 'approvalThreshold'}`,
-                ),
+                term: t(`app.plugins.lockToVote.lockToVoteGovernanceSettings.${isVeto ? 'vetoThreshold' : 'approvalThreshold'}`),
                 definition: t('app.plugins.lockToVote.lockToVoteGovernanceSettings.threshold', {
                     threshold: formattedApproveThreshold,
                 }),

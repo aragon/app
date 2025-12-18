@@ -1,11 +1,11 @@
 'use client';
 
+import { useCallback, useMemo, useState } from 'react';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { useCallback, useMemo, useState } from 'react';
 import { CreateProposalForm, type ICreateProposalFormData } from '../../components/createProposalForm';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type {
@@ -43,7 +43,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     const addPrepareAction = useCallback(
         (type: string, prepareAction: PrepareProposalActionFunction) =>
             setPrepareActions((current) => ({ ...current, [type]: prepareAction })),
-        [],
+        []
     );
 
     const contextValues = useMemo(() => ({ prepareActions, addPrepareAction }), [prepareActions, addPrepareAction]);
@@ -62,21 +62,21 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
                 ...step,
                 meta: { ...step.meta, name: t(step.meta.name) },
             })),
-        [t],
+        [t]
     );
 
     return (
         <Page.Main fullWidth={true}>
             <WizardPage.Container
+                defaultValues={{ actions: [] }}
                 finalStep={t('app.governance.createProposalPage.finalStep')}
-                submitLabel={t('app.governance.createProposalPage.submitLabel')}
+                id={createProposalWizardId}
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
-                defaultValues={{ actions: [] }}
-                id={createProposalWizardId}
+                submitLabel={t('app.governance.createProposalPage.submitLabel')}
             >
                 <CreateProposalForm.Provider value={contextValues}>
-                    <CreateProposalPageClientSteps steps={processedSteps} daoId={daoId} pluginAddress={pluginAddress} />
+                    <CreateProposalPageClientSteps daoId={daoId} pluginAddress={pluginAddress} steps={processedSteps} />
                 </CreateProposalForm.Provider>
             </WizardPage.Container>
         </Page.Main>

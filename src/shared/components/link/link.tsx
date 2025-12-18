@@ -1,8 +1,8 @@
-import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import classNames from 'classnames';
 import NextLink from 'next/link';
-import { type ComponentProps } from 'react';
+import type { ComponentProps } from 'react';
+import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
+import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface ILinkProps extends ComponentProps<'a'> {}
 
@@ -33,12 +33,12 @@ export const Link: React.FC<ILinkProps> = (props) => {
 
     return (
         <NextLink
+            className={classNames(className, { 'pointer-events-none': isDisabled })}
             href={href}
+            onClick={handleClick}
+            onClickCapture={handleClickCapture}
             rel={processedRel}
             target={target}
-            onClickCapture={handleClickCapture}
-            onClick={handleClick}
-            className={classNames(className, { 'pointer-events-none': isDisabled })}
             {...otherProps}
         />
     );

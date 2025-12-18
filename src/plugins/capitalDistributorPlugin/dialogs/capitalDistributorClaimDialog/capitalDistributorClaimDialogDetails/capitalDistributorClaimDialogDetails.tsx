@@ -1,20 +1,11 @@
+import { AlertInline, Card, Checkbox, DateFormat, formatterUtils, Heading, Link, NumberFormat } from '@aragon/gov-ui-kit';
+import React from 'react';
+import { useFormContext } from 'react-hook-form';
+import { formatUnits } from 'viem';
 import { CampaignStatus, type ICampaign } from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
 import type { ICapitalDistributorPlugin } from '@/plugins/capitalDistributorPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import {
-    AlertInline,
-    Card,
-    Checkbox,
-    DateFormat,
-    formatterUtils,
-    Heading,
-    Link,
-    NumberFormat,
-} from '@aragon/gov-ui-kit';
-import React from 'react';
-import { useFormContext } from 'react-hook-form';
-import { formatUnits } from 'viem';
 import type { ICapitalDistributorClaimDialogForm } from '../capitalDistributorClaimDialogDefinitions';
 import { CapitalDistributorClaimDialogDetailsInfo } from './capitalDistributorClaimDialogDetailsInfo';
 
@@ -77,8 +68,7 @@ export const CapitalDistributorClaimDialogDetails: React.FC<ICapitalDistributorC
     ];
 
     const completeDetails = endTime !== 0 ? [amountDetails, metaDetails, timeDetails] : [amountDetails, metaDetails];
-    const displayTermsConditionAlert =
-        formState.isSubmitted && plugin.termsConditionsUrl != null && !termsConditionsAccepted;
+    const displayTermsConditionAlert = formState.isSubmitted && plugin.termsConditionsUrl != null && !termsConditionsAccepted;
 
     return (
         <div className="flex grow flex-col gap-4">
@@ -87,7 +77,7 @@ export const CapitalDistributorClaimDialogDetails: React.FC<ICapitalDistributorC
                     <React.Fragment key={index}>
                         <div className="flex flex-row">
                             {detailsGroup.map((details) => (
-                                <CapitalDistributorClaimDialogDetailsInfo key={details.label} info={details} />
+                                <CapitalDistributorClaimDialogDetailsInfo info={details} key={details.label} />
                             ))}
                         </div>
                         {index !== completeDetails.length - 1 && <div className="h-[1px] w-full bg-neutral-100" />}
@@ -96,12 +86,10 @@ export const CapitalDistributorClaimDialogDetails: React.FC<ICapitalDistributorC
             </Card>
             {resources != null && resources.length > 0 && (
                 <Card className="flex flex-col gap-3 border border-neutral-100 p-6">
-                    <Heading size="h4">
-                        {t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.resources')}
-                    </Heading>
+                    <Heading size="h4">{t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.resources')}</Heading>
                     <div className="flex flex-col gap-4">
                         {resources.map((resource) => (
-                            <Link key={resource.url} href={resource.url} isExternal={true} showUrl={true}>
+                            <Link href={resource.url} isExternal={true} key={resource.url} showUrl={true}>
                                 {resource.name}
                             </Link>
                         ))}
@@ -117,17 +105,13 @@ export const CapitalDistributorClaimDialogDetails: React.FC<ICapitalDistributorC
                         {...termsConditionsAcceptedField}
                     />
                     <Link href={plugin.termsConditionsUrl} isExternal={true}>
-                        {t(
-                            'app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.termsConditionsAccepted.link',
-                        )}
+                        {t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.termsConditionsAccepted.link')}
                     </Link>
                 </div>
             )}
             {displayTermsConditionAlert && (
                 <AlertInline
-                    message={t(
-                        'app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.termsConditionsAccepted.error',
-                    )}
+                    message={t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.termsConditionsAccepted.error')}
                     variant="critical"
                 />
             )}

@@ -1,10 +1,10 @@
 'use client';
 
+import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 import type { ISetupBodyFormExisting } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { daoProcessDetailsClientUtils } from '@/modules/settings/pages/daoProcessDetailsPage';
 import type { IPluginToFormDataParams } from '@/modules/settings/types';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 import type { ITokenSetupMembershipForm } from '../../components/tokenSetupMembership';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
 
@@ -12,7 +12,7 @@ export interface ITokenPluginToFormDataParams extends IPluginToFormDataParams<IT
 
 export class TokenBodyUtils {
     pluginToFormData = (
-        params: ITokenPluginToFormDataParams,
+        params: ITokenPluginToFormDataParams
     ): ISetupBodyFormExisting<ITokenPluginSettings, ICompositeAddress, ITokenSetupMembershipForm> => {
         const { plugin } = params;
 

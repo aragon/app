@@ -6,7 +6,7 @@ import type { IEpochMetrics } from '../../api/gaugeVoterService/domain';
  */
 export const generateEpochMetrics = (epochMetrics?: Partial<IEpochMetrics>): IEpochMetrics => {
     const now = Math.floor(Date.now() / 1000);
-    const oneDay = 86400; // seconds in a day
+    const oneDay = 86_400; // seconds in a day
     const epochStart = now - oneDay * 2; // Epoch/voting started 2 days ago
 
     return {

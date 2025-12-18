@@ -1,17 +1,5 @@
 'use client';
 
-import { ProposalExecutionStatus } from '@/modules/governance/components/proposalExecutionStatus';
-import { proposalActionsImportExportUtils } from '@/modules/governance/utils/proposalActionsImportExportUtils';
-import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
-import { useDao } from '@/shared/api/daoService';
-import { Page } from '@/shared/components/page';
-import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
-import { SafeDocumentParser } from '@/shared/components/SafeDocumentParser';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoChain } from '@/shared/hooks/useDaoChain';
-import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     ActionSimulation,
     addressUtils,
@@ -29,13 +17,20 @@ import {
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
+import { ProposalExecutionStatus } from '@/modules/governance/components/proposalExecutionStatus';
+import { proposalActionsImportExportUtils } from '@/modules/governance/utils/proposalActionsImportExportUtils';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
+import { useDao } from '@/shared/api/daoService';
+import { Page } from '@/shared/components/page';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { SafeDocumentParser } from '@/shared/components/SafeDocumentParser';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
+import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { actionSimulationServiceKeys, useLastSimulation, useSimulateProposal } from '../../api/actionSimulationService';
-import {
-    governanceServiceKeys,
-    type IProposal,
-    useProposalActions,
-    useProposalBySlug,
-} from '../../api/governanceService';
+import { governanceServiceKeys, type IProposal, useProposalActions, useProposalBySlug } from '../../api/governanceService';
 import type { IProposalActionData } from '../../components/createProposalForm';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -53,7 +48,7 @@ export interface IDaoProposalDetailsPageClientProps {
 }
 
 // Proposal actions cannot be simulated if last simulation has been triggered less than 10 minutes ago
-const actionSimulationLimitMillis = 10 * 60 * 1_000;
+const actionSimulationLimitMillis = 10 * 60 * 1000;
 
 export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClientProps> = (props) => {
     const { daoId, proposalSlug } = props;
@@ -80,7 +75,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     const { data: actionData } = useProposalActions(
         { urlParams: { id: proposal?.id as string } },
-        { enabled: proposal != null, refetchInterval: ({ state }) => (state.data?.decoding ? 2000 : false) },
+        { enabled: proposal != null, refetchInterval: ({ state }) => (state.data?.decoding ? 2000 : false) }
     );
     const actionsCount = actionData?.rawActions?.length ?? 0;
 
@@ -97,16 +92,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         data: lastSimulation,
         isError: isLastSimulationError,
         error: lastSimulationError,
-    } = useLastSimulation(
-        { urlParams: { proposalId: proposal?.id as string } },
-        { enabled: !!proposal?.hasSimulation },
-    );
+    } = useLastSimulation({ urlParams: { proposalId: proposal?.id as string } }, { enabled: !!proposal?.hasSimulation });
 
-    const {
-        mutate: simulateProposal,
-        isPending: isSimulationLoading,
-        isError: hasSimulationFailed,
-    } = useSimulateProposal();
+    const { mutate: simulateProposal, isPending: isSimulationLoading, isError: hasSimulationFailed } = useSimulateProposal();
 
     if (proposal == null || dao == null) {
         return null;
@@ -161,16 +149,13 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         {
             label: t('app.governance.daoProposalDetailsPage.main.actions.downloadAsJSON'),
             onClick: () =>
-                proposalActionsImportExportUtils.downloadActionsAsJSON(
-                    actionData?.actions ?? [],
-                    `proposal-${proposalSlug}-actions.json`,
-                ),
+                proposalActionsImportExportUtils.downloadActionsAsJSON(actionData?.actions ?? [], `proposal-${proposalSlug}-actions.json`),
         },
     ];
 
     return (
         <>
-            <Page.Header breadcrumbs={pageBreadcrumbs} breadcrumbsTag={statusTag} title={title} description={summary} />
+            <Page.Header breadcrumbs={pageBreadcrumbs} breadcrumbsTag={statusTag} description={summary} title={title} />
             <Page.Content>
                 <Page.Main>
                     {description && (
@@ -185,26 +170,26 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                     )}
                     <Page.MainSection title={t('app.governance.daoProposalDetailsPage.main.voting')}>
                         <PluginSingleComponent
-                            slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_TERMINAL}
-                            pluginId={proposal.pluginInterfaceType}
-                            proposal={proposal}
-                            status={proposalStatus}
                             daoId={daoId}
                             Fallback={ProposalVotingTerminal}
+                            pluginId={proposal.pluginInterfaceType}
+                            proposal={proposal}
+                            slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_TERMINAL}
+                            status={proposalStatus}
                         />
                     </Page.MainSection>
                     <Page.MainSection title={t('app.governance.daoProposalDetailsPage.main.actions.header')}>
                         {showActionSimulation && (
                             <ActionSimulation
-                                totalActions={actionsCount}
-                                lastSimulation={processedLastSimulation}
-                                isLoading={isSimulationLoading}
                                 error={showSimulationError ? simulationError : undefined}
-                                onSimulate={handleSimulateProposal}
                                 isEnabled={canSimulate}
+                                isLoading={isSimulationLoading}
+                                lastSimulation={processedLastSimulation}
+                                onSimulate={handleSimulateProposal}
+                                totalActions={actionsCount}
                             />
                         )}
-                        <ProposalActions.Root isLoading={actionData?.decoding} actionsCount={actionsCount}>
+                        <ProposalActions.Root actionsCount={actionsCount} isLoading={actionData?.decoding}>
                             <ProposalActions.Container emptyStateDescription="">
                                 {normalizedProposalActions.map((action, index) => {
                                     const fnSelector = proposalActionUtils.actionToFunctionSelector(action);
@@ -212,32 +197,28 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
                                     return customActionView ? (
                                         <ProposalActions.Item<IProposalActionData>
-                                            key={index}
                                             action={{ ...action, daoId } as IProposalActionData}
                                             actionFunctionSelector={fnSelector}
-                                            chainId={chainId}
-                                            readOnly={true}
                                             CustomComponent={customActionView.componentDetails}
+                                            chainId={chainId}
+                                            key={index}
+                                            readOnly={true}
                                         />
                                     ) : (
                                         <ProposalActions.Item
-                                            key={index}
                                             action={action}
                                             actionFunctionSelector={fnSelector}
                                             chainId={chainId}
+                                            key={index}
                                             readOnly={true}
                                         />
                                     );
                                 })}
                             </ProposalActions.Container>
                             <ProposalActions.Footer
-                                dropdownItems={
-                                    normalizedProposalActions.length > 0 ? proposalActionsDropdownItems : undefined
-                                }
+                                dropdownItems={normalizedProposalActions.length > 0 ? proposalActionsDropdownItems : undefined}
                             >
-                                {normalizedProposalActions.length > 0 && (
-                                    <ProposalExecutionStatus daoId={daoId} proposal={proposal} />
-                                )}
+                                {normalizedProposalActions.length > 0 && <ProposalExecutionStatus daoId={daoId} proposal={proposal} />}
                             </ProposalActions.Footer>
                         </ProposalActions.Root>
                     </Page.MainSection>
@@ -249,8 +230,8 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                     >
                         <DefinitionList.Container>
                             <DefinitionList.Item
-                                term={t('app.governance.daoProposalDetailsPage.aside.details.onChainId')}
                                 copyValue={proposal.proposalIndex}
+                                term={t('app.governance.daoProposalDetailsPage.aside.details.onChainId')}
                             >
                                 <p className="truncate text-neutral-500">{proposal.proposalIndex}</p>
                             </DefinitionList.Item>
@@ -258,20 +239,20 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                 <p className="truncate text-neutral-500">{proposalSlug.toUpperCase()}</p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
-                                term={t('app.governance.daoProposalDetailsPage.aside.details.creator')}
                                 copyValue={creator.ens ?? creator.address}
                                 link={{ href: creatorLink }}
+                                term={t('app.governance.daoProposalDetailsPage.aside.details.creator')}
                             >
                                 {creatorName}
                             </DefinitionList.Item>
                             <DefinitionList.Item
-                                term={t('app.governance.daoProposalDetailsPage.aside.details.published')}
                                 link={{ href: creationBlockLink, textClassName: 'first-letter:capitalize' }}
+                                term={t('app.governance.daoProposalDetailsPage.aside.details.published')}
                             >
                                 {formattedCreationDate}
                             </DefinitionList.Item>
                             <DefinitionList.Item term={t('app.governance.daoProposalDetailsPage.aside.details.status')}>
-                                <Tag label={statusTag.label} variant={statusTag.variant} className="w-fit" />
+                                <Tag className="w-fit" label={statusTag.label} variant={statusTag.variant} />
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Page.AsideCard>
@@ -279,7 +260,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         <Page.AsideCard title={t('app.governance.daoProposalDetailsPage.aside.links.title')}>
                             <div className="flex flex-col gap-4">
                                 {resources.map((resource) => (
-                                    <Link key={resource.name} href={resource.url} isExternal={true} showUrl={true}>
+                                    <Link href={resource.url} isExternal={true} key={resource.name} showUrl={true}>
                                         {resource.name}
                                     </Link>
                                 ))}

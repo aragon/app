@@ -1,1 +1,1 @@
-export { PageContainer, type IPageContainerProps } from './pageContainer';
+export { type IPageContainerProps, PageContainer } from './pageContainer';

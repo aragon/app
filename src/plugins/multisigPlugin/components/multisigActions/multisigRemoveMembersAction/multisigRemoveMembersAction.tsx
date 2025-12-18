@@ -1,14 +1,14 @@
-import { type IProposalAction } from '@/modules/governance/api/governanceService';
-import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
-import type { IMultisigRemoveMembersActionDialogParams } from '@/plugins/multisigPlugin/dialogs/multisigRemoveMembersActionDialog';
-import { type IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
-import { type IDaoPlugin } from '@/shared/api/daoService';
-import { useDialogContext } from '@/shared/components/dialogProvider';
-import { useFormField } from '@/shared/hooks/useFormField';
 import { addressUtils, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import type { IMultisigRemoveMembersActionDialogParams } from '@/plugins/multisigPlugin/dialogs/multisigRemoveMembersActionDialog';
+import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
+import type { IDaoPlugin } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 import { MultisigPluginDialogId } from '../../../constants/multisigPluginDialogId';
 import type { IMultisigSetupMembershipForm } from '../../multisigSetupMembership';
 import { MultisigSetupMembership } from '../../multisigSetupMembership';
@@ -41,7 +41,7 @@ export const MultisigRemoveMembersAction: React.FC<IMultisigRemoveMembersActionP
     });
     const controlledMembersField = useMemo(
         () => watchFieldArray.map((field, index) => ({ ...field, ...watchFieldArray[index] })),
-        [watchFieldArray],
+        [watchFieldArray]
     );
 
     const handleMemberClick = (memberAddress: string) => {
@@ -74,11 +74,11 @@ export const MultisigRemoveMembersAction: React.FC<IMultisigRemoveMembersActionP
 
     return (
         <MultisigSetupMembership
-            formPrefix={actionFieldName}
-            disabled={true}
-            onAddClick={handleAddClick}
-            hideLabel={true}
             daoId={action.daoId}
+            disabled={true}
+            formPrefix={actionFieldName}
+            hideLabel={true}
+            onAddClick={handleAddClick}
         />
     );
 };

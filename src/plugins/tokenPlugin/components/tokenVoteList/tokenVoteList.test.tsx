@@ -1,31 +1,23 @@
+import { addressUtils, GukModulesProvider, type VoteIndicator } from '@aragon/gov-ui-kit';
+import { render, screen, within } from '@testing-library/react';
 import { generateToken } from '@/modules/finance/testUtils';
-import { type IVote } from '@/modules/governance/api/governanceService';
+import type { IVote } from '@/modules/governance/api/governanceService';
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
 import { generateProposal } from '@/modules/governance/testUtils';
 import * as daoService from '@/shared/api/daoService';
 import { generateAddressInfo, generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { addressUtils, GukModulesProvider, type VoteIndicator } from '@aragon/gov-ui-kit';
-import { render, screen, within } from '@testing-library/react';
 import { daoUtils } from '../../../../shared/utils/daoUtils';
 import { generateTokenVote } from '../../testUtils';
 import { VoteOption } from '../../types';
 import { type ITokenVoteListProps, TokenVoteList } from './tokenVoteList';
 
 jest.mock('../../../../modules/governance/components/voteList', () => ({
-    VoteProposalListItem: ({
-        vote,
-        daoId,
-        voteIndicator,
-    }: {
-        vote: IVote;
-        daoId: string;
-        voteIndicator: VoteIndicator;
-    }) => {
+    VoteProposalListItem: ({ vote, daoId, voteIndicator }: { vote: IVote; daoId: string; voteIndicator: VoteIndicator }) => {
         const slug = `TOKENVOTING-${vote.proposal!.incrementalId.toString()}`;
         const href = `/test/${daoId}/proposals/${slug}`;
 
         return (
-            <a href={href} data-testid="vote-proposal-list-item-mock">
+            <a data-testid="vote-proposal-list-item-mock" href={href}>
                 <span data-testid="proposal-title">{vote.proposal!.title}</span>
                 <span data-testid="vote-indicator">{voteIndicator.toLowerCase()}</span>
             </a>
@@ -121,14 +113,14 @@ describe('<TokenVoteList /> component', () => {
                 transactionHash: '0x123',
                 voteOption: VoteOption.YES,
                 proposal: generateProposal({ title: 'Test Proposal 1', incrementalId: 2 }),
-                blockTimestamp: 1234567890,
+                blockTimestamp: 1_234_567_890,
                 token,
             }),
             generateTokenVote({
                 transactionHash: '0x456',
                 voteOption: VoteOption.NO,
                 proposal: generateProposal({ title: 'Test Proposal 2', incrementalId: 3 }),
-                blockTimestamp: 1234567890,
+                blockTimestamp: 1_234_567_890,
                 token,
             }),
         ];
@@ -153,7 +145,7 @@ describe('<TokenVoteList /> component', () => {
                         network: daoService.Network.ETHEREUM_SEPOLIA,
                     },
                 },
-            }),
+            })
         );
 
         const links = screen.getAllByTestId('vote-proposal-list-item-mock');

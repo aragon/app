@@ -37,13 +37,13 @@ export const LockToVoteProposalVotingBreakdown: React.FC<ILockToVoteProposalVoti
     return (
         <ProposalVoting.BreakdownToken
             isVeto={isVeto}
-            totalYes={yesVotes}
-            totalNo={noVotes}
-            totalAbstain={abstainVotes}
             minParticipation={tokenSettingsUtils.ratioToPercentage(minParticipation)}
             supportThreshold={tokenSettingsUtils.ratioToPercentage(supportThreshold)}
             tokenSymbol={symbol}
             tokenTotalSupply={formatUnits(BigInt(totalSupply ?? 0), decimals)}
+            totalAbstain={abstainVotes}
+            totalNo={noVotes}
+            totalYes={yesVotes}
         >
             {children}
         </ProposalVoting.BreakdownToken>

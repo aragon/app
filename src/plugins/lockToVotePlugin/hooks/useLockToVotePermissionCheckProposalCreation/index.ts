@@ -1,4 +1,4 @@
 export {
-    useLockToVotePermissionCheckProposalCreation,
     type ILockToVotePermissionCheckProposalCreationParams,
+    useLockToVotePermissionCheckProposalCreation,
 } from './useLockToVotePermissionCheckProposalCreation';

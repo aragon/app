@@ -2,7 +2,7 @@
 // See full list of matchers here (https://github.com/testing-library/jest-dom?tab=readme-ov-file#custom-matchers)
 import '@testing-library/jest-dom';
 import 'jest-canvas-mock';
-import { TextDecoder, TextEncoder } from 'util';
+import { TextDecoder, TextEncoder } from 'node:util';
 import { mockFetch, mockTranslations, testLogger, timeUtils } from './utils';
 
 // Setup test logger
@@ -21,9 +21,7 @@ timeUtils.setup();
 Object.assign(global, { TextDecoder, TextEncoder });
 
 // Mock ResizeObserver functionality
-global.ResizeObserver = jest
-    .fn()
-    .mockImplementation(() => ({ observe: jest.fn(), unobserve: jest.fn(), disconnect: jest.fn() }));
+global.ResizeObserver = jest.fn().mockImplementation(() => ({ observe: jest.fn(), unobserve: jest.fn(), disconnect: jest.fn() }));
 
 // Allow spying on library functions
 jest.mock('react-hook-form', () => ({ __esModule: true, ...jest.requireActual<object>('react-hook-form') }));

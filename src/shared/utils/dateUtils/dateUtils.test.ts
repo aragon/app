@@ -7,9 +7,9 @@ describe('dateUtils', () => {
             { seconds: 0, result: {} },
             { seconds: 60, result: { minutes: 1 } },
             { seconds: 3600, result: { hours: 1 } },
-            { seconds: 86400, result: { days: 1 } },
-            { seconds: 2 * 86400 + 3 * 3600 + 45 * 60, result: { days: 2, hours: 3, minutes: 45 } },
-            { seconds: 100 * 86400 + 23 * 3600 + 59 * 60, result: { days: 100, hours: 23, minutes: 59 } },
+            { seconds: 86_400, result: { days: 1 } },
+            { seconds: 2 * 86_400 + 3 * 3600 + 45 * 60, result: { days: 2, hours: 3, minutes: 45 } },
+            { seconds: 100 * 86_400 + 23 * 3600 + 59 * 60, result: { days: 100, hours: 23, minutes: 59 } },
         ])('correctly converts $seconds seconds', ({ seconds, result }) => {
             const expectedResult = { days: 0, hours: 0, minutes: 0, ...result };
             expect(dateUtils.secondsToDuration(seconds)).toEqual(expectedResult);
@@ -19,17 +19,14 @@ describe('dateUtils', () => {
     describe('durationToSeconds', () => {
         it.each([
             { days: 0, hours: 0, minutes: 0, result: 0 },
-            { days: 1, hours: 0, minutes: 0, result: 86400 },
+            { days: 1, hours: 0, minutes: 0, result: 86_400 },
             { days: 0, hours: 1, minutes: 0, result: 3600 },
             { days: 0, hours: 0, minutes: 1, result: 60 },
-            { days: 10, hours: 2, minutes: 55, result: 874500 },
-        ])(
-            'correctly converts $days days, $hours hours, $minutes minutes to $result seconds',
-            ({ days, hours, minutes, result }) => {
-                const duration = { days, hours, minutes };
-                expect(dateUtils.durationToSeconds(duration)).toEqual(result);
-            },
-        );
+            { days: 10, hours: 2, minutes: 55, result: 874_500 },
+        ])('correctly converts $days days, $hours hours, $minutes minutes to $result seconds', ({ days, hours, minutes, result }) => {
+            const duration = { days, hours, minutes };
+            expect(dateUtils.durationToSeconds(duration)).toEqual(result);
+        });
     });
 
     describe('parseFixedDate', () => {

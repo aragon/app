@@ -7,33 +7,31 @@ import { lockToVoteSettingsUtils } from './lockToVoteSettingsUtils';
 describe('lockToVoteSettings utils', () => {
     describe('parseSettings', () => {
         it('correctly formats and displays the approval threshold', () => {
-            const settings = generateLockToVotePluginSettings({ supportThreshold: 300000 });
+            const settings = generateLockToVotePluginSettings({ supportThreshold: 300_000 });
             const result = lockToVoteSettingsUtils.parseSettings({ settings, t: mockTranslations.tMock });
 
             const [approvalThresholdTerm] = result;
 
             expect(approvalThresholdTerm.term).toMatch(/lockToVoteGovernanceSettings.approvalThreshold/);
-            expect(approvalThresholdTerm.definition).toMatch(
-                /lockToVoteGovernanceSettings.threshold \(threshold=30%\)/,
-            );
+            expect(approvalThresholdTerm.definition).toMatch(/lockToVoteGovernanceSettings.threshold \(threshold=30%\)/);
         });
 
         it('correctly formats and displays the minimum participation', () => {
-            const settings = generateLockToVotePluginSettings({ minParticipation: 123456 });
+            const settings = generateLockToVotePluginSettings({ minParticipation: 123_456 });
             const result = lockToVoteSettingsUtils.parseSettings({ settings, t: mockTranslations.tMock });
 
             const [, minimumParticipationTerm] = result;
 
             expect(minimumParticipationTerm.term).toMatch(/lockToVoteGovernanceSettings.minimumParticipation/);
             expect(minimumParticipationTerm.definition).toMatch(
-                /lockToVoteGovernanceSettings.participation \(participation=12\.35%,tokenValue=0,tokenSymbol=ETH\)/,
+                /lockToVoteGovernanceSettings.participation \(participation=12\.35%,tokenValue=0,tokenSymbol=ETH\)/
             );
         });
 
         it('correctly formats and displays the minimum participation token value', () => {
             const settings = generateLockToVotePluginSettings({
                 token: generateLockToVotePluginSettingsToken({ totalSupply: '200000', decimals: 2 }),
-                minParticipation: 200000,
+                minParticipation: 200_000,
             });
             const result = lockToVoteSettingsUtils.parseSettings({ settings, t: mockTranslations.tMock });
 
@@ -41,7 +39,7 @@ describe('lockToVoteSettings utils', () => {
 
             expect(minimumParticipationTerm.term).toMatch(/lockToVoteGovernanceSettings.minimumParticipation/);
             expect(minimumParticipationTerm.definition).toMatch(
-                /lockToVoteGovernanceSettings.participation \(participation=20\.00%,tokenValue=400,tokenSymbol=ETH\)/,
+                /lockToVoteGovernanceSettings.participation \(participation=20\.00%,tokenValue=400,tokenSymbol=ETH\)/
             );
         });
 
@@ -52,9 +50,7 @@ describe('lockToVoteSettings utils', () => {
             const [, , durationTerm] = result;
 
             expect(durationTerm.term).toMatch(/lockToVoteGovernanceSettings.proposalDuration/);
-            expect(durationTerm.definition).toMatch(
-                /lockToVoteGovernanceSettings.duration \(days=7,hours=0,minutes=0\)/,
-            );
+            expect(durationTerm.definition).toMatch(/lockToVoteGovernanceSettings.duration \(days=7,hours=0,minutes=0\)/);
         });
 
         it('correctly formats and displays the voting power necessary to be a proposer', () => {
@@ -67,9 +63,7 @@ describe('lockToVoteSettings utils', () => {
             const [, , , , proposerVotingTerm] = result;
 
             expect(proposerVotingTerm.term).toMatch(/lockToVoteGovernanceSettings.proposalThreshold/);
-            expect(proposerVotingTerm.definition).toMatch(
-                /lockToVoteGovernanceSettings.proposalAccess \(balance=100,symbol=TKN\)/,
-            );
+            expect(proposerVotingTerm.definition).toMatch(/lockToVoteGovernanceSettings.proposalAccess \(balance=100,symbol=TKN\)/);
         });
 
         it('correctly formats and displays for different voting modes', () => {

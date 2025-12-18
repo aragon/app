@@ -1,6 +1,6 @@
+import { renderHook, waitFor } from '@testing-library/react';
 import { generateSimulationResult } from '@/modules/governance/testUtils';
 import { ReactQueryWrapper } from '@/shared/testUtils';
-import { renderHook, waitFor } from '@testing-library/react';
 import { actionSimulationService } from '../../actionSimulationService';
 import { useLastSimulation } from './useLastSimulation';
 

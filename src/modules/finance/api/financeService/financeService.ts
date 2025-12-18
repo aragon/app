@@ -1,10 +1,10 @@
-import { type ITransaction } from '@/modules/finance/api/financeService/';
+import type { ITransaction } from '@/modules/finance/api/financeService/';
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import type { IAsset } from './domain';
 import type { IGetAssetListParams, IGetTransactionListParams } from './financeService.api';
 
 class FinanceService extends AragonBackendService {
-    private urls = {
+    private readonly urls = {
         assets: '/v2/assets',
         transactions: '/v2/transactions',
     };

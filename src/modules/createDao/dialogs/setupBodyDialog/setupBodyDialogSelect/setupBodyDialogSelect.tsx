@@ -1,13 +1,13 @@
+import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
+import { zeroAddress } from 'viem';
 import { useWhitelistValidation } from '@/modules/createDao/hooks/useWhitelistValidation';
 import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IPluginInfo } from '@/shared/types';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
-import { zeroAddress } from 'viem';
 import { BodyType } from '../../../types/enum';
-import { type ISetupBodyForm } from '../setupBodyDialogDefinitions';
+import type { ISetupBodyForm } from '../setupBodyDialogDefinitions';
 
 export interface ISetupBodyDialogSelectProps {
     /**
@@ -61,27 +61,27 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (pro
         >
             {enabledPlugins.map((plugin) => (
                 <RadioCard
+                    description={t(plugin.setup!.descriptionKey)}
                     key={plugin.id}
                     label={t(plugin.setup!.nameKey)}
-                    description={t(plugin.setup!.descriptionKey)}
                     value={plugin.id}
                 />
             ))}
             {isSubPlugin && (
                 <RadioCard
-                    label={t('app.createDao.setupBodyDialog.select.external.label')}
                     description={t('app.createDao.setupBodyDialog.select.external.description')}
+                    label={t('app.createDao.setupBodyDialog.select.external.label')}
                     value={externalPluginId}
                 />
             )}
             {disabledPlugins.map((plugin) => (
                 <RadioCard
+                    description={t(plugin.setup!.descriptionKey)}
+                    disabled={true}
                     key={plugin.id}
                     label={t(plugin.setup!.nameKey)}
-                    description={t(plugin.setup!.descriptionKey)}
-                    value={plugin.id}
-                    disabled={true}
                     tag={{ variant: 'info', label: t('app.createDao.setupBodyDialog.select.disabled.label') }}
+                    value={plugin.id}
                 />
             ))}
         </RadioGroup>

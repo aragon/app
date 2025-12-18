@@ -1,8 +1,8 @@
-import type { Network } from '@/shared/api/daoService';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import { useReadContract } from 'wagmi';
+import type { Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { gaugeRegistrarAbi } from '../../constants/gaugeRegistrarAbi';
 import type { IRegisteredGauge } from '../../types/gaugeRegistrar';
 import { useAllGauges } from '../useAllGauges';
@@ -60,9 +60,7 @@ export const useGaugeRegistrarGauges = (params: IUseGaugeRegistrarGaugesParams) 
     const mergedData =
         allGauges.length && gaugesFromRegistrar
             ? gaugesFromRegistrar.map((gaugeFromRegistrar) => {
-                  const gauge = allGauges.find((gauge) =>
-                      addressUtils.isAddressEqual(gauge.address, gaugeFromRegistrar.gaugeAddress),
-                  );
+                  const gauge = allGauges.find((gauge) => addressUtils.isAddressEqual(gauge.address, gaugeFromRegistrar.gaugeAddress));
                   return { ...gauge, ...gaugeFromRegistrar };
               })
             : undefined;

@@ -1,13 +1,9 @@
 import { AragonBackendService } from '@/shared/api/aragonBackendService';
-import type {
-    IGetLastSimulationParams,
-    ISimulateActionsParams,
-    ISimulateProposalParams,
-} from './actionSimulationService.api';
+import type { IGetLastSimulationParams, ISimulateActionsParams, ISimulateProposalParams } from './actionSimulationService.api';
 import type { ISimulationResult } from './domain';
 
 class ActionSimulationService extends AragonBackendService {
-    private urls = {
+    private readonly urls = {
         simulateActions: '/v2/simulations/:network/plugin/:pluginAddress/simulate',
         simulateProposal: '/v2/simulations/proposal/:proposalId',
         getLastSimulation: '/v2/simulations/proposal/:proposalId',

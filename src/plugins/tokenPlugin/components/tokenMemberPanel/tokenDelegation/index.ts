@@ -1,6 +1,6 @@
 export { TokenDelegationForm } from './tokenDelegationForm';
 export {
-    TokenDelegationSelection,
     type ITokenDelegationFormData,
     type ITokenDelegationFormProps,
+    TokenDelegationSelection,
 } from './tokenDelegationForm.api';

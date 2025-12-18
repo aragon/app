@@ -1,11 +1,4 @@
-import type {
-    IPlugin,
-    IPluginRegistry,
-    PluginComponent,
-    PluginFunction,
-    PluginId,
-    SlotId,
-} from './pluginRegistryUtils.api';
+import type { IPlugin, IPluginRegistry, PluginComponent, PluginFunction, PluginId, SlotId } from './pluginRegistryUtils.api';
 
 export interface IRegisterSlotComponentParams {
     /**
@@ -87,8 +80,7 @@ export class PluginRegistryUtils {
         return this;
     };
 
-    getPlugin = (pluginId: PluginId): IPlugin | undefined =>
-        this.pluginRegistry.plugins.find((plugin) => plugin.id === pluginId);
+    getPlugin = (pluginId: PluginId): IPlugin | undefined => this.pluginRegistry.plugins.find((plugin) => plugin.id === pluginId);
 
     getPlugins = (): IPlugin[] => this.pluginRegistry.plugins;
 
@@ -108,16 +100,14 @@ export class PluginRegistryUtils {
         return this;
     };
 
-    getSlotFunctions = <TParams = unknown, TResult = unknown>(
-        slotId: SlotId,
-    ): Array<PluginFunction<TParams, TResult>> => {
+    getSlotFunctions = <TParams = unknown, TResult = unknown>(slotId: SlotId): PluginFunction<TParams, TResult>[] => {
         const functions = this.pluginRegistry.slotFunctions[slotId] ?? {};
 
-        return Object.values(functions) as Array<PluginFunction<TParams, TResult>>;
+        return Object.values(functions) as PluginFunction<TParams, TResult>[];
     };
 
     getSlotFunction = <TParams = unknown, TResult = unknown>(
-        params: IGetSlotFunctionParams,
+        params: IGetSlotFunctionParams
     ): PluginFunction<TParams, TResult> | undefined => {
         const { slotId, pluginId } = params;
         const func = this.pluginRegistry.slotFunctions[slotId]?.[pluginId];

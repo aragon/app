@@ -13,13 +13,13 @@ describe('pluginRegistry utils', () => {
             const firstPlugin = generatePlugin({ id: 'plugin-1' });
             const secondPlugin = generatePlugin({ id: 'plugin-2' });
             pluginRegistryUtils.registerPlugin(firstPlugin).registerPlugin(secondPlugin);
-            expect(pluginRegistryUtils['pluginRegistry'].plugins).toEqual([firstPlugin, secondPlugin]);
+            expect(pluginRegistryUtils.pluginRegistry.plugins).toEqual([firstPlugin, secondPlugin]);
         });
 
         it('does not register the same plugin twice', () => {
             const plugin = generatePlugin({ id: 'plugin-1' });
             pluginRegistryUtils.registerPlugin(plugin).registerPlugin(plugin);
-            expect(pluginRegistryUtils['pluginRegistry'].plugins).toEqual([plugin]);
+            expect(pluginRegistryUtils.pluginRegistry.plugins).toEqual([plugin]);
         });
 
         it('returns the class instance', () => {
@@ -55,9 +55,7 @@ describe('pluginRegistry utils', () => {
         it('registers the specified slot component', () => {
             const params = { slotId: 'slot-id', pluginId: 'plugin-id', component: () => null };
             pluginRegistryUtils.registerSlotComponent(params);
-            expect(pluginRegistryUtils.getSlotComponent({ slotId: params.slotId, pluginId: params.pluginId })).toEqual(
-                params.component,
-            );
+            expect(pluginRegistryUtils.getSlotComponent({ slotId: params.slotId, pluginId: params.pluginId })).toEqual(params.component);
         });
 
         it('returns the class instance', () => {
@@ -95,12 +93,10 @@ describe('pluginRegistry utils', () => {
             const pluginId = 'token-voting';
             pluginRegistryUtils.registerSlotComponent({
                 slotId: registeredSlotId,
-                pluginId: pluginId,
+                pluginId,
                 component: () => null,
             });
-            expect(
-                pluginRegistryUtils.getSlotComponent({ slotId: unregisteredSlotId, pluginId: pluginId }),
-            ).toBeUndefined();
+            expect(pluginRegistryUtils.getSlotComponent({ slotId: unregisteredSlotId, pluginId })).toBeUndefined();
         });
     });
 
@@ -108,9 +104,7 @@ describe('pluginRegistry utils', () => {
         it('registers the specified slot function', () => {
             const params = { slotId: 'slot-id', pluginId: 'plugin-id', function: () => null };
             pluginRegistryUtils.registerSlotFunction(params);
-            expect(pluginRegistryUtils.getSlotFunction({ slotId: params.slotId, pluginId: params.pluginId })).toEqual(
-                params.function,
-            );
+            expect(pluginRegistryUtils.getSlotFunction({ slotId: params.slotId, pluginId: params.pluginId })).toEqual(params.function);
         });
 
         it('returns the class instance', () => {
@@ -163,12 +157,10 @@ describe('pluginRegistry utils', () => {
             const pluginId = 'token-voting';
             pluginRegistryUtils.registerSlotFunction({
                 slotId: registeredSlotId,
-                pluginId: pluginId,
+                pluginId,
                 function: () => null,
             });
-            expect(
-                pluginRegistryUtils.getSlotFunction({ slotId: unregisteredSlotId, pluginId: pluginId }),
-            ).toBeUndefined();
+            expect(pluginRegistryUtils.getSlotFunction({ slotId: unregisteredSlotId, pluginId })).toBeUndefined();
         });
     });
 

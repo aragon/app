@@ -1,13 +1,13 @@
+import { InputFileAvatar, InputText, TextArea } from '@aragon/gov-ui-kit';
+import { useWatch } from 'react-hook-form';
+import { mainnet } from 'viem/chains';
+import { getEnsAddress } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { Network } from '@/shared/api/daoService';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { sanitizePlainText } from '@/shared/security';
-import { InputFileAvatar, InputText, TextArea } from '@aragon/gov-ui-kit';
-import { useWatch } from 'react-hook-form';
-import { mainnet } from 'viem/chains';
-import { getEnsAddress } from 'wagmi/actions';
 import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 
 export interface ICreateDaoFormMetadataProps {
@@ -47,7 +47,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
 
     const validateEnsField = async (value?: string) => {
         if (!value) {
-            return undefined;
+            return;
         }
 
         // Check if the value matches the valid pattern from the smart contract
@@ -82,8 +82,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
         label: t('app.createDao.createDaoForm.metadata.avatar.label'),
         fieldPrefix,
         rules: {
-            validate: (value) =>
-                value?.error ? `app.createDao.createDaoForm.metadata.avatar.error.${value.error}` : undefined,
+            validate: (value) => (value?.error ? `app.createDao.createDaoForm.metadata.avatar.error.${value.error}` : undefined),
         },
     });
 
@@ -108,38 +107,38 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
             <InputText maxLength={nameMaxLength} {...nameField} />
             {isEthMainnet && (
                 <InputText
-                    value={ensValue}
+                    addon=".dao.eth"
+                    addonPosition="right"
+                    helpText={t('app.createDao.createDaoForm.metadata.ens.helpText')}
+                    isOptional={true}
+                    maxLength={ensMaxLength}
                     onChange={(e) => {
                         onChangeEnsField(sanitizePlainText(e.target.value).toLowerCase());
                     }}
-                    helpText={t('app.createDao.createDaoForm.metadata.ens.helpText')}
-                    addon=".dao.eth"
-                    addonPosition="right"
-                    maxLength={ensMaxLength}
+                    value={ensValue}
                     wrapperClassName="w-full md:w-1/2"
-                    isOptional={true}
                     {...ensField}
                 />
             )}
             <InputFileAvatar
-                value={avatarValue}
                 helpText={t('app.createDao.createDaoForm.metadata.avatar.helpText')}
+                isOptional={true}
                 maxDimension={maxAvatarDimension}
                 maxFileSize={maxAvatarFileSize}
-                isOptional={true}
+                value={avatarValue}
                 {...avatarField}
             />
             <TextArea
                 helpText={t('app.createDao.createDaoForm.metadata.description.helpText')}
-                maxLength={descriptionMaxLength}
                 isOptional={true}
+                maxLength={descriptionMaxLength}
                 {...descriptionField}
                 value={(descriptionField.value as string | null | undefined) ?? ''}
             />
             <ResourcesInput
-                name="resources"
                 fieldPrefix={fieldPrefix}
                 helpText={t('app.createDao.createDaoForm.metadata.resources.helpText')}
+                name="resources"
             />
         </div>
     );

@@ -1,4 +1,4 @@
-import { type IProposalActionChangeMembers as IGukProposalActionChangeMembers } from '@aragon/gov-ui-kit';
+import type { IProposalActionChangeMembers as IGukProposalActionChangeMembers } from '@aragon/gov-ui-kit';
 import type { MultisigProposalActionType } from './enum';
 
 export interface IMultisigActionChangeMembers extends Omit<IGukProposalActionChangeMembers, 'type'> {

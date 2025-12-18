@@ -1,6 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
-import { useVoteList, type IGetVoteListParams, type IVote } from '../../api/governanceService';
+import { type IGetVoteListParams, type IVote, useVoteList } from '../../api/governanceService';
 
 export const useVoteListData = <TVote extends IVote = IVote>(params: IGetVoteListParams) => {
     const { t } = useTranslations();

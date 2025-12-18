@@ -57,7 +57,7 @@ export const useFilterUrlParam = (params: IUseFilterUrlParamParams): IUseFilterU
 
             setActiveFilter(tabId);
         },
-        [name, enableUrlUpdate],
+        [name, enableUrlUpdate]
     );
 
     // Update active tab on URL on fallbackValue change

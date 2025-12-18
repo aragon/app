@@ -1,7 +1,7 @@
-import * as dialogProvider from '@/shared/components/dialogProvider';
-import { type IDialogLocation } from '@/shared/components/dialogProvider';
-import * as translationsProvider from '@/shared/components/translationsProvider';
 import { fireEvent, render, screen } from '@testing-library/react';
+import type { IDialogLocation } from '@/shared/components/dialogProvider';
+import * as dialogProvider from '@/shared/components/dialogProvider';
+import * as translationsProvider from '@/shared/components/translationsProvider';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { ISimulateActionsDialogParams } from './simulateActionsDialog';
 import { SimulateActionsDialog } from './simulateActionsDialog';
@@ -16,14 +16,14 @@ jest.mock('@aragon/gov-ui-kit', () => {
         Header: (props: { title: string; onClose?: () => void }) => (
             <div>
                 <div>{props.title}</div>
-                <button type="button" onClick={props.onClose}>
+                <button onClick={props.onClose} type="button">
                     close
                 </button>
             </div>
         ),
         Content: (props: { children: React.ReactNode }) => <div>{props.children}</div>,
         Footer: (props: { primaryAction: { label: string; onClick?: () => void } }) => (
-            <button type="button" onClick={props.primaryAction.onClick}>
+            <button onClick={props.primaryAction.onClick} type="button">
                 {props.primaryAction.label}
             </button>
         ),
@@ -68,9 +68,7 @@ describe('<SimulateActionsDialog /> component', () => {
         useTranslationsMock.mockReset();
     });
 
-    const createLocation = (
-        params?: Partial<ISimulateActionsDialogParams>,
-    ): IDialogLocation<ISimulateActionsDialogParams> =>
+    const createLocation = (params?: Partial<ISimulateActionsDialogParams>): IDialogLocation<ISimulateActionsDialogParams> =>
         ({
             id: 'SIMULATE_ACTIONS_TEST',
             params: {
@@ -81,9 +79,8 @@ describe('<SimulateActionsDialog /> component', () => {
             },
         }) as IDialogLocation<ISimulateActionsDialogParams>;
 
-    const renderComponent = (location: IDialogLocation<ISimulateActionsDialogParams>) => {
-        return render(<SimulateActionsDialog location={location} />);
-    };
+    const renderComponent = (location: IDialogLocation<ISimulateActionsDialogParams>) =>
+        render(<SimulateActionsDialog location={location} />);
 
     it('closes only itself after requesting wizard form submit (does not call close() without id)', () => {
         const close = jest.fn();

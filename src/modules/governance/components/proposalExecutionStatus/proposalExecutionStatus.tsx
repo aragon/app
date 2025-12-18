@@ -1,9 +1,9 @@
+import { Button, ChainEntityType, type IButtonProps, IconType, ProposalStatus } from '@aragon/gov-ui-kit';
 import type { IExecuteDialogParams } from '@/modules/governance/dialogs/executeDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { Button, ChainEntityType, type IButtonProps, IconType, ProposalStatus } from '@aragon/gov-ui-kit';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -69,11 +69,7 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
     const buttonConfig = buttonConfigs[proposalStatus];
 
     if (!buttonConfig) {
-        return (
-            <p className="text-sm leading-normal text-neutral-500">
-                {t('app.governance.proposalExecutionStatus.notExecutable')}
-            </p>
-        );
+        return <p className="text-neutral-500 text-sm leading-normal">{t('app.governance.proposalExecutionStatus.notExecutable')}</p>;
     }
 
     return <Button className="w-full md:w-fit" size="md" {...buttonConfig} />;

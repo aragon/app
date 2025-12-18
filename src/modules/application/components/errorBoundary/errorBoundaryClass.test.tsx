@@ -1,5 +1,5 @@
-import { testLogger } from '@/test/utils';
 import { render, screen } from '@testing-library/react';
+import { testLogger } from '@/test/utils';
 import { ErrorBoundaryClass, type IErrorBoundaryClassProps } from './errorBoundaryClass';
 
 describe('<ErrorBoundary /> component', () => {

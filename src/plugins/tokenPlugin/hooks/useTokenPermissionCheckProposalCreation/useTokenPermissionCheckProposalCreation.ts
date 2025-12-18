@@ -1,3 +1,6 @@
+import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
+import { formatUnits } from 'viem';
+import { useAccount } from 'wagmi';
 import { useMember } from '@/modules/governance/api/governanceService';
 import { useCanCreateProposal } from '@/modules/governance/api/governanceService/queries/useCanCreateProposal';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
@@ -5,16 +8,12 @@ import type { ITokenMember, ITokenPluginSettings } from '@/plugins/tokenPlugin/t
 import { type IDaoPlugin, type Network, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
-import { formatUnits } from 'viem';
-import { useAccount } from 'wagmi';
 import { useWrappedTokenBalance } from '../useWrappedTokenBalance';
 
-export interface ITokenPermissionCheckProposalCreationParams
-    extends IPermissionCheckGuardParams<IDaoPlugin<ITokenPluginSettings>> {}
+export interface ITokenPermissionCheckProposalCreationParams extends IPermissionCheckGuardParams<IDaoPlugin<ITokenPluginSettings>> {}
 
 export const useTokenPermissionCheckProposalCreation = (
-    params: ITokenPermissionCheckProposalCreationParams,
+    params: ITokenPermissionCheckProposalCreationParams
 ): IPermissionCheckGuardResult => {
     const { plugin, daoId, useConnectedUserInfo = true } = params;
 
@@ -38,7 +37,7 @@ export const useTokenPermissionCheckProposalCreation = (
     const memberQueryParams = { daoId, pluginAddress: plugin.address };
     const { data: member, isLoading } = useMember<ITokenMember>(
         { urlParams: memberUrlParams, queryParams: memberQueryParams },
-        { enabled: address != null },
+        { enabled: address != null }
     );
 
     // As the /member endpoint returns outdated balance and/or voting power in some scenarios, here we use the
@@ -50,7 +49,7 @@ export const useTokenPermissionCheckProposalCreation = (
     };
     const { data: canCreateProposal } = useCanCreateProposal(
         { queryParams: checkQueryParams },
-        { enabled: address != null && dao != null },
+        { enabled: address != null && dao != null }
     );
 
     // Read wrapped token balance directly from blockchain

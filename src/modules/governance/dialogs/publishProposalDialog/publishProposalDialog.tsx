@@ -1,3 +1,6 @@
+import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/gov-ui-kit';
+import { useCallback, useMemo } from 'react';
+import { useAccount } from 'wagmi';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { TransactionType } from '@/shared/api/transactionService';
@@ -12,9 +15,6 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/gov-ui-kit';
-import { useCallback, useMemo } from 'react';
-import { useAccount } from 'wagmi';
 import type { IPublishProposalDialogProps } from './publishProposalDialog.api';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
@@ -49,7 +49,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
             const proposalMetadata = publishProposalDialogUtils.prepareMetadata(proposal);
             pinJson({ body: proposalMetadata }, params);
         },
-        [pinJson, proposal],
+        [pinJson, proposal]
     );
 
     const handlePrepareTransaction = async () => {
@@ -70,52 +70,44 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
 
     // Handler function to disable the navigation block when the transaction is needed.
     // We can't simply just pass the href to the TransactionDialog
-    const getProposalsLink = ({ slug }: IBuildTransactionDialogSuccessLinkHref) => {
-        return daoUtils.getDaoUrl(dao, `proposals/${slug!.toUpperCase()}`)!;
-    };
+    const getProposalsLink = ({ slug }: IBuildTransactionDialogSuccessLinkHref) =>
+        daoUtils.getDaoUrl(dao, `proposals/${slug!.toUpperCase()}`)!;
 
-    const customSteps: Array<ITransactionDialogStep<PublishProposalStep>> = useMemo(
+    const customSteps: ITransactionDialogStep<PublishProposalStep>[] = useMemo(
         () => [
             {
                 id: PublishProposalStep.PIN_METADATA,
                 order: 0,
                 meta: {
                     label: t(`app.governance.publishProposalDialog.step.${PublishProposalStep.PIN_METADATA}.label`),
-                    errorLabel: t(
-                        `app.governance.publishProposalDialog.step.${PublishProposalStep.PIN_METADATA}.errorLabel`,
-                    ),
+                    errorLabel: t(`app.governance.publishProposalDialog.step.${PublishProposalStep.PIN_METADATA}.errorLabel`),
                     state: status,
                     action: handlePinJson,
                     auto: true,
                 },
             },
         ],
-        [status, handlePinJson, t],
+        [status, handlePinJson, t]
     );
 
     const namespace = translationNamespace ?? 'app.governance.publishProposalDialog';
 
     return (
         <TransactionDialog<PublishProposalStep>
-            title={t(`${namespace}.title`)}
+            customSteps={customSteps}
             description={t(`${namespace}.description`)}
+            indexingFallbackUrl={daoUtils.getDaoUrl(dao, 'proposals')}
+            network={dao?.network}
+            prepareTransaction={handlePrepareTransaction}
+            stepper={stepper}
             submitLabel={t(`${namespace}.button.submit`)}
             successLink={{ label: t('app.governance.publishProposalDialog.button.success'), href: getProposalsLink }}
-            stepper={stepper}
-            customSteps={customSteps}
-            prepareTransaction={handlePrepareTransaction}
-            network={dao?.network}
-            transactionType={TransactionType.PROPOSAL_CREATE}
-            indexingFallbackUrl={daoUtils.getDaoUrl(dao, 'proposals')}
+            title={t(`${namespace}.title`)}
             transactionInfo={transactionInfo}
+            transactionType={TransactionType.PROPOSAL_CREATE}
         >
             {plugin.interfaceType !== PluginInterfaceType.ADMIN && (
-                <ProposalDataListItem.Structure
-                    title={title}
-                    summary={summary}
-                    publisher={{ address }}
-                    status={ProposalStatus.DRAFT}
-                />
+                <ProposalDataListItem.Structure publisher={{ address }} status={ProposalStatus.DRAFT} summary={summary} title={title} />
             )}
         </TransactionDialog>
     );

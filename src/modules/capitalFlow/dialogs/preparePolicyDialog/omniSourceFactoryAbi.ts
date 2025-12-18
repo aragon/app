@@ -15,9 +15,7 @@ export const omniSourceFactoryAbi = [
     {
         type: 'event',
         name: 'StreamBalanceSourceDeployed',
-        inputs: [
-            { name: 'newContract', type: 'address', indexed: false, internalType: 'contract StreamBalanceSource' },
-        ],
+        inputs: [{ name: 'newContract', type: 'address', indexed: false, internalType: 'contract StreamBalanceSource' }],
         anonymous: false,
     },
 ] as const;

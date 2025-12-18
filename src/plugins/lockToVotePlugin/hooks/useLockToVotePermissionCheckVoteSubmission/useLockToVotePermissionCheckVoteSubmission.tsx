@@ -1,9 +1,9 @@
 'use client';
 
+import { ChainEntityType, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
-import { ChainEntityType, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
 import type { ILockToVotePlugin } from '../../types';
 import { useLockToVoteData } from '../useLockToVoteData';
 
@@ -15,7 +15,7 @@ export interface IUseLockToVotePermissionCheckVoteSubmissionParams extends IPerm
 }
 
 export const useLockToVotePermissionCheckVoteSubmission = (
-    params: IUseLockToVotePermissionCheckVoteSubmissionParams,
+    params: IUseLockToVotePermissionCheckVoteSubmissionParams
 ): IPermissionCheckGuardResult => {
     const { plugin, proposal, daoId } = params;
 

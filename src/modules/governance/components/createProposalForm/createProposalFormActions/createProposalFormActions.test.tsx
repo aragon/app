@@ -1,3 +1,5 @@
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
 import * as daoService from '@/shared/api/daoService';
 import * as DialogProvider from '@/shared/components/dialogProvider';
 import {
@@ -10,8 +12,6 @@ import {
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
 import * as CreateProposalProvider from '../createProposalFormProvider';
 import { CreateProposalFormActions, type ICreateProposalFormActionsProps } from './createProposalFormActions';
 
@@ -27,7 +27,7 @@ describe('<CreateProposalFormActions /> component', () => {
         useDaoPermissionsSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({
                 data: { pages: [generatePaginatedResponse({ data: [] })], pageParams: [] },
-            }),
+            })
         );
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useCreateProposalFormContextSpy.mockReturnValue({

@@ -10,11 +10,7 @@ const tokenFallback: IUseTokenResult['data'] = { name: 'Unknown', decimals: 18, 
 export const useGovernanceToken = (params: IUseGovernanceTokenParams): IUseGovernanceTokenResult => {
     const { isLoading: isTokenLoading, data: tokenResult } = useToken(params);
 
-    const {
-        data: isErc20Token,
-        isLoading: isErc20CheckLoading,
-        isError: isErc20CheckError,
-    } = useGovernanceTokenErc20Check(params);
+    const { data: isErc20Token, isLoading: isErc20CheckLoading, isError: isErc20CheckError } = useGovernanceTokenErc20Check(params);
 
     const {
         data: isDelegationCompatible,

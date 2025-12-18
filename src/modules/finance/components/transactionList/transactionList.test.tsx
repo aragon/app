@@ -1,8 +1,8 @@
-import { generateToken, generateTransaction } from '@/modules/finance/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { TransactionList, type ITransactionListDefaultProps } from '.';
+import { generateToken, generateTransaction } from '@/modules/finance/testUtils';
 import * as useTransactionListData from '../../hooks/useTransactionListData';
+import { type ITransactionListDefaultProps, TransactionList } from '.';
 
 describe('<TransactionList.Default /> component', () => {
     const useTransactionListDataSpy = jest.spyOn(useTransactionListData, 'useTransactionListData');

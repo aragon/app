@@ -1,1 +1,1 @@
-export { DaoFilterComponent, mapDaoOptionsToFilterFormat, type IDaoFilterComponentProps } from './daoFilterComponent';
+export { DaoFilterComponent, type IDaoFilterComponentProps, mapDaoOptionsToFilterFormat } from './daoFilterComponent';

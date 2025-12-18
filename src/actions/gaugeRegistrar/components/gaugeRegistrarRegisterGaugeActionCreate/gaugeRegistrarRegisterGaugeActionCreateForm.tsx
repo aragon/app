@@ -1,8 +1,5 @@
 'use client';
 
-import { type IResourcesInputResource, ResourcesInput } from '@/shared/components/forms/resourcesInput';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useFormField } from '@/shared/hooks/useFormField';
 import {
     AddressInput,
     addressUtils,
@@ -16,6 +13,9 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useWatch } from 'react-hook-form';
+import { type IResourcesInputResource, ResourcesInput } from '@/shared/components/forms/resourcesInput';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 import { GaugeIncentiveType } from '../../types/enum/gaugeIncentiveType';
 import { GaugeRegistrarActiveVotingAlert } from '../gaugeRegistrarActiveVotingAlert';
 
@@ -66,9 +66,7 @@ const descriptionMaxLength = 480;
 const maxAvatarFileSize = 1 * 1024 * 1024; // 1 MB in bytes
 const maxAvatarDimension = 1024;
 
-export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
-    IGaugeRegistrarRegisterGaugeActionCreateFormProps
-> = (props) => {
+export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<IGaugeRegistrarRegisterGaugeActionCreateFormProps> = (props) => {
     const { fieldPrefix, chainId } = props;
     const { t } = useTranslations();
 
@@ -96,15 +94,15 @@ export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
         name: avatarFieldName,
     });
 
-    const { value: descriptionValue, ...descriptionFieldRest } = useFormField<
-        IGaugeRegistrarRegisterGaugeFormData,
-        'description'
-    >('description', {
-        label: t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.description.label'),
-        fieldPrefix,
-        rules: { required: true, maxLength: descriptionMaxLength },
-        trimOnBlur: true,
-    });
+    const { value: descriptionValue, ...descriptionFieldRest } = useFormField<IGaugeRegistrarRegisterGaugeFormData, 'description'>(
+        'description',
+        {
+            label: t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.description.label'),
+            fieldPrefix,
+            rules: { required: true, maxLength: descriptionMaxLength },
+            trimOnBlur: true,
+        }
+    );
 
     const {
         onChange: onQiTokenAddressChange,
@@ -146,87 +144,69 @@ export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
         sanitizeOnBlur: false,
     });
 
-    const [rewardControllerAddressInput, setRewardControllerAddressInput] = useState<string | undefined>(
-        rewardControllerAddress?.address,
-    );
+    const [rewardControllerAddressInput, setRewardControllerAddressInput] = useState<string | undefined>(rewardControllerAddress?.address);
 
     return (
         <div className="flex flex-col gap-10">
             <InputText
-                maxLength={nameMaxLength}
-                value={nameValue || ''} // explicit default because defaultValue didn't work (as per docs, it works only when form is initialized with useForm).
                 helpText={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.name.helpText')}
+                maxLength={nameMaxLength} // explicit default because defaultValue didn't work (as per docs, it works only when form is initialized with useForm).
+                value={nameValue || ''}
                 {...nameFieldRest}
             />
             <InputFileAvatar
-                value={avatarValue}
                 helpText={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.avatar.helpText')}
+                isOptional={true}
                 maxDimension={maxAvatarDimension}
                 maxFileSize={maxAvatarFileSize}
-                isOptional={true}
+                value={avatarValue}
                 {...avatarField}
             />
             <TextArea
-                helpText={t(
-                    'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.description.helpText',
-                )}
+                helpText={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.description.helpText')}
                 maxLength={descriptionMaxLength}
                 value={descriptionValue || ''}
                 {...descriptionFieldRest}
             />
             <ResourcesInput
-                name="resources"
                 fieldPrefix={fieldPrefix}
-                helpText={t(
-                    'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.resources.helpText',
-                )}
+                helpText={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.resources.helpText')}
+                name="resources"
             />
             <AddressInput
-                placeholder={t(
-                    'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.qiToken.placeholder',
-                )}
-                helpText={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.qiToken.helpText')}
-                value={qiTokenAddressInput}
-                onChange={setQiTokenAddressInput}
-                onAccept={onQiTokenAddressChange}
                 chainId={chainId}
+                helpText={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.qiToken.helpText')}
+                onAccept={onQiTokenAddressChange}
+                onChange={setQiTokenAddressInput}
+                placeholder={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.qiToken.placeholder')}
+                value={qiTokenAddressInput}
                 {...qiTokenAddressField}
             />
             <RadioGroup
-                className="flex gap-4 md:!flex-row"
+                className="md:!flex-row flex gap-4"
+                helpText={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.incentive.helpText')}
                 onValueChange={onIncentiveTypeChange}
                 value={incentiveType != null ? String(incentiveType) : undefined}
-                helpText={t(
-                    'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.incentive.helpText',
-                )}
                 {...incentiveTypeField}
             >
                 <RadioCard
                     className="min-w-0"
-                    label={t(
-                        'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.incentive.supplyLabel',
-                    )}
+                    label={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.incentive.supplyLabel')}
                     value={String(GaugeIncentiveType.SUPPLY)}
                 />
                 <RadioCard
                     className="min-w-0"
-                    label={t(
-                        'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.incentive.borrowLabel',
-                    )}
+                    label={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.incentive.borrowLabel')}
                     value={String(GaugeIncentiveType.BORROW)}
                 />
             </RadioGroup>
             <AddressInput
-                placeholder={t(
-                    'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.rewardController.placeholder',
-                )}
-                helpText={t(
-                    'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.rewardController.helpText',
-                )}
-                value={rewardControllerAddressInput}
-                onChange={setRewardControllerAddressInput}
-                onAccept={onRewardControllerAddressChange}
                 chainId={chainId}
+                helpText={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.rewardController.helpText')}
+                onAccept={onRewardControllerAddressChange}
+                onChange={setRewardControllerAddressInput}
+                placeholder={t('app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.rewardController.placeholder')}
+                value={rewardControllerAddressInput}
                 {...rewardControllerAddressField}
             />
             <GaugeRegistrarActiveVotingAlert />

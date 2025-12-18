@@ -1,8 +1,8 @@
-import type { Translations } from '@/shared/utils/translationsUtils';
-import { testLogger } from '@/test/utils';
 import { render, renderHook, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { TranslationsProvider, useTranslations, type ITranslationsProviderProps } from './translationsProvider';
+import type { Translations } from '@/shared/utils/translationsUtils';
+import { testLogger } from '@/test/utils';
+import { type ITranslationsProviderProps, TranslationsProvider, useTranslations } from './translationsProvider';
 
 describe('<TranslationsProvider /> component', () => {
     const createTestComponent = (props?: Partial<ITranslationsProviderProps>) => {

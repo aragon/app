@@ -1,9 +1,9 @@
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
 import * as useMemberListData from '@/modules/governance/hooks/useMemberListData';
 import { generateMember } from '@/modules/governance/testUtils';
 import * as daoService from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
 import { DaoMemberListDefault, type IDaoMemberListDefaultProps } from './daoMemberListDefault';
 
 describe('<DaoMemberListDefault /> component', () => {

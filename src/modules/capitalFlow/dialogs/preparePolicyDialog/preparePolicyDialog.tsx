@@ -1,3 +1,7 @@
+import { invariant } from '@aragon/gov-ui-kit';
+import { useCallback, useMemo, useState } from 'react';
+import { type Hex, parseEventLogs, type TransactionReceipt, zeroAddress } from 'viem';
+import { useAccount } from 'wagmi';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
@@ -13,10 +17,6 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { invariant } from '@aragon/gov-ui-kit';
-import { useCallback, useMemo, useState } from 'react';
-import { type Hex, parseEventLogs, type TransactionReceipt, zeroAddress } from 'viem';
-import { useAccount } from 'wagmi';
 import { pluginTransactionUtils } from '../../../../shared/utils/pluginTransactionUtils';
 import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
 import { RouterType, StrategyType } from '../setupStrategyDialog';
@@ -77,10 +77,8 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     const { open } = useDialogContext();
 
     const isMultiDispatch = useMemo(
-        () =>
-            values.strategy?.type === StrategyType.CAPITAL_ROUTER &&
-            values.strategy.routerType === RouterType.MULTI_DISPATCH,
-        [values.strategy],
+        () => values.strategy?.type === StrategyType.CAPITAL_ROUTER && values.strategy.routerType === RouterType.MULTI_DISPATCH,
+        [values.strategy]
     );
 
     const [policyMetadata, setPolicyMetadata] = useState<IPreparePolicyMetadata>();
@@ -127,13 +125,12 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
             strict: false,
         });
 
-        const hasModel =
-            values.strategy.type === StrategyType.CAPITAL_ROUTER && withModelRouters[values.strategy.routerType];
+        const hasModel = values.strategy.type === StrategyType.CAPITAL_ROUTER && withModelRouters[values.strategy.routerType];
 
         invariant(
             // BURN does not deploy model
             hasModel ? modelLogs.length > 0 : modelLogs.length === 0,
-            'PreparePolicyDialog: Unexpected state in model deployment event logs',
+            'PreparePolicyDialog: Unexpected state in model deployment event logs'
         );
         const modelAddress = hasModel ? (modelLogs[0].args.newContract as Hex) : zeroAddress;
 
@@ -172,7 +169,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
             setPolicyMetadata(metadata);
             nextStep();
         },
-        [pinJson, nextStep, values],
+        [pinJson, nextStep, values]
     );
 
     const handlePrepareInstallationSuccess = (txReceipt: TransactionReceipt) => {
@@ -206,7 +203,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     };
 
     const pinMetadataNamespace = `app.capitalFlow.preparePolicyDialog.step.${PreparePolicyStep.PIN_METADATA}`;
-    const customSteps: Array<ITransactionDialogStep<PreparePolicyStep>> = useMemo(
+    const customSteps: ITransactionDialogStep<PreparePolicyStep>[] = useMemo(
         () => [
             {
                 id: PreparePolicyStep.PIN_METADATA,
@@ -220,7 +217,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
                 },
             },
         ],
-        [status, handlePinJson, pinMetadataNamespace, t],
+        [status, handlePinJson, pinMetadataNamespace, t]
     );
 
     // We have 2 instances of TransactionDialog:
@@ -231,39 +228,39 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     if (sourceAndModelContracts == null) {
         return (
             <TransactionDialog<PreparePolicyStep>
-                key="model-and-source-deploy"
-                title={t('app.capitalFlow.preparePolicyDialog.title')}
+                customSteps={customSteps}
                 description={t('app.capitalFlow.preparePolicyDialog.description')}
-                submitLabel={t('app.capitalFlow.preparePolicyDialog.button.submit')}
+                key="model-and-source-deploy"
+                network={dao?.network}
                 onSuccess={handleDeploySourceAndModelSuccess}
+                prepareTransaction={handleDeploySourceAndModelTransaction}
+                stepper={deploymentStepper}
+                submitLabel={t('app.capitalFlow.preparePolicyDialog.button.submit')}
+                title={t('app.capitalFlow.preparePolicyDialog.title')}
                 transactionInfo={{
                     title: t('app.capitalFlow.preparePolicyDialog.transactionInfoTitleDeploy'),
                     current: 1,
                     total: 3,
                 }}
-                stepper={deploymentStepper}
-                customSteps={customSteps}
-                prepareTransaction={handleDeploySourceAndModelTransaction}
-                network={dao?.network}
             />
         );
     }
 
     return (
         <TransactionDialog
-            key="plugin-install"
-            title={t('app.capitalFlow.preparePolicyDialog.title')}
             description={t('app.capitalFlow.preparePolicyDialog.description')}
-            submitLabel={t('app.capitalFlow.preparePolicyDialog.button.submit')}
+            key="plugin-install"
+            network={dao?.network}
             onSuccess={handlePrepareInstallationSuccess}
+            prepareTransaction={handlePrepareInstallationTransaction}
+            stepper={installationStepper}
+            submitLabel={t('app.capitalFlow.preparePolicyDialog.button.submit')}
+            title={t('app.capitalFlow.preparePolicyDialog.title')}
             transactionInfo={{
                 title: t('app.capitalFlow.preparePolicyDialog.transactionInfoTitleInstall'),
                 current: 2,
                 total: 3,
             }}
-            stepper={installationStepper}
-            prepareTransaction={handlePrepareInstallationTransaction}
-            network={dao?.network}
         />
     );
 };

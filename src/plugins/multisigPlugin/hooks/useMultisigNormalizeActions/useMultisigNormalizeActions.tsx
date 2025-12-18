@@ -15,14 +15,15 @@ export const useMultisigNormalizeActions = (params: IUseMultisigNormalizeActions
     const changeSettingsAction = actions.find((action) => multisigActionUtils.isChangeSettingsAction(action));
     const { data: memberList } = useMemberList(
         { queryParams: { daoId, pluginAddress: changeSettingsAction?.to as string } },
-        { enabled: changeSettingsAction != null },
+        { enabled: changeSettingsAction != null }
     );
     const membersCount = memberList?.pages[0].metadata.totalRecords ?? 0;
 
     return actions.map((action) => {
         if (multisigActionUtils.isChangeMembersAction(action)) {
             return multisigActionUtils.normalizeChangeMembersAction(action);
-        } else if (multisigActionUtils.isChangeSettingsAction(action)) {
+        }
+        if (multisigActionUtils.isChangeSettingsAction(action)) {
             return multisigActionUtils.normalizeChangeSettingsAction({ action, t, membersCount });
         }
 

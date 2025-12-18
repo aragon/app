@@ -1,3 +1,4 @@
+import { renderHook } from '@testing-library/react';
 import { generateTransaction } from '@/modules/finance/testUtils';
 import {
     generatePaginatedResponse,
@@ -6,7 +7,6 @@ import {
     generateReactQueryInfiniteResultLoading,
     generateReactQueryInfiniteResultSuccess,
 } from '@/shared/testUtils';
-import { renderHook } from '@testing-library/react';
 import * as financeService from '../../api/financeService';
 import { useTransactionListData } from './useTransactionListData';
 
@@ -26,7 +26,7 @@ describe('useTransactionListData hook', () => {
         const transactionsResponse = generatePaginatedResponse({ data: transactions, metadata: transactionsMetadata });
         const params = { queryParams: { daoId: 'polygon-mainnet-0xdao' } };
         useTransactionListSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({ data: { pages: [transactionsResponse], pageParams: [] } }),
+            generateReactQueryInfiniteResultSuccess({ data: { pages: [transactionsResponse], pageParams: [] } })
         );
         const { result } = renderHook(() => useTransactionListData(params));
 

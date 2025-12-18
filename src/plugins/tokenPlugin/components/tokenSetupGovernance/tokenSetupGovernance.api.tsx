@@ -14,7 +14,4 @@ export interface ITokenSetupGovernanceProps extends Omit<IPluginSetupGovernanceP
 }
 
 export interface ITokenSetupGovernanceForm
-    extends Pick<
-        ITokenPluginSettings,
-        'supportThreshold' | 'minParticipation' | 'minProposerVotingPower' | 'minDuration' | 'votingMode'
-    > {}
+    extends Pick<ITokenPluginSettings, 'supportThreshold' | 'minParticipation' | 'minProposerVotingPower' | 'minDuration' | 'votingMode'> {}

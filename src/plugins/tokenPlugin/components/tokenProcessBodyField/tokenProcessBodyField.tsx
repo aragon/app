@@ -1,6 +1,8 @@
 'use client';
 
-import { type ISetupBodyFormExisting, type ISetupBodyFormNew } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { ChainEntityType, DefinitionList, formatterUtils, NumberFormat, Tag } from '@aragon/gov-ui-kit';
+import { formatUnits } from 'viem';
+import type { ISetupBodyFormExisting, ISetupBodyFormNew } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { BodyType } from '@/modules/createDao/types/enum';
 import { useMemberList } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
@@ -9,8 +11,6 @@ import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
-import { ChainEntityType, DefinitionList, formatterUtils, NumberFormat, Tag } from '@aragon/gov-ui-kit';
-import { formatUnits } from 'viem';
 import { DaoTokenVotingMode } from '../../types';
 import type { ITokenSetupGovernanceForm } from '../tokenSetupGovernance';
 import type { ITokenSetupMembershipForm, ITokenSetupMembershipMember } from '../tokenSetupMembership';
@@ -48,13 +48,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     };
     const { data: memberList } = useMemberList(initialParams, { enabled: isExisting });
 
-    const {
-        address: tokenAddress,
-        name: tokenName,
-        symbol: tokenSymbol,
-        decimals: tokenDecimals,
-        totalSupply,
-    } = membership.token;
+    const { address: tokenAddress, name: tokenName, symbol: tokenSymbol, decimals: tokenDecimals, totalSupply } = membership.token;
     const { votingMode, supportThreshold, minParticipation, minDuration } = governance;
 
     const parsedTotalSupply = totalSupply && formatUnits(BigInt(totalSupply), tokenDecimals);
@@ -89,26 +83,17 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
         <DefinitionList.Container className="w-full">
             {isExisting &&
                 contractInfo.map(({ term, definition, description, link, copyValue }) => (
-                    <DefinitionList.Item
-                        key={term}
-                        term={term}
-                        description={description}
-                        link={link}
-                        copyValue={copyValue}
-                    >
+                    <DefinitionList.Item copyValue={copyValue} description={description} key={term} link={link} term={term}>
                         {definition}
                     </DefinitionList.Item>
                 ))}
-            <DefinitionList.Item
-                term={t('app.plugins.token.tokenProcessBodyField.tokenTerm')}
-                {...(isExisting ? existingTokenProps : {})}
-            >
+            <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.tokenTerm')} {...(isExisting ? existingTokenProps : {})}>
                 {tokenName} (${tokenSymbol})
             </DefinitionList.Item>
             {numberOfMembers! > 0 && (
                 <DefinitionList.Item
-                    term={t('app.plugins.token.tokenProcessBodyField.distributionTerm')}
                     link={isExisting ? { href: daoUtils.getDaoUrl(dao, 'members'), isExternal: false } : undefined}
+                    term={t('app.plugins.token.tokenProcessBodyField.distributionTerm')}
                 >
                     {t('app.plugins.token.tokenProcessBodyField.holders', {
                         count: numberOfMembers,
@@ -137,18 +122,18 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                     </DefinitionList.Item>
                     <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.earlyExecution')}>
                         <Tag
+                            className="max-w-fit"
                             label={t(`app.plugins.token.tokenProcessBodyField.${earlyExecutionLabel}`)}
                             variant={earlyExecutionLabel === 'enabled' ? 'primary' : 'neutral'}
-                            className="max-w-fit"
                         />
                     </DefinitionList.Item>
                 </>
             )}
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.voteChange')}>
                 <Tag
+                    className="max-w-fit"
                     label={t(`app.plugins.token.tokenProcessBodyField.${voteChangeLabel}`)}
                     variant={voteChangeLabel === 'enabled' ? 'primary' : 'neutral'}
-                    className="max-w-fit"
                 />
             </DefinitionList.Item>
         </DefinitionList.Container>

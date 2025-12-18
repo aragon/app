@@ -1,10 +1,10 @@
 'use client';
 
+import { addressUtils } from '@aragon/gov-ui-kit';
 import type { INormalizeActionsParams } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { addressUtils } from '@aragon/gov-ui-kit';
 import type { ILockToVotePluginSettings } from '../../types';
 import { lockToVoteActionUtils } from '../../utils/lockToVoteActionUtils';
 

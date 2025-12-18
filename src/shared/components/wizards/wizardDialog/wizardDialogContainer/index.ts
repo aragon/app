@@ -1,1 +1,1 @@
-export { WizardDialogContainer, type IWizardDialogContainerProps } from './wizardDialogContainer';
+export { type IWizardDialogContainerProps, WizardDialogContainer } from './wizardDialogContainer';

@@ -1,20 +1,18 @@
-import { type IProposalAction } from '@/modules/governance/api/governanceService';
+import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
+import { useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { encodeFunctionData, parseUnits } from 'viem';
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { ITokenSetupGovernanceForm } from '@/plugins/tokenPlugin/components/tokenSetupGovernance';
 import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { encodeFunctionData, parseUnits } from 'viem';
 import type { ILockToVotePluginSettings } from '../../../types';
 import { LockToVoteSetupGovernance } from '../../lockToVoteSetupGovernance';
 
 export interface ILockToVoteUpdateSettingsActionProps
-    extends IProposalActionComponentProps<
-        IProposalActionData<IProposalAction, IDaoPlugin<ILockToVotePluginSettings>>
-    > {}
+    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<ILockToVotePluginSettings>>> {}
 
 const updateLockToVoteSettingsAbi = {
     type: 'function',
@@ -99,24 +97,15 @@ export const LockToVoteUpdateSettingsAction: React.FC<ILockToVoteUpdateSettingsA
 
         setValue(`${actionFieldName}.data`, newData);
         setValue(`${actionFieldName}.inputData.parameters[0].value`, paramValues);
-    }, [
-        actionFieldName,
-        minParticipation,
-        minVotingPowerValue,
-        setValue,
-        supportThreshold,
-        votingMode,
-        decimals,
-        proposalDuration,
-    ]);
+    }, [actionFieldName, minParticipation, minVotingPowerValue, setValue, supportThreshold, votingMode, decimals, proposalDuration]);
 
     const membershipSettings = { token: action.meta.settings.token };
 
     return (
         <LockToVoteSetupGovernance
             formPrefix={`${actionFieldName}.proposedSettings`}
-            membershipSettings={membershipSettings}
             isSubPlugin={action.meta.isSubPlugin}
+            membershipSettings={membershipSettings}
             showProposalCreationSettings={!action.meta.isSubPlugin}
         />
     );

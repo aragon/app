@@ -1,1 +1,1 @@
-export { WizardPageContainer, type IWizardPageContainerProps } from './wizardPageContainer';
+export { type IWizardPageContainerProps, WizardPageContainer } from './wizardPageContainer';

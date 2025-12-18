@@ -1,6 +1,6 @@
-import { timeUtils } from '@/test/utils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import { timeUtils } from '@/test/utils';
 import { proposalStatusUtils } from './proposalStatusUtils';
 import type { IGetProposalStatusParams } from './proposalStatusUtils.api';
 
@@ -76,26 +76,27 @@ describe('proposalStatus utils', () => {
             expect(proposalStatusUtils.getProposalStatus(params)).toEqual(ProposalStatus.EXECUTABLE);
         });
 
-        it.each([{ param: 'paramsMet' }, { param: 'hasActions' }, { param: 'canExecuteEarly' }])(
-            'returns ACTIVE when proposal ends in the future and $param is false',
-            ({ param }) => {
-                const now = '2023-10-15T12:44:23';
-                timeUtils.setTime(now);
-                const params = generateTestParams({
-                    isExecuted: false,
-                    isVetoed: false,
-                    startDate: DateTime.fromISO(now).minus({ days: 1 }).toSeconds(),
-                    endDate: DateTime.fromISO(now).plus({ days: 1 }).toSeconds(),
-                    hasAdvanceableStages: false,
-                    hasExpiredStages: false,
-                    paramsMet: true,
-                    hasActions: true,
-                    canExecuteEarly: true,
-                    [param]: false,
-                });
-                expect(proposalStatusUtils.getProposalStatus(params)).toEqual(ProposalStatus.ACTIVE);
-            },
-        );
+        it.each([
+            { param: 'paramsMet' },
+            { param: 'hasActions' },
+            { param: 'canExecuteEarly' },
+        ])('returns ACTIVE when proposal ends in the future and $param is false', ({ param }) => {
+            const now = '2023-10-15T12:44:23';
+            timeUtils.setTime(now);
+            const params = generateTestParams({
+                isExecuted: false,
+                isVetoed: false,
+                startDate: DateTime.fromISO(now).minus({ days: 1 }).toSeconds(),
+                endDate: DateTime.fromISO(now).plus({ days: 1 }).toSeconds(),
+                hasAdvanceableStages: false,
+                hasExpiredStages: false,
+                paramsMet: true,
+                hasActions: true,
+                canExecuteEarly: true,
+                [param]: false,
+            });
+            expect(proposalStatusUtils.getProposalStatus(params)).toEqual(ProposalStatus.ACTIVE);
+        });
 
         it('returns REJECTED when proposal has ended and params are not met', () => {
             const now = '2023-10-15T12:44:23';

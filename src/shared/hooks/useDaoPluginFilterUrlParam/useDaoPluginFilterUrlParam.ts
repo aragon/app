@@ -1,12 +1,10 @@
+import { useCallback, useMemo } from 'react';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
-import { useCallback, useMemo } from 'react';
-import { useDaoPlugins, type IUseDaoPluginsParams } from '../useDaoPlugins';
-import { useFilterUrlParam, type IUseFilterUrlParamParams } from '../useFilterUrlParam';
+import { type IUseDaoPluginsParams, useDaoPlugins } from '../useDaoPlugins';
+import { type IUseFilterUrlParamParams, useFilterUrlParam } from '../useFilterUrlParam';
 
-export interface IUseDaoPluginFilterUrlParamParams
-    extends Omit<IUseFilterUrlParamParams, 'validValues'>,
-        IUseDaoPluginsParams {}
+export interface IUseDaoPluginFilterUrlParamParams extends Omit<IUseFilterUrlParamParams, 'validValues'>, IUseDaoPluginsParams {}
 
 export const useDaoPluginFilterUrlParam = (params: IUseDaoPluginFilterUrlParamParams) => {
     const { name, fallbackValue: fallbackValueProp, enableUrlUpdate = true } = params;
@@ -23,14 +21,14 @@ export const useDaoPluginFilterUrlParam = (params: IUseDaoPluginFilterUrlParamPa
                 (plugin) =>
                     plugin.uniqueId === activeFilter ||
                     // backward compatibility for old URLs that used slug only
-                    plugin.meta.slug === activeFilter,
+                    plugin.meta.slug === activeFilter
             ) ?? plugins?.[0],
-        [plugins, activeFilter],
+        [plugins, activeFilter]
     );
 
     const setActivePlugin = useCallback(
         (plugin: IFilterComponentPlugin<IDaoPlugin>) => setActiveFilter(plugin.uniqueId),
-        [setActiveFilter],
+        [setActiveFilter]
     );
 
     return { activePlugin, setActivePlugin, plugins };

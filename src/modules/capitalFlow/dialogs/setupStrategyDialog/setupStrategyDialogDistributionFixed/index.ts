@@ -1,4 +1,4 @@
 export {
-    SetupStrategyDialogDistributionFixed,
     type ISetupStrategyDialogDistributionFixedProps,
+    SetupStrategyDialogDistributionFixed,
 } from './setupStrategyDialogDistributionFixed';

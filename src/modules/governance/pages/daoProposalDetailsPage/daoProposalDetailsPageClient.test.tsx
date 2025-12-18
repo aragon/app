@@ -1,3 +1,8 @@
+import { clipboardUtils, GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
+import type * as ReactQuery from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
+import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {
     DaoProposalDetailsPageClient,
     type IDaoProposalDetailsPageClientProps,
@@ -6,17 +11,7 @@ import { generateProposal, generateSimulationResult } from '@/modules/governance
 import * as DaoService from '@/shared/api/daoService';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
-import {
-    generateAddressInfo,
-    generateDao,
-    generateReactQueryResultError,
-    generateReactQueryResultSuccess,
-} from '@/shared/testUtils';
-import { clipboardUtils, GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
-import type * as ReactQuery from '@tanstack/react-query';
-import { useQueryClient } from '@tanstack/react-query';
-import { render, screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { generateAddressInfo, generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import * as actionSimulationService from '../../api/actionSimulationService';
 import * as governanceService from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -50,9 +45,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
     beforeEach(() => {
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateProposal() }));
-        useProposalActionsSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: { decoding: false, actions: [], rawActions: [] } }),
-        );
+        useProposalActionsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: { decoding: false, actions: [], rawActions: [] } }));
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         useLastSimulationSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateSimulationResult() }));
         (useQueryClient as jest.Mock).mockReturnValue(mockQueryClient);
@@ -150,7 +143,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         const proposalSlug = 'TEST-SLUG-1';
         const proposal = generateProposal({
             proposalIndex: '123',
-            blockTimestamp: 1690367967,
+            blockTimestamp: 1_690_367_967,
             creator: generateAddressInfo({ address: '0x123' }),
             network: Network.ETHEREUM_SEPOLIA,
             transactionHash: '0x4654',
@@ -238,10 +231,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
             render(createTestComponent());
 
-            expect(useLastSimulationSpy).toHaveBeenCalledWith(
-                { urlParams: { proposalId: proposal.id } },
-                { enabled: false },
-            );
+            expect(useLastSimulationSpy).toHaveBeenCalledWith({ urlParams: { proposalId: proposal.id } }, { enabled: false });
         });
 
         it('fetches simulation when hasSimulation is true', () => {
@@ -253,22 +243,16 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
             render(createTestComponent());
 
-            expect(useLastSimulationSpy).toHaveBeenCalledWith(
-                { urlParams: { proposalId: proposal.id } },
-                { enabled: true },
-            );
+            expect(useLastSimulationSpy).toHaveBeenCalledWith({ urlParams: { proposalId: proposal.id } }, { enabled: true });
         });
 
         it('invalidates proposal query after successful simulation', async () => {
             const mutateFn = jest.fn(
-                (
-                    _params: unknown,
-                    options?: { onSuccess?: () => void; onError?: () => void; onSettled?: () => void },
-                ) => {
+                (_params: unknown, options?: { onSuccess?: () => void; onError?: () => void; onSettled?: () => void }) => {
                     if (options?.onSuccess) {
                         options.onSuccess();
                     }
-                },
+                }
             );
 
             useSimulateProposalSpy.mockReturnValue({

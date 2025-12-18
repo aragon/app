@@ -1,7 +1,7 @@
-import type { BreadcrumbNode } from '@/shared/utils/daoBreadcrumbsUtils';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoAvatar, Icon, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
+import type { BreadcrumbNode } from '@/shared/utils/daoBreadcrumbsUtils';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 
 export interface IDaoBreadcrumbsProps {
     /**
@@ -22,20 +22,20 @@ export const DaoBreadcrumbs: React.FC<IDaoBreadcrumbsProps> = ({ path }) => {
     }
 
     return (
-        <div className="mt-2 flex flex-wrap items-center gap-2 leading-tight text-neutral-500">
+        <div className="mt-2 flex flex-wrap items-center gap-2 text-neutral-500 leading-tight">
             {path.map((node, index) => {
                 const avatarSrc = ipfsUtils.cidToSrc(node.avatar);
                 const isLast = index === path.length - 1;
 
                 return (
-                    <div key={node.address} className="flex items-center gap-2">
-                        {index > 0 && <Icon icon={IconType.CHEVRON_RIGHT} size="sm" className="text-neutral-500" />}
+                    <div className="flex items-center gap-2" key={node.address}>
+                        {index > 0 && <Icon className="text-neutral-500" icon={IconType.CHEVRON_RIGHT} size="sm" />}
                         <div
-                            className={classNames('bg-neutral-0 flex items-center gap-2 py-1', {
+                            className={classNames('flex items-center gap-2 bg-neutral-0 py-1', {
                                 'text-neutral-800': isLast,
                             })}
                         >
-                            <DaoAvatar src={avatarSrc} name={node.name} size="sm" />
+                            <DaoAvatar name={node.name} size="sm" src={avatarSrc} />
                             <p>{node.name}</p>
                         </div>
                     </div>

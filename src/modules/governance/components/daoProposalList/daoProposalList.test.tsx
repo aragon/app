@@ -1,13 +1,13 @@
+import { render, screen } from '@testing-library/react';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateDaoPlugin, generateFilterComponentPlugin } from '@/shared/testUtils';
-import { render, screen } from '@testing-library/react';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DaoProposalList, type IDaoProposalListProps } from './daoProposalList';
 
 jest.mock('@/shared/components/pluginFilterComponent', () => ({
     PluginFilterComponent: (props: { slotId: string; plugins: IFilterComponentPlugin[] }) => (
-        <div data-testid="plugin-component-mock" data-slotid={props.slotId} data-plugins={props.plugins[0].id} />
+        <div data-plugins={props.plugins[0].id} data-slotid={props.slotId} data-testid="plugin-component-mock" />
     ),
 }));
 

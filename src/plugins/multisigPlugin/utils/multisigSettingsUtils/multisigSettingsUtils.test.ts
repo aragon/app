@@ -17,9 +17,7 @@ describe('multisigSettings utils', () => {
             const [minimumApproval, proposalCreation] = result;
 
             expect(minimumApproval.term).toBe('app.plugins.multisig.multisigGovernanceSettings.minimumApproval');
-            expect(minimumApproval.definition).toBe(
-                'app.plugins.multisig.multisigGovernanceSettings.approvals (min=2,max=5)',
-            );
+            expect(minimumApproval.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.approvals (min=2,max=5)');
 
             expect(proposalCreation.term).toBe('app.plugins.multisig.multisigGovernanceSettings.proposalCreation');
             expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.anyWallet');
@@ -38,9 +36,7 @@ describe('multisigSettings utils', () => {
             const [minimumApproval, proposalCreation] = result;
 
             expect(minimumApproval.term).toBe('app.plugins.multisig.multisigGovernanceSettings.minimumApproval');
-            expect(minimumApproval.definition).toBe(
-                'app.plugins.multisig.multisigGovernanceSettings.approvals (min=3,max=10)',
-            );
+            expect(minimumApproval.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.approvals (min=3,max=10)');
 
             expect(proposalCreation.term).toBe('app.plugins.multisig.multisigGovernanceSettings.proposalCreation');
             expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.members');
@@ -59,9 +55,7 @@ describe('multisigSettings utils', () => {
             const [minimumApproval, proposalCreation] = result;
 
             expect(minimumApproval.term).toBe('app.plugins.multisig.multisigGovernanceSettings.minimumApproval');
-            expect(minimumApproval.definition).toBe(
-                'app.plugins.multisig.multisigGovernanceSettings.approvals (min=0,max=0)',
-            );
+            expect(minimumApproval.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.approvals (min=0,max=0)');
 
             expect(proposalCreation.term).toBe('app.plugins.multisig.multisigGovernanceSettings.proposalCreation');
             expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.anyWallet');
@@ -80,9 +74,7 @@ describe('multisigSettings utils', () => {
             const [minimumApproval, proposalCreation] = result;
 
             expect(minimumApproval.term).toBe('app.plugins.multisig.multisigGovernanceSettings.minimumApproval');
-            expect(minimumApproval.definition).toBe(
-                'app.plugins.multisig.multisigGovernanceSettings.approvals (min=1,max=0)',
-            );
+            expect(minimumApproval.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.approvals (min=1,max=0)');
 
             expect(proposalCreation.term).toBe('app.plugins.multisig.multisigGovernanceSettings.proposalCreation');
             expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.members');

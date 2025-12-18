@@ -1,7 +1,7 @@
-import { generateTokenPluginSettingsToken } from '@/plugins/tokenPlugin/testUtils';
-import { timeUtils } from '@/test/utils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import { generateTokenPluginSettingsToken } from '@/plugins/tokenPlugin/testUtils';
+import { timeUtils } from '@/test/utils';
 import { type ITokenProposalOptionVotes, VoteOption } from '../../../tokenPlugin/types';
 import { generateLockToVotePluginSettings } from '../../testUtils/generators/lockToVotePluginSettings';
 import { generateLockToVoteProposal } from '../../testUtils/generators/lockToVoteProposal';
@@ -128,7 +128,7 @@ describe('lockToVoteProposalUtils', () => {
 
         it('returns true when total votes is greater than min participation required', () => {
             const settings = generateLockToVotePluginSettings({
-                minParticipation: 150000,
+                minParticipation: 150_000,
                 historicalTotalSupply: '1000',
             }); // 15%
             const totalVotes = BigInt('200'); // 20% of total-supply
@@ -139,7 +139,7 @@ describe('lockToVoteProposalUtils', () => {
 
         it('returns true when total votes is equal to min participation required', () => {
             const settings = generateLockToVotePluginSettings({
-                minParticipation: 500000,
+                minParticipation: 500_000,
                 historicalTotalSupply: '1000',
             }); // 50%
             const totalVotes = BigInt('500'); // 50% of total-supply
@@ -150,7 +150,7 @@ describe('lockToVoteProposalUtils', () => {
 
         it('returns false when total votes is less than min participation required', () => {
             const settings = generateLockToVotePluginSettings({
-                minParticipation: 300000,
+                minParticipation: 300_000,
                 historicalTotalSupply: '1000',
             }); // 30%
             const totalVotes = BigInt('290'); // 29% of total-supply
@@ -180,7 +180,7 @@ describe('lockToVoteProposalUtils', () => {
 
     describe('isSupportReached', () => {
         it('returns true when the amount of yes votes is greater than the support required', () => {
-            const settings = generateLockToVotePluginSettings({ supportThreshold: 500000, historicalTotalSupply: '0' }); // 50%
+            const settings = generateLockToVotePluginSettings({ supportThreshold: 500_000, historicalTotalSupply: '0' }); // 50%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '510' }, // 51%
                 { type: VoteOption.NO, totalVotingPower: '490' }, // 49%
@@ -191,7 +191,7 @@ describe('lockToVoteProposalUtils', () => {
         });
 
         it('returns false when the amount of yes votes is equal to the support required', () => {
-            const settings = generateLockToVotePluginSettings({ supportThreshold: 600000, historicalTotalSupply: '0' }); // 60%
+            const settings = generateLockToVotePluginSettings({ supportThreshold: 600_000, historicalTotalSupply: '0' }); // 60%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '600' }, // 60%
                 { type: VoteOption.NO, totalVotingPower: '400' }, // 40%
@@ -201,7 +201,7 @@ describe('lockToVoteProposalUtils', () => {
         });
 
         it('returns false when the amount of yes votes is less than the support required', () => {
-            const settings = generateLockToVotePluginSettings({ supportThreshold: 400000, historicalTotalSupply: '0' }); // 40%
+            const settings = generateLockToVotePluginSettings({ supportThreshold: 400_000, historicalTotalSupply: '0' }); // 40%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '380' }, // 38%
                 { type: VoteOption.NO, totalVotingPower: '620' }, // 62%
@@ -284,9 +284,7 @@ describe('lockToVoteProposalUtils', () => {
         });
 
         it('returns 0 when the option does not exist', () => {
-            const votesByOption: ITokenProposalOptionVotes[] = [
-                { type: VoteOption.YES, totalVotingPower: '1000000000000000000' },
-            ];
+            const votesByOption: ITokenProposalOptionVotes[] = [{ type: VoteOption.YES, totalVotingPower: '1000000000000000000' }];
             const proposal: ILockToVoteProposal = generateLockToVoteProposal({
                 settings: generateLockToVotePluginSettings({
                     token: generateTokenPluginSettingsToken({ decimals: 18 }),

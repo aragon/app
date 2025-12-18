@@ -1,1 +1,1 @@
-export { KeyboardShortcut, type IKeyboardShortcutProps } from './keyboardShortcut';
+export { type IKeyboardShortcutProps, KeyboardShortcut } from './keyboardShortcut';

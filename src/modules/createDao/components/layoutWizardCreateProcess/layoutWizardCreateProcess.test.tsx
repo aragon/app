@@ -1,6 +1,6 @@
-import { type ILayoutWizardProps } from '@/modules/application/components/layouts/layoutWizard';
-import { Network } from '@/shared/api/daoService';
 import { render, screen } from '@testing-library/react';
+import type { ILayoutWizardProps } from '@/modules/application/components/layouts/layoutWizard';
+import { Network } from '@/shared/api/daoService';
 import { type ILayoutWizardCreateProcessProps, LayoutWizardCreateProcess } from './layoutWizardCreateProcess';
 
 jest.mock('@/modules/application/components/layouts/layoutWizard', () => ({

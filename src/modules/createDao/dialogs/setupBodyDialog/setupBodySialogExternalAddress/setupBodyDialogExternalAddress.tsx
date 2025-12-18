@@ -1,17 +1,13 @@
-import {
-    type ITransactionInfo,
-    type ITransactionStatusStepMeta,
-    TransactionStatus,
-} from '@/shared/components/transactionStatus';
+import { AddressInput, addressUtils, type IAddressInputResolvedValue } from '@aragon/gov-ui-kit';
+import { useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { type ITransactionInfo, type ITransactionStatusStepMeta, TransactionStatus } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { useIsSafeContract } from '@/shared/hooks/useIsSafeContract';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
-import { AddressInput, addressUtils, type IAddressInputResolvedValue } from '@aragon/gov-ui-kit';
-import { useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 import type { ISetupBodyForm } from '../setupBodyDialogDefinitions';
 
 export interface ISetupBodyDialogExternalAddressProps {
@@ -40,8 +36,7 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
             validate: {
                 isAddress: (value) => addressUtils.isAddress(value),
                 isSafeCheckLoading: () =>
-                    !isSafeCheckLoading ||
-                    t('app.createDao.setupBodyDialog.externalAddress.addressTypeCheck.validation'),
+                    !isSafeCheckLoading || t('app.createDao.setupBodyDialog.externalAddress.addressTypeCheck.validation'),
             },
         },
         sanitizeOnBlur: false,
@@ -68,7 +63,7 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
     };
 
     const addressCheckStepLabelType = isSafeCheckLoading ? 'loading' : isSafe ? 'successSafe' : 'success';
-    const steps: Array<IStepperStep<ITransactionStatusStepMeta>> = [
+    const steps: IStepperStep<ITransactionStatusStepMeta>[] = [
         {
             id: 'safeCheck',
             order: 0,
@@ -84,11 +79,11 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
     return (
         <div className="flex w-full flex-col gap-3">
             <AddressInput
-                helpText={t('app.createDao.setupBodyDialog.externalAddress.address.helpText')}
-                value={addressInput}
-                onChange={setAddressInput}
-                onAccept={handleAddressAccept}
                 chainId={chainId}
+                helpText={t('app.createDao.setupBodyDialog.externalAddress.address.helpText')}
+                onAccept={handleAddressAccept}
+                onChange={setAddressInput}
+                value={addressInput}
                 {...addressField}
             />
             {value && (

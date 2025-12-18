@@ -1,1 +1,1 @@
-export { WizardDialogStep, type IWizardDialogStepProps } from './wizardDialogStep';
+export { type IWizardDialogStepProps, WizardDialogStep } from './wizardDialogStep';

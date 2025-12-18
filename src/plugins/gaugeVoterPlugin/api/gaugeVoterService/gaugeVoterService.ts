@@ -3,7 +3,7 @@ import type { IEpochMetrics, IGauge } from './domain';
 import type { IGetEpochMetricsParams, IGetGaugeListParams } from './gaugeVoterService.api';
 
 class GaugeVoterService extends AragonBackendService {
-    private urls = {
+    private readonly urls = {
         gauges: '/v2/gauge/:pluginAddress/:network',
         epochMetrics: '/v2/gauge/epochMetrics/:pluginAddress/:network',
     };

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { PageHeader, type IPageHeaderProps } from './pageHeader';
+import { type IPageHeaderProps, PageHeader } from './pageHeader';
 
 describe('<Page.Header /> component', () => {
     const createTestComponent = (props?: Partial<IPageHeaderProps>) => {

@@ -1,7 +1,7 @@
+import { addressUtils, DataList, Link } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IContractVersionInfo } from '@/shared/types';
-import { versionComparatorUtils, type IVersion } from '@/shared/utils/versionComparatorUtils';
-import { addressUtils, DataList, Link } from '@aragon/gov-ui-kit';
+import { type IVersion, versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 
 export interface IUpdateDaoContractsCardProps {
     /**
@@ -45,7 +45,7 @@ export const UpdateDaoContractsCard: React.FC<IUpdateDaoContractsCardProps> = (p
                     <p className="text-base text-neutral-800 md:text-lg">{name}</p>
                     <p className="text-base text-neutral-500 md:text-lg">{addressUtils.truncateAddress(address)}</p>
                 </div>
-                <p className="text-sm text-neutral-500 md:text-base">
+                <p className="text-neutral-500 text-sm md:text-base">
                     {t('app.settings.updateDaoContractsCard.versionUpdate', { from: fromVersion, to: toVersion })}
                 </p>
             </div>

@@ -1,7 +1,7 @@
+import { addressUtils, ChainEntityType, DateFormat, formatterUtils, type IDefinitionSetting } from '@aragon/gov-ui-kit';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { addressUtils, ChainEntityType, DateFormat, formatterUtils, type IDefinitionSetting } from '@aragon/gov-ui-kit';
 import { useDaoChain } from '../useDaoChain';
 import { useDaoPlugins } from '../useDaoPlugins';
 

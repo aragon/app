@@ -1,8 +1,4 @@
-import {
-    TokenExitQueueFeeMode,
-    type ITokenExitQueueTicket,
-    type ITokenPluginSettingsEscrowSettings,
-} from '../../types';
+import { type ITokenExitQueueTicket, type ITokenPluginSettingsEscrowSettings, TokenExitQueueFeeMode } from '../../types';
 import type {
     ICalculateFeeAtTimeParams,
     ICalculateReceiveAmountParams,
@@ -99,7 +95,7 @@ class TokenExitQueueFeeUtils {
      * @param scaledFee - Fee in 1e18 precision.
      * @returns Fee as percentage (0-100).
      */
-    private scaledFeeToPercent = (scaledFee: bigint): number => {
+    private readonly scaledFeeToPercent = (scaledFee: bigint): number => {
         const roundedScaledFee = scaledFee * BigInt(this.MAX_FEE_PERCENT) + this.INTERNAL_PRECISION / BigInt(2);
         const basisPoints = Number(roundedScaledFee / this.INTERNAL_PRECISION);
         return basisPoints / 100;
@@ -117,7 +113,7 @@ class TokenExitQueueFeeUtils {
             | {
                   feePercent?: number | null;
                   minFeePercent?: number | null;
-              },
+              }
     ): boolean => {
         const feePercent = config.feePercent ?? 0;
         const minFeePercent = config.minFeePercent ?? 0;

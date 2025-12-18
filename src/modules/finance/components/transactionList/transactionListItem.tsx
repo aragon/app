@@ -1,11 +1,7 @@
 'use client';
 
+import { TransactionType as DataListTransactionType, TransactionDataListItem, TransactionStatus } from '@aragon/gov-ui-kit';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import {
-    TransactionType as DataListTransactionType,
-    TransactionDataListItem,
-    TransactionStatus,
-} from '@aragon/gov-ui-kit';
 import type { ITransaction, TransactionSide } from '../../api/financeService';
 
 export interface ITransactionListItemProps {
@@ -42,17 +38,17 @@ export const TransactionListItem: React.FC<ITransactionListItemProps> = (props) 
         <TransactionDataListItem.Structure
             // Multiple transactions can have the same transaction hash
             // (e.g. one deposit and one withdraw on the same proposal)
-            key={`${transaction.transactionHash}-${index.toString()}`}
             chainId={networkDefinitions[transaction.network].id}
-            hash={transaction.transactionHash}
-            target={onTransactionClick ? undefined : '_blank'}
             date={transaction.blockTimestamp * 1000}
-            type={transactionSideToDataListType[transaction.side]}
-            status={TransactionStatus.SUCCESS}
-            tokenSymbol={transaction.token.symbol}
-            tokenAmount={transaction.value}
+            hash={transaction.transactionHash}
             hideValue={true}
+            key={`${transaction.transactionHash}-${index.toString()}`}
             onClick={handleClick}
+            status={TransactionStatus.SUCCESS}
+            target={onTransactionClick ? undefined : '_blank'}
+            tokenAmount={transaction.value}
+            tokenSymbol={transaction.token.symbol}
+            type={transactionSideToDataListType[transaction.side]}
         />
     );
 };

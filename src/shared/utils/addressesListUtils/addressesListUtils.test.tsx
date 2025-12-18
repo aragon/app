@@ -1,5 +1,5 @@
-import type { ITokenSetupMembershipMember } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import { addressUtils } from '@aragon/gov-ui-kit';
+import type { ITokenSetupMembershipMember } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import { addressesListUtils } from './addressesListUtils';
 
 describe('addressesList Utils', () => {

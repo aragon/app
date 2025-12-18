@@ -1,18 +1,18 @@
-import { daoOptions, Network } from '@/shared/api/daoService';
-import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
-import { PluginType } from '@/shared/types';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import { daoOptions, Network } from '@/shared/api/daoService';
+import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
+import { PluginType } from '@/shared/types';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { memberListOptions } from '../../api/governanceService';
-import { daoMembersCount, DaoMembersPage, type IDaoMembersPageProps } from './daoMembersPage';
+import { DaoMembersPage, daoMembersCount, type IDaoMembersPageProps } from './daoMembersPage';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
-        <div data-testid="hydration-mock" data-state={JSON.stringify(props.state)}>
+        <div data-state={JSON.stringify(props.state)} data-testid="hydration-mock">
             {props.children}
         </div>
     ),
@@ -51,7 +51,7 @@ describe('<DaoMembersPage /> component', () => {
     };
 
     it('prefetches the DAO member list of the first DAO body plugin', async () => {
-        const expectedDaoId = `test-dao-id`;
+        const expectedDaoId = 'test-dao-id';
         const dao = generateDao();
         const bodyPlugin = generateDaoPlugin({ address: '0x123' });
         resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
@@ -60,15 +60,11 @@ describe('<DaoMembersPage /> component', () => {
 
         render(await createTestComponent());
 
-        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
-            daoOptions({ urlParams: { id: expectedDaoId } }).queryKey,
-        );
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: { id: expectedDaoId } }).queryKey);
         expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, { type: PluginType.BODY, includeSubPlugins: true });
 
         const memberListParams = { daoId: expectedDaoId, pageSize: daoMembersCount, pluginAddress: bodyPlugin.address };
-        expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
-            memberListOptions({ queryParams: memberListParams }).queryKey,
-        );
+        expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(memberListOptions({ queryParams: memberListParams }).queryKey);
     });
 
     it('renders the page client component', async () => {

@@ -1,5 +1,5 @@
-import { Network } from '@/shared/api/daoService';
 import { render, screen } from '@testing-library/react';
+import { Network } from '@/shared/api/daoService';
 import { type INotFoundDaoProps, NotFoundDao } from './notFoundDao';
 
 describe('<NotFoundDao /> component', () => {

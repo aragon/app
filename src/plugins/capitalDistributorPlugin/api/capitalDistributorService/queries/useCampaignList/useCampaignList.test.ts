@@ -1,7 +1,7 @@
+import { renderHook, waitFor } from '@testing-library/react';
 import { generateCampaign } from '@/plugins/capitalDistributorPlugin/testUtils/generators';
 import { Network } from '@/shared/api/daoService';
 import { generatePaginatedResponse, ReactQueryWrapper } from '@/shared/testUtils';
-import { renderHook, waitFor } from '@testing-library/react';
 import { capitalDistributorService } from '../../capitalDistributorService';
 import { useCampaignList } from './useCampaignList';
 

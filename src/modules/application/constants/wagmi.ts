@@ -1,9 +1,9 @@
-import { type INetworkDefinition, networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { walletConnectDefinitions } from '@/shared/constants/walletConnectDefinitions';
-import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { createAppKit } from '@reown/appkit/react';
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { createClient } from 'viem';
 import { cookieStorage, createStorage, http } from 'wagmi';
+import { type INetworkDefinition, networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { walletConnectDefinitions } from '@/shared/constants/walletConnectDefinitions';
 
 // Supported chains by the Application.
 const chains = Object.values(networkDefinitions) as [INetworkDefinition, ...INetworkDefinition[]];

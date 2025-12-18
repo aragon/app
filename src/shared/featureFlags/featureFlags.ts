@@ -20,11 +20,7 @@ const getStaticDefaultValue = (definition: FeatureFlagDefinition, env: FeatureFl
     return definition.defaultValue;
 };
 
-const resolveFlagValue = (
-    definition: FeatureFlagDefinition,
-    overrides: FeatureFlagOverrides,
-    env: FeatureFlagEnvironment,
-): boolean => {
+const resolveFlagValue = (definition: FeatureFlagDefinition, overrides: FeatureFlagOverrides, env: FeatureFlagEnvironment): boolean => {
     if (overrides[definition.key] != null) {
         return overrides[definition.key] === true;
     }
@@ -45,11 +41,7 @@ class FeatureFlags {
      * without touching the public API. The effective environment is provided
      * explicitly by the caller.
      */
-    constructor(
-        provider: IFeatureFlagsProvider,
-        definitions: FeatureFlagDefinition[],
-        environment: FeatureFlagEnvironment,
-    ) {
+    constructor(provider: IFeatureFlagsProvider, definitions: FeatureFlagDefinition[], environment: FeatureFlagEnvironment) {
         this.provider = provider;
         this.definitions = definitions;
         this.environment = environment;
@@ -75,7 +67,7 @@ class FeatureFlags {
      *
      * @param key - Feature flag key
      */
-    public isEnabled = async (key: FeatureFlagKey): Promise<boolean> => {
+    isEnabled = async (key: FeatureFlagKey): Promise<boolean> => {
         try {
             const snapshot = await this.getSnapshotInternal();
             const flag = snapshot.find((item) => item.key === key);
@@ -94,7 +86,7 @@ class FeatureFlags {
     /**
      * Get a snapshot of all feature flags.
      */
-    public getSnapshot = async (): Promise<FeatureFlagSnapshot[]> => {
+    getSnapshot = async (): Promise<FeatureFlagSnapshot[]> => {
         try {
             return await this.getSnapshotInternal();
         } catch {
@@ -120,5 +112,5 @@ class FeatureFlags {
 export const featureFlags = new FeatureFlags(
     new GithubCmsFeatureFlagsProvider(getEnvironment(), () => headers().then((h) => h.get('cookie'))),
     FEATURE_FLAG_DEFINITIONS,
-    getEnvironment(),
+    getEnvironment()
 );

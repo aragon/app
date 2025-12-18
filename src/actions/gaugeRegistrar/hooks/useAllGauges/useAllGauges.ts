@@ -1,9 +1,9 @@
+import { useEffect, useMemo } from 'react';
 import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/domain';
 import type { IGetGaugeListParams } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/gaugeVoterService.api';
 import { useGaugeList } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/queries';
 import type { IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import type { InfiniteQueryOptions } from '@/shared/types/queryOptions';
-import { useEffect, useMemo } from 'react';
 
 export interface IUseAllGaugesParams {
     /**
@@ -35,7 +35,7 @@ export const useAllGauges = (params: IUseAllGaugesParams) => {
 
     const { data, isLoading, error, hasNextPage, fetchNextPage, isFetchingNextPage, refetch } = useGaugeList(
         { ...gaugeListParams, queryParams: { ...gaugeListParams.queryParams, pageSize: 50 } },
-        options,
+        options
     );
 
     // Automatically fetch all pages

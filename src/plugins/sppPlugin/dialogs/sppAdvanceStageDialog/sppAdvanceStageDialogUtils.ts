@@ -1,5 +1,5 @@
-import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { encodeFunctionData, type Hex } from 'viem';
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import type { ISppProposal } from '../../types';
 
 const advanceStageAbi = [

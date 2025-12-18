@@ -1,1 +1,1 @@
-export { WizardForm, type IWizardFormProps } from './wizardForm';
+export { type IWizardFormProps, WizardForm } from './wizardForm';

@@ -1,10 +1,10 @@
+import { render, screen } from '@testing-library/react';
 import * as financeService from '@/modules/finance/api/financeService';
 import * as daoService from '@/shared/api/daoService';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import * as useDaoFilterUrlParam from '@/shared/hooks/useDaoFilterUrlParam';
 import { generateDao, generateReactQueryResultSuccess, generateSubDao, ReactQueryWrapper } from '@/shared/testUtils';
-import { render, screen } from '@testing-library/react';
 import { DaoAssetsPageClient, type IDaoAssetsPageClientProps } from './daoAssetsPageClient';
 
 jest.mock('@/modules/finance/components/assetList', () => ({

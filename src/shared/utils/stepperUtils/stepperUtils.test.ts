@@ -9,8 +9,8 @@ describe('stepper utils', () => {
             ];
             const activeStep = '0';
             const instance = new StepperUtils(steps, activeStep);
-            expect(instance['steps']).toEqual(steps);
-            expect(instance['activeStep']).toEqual(activeStep);
+            expect(instance.steps).toEqual(steps);
+            expect(instance.activeStep).toEqual(activeStep);
         });
 
         it('sorts the steps using the order attribute', () => {
@@ -19,7 +19,7 @@ describe('stepper utils', () => {
                 { id: '0', order: 0, meta: null },
             ];
             const instance = new StepperUtils(steps);
-            expect(instance['steps']).toEqual([
+            expect(instance.steps).toEqual([
                 { id: '0', order: 0, meta: null },
                 { id: '1', order: 1, meta: null },
             ]);
@@ -32,7 +32,7 @@ describe('stepper utils', () => {
                 { id: '0', order: 0, meta: null },
             ];
             const instance = new StepperUtils(steps);
-            expect(instance['activeStep']).toEqual('0');
+            expect(instance.activeStep).toEqual('0');
         });
     });
 
@@ -63,7 +63,7 @@ describe('stepper utils', () => {
             const newActiveStep = '002';
             const instance = new StepperUtils(undefined, activeStep);
             expect(instance.setActiveStep(newActiveStep)).toEqual(newActiveStep);
-            expect(instance['activeStep']).toEqual(newActiveStep);
+            expect(instance.activeStep).toEqual(newActiveStep);
         });
     });
 
@@ -81,7 +81,7 @@ describe('stepper utils', () => {
             const newSteps = [{ id: '1', order: 1, meta: null }];
             const instance = new StepperUtils(steps);
             expect(instance.setSteps(newSteps)).toEqual(newSteps);
-            expect(instance['steps']).toEqual(newSteps);
+            expect(instance.steps).toEqual(newSteps);
         });
     });
 

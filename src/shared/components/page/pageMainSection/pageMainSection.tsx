@@ -46,15 +46,15 @@ export const PageMainSection: React.FC<IPageMainSectionProps> = (props) => {
                 <div className="flex flex-row justify-between gap-1">
                     <div className="flex items-center gap-2">
                         <Heading size="h2">{title}</Heading>
-                        {icon && <Icon icon={icon} size="md" className="text-warning-500" />}
+                        {icon && <Icon className="text-warning-500" icon={icon} size="md" />}
                     </div>
                     {action && (
-                        <Button variant="primary" size="md" {...(actionProps as IButtonProps)}>
+                        <Button size="md" variant="primary" {...(actionProps as IButtonProps)}>
                             {actionLabel}
                         </Button>
                     )}
                 </div>
-                {description && <p className="text-base leading-normal font-normal text-neutral-500">{description}</p>}
+                {description && <p className="font-normal text-base text-neutral-500 leading-normal">{description}</p>}
             </div>
             {children}
         </div>

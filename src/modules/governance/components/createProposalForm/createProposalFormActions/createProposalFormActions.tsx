@@ -1,12 +1,12 @@
+import { type IProposalActionsArrayControls, type ProposalActionComponent, ProposalActions } from '@aragon/gov-ui-kit';
+import { useCallback, useEffect } from 'react';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { useDao, useDaoPermissions } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { ProposalActions, type IProposalActionsArrayControls, type ProposalActionComponent } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect } from 'react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
 import type { ICreateProposalFormData, IProposalActionData } from '../createProposalFormDefinitions';
@@ -57,7 +57,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const { data: allowedActionsData } = useAllowedActions(
         { urlParams: { network: dao!.network, pluginAddress }, queryParams: { pageSize: 50 } },
-        { enabled: hasConditionalPermissions },
+        { enabled: hasConditionalPermissions }
     );
     const {
         data: daoPermissionsData,
@@ -103,7 +103,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 shouldTouch: false,
             });
         },
-        [actions, getValues, setValue],
+        [actions, getValues, setValue]
     );
 
     const handleRemoveAction = (index: number) => {
@@ -114,25 +114,23 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         append(newActions);
     };
 
-    const getArrayControls = (index: number): IProposalActionsArrayControls<IProposalActionData> => {
-        return {
-            moveUp: {
-                label: t('app.governance.createProposalForm.actions.editAction.up'),
-                onClick: (index) => handleMoveAction(index, index - 1),
-                disabled: actions.length < 2 || index === 0,
-            },
-            moveDown: {
-                label: t('app.governance.createProposalForm.actions.editAction.down'),
-                onClick: (index) => handleMoveAction(index, index + 1),
-                disabled: actions.length < 2 || index === actions.length - 1,
-            },
-            remove: {
-                label: t('app.governance.createProposalForm.actions.editAction.remove'),
-                onClick: handleRemoveAction,
-                disabled: false,
-            },
-        };
-    };
+    const getArrayControls = (index: number): IProposalActionsArrayControls<IProposalActionData> => ({
+        moveUp: {
+            label: t('app.governance.createProposalForm.actions.editAction.up'),
+            onClick: (index) => handleMoveAction(index, index - 1),
+            disabled: actions.length < 2 || index === 0,
+        },
+        moveDown: {
+            label: t('app.governance.createProposalForm.actions.editAction.down'),
+            onClick: (index) => handleMoveAction(index, index + 1),
+            disabled: actions.length < 2 || index === actions.length - 1,
+        },
+        remove: {
+            label: t('app.governance.createProposalForm.actions.editAction.remove'),
+            onClick: handleRemoveAction,
+            disabled: false,
+        },
+    });
 
     const { pluginComponents } = actionComposerUtils.getDaoPluginActions(dao);
     const { components: permissionActionComponents } = actionComposerUtils.getDaoPermissionActions({
@@ -153,36 +151,30 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     return (
         <div className="flex flex-col gap-y-10">
-            <ProposalActions.Root
-                editMode={true}
-                expandedActions={expandedActions}
-                onExpandedActionsChange={noOpActionsChange}
-            >
+            <ProposalActions.Root editMode={true} expandedActions={expandedActions} onExpandedActionsChange={noOpActionsChange}>
                 <ProposalActions.Container emptyStateDescription="">
                     {actions.map((action, index) => (
                         <ProposalActions.Item<IProposalActionData>
-                            key={action.id}
                             action={action as IProposalActionData}
-                            actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(
-                                action as IProposalActionData,
-                            )}
-                            value={action.id}
-                            CustomComponent={customActionComponents[action.type]}
-                            arrayControls={getArrayControls(index)}
                             actionCount={actions.length}
-                            formPrefix={`actions.${index.toString()}`}
+                            actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(action as IProposalActionData)}
+                            arrayControls={getArrayControls(index)}
+                            CustomComponent={customActionComponents[action.type]}
                             chainId={chainId}
                             editMode={true}
+                            formPrefix={`actions.${index.toString()}`}
+                            key={action.id}
+                            value={action.id}
                         />
                     ))}
                 </ProposalActions.Container>
             </ProposalActions.Root>
             {showActionComposer ? (
                 <ActionComposer
-                    daoId={daoId}
-                    onAddAction={handleAddAction}
                     allowedActions={allowedActions}
+                    daoId={daoId}
                     daoPermissions={daoPermissions}
+                    onAddAction={handleAddAction}
                 />
             ) : (
                 <p className="text-primary-400">{t('app.governance.createProposalForm.actions.loading')}</p>

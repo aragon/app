@@ -54,7 +54,7 @@ const findDaoPath = (params: { dao?: IDao; targetAddress?: string }): Breadcrumb
     const { dao, targetAddress } = params;
 
     if (dao == null || targetAddress == null) {
-        return undefined;
+        return;
     }
 
     const normalizedTarget = targetAddress.toLowerCase();
@@ -72,7 +72,7 @@ const findDaoPath = (params: { dao?: IDao; targetAddress?: string }): Breadcrumb
             }
         }
 
-        return undefined;
+        return;
     };
 
     return dfs(buildHierarchyNode(dao));

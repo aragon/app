@@ -1,12 +1,8 @@
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type { Hex } from 'viem';
 import { useAccount, useReadContract, useReadContracts } from 'wagmi';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { gaugeVoterAbi } from '../../utils/gaugeVoterContractUtils/abi/gaugeVoterAbi';
-import type {
-    IGaugeUserVote,
-    IUseGaugeVoterUserDataParams,
-    IUseGaugeVoterUserDataResult,
-} from './useGaugeVoterUserData.api';
+import type { IGaugeUserVote, IUseGaugeVoterUserDataParams, IUseGaugeVoterUserDataResult } from './useGaugeVoterUserData.api';
 
 const erc20VotesAbi = [
     {
@@ -19,14 +15,7 @@ const erc20VotesAbi = [
 ] as const;
 
 export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUseGaugeVoterUserDataResult => {
-    const {
-        pluginAddress,
-        network,
-        gaugeAddresses,
-        enabled = true,
-        backendVotingPower,
-        backendUsedVotingPower,
-    } = params;
+    const { pluginAddress, network, gaugeAddresses, enabled = true, backendVotingPower, backendUsedVotingPower } = params;
 
     const { address: userAddress } = useAccount();
     const { id: chainId } = networkDefinitions[network];
@@ -105,12 +94,8 @@ export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUs
     };
 
     // Use backend data if available, otherwise use RPC data
-    const totalVotingPower = hasBackendVotingPower
-        ? BigInt(backendVotingPower)
-        : (rpcTotalVotingPowerData ?? BigInt(0));
-    const usedVotingPower = hasBackendUsedVotingPower
-        ? BigInt(backendUsedVotingPower)
-        : (rpcUsedVotingPowerData ?? BigInt(0));
+    const totalVotingPower = hasBackendVotingPower ? BigInt(backendVotingPower) : (rpcTotalVotingPowerData ?? BigInt(0));
+    const usedVotingPower = hasBackendUsedVotingPower ? BigInt(backendUsedVotingPower) : (rpcUsedVotingPowerData ?? BigInt(0));
 
     // Show loading if we're waiting for any RPC data
     const isLoading =
@@ -120,7 +105,7 @@ export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUs
 
     return {
         votingPower: totalVotingPower,
-        usedVotingPower: usedVotingPower,
+        usedVotingPower,
         gaugeVotes,
         isLoading,
         refetch,

@@ -1,7 +1,7 @@
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { generateSimulationResult } from '@/modules/governance/testUtils';
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
-import { act, renderHook, waitFor } from '@testing-library/react';
 import { actionSimulationService } from '../../actionSimulationService';
 import { useSimulateActions } from './useSimulateActions';
 

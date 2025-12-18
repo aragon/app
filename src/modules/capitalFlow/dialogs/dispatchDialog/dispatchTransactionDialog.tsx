@@ -1,17 +1,13 @@
-import { type Network } from '@/shared/api/daoService';
-import { type IDaoPolicy } from '@/shared/api/daoService/domain/daoPolicy';
-import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
-import {
-    TransactionDialog,
-    TransactionDialogStep,
-    type ITransactionDialogStepMeta,
-} from '@/shared/components/transactionDialog';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useStepper } from '@/shared/hooks/useStepper';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { encodeFunctionData, type Hex } from 'viem';
 import { useAccount } from 'wagmi';
+import type { Network } from '@/shared/api/daoService';
+import type { IDaoPolicy } from '@/shared/api/daoService/domain/daoPolicy';
+import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import { type ITransactionDialogStepMeta, TransactionDialog, TransactionDialogStep } from '@/shared/components/transactionDialog';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useStepper } from '@/shared/hooks/useStepper';
 import { CapitalFlowDialogId } from '../../constants/capitalFlowDialogId';
 import type { IRouterSelectorDialogParams } from '../routerSelectorDialog';
 
@@ -84,16 +80,16 @@ export const DispatchTransactionDialog: React.FC<IDispatchTransactionDialogProps
 
     return (
         <TransactionDialog
-            title={t('app.capitalFlow.dispatchTransactionDialog.title', { policyName: policy.name })}
             description={t('app.capitalFlow.dispatchTransactionDialog.description')}
+            network={network}
             prepareTransaction={prepareTransaction}
+            stepper={stepper}
             submitLabel={t('app.capitalFlow.dispatchTransactionDialog.dispatchButton')}
             successLink={{
                 label: t('app.capitalFlow.dispatchTransactionDialog.successButton'),
                 onClick: handleSuccess,
             }}
-            stepper={stepper}
-            network={network}
+            title={t('app.capitalFlow.dispatchTransactionDialog.title', { policyName: policy.name })}
         />
     );
 };

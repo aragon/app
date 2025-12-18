@@ -1,13 +1,13 @@
-import { useMemberList, type IProposalAction } from '@/modules/governance/api/governanceService';
-import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
-import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
-import type { IDaoPlugin } from '@/shared/api/daoService';
-import { useFormField } from '@/shared/hooks/useFormField';
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
-import { MultisigSetupGovernance, type IMultisigSetupGovernanceForm } from '../../multisigSetupGovernance';
+import { type IProposalAction, useMemberList } from '@/modules/governance/api/governanceService';
+import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
+import type { IDaoPlugin } from '@/shared/api/daoService';
+import { useFormField } from '@/shared/hooks/useFormField';
+import { type IMultisigSetupGovernanceForm, MultisigSetupGovernance } from '../../multisigSetupGovernance';
 
 export interface IMultisigUpdateSettingsActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<IMultisigPluginSettings>>> {}

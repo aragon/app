@@ -4,9 +4,7 @@ import { daoBreadcrumbsUtils } from './daoBreadcrumbsUtils';
 
 describe('buildDaoBreadcrumbPath', () => {
     it('returns undefined when no dao or target is provided', () => {
-        expect(
-            daoBreadcrumbsUtils.buildDaoBreadcrumbPath({ rootDao: undefined, targetAddress: undefined }),
-        ).toBeUndefined();
+        expect(daoBreadcrumbsUtils.buildDaoBreadcrumbPath({ rootDao: undefined, targetAddress: undefined })).toBeUndefined();
     });
 
     it('returns the root DAO when target matches the root', () => {

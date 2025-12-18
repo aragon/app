@@ -1,1 +1,1 @@
-export { NavigationTrigger, type INavigationTriggerProps } from './navigationTrigger';
+export { type INavigationTriggerProps, NavigationTrigger } from './navigationTrigger';

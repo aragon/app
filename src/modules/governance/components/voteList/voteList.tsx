@@ -43,12 +43,12 @@ export const VoteList: React.FC<IVoteListProps> = (props) => {
 
     return (
         <PluginFilterComponent
-            slotId={GovernanceSlotId.GOVERNANCE_VOTE_LIST}
-            plugins={processedPlugins}
             daoId={daoId}
-            isVeto={isVeto}
             Fallback={VoteListFallback}
+            isVeto={isVeto}
+            plugins={processedPlugins}
             searchParamName={voteListFilterParam}
+            slotId={GovernanceSlotId.GOVERNANCE_VOTE_LIST}
         />
     );
 };

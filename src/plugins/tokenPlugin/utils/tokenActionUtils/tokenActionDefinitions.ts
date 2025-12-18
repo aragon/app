@@ -1,11 +1,11 @@
-import { type IDaoPlugin } from '@/shared/api/daoService';
-import { PluginContractName } from '@/shared/api/daoService/domain/enum';
 import { formatUnits } from 'viem';
+import type { IDaoPlugin } from '@/shared/api/daoService';
+import { PluginContractName } from '@/shared/api/daoService/domain/enum';
 import {
-    TokenProposalActionType,
     type ITokenActionChangeSettings,
     type ITokenPluginSettings,
     type ITokenProposalAction,
+    TokenProposalActionType,
 } from '../../types';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
 
@@ -35,10 +35,7 @@ export const defaultMintAction = (settings: ITokenPluginSettings): ITokenProposa
     },
 });
 
-export const defaultUpdateSettings = ({
-    address,
-    settings,
-}: IDaoPlugin<ITokenPluginSettings>): ITokenActionChangeSettings => ({
+export const defaultUpdateSettings = ({ address, settings }: IDaoPlugin<ITokenPluginSettings>): ITokenActionChangeSettings => ({
     type: TokenProposalActionType.UPDATE_VOTE_SETTINGS,
     from: '',
     to: address,

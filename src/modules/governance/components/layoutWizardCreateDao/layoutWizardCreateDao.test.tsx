@@ -1,5 +1,5 @@
-import { type ILayoutWizardProps } from '@/modules/application/components/layouts/layoutWizard';
 import { render, screen } from '@testing-library/react';
+import type { ILayoutWizardProps } from '@/modules/application/components/layouts/layoutWizard';
 import { type ILayoutWizardCreateDaoProps, LayoutWizardCreateDao } from './layoutWizardCreateDao';
 
 jest.mock('@/modules/application/components/layouts/layoutWizard', () => ({

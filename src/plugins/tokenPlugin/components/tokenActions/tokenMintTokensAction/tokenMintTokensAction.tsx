@@ -1,19 +1,13 @@
+import { AddressInput, addressUtils, type ICompositeAddress, InputNumber, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
+import { useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { encodeFunctionData, parseUnits, zeroAddress } from 'viem';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import {
-    AddressInput,
-    addressUtils,
-    InputNumber,
-    type ICompositeAddress,
-    type IProposalActionComponentProps,
-} from '@aragon/gov-ui-kit';
-import { useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { encodeFunctionData, parseUnits, zeroAddress } from 'viem';
 
 export interface ITokenMintTokensActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<ITokenPluginSettings>>> {}
@@ -67,7 +61,7 @@ export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (pro
         label: t('app.plugins.token.tokenMintTokensAction.amount.label'),
         rules: {
             required: true,
-            validate: (value) => parseFloat(value ?? '') > 0,
+            validate: (value) => Number.parseFloat(value ?? '') > 0,
         },
         fieldPrefix: fieldName,
     });
@@ -94,16 +88,16 @@ export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (pro
     return (
         <div className="flex w-full flex-col gap-6">
             <AddressInput
+                chainId={chainId}
+                onAccept={onReceiverChange}
+                onChange={setReceiverInput}
                 placeholder={t('app.plugins.token.tokenMintTokensAction.address.placeholder')}
                 value={receiverInput}
-                onChange={setReceiverInput}
-                onAccept={onReceiverChange}
-                chainId={chainId}
                 {...receiverField}
             />
             <InputNumber
-                placeholder={t('app.plugins.token.tokenMintTokensAction.amount.placeholder', { symbol: tokenSymbol })}
                 min={0}
+                placeholder={t('app.plugins.token.tokenMintTokensAction.amount.placeholder', { symbol: tokenSymbol })}
                 suffix={tokenSymbol}
                 {...amountField}
             />

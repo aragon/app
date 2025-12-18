@@ -1,3 +1,4 @@
+import { encodeFunctionData, type Hex, parseEventLogs, type TransactionReceipt } from 'viem';
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { conditionFactoryAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/conditionFactoryAbi';
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
@@ -5,18 +6,9 @@ import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUti
 import type { IDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import {
-    pluginTransactionUtils,
-    type IBuildApplyPluginsInstallationActionsParams,
-} from '@/shared/utils/pluginTransactionUtils';
-import { transactionUtils, type ITransactionRequest } from '@/shared/utils/transactionUtils';
-import { encodeFunctionData, parseEventLogs, type Hex, type TransactionReceipt } from 'viem';
-import {
-    createProcessFormUtils,
-    GovernanceType,
-    ProcessPermission,
-    type ICreateProcessFormData,
-} from '../../components/createProcessForm';
+import { type IBuildApplyPluginsInstallationActionsParams, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
+import { createProcessFormUtils, GovernanceType, type ICreateProcessFormData, ProcessPermission } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
 import { BodyType } from '../../types/enum';
 import type { ISetupBodyFormExternal, ISetupBodyFormNew } from '../setupBodyDialog';
@@ -29,7 +21,7 @@ import type {
 } from './prepareProcessDialogUtils.api';
 
 class PrepareProcessDialogUtils {
-    private publishProcessProposalMetadata = {
+    private readonly publishProcessProposalMetadata = {
         title: 'Apply plugin installation',
         summary: 'This proposal applies the plugin installation to create the new process',
     };
@@ -43,9 +35,7 @@ class PrepareProcessDialogUtils {
             return { pluginsMetadata: [processorMetadata] };
         }
 
-        const newStageBodies = values.stages
-            .flatMap((stage) => stage.bodies)
-            .filter((body) => body.type === BodyType.NEW);
+        const newStageBodies = values.stages.flatMap((stage) => stage.bodies).filter((body) => body.type === BodyType.NEW);
         const pluginsMetadata = newStageBodies.map((body) => prepareProcessDialogUtils.preparePluginMetadata(body));
 
         return { pluginsMetadata, processorMetadata };
@@ -87,7 +77,7 @@ class PrepareProcessDialogUtils {
         }));
         const encodedTransaction = transactionUtils.encodeTransactionRequests(
             [...executeConditionDeployTransaction, ...installActionTransactions, ...safeConditionsDeployTransactions],
-            dao.network,
+            dao.network
         );
 
         return Promise.resolve(encodedTransaction);
@@ -137,13 +127,13 @@ class PrepareProcessDialogUtils {
         return safeConditionLogs.map((log) => log.args.newContract).filter((value) => value != null);
     };
 
-    private preparePluginMetadata = (plugin: ISetupBodyFormNew) => {
+    private readonly preparePluginMetadata = (plugin: ISetupBodyFormNew) => {
         const { name, description, resources: links } = plugin;
 
         return { name, description, links };
     };
 
-    private prepareProcessorMetadata = (values: ICreateProcessFormData) => {
+    private readonly prepareProcessorMetadata = (values: ICreateProcessFormData) => {
         const { name, description, resources: links, processKey, governanceType } = values;
         const baseMetadata = { name, description, links, processKey };
 
@@ -152,14 +142,14 @@ class PrepareProcessDialogUtils {
             : { ...baseMetadata, stageNames: values.stages.map((stage) => stage.name) };
     };
 
-    private buildPrepareInstallProcessorActionData = (metadata: string, dao: IDao) => {
+    private readonly buildPrepareInstallProcessorActionData = (metadata: string, dao: IDao) => {
         const processorMetadata = transactionUtils.stringToMetadataHex(metadata);
         const processorInstallData = sppTransactionUtils.buildPreparePluginInstallData(processorMetadata, dao);
 
         return processorInstallData;
     };
 
-    private buildPrepareInstallPluginsActionData = (params: IBuildPrepareInstallPluginsActionParams) => {
+    private readonly buildPrepareInstallPluginsActionData = (params: IBuildPrepareInstallPluginsActionParams) => {
         const { values, pluginsMetadata, dao } = params;
         const { governanceType } = values;
 
@@ -184,7 +174,7 @@ class PrepareProcessDialogUtils {
         return installData;
     };
 
-    private buildSafeConditionsDeployData = (params: IBuildPrepareInstallPluginsActionParams) => {
+    private readonly buildSafeConditionsDeployData = (params: IBuildPrepareInstallPluginsActionParams) => {
         const { values } = params;
         const { governanceType } = values;
 
@@ -196,22 +186,20 @@ class PrepareProcessDialogUtils {
 
         const safeBodies = values.stages
             .flatMap((stage) => stage.bodies)
-            .filter(
-                (body) => body.canCreateProposal && createProcessFormUtils.isBodySafe(body),
-            ) as ISetupBodyFormExternal[];
+            .filter((body) => body.canCreateProposal && createProcessFormUtils.isBodySafe(body)) as ISetupBodyFormExternal[];
 
         const safeInstallData = safeBodies.map((body) =>
             encodeFunctionData({
                 abi: conditionFactoryAbi,
                 functionName: 'deploySafeOwnerCondition',
                 args: [body.address as Hex],
-            }),
+            })
         );
 
         return safeInstallData;
     };
 
-    private buildPrepareInstallPluginActionData = (params: IBuildPrepareInstallPluginActionParams) => {
+    private readonly buildPrepareInstallPluginActionData = (params: IBuildPrepareInstallPluginActionParams) => {
         const { metadataCid, dao, body, stageVotingPeriod } = params;
 
         const metadata = transactionUtils.stringToMetadataHex(metadataCid);
@@ -224,7 +212,7 @@ class PrepareProcessDialogUtils {
         return prepareFunction(prepareFunctionParams);
     };
 
-    private buildDeployExecuteSelectorConditionData = (params: IBuildDeployExecuteSelectorConditionDataParams) => {
+    private readonly buildDeployExecuteSelectorConditionData = (params: IBuildDeployExecuteSelectorConditionDataParams) => {
         const { dao, permissionSelectors } = params;
 
         const groupedSelectors = Object.groupBy(permissionSelectors, (selector) => selector.to);

@@ -1,4 +1,4 @@
 export {
-    useMultisigPermissionCheckVoteSubmission,
     type IUseMultisigPermissionCheckVoteSubmissionParams,
+    useMultisigPermissionCheckVoteSubmission,
 } from './useMultisigPermissionCheckVoteSubmission';

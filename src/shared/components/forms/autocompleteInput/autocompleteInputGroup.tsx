@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
-import { type IAutocompleteInputGroup } from './autocompleteInput.api';
+import type { IAutocompleteInputGroup } from './autocompleteInput.api';
 
 export interface IAutocompleteInputGroupProps extends ComponentProps<'div'> {
     /**
@@ -15,10 +15,10 @@ export const AutocompleteInputGroup: React.FC<IAutocompleteInputGroupProps> = (p
     return (
         <div className={classNames('flex flex-col', className)} {...otherProps}>
             {group && (
-                <div className="flex flex-row items-center gap-3 px-3 py-2 text-base leading-tight font-normal">
+                <div className="flex flex-row items-center gap-3 px-3 py-2 font-normal text-base leading-tight">
                     <p className="shrink-0 text-neutral-800">{group.name}</p>
                     <hr className="h-[1px] w-full text-neutral-100" />
-                    <p className="shrink-0 text-sm text-neutral-500">{group.info}</p>
+                    <p className="shrink-0 text-neutral-500 text-sm">{group.info}</p>
                     <hr className="h-[1px] w-5 text-neutral-100" />
                 </div>
             )}

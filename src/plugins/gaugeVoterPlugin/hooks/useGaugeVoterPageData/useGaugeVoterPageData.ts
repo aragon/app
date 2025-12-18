@@ -1,12 +1,7 @@
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useGaugeVoterUserData } from '../useGaugeVoterUserData';
-import type {
-    IGaugeVote,
-    IUseGaugeVoterPageDataParams,
-    IUseGaugeVoterPageDataResult,
-    IVotingPowerData,
-} from './useGaugeVoterPageData.api';
+import type { IGaugeVote, IUseGaugeVoterPageDataParams, IUseGaugeVoterPageDataResult, IVotingPowerData } from './useGaugeVoterPageData.api';
 
 /**
  * Transforms raw BigInt voting power into display-ready format.

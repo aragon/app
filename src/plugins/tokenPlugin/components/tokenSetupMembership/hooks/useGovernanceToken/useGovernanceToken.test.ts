@@ -1,6 +1,6 @@
+import { renderHook } from '@testing-library/react';
 import { generateToken } from '@/modules/finance/testUtils';
 import * as useToken from '@/shared/hooks/useToken';
-import { renderHook } from '@testing-library/react';
 import { useGovernanceToken } from './useGovernanceToken';
 import * as useGovernanceTokenDelegationCheck from './useGovernanceTokenDelegationCheck';
 import * as useGovernanceTokenErc20Check from './useGovernanceTokenErc20Check';

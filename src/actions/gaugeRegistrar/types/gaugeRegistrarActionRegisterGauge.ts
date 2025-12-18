@@ -1,5 +1,5 @@
-import type { IResource } from '@/shared/api/daoService';
 import type { IProposalAction } from '@aragon/gov-ui-kit';
+import type { IResource } from '@/shared/api/daoService';
 import type { IGaugeRegistrarRegisterGaugeFormData } from '../components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm';
 import type { GaugeRegistrarActionType } from './enum/gaugeRegistrarActionType';
 

@@ -1,4 +1,4 @@
 export {
-    useMultisigPermissionCheckProposalCreation,
     type IUseMultisigPermissionCheckProposalCreationParams,
+    useMultisigPermissionCheckProposalCreation,
 } from './useMultisigPermissionCheckProposalCreation';

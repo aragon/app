@@ -1,20 +1,17 @@
 'use client';
 
-import { type ISetupBodyFormExisting, type ISetupBodyFormNew } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { ChainEntityType, DefinitionList, formatterUtils, NumberFormat, Tag } from '@aragon/gov-ui-kit';
+import { formatUnits } from 'viem';
+import type { ISetupBodyFormExisting, ISetupBodyFormNew } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { BodyType } from '@/modules/createDao/types/enum';
 import { useMemberList } from '@/modules/governance/api/governanceService';
-import type {
-    ITokenSetupMembershipForm,
-    ITokenSetupMembershipMember,
-} from '@/plugins/tokenPlugin/components/tokenSetupMembership';
+import type { ITokenSetupMembershipForm, ITokenSetupMembershipMember } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
-import { ChainEntityType, DefinitionList, formatterUtils, NumberFormat, Tag } from '@aragon/gov-ui-kit';
-import { formatUnits } from 'viem';
 import { DaoLockToVoteVotingMode } from '../../types';
 import type { ILockToVoteSetupGovernanceForm } from '../lockToVoteSetupGovernance/lockToVoteSetupGovernance.api';
 
@@ -24,11 +21,7 @@ export interface ILockToVoteProcessBodyFieldProps {
      */
     body:
         | ISetupBodyFormNew<ILockToVoteSetupGovernanceForm, ITokenSetupMembershipMember, ITokenSetupMembershipForm>
-        | ISetupBodyFormExisting<
-              ILockToVoteSetupGovernanceForm,
-              ITokenSetupMembershipMember,
-              ITokenSetupMembershipForm
-          >;
+        | ISetupBodyFormExisting<ILockToVoteSetupGovernanceForm, ITokenSetupMembershipMember, ITokenSetupMembershipForm>;
     /**
      * Displays / hides some of the token-voting governance settings depending on the process governance type.
      */
@@ -60,13 +53,7 @@ export const LockToVoteProcessBodyField = (props: ILockToVoteProcessBodyFieldPro
     };
     const { data: memberList } = useMemberList(initialParams, { enabled: body.type === BodyType.EXISTING });
 
-    const {
-        address: tokenAddress,
-        name: tokenName,
-        symbol: tokenSymbol,
-        decimals: tokenDecimals,
-        totalSupply,
-    } = membership.token;
+    const { address: tokenAddress, name: tokenName, symbol: tokenSymbol, decimals: tokenDecimals, totalSupply } = membership.token;
     const { votingMode, supportThreshold, minParticipation, minDuration } = governance;
 
     const parsedTotalSupply = totalSupply && formatUnits(BigInt(totalSupply), tokenDecimals);
@@ -82,10 +69,7 @@ export const LockToVoteProcessBodyField = (props: ILockToVoteProcessBodyFieldPro
     const voteChangeLabel = votingMode === DaoLockToVoteVotingMode.VOTE_REPLACEMENT ? 'enabled' : 'disabled';
 
     const proposalDurationObject = dateUtils.secondsToDuration(minDuration);
-    const formattedMinDuration = t(
-        'app.plugins.lockToVote.lockToVoteProcessBodyField.proposalDurationDefinition',
-        proposalDurationObject,
-    );
+    const formattedMinDuration = t('app.plugins.lockToVote.lockToVoteProcessBodyField.proposalDurationDefinition', proposalDurationObject);
 
     const numberOfMembers = readOnly ? memberList?.pages[0].metadata.totalRecords : membership.members.length;
 
@@ -104,13 +88,7 @@ export const LockToVoteProcessBodyField = (props: ILockToVoteProcessBodyFieldPro
         <DefinitionList.Container className="w-full">
             {readOnly &&
                 contractInfo.map(({ term, definition, description, link, copyValue }) => (
-                    <DefinitionList.Item
-                        key={term}
-                        term={term}
-                        description={description}
-                        link={link}
-                        copyValue={copyValue}
-                    >
+                    <DefinitionList.Item copyValue={copyValue} description={description} key={term} link={link} term={term}>
                         {definition}
                     </DefinitionList.Item>
                 ))}
@@ -122,8 +100,8 @@ export const LockToVoteProcessBodyField = (props: ILockToVoteProcessBodyFieldPro
             </DefinitionList.Item>
             {numberOfMembers! > 0 && (
                 <DefinitionList.Item
-                    term={t('app.plugins.lockToVote.lockToVoteProcessBodyField.distributionTerm')}
                     link={readOnly ? { href: daoUtils.getDaoUrl(dao, 'members'), isExternal: false } : undefined}
+                    term={t('app.plugins.lockToVote.lockToVoteProcessBodyField.distributionTerm')}
                 >
                     {t('app.plugins.lockToVote.lockToVoteProcessBodyField.holders', {
                         count: numberOfMembers,
@@ -146,19 +124,15 @@ export const LockToVoteProcessBodyField = (props: ILockToVoteProcessBodyFieldPro
                 })}
             </DefinitionList.Item>
             {!isAdvancedGovernance && (
-                <>
-                    <DefinitionList.Item
-                        term={t('app.plugins.lockToVote.lockToVoteProcessBodyField.proposalDurationTerm')}
-                    >
-                        {formattedMinDuration}
-                    </DefinitionList.Item>
-                </>
+                <DefinitionList.Item term={t('app.plugins.lockToVote.lockToVoteProcessBodyField.proposalDurationTerm')}>
+                    {formattedMinDuration}
+                </DefinitionList.Item>
             )}
             <DefinitionList.Item term={t('app.plugins.lockToVote.lockToVoteProcessBodyField.voteChange')}>
                 <Tag
+                    className="max-w-fit"
                     label={t(`app.plugins.lockToVote.lockToVoteProcessBodyField.${voteChangeLabel}`)}
                     variant={voteChangeLabel === 'enabled' ? 'primary' : 'neutral'}
-                    className="max-w-fit"
                 />
             </DefinitionList.Item>
         </DefinitionList.Container>

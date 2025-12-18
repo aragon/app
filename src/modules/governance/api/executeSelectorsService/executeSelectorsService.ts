@@ -3,7 +3,7 @@ import type { IAllowedAction } from './domain';
 import type { IGetAllowedActionsParams } from './executeSelectorsService.api';
 
 class ExecuteSelectorsService extends AragonBackendService {
-    private urls = {
+    private readonly urls = {
         allowedActions: '/v2/execute-selectors/:network/:pluginAddress',
     };
 

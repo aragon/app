@@ -1,5 +1,5 @@
-import { type IDaoPolicy, PolicyStrategyType } from '@/shared/api/daoService';
 import { DataList, type IDataListItemProps } from '@aragon/gov-ui-kit';
+import { type IDaoPolicy, PolicyStrategyType } from '@/shared/api/daoService';
 import { useTranslations } from '../translationsProvider';
 
 export type IPolicyDataListItemProps = IDataListItemProps & {
@@ -28,20 +28,16 @@ export const PolicyDataListItem: React.FC<IPolicyDataListItemProps> = (props) =>
             ? name
             : t('app.shared.policyDataListItem.defaultName', { type: strategyTypeToNameMap[strategy.type] });
     const processedDescription =
-        description != null && description.length > 0
-            ? description
-            : t('app.shared.policyDataListItem.defaultDescription');
+        description != null && description.length > 0 ? description : t('app.shared.policyDataListItem.defaultDescription');
 
     return (
-        <DataList.Item key={policy.address} className="px-4 py-3 md:p-6" {...otherProps}>
+        <DataList.Item className="px-4 py-3 md:p-6" key={policy.address} {...otherProps}>
             <div className="flex flex-col gap-y-1">
-                <div className="flex gap-2 text-lg leading-tight font-normal">
+                <div className="flex gap-2 font-normal text-lg leading-tight">
                     <p className="truncate text-neutral-800">{processedName}</p>
                     {policyKey && <p className="text-right text-neutral-500 uppercase">{policyKey}</p>}
                 </div>
-                <p className="line-clamp-2 text-base leading-normal font-normal text-neutral-500">
-                    {processedDescription}
-                </p>
+                <p className="line-clamp-2 font-normal text-base text-neutral-500 leading-normal">{processedDescription}</p>
             </div>
         </DataList.Item>
     );

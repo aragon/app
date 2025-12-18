@@ -1,10 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import type {
-    DebugContextValues,
-    IDebugContext,
-    IDebugContextControl,
-    IDebugContextProviderProps,
-} from './debugProvider.api';
+import type { DebugContextValues, IDebugContext, IDebugContextControl, IDebugContextProviderProps } from './debugProvider.api';
 
 const debugContext = createContext<IDebugContext | null>(null);
 
@@ -14,10 +9,7 @@ export const DebugContextProvider: React.FC<IDebugContextProviderProps> = (props
     const [controls, setControls] = useState<IDebugContextControl[]>([]);
     const [values, setValues] = useState<Record<string, unknown>>({});
 
-    const updateValue = useCallback(
-        (name: string, value: unknown) => setValues((current) => ({ ...current, [name]: value })),
-        [],
-    );
+    const updateValue = useCallback((name: string, value: unknown) => setValues((current) => ({ ...current, [name]: value })), []);
 
     const registerControl = useCallback(
         (control: IDebugContextControl) => {
@@ -31,17 +23,17 @@ export const DebugContextProvider: React.FC<IDebugContextProviderProps> = (props
                 return alreadyRegistered ? current : current.concat(control);
             });
         },
-        [updateValue],
+        [updateValue]
     );
 
     const unregisterControl = useCallback(
-        (controlName: string) => setControls((current) => current.filter(({ name }) => name != controlName)),
-        [],
+        (controlName: string) => setControls((current) => current.filter(({ name }) => name !== controlName)),
+        []
     );
 
     const contextValues = useMemo(
         () => ({ controls, registerControl, values, updateValue, unregisterControl }),
-        [controls, registerControl, values, updateValue, unregisterControl],
+        [controls, registerControl, values, updateValue, unregisterControl]
     );
 
     return <debugContext.Provider value={contextValues}>{children}</debugContext.Provider>;

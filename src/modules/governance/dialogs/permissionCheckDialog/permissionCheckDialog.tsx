@@ -1,9 +1,9 @@
-import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
-import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
+import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { PermissionsDefinitionList } from '../../components/permissionsDefinitionList';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 
@@ -39,7 +39,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
     const { close, updateOptions } = useDialogContext();
 
     const checkPermissions = useSlotSingleFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
-        slotId: slotId,
+        slotId,
         pluginId: plugin.interfaceType,
         params: { plugin, ...otherParams },
     }) ?? { hasPermission: true, isLoading: false, settings: [] };
@@ -68,13 +68,11 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
     const title = isLoading ? t('app.governance.permissionCheckDialog.loading') : t(`${keyNamespace}.title`);
     const description = isLoading ? undefined : t(`${keyNamespace}.description`);
 
-    const footerAction = isLoading
-        ? undefined
-        : { label: t('app.governance.permissionCheckDialog.action'), onClick: handleDialogClose };
+    const footerAction = isLoading ? undefined : { label: t('app.governance.permissionCheckDialog.action'), onClick: handleDialogClose };
 
     return (
         <>
-            <Dialog.Header title={title} description={description} />
+            <Dialog.Header description={description} title={title} />
             <Dialog.Content className="pb-3">
                 <PermissionsDefinitionList isLoading={isLoading} settings={settings} />
             </Dialog.Content>

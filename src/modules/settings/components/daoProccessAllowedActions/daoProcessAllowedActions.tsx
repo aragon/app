@@ -1,13 +1,9 @@
+import { DataList, type IEmptyStateObjectIllustrationProps, SmartContractFunctionDataListItem } from '@aragon/gov-ui-kit';
 import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
-import { type IDaoPlugin, type Network } from '@/shared/api/daoService';
+import type { IDaoPlugin, Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
-import {
-    DataList,
-    SmartContractFunctionDataListItem,
-    type IEmptyStateObjectIllustrationProps,
-} from '@aragon/gov-ui-kit';
 
 export interface IDaoProcessAllowedActionsProps {
     /**
@@ -27,7 +23,7 @@ export const DaoProcessAllowedActions: React.FC<IDaoProcessAllowedActionsProps> 
 
     const { data, status, fetchStatus, isLoading, isFetchingNextPage, fetchNextPage } = useAllowedActions(
         { urlParams: { network, pluginAddress: plugin.address }, queryParams: {} },
-        { enabled: plugin.conditionAddress != null },
+        { enabled: plugin.conditionAddress != null }
     );
 
     const allowedActionsList = data?.pages.flatMap((page) => page.data);
@@ -48,20 +44,20 @@ export const DaoProcessAllowedActions: React.FC<IDaoProcessAllowedActionsProps> 
     return (
         <DataList.Root
             entityLabel=""
-            pageSize={isLoading ? 3 : 12}
-            onLoadMore={fetchNextPage}
             itemsCount={itemsCount}
+            onLoadMore={fetchNextPage}
+            pageSize={isLoading ? 3 : 12}
             state={processedState}
         >
             <DataList.Container emptyState={emptyState} SkeletonElement={SmartContractFunctionDataListItem.Skeleton}>
                 {allowedActionsList?.map((action, index) => (
                     <SmartContractFunctionDataListItem.Structure
-                        key={index}
+                        chainId={networkDefinitions[network].id}
                         contractAddress={action.target}
                         contractName={action.decoded.contractName}
                         functionName={action.decoded.functionName}
                         functionSelector={action.selector ?? undefined}
-                        chainId={networkDefinitions[network].id}
+                        key={index}
                     />
                 ))}
             </DataList.Container>

@@ -1,17 +1,15 @@
-import { type ILayoutWizardProps } from '@/modules/application/components/layouts/layoutWizard';
+import { QueryClient } from '@tanstack/react-query';
+import { render, screen } from '@testing-library/react';
+import type { ILayoutWizardProps } from '@/modules/application/components/layouts/layoutWizard';
 import { Network } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { mockTranslations } from '@/test/utils';
-import { QueryClient } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
 import { type ILayoutWizardCreateProposalProps, LayoutWizardCreateProposal } from './layoutWizardCreateProposal';
 
 jest.mock('@/modules/application/components/layouts/layoutWizard', () => ({
     LayoutWizard: (props: ILayoutWizardProps) => (
-        <div data-testid="layout-wizard-mock">
-            {typeof props.name === 'string' ? props.name : mockTranslations.tMock(...props.name)}
-        </div>
+        <div data-testid="layout-wizard-mock">{typeof props.name === 'string' ? props.name : mockTranslations.tMock(...props.name)}</div>
     ),
 }));
 

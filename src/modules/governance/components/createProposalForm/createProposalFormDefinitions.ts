@@ -24,5 +24,5 @@ export interface ICreateProposalFormData<TMeta = undefined> extends Omit<IPropos
     /**
      * List of actions to be executed if the proposal succeeds.
      */
-    actions: Array<IProposalActionData<IProposalAction, TMeta>>;
+    actions: IProposalActionData<IProposalAction, TMeta>[];
 }

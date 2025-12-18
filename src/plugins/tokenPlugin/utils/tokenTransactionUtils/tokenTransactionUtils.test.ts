@@ -1,3 +1,5 @@
+import * as Viem from 'viem';
+import { zeroAddress } from 'viem';
 import type { ISetupBodyFormMembership } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { generateSetupBodyFormData } from '@/modules/createDao/testUtils';
 import { generateToken } from '@/modules/finance/testUtils';
@@ -8,8 +10,6 @@ import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
-import * as Viem from 'viem';
-import { zeroAddress } from 'viem';
 import { generateTokenPluginSettings } from '../../testUtils';
 import { DaoTokenVotingMode } from '../../types';
 import { tokenPluginAbi, tokenPluginPrepareUpdateAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
@@ -37,11 +37,9 @@ describe('tokenTransaction utils', () => {
     describe('buildCreateProposalData', () => {
         it('correctly encodes the create-proposal data from the given parameters', () => {
             const startDate = 0;
-            const endDate = 1728660603;
+            const endDate = 1_728_660_603;
             const proposal = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
-            const actions: ITransactionRequest[] = [
-                { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x000', value: BigInt(0) },
-            ];
+            const actions: ITransactionRequest[] = [{ to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x000', value: BigInt(0) }];
             const plugin = generateDaoPlugin({
                 interfaceType: PluginInterfaceType.TOKEN_VOTING,
                 settings: generateTokenPluginSettings(),
@@ -72,9 +70,7 @@ describe('tokenTransaction utils', () => {
             const endDate = 0;
             const minDuration = 10 * 24 * 60 * 60;
             const proposal = generateProposalCreate();
-            const actions: ITransactionRequest[] = [
-                { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x000', value: BigInt(0) },
-            ];
+            const actions: ITransactionRequest[] = [{ to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x000', value: BigInt(0) }];
             const plugin = generateDaoPlugin({
                 interfaceType: PluginInterfaceType.TOKEN_VOTING,
                 settings: generateTokenPluginSettings({
@@ -114,11 +110,10 @@ describe('tokenTransaction utils', () => {
     });
 
     describe('buildPrepareInstallData', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const tokenSettingsSpy = jest.spyOn(tokenTransactionUtils as any, 'buildInstallDataTokenSettings');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const votingSettingsSpy = jest.spyOn(tokenTransactionUtils as any, 'buildInstallDataVotingSettings');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const mintSettingsSpy = jest.spyOn(tokenTransactionUtils as any, 'buildInstallDataMintSettings');
 
         type BuildDataParams = Parameters<typeof tokenTransactionUtils.buildPrepareInstallData>;
@@ -145,7 +140,7 @@ describe('tokenTransaction utils', () => {
             const token = { address: zeroAddress, name: '', symbol: '' };
             const body = generateSetupBodyFormData({
                 membership: { members: [], token } as ISetupBodyFormMembership,
-                governance: { supportThreshold: 2, minParticipation: 2, minDuration: 1000000 },
+                governance: { supportThreshold: 2, minParticipation: 2, minDuration: 1_000_000 },
             });
 
             const target = { operation: 0, target: dao.address as Viem.Hex };
@@ -190,7 +185,7 @@ describe('tokenTransaction utils', () => {
                 tokenPlugin.repositoryAddresses[dao.network],
                 tokenPlugin.installVersion,
                 encodedPluginData,
-                dao.address,
+                dao.address
             );
 
             expect(result).toBe(transactionData);
@@ -229,7 +224,7 @@ describe('tokenTransaction utils', () => {
     describe('buildInstallDataTokenSettings', () => {
         it('returns the token settings for the plugin installation', () => {
             const token = generateToken({ address: '0x123', symbol: 'MTT', name: 'My Token' });
-            expect(tokenTransactionUtils['buildInstallDataTokenSettings'](token)).toEqual({
+            expect(tokenTransactionUtils.buildInstallDataTokenSettings(token)).toEqual({
                 addr: token.address,
                 name: token.name,
                 symbol: token.symbol,
@@ -244,7 +239,7 @@ describe('tokenTransaction utils', () => {
                 { address: '0x456', tokenAmount: 1.5 },
             ];
 
-            const result = tokenTransactionUtils['buildInstallDataMintSettings'](members);
+            const result = tokenTransactionUtils.buildInstallDataMintSettings(members);
             expect(result).toEqual({
                 receivers: ['0x123', '0x456'],
                 amounts: [BigInt('10000000000000000'), BigInt('1500000000000000000')],
@@ -269,14 +264,14 @@ describe('tokenTransaction utils', () => {
             });
 
             const params = [{ body }] as Parameters<typeof tokenTransactionUtils.buildPrepareInstallData>;
-            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](...params);
+            const result = tokenTransactionUtils.buildInstallDataVotingSettings(...params);
 
             expect(result).toEqual({
                 votingMode: settings.votingMode,
-                supportThreshold: 30000,
-                minParticipation: 40000,
+                supportThreshold: 30_000,
+                minParticipation: 40_000,
                 minDuration: BigInt(settings.minDuration),
-                minProposerVotingPower: BigInt(100000000000000000000),
+                minProposerVotingPower: BigInt(100_000_000_000_000_000_000),
             });
         });
 
@@ -289,11 +284,9 @@ describe('tokenTransaction utils', () => {
                 membership: { members: [], token } as ISetupBodyFormMembership,
             });
 
-            const params = [{ body, stageVotingPeriod }] as Parameters<
-                typeof tokenTransactionUtils.buildPrepareInstallData
-            >;
-            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](...params);
-            expect(result.minDuration).toEqual(BigInt(86400));
+            const params = [{ body, stageVotingPeriod }] as Parameters<typeof tokenTransactionUtils.buildPrepareInstallData>;
+            const result = tokenTransactionUtils.buildInstallDataVotingSettings(...params);
+            expect(result.minDuration).toEqual(BigInt(86_400));
         });
     });
 });

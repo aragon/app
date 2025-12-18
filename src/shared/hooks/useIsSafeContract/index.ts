@@ -1,1 +1,1 @@
-export { useIsSafeContract, type IUseIsSafeContractParams } from './useIsSafeContract';
+export { type IUseIsSafeContractParams, useIsSafeContract } from './useIsSafeContract';

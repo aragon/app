@@ -6,9 +6,7 @@ class NetworkUtils {
      * Gets all supported networks from the network definitions.
      * @returns Array of all supported network identifiers
      */
-    getSupportedNetworks = (): Network[] => {
-        return Object.keys(networkDefinitions) as Network[];
-    };
+    getSupportedNetworks = (): Network[] => Object.keys(networkDefinitions) as Network[];
 
     /**
      * Gets only mainnet networks (excludes testnets) from the network definitions.
@@ -23,9 +21,7 @@ class NetworkUtils {
      * Checks if given value is a valid Network.
      * @param network
      */
-    isValidNetwork = (network: unknown): boolean => {
-        return Object.values(Network).includes(network as Network);
-    };
+    isValidNetwork = (network: unknown): boolean => Object.values(Network).includes(network as Network);
 }
 
 export const networkUtils = new NetworkUtils();

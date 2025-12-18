@@ -4,7 +4,7 @@ import type { ITransactionInfo } from '@/shared/components/transactionStatus';
 import type { IProposal, IProposalAction } from '../../api/governanceService';
 
 export type PrepareProposalActionFunction<TAction extends IProposalCreateAction = IProposalCreateAction> = (
-    action: TAction,
+    action: TAction
 ) => Promise<string>;
 
 export type PrepareProposalActionMap<TAction extends IProposalCreateAction = IProposalCreateAction> = Partial<

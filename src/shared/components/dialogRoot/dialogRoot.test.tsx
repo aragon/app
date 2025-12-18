@@ -1,7 +1,7 @@
-import { generateDialogContext } from '@/shared/testUtils';
-import { testLogger } from '@/test/utils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { generateDialogContext } from '@/shared/testUtils';
+import { testLogger } from '@/test/utils';
 import * as useDialogContext from '../dialogProvider';
 import { DialogRoot, type IDialogRootProps } from './dialogRoot';
 

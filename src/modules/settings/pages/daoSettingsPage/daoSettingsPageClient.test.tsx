@@ -1,3 +1,5 @@
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
 import * as DaoService from '@/shared/api/daoService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { DialogProvider } from '@/shared/components/dialogProvider';
@@ -11,9 +13,6 @@ import {
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
-
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
 import { DaoSettingsPageClient, type IDaoSettingsPageClientProps } from './daoSettingsPageClient';
 
 jest.mock('@/modules/settings/components/updateDaoContracts', () => ({

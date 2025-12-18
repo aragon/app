@@ -1,10 +1,10 @@
-import type { TransactionType } from '@/shared/api/transactionService';
 import { DialogFooter, IconType } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import type { TransactionReceipt } from 'viem';
+import type { TransactionType } from '@/shared/api/transactionService';
 import { useBlockNavigationContext } from '../blockNavigationContext';
 import { useDialogContext } from '../dialogProvider';
-import { type TransactionStatusState } from '../transactionStatus';
+import type { TransactionStatusState } from '../transactionStatus';
 import { useTranslations } from '../translationsProvider';
 import {
     type IBuildTransactionDialogSuccessLinkHref,
@@ -64,7 +64,7 @@ const stepStateSubmitLabel: Partial<Record<TransactionDialogStep, Partial<Record
 
 const buildSuccessLink = (
     successHref: TransactionDialogSuccessLinkHref,
-    params: IBuildTransactionDialogSuccessLinkHref,
+    params: IBuildTransactionDialogSuccessLinkHref
 ): string | undefined => {
     if (typeof successHref === 'string') {
         return successHref;
@@ -73,22 +73,11 @@ const buildSuccessLink = (
     return successHref(params);
 };
 
-const indexingStepTimeout = 14000;
+const indexingStepTimeout = 14_000;
 
-export const TransactionDialogFooter = <TCustomStepId extends string = string>(
-    props: ITransactionDialogFooterProps<TCustomStepId>,
-) => {
-    const {
-        submitLabel,
-        successLink,
-        txReceipt,
-        activeStep,
-        onError,
-        onCancelClick,
-        transactionType,
-        indexingFallbackUrl,
-        proposalSlug,
-    } = props;
+export const TransactionDialogFooter = <TCustomStepId extends string = string>(props: ITransactionDialogFooterProps<TCustomStepId>) => {
+    const { submitLabel, successLink, txReceipt, activeStep, onError, onCancelClick, transactionType, indexingFallbackUrl, proposalSlug } =
+        props;
 
     // For two step transactions we move from first to second step automatically on success, so in those cases
     // we will not have a success link and just use the default label to satisfy the interface.
@@ -135,8 +124,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     }, [displaySuccessLink, showProceedAnyway, setIsBlocked]);
 
     const isCancelDisabled =
-        (stepId === TransactionDialogStep.CONFIRM || stepId === TransactionDialogStep.INDEXING) &&
-        (isSuccessState || isPendingState);
+        (stepId === TransactionDialogStep.CONFIRM || stepId === TransactionDialogStep.INDEXING) && (isSuccessState || isPendingState);
 
     const customSubmitLabel = stepId != null && state != null ? stepStateSubmitLabel[stepId]?.[state] : undefined;
     const defaultSubmitLabel = isErrorState
@@ -169,9 +157,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     };
 
     const processedSuccessLink =
-        displaySuccessLink && successHref
-            ? buildSuccessLink(successHref, { receipt: txReceipt!, slug: proposalSlug })
-            : undefined;
+        displaySuccessLink && successHref ? buildSuccessLink(successHref, { receipt: txReceipt!, slug: proposalSlug }) : undefined;
 
     // The cancel button becomes "Proceed anyway" during indexing after 8 seconds
     // and navigates the user to a different page based on transaction type

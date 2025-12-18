@@ -1,9 +1,9 @@
-import * as useDialogContext from '@/shared/components/dialogProvider';
-import { generateDialogContext, generateWizardContext } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import * as useDialogContext from '@/shared/components/dialogProvider';
+import { generateDialogContext, generateWizardContext } from '@/shared/testUtils';
 import * as Wizard from '../../wizard';
-import { WizardDialogContainerFooter, type IWizardDialogContainerFooterProps } from './wizardDialogContainerFooter';
+import { type IWizardDialogContainerFooterProps, WizardDialogContainerFooter } from './wizardDialogContainerFooter';
 
 describe('<WizardDialogContainerFooter /> component', () => {
     const useWizardContextSpy = jest.spyOn(Wizard, 'useWizardContext');

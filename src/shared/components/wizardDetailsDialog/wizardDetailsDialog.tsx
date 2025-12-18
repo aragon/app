@@ -22,9 +22,7 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (props) 
                 <Title asChild={true}>
                     <Heading size="h3">{title}</Heading>
                 </Title>
-                <Description className="text-base leading-normal font-normal text-neutral-500">
-                    {description}
-                </Description>
+                <Description className="font-normal text-base text-neutral-500 leading-normal">{description}</Description>
                 {infoLink && (
                     <Link href={infoLink} isExternal={true}>
                         {t('app.shared.wizardDetailsDialog.infoLabel')}
@@ -33,13 +31,10 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (props) 
             </div>
             <div className="flex flex-col">
                 {steps.map((step, index) => (
-                    <div key={index} className="flex items-center gap-x-6 py-4">
-                        <IllustrationObject
-                            className="size-16 rounded-full border border-neutral-100"
-                            object={step.icon}
-                        />
-                        <p className="grow py-4 leading-normal font-normal text-neutral-800">{step.label}</p>
-                        <p className="text-base leading-normal font-normal text-neutral-500">
+                    <div className="flex items-center gap-x-6 py-4" key={index}>
+                        <IllustrationObject className="size-16 rounded-full border border-neutral-100" object={step.icon} />
+                        <p className="grow py-4 font-normal text-neutral-800 leading-normal">{step.label}</p>
+                        <p className="font-normal text-base text-neutral-500 leading-normal">
                             {t('app.shared.wizardDetailsDialog.step', { number: index + 1 })}
                         </p>
                     </div>
@@ -49,7 +44,7 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (props) 
                 <Button href={wizardLink} onClick={handleActionClick}>
                     {actionLabel}
                 </Button>
-                <Button variant="tertiary" onClick={() => close()}>
+                <Button onClick={() => close()} variant="tertiary">
                     {t('app.shared.wizardDetailsDialog.footer.cancel')}
                 </Button>
             </div>

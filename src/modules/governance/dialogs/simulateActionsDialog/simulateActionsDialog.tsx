@@ -1,8 +1,8 @@
-import type { Network } from '@/shared/api/daoService';
-import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { ActionSimulation, Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
+import type { Network } from '@/shared/api/daoService';
+import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSimulateActions } from '../../api/actionSimulationService';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { IProposalCreateAction } from '../publishProposalDialog';
@@ -70,16 +70,16 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
     return (
         <>
             <Dialog.Header
-                title={t(`app.governance.simulateActionsDialog.title`)}
                 onClose={() => close(GovernanceDialogId.SIMULATE_ACTIONS)}
+                title={t('app.governance.simulateActionsDialog.title')}
             />
             <Dialog.Content className="pt-2 pb-3">
                 <ActionSimulation
+                    error={error}
                     isEnabled={false}
                     isLoading={isPending}
-                    totalActions={actions.length}
                     lastSimulation={lastSimulation}
-                    error={error}
+                    totalActions={actions.length}
                 />
             </Dialog.Content>
             <Dialog.Footer

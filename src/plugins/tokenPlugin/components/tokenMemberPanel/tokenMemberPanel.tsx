@@ -1,9 +1,9 @@
 'use client';
 
+import { Tabs } from '@aragon/gov-ui-kit';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
-import { Tabs } from '@aragon/gov-ui-kit';
 import type { ITokenPlugin, ITokenPluginSettings } from '../../types';
 import { TokenDelegationForm } from './tokenDelegation';
 import { TokenLockForm } from './tokenLock';
@@ -64,14 +64,10 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
 
     return (
         <Page.AsideCard title={cardTitle}>
-            <Tabs.Root value={selectedTab} onValueChange={setSelectedTab}>
+            <Tabs.Root onValueChange={setSelectedTab} value={selectedTab}>
                 <Tabs.List className="pb-4">
                     {visibleTabs.map(({ value }) => (
-                        <Tabs.Trigger
-                            key={value}
-                            label={t(`app.plugins.token.tokenMemberPanel.tabs.${value}`)}
-                            value={value}
-                        />
+                        <Tabs.Trigger key={value} label={t(`app.plugins.token.tokenMemberPanel.tabs.${value}`)} value={value} />
                     ))}
                 </Tabs.List>
                 {votingEscrow != null && (

@@ -138,7 +138,7 @@ describe('permissionTransaction utils', () => {
             const conditionAddresses = ['0x123', '0x456'];
             const result = permissionTransactionUtils.buildRuleConditions([...conditionAddresses], []);
             expect(result).toEqual([
-                { id: 203, op: 10, permissionId: zeroHash, value: BigInt(8589934593) }, // OR operator on indexes 1 & 2
+                { id: 203, op: 10, permissionId: zeroHash, value: BigInt(8_589_934_593) }, // OR operator on indexes 1 & 2
                 { id: 202, op: 1, permissionId: zeroHash, value: conditionAddresses[0] },
                 { id: 202, op: 1, permissionId: zeroHash, value: conditionAddresses[1] },
             ]);
@@ -148,8 +148,8 @@ describe('permissionTransaction utils', () => {
             const conditionAddresses = ['0x123', '0x456', '0x789'];
             const result = permissionTransactionUtils.buildRuleConditions([...conditionAddresses], []);
             expect(result).toEqual([
-                { id: 203, op: 10, permissionId: zeroHash, value: BigInt(8589934593) }, // OR operator on indexes 1 & 2
-                { id: 203, op: 10, permissionId: zeroHash, value: BigInt(17179869187) }, // OR operator on indexes 3 & 4
+                { id: 203, op: 10, permissionId: zeroHash, value: BigInt(8_589_934_593) }, // OR operator on indexes 1 & 2
+                { id: 203, op: 10, permissionId: zeroHash, value: BigInt(17_179_869_187) }, // OR operator on indexes 3 & 4
                 { id: 202, op: 1, permissionId: zeroHash, value: conditionAddresses[0] },
                 { id: 202, op: 1, permissionId: zeroHash, value: conditionAddresses[1] },
                 { id: 202, op: 1, permissionId: zeroHash, value: conditionAddresses[2] },
@@ -159,16 +159,16 @@ describe('permissionTransaction utils', () => {
 
     describe('encodeLogicalOperator', () => {
         it('encodes two indexes into a uint 240 value', () => {
-            expect(permissionTransactionUtils['encodeLogicalOperator'](0, 1)).toEqual(BigInt(4294967296));
-            expect(permissionTransactionUtils['encodeLogicalOperator'](1, 2)).toEqual(BigInt(8589934593));
-            expect(permissionTransactionUtils['encodeLogicalOperator'](10, 11)).toEqual(BigInt(47244640266));
+            expect(permissionTransactionUtils.encodeLogicalOperator(0, 1)).toEqual(BigInt(4_294_967_296));
+            expect(permissionTransactionUtils.encodeLogicalOperator(1, 2)).toEqual(BigInt(8_589_934_593));
+            expect(permissionTransactionUtils.encodeLogicalOperator(10, 11)).toEqual(BigInt(47_244_640_266));
         });
     });
 
     describe('addressToCondition', () => {
         it('builds a ruled condition from a condition address', () => {
             const address = '0x111';
-            const result = permissionTransactionUtils['addressToCondition'](address);
+            const result = permissionTransactionUtils.addressToCondition(address);
             expect(result.id).toEqual(202);
             expect(result.op).toEqual(1);
             expect(result.permissionId).toEqual(zeroHash);

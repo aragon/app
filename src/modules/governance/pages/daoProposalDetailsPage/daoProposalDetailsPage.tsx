@@ -1,8 +1,8 @@
+import { QueryClient } from '@tanstack/react-query';
 import { Page } from '@/shared/components/page';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { QueryClient } from '@tanstack/react-query';
 import { proposalActionsOptions, proposalBySlugOptions } from '../../api/governanceService';
-import { type IDaoProposalPageParams } from '../../types';
+import type { IDaoProposalPageParams } from '../../types';
 import { DaoProposalDetailsPageClient } from './daoProposalDetailsPageClient';
 
 export interface IDaoProposalDetailsPageProps {
@@ -32,7 +32,7 @@ export const DaoProposalDetailsPage: React.FC<IDaoProposalDetailsPageProps> = as
         const errorNamespace = 'app.governance.daoProposalDetailsPage.error';
         const actionLink = `/dao/${network}/${addressOrEns}/proposals`;
 
-        return <Page.Error error={parsedError} actionLink={actionLink} errorNamespace={errorNamespace} />;
+        return <Page.Error actionLink={actionLink} error={parsedError} errorNamespace={errorNamespace} />;
     }
 
     return (

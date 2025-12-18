@@ -1,9 +1,9 @@
+import { QueryClient } from '@tanstack/react-query';
 import { type ILayoutWizardProps, LayoutWizard } from '@/modules/application/components/layouts/layoutWizard';
 import { daoOptions, type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { QueryClient } from '@tanstack/react-query';
 import type { ICreateProposalPageParams } from '../../types';
 
 export interface ILayoutWizardCreateProposalProps {
@@ -20,10 +20,7 @@ const getWizardName = (dao: IDao, pluginAddress: string): ILayoutWizardProps['na
     const pluginName = daoUtils.getPluginName(processPlugin);
 
     const nameSuffix = processes.length > 1 ? 'namePlugin' : 'name';
-    const wizardName: ILayoutWizardProps['name'] = [
-        `app.governance.layoutWizardCreateProposal.${nameSuffix}`,
-        { plugin: pluginName },
-    ];
+    const wizardName: ILayoutWizardProps['name'] = [`app.governance.layoutWizardCreateProposal.${nameSuffix}`, { plugin: pluginName }];
 
     return wizardName;
 };
@@ -45,8 +42,8 @@ export const LayoutWizardCreateProposal: React.FC<ILayoutWizardCreateProposalPro
         const parsedError = JSON.parse(JSON.stringify(error)) as unknown;
         const errorNamespace = 'app.governance.layoutWizardCreateProposal.error';
 
-        return <Page.Error error={parsedError} actionLink={proposalsPageUrl} errorNamespace={errorNamespace} />;
+        return <Page.Error actionLink={proposalsPageUrl} error={parsedError} errorNamespace={errorNamespace} />;
     }
 
-    return <LayoutWizard name={wizardName} exitPath={proposalsPageUrl} {...props} />;
+    return <LayoutWizard exitPath={proposalsPageUrl} name={wizardName} {...props} />;
 };

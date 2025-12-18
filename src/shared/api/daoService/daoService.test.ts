@@ -23,7 +23,7 @@ describe('dao service', () => {
         requestSpy.mockResolvedValue(dao);
         const result = await daoService.getDao(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(daoService['urls'].dao, params);
+        expect(requestSpy).toHaveBeenCalledWith(daoService.urls.dao, params);
         expect(result).toEqual(dao);
     });
 
@@ -34,7 +34,7 @@ describe('dao service', () => {
         requestSpy.mockResolvedValue(dao);
         const result = await daoService.getDaoByEns(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(daoService['urls'].daoByEns, params);
+        expect(requestSpy).toHaveBeenCalledWith(daoService.urls.daoByEns, params);
         expect(result).toEqual(dao);
     });
 
@@ -52,7 +52,7 @@ describe('dao service', () => {
         requestSpy.mockResolvedValue(paginatedResponse);
         const result = await daoService.getDaoPermissions(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(daoService['urls'].daoPermissions, params);
+        expect(requestSpy).toHaveBeenCalledWith(daoService.urls.daoPermissions, params);
         expect(result).toEqual(paginatedResponse);
     });
 });

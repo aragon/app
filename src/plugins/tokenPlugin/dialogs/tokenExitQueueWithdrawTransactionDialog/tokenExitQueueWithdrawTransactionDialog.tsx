@@ -1,21 +1,15 @@
 'use client';
 
-import { TransactionType } from '@/shared/api/transactionService';
-import {
-    TransactionDialog,
-    TransactionDialogStep,
-    type ITransactionDialogStepMeta,
-} from '@/shared/components/transactionDialog';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useStepper } from '@/shared/hooks/useStepper';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { encodeFunctionData } from 'viem';
+import { TransactionType } from '@/shared/api/transactionService';
+import { type ITransactionDialogStepMeta, TransactionDialog, TransactionDialogStep } from '@/shared/components/transactionDialog';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useStepper } from '@/shared/hooks/useStepper';
 import type { ITokenExitQueueWithdrawTransactionDialogProps } from './tokenExitQueueWithdrawTransactionDialog.api';
 
-export const TokenExitQueueWithdrawTransactionDialog: React.FC<ITokenExitQueueWithdrawTransactionDialogProps> = (
-    props,
-) => {
+export const TokenExitQueueWithdrawTransactionDialog: React.FC<ITokenExitQueueWithdrawTransactionDialogProps> = (props) => {
     const { location } = props;
     invariant(location.params != null, 'TokenExitQueueWithdrawTransactionDialog: required parameters must be set.');
 
@@ -53,15 +47,13 @@ export const TokenExitQueueWithdrawTransactionDialog: React.FC<ITokenExitQueueWi
 
     return (
         <TransactionDialog
-            title={t('app.plugins.tokenExitQueue.withdrawTransactionDialog.title', { symbol: token.symbol })}
             description={t('app.plugins.tokenExitQueue.withdrawTransactionDialog.description', {
                 symbol: token.symbol,
             })}
-            submitLabel={t('app.plugins.tokenExitQueue.withdrawTransactionDialog.submit')}
-            stepper={stepper}
-            prepareTransaction={handlePrepareTransaction}
             network={network}
-            transactionType={TransactionType.WITHDRAW_CREATE}
+            prepareTransaction={handlePrepareTransaction}
+            stepper={stepper}
+            submitLabel={t('app.plugins.tokenExitQueue.withdrawTransactionDialog.submit')}
             successLink={{
                 label: t('app.plugins.tokenExitQueue.withdrawTransactionDialog.success'),
                 onClick: () => {
@@ -69,6 +61,8 @@ export const TokenExitQueueWithdrawTransactionDialog: React.FC<ITokenExitQueueWi
                     onSuccess?.();
                 },
             }}
+            title={t('app.plugins.tokenExitQueue.withdrawTransactionDialog.title', { symbol: token.symbol })}
+            transactionType={TransactionType.WITHDRAW_CREATE}
         />
     );
 };

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { daoService } from '@/shared/api/daoService';
 import type { IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -5,7 +6,6 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { metadataUtils } from '@/shared/utils/metadataUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
-import type { Metadata } from 'next';
 
 export interface IGenerateDaoMetadataParams {
     /**

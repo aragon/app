@@ -1,5 +1,5 @@
-import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionReceipt } from 'viem';
+import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 
 export interface IBuildPrepareUpdatePluginsTransactionParams {
     /**

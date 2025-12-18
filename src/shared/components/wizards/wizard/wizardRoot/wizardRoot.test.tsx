@@ -1,6 +1,6 @@
-import { generateFormContext, generateFormContextState } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
+import { generateFormContext, generateFormContextState } from '@/shared/testUtils';
 import { type IWizardRootProps, WizardRoot } from './wizardRoot';
 
 jest.mock('next/dynamic', () => ({ __esModule: true, default: () => () => <div data-testid="dev-tool" /> }));

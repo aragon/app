@@ -1,7 +1,7 @@
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useFormField } from '@/shared/hooks/useFormField';
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useFormContext } from 'react-hook-form';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 import { GovernanceType, type ICreateProcessFormData } from '../createProcessFormDefinitions';
 import { createProcessFormUtils } from '../createProcessFormUtils';
 import { GovernanceBasicBodyField } from './fields/governanceBasicBodyField';
@@ -45,17 +45,17 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
     return (
         <div className="flex w-full flex-col gap-10">
             <RadioGroup
+                className="w-full gap-4 md:flex-row"
                 helpText={t('app.createDao.createProcessForm.governance.type.helpText')}
                 onValueChange={handleGovernanceTypeChange}
-                className="w-full gap-4 md:flex-row"
                 value={governanceType}
                 {...governanceTypeField}
             >
                 {Object.values(GovernanceType).map((type) => (
                     <RadioCard
+                        description={t(`app.createDao.createProcessForm.governance.type.${type}.description`)}
                         key={type}
                         label={t(`app.createDao.createProcessForm.governance.type.${type}.label`)}
-                        description={t(`app.createDao.createProcessForm.governance.type.${type}.description`)}
                         value={type}
                     />
                 ))}

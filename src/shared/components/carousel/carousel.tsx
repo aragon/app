@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { animate, motion, type MotionStyle, useMotionValue } from 'framer-motion';
+import { animate, type MotionStyle, motion, useMotionValue } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import useMeasure from 'react-use-measure';
 
@@ -102,8 +102,8 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         animationControlsRef.current?.stop();
         animationControlsRef.current = animate(translation, [0, finalPosition], {
             ease: 'linear',
-            duration: duration,
-            repeat: Infinity,
+            duration,
+            repeat: Number.POSITIVE_INFINITY,
             repeatType: 'loop',
             repeatDelay: 0,
         });
@@ -139,8 +139,8 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         <div className={classNames('overflow-hidden', className)}>
             <motion.div
                 className={classNames('flex w-max will-change-transform', isDraggable && 'cursor-grab')}
-                style={containerStyle}
                 ref={ref}
+                style={containerStyle}
                 {...(!isDraggable && {
                     onHoverStart: () => updateAnimationSpeed(speedOnHoverFactor),
                     onHoverEnd: () => updateAnimationSpeed(1),

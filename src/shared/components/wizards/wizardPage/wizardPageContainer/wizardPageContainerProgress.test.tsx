@@ -1,5 +1,5 @@
-import { generateWizardContext } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
+import { generateWizardContext } from '@/shared/testUtils';
 import * as Wizard from '../../wizard';
 import { type IWizardPageContainerProgressProps, WizardPageContainerProgress } from './wizardPageContainerProgress';
 

@@ -1,4 +1,3 @@
-import { Network } from '@/shared/api/daoService';
 import type { Chain, Hex } from 'viem';
 import {
     arbitrum,
@@ -14,6 +13,7 @@ import {
     zksync,
     zksyncSepoliaTestnet,
 } from 'wagmi/chains';
+import { Network } from '@/shared/api/daoService';
 import type { IContractVersionInfo } from '../types';
 
 export interface INetworkDefinitionAddresses {

@@ -1,11 +1,11 @@
 'use client';
 
+import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import type { IMember } from '@/modules/governance/api/governanceService';
 import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { Dialog, invariant } from '@aragon/gov-ui-kit';
 
 export interface IMultisigRemoveMembersActionDialogParams {
     /**
@@ -22,8 +22,7 @@ export interface IMultisigRemoveMembersActionDialogParams {
     onMemberClick: (address: string) => void;
 }
 
-export interface IMultisigRemoveMembersActionDialogProps
-    extends IDialogComponentProps<IMultisigRemoveMembersActionDialogParams> {}
+export interface IMultisigRemoveMembersActionDialogProps extends IDialogComponentProps<IMultisigRemoveMembersActionDialogParams> {}
 
 export const MultisigRemoveMembersActionDialog: React.FC<IMultisigRemoveMembersActionDialogProps> = (props) => {
     const { location } = props;
@@ -44,16 +43,13 @@ export const MultisigRemoveMembersActionDialog: React.FC<IMultisigRemoveMembersA
 
     return (
         <>
-            <Dialog.Header
-                title={t('app.plugins.multisig.multisigRemoveMembersAction.dialog.heading')}
-                onClose={close}
-            />
+            <Dialog.Header onClose={close} title={t('app.plugins.multisig.multisigRemoveMembersAction.dialog.heading')} />
             <Dialog.Content className="pb-4">
                 <DaoMemberList.Default
                     initialParams={membersParams}
-                    plugin={multisigPlugin.meta}
                     layoutClassNames="grid grid-cols-2"
                     onMemberClick={handleMemberClicked}
+                    plugin={multisigPlugin.meta}
                 />
             </Dialog.Content>
         </>

@@ -1,19 +1,19 @@
 /* eslint-disable no-console */
 class TestLogger {
     private shouldSuppressErrors = false;
-    private originalConsoleError = console.error;
-    private originalConsoleWarn = console.warn;
+    // biome-ignore lint/suspicious/noConsole: console allowed
+    private readonly originalConsoleError = console.error;
+    // biome-ignore lint/suspicious/noConsole: console allowed
+    private readonly originalConsoleWarn = console.warn;
 
-    private testErrorLogger = jest.fn((...params) => {
+    private readonly testErrorLogger = jest.fn((...params) => {
         if (!this.shouldSuppressErrors) {
             if (params[1] === 'fetchPriority') {
                 // Suppress "fetchPriority" React error until fixed on stable version
                 // (See https://github.com/facebook/react/issues/27233)
                 return;
-            } else if (
-                typeof params[0] === 'string' &&
-                params[0].includes('`DialogContent` requires a `DialogTitle`')
-            ) {
+            }
+            if (typeof params[0] === 'string' && params[0].includes('`DialogContent` requires a `DialogTitle`')) {
                 // Suppress radix-ui error about title missing on Dialog component
                 return;
             }
@@ -22,7 +22,7 @@ class TestLogger {
         }
     });
 
-    private testWarnLogger = jest.fn((...params) => {
+    private readonly testWarnLogger = jest.fn((...params) => {
         if (!this.shouldSuppressErrors) {
             if (typeof params[0] === 'string' && params[0].includes('Missing `Description`')) {
                 // Suppress radix-ui error about title missing on Dialog component

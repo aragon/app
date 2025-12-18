@@ -1,1 +1,1 @@
-export { PluginSingleComponent, type IPluginSingleComponentProps } from './pluginSingleComponent';
+export { type IPluginSingleComponentProps, PluginSingleComponent } from './pluginSingleComponent';

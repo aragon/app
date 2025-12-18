@@ -1,5 +1,5 @@
-import { ReactQueryWrapper, generateDao } from '@/shared/testUtils';
 import { renderHook, waitFor } from '@testing-library/react';
+import { generateDao, ReactQueryWrapper } from '@/shared/testUtils';
 import { daoService } from '../../daoService';
 import { useDao } from './useDao';
 

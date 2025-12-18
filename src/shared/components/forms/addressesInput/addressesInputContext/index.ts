@@ -1,5 +1,5 @@
 export {
     AddressesInputContextProvider,
-    useAddressesInputContext,
     type IAddressesInputContext,
+    useAddressesInputContext,
 } from './addressesInputContext';

@@ -1,5 +1,5 @@
-import { mockTranslations } from '@/test/utils';
 import { renderHook } from '@testing-library/react';
+import { mockTranslations } from '@/test/utils';
 import { generateSppPluginSettings } from '../../testUtils';
 import { sppSettingsUtils } from '../../utils/sppSettingsUtils/sppSettingsUtils';
 import { useSppGovernanceSettings } from './useSppGovernanceSettings';

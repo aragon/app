@@ -1,7 +1,7 @@
-import { StatCard } from '@/shared/components/statCard';
-import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
+import { StatCard } from '@/shared/components/statCard';
+import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { CampaignStatus, type IGetCampaignListParams, useCampaignList } from '../../api/capitalDistributorService';
 
 export interface ICapitalDistributorRewardsStatsProps {
@@ -50,7 +50,7 @@ export const CapitalDistributorRewardsStats: React.FC<ICapitalDistributorRewards
     return (
         <div className="grid w-full grid-cols-2 gap-3">
             {stats.map(({ label, value, suffix }) => (
-                <StatCard key={label} value={value} suffix={suffix} label={label} />
+                <StatCard key={label} label={label} suffix={suffix} value={value} />
             ))}
         </div>
     );

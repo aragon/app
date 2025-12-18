@@ -32,7 +32,7 @@ export interface IPluginFilterComponentProps<TMeta extends object = object, TPro
     /**
      * Plugin definitions to load the component from.
      */
-    plugins?: Array<IFilterComponentPlugin<TMeta, TProps>>;
+    plugins?: IFilterComponentPlugin<TMeta, TProps>[];
     /**
      * Current active plugin to be displayed, defaults to the first plugin.
      */

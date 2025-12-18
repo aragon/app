@@ -1,7 +1,7 @@
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { timeUtils } from '@/test/utils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { timeUtils } from '@/test/utils';
 import {
     generateSppPluginSettings,
     generateSppProposal,
@@ -62,9 +62,9 @@ describe('SppStageUtils', () => {
             const now = '2022-02-10T07:55:55.868Z';
             const startDate = DateTime.fromISO(now).toSeconds();
             const proposal = generateSppProposal({ startDate });
-            const stage = generateSppStage({ voteDuration: 86400 });
+            const stage = generateSppStage({ voteDuration: 86_400 });
             const result = sppStageUtils.getStageEndDate(proposal, stage);
-            expect(result?.toSeconds()).toBe(startDate + 86400);
+            expect(result?.toSeconds()).toBe(startDate + 86_400);
         });
     });
 
@@ -176,9 +176,7 @@ describe('SppStageUtils', () => {
         it('returns correct success threshold when body is external and reported the results', () => {
             const body = generateSppStagePlugin({ address: '0x1c479675ad559DC151F6Ec7ed3FbF8ceE79582B6' });
             const stage = generateSppStage({ stageIndex: 0, plugins: [body] });
-            const results = [
-                { pluginAddress: body.address, stage: stage.stageIndex, resultType: SppProposalType.APPROVAL },
-            ];
+            const results = [{ pluginAddress: body.address, stage: stage.stageIndex, resultType: SppProposalType.APPROVAL }];
             const proposal = generateSppProposal({ results });
 
             getSlotFunctionSpy.mockReturnValue(undefined);
@@ -217,9 +215,7 @@ describe('SppStageUtils', () => {
             const stage = generateSppStage({ stageIndex: 0, plugins: bodies });
             const proposal = generateSppProposal({
                 subProposals: [generateSppSubProposal({ stageIndex: 0, pluginAddress: bodies[0].address })],
-                results: [
-                    { pluginAddress: bodies[1].address, stage: stage.stageIndex, resultType: SppProposalType.APPROVAL },
-                ],
+                results: [{ pluginAddress: bodies[1].address, stage: stage.stageIndex, resultType: SppProposalType.APPROVAL }],
             });
 
             getSlotFunctionSpy.mockReturnValue(() => true);

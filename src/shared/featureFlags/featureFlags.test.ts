@@ -29,13 +29,13 @@ const createService = (params: {
     const FeatureFlagsClass = singletonFeatureFlags.constructor as new (
         provider: IFeatureFlagsProvider,
         definitions: FeatureFlagDefinition[],
-        environment: FeatureFlagEnvironment,
+        environment: FeatureFlagEnvironment
     ) => FeatureFlagsService;
 
     const provider = new TestProvider(
         overrides instanceof Error
             ? () => Promise.reject<FeatureFlagOverrides>(overrides)
-            : () => Promise.resolve<FeatureFlagOverrides>(overrides),
+            : () => Promise.resolve<FeatureFlagOverrides>(overrides)
     );
 
     const service = new FeatureFlagsClass(provider, definitions, environment);

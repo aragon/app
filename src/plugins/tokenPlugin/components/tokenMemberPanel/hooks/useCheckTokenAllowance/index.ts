@@ -1,1 +1,1 @@
-export { useCheckTokenAllowance, type IUseCheckTokenAllowanceParams } from './useCheckTokenAllowance';
+export { type IUseCheckTokenAllowanceParams, useCheckTokenAllowance } from './useCheckTokenAllowance';

@@ -1,4 +1,4 @@
 export {
-    useSppGovernanceSettingsDefault,
     type IUseSppGovernanceSettingsDefaultParams,
+    useSppGovernanceSettingsDefault,
 } from './useSppGovernanceSettingsDefault';

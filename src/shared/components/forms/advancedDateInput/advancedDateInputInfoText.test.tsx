@@ -1,7 +1,7 @@
-import type { IUseFormFieldReturn } from '@/shared/hooks/useFormField';
-import type { IDateFixed } from '@/shared/utils/dateUtils';
 import { IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import type { IUseFormFieldReturn } from '@/shared/hooks/useFormField';
+import type { IDateFixed } from '@/shared/utils/dateUtils';
 import { AdvancedDateInputInfoText, type IAdvancedDateInputInfoTextProps } from './advancedDateInputInfoText';
 
 describe('<AdvancedDateInputInfoText /> component', () => {

@@ -1,1 +1,1 @@
-export { useLockToVoteData, type IUseLockToVoteDataParams, type IUseLockToVoteDataResult } from './useLockToVoteData';
+export { type IUseLockToVoteDataParams, type IUseLockToVoteDataResult, useLockToVoteData } from './useLockToVoteData';

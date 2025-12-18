@@ -1,12 +1,12 @@
 'use client';
 
+import { invariant } from '@aragon/gov-ui-kit';
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
 import { PluginType } from '@/shared/types';
-import { invariant } from '@aragon/gov-ui-kit';
 import type { IGetMemberListParams } from '../../api/governanceService';
 import { DaoMemberList } from '../../components/daoMemberList';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -38,21 +38,17 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
     return (
         <>
             <Page.Main title={t('app.governance.daoMembersPage.main.title')}>
-                <DaoMemberList.Container
-                    initialParams={initialParams}
-                    onValueChange={setActivePlugin}
-                    value={activePlugin}
-                />
+                <DaoMemberList.Container initialParams={initialParams} onValueChange={setActivePlugin} value={activePlugin} />
             </Page.Main>
             <Page.Aside>
                 <Page.AsideCard title={activePlugin.label}>
-                    <DaoPluginInfo plugin={activePlugin.meta} daoId={daoId} type={PluginType.BODY} />
+                    <DaoPluginInfo daoId={daoId} plugin={activePlugin.meta} type={PluginType.BODY} />
                 </Page.AsideCard>
                 <PluginSingleComponent
+                    daoId={daoId}
+                    plugin={activePlugin.meta}
                     pluginId={activePlugin.id}
                     slotId={GovernanceSlotId.GOVERNANCE_MEMBER_PANEL}
-                    plugin={activePlugin.meta}
-                    daoId={daoId}
                 />
             </Page.Aside>
         </>

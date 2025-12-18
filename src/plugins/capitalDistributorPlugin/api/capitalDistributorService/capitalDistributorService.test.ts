@@ -20,7 +20,7 @@ describe('capitalDistributor service', () => {
         requestSpy.mockResolvedValue(campaignsListResponse);
         const result = await capitalDistributorService.getCampaignList(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(capitalDistributorService['urls'].campaigns, params);
+        expect(requestSpy).toHaveBeenCalledWith(capitalDistributorService.urls.campaigns, params);
         expect(result).toEqual(campaignsListResponse);
     });
 });

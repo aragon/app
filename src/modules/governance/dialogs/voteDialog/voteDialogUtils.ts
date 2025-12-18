@@ -1,9 +1,9 @@
+import type { Hex } from 'viem';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
-import { type Hex } from 'viem';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import { type IBuildVoteDataOption, type IBuildVoteDataParams } from '../../types';
+import type { IBuildVoteDataOption, IBuildVoteDataParams } from '../../types';
 
 export interface IBuildTransactionParams {
     /**

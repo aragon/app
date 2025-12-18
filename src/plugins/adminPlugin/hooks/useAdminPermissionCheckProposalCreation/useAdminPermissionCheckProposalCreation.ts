@@ -1,13 +1,13 @@
+import { useAccount } from 'wagmi';
 import { useMemberExists } from '@/modules/governance/api/governanceService';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { useAccount } from 'wagmi';
 
 export interface IUseAdminPermissionCheckProposalCreationParams extends IPermissionCheckGuardParams {}
 
 export const useAdminPermissionCheckProposalCreation = (
-    params: IUseAdminPermissionCheckProposalCreationParams,
+    params: IUseAdminPermissionCheckProposalCreationParams
 ): IPermissionCheckGuardResult => {
     const { plugin, daoId } = params;
 

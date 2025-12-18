@@ -1,11 +1,11 @@
-import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { Area, AreaChart, ReferenceDot, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import type { MouseHandlerDataParam } from 'recharts/types/synchronisation/types';
 import { parseUnits } from 'viem';
+import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { tokenLockUtils } from '../tokenLockUtils';
 
 export interface IChartPoint {
@@ -41,7 +41,7 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
 
     const [hoveredPoint, setHoveredPoint] = useState<IChartPoint>();
 
-    const processedAmount = parseFloat(amount) > maxAmount ? maxAmount.toString() : amount;
+    const processedAmount = Number.parseFloat(amount) > maxAmount ? maxAmount.toString() : amount;
     const processedAmountWei = parseUnits(processedAmount, 18).toString();
 
     const oneYearInSeconds = 365 * 24 * 60 * 60;
@@ -55,11 +55,10 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
         const dateLabel = index === 0 ? nowLabel : futureDate.toFormat('LLL d');
         const votingPower = tokenLockUtils.calculateVotingPower(processedAmountWei, lockDuration, settings);
 
-        return { x: dateLabel, y: parseFloat(votingPower) };
+        return { x: dateLabel, y: Number.parseFloat(votingPower) };
     });
 
-    const formatVotingPower = (value: number) =>
-        formatterUtils.formatNumber(value, { format: NumberFormat.GENERIC_SHORT }) ?? '';
+    const formatVotingPower = (value: number) => formatterUtils.formatNumber(value, { format: NumberFormat.GENERIC_SHORT }) ?? '';
 
     const handleMouseMove = (data: MouseHandlerDataParam) => {
         const { activeIndex } = data;
@@ -85,7 +84,7 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
         if (value === 0) {
             return 0;
         }
-        const magnitude = Math.pow(10, Math.floor(Math.log10(value)));
+        const magnitude = 10 ** Math.floor(Math.log10(value));
         const normalized = value / magnitude;
 
         // Round to nearest 1, 2, 5, or 10
@@ -121,7 +120,7 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
 
     // Use actual min value as baseline (the "Now" point), round max for clean upper bound
     const yDomainMin = hasZeroValues ? 0 : minY;
-    const yDomainMax = hasZeroValues ? 50000 : roundToNice(paddedMax, true);
+    const yDomainMax = hasZeroValues ? 50_000 : roundToNice(paddedMax, true);
 
     // Dynamic tick count based on the domain range
     const domainRange = yDomainMax - yDomainMin;
@@ -131,9 +130,7 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
     const tickCount = domainRange >= trillion ? 6 : domainRange >= billion ? 5 : domainRange >= million ? 5 : 4;
 
     // Generate evenly-spaced ticks for visual consistency
-    const yAxisTicks = Array.from({ length: tickCount }, (_, i) => {
-        return yDomainMin + (domainRange / (tickCount - 1)) * i;
-    });
+    const yAxisTicks = Array.from({ length: tickCount }, (_, i) => yDomainMin + (domainRange / (tickCount - 1)) * i);
 
     return (
         <div className="w-full py-2">
@@ -142,58 +139,58 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
                     {formatterUtils.formatNumber(activePoint.y, { format: NumberFormat.TOKEN_AMOUNT_SHORT })}{' '}
                     <span className="font-normal">{t('app.plugins.token.tokenLockForm.chart.votingPower')}</span>
                 </p>
-                <span className="text-sm text-neutral-500 md:text-base">{activePoint.x}</span>
+                <span className="text-neutral-500 text-sm md:text-base">{activePoint.x}</span>
             </div>
-            <ResponsiveContainer width="100%" height={200}>
+            <ResponsiveContainer height={200} width="100%">
                 <AreaChart
                     data={points}
-                    onMouseMove={handleMouseMove}
-                    onMouseLeave={() => setHoveredPoint(undefined)}
                     margin={{ top: 10, right: 10, bottom: 5, left: 12 }}
+                    onMouseLeave={() => setHoveredPoint(undefined)}
+                    onMouseMove={handleMouseMove}
                 >
                     <defs>
-                        <linearGradient id="colorY" x1="0" y1="0" x2="0" y2="1">
+                        <linearGradient id="colorY" x1="0" x2="0" y1="0" y2="1">
                             <stop offset="5%" stopColor="var(--color-primary-400)" stopOpacity={0.4} />
                             <stop offset="95%" stopColor="var(--color-primary-400)" stopOpacity={0} />
                         </linearGradient>
                     </defs>
                     <XAxis
-                        dataKey="x"
-                        className="text-xs"
-                        tickLine={false}
                         axisLine={false}
-                        type="category"
-                        ticks={points.map((p) => p.x)}
+                        className="text-xs"
+                        dataKey="x"
                         interval={0}
                         tick={{ dy: 12 }}
+                        tickLine={false}
+                        ticks={points.map((p) => p.x)}
+                        type="category"
                     />
                     <YAxis
-                        tickFormatter={formatVotingPower}
-                        className="text-xs"
-                        width={45}
-                        tickLine={false}
                         axisLine={false}
-                        type="number"
-                        ticks={yAxisTicks}
+                        className="text-xs"
                         dataKey="y"
-                        orientation="right"
                         domain={[yDomainMin, yDomainMax]}
+                        orientation="right"
+                        tickFormatter={formatVotingPower}
+                        tickLine={false}
+                        ticks={yAxisTicks}
+                        type="number"
+                        width={45}
                     />
                     <Area
-                        type="monotone"
                         dataKey="y"
+                        fill="url(#colorY)"
+                        fillOpacity={1}
                         stroke="var(--color-primary-400)"
                         strokeWidth={1}
-                        fillOpacity={1}
-                        fill="url(#colorY)"
+                        type="monotone"
                     />
                     <ReferenceDot
-                        x={activePoint.x}
-                        y={activePoint.y}
-                        r={4}
                         fill="var(--color-primary-400)"
+                        r={4}
                         stroke="var(--color-neutral-0)"
                         strokeWidth={1}
+                        x={activePoint.x}
+                        y={activePoint.y}
                     />
                 </AreaChart>
             </ResponsiveContainer>

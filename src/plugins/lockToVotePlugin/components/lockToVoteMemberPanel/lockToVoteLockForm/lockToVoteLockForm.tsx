@@ -1,10 +1,10 @@
-import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
-import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { useCallback } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
+import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
+import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useLockToVoteData } from '../../../hooks/useLockToVoteData';
 import type { ILockToVoteMemberPanelProps } from '../lockToVoteMemberPanel';
 
@@ -32,7 +32,7 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (props) =>
             const parsedBalance = formatUnits(balance, decimals);
             setValue('asset', { token, amount: parsedBalance });
         },
-        [decimals, setValue, token],
+        [decimals, setValue, token]
     );
 
     const { balance, allowance, lockedAmount, lockTokens, unlockTokens, isLoading } = useLockToVoteData({
@@ -59,36 +59,36 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (props) =>
     return (
         <FormProvider {...formValues}>
             <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
-                <p className="text-base leading-normal font-normal text-neutral-500">
+                <p className="font-normal text-base text-neutral-500 leading-normal">
                     {t('app.plugins.lockToVote.lockToVoteLockForm.info', { symbol: token.symbol })}
                 </p>
                 <AssetInput
                     disableAssetField={true}
-                    hideMax={true}
                     hideAmountLabel={true}
+                    hideMax={true}
                     percentageSelection={{ totalBalance: balance, tokenDecimals: decimals }}
                 />
                 <div className="flex flex-col gap-3">
                     <Button
-                        type={isConnected ? 'submit' : undefined}
-                        onClick={isConnected ? undefined : () => walletGuard()}
                         disabled={disableSubmit}
-                        variant="primary"
+                        onClick={isConnected ? undefined : () => walletGuard()}
                         size="lg"
+                        type={isConnected ? 'submit' : undefined}
+                        variant="primary"
                     >
                         {t(`app.plugins.lockToVote.lockToVoteLockForm.submit.${submitLabel}`, {
                             symbol: token.symbol,
                         })}
                     </Button>
                     {lockedAmount > 0 && (
-                        <Button variant="secondary" size="lg" onClick={unlockTokens} disabled={isLoading}>
+                        <Button disabled={isLoading} onClick={unlockTokens} size="lg" variant="secondary">
                             {t('app.plugins.lockToVote.lockToVoteLockForm.submit.unlock', {
                                 amount: formattedLockedAmount,
                                 symbol,
                             })}
                         </Button>
                     )}
-                    <p className="text-center text-sm leading-normal font-normal text-neutral-500">
+                    <p className="text-center font-normal text-neutral-500 text-sm leading-normal">
                         {t('app.plugins.lockToVote.lockToVoteLockForm.footerInfo')}
                     </p>
                 </div>

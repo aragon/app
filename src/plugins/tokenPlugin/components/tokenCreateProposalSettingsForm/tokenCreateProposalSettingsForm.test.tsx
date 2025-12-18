@@ -1,13 +1,10 @@
+import { render, screen } from '@testing-library/react';
+import * as ReactHookForm from 'react-hook-form';
 import type { IAdvancedDateInputProps } from '@/shared/components/forms/advancedDateInput';
 import { FormWrapper, generateDaoPlugin } from '@/shared/testUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
-import { render, screen } from '@testing-library/react';
-import * as ReactHookForm from 'react-hook-form';
 import { generateTokenPluginSettings } from '../../testUtils';
-import {
-    TokenCreateProposalSettingsForm,
-    type ITokenCreateProposalSettingsFormProps,
-} from './tokenCreateProposalSettingsForm';
+import { type ITokenCreateProposalSettingsFormProps, TokenCreateProposalSettingsForm } from './tokenCreateProposalSettingsForm';
 
 jest.mock('@/shared/components/forms/advancedDateInput', () => ({
     AdvancedDateInput: ({ label, helpText, field, infoText, useDuration, minDuration }: IAdvancedDateInputProps) => (
@@ -71,9 +68,7 @@ describe('<TokenCreateProposalSettingsForm /> component', () => {
         const endTimeInput = screen.getAllByTestId('advanced-date-input')[1];
         expect(endTimeInput).toHaveTextContent(/tokenCreateProposalSettingsForm.endTime.label/);
         expect(endTimeInput).toHaveTextContent('endTime');
-        expect(endTimeInput).toHaveTextContent(
-            /tokenCreateProposalSettingsForm.endTime.infoText \(days=0,hours=1,minutes=0\)/,
-        );
+        expect(endTimeInput).toHaveTextContent(/tokenCreateProposalSettingsForm.endTime.infoText \(days=0,hours=1,minutes=0\)/);
         expect(endTimeInput).toHaveTextContent('Use Duration: true');
         expect(endTimeInput).toHaveTextContent('Min Duration: {"days":0,"hours":1,"minutes":0}');
     });

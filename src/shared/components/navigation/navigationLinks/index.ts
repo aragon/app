@@ -1,3 +1,3 @@
-export { NavigationLinks, type INavigationLinksProps } from './navigationLinks';
+export { type INavigationLinksProps, NavigationLinks } from './navigationLinks';
 export type { INavigationLink, NavigationLinksVariant } from './navigationLinks.api';
-export { NavigationLinksItem, type INavigationLinksItemProps } from './navigationLinksItem';
+export { type INavigationLinksItemProps, NavigationLinksItem } from './navigationLinksItem';

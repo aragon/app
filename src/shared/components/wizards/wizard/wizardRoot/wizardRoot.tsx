@@ -1,9 +1,9 @@
+import dynamic from 'next/dynamic';
+import { type ElementType, type ReactNode, useEffect, useMemo } from 'react';
+import { type FieldValues, FormProvider, type UseFormProps, useForm } from 'react-hook-form';
 import { useConfirmWizardExit } from '@/shared/hooks/useConfirmWizardExit';
 import { useStepper } from '@/shared/hooks/useStepper';
-import dynamic from 'next/dynamic';
-import { useEffect, useMemo, type ElementType, type ReactNode } from 'react';
-import { FormProvider, useForm, type FieldValues, type UseFormProps } from 'react-hook-form';
-import { WizardProvider, type IWizardStepperStep } from '../wizardProvider';
+import { type IWizardStepperStep, WizardProvider } from '../wizardProvider';
 
 // Dynamically import react-hook-form dev-tools to avoid NextJs hydration errors
 const DevTool: ElementType = dynamic(() => import('@hookform/devtools').then((module) => module.DevTool), {
@@ -54,7 +54,7 @@ export const WizardRoot = <TFormData extends FieldValues = FieldValues>(props: I
 
     const wizardContextValues = useMemo(
         () => ({ ...wizardStepper, submitLabel, submitHelpText }),
-        [wizardStepper, submitLabel, submitHelpText],
+        [wizardStepper, submitLabel, submitHelpText]
     );
 
     useConfirmWizardExit(formState.isDirty);

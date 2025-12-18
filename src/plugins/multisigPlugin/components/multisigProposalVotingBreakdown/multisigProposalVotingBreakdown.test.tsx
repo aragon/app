@@ -1,10 +1,7 @@
 import { ProposalVotingTab, Tabs } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateMultisigPluginSettings, generateMultisigProposal } from '../../testUtils';
-import {
-    type IMultisigProposalVotingBreakdownProps,
-    MultisigProposalVotingBreakdown,
-} from './multisigProposalVotingBreakdown';
+import { type IMultisigProposalVotingBreakdownProps, MultisigProposalVotingBreakdown } from './multisigProposalVotingBreakdown';
 
 describe('<MultisigProposalVotingBreakdown /> component', () => {
     const createTestComponent = (props?: Partial<IMultisigProposalVotingBreakdownProps>) => {

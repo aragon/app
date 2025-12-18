@@ -1,10 +1,6 @@
 import { AvatarIcon, Icon, IconType, Link, Spinner } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import type {
-    ITransactionStatusStepMeta,
-    ITransactionStatusStepProps,
-    TransactionStatusState,
-} from './transactionStatusStep.api';
+import type { ITransactionStatusStepMeta, ITransactionStatusStepProps, TransactionStatusState } from './transactionStatusStep.api';
 
 const stateToLabelClassName: Record<TransactionStatusState, string> = {
     pending: 'text-primary-400',
@@ -18,7 +14,7 @@ export const TransactionStatusStep = <
     TMeta extends ITransactionStatusStepMeta = ITransactionStatusStepMeta,
     TStepId extends string = string,
 >(
-    props: ITransactionStatusStepProps<TMeta, TStepId>,
+    props: ITransactionStatusStepProps<TMeta, TStepId>
 ) => {
     const { id, order, meta, className, ...otherProps } = props;
     const { addon, state, errorLabel, warningLabel, label } = meta;
@@ -33,19 +29,13 @@ export const TransactionStatusStep = <
             <div className="flex flex-row items-center gap-2 md:gap-3">
                 {['pending', 'idle'].includes(state) && (
                     <div className="p-0.5">
-                        <Spinner
-                            size="md"
-                            variant={state === 'pending' ? 'primary' : 'neutral'}
-                            isLoading={state === 'pending'}
-                        />
+                        <Spinner isLoading={state === 'pending'} size="md" variant={state === 'pending' ? 'primary' : 'neutral'} />
                     </div>
                 )}
                 {state === 'warning' && <AvatarIcon icon={IconType.WARNING} size="sm" variant="warning" />}
                 {state === 'error' && <AvatarIcon icon={IconType.CRITICAL} size="sm" variant="critical" />}
                 {state === 'success' && <AvatarIcon icon={IconType.CHECKMARK} size="sm" variant="success" />}
-                <p className={classNames('text-base leading-tight font-normal', stateToLabelClassName[state])}>
-                    {processedLabel}
-                </p>
+                <p className={classNames('font-normal text-base leading-tight', stateToLabelClassName[state])}>{processedLabel}</p>
             </div>
             {isLinkAddon && (
                 <Link href={addon.href} isExternal={true}>
@@ -54,14 +44,9 @@ export const TransactionStatusStep = <
             )}
             {addon != null && !isLinkAddon && (
                 <div className="flex flex-row items-center gap-2">
-                    <p className="text-sm leading-tight font-normal text-neutral-500 md:text-base">{addon.label}</p>
+                    <p className="font-normal text-neutral-500 text-sm leading-tight md:text-base">{addon.label}</p>
                     {addon.icon && (
-                        <Icon
-                            icon={IconType.BLOCKCHAIN_WALLET}
-                            size="sm"
-                            responsiveSize={{ md: 'md' }}
-                            className="text-neutral-300"
-                        />
+                        <Icon className="text-neutral-300" icon={IconType.BLOCKCHAIN_WALLET} responsiveSize={{ md: 'md' }} size="sm" />
                     )}
                 </div>
             )}

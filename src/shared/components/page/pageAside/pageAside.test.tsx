@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { PageAside, type IPageAsideProps } from './pageAside';
+import { type IPageAsideProps, PageAside } from './pageAside';
 
 describe('<Page.Aside /> component', () => {
     const createTestComponent = (props?: Partial<IPageAsideProps>) => {

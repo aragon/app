@@ -1,5 +1,5 @@
 import { testLogger } from '@/test/utils';
-import { translationUtils, type Translations } from './translationsUtils';
+import { type Translations, translationUtils } from './translationsUtils';
 
 describe('translations utils', () => {
     describe('t function', () => {
@@ -16,7 +16,7 @@ describe('translations utils', () => {
             const values = { firstValue: 'abc', secondValue: 123 };
             const translations = { app: { key: string } } as unknown as Translations;
             expect(translationUtils.t(translations)(key, { ...values })).toEqual(
-                `String with values: ${values.firstValue} and ${values.secondValue.toString()}`,
+                `String with values: ${values.firstValue} and ${values.secondValue.toString()}`
             );
         });
 
@@ -25,9 +25,7 @@ describe('translations utils', () => {
             const string = 'First {{value}} and second {{value}}';
             const values = { value: 'my-value' };
             const translations = { app: { test: string } } as unknown as Translations;
-            expect(translationUtils.t(translations)(key, { ...values })).toEqual(
-                `First ${values.value} and second ${values.value}`,
-            );
+            expect(translationUtils.t(translations)(key, { ...values })).toEqual(`First ${values.value} and second ${values.value}`);
         });
 
         it('returns the translation as is when values to replace are not found', () => {

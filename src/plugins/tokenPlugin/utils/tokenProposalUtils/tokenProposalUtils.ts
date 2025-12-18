@@ -1,8 +1,8 @@
-import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
-import { type ProposalStatus } from '@aragon/gov-ui-kit';
+import type { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { formatUnits } from 'viem';
-import { DaoTokenVotingMode, VoteOption, type ITokenProposal, type ITokenProposalOptionVotes } from '../../types';
+import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
+import { DaoTokenVotingMode, type ITokenProposal, type ITokenProposalOptionVotes, VoteOption } from '../../types';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
 
 class TokenProposalUtils {
@@ -67,8 +67,7 @@ class TokenProposalUtils {
         }
 
         const totalVotes = this.getTotalVotes(proposal);
-        const minVotingPower =
-            (parsedTotalSupply * parsedMinParticipation) / BigInt(tokenSettingsUtils.percentageToRatio(100));
+        const minVotingPower = (parsedTotalSupply * parsedMinParticipation) / BigInt(tokenSettingsUtils.percentageToRatio(100));
 
         return totalVotes >= minVotingPower;
     };
@@ -86,10 +85,7 @@ class TokenProposalUtils {
         // For early-execution, check that the support threshold is met even if all remaining votes are no votes.
         const noVotesComparator = early ? noVotesWorstCase : noVotesCurrent;
 
-        return (
-            (tokenSettingsUtils.ratioBase - BigInt(supportThreshold)) * yesVotes >
-            BigInt(supportThreshold) * noVotesComparator
-        );
+        return (tokenSettingsUtils.ratioBase - BigInt(supportThreshold)) * yesVotes > BigInt(supportThreshold) * noVotesComparator;
     };
 
     getTotalVotes = (proposal: ITokenProposal, excludeAbstain?: boolean): bigint => {

@@ -1,10 +1,4 @@
-import {
-    isSafeUrl,
-    sanitizeHtmlRich,
-    sanitizeHtmlStrict,
-    sanitizePlainText,
-    sanitizePlainTextMultiline,
-} from './htmlSanitizer';
+import { isSafeUrl, sanitizeHtmlRich, sanitizeHtmlStrict, sanitizePlainText, sanitizePlainTextMultiline } from './htmlSanitizer';
 
 describe('htmlSanitizer', () => {
     test('sanitizeHtmlStrict strips all tags and scripts', () => {

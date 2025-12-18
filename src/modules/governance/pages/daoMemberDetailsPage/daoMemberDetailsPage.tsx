@@ -1,9 +1,9 @@
+import { QueryClient } from '@tanstack/react-query';
 import { daoService } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { QueryClient } from '@tanstack/react-query';
 import { memberOptions } from '../../api/governanceService';
-import { type IDaoMemberPageParams } from '../../types';
+import type { IDaoMemberPageParams } from '../../types';
 import { DaoMemberDetailsPageClient } from './daoMemberDetailsPageClient';
 
 export interface IDaoMemberDetailsPageProps {
@@ -32,7 +32,7 @@ export const DaoMemberDetailsPage: React.FC<IDaoMemberDetailsPageProps> = async 
         const errorNamespace = 'app.governance.daoMemberDetailsPage.error';
         const actionLink = `/dao/${network}/${addressOrEns}/members`;
 
-        return <Page.Error error={parsedError} actionLink={actionLink} errorNamespace={errorNamespace} />;
+        return <Page.Error actionLink={actionLink} error={parsedError} errorNamespace={errorNamespace} />;
     }
 
     return (

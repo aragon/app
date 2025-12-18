@@ -1,1 +1,1 @@
-export { useGaugeRegistrarGauges, type IUseGaugeRegistrarGaugesParams } from './useGaugeRegistrarGauges';
+export { type IUseGaugeRegistrarGaugesParams, useGaugeRegistrarGauges } from './useGaugeRegistrarGauges';

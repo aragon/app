@@ -1,19 +1,18 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import { PluginFilterComponent, type IPluginFilterComponentProps } from '@/shared/components/pluginFilterComponent';
+import { type IPluginFilterComponentProps, PluginFilterComponent } from '@/shared/components/pluginFilterComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
 import { pluginGroupFilter } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
-import type { ReactNode } from 'react';
 import type { IGetProposalListParams } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DaoProposalListDefault } from './daoProposalListDefault';
 
-export interface IDaoProposalListProps
-    extends Pick<IPluginFilterComponentProps<IDaoPlugin>, 'value' | 'onValueChange'> {
+export interface IDaoProposalListProps extends Pick<IPluginFilterComponentProps<IDaoPlugin>, 'value' | 'onValueChange'> {
     /**
      * Parameters to use for fetching the proposal list.
      */
@@ -60,12 +59,12 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
 
     return (
         <PluginFilterComponent
-            slotId={GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST}
-            plugins={processedPlugins}
             Fallback={DaoProposalListDefault}
-            value={value ?? activePlugin}
             onValueChange={onValueChange ?? setActivePlugin}
+            plugins={processedPlugins}
             searchParamName={daoProposalListFilterParam}
+            slotId={GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST}
+            value={value ?? activePlugin}
             {...otherProps}
         />
     );

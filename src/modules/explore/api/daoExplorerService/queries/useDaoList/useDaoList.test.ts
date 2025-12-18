@@ -1,6 +1,6 @@
-import { Network } from '@/shared/api/daoService';
-import { ReactQueryWrapper, generateDao, generatePaginatedResponse } from '@/shared/testUtils';
 import { renderHook, waitFor } from '@testing-library/react';
+import { Network } from '@/shared/api/daoService';
+import { generateDao, generatePaginatedResponse, ReactQueryWrapper } from '@/shared/testUtils';
 import { daoExplorerService } from '../../daoExplorerService';
 import { useDaoList } from './useDaoList';
 

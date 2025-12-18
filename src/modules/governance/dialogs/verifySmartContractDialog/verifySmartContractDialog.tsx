@@ -1,18 +1,14 @@
+import { AddressInput, addressUtils, Dialog, type ICompositeAddress, invariant } from '@aragon/gov-ui-kit';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import type { Network } from '@/shared/api/daoService';
-import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
-import {
-    TransactionStatus,
-    type ITransactionInfo,
-    type ITransactionStatusStepMeta,
-} from '@/shared/components/transactionStatus';
+import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import { type ITransactionInfo, type ITransactionStatusStepMeta, TransactionStatus } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
-import { AddressInput, addressUtils, Dialog, invariant, type ICompositeAddress } from '@aragon/gov-ui-kit';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useSmartContractAbi, type IGetAbiUrlParams, type ISmartContractAbi } from '../../api/smartContractService';
+import { type IGetAbiUrlParams, type ISmartContractAbi, useSmartContractAbi } from '../../api/smartContractService';
 
 export interface IVerifySmartContractDialogParams {
     /**
@@ -81,7 +77,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
     const abiParams = { network, address: smartContractValue?.address };
     const { data: smartContractAbi, isLoading: isLoadingAbi } = useSmartContractAbi(
         { urlParams: abiParams as IGetAbiUrlParams },
-        { enabled: smartContractValue != null },
+        { enabled: smartContractValue != null }
     );
 
     const isContractVerified = smartContractAbi != null;
@@ -89,10 +85,9 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
 
     const proxyState = isLoadingAbi ? 'pending' : smartContractAbi?.implementationAddress != null ? 'success' : 'idle';
     const abiState = isLoadingAbi ? 'pending' : isContractVerified ? 'success' : 'warning';
-    const getStepLabel = (step: string, status = 'default') =>
-        t(`app.governance.verifySmartContractDialog.step.${step}.${status}`);
+    const getStepLabel = (step: string, status = 'default') => t(`app.governance.verifySmartContractDialog.step.${step}.${status}`);
 
-    const verificationSteps: Array<IStepperStep<ITransactionStatusStepMeta>> = [
+    const verificationSteps: IStepperStep<ITransactionStatusStepMeta>[] = [
         { id: 'proxy', order: 0, meta: { label: getStepLabel('proxy'), state: proxyState } },
         {
             id: 'verify',
@@ -137,17 +132,17 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
     return (
         <>
             <Dialog.Header
-                title={t('app.governance.verifySmartContractDialog.title')}
                 description={t('app.governance.verifySmartContractDialog.description')}
+                title={t('app.governance.verifySmartContractDialog.title')}
             />
             <Dialog.Content>
-                <form className="flex flex-col gap-3 py-2" onSubmit={handleSubmit(handleFormSubmit)} id={formId}>
+                <form className="flex flex-col gap-3 py-2" id={formId} onSubmit={handleSubmit(handleFormSubmit)}>
                     <AddressInput
+                        chainId={chainId}
+                        onAccept={onSmartContractChange}
+                        onChange={setAddressInput}
                         placeholder={t('app.finance.transferAssetForm.receiver.placeholder')}
                         value={addressInput}
-                        onChange={setAddressInput}
-                        onAccept={onSmartContractChange}
-                        chainId={chainId}
                         {...smartContractField}
                     />
                     {smartContractValue?.address != null && (

@@ -29,9 +29,7 @@ export const routerSourceFactoryAbi = [
     {
         type: 'event',
         name: 'RequiredBalanceSourceDeployed',
-        inputs: [
-            { name: 'newContract', type: 'address', indexed: false, internalType: 'contract RequiredBalanceSource' },
-        ],
+        inputs: [{ name: 'newContract', type: 'address', indexed: false, internalType: 'contract RequiredBalanceSource' }],
         anonymous: false,
     },
 ] as const;

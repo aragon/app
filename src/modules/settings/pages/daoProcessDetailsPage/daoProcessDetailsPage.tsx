@@ -32,12 +32,12 @@ export const DaoProcessDetailsPage: React.FC<IDaoProcessDetailsPageProps> = asyn
         const errorNamespace = 'app.settings.daoProcessDetailsPage.error';
         const actionLink = `/dao/${network}/${addressOrEns}/settings`;
 
-        return <Page.Error error={parsedError} actionLink={actionLink} errorNamespace={errorNamespace} />;
+        return <Page.Error actionLink={actionLink} error={parsedError} errorNamespace={errorNamespace} />;
     }
 
     return (
         <Page.Container>
-            <DaoProcessDetailsPageClient slug={slug} daoId={daoId} />
+            <DaoProcessDetailsPageClient daoId={daoId} slug={slug} />
         </Page.Container>
     );
 };

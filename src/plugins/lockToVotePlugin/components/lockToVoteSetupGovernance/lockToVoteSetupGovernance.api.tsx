@@ -15,10 +15,7 @@ export interface ILockToVoteSetupGovernanceProps extends Omit<IPluginSetupGovern
 }
 
 export interface ILockToVoteSetupGovernanceForm
-    extends Pick<
-        ITokenPluginSettings,
-        'supportThreshold' | 'minParticipation' | 'minProposerVotingPower' | 'minDuration'
-    > {
+    extends Pick<ITokenPluginSettings, 'supportThreshold' | 'minParticipation' | 'minProposerVotingPower' | 'minDuration'> {
     /**
      * Voting mode of the DAO.
      */

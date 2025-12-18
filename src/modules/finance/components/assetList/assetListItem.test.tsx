@@ -1,6 +1,6 @@
-import { Network } from '@/shared/api/daoService';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import { Network } from '@/shared/api/daoService';
 import { generateAsset, generateToken } from '../../testUtils';
 import { AssetListItem, type IAssetListItemProps } from './assetListItem';
 

@@ -9,18 +9,19 @@ class VersionComparatorUtils {
 
     normaliseComparatorInput = (input: ComparatorInput): IVersion | undefined => {
         if (input == null) {
-            return undefined;
-        } else if (typeof input === 'string') {
+            return;
+        }
+        if (typeof input === 'string') {
             return this.normaliseStringVersion(input);
         }
 
         return this.normaliseVersion(input);
     };
 
-    private compareVersions = (
+    private readonly compareVersions = (
         current: ComparatorInput,
         target: ComparatorInput,
-        comparator: (diff: number) => boolean,
+        comparator: (diff: number) => boolean
     ): boolean => {
         const currentVersion = this.normaliseComparatorInput(current);
         const targetVersion = this.normaliseComparatorInput(target);
@@ -34,7 +35,7 @@ class VersionComparatorUtils {
         return comparator(versionDiff);
     };
 
-    private getVersionDiff = (current: IVersion, target: IVersion): number => {
+    private readonly getVersionDiff = (current: IVersion, target: IVersion): number => {
         const keys: Array<keyof IVersion> = ['release', 'build', 'patch'];
 
         for (const key of keys) {
@@ -43,7 +44,8 @@ class VersionComparatorUtils {
 
             if (firstValue > secondValue) {
                 return 1;
-            } else if (firstValue < secondValue) {
+            }
+            if (firstValue < secondValue) {
                 return -1;
             }
         }
@@ -51,13 +53,13 @@ class VersionComparatorUtils {
         return 0;
     };
 
-    private normaliseStringVersion = (version: string): IVersion => {
+    private readonly normaliseStringVersion = (version: string): IVersion => {
         const [release, build, patch] = version.split('.');
 
         return this.normaliseVersion({ release, build, patch });
     };
 
-    private normaliseVersion = (version: IVersion<string> | IVersion): IVersion => {
+    private readonly normaliseVersion = (version: IVersion<string> | IVersion): IVersion => {
         const { release, build, patch } = version;
         const normalizedVersion: IVersion = { release: Number(release), build: Number(build) };
 

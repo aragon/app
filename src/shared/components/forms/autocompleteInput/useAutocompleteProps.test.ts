@@ -17,7 +17,7 @@ describe('useAutocompleteProps hook', () => {
                 onKeyDown: expect.any(Function) as unknown,
                 onFocus: expect.any(Function) as unknown,
                 onClick: expect.any(Function) as unknown,
-            }),
+            })
         );
     });
 
@@ -28,7 +28,7 @@ describe('useAutocompleteProps hook', () => {
                 role: 'listbox',
                 onKeyDown: expect.any(Function) as unknown,
                 onPointerMove: expect.any(Function) as unknown,
-            }),
+            })
         );
     });
 
@@ -46,7 +46,7 @@ describe('useAutocompleteProps hook', () => {
             expect.objectContaining({
                 onFocus: expect.any(Function) as unknown,
                 onClick: expect.any(Function) as unknown,
-            }),
+            })
         );
     });
 });

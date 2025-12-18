@@ -55,9 +55,4 @@ export const getAllRegisteredGaugeDetailsAbi = {
     stateMutability: 'view',
 } as const;
 
-export const gaugeRegistrarAbi = [
-    registerGaugeAbi,
-    unregisterGaugeAbi,
-    getGaugeAddressAbi,
-    getAllRegisteredGaugeDetailsAbi,
-];
+export const gaugeRegistrarAbi = [registerGaugeAbi, unregisterGaugeAbi, getGaugeAddressAbi, getAllRegisteredGaugeDetailsAbi];

@@ -1,12 +1,9 @@
 'use client';
 
-import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react';
+import { createContext, type ReactNode, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import type { FeatureFlagKey, FeatureFlagOverrides, FeatureFlagSnapshot } from '@/shared/featureFlags';
-import {
-    parseFeatureFlagOverridesFromCookie,
-    serializeFeatureFlagOverridesToCookie,
-} from '@/shared/featureFlags/utils/cookieOverrides';
+import { parseFeatureFlagOverridesFromCookie, serializeFeatureFlagOverridesToCookie } from '@/shared/featureFlags/utils/cookieOverrides';
 
 export interface IFeatureFlagsContextValue {
     /**
@@ -58,10 +55,7 @@ export const FeatureFlagsProvider: React.FC<IFeatureFlagsProviderProps> = (props
     const baseSnapshotRef = useRef<FeatureFlagSnapshot[]>(initialSnapshot);
     const [snapshot, setSnapshot] = useState<FeatureFlagSnapshot[]>(initialSnapshot);
 
-    const isEnabled = useCallback(
-        (key: FeatureFlagKey): boolean => snapshot.some((flag) => flag.key === key && flag.enabled),
-        [snapshot],
-    );
+    const isEnabled = useCallback((key: FeatureFlagKey): boolean => snapshot.some((flag) => flag.key === key && flag.enabled), [snapshot]);
 
     const setOverride = (key: FeatureFlagKey, value: boolean | undefined): void => {
         if (typeof document === 'undefined') {
@@ -98,7 +92,7 @@ export const FeatureFlagsProvider: React.FC<IFeatureFlagsProviderProps> = (props
                     ...flag,
                     enabled: value ?? baseEnabled,
                 };
-            }),
+            })
         );
     };
 
@@ -108,7 +102,8 @@ export const FeatureFlagsProvider: React.FC<IFeatureFlagsProviderProps> = (props
             isEnabled,
             setOverride,
         }),
-        [snapshot, isEnabled],
+        // biome-ignore lint/correctness/useExhaustiveDependencies: working fine as dependency
+        [snapshot, isEnabled, setOverride]
     );
 
     return <featureFlagsContext.Provider value={contextValue}>{children}</featureFlagsContext.Provider>;

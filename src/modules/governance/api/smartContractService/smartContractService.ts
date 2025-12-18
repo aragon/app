@@ -4,7 +4,7 @@ import type { ISmartContractAbi } from './domain';
 import type { IDecodeTransactionParams, IGetAbiParams } from './smartContractService.api';
 
 class SmartContractService extends AragonBackendService {
-    private urls = {
+    private readonly urls = {
         abi: '/v2/contract/:network/:address',
         decodeTransaction: '/v2/contract/:network/:address/decode',
     };

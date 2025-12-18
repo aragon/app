@@ -1,7 +1,7 @@
-import { type IAsset, type IGetAssetListParams } from '@/modules/finance/api/financeService';
-import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
+import type { IAsset, IGetAssetListParams } from '@/modules/finance/api/financeService';
+import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { AssetList } from '../../components/assetList';
 
 export interface IAssetSelectionDialogParams {
@@ -37,9 +37,9 @@ export const AssetSelectionDialog: React.FC<IAssetSelectionDialogProps> = (props
 
     return (
         <>
-            <Dialog.Header title={t('app.finance.assetSelectionDialog.title')} onClose={close} />
+            <Dialog.Header onClose={close} title={t('app.finance.assetSelectionDialog.title')} />
             <Dialog.Content className="flex flex-col gap-6 py-7">
-                <AssetList.Default initialParams={initialParams} onAssetClick={handleSelectAsset} hasSearch={true} />
+                <AssetList.Default hasSearch={true} initialParams={initialParams} onAssetClick={handleSelectAsset} />
             </Dialog.Content>
         </>
     );

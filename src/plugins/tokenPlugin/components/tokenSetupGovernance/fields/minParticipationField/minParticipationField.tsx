@@ -1,8 +1,8 @@
-import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { useWatch } from 'react-hook-form';
 import { formatUnits } from 'viem';
+import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import type { ITokenSetupGovernanceForm, ITokenSetupGovernanceProps } from '../../tokenSetupGovernance.api';
 
 export interface IMinParticipationFieldProps {
@@ -36,15 +36,15 @@ export const MinParticipationField: React.FC<IMinParticipationFieldProps> = (pro
 
     return (
         <NumberProgressInput
-            fieldName={fieldName}
-            label={t('app.plugins.token.tokenSetupGovernance.minParticipation.label')}
-            helpText={t('app.plugins.token.tokenSetupGovernance.minParticipation.helpText')}
-            valueLabel={totalSupply === '0' || totalSupply == null ? undefined : `${formattedAmount} ${symbol}`}
-            min={0}
-            total={100}
             defaultValue={defaultMinParticipation}
+            fieldName={fieldName}
+            helpText={t('app.plugins.token.tokenSetupGovernance.minParticipation.helpText')}
+            label={t('app.plugins.token.tokenSetupGovernance.minParticipation.label')}
+            min={0}
             prefix="≥"
             suffix="%"
+            total={100}
+            valueLabel={totalSupply === '0' || totalSupply == null ? undefined : `${formattedAmount} ${symbol}`}
         />
     );
 };

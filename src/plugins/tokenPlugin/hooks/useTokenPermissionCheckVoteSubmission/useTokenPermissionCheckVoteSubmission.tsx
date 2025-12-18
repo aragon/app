@@ -1,14 +1,13 @@
-import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
-import { VoteOption, type ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import type { IDaoPlugin } from '@/shared/api/daoService';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { ChainEntityType, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
+import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import { type ITokenPluginSettings, VoteOption } from '@/plugins/tokenPlugin/types';
+import type { IDaoPlugin } from '@/shared/api/daoService';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 
-export interface ITokenPermissionCheckVoteSubmissionParams
-    extends IPermissionCheckGuardParams<IDaoPlugin<ITokenPluginSettings>> {}
+export interface ITokenPermissionCheckVoteSubmissionParams extends IPermissionCheckGuardParams<IDaoPlugin<ITokenPluginSettings>> {}
 
 const tokenVotingAbi = [
     {
@@ -24,9 +23,7 @@ const tokenVotingAbi = [
     },
 ] as const;
 
-export const useTokenPermissionCheckVoteSubmission = (
-    params: ITokenPermissionCheckVoteSubmissionParams,
-): IPermissionCheckGuardResult => {
+export const useTokenPermissionCheckVoteSubmission = (params: ITokenPermissionCheckVoteSubmissionParams): IPermissionCheckGuardResult => {
     const { plugin, proposal } = params;
 
     const { address } = useAccount();
@@ -39,7 +36,7 @@ export const useTokenPermissionCheckVoteSubmission = (
 
     const { data: hasPermission, isLoading } = useReadContract({
         address: pluginAddress as Hex,
-        chainId: chainId,
+        chainId,
         abi: tokenVotingAbi,
         functionName: 'canVote',
         // Passing YES as vote option because we are only checking permission to vote and the option does not matter

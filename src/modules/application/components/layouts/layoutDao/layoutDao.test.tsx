@@ -1,16 +1,16 @@
-import { daoOptions, Network } from '@/shared/api/daoService';
-import { daoUtils } from '@/shared/utils/daoUtils';
-import { testLogger } from '@/test/utils';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import { daoOptions, Network } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { testLogger } from '@/test/utils';
 import { type ILayoutDaoProps, LayoutDao } from './layoutDao';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
-        <div data-testid="hydration-mock" data-state={JSON.stringify(props.state)}>
+        <div data-state={JSON.stringify(props.state)} data-testid="hydration-mock">
             {props.children}
         </div>
     ),
@@ -57,13 +57,11 @@ describe('<LayoutDao /> component', () => {
     });
 
     it('prefetches the DAO from the given slug', async () => {
-        const expectedDaoId = `test-dao-id`;
+        const expectedDaoId = 'test-dao-id';
         resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
 
         render(await createTestComponent());
-        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
-            daoOptions({ urlParams: { id: expectedDaoId } }).queryKey,
-        );
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: { id: expectedDaoId } }).queryKey);
     });
 
     it('dehydrates the query client state', async () => {
@@ -88,6 +86,6 @@ describe('<LayoutDao /> component', () => {
         render(await createTestComponent());
         const errorLink = screen.getByRole('link', { name: /link.explore/ });
         expect(errorLink).toBeInTheDocument();
-        expect(errorLink.getAttribute('href')).toEqual(`/`);
+        expect(errorLink.getAttribute('href')).toEqual('/');
     });
 });

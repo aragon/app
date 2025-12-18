@@ -1,8 +1,8 @@
+import type { ProposalActionComponent } from '@aragon/gov-ui-kit';
+import type { Hex } from 'viem';
 import type { IActionComposerInputItem } from '@/modules/governance/components/actionComposer';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { ActionComposerPluginComponent } from '@/modules/governance/types/actionComposerPluginData';
-import type { ProposalActionComponent } from '@aragon/gov-ui-kit';
-import type { Hex } from 'viem';
 import type { IAutocompleteInputGroup } from '../../components/forms/autocompleteInput';
 import type { TranslationFunction } from '../../components/translationsProvider';
 

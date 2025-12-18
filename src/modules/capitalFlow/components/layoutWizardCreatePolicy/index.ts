@@ -1,1 +1,1 @@
-export { LayoutWizardCreatePolicy, type ILayoutWizardCreatePolicyProps } from './layoutWizardCreatePolicy';
+export { type ILayoutWizardCreatePolicyProps, LayoutWizardCreatePolicy } from './layoutWizardCreatePolicy';

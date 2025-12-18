@@ -1,10 +1,10 @@
+import type { Hex } from 'viem';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
-import type { Hex } from 'viem';
 import { SettingsSlotId } from '../../constants/moduleSlots';
 import type { IGetUninstallHelpersParams } from '../../types';
 
@@ -34,7 +34,7 @@ class PreparePluginUninstallationDialogUtils {
         const summary = [
             `If approved, this proposal will uninstall the ${uninstallPluginInfo} plugin. It will revoke the`,
             `plugin's permission to execute actions on the DAO's behalf. Vote in favor only if you're confident other`,
-            `installed governance processes are enough for the DAO to function as intended. The current`,
+            'installed governance processes are enough for the DAO to function as intended. The current',
             `${proposalPluginInfo} process will not be affected`,
         ].join(' ');
 

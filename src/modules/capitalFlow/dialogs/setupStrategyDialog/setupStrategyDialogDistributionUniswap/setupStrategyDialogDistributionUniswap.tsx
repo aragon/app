@@ -1,8 +1,8 @@
+import { addressUtils, InputText } from '@aragon/gov-ui-kit';
+import { useWatch } from 'react-hook-form';
 import { AssetInput } from '@/modules/finance/components/assetInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { addressUtils, InputText } from '@aragon/gov-ui-kit';
-import { useWatch } from 'react-hook-form';
 import type { ISetupStrategyForm } from '../setupStrategyDialogDefinitions';
 
 export interface ISetupStrategyDialogDistributionUniswapProps {}
@@ -19,7 +19,7 @@ export const SetupStrategyDialogDistributionUniswap: React.FC<ISetupStrategyDial
         {
             label: t('app.capitalFlow.setupStrategyDialog.distributionUniswap.targetTokenAddress.label'),
             rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
-        },
+        }
     );
 
     const uniswapRouterAddressField = useFormField<ISetupStrategyForm, 'distributionUniswap.uniswapRouterAddress'>(
@@ -27,16 +27,16 @@ export const SetupStrategyDialogDistributionUniswap: React.FC<ISetupStrategyDial
         {
             label: t('app.capitalFlow.setupStrategyDialog.distributionUniswap.uniswapRouterAddress.label'),
             rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
-        },
+        }
     );
 
     return (
         <div className="flex w-full flex-col gap-6">
             <div className="flex flex-col gap-0.5 md:gap-1">
-                <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
+                <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
                     {t('app.capitalFlow.setupStrategyDialog.distributionUniswap.token.label')}
                 </p>
-                <p className="text-sm leading-normal font-normal text-neutral-500 md:text-base">
+                <p className="font-normal text-neutral-500 text-sm leading-normal md:text-base">
                     {t('app.capitalFlow.setupStrategyDialog.distributionUniswap.token.helpText')}
                 </p>
             </div>
@@ -45,17 +45,13 @@ export const SetupStrategyDialogDistributionUniswap: React.FC<ISetupStrategyDial
 
             <InputText
                 helpText={t('app.capitalFlow.setupStrategyDialog.distributionUniswap.targetTokenAddress.helpText')}
-                placeholder={t(
-                    'app.capitalFlow.setupStrategyDialog.distributionUniswap.targetTokenAddress.placeholder',
-                )}
+                placeholder={t('app.capitalFlow.setupStrategyDialog.distributionUniswap.targetTokenAddress.placeholder')}
                 {...targetTokenAddressField}
             />
 
             <InputText
                 helpText={t('app.capitalFlow.setupStrategyDialog.distributionUniswap.uniswapRouterAddress.helpText')}
-                placeholder={t(
-                    'app.capitalFlow.setupStrategyDialog.distributionUniswap.uniswapRouterAddress.placeholder',
-                )}
+                placeholder={t('app.capitalFlow.setupStrategyDialog.distributionUniswap.uniswapRouterAddress.placeholder')}
                 {...uniswapRouterAddressField}
             />
         </div>

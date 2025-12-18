@@ -1,1 +1,1 @@
-export { PolicyDataListItem, type IPolicyDataListItemProps } from './policyDataListItem';
+export { type IPolicyDataListItemProps, PolicyDataListItem } from './policyDataListItem';

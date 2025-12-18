@@ -1,6 +1,6 @@
+import { renderHook } from '@testing-library/react';
 import { generateTokenPluginSettings } from '@/plugins/tokenPlugin/testUtils';
 import { mockTranslations } from '@/test/utils';
-import { renderHook } from '@testing-library/react';
 import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
 import { useTokenGovernanceSettings } from './useTokenGovernanceSettings';
 

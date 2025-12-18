@@ -1,7 +1,7 @@
+import { renderHook } from '@testing-library/react';
 import * as governanceService from '@/modules/governance/api/governanceService';
 import { generateMember } from '@/modules/governance/testUtils';
 import { generateDaoPlugin, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { renderHook } from '@testing-library/react';
 import {
     generateTokenMember,
     generateTokenMemberMetrics,
@@ -37,7 +37,7 @@ describe('useTokenMemberStats hook', () => {
 
         const member = generateTokenMember({
             votingPower: '47928374987234',
-            metrics: generateTokenMemberMetrics({ delegateReceivedCount: 47928374 }),
+            metrics: generateTokenMemberMetrics({ delegateReceivedCount: 47_928_374 }),
         });
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
         useWrappedTokenBalanceSpy.mockReturnValue({ balance: BigInt('123456123456'), refetch: jest.fn() });
@@ -55,17 +55,13 @@ describe('useTokenMemberStats hook', () => {
     it('returns empty list when member is not a token member', () => {
         const member = generateMember();
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
-        const { result } = renderHook(() =>
-            useTokenMemberStats({ address: '0x123', daoId: '1', plugin: generateDaoPlugin() }),
-        );
+        const { result } = renderHook(() => useTokenMemberStats({ address: '0x123', daoId: '1', plugin: generateDaoPlugin() }));
         expect(result.current).toEqual([]);
     });
 
     it('returns empty list when member is null', () => {
         useMemberSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
-        const { result } = renderHook(() =>
-            useTokenMemberStats({ address: '0x123', daoId: '1', plugin: generateDaoPlugin() }),
-        );
+        const { result } = renderHook(() => useTokenMemberStats({ address: '0x123', daoId: '1', plugin: generateDaoPlugin() }));
         expect(result.current).toEqual([]);
     });
 });

@@ -4,7 +4,7 @@ export interface IUseStepperParams<TMeta = undefined, TStepId extends string = s
     /**
      * Initial steps used to populate the steps array.
      */
-    initialSteps?: Array<IStepperStep<TMeta, TStepId>>;
+    initialSteps?: IStepperStep<TMeta, TStepId>[];
     /**
      * Initial active step, defaults to the first element on the initialSteps array.
      */
@@ -15,7 +15,7 @@ export interface IUseStepperReturn<TMeta = undefined, TStepId extends string = s
     /**
      * Array of steps ordered by order value.
      */
-    steps: Array<IStepperStep<TMeta, TStepId>>;
+    steps: IStepperStep<TMeta, TStepId>[];
     /**
      * Current active step id.
      */
@@ -55,5 +55,5 @@ export interface IUseStepperReturn<TMeta = undefined, TStepId extends string = s
     /**
      * Updates all stepper steps.
      */
-    updateSteps: (steps: Array<IStepperStep<TMeta, TStepId>>) => void;
+    updateSteps: (steps: IStepperStep<TMeta, TStepId>[]) => void;
 }

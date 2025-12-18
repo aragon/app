@@ -14,18 +14,17 @@ export interface IStepperStep<TMeta = undefined, TStepId = string> {
 }
 
 export class StepperUtils<TMeta = undefined, TStepId = string> {
-    private steps: Array<IStepperStep<TMeta, TStepId>>;
+    private steps: IStepperStep<TMeta, TStepId>[];
 
     private activeStep?: TStepId;
 
-    constructor(steps: Array<IStepperStep<TMeta, TStepId>> = [], activeStep?: TStepId) {
+    constructor(steps: IStepperStep<TMeta, TStepId>[] = [], activeStep?: TStepId) {
         this.steps = StepperUtils.sortSteps(steps);
         this.activeStep = activeStep ?? this.steps[0]?.id;
     }
 
-    static sortSteps = <TMeta = undefined, TStepId = string>(
-        steps: Array<IStepperStep<TMeta, TStepId>>,
-    ): Array<IStepperStep<TMeta, TStepId>> => [...steps].sort((stepA, stepB) => stepA.order - stepB.order);
+    static sortSteps = <TMeta = undefined, TStepId = string>(steps: IStepperStep<TMeta, TStepId>[]): IStepperStep<TMeta, TStepId>[] =>
+        [...steps].sort((stepA, stepB) => stepA.order - stepB.order);
 
     getActiveStep = () => this.activeStep;
 
@@ -37,7 +36,7 @@ export class StepperUtils<TMeta = undefined, TStepId = string> {
 
     getSteps = () => this.steps;
 
-    setSteps = (steps: Array<IStepperStep<TMeta, TStepId>>) => {
+    setSteps = (steps: IStepperStep<TMeta, TStepId>[]) => {
         this.steps = steps;
 
         return this.steps;
@@ -82,7 +81,7 @@ export class StepperUtils<TMeta = undefined, TStepId = string> {
     };
 
     syncActiveStep = () => {
-        const shouldUpdateActiveStep = this.activeStep == undefined && this.steps.length > 0;
+        const shouldUpdateActiveStep = this.activeStep === undefined && this.steps.length > 0;
 
         if (shouldUpdateActiveStep) {
             this.setActiveStep(this.steps[0].id);

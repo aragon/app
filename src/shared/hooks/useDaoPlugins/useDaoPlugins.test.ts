@@ -1,10 +1,10 @@
+import { renderHook } from '@testing-library/react';
 import * as daoService from '@/shared/api/daoService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { renderHook } from '@testing-library/react';
 import { useDaoPlugins } from './useDaoPlugins';
 
 describe('useDaoPlugins hook', () => {

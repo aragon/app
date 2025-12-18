@@ -1,16 +1,12 @@
 'use client';
 
-import type { Network } from '@/shared/api/daoService';
-import type { IDialogComponentProps } from '@/shared/components/dialogProvider/dialogProvider.api';
-import {
-    type ITransactionDialogStepMeta,
-    TransactionDialog,
-    TransactionDialogStep,
-} from '@/shared/components/transactionDialog';
-import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
-import { useStepper } from '@/shared/hooks/useStepper/useStepper';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
+import type { Network } from '@/shared/api/daoService';
+import type { IDialogComponentProps } from '@/shared/components/dialogProvider/dialogProvider.api';
+import { type ITransactionDialogStepMeta, TransactionDialog, TransactionDialogStep } from '@/shared/components/transactionDialog';
+import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
+import { useStepper } from '@/shared/hooks/useStepper/useStepper';
 import { gaugeVoterVoteTransactionDialogUtils } from './gaugeVoterVoteTransactionDialogUtils';
 import type { IGaugeVote } from './gaugeVoterVoteTransactionDialogUtils.api';
 
@@ -33,8 +29,7 @@ export interface IGaugeVoterVoteTransactionDialogParams {
     onSuccess?: () => void;
 }
 
-export interface IGaugeVoterVoteTransactionDialogProps
-    extends IDialogComponentProps<IGaugeVoterVoteTransactionDialogParams> {}
+export interface IGaugeVoterVoteTransactionDialogProps extends IDialogComponentProps<IGaugeVoterVoteTransactionDialogParams> {}
 
 export const GaugeVoterVoteTransactionDialog: React.FC<IGaugeVoterVoteTransactionDialogProps> = (props) => {
     const { location } = props;
@@ -65,17 +60,17 @@ export const GaugeVoterVoteTransactionDialog: React.FC<IGaugeVoterVoteTransactio
 
     return (
         <TransactionDialog
-            title={t('app.plugins.gaugeVoter.gaugeVoterVoteTransactionDialog.title')}
             description={t('app.plugins.gaugeVoter.gaugeVoterVoteTransactionDialog.description')}
+            network={network}
+            onSuccess={handleSuccess}
+            prepareTransaction={prepareTransaction}
+            stepper={stepper}
             submitLabel={t('app.plugins.gaugeVoter.gaugeVoterVoteTransactionDialog.submit')}
             successLink={{
                 onClick: handleSuccess,
                 label: t('app.plugins.gaugeVoter.gaugeVoterVoteTransactionDialog.successLinkLabel'),
             }}
-            stepper={stepper}
-            prepareTransaction={prepareTransaction}
-            onSuccess={handleSuccess}
-            network={network}
+            title={t('app.plugins.gaugeVoter.gaugeVoterVoteTransactionDialog.title')}
         />
     );
 };

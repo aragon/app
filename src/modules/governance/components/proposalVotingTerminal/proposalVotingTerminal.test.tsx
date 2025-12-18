@@ -1,19 +1,19 @@
+import { ProposalStatus } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
+import * as wagmi from 'wagmi';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import * as useDaoPluginInfo from '@/shared/hooks/useDaoPluginInfo';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
 import { generatePluginSettings } from '@/shared/testUtils';
-import { ProposalStatus } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
-import * as wagmi from 'wagmi';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { generateProposal } from '../../testUtils';
 import { type IProposalVotingTerminalProps, ProposalVotingTerminal } from './proposalVotingTerminal';
 
 jest.mock('@/shared/components/pluginSingleComponent', () => ({
     PluginSingleComponent: (props: { slotId: string; pluginId: string }) => (
-        <div data-testid="plugin-component-mock" data-slotid={props.slotId} data-pluginid={props.pluginId} />
+        <div data-pluginid={props.pluginId} data-slotid={props.slotId} data-testid="plugin-component-mock" />
     ),
 }));
 

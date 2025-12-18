@@ -8,9 +8,8 @@ export const Wizard = {
     Step: WizardStep,
 };
 
+export { type IUseWizardFooterReturn, useWizardFooter } from './useWizardFooter';
 export * from './wizardForm';
 export * from './wizardProvider';
 export * from './wizardRoot';
 export * from './wizardStep';
-
-export { useWizardFooter, type IUseWizardFooterReturn } from './useWizardFooter';

@@ -1,11 +1,11 @@
 'use client';
 
+import { DateTime } from 'luxon';
+import { useWatch } from 'react-hook-form';
 import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { AdvancedDateInput } from '@/shared/components/forms/advancedDateInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dateUtils } from '@/shared/utils/dateUtils';
-import { DateTime } from 'luxon';
-import { useWatch } from 'react-hook-form';
 
 export interface IMultisigCreateProposalSettingsFormProps {}
 
@@ -20,21 +20,21 @@ export const MultisigCreateProposalSettingsForm: React.FC<IMultisigCreateProposa
     return (
         <div className="flex flex-col gap-6 md:gap-12">
             <AdvancedDateInput
-                label={t('app.plugins.multisig.multisigCreateProposalSettingsForm.startTime.label')}
-                helpText={t('app.plugins.multisig.multisigCreateProposalSettingsForm.startTime.helpText')}
                 field="startTime"
+                helpText={t('app.plugins.multisig.multisigCreateProposalSettingsForm.startTime.helpText')}
+                label={t('app.plugins.multisig.multisigCreateProposalSettingsForm.startTime.label')}
                 minTime={DateTime.now()}
             />
             <AdvancedDateInput
-                label={t('app.plugins.multisig.multisigCreateProposalSettingsForm.endTime.label')}
-                helpText={t('app.plugins.multisig.multisigCreateProposalSettingsForm.endTime.helpText')}
                 field="endTime"
+                helpText={t('app.plugins.multisig.multisigCreateProposalSettingsForm.endTime.helpText')}
                 infoText={t('app.plugins.multisig.multisigCreateProposalSettingsForm.endTime.infoText', {
                     days: recommendedMinDays,
                 })}
-                useDuration={true}
-                minTime={minEndTime}
+                label={t('app.plugins.multisig.multisigCreateProposalSettingsForm.endTime.label')}
                 minDuration={{ days: recommendedMinDays, hours: 0, minutes: 0 }}
+                minTime={minEndTime}
+                useDuration={true}
             />
         </div>
     );

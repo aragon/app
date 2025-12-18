@@ -1,10 +1,10 @@
+import { useCallback, useEffect } from 'react';
+import { encodeFunctionData } from 'viem';
 import { CreateProcessForm } from '@/modules/createDao/components/createProcessForm';
 import { ProposalActionType } from '@/modules/governance/api/governanceService/domain';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
-import { useCallback, useEffect } from 'react';
-import { encodeFunctionData } from 'viem';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 import { useCreateProposalFormContext } from '../../../createProposalFormProvider';
 import type { IUpdatePluginMetadataAction, IUpdatePluginMetadataActionProps } from './updatePluginMetadataAction.api';
@@ -49,7 +49,7 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
 
             return data;
         },
-        [pinJsonAsync, displayProcessKey],
+        [pinJsonAsync, displayProcessKey]
     );
 
     useEffect(() => {

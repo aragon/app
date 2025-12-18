@@ -1,5 +1,5 @@
-import safeWallet from '@/assets/images/safeWallet.png';
 import type { IProposalVotingBodyBrand } from '@aragon/gov-ui-kit';
+import safeWallet from '@/assets/images/safeWallet.png';
 import { VotingBodyBrandIdentity } from '../types';
 
 export const brandedExternals: Record<VotingBodyBrandIdentity, IProposalVotingBodyBrand | undefined> = {

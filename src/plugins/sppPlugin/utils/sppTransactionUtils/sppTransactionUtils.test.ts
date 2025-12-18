@@ -1,8 +1,6 @@
-import {
-    GovernanceType,
-    ProcessStageType,
-    ProposalCreationMode,
-} from '@/modules/createDao/components/createProcessForm';
+import * as Viem from 'viem';
+import { zeroHash } from 'viem';
+import { GovernanceType, ProcessStageType, ProposalCreationMode } from '@/modules/createDao/components/createProcessForm';
 import {
     generateCreateProcessFormDataAdvanced,
     generateCreateProcessFormStage,
@@ -21,8 +19,6 @@ import { generatePluginInstallationSetupData } from '@/shared/testUtils/generato
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
-import * as Viem from 'viem';
-import { zeroHash } from 'viem';
 import { generateSppPluginSettings } from '../../testUtils';
 import { sppPluginAbi, sppPluginSetupAbi } from './sppPluginAbi';
 import { sppTransactionUtils } from './sppTransactionUtils';
@@ -47,7 +43,7 @@ describe('sppTransaction utils', () => {
     describe('buildCreateProposalData', () => {
         it('encodes createProposal data with correct parameters', () => {
             const transactionData = '0xencoded';
-            const startDate = 12345;
+            const startDate = 12_345;
             const proposal = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
             const actions: ITransactionRequest[] = [{ to: '0xAddress', data: '0xdata', value: BigInt(0) }];
             const plugin = generateDaoPlugin({
@@ -79,12 +75,7 @@ describe('sppTransaction utils', () => {
             sppTransactionUtils.buildPreparePluginInstallData(metadataCid, dao);
 
             const expectedTarget = { target: dao.address as Viem.Hex, operation: 0 };
-            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(sppPluginSetupAbi, [
-                metadataCid as Viem.Hex,
-                [],
-                [],
-                expectedTarget,
-            ]);
+            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(sppPluginSetupAbi, [metadataCid as Viem.Hex, [], [], expectedTarget]);
         });
 
         it('builds prepare installation data correctly using buildPrepareInstallationData', () => {
@@ -104,23 +95,18 @@ describe('sppTransaction utils', () => {
                 sppPlugin.repositoryAddresses[network],
                 sppPlugin.installVersion,
                 pluginSettingsData,
-                dao.address as Viem.Hex,
+                dao.address as Viem.Hex
             );
         });
     });
 
     describe('buildPluginsSetupActions', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const buildUpdateStagesTransactionSpy = jest.spyOn(sppTransactionUtils as any, 'buildUpdateStagesTransaction');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const buildUpdateRulesTransactionSpy = jest.spyOn(sppTransactionUtils as any, 'buildUpdateRulesTransaction');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const buildBodyPermissionActionsSpy = jest.spyOn(sppTransactionUtils as any, 'buildBodyPermissionActions');
-        const buildGrantSppProposalCreationActionSpy = jest.spyOn(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            sppTransactionUtils as any,
-            'buildGrantSppProposalCreationAction',
-        );
+        const buildGrantSppProposalCreationActionSpy = jest.spyOn(sppTransactionUtils as any, 'buildGrantSppProposalCreationAction');
 
         afterEach(() => {
             buildUpdateStagesTransactionSpy.mockReset();
@@ -184,11 +170,7 @@ describe('sppTransaction utils', () => {
 
             const result = sppTransactionUtils.buildPluginsSetupActions(values, setupData, dao, []);
 
-            expect(buildGrantSppProposalCreationActionSpy).toHaveBeenCalledWith(
-                existingBody.address,
-                dao.address,
-                '0xSpp',
-            );
+            expect(buildGrantSppProposalCreationActionSpy).toHaveBeenCalledWith(existingBody.address, dao.address, '0xSpp');
 
             expect(result).toContain(existingBodyPermissionAction);
         });
@@ -204,17 +186,15 @@ describe('sppTransaction utils', () => {
             const revokeExecutePermissionAction = { to: daoAddress, data: '0xexecute' as Viem.Hex, value: BigInt(0) };
             const grantAction = { to: daoAddress, data: '0xgrant' as Viem.Hex, value: BigInt(0) };
 
-            revokePermissionSpy
-                .mockReturnValueOnce(revokeCreateProposalAction)
-                .mockReturnValueOnce(revokeExecutePermissionAction);
+            revokePermissionSpy.mockReturnValueOnce(revokeCreateProposalAction).mockReturnValueOnce(revokeExecutePermissionAction);
             grantPermissionSpy.mockReturnValueOnce(grantAction);
 
-            const result = sppTransactionUtils['buildBodyPermissionActions'](pluginAddress, daoAddress, sppAddress);
+            const result = sppTransactionUtils.buildBodyPermissionActions(pluginAddress, daoAddress, sppAddress);
             expect(result).toEqual([revokeCreateProposalAction, grantAction, revokeExecutePermissionAction]);
 
             expect(revokePermissionSpy).toHaveBeenNthCalledWith(1, {
                 where: pluginAddress,
-                who: sppTransactionUtils['anyAddress'],
+                who: sppTransactionUtils.anyAddress,
                 what: permissionTransactionUtils.permissionIds.createProposalPermission,
                 to: daoAddress,
             });
@@ -242,11 +222,7 @@ describe('sppTransaction utils', () => {
             const grantAction = { to: daoAddress, data: '0xGrant' as Viem.Hex, value: BigInt(0) };
             grantPermissionSpy.mockReturnValueOnce(grantAction);
 
-            const result = sppTransactionUtils['buildGrantSppProposalCreationAction'](
-                bodyAddress,
-                daoAddress,
-                sppAddress,
-            );
+            const result = sppTransactionUtils.buildGrantSppProposalCreationAction(bodyAddress, daoAddress, sppAddress);
 
             expect(grantPermissionSpy).toHaveBeenCalledWith({
                 where: bodyAddress,
@@ -269,7 +245,7 @@ describe('sppTransaction utils', () => {
             const proposalCreationMode = ProposalCreationMode.ANY_WALLET;
             const values = generateCreateProcessFormDataAdvanced({ proposalCreationMode });
             const setupData = generatePluginInstallationSetupData();
-            const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, setupData, [], []);
+            const result = sppTransactionUtils.buildUpdateRulesTransaction(values, setupData, [], []);
             expect(result).toBeUndefined();
         });
 
@@ -298,12 +274,7 @@ describe('sppTransaction utils', () => {
             const updateRulesTxData = '0xUpdateRulesTxData';
             encodeFunctionDataSpy.mockReturnValueOnce(updateRulesTxData);
 
-            const result = sppTransactionUtils['buildUpdateRulesTransaction'](
-                values,
-                sppSetupData,
-                pluginSetupData,
-                [],
-            );
+            const result = sppTransactionUtils.buildUpdateRulesTransaction(values, sppSetupData, pluginSetupData, []);
 
             expect(buildRuleConditionsSpy).toHaveBeenCalledWith(['0x0'], []);
 
@@ -345,17 +316,12 @@ describe('sppTransaction utils', () => {
             const updateRulesTxData = '0xUpdateRulesTxData';
             encodeFunctionDataSpy.mockReturnValueOnce(updateRulesTxData);
 
-            const result = sppTransactionUtils['buildUpdateRulesTransaction'](
-                values,
-                sppSetupData,
-                pluginSetupData,
-                [],
-            );
+            const result = sppTransactionUtils.buildUpdateRulesTransaction(values, sppSetupData, pluginSetupData, []);
 
             // Should include both existing condition address and new condition address
             expect(buildRuleConditionsSpy).toHaveBeenCalledWith(
                 ['0xConditionAddress', '0xNewCondition'], // All condition addresses combined
-                [],
+                []
             );
 
             expect(result).toBeDefined();
@@ -400,14 +366,14 @@ describe('sppTransaction utils', () => {
             const updateRulesTxData = '0xUpdateRulesTxData';
             encodeFunctionDataSpy.mockReturnValueOnce(updateRulesTxData);
 
-            sppTransactionUtils['buildUpdateRulesTransaction'](values, sppSetupData, pluginSetupData, []);
+            sppTransactionUtils.buildUpdateRulesTransaction(values, sppSetupData, pluginSetupData, []);
 
             // Should only include condition addresses for bodies that can create proposals
             // Existing body conditions are always included (filtering happens at UI level)
             // New body conditions are filtered by canCreateProposal in the implementation
             expect(buildRuleConditionsSpy).toHaveBeenLastCalledWith(
                 [existingBodyCanCreate.proposalCreationConditionAddress, '0xNewCondition1'],
-                [],
+                []
             );
         });
 
@@ -437,27 +403,18 @@ describe('sppTransaction utils', () => {
             const updateRulesTxData = '0xUpdateRulesTxData';
             encodeFunctionDataSpy.mockReturnValueOnce(updateRulesTxData);
 
-            const result = sppTransactionUtils['buildUpdateRulesTransaction'](
-                values,
-                sppSetupData,
-                pluginSetupData,
-                safeConditionAddresses,
-            );
+            const result = sppTransactionUtils.buildUpdateRulesTransaction(values, sppSetupData, pluginSetupData, safeConditionAddresses);
 
             // Should include new body condition addresses and safe condition addresses
-            expect(buildRuleConditionsSpy).toHaveBeenCalledWith(
-                ['0xNewCondition', '0xSafeCondition1', '0xSafeCondition2'],
-                [],
-            );
+            expect(buildRuleConditionsSpy).toHaveBeenCalledWith(['0xNewCondition', '0xSafeCondition1', '0xSafeCondition2'], []);
 
             expect(result).toBeDefined();
         });
     });
 
     describe('buildUpdateStagesTransaction', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const processStageTimingSpy = jest.spyOn(sppTransactionUtils as any, 'processStageTiming');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const processStageApprovalsSpy = jest.spyOn(sppTransactionUtils as any, 'processStageApprovals');
 
         afterEach(() => {
@@ -481,9 +438,9 @@ describe('sppTransaction utils', () => {
             const transactionData = '0xupdate-stages';
 
             const timing = {
-                voteDuration: BigInt(86400),
-                minAdvance: BigInt(86400),
-                maxAdvance: sppTransactionUtils['defaultMaxAdvance'],
+                voteDuration: BigInt(86_400),
+                minAdvance: BigInt(86_400),
+                maxAdvance: sppTransactionUtils.defaultMaxAdvance,
             };
             processStageTimingSpy.mockReturnValueOnce(timing);
 
@@ -494,7 +451,7 @@ describe('sppTransaction utils', () => {
 
             const sppAddress = '0xSpp';
             const pluginAddresses = ['0x01'] as Viem.Hex[];
-            const result = sppTransactionUtils['buildUpdateStagesTransaction']([sppStage], sppAddress, pluginAddresses);
+            const result = sppTransactionUtils.buildUpdateStagesTransaction([sppStage], sppAddress, pluginAddresses);
 
             const expectedProcessedBodies = [
                 { addr: pluginAddresses[0], resultType: 1, isManual: false, tryAdvance: true },
@@ -517,27 +474,21 @@ describe('sppTransaction utils', () => {
 
     describe('processStageApprovals', () => {
         it('returns the correct approvals for a timelock stage', () => {
-            const result = sppTransactionUtils['processStageApprovals'](1, ProcessStageType.NORMAL, []);
+            const result = sppTransactionUtils.processStageApprovals(1, ProcessStageType.NORMAL, []);
             expect(result).toEqual({ approvalThreshold: 0, vetoThreshold: 0 });
         });
 
         it('returns the correct approvals for a normal stage', () => {
             const requiredApprovals = 3;
             const body = generateSetupBodyFormData();
-            const result = sppTransactionUtils['processStageApprovals'](requiredApprovals, ProcessStageType.NORMAL, [
-                body,
-            ]);
+            const result = sppTransactionUtils.processStageApprovals(requiredApprovals, ProcessStageType.NORMAL, [body]);
             expect(result).toEqual({ approvalThreshold: requiredApprovals, vetoThreshold: 0 });
         });
 
         it('returns the correct approvals for a optimistic stage', () => {
             const requiredApprovals = 2;
             const body = generateSetupBodyFormData();
-            const result = sppTransactionUtils['processStageApprovals'](
-                requiredApprovals,
-                ProcessStageType.OPTIMISTIC,
-                [body],
-            );
+            const result = sppTransactionUtils.processStageApprovals(requiredApprovals, ProcessStageType.OPTIMISTIC, [body]);
             expect(result).toEqual({ approvalThreshold: 0, vetoThreshold: requiredApprovals });
         });
     });
@@ -548,8 +499,8 @@ describe('sppTransaction utils', () => {
                 votingPeriod: { days: 1, hours: 0, minutes: 0 },
                 earlyStageAdvance: false,
             });
-            const result = sppTransactionUtils['processStageTiming'](settings, []);
-            expect(result.voteDuration).toBe(BigInt(86400)); // One day in seconds
+            const result = sppTransactionUtils.processStageTiming(settings, []);
+            expect(result.voteDuration).toBe(BigInt(86_400)); // One day in seconds
         });
 
         it('returns minAdvance as 0 when earlyStageAdvance is true', () => {
@@ -558,7 +509,7 @@ describe('sppTransaction utils', () => {
                 earlyStageAdvance: true,
             });
             const body = generateSetupBodyFormData();
-            const result = sppTransactionUtils['processStageTiming'](settings, [body]);
+            const result = sppTransactionUtils.processStageTiming(settings, [body]);
             expect(result.minAdvance).toBe(BigInt(0));
         });
 
@@ -567,8 +518,8 @@ describe('sppTransaction utils', () => {
                 votingPeriod: { days: 0, hours: 12, minutes: 0 },
                 earlyStageAdvance: false,
             });
-            const result = sppTransactionUtils['processStageTiming'](settings, []);
-            expect(result.minAdvance).toBe(BigInt(43200));
+            const result = sppTransactionUtils.processStageTiming(settings, []);
+            expect(result.minAdvance).toBe(BigInt(43_200));
         });
 
         it('returns a big default max advance when stage expiration is not set', () => {
@@ -577,8 +528,8 @@ describe('sppTransaction utils', () => {
                 earlyStageAdvance: false,
                 stageExpiration: undefined,
             });
-            const result = sppTransactionUtils['processStageTiming'](settings, []);
-            expect(result.maxAdvance).toEqual(sppTransactionUtils['defaultMaxAdvance']);
+            const result = sppTransactionUtils.processStageTiming(settings, []);
+            expect(result.maxAdvance).toEqual(sppTransactionUtils.defaultMaxAdvance);
         });
 
         it('returns the max advance set to the vote duration plus the stage expiration when set', () => {
@@ -587,8 +538,8 @@ describe('sppTransaction utils', () => {
                 earlyStageAdvance: false,
                 stageExpiration: { days: 0, hours: 0, minutes: 30 },
             });
-            const result = sppTransactionUtils['processStageTiming'](settings, []);
-            expect(result.maxAdvance).toEqual(BigInt(45000));
+            const result = sppTransactionUtils.processStageTiming(settings, []);
+            expect(result.maxAdvance).toEqual(BigInt(45_000));
         });
     });
 });

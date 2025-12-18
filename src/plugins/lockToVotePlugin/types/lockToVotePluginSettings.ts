@@ -1,4 +1,4 @@
-import { type ITokenPluginSettings } from '../../tokenPlugin/types';
+import type { ITokenPluginSettings } from '../../tokenPlugin/types';
 import type { DaoLockToVoteVotingMode } from './enum';
 import type { ILockToVotePluginSettingsToken } from './lockToVotePluginSettingsToken';
 

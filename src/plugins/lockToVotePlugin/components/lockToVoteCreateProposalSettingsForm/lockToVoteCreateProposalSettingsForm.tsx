@@ -1,5 +1,6 @@
 'use client';
 
+import { DateTime } from 'luxon';
 import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
@@ -7,7 +8,6 @@ import { AdvancedDateInput } from '@/shared/components/forms/advancedDateInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { dateUtils } from '@/shared/utils/dateUtils/dateUtils';
-import { DateTime } from 'luxon';
 
 export interface ILockToVoteCreateProposalSettingsFormProps {
     /**
@@ -34,8 +34,8 @@ export const LockToVoteCreateProposalSettingsForm: React.FC<ILockToVoteCreatePro
     return (
         <div className="flex flex-col gap-6 md:gap-12">
             <AdvancedDateInput
-                label={t('app.plugins.lockToVote.lockToVoteCreateProposalSettingsForm.startTime.label')}
                 field="startTime"
+                label={t('app.plugins.lockToVote.lockToVoteCreateProposalSettingsForm.startTime.label')}
                 minTime={DateTime.now()}
             />
         </div>

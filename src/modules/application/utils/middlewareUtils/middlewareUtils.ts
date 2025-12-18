@@ -16,7 +16,7 @@ class MiddlewareUtils {
         return response;
     };
 
-    private getContentSecurityPolicies = (nonce: string, env: string): string[] => {
+    private readonly getContentSecurityPolicies = (nonce: string, env: string): string[] => {
         const isProd = env === 'production' || env === 'staging';
         const isLocal = env === 'local';
 
@@ -27,9 +27,7 @@ class MiddlewareUtils {
         const allowedInFrameHostsNonProd = ['https://vercel.live'];
 
         const scriptSrc = isProd ? `'strict-dynamic'` : isLocal ? `'unsafe-eval'` : 'https://vercel.live';
-        const frameSrc = isProd
-            ? allowedInFrameHosts.join(' ')
-            : [...allowedInFrameHosts, ...allowedInFrameHostsNonProd].join(' ');
+        const frameSrc = isProd ? allowedInFrameHosts.join(' ') : [...allowedInFrameHosts, ...allowedInFrameHostsNonProd].join(' ');
         const fontSrc = isProd ? '' : ' https://vercel.live';
 
         const policies = [
@@ -56,7 +54,7 @@ class MiddlewareUtils {
 
             if (sentryUri && sentryKey) {
                 const reportUri = `${sentryUri}?sentry_key=${encodeURIComponent(
-                    sentryKey,
+                    sentryKey
                 )}&sentry_environment=${encodeURIComponent(envName)}&sentry_release=${encodeURIComponent(release)}`;
                 policies.push(`report-uri ${reportUri}`);
             }

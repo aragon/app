@@ -1,7 +1,7 @@
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import type { ISetupStrategyForm } from '../setupStrategyDialogDefinitions';
 import { SetupStrategyDialogDistributionRecipientItem } from './setupStrategyDialogDistributionRecipientItem';
 
@@ -18,9 +18,7 @@ export interface ISetupStrategyDialogDistributionRecipientsProps {
 
 const maxRecipients = 15;
 
-export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyDialogDistributionRecipientsProps> = (
-    props,
-) => {
+export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyDialogDistributionRecipientsProps> = (props) => {
     const { recipientsFieldName, daoId } = props;
 
     const { t } = useTranslations();
@@ -73,7 +71,7 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
         // We need to use getValues() here because 'address' changes from nested component are not reflected in recipientsField until rerender
         const recipientsValues = getValues(recipientsFieldName);
 
-        recipientsField.forEach((recipient, index) => {
+        recipientsField.forEach((_recipient, index) => {
             const newRatio = index === 0 ? evenRatio + remainder : evenRatio;
             updateRecipient(index, { ...recipientsValues[index], ratio: newRatio });
         });
@@ -85,11 +83,6 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
     return (
         <div className="flex flex-col gap-4">
             <InputContainer
-                id="recipients"
-                label={t('app.capitalFlow.setupStrategyDialog.distributionRecipients.label')}
-                helpText={t('app.capitalFlow.setupStrategyDialog.distributionRecipients.helpText')}
-                useCustomWrapper={true}
-                className="gap-3 md:gap-2"
                 alert={
                     totalRatio !== 100 && recipientsField.length > 0
                         ? {
@@ -98,40 +91,40 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
                           }
                         : undefined
                 }
+                className="gap-3 md:gap-2"
+                helpText={t('app.capitalFlow.setupStrategyDialog.distributionRecipients.helpText')}
+                id="recipients"
+                label={t('app.capitalFlow.setupStrategyDialog.distributionRecipients.label')}
+                useCustomWrapper={true}
             >
                 {recipientsField.map((field, index) => (
                     <SetupStrategyDialogDistributionRecipientItem
-                        key={field.id}
-                        fieldPrefix={`${recipientsFieldName}.[${index.toString()}]`}
-                        onRemove={() => handleRemoveRecipient(index)}
                         canRemove={canRemove}
                         daoId={daoId}
+                        fieldPrefix={`${recipientsFieldName}.[${index.toString()}]`}
+                        key={field.id}
+                        onRemove={() => handleRemoveRecipient(index)}
                     />
                 ))}
             </InputContainer>
 
             <div className="flex items-center justify-between">
-                <span className="text-sm leading-tight font-normal text-neutral-500">
+                <span className="font-normal text-neutral-500 text-sm leading-tight">
                     {recipientsField.length}/{maxRecipients}
                 </span>
 
-                <Button
-                    variant="tertiary"
-                    size="sm"
-                    onClick={handleDistributeEvenly}
-                    disabled={recipientsField.length === 0}
-                >
+                <Button disabled={recipientsField.length === 0} onClick={handleDistributeEvenly} size="sm" variant="tertiary">
                     {t('app.capitalFlow.setupStrategyDialog.distributionRecipients.distributeEvenly')}
                 </Button>
             </div>
 
             <Button
-                size="md"
-                variant="tertiary"
                 className="w-fit"
+                disabled={!canAddMore}
                 iconLeft={IconType.PLUS}
                 onClick={handleAddRecipient}
-                disabled={!canAddMore}
+                size="md"
+                variant="tertiary"
             >
                 {t('app.capitalFlow.setupStrategyDialog.distributionRecipients.addButton')}
             </Button>

@@ -1,6 +1,6 @@
-import { type Network } from '@/shared/api/daoService';
-import { type TransactionSide } from './enum';
-import { type IToken } from './token';
+import type { Network } from '@/shared/api/daoService';
+import type { TransactionSide } from './enum';
+import type { IToken } from './token';
 
 export interface ITransaction {
     /**

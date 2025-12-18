@@ -1,25 +1,20 @@
-import * as daoService from '@/shared/api/daoService';
-import { Network } from '@/shared/api/daoService';
-import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import {
-    generateDao,
-    generateDaoMetrics,
-    generateReactQueryResultError,
-    generateReactQueryResultSuccess,
-} from '@/shared/testUtils';
-import { daoUtils } from '@/shared/utils/daoUtils';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import type * as GovUiKit from '@aragon/gov-ui-kit';
 import { addressUtils, clipboardUtils, GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { ReactNode } from 'react';
+import * as daoService from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { generateDao, generateDaoMetrics, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoDashboardPageClient, type IDaoDashboardPageClientProps } from './daoDashboardPageClient';
 
 jest.mock('@aragon/gov-ui-kit', () => ({
     ...jest.requireActual<typeof GovUiKit>('@aragon/gov-ui-kit'),
-    DaoAvatar: (props: { src: string }) => <div data-testid="dao-avatar-mock" data-src={props.src} />,
+    DaoAvatar: (props: { src: string }) => <div data-src={props.src} data-testid="dao-avatar-mock" />,
 }));
 
 jest.mock('@/modules/governance/components/daoProposalList', () => ({
@@ -110,9 +105,7 @@ describe('<DaoDashboardPageClient /> component', () => {
         const daoId = 'my-dao';
         const daoNetwork = Network.ETHEREUM_MAINNET;
         const daoAddress = '0x12345';
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }),
-        );
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }));
 
         render(createTestComponent({ daoId }));
 
@@ -135,9 +128,7 @@ describe('<DaoDashboardPageClient /> component', () => {
         const daoId = 'my-dao';
         const daoNetwork = Network.ETHEREUM_MAINNET;
         const daoAddress = '0x12345';
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }),
-        );
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }));
 
         render(createTestComponent({ daoId }));
         const assetList = screen.getByTestId('asset-list-mock');
@@ -154,9 +145,7 @@ describe('<DaoDashboardPageClient /> component', () => {
         const daoId = 'my-dao';
         const daoNetwork = Network.ETHEREUM_MAINNET;
         const daoAddress = '0x12345';
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }),
-        );
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao({ address: daoAddress, network: daoNetwork }) }));
 
         render(createTestComponent({ daoId }));
 
@@ -180,7 +169,7 @@ describe('<DaoDashboardPageClient /> component', () => {
             network: Network.POLYGON_MAINNET,
             address: '0xeed34C7B9B9A7B16B26125650C0f7202D4018620',
             ens: 'aa-dao.dao.eth',
-            blockTimestamp: 1702526946,
+            blockTimestamp: 1_702_526_946,
             transactionHash: '0x978465132',
         });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));

@@ -1,4 +1,4 @@
-import { type IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
+import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { AdminManageMembersDialog } from '../dialogs/adminManageMembersDialog';
 import { AdminPluginDialogId } from './adminPluginDialogId';
 

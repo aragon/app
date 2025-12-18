@@ -1,16 +1,14 @@
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
 import * as useMemberListData from '@/modules/governance/hooks/useMemberListData';
 import * as daoService from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
 import { generateTokenMember } from '../../testUtils';
 import type { ITokenMember } from '../../types';
-import { TokenMemberList, type ITokenMemberListProps } from './tokenMemberList';
+import { type ITokenMemberListProps, TokenMemberList } from './tokenMemberList';
 
 jest.mock('./components/tokenMemberListItem', () => ({
-    TokenMemberListItem: (props: { member: ITokenMember }) => (
-        <div data-testid="member-mock">{props.member.address}</div>
-    ),
+    TokenMemberListItem: (props: { member: ITokenMember }) => <div data-testid="member-mock">{props.member.address}</div>,
 }));
 
 describe('<TokenMemberList /> component', () => {

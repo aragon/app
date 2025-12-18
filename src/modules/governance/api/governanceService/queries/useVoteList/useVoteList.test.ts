@@ -1,7 +1,7 @@
+import { renderHook, waitFor } from '@testing-library/react';
 import { generateVote } from '@/modules/governance/testUtils';
 import { Network } from '@/shared/api/daoService';
-import { ReactQueryWrapper, generatePaginatedResponse } from '@/shared/testUtils';
-import { renderHook, waitFor } from '@testing-library/react';
+import { generatePaginatedResponse, ReactQueryWrapper } from '@/shared/testUtils';
 import { governanceService } from '../../governanceService';
 import { useVoteList } from './useVoteList';
 

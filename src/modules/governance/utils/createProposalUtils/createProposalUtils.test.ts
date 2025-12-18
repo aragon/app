@@ -1,5 +1,5 @@
-import { timeUtils } from '@/test/utils';
 import { DateTime } from 'luxon';
+import { timeUtils } from '@/test/utils';
 import { generateCreateProposalEndDateFormData, generateCreateProposalStartDateFormData } from '../../testUtils';
 import { createProposalUtils } from './createProposalUtils';
 
@@ -26,7 +26,7 @@ describe('createProposal utils', () => {
         it('returns the parsed fixed start date in seconds as an integer', () => {
             const startTimeFixed = { date: '2024-08-30', time: '10:24' };
             const formValues = generateCreateProposalStartDateFormData({ startTimeMode: 'fixed', startTimeFixed });
-            expect(createProposalUtils.parseStartDate(formValues)).toEqual(1725013440);
+            expect(createProposalUtils.parseStartDate(formValues)).toEqual(1_725_013_440);
         });
     });
 
@@ -47,7 +47,7 @@ describe('createProposal utils', () => {
         it('returns the parsed fixed end date in seconds as an integer', () => {
             const endTimeFixed = { date: '2021-01-22', time: '11:00' };
             const formValues = generateCreateProposalEndDateFormData({ endTimeMode: 'fixed', endTimeFixed });
-            expect(createProposalUtils.parseEndDate(formValues)).toEqual(1611313200);
+            expect(createProposalUtils.parseEndDate(formValues)).toEqual(1_611_313_200);
         });
 
         it('returns 0 when endTimeMode is duration and minimumDuration equals endTimeDuration', () => {
@@ -73,7 +73,7 @@ describe('createProposal utils', () => {
             const endTimeMode = 'duration';
             const endTimeDuration = { days: 3, hours: 0, minutes: 30 };
             const formValues = generateCreateProposalEndDateFormData({ startTimeMode, endTimeMode, endTimeDuration });
-            const expectedValue = 1608739200;
+            const expectedValue = 1_608_739_200;
             expect(createProposalUtils.parseEndDate(formValues)).toEqual(expectedValue);
         });
 
@@ -88,7 +88,7 @@ describe('createProposal utils', () => {
                 endTimeMode,
                 endTimeDuration,
             });
-            const expectedValue = 1693827060;
+            const expectedValue = 1_693_827_060;
             expect(createProposalUtils.parseEndDate(formValues)).toEqual(expectedValue);
         });
 
@@ -103,7 +103,7 @@ describe('createProposal utils', () => {
                 endTimeMode,
                 endTimeDuration,
             });
-            const expectedValue = 1697506920; // value * 1000 in epoch is Tuesday, October 17, 2023 1:42:00 AM
+            const expectedValue = 1_697_506_920; // value * 1000 in epoch is Tuesday, October 17, 2023 1:42:00 AM
             expect(createProposalUtils.parseEndDate(formValues)).toEqual(expectedValue);
         });
     });
@@ -111,7 +111,7 @@ describe('createProposal utils', () => {
     describe('dateToSeconds', () => {
         it('parses the given DateTime object to an integer number representing its seconds', () => {
             const date = DateTime.fromISO('2016-05-25T09:08:34.123');
-            expect(createProposalUtils['dateToSeconds'](date)).toEqual(1464167314);
+            expect(createProposalUtils.dateToSeconds(date)).toEqual(1_464_167_314);
         });
     });
 
