@@ -1,5 +1,37 @@
 # @aragon/app
 
+## 1.17.0
+
+### Minor Changes
+
+- [#897](https://github.com/aragon/app/pull/897) [`c6c91a4`](https://github.com/aragon/app/commit/c6c91a40b015cdeb038c013f0b89812a097662e7) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Add MultiDispatch router plugin
+
+- [#894](https://github.com/aragon/app/pull/894) [`e426887`](https://github.com/aragon/app/commit/e4268875033b8c782afc1ca250673bd6a0a37326) Thanks [@milosh86](https://github.com/milosh86)! - Add CowSwap router
+
+- [#884](https://github.com/aragon/app/pull/884) [`b57ee80`](https://github.com/aragon/app/commit/b57ee80afde12889faaa372e898ef0ce9cd17689) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement necessary SubDAO UI changes for assets, transctions pages
+
+- [#896](https://github.com/aragon/app/pull/896) [`2430000`](https://github.com/aragon/app/commit/2430000f4ebbc09d24ddcb3c4e3cc1aecf4ea68b) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Add Dispatch routers functionality
+
+- [#895](https://github.com/aragon/app/pull/895) [`83fb36f`](https://github.com/aragon/app/commit/83fb36fbdddc4599e49825a77a17266a720d8786) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implememt import/export flows for action compositions
+
+### Patch Changes
+
+- [#917](https://github.com/aragon/app/pull/917) [`4fd71a2`](https://github.com/aragon/app/commit/4fd71a2c733dc3d1336d76b2ee886745b6268dd5) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix simulate actions dialog closing publish dialog on final wizard step
+
+- [#909](https://github.com/aragon/app/pull/909) [`42b6765`](https://github.com/aragon/app/commit/42b6765e6f00cf5cfc4dbd4b17f06d8b9426a5ec) Thanks [@milosh86](https://github.com/milosh86)! - Update policy factory address
+
+- [#917](https://github.com/aragon/app/pull/917) [`4fd71a2`](https://github.com/aragon/app/commit/4fd71a2c733dc3d1336d76b2ee886745b6268dd5) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix navigation blocking side effects
+
+- [#902](https://github.com/aragon/app/pull/902) [`cc62f6d`](https://github.com/aragon/app/commit/cc62f6da19f6c72177c74136fa1ef2bf00e37ce5) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update peaq quicknode rpc url
+
+- [#903](https://github.com/aragon/app/pull/903) [`b9f623c`](https://github.com/aragon/app/commit/b9f623c472dc74262119985cada427e49bcebd2c) Thanks [@milosh86](https://github.com/milosh86)! - Fix policy plugin metadata setup
+
+- [#908](https://github.com/aragon/app/pull/908) [`ed79ab3`](https://github.com/aragon/app/commit/ed79ab376336ee67b9b2f0b98d2c3e17ca110770) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Update sitemap generator to use now-required networks param
+
+- [#907](https://github.com/aragon/app/pull/907) [`fcff799`](https://github.com/aragon/app/commit/fcff799ff0a1b2d3d73565bfb6c8b2e4cdce0489) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Improve the settings page according to the designs in Figma
+
+- [#912](https://github.com/aragon/app/pull/912) [`b02cb2e`](https://github.com/aragon/app/commit/b02cb2ee264640febd4430b3bd2780951293cfed) Thanks [@milosh86](https://github.com/milosh86)! - Update Uniswap capital router setup contract address
+
 ## 1.16.0
 
 ### Minor Changes
