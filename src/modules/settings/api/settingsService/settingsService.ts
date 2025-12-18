@@ -3,7 +3,7 @@ import type { IPluginEventLog, IPluginInstallationData } from './domain';
 import type { IGetLastPluginEventLogParams, IGetPluginInstallationDataParams } from './settingsService.api';
 
 class SettingsService extends AragonBackendService {
-    private readonly urls = {
+    private urls = {
         pluginInstallationData: '/v2/plugins/installation-data',
         lastPluginEventLog: '/v2/plugins/logs/:pluginAddress/:network/:event',
     };

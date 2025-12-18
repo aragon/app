@@ -14,7 +14,7 @@ type IDaoApiResponse = Omit<IDao, 'plugins'> & {
 
 class DaoService extends AragonBackendService {
     // Base paths without version prefix
-    private readonly basePaths = {
+    private basePaths = {
         dao: '/daos/:id',
         daoByEns: '/daos/:network/ens/:ens',
         daoPermissions: '/permissions/:network/:daoAddress',
@@ -38,7 +38,7 @@ class DaoService extends AragonBackendService {
      * This is a local helper to avoid importing daoUtils and creating cycles.
      * Refactor this in https://linear.app/aragon/issue/APP-364
      */
-    private readonly parseDaoId = (daoId: string): { network: Network; address: string } => {
+    private parseDaoId = (daoId: string): { network: Network; address: string } => {
         const lastDash = daoId.lastIndexOf('-');
         const network = daoId.substring(0, lastDash) as Network;
         const address = daoId.substring(lastDash + 1);
@@ -51,7 +51,7 @@ class DaoService extends AragonBackendService {
      * Old backends already include plugins on the DAO endpoint; new ones
      * require an extra call to the plugins-by-dao endpoint.
      */
-    private readonly withPlugins = async (dao: IDaoApiResponse): Promise<IDao> => {
+    private withPlugins = async (dao: IDaoApiResponse): Promise<IDao> => {
         if (dao.plugins != null && dao.plugins.length > 0) {
             return dao as IDao;
         }

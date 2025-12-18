@@ -15,7 +15,7 @@ class TransactionUtils {
     encodeTransactionRequests = (transactions: ITransactionRequest[], network: Network): ITransactionRequest =>
         transactions.length === 1 ? transactions[0] : this.buildExecutorTransaction(transactions, network);
 
-    private readonly buildExecutorTransaction = (transactions: ITransactionRequest[], network: Network): ITransactionRequest => {
+    private buildExecutorTransaction = (transactions: ITransactionRequest[], network: Network): ITransactionRequest => {
         const { globalExecutor } = networkDefinitions[network].addresses;
 
         const transactionData = encodeFunctionData({

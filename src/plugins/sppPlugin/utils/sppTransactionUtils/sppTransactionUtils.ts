@@ -26,11 +26,11 @@ export interface ICreateSppProposalFormData extends IProposalCreate, ICreateProp
 
 class SppTransactionUtils {
     // When stage expiration is not defined, we set a default max-advance to 100 years
-    private readonly defaultMaxAdvance = BigInt(dateUtils.durationToSeconds({ days: 36_525, hours: 0, minutes: 0 }));
+    private defaultMaxAdvance = BigInt(dateUtils.durationToSeconds({ days: 36_525, hours: 0, minutes: 0 }));
 
     // A special address for encoding permissions
     // See https://github.com/aragon/osx/blob/main/packages/contracts/src/core/permission/PermissionManager.sol#L23
-    private readonly anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';
+    private anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';
 
     buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateSppProposalFormData>): Hex => {
         const { metadata, actions, proposal } = params;
@@ -99,7 +99,7 @@ class SppTransactionUtils {
         return [proposalCreationConditionAddress] as Hex[];
     };
 
-    private readonly buildBodyPermissionActions = (body: Hex, dao: Hex, spp: Hex): ITransactionRequest[] => {
+    private buildBodyPermissionActions = (body: Hex, dao: Hex, spp: Hex): ITransactionRequest[] => {
         // No address should be able to create proposals directly on sub-plugins
         const revokePluginCreateProposalAction = permissionTransactionUtils.buildRevokePermissionTransaction({
             where: body,
@@ -121,7 +121,7 @@ class SppTransactionUtils {
         return [revokePluginCreateProposalAction, grantSppCreateProposalAction, revokeExecutePermission];
     };
 
-    private readonly buildGrantSppProposalCreationAction = (body: Hex, dao: Hex, spp: Hex) => {
+    private buildGrantSppProposalCreationAction = (body: Hex, dao: Hex, spp: Hex) => {
         // Allow SPP to create proposals on sub-plugins
         const action = permissionTransactionUtils.buildGrantPermissionTransaction({
             where: body,
@@ -133,7 +133,7 @@ class SppTransactionUtils {
         return action;
     };
 
-    private readonly buildUpdateRulesTransaction = (
+    private buildUpdateRulesTransaction = (
         values: ICreateProcessFormDataAdvanced,
         sppSetupData: IPluginInstallationSetupData,
         pluginSetupData: IPluginInstallationSetupData[],
@@ -174,7 +174,7 @@ class SppTransactionUtils {
         return { to: sppRuleConditionContract, data: transactionData, value: BigInt(0) };
     };
 
-    private readonly buildUpdateStagesTransaction = (
+    private buildUpdateStagesTransaction = (
         stages: ICreateProcessFormDataAdvanced['stages'],
         sppAddress: Hex,
         bodyAddresses: Hex[]
@@ -208,7 +208,7 @@ class SppTransactionUtils {
         return { to: sppAddress, data: transactionData, value: BigInt(0) };
     };
 
-    private readonly processStageApprovals = (requiredApprovals: number, stageType: ProcessStageType, bodies: ISetupBodyForm[]) => {
+    private processStageApprovals = (requiredApprovals: number, stageType: ProcessStageType, bodies: ISetupBodyForm[]) => {
         // Stages with no bodies (timelock stages) do not require approvals
         const approvalThreshold = bodies.length > 0 && stageType === ProcessStageType.NORMAL ? requiredApprovals : 0;
         const vetoThreshold = bodies.length > 0 && stageType === ProcessStageType.OPTIMISTIC ? requiredApprovals : 0;
@@ -216,7 +216,7 @@ class SppTransactionUtils {
         return { approvalThreshold, vetoThreshold };
     };
 
-    private readonly processStageTiming = (settings: ISetupStageSettingsForm, bodies: ISetupBodyForm[]) => {
+    private processStageTiming = (settings: ISetupStageSettingsForm, bodies: ISetupBodyForm[]) => {
         const { votingPeriod, stageExpiration, earlyStageAdvance } = settings;
 
         const voteDuration = BigInt(dateUtils.durationToSeconds(votingPeriod));

@@ -6,7 +6,7 @@ import { metadataUtils } from '@/shared/utils/metadataUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 
 class SitemapUtils {
-    private readonly daoPageRoutes = ['assets', 'dashboard', 'members', 'proposals', 'settings', 'transactions'];
+    private daoPageRoutes = ['assets', 'dashboard', 'members', 'proposals', 'settings', 'transactions'];
 
     generateSitemap = async (): Promise<MetadataRoute.Sitemap> => {
         const now = new Date();
@@ -21,7 +21,7 @@ class SitemapUtils {
         return this.prependBaseUrl([...this.buildStaticPages(now), ...daoPages]);
     };
 
-    private readonly buildDaoPages = (dao: IDao, lastModified: Date): MetadataRoute.Sitemap =>
+    private buildDaoPages = (dao: IDao, lastModified: Date): MetadataRoute.Sitemap =>
         this.daoPageRoutes.map((daoPageRoute) => ({
             url: daoUtils.getDaoUrl(dao, daoPageRoute)!,
             changeFrequency: 'daily',
@@ -29,7 +29,7 @@ class SitemapUtils {
             lastModified,
         }));
 
-    private readonly buildStaticPages = (lastModified: Date): MetadataRoute.Sitemap => [
+    private buildStaticPages = (lastModified: Date): MetadataRoute.Sitemap => [
         {
             url: '/',
             lastModified,
@@ -44,7 +44,7 @@ class SitemapUtils {
         },
     ];
 
-    private readonly prependBaseUrl = (sitemap: MetadataRoute.Sitemap): MetadataRoute.Sitemap =>
+    private prependBaseUrl = (sitemap: MetadataRoute.Sitemap): MetadataRoute.Sitemap =>
         sitemap.map((site) => ({ ...site, url: `${metadataUtils.baseUrl}${site.url}` }));
 }
 

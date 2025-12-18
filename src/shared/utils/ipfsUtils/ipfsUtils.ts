@@ -7,9 +7,9 @@ export interface ICidToSrcOptions {
 }
 
 class IpfsUtils {
-    private readonly ipfsGateway = 'https://aragon-1.mypinata.cloud';
+    private ipfsGateway = 'https://aragon-1.mypinata.cloud';
 
-    private readonly ipfsPrefix = 'ipfs://';
+    private ipfsPrefix = 'ipfs://';
 
     cidToSrc = (cid?: string | null, options?: ICidToSrcOptions): string | undefined => {
         const { size = 256 } = options ?? {};

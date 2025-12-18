@@ -16,7 +16,7 @@ class MiddlewareUtils {
         return response;
     };
 
-    private readonly getContentSecurityPolicies = (nonce: string, env: string): string[] => {
+    private getContentSecurityPolicies = (nonce: string, env: string): string[] => {
         const isProd = env === 'production' || env === 'staging';
         const isLocal = env === 'local';
 

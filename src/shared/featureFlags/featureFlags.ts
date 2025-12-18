@@ -29,9 +29,9 @@ const resolveFlagValue = (definition: FeatureFlagDefinition, overrides: FeatureF
 };
 
 class FeatureFlags {
-    private readonly provider: IFeatureFlagsProvider;
-    private readonly definitions: FeatureFlagDefinition[];
-    private readonly environment: FeatureFlagEnvironment;
+    private provider: IFeatureFlagsProvider;
+    private definitions: FeatureFlagDefinition[];
+    private environment: FeatureFlagEnvironment;
 
     /**
      * Stateless feature flags service.

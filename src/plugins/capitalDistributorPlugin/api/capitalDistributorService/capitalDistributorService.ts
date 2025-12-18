@@ -3,7 +3,7 @@ import type { IGetCampaignListParams } from './capitalDistributorService.api';
 import type { ICampaign } from './domain';
 
 class CapitalDistributorService extends AragonBackendService {
-    private readonly urls = {
+    private urls = {
         campaigns: '/capital-distributor/campaigns',
     };
 

@@ -50,7 +50,7 @@ class WalletConnectActionDialogUtils {
         }
     };
 
-    private readonly requestParamsToRawAction = (params: ISessionRequestParams['eth_sendTransaction']): IProposalAction => {
+    private requestParamsToRawAction = (params: ISessionRequestParams['eth_sendTransaction']): IProposalAction => {
         const { from, to, data, value } = params[0];
         const parsedValue = this.parseRequestValue(value);
 
@@ -58,9 +58,9 @@ class WalletConnectActionDialogUtils {
     };
 
     // Request value might be set as hex instead of number
-    private readonly parseRequestValue = (value = '0') => (isHex(value) ? fromHex(value, 'bigint').toString() : value);
+    private parseRequestValue = (value = '0') => (isHex(value) ? fromHex(value, 'bigint').toString() : value);
 
-    private readonly decodeRawAction = async (params: IDecodeRawActionParams) => {
+    private decodeRawAction = async (params: IDecodeRawActionParams) => {
         const { daoNetwork, decodeTransactionAsync, rawAction } = params;
 
         const { type, inputData, to, ...body } = rawAction;

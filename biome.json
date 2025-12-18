@@ -172,7 +172,8 @@
                         "style": "interface"
                     }
                 },
-                "noParameterProperties": "off"
+                "noParameterProperties": "off",
+                "useReadonlyClassProperties": "off"
             },
             "suspicious": {
                 "noAsyncPromiseExecutor": "error",

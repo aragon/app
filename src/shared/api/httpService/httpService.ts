@@ -2,9 +2,9 @@ import { responseUtils } from '@/shared/utils/responseUtils';
 import type { HttpServiceErrorHandler, IRequestOptions, IRequestParams } from './httpService.api';
 
 export class HttpService {
-    private readonly baseUrl: string;
-    private readonly errorHandler?: HttpServiceErrorHandler;
-    private readonly apiKey?: string;
+    private baseUrl: string;
+    private errorHandler?: HttpServiceErrorHandler;
+    private apiKey?: string;
 
     constructor(baseUrl: string, errorHandler?: HttpServiceErrorHandler, apiKey?: string) {
         this.baseUrl = baseUrl;
@@ -34,7 +34,7 @@ export class HttpService {
         return result as TData;
     };
 
-    private readonly buildUrl = <TUrlParams, TQueryParams, TBody>(
+    private buildUrl = <TUrlParams, TQueryParams, TBody>(
         url: string,
         params: IRequestParams<TUrlParams, TQueryParams, TBody> = {}
     ): string => {
@@ -46,7 +46,7 @@ export class HttpService {
         return parsedParams != null ? `${fullUrl}?${parsedParams.toString()}` : fullUrl;
     };
 
-    private readonly buildOptions = (options?: IRequestOptions, body?: unknown) => {
+    private buildOptions = (options?: IRequestOptions, body?: unknown) => {
         const { method, headers, ...otherOptions } = options ?? {};
 
         const processedHeaders = new Headers(headers);
@@ -62,7 +62,7 @@ export class HttpService {
         return { method, headers: processedHeaders, ...otherOptions };
     };
 
-    private readonly parseBody = (body?: unknown) => {
+    private parseBody = (body?: unknown) => {
         if (body == null) {
             return;
         }
@@ -70,7 +70,7 @@ export class HttpService {
         return body instanceof FormData ? body : JSON.stringify(body);
     };
 
-    private readonly replaceUrlParams = (url: string, params?: Record<string, string>): string => {
+    private replaceUrlParams = (url: string, params?: Record<string, string>): string => {
         if (params == null) {
             return url;
         }
@@ -80,7 +80,7 @@ export class HttpService {
         return parsedUrl;
     };
 
-    private readonly parseQueryParams = (params?: Record<string, unknown>): URLSearchParams | undefined => {
+    private parseQueryParams = (params?: Record<string, unknown>): URLSearchParams | undefined => {
         if (params == null || Object.keys(params).length === 0) {
             return;
         }

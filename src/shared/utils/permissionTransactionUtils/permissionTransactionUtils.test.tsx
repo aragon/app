@@ -159,16 +159,16 @@ describe('permissionTransaction utils', () => {
 
     describe('encodeLogicalOperator', () => {
         it('encodes two indexes into a uint 240 value', () => {
-            expect(permissionTransactionUtils.encodeLogicalOperator(0, 1)).toEqual(BigInt(4_294_967_296));
-            expect(permissionTransactionUtils.encodeLogicalOperator(1, 2)).toEqual(BigInt(8_589_934_593));
-            expect(permissionTransactionUtils.encodeLogicalOperator(10, 11)).toEqual(BigInt(47_244_640_266));
+            expect(permissionTransactionUtils['encodeLogicalOperator'](0, 1)).toEqual(BigInt(4_294_967_296));
+            expect(permissionTransactionUtils['encodeLogicalOperator'](1, 2)).toEqual(BigInt(8_589_934_593));
+            expect(permissionTransactionUtils['encodeLogicalOperator'](10, 11)).toEqual(BigInt(47_244_640_266));
         });
     });
 
     describe('addressToCondition', () => {
         it('builds a ruled condition from a condition address', () => {
             const address = '0x111';
-            const result = permissionTransactionUtils.addressToCondition(address);
+            const result = permissionTransactionUtils['addressToCondition'](address);
             expect(result.id).toEqual(202);
             expect(result.op).toEqual(1);
             expect(result.permissionId).toEqual(zeroHash);

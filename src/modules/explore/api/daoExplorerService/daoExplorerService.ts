@@ -3,7 +3,7 @@ import type { IDao } from '@/shared/api/daoService';
 import type { IGetDaoListByMemberAddressParams, IGetDaoListParams } from './daoExplorerService.api';
 
 class DaoExplorerService extends AragonBackendService {
-    private readonly urls = {
+    private urls = {
         daos: '/v2/daos',
         daoListByMemberAddress: '/v2/daos/member/:address',
     };

@@ -2,11 +2,11 @@
 class TestLogger {
     private shouldSuppressErrors = false;
     // biome-ignore lint/suspicious/noConsole: console allowed
-    private readonly originalConsoleError = console.error;
+    private originalConsoleError = console.error;
     // biome-ignore lint/suspicious/noConsole: console allowed
-    private readonly originalConsoleWarn = console.warn;
+    private originalConsoleWarn = console.warn;
 
-    private readonly testErrorLogger = jest.fn((...params) => {
+    private testErrorLogger = jest.fn((...params) => {
         if (!this.shouldSuppressErrors) {
             if (params[1] === 'fetchPriority') {
                 // Suppress "fetchPriority" React error until fixed on stable version
@@ -22,7 +22,7 @@ class TestLogger {
         }
     });
 
-    private readonly testWarnLogger = jest.fn((...params) => {
+    private testWarnLogger = jest.fn((...params) => {
         if (!this.shouldSuppressErrors) {
             if (typeof params[0] === 'string' && params[0].includes('Missing `Description`')) {
                 // Suppress radix-ui error about title missing on Dialog component

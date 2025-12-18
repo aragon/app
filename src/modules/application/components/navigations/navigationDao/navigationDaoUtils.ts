@@ -27,7 +27,7 @@ class NavigationDaoUtils {
         });
     };
 
-    private readonly getDefaultLinks = (dao: IDao, baseUrl: string, context: NavigationDaoContext): INavigationLink[] => {
+    private getDefaultLinks = (dao: IDao, baseUrl: string, context: NavigationDaoContext): INavigationLink[] => {
         const isSupported = daoUtils.hasSupportedPlugins(dao);
         const hasBodyPlugin = daoUtils.hasPluginBody(dao);
 
@@ -76,7 +76,7 @@ class NavigationDaoUtils {
         ];
     };
 
-    private readonly getPluginLinks = (dao: IDao, baseUrl: string, context: NavigationDaoContext) => {
+    private getPluginLinks = (dao: IDao, baseUrl: string, context: NavigationDaoContext) => {
         const pluginLinks = dao.plugins.reduce<{ left: INavigationLink[]; right: INavigationLink[] }>(
             (current, plugin) => {
                 const pluginInfo = pluginRegistryUtils.getPlugin(plugin.interfaceType) as IPluginInfo | undefined;

@@ -17,7 +17,7 @@ describe('settings service', () => {
         requestSpy.mockResolvedValue(installationData);
         const result = await settingsService.getPluginInstallationData(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(settingsService.urls.pluginInstallationData, params);
+        expect(requestSpy).toHaveBeenCalledWith(settingsService['urls'].pluginInstallationData, params);
         expect(result).toEqual(installationData);
     });
 
@@ -41,7 +41,7 @@ describe('settings service', () => {
         requestSpy.mockResolvedValue(pluginLog);
         const result = await settingsService.getLastPluginEventLog(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(settingsService.urls.lastPluginEventLog, params);
+        expect(requestSpy).toHaveBeenCalledWith(settingsService['urls'].lastPluginEventLog, params);
         expect(result).toEqual(pluginLog);
     });
 });

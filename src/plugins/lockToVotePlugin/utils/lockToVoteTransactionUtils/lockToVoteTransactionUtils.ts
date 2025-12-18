@@ -33,7 +33,7 @@ export interface IPrepareTokenInstallDataParams
     > {}
 
 class LockToVoteTransactionUtils {
-    private readonly anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';
+    private anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';
 
     buildPrepareInstallData = (params: IPrepareTokenInstallDataParams) => {
         const { body, metadata, dao, stageVotingPeriod } = params;
@@ -97,7 +97,7 @@ class LockToVoteTransactionUtils {
         return [proposalCreationConditionAddress, lockManagerAddress, this.anyAddress, this.anyAddress] as Hex[];
     };
 
-    private readonly buildInstallDataVotingSettings = (params: IPrepareTokenInstallDataParams) => {
+    private buildInstallDataVotingSettings = (params: IPrepareTokenInstallDataParams) => {
         const { body, stageVotingPeriod } = params;
 
         const { votingMode, supportThreshold, minParticipation, minProposerVotingPower, minDuration } = body.governance;
@@ -120,7 +120,7 @@ class LockToVoteTransactionUtils {
         return votingSettings;
     };
 
-    private readonly buildLockAndVoteData = (params: IBuildVoteDataParams<number, ILockToVoteOption>): Hex => {
+    private buildLockAndVoteData = (params: IBuildVoteDataParams<number, ILockToVoteOption>): Hex => {
         const { proposalIndex, vote } = params;
 
         const data = encodeFunctionData({
@@ -132,7 +132,7 @@ class LockToVoteTransactionUtils {
         return data;
     };
 
-    private readonly buildVoteDataDefault = (params: IBuildVoteDataParams<number, ILockToVoteOption>): Hex => {
+    private buildVoteDataDefault = (params: IBuildVoteDataParams<number, ILockToVoteOption>): Hex => {
         const { proposalIndex, vote } = params;
 
         const data = encodeFunctionData({

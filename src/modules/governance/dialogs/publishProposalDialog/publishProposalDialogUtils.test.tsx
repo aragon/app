@@ -111,7 +111,7 @@ describe('publishProposalDialog utils', () => {
         it('correctly maps a proposal action to a transaction request', () => {
             const actionBaseData = { to: '0x123', value: '10', data: '0x1234' };
             const action = generateProposalActionWithdrawToken(actionBaseData);
-            expect(publishProposalDialogUtils.actionToTransactionRequest(action)).toEqual({
+            expect(publishProposalDialogUtils['actionToTransactionRequest'](action)).toEqual({
                 ...actionBaseData,
                 value: BigInt(actionBaseData.value),
             });

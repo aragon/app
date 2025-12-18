@@ -16,7 +16,7 @@ describe('governance service', () => {
         requestSpy.mockResolvedValue(members);
         const result = await governanceService.getMemberList(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(governanceService.urls.members, params);
+        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].members, params);
         expect(result).toEqual(members);
     });
 
@@ -30,7 +30,7 @@ describe('governance service', () => {
         requestSpy.mockResolvedValue(member);
         const result = await governanceService.getMember(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(governanceService.urls.member, params);
+        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].member, params);
         expect(result).toEqual(member);
     });
 
@@ -41,7 +41,7 @@ describe('governance service', () => {
         requestSpy.mockResolvedValue(proposals);
         const result = await governanceService.getProposalList(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(governanceService.urls.proposals, params);
+        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].proposals, params);
         expect(result).toEqual(proposals);
     });
 
@@ -55,7 +55,7 @@ describe('governance service', () => {
         requestSpy.mockResolvedValue(proposal);
         const result = await governanceService.getProposalBySlug(proposalParams);
 
-        expect(requestSpy).toHaveBeenCalledWith(governanceService.urls.proposalBySlug, proposalParams);
+        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].proposalBySlug, proposalParams);
         expect(result).toEqual(proposal);
     });
 
@@ -68,7 +68,7 @@ describe('governance service', () => {
         requestSpy.mockResolvedValue(canCreateProposal);
         const result = await governanceService.getCanCreateProposal(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(governanceService.urls.canCreateProposal, params);
+        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].canCreateProposal, params);
         expect(result).toEqual(canCreateProposal);
     });
 
@@ -81,7 +81,7 @@ describe('governance service', () => {
         requestSpy.mockResolvedValue(votes);
         const result = await governanceService.getVoteList(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(governanceService.urls.votes, params);
+        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].votes, params);
         expect(result).toEqual(votes);
     });
 });

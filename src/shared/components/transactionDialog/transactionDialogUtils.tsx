@@ -3,7 +3,7 @@ import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import type { TransactionStatusState } from '../transactionStatus';
 
 export class TransactionDialogUtils {
-    private readonly ignoreErrors = [
+    private ignoreErrors = [
         'User rejected the request', // Error caused by user rejecting the transaction on their wallet
     ];
 
@@ -18,7 +18,7 @@ export class TransactionDialogUtils {
         monitoringUtils.logError(error, { context });
     };
 
-    private readonly shouldIgnoreError = (error: unknown) =>
+    private shouldIgnoreError = (error: unknown) =>
         error instanceof Error && this.ignoreErrors.some((ignoreError) => error.message.includes(ignoreError));
 }
 

@@ -11,7 +11,7 @@ describe('AragonBackend service (client)', () => {
     });
 
     it('initializes the service using the proxy route on client side', () => {
-        expect(serviceTest.baseUrl).toEqual('/api/backend');
+        expect(serviceTest['baseUrl']).toEqual('/api/backend');
     });
 
     describe('getNextPageParams', () => {

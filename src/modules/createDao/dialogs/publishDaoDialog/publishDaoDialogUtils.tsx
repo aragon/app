@@ -70,7 +70,7 @@ class PublishDaoDialogUtils {
         return daoAddress;
     };
 
-    private readonly buildDaoSettingsParams = (metadataCid: string, ens?: string) => {
+    private buildDaoSettingsParams = (metadataCid: string, ens?: string) => {
         const metadata = transactionUtils.stringToMetadataHex(metadataCid);
 
         const createDaoParams = {
@@ -83,7 +83,7 @@ class PublishDaoDialogUtils {
         return createDaoParams;
     };
 
-    private readonly buildPluginSettingsParams = (adminPluginRepo: Hex, connectedAddress: string) => {
+    private buildPluginSettingsParams = (adminPluginRepo: Hex, connectedAddress: string) => {
         const pluginSettingsData = encodeAbiParameters(adminPluginSetupAbi, [
             connectedAddress as Hex,
             { target: zeroAddress, operation: 0 },

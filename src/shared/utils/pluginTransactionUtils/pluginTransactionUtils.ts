@@ -20,7 +20,7 @@ import type {
 class PluginTransactionUtils {
     // Specifies the type of operation to perform
     // See https://github.com/aragon/osx-commons/blob/main/contracts/src/plugin/IPlugin.sol#L18
-    private readonly targetOperation = {
+    private targetOperation = {
         call: 0,
         delegateCall: 1,
     };
@@ -178,7 +178,7 @@ class PluginTransactionUtils {
         return applyUpdateTransactions;
     };
 
-    private readonly buildApplyPluginUpdateAction = (dao: IDao, plugin: IDaoPlugin, setupData: IPluginUpdateSetupData) => {
+    private buildApplyPluginUpdateAction = (dao: IDao, plugin: IDaoPlugin, setupData: IPluginUpdateSetupData) => {
         const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
         const daoAddress = dao.address as Hex;
 
@@ -195,7 +195,7 @@ class PluginTransactionUtils {
         return [grantUpgradeTx, applyUpdateTransaction, revokeUpgradeTx];
     };
 
-    private readonly setupUpdateDataToAction = (dao: IDao, plugin: IDaoPlugin, setupData: IPluginUpdateSetupData) => {
+    private setupUpdateDataToAction = (dao: IDao, plugin: IDaoPlugin, setupData: IPluginUpdateSetupData) => {
         const { pluginSetupRepo, versionTag, initData, preparedSetupData } = setupData;
         const { permissions, helpers } = preparedSetupData;
 
@@ -212,7 +212,7 @@ class PluginTransactionUtils {
         return { to: pluginSetupProcessor, data: transactionData, value: BigInt(0) };
     };
 
-    private readonly setupInstallationDataToAction = (setupData: IPluginInstallationSetupData, dao: IDao) => {
+    private setupInstallationDataToAction = (setupData: IPluginInstallationSetupData, dao: IDao) => {
         const { pluginSetupRepo, versionTag, pluginAddress, preparedSetupData } = setupData;
         const { permissions, helpers } = preparedSetupData;
 
@@ -229,7 +229,7 @@ class PluginTransactionUtils {
         return { to: pluginSetupProcessor, data: transactionData, value: BigInt(0) };
     };
 
-    private readonly hashHelpers = (helpers: readonly Hex[]): Hex => keccak256(encodeAbiParameters([{ type: 'address[]' }], [helpers]));
+    private hashHelpers = (helpers: readonly Hex[]): Hex => keccak256(encodeAbiParameters([{ type: 'address[]' }], [helpers]));
 }
 
 export const pluginTransactionUtils = new PluginTransactionUtils();

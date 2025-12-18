@@ -22,16 +22,16 @@ describe('transactionDialog utils', () => {
 
     describe('shouldIgnoreError', () => {
         it('returns false when error is not an instance of Error class', () => {
-            expect(transactionDialogUtils.shouldIgnoreError('test')).toBeFalsy();
+            expect(transactionDialogUtils['shouldIgnoreError']('test')).toBeFalsy();
         });
 
         it('returns false when error does not match any of the ignore error list', () => {
-            expect(transactionDialogUtils.shouldIgnoreError('unknown-error')).toBeFalsy();
+            expect(transactionDialogUtils['shouldIgnoreError']('unknown-error')).toBeFalsy();
         });
 
         it('returns true when error matches one of the ignore error list', () => {
             const error = new Error('User rejected the request. stack: "Error: [...]');
-            expect(transactionDialogUtils.shouldIgnoreError(error)).toBeTruthy();
+            expect(transactionDialogUtils['shouldIgnoreError'](error)).toBeTruthy();
         });
     });
 

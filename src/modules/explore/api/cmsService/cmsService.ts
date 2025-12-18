@@ -6,7 +6,7 @@ class CmsService extends HttpService {
         super('https://raw.githubusercontent.com/aragon/app-cms');
     }
 
-    private readonly urls = {
+    private urls = {
         featuredDaos: '/main/featured-daos.json',
         whitelistedAddresses: '/main/whitelisted-addresses.json',
         sanctionedAddresses: '/main/sanctioned-addresses.json',

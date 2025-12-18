@@ -31,7 +31,7 @@ const epochPeriodToSeconds = {
 const ratioBase = 1_000_000;
 
 class PreparePolicyDialogUtils {
-    private readonly publishPolicyProposalMetadata = {
+    private publishPolicyProposalMetadata = {
         title: 'Deploy Capital Flow Policy',
         summary: 'This proposal deploys a new capital flow policy to the DAO',
     };

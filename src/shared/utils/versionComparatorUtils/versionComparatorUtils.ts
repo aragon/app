@@ -18,11 +18,7 @@ class VersionComparatorUtils {
         return this.normaliseVersion(input);
     };
 
-    private readonly compareVersions = (
-        current: ComparatorInput,
-        target: ComparatorInput,
-        comparator: (diff: number) => boolean
-    ): boolean => {
+    private compareVersions = (current: ComparatorInput, target: ComparatorInput, comparator: (diff: number) => boolean): boolean => {
         const currentVersion = this.normaliseComparatorInput(current);
         const targetVersion = this.normaliseComparatorInput(target);
 
@@ -35,7 +31,7 @@ class VersionComparatorUtils {
         return comparator(versionDiff);
     };
 
-    private readonly getVersionDiff = (current: IVersion, target: IVersion): number => {
+    private getVersionDiff = (current: IVersion, target: IVersion): number => {
         const keys: Array<keyof IVersion> = ['release', 'build', 'patch'];
 
         for (const key of keys) {
@@ -53,13 +49,13 @@ class VersionComparatorUtils {
         return 0;
     };
 
-    private readonly normaliseStringVersion = (version: string): IVersion => {
+    private normaliseStringVersion = (version: string): IVersion => {
         const [release, build, patch] = version.split('.');
 
         return this.normaliseVersion({ release, build, patch });
     };
 
-    private readonly normaliseVersion = (version: IVersion<string> | IVersion): IVersion => {
+    private normaliseVersion = (version: IVersion<string> | IVersion): IVersion => {
         const { release, build, patch } = version;
         const normalizedVersion: IVersion = { release: Number(release), build: Number(build) };
 

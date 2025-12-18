@@ -111,7 +111,7 @@ class ProposalActionsImportExportUtils {
      * @param action - Action object to validate
      * @returns Error translation key if invalid, null if valid
      */
-    private readonly validateActionStructure = (action: unknown): string | null => {
+    private validateActionStructure = (action: unknown): string | null => {
         if (typeof action !== 'object' || action === null) {
             return 'app.governance.createProposalForm.actionsImportExport.errors.invalidFormat';
         }

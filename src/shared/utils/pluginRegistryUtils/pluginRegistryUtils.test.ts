@@ -13,13 +13,13 @@ describe('pluginRegistry utils', () => {
             const firstPlugin = generatePlugin({ id: 'plugin-1' });
             const secondPlugin = generatePlugin({ id: 'plugin-2' });
             pluginRegistryUtils.registerPlugin(firstPlugin).registerPlugin(secondPlugin);
-            expect(pluginRegistryUtils.pluginRegistry.plugins).toEqual([firstPlugin, secondPlugin]);
+            expect(pluginRegistryUtils['pluginRegistry'].plugins).toEqual([firstPlugin, secondPlugin]);
         });
 
         it('does not register the same plugin twice', () => {
             const plugin = generatePlugin({ id: 'plugin-1' });
             pluginRegistryUtils.registerPlugin(plugin).registerPlugin(plugin);
-            expect(pluginRegistryUtils.pluginRegistry.plugins).toEqual([plugin]);
+            expect(pluginRegistryUtils['pluginRegistry'].plugins).toEqual([plugin]);
         });
 
         it('returns the class instance', () => {

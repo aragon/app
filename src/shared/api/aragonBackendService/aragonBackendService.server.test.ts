@@ -17,6 +17,6 @@ describe('AragonBackend service (server)', () => {
         const backendUrl = 'https://test.backend.com';
         process.env.ARAGON_BACKEND_URL = backendUrl;
         const serviceTest = new ServiceTest();
-        expect(serviceTest.baseUrl).toEqual(backendUrl);
+        expect(serviceTest['baseUrl']).toEqual(backendUrl);
     });
 });

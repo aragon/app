@@ -120,7 +120,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
             buildPayloadSpy.mockResolvedValue(setupPayload);
             encodeFunctionDataSpy.mockReturnValue(transactionData);
 
-            const result = await prepareDaoContractsUpdateDialogUtils.buildPrepareUpdateTransaction(dao, plugin);
+            const result = await prepareDaoContractsUpdateDialogUtils['buildPrepareUpdateTransaction'](dao, plugin);
             expect(getPluginSpy).toHaveBeenCalledWith(plugin.interfaceType);
             expect(buildPayloadSpy).toHaveBeenCalledWith(dao, plugin);
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
@@ -142,7 +142,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
             getSlotFunctionSpy.mockReturnValue(dataBuilder);
             getPluginInstallationDataSpy.mockResolvedValue(installationData);
 
-            const result = await prepareDaoContractsUpdateDialogUtils.buildPluginSetupPayload(dao, plugin);
+            const result = await prepareDaoContractsUpdateDialogUtils['buildPluginSetupPayload'](dao, plugin);
             expect(dataBuilder).toHaveBeenCalledWith({ dao, plugin });
             expect(result).toEqual({
                 plugin: plugin.address,
@@ -157,7 +157,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
             const expectedMessage = expect.stringMatching('builder function does not exist') as unknown;
             getSlotFunctionSpy.mockReturnValue(undefined);
             getPluginInstallationDataSpy.mockResolvedValue({ preparedSetupData: { helpers: [] } });
-            await expect(prepareDaoContractsUpdateDialogUtils.buildPluginSetupPayload(dao, plugin)).rejects.toEqual(
+            await expect(prepareDaoContractsUpdateDialogUtils['buildPluginSetupPayload'](dao, plugin)).rejects.toEqual(
                 expect.objectContaining({ message: expectedMessage })
             );
         });
@@ -178,14 +178,14 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
             const params = { dao: generateDao(), plugins: [generateDaoPlugin()], osxUpdate: true };
             const osxUpdateTx = { to: '0x', data: '0xosx-update', value: BigInt(0) };
             buildOsxSpy.mockReturnValue(osxUpdateTx);
-            const result = prepareDaoContractsUpdateDialogUtils.buildApplyUpdateTransactions(params);
+            const result = prepareDaoContractsUpdateDialogUtils['buildApplyUpdateTransactions'](params);
             expect(buildOsxSpy).toHaveBeenCalledWith(params.dao);
             expect(result).toEqual([osxUpdateTx]);
         });
 
         it('does not build the osx-update transaction when osxUpdate parameter is set to false', () => {
             const params = { dao: generateDao(), plugins: [generateDaoPlugin()], osxUpdate: false };
-            prepareDaoContractsUpdateDialogUtils.buildApplyUpdateTransactions(params);
+            prepareDaoContractsUpdateDialogUtils['buildApplyUpdateTransactions'](params);
             expect(buildOsxSpy).not.toHaveBeenCalled();
         });
 
@@ -201,7 +201,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
             getPluginUpdateSetupDataSpy.mockReturnValue(pluginSetupData);
             buildApplyPluginsUpdateActionsSpy.mockReturnValue(updateTransactions);
 
-            const result = prepareDaoContractsUpdateDialogUtils.buildApplyUpdateTransactions(params);
+            const result = prepareDaoContractsUpdateDialogUtils['buildApplyUpdateTransactions'](params);
             expect(getPluginUpdateSetupDataSpy).toHaveBeenCalledWith(prepareUpdateReceipt);
             expect(buildApplyPluginsUpdateActionsSpy).toHaveBeenCalledWith({
                 dao: params.dao,
@@ -219,7 +219,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
             const upgradeData = '0xupgrade';
             encodeFunctionDataSpy.mockReturnValueOnce(initializeData).mockReturnValueOnce(upgradeData);
 
-            const result = prepareDaoContractsUpdateDialogUtils.buildOsxUpdateAction(dao);
+            const result = prepareDaoContractsUpdateDialogUtils['buildOsxUpdateAction'](dao);
             expect(encodeFunctionDataSpy).toHaveBeenNthCalledWith(1, {
                 abi: daoAbi,
                 functionName: 'initializeFrom',
@@ -255,7 +255,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
             const body = 'body';
             summarySpy.mockReturnValue(summary);
             bodySpy.mockReturnValue(body);
-            const result = prepareDaoContractsUpdateDialogUtils.buildApplyUpdateMetadata(params);
+            const result = prepareDaoContractsUpdateDialogUtils['buildApplyUpdateMetadata'](params);
             expect(summarySpy).toHaveBeenCalled();
             expect(bodySpy).toHaveBeenCalledWith(params);
             expect(result).toMatchObject({ body, summary });
@@ -265,7 +265,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
 
     describe('getApplyUpdateSummaryMetadata', () => {
         it('returns the summary of the update DAO contracts proposal', () => {
-            const result = prepareDaoContractsUpdateDialogUtils.getApplyUpdateSummaryMetadata();
+            const result = prepareDaoContractsUpdateDialogUtils['getApplyUpdateSummaryMetadata']();
             expect(result).toBe(
                 'This proposal is for a smart contract upgrade. The title, summary, and description text are automatically generated by Aragon.'
             );
@@ -294,7 +294,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
             const pluginsUpdate = ['plugin-1-update', 'plugin-2-update'];
             osxDetailsSpy.mockReturnValue(osxUpdate);
             pluginDetailsSpy.mockReturnValueOnce(pluginsUpdate[0]).mockReturnValueOnce(pluginsUpdate[1]);
-            const result = prepareDaoContractsUpdateDialogUtils.getApplyUpdateBodyMetadata(params);
+            const result = prepareDaoContractsUpdateDialogUtils['getApplyUpdateBodyMetadata'](params);
             expect(osxDetailsSpy).toHaveBeenCalledWith(params.dao);
             expect(pluginDetailsSpy).toHaveBeenNthCalledWith(1, plugins[0]);
             expect(pluginDetailsSpy).toHaveBeenNthCalledWith(2, plugins[1]);
@@ -304,7 +304,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
 
         it('does not includes the osx-updates details when the osxUpdate parameter is set to false', () => {
             const params = { dao: generateDao(), plugins: [generateDaoPlugin()], osxUpdate: false };
-            prepareDaoContractsUpdateDialogUtils.getApplyUpdateBodyMetadata(params);
+            prepareDaoContractsUpdateDialogUtils['getApplyUpdateBodyMetadata'](params);
             expect(osxDetailsSpy).not.toHaveBeenCalled();
         });
     });
@@ -318,7 +318,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
             networkDefinitions[dao.network].protocolVersion.patch = 0;
             networkDefinitions[dao.network].protocolVersion.releaseNotes = 'https://github.com/notes';
             networkDefinitions[dao.network].protocolVersion.description = 'OSX-summary';
-            const result = prepareDaoContractsUpdateDialogUtils.getOsxUpdateDetails(dao);
+            const result = prepareDaoContractsUpdateDialogUtils['getOsxUpdateDetails'](dao);
             expect(result).toContain('Aragon OSx 2.1.0');
             expect(result).toContain(dao.version);
             expect(result).toContain('OSX-summary');
@@ -336,7 +336,7 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
                 installVersion: { release: 1, build: 2, description: 'New-token', releaseNotes: 'https://releases' },
             };
             getPluginSpy.mockReturnValue(pluginInfo);
-            const result = prepareDaoContractsUpdateDialogUtils.getPluginUpdateDetails(plugin);
+            const result = prepareDaoContractsUpdateDialogUtils['getPluginUpdateDetails'](plugin);
             expect(result).toContain('Token Voting 1.2');
             expect(result).toContain('Token Voting 1.1');
             expect(result).toContain('New-token');

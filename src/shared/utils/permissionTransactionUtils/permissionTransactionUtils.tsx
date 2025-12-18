@@ -11,14 +11,14 @@ import type {
 class PermissionTransactionUtils {
     // Identifiers of rule conditions
     // See https://github.com/aragon/osx-commons/blob/develop/contracts/src/permission/condition/extensions/RuledCondition.sol#L12
-    private readonly ruleConditionId = {
+    private ruleConditionId = {
         condition: 202,
         logicOperation: 203,
     };
 
     // Operations for conditions
     // See https://github.com/aragon/osx-commons/blob/develop/contracts/src/permission/condition/extensions/RuledCondition.sol#L43
-    private readonly ruleConditionOperator = {
+    private ruleConditionOperator = {
         eq: 1,
         or: 10,
     };
@@ -126,10 +126,9 @@ class PermissionTransactionUtils {
 
     // Encodes two rules indexes into a uint240 value
     // See https://github.com/aragon/osx-commons/blob/develop/contracts/src/permission/condition/extensions/RuledCondition.sol#L315
-    private readonly encodeLogicalOperator = (firstIndex: number, secondIndex: number) =>
-        BigInt(firstIndex) + (BigInt(secondIndex) << BigInt(32));
+    private encodeLogicalOperator = (firstIndex: number, secondIndex: number) => BigInt(firstIndex) + (BigInt(secondIndex) << BigInt(32));
 
-    private readonly addressToCondition = (address: string): IRuledCondition => ({
+    private addressToCondition = (address: string): IRuledCondition => ({
         id: this.ruleConditionId.condition,
         op: this.ruleConditionOperator.eq,
         value: address,

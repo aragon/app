@@ -36,15 +36,15 @@ class SppProposalUtils {
         const hasExpiredStages = this.hasAnyStageStatus(proposal, ProposalStatus.EXPIRED);
 
         // Set end date to 0 to mark SPP proposals as "ended" when one or more stages are unreached
-        const endDate = hasUnreachedStages ? 0 : sppStageUtils.getStageEndDate(proposal, lastStage)?.toSeconds();
-        const executionExpiryDate = sppStageUtils.getStageMaxAdvance(proposal, lastStage)?.toSeconds();
+        const endDate = hasUnreachedStages || !lastStage ? 0 : sppStageUtils.getStageEndDate(proposal, lastStage)?.toSeconds();
+        const executionExpiryDate = lastStage ? sppStageUtils.getStageMaxAdvance(proposal, lastStage)?.toSeconds() : undefined;
 
         const hasAdvanceableStages = stages.some(
             (stage) => !sppStageUtils.isLastStage(proposal, stage) && sppStageUtils.canStageAdvance(proposal, stage)
         );
 
         const paramsMet = this.areAllStagesAccepted(proposal);
-        const canExecuteEarly = lastStage.minAdvance === 0;
+        const canExecuteEarly = lastStage?.minAdvance === 0;
 
         return proposalStatusUtils.getProposalStatus({
             isExecuted,

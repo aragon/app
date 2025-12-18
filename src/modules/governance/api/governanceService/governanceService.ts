@@ -13,7 +13,7 @@ import type {
 } from './governanceService.api';
 
 class GovernanceService extends AragonBackendService {
-    private readonly urls = {
+    private urls = {
         members: '/v2/members',
         member: '/v2/members/:address',
         memberExists: '/v2/members/:memberAddress/:pluginAddress/exists',

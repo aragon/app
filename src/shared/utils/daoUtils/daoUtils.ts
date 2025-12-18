@@ -170,20 +170,20 @@ class DaoUtils {
         return fullPath;
     };
 
-    private readonly filterPluginByAddress = (plugin: IDaoPlugin, address?: string) =>
+    private filterPluginByAddress = (plugin: IDaoPlugin, address?: string) =>
         address == null || addressUtils.isAddressEqual(plugin.address, address);
 
-    private readonly filterPluginByType = (plugin: IDaoPlugin, type?: PluginType) =>
+    private filterPluginByType = (plugin: IDaoPlugin, type?: PluginType) =>
         type == null || (type === PluginType.BODY && plugin.isBody) || (type === PluginType.PROCESS && plugin.isProcess);
 
-    private readonly filterBySubPlugin = (plugin: IDaoPlugin, includeSubPlugins: boolean) => includeSubPlugins || !plugin.isSubPlugin;
+    private filterBySubPlugin = (plugin: IDaoPlugin, includeSubPlugins: boolean) => includeSubPlugins || !plugin.isSubPlugin;
 
-    private readonly filterByInterfaceType = (plugin: IDaoPlugin, interfaceType?: PluginInterfaceType) =>
+    private filterByInterfaceType = (plugin: IDaoPlugin, interfaceType?: PluginInterfaceType) =>
         interfaceType == null || plugin.interfaceType === interfaceType;
 
-    private readonly filterBySlug = (plugin: IDaoPlugin, slug?: string) => slug == null || plugin.slug === slug;
+    private filterBySlug = (plugin: IDaoPlugin, slug?: string) => slug == null || plugin.slug === slug;
 
-    private readonly filterByHasExecute = (plugin: IDaoPlugin, hasExecute?: boolean) => !hasExecute || plugin.conditionAddress == null;
+    private filterByHasExecute = (plugin: IDaoPlugin, hasExecute?: boolean) => !hasExecute || plugin.conditionAddress == null;
 }
 
 export const daoUtils = new DaoUtils();

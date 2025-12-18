@@ -18,7 +18,7 @@ describe('finance service', () => {
         requestSpy.mockResolvedValue(assets);
         const result = await financeService.getAssetList(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(financeService.urls.assets, params);
+        expect(requestSpy).toHaveBeenCalledWith(financeService['urls'].assets, params);
         expect(result).toEqual(assets);
     });
 
@@ -29,7 +29,7 @@ describe('finance service', () => {
         requestSpy.mockResolvedValue(transactions);
         const result = await financeService.getTransactionList(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(financeService.urls.transactions, params);
+        expect(requestSpy).toHaveBeenCalledWith(financeService['urls'].transactions, params);
         expect(result).toEqual(transactions);
     });
 });

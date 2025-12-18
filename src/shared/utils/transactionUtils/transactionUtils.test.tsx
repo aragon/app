@@ -79,7 +79,7 @@ describe('transaction utils', () => {
             const expectedAddress = networkDefinitions[network].addresses.globalExecutor;
             encodeFunctionDataSpy.mockReturnValue(executorData);
 
-            const multicallTransaction = transactionUtils.buildExecutorTransaction(actions, network);
+            const multicallTransaction = transactionUtils['buildExecutorTransaction'](actions, network);
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: globalExecutorAbi,
                 functionName: 'execute',

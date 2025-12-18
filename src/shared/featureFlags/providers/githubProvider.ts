@@ -54,8 +54,8 @@ export type GithubCmsCookieSourceGetter = () => string | null | undefined | Prom
  * cookie source getter; the provider itself stays agnostic of Next.js / DOM.
  */
 export class GithubCmsFeatureFlagsProvider implements IFeatureFlagsProvider {
-    private readonly environment: FeatureFlagEnvironment;
-    private readonly getCookieSource?: GithubCmsCookieSourceGetter;
+    private environment: FeatureFlagEnvironment;
+    private getCookieSource?: GithubCmsCookieSourceGetter;
 
     constructor(environment: FeatureFlagEnvironment, getCookieSource?: GithubCmsCookieSourceGetter) {
         this.environment = environment;

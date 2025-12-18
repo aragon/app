@@ -105,13 +105,13 @@ class TokenTransactionUtils {
         return [proposalCreationConditionAddress, tokenAddress] as Hex[];
     };
 
-    private readonly buildInstallDataTokenSettings = (token: ITokenSetupMembershipForm['token']) => {
+    private buildInstallDataTokenSettings = (token: ITokenSetupMembershipForm['token']) => {
         const { address, name, symbol } = token;
 
         return { addr: address as Hex, name, symbol };
     };
 
-    private readonly buildInstallDataMintSettings = (members: ITokenSetupMembershipMember[]) => {
+    private buildInstallDataMintSettings = (members: ITokenSetupMembershipMember[]) => {
         const initialData: { receivers: Hex[]; amounts: bigint[] } = { receivers: [], amounts: [] };
         const governanceTokenDecimals = 18;
 
@@ -129,7 +129,7 @@ class TokenTransactionUtils {
         };
     };
 
-    private readonly buildInstallDataVotingSettings = (params: IPrepareTokenInstallDataParams) => {
+    private buildInstallDataVotingSettings = (params: IPrepareTokenInstallDataParams) => {
         const { body, stageVotingPeriod } = params;
 
         const { votingMode, supportThreshold, minParticipation, minProposerVotingPower, minDuration } = body.governance;

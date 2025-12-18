@@ -13,18 +13,18 @@ import type {
 } from './walletConnectService.api';
 
 export class WalletConnectService {
-    private readonly core = new Core({ projectId: walletConnectDefinitions.projectId });
+    private core = new Core({ projectId: walletConnectDefinitions.projectId });
 
     private client: InstanceType<typeof WalletKit> | undefined;
 
     // Disable request queue on signer client as otherwise the WalletConnect controller would not emit events if the
     // web UI does not respond to the initial session request.
     // See https://github.com/WalletConnect/walletconnect-monorepo/blob/v2.0/packages/sign-client/src/controllers/engine.ts#L2138
-    private readonly signConfig: WalletKitTypes.Options['signConfig'] = { disableRequestQueue: true };
+    private signConfig: WalletKitTypes.Options['signConfig'] = { disableRequestQueue: true };
 
     // Specify all methods and events to always establish a connection with dApps even if some of the methods (e.g. sign)
     // are not supported (see https://docs.reown.com/walletkit/web/usage#evm-methods--events)
-    private readonly supportedMethods = [
+    private supportedMethods = [
         'eth_accounts',
         'eth_requestAccounts',
         'eth_sendRawTransaction',
@@ -48,13 +48,13 @@ export class WalletConnectService {
         'wallet_getCapabilities',
     ];
 
-    private readonly supportedEvents = ['chainChanged', 'accountsChanged', 'message', 'disconnect', 'connect'];
+    private supportedEvents = ['chainChanged', 'accountsChanged', 'message', 'disconnect', 'connect'];
 
     constructor() {
         void this.initialize();
     }
 
-    private readonly initialize = async (): Promise<void> => {
+    private initialize = async (): Promise<void> => {
         const { metadata } = walletConnectDefinitions;
         this.client = await WalletKit.init({ core: this.core, metadata, signConfig: this.signConfig });
     };
@@ -87,7 +87,7 @@ export class WalletConnectService {
         this.client?.off(event, callback);
     };
 
-    private readonly handleSessionProposal = async (params: IHandleSessionProposalParams) => {
+    private handleSessionProposal = async (params: IHandleSessionProposalParams) => {
         const { sessionProposal, address, onError, onSuccess } = params;
 
         try {
@@ -98,7 +98,7 @@ export class WalletConnectService {
         }
     };
 
-    private readonly approveSession = async (params: IApproveSessionParams): Promise<ISession> => {
+    private approveSession = async (params: IApproveSessionParams): Promise<ISession> => {
         const { address, sessionProposal } = params;
 
         const supportedNamespaces = this.getSupportedNamespaces(address);
@@ -108,7 +108,7 @@ export class WalletConnectService {
         return session;
     };
 
-    private readonly getSupportedNamespaces = (account: string) => {
+    private getSupportedNamespaces = (account: string) => {
         const supportedChainIds = Object.values(networkDefinitions).map((definition) => definition.id);
 
         const chainIdNamespaces = supportedChainIds.map((chainId) => `eip155:${chainId.toString()}`);
@@ -124,7 +124,7 @@ export class WalletConnectService {
         };
     };
 
-    private readonly parseError = (error: unknown): Error =>
+    private parseError = (error: unknown): Error =>
         error instanceof Error ? error : typeof error === 'string' ? new Error(error) : new Error('unknown error');
 }
 

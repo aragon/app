@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { responseUtils } from '@/shared/utils/responseUtils';
 
 export class ProxyBackendUtils {
-    private readonly proxyUrl = '/api/backend';
+    private proxyUrl = '/api/backend';
 
     request = async (request: NextRequest) => {
         const url = this.buildBackendUrl(request);
@@ -31,14 +31,14 @@ export class ProxyBackendUtils {
         return new NextResponse(bodyText, { status: result.status, headers: result.headers });
     };
 
-    private readonly buildBackendUrl = (request: NextRequest): string => {
+    private buildBackendUrl = (request: NextRequest): string => {
         const [, relativeUrl] = request.nextUrl.href.split(this.proxyUrl);
         const url = `${process.env.ARAGON_BACKEND_URL!}${relativeUrl}`;
 
         return url;
     };
 
-    private readonly buildRequestOptions = async (request: NextRequest): Promise<RequestInit> => {
+    private buildRequestOptions = async (request: NextRequest): Promise<RequestInit> => {
         const { method, headers } = request;
         const body = method.toUpperCase() === 'POST' ? await request.text() : undefined;
 

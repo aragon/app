@@ -40,7 +40,7 @@ describe('walletConnect service', () => {
             walletInitSpy.mockResolvedValue({ pair } as unknown as InstanceType<typeof WalletKit>);
             const testService = await createTestService();
 
-            testService.handleSessionProposal = (({ onSuccess }) =>
+            testService['handleSessionProposal'] = (({ onSuccess }) =>
                 onSuccess({} as ISession)) as (typeof testService)['handleSessionProposal'];
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             testService.attachListener = jest.fn(({ event, callback }) => callback({} as ISessionEventArguments[typeof event]));
@@ -59,9 +59,9 @@ describe('walletConnect service', () => {
             walletInitSpy.mockResolvedValue({ pair } as unknown as InstanceType<typeof WalletKit>);
             const testService = await createTestService();
             testService.attachListener = jest.fn();
-            testService.parseError = jest.fn(() => pairError);
+            testService['parseError'] = jest.fn(() => pairError);
             await expect(testService.connectApp({ uri: 'test', address: '00' })).rejects.toThrow();
-            expect(testService.parseError).toHaveBeenCalledWith(pairError);
+            expect(testService['parseError']).toHaveBeenCalledWith(pairError);
         });
     });
 
@@ -115,7 +115,7 @@ describe('walletConnect service', () => {
             const address = '0x123';
             const session = { topic: 'test' } as ISession;
             approveSessionSpy.mockResolvedValue(session);
-            await walletConnectService.handleSessionProposal({
+            await walletConnectService['handleSessionProposal']({
                 sessionProposal,
                 address,
                 onSuccess,
@@ -131,7 +131,7 @@ describe('walletConnect service', () => {
             const address = '0x123';
             const approveError = new Error('unknown');
             approveSessionSpy.mockRejectedValue(approveError);
-            await walletConnectService.handleSessionProposal({
+            await walletConnectService['handleSessionProposal']({
                 sessionProposal,
                 address,
                 onSuccess: jest.fn(),
@@ -153,12 +153,12 @@ describe('walletConnect service', () => {
             buildApprovedNamespacesSpy.mockReturnValue(supportedNamespaces as unknown as SessionTypes.Namespaces);
 
             const testService = await createTestService();
-            testService.getSupportedNamespaces = jest.fn(
+            testService['getSupportedNamespaces'] = jest.fn(
                 () => supportedNamespaces as ReturnType<(typeof testService)['getSupportedNamespaces']>
             );
 
-            const result = await testService.approveSession({ address, sessionProposal });
-            expect(testService.getSupportedNamespaces).toHaveBeenCalledWith(address);
+            const result = await testService['approveSession']({ address, sessionProposal });
+            expect(testService['getSupportedNamespaces']).toHaveBeenCalledWith(address);
             expect(buildApprovedNamespacesSpy).toHaveBeenCalledWith({
                 proposal: sessionProposal.params,
                 supportedNamespaces,
@@ -171,9 +171,9 @@ describe('walletConnect service', () => {
     describe('getSupportedNamespaces', () => {
         it('builds the supported namespaces', () => {
             const address = '0x123';
-            const namespaces = walletConnectService.getSupportedNamespaces(address);
-            expect(namespaces.eip155.methods).toEqual(walletConnectService.supportedMethods);
-            expect(namespaces.eip155.events).toEqual(walletConnectService.supportedEvents);
+            const namespaces = walletConnectService['getSupportedNamespaces'](address);
+            expect(namespaces.eip155.methods).toEqual(walletConnectService['supportedMethods']);
+            expect(namespaces.eip155.events).toEqual(walletConnectService['supportedEvents']);
             expect(namespaces.eip155.chains).toContain('eip155:1');
             expect(namespaces.eip155.accounts).toContain(`eip155:1:${address}`);
         });
@@ -182,17 +182,17 @@ describe('walletConnect service', () => {
     describe('parseError', () => {
         it('just returns the error when it is already an error instance', () => {
             const error = new Error('test');
-            expect(walletConnectService.parseError(error)).toEqual(error);
+            expect(walletConnectService['parseError'](error)).toEqual(error);
         });
 
         it('creates a new error instance from the given error message when error is a string', () => {
             const error = 'test-error';
-            expect(walletConnectService.parseError(error)).toEqual(new Error(error));
+            expect(walletConnectService['parseError'](error)).toEqual(new Error(error));
         });
 
         it('returns unknown error when error has unsupported type', () => {
             const error = 1;
-            expect(walletConnectService.parseError(error)).toEqual(new Error('unknown error'));
+            expect(walletConnectService['parseError'](error)).toEqual(new Error('unknown error'));
         });
     });
 });

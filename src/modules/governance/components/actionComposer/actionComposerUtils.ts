@@ -28,7 +28,7 @@ class ActionComposerUtils {
     // the "to" attribute of the action. It is used to display the native transfer UI on ERC-20 transfer actions.
     transferActionLocked = 'TransferActionLocked';
 
-    private readonly transferSelector = '0xa9059cbb';
+    private transferSelector = '0xa9059cbb';
 
     getDaoActions = ({ dao, permissions, t }: IGetDaoActionsParams) => {
         const pluginActions = this.getDaoPluginActions(dao);
@@ -190,7 +190,7 @@ class ActionComposerUtils {
         };
     };
 
-    private readonly groupActionItems = (items: IActionComposerInputItem[]) =>
+    private groupActionItems = (items: IActionComposerInputItem[]) =>
         items.reduce<{
             nonGroupItems: IActionComposerInputItem[];
             itemsByGroup: Partial<Record<string, IActionComposerInputItem[]>>;
@@ -215,7 +215,7 @@ class ActionComposerUtils {
      * @param customItemsByGroup
      * @param nativeItemsByGroup
      */
-    private readonly getFinalCustomItems = (
+    private getFinalCustomItems = (
         customItemsByGroup: Partial<Record<string, IActionComposerInputItem[]>>,
         nativeItemsByGroup: Partial<Record<string, IActionComposerInputItem[]>>
     ) =>
@@ -233,7 +233,7 @@ class ActionComposerUtils {
      * @param nativeItemsByGroup
      * @param customItemsByGroup
      */
-    private readonly getFinalNativeItems = (
+    private getFinalNativeItems = (
         nativeItemsByGroup: Partial<Record<string, IActionComposerInputItem[]>>,
         customItemsByGroup: Partial<Record<string, IActionComposerInputItem[]>>
     ) =>
@@ -255,12 +255,12 @@ class ActionComposerUtils {
             return acc;
         }, []);
 
-    private readonly infoToSelectorMapper = (item: IActionComposerInputItem) => ({
+    private infoToSelectorMapper = (item: IActionComposerInputItem) => ({
         ...item,
         info: this.getFunctionSelector(item),
     });
 
-    private readonly getFunctionSelector = (item: IActionComposerInputItem) => {
+    private getFunctionSelector = (item: IActionComposerInputItem) => {
         const { defaultValue, id, info } = item;
 
         if (defaultValue?.inputData == null || id === ProposalActionType.TRANSFER) {
@@ -270,14 +270,14 @@ class ActionComposerUtils {
         return info ?? proposalActionUtils.actionToFunctionSelector(defaultValue);
     };
 
-    private readonly buildCustomActionGroup = ({ address, name }: Pick<ISmartContractAbi, 'address' | 'name'>) => ({
+    private buildCustomActionGroup = ({ address, name }: Pick<ISmartContractAbi, 'address' | 'name'>) => ({
         id: address,
         name,
         info: addressUtils.truncateAddress(address),
         indexData: [address],
     });
 
-    private readonly getCustomActionItems = ({ abis, t }: IGetCustomActionParams): IActionComposerInputItem[] => {
+    private getCustomActionItems = ({ abis, t }: IGetCustomActionParams): IActionComposerInputItem[] => {
         const customActionItems = abis.map((abi) => {
             const functionActions = abi.functions.map((abiFunction, index) => this.buildDefaultCustomAction(abi, abiFunction, index));
 
@@ -297,7 +297,7 @@ class ActionComposerUtils {
         ];
     };
 
-    private readonly getNativeActionGroups = (params: IGetNativeActionGroupsParams): IAutocompleteInputGroup[] => {
+    private getNativeActionGroups = (params: IGetNativeActionGroupsParams): IAutocompleteInputGroup[] => {
         const { t, dao, nativeGroups } = params;
 
         return [
@@ -311,7 +311,7 @@ class ActionComposerUtils {
         ];
     };
 
-    private readonly getNativeActionItems = (params: IGetNativeActionItemsParams): IActionComposerInputItem[] => {
+    private getNativeActionItems = (params: IGetNativeActionItemsParams): IActionComposerInputItem[] => {
         const { t, dao, nativeItems } = params;
 
         const transferAction = this.buildTransferNativeAction(t);
@@ -326,7 +326,7 @@ class ActionComposerUtils {
         return [transferAction, metadataUpdateAction, ...nativeItems];
     };
 
-    private readonly buildTransferNativeAction = (t: TranslationFunction, token?: string) => ({
+    private buildTransferNativeAction = (t: TranslationFunction, token?: string) => ({
         id: ProposalActionType.TRANSFER,
         name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.TRANSFER}`),
         icon: IconType.APP_TRANSACTIONS,
@@ -335,7 +335,7 @@ class ActionComposerUtils {
         info: token != null ? this.transferSelector : undefined,
     });
 
-    private readonly buildDefaultActionPluginMetadata = (
+    private buildDefaultActionPluginMetadata = (
         plugin: IDaoPlugin,
         additionalMetadata?: Record<string, unknown>
     ): IProposalActionUpdatePluginMetadata => {
@@ -358,7 +358,7 @@ class ActionComposerUtils {
         };
     };
 
-    private readonly buildDefaultCustomAction = (
+    private buildDefaultCustomAction = (
         { address: contractAddress, name: contractName }: Pick<ISmartContractAbi, 'address' | 'name'>,
         { name: functionName, stateMutability, parameters }: ISmartContractAbiFunction,
         index: number
@@ -382,10 +382,7 @@ class ActionComposerUtils {
         },
     });
 
-    private readonly buildDefaultRawCalldataAction = (
-        { address, name }: ISmartContractAbi,
-        t: TranslationFunction
-    ): IActionComposerInputItem => ({
+    private buildDefaultRawCalldataAction = ({ address, name }: ISmartContractAbi, t: TranslationFunction): IActionComposerInputItem => ({
         id: `${address}-${ActionItemId.RAW_CALLDATA}`,
         name: t(`app.governance.actionComposer.customItem.${ActionItemId.RAW_CALLDATA}`),
         icon: IconType.BLOCKCHAIN_SMARTCONTRACT,
@@ -404,7 +401,7 @@ class ActionComposerUtils {
         },
     });
 
-    private readonly buildDefaultActionTransfer = (token?: string): IProposalAction => ({
+    private buildDefaultActionTransfer = (token?: string): IProposalAction => ({
         type: token != null ? this.transferActionLocked : ProposalActionType.TRANSFER,
         from: '',
         to: token ?? zeroAddress,
@@ -413,7 +410,7 @@ class ActionComposerUtils {
         inputData: { function: 'transfer', contract: 'Ether', parameters: [] },
     });
 
-    private readonly buildDefaultActionMetadata = (dao: IDao) => {
+    private buildDefaultActionMetadata = (dao: IDao) => {
         const { avatar, address, name, description, links: resources } = dao;
         const existingMetadata = { avatar: { url: ipfsUtils.cidToSrc(avatar) }, name, description, resources };
 

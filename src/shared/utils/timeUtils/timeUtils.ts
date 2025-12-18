@@ -31,7 +31,7 @@ class TimeUtils {
         return `${normalizedHours}:${normalizedMinutes}`;
     };
 
-    private readonly timePattern = /^(\d{1,2}):(\d{2})(?:\s*([ap])\.?m\.?)?$/i;
+    private timePattern = /^(\d{1,2}):(\d{2})(?:\s*([ap])\.?m\.?)?$/i;
 }
 
 export const timeUtils = new TimeUtils();

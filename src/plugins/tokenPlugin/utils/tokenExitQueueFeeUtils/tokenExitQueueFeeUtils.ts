@@ -95,7 +95,7 @@ class TokenExitQueueFeeUtils {
      * @param scaledFee - Fee in 1e18 precision.
      * @returns Fee as percentage (0-100).
      */
-    private readonly scaledFeeToPercent = (scaledFee: bigint): number => {
+    private scaledFeeToPercent = (scaledFee: bigint): number => {
         const roundedScaledFee = scaledFee * BigInt(this.MAX_FEE_PERCENT) + this.INTERNAL_PRECISION / BigInt(2);
         const basisPoints = Number(roundedScaledFee / this.INTERNAL_PRECISION);
         return basisPoints / 100;

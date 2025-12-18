@@ -16,7 +16,7 @@ describe('smartContract service', () => {
         requestSpy.mockResolvedValue(abi);
         const result = await smartContractService.getAbi(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(smartContractService.urls.abi, params);
+        expect(requestSpy).toHaveBeenCalledWith(smartContractService['urls'].abi, params);
         expect(result).toEqual(abi);
     });
 
@@ -28,7 +28,7 @@ describe('smartContract service', () => {
         requestSpy.mockResolvedValue(proposalAction);
         const result = await smartContractService.decodeTransaction({ urlParams, body });
 
-        expect(requestSpy).toHaveBeenCalledWith(smartContractService.urls.decodeTransaction, { urlParams, body }, { method: 'POST' });
+        expect(requestSpy).toHaveBeenCalledWith(smartContractService['urls'].decodeTransaction, { urlParams, body }, { method: 'POST' });
         expect(result).toEqual(proposalAction);
     });
 });

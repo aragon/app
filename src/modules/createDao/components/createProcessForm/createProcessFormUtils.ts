@@ -3,11 +3,11 @@ import { BodyType } from '../../types/enum';
 import { type ICreateProcessFormDataAdvanced, ProcessStageType } from './createProcessFormDefinitions';
 
 class CreateProcessFormUtils {
-    private readonly defaultVotingPeriod = { days: 7, minutes: 0, hours: 0 };
+    private defaultVotingPeriod = { days: 7, minutes: 0, hours: 0 };
 
-    private readonly defaultType = ProcessStageType.NORMAL;
+    private defaultType = ProcessStageType.NORMAL;
 
-    private readonly defaultStageSettings = {
+    private defaultStageSettings = {
         type: this.defaultType,
         votingPeriod: this.defaultVotingPeriod,
         earlyStageAdvance: true,

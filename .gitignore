@@ -33,6 +33,7 @@ pnpm-debug.log*
 
 # vercel
 .vercel
+.turbo
 deployment-url.txt
 
 # typescript

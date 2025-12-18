@@ -3,8 +3,8 @@ import type { TranslationFunction } from '../../components/translationsProvider'
 import type { IActionGroupDescriptor, IActionViewDescriptor } from './actionViewRegistry.api';
 
 export class ActionViewRegistry {
-    private readonly views: IActionViewDescriptor[] = [];
-    private readonly groups: IActionGroupDescriptor[] = [];
+    private views: IActionViewDescriptor[] = [];
+    private groups: IActionGroupDescriptor[] = [];
 
     register = (descriptor: IActionViewDescriptor): this => {
         if (this.views.find((view) => view.actionType === descriptor.actionType)) {

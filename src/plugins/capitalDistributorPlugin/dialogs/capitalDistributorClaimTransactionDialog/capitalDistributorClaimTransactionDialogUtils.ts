@@ -21,17 +21,17 @@ class CapitalDistributorClaimTransactionDialogUtils {
         return Promise.resolve(transaction);
     };
 
-    private readonly buildClaimAuxData = (campaign: ICampaign): Hex => {
+    private buildClaimAuxData = (campaign: ICampaign): Hex => {
         if (this.isMerkleTreeCampaign(campaign)) {
             return this.buildMerkleTreeAuxData(campaign);
         }
         throw new Error('buildClaimAuxData: campaign strategy not supported.');
     };
 
-    private readonly isMerkleTreeCampaign = (campaign: ICampaign): campaign is ICampaign<ICampaignUserDataMerkle> =>
+    private isMerkleTreeCampaign = (campaign: ICampaign): campaign is ICampaign<ICampaignUserDataMerkle> =>
         campaign.strategy != null && typeof campaign.strategy === 'object' && 'root' in campaign.strategy;
 
-    private readonly buildMerkleTreeAuxData = (campaign: ICampaign<ICampaignUserDataMerkle>): Hex => {
+    private buildMerkleTreeAuxData = (campaign: ICampaign<ICampaignUserDataMerkle>): Hex => {
         const { totalAmount, proofs } = campaign.userData;
         const auxData = encodeAbiParameters(merkleClaimDataAbi, [proofs as Hex[], BigInt(totalAmount)]);
 

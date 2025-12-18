@@ -224,7 +224,7 @@ describe('tokenTransaction utils', () => {
     describe('buildInstallDataTokenSettings', () => {
         it('returns the token settings for the plugin installation', () => {
             const token = generateToken({ address: '0x123', symbol: 'MTT', name: 'My Token' });
-            expect(tokenTransactionUtils.buildInstallDataTokenSettings(token)).toEqual({
+            expect(tokenTransactionUtils['buildInstallDataTokenSettings'](token)).toEqual({
                 addr: token.address,
                 name: token.name,
                 symbol: token.symbol,
@@ -239,7 +239,7 @@ describe('tokenTransaction utils', () => {
                 { address: '0x456', tokenAmount: 1.5 },
             ];
 
-            const result = tokenTransactionUtils.buildInstallDataMintSettings(members);
+            const result = tokenTransactionUtils['buildInstallDataMintSettings'](members);
             expect(result).toEqual({
                 receivers: ['0x123', '0x456'],
                 amounts: [BigInt('10000000000000000'), BigInt('1500000000000000000')],
@@ -264,7 +264,7 @@ describe('tokenTransaction utils', () => {
             });
 
             const params = [{ body }] as Parameters<typeof tokenTransactionUtils.buildPrepareInstallData>;
-            const result = tokenTransactionUtils.buildInstallDataVotingSettings(...params);
+            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](...params);
 
             expect(result).toEqual({
                 votingMode: settings.votingMode,
@@ -285,7 +285,7 @@ describe('tokenTransaction utils', () => {
             });
 
             const params = [{ body, stageVotingPeriod }] as Parameters<typeof tokenTransactionUtils.buildPrepareInstallData>;
-            const result = tokenTransactionUtils.buildInstallDataVotingSettings(...params);
+            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](...params);
             expect(result.minDuration).toEqual(BigInt(86_400));
         });
     });

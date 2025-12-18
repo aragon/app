@@ -23,7 +23,7 @@ describe('adminManageMembersDialog utils', () => {
     describe('prepareProposalMetadata', () => {
         it('returns metadata for the prepare-process proposal', () => {
             const result = adminManageMembersDialogUtils.prepareProposalMetadata();
-            expect(result).toEqual(adminManageMembersDialogUtils.proposalMetadata);
+            expect(result).toEqual(adminManageMembersDialogUtils['proposalMetadata']);
         });
     });
 

@@ -153,7 +153,7 @@ describe('prepareProcessDialog utils', () => {
         it('maps the plugin form body to metadata', () => {
             const pluginResources = [{ name: 'resource', url: 'resource.com' }];
             const plugin = generateSetupBodyFormNew({ name: '1', description: '2', resources: pluginResources });
-            const result = prepareProcessDialogUtils.preparePluginMetadata(plugin);
+            const result = prepareProcessDialogUtils['preparePluginMetadata'](plugin);
             expect(result).toEqual({ name: plugin.name, description: plugin.description, links: plugin.resources });
         });
     });
@@ -170,7 +170,7 @@ describe('prepareProcessDialog utils', () => {
                 processKey: 'PPP',
                 stages: [stageOne, stageTwo],
             });
-            const result = prepareProcessDialogUtils.prepareProcessorMetadata(values);
+            const result = prepareProcessDialogUtils['prepareProcessorMetadata'](values);
             expect(result).toEqual({
                 name: values.name,
                 description: values.description,
@@ -195,7 +195,7 @@ describe('prepareProcessDialog utils', () => {
             const transactionData = '0xdata';
             buildPreparePluginInstallDataSpy.mockReturnValue(transactionData);
             stringToMetadataHexSpy.mockReturnValue(metadataHex);
-            const result = prepareProcessDialogUtils.buildPrepareInstallProcessorActionData(metadata, dao);
+            const result = prepareProcessDialogUtils['buildPrepareInstallProcessorActionData'](metadata, dao);
             expect(buildPreparePluginInstallDataSpy).toHaveBeenCalledWith(metadataHex, dao);
             expect(result).toEqual(transactionData);
         });
@@ -221,7 +221,7 @@ describe('prepareProcessDialog utils', () => {
             buildPrepareInstallPluginActionDataSpy.mockReturnValue(actionData);
 
             const params = { values, dao, pluginsMetadata };
-            const result = prepareProcessDialogUtils.buildPrepareInstallPluginsActionData(params);
+            const result = prepareProcessDialogUtils['buildPrepareInstallPluginsActionData'](params);
 
             expect(buildPrepareInstallPluginActionDataSpy).toHaveBeenCalledWith({
                 body,
@@ -246,7 +246,7 @@ describe('prepareProcessDialog utils', () => {
             buildPrepareInstallPluginActionDataSpy.mockReturnValueOnce(actionsData[0]).mockReturnValueOnce(actionsData[1]);
 
             const params = { values, dao, pluginsMetadata };
-            const result = prepareProcessDialogUtils.buildPrepareInstallPluginsActionData(params);
+            const result = prepareProcessDialogUtils['buildPrepareInstallPluginsActionData'](params);
 
             newBodies.forEach((body, index) => {
                 const metadataCid = pluginsMetadata[index];
@@ -270,7 +270,7 @@ describe('prepareProcessDialog utils', () => {
             stringToMetadataHexSpy.mockReturnValue(metadata);
 
             const params = { metadataCid, dao, body };
-            const result = prepareProcessDialogUtils.buildPrepareInstallPluginActionData(params);
+            const result = prepareProcessDialogUtils['buildPrepareInstallPluginActionData'](params);
             expect(getSlotFunctionSpy).toHaveBeenCalledWith(expect.objectContaining({ pluginId: body.plugin }));
             expect(prepareTransactionMock).toHaveBeenCalledWith({ metadata, dao, body, stageVotingPeriod: undefined });
             expect(result).toEqual(transactionData);
@@ -280,8 +280,8 @@ describe('prepareProcessDialog utils', () => {
     describe('preparePublishProcessProposalMetadata', () => {
         it('returns the metadata for the publish process proposal', () => {
             const result = prepareProcessDialogUtils.preparePublishProcessProposalMetadata();
-            expect(result.title).toEqual(prepareProcessDialogUtils.publishProcessProposalMetadata.title);
-            expect(result.summary).toEqual(prepareProcessDialogUtils.publishProcessProposalMetadata.summary);
+            expect(result.title).toEqual(prepareProcessDialogUtils['publishProcessProposalMetadata'].title);
+            expect(result.summary).toEqual(prepareProcessDialogUtils['publishProcessProposalMetadata'].summary);
         });
     });
 

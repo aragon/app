@@ -111,7 +111,7 @@ describe('createProposal utils', () => {
     describe('dateToSeconds', () => {
         it('parses the given DateTime object to an integer number representing its seconds', () => {
             const date = DateTime.fromISO('2016-05-25T09:08:34.123');
-            expect(createProposalUtils.dateToSeconds(date)).toEqual(1_464_167_314);
+            expect(createProposalUtils['dateToSeconds'](date)).toEqual(1_464_167_314);
         });
     });
 

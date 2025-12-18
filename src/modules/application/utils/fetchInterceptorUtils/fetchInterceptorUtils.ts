@@ -3,7 +3,7 @@ import { backendApiMocks } from '@/backendApiMocks';
 import { responseUtils } from '@/shared/utils/responseUtils';
 
 class FetchInterceptorUtils {
-    private readonly originalFetch = global.fetch.bind(global);
+    private originalFetch = global.fetch.bind(global);
 
     intercept = () => {
         if (process.env.NEXT_PUBLIC_USE_MOCKS === 'true') {
@@ -11,7 +11,7 @@ class FetchInterceptorUtils {
         }
     };
 
-    private readonly mockDataInterceptor = async (...args: Parameters<typeof this.originalFetch>): Promise<Response> => {
+    private mockDataInterceptor = async (...args: Parameters<typeof this.originalFetch>): Promise<Response> => {
         const [url, request] = args;
 
         const mock = backendApiMocks.find((mock) => mock.url.test(url as string));

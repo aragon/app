@@ -28,13 +28,12 @@ export interface IBuildMetadataParams {
 class MetadataUtils {
     baseUrl = 'https://app.aragon.org';
 
-    private readonly defaultTitle = 'Governed on Aragon';
-    private readonly defaultDescription =
-        'Explore the organizations using our modular governance stack to secure their onchain governance.';
-    private readonly defaultImage = '/og-share-large.png';
-    private readonly defaultSiteName = 'Aragon';
+    private defaultTitle = 'Governed on Aragon';
+    private defaultDescription = 'Explore the organizations using our modular governance stack to secure their onchain governance.';
+    private defaultImage = '/og-share-large.png';
+    private defaultSiteName = 'Aragon';
 
-    private readonly authors = [{ name: this.defaultSiteName, url: this.baseUrl }];
+    private authors = [{ name: this.defaultSiteName, url: this.baseUrl }];
 
     getDefaultMetadata = (): Metadata => ({
         title: this.defaultTitle,

@@ -71,7 +71,7 @@ describe('proxyBackend utils', () => {
             process.env.ARAGON_BACKEND_URL = 'https://test-backend.com';
             const testClass = new ProxyBackendUtils();
             const request = generateNextRequest({ nextUrl: { href } as NextURL });
-            expect(testClass.buildBackendUrl(request)).toEqual('https://test-backend.com/dao/0x1234?network=mainnet');
+            expect(testClass['buildBackendUrl'](request)).toEqual('https://test-backend.com/dao/0x1234?network=mainnet');
         });
     });
 });

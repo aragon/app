@@ -27,7 +27,7 @@ const RPC_PROVIDER_ENV_VARS: Record<RpcProvider, string> = {
 };
 
 export class ProxyRpcUtils {
-    private readonly rpcKeyByProvider: Partial<Record<RpcProvider, string>>;
+    private rpcKeyByProvider: Partial<Record<RpcProvider, string>>;
 
     constructor() {
         const isCI = process.env.CI === 'true';
@@ -123,7 +123,7 @@ export class ProxyRpcUtils {
         }
     };
 
-    private readonly chainIdToRpcEndpoint = (chainId: string): string | undefined => {
+    private chainIdToRpcEndpoint = (chainId: string): string | undefined => {
         const network = this.chainIdToNetwork(chainId);
 
         if (!network) {
@@ -154,11 +154,11 @@ export class ProxyRpcUtils {
         return `${privateRpcConfig.rpcUrl}${rpcKey}`;
     };
 
-    private readonly chainIdToNetwork = (chainId: string): Network | undefined =>
+    private chainIdToNetwork = (chainId: string): Network | undefined =>
         Object.values(Network).find((network) => networkDefinitions[network as Network].id === Number(chainId));
 
     // Return type extended to include Node-specific 'duplex' property used for streamed requests.
-    private readonly buildRequestOptions = (request: Request): RequestInit & { duplex?: 'half' } => {
+    private buildRequestOptions = (request: Request): RequestInit & { duplex?: 'half' } => {
         const { method, body } = request;
 
         // Don't forward headers: avoid RPC 413 "Request Entity Too Large" errors caused by sending headers' data, specifically cookies.

@@ -16,7 +16,7 @@ class QueryClientUtils {
         return this.browserQueryClient;
     };
 
-    private readonly makeQueryClient = () => new QueryClient(queryClientConfig);
+    private makeQueryClient = () => new QueryClient(queryClientConfig);
 }
 
 export const queryClientUtils = new QueryClientUtils();

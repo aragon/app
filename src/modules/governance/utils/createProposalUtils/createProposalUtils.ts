@@ -4,7 +4,7 @@ import { dateUtils } from '@/shared/utils/dateUtils';
 import type { ICreateProposalEndDateForm, ICreateProposalStartDateForm } from './createProposalUtils.api';
 
 class CreateProposalUtils {
-    private readonly sevenDaysInSeconds = 7 * 24 * 60 * 60;
+    private sevenDaysInSeconds = 7 * 24 * 60 * 60;
 
     parseStartDate = (formValues: ICreateProposalStartDateForm): number => {
         const { startTimeMode, startTimeFixed } = formValues;
@@ -74,7 +74,7 @@ class CreateProposalUtils {
         return this.dateToSeconds(endDate);
     };
 
-    private readonly dateToSeconds = (date: DateTime): number => Math.round(date.toMillis() / 1000);
+    private dateToSeconds = (date: DateTime): number => Math.round(date.toMillis() / 1000);
 }
 
 export const createProposalUtils = new CreateProposalUtils();

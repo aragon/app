@@ -4,7 +4,7 @@ import type { IAsset } from './domain';
 import type { IGetAssetListParams, IGetTransactionListParams } from './financeService.api';
 
 class FinanceService extends AragonBackendService {
-    private readonly urls = {
+    private urls = {
         assets: '/v2/assets',
         transactions: '/v2/transactions',
     };

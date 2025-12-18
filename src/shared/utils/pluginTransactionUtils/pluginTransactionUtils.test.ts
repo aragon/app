@@ -269,7 +269,7 @@ describe('pluginTransaction utils', () => {
             const updateAction = { to: '0x1', data: '0xupdate', value: BigInt(0) } as const;
             grantRevokePermissionSpy.mockReturnValue([grantRevokeActions[0], grantRevokeActions[1]]);
             setupUpdateDataToActionSpy.mockReturnValue(updateAction);
-            const result = pluginTransactionUtils.buildApplyPluginUpdateAction(dao, plugin, setupData);
+            const result = pluginTransactionUtils['buildApplyPluginUpdateAction'](dao, plugin, setupData);
             expect(grantRevokePermissionSpy).toHaveBeenCalledWith({
                 where: plugin.address,
                 who: networkDefinitions[dao.network].addresses.pluginSetupProcessor,
@@ -328,7 +328,7 @@ describe('pluginTransaction utils', () => {
             hashHelpersSpy.mockReturnValue(helpersHash);
             encodeFunctionDataSpy.mockReturnValueOnce(encodedTxData);
 
-            const result = pluginTransactionUtils.setupUpdateDataToAction(dao, plugin, setupData);
+            const result = pluginTransactionUtils['setupUpdateDataToAction'](dao, plugin, setupData);
             expect(hashHelpersSpy).toHaveBeenCalledWith(preparedSetupData.helpers);
 
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
@@ -377,7 +377,7 @@ describe('pluginTransaction utils', () => {
             hashHelpersSpy.mockReturnValue(helpersHash);
             encodeFunctionDataSpy.mockReturnValueOnce(encodedTxData);
 
-            const result = pluginTransactionUtils.setupInstallationDataToAction(setupData, dao);
+            const result = pluginTransactionUtils['setupInstallationDataToAction'](setupData, dao);
             expect(hashHelpersSpy).toHaveBeenCalledWith(preparedSetupData.helpers);
 
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
@@ -409,7 +409,7 @@ describe('pluginTransaction utils', () => {
             encodeAbiParametersSpy.mockReturnValueOnce(encodedValue);
             keccak256Spy.mockReturnValueOnce(expectedHash);
 
-            const result = pluginTransactionUtils.hashHelpers(helpers);
+            const result = pluginTransactionUtils['hashHelpers'](helpers);
 
             expect(encodeAbiParametersSpy).toHaveBeenCalledWith([{ type: 'address[]' }], [helpers]);
             expect(keccak256Spy).toHaveBeenCalledWith(encodedValue);

@@ -80,10 +80,7 @@ export class DaoProcessDetailsClientUtils {
         return pluginFunction != null ? pluginFunction(params) : this.bodyToFormDataDefault(params);
     };
 
-    private readonly sppSettingsToFormData = (
-        settings: ISppPluginSettings,
-        allPlugins: IDaoPlugin[]
-    ): ICreateProcessFormDataAdvanced['stages'] =>
+    private sppSettingsToFormData = (settings: ISppPluginSettings, allPlugins: IDaoPlugin[]): ICreateProcessFormDataAdvanced['stages'] =>
         settings.stages.map((stage) => {
             const bodies = stage.plugins.map((plugin) =>
                 this.bodyToFormData({

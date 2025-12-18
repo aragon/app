@@ -78,7 +78,7 @@ class PublishProposalDialogUtils {
         return processedActions;
     };
 
-    private readonly actionToTransactionRequest = (action: IProposalCreateAction): ITransactionRequest => {
+    private actionToTransactionRequest = (action: IProposalCreateAction): ITransactionRequest => {
         const { to, value, data } = action;
 
         return { to: to as Hex, value: BigInt(value), data: data as Hex };

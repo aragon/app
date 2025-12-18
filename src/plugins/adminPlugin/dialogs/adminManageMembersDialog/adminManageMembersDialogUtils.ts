@@ -4,11 +4,11 @@ import { permissionTransactionUtils } from '@/shared/utils/permissionTransaction
 import type { IBuildActionsArrayParams } from './adminManageMembersDialogUtils.api';
 
 class AdminManageMembersDialogUtils {
-    private readonly permissionIds = {
+    private permissionIds = {
         EXECUTE_PROPOSAL_PERMISSION: 'EXECUTE_PROPOSAL_PERMISSION',
     };
 
-    private readonly proposalMetadata = {
+    private proposalMetadata = {
         title: 'Update admins',
         summary: 'One or more changes have been made to who has permission to execute proposals via the admin plugin.',
     };
