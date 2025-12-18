@@ -39,7 +39,7 @@ export const GaugeVoterUpdateGaugeMetadataActionCreate: React.FC<IGaugeVoterUpda
     const { action, index, chainId } = props;
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const { setValue } = useFormContext();
+    const { setValue, unregister } = useFormContext();
 
     const { data: dao } = useDao({ urlParams: { id: action.daoId } });
 
@@ -57,7 +57,7 @@ export const GaugeVoterUpdateGaugeMetadataActionCreate: React.FC<IGaugeVoterUpda
 
     const handleRemoveGauge = () => {
         setSelectedGauge(undefined);
-        setValue(actionFieldName, {}); // Reset the state of previously selected gauge.
+        unregister(`${actionFieldName}.gaugeDetails`);
     };
 
     const { value: selectedGauge, alert } = useFormField<Record<string, IGauge | undefined>, string>(
