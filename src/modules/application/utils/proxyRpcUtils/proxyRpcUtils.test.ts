@@ -2,12 +2,12 @@
  * @jest-environment node
  */
 
+import { NextResponse } from 'next/server';
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateNextRequest, generateRequest, generateResponse } from '@/shared/testUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { testLogger } from '@/test/utils';
-import { NextResponse } from 'next/server';
 import { type IRpcRequestOptions, ProxyRpcUtils } from './proxyRpcUtils';
 
 describe('proxyRpc utils', () => {
@@ -31,12 +31,7 @@ describe('proxyRpc utils', () => {
         nextResponseJsonSpy.mockReset();
     });
 
-    const createTestClass = (options?: {
-        alchemyKey?: string;
-        ankrKey?: string;
-        drpcKey?: string;
-        peaqKey?: string;
-    }) => {
+    const createTestClass = (options?: { alchemyKey?: string; ankrKey?: string; drpcKey?: string; peaqKey?: string }) => {
         if (options?.alchemyKey !== undefined) {
             process.env.NEXT_SECRET_RPC_KEY = options.alchemyKey;
         }
@@ -106,10 +101,7 @@ describe('proxyRpc utils', () => {
         it('returns error when network definitions are not found for chain id', async () => {
             const testClass = createTestClass();
             await testClass.request(generateNextRequest(), createTestOptions('72983'));
-            expect(nextResponseJsonSpy).toHaveBeenCalledWith(
-                { error: expect.stringMatching(/not supported/) as unknown },
-                { status: 501 },
-            );
+            expect(nextResponseJsonSpy).toHaveBeenCalledWith({ error: expect.stringMatching(/not supported/) as unknown }, { status: 501 });
         });
 
         it('calls the rpc endpoint with the specified parameters, parses and returns the result', async () => {
@@ -205,7 +197,7 @@ describe('proxyRpc utils', () => {
                         rpcProvider: 'ankr',
                         fallbackToPublicRpc: true,
                     }),
-                }),
+                })
             );
 
             logErrorSpy.mockRestore();

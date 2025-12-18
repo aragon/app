@@ -56,7 +56,8 @@
                 "noEqualsToNull": "off",
                 "noLeakedRender": "off",
                 "noEmptySource": "off",
-                "noUnusedExpressions": "off"
+                "noUnusedExpressions": "off",
+                "noUselessUndefined": "off"
             },
             "a11y": {
                 "noAccessKey": "error",
@@ -140,7 +141,8 @@
                 "noBarrelFile": "off",
                 "noNamespaceImport": "off",
                 "useTopLevelRegex": "off",
-                "noAccumulatingSpread": "off"
+                "noAccumulatingSpread": "off",
+                "noDelete": "off"
             },
             "security": {
                 "noDangerouslySetInnerHtmlWithChildren": "error",

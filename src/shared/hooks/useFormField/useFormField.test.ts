@@ -100,14 +100,14 @@ describe('useFormField hook', () => {
     // can break inputs that rely on formatted display values (for example numeric inputs with suffixes).
     // Sanitization is still available via explicit `sanitizeOnBlur: true`, but we no longer guarantee
     // that every field sanitizes by default, so this spec is skipped.
-    it.skip('sanitizes input value on blur before forwarding onChange', () => {
+    it('sanitizes input value on blur before forwarding onChange', () => {
         const onChange = jest.fn();
         const onBlur = jest.fn();
         const field = { onChange, onBlur } as unknown as ReactHookForm.UseControllerReturn['field'];
         useControllerSpy.mockReturnValue({ field, fieldState: {} } as unknown as ReactHookForm.UseControllerReturn);
 
         const { result } = renderHook(() =>
-            useFormField<ReactHookForm.FieldValues, string>('field', { trimOnBlur: true }),
+            useFormField<ReactHookForm.FieldValues, string>('field', { trimOnBlur: true, sanitizeOnBlur: true })
         );
 
         // call returned onBlur with a synthetic event carrying a value
@@ -121,14 +121,14 @@ describe('useFormField hook', () => {
     // NOTE: Same as above, multiline sanitization on blur is now an opt-in behavior.
     // Since the default no longer enforces sanitization, this expectation would be misleading,
     // therefore the test is skipped.
-    it.skip('supports multiline sanitize mode preserving newlines and tabs', () => {
+    it('supports multiline sanitize mode preserving newlines and tabs', () => {
         const onChange = jest.fn();
         const onBlur = jest.fn();
         const field = { onChange, onBlur } as unknown as ReactHookForm.UseControllerReturn['field'];
         useControllerSpy.mockReturnValue({ field, fieldState: {} } as unknown as ReactHookForm.UseControllerReturn);
 
         const { result } = renderHook(() =>
-            useFormField<ReactHookForm.FieldValues, string>('field', { trimOnBlur: false, sanitizeMode: 'multiline' }),
+            useFormField<ReactHookForm.FieldValues, string>('field', { trimOnBlur: false, sanitizeMode: 'multiline', sanitizeOnBlur: true })
         );
 
         (result.current.onBlur as unknown as (e: { target: { value: string } }) => void)({
@@ -145,7 +145,7 @@ describe('useFormField hook', () => {
         useControllerSpy.mockReturnValue({ field, fieldState: {} } as unknown as ReactHookForm.UseControllerReturn);
 
         const { result } = renderHook(() =>
-            useFormField<ReactHookForm.FieldValues, string>('field', { sanitizeOnBlur: false, trimOnBlur: true }),
+            useFormField<ReactHookForm.FieldValues, string>('field', { sanitizeOnBlur: false, trimOnBlur: true })
         );
 
         (result.current.onBlur as unknown as (e: { target: { value: string } }) => void)({

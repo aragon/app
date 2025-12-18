@@ -1,8 +1,8 @@
+import { type NextRequest, NextResponse } from 'next/server';
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions, RpcProvider } from '@/shared/constants/networkDefinitions';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { responseUtils } from '@/shared/utils/responseUtils';
-import { type NextRequest, NextResponse } from 'next/server';
 
 export interface IRpcRequestParams {
     /**
@@ -27,7 +27,7 @@ const RPC_PROVIDER_ENV_VARS: Record<RpcProvider, string> = {
 };
 
 export class ProxyRpcUtils {
-    private rpcKeyByProvider: Partial<Record<RpcProvider, string>>;
+    private readonly rpcKeyByProvider: Partial<Record<RpcProvider, string>>;
 
     constructor() {
         const isCI = process.env.CI === 'true';
@@ -35,11 +35,11 @@ export class ProxyRpcUtils {
         const providerKeys: Partial<Record<RpcProvider, string>> = {};
         const missingKeys: RpcProvider[] = [];
 
-        for (const [provider, envVar] of Object.entries(RPC_PROVIDER_ENV_VARS) as Array<[RpcProvider, string]>) {
+        for (const [provider, envVar] of Object.entries(RPC_PROVIDER_ENV_VARS) as [RpcProvider, string][]) {
             const key = process.env[envVar];
             providerKeys[provider] = key;
 
-            if (!isCI && !key) {
+            if (!(isCI || key)) {
                 missingKeys.push(provider);
             }
         }
@@ -47,8 +47,7 @@ export class ProxyRpcUtils {
         if (missingKeys.length > 0) {
             const missingEnvVars = missingKeys.map((p) => RPC_PROVIDER_ENV_VARS[p]).join(', ');
             throw new Error(
-                `ProxyRpcUtils: Missing RPC keys for providers: ${missingKeys.join(', ')}. ` +
-                    `Required env vars: ${missingEnvVars}`,
+                `ProxyRpcUtils: Missing RPC keys for providers: ${missingKeys.join(', ')}. Required env vars: ${missingEnvVars}`
             );
         }
 
@@ -84,10 +83,7 @@ export class ProxyRpcUtils {
                     },
                 });
 
-                return NextResponse.json(
-                    { error: `RPC request failed with status ${String(result.status)}` },
-                    { status: 500 },
-                );
+                return NextResponse.json({ error: `RPC request failed with status ${String(result.status)}` }, { status: 500 });
             }
 
             // Forward no-content responses as-is without a body
@@ -127,7 +123,7 @@ export class ProxyRpcUtils {
         }
     };
 
-    private chainIdToRpcEndpoint = (chainId: string): string | undefined => {
+    private readonly chainIdToRpcEndpoint = (chainId: string): string | undefined => {
         const network = this.chainIdToNetwork(chainId);
 
         if (!network) {
@@ -158,11 +154,11 @@ export class ProxyRpcUtils {
         return `${privateRpcConfig.rpcUrl}${rpcKey}`;
     };
 
-    private chainIdToNetwork = (chainId: string): Network | undefined =>
+    private readonly chainIdToNetwork = (chainId: string): Network | undefined =>
         Object.values(Network).find((network) => networkDefinitions[network as Network].id === Number(chainId));
 
     // Return type extended to include Node-specific 'duplex' property used for streamed requests.
-    private buildRequestOptions = (request: Request): RequestInit & { duplex?: 'half' } => {
+    private readonly buildRequestOptions = (request: Request): RequestInit & { duplex?: 'half' } => {
         const { method, body } = request;
 
         // Don't forward headers: avoid RPC 413 "Request Entity Too Large" errors caused by sending headers' data, specifically cookies.
